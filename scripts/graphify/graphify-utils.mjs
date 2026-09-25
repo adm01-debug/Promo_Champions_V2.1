@@ -8,7 +8,14 @@ const SECRET_PATTERNS = [
   /gh[pousr]_[A-Za-z0-9]{20,}/g,
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g,
   /eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/g,
+  /sk_(?:live|test)_[A-Za-z0-9]{16,}/gi,
+  /re_[A-Za-z0-9]{20,}/gi,
+  /AKIA[0-9A-Z]{16}/g,
+  /(?:postgres(?:ql)?:\/\/)[^\s'"<>]+/gi,
+  /\bBearer\s+[A-Za-z0-9._~+\/-]{12,}/gi,
 ];
+const SENSITIVE_PATH = /(?:^|\/)(?:\.env(?:\.[^/]+)?|[^/]*\.(?:pem|key|p12|pfx|keystore))$/i;
+const SENSITIVE_KEY = /(?:authorization|api[_-]?key|token|secret|password|credential|connection(?:_?string)?|access[_-]?key)/i;
 
 const IMPORT_RELATIONS = new Set(['imports', 'imports_from', 'dynamic_import', 're_exports']);
 const CONFIDENCE_LEVELS = new Set(['EXTRACTED', 'INFERRED', 'AMBIGUOUS']);
@@ -35,9 +42,26 @@ export function assertExactGraphifyVersion(output, expectedVersion) {
 }
 
 export function redactSensitiveText(value, maximumLength = 2000) {
-  const compact = String(value ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ');
+  const compact = Array.from(String(value ?? ''), character => {
+    const code = character.codePointAt(0);
+    return code !== undefined && code < 32 && ![9, 10, 13].includes(code) ? ' ' : character;
+  }).join('');
   const redacted = SECRET_PATTERNS.reduce((text, pattern) => text.replace(pattern, '[REDACTED]'), compact);
   return redacted.slice(0, maximumLength);
+}
+
+export function sanitizeMetadata(value, key = '') {
+  if (SENSITIVE_KEY.test(key)) return '[REDACTED]';
+  if (typeof value === 'string') return redactSensitiveText(value, 500);
+  if (Array.isArray(value)) return value.map(item => sanitizeMetadata(item));
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([childKey, item]) => [childKey, sanitizeMetadata(item, childKey)]));
+  }
+  return value ?? null;
+}
+
+export function sanitizeError(error) {
+  return redactSensitiveText(error instanceof Error ? error.message : String(error));
 }
 
 export function findSecretSignals(serialized) {
@@ -90,33 +114,62 @@ export function createStagingDirectory(resolvedRoot) {
   return staging;
 }
 
+export function assertSafeRegularTree(root) {
+  const resolvedRoot = fs.realpathSync(root);
+  const queue = [resolvedRoot];
+  while (queue.length > 0) {
+    const current = queue.pop();
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const entryPath = path.join(current, entry.name);
+      const stat = fs.lstatSync(entryPath);
+      if (stat.isSymbolicLink() || (!stat.isDirectory() && !stat.isFile())) {
+        throw new Error('Árvore contém link simbólico ou entrada especial.');
+      }
+      if (stat.isDirectory()) queue.push(entryPath);
+    }
+  }
+}
+
 function ignoredSourceEntry(name) {
   return name === 'node_modules' || name === 'graphify-out' || name === '.graphify-local';
 }
 
-export function inspectSourceScope(root, { maximumFileBytes = Number.MAX_SAFE_INTEGER, maximumTotalBytes = Number.MAX_SAFE_INTEGER } = {}) {
+function initialScope(root, maximumFileBytes) {
   const initial = fs.lstatSync(root);
   if (initial.isSymbolicLink()) throw new Error('Escopo não pode ser link simbólico.');
+  if (initial.isFile() && SENSITIVE_PATH.test(root)) throw new Error('Escopo contém arquivo sensível e não pode ser analisado.');
+  if (initial.isFile() && initial.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
+  if (!initial.isFile() && !initial.isDirectory()) throw new Error('Escopo deve ser arquivo regular ou diretório.');
+  return initial;
+}
+
+function inspectScopeEntry(entryPath, maximumFileBytes) {
+  const stat = fs.lstatSync(entryPath);
+  if (stat.isSymbolicLink()) throw new Error(`Escopo contém link simbólico: ${entryPath}`);
+  if (stat.isDirectory()) return { stat, kind: 'directory' };
+  if (!stat.isFile()) throw new Error(`Escopo contém entrada não regular: ${entryPath}`);
+  if (SENSITIVE_PATH.test(entryPath)) throw new Error('Escopo contém arquivo sensível e não pode ser analisado.');
+  if (stat.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
+  return { stat, kind: 'file' };
+}
+
+export function inspectSourceScope(root, { maximumFileBytes = Number.MAX_SAFE_INTEGER, maximumTotalBytes = Number.MAX_SAFE_INTEGER } = {}) {
+  const initial = initialScope(root, maximumFileBytes);
   const queue = initial.isDirectory() ? [root] : [];
   const entries = initial.isFile() ? [root] : [];
   let totalBytes = initial.isFile() ? initial.size : 0;
-  if (initial.isFile() && initial.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
-  if (!initial.isFile() && !initial.isDirectory()) throw new Error('Escopo deve ser arquivo regular ou diretório.');
 
   while (queue.length > 0) {
     const current = queue.pop();
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
       if (ignoredSourceEntry(entry.name)) continue;
       const entryPath = path.join(current, entry.name);
-      const stat = fs.lstatSync(entryPath);
-      if (stat.isSymbolicLink()) throw new Error(`Escopo contém link simbólico: ${entryPath}`);
-      if (stat.isDirectory()) {
+      const inspected = inspectScopeEntry(entryPath, maximumFileBytes);
+      if (inspected.kind === 'directory') {
         queue.push(entryPath);
         continue;
       }
-      if (!stat.isFile()) throw new Error(`Escopo contém entrada não regular: ${entryPath}`);
-      if (stat.size > maximumFileBytes) throw new Error(`Arquivo do escopo excede o limite de ${maximumFileBytes} bytes.`);
-      totalBytes += stat.size;
+      totalBytes += inspected.stat.size;
       if (totalBytes > maximumTotalBytes) throw new Error(`Escopo excede o limite total de ${maximumTotalBytes} bytes.`);
       entries.push(entryPath);
     }
@@ -137,7 +190,14 @@ export function digestFiles(root) {
 }
 
 export function digestValue(value) {
-  return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+  const canonicalize = current => {
+    if (Array.isArray(current)) return current.map(canonicalize);
+    if (current && typeof current === 'object') {
+      return Object.fromEntries(Object.keys(current).sort().map(key => [key, canonicalize(current[key])]));
+    }
+    return current;
+  };
+  return crypto.createHash('sha256').update(JSON.stringify(canonicalize(value))).digest('hex');
 }
 
 function validateGraphShape(document) {

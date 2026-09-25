@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { assertSafeNewOutputPath, createSafeOutputParents, isPathInside } from './graphify-utils.mjs';
+import { assertSafeNewOutputPath, createSafeOutputParents, isPathInside, sanitizeError } from './graphify-utils.mjs';
 import { reconcileStaticContracts } from './catalog-adapter.mjs';
 
 function argument(flag) {
@@ -27,7 +27,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     fs.writeFileSync(outputPlan.candidate, `${JSON.stringify(report, null, 2)}\n`, { mode: 0o600 });
     console.info(`Reconciliação pronta: ${report.unresolvedStaticReferences.length} referências estáticas sem objeto observado e ${report.dynamicReferences.length} referências dinâmicas.`);
   } catch (error) {
-    console.error(`Reconciliação recusada: ${error.message}`);
+    console.error(`Reconciliação recusada: ${sanitizeError(error)}`);
     process.exitCode = 1;
   }
 }

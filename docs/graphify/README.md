@@ -16,12 +16,12 @@ Enquanto a publicação interna do runtime não existir, a alternativa equivalen
 ## Extração estrutural por domínio
 
 ```bash
-GRAPHIFY_BIN="$PWD/tools/graphify/.venv/bin/graphify" \
-  node scripts/graphify/extract-code-only.mjs --scope src/lib --max-workers 1
+uv sync --directory tools/graphify --locked
+node scripts/graphify/extract-code-only.mjs --scope src/lib --max-workers 1
 node scripts/graphify/verify-output.mjs --graph .graphify-local/lib/graphify-out/graph.json
 ```
 
-O wrapper recusa caminho fora do repositório, qualquer link simbólico no escopo, saída fora de `.graphify-local/`, versão inesperada, grafo corrompido e padrões comuns de segredo. Limita cada arquivo a 10 MiB e o escopo a 200 MiB, além de exigir confirmação explícita para escopos com mais de 500 arquivos. Os artefatos permanecem ignorados pelo Git.
+O wrapper usa exclusivamente o runtime travado em `tools/graphify/.venv`, recusa caminho fora do repositório, arquivos sensíveis, qualquer link simbólico no escopo ou staging, saída fora de `.graphify-local/`, versão inesperada, grafo corrompido e padrões comuns de segredo. Limita cada arquivo a 10 MiB e o escopo a 200 MiB, além de exigir confirmação explícita para escopos com mais de 500 arquivos. Os artefatos permanecem ignorados pelo Git.
 
 Cada extração é feita em staging e só é promovida após validar o `graph.json`. A geração publicada inclui `snapshot.json`, com commit, digest dos arquivos do escopo, versão do extrator e digest da configuração, e `multigraph.json`, que preserva relações múltiplas e direção. O destino precisa ser novo; não reutilize snapshot manualmente.
 
@@ -29,7 +29,7 @@ O Graphify 0.9.48 pode representar imports externos — por exemplo `node:fs` �
 
 O formato bruto preserva relações múltiplas, mas a consulta nativa pode reduzir relações entre o mesmo par de nós. O validador expõe esse risco; até o adaptador multigrafo estar validado, não use uma consulta do Graphify como prova única de impacto, permissão ou ausência de dependência.
 
-Use o adaptador local para impacto estático, sempre como sugestão de testes — nunca para reduzir automaticamente a suíte exigida:
+Use o adaptador local para impacto estático, sempre como sugestão de testes — nunca para reduzir automaticamente a suíte exigida. Por padrão, a consulta recusa snapshot de outro estado Git ou com digest de escopo divergente:
 
 ```bash
 npm run graphify:impact -- \
@@ -44,7 +44,7 @@ npm run graphify:contracts -- \
   --out .graphify-local/contratos-estaticos.json
 ```
 
-Quando uma sessão RO canônica for comprovada fora desta CLI, o adaptador aceita uma exportação de **metadados** já sanitizada; ele recusa linhas de negócio, projeto divergente e metadados que não se declarem read-only. A declaração no arquivo não substitui a verificação independente da conexão. A exportação bruta não é versionada:
+Quando uma sessão RO canônica for comprovada fora desta CLI, o adaptador aceita uma exportação de **metadados** já sanitizada; ele recusa linhas de negócio, projeto divergente e metadados que não se declarem read-only. A declaração no arquivo não substitui a verificação independente da conexão. O normalizador local marca todo catálogo como não verificado e a reconciliação o recusa até um coletor RO confiável produzir atestação verificável. A exportação bruta não é versionada:
 
 ```bash
 npm run graphify:catalog -- \

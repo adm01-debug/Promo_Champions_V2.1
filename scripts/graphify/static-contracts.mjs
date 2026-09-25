@@ -8,7 +8,17 @@ import { assertSafeNewOutputPath, createSafeOutputParents, digestValue, isPathIn
 
 const CODE_EXTENSIONS = new Set(['.ts', '.tsx']);
 const SQL_EXTENSION = '.sql';
-const SQL_EVENT = /\b(CREATE|ALTER|DROP)\s+(?:OR\s+REPLACE\s+)?(MATERIALIZED\s+VIEW|TABLE|FUNCTION|VIEW|TYPE|INDEX|TRIGGER|POLICY)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?((?:"[^"]+"|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:"[^"]+"|[A-Za-z_][\w$]*))?)/gi;
+const SQL_EVENT = /\b(CREATE|ALTER|DROP)\s+(?:OR\s+REPLACE\s+)?(MATERIALIZED\s+VIEW|TABLE|FUNCTION|VIEW|TYPE|INDEX|TRIGGER)\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?((?:"[^"]+"|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:"[^"]+"|[A-Za-z_][\w$]*))?)/gi;
+const IDENTIFIER = '(?:"[^"]+"|[A-Za-z_][\\w$]*)(?:\\s*\\.\\s*(?:"[^"]+"|[A-Za-z_][\\w$]*))?';
+const POLICY_EVENT = new RegExp(`\\b(CREATE|ALTER|DROP)\\s+POLICY\\s+(?:IF\\s+EXISTS\\s+)?(${IDENTIFIER})\\s+ON\\s+(${IDENTIFIER})`, 'gi');
+const RLS_EVENT = new RegExp(`\\bALTER\\s+TABLE\\s+(?:ONLY\\s+)?(${IDENTIFIER})\\s+(ENABLE|DISABLE|FORCE|NO\\s+FORCE)\\s+ROW\\s+LEVEL\\s+SECURITY`, 'gi');
+const UNSUPPORTED_SQL = [
+  ['privilégios/ACL', /\b(?:GRANT|REVOKE|ALTER\s+DEFAULT\s+PRIVILEGES)\b/i],
+  ['extensão', /\bCREATE\s+EXTENSION\b/i],
+  ['cron/job', /\b(?:cron\.schedule|pg_cron)\b/i],
+  ['Storage', /\bstorage\./i],
+  ['bloco procedural', /\bDO\s*\$/i],
+];
 const CODE_REFERENCES = [
   ['table', /(?<!storage)\.from\(\s*['"]([^'"]+)['"]/g],
   ['rpc', /\.rpc\(\s*['"]([^'"]+)['"]/g],
@@ -36,30 +46,165 @@ function lineAt(source, offset) {
   return source.slice(0, offset).split('\n').length;
 }
 
+function appendMasked(scanner, value) {
+  scanner.result += scanner.preserveStrings ? value : value.replace(/[^\n]/g, ' ');
+}
+
+function consumeCode(scanner) {
+  const { source, index } = scanner;
+  const character = source[index];
+  const next = source[index + 1];
+  if (character === '-' && next === '-') {
+    appendMasked(scanner, '--'); scanner.index += 2; scanner.state = 'line-comment'; return;
+  }
+  if (character === '/' && next === '*') {
+    appendMasked(scanner, '/*'); scanner.index += 2; scanner.state = 'block-comment'; return;
+  }
+  if (character === "'") {
+    appendMasked(scanner, character); scanner.index += 1; scanner.state = 'single-quote'; return;
+  }
+  if (character === '"') {
+    scanner.result += character; scanner.index += 1; scanner.state = 'double-quote'; return;
+  }
+  const tag = character === '$' ? /^\$[A-Za-z_][\w$]*\$|^\$\$/.exec(source.slice(index))?.[0] : null;
+  if (tag) {
+    appendMasked(scanner, tag); scanner.index += tag.length; scanner.state = 'dollar-quote'; scanner.dollarTag = tag; return;
+  }
+  scanner.result += character;
+  scanner.index += 1;
+}
+
+function consumeLineComment(scanner) {
+  const character = scanner.source[scanner.index];
+  appendMasked(scanner, character);
+  scanner.index += 1;
+  if (character === '\n') scanner.state = 'code';
+}
+
+function consumeBlockComment(scanner) {
+  const { source, index } = scanner;
+  if (source[index] === '*' && source[index + 1] === '/') {
+    appendMasked(scanner, '*/'); scanner.index += 2; scanner.state = 'code'; return;
+  }
+  appendMasked(scanner, source[index]);
+  scanner.index += 1;
+}
+
+function consumeSingleQuote(scanner) {
+  const { source, index } = scanner;
+  if (source[index] === "'" && source[index + 1] === "'") {
+    appendMasked(scanner, "''"); scanner.index += 2; return;
+  }
+  const character = source[index];
+  appendMasked(scanner, character);
+  scanner.index += 1;
+  if (character === "'") scanner.state = 'code';
+}
+
+function consumeDoubleQuote(scanner) {
+  const { source, index } = scanner;
+  const character = source[index];
+  scanner.result += character;
+  scanner.index += 1;
+  if (character === '"' && source[index + 1] === '"') {
+    scanner.result += source[index + 1]; scanner.index += 1; return;
+  }
+  if (character === '"') scanner.state = 'code';
+}
+
+function consumeDollarQuote(scanner) {
+  const { source, index, dollarTag } = scanner;
+  if (source.startsWith(dollarTag, index)) {
+    appendMasked(scanner, dollarTag); scanner.index += dollarTag.length; scanner.state = 'code'; scanner.dollarTag = null; return;
+  }
+  appendMasked(scanner, source[index]);
+  scanner.index += 1;
+}
+
+const SQL_STATE_CONSUMERS = {
+  code: consumeCode,
+  'line-comment': consumeLineComment,
+  'block-comment': consumeBlockComment,
+  'single-quote': consumeSingleQuote,
+  'double-quote': consumeDoubleQuote,
+  'dollar-quote': consumeDollarQuote,
+};
+
+function sqlMasks(source, { preserveStrings = false } = {}) {
+  const scanner = { source, preserveStrings, result: '', index: 0, state: 'code', dollarTag: null };
+  while (scanner.index < source.length) SQL_STATE_CONSUMERS[scanner.state](scanner);
+  return scanner.result;
+}
+
+function structuralSql(source) {
+  return sqlMasks(source);
+}
+
+function functionStatements(source, structural) {
+  const statements = [];
+  let start = 0;
+  for (let index = 0; index < structural.length; index += 1) {
+    if (structural[index] !== ';') continue;
+    const structuralStatement = structural.slice(start, index + 1);
+    if (/^\s*CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\b/i.test(structuralStatement)) {
+      statements.push(source.slice(start, index + 1));
+    }
+    start = index + 1;
+  }
+  return statements;
+}
+
 export function parseMigrationFile(filePath, source) {
   const name = path.basename(filePath);
   const version = /^(\d{8,14})_/.exec(name)?.[1] ?? null;
   const events = [];
-  for (const match of source.matchAll(SQL_EVENT)) {
+  const structural = structuralSql(source);
+  for (const match of structural.matchAll(SQL_EVENT)) {
     events.push({
       action: match[1].toUpperCase(),
       objectType: match[2].replace(/\s+/g, '_').toLowerCase(),
       objectName: match[3].replace(/\s+/g, ''),
-      line: lineAt(source, match.index),
+      line: lineAt(structural, match.index),
+    });
+  }
+  for (const match of structural.matchAll(POLICY_EVENT)) {
+    events.push({
+      action: match[1].toUpperCase(),
+      objectType: 'policy',
+      objectName: `${match[3].replace(/\s+/g, '')}.${match[2].replace(/\s+/g, '')}`,
+      line: lineAt(structural, match.index),
+    });
+  }
+  for (const match of structural.matchAll(RLS_EVENT)) {
+    events.push({
+      action: 'ALTER',
+      objectType: 'row_level_security',
+      objectName: match[1].replace(/\s+/g, ''),
+      operation: match[2].replace(/\s+/g, ' ').toUpperCase(),
+      line: lineAt(structural, match.index),
     });
   }
   const gaps = [];
   if (!version) gaps.push('Nome sem versão de migration reconhecida.');
-  if (/\bEXECUTE\b|\bFORMAT\s*\(/i.test(source)) gaps.push('SQL dinâmico: objetos podem não ser extraídos estaticamente.');
+  const commentFree = sqlMasks(source, { preserveStrings: true });
+  if (functionStatements(commentFree, structural).some(statement => /\bEXECUTE\b|\bFORMAT\s*\(/i.test(statement))) gaps.push('SQL dinâmico em corpo de função: objetos podem não ser extraídos estaticamente.');
+  if (/\b(?:CREATE|ALTER|DROP)\s+POLICY\b|\b(?:ENABLE|DISABLE|FORCE|NO\s+FORCE)\s+ROW\s+LEVEL\s+SECURITY\b/i.test(structural) && !events.some(event => event.objectType === 'policy' || event.objectType === 'row_level_security')) {
+    gaps.push('RLS/policy com sintaxe não reconhecida estaticamente.');
+  }
+  for (const [kind, expression] of UNSUPPORTED_SQL) {
+    if (expression.test(structural)) gaps.push(`Construto ${kind} ainda não é modelado estaticamente.`);
+  }
   return { version, events, gaps };
 }
 
-export function extractCodeReferences(filePath, source) {
+export function extractCodeReferences(_filePath, source) {
   const references = [];
   for (const [kind, expression] of CODE_REFERENCES) {
     expression.lastIndex = 0;
     for (const match of source.matchAll(expression)) {
-      references.push({ kind, name: match[1], line: lineAt(source, match.index) });
+      const prefix = source.slice(Math.max(0, match.index - 220), match.index);
+      const schema = kind === 'table' ? /\.schema\(\s*['"]([^'"]+)['"]\s*\)\s*$/.exec(prefix)?.[1] ?? 'public' : null;
+      references.push({ kind, name: schema ? `${schema}.${match[1]}` : match[1], schema, line: lineAt(source, match.index) });
     }
   }
   if (/\.(?:from|rpc|invoke|channel)\(\s*[^'"]/m.test(source)) {

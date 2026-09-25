@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { normalizeCatalog, reconcileStaticContracts } from './catalog-adapter.mjs';
+import { digestValue } from './graphify-utils.mjs';
 
 function fixture() {
   return {
@@ -18,6 +19,7 @@ function fixture() {
 test('normaliza catálogo rico sem incluir linhas de negócio', () => {
   const raw = fixture();
   raw.gaps = ['token=sbp_123456789012345678901234567890'];
+  raw.capabilities = { Authorization: 'Bearer abcdefghijklmnopqrstuvwxyz' };
   const catalog = normalizeCatalog(raw, 'usyxfpqlsspldubptrdl');
   assert.equal(catalog.tables[0].rls.forced, true);
   assert.equal(catalog.tables[0].policies[0].id, 'policy:public.sales.sales_read');
@@ -25,6 +27,11 @@ test('normaliza catálogo rico sem incluir linhas de negócio', () => {
   assert.match(catalog.digest, /^[a-f0-9]{64}$/);
   assert.doesNotMatch(catalog.gaps[0], /sbp_123456789012345678901234567890/);
   assert.equal(catalog.provenance.independentlyVerified, false);
+  assert.equal(catalog.capabilities.Authorization, '[REDACTED]');
+  const partial = normalizeCatalog({ ...fixture(), tables: [{ schema: 'public', name: 'partial', columns: [{ name: 'unknown' }] }] }, 'usyxfpqlsspldubptrdl').tables[0];
+  assert.equal(partial.rls.enabled, null);
+  assert.equal(partial.columns[0].generated, null);
+  assert.equal(partial.columns[0].identity, null);
 });
 
 test('recusa projeto, sessão e linhas não comprovados', () => {
@@ -34,7 +41,11 @@ test('recusa projeto, sessão e linhas não comprovados', () => {
 });
 
 test('reconciliação trata ausência como pendência, não como remoção', () => {
-  const result = reconcileStaticContracts({ references: [{ kind: 'table', name: 'sales', sourceFile: 'a.ts' }, { kind: 'rpc', name: 'missing', sourceFile: 'b.ts' }, { kind: 'dynamic_reference', name: null, sourceFile: 'c.ts' }] }, normalizeCatalog(fixture(), 'usyxfpqlsspldubptrdl'));
+  const catalog = normalizeCatalog(fixture(), 'usyxfpqlsspldubptrdl');
+  assert.throws(() => reconcileStaticContracts({ references: [] }, catalog));
+  catalog.provenance.independentlyVerified = true;
+  catalog.digest = digestValue({ ...catalog, digest: undefined });
+  const result = reconcileStaticContracts({ references: [{ kind: 'table', name: 'public.sales', sourceFile: 'a.ts' }, { kind: 'rpc', name: 'missing', sourceFile: 'b.ts' }, { kind: 'dynamic_reference', name: null, sourceFile: 'c.ts' }] }, catalog);
   assert.equal(result.unresolvedStaticReferences.length, 1);
   assert.equal(result.dynamicReferences.length, 1);
   assert.match(result.limitations[0], /não prova perda/);

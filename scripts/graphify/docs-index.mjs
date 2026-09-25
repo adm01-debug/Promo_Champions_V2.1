@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { assertSafeNewOutputPath, createSafeOutputParents, digestFiles, isPathInside } from './graphify-utils.mjs';
+import { assertSafeNewOutputPath, createSafeOutputParents, digestFiles, isPathInside, sanitizeError } from './graphify-utils.mjs';
 
 function walkMarkdown(directory) {
   const files = [];
@@ -41,7 +41,10 @@ function resolveLink(repositoryRoot, sourceFile, rawTarget) {
   if (!targetPath) return { kind: 'ancora_local', target: rawTarget };
   const resolved = path.resolve(path.dirname(sourceFile), targetPath);
   if (!isPathInside(repositoryRoot, resolved)) return { kind: 'fora_do_repositorio', target: rawTarget };
-  return { kind: fs.existsSync(resolved) ? 'local' : 'ausente', target: path.relative(repositoryRoot, resolved), fragment: fragment ?? null };
+  if (!fs.existsSync(resolved)) return { kind: 'ausente', target: path.relative(repositoryRoot, resolved), fragment: fragment ?? null };
+  const realTarget = fs.realpathSync(resolved);
+  if (!isPathInside(repositoryRoot, realTarget)) return { kind: 'fora_do_repositorio', target: rawTarget };
+  return { kind: 'local', target: path.relative(repositoryRoot, realTarget), fragment: fragment ?? null };
 }
 
 export function indexDocuments(repositoryRoot, documentsDirectory = path.join(repositoryRoot, 'docs')) {
@@ -60,7 +63,7 @@ export function indexDocuments(repositoryRoot, documentsDirectory = path.join(re
   })));
   return {
     schemaVersion: 1,
-    documents: documents.map(({ content, ...document }) => document),
+    documents: documents.map(({ content: _content, ...document }) => document),
     links,
     limitations: ['O índice representa somente links Markdown explícitos. Texto livre, referências por convenção e links externos não comprovam implementação ou atualidade.'],
   };
@@ -87,7 +90,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const missing = index.links.filter(link => link.kind === 'ausente').length;
     console.info(`Índice documental pronto: ${index.documents.length} documentos, ${index.links.length} links e ${missing} referências locais ausentes.`);
   } catch (error) {
-    console.error(`Índice documental recusado: ${error.message}`);
+    console.error(`Índice documental recusado: ${sanitizeError(error)}`);
     process.exitCode = 1;
   }
 }
