@@ -101,9 +101,7 @@ const App = () => {
                     expand={false}
                     theme="dark"
                   />
-                  <BrowserRouter
-                    future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-                  >
+                  <BrowserRouter>
                     <KeyboardShortcutsProvider>
                       <AuthProvider>
                         <I18nProvider>
