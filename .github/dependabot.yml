@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # NPM dependencies
+  # NPM dependencies — grupos evitam PRs individuais por pacote Radix/React/etc.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -15,7 +15,30 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
-
+    groups:
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      react-core:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-router*"
+          - "@types/react*"
+      testing:
+        patterns:
+          - "vitest*"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "playwright*"
+          - "@playwright/*"
+      build-tools:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "esbuild*"
+          - "rollup*"
+          - "typescript*"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -24,6 +47,17 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    assignees:
+      - "adm01-debug"
     labels:
       - "ci"
       - "dependencies"
+    groups:
+      actions-core:
+        patterns:
+          - "actions/*"
+      actions-runtime:
+        patterns:
+          - "denoland/*"
+          - "astral-sh/*"
+          - "supabase/*"

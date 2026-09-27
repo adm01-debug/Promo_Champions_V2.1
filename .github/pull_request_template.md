@@ -71,7 +71,7 @@ server_time: (SELECT now();)
 
 1. Checkout desta branch
 2. Executar `npm install`
-3. Executar `npm run health` (typecheck + lint + tests)
+3. Executar `npm run ci` (lint + typecheck + secrets + tests + build + bundle budget)
 4. Testar funcionalidade descrita
 
 ## 📸 Screenshots
