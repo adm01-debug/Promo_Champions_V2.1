@@ -36,7 +36,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.2.x
+          deno-version: v2.9.x
 
       # Cache the Deno module download directory so repeat runs are fast and
       # network blips don't masquerade as bundle failures.
