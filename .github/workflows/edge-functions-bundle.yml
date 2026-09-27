@@ -27,7 +27,7 @@ permissions:
 # Cancel in-flight runs when a new commit is pushed to the same branch/PR.
 concurrency:
   group: edge-bundle-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   bundle:
@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.cache/deno
-          key: deno-${{ runner.os }}-${{ hashFiles('deno.json', 'deno.lock', 'package.json', 'supabase/functions/**/*.ts', 'scripts/bundle-edge-functions.ts') }}
+          key: deno-${{ runner.os }}-${{ hashFiles('deno.lock') }}
           restore-keys: |
             deno-${{ runner.os }}-
 
