@@ -9,6 +9,8 @@ on:
       - 'tests/e2e/helpers/quote-to-sale-*'
       - 'scripts/verify-quote-to-sale-invariants.ts'
       - 'supabase/migrations/**convert**'
+      - 'supabase/migrations/**quote**'
+      - 'supabase/functions/**'
       - 'supabase/tests/quote-to-sale-stress.sql'
   workflow_dispatch:
 

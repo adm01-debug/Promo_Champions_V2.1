@@ -132,6 +132,14 @@ jobs:
           # quebrar o gate sem mudança de código.
           deno-version: v2.2.x
 
+      - name: Lockfile drift check
+        run: |
+          deno install --frozen=false
+          if ! git diff --exit-code deno.lock; then
+            echo "::error::deno.lock desatualizado — rode 'deno install --frozen=false' localmente e commite o lockfile"
+            exit 1
+          fi
+
       - name: Deno lint (supabase/functions)
         run: deno lint
 

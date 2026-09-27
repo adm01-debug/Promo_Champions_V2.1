@@ -2,8 +2,22 @@ name: Graphify Foundation
 
 on:
   pull_request:
+    paths:
+      - 'src/**'
+      - 'tools/graphify/**'
+      - 'scripts/graphify/**'
+      - 'package.json'
+      - 'tsconfig*.json'
+      - '.github/workflows/graphify.yml'
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'tools/graphify/**'
+      - 'scripts/graphify/**'
+      - 'package.json'
+      - 'tsconfig*.json'
+      - '.github/workflows/graphify.yml'
   workflow_dispatch:
 
 permissions:
@@ -21,8 +35,8 @@ jobs:
     env:
       HUSKY: 0
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm

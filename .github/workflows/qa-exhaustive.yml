@@ -64,6 +64,14 @@ jobs:
       - name: Vitest — full suite (293+ cenários)
         run: npx vitest run --reporter=dot
 
+      - name: Lockfile drift check (Deno)
+        run: |
+          deno install --frozen=false
+          if ! git diff --exit-code deno.lock; then
+            echo "::error::deno.lock desatualizado — rode 'deno install --frozen=false' localmente e commite o lockfile"
+            exit 1
+          fi
+
       - name: Deno — shared guards (retry, cors, fuzz, chunked-in, notification-categories)
         run: |
           deno test --frozen --allow-read --allow-env --allow-net --no-check \
@@ -104,7 +112,6 @@ jobs:
           done
           lhci autorun --config=.lighthouserc.json || echo "::warning::Lighthouse CI reportou regressões"
           kill $PREVIEW_PID || true
-        continue-on-error: true
 
       - name: A11y sweep — Playwright + axe-core (Onda Q)
         run: |

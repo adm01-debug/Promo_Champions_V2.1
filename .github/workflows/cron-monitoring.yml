@@ -11,6 +11,9 @@ on:
     paths:
       - 'supabase/functions/cron-failure-alerter/**'
       - 'supabase/migrations/**cron**'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
   schedule:
     # Roda diariamente às 06:00 UTC — captura regressões causadas por mudanças
     # de schema/RLS mesmo sem PR na função de cron.
@@ -36,16 +39,21 @@ jobs:
         with:
           deno-version: v2.2.x
 
+      - name: Sync deno.lock
+        run: deno install --frozen=false
+
       - name: Sanity check env
         id: env-check
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            # O repositório ainda NÃO tem os secrets VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY
-            # configurados (verificado 2026-09-03). Falhar aqui viraria vermelho
-            # diário permanente; quando os secrets forem criados, endurecer este
-            # ramo (exit 1 fora de pull_request) para eliminar o verde silencioso.
-            echo "::warning::Integration-test secrets absent (${{ github.event_name }}) — live suite SKIPPED, not validated"
-            echo "skip=true" >> "$GITHUB_OUTPUT"
+            # Secrets presentes desde 2026-09-03. PR sem secrets = skip; schedule/push = falha real.
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              echo "::warning::Integration-test secrets absent (PR) — live suite SKIPPED"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::Secrets ausentes (evento: ${{ github.event_name }}). Configure em Settings > Secrets."
+              exit 1
+            fi
           fi
 
       - name: Run Deno regression suite

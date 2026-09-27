@@ -7,12 +7,18 @@ on:
       - 'supabase/functions/**'
       - 'scripts/bundle-edge-functions.ts'
       - '.github/workflows/edge-functions-bundle.yml'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
   pull_request:
     branches: [main]
     paths:
       - 'supabase/functions/**'
       - 'scripts/bundle-edge-functions.ts'
       - '.github/workflows/edge-functions-bundle.yml'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
 
 # Cancel in-flight runs when a new commit is pushed to the same branch/PR.
 concurrency:
@@ -41,6 +47,14 @@ jobs:
           key: deno-${{ runner.os }}-${{ hashFiles('deno.json', 'deno.lock', 'package.json', 'supabase/functions/**/*.ts', 'scripts/bundle-edge-functions.ts') }}
           restore-keys: |
             deno-${{ runner.os }}-
+
+      - name: Lockfile drift check
+        run: |
+          deno install --frozen=false
+          if ! git diff --exit-code deno.lock; then
+            echo "::error::deno.lock desatualizado — rode 'deno install --frozen=false' localmente e commite o lockfile"
+            exit 1
+          fi
 
       - name: Bundle every edge function
         id: bundle
