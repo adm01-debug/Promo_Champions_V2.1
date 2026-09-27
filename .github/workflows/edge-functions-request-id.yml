@@ -8,6 +8,9 @@ on:
       - 'scripts/lint-request-id.ts'
       - 'scripts/request-id-lint-allowlist.txt'
       - '.github/workflows/edge-functions-request-id.yml'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
   pull_request:
     branches: [main]
     paths:
@@ -15,10 +18,16 @@ on:
       - 'scripts/lint-request-id.ts'
       - 'scripts/request-id-lint-allowlist.txt'
       - '.github/workflows/edge-functions-request-id.yml'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
+
+permissions:
+  contents: read
 
 concurrency:
   group: request-id-lint-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint:
@@ -31,7 +40,15 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.2.x
+          deno-version: v2.9.x
+
+      - name: Lockfile drift check
+        run: |
+          deno install --frozen=false
+          if ! git diff --exit-code deno.lock; then
+            echo "::error::deno.lock desatualizado — rode 'deno install --frozen=false' localmente e commite o lockfile"
+            exit 1
+          fi
 
       - name: Lint — block Deno.serve without withRequestId
         run: deno run --frozen --allow-read scripts/lint-request-id.ts

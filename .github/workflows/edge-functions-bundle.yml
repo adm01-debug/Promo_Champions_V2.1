@@ -7,17 +7,27 @@ on:
       - 'supabase/functions/**'
       - 'scripts/bundle-edge-functions.ts'
       - '.github/workflows/edge-functions-bundle.yml'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
   pull_request:
     branches: [main]
     paths:
       - 'supabase/functions/**'
       - 'scripts/bundle-edge-functions.ts'
       - '.github/workflows/edge-functions-bundle.yml'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
+
+permissions:
+  contents: read
+  actions: write
 
 # Cancel in-flight runs when a new commit is pushed to the same branch/PR.
 concurrency:
   group: edge-bundle-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   bundle:
@@ -30,7 +40,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.2.x
+          deno-version: v2.9.x
 
       # Cache the Deno module download directory so repeat runs are fast and
       # network blips don't masquerade as bundle failures.
@@ -38,9 +48,17 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.cache/deno
-          key: deno-${{ runner.os }}-${{ hashFiles('deno.json', 'deno.lock', 'package.json', 'supabase/functions/**/*.ts', 'scripts/bundle-edge-functions.ts') }}
+          key: deno-${{ runner.os }}-${{ hashFiles('deno.lock') }}
           restore-keys: |
             deno-${{ runner.os }}-
+
+      - name: Lockfile drift check
+        run: |
+          deno install --frozen=false
+          if ! git diff --exit-code deno.lock; then
+            echo "::error::deno.lock desatualizado — rode 'deno install --frozen=false' localmente e commite o lockfile"
+            exit 1
+          fi
 
       - name: Bundle every edge function
         id: bundle

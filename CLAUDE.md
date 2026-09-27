@@ -160,12 +160,12 @@ src/
 ## 7. Testes
 
 ```sh
-bun run test         # vitest watch
-bun run test:watch   # watch mode
-bun run typecheck    # tsc --noEmit
-bun run lint         # eslint
-bun run test:e2e     # playwright E2E
-bun run a11y:sweep   # axe accessibility
+npm run test         # vitest watch
+npm run test:watch   # watch mode
+npm run typecheck    # tsc --noEmit
+npm run lint         # eslint
+npm run test:e2e     # playwright E2E
+npm run a11y:sweep   # axe accessibility
 ```
 
 ---

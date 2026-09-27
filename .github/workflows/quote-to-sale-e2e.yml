@@ -5,16 +5,24 @@ on:
     paths:
       - 'src/hooks/useQuotes.ts'
       - 'src/hooks/quoteErrorMessages.ts'
+      - 'src/pages/*Quote*'
+      - 'src/components/quotes/**'
       - 'tests/e2e/quote-to-sale-*'
       - 'tests/e2e/helpers/quote-to-sale-*'
       - 'scripts/verify-quote-to-sale-invariants.ts'
       - 'supabase/migrations/**convert**'
+      - 'supabase/migrations/**quote**'
+      - 'supabase/functions/**'
       - 'supabase/tests/quote-to-sale-stress.sql'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 concurrency:
   group: quote-to-sale-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   unit-tests:
@@ -29,6 +37,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
         run: npm ci
       - name: Vitest — quote-error-messages
@@ -47,6 +56,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
         run: npm ci
       - name: Run invariants script
@@ -56,9 +66,17 @@ jobs:
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
-          if [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ] || [ -z "$E2E_TEST_EMAIL" ]; then
-            echo "::warning::Secrets incompletos (VITE_SUPABASE_PUBLISHABLE_KEY ou E2E_TEST_EMAIL ausente) — invariantes SKIPPED"
+          n=0
+          [ -n "$VITE_SUPABASE_URL" ] && n=$((n+1))
+          [ -n "$VITE_SUPABASE_PUBLISHABLE_KEY" ] && n=$((n+1))
+          [ -n "$E2E_TEST_EMAIL" ] && n=$((n+1))
+          [ -n "$E2E_TEST_PASSWORD" ] && n=$((n+1))
+          if [ "$n" -eq 0 ]; then
+            echo "::warning::Invariantes SKIPPED — nenhum secret de integração configurado"
             exit 0
+          elif [ "$n" -lt 4 ]; then
+            echo "::error::Configuração parcial ($n/4). Secrets necessários: VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, E2E_TEST_EMAIL, E2E_TEST_PASSWORD"
+            exit 1
           fi
           npx tsx scripts/verify-quote-to-sale-invariants.ts
 
@@ -75,17 +93,28 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
         run: npm ci
-      - name: Skip check
+      - name: Validar configuração E2E
         id: skip
         env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
-          if [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ] || [ -z "$E2E_TEST_EMAIL" ]; then
+          n=0
+          [ -n "$VITE_SUPABASE_URL" ] && n=$((n+1))
+          [ -n "$VITE_SUPABASE_PUBLISHABLE_KEY" ] && n=$((n+1))
+          [ -n "$E2E_TEST_EMAIL" ] && n=$((n+1))
+          [ -n "$E2E_TEST_PASSWORD" ] && n=$((n+1))
+          if [ "$n" -eq 0 ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Secrets incompletos (VITE_SUPABASE_PUBLISHABLE_KEY ou E2E_TEST_EMAIL ausente) — E2E SKIPPED"
+            echo "::warning::E2E SKIPPED — nenhum secret de integração configurado"
+          elif [ "$n" -lt 4 ]; then
+            echo "::error::Configuração parcial ($n/4). Secrets necessários: VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, E2E_TEST_EMAIL, E2E_TEST_PASSWORD"
+            exit 1
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi

@@ -11,21 +11,33 @@ on:
     paths:
       - 'supabase/functions/cron-failure-alerter/**'
       - 'supabase/migrations/**cron**'
+      - 'deno.lock'
+      - 'deno.json'
+      - 'package.json'
   schedule:
     # Roda diariamente às 06:00 UTC — captura regressões causadas por mudanças
     # de schema/RLS mesmo sem PR na função de cron.
     - cron: '0 6 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 concurrency:
-  group: cron-monitoring-${{ github.ref }}
-  cancel-in-progress: true
+  # Schedule usa grupo fixo ('daily') para não cancelar runs concorrentes de
+  # push/PR; pull_request usa group por branch para cancelar run anterior da
+  # mesma PR ao receber novo commit.
+  group: cron-monitoring-${{ github.event_name == 'schedule' && 'daily' || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   deno-regression:
     name: Deno — cron-failure-alerter suite
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Etapa 18: nunca executa em PRs de fork (sem acesso a secrets)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
@@ -34,18 +46,30 @@ jobs:
       - uses: actions/checkout@v7
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.2.x
+          deno-version: v2.9.x
+
+      - name: Cache Deno modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/deno
+          key: deno-${{ runner.os }}-${{ hashFiles('deno.lock') }}
+          restore-keys: deno-${{ runner.os }}-
+
+      - name: Sync deno.lock
+        run: deno install --frozen=false
 
       - name: Sanity check env
         id: env-check
         run: |
           if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            # O repositório ainda NÃO tem os secrets VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY
-            # configurados (verificado 2026-09-03). Falhar aqui viraria vermelho
-            # diário permanente; quando os secrets forem criados, endurecer este
-            # ramo (exit 1 fora de pull_request) para eliminar o verde silencioso.
-            echo "::warning::Integration-test secrets absent (${{ github.event_name }}) — live suite SKIPPED, not validated"
-            echo "skip=true" >> "$GITHUB_OUTPUT"
+            # Secrets presentes desde 2026-09-03. PR sem secrets = skip; schedule/push = falha real.
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              echo "::warning::Integration-test secrets absent (PR) — live suite SKIPPED"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::Secrets ausentes (evento: ${{ github.event_name }}). Configure em Settings > Secrets."
+              exit 1
+            fi
           fi
 
       - name: Run Deno regression suite
@@ -76,13 +100,3 @@ jobs:
               supabase/functions/cron-failure-alerter/index.test.ts
           fi
 
-      - name: Upload deno cache on failure
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: deno-logs-${{ github.run_id }}
-          path: |
-            ~/.cache/deno/
-            !~/.cache/deno/deps
-          if-no-files-found: ignore
-          retention-days: 3

@@ -11,6 +11,9 @@ on:
     - cron: "0 3 * * 1"
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 concurrency:
   group: qa-exhaustive
   cancel-in-progress: true
@@ -26,10 +29,11 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
+          cache-dependency-path: package-lock.json
 
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.2.x
+          deno-version: v2.9.x
 
       - name: Install deps
         run: npm ci
@@ -63,6 +67,14 @@ jobs:
 
       - name: Vitest — full suite (293+ cenários)
         run: npx vitest run --reporter=dot
+
+      - name: Lockfile drift check (Deno)
+        run: |
+          deno install --frozen=false
+          if ! git diff --exit-code deno.lock; then
+            echo "::error::deno.lock desatualizado — rode 'deno install --frozen=false' localmente e commite o lockfile"
+            exit 1
+          fi
 
       - name: Deno — shared guards (retry, cors, fuzz, chunked-in, notification-categories)
         run: |
@@ -104,7 +116,6 @@ jobs:
           done
           lhci autorun --config=.lighthouserc.json || echo "::warning::Lighthouse CI reportou regressões"
           kill $PREVIEW_PID || true
-        continue-on-error: true
 
       - name: A11y sweep — Playwright + axe-core (Onda Q)
         run: |

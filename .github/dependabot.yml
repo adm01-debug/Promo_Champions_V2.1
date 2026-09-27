@@ -1,13 +1,13 @@
 version: 2
 updates:
-  # NPM dependencies
+  # NPM dependencies — grupos evitam PRs individuais por pacote Radix/React/etc.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 10
-    reviewers:
+    assignees:
       - "adm01-debug"
     labels:
       - "dependencies"
@@ -15,13 +15,30 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
-    ignore:
-      # Preso à linha do vitest 1.x até o upgrade coordenado vitest@3 +
-      # coverage-v8 (PR #88 reverteu um bump de major incompatível).
-      - dependency-name: "@vitest/coverage-v8"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "vitest"
-        update-types: ["version-update:semver-major"]
+    groups:
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      react-core:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-router*"
+          - "@types/react*"
+      testing:
+        patterns:
+          - "vitest*"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "playwright*"
+          - "@playwright/*"
+      build-tools:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "esbuild*"
+          - "rollup*"
+          - "typescript*"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -30,6 +47,17 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    assignees:
+      - "adm01-debug"
     labels:
       - "ci"
       - "dependencies"
+    groups:
+      actions-core:
+        patterns:
+          - "actions/*"
+      actions-runtime:
+        patterns:
+          - "denoland/*"
+          - "astral-sh/*"
+          - "supabase/*"
