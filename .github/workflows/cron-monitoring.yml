@@ -20,9 +20,16 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 concurrency:
-  group: cron-monitoring-${{ github.ref }}
-  cancel-in-progress: true
+  # Schedule usa grupo fixo ('daily') para não cancelar runs concorrentes de
+  # push/PR; pull_request usa group por branch para cancelar run anterior da
+  # mesma PR ao receber novo commit.
+  group: cron-monitoring-${{ github.event_name == 'schedule' && 'daily' || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   deno-regression:
@@ -38,6 +45,13 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.9.x
+
+      - name: Cache Deno modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/deno
+          key: deno-${{ runner.os }}-${{ hashFiles('deno.lock') }}
+          restore-keys: deno-${{ runner.os }}-
 
       - name: Sync deno.lock
         run: deno install --frozen=false
@@ -84,13 +98,3 @@ jobs:
               supabase/functions/cron-failure-alerter/index.test.ts
           fi
 
-      - name: Upload deno cache on failure
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: deno-logs-${{ github.run_id }}
-          path: |
-            ~/.cache/deno/
-            !~/.cache/deno/deps
-          if-no-files-found: ignore
-          retention-days: 3

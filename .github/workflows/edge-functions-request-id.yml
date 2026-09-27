@@ -22,6 +22,9 @@ on:
       - 'deno.json'
       - 'package.json'
 
+permissions:
+  contents: read
+
 concurrency:
   group: request-id-lint-${{ github.ref }}
   cancel-in-progress: true

@@ -11,11 +11,17 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: write
+
 # Um run por ref: push novo na mesma PR cancela o run anterior (economia de
-# minutos — repo privado consome quota de Actions).
+# minutos — repo privado consome quota de Actions). push:main nunca cancela
+# outro push:main (ambos apontam para refs/heads/main — cancel bloquearia
+# runs legítimos de deploys consecutivos).
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint-and-typecheck:
@@ -130,7 +136,7 @@ jobs:
         with:
           # Pinado na minor: uma major/minor nova pode trazer regra de lint e
           # quebrar o gate sem mudança de código.
-          deno-version: v2.2.x
+          deno-version: v2.9.x
 
       - name: Lockfile drift check
         run: |
@@ -385,11 +391,16 @@ jobs:
       - name: Slack notification (opcional)
         env:
           SLACK_CI_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK_URL }}
+          GH_REPO: ${{ github.repository }}
+          GH_WORKFLOW: ${{ github.workflow }}
+          GH_EVENT: ${{ github.event_name }}
+          GH_SERVER: ${{ github.server_url }}
+          GH_RUN_ID: ${{ github.run_id }}
         run: |
           if [ -z "$SLACK_CI_WEBHOOK_URL" ]; then
             echo "SLACK_CI_WEBHOOK_URL não configurado — pulando notificação Slack."
             exit 0
           fi
           curl -sS -X POST -H 'Content-Type: application/json' \
-            -d "{\"text\":\"🔴 CI falhou: ${{ github.repository }} — ${{ github.workflow }} (${{ github.event_name }}) — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            -d "{\"text\":\"🔴 CI falhou: $GH_REPO — $GH_WORKFLOW ($GH_EVENT) — $GH_SERVER/$GH_REPO/actions/runs/$GH_RUN_ID\"}" \
             "$SLACK_CI_WEBHOOK_URL"

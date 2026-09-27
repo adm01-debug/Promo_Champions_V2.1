@@ -20,6 +20,10 @@ on:
       - 'deno.json'
       - 'package.json'
 
+permissions:
+  contents: read
+  actions: write
+
 # Cancel in-flight runs when a new commit is pushed to the same branch/PR.
 concurrency:
   group: edge-bundle-${{ github.ref }}

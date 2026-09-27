@@ -41,6 +41,8 @@ jobs:
           node-version: '22'
           cache: npm
       - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
       - run: npm ci
       - run: uv sync --directory tools/graphify --locked
       - run: tools/graphify/.venv/bin/graphify --version
