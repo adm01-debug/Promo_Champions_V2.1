@@ -218,8 +218,10 @@ jobs:
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
+          set +e
           node scripts/e2e-precheck.mjs
           CODE=$?
+          set -e
           if [ "$CODE" -eq 0 ]; then
             echo "valid=true" >> "$GITHUB_OUTPUT"
           elif [ "$CODE" -eq 3 ]; then
