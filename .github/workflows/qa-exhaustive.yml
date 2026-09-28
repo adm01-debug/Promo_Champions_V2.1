@@ -126,8 +126,10 @@ jobs:
             if curl -sf http://localhost:5173 > /dev/null; then break; fi
             sleep 1
           done
+          set +e
           npx playwright test -c playwright.a11y.config.ts
           A11Y_EXIT=$?
+          set -e
           kill $PREVIEW_PID || true
           exit $A11Y_EXIT
 

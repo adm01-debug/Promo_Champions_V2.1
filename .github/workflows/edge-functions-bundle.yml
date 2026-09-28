@@ -63,6 +63,7 @@ jobs:
       - name: Bundle every edge function
         id: bundle
         run: |
+          set -o pipefail
           deno run --frozen --allow-read --allow-run --allow-env --allow-net \
             scripts/bundle-edge-functions.ts | tee bundle-report.txt
         # The script exits 1 when any function fails to bundle; let the step
