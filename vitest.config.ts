@@ -25,6 +25,10 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],
+      // vitest v5 changed the default: all files in `include` are now counted
+      // even if not imported by any test, which collapses coverage % on large
+      // codebases. `all: false` restores the v1 behaviour (only imported files).
+      all: false,
       // Etapa 31 do plano de 50 etapas: a whitelist anterior (16 arquivos) media
       // ~99% sobre <1% do código e circulava como se fosse a cobertura do sistema.
       // Agora o escopo é todo src/ com exclusões justificadas (gerado, wrappers
