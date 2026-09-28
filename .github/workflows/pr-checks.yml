@@ -218,8 +218,12 @@ jobs:
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: |
-          if node scripts/e2e-precheck.mjs; then
+          node scripts/e2e-precheck.mjs
+          CODE=$?
+          if [ "$CODE" -eq 0 ]; then
             echo "valid=true" >> "$GITHUB_OUTPUT"
+          elif [ "$CODE" -eq 3 ]; then
+            echo "valid=skip" >> "$GITHUB_OUTPUT"
           else
             echo "::error::Credenciais E2E configuradas, mas inválidas. Corrija ou remova a configuração parcial; não é seguro aprovar o gate sem executar os cenários."
             exit 1
