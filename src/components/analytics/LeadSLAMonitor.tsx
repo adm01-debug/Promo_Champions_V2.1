@@ -35,7 +35,16 @@ export const LeadSLAMonitor: FC = () => {
         .in('sale_id', leadIds.length > 0 ? leadIds : ['none'])
         .order('created_at', { ascending: true });
 
-      const SLA_HOURS = 24; // 24h SLA
+      // SLA configurável via public.app_config ('sla.lead_response_hours'), fallback 24h
+      let SLA_HOURS = 24;
+      const { data: slaCfg } = await supabase
+        .from('app_config' as never)
+        .select('value')
+        .eq('key', 'sla.lead_response_hours')
+        .maybeSingle();
+      const slaRaw = (slaCfg as { value?: unknown } | null)?.value;
+      if (typeof slaRaw === 'number' && slaRaw > 0) SLA_HOURS = slaRaw;
+      else if (typeof slaRaw === 'string' && Number(slaRaw) > 0) SLA_HOURS = Number(slaRaw);
       const firstActivityMap = new Map<string, string>();
       (activities || []).forEach(a => {
         if (a.sale_id && !firstActivityMap.has(a.sale_id)) {

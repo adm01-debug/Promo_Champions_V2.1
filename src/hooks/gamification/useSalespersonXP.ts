@@ -109,10 +109,83 @@ export function calculateLevelFromXP(totalXP: number): {
 }
 
 export function getLevelInfo(level: number) {
-  return LEVEL_INFO[Math.min(level, 20)] || LEVEL_INFO[1];
+  const maxLevel = LEVEL_THRESHOLDS.length;
+  return LEVEL_INFO[Math.min(level, maxLevel)] || LEVEL_INFO[1];
+}
+
+// ── Config dinâmica (public.app_config) ─────────────────────────────────────
+// Seeds mantêm os valores hardcoded acima; quando o banco devolve valores
+// diferentes, aplicamos in-place para que consumidores que importam as
+// constantes (LEVEL_THRESHOLDS / LEVEL_INFO / XP_REWARDS) e os cálculos
+// (calculateLevelFromXP / getLevelInfo) passem a usar a configuração viva.
+const XP_CONFIG_KEYS = ['xp.level_thresholds', 'xp.level_info', 'xp.rewards'] as const;
+
+interface AppConfigRow {
+  key: string;
+  value: unknown;
+}
+
+function applyXpConfig(rows: AppConfigRow[]) {
+  for (const row of rows) {
+    if (row.key === 'xp.level_thresholds' && Array.isArray(row.value)) {
+      const thresholds = row.value.filter(
+        (v): v is number => typeof v === 'number' && Number.isFinite(v)
+      );
+      if (thresholds.length > 0) {
+        LEVEL_THRESHOLDS.splice(0, LEVEL_THRESHOLDS.length, ...thresholds);
+      }
+    }
+
+    if (
+      row.key === 'xp.level_info' &&
+      row.value !== null &&
+      typeof row.value === 'object' &&
+      !Array.isArray(row.value)
+    ) {
+      for (const [lvl, info] of Object.entries(
+        row.value as Record<string, { title?: string; color?: string; emoji?: string }>
+      )) {
+        const n = Number(lvl);
+        if (Number.isInteger(n) && n >= 1 && info && typeof info === 'object') {
+          LEVEL_INFO[n] = {
+            title: info.title ?? LEVEL_INFO[n]?.title ?? '',
+            color: info.color ?? LEVEL_INFO[n]?.color ?? '',
+            emoji: info.emoji ?? LEVEL_INFO[n]?.emoji ?? '',
+          };
+        }
+      }
+    }
+
+    if (
+      row.key === 'xp.rewards' &&
+      row.value !== null &&
+      typeof row.value === 'object' &&
+      !Array.isArray(row.value)
+    ) {
+      Object.assign(XP_REWARDS, row.value);
+    }
+  }
+}
+
+export function useXpConfig() {
+  return useQuery({
+    queryKey: ['app-config', 'xp'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('app_config' as never)
+        .select('key, value')
+        .in('key', [...XP_CONFIG_KEYS]);
+      if (error) throw error;
+      applyXpConfig((data ?? []) as AppConfigRow[]);
+      return data;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+  });
 }
 
 export function useSalespersonXP(salespersonId?: string) {
+  useXpConfig();
   return useQuery({
     queryKey: ['salesperson-xp', salespersonId],
     queryFn: async () => {
@@ -179,6 +252,7 @@ export function useXPHistory(salespersonId?: string) {
 
 export function useAddXP() {
   const queryClient = useQueryClient();
+  useXpConfig();
 
   return useMutation({
     mutationFn: async ({
