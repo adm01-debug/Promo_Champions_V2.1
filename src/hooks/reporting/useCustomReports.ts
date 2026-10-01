@@ -1,20 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { Json } from '@/integrations/supabase/types';
+import type { Tables } from '@/integrations/supabase/types';
 import { updatePayload, insertPayload } from '@/lib/supabase/typed-payloads';
+import { parseRow, parseRows, toJson } from '@/lib/supabase/parseRows';
 import type { ReportEntity, ReportConfig } from './reportBuilderHelpers';
 
-export interface CustomReport {
-  id: string;
-  owner_id: string;
-  name: string;
-  description: string | null;
+// Linha gerada com colunas estreitadas: `entity`/`config` vêm como string/Json
+// no banco, mas o app só grava valores válidos de ReportEntity/ReportConfig.
+export interface CustomReport
+  extends Omit<Tables<'custom_reports'>, 'entity' | 'config'> {
   entity: ReportEntity;
   config: ReportConfig;
-  is_shared: boolean;
-  created_at: string;
-  updated_at: string;
 }
 
 export function useCustomReports() {
@@ -26,8 +23,7 @@ export function useCustomReports() {
         .select('*')
         .order('updated_at', { ascending: false });
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as CustomReport[];
+      return parseRows<CustomReport>(data);
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -44,8 +40,7 @@ export function useCustomReport(id: string | undefined) {
         .eq('id', id)
         .single();
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return data as unknown as CustomReport;
+      return parseRow<CustomReport>(data);
     },
     enabled: !!id,
   });
@@ -71,16 +66,16 @@ export function useCreateCustomReport() {
             name: input.name,
             description: input.description,
             entity: input.entity,
-            // eslint-disable-next-line no-restricted-syntax
-            config: input.config as unknown as Json,
+            config: toJson(input.config),
             is_shared: input.is_shared ?? false,
           })
         )
         .select()
         .single();
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return data as unknown as CustomReport;
+      const row = parseRow<CustomReport>(data);
+      if (!row) throw new Error('custom_reports: criação não retornou a linha');
+      return row;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['custom-reports'] });
@@ -101,8 +96,7 @@ export function useUpdateCustomReport() {
             name: patch.name,
             description: patch.description,
             entity: patch.entity,
-            // eslint-disable-next-line no-restricted-syntax
-            config: patch.config as unknown as Json | undefined,
+            config: patch.config === undefined ? undefined : toJson(patch.config),
             is_shared: patch.is_shared,
           })
         )
@@ -110,8 +104,9 @@ export function useUpdateCustomReport() {
         .select()
         .single();
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return data as unknown as CustomReport;
+      const row = parseRow<CustomReport>(data);
+      if (!row) throw new Error('custom_reports: atualização não retornou a linha');
+      return row;
     },
     onSuccess: r => {
       qc.invalidateQueries({ queryKey: ['custom-reports'] });

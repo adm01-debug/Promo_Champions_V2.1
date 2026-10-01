@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRow, parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
 import type {
   ObjectionAnalysis,
@@ -21,8 +22,7 @@ export function useObjectionAnalysis(recordingId: string | undefined) {
         .eq('recording_id', recordingId!)
         .maybeSingle();
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as ObjectionAnalysis) ?? null;
+      return parseRow<ObjectionAnalysis>(data);
     },
   });
 
@@ -61,8 +61,7 @@ export function useCallObjections(recordingId: string | undefined) {
         .eq('recording_id', recordingId!)
         .order('client_turn_index', { ascending: true });
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as CallObjection[]) ?? [];
+      return parseRows<CallObjection>(data);
     },
   });
 
@@ -102,8 +101,7 @@ export function useObjectionLibrary(filter?: { type?: ObjectionType; limit?: num
       if (filter?.type) q = q.eq('objection_type', filter.type);
       const { data, error } = await q;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as ObjectionLibraryEntry[]) ?? [];
+      return parseRows<ObjectionLibraryEntry>(data);
     },
   });
 }

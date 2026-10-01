@@ -3,13 +3,21 @@ import React from 'react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import Index from './Index';
 import { useAuth } from '@/contexts/AuthContext';
-import { useDashboardKPIsPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
+import { useDashboardKPIsPeriod, type KPIPeriodResult } from '@/hooks/dashboard/useDashboardKPIsPeriod';
 import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
 import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, type UseQueryResult } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { DashboardThemeProvider } from '@/contexts/DashboardThemeContext';
+
+// Permite mocks parciais de UseQueryResult nos testes.
+type MockQueryOverrides<T> = Omit<Partial<UseQueryResult<T, Error>>, 'data'> & {
+  data?: T | null;
+};
+function queryResult<T>(overrides: MockQueryOverrides<T>): UseQueryResult<T, Error> {
+  return overrides as UseQueryResult<T, Error>;
+}
 
 // Mock the hooks
 vi.mock('@/contexts/AuthContext');
@@ -114,26 +122,21 @@ describe('Dashboard Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // eslint-disable-next-line no-restricted-syntax
-    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
       salesperson: mockSalesperson,
-    });
-    // eslint-disable-next-line no-restricted-syntax
-    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    } as ReturnType<typeof useAuth>);
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({
       data: mockKPIs,
       isLoading: false,
       isError: false,
-    });
-    // eslint-disable-next-line no-restricted-syntax
-    (useGoalsDashboard as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    } as ReturnType<typeof useDashboardKPIsPeriod>);
+    vi.mocked(useGoalsDashboard).mockReturnValue({
       data: { totalSales: 50, totalGoal: 100 },
       isLoading: false,
-    });
-    // eslint-disable-next-line no-restricted-syntax
-    (useSalesChartData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: [],
-      isLoading: false,
-    });
+    } as ReturnType<typeof useGoalsDashboard>);
+    vi.mocked(useSalesChartData).mockReturnValue(
+      queryResult<{ name: string; value: number }[]>({ data: [], isLoading: false })
+    );
   });
 
   it('recalculates KPIs when period is changed', async () => {
@@ -150,12 +153,9 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('shows skeleton states while loading', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: null,
-      isLoading: true,
-      isError: false,
-    });
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue(
+      queryResult<KPIPeriodResult>({ data: null, isLoading: true, isError: false })
+    );
 
     renderWithProviders(<Index />);
 
@@ -165,13 +165,14 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('handles data fetch failure and recovery', async () => {
-    // eslint-disable-next-line no-restricted-syntax
-    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: null,
-      isLoading: false,
-      isError: true,
-      error: new Error('Fetch failed'),
-    });
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue(
+      queryResult<KPIPeriodResult>({
+        data: null,
+        isLoading: false,
+        isError: true,
+        error: new Error('Fetch failed'),
+      })
+    );
 
     renderWithProviders(<Index />);
 
@@ -188,10 +189,9 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders correct modules for Closer role', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
       salesperson: { ...mockSalesperson, role: 'closer' },
-    });
+    } as ReturnType<typeof useAuth>);
 
     renderWithProviders(<Index />);
 
@@ -200,18 +200,16 @@ describe('Dashboard Integration Tests', () => {
   });
 
   it('renders correct modules for SDR role', () => {
-    // eslint-disable-next-line no-restricted-syntax
-    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
       salesperson: { ...mockSalesperson, role: 'sdr' },
-    });
-    // eslint-disable-next-line no-restricted-syntax
-    (useDashboardKPIsPeriod as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    } as ReturnType<typeof useAuth>);
+    vi.mocked(useDashboardKPIsPeriod).mockReturnValue({
       data: {
         ...mockKPIs,
         current: { ...mockKPIs.current, meetingsScheduled: 15, qualifiedLeads: 20 },
       },
       isLoading: false,
-    });
+    } as ReturnType<typeof useDashboardKPIsPeriod>);
 
     renderWithProviders(<Index />);
 

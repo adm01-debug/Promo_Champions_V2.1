@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface WinLossAnalysis {
   id: string;
@@ -50,8 +52,7 @@ export const useWinLossAnalyses = (filters?: { outcome?: 'won' | 'lost' }) =>
       if (filters?.outcome) q = q.eq('outcome', filters.outcome);
       const { data, error } = await q.limit(500);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as WinLossAnalysis[];
+      return parseRows<WinLossAnalysis>(data);
     },
     staleTime: 60_000,
   });
@@ -67,8 +68,7 @@ export const useWinLossPatterns = (type?: WinLossPattern['pattern_type']) =>
       if (type) q = q.eq('pattern_type', type);
       const { data, error } = await q.limit(200);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as WinLossPattern[];
+      return parseRows<WinLossPattern>(data);
     },
     staleTime: 60_000,
   });
@@ -83,8 +83,7 @@ export const useWinLossInsights = () =>
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as WinLossInsight[];
+      return parseRows<WinLossInsight>(data);
     },
     staleTime: 60_000,
   });
@@ -104,8 +103,8 @@ export const useWinLossSummary = () =>
         cycle_days: number | null;
         amount: number | null;
       }>;
-      const wins = rows.filter(r => r.outcome === 'won');
-      const losses = rows.filter(r => r.outcome === 'lost');
+      const wins = rows.filter(r => r.outcome === WIN_LOSS_OUTCOME.WON);
+      const losses = rows.filter(r => r.outcome === WIN_LOSS_OUTCOME.LOST);
       const total = rows.length || 1;
       const avg = (arr: Array<number | null>) => {
         const v = arr.filter((x): x is number => x != null);

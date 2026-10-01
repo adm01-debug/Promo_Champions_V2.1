@@ -960,16 +960,7 @@ export function LeadScoringDashboard() {
                                   {!lead.labels && (
                                     <FactorBar
                                       label="Deal Momentum"
-                                      value={
-                                        /* eslint-disable no-restricted-syntax */
-                                        (
-                                          lead.factors as unknown as Record<
-                                            string,
-                                            number
-                                          >
-                                        ).dealValue
-                                        /* eslint-enable no-restricted-syntax */
-                                      }
+                                      value={'dealValue' in lead.factors ? lead.factors.dealValue : 0}
                                       maxValue={25}
                                     />
                                   )}
@@ -978,29 +969,17 @@ export function LeadScoringDashboard() {
                                 <>
                                   <FactorBar
                                     label="Firmographics"
-                                    value={
-                                      // eslint-disable-next-line no-restricted-syntax
-                                      (lead.factors as unknown as Record<string, number>)
-                                        .companySize
-                                    }
+                                    value={'companySize' in lead.factors ? lead.factors.companySize : 0}
                                     maxValue={20}
                                   />
                                   <FactorBar
                                     label="ICP Fit"
-                                    value={
-                                      // eslint-disable-next-line no-restricted-syntax
-                                      (lead.factors as unknown as Record<string, number>)
-                                        .industry
-                                    }
+                                    value={'industry' in lead.factors ? lead.factors.industry : 0}
                                     maxValue={15}
                                   />
                                   <FactorBar
                                     label="Engajamento"
-                                    value={
-                                      // eslint-disable-next-line no-restricted-syntax
-                                      (lead.factors as unknown as Record<string, number>)
-                                        .engagement
-                                    }
+                                    value={'engagement' in lead.factors ? lead.factors.engagement : 0}
                                     maxValue={25}
                                   />
                                 </>
