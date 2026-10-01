@@ -40,12 +40,6 @@ export function useMyCareer(salespersonId?: string) {
       };
       if (!salespersonId) return { entries: [], summary: empty };
 
-      // Busca todos os carros do salesperson (1 por season normalmente)
-      await supabase
-        .from('race_cars')
-        .select('id, salesperson_id')
-        .eq('salesperson_id', salespersonId);
-
       // Busca todas as seasons finalizadas
       const { data: seasons, error: sErr } = await supabase
         .from('race_seasons')
@@ -53,14 +47,37 @@ export function useMyCareer(salespersonId?: string) {
         .order('end_date', { ascending: false });
       if (sErr) throw sErr;
 
+      const seasonIds = (seasons ?? []).map(s => s.id);
+
+      // Uma única query para o leaderboard de todas as seasons (evita N+1);
+      // o agrupamento por season é feito no cliente.
+      const leaderboardBySeason = new Map<
+        string,
+        { salesperson_id: string; total_sales: number }[]
+      >();
+      if (seasonIds.length > 0) {
+        const { data: lbRows, error: lbErr } = await supabase
+          .from('race_leaderboard_view')
+          .select('season_id, salesperson_id, total_sales')
+          .in('season_id', seasonIds);
+        if (lbErr) throw lbErr;
+
+        for (const row of lbRows ?? []) {
+          if (row.season_id == null || row.salesperson_id == null) continue;
+          const rows = leaderboardBySeason.get(row.season_id) ?? [];
+          rows.push({
+            salesperson_id: row.salesperson_id,
+            total_sales: row.total_sales ?? 0,
+          });
+          leaderboardBySeason.set(row.season_id, rows);
+        }
+      }
+
       const entries: CareerSeasonEntry[] = [];
 
       for (const s of seasons ?? []) {
         // Pega ranking final da season
-        const { data: lb } = await supabase
-          .from('race_leaderboard_view')
-          .select('salesperson_id, total_sales')
-          .eq('season_id', s.id);
+        const lb = leaderboardBySeason.get(s.id);
 
         if (!lb || lb.length === 0) continue;
         const sorted = [...lb].sort(

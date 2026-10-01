@@ -93,26 +93,34 @@ export const useStreakRanking = () => {
 
       if (spError) throw spError;
 
-      const rankings: StreakRanking[] = [];
+      // Uma única query agregada por vendedor (evita N+1): as conquistas de
+      // daily_goal de todos os ativos vêm de uma vez e são contadas por id.
+      const salespersonIds = (salespeople || []).map(sp => sp.id);
+      const { data: achievements, error: achError } = await supabase
+        .from('achievements')
+        .select('salesperson_id, achievement_date, achievement_type')
+        .in('salesperson_id', salespersonIds)
+        .eq('achievement_type', 'daily_goal')
+        .order('achievement_date', { ascending: false });
 
-      for (const sp of salespeople || []) {
-        const { data: achievements } = await supabase
-          .from('achievements')
-          .select('achievement_date, achievement_type')
-          .eq('salesperson_id', sp.id)
-          .eq('achievement_type', 'daily_goal')
-          .order('achievement_date', { ascending: false });
+      if (achError) throw achError;
+
+      const countBySalesperson = new Map<string, number>();
+      for (const achievement of achievements || []) {
+        countBySalesperson.set(
+          achievement.salesperson_id,
+          (countBySalesperson.get(achievement.salesperson_id) ?? 0) + 1
+        );
+      }
+
+      const rankings: StreakRanking[] = (salespeople || []).map(sp => {
+        const count = countBySalesperson.get(sp.id) ?? 0;
 
         // Calculate current and best streak
-        let currentStreak = 0;
-        let bestStreak = 0;
+        const currentStreak = count > 0 ? 1 : 0;
+        const bestStreak = count;
 
-        if (achievements && achievements.length > 0) {
-          currentStreak = achievements.length > 0 ? 1 : 0;
-          bestStreak = achievements.length;
-        }
-
-        rankings.push({
+        return {
           salesperson_id: sp.id,
           salesperson_name: sp.name,
           avatar_url: sp.avatar_url,
@@ -122,11 +130,11 @@ export const useStreakRanking = () => {
           // Add aliases for component compatibility
           name: sp.name,
           role: sp.role,
-          currentStreak: currentStreak,
-          bestStreak: bestStreak,
-          totalGoalsAchieved: achievements?.length || 0,
-        });
-      }
+          currentStreak,
+          bestStreak,
+          totalGoalsAchieved: count,
+        };
+      });
 
       // Sort by current streak and assign ranks
       rankings.sort((a, b) => b.current_streak - a.current_streak);

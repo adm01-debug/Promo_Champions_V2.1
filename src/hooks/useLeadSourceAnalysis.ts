@@ -81,7 +81,10 @@ export function useLeadSourceAnalysis(months: number = 3) {
       const configMap = new Map((configs || []).map(c => [c.source_name, c]));
 
       // Group by source
-      const sourceMap = new Map<LeadSource, Array<{ status: string; amount: number | string }>>();
+      const sourceMap = new Map<
+        LeadSource,
+        Array<{ status: string; amount: number | string }>
+      >();
 
       (sales || []).forEach(sale => {
         const source = (sale.source || 'other') as LeadSource;
@@ -103,13 +106,18 @@ export function useLeadSourceAnalysis(months: number = 3) {
       for (const [source, sourceSales] of sourceMap.entries()) {
         const sourceTotal = sourceSales.length;
         const qualified = sourceSales.filter(s =>
-          ['qualified', 'proposal', 'negotiation', ...WON_SALE_STATUSES].includes(s.status)
+          ['qualified', 'proposal', 'negotiation', ...WON_SALE_STATUSES].includes(
+            s.status
+          )
         ).length;
         const closed = sourceSales.filter(s => isWonSaleStatus(s.status)).length;
         const closedValue = sourceSales
           .filter(s => isWonSaleStatus(s.status))
           .reduce((sum, s) => sum + Number(s.amount), 0);
-        const totalSourceValue = sourceSales.reduce((sum, s) => sum + Number(s.amount), 0);
+        const totalSourceValue = sourceSales.reduce(
+          (sum, s) => sum + Number(s.amount),
+          0
+        );
 
         const config = configMap.get(source);
         const monthlyBudget = config?.monthly_budget ? Number(config.monthly_budget) : 0;
@@ -137,7 +145,9 @@ export function useLeadSourceAnalysis(months: number = 3) {
       // Find best performers
       const bestConversion = sources.reduce(
         (best, curr) =>
-          curr.conversionRate > (best?.conversionRate || 0) && curr.totalLeads >= 3 ? curr : best,
+          curr.conversionRate > (best?.conversionRate || 0) && curr.totalLeads >= 3
+            ? curr
+            : best,
         null as SourceMetrics | null
       );
 
@@ -174,20 +184,26 @@ export function useLeadSourceTrend() {
     queryKey: ['lead-source-trend'],
     queryFn: async () => {
       const now = new Date();
-      const months: { month: string; data: Record<LeadSource, number> }[] = [];
-
+      const monthRanges: { monthDate: Date; start: Date; end: Date }[] = [];
       for (let i = 5; i >= 0; i--) {
         const monthDate = subMonths(now, i);
-        const start = startOfMonth(monthDate);
-        const end = endOfMonth(monthDate);
+        monthRanges.push({
+          monthDate,
+          start: startOfMonth(monthDate),
+          end: endOfMonth(monthDate),
+        });
+      }
 
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('source, status')
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', start.toISOString())
-          .lte('created_at', end.toISOString());
+      // Uma única query cobrindo os 6 meses (evita N+1); o agrupamento por
+      // mês é feito no cliente.
+      const { data: sales } = await supabase
+        .from('sales')
+        .select('source, status, created_at')
+        .in('status', [...WON_SALE_STATUSES])
+        .gte('created_at', monthRanges[0].start.toISOString())
+        .lte('created_at', monthRanges[monthRanges.length - 1].end.toISOString());
 
+      return monthRanges.map(({ monthDate, start, end }) => {
         const sourceCount: Record<LeadSource, number> = {
           linkedin: 0,
           referral: 0,
@@ -200,17 +216,18 @@ export function useLeadSourceTrend() {
         };
 
         (sales || []).forEach(sale => {
-          const source = (sale.source || 'other') as LeadSource;
-          sourceCount[source]++;
+          const createdAt = new Date(sale.created_at);
+          if (createdAt >= start && createdAt <= end) {
+            const source = (sale.source || 'other') as LeadSource;
+            sourceCount[source]++;
+          }
         });
 
-        months.push({
+        return {
           month: format(monthDate, 'MMM'),
           data: sourceCount,
-        });
-      }
-
-      return months;
+        };
+      });
     },
   });
 }

@@ -16,29 +16,38 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
   const { data: trend, isLoading: trendLoading } = useQuery({
     queryKey: ['conversion-trend-widget'],
     queryFn: async () => {
-      const weeks: { week: string; rate: number }[] = [];
       const now = new Date();
+      const weekRanges: { weekStart: Date; weekEnd: Date }[] = [];
       for (let i = 7; i >= 0; i--) {
         const weekEnd = new Date(now);
         weekEnd.setDate(weekEnd.getDate() - i * 7);
         const weekStart = new Date(weekEnd);
         weekStart.setDate(weekStart.getDate() - 7);
+        weekRanges.push({ weekStart, weekEnd });
+      }
 
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('status')
-          .gte('created_at', weekStart.toISOString())
-          .lte('created_at', weekEnd.toISOString());
+      // Uma única query cobrindo as 8 semanas (evita N+1); o agrupamento por
+      // semana é feito no cliente.
+      const { data: sales } = await supabase
+        .from('sales')
+        .select('status, created_at')
+        .gte('created_at', weekRanges[0].weekStart.toISOString())
+        .lte('created_at', weekRanges[weekRanges.length - 1].weekEnd.toISOString());
 
-        const total = sales?.length || 0;
-        const won = sales?.filter(s => isWonSaleStatus(s.status)).length || 0;
+      return weekRanges.map(({ weekStart, weekEnd }) => {
+        const weekSales = (sales || []).filter(s => {
+          const createdAt = new Date(s.created_at);
+          return createdAt >= weekStart && createdAt <= weekEnd;
+        });
+
+        const total = weekSales.length;
+        const won = weekSales.filter(s => isWonSaleStatus(s.status)).length;
         const rate = total > 0 ? Math.round((won / total) * 100) : 0;
-        weeks.push({
+        return {
           week: `${weekStart.getDate()}/${weekStart.getMonth() + 1}`,
           rate,
-        });
-      }
-      return weeks;
+        };
+      });
     },
     staleTime: 120_000,
   });
@@ -77,7 +86,9 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
               )}
               {isPositive ? '+' : ''}
               {change}%{' '}
-              <span className="text-muted-foreground/60 font-normal ml-0.5">vs anterior</span>
+              <span className="text-muted-foreground/60 font-normal ml-0.5">
+                vs anterior
+              </span>
             </div>
           </div>
         </div>
