@@ -324,3 +324,81 @@ Deno.test("crons de saúde WAL/webhook seguem o mesmo padrão interno", async ()
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
 });
+
+Deno.test("pacote LGPD: consentimento, DSR e anonimização defensiva", async () => {
+  const sql = await readMigration(
+    "20261001150000_lgpd_consent_and_anonymization.sql",
+  );
+
+  for (const table of ["consent_records", "data_subject_requests"]) {
+    assertMatch(
+      sql,
+      new RegExp(`CREATE\\s+TABLE\\s+IF\\s+NOT\\s+EXISTS\\s+public\\.${table}`, "i"),
+      `${table} deve ser criada idempotentemente`,
+    );
+    assertMatch(
+      sql,
+      new RegExp(
+        `ALTER\\s+TABLE\\s+public\\.${table}\\s+ENABLE\\s+ROW\\s+LEVEL\\s+SECURITY`,
+        "i",
+      ),
+      `${table} deve ter RLS habilitado`,
+    );
+  }
+
+  // RLS: admin/manager gerencia; titular lê/registra/revoga o próprio.
+  assertMatch(sql, /is_admin_or_manager\(auth\.uid\(\)\)/i);
+  assertMatch(sql, /auth\.jwt\(\)\s*->>\s*'email'/i);
+
+  // visitor_logs: base legal + janela de retenção + guard de consentimento.
+  assertMatch(sql, /ADD\s+COLUMN\s+IF\s+NOT\s+EXISTS\s+legal_basis/i);
+  assertMatch(sql, /retention_expires_at/i);
+  assertMatch(sql, /fn_website_visitor_log_consent/i);
+
+  // RPC de anonimização: privilegiada, restrita e auditável.
+  assertMatch(
+    sql,
+    /CREATE\s+OR\s+REPLACE\s+FUNCTION\s+public\.anonymize_data_subject/i,
+  );
+  assertMatch(sql, /SECURITY\s+DEFINER/i);
+  assertMatch(sql, /SET\s+search_path\s*=\s*public/i);
+  assertMatch(
+    sql,
+    /REVOKE\s+ALL\s+ON\s+FUNCTION\s+public\.anonymize_data_subject[\s\S]*FROM\s+PUBLIC,\s*anon/i,
+  );
+  assertMatch(sql, /EXCEPTION\s+WHEN\s+undefined_table\s+OR\s+undefined_column/i);
+
+  // Sem segredos literais nem destrutivo irreversível.
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+  assertNotMatch(sql, /\bTRUNCATE\s+TABLE\b/i);
+});
+
+Deno.test("retenção: política versionada, purge em lotes e cron diário", async () => {
+  const sql = await readMigration(
+    "20261001151000_log_retention_indexes_and_purge.sql",
+  );
+
+  assertMatch(
+    sql,
+    /CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+public\.data_retention_policies/i,
+  );
+  assertMatch(sql, /retention_days\s+integer\s+NOT\s+NULL/i);
+  assertMatch(sql, /CREATE\s+INDEX\s+IF\s+NOT\s+EXISTS/i);
+  assertMatch(
+    sql,
+    /CREATE\s+OR\s+REPLACE\s+FUNCTION\s+public\.fn_apply_data_retention/i,
+  );
+  assertMatch(sql, /SECURITY\s+DEFINER/i);
+  assertMatch(sql, /'data-retention-purge-daily'/i);
+  assertMatch(sql, /cron\.schedule/i);
+  assertMatch(sql, /cron\.unschedule\('data-retention-purge-daily'/i);
+  assertMatch(sql, /pg_extension.*pg_cron|extname\s*=\s*'pg_cron'/i);
+  // Tolerância a schema drift em produção.
+  assertMatch(sql, /to_regclass\('public\.'/i);
+  assertMatch(sql, /EXCEPTION\s+WHEN\s+OTHERS/i);
+
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+  assertNotMatch(sql, /\bCONCURRENTLY\b/i);
+});
