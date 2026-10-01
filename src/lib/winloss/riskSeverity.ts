@@ -1,9 +1,15 @@
 /**
  * Pure UI mirrors of backend severity + action-matrix logic.
- * Keep in sync with `supabase/functions/detect-winloss-at-risk/scoring.ts`:
- *   - severityFromScore
- *   - suggestedActionFor (branch selection)
+ * The rules themselves live in the shared contract
+ * `supabase/functions/_shared/winloss-contract.ts`
+ * (severityFromScore / suggestedActionFor / CANONICAL_PATTERN_TYPES);
+ * this module only adds the UI layer (rules table, explicações, classificação).
  */
+
+import {
+  CANONICAL_PATTERN_TYPES,
+  severityFromScore,
+} from "../../../supabase/functions/_shared/winloss-contract";
 
 export type RiskSeverity = "low" | "medium" | "high" | "critical";
 
@@ -45,24 +51,13 @@ export const SEVERITY_RULES: readonly SeverityRule[] = [
   },
 ] as const;
 
-/** Mirror of backend `severityFromScore(final, confidence)`. */
+/** Delega ao contrato compartilhado (mesma função que a edge executa). */
 export function deriveSeverity(
   final: number,
   confidence: number | null | undefined,
 ): RiskSeverity {
-  const c = Math.max(0, Math.min(1, confidence ?? 0.5));
-  for (const r of SEVERITY_RULES) {
-    if (r.matches(final, c)) return r.severity;
-  }
-  return "low";
+  return severityFromScore(final, confidence);
 }
-
-const CANONICAL_TYPES = new Set([
-  "loss_factor",
-  "stuck_stage",
-  "competitor",
-  "win_factor",
-]);
 
 export type ActionMatrixKind = "matrix" | "win-override" | "default-fallback";
 
@@ -94,7 +89,7 @@ export function summarizeActionMatrix(
       severity,
     };
   }
-  if (CANONICAL_TYPES.has(type)) {
+  if (CANONICAL_PATTERN_TYPES.has(type)) {
     return {
       kind: "matrix",
       label: `${type} × ${severity}`,

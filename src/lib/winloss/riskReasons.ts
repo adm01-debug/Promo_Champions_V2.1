@@ -2,42 +2,24 @@
  * Canonical risk reason codes shared between the backend (detect-winloss-at-risk
  * edge function) and the frontend UI. Strings PT-BR are the user-facing copy;
  * the codes are the stable, machine-readable identity for filters/tests/i18n.
+ *
+ * Tipos, códigos e labels vêm do contrato compartilhado
+ * `supabase/functions/_shared/winloss-contract.ts`; este módulo só adiciona a
+ * camada de UI (ícones, variantes de badge) por cima.
  */
 import { Clock, DollarSign, Layers, Swords, Info, type LucideIcon } from "lucide-react";
 import type { BadgeProps } from "@/components/ui/badge";
+import {
+  RISK_REASON_CODES,
+  RISK_REASON_LABELS,
+} from "../../../supabase/functions/_shared/winloss-contract";
+import type {
+  RiskReasonCode,
+  RiskReasonSource,
+} from "../../../supabase/functions/_shared/winloss-contract";
 
-export type RiskReasonCode =
-  | "STAGNATION_HIGH"
-  | "STAGNATION_LOW"
-  | "AMOUNT_ALIGNED"
-  | "STAGE_STUCK"
-  | "COMPETITOR_PRESSURE"
-  | "CROSSED_SIGNALS";
-
-export const RISK_REASON_CODES: readonly RiskReasonCode[] = [
-  "STAGNATION_HIGH",
-  "STAGNATION_LOW",
-  "AMOUNT_ALIGNED",
-  "STAGE_STUCK",
-  "COMPETITOR_PRESSURE",
-  "CROSSED_SIGNALS",
-] as const;
-
-export type RiskReasonSource =
-  | "stagnation"
-  | "amount"
-  | "stage"
-  | "competitor"
-  | "generic";
-
-export const RISK_REASON_LABELS: Record<RiskReasonCode, string> = {
-  STAGNATION_HIGH: "Estagnação severa",
-  STAGNATION_LOW: "Estagnação leve",
-  AMOUNT_ALIGNED: "Ticket alinhado",
-  STAGE_STUCK: "Estágio travado",
-  COMPETITOR_PRESSURE: "Pressão competitiva",
-  CROSSED_SIGNALS: "Sinais cruzados",
-};
+export { RISK_REASON_CODES, RISK_REASON_LABELS };
+export type { RiskReasonCode, RiskReasonSource };
 
 export interface ReasonKindMeta {
   icon: LucideIcon;
