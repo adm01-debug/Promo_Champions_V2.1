@@ -9,10 +9,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**/*.md'
-      - '.github/CODEOWNERS'
   workflow_dispatch:
 
 permissions:
@@ -27,10 +23,41 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      has-code: ${{ steps.check.outputs.has_code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "has_code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.sha }}"
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD" \
+            | grep -v '^docs/' \
+            | grep -v '\.md$' \
+            | grep -v '^\.github/CODEOWNERS$' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "has_code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_code=false" >> "$GITHUB_OUTPUT"
+            echo "PR contém apenas docs/markdown — pulando jobs de código."
+          fi
+
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
 
@@ -74,6 +101,8 @@ jobs:
     name: Security Audit (production deps)
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
     steps:
@@ -128,6 +157,8 @@ jobs:
     name: Edge Functions Lint (deno)
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
 
@@ -359,8 +390,9 @@ jobs:
     name: Supabase Types Drift
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: detect-changes
     # Not a required check — needs SUPABASE_ACCESS_TOKEN; skips gracefully without it.
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
     steps:
@@ -387,6 +419,25 @@ jobs:
             exit 1
           fi
           echo "Types are in sync with the live schema."
+
+  ci-gate:
+    name: CI Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    # Apenas os 3 jobs que eram required checks antes (security-audit e
+    # edge-functions-lint são informativos — intencionalmente fora do gate).
+    needs: [lint-and-typecheck, test, build]
+    if: always()
+    steps:
+      - name: Check required jobs
+        run: |
+          RESULTS='${{ toJSON(needs) }}'
+          FAILED=$(echo "$RESULTS" | grep -c '"result": "failure"' || true)
+          if [ "$FAILED" -gt 0 ]; then
+            echo "Um ou mais jobs obrigatórios falharam."
+            exit 1
+          fi
+          echo "Todos os checks passaram (ou PR é doc-only e os jobs foram pulados)."
 
   notify-failure:
     name: Notify on failure
