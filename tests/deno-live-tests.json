@@ -7,11 +7,13 @@
     },
     {
       "file": "supabase/functions/cron-failure-alerter/index.test.ts",
-      "motivo": "testes fn_* via PostgREST (service_role) + E2E HTTP na edge function deployada"
+      "motivo": "testes fn_* via PostgREST (service_role) + E2E HTTP na edge function deployada",
+      "requer_service_role": true
     },
     {
       "file": "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
-      "motivo": "dotenv estrito + RBAC validado contra o banco real"
+      "motivo": "dotenv estrito + RBAC validado contra o banco real",
+      "requer_service_role": true
     },
     {
       "file": "supabase/functions/forecast-narrative/index.test.ts",
@@ -35,7 +37,8 @@
     },
     {
       "file": "supabase/functions/winloss-webhook-dispatcher/retry_persist_status_test.ts",
-      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY)"
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY) + testes com service_role",
+      "requer_service_role": true
     }
   ]
 }

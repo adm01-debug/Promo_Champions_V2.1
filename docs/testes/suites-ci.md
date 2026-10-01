@@ -14,8 +14,13 @@ node scripts/deno-test-suite.mjs --mode live   # só suites com secrets
   `tests/deno-live-tests.json`. Sem secrets nem rede — deve passar sempre.
 - **live**: suites que dependem de backend vivo (listadas no manifesto com o
   motivo). Roda quando `VITE_SUPABASE_URL` + `VITE_SUPABASE_PUBLISHABLE_KEY`
-  existem; sem eles, ou quando a credencial está inválida ("Invalid API key"),
-  o CI lista as suites puladas em `::warning::` sem reprovar.
+  existem e passam num pre-flight contra `/rest/v1/` — chave inválida (401) ou
+  backend inacessível pulam o tier inteiro com `::warning::` listando cada
+  suite, sem reprovar. Suites marcadas com `"requer_service_role": true` no
+  manifesto exigem também `SUPABASE_SERVICE_ROLE_KEY` válida (mesmo pre-flight).
+  Rodando, uma suite que falha por credencial/autorização (backend respondendo
+  401, "Invalid API key", JWT inválido, env ausente) vira warning listado;
+  qualquer outra falha reprova o build.
 
 No CI: job **Edge Functions Tests (deno)** do `pr-checks.yml`.
 

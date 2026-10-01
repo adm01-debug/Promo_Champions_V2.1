@@ -8,10 +8,14 @@
  *           nem rede. Qualquer falha reprova (exit 1).
  *   live  — apenas as suites do manifesto (dependem de backend vivo/secrets).
  *           Sem VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY: puladas com
- *           ::warning:: listando cada arquivo. Com secrets: rodam de verdade;
- *           falhas classificadas como credencial inválida ("Invalid API key",
- *           JWT inválido, MissingEnvVars) viram warning — não reprovam; qualquer
- *           outra falha reprova.
+ *           ::warning:: listando cada arquivo. Com secrets: antes de rodar, um
+ *           pre-flight valida a anon key (e a service_role para suites marcadas
+ *           com "requer_service_role") contra /rest/v1/ — chave inválida (401)
+ *           ou backend inacessível pulam as suites com warning, não reprovam.
+ *           Suites que rodam e falham por credencial/autorização
+ *           ("Invalid API key", JWT inválido, MissingEnvVars, backend
+ *           respondendo 401) viram warning — não reprovam; qualquer outra
+ *           falha reprova.
  *   all   — unit + live (default).
  *
  * Uso:
@@ -30,7 +34,11 @@ const mode = args.includes('--mode') ? args[args.indexOf('--mode') + 1] : 'all';
 const verbose = args.includes('--verbose');
 const isCI = Boolean(process.env.CI);
 
-const CREDENTIAL_FAILURE = /Invalid API key|invalid JWT|MissingEnvVarsError|Invalid login credentials|401 Unauthorized/i;
+// Falhas causadas por credencial/ausência de autorização no backend vivo:
+// marcadores textuais + backend respondendo 401 onde o teste esperava outro
+// status (diff do assertEquals mostra o atual como "-   401").
+const CREDENTIAL_FAILURE =
+  /Invalid API key|invalid JWT|MissingEnvVarsError|Invalid login credentials|401 Unauthorized|got 401\b|-\s+401\b/i;
 
 function* walk(dir) {
   for (const entry of readdirSync(dir)) {
@@ -45,6 +53,9 @@ function* walk(dir) {
 
 const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8'));
 const liveFiles = new Set(manifest.suites.map((s) => s.file));
+const serviceRoleFiles = new Set(
+  manifest.suites.filter((s) => s.requer_service_role).map((s) => s.file),
+);
 const allFiles = [...walk(FUNCTIONS_DIR)]
   .map((f) => relative(ROOT, f))
   .sort();
@@ -91,6 +102,21 @@ function runSuite(file, extraEnv = {}) {
   }
 }
 
+async function checkKey(baseUrl, key) {
+  // GET /rest/v1/ devolve o spec OpenAPI quando a apikey é aceita; 401/403
+  // quando inválida. Erro de rede = backend inacessível.
+  try {
+    const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/rest/v1/`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(15_000),
+    });
+    await res.text().catch(() => '');
+    return res.status === 401 || res.status === 403 ? 'invalid' : 'ok';
+  } catch {
+    return 'unreachable';
+  }
+}
+
 function runTier(label, files, { liveMode }) {
   const passed = [];
   const failed = [];
@@ -125,20 +151,55 @@ if (mode === 'unit' || mode === 'all') {
   summary.unit = runTier('unit', unitFiles, { liveMode: false });
 }
 
-if (mode === 'live' || mode === 'all') {
-  const hasSecrets = Boolean(
-    process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+function skipAllLive(reason) {
+  console.warn(
+    `::warning::tier live pulado — ${reason}. ` +
+      `${liveList.length} suites live não executaram:`,
   );
-  if (!hasSecrets) {
-    console.warn(
-      `::warning::tier live pulado — sem VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY. ` +
-        `${liveList.length} suites live não executaram:`,
-    );
-    for (const f of liveList) console.warn(`::warning::  skip ${f}`);
-    summary.live = { skippedAll: true, files: liveList };
+  for (const f of liveList) console.warn(`::warning::  skip ${f}`);
+  summary.live = { skippedAll: true, files: liveList, reason };
+}
+
+if (mode === 'live' || mode === 'all') {
+  const supaUrl = process.env.VITE_SUPABASE_URL;
+  const anonKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!supaUrl || !anonKey) {
+    skipAllLive('sem VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY');
   } else {
-    console.log(`[deno-suite] tier live: ${liveList.length} suites`);
-    summary.live = runTier('live', liveList, { liveMode: true });
+    const anonStatus = await checkKey(supaUrl, anonKey);
+    if (anonStatus !== 'ok') {
+      skipAllLive(
+        anonStatus === 'invalid'
+          ? 'VITE_SUPABASE_PUBLISHABLE_KEY inválida (backend respondeu 401)'
+          : `backend ${supaUrl} inacessível`,
+      );
+    } else {
+      let runnable = liveList;
+      const preSkipped = [];
+      const needsService = liveList.filter((f) => serviceRoleFiles.has(f));
+      if (needsService.length) {
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const serviceStatus = serviceKey
+          ? await checkKey(supaUrl, serviceKey)
+          : 'missing';
+        if (serviceStatus !== 'ok') {
+          const label =
+            serviceStatus === 'missing'
+              ? 'SUPABASE_SERVICE_ROLE_KEY ausente'
+              : serviceStatus === 'invalid'
+                ? 'SUPABASE_SERVICE_ROLE_KEY inválida (401)'
+                : 'backend inacessível para service_role';
+          for (const f of needsService) {
+            preSkipped.push(f);
+            console.warn(`::warning::live: ${f} pulada — ${label}`);
+          }
+          runnable = liveList.filter((f) => !serviceRoleFiles.has(f));
+        }
+      }
+      console.log(`[deno-suite] tier live: ${runnable.length} suites`);
+      summary.live = runTier('live', runnable, { liveMode: true });
+      summary.live.preSkipped = preSkipped;
+    }
   }
 }
 
@@ -149,8 +210,10 @@ console.log(`  unit: ${summary.unit?.passed.length ?? 0} ok / ${summary.unit?.fa
 if (summary.live?.skippedAll) {
   console.log(`  live: ${summary.live.files.length} puladas (sem secrets)`);
 } else if (summary.live) {
+  const skipped =
+    summary.live.credSkipped.length + (summary.live.preSkipped?.length ?? 0);
   console.log(
-    `  live: ${summary.live.passed.length} ok / ${summary.live.failed.length} falhas / ${summary.live.credSkipped.length} puladas por credencial`,
+    `  live: ${summary.live.passed.length} ok / ${summary.live.failed.length} falhas / ${skipped} puladas por credencial`,
   );
 }
 
