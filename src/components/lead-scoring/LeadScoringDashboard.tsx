@@ -793,6 +793,13 @@ export function LeadScoringDashboard() {
                 const cfg = categoryConfig[lead.category];
                 const Icon = cfg.icon;
                 const isServerScore = 'dealValue' in lead.factors;
+                const factorVals = {
+                  dealValue: 0,
+                  companySize: 0,
+                  industry: 0,
+                  engagement: 0,
+                  ...lead.factors,
+                };
 
                 return (
                   <div
@@ -960,7 +967,7 @@ export function LeadScoringDashboard() {
                                   {!lead.labels && (
                                     <FactorBar
                                       label="Deal Momentum"
-                                      value={'dealValue' in lead.factors ? lead.factors.dealValue : 0}
+                                      value={factorVals.dealValue}
                                       maxValue={25}
                                     />
                                   )}
@@ -969,17 +976,17 @@ export function LeadScoringDashboard() {
                                 <>
                                   <FactorBar
                                     label="Firmographics"
-                                    value={'companySize' in lead.factors ? lead.factors.companySize : 0}
+                                    value={factorVals.companySize}
                                     maxValue={20}
                                   />
                                   <FactorBar
                                     label="ICP Fit"
-                                    value={'industry' in lead.factors ? lead.factors.industry : 0}
+                                    value={factorVals.industry}
                                     maxValue={15}
                                   />
                                   <FactorBar
                                     label="Engajamento"
-                                    value={'engagement' in lead.factors ? lead.factors.engagement : 0}
+                                    value={factorVals.engagement}
                                     maxValue={25}
                                   />
                                 </>
