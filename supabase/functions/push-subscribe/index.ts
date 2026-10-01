@@ -1,6 +1,10 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
 
 Deno.serve(
   withRequestId('push-subscribe', async (req, ctx) => {
@@ -16,9 +20,10 @@ Deno.serve(
       });
 
     try {
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      // Bypass de RLS necessário: o upsert em push_subscriptions já é
+      // restrito ao user_id do JWT validado abaixo.
+      const supabase = getServiceClient(
+        'gerencia push_subscriptions do proprio usuario autenticado',
       );
 
       const body = await req.json();
@@ -36,16 +41,16 @@ Deno.serve(
 
       // subscribe / unsubscribe: caller must be authenticated and can only
       // manage their own subscription (user_id in body must match JWT sub)
-      const authHeader = req.headers.get('Authorization');
-      if (!authHeader?.startsWith('Bearer ')) {
-        return json({ error: 'Unauthorized' }, 401);
+      let caller;
+      try {
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return json({ error: 'Unauthorized' }, 401);
+        }
+        throw error;
       }
-      const token = authHeader.replace('Bearer ', '');
-      const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(token);
-      if (claimsErr || !claimsData?.claims) {
-        return json({ error: 'Unauthorized' }, 401);
-      }
-      const callerUserId = claimsData.claims.sub as string;
+      const callerUserId = caller.userId;
 
       if (!user_id || typeof user_id !== 'string') {
         return json({ error: 'user_id is required' }, 400);

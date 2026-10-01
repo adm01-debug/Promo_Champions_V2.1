@@ -1,7 +1,11 @@
 import { corsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 
 
@@ -9,29 +13,28 @@ Deno.serve(withRequestId("transcribe-call-recording", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return json({ error: "Unauthorized" }, 401);
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return json({ error: "Unauthorized" }, 401);
+      }
+      throw error;
     }
 
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) return json({ error: "LOVABLE_API_KEY not configured" }, 500);
-
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: authErr } = await userClient.auth.getClaims(token);
-    if (authErr || !claims?.claims?.sub) return json({ error: "Unauthorized" }, 401);
 
     const body = await req.json().catch(() => ({}));
     const recording_id = body?.recording_id as string | undefined;
     if (!recording_id) return json({ error: "recording_id is required" }, 400);
 
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+    // Bypass de RLS necessário: atualiza status da gravação e gera signed
+    // URL do storage; posse da gravação é validada abaixo.
+    const admin = getServiceClient(
+      "transcricao atualiza call_recordings e gera signed url do storage",
+    );
 
     // Buscar gravação
     const { data: rec, error: recErr } = await admin
@@ -41,6 +44,22 @@ Deno.serve(withRequestId("transcribe-call-recording", async (req, _ctx) => {
       .maybeSingle();
     if (recErr || !rec) return json({ error: "Recording not found" }, 404);
     if (!rec.audio_url) return json({ error: "Recording has no audio file" }, 400);
+
+    // Só o dono da gravação (ou admin/manager) pode transcrevê-la — o
+    // áudio pode conter dados sensíveis do cliente.
+    const { data: callerSp } = await admin
+      .from("salespeople")
+      .select("id")
+      .eq("auth_user_id", caller.userId)
+      .maybeSingle();
+    if (callerSp?.id !== rec.salesperson_id) {
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleError) throw roleError;
+      if (!isPrivileged) return json({ error: "Forbidden" }, 403);
+    }
 
     // Marca transcribing
     await admin
