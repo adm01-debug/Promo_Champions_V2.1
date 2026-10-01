@@ -26,6 +26,8 @@
     "typecheck": "tsc --noEmit",
     "prepare": "husky",
     "deps:check": "depcruise --config .dependency-cruiser.cjs src supabase/functions/_shared",
+    "check:data-layer": "node scripts/check-data-layer.mjs",
+    "check:domain-boundaries": "node scripts/check-domain-boundaries.mjs",
     "deps:graph": "depcruise --config .dependency-cruiser.cjs --output-type dot src supabase/functions/_shared | dot -Tsvg -o dependency-graph.svg",
     "a11y:sweep": "playwright test -c playwright.a11y.config.ts",
     "a11y:report": "A11Y_REPORT_ONLY=1 playwright test -c playwright.a11y.config.ts",

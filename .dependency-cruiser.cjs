@@ -65,6 +65,22 @@ module.exports = {
       to: { path: "^src/pages/", ...RUNTIME_ONLY_TO },
     },
     {
+      name: "hooks-not-to-ui",
+      severity: "warn",
+      comment:
+        "Camada de dados não depende de UI. Arestas legadas estão na baseline de scripts/check-domain-boundaries.mjs (novo edge = error).",
+      from: { path: "^src/hooks/" },
+      to: { path: "^src/(components|pages)/", ...RUNTIME_ONLY_TO },
+    },
+    {
+      name: "services-not-to-ui",
+      severity: "warn",
+      comment:
+        "Services (acesso não-React) não dependem de UI. Arestas legadas na baseline de scripts/check-domain-boundaries.mjs.",
+      from: { path: "^src/services/" },
+      to: { path: "^src/(components|pages)/", ...RUNTIME_ONLY_TO },
+    },
+    {
       name: "shared-not-to-function",
       severity: "error",
       comment: "_shared/ não pode depender de edge functions específicas.",
