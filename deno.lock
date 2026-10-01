@@ -16,7 +16,7 @@
     "npm:@dnd-kit/sortable@10": "10.0.0_@dnd-kit+core@6.3.1_react@18.3.1_react-dom@18.3.1",
     "npm:@dnd-kit/utilities@^3.2.2": "3.2.2_react@18.3.1",
     "npm:@hookform/resolvers@^3.3.2": "3.10.0_react-hook-form@7.87.0_react@18.3.1",
-    "npm:@lovable.dev/cloud-auth-js@^1.1.2": "1.2.0",
+    "npm:@lovable.dev/cloud-auth-js@^1.2.1": "1.2.1",
     "npm:@playwright/test@^1.63.0": "1.63.0",
     "npm:@radix-ui/react-accordion@^1.2.20": "1.2.20_@types+react@18.3.31_@types+react-dom@18.3.7_react@18.3.1_react-dom@18.3.1",
     "npm:@radix-ui/react-alert-dialog@^1.1.23": "1.1.23_@types+react@18.3.31_@types+react-dom@18.3.7_react@18.3.1_react-dom@18.3.1",
@@ -68,11 +68,11 @@
     "npm:canvas-confetti@^1.9.4": "1.9.4",
     "npm:class-variance-authority@0.7": "0.7.1",
     "npm:clsx@^2.1.0": "2.1.1",
-    "npm:cmdk@1": "1.1.1_react@18.3.1_react-dom@18.3.1_@types+react@18.3.31_@types+react-dom@18.3.7",
+    "npm:cmdk@1": "1.1.1_react@18.3.1_react-dom@18.3.1",
     "npm:date-fns@3": "3.6.0",
     "npm:date-fns@^4.4.0": "4.4.0",
     "npm:dependency-cruiser@^18.2.0": "18.2.0_acorn@8.18.0",
-    "npm:embla-carousel-react@8": "8.6.0_react@18.3.1_embla-carousel@8.6.0",
+    "npm:embla-carousel-react@8": "8.6.0_react@18.3.1",
     "npm:eslint-plugin-react-hooks@^5.2.0": "5.2.0_eslint@9.39.5",
     "npm:eslint-plugin-react-refresh@~0.4.26": "0.4.26_eslint@9.39.5",
     "npm:eslint-plugin-unused-imports@^4.4.1": "4.4.1_eslint@9.39.5",
@@ -97,10 +97,10 @@
     "npm:qrcode@^1.5.4": "1.5.4",
     "npm:react-day-picker@^10.0.1": "10.0.1_@types+react@18.3.31_react@18.3.1",
     "npm:react-dom@^18.3.1": "18.3.1_react@18.3.1",
-    "npm:react-helmet-async@^2.0.4": "2.0.5_react@18.3.1",
+    "npm:react-helmet-async@3": "3.0.0_react@18.3.1",
     "npm:react-hook-form@^7.49.0": "7.87.0_react@18.3.1",
     "npm:react-intersection-observer@^10.1.0": "10.1.0_react@18.3.1_react-dom@18.3.1",
-    "npm:react-leaflet@^4.2.1": "4.2.1_leaflet@1.9.4_react@18.3.1_react-dom@18.3.1",
+    "npm:react-leaflet@5": "5.0.0_leaflet@1.9.4_react@18.3.1_react-dom@18.3.1",
     "npm:react-markdown@^10.1.0": "10.1.0_@types+react@18.3.31_react@18.3.1",
     "npm:react-resizable-panels@2": "2.1.9_react@18.3.1_react-dom@18.3.1",
     "npm:react-router-dom@^7.18.4": "7.18.4_react@18.3.1_react-dom@18.3.1",
@@ -110,13 +110,13 @@
     "npm:resend@2": "2.1.0",
     "npm:rollup-plugin-visualizer@^7.0.1": "7.1.1",
     "npm:sonner@^2.0.8": "2.0.8_@types+react@18.3.31_react@18.3.1_react-dom@18.3.1",
-    "npm:tailwind-merge@^2.5.0": "2.6.1",
+    "npm:tailwind-merge@^3.7.0": "3.7.0",
     "npm:tailwindcss-animate@^1.0.7": "1.0.7_tailwindcss@3.4.17",
     "npm:tailwindcss@3.4.17": "3.4.17_postcss@8.5.26",
     "npm:tsx@^4.7.0": "4.23.13",
     "npm:typescript-eslint@^8.70.0": "8.70.1_eslint@9.39.5_typescript@5.9.3",
     "npm:typescript@^5.3.0": "5.9.3",
-    "npm:vaul@^1.1.2": "1.1.2_react@18.3.1_react-dom@18.3.1_@types+react@18.3.31_@types+react-dom@18.3.7",
+    "npm:vaul@^1.1.2": "1.1.2_react@18.3.1_react-dom@18.3.1",
     "npm:vite-plugin-pwa@1": "1.3.0_vite@8.3.1_workbox-build@7.4.1_workbox-window@7.4.1_tsx@4.23.13",
     "npm:vite@^8.3.0": "8.3.1_tsx@4.23.13",
     "npm:vitest@^5.0.2": "5.0.2_@vitest+coverage-v8@5.0.2_jsdom@24.1.3_vite@8.3.1",
@@ -1469,9 +1469,8 @@
         "@jridgewell/sourcemap-codec"
       ]
     },
-    "@lovable.dev/cloud-auth-js@1.2.0": {
-      "integrity": "sha512-kqBDh8xJpFSXFl3EIyvtpi5/HFYKC+vjlsvjon0H+NC0/rCjOwFlXA/Mtis9LE0zhQ86mTAq7JVWavhVo+ekKg==",
-      "deprecated": true
+    "@lovable.dev/cloud-auth-js@1.2.1": {
+      "integrity": "sha512-BetMp9TvV/QgZ54KBr0yhPNqcB2Z6VqrF3H54sNgsKpKeSQO0CFDtPNtSmtKW9cCsHAp7yXCl04X82Zfdjo0CA=="
     },
     "@napi-rs/lzma-linux-x64-gnu@1.5.1": {
       "integrity": "sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==",
@@ -2430,8 +2429,8 @@
         "react-dom@18.2.0_react@18.2.0"
       ]
     },
-    "@react-leaflet/core@2.1.0_leaflet@1.9.4_react@18.3.1_react-dom@18.3.1": {
-      "integrity": "sha512-Qk7Pfu8BSarKGqILj4x7bCSZ1pjuAPZ+qmRwH5S7mDS91VSbVVsJSrW4qA+GPrro8t69gFYVMWb1Zc4yFmPiVg==",
+    "@react-leaflet/core@3.0.0_leaflet@1.9.4_react@18.3.1_react-dom@18.3.1": {
+      "integrity": "sha512-3EWmekh4Nz+pGcr+xjf0KNyYfC3U2JjnkWsh0zcqaexYqmmB5ZhH37kz41JXGmKzpaMZCnPofBBm64i+YrEvGQ==",
       "dependencies": [
         "leaflet",
         "react@18.3.1",
@@ -3685,7 +3684,7 @@
       "integrity": "sha512-MaU0U/za7N3r6brxD4YB/l4NSrFzLPlANv6wEuQVaIPlD3L4W9rFcQPbL/EilY9BHhHvhfcz3gInDLrEtWT4EA==",
       "dependencies": [
         "browserslist",
-        "caniuse-lite@1.0.30001810",
+        "caniuse-lite",
         "fraction.js",
         "picocolors",
         "postcss",
@@ -3798,7 +3797,7 @@
       "integrity": "sha512-1R4kiYKXGViqEN0CnoDrXc1StD9niAwu+j2dukWzrD4bJgsD4lDmEp0CRbc6E/vYJIfTHwPmwyaKtVSudICdPA==",
       "dependencies": [
         "baseline-browser-mapping",
-        "caniuse-lite@1.0.30001814",
+        "caniuse-lite",
         "electron-to-chromium",
         "node-releases",
         "update-browserslist-db"
@@ -3861,9 +3860,6 @@
     },
     "camelcase@5.3.1": {
       "integrity": "sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg=="
-    },
-    "caniuse-lite@1.0.30001810": {
-      "integrity": "sha512-TITQPUkaz+aVk5GL6NhOdwk1aEaNTSDPsGFWrTuhKGtjTF70jL/Oht2W4c6rXUe5fu7Ie19VIahAXHIIiWWNeg=="
     },
     "caniuse-lite@1.0.30001814": {
       "integrity": "sha512-/Uaf1lAzr59XcMpW0o96WoEfr+VXK2OX4U9AgFoiSHsVJ4HppnIFUjtYzsyDH2+tgANaQb2/oxYGwCPapN1FpA=="
@@ -3974,7 +3970,7 @@
     "clsx@2.1.1": {
       "integrity": "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="
     },
-    "cmdk@1.1.1_react@18.3.1_react-dom@18.3.1_@types+react@18.3.31_@types+react-dom@18.3.7": {
+    "cmdk@1.1.1_react@18.3.1_react-dom@18.3.1": {
       "integrity": "sha512-Vsv7kFaXm+ptHDMZ7izaRsP70GgrW9NBNGswt9OZaVBLlE0SNpDq8eu/VGXyF9r7M0azK3Wy7OlYXsuyYLFzHg==",
       "dependencies": [
         "@radix-ui/react-compose-refs",
@@ -4496,7 +4492,7 @@
     "electron-to-chromium@1.5.439": {
       "integrity": "sha512-qu6QIPXhsb+CRcAiTMNjR4A1y/7tCYKkKjr5CZXRVih6qkDf79peZ2BpEU3qoDBNCRrcy3Mra3X9nG5oruuA7Q=="
     },
-    "embla-carousel-react@8.6.0_react@18.3.1_embla-carousel@8.6.0": {
+    "embla-carousel-react@8.6.0_react@18.3.1": {
       "integrity": "sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==",
       "dependencies": [
         "embla-carousel",
@@ -6916,8 +6912,8 @@
     "react-fast-compare@3.2.2": {
       "integrity": "sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ=="
     },
-    "react-helmet-async@2.0.5_react@18.3.1": {
-      "integrity": "sha512-rYUYHeus+i27MvFE+Jaa4WsyBKGkL6qVgbJvSBoX8mbsWoABJXdEO0bZyi0F6i+4f0NuIb8AvqPMj3iXFHkMwg==",
+    "react-helmet-async@3.0.0_react@18.3.1": {
+      "integrity": "sha512-nA3IEZfXiclgrz4KLxAhqJqIfFDuvzQwlKwpdmzZIuC1KNSghDEIXmyU0TKtbM+NafnkICcwx8CECFrZ/sL/1w==",
       "dependencies": [
         "invariant",
         "react@18.3.1",
@@ -6950,8 +6946,8 @@
     "react-is@18.3.1": {
       "integrity": "sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg=="
     },
-    "react-leaflet@4.2.1_leaflet@1.9.4_react@18.3.1_react-dom@18.3.1": {
-      "integrity": "sha512-p9chkvhcKrWn/H/1FFeVSqLdReGwn2qmiobOQGO3BifX+/vV/39qhY8dGqbdcPh1e6jxh/QHriLXr7a4eLFK4Q==",
+    "react-leaflet@5.0.0_leaflet@1.9.4_react@18.3.1_react-dom@18.3.1": {
+      "integrity": "sha512-CWbTpr5vcHw5bt9i4zSlPEVQdTVcML390TjeDG0cK59z1ylexpqC6M1PJFjV8jD7CF+ACBFsLIDs6DRMoLEofw==",
       "dependencies": [
         "@react-leaflet/core",
         "leaflet",
@@ -7773,8 +7769,8 @@
     "symbol-tree@3.2.4": {
       "integrity": "sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw=="
     },
-    "tailwind-merge@2.6.1": {
-      "integrity": "sha512-Oo6tHdpZsGpkKG88HJ8RR1rg/RdnEkQEfMoEk2x1XRI3F1AxeU+ijRXpiVUF4UbLfcxxRGw6TbUINKYdWVsQTQ=="
+    "tailwind-merge@3.7.0": {
+      "integrity": "sha512-XPPUyAc+cvspz3lHTcR/QgPfW2A0lv/xQNIjX3HGhLR+Nq2lHaLq5MtTesHn8GUr3W3DguT2KT5x3NVgRtYwmA=="
     },
     "tailwindcss-animate@1.0.7_tailwindcss@3.4.17": {
       "integrity": "sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==",
@@ -8186,7 +8182,7 @@
       "deprecated": true,
       "bin": true
     },
-    "vaul@1.1.2_react@18.3.1_react-dom@18.3.1_@types+react@18.3.31_@types+react-dom@18.3.7": {
+    "vaul@1.1.2_react@18.3.1_react-dom@18.3.1": {
       "integrity": "sha512-ZFkClGpWyI2WUQjdLJ/BaGuV6AVQiJ3uELGk3OYtP+B6yCO7Cmn9vPFXVJkRaGkOJu3m8bQMgtyzNHixULceQA==",
       "dependencies": [
         "@radix-ui/react-dialog",
@@ -8794,7 +8790,7 @@
         "npm:@dnd-kit/sortable@10",
         "npm:@dnd-kit/utilities@^3.2.2",
         "npm:@hookform/resolvers@^3.3.2",
-        "npm:@lovable.dev/cloud-auth-js@^1.1.2",
+        "npm:@lovable.dev/cloud-auth-js@^1.2.1",
         "npm:@playwright/test@^1.63.0",
         "npm:@radix-ui/react-accordion@^1.2.20",
         "npm:@radix-ui/react-alert-dialog@^1.1.23",
@@ -8873,10 +8869,10 @@
         "npm:qrcode@^1.5.4",
         "npm:react-day-picker@^10.0.1",
         "npm:react-dom@^18.3.1",
-        "npm:react-helmet-async@^2.0.4",
+        "npm:react-helmet-async@3",
         "npm:react-hook-form@^7.49.0",
         "npm:react-intersection-observer@^10.1.0",
-        "npm:react-leaflet@^4.2.1",
+        "npm:react-leaflet@5",
         "npm:react-markdown@^10.1.0",
         "npm:react-resizable-panels@2",
         "npm:react-router-dom@^7.18.4",
@@ -8885,7 +8881,7 @@
         "npm:recharts@^2.12.0",
         "npm:rollup-plugin-visualizer@^7.0.1",
         "npm:sonner@^2.0.8",
-        "npm:tailwind-merge@^2.5.0",
+        "npm:tailwind-merge@^3.7.0",
         "npm:tailwindcss-animate@^1.0.7",
         "npm:tailwindcss@3.4.17",
         "npm:tsx@^4.7.0",
