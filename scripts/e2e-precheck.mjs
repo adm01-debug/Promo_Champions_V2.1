@@ -18,11 +18,36 @@
  * fora do Playwright.
  */
 import { createClient } from '@supabase/supabase-js';
+import { appendFileSync } from 'node:fs';
 
 const email = process.env.E2E_TEST_EMAIL;
 const password = process.env.E2E_TEST_PASSWORD;
 const url = process.env.VITE_SUPABASE_URL;
 const anon = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+// URL malformada é configuração quebrada (exit 1), não falha transitória —
+// createClient lançaria dentro do try e cairia no skip de rede (exit 3).
+let parsedUrl;
+try {
+  parsedUrl = new URL(url ?? '');
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    throw new Error(`protocolo inválido: ${parsedUrl.protocol}`);
+  }
+} catch (err) {
+  console.log(
+    `::error::VITE_SUPABASE_URL inválida ("${url}" — ${err instanceof Error ? err.message : err}). ` +
+      `Corrija o secret em Settings > Secrets; gate reprovado.`,
+  );
+  process.exit(1);
+}
+
+// O ref do projeto (<ref>.supabase.co) sai da URL — global-setup.ts exige
+// VITE_SUPABASE_PROJECT_ID para persistir a sessão autenticada. Exportar
+// como output elimina o secret extra e o "skip silencioso" quando ele falta.
+const refMatch = parsedUrl.hostname.match(/^([^.]+)\.supabase\.co$/);
+if (refMatch && process.env.GITHUB_OUTPUT) {
+  appendFileSync(process.env.GITHUB_OUTPUT, `project_ref=${refMatch[1]}\n`);
+}
 
 try {
   const client = createClient(url, anon, {

@@ -253,7 +253,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: usyxfpqlsspldubptrdl
+          # Derivado da URL verificada pelo precheck (fallback: ref conhecido).
+          VITE_SUPABASE_PROJECT_ID: ${{ steps.precheck.outputs.project_ref || 'usyxfpqlsspldubptrdl' }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: npm run test:e2e
