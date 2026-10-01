@@ -1,0 +1,41 @@
+{
+  "_doc": "Suítes Deno que dependem de backend vivo (Supabase) e/ou secrets. Elas NÃO rodam no tier 'unit' do CI (scripts/deno-test-suite.mjs) — rodam no tier 'live' quando VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY estão configurados. Sem secrets, ou quando a credencial do repo está inválida ('Invalid API key'), são reportadas como puladas com ::warning:: explícito — nunca quebram o CI. Ao adicionar uma suite que chama PostgREST/Auth/edge remoto, liste-a aqui com o motivo.",
+  "suites": [
+    {
+      "file": "supabase/functions/create-stagnant-tasks/index.test.ts",
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY) + chamadas ao projeto real"
+    },
+    {
+      "file": "supabase/functions/cron-failure-alerter/index.test.ts",
+      "motivo": "testes fn_* via PostgREST (service_role) + E2E HTTP na edge function deployada"
+    },
+    {
+      "file": "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
+      "motivo": "dotenv estrito + RBAC validado contra o banco real"
+    },
+    {
+      "file": "supabase/functions/forecast-narrative/index.test.ts",
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY)"
+    },
+    {
+      "file": "supabase/functions/process-race-event/index_test.ts",
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY)"
+    },
+    {
+      "file": "supabase/functions/race-commentary/index_test.ts",
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY)"
+    },
+    {
+      "file": "supabase/functions/receive-quote-sync/index.test.ts",
+      "motivo": "dotenv estrito + integração com endpoint remoto"
+    },
+    {
+      "file": "supabase/functions/start-race-season/index_test.ts",
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY)"
+    },
+    {
+      "file": "supabase/functions/winloss-webhook-dispatcher/retry_persist_status_test.ts",
+      "motivo": "dotenv estrito (VITE_SUPABASE_URL/PUBLISHABLE_KEY)"
+    }
+  ]
+}
