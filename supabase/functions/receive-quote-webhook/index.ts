@@ -172,121 +172,61 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
       const pipelineStatus = mapToPipelineStatus(mappedStatus);
       const now = new Date().toISOString();
 
-      // ── Upsert de cliente ─────────────────────────────────────
-      let clientId: string | null = null;
-      if (quote.client_email || quote.client_phone) {
-        const { data: rpcData, error: rpcErr } = await supabase.rpc("upsert_client_from_quote", {
-          p_name: quote.client_name,
-          p_email: quote.client_email ?? null,
-          p_phone: quote.client_phone ?? null,
-          p_company: null,
-        });
-        if (rpcErr) {
-          console.error("[receive-quote-webhook] upsert_client_from_quote failed:", rpcErr);
-        } else {
-          clientId = rpcData as string;
-        }
+      // ── Resumo de produtos para sales.product_name ───────────
+      const productSummary = quote.items
+        .slice(0, 3)
+        .map((i) => `${i.product_name} (x${i.quantity})`)
+        .join(", ");
+      const productName =
+        quote.items.length > 3
+          ? `${productSummary} +${quote.items.length - 3} itens`
+          : productSummary || `Orçamento ${quote.quote_number}`;
+
+      // ── Escrita atômica: cliente + quote + quote_items + sale ──
+      // Toda a mutação roda em UMA transação dentro da RPC
+      // sync_quote_from_webhook: falha em qualquer etapa faz rollback
+      // completo, e o retry do emissor reaplica o payload inteiro.
+      // quote_sync_logs fica fora da transação para registrar falhas.
+      const { data: syncResult, error: syncErr } = await supabase.rpc(
+        "sync_quote_from_webhook",
+        {
+          p_external_quote_id: quote.id,
+          p_quote_number: quote.quote_number,
+          p_title: `Orçamento ${quote.quote_number}`,
+          p_description: quote.notes ?? null,
+          p_client_name: quote.client_name,
+          p_client_email: quote.client_email ?? null,
+          p_client_phone: quote.client_phone ?? null,
+          p_seller_name: quote.seller_name ?? null,
+          p_external_seller_id: quote.seller_id ?? null,
+          p_status: mappedStatus,
+          p_pipeline_status: pipelineStatus,
+          p_total_value: quote.total,
+          p_subtotal: quote.subtotal ?? quote.total,
+          p_discount_percent: quote.discount_percent ?? 0,
+          p_discount_amount: quote.discount_amount ?? 0,
+          p_items: quote.items ?? [],
+          p_valid_until: quote.valid_until ?? null,
+          p_notes: quote.notes ?? null,
+          p_sent_at: mappedStatus === "sent" ? now : null,
+          p_approved_at: mappedStatus === "approved" ? now : null,
+          p_rejected_at: mappedStatus === "rejected" ? now : null,
+          p_quote_created_at: quote.created_at ?? null,
+          p_sale_product_name: productName,
+        },
+      );
+      if (syncErr) throw syncErr;
+
+      const quoteId = syncResult.quote_id as string;
+      const saleId = (syncResult.sale_id ?? null) as string | null;
+      const clientId = (syncResult.client_id ?? null) as string | null;
+      const salespersonId = (syncResult.salesperson_id ?? null) as string | null;
+      if ((syncResult.itens_sem_produto ?? 0) > 0) {
+        console.warn(
+          `[receive-quote-webhook] ${syncResult.itens_sem_produto} item(ns) com product_id sem match em products (quote ${quoteId})`,
+        );
       }
-
-      // ── Mapeamento vendedor externo → salesperson ────────────
-      let salespersonId: string | null = null;
-      if (quote.seller_id) {
-        const { data: mapRow } = await supabase
-          .from("external_seller_map")
-          .select("salesperson_id")
-          .eq("external_source", "gift_store")
-          .eq("external_id", quote.seller_id)
-          .maybeSingle();
-        salespersonId = mapRow?.salesperson_id ?? null;
-      }
-
-      // ── Verificar quote existente ────────────────────────────
-      const { data: existingQuote } = await supabase
-        .from("quotes")
-        .select("id, sale_id")
-        .eq("external_quote_id", quote.id)
-        .maybeSingle();
-
-      const quoteRecord: Record<string, unknown> = {
-        client_name: quote.client_name,
-        client_email: quote.client_email ?? null,
-        client_phone: quote.client_phone ?? null,
-        seller_name: quote.seller_name ?? null,
-        external_seller_id: quote.seller_id ?? null,
-        client_id: clientId,
-        created_by: salespersonId,
-        title: `Orçamento ${quote.quote_number}`,
-        description: quote.notes ?? null,
-        total_value: quote.total,
-        status: mappedStatus,
-        external_reference: quote.quote_number,
-        external_quote_id: quote.id,
-        quote_number: quote.quote_number,
-        subtotal: quote.subtotal ?? quote.total,
-        discount_percent: quote.discount_percent ?? 0,
-        discount_amount: quote.discount_amount ?? 0,
-        items: quote.items, // JSONB nativo
-        valid_until: quote.valid_until ?? null,
-        notes: quote.notes ?? null,
-        source: "gift_store",
-        synced_from_external: true,
-        sync_status: "synced",
-        last_synced_at: now,
-        updated_at: now,
-      };
-
-      if (mappedStatus === "sent") quoteRecord.sent_at = now;
-      if (mappedStatus === "approved") quoteRecord.approved_at = now;
-      if (mappedStatus === "rejected") quoteRecord.rejected_at = now;
-
-      let quoteId: string;
-      let saleId: string | null = existingQuote?.sale_id || null;
-
-      if (existingQuote) {
-        const { error: updateErr } = await supabase
-          .from("quotes")
-          .update(quoteRecord)
-          .eq("id", existingQuote.id);
-        if (updateErr) throw updateErr;
-        quoteId = existingQuote.id;
-        console.info(`[receive-quote-webhook] updated quote ${quoteId}`);
-      } else {
-        quoteRecord.created_at = quote.created_at ?? now;
-        const { data: newQuote, error: insertErr } = await supabase
-          .from("quotes")
-          .insert(quoteRecord)
-          .select("id")
-          .single();
-        if (insertErr) throw insertErr;
-        quoteId = newQuote.id;
-        console.info(`[receive-quote-webhook] created quote ${quoteId}`);
-      }
-
-      // ── Sync quote_items (structured rows) ───────────────────
-      // The quotes.items JSONB column is kept for backwards compat, but
-      // quote_items must also be populated so downstream RPCs (quote→order
-      // conversion) can read normalized rows (HIGH #5 fix).
-      if (quote.items && quote.items.length > 0) {
-        // Replace all items for this quote atomically.
-        await supabase.from("quote_items").delete().eq("quote_id", quoteId);
-
-        const itemRows = quote.items.map((item) => ({
-          quote_id: quoteId,
-          product_id: item.product_id ?? null,
-          product_name: item.product_name,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          discount_amount: 0,
-          total_price: item.subtotal ?? item.quantity * item.unit_price,
-        }));
-
-        const { error: itemsErr } = await supabase.from("quote_items").insert(itemRows);
-        if (itemsErr) {
-          console.error("[receive-quote-webhook] quote_items sync error:", itemsErr);
-        } else {
-          console.info(`[receive-quote-webhook] synced ${itemRows.length} item(s) to quote_items for ${quoteId}`);
-        }
-      }
+      console.info(`[receive-quote-webhook] synced quote ${quoteId} (sale ${saleId ?? "—"})`);
 
       // ── Upload de PDF com limite ──────────────────────────────
       if (pdf_base64) {
@@ -313,53 +253,6 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
           }
         } catch (pdfErr) {
           console.error("[receive-quote-webhook] PDF processing error:", pdfErr);
-        }
-      }
-
-      // ── Pipeline (sales) ──────────────────────────────────────
-      const productSummary = quote.items
-        .slice(0, 3)
-        .map((i) => `${i.product_name} (x${i.quantity})`)
-        .join(", ");
-      const productName =
-        quote.items.length > 3
-          ? `${productSummary} +${quote.items.length - 3} itens`
-          : productSummary || `Orçamento ${quote.quote_number}`;
-
-      if (saleId) {
-        await supabase
-          .from("sales")
-          .update({
-            client_name: quote.client_name,
-            product_name: productName,
-            amount: quote.total,
-            status: pipelineStatus,
-            client_id: clientId,
-            salesperson_id: salespersonId,
-            updated_at: now,
-          })
-          .eq("id", saleId);
-      } else {
-        const { data: newSale, error: saleInsertErr } = await supabase
-          .from("sales")
-          .insert({
-            client_name: quote.client_name,
-            product_name: productName,
-            amount: quote.total,
-            status: pipelineStatus,
-            category: "brindes",
-            client_id: clientId,
-            salesperson_id: salespersonId,
-            source: "gift_store",
-            created_at: quote.created_at ?? now,
-          })
-          .select("id")
-          .single();
-        if (saleInsertErr) {
-          console.error("[receive-quote-webhook] sale insert error:", saleInsertErr);
-        } else if (newSale) {
-          saleId = newSale.id;
-          await supabase.from("quotes").update({ sale_id: saleId }).eq("id", quoteId);
         }
       }
 
