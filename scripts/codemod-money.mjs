@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable complexity -- codemod de migração one-off, não é código de produto */
 /**
  * Codemod MONEY — centraliza formatação monetária em @/lib/money.
  *
@@ -64,6 +63,22 @@ function callEnd(src, openIdx) {
   return -1;
 }
 
+// retrocede sobre um grupo balanceado ')' ou ']' terminando em i-1
+function skipBalancedBackward(src, i) {
+  let depth = 0;
+  for (let k = i - 1; k >= 0; k--) {
+    if (src[k] === ')' || src[k] === ']') depth++;
+    else if (src[k] === '(' || src[k] === '[') {
+      depth--;
+      if (depth === 0) return k;
+    } else if (src[k] === "'" || src[k] === '"' || src[k] === '`') {
+      k--;
+      while (k >= 0 && src[k] !== src[i - 1]) k--;
+    }
+  }
+  return -1;
+}
+
 // início da expressão que antecede o '.' em dotIdx (member/call chain + unary)
 function exprStart(src, dotIdx) {
   let i = dotIdx;
@@ -71,19 +86,8 @@ function exprStart(src, dotIdx) {
   while (i > 0) {
     const c = src[i - 1];
     if (c === ')' || c === ']') {
-      let depth = 0,
-        k = i - 1;
-      for (; k >= 0; k--) {
-        if (src[k] === ')' || src[k] === ']') depth++;
-        else if (src[k] === '(' || src[k] === '[') {
-          depth--;
-          if (depth === 0) break;
-        } else if (src[k] === "'" || src[k] === '"' || src[k] === '`') {
-          k--;
-          while (k >= 0 && src[k] !== src[i - 1]) k--;
-        }
-      }
-      i = k;
+      const k = skipBalancedBackward(src, i);
+      i = k < 0 ? i - 1 : k;
       continue;
     }
     if (/[\w$.]/.test(c)) {
@@ -174,6 +178,29 @@ function phase2(src, file, pending) {
 }
 
 // ---------------- fase 1 ----------------
+// fim da def (após arrow): bloco balanceado ou expressão até ';'
+function defEndAt(src, afterArrow, arrowWs) {
+  let defEnd;
+  if (src[afterArrow + arrowWs] === '{') {
+    let depth = 0,
+      i = afterArrow + arrowWs;
+    for (; i < src.length; i++) {
+      if (src[i] === '{') depth++;
+      else if (src[i] === '}') {
+        depth--;
+        if (depth === 0) break;
+      }
+    }
+    defEnd = i + 1;
+  } else {
+    defEnd = afterArrow;
+    while (defEnd < src.length && src[defEnd] !== ';') defEnd++;
+  }
+  while (defEnd < src.length && src[defEnd] === ';') defEnd++;
+  while (defEnd < src.length && src[defEnd] === '\n') defEnd++;
+  return defEnd;
+}
+
 function stripLocalDef(src, pending, file) {
   const defRe =
     /^[ \t]*(?:export\s+)?const\s+(formatBRL|formatCurrency|formatMoney|fmtBRL|fmtCurrency)\s*=\s*(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*(?::\s*[^=\n]*)?=>/m;
@@ -184,26 +211,7 @@ function stripLocalDef(src, pending, file) {
   const defStart = m.index;
   const afterArrow = m.index + m[0].length;
   const arrowWs = /^[ \t]*/.exec(src.slice(afterArrow))[0].length;
-  let defEnd;
-  if (src[afterArrow + arrowWs] === '{') {
-    const blockStart = afterArrow + arrowWs;
-    let depth = 0,
-      i = blockStart;
-    for (; i < src.length; i++) {
-      if (src[i] === '{') depth++;
-      else if (src[i] === '}') {
-        depth--;
-        if (depth === 0) break;
-      }
-    }
-    defEnd = i + 1;
-    while (defEnd < src.length && src[defEnd] === ';') defEnd++;
-  } else {
-    defEnd = afterArrow;
-    while (defEnd < src.length && src[defEnd] !== ';') defEnd++;
-    defEnd++;
-  }
-  while (defEnd < src.length && src[defEnd] === '\n') defEnd++;
+  const defEnd = defEndAt(src, afterArrow, arrowWs);
   const defText = src.slice(defStart, defEnd);
 
   if (/toFixed|\/\s*1000|\$\{[^}]*\}\s*k/i.test(defText)) {
