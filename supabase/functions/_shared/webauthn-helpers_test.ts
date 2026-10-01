@@ -36,23 +36,26 @@ Deno.test('expectedOrigins: aceita Origin cujo host casa com o rpId', () => {
     'https://app.promobrindes.com.br',
     'app.promobrindes.com.br'
   );
-  assertEquals(origins.includes('https://app.promobrindes.com.br'), true);
+  assertEquals(origins, ['https://app.promobrindes.com.br']);
 
   const subdomain = expectedOrigins(
     'https://sub.app.promobrindes.com.br',
     'app.promobrindes.com.br'
   );
-  assertEquals(subdomain.includes('https://sub.app.promobrindes.com.br'), true);
+  assertEquals(subdomain, [
+    'https://app.promobrindes.com.br',
+    'https://sub.app.promobrindes.com.br',
+  ]);
 });
 
 Deno.test('expectedOrigins: aceita localhost para desenvolvimento', () => {
   const origins = expectedOrigins('http://localhost:5173', 'localhost');
-  assertEquals(origins.includes('http://localhost:5173'), true);
+  assertEquals(origins, ['https://localhost', 'http://localhost:5173']);
 });
 
 Deno.test('expectedOrigins: rejeita Origin de host estranho ao rpId', () => {
   const origins = expectedOrigins('https://evil.example.com', 'app.promobrindes.com.br');
-  assertEquals(origins.includes('https://evil.example.com'), false);
+  assertEquals(origins, ['https://app.promobrindes.com.br']);
 });
 
 Deno.test('expectedOrigins: Origin malformado não quebra o cálculo', () => {
