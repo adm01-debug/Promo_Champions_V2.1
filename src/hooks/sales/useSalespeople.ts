@@ -11,6 +11,7 @@ import {
   endOfQuarter,
 } from 'date-fns';
 import { PeriodFilter } from '@/components/vendedores/PeriodFilter';
+import { toBusinessMonthStart } from "@/lib/date";
 
 export type { PeriodFilter };
 export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
@@ -82,7 +83,7 @@ export function useSalespeople() {
 
 export function useSalesGoals(month?: Date) {
   const targetMonth = month || new Date();
-  const monthStr = targetMonth.toISOString().slice(0, 7) + '-01';
+  const monthStr = toBusinessMonthStart(targetMonth);
 
   return useQuery({
     queryKey: ['sales_goals', monthStr],
@@ -110,7 +111,7 @@ export function useSalespeopleRanking(period: PeriodFilter = 'month') {
       if (spError) throw spError;
 
       // Fetch current month goals (goals are always monthly)
-      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+      const currentMonth = toBusinessMonthStart();
       const { data: goals, error: goalsError } = await supabase
         .from('sales_goals')
         .select('*')

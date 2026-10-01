@@ -4,6 +4,7 @@ import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { toBusinessMonthStart } from "../_shared/business-date.ts";
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -143,7 +144,7 @@ const generateAlerts = async (
       .eq('is_active', true)
       .limit(500);
 
-    const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+    const currentMonth = toBusinessMonthStart();
     const { data: goals } = await supabase
       .from('sales_goals')
       .select('salesperson_id, goal_amount')

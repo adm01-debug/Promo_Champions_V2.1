@@ -3,6 +3,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -14,7 +15,7 @@ Deno.serve(withRequestId("challenge-expiration-alerts", async (req, ctx) => {
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = toBusinessDate();
 
   const { data: expiringChallenges, error: challengesError } = await supabase
     .from("weekly_challenges")

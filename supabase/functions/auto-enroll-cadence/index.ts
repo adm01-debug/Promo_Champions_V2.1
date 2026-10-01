@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -109,7 +110,7 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
             salesperson_id: salespersonBySaleId.get(m.saleId) ?? null,
             enrolled_via_rule_id: m.rule_id,
             enrollment_source: "auto",
-            next_action_date: firstDate.toISOString().split("T")[0],
+            next_action_date: toBusinessDate(firstDate),
           })
           .select("id, sale_id, cadence_id")
           .single()
@@ -128,7 +129,7 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
         allTasks.push({
           prospect_cadence_id: ins.data.id,
           cadence_step_id: step.id,
-          scheduled_date: d.toISOString().split("T")[0],
+          scheduled_date: toBusinessDate(d),
         });
       }
     }

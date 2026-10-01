@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface MetricRow {
   salesperson_id: string;
@@ -167,7 +168,7 @@ Deno.serve(withRequestId("detect-coaching-opportunities", async (req, _ctx) => {
 
     // Insert opportunities (use today date as part of unique key)
     if (opportunities.length > 0) {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = toBusinessDate();
       // Delete existing today entries to allow re-run
       await supabase
         .from("coaching_opportunities")

@@ -21,6 +21,7 @@ import {
   collectErrors,
   validationErrorResponse,
 } from "../_shared/validation.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 type Mode = "briefing" | "chat" | "proactive_nudge";
 
@@ -60,7 +61,7 @@ async function buildContext(
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
   const currentMonth = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, "0")}-01`;
-  const todayISO = now.toISOString().slice(0, 10);
+  const todayISO = toBusinessDate(now);
   const msPerDay = 86_400_000;
   const daysElapsed = Math.max(1, Math.floor((now.getTime() - monthStart.getTime()) / msPerDay) + 1);
   const daysInMonth = Math.floor((monthEnd.getTime() - monthStart.getTime()) / msPerDay) + 1;
@@ -278,7 +279,7 @@ Deno.serve(
       // ── Cache do briefing do dia (idempotência por vendedor/dia) ────────────
       // Fuso America/Sao_Paulo → chave do dia estável.
       const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
-      const todayKey = today.toISOString().slice(0, 10);
+      const todayKey = toBusinessDate(today);
 
       if (mode === "briefing") {
         const { data: cached } = await auth.client

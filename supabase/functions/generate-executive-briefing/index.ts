@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface BriefingPayload {
   headline: string;
@@ -37,7 +38,7 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
 
     const body = await req.json().catch(() => ({}));
     const generated_by: "auto" | "manual" = body?.auto ? "auto" : "manual";
-    const today = new Date().toISOString().slice(0, 10);
+    const today = toBusinessDate();
 
     // Idempotência por dia
     const { data: existing } = await supabase

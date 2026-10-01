@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -59,7 +60,7 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
     
     // Check for existing tasks for these deals to avoid duplicates
     const dealIds = stagnantDeals.map(d => d.id);
-    const today = new Date().toISOString().split('T')[0];
+    const today = toBusinessDate();
     
     // Chunked to avoid PostgREST URL overflow when there are hundreds of stagnant deals
     const existingTasks = await chunkedIn<{ sale_id: string }>(

@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -36,7 +37,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     const dayEnd = new Date(today);
     dayEnd.setHours(23, 59, 59, 999);
 
-    console.info(`Checking activities for ${today.toISOString().split('T')[0]}`);
+    console.info(`Checking activities for ${toBusinessDate(today)}`);
 
     // Fetch active salespeople with emails
     const { data: salespeople, error: spError } = await supabase

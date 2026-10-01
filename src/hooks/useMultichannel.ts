@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { toBusinessDate } from "@/lib/date";
 
 export type Channel = 'whatsapp' | 'email' | 'linkedin' | 'sms' | 'phone';
 export type InteractionStatus =
@@ -250,7 +251,7 @@ export const useChannelStats = (days = 30) => {
 function groupByDay(interactions: Pick<ChannelInteraction, 'channel' | 'created_at'>[]) {
   const map = new Map<string, Record<string, number>>();
   interactions.forEach(i => {
-    const day = i.created_at.split('T')[0];
+    const day = toBusinessDate(i.created_at);
     if (!map.has(day)) map.set(day, {});
     const entry = map.get(day)!;
     entry[i.channel] = (entry[i.channel] || 0) + 1;

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus } from '@/constants';
 import { startOfDay, endOfDay } from 'date-fns';
+import { toBusinessDate } from "@/lib/date";
 
 interface DateRange {
   from: Date | undefined;
@@ -77,10 +78,10 @@ export function useDailyMetrics(dateRange: DateRange) {
         .order('date', { ascending: true });
 
       if (dateRange.from) {
-        query = query.gte('date', dateRange.from.toISOString().split('T')[0]);
+        query = query.gte('date', toBusinessDate(dateRange.from));
       }
       if (dateRange.to) {
-        query = query.lte('date', dateRange.to.toISOString().split('T')[0]);
+        query = query.lte('date', toBusinessDate(dateRange.to));
       }
 
       const { data, error } = await query;

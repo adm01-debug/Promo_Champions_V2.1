@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4'
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 // Pool of daily challenge templates with smaller targets
@@ -28,7 +29,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    const today = new Date().toISOString().split('T')[0]
+    const today = toBusinessDate()
 
     // Check if today's challenges already exist
     const { data: existingChallenges } = await supabase
@@ -49,7 +50,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
     // Deactivate yesterday's challenges
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayStr = yesterday.toISOString().split('T')[0]
+    const yesterdayStr = toBusinessDate(yesterday)
 
     await supabase
       .from('daily_challenges')

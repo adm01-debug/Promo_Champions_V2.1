@@ -11,6 +11,7 @@ import { withRetry, RetryError } from '../_shared/retry.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 const DIGEST_TYPE = 'deal_risk_digest';
 const HEALTH_THRESHOLD = 50;
@@ -176,7 +177,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   }
 
   // 4. Idempotency guard — pull today's digests already sent.
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const todayIso = toBusinessDate();
   const userIds = Array.from(sellerMap.values())
     .map((s) => s.user_id)
     .filter((u): u is string => !!u);

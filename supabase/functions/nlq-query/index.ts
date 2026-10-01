@@ -13,6 +13,7 @@ import {
   queryTopClients,
   type ResolverArgs,
 } from './queryResolvers.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 const MAX_QUESTION_LENGTH = 1000;
 
@@ -126,7 +127,7 @@ const TOOLS = [
 ];
 
 const SYSTEM_PROMPT = `Você é um analista de dados do CRM da Promo Champions. Responda em PT-BR.
-Hoje é ${new Date().toISOString().slice(0, 10)}.
+Hoje é ${toBusinessDate()}.
 SEMPRE chame uma das ferramentas disponíveis para buscar dados reais antes de responder.
 NUNCA invente números. Se a ferramenta retornar zero registros, diga isso claramente.
 Quando o usuário citar um período (ex.: "março", "essa semana", "último trimestre"), converta para datas ISO precisas.

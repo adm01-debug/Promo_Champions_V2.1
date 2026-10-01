@@ -19,6 +19,7 @@ import { TablePagination } from '@/components/shared/TablePagination';
 import { useICPDataMap, ICPData } from '@/hooks/useICPData';
 import { usePagination } from '@/hooks/usePagination';
 import { PortfolioTableRow } from './PortfolioTableRow';
+import { toBusinessDate } from "@/lib/date";
 
 type SortField = 'client' | 'icp' | 'status' | 'lastPurchase' | 'assignedAt';
 type SortDirection = 'asc' | 'desc';
@@ -122,7 +123,7 @@ export function PortfolioTable({ data, isLoading }: PortfolioTableProps) {
       portfolioId: item.id,
       status: newStatus,
       lastPurchaseDate:
-        newStatus === 'active' ? new Date().toISOString().split('T')[0] : undefined,
+        newStatus === 'active' ? toBusinessDate() : undefined,
     });
   };
 

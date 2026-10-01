@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { toBusinessDate } from "@/lib/date";
 
 export interface WeeklyChallenge {
   id: string;
@@ -56,7 +57,7 @@ export function useWeeklyChallenges() {
   return useQuery({
     queryKey: ["weekly-challenges"],
     queryFn: async () => {
-      const today = new Date().toISOString().split("T")[0];
+      const today = toBusinessDate();
       
       const { data, error } = await supabase
         .from("weekly_challenges")

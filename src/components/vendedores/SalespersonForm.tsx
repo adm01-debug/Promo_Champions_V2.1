@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toBusinessMonthStart } from "@/lib/date";
 
 export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
 
@@ -77,7 +78,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
       if (spError) throw spError;
 
       // Insert goal for current month
-      const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
+      const currentMonth = toBusinessMonthStart();
       const { error: goalError } = await supabase
         .from("sales_goals")
         .insert({

@@ -18,6 +18,7 @@ import { useChurnTaskCompletion } from '@/hooks/bi/useChurnTaskCompletion';
 import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { toBusinessDate } from "@/lib/date";
 
 interface Props {
   className?: string;
@@ -91,7 +92,7 @@ export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `tarefas-churn-atrasadas-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `tarefas-churn-atrasadas-${toBusinessDate()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

@@ -3,6 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -126,8 +127,8 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
     const ownerId: string | null = body.owner_id ?? null;
 
     const since = new Date(Date.now() - days * 86400000).toISOString();
-    const periodStart = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
-    const periodEnd = new Date().toISOString().slice(0, 10);
+    const periodStart = toBusinessDate(Date.now() - days * 86400000);
+    const periodEnd = toBusinessDate();
 
     // Fetch history
     const { data: history, error: hErr } = await admin

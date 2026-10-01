@@ -3,6 +3,7 @@ import { sanitizeCsvCell } from '@/utils/csvExport';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Json } from '@/integrations/supabase/types';
+import { toBusinessDate } from "@/lib/date";
 
 export interface AuditLog {
   id: string;
@@ -99,7 +100,7 @@ export function exportAuditLogsToCSV(logs: AuditLog[]): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `audit_logs_${new Date().toISOString().split('T')[0]}.csv`;
+  a.download = `audit_logs_${toBusinessDate()}.csv`;
   a.click();
   URL.revokeObjectURL(url);
   toast.success(`${logs.length} registros exportados`);

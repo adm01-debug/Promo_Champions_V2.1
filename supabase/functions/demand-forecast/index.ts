@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface InventoryLevel {
   product_id: string;
@@ -154,7 +155,7 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
       if (forecasts.length > 0) {
         const forecastDate = new Date();
         forecastDate.setDate(forecastDate.getDate() + 30);
-        const forecastDateStr = forecastDate.toISOString().split('T')[0];
+        const forecastDateStr = toBusinessDate(forecastDate);
         const updatedAt = new Date().toISOString();
 
         // Need per-product data; rebuild from products map

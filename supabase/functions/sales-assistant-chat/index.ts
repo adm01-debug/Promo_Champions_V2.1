@@ -11,6 +11,7 @@ import {
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -74,7 +75,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
         .single();
 
       // Get current month goals
-      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+      const currentMonth = toBusinessMonthStart();
       const { data: goals } = await supabase
         .from('sales_goals')
         .select('salesperson_id, goal_amount')
@@ -120,7 +121,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const winRate = outcomes?.length ? Math.round((wins / outcomes.length) * 100) : 0;
 
       // Get activity goals progress
-      const today = new Date().toISOString().split('T')[0];
+      const today = toBusinessDate();
       const { data: activities } = await supabase
         .from('activities')
         .select('activity_type, outcome')

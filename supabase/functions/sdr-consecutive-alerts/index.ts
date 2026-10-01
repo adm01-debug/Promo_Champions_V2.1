@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.4
 import { Resend } from 'npm:resend@2';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -90,7 +91,7 @@ async function getUnderperformingSDRs(
   const activityBySDRAndDate: Record<string, Record<string, number>> = {};
   activities?.forEach((a: { salesperson_id: string | null; created_at: string }) => {
     if (!a.salesperson_id) return;
-    const date = a.created_at.split('T')[0];
+    const date = toBusinessDate(a.created_at);
     if (!activityBySDRAndDate[a.salesperson_id]) {
       activityBySDRAndDate[a.salesperson_id] = {};
     }
@@ -116,7 +117,7 @@ async function getUnderperformingSDRs(
     for (let i = 0; i < 7; i++) {
       const checkDate = new Date(today);
       checkDate.setDate(checkDate.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
+      const dateStr = toBusinessDate(checkDate);
       const dayActivities = sdrActivities[dateStr] || 0;
 
       if (dayActivities < goal) {

@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface Body { recording_id: string }
 
@@ -174,8 +175,8 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
 
       await supabase.from("salesperson_coaching_aggregates").upsert({
         salesperson_id: rec.salesperson_id,
-        period_start: start.toISOString().slice(0, 10),
-        period_end: now.toISOString().slice(0, 10),
+        period_start: toBusinessDate(start),
+        period_end: toBusinessDate(now),
         calls_analyzed: recent.length,
         avg_overall: Math.round(avg_overall * 10) / 10,
         avg_talk: Math.round(avg(recent, "talk_score") * 10) / 10,

@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -93,8 +94,8 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       const ratio = quota > 0 ? b.weighted / quota : 0;
       const gap = Math.max(quota * targetRatio - b.weighted, 0);
       snapshots.push({
-        period_start: periodStart.toISOString().slice(0, 10),
-        period_end: periodEnd.toISOString().slice(0, 10),
+        period_start: toBusinessDate(periodStart),
+        period_end: toBusinessDate(periodEnd),
         owner_id: b.owner,
         stage: b.stage,
         segment: null,

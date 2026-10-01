@@ -1,4 +1,5 @@
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { toBusinessDate } from "@/lib/date";
 
 export const formatBRL = (n: number) =>
   new Intl.NumberFormat('pt-BR', {
@@ -52,5 +53,5 @@ export function shiftPeriod(
   if (type === 'week') d.setUTCDate(d.getUTCDate() + 7 * direction);
   else if (type === 'month') d.setUTCMonth(d.getUTCMonth() + direction);
   else d.setUTCMonth(d.getUTCMonth() + 3 * direction);
-  return d.toISOString().slice(0, 10);
+  return toBusinessDate(d);
 }

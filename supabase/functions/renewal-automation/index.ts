@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface RenewalRow {
   id: string;
@@ -26,12 +27,12 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
 
     // 2) Carrega renovações nos próximos 90 dias
     const today = new Date();
-    const horizon = new Date(today.getTime() + 90 * 86400000).toISOString().slice(0, 10);
+    const horizon = toBusinessDate(today.getTime() + 90 * 86400000);
     const { data: rows } = await supabase
       .from("renewals")
       .select("id, account_id, contract_value, renewal_date, status, auto_renew, owner_salesperson_id")
       .lte("renewal_date", horizon)
-      .gte("renewal_date", today.toISOString().slice(0, 10))
+      .gte("renewal_date", toBusinessDate(today))
       .in("status", ["upcoming", "at_risk"])
       .limit(1000);
 
@@ -77,7 +78,7 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
       else if (days <= 90) { bucket = 90; buckets.d90++; }
       if (bucket === null || !r.owner_salesperson_id) continue;
 
-      const dueDate = new Date(today.getTime() + Math.min(bucket, 7) * 86400000).toISOString().slice(0, 10);
+      const dueDate = toBusinessDate(today.getTime() + Math.min(bucket, 7) * 86400000);
       const title = `Renovação em ${bucket}d — ${r.contract_value > 0 ? `R$ ${Number(r.contract_value).toLocaleString("pt-BR")}` : "contrato"}`;
       const taskKey = `${r.owner_salesperson_id}:${bucket}`;
 
