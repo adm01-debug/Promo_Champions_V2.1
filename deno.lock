@@ -8646,6 +8646,8 @@
         "npm:@radix-ui/react-toggle-group@^1.1.19",
         "npm:@radix-ui/react-toggle@^1.1.18",
         "npm:@radix-ui/react-tooltip@^1.2.16",
+        "npm:@sentry/react@^10.75.3",
+        "npm:@sentry/vite-plugin@^5.4.0",
         "npm:@supabase/supabase-js@^2.110.3",
         "npm:@tanstack/react-query@^5.17.0",
         "npm:@testing-library/jest-dom@^7.0.1",
