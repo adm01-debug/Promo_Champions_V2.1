@@ -111,9 +111,10 @@ if (baseRef) {
   if (diff) {
     let baseVersions = [];
     try {
-      baseVersions = git(['ls-tree', '--name-only', baseRef, '--', MIGRATIONS_DIR])
+      // `<ref>:<dir>` lista os filhos do diretório naquele ref (nomes crus,
+      // sem prefixo de caminho); `-- <dir>` listaria a entrada do próprio dir.
+      baseVersions = git(['ls-tree', '--name-only', `${baseRef}:${MIGRATIONS_DIR}`])
         .split('\n')
-        .map((path) => path.slice(MIGRATIONS_DIR.length + 1))
         .filter((name) => NAME_PATTERN.test(name))
         .map(versionOf);
     } catch {
