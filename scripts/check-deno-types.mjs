@@ -38,9 +38,8 @@ const result = spawnSync('deno', ['check', ...targets], {
   maxBuffer: 64 * 1024 * 1024,
 });
 
+// deno colore os paths dos erros — strip ANSI antes de parsear.
 const output = `${result.stdout ?? ''}${result.stderr ?? ''}`.replace(
-  // deno colore os paths dos erros — strip ANSI antes de parsear.
-  // eslint-disable-next-line no-control-regex
   /\x1b\[[0-9;]*m/g,
   ''
 );
