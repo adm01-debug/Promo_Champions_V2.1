@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import type { Json } from '@/integrations/supabase/types';
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 
 // Extended achievement type matching database schema
 export interface AchievementRecord {
@@ -93,20 +94,25 @@ export const useStreakRanking = () => {
 
       if (spError) throw spError;
 
-      // Uma única query agregada por vendedor (evita N+1): as conquistas de
-      // daily_goal de todos os ativos vêm de uma vez e são contadas por id.
+      // Uma única query paginada agregada por vendedor (evita N+1): as
+      // conquistas de daily_goal de todos os ativos vêm de uma vez e são
+      // contadas por id. Paginação necessária: o teto de 1000 linhas do
+      // PostgREST truncaria o agregado e corromperia o ranking.
       const salespersonIds = (salespeople || []).map(sp => sp.id);
-      const { data: achievements, error: achError } = await supabase
-        .from('achievements')
-        .select('salesperson_id, achievement_date, achievement_type')
-        .in('salesperson_id', salespersonIds)
-        .eq('achievement_type', 'daily_goal')
-        .order('achievement_date', { ascending: false });
-
-      if (achError) throw achError;
+      const achievements = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('achievements')
+            .select('salesperson_id, achievement_date, achievement_type')
+            .in('salesperson_id', salespersonIds)
+            .eq('achievement_type', 'daily_goal')
+            .order('achievement_date', { ascending: false })
+            .range(from, to),
+        { label: 'useStreakRanking:achievements' }
+      );
 
       const countBySalesperson = new Map<string, number>();
-      for (const achievement of achievements || []) {
+      for (const achievement of achievements) {
         countBySalesperson.set(
           achievement.salesperson_id,
           (countBySalesperson.get(achievement.salesperson_id) ?? 0) + 1

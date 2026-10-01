@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { isWonSaleStatus, WON_SALE_STATUSES } from '@/constants';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 
@@ -194,14 +195,20 @@ export function useLeadSourceTrend() {
         });
       }
 
-      // Uma única query cobrindo os 6 meses (evita N+1); o agrupamento por
-      // mês é feito no cliente.
-      const { data: sales } = await supabase
-        .from('sales')
-        .select('source, status, created_at')
-        .in('status', [...WON_SALE_STATUSES])
-        .gte('created_at', monthRanges[0].start.toISOString())
-        .lte('created_at', monthRanges[monthRanges.length - 1].end.toISOString());
+      // Uma única query paginada cobrindo os 6 meses (evita N+1); o
+      // agrupamento por mês é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('source, status, created_at')
+            .in('status', [...WON_SALE_STATUSES])
+            .gte('created_at', monthRanges[0].start.toISOString())
+            .lte('created_at', monthRanges[monthRanges.length - 1].end.toISOString())
+            .range(from, to),
+        { label: 'useLeadSourceTrend:sales' }
+      );
 
       return monthRanges.map(({ monthDate, start, end }) => {
         const sourceCount: Record<LeadSource, number> = {
@@ -215,7 +222,7 @@ export function useLeadSourceTrend() {
           other: 0,
         };
 
-        (sales || []).forEach(sale => {
+        sales.forEach(sale => {
           const createdAt = new Date(sale.created_at);
           if (createdAt >= start && createdAt <= end) {
             const source = (sale.source || 'other') as LeadSource;

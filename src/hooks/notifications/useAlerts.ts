@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { differenceInDays, parseISO } from 'date-fns';
 
 export type AlertType = 'stagnant_deal' | 'inactive_client' | 'at_risk_goal';
@@ -111,17 +112,24 @@ export const useAlerts = () => {
 
       const totalBySalesperson = new Map<string, number>();
       if (peopleWithGoals.length > 0) {
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('salesperson_id, amount')
-          .in(
-            'salesperson_id',
-            peopleWithGoals.map(p => p.id)
-          )
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', currentMonth);
+        // Paginado: volume mensal do time pode exceder o teto de 1000
+        // linhas do PostgREST e subcontar vendedores.
+        const sales = await fetchAllRows(
+          (from, to) =>
+            supabase
+              .from('sales')
+              .select('salesperson_id, amount')
+              .in(
+                'salesperson_id',
+                peopleWithGoals.map(p => p.id)
+              )
+              .in('status', [...WON_SALE_STATUSES])
+              .gte('created_at', currentMonth)
+              .range(from, to),
+          { label: 'useAlerts:monthSales' }
+        );
 
-        for (const sale of sales || []) {
+        for (const sale of sales) {
           if (sale.salesperson_id == null) continue;
           totalBySalesperson.set(
             sale.salesperson_id,

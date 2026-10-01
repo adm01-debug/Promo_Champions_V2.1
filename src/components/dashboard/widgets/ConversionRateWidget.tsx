@@ -2,6 +2,7 @@ import React from 'react';
 import { isWonSaleStatus } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -26,16 +27,22 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
         weekRanges.push({ weekStart, weekEnd });
       }
 
-      // Uma única query cobrindo as 8 semanas (evita N+1); o agrupamento por
-      // semana é feito no cliente.
-      const { data: sales } = await supabase
-        .from('sales')
-        .select('status, created_at')
-        .gte('created_at', weekRanges[0].weekStart.toISOString())
-        .lte('created_at', weekRanges[weekRanges.length - 1].weekEnd.toISOString());
+      // Uma única query paginada cobrindo as 8 semanas (evita N+1); o
+      // agrupamento por semana é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('status, created_at')
+            .gte('created_at', weekRanges[0].weekStart.toISOString())
+            .lte('created_at', weekRanges[weekRanges.length - 1].weekEnd.toISOString())
+            .range(from, to),
+        { label: 'ConversionRateWidget:sales' }
+      );
 
       return weekRanges.map(({ weekStart, weekEnd }) => {
-        const weekSales = (sales || []).filter(s => {
+        const weekSales = sales.filter(s => {
           const createdAt = new Date(s.created_at);
           return createdAt >= weekStart && createdAt <= weekEnd;
         });

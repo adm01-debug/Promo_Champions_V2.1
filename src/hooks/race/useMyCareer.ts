@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 
 export interface CareerSeasonEntry {
   season_id: string;
@@ -49,20 +50,26 @@ export function useMyCareer(salespersonId?: string) {
 
       const seasonIds = (seasons ?? []).map(s => s.id);
 
-      // Uma única query para o leaderboard de todas as seasons (evita N+1);
-      // o agrupamento por season é feito no cliente.
+      // Uma única query paginada para o leaderboard de todas as seasons
+      // (evita N+1); o agrupamento por season é feito no cliente. Paginação
+      // necessária: seasons x vendedores pode exceder o teto de 1000 linhas
+      // do PostgREST.
       const leaderboardBySeason = new Map<
         string,
         { salesperson_id: string; total_sales: number }[]
       >();
       if (seasonIds.length > 0) {
-        const { data: lbRows, error: lbErr } = await supabase
-          .from('race_leaderboard_view')
-          .select('season_id, salesperson_id, total_sales')
-          .in('season_id', seasonIds);
-        if (lbErr) throw lbErr;
+        const lbRows = await fetchAllRows(
+          (from, to) =>
+            supabase
+              .from('race_leaderboard_view')
+              .select('season_id, salesperson_id, total_sales')
+              .in('season_id', seasonIds)
+              .range(from, to),
+          { label: 'useMyCareer:leaderboard' }
+        );
 
-        for (const row of lbRows ?? []) {
+        for (const row of lbRows) {
           if (row.season_id == null || row.salesperson_id == null) continue;
           const rows = leaderboardBySeason.get(row.season_id) ?? [];
           rows.push({

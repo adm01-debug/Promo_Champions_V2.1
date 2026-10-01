@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -48,17 +49,23 @@ const RankingCompetitivo = () => {
         });
       }
 
-      // Uma única query cobrindo os 6 meses (evita N+1); o agrupamento por
-      // mês é feito no cliente.
-      const { data: sales } = await supabase
-        .from('sales')
-        .select('salesperson_id, amount, created_at')
-        .in('status', [...WON_SALE_STATUSES])
-        .gte('created_at', monthRanges[0].start.toISOString())
-        .lte('created_at', monthRanges[monthRanges.length - 1].end.toISOString());
+      // Uma única query paginada cobrindo os 6 meses (evita N+1); o
+      // agrupamento por mês é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('salesperson_id, amount, created_at')
+            .in('status', [...WON_SALE_STATUSES])
+            .gte('created_at', monthRanges[0].start.toISOString())
+            .lte('created_at', monthRanges[monthRanges.length - 1].end.toISOString())
+            .range(from, to),
+        { label: 'RankingCompetitivo:sales' }
+      );
 
       return monthRanges.map(({ date, start, end }) => {
-        const monthSales = (sales || []).filter(s => {
+        const monthSales = sales.filter(s => {
           const createdAt = new Date(s.created_at);
           return createdAt >= start && createdAt <= end;
         });
