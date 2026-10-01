@@ -1,12 +1,41 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { partitionNotificationBatch } from '../_shared/notification-categories.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-Deno.serve(withRequestId('check-quote-expiration', async (_req, ctx) => {
+Deno.serve(withRequestId('check-quote-expiration', async (req, ctx) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  // Autorização: apenas chamada interna (service_role ou X-Cron-Secret do pg_cron).
+  try {
+    const authorized = await isAuthorizedCronRequest(req, async () => {
+      const { data, error } = await supabase
+        .from('_internal_secrets')
+        .select('value')
+        .eq('key', 'coaching_cron_secret')
+        .maybeSingle();
+      if (error) throw error;
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!authorized) {
+      return new Response(
+        JSON.stringify({ error: 'unauthorized', request_id: ctx.requestId }),
+        { status: 401 }
+      );
+    }
+  } catch (error) {
+    ctx.log('error', 'authorization_failed', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return new Response(
+      JSON.stringify({ error: 'authorization_unavailable', request_id: ctx.requestId }),
+      { status: 503 }
+    );
+  }
+
   const now = new Date();
   const threeDaysFromNow = new Date();
   threeDaysFromNow.setDate(now.getDate() + 3);
