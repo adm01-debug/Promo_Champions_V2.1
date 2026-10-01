@@ -17,6 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { formatBRL as __formatBRL } from '@/lib/money';
 export type TrackKey = "operational" | "financial" | "post_sale";
 
 export type OperationalStage =
@@ -90,9 +91,7 @@ export function getStage(key: TrackingStageKey): StageDef | undefined {
   return ALL_STAGES.find((s) => s.key === key);
 }
 
-const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-export const formatBRL = (v: number) => brl.format(v || 0);
-
+export const formatBRL = (v: number) => __formatBRL(v, { decimals: 2 });
 export const formatDateTime = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
 

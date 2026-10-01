@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Clock, Target, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { formatBRL } from '@/lib/money';
 interface BIProjectionCardProps {
   title: string;
   currentValue: number;
@@ -20,7 +21,7 @@ interface BIProjectionCardProps {
 
 const formatValue = (value: number, format: "currency" | "number" = "currency"): string => {
   if (format === "currency") {
-    return `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+    return `${formatBRL(value)}`;
   }
   return value.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
 };
@@ -176,7 +177,7 @@ export const BIComparisonCard: FC<BIComparisonCardProps> = ({
   className
 }) => {
   const formatVal = (v: number) => {
-    if (format === "currency") return `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+    if (format === "currency") return `${formatBRL(v)}`;
     if (format === "percent") return `${v.toFixed(1)}%`;
     return v.toLocaleString("pt-BR");
   };

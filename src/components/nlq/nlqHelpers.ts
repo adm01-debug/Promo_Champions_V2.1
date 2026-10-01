@@ -1,3 +1,4 @@
+import { formatBRL as __formatBRL } from '@/lib/money';
 export interface NLQToolDataset {
   tool: string;
   args: Record<string, unknown>;
@@ -22,8 +23,7 @@ export const SUGGESTED_QUESTIONS = [
 ] as const;
 
 export function formatBRL(value: number): string {
-  if (!Number.isFinite(value)) return "R$ 0,00";
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(value);
+  return __formatBRL(value);
 }
 
 export function formatNumber(value: number): string {

@@ -13,6 +13,7 @@ import { TrendingUp, DollarSign, ShoppingBag, Target, LineChart, Activity } from
 import { useTrendsData } from "@/hooks/useTrendsData";
 import { cn } from "@/lib/utils";
 
+import { formatBRL } from '@/lib/money';
 type MetricKey = "revenue" | "sales" | "conversion";
 
 const METRIC_CONFIG: Record<
@@ -33,7 +34,7 @@ const METRIC_CONFIG: Record<
     glow: "rgba(14, 165, 233, 0.4)",
     accentClass: "text-primary",
     format: (v) =>
-      `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0, notation: v >= 100000 ? "compact" : "standard" })}`,
+      `${formatBRL(v)}`,
   },
   sales: {
     label: "Vendas",

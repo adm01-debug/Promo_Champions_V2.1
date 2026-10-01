@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Crown } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { formatBRL } from '@/lib/money';
 interface TopSeller {
   id: string;
   name: string;
@@ -19,7 +20,7 @@ interface TopSellersRankListProps {
 }
 
 const formatCompact = (value: number) =>
-  `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  `${formatBRL(value)}`;
 
 const rankStyles = [
   "bg-gradient-to-r from-rank-gold/10 to-transparent border border-rank-gold/30",

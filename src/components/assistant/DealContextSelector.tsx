@@ -21,6 +21,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 interface Deal {
   id: string;
   client_name: string;
@@ -183,11 +184,7 @@ export function DealContextSelector({
                     <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <DollarSign className="h-3 w-3" />
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                          minimumFractionDigits: 0,
-                        }).format(deal.amount)}
+                        {formatBRL(deal.amount)}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />

@@ -24,6 +24,7 @@ import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { ChurnRiskDetailDialog } from './ChurnRiskDetailDialog';
 
+import { formatBRL } from '@/lib/money';
 const RISK_VARIANTS: Record<AccountHealth['churn_risk'], string> = {
   low: 'bg-success/15 text-success border-success/30',
   medium: 'bg-warning/15 text-warning border-warning/30',
@@ -37,14 +38,6 @@ const RISK_LABELS: Record<AccountHealth['churn_risk'], string> = {
   high: 'Em Risco',
   critical: 'Crítico',
 };
-
-function formatBRL(value: number) {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 const KPICard = ({
   icon: Icon,

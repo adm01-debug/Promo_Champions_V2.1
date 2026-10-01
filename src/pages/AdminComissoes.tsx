@@ -39,9 +39,7 @@ import { PageTransition, itemVariants } from '@/components/transitions/PageTrans
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n || 0);
-
+import { formatBRL } from '@/lib/money';
 const statusBadge: Record<CommissionStatus, { label: string; className: string }> = {
   pending: {
     label: 'Pendente',
@@ -241,11 +239,11 @@ export default function AdminComissoes() {
                             })}
                           </TableCell>
                           <TableCell className="text-right text-xs">
-                            {formatBRL(c.base_amount)}
+                            {formatBRL(c.base_amount, { decimals: 2 })}
                           </TableCell>
                           <TableCell className="text-right">
                             <span className="font-black italic text-primary">
-                              {formatBRL(c.commission_amount)}
+                              {formatBRL(c.commission_amount, { decimals: 2 })}
                             </span>
                             <span className="text-[9px] text-muted-foreground ml-1">
                               ({c.percentage}%)
@@ -333,7 +331,7 @@ export default function AdminComissoes() {
             </DialogTitle>
             <DialogDescription className="text-xs">
               Vendedor: {selectedCommission?.salespeople?.name} | Valor:{' '}
-              {formatBRL(selectedCommission?.commission_amount ?? 0)}
+              {formatBRL(selectedCommission?.commission_amount ?? 0, { decimals: 2 })}
             </DialogDescription>
           </DialogHeader>
 

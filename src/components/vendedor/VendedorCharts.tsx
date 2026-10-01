@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell,
 } from "recharts";
 
+import { formatBRL } from '@/lib/money';
 const COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))", "hsl(var(--success))", "hsl(var(--warning))"];
 
 interface VendedorChartsProps {
@@ -30,7 +31,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
               <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
               <Tooltip
                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(value: number | string) => [`R$ ${Number(value).toLocaleString("pt-BR")}`, "Vendas"]}
+                formatter={(value: number | string) => [`${formatBRL(Number(value))}`, "Vendas"]}
               />
               <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} fillOpacity={1} fill="url(#colorValue)" />
             </AreaChart>
@@ -52,7 +53,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
               </Pie>
               <Tooltip
                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
-                formatter={(value: number | string) => [`R$ ${Number(value).toLocaleString("pt-BR")}`]}
+                formatter={(value: number | string) => [`${formatBRL(Number(value))}`]}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -66,7 +67,7 @@ export const VendedorCharts = memo(function VendedorCharts({ chartData, category
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                 <span className="capitalize">{cat.name}</span>
               </div>
-              <span className="font-medium">R$ {cat.value.toLocaleString("pt-BR")}</span>
+              <span className="font-medium">{formatBRL(cat.value)}</span>
             </div>
           ))}
         </div>

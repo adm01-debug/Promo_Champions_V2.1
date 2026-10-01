@@ -16,6 +16,7 @@ import {
 import { SDRHandoffContext } from "./SDRHandoffContext";
 import { Button } from "@/components/ui/button";
 
+import { formatBRL } from '@/lib/money';
 export function RecentClosedDeals() {
   const { data: deals } = useRecentClosedDeals();
 
@@ -33,7 +34,7 @@ export function RecentClosedDeals() {
           </CardTitle>
           {deals && deals.length > 0 && (
             <Badge variant="secondary" className="text-[10px] bg-status-success/10 text-status-success shadow-sm">
-              R$ {totalValue.toLocaleString("pt-BR")}
+              {formatBRL(totalValue)}
             </Badge>
           )}
         </div>
@@ -93,7 +94,7 @@ export function RecentClosedDeals() {
                     "text-sm font-display font-bold transition-transform group-hover:scale-105",
                     index === 0 ? "gradient-text" : "text-status-success"
                   )}>
-                    R$ {Number(deal.amount).toLocaleString("pt-BR")}
+                    {formatBRL(Number(deal.amount))}
                   </p>
                   <div className="flex items-center gap-1 justify-end text-[10px] text-muted-foreground">
                     <Clock className="h-2.5 w-2.5" />
@@ -128,7 +129,7 @@ export function RecentClosedDeals() {
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Valor</span>
-                          <span className="text-sm font-bold text-status-success">R$ {Number(deal.amount).toLocaleString("pt-BR")}</span>
+                          <span className="text-sm font-bold text-status-success">{formatBRL(Number(deal.amount))}</span>
                         </div>
                       </div>
                       

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { CommissionBonus, BonusType } from './useCommissionBonuses';
 
+import { formatBRL } from '@/lib/money';
 export interface EligibleBonus extends CommissionBonus {
   reason: string;
   progress: number; // 0..1
@@ -18,11 +19,7 @@ interface EvaluationContext {
 }
 
 const BRL0 = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
+  formatBRL(n);
 
 /**
  * Pure evaluator — no I/O. Testable in isolation.

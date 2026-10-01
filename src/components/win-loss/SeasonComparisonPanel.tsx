@@ -5,12 +5,10 @@ import { useSeasonComparison } from "@/hooks/win-loss/useSeasonComparison";
 import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
 import { cn } from "@/lib/utils";
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   rows: WLAnalysisRow[];
 }
-
-const fmtBRL = (n: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
 
 const Delta = ({ value, suffix = "", invert = false }: { value: number; suffix?: string; invert?: boolean }) => {
   const positive = invert ? value < 0 : value > 0;
@@ -52,7 +50,7 @@ export const SeasonComparisonPanel = memo(function SeasonComparisonPanel({ rows 
           </div>
           <div className="space-y-0.5">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Receita</p>
-            <p className="text-lg font-semibold tabular-nums">{fmtBRL(current.totalAmount)}</p>
+            <p className="text-lg font-semibold tabular-nums">{formatBRL(current.totalAmount)}</p>
             <Delta value={(deltas.totalAmount / Math.max(1, previous.totalAmount)) * 100} suffix="%" />
           </div>
           <div className="space-y-0.5">

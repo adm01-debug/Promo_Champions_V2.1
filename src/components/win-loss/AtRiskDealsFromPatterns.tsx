@@ -16,9 +16,7 @@ import { RiskDebugPanel } from "./RiskDebugPanel";
 import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
 import { RiskCompareModal } from "./RiskCompareModal";
 
-const fmtBRL = (n: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
-
+import { formatBRL } from '@/lib/money';
 const tone = (score: number) =>
   score >= 75 ? "border-destructive/40 bg-destructive/10 text-destructive" :
   score >= 50 ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400" :
@@ -290,7 +288,7 @@ export function AtRiskDealsFromPatterns() {
                     <p className="text-[11px] opacity-75 truncate pr-2" title={d.suggested_action}>
                       {d.suggested_action}
                     </p>
-                    <span className="text-[11px] tabular-nums font-medium shrink-0">{fmtBRL(d.amount)}</span>
+                    <span className="text-[11px] tabular-nums font-medium shrink-0">{formatBRL(d.amount)}</span>
                   </div>
                   {debug && d.breakdown && (
                     <RiskDebugPanel
@@ -354,7 +352,7 @@ export function AtRiskDealsFromPatterns() {
                       </p>
                       {p && (
                         <p className="mt-0.5 opacity-60 tabular-nums text-[10px]">
-                          ticket-alvo {fmtBRL(p.avg_amount ?? 0)} · ciclo {(p.avg_cycle_days ?? 0)}d · conf {Math.round((p.confidence ?? 0) * 100)}%
+                          ticket-alvo {formatBRL(p.avg_amount ?? 0)} · ciclo {(p.avg_cycle_days ?? 0)}d · conf {Math.round((p.confidence ?? 0) * 100)}%
                         </p>
                       )}
                     </li>

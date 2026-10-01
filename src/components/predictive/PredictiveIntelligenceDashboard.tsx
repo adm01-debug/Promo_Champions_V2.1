@@ -17,9 +17,7 @@ import { LeadScoreExplainCard } from "@/components/lead-scoring/LeadScoreExplain
 import { cn } from "@/lib/utils";
 import { PredictiveScenarioPlanner } from "./PredictiveScenarioPlanner";
 
-const formatBRL = (v: number) =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
-
+import { formatBRL } from '@/lib/money';
 export function PredictiveIntelligenceDashboard() {
   const [horizon, setHorizon] = useState(90);
   const { data, isLoading, isFetching, refetch } = usePredictiveIntelligence({ horizonDays: horizon });

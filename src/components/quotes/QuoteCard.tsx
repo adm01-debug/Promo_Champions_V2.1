@@ -11,6 +11,7 @@ import { QUOTE_STATUSES, type Quote } from "@/hooks/useQuotes";
 import { differenceInDays } from "date-fns";
 import { EnrollQuoteCadenceDialog } from "@/components/cadences/quote/EnrollQuoteCadenceDialog";
 
+import { formatBRL } from '@/lib/money';
 interface QuoteCardProps {
   quote: Quote;
   onView: (quote: Quote) => void;
@@ -48,7 +49,7 @@ export const QuoteCard = React.memo(function QuoteCard({ quote, onView, onUpdate
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>{quote.client_name}</span>
-            <span className="font-semibold text-foreground">{Number(quote.total_value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+            <span className="font-semibold text-foreground">{formatBRL(Number(quote.total_value), { decimals: 2 })}</span>
             {quote.external_reference && <span className="flex items-center gap-1 text-xs"><Link2 className="h-3 w-3" />{quote.external_reference}</span>}
             {quote.valid_until && <span className="text-xs">Validade: {format(new Date(quote.valid_until), "dd/MM/yyyy")}</span>}
           </div>

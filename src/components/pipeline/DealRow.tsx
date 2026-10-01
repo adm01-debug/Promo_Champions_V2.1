@@ -5,6 +5,7 @@ import { Flame, Clock, Activity, ChevronDown, Sparkles, Lightbulb } from "lucide
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AtRiskDeal } from "@/hooks/deal-intelligence/useAtRiskDeals";
 
+import { formatBRL } from '@/lib/money';
 const RISK_COLORS = {
   critical: "bg-status-error/20 text-status-error border-status-error/30",
   high: "bg-status-warning/20 text-status-warning border-status-warning/30",
@@ -13,9 +14,6 @@ const RISK_COLORS = {
 };
 
 const RISK_LABELS = { critical: "Crítico", high: "Alto", medium: "Médio", low: "Baixo" };
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
 interface DealRowProps {
   deal: AtRiskDeal;
@@ -57,7 +55,7 @@ export const DealRow = React.memo(function DealRow({ deal, onAnalyze, isAnalyzin
         <div className="flex items-center gap-4">
           <TooltipProvider><Tooltip><TooltipTrigger><div className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-110"><Clock className="h-4 w-4" /><span className="text-xs font-medium">{Math.floor(deal.hoursSinceLastActivity / 24)}d</span></div></TooltipTrigger><TooltipContent className="glass border-border/50 shadow-lg">{deal.hoursSinceLastActivity} horas sem atividade</TooltipContent></Tooltip></TooltipProvider>
           <TooltipProvider><Tooltip><TooltipTrigger><div className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-110"><Activity className="h-4 w-4" /><span className="text-xs font-medium">{deal.activityCount}</span></div></TooltipTrigger><TooltipContent className="glass border-border/50 shadow-lg">{deal.activityCount} atividades registradas</TooltipContent></Tooltip></TooltipProvider>
-          <span className="font-display font-bold text-sm min-w-[100px] text-right gradient-text">{formatCurrency(deal.amount)}</span>
+          <span className="font-display font-bold text-sm min-w-[100px] text-right gradient-text">{formatBRL(deal.amount, { decimals: 2 })}</span>
           <div className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}><ChevronDown className="h-4 w-4 text-muted-foreground group-hover/deal:text-primary transition-colors" /></div>
         </div>
       </div>
@@ -109,4 +107,5 @@ export const DealRow = React.memo(function DealRow({ deal, onAnalyze, isAnalyzin
   );
 });
 
-export { RISK_COLORS, RISK_LABELS, formatCurrency };
+export const formatCurrency = (value: number) => formatBRL(value, { decimals: 2 });
+export { RISK_COLORS, RISK_LABELS };

@@ -14,6 +14,7 @@ import { TeamLeaderboard } from './TeamLeaderboard';
 import { MyRivalCard } from './MyRivalCard';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   entries: RaceLeaderboardEntry[];
   goalAmount: number;
@@ -25,7 +26,7 @@ interface Props {
 }
 
 function fmt(n: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
+  return formatBRL(n);
 }
 
 export function RaceLeaderboardSidebar({

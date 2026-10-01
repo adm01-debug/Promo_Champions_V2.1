@@ -5,9 +5,7 @@ import { AlertTriangle, BarChart3, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const formatCurrency = (val: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(val);
-
+import { formatBRL } from '@/lib/money';
 interface ForecastDeal {
   id: string;
   client_name: string;
@@ -43,8 +41,8 @@ export const ForecastTopDeals = React.memo(function ForecastTopDeals({ deals }: 
                   <p className="text-xs text-muted-foreground truncate">{deal.product_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold">{formatCurrency(deal.weighted_value)}</p>
-                  <p className="text-[10px] text-muted-foreground">{formatCurrency(deal.amount)} × {Math.round(deal.probability * 100)}%</p>
+                  <p className="text-sm font-semibold">{formatBRL(deal.weighted_value)}</p>
+                  <p className="text-[10px] text-muted-foreground">{formatBRL(deal.amount)} × {Math.round(deal.probability * 100)}%</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <Badge variant="outline" className="text-[10px] h-4">{deal.days_in_stage}d</Badge>

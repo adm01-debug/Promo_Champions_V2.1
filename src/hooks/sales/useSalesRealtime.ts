@@ -10,6 +10,7 @@ import { useCelebration } from '@/hooks/useCelebration';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { triggerConfetti, awardSaleXP, getRankTitle } from '../salesRealtimeUtils';
 
+import { formatBRL } from '@/lib/money';
 export { getRankTitle };
 
 type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
@@ -101,10 +102,7 @@ export function useSalesRealtime(
             return;
           }
 
-          const formattedAmount = new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(newSale.amount);
+          const formattedAmount = formatBRL(newSale.amount, { decimals: 2 });
 
           playSound();
           playSoundForCategory('newSale');

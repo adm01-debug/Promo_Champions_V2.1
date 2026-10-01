@@ -6,6 +6,7 @@ import { LucideIcon, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 
+import { formatBRL } from '@/lib/money';
 interface ComparisonData {
   previousPeriod?: { value: number; label: string };
   lastYear?: { value: number; label: string };
@@ -28,7 +29,7 @@ interface BIMetricCardProps {
 const formatValue = (value: number, format: "currency" | "percent" | "number" = "number"): string => {
   switch (format) {
     case "currency":
-      return `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+      return `${formatBRL(value)}`;
     case "percent":
       return `${value.toFixed(1)}%`;
     default:

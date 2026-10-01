@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
 import { BarChart3 } from "lucide-react";
 
+import { formatBRL } from '@/lib/money';
 interface PortfolioValueChartProps {
   portfolio: Array<{
     salesperson_id: string;
@@ -75,7 +76,7 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
             />
             <Tooltip
               formatter={(v: number | string) => [
-                `R$ ${Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+                `${formatBRL(Number(v))}`,
                 "Valor Total",
               ]}
               contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}

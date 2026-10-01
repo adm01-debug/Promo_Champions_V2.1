@@ -10,11 +10,12 @@ import {
 import { SentimentDistributionCard } from "@/components/conversation-intelligence/SentimentDistributionCard";
 import { ObjectionsTrendChart } from "@/components/conversation-intelligence/ObjectionsTrendChart";
 
+import { formatBRL } from '@/lib/money';
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
 const STAGE_LABELS: Record<string, string> = { pending: "Lead", qualified: "Qualificado", proposal: "Proposta", negotiation: "Negociação" };
 
 function formatCurrency(value: number) {
-  return `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  return `${formatBRL(value)}`;
 }
 
 interface BIVendedorChartsProps {

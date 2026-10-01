@@ -1,3 +1,4 @@
+import { formatBRL as __formatBRL } from '@/lib/money';
 /**
  * Helpers para markup (margem sobre custo).
  *
@@ -94,10 +95,7 @@ export function formatMarkupPct(value: number | null | undefined): string {
 
 export function formatBRL(value: number | null | undefined): string {
   if (value === null || value === undefined || Number.isNaN(value)) return '—';
-  return value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  return __formatBRL(value, { decimals: 2 });
 }
 
 export const COST_SOURCE_LABELS: Record<string, string> = {

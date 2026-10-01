@@ -6,6 +6,7 @@ import { Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 interface ROIEntry {
   id: string;
   name: string;
@@ -20,13 +21,6 @@ interface ROIEntry {
   roi: number;
   revenuePerActivity: number;
 }
-
-const formatCurrency = (v: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(v);
 
 const formatPercent = (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
 
@@ -87,7 +81,7 @@ export const ROIRankingList = React.memo(function ROIRankingList({
                     </Badge>
                   </div>
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                    <span>{formatCurrency(sp.totalRevenue)} receita</span>
+                    <span>{formatBRL(sp.totalRevenue)} receita</span>
                     <span>{sp.wonDeals} vendas</span>
                     <span>{sp.activitiesCount} atividades</span>
                   </div>
@@ -95,11 +89,11 @@ export const ROIRankingList = React.memo(function ROIRankingList({
                 <div className="hidden md:flex items-center gap-6 shrink-0 text-sm">
                   <div className="text-center">
                     <p className="text-muted-foreground text-xs">CAC</p>
-                    <p className="font-semibold">{formatCurrency(sp.cac)}</p>
+                    <p className="font-semibold">{formatBRL(sp.cac)}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-muted-foreground text-xs">LTV</p>
-                    <p className="font-semibold">{formatCurrency(sp.ltv)}</p>
+                    <p className="font-semibold">{formatBRL(sp.ltv)}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-muted-foreground text-xs">Payback</p>
@@ -130,8 +124,8 @@ export const ROIRankingList = React.memo(function ROIRankingList({
                   className="h-1.5"
                 />
                 <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
-                  <span>Custo: {formatCurrency(sp.estimatedCost)}</span>
-                  <span>Receita: {formatCurrency(sp.totalRevenue)}</span>
+                  <span>Custo: {formatBRL(sp.estimatedCost)}</span>
+                  <span>Receita: {formatBRL(sp.totalRevenue)}</span>
                 </div>
               </div>
             </CardContent>

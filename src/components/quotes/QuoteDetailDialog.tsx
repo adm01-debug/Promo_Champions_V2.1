@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { generateQuotePDF } from "@/lib/quotePdfExporter";
 
 
+import { formatBRL } from '@/lib/money';
 interface QuoteDetailDialogProps {
   quote: Quote | null;
   open: boolean;
@@ -193,10 +194,10 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                         </td>
                         <td className="p-3 text-right font-medium">{item.quantity}</td>
                         <td className="p-3 text-right">
-                          {item.unit_price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {formatBRL(item.unit_price, { decimals: 2 })}
                         </td>
                         <td className="p-3 text-right font-semibold">
-                          {item.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {formatBRL(item.subtotal, { decimals: 2 })}
                         </td>
                       </tr>
                     ))}
@@ -213,18 +214,18 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
             <>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal produtos:</span>
-                <span>{productSubtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                <span>{formatBRL(productSubtotal, { decimals: 2 })}</span>
               </div>
               {personalizationTotal > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Personalização:</span>
-                  <span>{personalizationTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span>{formatBRL(personalizationTotal, { decimals: 2 })}</span>
                 </div>
               )}
               {discountAmount > 0 && (
                 <div className="flex justify-between text-destructive">
                   <span>Desconto ({discountPercent}%):</span>
-                  <span>-{discountAmount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span>-{formatBRL(discountAmount, { decimals: 2 })}</span>
                 </div>
               )}
               <Separator className="my-2" />
@@ -233,7 +234,7 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
           <div className="flex justify-between font-bold text-base">
             <span>Total:</span>
             <span className="text-primary">
-              {Number(quote.total_value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+              {formatBRL(Number(quote.total_value), { decimals: 2 })}
             </span>
           </div>
         </Card>

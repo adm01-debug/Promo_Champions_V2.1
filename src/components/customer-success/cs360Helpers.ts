@@ -1,6 +1,4 @@
-export function formatBRL(value: number): string {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(value);
-}
+export { formatBRL } from '@/lib/money';
 
 export function daysUntil(date: string | null): number | null {
   if (!date) return null;

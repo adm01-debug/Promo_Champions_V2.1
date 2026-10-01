@@ -5,12 +5,9 @@ import { Progress } from "@/components/ui/progress";
 import { Trophy, Target, Crown, ArrowUp, ArrowDown, Minus } from "lucide-react";
 import { SalespersonPerformance } from "@/hooks/usePerformanceComparison";
 
+import { formatBRL } from '@/lib/money';
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 0,
-  }).format(value);
+  return formatBRL(value);
 }
 
 function ComparisonIndicator({ value, avg }: { value: number; avg: number }) {

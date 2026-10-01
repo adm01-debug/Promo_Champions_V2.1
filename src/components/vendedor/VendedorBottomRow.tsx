@@ -4,6 +4,7 @@ import { Clock, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { differenceInDays, parseISO } from 'date-fns';
 
+import { formatBRL } from '@/lib/money';
 interface Sale {
   id: string;
   client_name: string;
@@ -41,7 +42,7 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
                   <p className="text-sm text-muted-foreground">{deal.product_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">R$ {Number(deal.amount).toLocaleString('pt-BR')}</p>
+                  <p className="font-bold">{formatBRL(Number(deal.amount))}</p>
                   <span
                     className={cn(
                       'text-xs px-2 py-0.5 rounded-full',
@@ -85,7 +86,7 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
                     <p className="text-sm text-muted-foreground">{task.product_name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold">R$ {Number(task.amount).toLocaleString('pt-BR')}</p>
+                    <p className="font-bold">{formatBRL(Number(task.amount))}</p>
                     <p className="text-xs text-warning">{daysSince} dias parado</p>
                   </div>
                 </div>

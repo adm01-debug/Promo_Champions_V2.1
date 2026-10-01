@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { DollarSign, TrendingUp, Users } from 'lucide-react';
 
+import { formatBRL } from '@/lib/money';
 interface SegmentLTV {
   segment: string;
   avgLTV: number;
@@ -144,8 +145,8 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                     {currentClientLTV >= avgSegmentLTV ? "+" : ""}{(((currentClientLTV / avgSegmentLTV) - 1) * 100).toFixed(1)}%
                   </Badge>
                 </div>
-                <div className="text-xl font-black">R$ {currentClientLTV.toLocaleString('pt-BR')}</div>
-                <div className="text-[9px] text-muted-foreground">Média do Segmento: R$ {avgSegmentLTV.toLocaleString('pt-BR')}</div>
+                <div className="text-xl font-black">{formatBRL(currentClientLTV)}</div>
+                <div className="text-[9px] text-muted-foreground">Média do Segmento: {formatBRL(avgSegmentLTV)}</div>
               </div>
               
               <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/20 space-y-2">
@@ -153,7 +154,7 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                   <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Ticket Médio</span>
                   <Badge variant="outline" className="h-4 text-[9px] border-primary/20 text-primary">BENCHMARK</Badge>
                 </div>
-                <div className="text-xl font-black">R$ {currentClientAvgTicket.toLocaleString('pt-BR')}</div>
+                <div className="text-xl font-black">{formatBRL(currentClientAvgTicket)}</div>
                 <div className="text-[9px] text-muted-foreground">Potencial: +R$ 450,00</div>
               </div>
             </div>
@@ -180,7 +181,7 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                     axisLine={false}
                   />
                   <Tooltip
-                    formatter={(value: number | string) => [`R$ ${Number(value).toLocaleString('pt-BR')}`, 'LTV Médio']}
+                    formatter={(value: number | string) => [`${formatBRL(Number(value))}`, 'LTV Médio']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
@@ -210,7 +211,7 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                   </div>
                   <div className="flex items-baseline gap-1">
                     <span className="text-lg font-bold">
-                      R$ {seg.avgLTV.toLocaleString('pt-BR')}
+                      {formatBRL(seg.avgLTV)}
                     </span>
                     <span className="text-[10px] text-muted-foreground">LTV médio</span>
                   </div>

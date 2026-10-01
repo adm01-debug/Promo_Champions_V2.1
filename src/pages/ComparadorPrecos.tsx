@@ -13,9 +13,7 @@ import { PriceAlertsPanel } from "@/components/comparador/PriceAlertsPanel";
 import { PriceHistoryTable } from "@/components/comparador/PriceHistoryTable";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
-
+import { formatBRL } from '@/lib/money';
 export default function ComparadorPrecos() {
   const { supplierProducts, productsLoading, getPriceComparison, getBestSupplier } = useSuppliers();
   const { data: productsData } = useProducts();
@@ -64,7 +62,7 @@ export default function ComparadorPrecos() {
             </Button>
           </div>
 
-          {showAlerts && <PriceAlertsPanel alerts={alerts as never[]} unreadCount={unreadCount} onMarkAllRead={() => markAllAsRead.mutate()} formatCurrency={formatCurrency} />}
+          {showAlerts && <PriceAlertsPanel alerts={alerts as never[]} unreadCount={unreadCount} onMarkAllRead={() => markAllAsRead.mutate()} formatCurrency={(v: number) => formatBRL(v, { decimals: 2 })} />}
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -93,7 +91,7 @@ export default function ComparadorPrecos() {
                           <h3 className="text-section-title">{product.name}</h3>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>{comparison.length} fornecedores</span>
-                            {priceRange && (<><span>•</span><span>{formatCurrency(priceRange.min)} - {formatCurrency(priceRange.max)}</span></>)}
+                            {priceRange && (<><span>•</span><span>{formatBRL(priceRange.min, { decimals: 2 })} - {formatBRL(priceRange.max, { decimals: 2 })}</span></>)}
                           </div>
                         </div>
                         {parseFloat(String(savings)) > 0 && (
@@ -115,7 +113,7 @@ export default function ComparadorPrecos() {
                           {comparison.map((sp, index: number) => (
                             <TableRow key={sp.id} className={best?.id === sp.id ? "bg-status-success/10" : ""}>
                               <TableCell className="font-medium">{sp.suppliers?.name}{sp.is_preferred && <Badge variant="outline" className="ml-2">Preferido</Badge>}</TableCell>
-                              <TableCell className="text-right font-mono">{formatCurrency(sp.unit_price)}{index === 0 && comparison.length > 1 && <Badge className="ml-2 bg-status-success text-xs">Menor</Badge>}</TableCell>
+                              <TableCell className="text-right font-mono">{formatBRL(sp.unit_price, { decimals: 2 })}{index === 0 && comparison.length > 1 && <Badge className="ml-2 bg-status-success text-xs">Menor</Badge>}</TableCell>
                               <TableCell className="text-center">{sp.min_order_quantity} un</TableCell>
                               <TableCell className="text-center">{sp.suppliers?.lead_time_days || "-"} dias</TableCell>
                               <TableCell className="text-center">{Math.round((sp.suppliers?.reliability_score || 0) * 100)}%</TableCell>
@@ -137,7 +135,7 @@ export default function ComparadorPrecos() {
             </CardContent>
           </Card>
 
-          <PriceHistoryTable priceHistory={priceHistory || []} formatCurrency={formatCurrency} />
+          <PriceHistoryTable priceHistory={priceHistory || []} formatCurrency={(v: number) => formatBRL(v, { decimals: 2 })} />
         </div>
       </div>
     </>

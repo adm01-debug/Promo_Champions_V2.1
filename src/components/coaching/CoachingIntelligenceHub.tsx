@@ -15,6 +15,7 @@ import { SkillGapAnalyzerPanel } from "./skills/SkillGapAnalyzerPanel";
 import { CoachingSessionPlanner } from "./sessions/CoachingSessionPlanner";
 import { CoachingImpactTracker } from "./impact/CoachingImpactTracker";
 
+import { formatBRL } from '@/lib/money';
 const PRIORITY_STYLES: Record<CoachingTarget["priority"], { border: string; badge: "destructive" | "default" | "secondary"; label: string; icon: typeof AlertTriangle }> = {
   critical: { border: "border-l-4 border-l-destructive", badge: "destructive", label: "Crítico", icon: AlertTriangle },
   warning: { border: "border-l-4 border-l-warning", badge: "default", label: "Atenção", icon: TrendingUp },
@@ -168,7 +169,7 @@ export function CoachingIntelligenceHub() {
                               </div>
                               <div className="space-y-0.5">
                                 <p className="text-muted-foreground">Ticket médio</p>
-                                <p className="font-semibold">R$ {t.avg_deal_size.toLocaleString("pt-BR")}</p>
+                                <p className="font-semibold">{formatBRL(t.avg_deal_size)}</p>
                               </div>
                             </div>
 

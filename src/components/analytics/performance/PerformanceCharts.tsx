@@ -6,11 +6,12 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, Cell,
 } from "recharts";
 
+import { formatBRL } from '@/lib/money';
 const ROLE_LABELS: Record<string, string> = { sdr: "SDRs", closer: "Closers", hybrid: "Híbridos" };
 const ROLE_COLORS: Record<string, string> = { sdr: "hsl(var(--status-info))", closer: "hsl(var(--status-success))", hybrid: "hsl(var(--status-purple))" };
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 }).format(value);
+  return formatBRL(value);
 }
 
 interface Benchmark {

@@ -3,6 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { TrendingUp, TrendingDown, Target, Calendar, Zap, Trophy, Flame, Rocket, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+import { formatBRL } from '@/lib/money';
 interface TeamGoalProgressProps {
   totalGoal: number;
   totalSales: number;
@@ -28,9 +29,6 @@ export function TeamGoalProgress({
   requiredDailyAverage,
   predictedAttainment,
 }: TeamGoalProgressProps) {
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
-
   const progressCapped = Math.min(progress, 100);
   const projectionProgress = totalGoal > 0 ? (projection / totalGoal) * 100 : 0;
   
@@ -81,11 +79,11 @@ export function TeamGoalProgress({
           <div className="flex items-end justify-between">
             <div className="relative group/price">
               <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter gradient-text drop-shadow-sm group-hover/price:scale-105 transition-transform duration-300">
-                {formatCurrency(totalSales)}
+                {formatBRL(totalSales)}
               </p>
               <div className="flex items-center gap-3 mt-1 px-3 py-1 rounded-full bg-muted/20 border border-border/10 w-fit">
                 <span className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground/60 italic">Budget Alvo</span>
-                <span className="text-xs font-black text-foreground tracking-tight drop-shadow-sm">{formatCurrency(totalGoal)}</span>
+                <span className="text-xs font-black text-foreground tracking-tight drop-shadow-sm">{formatBRL(totalGoal)}</span>
               </div>
             </div>
             <div className="text-right">
@@ -120,7 +118,7 @@ export function TeamGoalProgress({
             <div 
               className="absolute top-[26px] bottom-0 w-1 bg-primary/40 z-10 animate-pulse"
               style={{ left: `${idealProgress}%` }}
-              title={`Tendência Ideal: ${formatCurrency(idealSales)}`}
+              title={`Tendência Ideal: ${formatBRL(idealSales)}`}
             >
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary))]" />
             </div>
@@ -138,9 +136,9 @@ export function TeamGoalProgress({
               <span className="text-[10px] text-muted-foreground uppercase font-bold">Status vs Tendência</span>
               <span className={`text-sm font-bold flex items-center gap-1 ${isAheadOfIdeal ? "text-status-success" : "text-status-warning"}`}>
                 {isAheadOfIdeal ? (
-                  <><TrendingUp className="h-3 w-3" /> +{formatCurrency(salesGap)}</>
+                  <><TrendingUp className="h-3 w-3" /> +{formatBRL(salesGap)}</>
                 ) : (
-                  <><TrendingDown className="h-3 w-3" /> {formatCurrency(salesGap)}</>
+                  <><TrendingDown className="h-3 w-3" /> {formatBRL(salesGap)}</>
                 )}
               </span>
             </div>
@@ -173,7 +171,7 @@ export function TeamGoalProgress({
             </div>
             <div className="text-right">
               <span className={`text-3xl font-display font-black tracking-tighter italic ${onTrack ? "text-status-success drop-shadow-[0_0_10px_rgba(var(--status-success),0.2)]" : "text-status-warning"}`}>
-                {formatCurrency(projection)}
+                {formatBRL(projection)}
               </span>
             </div>
           </div>
@@ -208,7 +206,7 @@ export function TeamGoalProgress({
           }`}>
             {onTrack 
               ? `🏆 PERFORMANCE ELITE! Forecast de ${(projectionProgress - 100).toFixed(1)}% acima do teto.`
-              : `🚨 ALERTA DE RISCO! Necessário recuperar ${formatCurrency(totalGoal - projection)} no forecast.`
+              : `🚨 ALERTA DE RISCO! Necessário recuperar ${formatBRL(totalGoal - projection)} no forecast.`
             }
           </div>
         </div>
@@ -223,7 +221,7 @@ export function TeamGoalProgress({
             <div className="p-2.5 rounded-xl bg-primary/10 w-fit mx-auto mb-3 group-hover:scale-110 group-hover:-rotate-6 transition-all relative z-10 shadow-sm">
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
-            <p className="text-2xl font-display font-black tracking-tighter gradient-text italic relative z-10 leading-none mb-1">{formatCurrency(dailyAverage)}</p>
+            <p className="text-2xl font-display font-black tracking-tighter gradient-text italic relative z-10 leading-none mb-1">{formatBRL(dailyAverage)}</p>
             <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mt-2 relative z-10">Ritmo Atual / Dia</p>
           </div>
           <div 
@@ -237,7 +235,7 @@ export function TeamGoalProgress({
               <Target className={`h-4 w-4 ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`} />
             </div>
             <p className={`text-2xl font-display font-black tracking-tighter italic relative z-10 leading-none mb-1 ${requiredDailyAverage > dailyAverage ? "text-status-warning" : "text-status-success"}`}>
-              {formatCurrency(requiredDailyAverage)}
+              {formatBRL(requiredDailyAverage)}
             </p>
             <p className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/80 mt-2 relative z-10">Strike Rate Alvo</p>
           </div>

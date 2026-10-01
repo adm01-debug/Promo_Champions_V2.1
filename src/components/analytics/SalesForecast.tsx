@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, AlertTriangle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { formatBRL, formatBRLCompact } from '@/lib/money';
 interface SalesForecastProps {
   period?: 'week' | 'month' | 'quarter';
 }
@@ -132,7 +133,7 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
             <div className="p-3 rounded-lg bg-muted/50 text-center">
               <p className="text-xs text-muted-foreground">Receita Prevista</p>
               <p className="text-lg font-bold">
-                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: 'compact' }).format(summary.totalRevenue)}
+                {formatBRLCompact(summary.totalRevenue)}
               </p>
             </div>
             <div className="p-3 rounded-lg bg-muted/50 text-center">
@@ -170,7 +171,7 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Previsão: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(forecast.predicted_revenue)}
+                    Previsão: {formatBRL(forecast.predicted_revenue, { decimals: 2 })}
                     {' · '}
                     Qtd: {forecast.predicted_quantity}
                   </p>

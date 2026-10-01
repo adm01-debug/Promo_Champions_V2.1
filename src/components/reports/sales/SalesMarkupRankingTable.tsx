@@ -8,12 +8,13 @@ import { classifyMarkup, formatMarkupPct } from "@/lib/markupHelpers";
 import { useMarkupMinSamplePreference } from "@/hooks/reports/useMarkupMinSamplePreference";
 import type { MarkupRankingRow } from "@/hooks/reports/salesReportHelpers";
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   data: MarkupRankingRow[];
 }
 
 const currency = (v: number): string =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+  formatBRL(v);
 
 /**
  * Ranking de rentabilidade (markup médio) por vendedor.

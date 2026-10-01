@@ -1,3 +1,4 @@
+import { formatBRL } from '@/lib/money';
 /**
  * Helpers for FunnelReportView — pure functions, easily testable.
  */
@@ -42,11 +43,7 @@ export const formatDelta = (n: number, type: "pct" | "abs" | "currency" = "abs")
   const sign = n > 0 ? "+" : "";
   if (type === "pct") return `${sign}${n.toFixed(1)}%`;
   if (type === "currency") {
-    return `${sign}${new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      maximumFractionDigits: 0,
-    }).format(n)}`;
+    return `${sign}${formatBRL(n)}`;
   }
   return `${sign}${n.toLocaleString("pt-BR")}`;
 };

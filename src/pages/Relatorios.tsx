@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { ReportCharts } from "@/components/reports/ReportCharts";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
+import { formatBRL } from '@/lib/money';
 type DateRange = { from: Date | undefined; to: Date | undefined };
 
 const reportsData = [
@@ -35,10 +36,10 @@ const Relatorios = () => {
   };
 
   const metricsData = [
-    { title: "Receita Total", value: `R$ ${metrics.totalRevenue.toLocaleString("pt-BR")}`, change: metrics.revenueChange, icon: DollarSign, positive: metrics.revenueChange > 0 },
+    { title: "Receita Total", value: `${formatBRL(metrics.totalRevenue)}`, change: metrics.revenueChange, icon: DollarSign, positive: metrics.revenueChange > 0 },
     { title: "Novos Clientes", value: metrics.newClients.toString(), change: metrics.clientsChange, icon: Users, positive: metrics.clientsChange > 0 },
     { title: "Taxa de Conversão", value: `${metrics.conversionRate.toFixed(1)}%`, change: metrics.conversionChange, icon: metrics.conversionChange >= 0 ? TrendingUp : TrendingDown, positive: metrics.conversionChange >= 0 },
-    { title: "Ticket Médio", value: `R$ ${metrics.avgTicket.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`, change: metrics.ticketChange, icon: TrendingUp, positive: metrics.ticketChange > 0 },
+    { title: "Ticket Médio", value: `${formatBRL(metrics.avgTicket)}`, change: metrics.ticketChange, icon: TrendingUp, positive: metrics.ticketChange > 0 },
   ];
 
   return (

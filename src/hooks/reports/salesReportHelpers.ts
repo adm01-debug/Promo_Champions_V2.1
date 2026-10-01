@@ -9,6 +9,7 @@ import {
 import { isWonSaleStatus } from '@/constants';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL as __formatBRL } from '@/lib/money';
 export type ReportPeriod = 'weekly' | 'monthly';
 
 export interface SaleRow {
@@ -289,13 +290,7 @@ export function buildTopDeals(
     }));
 }
 
-export const formatBRL = (value: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(value);
-
+export const formatBRL = (value: number) => __formatBRL(value);
 /**
  * Série temporal do markup médio (apenas vendas ganhas com custo conhecido).
  * Buckets diários (semanal) ou semanais (mensal), espelhando buildRevenueSeries.

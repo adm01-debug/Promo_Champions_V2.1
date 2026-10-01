@@ -29,6 +29,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 const STAGE_PROBABILITIES: Record<string, number> = {
   pending: 0.1,
   lead: 0.05,
@@ -211,7 +212,7 @@ export const RevenueForecast: FC = () => {
     );
   }
 
-  const fmt = (v: number | string) => `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+  const fmt = (v: number | string) => `${formatBRL(Number(v))}`;
 
   return (
     <div className="space-y-4">

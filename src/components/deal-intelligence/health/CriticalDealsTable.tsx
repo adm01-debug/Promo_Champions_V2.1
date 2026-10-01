@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import type { HealthTier } from "@/hooks/deal-intelligence/useDealHealth";
 import { DealHealthScoreBadge } from "../DealHealthScoreBadge";
 
+import { formatBRL } from '@/lib/money';
 interface Row {
   id: string;
   sale_id: string;
@@ -29,11 +30,6 @@ type SortKey = "health_score" | "amount" | "days_in_stage";
 interface Props {
   rows: Row[];
 }
-
-const fmtBRL = (v: number | null | undefined) =>
-  typeof v === "number"
-    ? v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })
-    : "—";
 
 export const CriticalDealsTable: FC<Props> = ({ rows }) => {
   const [search, setSearch] = useState("");
@@ -132,7 +128,7 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
                     <TableCell>
                       <DealHealthScoreBadge score={r.health_score} tier={r.tier} />
                     </TableCell>
-                    <TableCell className="text-sm tabular-nums">{fmtBRL(r.sales?.amount)}</TableCell>
+                    <TableCell className="text-sm tabular-nums">{formatBRL(r.sales?.amount)}</TableCell>
                     <TableCell className="text-sm tabular-nums">{r.days_in_stage ?? 0}d</TableCell>
                     <TableCell className="hidden md:table-cell text-xs text-muted-foreground italic max-w-[280px] truncate">
                       {r.ai_recommendation || "—"}

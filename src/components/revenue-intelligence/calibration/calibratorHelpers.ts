@@ -1,3 +1,4 @@
+import { formatBRL } from '@/lib/money';
 export const FLAG_LABEL: Record<string, string> = {
   overconfident: "Super-otimista",
   underconfident: "Subestimado",
@@ -25,5 +26,5 @@ export function formatPct(v: number, digits = 1): string {
 }
 
 export function formatCurrency(v: number | null | undefined): string {
-  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(v ?? 0);
+  return formatBRL(v ?? 0);
 }

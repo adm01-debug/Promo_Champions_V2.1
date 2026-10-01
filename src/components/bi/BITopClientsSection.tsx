@@ -6,9 +6,7 @@ import { Trophy, Package, Building, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useBITopClients, TopClientData, SupplierSalesData, TopCompanyData } from "@/hooks/bi/useBITopClients";
 
-const formatCurrency = (value: number) =>
-  `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
-
+import { formatBRL } from '@/lib/money';
 const _RANK_COLORS = [
   "bg-rank-gold",
   "bg-rank-silver", 
@@ -65,7 +63,7 @@ const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({ cl
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
-                  <span className="font-bold text-sm">{formatCurrency(client.totalValue)}</span>
+                  <span className="font-bold text-sm">{formatBRL(client.totalValue)}</span>
                   <span className="text-xs text-muted-foreground">({client.ordersCount} ped.)</span>
                 </div>
               </div>
@@ -114,7 +112,7 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-sm truncate flex-1">{supplier.supplierName}</span>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
-                  <span className="font-bold text-sm">{formatCurrency(supplier.totalValue)}</span>
+                  <span className="font-bold text-sm">{formatBRL(supplier.totalValue)}</span>
                   <span className="text-xs text-muted-foreground">
                     {supplier.productsCount} prod. · {supplier.itemsCount} itens
                   </span>
@@ -165,7 +163,7 @@ const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = 
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-sm truncate flex-1">{company.company}</span>
                 <span className="text-xs text-muted-foreground shrink-0 ml-2">
-                  {company.ordersCount} pedidos · {formatCurrency(company.totalValue)}
+                  {company.ordersCount} pedidos · {formatBRL(company.totalValue)}
                 </span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">

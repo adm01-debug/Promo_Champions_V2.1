@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useRevOpsHub } from "@/hooks/useRevOpsHub";
 
+import { formatBRL } from '@/lib/money';
 const STAGE_LABELS: Record<string, string> = {
   lead: "Lead",
   prospecting: "Prospecção",
@@ -25,9 +26,6 @@ const HEALTH_CONFIG = {
   warning: { color: "bg-warning/15 text-warning border-warning/30", icon: AlertCircle, label: "Atenção" },
   critical: { color: "bg-destructive/15 text-destructive border-destructive/30", icon: AlertCircle, label: "Crítico" },
 };
-
-const fmtCurrency = (v: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(v);
 
 export function RevOpsHub() {
   const [horizon, setHorizon] = useState(90);
@@ -96,9 +94,9 @@ export function RevOpsHub() {
 
       {/* KPI Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KPICard icon={DollarSign} label="Pipeline Total" value={fmtCurrency(data.kpis.total_pipeline)} color="text-primary" />
-        <KPICard icon={Target} label="Forecast Ponderado" value={fmtCurrency(data.kpis.weighted_forecast)} color="text-info" />
-        <KPICard icon={Award} label="Receita Fechada" value={fmtCurrency(data.kpis.closed_revenue)} color="text-success" />
+        <KPICard icon={DollarSign} label="Pipeline Total" value={formatBRL(data.kpis.total_pipeline)} color="text-primary" />
+        <KPICard icon={Target} label="Forecast Ponderado" value={formatBRL(data.kpis.weighted_forecast)} color="text-info" />
+        <KPICard icon={Award} label="Receita Fechada" value={formatBRL(data.kpis.closed_revenue)} color="text-success" />
         <KPICard icon={TrendingUp} label="Win Rate" value={`${data.kpis.win_rate}%`} color="text-warning" />
       </div>
 
@@ -111,7 +109,7 @@ export function RevOpsHub() {
 
         <TabsContent value="performance" className="space-y-4">
           <div className="grid md:grid-cols-3 gap-4">
-            <KPICard icon={Zap} label="Sales Velocity" value={fmtCurrency(data.kpis.velocity) + "/dia"} color="text-primary" />
+            <KPICard icon={Zap} label="Sales Velocity" value={formatBRL(data.kpis.velocity) + "/dia"} color="text-primary" />
             <KPICard icon={Clock} label="Ciclo Médio" value={`${data.kpis.cycle_days} dias`} color="text-info" />
             <KPICard icon={Activity} label="Eficiência Atividades" value={`${data.kpis.activity_efficiency}%`} color="text-success" />
           </div>
@@ -138,7 +136,7 @@ export function RevOpsHub() {
                   <div key={stage} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">{STAGE_LABELS[stage] ?? stage}</span>
-                      <span className="text-muted-foreground">{info.count} deals · {fmtCurrency(info.value)}</span>
+                      <span className="text-muted-foreground">{info.count} deals · {formatBRL(info.value)}</span>
                     </div>
                     <Progress value={pct} className="h-2" />
                   </div>
@@ -150,9 +148,9 @@ export function RevOpsHub() {
 
         <TabsContent value="financial" className="space-y-4">
           <div className="grid md:grid-cols-3 gap-4">
-            <KPICard icon={DollarSign} label="Ticket Médio" value={fmtCurrency(data.kpis.avg_deal_size)} color="text-primary" />
-            <KPICard icon={CheckCircle2} label="Comissões Pagas" value={fmtCurrency(data.kpis.earned_commissions)} color="text-success" />
-            <KPICard icon={Clock} label="Comissões Pendentes" value={fmtCurrency(data.kpis.pending_commissions)} color="text-warning" />
+            <KPICard icon={DollarSign} label="Ticket Médio" value={formatBRL(data.kpis.avg_deal_size)} color="text-primary" />
+            <KPICard icon={CheckCircle2} label="Comissões Pagas" value={formatBRL(data.kpis.earned_commissions)} color="text-success" />
+            <KPICard icon={Clock} label="Comissões Pendentes" value={formatBRL(data.kpis.pending_commissions)} color="text-warning" />
           </div>
         </TabsContent>
       </Tabs>

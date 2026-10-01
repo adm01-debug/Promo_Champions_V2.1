@@ -7,9 +7,7 @@ import { Receipt, RefreshCw, TrendingUp, TrendingDown, User, Building, ShoppingB
 import { motion } from "framer-motion";
 import { useSalesInsights } from "@/hooks/sales/useSalesInsights";
 
-const formatCurrency = (value: number) =>
-  `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
-
+import { formatBRL } from '@/lib/money';
 const ChangeIndicator: FC<{ value: number }> = ({ value }) => {
   if (value === 0) return null;
   const isPositive = value > 0;
@@ -69,7 +67,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
           <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 mb-4">
             <div>
               <p className="text-sm text-muted-foreground font-medium">Ticket Médio Geral</p>
-              <p className="text-2xl font-black gradient-text">{formatCurrency(avgTicket)}</p>
+              <p className="text-2xl font-black gradient-text">{formatBRL(avgTicket)}</p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">vs mês anterior</p>
@@ -117,9 +115,9 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
                   </div>
 
                   <div className="text-right shrink-0">
-                    <p className="font-bold text-sm">{formatCurrency(client.avgTicket)}</p>
+                    <p className="font-bold text-sm">{formatBRL(client.avgTicket)}</p>
                     <p className="text-xs text-muted-foreground">
-                      Total: {formatCurrency(client.totalValue)}
+                      Total: {formatBRL(client.totalValue)}
                     </p>
                   </div>
                 </motion.div>
@@ -196,7 +194,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
                     <Badge variant="secondary" className="mb-1">
                       {client.purchaseCount} compras
                     </Badge>
-                    <p className="text-xs font-semibold">{formatCurrency(client.totalValue)}</p>
+                    <p className="text-xs font-semibold">{formatBRL(client.totalValue)}</p>
                   </div>
                 </motion.div>
               ))}

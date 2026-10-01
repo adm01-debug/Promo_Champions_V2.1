@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 interface EnhancedStatCardProps {
   title: string;
   value: string | number;
@@ -59,7 +60,7 @@ const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
     
     switch (format) {
       case 'currency':
-        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+        return formatBRL(val, { decimals: 2 });
       case 'percentage':
         return `${val.toFixed(1)}%`;
       default:

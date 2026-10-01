@@ -6,6 +6,7 @@ import { ProgressRing } from "@/components/ui/ProgressRing";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
+import { formatBRL } from '@/lib/money';
 interface GoalProgressProps {
   current: number;
   goal: number;
@@ -83,11 +84,11 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 rounded-xl bg-black/60 border border-white/10 shadow-inner">
                   <p className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Current</p>
-                  <p className="text-sm font-mono font-black text-foreground truncate">R$ {current.toLocaleString("pt-BR")}</p>
+                  <p className="text-sm font-mono font-black text-foreground truncate">{formatBRL(current)}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-black/60 border border-white/10 text-right shadow-inner">
                   <p className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Target</p>
-                  <p className="text-sm font-mono font-black text-foreground truncate">R$ {goal.toLocaleString("pt-BR")}</p>
+                  <p className="text-sm font-mono font-black text-foreground truncate">{formatBRL(goal)}</p>
                 </div>
               </div>
 
@@ -95,7 +96,7 @@ export const GoalProgress = React.memo(function GoalProgress({ current, goal }: 
                 <div className="flex items-center gap-2 p-2 rounded-lg bg-primary/5 border border-primary/20">
                   <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   <p className="text-[9px] font-mono uppercase tracking-widest text-primary/80">
-                    Remaining: <span className="font-bold text-primary">R$ {remaining.toLocaleString("pt-BR")}</span>
+                    Remaining: <span className="font-bold text-primary">{formatBRL(remaining)}</span>
                   </p>
                 </div>
               ) : (

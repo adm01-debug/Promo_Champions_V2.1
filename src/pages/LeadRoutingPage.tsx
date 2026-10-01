@@ -12,6 +12,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PageTransition } from "@/components/transitions/PageTransition";
 
+import { formatBRL } from '@/lib/money';
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const itemVariants = { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } };
 
@@ -95,7 +96,7 @@ const LeadRoutingPage = () => {
                           {r.description && <p className="text-sm text-muted-foreground">{r.description}</p>}
                           <div className="flex flex-wrap gap-2 text-xs">
                             <Badge variant="secondary">{meta.label}</Badge>
-                            {r.filter_min_value && <Badge variant="outline">Min R$ {r.filter_min_value.toLocaleString("pt-BR")}</Badge>}
+                            {r.filter_min_value && <Badge variant="outline">Min {formatBRL(r.filter_min_value)}</Badge>}
                             {r.filter_state && <Badge variant="outline">UF: {r.filter_state}</Badge>}
                             {r.filter_source && <Badge variant="outline">Fonte: {r.filter_source}</Badge>}
                           </div>

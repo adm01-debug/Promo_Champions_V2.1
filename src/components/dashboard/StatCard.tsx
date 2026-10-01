@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { formatBRL } from '@/lib/money';
 interface StatCardProps {
   title: string;
   value: string;
@@ -73,7 +74,7 @@ export const StatCard = React.memo(({
   const displayValue = useMemo(() => {
     if (numericValue === undefined) return value;
     if (value.startsWith("R$")) {
-      return `R$ ${animatedNum.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+      return `${formatBRL(animatedNum)}`;
     }
     if (value.endsWith("%")) {
       return `${animatedNum.toFixed(1)}%`;

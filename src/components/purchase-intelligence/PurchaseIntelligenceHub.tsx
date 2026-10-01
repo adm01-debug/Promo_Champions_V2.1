@@ -17,6 +17,7 @@ import { LTVBySegment } from "../analytics/LTVBySegment";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
+import { formatBRL } from '@/lib/money';
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
   const [hasData, _setHasData] = useState(true); // Toggle to test empty state
@@ -168,7 +169,7 @@ export function PurchaseIntelligenceHub() {
                           <YAxis fontSize={12} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `R$${v/1000}k`} />
                           <Tooltip 
                             contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
-                            formatter={(value: number | string) => [`R$ ${Number(value).toLocaleString('pt-BR')}`]}
+                            formatter={(value: number | string) => [`${formatBRL(Number(value))}`]}
                           />
                           <Bar dataKey="gastado" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Gastos Mensais" />
                         </BarChart>

@@ -26,11 +26,9 @@ import {
 import { useVendasMacro } from "@/hooks/useVendasMacro";
 import { TopSellersRankList } from "./TopSellersRankList";
 
-const formatCurrency = (value: number) =>
-  `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
+import { formatBRL } from '@/lib/money';
 const formatCompact = (value: number) =>
-  `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
+  `${formatBRL(value)}`;
 
 interface KpiCardProps {
   icon: FC<{ className?: string }>;
@@ -134,19 +132,19 @@ export const BIVendasMacro: FC<{ className?: string }> = ({ className }) => {
             icon={FileText}
             label="Orçado (qtd)"
             value={data.totalQuoted.toLocaleString("pt-BR")}
-            sub={formatCurrency(data.totalQuotedValue)}
+            sub={formatBRL(data.totalQuotedValue, { decimals: 2 })}
           />
           <KpiCard
             icon={ShoppingCart}
             label="Vendido (qtd)"
             value={data.totalSold.toLocaleString("pt-BR")}
-            sub={formatCurrency(data.totalSoldValue)}
+            sub={formatBRL(data.totalSoldValue, { decimals: 2 })}
             variant="highlight"
           />
           <KpiCard
             icon={DollarSign}
             label="Ticket médio"
-            value={formatCurrency(data.avgTicket)}
+            value={formatBRL(data.avgTicket, { decimals: 2 })}
             sub="por pedido"
           />
           <KpiCard
@@ -164,7 +162,7 @@ export const BIVendasMacro: FC<{ className?: string }> = ({ className }) => {
           <KpiCard
             icon={TrendingUp}
             label="Faturamento"
-            value={formatCurrency(data.totalRevenue)}
+            value={formatBRL(data.totalRevenue, { decimals: 2 })}
             sub="total no período"
             variant="success"
           />

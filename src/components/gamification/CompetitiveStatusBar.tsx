@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 
+import { formatBRL } from '@/lib/money';
 const RANK_ICONS: Record<number, React.ElementType> = {
   1: Crown,
   2: Swords,
@@ -69,15 +70,6 @@ export function CompetitiveStatusBar() {
   const RankIcon = RANK_ICONS[myRanking.rank] || TrendingUp;
   const isTopThree = myRanking.rank <= 3;
   
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   return (
     <div 
       className={cn(
@@ -124,7 +116,7 @@ export function CompetitiveStatusBar() {
               Olá, <span className="font-medium text-foreground">{salesperson.name}</span>! 
               {myRanking.rank === 1 
                 ? " Você é o líder! 👑"
-                : ` Falta ${formatCurrency(myRanking.gapToFirst)} para o 1º lugar.`
+                : ` Falta ${formatBRL(myRanking.gapToFirst)} para o 1º lugar.`
               }
             </p>
           </div>
@@ -137,7 +129,7 @@ export function CompetitiveStatusBar() {
         <div className="flex items-center gap-3 ml-auto">
           <div className="text-center px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Vendas</p>
-            <p className="font-display font-bold gradient-text">{formatCurrency(myRanking.totalSales)}</p>
+            <p className="font-display font-bold gradient-text">{formatBRL(myRanking.totalSales)}</p>
           </div>
           <div className="text-center px-3 py-1.5 rounded-lg bg-muted/50 border border-border/30">
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Deals</p>
@@ -157,7 +149,7 @@ export function CompetitiveStatusBar() {
             <div className="hidden md:block pl-3 border-l border-border/50">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">Para subir</p>
               <p className="font-display font-medium text-sm text-status-warning">
-                +{formatCurrency(myRanking.gapToNext)}
+                +{formatBRL(myRanking.gapToNext)}
               </p>
             </div>
           )}

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { AreaChart, Area, ResponsiveContainer, ReferenceLine, XAxis, Tooltip } from "recharts";
 
+import { formatBRL } from '@/lib/money';
 export const ForecastWidget = React.memo(function ForecastWidget() {
   const { data, isLoading } = useGoalsDashboard();
 
@@ -48,7 +49,7 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
         <div className="flex items-end justify-between">
           <div>
             <p className="text-xl font-bold">
-              R$ {projection.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+              {formatBRL(projection)}
             </p>
             <p className={cn("text-[11px] font-medium", onTrack ? "text-success" : "text-destructive")}>
               {onTrack ? "✓ No ritmo" : "⚠ Abaixo do ritmo"}
@@ -68,7 +69,7 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
               <XAxis dataKey="day" hide />
               <Tooltip
                 formatter={(v: number, name: string) => [
-                  `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+                  `${formatBRL(v)}`,
                   name === "actual" ? "Real" : "Projeção",
                 ]}
                 contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}

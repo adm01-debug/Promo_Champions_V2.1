@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 import { PeriodFilter } from '@/hooks/useCloserMetrics';
 
+import { formatBRL } from '@/lib/money';
 interface CloserRevenueComparisonProps {
   period: PeriodFilter;
 }
@@ -113,7 +114,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
         : 'ESTE TRIMESTRE';
 
   const formatCurrencyFull = (value: number | string) =>
-    `R$ ${Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+    `${formatBRL(Number(value))}`;
 
   const totalRevenue = closers?.reduce((sum, c) => sum + c.revenue, 0) || 0;
 

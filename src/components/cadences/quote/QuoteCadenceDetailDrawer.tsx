@@ -35,6 +35,7 @@ import type { QuoteCadenceRow } from '@/hooks/cadences/useQuoteCadences';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGamificationSafe } from '@/contexts/GamificationContext';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   row: QuoteCadenceRow | null;
   open: boolean;
@@ -104,10 +105,7 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
           <DrawerDescription id="quote-cadence-drawer-desc">
             {q?.quote_number ?? 'Orçamento'} ·{' '}
             {q?.total_value
-              ? new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                }).format(q.total_value)
+              ? formatBRL(q.total_value, { decimals: 2 })
               : '—'}{' '}
             · Etapa {row.current_step}
           </DrawerDescription>

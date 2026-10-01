@@ -21,6 +21,7 @@ import {
 } from "@/hooks/cadences/useQuoteCadenceMutations";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   row: QuoteCadenceRow;
   totalSteps?: number;
@@ -40,7 +41,7 @@ export function QuoteCadenceCard({ row, totalSteps = 5, selected, onToggleSelect
   const daysSinceSent = q?.sent_at ? differenceInDays(new Date(), parseISO(q.sent_at)) : null;
   const progress = Math.min((row.current_step / totalSteps) * 100, 100);
   const formatted = q?.total_value
-    ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(q.total_value)
+    ? formatBRL(q.total_value, { decimals: 2 })
     : "—";
 
   const reducedMotion = usePrefersReducedMotion();

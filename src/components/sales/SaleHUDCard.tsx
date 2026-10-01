@@ -86,7 +86,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
           <div className="flex flex-col items-end">
             <span className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-1">Volume Bruto</span>
             <span className="text-2xl font-display font-black tracking-tighter text-primary">
-              R$ {sale.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              {formatBRL(sale.valor)}
             </span>
           </div>
           <div className="flex gap-2">

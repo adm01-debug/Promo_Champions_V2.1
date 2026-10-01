@@ -16,10 +16,10 @@ import { PageTransition, StaggeredContainer } from "@/components/transitions/Pag
 import { BIVendedorCharts } from "@/components/bi/BIVendedorCharts";
 import { RunRateProjectionCard } from "@/components/vendedor/RunRateProjectionCard";
 
+import { formatBRL } from '@/lib/money';
 const BIVendedor = () => {
   const { salesperson } = useAuth();
   const { data, isLoading } = useBIVendedor();
-  const formatCurrency = (value: number) => `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
@@ -74,10 +74,10 @@ const BIVendedor = () => {
             {/* KPI Stats */}
             <StaggeredContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" delay={0.2}>
               {[
-                { title: "Faturamento", value: formatCurrency(data?.totalRevenue || 0), icon: DollarSign, change: data?.revenueChange, variant: "primary" as const },
-                { title: "Meta", value: formatCurrency(data?.currentGoal || 0), icon: Target, variant: "default" as const },
-                { title: "Comissão", value: formatCurrency(data?.commission || 0), icon: TrendingUp, variant: "success" as const },
-                { title: "Pipeline", value: formatCurrency(data?.pipelineValue || 0), icon: ShoppingBag, variant: "warning" as const },
+                { title: "Faturamento", value: formatBRL(data?.totalRevenue || 0), icon: DollarSign, change: data?.revenueChange, variant: "primary" as const },
+                { title: "Meta", value: formatBRL(data?.currentGoal || 0), icon: Target, variant: "default" as const },
+                { title: "Comissão", value: formatBRL(data?.commission || 0), icon: TrendingUp, variant: "success" as const },
+                { title: "Pipeline", value: formatBRL(data?.pipelineValue || 0), icon: ShoppingBag, variant: "warning" as const },
                 { title: "Conversão", value: `${(data?.conversionRate || 0).toFixed(1)}%`, icon: Percent, variant: "default" as const },
                 { title: "Ranking", value: `#${data?.currentRank || "-"}`, icon: Trophy, variant: data && data.currentRank <= 3 ? "gold" as const : "default" as const },
               ].map((stat, index) => {
@@ -118,7 +118,7 @@ const BIVendedor = () => {
                   <div className="p-3 rounded-xl bg-gradient-to-br from-warning to-warning/80 animate-pulse-glow"><Calendar className="h-5 w-5 text-warning-foreground" /></div>
                   <div>
                     <p className="font-display font-semibold text-foreground">Para bater a meta</p>
-                    <p className="text-sm text-muted-foreground">Faltam <span className="font-bold text-warning">{data.daysRemaining} dias</span> • Você precisa vender <span className="font-bold text-warning">{formatCurrency(data.dailyRequired)}/dia</span></p>
+                    <p className="text-sm text-muted-foreground">Faltam <span className="font-bold text-warning">{data.daysRemaining} dias</span> • Você precisa vender <span className="font-bold text-warning">{formatBRL(data.dailyRequired)}/dia</span></p>
                   </div>
                 </div>
               </div>

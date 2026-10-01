@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useSessionPrep } from "@/hooks/coaching/useCoachingSessions";
 import { Badge } from "@/components/ui/badge";
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   salespersonId: string;
 }
@@ -59,7 +60,7 @@ export function SessionPrepCard({ salespersonId }: Props) {
               {data.at_risk_deals.slice(0, 3).map((d) => (
                 <li key={d.id} className="flex justify-between">
                   <span className="truncate">{d.name}</span>
-                  <span className="text-muted-foreground">R$ {d.amount.toLocaleString("pt-BR")}</span>
+                  <span className="text-muted-foreground">{formatBRL(d.amount)}</span>
                 </li>
               ))}
             </ul>

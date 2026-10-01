@@ -21,6 +21,7 @@ import { SkeletonTransition } from "@/components/skeletons/SkeletonTransition";
 import { motion } from "framer-motion";
 import { PageTransition, containerVariants, itemVariants } from "@/components/transitions/PageTransition";
 
+import { formatBRL } from '@/lib/money';
 export default function Metas() {
   const { data, isLoading, dataUpdatedAt } = useGoalsDashboard();
   const { salesperson } = useAuth();
@@ -30,9 +31,6 @@ export default function Metas() {
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["goals-dashboard"] });
   };
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
 
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
   const lastUpdate = dataUpdatedAt ? format(new Date(dataUpdatedAt), "HH:mm:ss") : "--:--:--";
@@ -122,7 +120,7 @@ export default function Metas() {
                       <Target className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-2xl font-display font-black tracking-tighter gradient-text">{formatCurrency(data?.totalGoal || 0)}</p>
+                      <p className="text-2xl font-display font-black tracking-tighter gradient-text">{formatBRL(data?.totalGoal || 0)}</p>
                       <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Budget da Operação</p>
                     </div>
                   </CardContent>
@@ -137,7 +135,7 @@ export default function Metas() {
                       <TrendingUp className="h-6 w-6 text-success" />
                     </div>
                     <div>
-                      <p className="text-2xl font-display font-black tracking-tighter text-success">{formatCurrency(data?.totalSales || 0)}</p>
+                      <p className="text-2xl font-display font-black tracking-tighter text-success">{formatBRL(data?.totalSales || 0)}</p>
                       <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Volume Faturado</p>
                     </div>
                   </CardContent>

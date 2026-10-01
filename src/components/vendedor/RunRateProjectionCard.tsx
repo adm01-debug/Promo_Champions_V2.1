@@ -10,19 +10,13 @@ import { useEligibleBonuses } from '@/hooks/useEligibleBonuses';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 interface RunRateProjectionCardProps {
   salespersonId: string | null | undefined;
   /** Percentual de comissão do vendedor (ex.: 5 para 5%). */
   commissionRate?: number | null;
   className?: string;
 }
-
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
 
 const confidenceMeta = {
   low: { label: 'Baixa', className: 'bg-muted text-muted-foreground border-border' },

@@ -10,6 +10,7 @@ import { DashboardEmptyState } from "@/components/dashboard/DashboardEmptyState"
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
+import { formatBRL } from '@/lib/money';
 const RANK_CONFIG = [
   { icon: Crown, color: "text-warning", glow: "rgba(234, 179, 8, 0.4)", label: "Apex" },
   { icon: Medal, color: "text-slate-300", glow: "rgba(148, 163, 184, 0.3)", label: "Elite" },
@@ -21,14 +22,6 @@ function MiniLeaderboardImpl() {
   const { salesperson } = useAuth();
 
   const top3 = ranking?.slice(0, 3) || [];
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
 
   if (isLoading) {
     return (
@@ -140,7 +133,7 @@ function MiniLeaderboardImpl() {
                      "text-[10px] font-mono font-black tabular-nums",
                      isCurrentUser ? "text-primary" : "text-foreground/80"
                    )}>
-                    {formatCurrency(person.totalSales)}
+                    {formatBRL(person.totalSales)}
                   </span>
                 </div>
               </div>

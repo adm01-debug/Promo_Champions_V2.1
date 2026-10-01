@@ -5,6 +5,7 @@ import { Trophy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
 
+import { formatBRL } from '@/lib/money';
 const RANK_COLORS = [
   "hsl(var(--primary))",
   "hsl(262, 70%, 65%)",
@@ -51,7 +52,7 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
               />
               <Tooltip
                 formatter={(v: number) => [
-                  `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
+                  `${formatBRL(v)}`,
                   "Receita",
                 ]}
                 contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}

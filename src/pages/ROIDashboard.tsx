@@ -35,12 +35,7 @@ import { ROIRankingList } from '@/components/roi/ROIRankingList';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { useCountUp } from '@/hooks/useCountUp';
 
-const formatCurrency = (v: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(v);
+import { formatBRL } from '@/lib/money';
 const formatPercent = (v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
 const periodOptions = [
   { label: '1 mês', value: 1 },
@@ -180,7 +175,7 @@ const ROIDashboard = () => {
                   </div>
                 </div>
                 <p className="text-3xl font-black text-foreground">
-                  R$ {animatedCAC.toLocaleString('pt-BR')}
+                  {formatBRL(animatedCAC)}
                 </p>
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
                   CAC Médio
@@ -205,7 +200,7 @@ const ROIDashboard = () => {
                   </div>
                 </div>
                 <p className="text-3xl font-black text-foreground">
-                  R$ {animatedLTV.toLocaleString('pt-BR')}
+                  {formatBRL(animatedLTV)}
                 </p>
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
                   LTV Médio
@@ -270,7 +265,7 @@ const ROIDashboard = () => {
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip
                       formatter={(value: number | string, name: string) => [
-                        name === 'roi' ? `${value}%` : formatCurrency(Number(value)),
+                        name === 'roi' ? `${value}%` : formatBRL(Number(value)),
                         name === 'roi' ? 'ROI' : name === 'revenue' ? 'Receita' : 'Custo',
                       ]}
                       contentStyle={{
@@ -300,7 +295,7 @@ const ROIDashboard = () => {
                 <CardContent className="p-6 text-center">
                   <TrendingUp className="h-8 w-8 mx-auto text-success mb-3" />
                   <p className="text-metric-lg text-foreground">
-                    {formatCurrency(summary.totalRevenue)}
+                    {formatBRL(summary.totalRevenue)}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">Receita Total</p>
                 </CardContent>
@@ -309,7 +304,7 @@ const ROIDashboard = () => {
                 <CardContent className="p-6 text-center">
                   <TrendingDown className="h-8 w-8 mx-auto text-destructive mb-3" />
                   <p className="text-metric-lg text-foreground">
-                    {formatCurrency(summary.totalCosts)}
+                    {formatBRL(summary.totalCosts)}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">Custo Total</p>
                 </CardContent>
@@ -345,7 +340,7 @@ const ROIDashboard = () => {
                     <ZAxis type="number" dataKey="z" range={[60, 400]} name="Vendas" />
                     <Tooltip
                       formatter={(value: number | string, name: string) => [
-                        name === 'Receita' ? formatCurrency(Number(value)) : value,
+                        name === 'Receita' ? formatBRL(Number(value)) : value,
                         name,
                       ]}
                       contentStyle={{
@@ -383,7 +378,7 @@ const ROIDashboard = () => {
                         </span>
                       </div>
                       <span className="font-bold text-primary">
-                        {formatCurrency(sp.revenuePerActivity)}/atividade
+                        {formatBRL(sp.revenuePerActivity)}/atividade
                       </span>
                     </div>
                   ))}

@@ -5,12 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 
-const fmtBRL = (v: number) =>
-  `R$ ${v.toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-    notation: v >= 100000 ? "compact" : "standard",
-  })}`;
-
+import { formatBRL } from '@/lib/money';
 const positionAccent = (pos: number) => {
   if (pos === 1) return { color: "text-warning", glow: "hsl(var(--warning) / 0.4)", icon: Crown };
   if (pos === 2) return { color: "text-muted-foreground", glow: "hsl(var(--muted-foreground) / 0.3)", icon: Medal };
@@ -137,7 +132,7 @@ const RankingRowCard = ({ row, maxRevenue, index }: { row: RankingRow; maxRevenu
                 {row.revenueChangePct.toFixed(1)}%
               </span>
               <span className={cn("font-display font-black text-4xl tabular-nums", accent.color)} style={{ textShadow: `0 0 45px ${accent.glow}` }}>
-                {fmtBRL(row.revenue)}
+                {formatBRL(row.revenue)}
               </span>
             </div>
           </div>

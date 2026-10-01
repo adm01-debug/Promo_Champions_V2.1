@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useClientsNeedingContact, type ContactUrgency } from '@/hooks/useClientsNeedingContact';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   salespersonId?: string;
 }
@@ -156,7 +157,7 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                       )}
                       <span>{alert.purchaseCount}x compras</span>
                       <span className="font-medium text-foreground">
-                        R$ {alert.totalRevenue.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                        {formatBRL(alert.totalRevenue)}
                       </span>
                       {alert.churnRisk > 0 && (
                         <span className={cn('font-medium', style.color)}>

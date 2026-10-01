@@ -6,6 +6,7 @@ import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { formatBRL } from '@/lib/money';
 const STATUS_LABELS: Record<string, string> = {
   lead: "Lead",
   pending: "Lead",
@@ -50,7 +51,7 @@ export const TopDealsWidget = React.memo(function TopDealsWidget() {
             </div>
             <div className="text-right shrink-0">
               <p className="text-sm font-bold text-primary">
-                R$ {Number(deal.amount).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+                {formatBRL(Number(deal.amount))}
               </p>
               <Badge variant="outline" className="text-[9px]">
                 {STATUS_LABELS[deal.status] || deal.status}

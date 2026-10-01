@@ -23,19 +23,13 @@ import {
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   totalLost: number;
   discountLost: number;
   competitorLost: number;
   marginErosion: number;
 }
-
-const fmtBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
 
 const CountUp = ({ value, className }: { value: number; className?: string }) => {
   const [displayValue, setDisplayValue] = useState(0);
@@ -179,7 +173,7 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
             Receita perdida no período por ineficiências detectadas no pricing. A IA
             projeta recuperação de{' '}
             <span className="text-success font-bold">
-              R$ {(totalLost * 0.42).toLocaleString('pt-BR')}
+              {formatBRL((totalLost * 0.42))}
             </span>{' '}
             se as recomendações forem aplicadas.
           </p>
@@ -255,7 +249,7 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                             </div>
                             <div className="text-right">
                               <div className="text-sm font-mono font-black tracking-tight">
-                                {fmtBRL(item.value)}
+                                {formatBRL(item.value)}
                               </div>
                               <div
                                 className={cn(
@@ -332,7 +326,7 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                             Potencial de Ganho:
                           </span>
                           <span className="text-[10px] text-success font-black">
-                            +{fmtBRL(item.value * 0.4)}
+                            +{formatBRL(item.value * 0.4)}
                           </span>
                         </div>
                       </TooltipContent>

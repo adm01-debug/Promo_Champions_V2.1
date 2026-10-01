@@ -10,6 +10,7 @@ import { useRacePredictions } from '@/hooks/race/useRacePredictions';
 import { ComboStreakBadge } from './ComboStreakBadge';
 import { PredictedRankBadge } from './PredictedRankBadge';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   entries: RaceLeaderboardEntry[];
   currentUserSalespersonId?: string;
@@ -19,11 +20,7 @@ interface Props {
 }
 
 function fmt(n: number) {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
+  return formatBRL(n);
 }
 
 export function NextGoalPanel({

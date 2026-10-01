@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { DealChatHistory } from './DealChatHistory';
 import { calculateRiskLevel, STATUS_LABELS, ACTIVITY_TYPE_LABELS } from './dealRiskCalculator';
 
+import { formatBRL } from '@/lib/money';
 interface DealPreviewCardProps {
   dealId: string;
   clientName: string;
@@ -71,7 +72,7 @@ const DealPreviewCardInner = function DealPreviewCard({ dealId, clientName, prod
 
       <div className="grid grid-cols-2 gap-2 mt-3">
         {[
-          { icon: DollarSign, label: "Valor", value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(amount), color: "emerald-500" },
+          { icon: DollarSign, label: "Valor", value: formatBRL(amount), color: "emerald-500" },
           { icon: Clock, label: "No Pipeline", value: daysInPipeline !== null ? `${daysInPipeline} dias` : '-', color: "blue-500" },
           { icon: TrendingUp, label: "Neste Estágio", value: daysInCurrentStage !== null ? `${daysInCurrentStage} dias` : '-', color: "purple-500" },
           { icon: Activity, label: "Última Atividade", value: dealDetails?.lastActivity ? formatDistanceToNow(new Date(dealDetails.lastActivity.created_at), { addSuffix: false, locale: ptBR }) : 'Sem atividade', color: "amber-500", title: dealDetails?.lastActivity ? ACTIVITY_TYPE_LABELS[dealDetails.lastActivity.activity_type] : undefined },

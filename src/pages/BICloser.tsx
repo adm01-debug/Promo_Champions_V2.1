@@ -12,9 +12,8 @@ import { DollarSign, Target, TrendingUp, ShoppingBag, Clock, Trophy, Percent, Br
 import { BICloserHeader } from "@/components/bi/BICloserHeader";
 import { BICloserCharts } from "@/components/bi/BICloserCharts";
 
+import { formatBRL } from '@/lib/money';
 const STAGE_LABELS: Record<string, string> = { qualified: "Qualificado", proposal: "Proposta", negotiation: "Negociação" };
-const formatCurrency = (value: number) => `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
-
 const BICloser = () => {
   const { salesperson } = useAuth();
   const filters = useBIFilters("this_month");
@@ -103,11 +102,11 @@ const BICloser = () => {
                       <p className="text-xs text-muted-foreground">Deals</p>
                     </div>
                     <div className="p-3 rounded-xl glass">
-                      <p className="text-lg font-bold">{formatCurrency(data?.pipelineValue || 0)}</p>
+                      <p className="text-lg font-bold">{formatBRL(data?.pipelineValue || 0)}</p>
                       <p className="text-xs text-muted-foreground">Total</p>
                     </div>
                     <div className="p-3 rounded-xl bg-success/10 border border-success/20">
-                      <p className="text-lg font-bold text-success">{formatCurrency(data?.weightedPipeline || 0)}</p>
+                      <p className="text-lg font-bold text-success">{formatBRL(data?.weightedPipeline || 0)}</p>
                       <p className="text-xs text-muted-foreground">Ponderado</p>
                     </div>
                   </div>
@@ -116,7 +115,7 @@ const BICloser = () => {
                       <div key={stage.stage}>
                         <div className="flex items-center justify-between text-sm mb-1">
                           <span className="font-medium">{STAGE_LABELS[stage.stage] || stage.stage}</span>
-                          <span className="text-muted-foreground">{stage.count} • {formatCurrency(stage.value)} ({(stage.probability * 100).toFixed(0)}%)</span>
+                          <span className="text-muted-foreground">{stage.count} • {formatBRL(stage.value)} ({(stage.probability * 100).toFixed(0)}%)</span>
                         </div>
                         <Progress value={stage.probability * 100} className="h-2" />
                       </div>

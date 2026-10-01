@@ -41,6 +41,7 @@ import {
   type CommissionBonus,
 } from '@/hooks/useCommissionBonuses';
 
+import { formatBRL } from '@/lib/money';
 const bonusTypeLabels: Record<BonusType, string> = {
   first_sale: 'Primeira Venda',
   milestone: 'Marco de Faturamento',
@@ -56,9 +57,6 @@ const bonusTypeColors: Record<BonusType, string> = {
   streak: 'bg-purple-500/15 text-purple-500 border-purple-500/30',
   other: 'bg-muted text-muted-foreground border-border',
 };
-
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n || 0);
 
 interface FormState {
   id?: string;
@@ -260,7 +258,7 @@ export default function AdminPremiacoes() {
                     </TableCell>
                     <TableCell className="tabular-nums font-semibold">
                       {b.bonus_kind === 'fixed'
-                        ? formatBRL(Number(b.bonus_amount))
+                        ? formatBRL(Number(b.bonus_amount), { decimals: 2 })
                         : `${Number(b.bonus_amount).toFixed(2)}%`}
                     </TableCell>
                     <TableCell>

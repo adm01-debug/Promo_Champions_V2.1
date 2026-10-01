@@ -15,6 +15,7 @@ import { Trophy, MessageCircle, Send, PartyPopper, Star, ArrowRight } from 'luci
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 const REACTION_EMOJIS = ['🔥', '👏', '🎉', '💪', '❤️', '🏆'];
 
 const EVENT_ICONS: Record<string, { icon: React.ElementType; color: string }> = {
@@ -155,10 +156,7 @@ const VictoryFeedPage = () => {
                               variant="outline"
                             >
                               💰{' '}
-                              {new Intl.NumberFormat('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL',
-                              }).format(item.value ?? 0)}
+                              {formatBRL(item.value ?? 0, { decimals: 2 })}
                             </Badge>
                           )}
                           {!!(item.metadata as Record<string, unknown> | null)?.sale_id && (

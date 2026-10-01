@@ -6,9 +6,8 @@ import {
   BarChart, Bar, PieChart, Pie, Cell
 } from "recharts";
 
+import { formatBRL } from '@/lib/money';
 const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
-const formatCurrency = (value: number) => `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
-
 interface BICloserChartsProps {
   revenueByDay: { day: string; value: number }[];
   dealsByCategory: { category: string; value: number }[];
@@ -43,7 +42,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                   <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                  <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatCurrency(value), "Faturamento"]} />
+                  <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatBRL(value), "Faturamento"]} />
                   <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fill="url(#colorRevenue)" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -70,7 +69,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => [formatCurrency(value)]} contentStyle={tooltipStyle} />
+                    <Tooltip formatter={(value: number) => [formatBRL(value)]} contentStyle={tooltipStyle} />
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="space-y-2 mt-2">
@@ -78,7 +77,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
                     <div key={cat.category} className="flex items-center gap-2 text-sm hover-scale-sm cursor-default">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                       <span className="truncate">{cat.category}</span>
-                      <span className="ml-auto font-bold">{formatCurrency(cat.value)}</span>
+                      <span className="ml-auto font-bold">{formatBRL(cat.value)}</span>
                     </div>
                   ))}
                 </div>
@@ -99,7 +98,7 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
                 <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatCurrency(value), "Faturamento"]} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatBRL(value), "Faturamento"]} />
                 <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

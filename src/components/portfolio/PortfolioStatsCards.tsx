@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PortfolioStats } from "@/hooks/crm/useClientPortfolio";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+import { formatBRL } from '@/lib/money';
 interface PortfolioStatsCardsProps {
   stats: PortfolioStats | undefined;
   isLoading: boolean;
@@ -44,10 +45,7 @@ function PortfolioStatsCardsImpl({ stats, isLoading }: PortfolioStatsCardsProps)
     },
     {
       title: "Valor Total",
-      value: new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(stats?.totalValue || 0),
+      value: formatBRL(stats?.totalValue || 0, { decimals: 2 }),
       icon: DollarSign,
       iconWrapperClass: "bg-accent/10",
       iconClass: "text-accent",

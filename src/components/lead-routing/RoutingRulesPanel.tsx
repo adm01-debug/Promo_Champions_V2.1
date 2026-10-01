@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useLeadRoutingEngine";
 import { formatStrategy, strategyTone } from "./routingHelpers";
 
+import { formatBRL } from '@/lib/money';
 export function RoutingRulesPanel() {
   const { data: rules, isLoading } = useRoutingRules();
   const toggle = useToggleRoutingRule();
@@ -52,7 +53,7 @@ export function RoutingRulesPanel() {
                 )}
                 <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                   {rule.filter_min_value && (
-                    <span>Min: R$ {rule.filter_min_value.toLocaleString("pt-BR")}</span>
+                    <span>Min: {formatBRL(rule.filter_min_value)}</span>
                   )}
                   {rule.filter_state && <span>UF: {rule.filter_state}</span>}
                   {rule.filter_source && <span>Origem: {rule.filter_source}</span>}

@@ -6,6 +6,7 @@ import { TrendingUp, Package, Activity } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+import { formatBRL } from '@/lib/money';
 export const DemandForecast: FC = () => {
   const { data: forecasts, isLoading } = useQuery({
     queryKey: ['demand-forecasts-component'],
@@ -60,7 +61,7 @@ export const DemandForecast: FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">
-                    R$ {(f.predicted_revenue || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                    {formatBRL((f.predicted_revenue || 0))}
                   </span>
                   <Badge variant="secondary" className="text-xs">
                     {Math.round((f.confidence_score || 0) * 100)}%

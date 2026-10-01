@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { ForecastRollupRow } from "@/hooks/revenue/useRevenueIntelligenceHub";
 
+import { formatBRL } from '@/lib/money';
 const labels: Record<string, string> = {
   commit: "Commit",
   best_case: "Best Case",
@@ -27,7 +28,7 @@ interface Props {
 
 export const ForecastCategoriesPanel: FC<Props> = ({ rollup, variance }) => {
   const fmt = (n: number) =>
-    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n);
+    formatBRL(n);
 
   return (
     <Card className="glass border-border/40">
