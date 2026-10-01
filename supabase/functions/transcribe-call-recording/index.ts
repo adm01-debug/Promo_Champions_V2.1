@@ -2,11 +2,17 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { checkAudioSignature } from "../_shared/file-signature.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
 
 
 
 Deno.serve(withRequestId("transcribe-call-recording", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "transcribe-call-recording", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -74,6 +80,17 @@ Deno.serve(withRequestId("transcribe-call-recording", async (req, _ctx) => {
     const audioBuf = await audioResp.arrayBuffer();
     const audioBytes = new Uint8Array(audioBuf);
     const mimeType = audioResp.headers.get("content-type") || "audio/mpeg";
+
+    // Magic bytes: o arquivo no bucket foi enviado pelo cliente — validar
+    // a assinatura antes de gastar créditos de IA e repassar o binário.
+    const sig = checkAudioSignature(audioBytes);
+    if (!sig.ok) {
+      const msg = `invalid_audio_signature:${sig.detected ?? "unknown"}`;
+      await admin.rpc("update_call_recording_transcript", {
+        _id: recording_id, _transcript: "", _language: "pt", _error: msg,
+      });
+      return json({ error: msg }, 422);
+    }
 
     // Base64 em chunks (evita stack overflow com arquivos grandes)
     let binary = "";

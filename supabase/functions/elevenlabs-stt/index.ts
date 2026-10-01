@@ -2,10 +2,12 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { checkAudioSignature } from '../_shared/file-signature.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 
 const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 
@@ -16,6 +18,10 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'elevenlabs-stt', limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
     try {
       // Require a valid Supabase JWT — prevents anonymous billing abuse
@@ -66,6 +72,18 @@ Deno.serve(
 
       // Decode base64 audio
       const audioBytes = Uint8Array.from(atob(audio), c => c.charCodeAt(0));
+
+      // Magic bytes: o body declara áudio, mas só a assinatura binária prova.
+      const sig = checkAudioSignature(audioBytes);
+      if (!sig.ok) {
+        return new Response(
+          JSON.stringify({
+            error: 'invalid_audio_signature',
+            detected: sig.detected ?? 'unknown',
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
 
       // Create form data for the API
       const formData = new FormData();
