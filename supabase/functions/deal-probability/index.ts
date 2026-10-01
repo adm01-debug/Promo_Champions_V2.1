@@ -1,7 +1,7 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 
 // Base probabilities by stage
@@ -20,9 +20,9 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Cálculo read-only sobre deals: o client do usuário aplica RLS, então o
+    // chamador só recebe probabilidades dos deals que ele pode ver.
+    const supabase = (await getUserClient(req)).client;
 
     const { dealIds } = await req.json();
 
@@ -162,6 +162,12 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     console.error('Error calculating deal probabilities:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: errorMessage }), {
