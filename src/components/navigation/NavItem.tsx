@@ -13,8 +13,7 @@ interface NavItemProps {
   isCollapsed?: boolean;
   badgeCount?: number;
   badgeVariant?: "default" | "warning" | "destructive";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component?: any; // Passed for prefetching (mixed lazy/prefetch shapes)
+  prefetch?: () => Promise<unknown>; // pré-carrega o chunk da rota no hover
   id?: string;
 }
 
@@ -25,7 +24,7 @@ export const NavItem: FC<NavItemProps> = memo(({
   isCollapsed = false,
   badgeCount = 0,
   badgeVariant = "default",
-  component,
+  prefetch,
   id
 }) => {
   const hasBadge = badgeCount > 0;
@@ -45,7 +44,7 @@ export const NavItem: FC<NavItemProps> = memo(({
       <SidebarMenuButton asChild tooltip={title} aria-label={title}>
         <PreloadLink 
           to={url} 
-          component={component}
+          prefetch={prefetch}
           id={id}
           className={cn(
             "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden will-change-transform",

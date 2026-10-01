@@ -20,20 +20,13 @@ module.exports = {
         pathNot: [
           // Type-only cycle (import type BISDRData) — TS apaga em compile.
           "^src/hooks/bi/useBISDR(Transformers)?\\.ts$",
-          // Arquitetural: MainLayout renderiza sidebar que referencia lazyPages
-          // que carrega rotas que usam MainLayout. Todos os edges de lazyPages
-          // são dynamic-import (React.lazy), sem hazard de runtime.
-          "^src/components/organisms/(AppSidebar|RoleAwareSidebar)\\.tsx$",
-          "^src/components/templates/MainLayout\\.tsx$",
-          "^src/routes/lazyPages\\.ts$",
-          "^src/pages/AdminTelemetria\\.tsx$",
         ],
       },
       to: { circular: true, ...RUNTIME_ONLY_TO },
     },
     {
       name: "no-orphans",
-      severity: "warn",
+      severity: "error",
       comment: "Módulo órfão — provavelmente código morto.",
       from: {
         orphan: true,

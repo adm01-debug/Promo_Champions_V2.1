@@ -9,9 +9,7 @@ import {
   safeNavigationHref,
 } from '@/lib/safeNavigation';
 
-type PrefetchableRouteComponent = {
-  prefetch?: () => Promise<unknown> | unknown;
-};
+type RoutePrefetcher = () => Promise<unknown> | unknown;
 
 const prefetchedTargets = new Set<string>();
 
@@ -19,7 +17,7 @@ interface PreloadLinkProps extends Omit<HTMLMotionProps<'a'>, 'href'> {
   to: string;
   children: React.ReactNode;
   replace?: boolean;
-  component?: PrefetchableRouteComponent;
+  prefetch?: RoutePrefetcher;
 }
 
 /**
@@ -32,7 +30,7 @@ export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
     children,
     className,
     replace,
-    component,
+    prefetch,
     onClick,
     onMouseEnter,
     onTouchStart,
@@ -54,10 +52,10 @@ export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
         document.head.appendChild(link);
       }
 
-      if (component?.prefetch) {
-        void component.prefetch();
+      if (prefetch) {
+        void prefetch();
       }
-    }, [to, component]);
+    }, [to, prefetch]);
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       onClick?.(e);
