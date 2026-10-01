@@ -1,4 +1,3 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
@@ -25,19 +24,10 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
   const startedAt = Date.now();
 
   try {
-    // Retorna deals em risco de toda a organização (lê todas as sales):
-    // restrito a admin/manager.
+    // Read-only sobre win_loss_patterns e sales (RLS: SELECT liberado a
+    // autenticados): o client do usuário já basta — nenhum dado além do que o
+    // chamador pode ler diretamente é exposto.
     const caller = await getUserClient(req);
-    const { data: isManager, error: roleError } = await caller.client.rpc(
-      "is_admin_or_manager" as never,
-      { _user_id: caller.userId } as never,
-    );
-    if (roleError) throw roleError;
-    if (!isManager) {
-      return new Response(JSON.stringify({ error: "forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
     let body: RequestBody = {};
     if (req.method === "POST") {
@@ -55,10 +45,7 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
       ? body.limit
       : 20;
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    const supabase = caller.client;
 
     const [{ data: patternsRaw, error: pErr }, { data: salesRaw, error: sErr }] = await Promise.all([
       supabase
