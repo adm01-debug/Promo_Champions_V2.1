@@ -223,20 +223,28 @@ export const PipelineBoard = () => {
       }
 
       let currentStageId: string | null = null;
+      let draggedVersion: number | undefined;
       for (const stage of currentStages) {
-        if (currentDealsByStage?.[stage.id]?.some(d => d.id === dealId)) {
+        const dragged = currentDealsByStage?.[stage.id]?.find(d => d.id === dealId);
+        if (dragged) {
           currentStageId = stage.id;
+          draggedVersion = dragged.version;
           break;
         }
       }
       if (currentStageId && currentStageId !== targetStage.id) {
         if (isDefaultPipeline) {
-          moveDeal.mutate({ dealId, newStage: targetStage.id as PipelineStageId });
+          moveDeal.mutate({
+            dealId,
+            newStage: targetStage.id as PipelineStageId,
+            expectedVersion: draggedVersion,
+          });
         } else {
           moveDealMulti.mutate({
             dealId,
             newStage: targetStage.id,
             pipelineId: selectedPipelineId,
+            expectedVersion: draggedVersion,
           });
         }
       }
@@ -245,12 +253,17 @@ export const PipelineBoard = () => {
         const dealInStage = currentDealsByStage?.[stage.id]?.find(d => d.id === overId);
         if (dealInStage) {
           if (isDefaultPipeline) {
-            moveDeal.mutate({ dealId, newStage: stage.id as PipelineStageId });
+            moveDeal.mutate({
+              dealId,
+              newStage: stage.id as PipelineStageId,
+              expectedVersion: dealInStage.version,
+            });
           } else {
             moveDealMulti.mutate({
               dealId,
               newStage: stage.id,
               pipelineId: selectedPipelineId,
+              expectedVersion: dealInStage.version,
             });
           }
           return;
@@ -565,8 +578,7 @@ export const PipelineBoard = () => {
                   activeCadence={activeCadences?.[activeDeal.id]}
                   icpData={
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
-                      | { is_icp_match: boolean; grupo_nicho?: string }
-                      | undefined
+                      { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
                 />
               </div>

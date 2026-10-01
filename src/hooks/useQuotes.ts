@@ -2,6 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { insertPayload, type TableUpdate } from '@/lib/supabase/typed-payloads';
+import {
+  OptimisticLockConflictError,
+  isOptimisticLockConflict,
+} from '@/lib/supabase/optimisticLock';
 
 export interface Quote {
   id: string;
@@ -21,6 +25,9 @@ export interface Quote {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  /** Optimistic locking — presente após migration 20261001193200. */
+  version?: number;
+  deleted_at?: string | null;
   // New fields from GIFT STORE integration
   quote_number: string | null;
   subtotal: number | null;
@@ -86,6 +93,7 @@ export function useQuotes(statusFilter?: string) {
         .select(
           `*, salespeople:created_by (name), sales:sale_id (client_name, product_name, status)`
         )
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         // Janela explícita: a página renderiza a lista inteira sem paginação;
         // sem limite, o teto de 1000 linhas do PostgREST truncava silencioso.
@@ -109,7 +117,8 @@ export function useQuoteSummary() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('quotes')
-        .select('status, total_value, valid_until');
+        .select('status, total_value, valid_until')
+        .is('deleted_at', null);
       if (error) throw error;
 
       const now = new Date();
@@ -182,10 +191,13 @@ export function useUpdateQuoteStatus() {
       id,
       status,
       rejection_reason,
+      version,
     }: {
       id: string;
       status: string;
       rejection_reason?: string;
+      /** Versão lida do orçamento (optimistic locking) — quando presente, exige casar. */
+      version?: number;
     }) => {
       const updates: TableUpdate<'quotes'> = { status };
       if (status === 'sent') updates.sent_at = new Date().toISOString();
@@ -195,13 +207,14 @@ export function useUpdateQuoteStatus() {
         if (rejection_reason) updates.rejection_reason = rejection_reason;
       }
 
-      const { data: quote, error } = await supabase
-        .from('quotes')
-        .update(updates)
-        .eq('id', id)
-        .select('sale_id')
-        .single();
+      let updateQuery = supabase.from('quotes').update(updates).eq('id', id);
+      if (typeof version === 'number') {
+        updateQuery = updateQuery.eq('version', version);
+      }
+
+      const { data: quote, error } = await updateQuery.select('sale_id').maybeSingle();
       if (error) throw error;
+      if (!quote) throw new OptimisticLockConflictError();
 
       // Sincronização automática com pipeline
       if (quote?.sale_id) {
@@ -226,7 +239,14 @@ export function useUpdateQuoteStatus() {
       qc.invalidateQueries({ queryKey: ['sales'] });
       toast.success('Status atualizado e pipeline sincronizado');
     },
-    onError: () => toast.error('Erro ao atualizar status'),
+    onError: err => {
+      if (isOptimisticLockConflict(err)) {
+        qc.invalidateQueries({ queryKey: ['quotes'] });
+        toast.warning('Registro alterado por outro usuário — dados atualizados');
+      } else {
+        toast.error('Erro ao atualizar status');
+      }
+    },
   });
 }
 
@@ -234,7 +254,13 @@ export function useDeleteQuote() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('quotes').delete().eq('id', id);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('quotes')
+        .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -253,6 +279,7 @@ export function useDealsForQuotes() {
       const { data, error } = await supabase
         .from('sales')
         .select('id, client_name, product_name, status')
+        .is('deleted_at', null)
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation'])
         .order('created_at', { ascending: false });
 
