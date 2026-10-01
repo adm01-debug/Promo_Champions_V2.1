@@ -4,21 +4,22 @@ import {
   computePipelineHealth, 
   computeForecast 
 } from "../utils/bi-helpers";
+import { buildSale, buildSalesperson } from "./factories";
 
 describe("BI Helpers", () => {
   const mockSalespeople = [
-    { id: "1", name: "John", avatar_url: null, role: "SDR" },
-    { id: "2", name: "Jane", avatar_url: null, role: "Closer" }
+    buildSalesperson({ id: "1", name: "John", avatar_url: null, role: "sdr" }),
+    buildSalesperson({ id: "2", name: "Jane", avatar_url: null, role: "closer" })
   ];
 
   const mockCompletedSales = [
-    { id: "s1", salesperson_id: "1", amount: 100, status: "completed", created_at: "2024-01-01T10:00:00Z" },
-    { id: "s2", salesperson_id: "2", amount: 200, status: "completed", created_at: "2024-01-02T10:00:00Z" }
+    buildSale({ id: "s1", salesperson_id: "1", amount: 100, status: "completed", created_at: "2024-01-01T10:00:00Z" }),
+    buildSale({ id: "s2", salesperson_id: "2", amount: 200, status: "completed", created_at: "2024-01-02T10:00:00Z" })
   ];
 
   const mockAllCurrentSales = [
     ...mockCompletedSales,
-    { id: "s3", salesperson_id: "1", amount: 150, status: "pending", created_at: "2024-01-03T10:00:00Z" }
+    buildSale({ id: "s3", salesperson_id: "1", amount: 150, status: "pending", created_at: "2024-01-03T10:00:00Z" })
   ];
 
   const mockGoals = [

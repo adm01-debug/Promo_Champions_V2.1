@@ -14,17 +14,18 @@ import {
   type SaleRow,
   type SalespersonRow,
 } from './salesReportHelpers';
+import { buildSale } from '@/test/factories';
 
-const sale = (over: Partial<SaleRow>): SaleRow => ({
-  id: crypto.randomUUID(),
-  amount: 100,
-  status: 'completed',
-  created_at: '2026-01-15T10:00:00Z',
-  client_name: 'Cliente X',
-  product_name: 'Produto A',
-  salesperson_id: 'sp-1',
-  ...over,
-});
+const sale = (over: Partial<SaleRow> = {}): SaleRow =>
+  buildSale({
+    amount: 100,
+    status: 'completed',
+    created_at: '2026-01-15T10:00:00Z',
+    client_name: 'Cliente X',
+    product_name: 'Produto A',
+    salesperson_id: 'sp-1',
+    ...over,
+  });
 
 describe('salesReportHelpers.buildKpis', () => {
   it('agrega apenas vendas ganhas (completed/won/closed) na receita', () => {
@@ -391,16 +392,17 @@ describe('buildMarkupRanking', () => {
     markup_pct: number | null,
     status = 'completed',
     amount = 1000,
-  ): SaleRow => ({
-    id,
-    amount,
-    status,
-    created_at: '2026-07-20T10:00:00',
-    client_name: 'C',
-    product_name: 'P',
-    salesperson_id,
-    markup_pct,
-  });
+  ): SaleRow =>
+    buildSale({
+      id,
+      amount,
+      status,
+      created_at: '2026-07-20T10:00:00',
+      client_name: 'C',
+      product_name: 'P',
+      salesperson_id,
+      markup_pct,
+    });
 
   it('ordena por markup médio decrescente e calcula amostra/receita', () => {
     const rows = buildMarkupRanking(
