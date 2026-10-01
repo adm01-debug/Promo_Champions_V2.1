@@ -4,7 +4,7 @@
 Aceito — Fevereiro 2025
 
 ## Contexto
-Como aplicação SPA sem backend próprio, o SalesPro acessa o banco diretamente via Supabase client. Isso exige que a segurança seja enforçada no nível do banco de dados, não apenas no frontend.
+Como aplicação SPA sem backend próprio, o Promo Champions acessa o banco diretamente via Supabase client. Isso exige que a segurança seja enforçada no nível do banco de dados, não apenas no frontend.
 
 ## Decisão
 Toda segurança de acesso a dados é implementada via RLS (Row Level Security) do PostgreSQL, complementada por RPCs `SECURITY DEFINER` para operações sensíveis.

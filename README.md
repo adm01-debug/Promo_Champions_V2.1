@@ -5,36 +5,32 @@ Plataforma gamificada de CRM, BI e inteligência de vendas para equipes comercia
 ## 🚀 Quick Start
 
 ### Pré-requisitos
-- **Node.js** 22+ ou **Bun** 1.0+
-- **Supabase** (local ou cloud)
+- **Node.js** 22+ (lockfile único: `package-lock.json`)
+- Acesso ao projeto **Supabase Cloud** `usyxfpqlsspldubptrdl`
 
 ### Setup
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/adm01-debug/promo-champions-v2.git
-cd promo-champions-v2
+git clone https://github.com/adm01-debug/Promo_Champions_V2.1.git
+cd Promo_Champions_V2.1
 
-# 2. Instale as dependências (escolha um)
+# 2. Instale as dependências (lockfile único: package-lock.json)
 npm install
-# ou
-bun install
 
 # 3. Configure variáveis de ambiente
 cp .env.example .env
-# Edite .env com suas credenciais do Supabase
+# Edite .env com as credenciais do projeto Supabase cloud
+# (usyxfpqlsspldubptrdl — ver CLAUDE.md §1)
 
-# 4. Inicie o Supabase local (opcional)
-supabase start
-
-# 5. Rode as migrações
-supabase db push
-
-# 6. Inicie o dev server
+# 4. Inicie o dev server
 npm run dev
-# ou
-bun run dev
 ```
+
+> **Banco**: produção e desenvolvimento usam o Supabase **cloud**
+> (`usyxfpqlsspldubptrdl`) — não há `supabase start`/`db push` local no
+> fluxo real. Migrations são aplicadas manualmente (ver
+> [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) §3).
 
 Acesse: **http://localhost:5173**
 
@@ -86,7 +82,8 @@ tests/
 
 ## 🔒 Segurança
 
-- Todas as tabelas possuem **Row Level Security (RLS)**
+- As tabelas de aplicação possuem **Row Level Security (RLS)** — o mapa real
+  por tabela (🔒/⚠️) está em [`docs/DATA_DICTIONARY.md`](./docs/DATA_DICTIONARY.md)
 - **Nunca** commite o arquivo `.env`
 - Rotacione as chaves do Supabase periodicamente
 

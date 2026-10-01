@@ -1,7 +1,7 @@
-# 📋 Documentação Completa do Sistema — SalesPro (Sales Arena)
+# 📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)
 
 > **Versão:** 1.0  
-> **Última atualização:** 24/02/2026  
+> **Atualizado em:** 2026-02-24  
 > **Stack:** React 18 · Vite · TypeScript · Tailwind CSS · Lovable Cloud (Supabase)  
 > **Banco:** Lovable Cloud (PostgreSQL — CRM, pipeline, gamificação, segurança)
 
@@ -62,7 +62,7 @@
 
 ## 1. Visão Geral
 
-O **SalesPro (Sales Arena)** é uma plataforma completa de CRM e gestão comercial projetada para equipes de vendas. O sistema abrange todo o ciclo de vida de vendas — desde a prospecção (SDR) até o fechamento (Closer) — com pipeline Kanban, gamificação, IA assistente, analytics avançados e gestão de equipes.
+O **Promo Champions (Sales Arena)** é uma plataforma completa de CRM e gestão comercial projetada para equipes de vendas. O sistema abrange todo o ciclo de vida de vendas — desde a prospecção (SDR) até o fechamento (Closer) — com pipeline Kanban, gamificação, IA assistente, analytics avançados e gestão de equipes.
 
 ### Objetivo Principal
 Fornecer uma plataforma unificada para equipes de vendas gerenciarem leads, deals, clientes, atividades, metas e performance, com gamificação para engajamento e IA para produtividade.

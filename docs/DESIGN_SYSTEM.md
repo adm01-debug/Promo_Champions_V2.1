@@ -1,4 +1,4 @@
-# Design System - SalesPro
+# Design System - Promo Champions
 
 Documentação completa das classes utilitárias, variantes e tokens de design implementados.
 
@@ -860,7 +860,7 @@ Os seguintes componentes já utilizam o design system completo:
 
 ### Resumo Executivo
 
-Esta sessão implementou melhorias significativas no design system do SalesPro, focando em:
+Esta sessão implementou melhorias significativas no design system do Promo Champions, focando em:
 - **Profundidade e contraste** no light mode
 - **Refinamento de bordas/glows** no dark mode
 - **Tipografia consistente** com font-display
@@ -1155,4 +1155,4 @@ animation: {
 
 ---
 
-*Última atualização: Dezembro 2024*
+*Atualizado em: 2024-12*

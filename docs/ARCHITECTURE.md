@@ -2,7 +2,7 @@
 
 ## System Overview
 
-SalesPro is built as a modern, scalable SaaS application using a microservices-inspired architecture.
+Promo Champions is built as a modern, scalable SaaS application using a microservices-inspired architecture.
 
 ## Technology Stack
 
