@@ -45,6 +45,7 @@ export const SessionManager = () => {
     isLoading,
     terminateSession,
     terminateOtherSessions,
+    terminateAllSessions,
     refreshSession,
   } = useSessionManagement();
 
@@ -88,14 +89,24 @@ export const SessionManager = () => {
               </p>
             </div>
             {sessions.length > 1 && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={terminateOtherSessions}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Encerrar outras
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={terminateOtherSessions}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Encerrar outras
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={terminateAllSessions}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Encerrar todas
+                </Button>
+              </div>
             )}
           </div>
         </CardContent>
