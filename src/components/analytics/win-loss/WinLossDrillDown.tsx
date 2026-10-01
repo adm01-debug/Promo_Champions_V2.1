@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, Package, Clock, Trophy, XCircle } from 'lucide-react';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 interface SP {
   name: string;
@@ -113,7 +114,7 @@ const RecentList: FC<{ items: Detail[] }> = memo(({ items }) => {
               <div key={i} className="p-3">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    {d.outcome === 'won' ? (
+                    {d.outcome === WIN_LOSS_OUTCOME.WON ? (
                       <Trophy className="h-3.5 w-3.5 text-success" />
                     ) : (
                       <XCircle className="h-3.5 w-3.5 text-destructive" />

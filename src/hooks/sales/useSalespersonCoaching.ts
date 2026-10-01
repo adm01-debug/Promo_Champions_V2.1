@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface CoachingInsight {
@@ -82,14 +82,14 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
       const allOutcomes = outcomes || [];
       const allActivities = activities || [];
 
-      const wins = allOutcomes.filter(o => o.outcome === 'won').length;
-      const losses = allOutcomes.filter(o => o.outcome === 'lost').length;
+      const wins = allOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
+      const losses = allOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.LOST).length;
       const totalOutcomes = allOutcomes.length;
       const winRate = totalOutcomes > 0 ? (wins / totalOutcomes) * 100 : 0;
 
       // Team average win rate
       const teamOutcomes = allTeamOutcomes || [];
-      const teamWins = teamOutcomes.filter(o => o.outcome === 'won').length;
+      const teamWins = teamOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
       const teamWinRate = teamOutcomes.length > 0 ? (teamWins / teamOutcomes.length) * 100 : 0;
       const comparisonToTeam = teamWinRate > 0 ? winRate - teamWinRate : 0;
 
@@ -100,7 +100,7 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
 
       // Top loss reasons
       const lossReasons = allOutcomes
-        .filter(o => o.outcome === 'lost' && o.reason)
+        .filter(o => o.outcome === WIN_LOSS_OUTCOME.LOST && o.reason)
         .reduce(
           (acc, o) => {
             acc[o.reason] = (acc[o.reason] || 0) + 1;

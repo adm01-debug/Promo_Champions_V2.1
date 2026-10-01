@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface SalespersonPerformance {
   id: string;
@@ -73,7 +73,7 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
           const completedSales = spSales.filter(s => isWonSaleStatus(s.status));
           const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
           const spOutcomes = (outcomes || []).filter(o => o.salesperson_id === sp.id);
-          const wins = spOutcomes.filter(o => o.outcome === 'won').length;
+          const wins = spOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
           const totalOutcomes = spOutcomes.length;
 
           const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);

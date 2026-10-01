@@ -22,6 +22,7 @@ import {
   MARKUP_TIER_LABELS,
   type MarkupTier,
 } from '@/lib/markupHelpers';
+import { isLostSaleStatus } from '@/constants';
 
 const sortOptions: SortOption[] = [
   { label: 'Mais recente', value: 'date_desc', direction: 'desc' },
@@ -90,8 +91,8 @@ const Vendas = () => {
     }
 
     // Improved Lost Deals Handling: Filtered list shows lost deals only if specifically requested
-    if (!statusFilter || statusFilter !== 'lost') {
-      filtered = filtered.filter(s => s.status !== 'lost');
+    if (!statusFilter || !isLostSaleStatus(statusFilter)) {
+      filtered = filtered.filter(s => !isLostSaleStatus(s.status));
     }
 
     // Apply markup tier filter (faixa de rentabilidade)
