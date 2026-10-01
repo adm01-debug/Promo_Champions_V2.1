@@ -21,7 +21,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry } from "../_shared/retry.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
+import { escalateCriticalAlert, runbookUrl } from "../_shared/alert-escalation.ts";
 
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
@@ -42,11 +43,16 @@ async function postSlack(webhook: string, text: string, blocks?: unknown, reques
     "slack:wal-health-alert",
     async () => {
       await withRetry(async (_attempt, signal) => {
-        const res = await fetchWithTimeout(webhook, {
+        const res = await fetchWithTrace(webhook, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(blocks ? { text, blocks } : { text }),
           signal,
+        }, {
+          requestId: requestId ?? "unknown",
+          fnName: "wal-health-alert",
+          operation: "slack_post",
+          log: "silent",
         });
         if (!res.ok) {
           const body = await res.text();
@@ -142,7 +148,8 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
     }
 
     const text =
-      `*[WAL Health Alert]* ${alerts.length} evento(s)\n` + alerts.join("\n");
+      `*[WAL Health Alert]* ${alerts.length} evento(s)\n` + alerts.join("\n") +
+      `\n\nRunbook: ${runbookUrl("wal-health")}`;
 
     await postSlack(slack, text, [
       { type: "section", text: { type: "mrkdwn", text } },
@@ -156,6 +163,19 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
         ],
       },
     ], ctx.requestId);
+
+    // ALERT-ESCAL: alertas de WAL são sempre críticos — escala para canal
+    // externo dedicado (Slack de escalação / Resend) quando configurado.
+    const escal = await escalateCriticalAlert({
+      title: `WAL Health Alert — ${alerts.length} evento(s)`,
+      lines: alerts,
+      runbook: "wal-health",
+      requestId: ctx.requestId,
+      source: "wal-health-alert",
+    });
+    if (escal.slack === "failed" || escal.email === "failed") {
+      ctx.log("warn", "alert_escalation_partial", { ...escal });
+    }
 
     return new Response(
       JSON.stringify({ ok: true, alerts, snapshot: data }),

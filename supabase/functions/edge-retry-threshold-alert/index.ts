@@ -14,7 +14,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry, RetryError } from "../_shared/retry.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
+import { escalateCriticalAlert, runbookUrl } from "../_shared/alert-escalation.ts";
 
 interface ExhaustedRow {
   function_name: string;
@@ -28,11 +29,16 @@ async function postSlack(webhook: string, text: string, requestId: string | null
     "slack:edge-retry-threshold-alert",
     async () => {
       await withRetry(async (_a, signal) => {
-        const res = await fetchWithTimeout(webhook, {
+        const res = await fetchWithTrace(webhook, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text }),
           signal,
+        }, {
+          requestId: requestId ?? "unknown",
+          fnName: "edge-retry-threshold-alert",
+          operation: "slack_post",
+          log: "silent",
         });
         if (!res.ok) {
           const body = await res.text().catch(() => "");
@@ -166,7 +172,22 @@ Deno.serve(withRequestId("edge-retry-threshold-alert", async (req, ctx) => {
   const text =
     `:rotating_light: *Edge Retry Exhausted acima do threshold*\n` +
     `Últimas ${windowH}h: *${total}* eventos exauridos (threshold: ${threshold})\n` +
-    `\n*Top funções:*\n${top}\n\n_req: ${ctx.requestId}_`;
+    `\n*Top funções:*\n${top}\n` +
+    `\n*Runbook:* ${runbookUrl("edge-retry")}\n\n_req: ${ctx.requestId}_`;
+
+  // ALERT-ESCAL: retries exauridos acima do threshold são críticos — escala
+  // para o canal externo dedicado (Slack de escalação / Resend) quando configurado.
+  const escal = await escalateCriticalAlert({
+    title: `Edge retries exauridos: ${total} em ${windowH}h (threshold ${threshold})`,
+    lines: [...byFn.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10)
+      .map(([fn, n]) => `• ${fn}: ${n}`),
+    runbook: "edge-retry",
+    requestId: ctx.requestId,
+    source: "edge-retry-threshold-alert",
+  });
+  if (escal.slack === "failed" || escal.email === "failed") {
+    ctx.log("warn", "alert_escalation_partial", { ...escal });
+  }
 
   try {
     await postSlack(webhook, text, ctx.requestId);

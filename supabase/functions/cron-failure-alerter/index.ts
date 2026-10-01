@@ -6,6 +6,8 @@ import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateNotificationBatch } from "../_shared/notification-categories.ts";
+import { escalateCriticalAlert } from "../_shared/alert-escalation.ts";
+import { exportOperationalMetrics } from "../_shared/metrics-exporter.ts";
 
 interface CronFailure {
   jobid: number;
@@ -180,6 +182,31 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       admins: adminIds.length,
     });
 
+    // ALERT-ESCAL: falha de cron é severity=critical — escala para o canal
+    // externo dedicado (Slack de escalação / Resend) quando configurado.
+    const escal = await escalateCriticalAlert({
+      title: `${rows.length} job(s) pg_cron falharam`,
+      lines: rows.slice(0, 10).map((f) =>
+        `• ${f.jobname ?? `job#${f.jobid}`}: ${(f.return_message ?? f.status).slice(0, 200)}`
+      ),
+      runbook: "cron-failures",
+      requestId,
+      source: "cron-failure-alerter",
+    });
+    if (escal.slack === "failed" || escal.email === "failed") {
+      log("warn", "alert_escalation_partial", { ...escal });
+    }
+
+    // METRICS: exporta contadores para o sink externo (Better Stack/Grafana)
+    // quando METRICS_INGEST_URL está configurada; no-op caso contrário.
+    const metricsResult = await exportOperationalMetrics([
+      { name: "cron_failures", value: rows.length, tags: { source: "cron-failure-alerter" } },
+      { name: "cron_failure_notifications", value: notifiedTotal, tags: { source: "cron-failure-alerter" } },
+    ], requestId);
+    if (!metricsResult.exported && metricsResult.reason !== "not_configured") {
+      log("warn", "metrics_export_failed", { reason: metricsResult.reason });
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
@@ -191,7 +218,6 @@ Deno.serve(withRequestId("cron-failure-alerter", async (req, ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
-    console.error('cron-failure-alerter error:', e);
     const msg = e instanceof Error ? e.message : String(e);
     log("error", "unhandled", { error: msg });
     return new Response(JSON.stringify({ error: msg, requestId }), {

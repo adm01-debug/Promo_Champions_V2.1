@@ -8,7 +8,7 @@ import {
 } from "../_shared/auth-client.ts";
 import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 import { checkRateLimit, rateLimitHeaders } from "../_shared/rate-limit.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import {
   buildUnsubscribeUrl,
   filterOptedOut,
@@ -269,7 +269,7 @@ Deno.serve(withRequestId("send-transactional-email", async (req, ctx) => {
 
   let providerResponse: Response;
   try {
-    providerResponse = await fetchWithTimeout(
+    providerResponse = await fetchWithTrace(
       "https://api.resend.com/emails",
       {
         method: "POST",
@@ -286,7 +286,12 @@ Deno.serve(withRequestId("send-transactional-email", async (req, ctx) => {
           ...(prepared.text ? { text: prepared.text } : {}),
         }),
       },
-      15_000,
+      {
+        timeoutMs: 15_000,
+        requestId: ctx.requestId,
+        fnName: 'send-transactional-email',
+        operation: 'resend_email',
+      },
     );
   } catch (error) {
     ctx.log("error", "provider_request_failed", {

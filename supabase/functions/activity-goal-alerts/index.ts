@@ -1,7 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
+import { alertFromEmail } from "../_shared/alert-escalation.ts";
+import { maskEmail } from "../_shared/pii.ts";
 
 
 
@@ -13,7 +15,8 @@ interface SalespersonAlert {
   goals: { calls: number; emails: number; meetings: number };
 }
 
-Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
+Deno.serve(withRequestId('activity-goal-alerts', async (req, ctx) => {
+  const log = ctx.log;
   const corsHeaders = getCorsHeaders(req);
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -21,7 +24,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
   }
 
   try {
-    console.info('Starting activity goal check...');
+    log('info', 'check_started');
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -36,7 +39,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     const dayEnd = new Date(today);
     dayEnd.setHours(23, 59, 59, 999);
 
-    console.info(`Checking activities for ${today.toISOString().split('T')[0]}`);
+    log('info', 'checking_activities', { date: today.toISOString().split('T')[0] });
 
     // Fetch active salespeople with emails
     const { data: salespeople, error: spError } = await supabase
@@ -46,7 +49,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
       .limit(500);
 
     if (spError) {
-      console.error('Error fetching salespeople:', spError);
+      log('error', 'salespeople_fetch_failed');
       throw spError;
     }
 
@@ -57,7 +60,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
       .limit(500);
 
     if (goalsError) {
-      console.error('Error fetching goals:', goalsError);
+      log('error', 'goals_fetch_failed');
       throw goalsError;
     }
 
@@ -70,7 +73,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
       .limit(50000);
 
     if (actError) {
-      console.error('Error fetching activities:', actError);
+      log('error', 'activities_fetch_failed');
       throw actError;
     }
 
@@ -91,7 +94,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
 
       // Skip if no goals configured
       if (!spGoals) {
-        console.info(`${sp.name}: No goals configured, skipping`);
+        log('info', 'no_goals_skip', { salesperson_id: sp.id });
         continue;
       }
 
@@ -117,7 +120,10 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
         ? (progressCalls + progressEmails + progressMeetings) / totalGoals
         : 100;
 
-      console.info(`${sp.name}: ${overallProgress.toFixed(0)}% progress`);
+      log('info', 'progress_computed', {
+        salesperson_id: sp.id,
+        progress_pct: Math.round(overallProgress),
+      });
 
       // Alert if below 50%
       if (overallProgress < 50) {
@@ -131,7 +137,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
       }
     }
 
-    console.info(`Found ${alertList.length} salespeople below 50% progress`);
+    log('info', 'below_target_found', { count: alertList.length });
 
     // Send email alerts if there are any and Resend is configured
     if (alertList.length > 0 && resendApiKey) {
@@ -178,18 +184,22 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
           </div>
         `;
 
-        const emailRes = await fetchWithTimeout('https://api.resend.com/emails', {
+        const emailRes = await fetchWithTrace('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: 'PROMO CHAMPIONS <onboarding@resend.dev>',
+            from: alertFromEmail(),
             to: [adminEmail],
             subject,
             html: emailHtml,
           }),
+        }, {
+          requestId: ctx.requestId,
+          fnName: 'activity-goal-alerts',
+          operation: 'resend_email',
         });
 
         // Log email to email_logs table
@@ -209,12 +219,12 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
         });
 
         if (emailRes.ok) {
-          console.info(`Email alert sent to ${adminEmail}`);
+          log('info', 'alert_email_sent', { to: maskEmail(adminEmail) });
         } else {
-          console.error('Error sending email:', errorMessage);
+          log('error', 'alert_email_failed', { to: maskEmail(adminEmail) });
         }
       } else {
-        console.info('No admin email configured in notification_preferences');
+        log('info', 'no_admin_email_configured');
       }
     }
 
@@ -232,7 +242,7 @@ Deno.serve(withRequestId('activity-goal-alerts', async (req, _ctx) => {
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error in activity-goal-alerts:', errorMessage);
+    log('error', 'activity_goal_alerts_failed');
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {

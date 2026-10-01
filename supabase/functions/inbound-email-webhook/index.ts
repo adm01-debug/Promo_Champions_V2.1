@@ -25,7 +25,7 @@ function json(body: unknown, status = 200): Response {
 }
 
 Deno.serve(
-  withRequestId('inbound-email-webhook', async (req, _ctx) => {
+  withRequestId('inbound-email-webhook', async (req, ctx) => {
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
@@ -172,7 +172,9 @@ Deno.serve(
         event_type: events.length === 1 ? events[0].eventType : undefined,
       });
     } catch (e) {
-      console.error('inbound-email-webhook error', e);
+      ctx.log('error', 'inbound_email_processing_failed', {
+        error: e instanceof Error ? e.message : String(e),
+      });
       return json({ ok: false, error: 'processing_failed' }, 500);
     }
   })

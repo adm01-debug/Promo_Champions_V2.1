@@ -1,7 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -186,7 +186,7 @@ Deno.serve(
         twilioRes = await withEdgeCircuitBreaker(
           'twilio:calls',
           async () => {
-            const r = await fetchWithTimeout(
+            const r = await fetchWithTrace(
               `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Calls.json`,
               {
                 method: 'POST',
@@ -195,6 +195,11 @@ Deno.serve(
                   'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: params.toString(),
+              },
+              {
+                requestId: ctx.requestId,
+                fnName: 'twilio-click-to-call',
+                operation: 'twilio_create_call',
               }
             );
             if (r.status >= 500) throw new Error(`twilio_5xx_${r.status}`);

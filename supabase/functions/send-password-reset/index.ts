@@ -2,13 +2,16 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { alertFromEmail } from "../_shared/alert-escalation.ts";
+import { maskEmail } from "../_shared/pii.ts";
 
 interface PasswordResetRequest {
   email: string;
   requestId: string;
 }
 
-Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Promise<Response> => {
+Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promise<Response> => {
+  const log = ctx.log;
   const cors = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: cors });
@@ -56,7 +59,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       throw new Error("Email and requestId are required");
     }
 
-    console.info(`Processing password reset approval for: ${email}`);
+    log('info', 'password_reset_processing', { to: maskEmail(email) });
 
     // Verify the request exists and is approved
     const { data: resetRequest, error: requestError } = await supabaseAdmin
@@ -80,19 +83,19 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
     });
 
     if (resetError) {
-      console.error("Error generating reset link:", resetError);
+      log('error', 'reset_link_generation_failed');
       throw new Error(`Failed to generate reset link: ${resetError.message}`);
     }
 
     const resetLink = resetData.properties?.action_link;
-    console.info("Reset link generated successfully");
+    log('info', 'reset_link_generated');
 
     // Send email with Resend if configured
     if (resendApiKey) {
       const resend = new Resend(resendApiKey);
 
       const { error: emailError } = await resend.emails.send({
-        from: "Sistema <onboarding@resend.dev>",
+        from: alertFromEmail(),
         to: [email],
         subject: "Redefinição de Senha Aprovada",
         html: `
@@ -139,13 +142,13 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       });
 
       if (emailError) {
-        console.error("Error sending email:", emailError);
+        log('error', 'reset_email_send_failed', { to: maskEmail(email) });
         throw new Error(`Failed to send email: ${emailError.message}`);
       }
 
-      console.info("Email sent successfully");
+      log('info', 'reset_email_sent', { to: maskEmail(email) });
     } else {
-      console.info("RESEND_API_KEY not configured, skipping email send");
+      log('warn', 'resend_not_configured_email_skipped');
     }
 
     // Update request status to completed
@@ -162,7 +165,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
       }
     );
   } catch (error: unknown) {
-    console.error('send-password-reset error:', error);
+    log('error', 'send_password_reset_failed');
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

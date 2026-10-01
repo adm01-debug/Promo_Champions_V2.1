@@ -1,8 +1,10 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { alertFromEmail, escalateCriticalAlert, runbookUrl } from "../_shared/alert-escalation.ts";
+import { exportOperationalMetrics } from "../_shared/metrics-exporter.ts";
 
 type LogLevel = 'info' | 'warn' | 'error';
 type AlertKind = 'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
@@ -234,23 +236,29 @@ async function sendAlertEmail(
         `<li><strong>${t.kind}</strong>: <code>${JSON.stringify(t.details)}</code></li>`
     )
     .join('');
+  const runbook = runbookUrl('winloss-webhooks');
   const html = `
     <h2>⚠️ Webhook degradado</h2>
     <p>Assinatura <code>${subscriptionId}</code> (<a href="${url}">${url}</a>) disparou alerta(s):</p>
     <ul>${items}</ul>
     <p>Investigue no painel Win/Loss Intelligence → Webhooks.</p>
+    <p><strong>Runbook:</strong> <a href="${runbook}">${runbook}</a></p>
   `;
 
   try {
-    const r = await fetchWithTimeout('https://api.resend.com/emails', {
+    const r = await fetchWithTrace('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'Win/Loss Webhooks <onboarding@resend.dev>',
+        from: alertFromEmail(),
         to: [adminEmail],
         subject: `Webhook degradado: ${triggers.map(t => t.kind).join(', ')}`,
         html,
       }),
+    }, {
+      requestId,
+      fnName: 'winloss-webhook-health-monitor',
+      operation: 'resend_email',
     });
     if (!r.ok) {
       const text = await r.text().catch(() => '');
@@ -552,6 +560,28 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
 
     for (const { sub, firedTriggers } of emailQueue) {
       await sendAlertEmail(sub.url, sub.id, firedTriggers, requestId);
+
+      // ALERT-ESCAL: webhooks degradados são críticos — escala para canal
+      // externo dedicado (Slack de escalação / Resend) quando configurado.
+      const escal = await escalateCriticalAlert({
+        title: `Webhook degradado: ${sub.url}`,
+        lines: firedTriggers.map(t => `${t.kind}: ${JSON.stringify(t.details)}`),
+        runbook: 'winloss-webhooks',
+        requestId,
+        source: 'winloss-webhook-health-monitor',
+      });
+      if (escal.slack === 'failed' || escal.email === 'failed') {
+        structuredLog('warn', { msg: 'alert_escalation_partial', subscriptionId: sub.id, ...escal }, requestId);
+      }
+    }
+
+    const metricsResult = await exportOperationalMetrics([
+      { name: 'webhook_health_subscriptions_checked', value: subscriptions.length, tags: { source: 'winloss-webhook-health-monitor' } },
+      { name: 'webhook_alerts_fired', value: firedCount, tags: { source: 'winloss-webhook-health-monitor' } },
+      { name: 'webhook_alerts_suppressed', value: suppressedCount, tags: { source: 'winloss-webhook-health-monitor' } },
+    ], requestId);
+    if (!metricsResult.exported && metricsResult.reason !== 'not_configured') {
+      structuredLog('warn', { msg: 'metrics_export_failed', reason: metricsResult.reason }, requestId);
     }
 
     const totalLatency = Date.now() - requestStart;

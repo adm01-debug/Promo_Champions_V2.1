@@ -5,9 +5,9 @@ import {
   validateWebhookPayload,
   WebhookContracts,
 } from '../_shared/webhook-validator.ts';
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 
-Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
+Deno.serve(withRequestId('ai-copilot', async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -45,9 +45,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       '1.0.0'
     );
     if (!validation.success) {
-      console.error(
-        `[Contract Violation] AI Copilot failed validation: ${validation.error}`
-      );
+      ctx.log('error', 'contract_violation', { error: validation.error });
       return new Response(
         JSON.stringify({
           error: validation.error,
@@ -74,13 +72,17 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
-      const skillResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/forecast-narrative`, {
+      const skillResp = await fetchWithTrace(`${supabaseUrl}/functions/v1/forecast-narrative`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: authHeader,
         },
         body: JSON.stringify({ forecast_id: forecastId }),
+      }, {
+        requestId: ctx.requestId,
+        fnName: 'ai-copilot',
+        operation: 'skill_forecast_narrative',
       });
       const skillBody = await skillResp.text();
       return new Response(skillBody, {
@@ -96,13 +98,17 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
-      const skillResp = await fetchWithTimeout(`${supabaseUrl}/functions/v1/generate-coaching-actions`, {
+      const skillResp = await fetchWithTrace(`${supabaseUrl}/functions/v1/generate-coaching-actions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: authHeader,
         },
         body: JSON.stringify({ recording_id: recordingId }),
+      }, {
+        requestId: ctx.requestId,
+        fnName: 'ai-copilot',
+        operation: 'skill_coaching_plan',
       });
       const skillBody = await skillResp.text();
       return new Response(skillBody, {
@@ -199,7 +205,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
       userMessage = context.question || 'O que devo fazer agora?';
     }
 
-    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTrace('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -213,6 +219,10 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
         ],
         max_tokens: 200,
       }),
+    }, {
+      requestId: ctx.requestId,
+      fnName: 'ai-copilot',
+      operation: 'ai_gateway_chat',
     });
 
     if (!response.ok) {
@@ -234,8 +244,8 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
           }
         );
       }
-      const t = await response.text();
-      console.error('AI gateway error:', response.status, t);
+      await response.text().catch(() => undefined);
+      ctx.log('error', 'ai_gateway_error', { status: response.status });
       // Graceful fallback for 403 (AI disabled) and other 5xx — avoid blank screens
       if (response.status === 403 || response.status >= 500) {
         return new Response(
@@ -257,7 +267,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error('ai-copilot error:', e);
+    ctx.log('error', 'ai_copilot_failed');
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }),
       {

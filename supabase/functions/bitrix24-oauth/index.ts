@@ -1,7 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -14,7 +14,7 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
 Deno.serve(
-  withRequestId('bitrix24-oauth', async (req, _ctx) => {
+  withRequestId('bitrix24-oauth', async (req, ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
@@ -46,7 +46,7 @@ Deno.serve(
         const tokenResponse = await withEdgeCircuitBreaker(
           'bitrix24:oauth',
           async () => {
-            const r = await fetchWithTimeout(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
+            const r = await fetchWithTrace(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
               body: new URLSearchParams({
@@ -56,6 +56,10 @@ Deno.serve(
                 code,
                 redirect_uri: redirectUri,
               }),
+            }, {
+              requestId: ctx.requestId,
+              fnName: 'bitrix24-oauth',
+              operation: 'bitrix24_token_exchange',
             });
             if (r.status >= 500) throw new Error(`bitrix24_5xx_${r.status}`);
             return r;
@@ -140,7 +144,7 @@ Deno.serve(
         const tokenResponse = await withEdgeCircuitBreaker(
           'bitrix24:oauth',
           async () => {
-            const r = await fetchWithTimeout(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
+            const r = await fetchWithTrace(`https://${BITRIX24_DOMAIN}/oauth/token/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
               body: new URLSearchParams({
@@ -149,6 +153,10 @@ Deno.serve(
                 client_secret: BITRIX24_CLIENT_SECRET,
                 refresh_token: refreshTokenData.setting_value,
               }),
+            }, {
+              requestId: ctx.requestId,
+              fnName: 'bitrix24-oauth',
+              operation: 'bitrix24_token_refresh',
             });
             if (r.status >= 500) throw new Error(`bitrix24_5xx_${r.status}`);
             return r;
@@ -232,7 +240,9 @@ Deno.serve(
           }
         );
       }
-      console.error('Bitrix24 OAuth error:', error);
+      ctx.log('error', 'bitrix24_oauth_failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return new Response(JSON.stringify({ error: errorMessage }), {
         status: 500,

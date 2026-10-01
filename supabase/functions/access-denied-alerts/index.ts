@@ -1,8 +1,12 @@
 import { Resend } from 'npm:resend@2';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { alertFromEmail, escalateCriticalAlert } from '../_shared/alert-escalation.ts';
+import { maskEmail } from '../_shared/pii.ts';
+
+type LogFn = RequestIdContext['log'];
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -102,7 +106,7 @@ const buildSpikeAlertHtml = (
   `;
 };
 
-async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings> {
+async function getAlertSettings(supabase: SupabaseClient, log: LogFn): Promise<AlertSettings> {
   try {
     const { data, error } = await supabase
       .from('security_alert_settings')
@@ -111,7 +115,7 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
       .single();
 
     if (error || !data) {
-      console.info('Using default settings (DB fetch failed):', error?.message);
+      log('warn', 'settings_fetch_failed_defaults_used', { error: error?.message });
       return {
         spike_threshold: DEFAULT_SPIKE_THRESHOLD,
         time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
@@ -119,14 +123,16 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
       };
     }
 
-    console.info('Loaded settings from DB:', data);
+    log('info', 'settings_loaded', { settings: data });
     return {
       spike_threshold: data.spike_threshold,
       time_window_hours: data.time_window_hours,
       cooldown_hours: data.cooldown_hours,
     };
   } catch (e) {
-    console.error('Error fetching settings:', e);
+    log('error', 'settings_fetch_error_defaults_used', {
+      error: e instanceof Error ? e.message : String(e),
+    });
     return {
       spike_threshold: DEFAULT_SPIKE_THRESHOLD,
       time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
@@ -135,21 +141,21 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
   }
 }
 
-const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise<Response> => {
+const handler = withRequestId('access-denied-alerts', async (req, ctx): Promise<Response> => {
+  const log = ctx.log;
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.info('Starting access denied spike check...');
+    log('info', 'check_started');
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get alert settings from database
-    const settings = await getAlertSettings(supabase);
-    console.info('Using settings:', settings);
+    const settings = await getAlertSettings(supabase, log);
 
     // Calculate time window
     const timeWindowStart = new Date();
@@ -168,7 +174,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     }
 
     if (!logs || logs.length === 0) {
-      console.info('No access denied attempts in the time window');
+      log('info', 'no_attempts_in_window');
       return new Response(
         JSON.stringify({
           message: 'No access denied attempts found',
@@ -178,9 +184,10 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       );
     }
 
-    console.info(
-      `Found ${logs.length} access denied attempts in the last ${settings.time_window_hours} hour(s)`
-    );
+    log('info', 'attempts_found', {
+      count: logs.length,
+      window_hours: settings.time_window_hours,
+    });
 
     // Group attempts by user
     const attemptsByUser: Record<string, AccessDeniedLog[]> = {};
@@ -207,7 +214,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     }
 
     if (spikes.length === 0) {
-      console.info('No spikes detected (no user exceeded threshold)');
+      log('info', 'no_spikes_detected');
       return new Response(
         JSON.stringify({
           message: 'No spikes detected',
@@ -219,7 +226,14 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       );
     }
 
-    console.info(`Detected ${spikes.length} spike(s):`, spikes);
+    log('info', 'spikes_detected', {
+      count: spikes.length,
+      users: spikes.map(s => ({
+        user_id: s.userId,
+        email: maskEmail(s.userEmail),
+        attempts: s.attemptCount,
+      })),
+    });
 
     // Get admin emails to notify
     const { data: adminRoles, error: rolesError } = await supabase
@@ -233,7 +247,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     }
 
     if (!adminRoles || adminRoles.length === 0) {
-      console.info('No admin users found to notify');
+      log('info', 'no_admins_to_notify');
       return new Response(
         JSON.stringify({
           message: 'Spikes detected but no admins to notify',
@@ -271,7 +285,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     const allEmails = [...new Set([...adminEmails, ...notifEmails])];
 
     if (allEmails.length === 0) {
-      console.info('No email addresses found for admins');
+      log('info', 'no_admin_emails');
       return new Response(
         JSON.stringify({
           message: 'Spikes detected but no admin emails configured',
@@ -281,7 +295,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       );
     }
 
-    console.info(`Sending spike alert to ${allEmails.length} admin(s):`, allEmails);
+    log('info', 'sending_spike_alert', { recipients: allEmails.length });
 
     // Send alert email
     const subject = `🛡️ ALERTA: ${spikes.length} usuário(s) com pico de acessos negados`;
@@ -291,19 +305,33 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     let errorMessage: string | null = null;
 
     try {
-      const emailResponse = await resend.emails.send({
-        from: 'Segurança <onboarding@resend.dev>',
+      await resend.emails.send({
+        from: alertFromEmail(),
         to: allEmails,
         subject,
         html: emailHtml,
       });
-      console.info('Spike alert email sent:', emailResponse);
+      log('info', 'spike_alert_email_sent', { recipients: allEmails.length });
     } catch (emailError: unknown) {
       emailStatus = 'failed';
       errorMessage =
         emailError instanceof Error ? emailError.message : 'Unknown email error';
-      console.error('Error sending email:', emailError);
+      log('error', 'spike_alert_email_failed', { recipients: allEmails.length });
     }
+
+    // Escalação externa: pico de acessos negados é crítico de segurança.
+    await escalateCriticalAlert({
+      title: `Pico de acessos negados — ${spikes.length} usuário(s)`,
+      lines: [
+        `${logs.length} tentativas nas últimas ${settings.time_window_hours}h`,
+        ...spikes.slice(0, 10).map(
+          s => `• ${maskEmail(s.userEmail) || s.userId}: ${s.attemptCount} tentativas`
+        ),
+      ],
+      runbook: 'access-denied',
+      requestId: ctx.requestId,
+      source: 'access-denied-alerts',
+    });
 
     // Batch-insert email_logs for all recipients in one query
     const emailLogRows = allEmails.map(email => ({
@@ -336,9 +364,9 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
     });
 
     if (historyError) {
-      console.error('Failed to log alert history:', historyError);
+      log('error', 'alert_history_insert_failed');
     } else {
-      console.info('Alert logged to history');
+      log('info', 'alert_history_logged');
     }
 
     return new Response(
@@ -354,7 +382,7 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   } catch (error: unknown) {
-    console.error('Error in access-denied-alerts:', error);
+    log('error', 'access_denied_alerts_failed');
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
       { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }

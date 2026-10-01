@@ -2,8 +2,10 @@ import { Resend } from 'npm:resend@2';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { alertFromEmail } from '../_shared/alert-escalation.ts';
+import { maskEmail } from '../_shared/pii.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -237,7 +239,9 @@ const logEmailToDatabase = async (
   }
 };
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> => {
+  const log = ctx.log;
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -279,7 +283,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       if (!preferences || preferences.length === 0) {
-        console.info('No active notification preferences found');
+        log('info', 'no_active_preferences');
         return new Response(
           JSON.stringify({
             message: 'No active notification preferences',
@@ -289,7 +293,7 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
-      console.info(`Processing ${preferences.length} notification preferences`);
+      log('info', 'processing_preferences', { count: preferences.length });
 
       for (const pref of preferences as NotificationPreference[]) {
         try {
@@ -305,13 +309,16 @@ const handler = async (req: Request): Promise<Response> => {
 
           try {
             const emailResponse = await resend.emails.send({
-              from: 'Alertas <onboarding@resend.dev>',
+              from: alertFromEmail(),
               to: [pref.email],
               subject,
               html: emailHtml,
             });
 
-            console.info(`Email sent to ${pref.email}:`, emailResponse);
+            log('info', 'alert_email_sent', {
+              to: maskEmail(pref.email),
+              resend_id: (emailResponse as { id?: string }).id ?? null,
+            });
             await logEmailToDatabase(
               supabase,
               pref.email,
@@ -322,7 +329,7 @@ const handler = async (req: Request): Promise<Response> => {
             );
             results.push({ email: pref.email, alertsSent: alerts.length, success: true });
           } catch (emailError: unknown) {
-            console.error(`Error sending to ${pref.email}:`, emailError);
+            log('error', 'alert_email_send_failed', { to: maskEmail(pref.email) });
             const emailErrorMessage =
               emailError instanceof Error ? emailError.message : String(emailError);
             await logEmailToDatabase(
@@ -342,7 +349,7 @@ const handler = async (req: Request): Promise<Response> => {
             });
           }
         } catch (error: unknown) {
-          console.error(`Error processing ${pref.email}:`, error);
+          log('error', 'preference_processing_failed', { to: maskEmail(pref.email) });
           const errorMessage = error instanceof Error ? error.message : String(error);
           results.push({
             email: pref.email,
@@ -384,7 +391,7 @@ const handler = async (req: Request): Promise<Response> => {
       const alerts = await generateAlerts(supabase, defaultPref);
 
       if (alerts.length === 0) {
-        console.info('No critical alerts to send');
+        log('info', 'no_critical_alerts');
         return new Response(
           JSON.stringify({ message: 'No critical alerts found', alertsSent: 0 }),
           { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
@@ -396,13 +403,16 @@ const handler = async (req: Request): Promise<Response> => {
 
       try {
         const emailResponse = await resend.emails.send({
-          from: 'Alertas <onboarding@resend.dev>',
+          from: alertFromEmail(),
           to: [recipientEmail],
           subject,
           html: emailHtml,
         });
 
-        console.info('Email sent successfully:', emailResponse);
+        log('info', 'alert_email_sent', {
+          to: maskEmail(recipientEmail),
+          resend_id: (emailResponse as { id?: string }).id ?? null,
+        });
         await logEmailToDatabase(
           supabase,
           recipientEmail,
@@ -421,7 +431,7 @@ const handler = async (req: Request): Promise<Response> => {
           { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
       } catch (emailError: unknown) {
-        console.error('Error sending email:', emailError);
+        log('error', 'alert_email_send_failed', { to: maskEmail(recipientEmail) });
         const emailErrorMessage =
           emailError instanceof Error ? emailError.message : String(emailError);
         await logEmailToDatabase(
@@ -444,7 +454,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
   } catch (error: unknown) {
-    console.error('Error in send-alert-notifications:', error);
+    log('error', 'send_alert_notifications_failed');
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
