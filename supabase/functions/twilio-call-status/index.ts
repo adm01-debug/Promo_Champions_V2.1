@@ -136,13 +136,20 @@ Deno.serve(
       const recordingSid = form.get('RecordingSid');
       const price = form.get('Price');
 
-      // Dedupe (mesmo padrão de receive-quote-sync): a reserva única por
-      // CallSid + CallStatus (RecordingSid nos callbacks de gravação, que
-      // chegam sem status) precede qualquer efeito colateral; um reenvio
-      // idêntico cai no 23505 e é ignorado.
-      const dedupeKey = recordingSid
-        ? `twilio-call-status:${callSid}:${status}:rec:${recordingSid}`
-        : `twilio-call-status:${callSid}:${status}`;
+      // Dedupe (mesmo padrão de receive-quote-sync): a reserva única precede
+      // qualquer efeito colateral. A chave inclui hash do corpo cru — um
+      // reenvio byte-idêntico cai no 23505 e é ignorado, mas um callback do
+      // mesmo status trazendo dados novos (Price/CallDuration/RecordingSid)
+      // tem hash diferente e é processado normalmente.
+      const digest = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(rawBody)
+      );
+      const payloadHash = Array.from(new Uint8Array(digest))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+        .slice(0, 16);
+      const dedupeKey = `twilio-call-status:${callSid}:${payloadHash}`;
       const { data: dedupeReservation, error: dedupeErr } = await admin
         .from('webhook_inbound_dedupe')
         .insert({
@@ -169,6 +176,22 @@ Deno.serve(
       const dedupeReservationId =
         (dedupeReservation as { id?: string } | null)?.id ?? null;
 
+      // A resposta continua 200 (a Twilio não repete statusCallback), mas a
+      // reserva é liberada quando um efeito falha para um reenvio legítimo
+      // não ser engolido como duplicado.
+      const releaseDedupeReservation = async () => {
+        if (!dedupeReservationId) return;
+        const { error: releaseErr } = await admin
+          .from('webhook_inbound_dedupe')
+          .delete()
+          .eq('id', dedupeReservationId);
+        if (releaseErr) {
+          ctx.log('error', 'dedupe_release_failed', {
+            detail: releaseErr.message,
+          });
+        }
+      };
+
       // Callbacks de gravação chegam SEM CallStatus — não sobrescrever o estado
       // real com string vazia.
       const update: Record<string, unknown> = {};
@@ -193,18 +216,8 @@ Deno.serve(
         .eq('call_sid', callSid)
         .select()
         .maybeSingle();
-      if (updateErr && dedupeReservationId) {
-        // A resposta continua 200 (a Twilio não repete statusCallback), mas a
-        // reserva é liberada para um reenvio legítimo não ser engolido.
-        const { error: releaseErr } = await admin
-          .from('webhook_inbound_dedupe')
-          .delete()
-          .eq('id', dedupeReservationId);
-        if (releaseErr) {
-          ctx.log('error', 'dedupe_release_failed', {
-            detail: releaseErr.message,
-          });
-        }
+      if (updateErr) {
+        await releaseDedupeReservation();
       }
 
       // Auto-create call_log on completion
@@ -223,7 +236,7 @@ Deno.serve(
           .maybeSingle();
 
         if (!existing) {
-          await admin.from('call_logs').insert({
+          const { error: logErr } = await admin.from('call_logs').insert({
             owner_id: updated.owner_id,
             sale_id: updated.sale_id,
             queue_item_id: updated.queue_item_id,
@@ -235,6 +248,13 @@ Deno.serve(
                 ? 'Chamada Twilio concluída'
                 : `Chamada Twilio: ${status}`,
           });
+          if (logErr) {
+            ctx.log('error', 'call_log_insert_failed', {
+              detail: logErr.message,
+              call_sid: callSid,
+            });
+            await releaseDedupeReservation();
+          }
         }
       }
 
