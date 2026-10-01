@@ -32,6 +32,7 @@
     "smoke:target": "tsx scripts/smoke-target-backend.ts",
     "security:secrets": "tsx scripts/security/check-no-committed-service-role.ts",
     "graphify:test": "node --test scripts/graphify/*.test.mjs",
+    "check:migrations": "node scripts/check-migrations.mjs",
     "graphify:verify": "node scripts/graphify/verify-output.mjs",
     "graphify:impact": "node scripts/graphify/impact-report.mjs",
     "graphify:contracts": "node scripts/graphify/static-contracts.mjs",

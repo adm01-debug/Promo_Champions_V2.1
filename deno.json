@@ -1,6 +1,7 @@
 {
   "tasks": {
     "check": "deno check src/main.ts",
+    "test:migrations": "deno test --allow-read tests/migrations/",
     "lint:functions": "deno lint"
   },
   "lint": {
