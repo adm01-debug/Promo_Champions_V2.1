@@ -424,7 +424,9 @@ jobs:
     name: CI Gate
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    needs: [lint-and-typecheck, security-audit, test, edge-functions-lint, build, bundle-size]
+    # Apenas os 3 jobs que eram required checks antes (security-audit e
+    # edge-functions-lint são informativos — intencionalmente fora do gate).
+    needs: [lint-and-typecheck, test, build]
     if: always()
     steps:
       - name: Check required jobs
