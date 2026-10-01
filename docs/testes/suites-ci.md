@@ -39,7 +39,12 @@ SUPABASE_DB_URL=postgres://postgres:<senha>@db.usyxfpqlsspldubptrdl.supabase.co:
   `canonical_role_simulation` (single-transaction) e `quote-to-sale-stress`
   (auto-descobre admin/salesperson). Requer o secret `SUPABASE_DB_URL`.
 
-No CI: job **SQL Suites** — sem `SUPABASE_DB_URL` o remoto é pulado com warning.
+No CI: job **SQL Suites** — sem `SUPABASE_DB_URL`, ou com o banco
+inalcançável (pre-flight `select 1`), o remoto é pulado com warning. Atenção:
+hosts `db.<ref>.supabase.co` são IPv6-only e os runners do GitHub não os
+alcançam — o secret deve apontar para o **pooler IPv4**
+(`aws-<regiao>.pooler.supabase.com`) do projeto `usyxfpqlsspldubptrdl` (o valor
+atual do secret aponta para outro ref e falha no pre-flight).
 
 ## Carga (k6)
 

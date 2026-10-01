@@ -8,9 +8,11 @@
 #     2. matriz de cobertura public × suite (scripts/sql-coverage-matrix.mjs),
 #        escrita em sql-coverage-matrix.md para upload como artefato.
 #   remote — executa as suites contra o banco real via psql. Requer o secret
-#     SUPABASE_DB_URL (postgres://postgres:<senha>@db.<ref>.supabase.co:5432/postgres).
-#     Sem o secret: imprime o comando manual e sai 0 (skip com ::warning::),
-#     nunca reprova por ausência de credencial.
+#     SUPABASE_DB_URL (postgres://postgres:<senha>@db.<ref>.supabase.co:5432/postgres
+#     — em CI, preferir a URL do pooler IPv4, aws-<regiao>.pooler.supabase.com,
+#     pois runners GitHub não alcançam o host direto db.<ref> que é IPv6-only).
+#     Sem o secret, ou com o banco inalcançável: imprime o comando manual e sai
+#     0 (skip com ::warning::), nunca reprova por credencial/conectividade.
 #
 # Uso:
 #   scripts/run-sql-tests.sh static
@@ -53,6 +55,16 @@ remote_checks() {
   if ! command -v psql >/dev/null 2>&1; then
     echo "::error::SUPABASE_DB_URL presente mas psql não está instalado no runner."
     return 1
+  fi
+
+  # Pre-flight de conectividade: runners GitHub não alcançam o host direto
+  # db.<ref>.supabase.co (IPv6-only) — é preciso a URL do pooler IPv4.
+  if ! PGCONNECT_TIMEOUT=10 psql "$SUPABASE_DB_URL" -tAc 'select 1' >/dev/null 2>&1; then
+    local host
+    host=$(printf '%s' "$SUPABASE_DB_URL" | sed -E 's|.*@([^:/]+).*|\1|')
+    echo "::warning::Banco inalcançável em $host — suites SQL remotas puladas."
+    echo "::warning::Confira SUPABASE_DB_URL: hosts db.<ref>.supabase.co são IPv6-only; use a URL do pooler IPv4 (aws-<regiao>.pooler.supabase.com) do projeto usyxfpqlsspldubptrdl."
+    return 0
   fi
 
   echo "[sql-tests] remote — rls_test_suite.sql (transacional, RLS das tabelas críticas)"
