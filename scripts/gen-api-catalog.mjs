@@ -10,8 +10,8 @@
  * no source", não prova de ausência de auth. Verifique a function antes de
  * confiar.
  */
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
 const ROOT = join(import.meta.dirname, '..');
 const FN_DIR = join(ROOT, 'supabase', 'functions');
@@ -201,7 +201,7 @@ function walk(dir) {
 walk(join(ROOT, 'src'));
 
 // ---------- emissão ----------
-const esc = s => s.replace(/\|/g, '\\|');
+const esc = s => s.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
 const lines = [];
 lines.push('# API — Promo Champions V2.1', '');
 lines.push('> Catálogo gerado automaticamente por `scripts/gen-api-catalog.mjs` a');

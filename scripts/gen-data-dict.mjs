@@ -114,7 +114,7 @@ function parseTableConstraint(seg, t) {
 }
 
 const unquote = s => s.replace(/^'|'$/g, '').replace(/''/g, "'").trim();
-const esc = s => s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+const esc = s => s.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
 for (const file of files) {
   const sql = readFileSync(join(MIG_DIR, file), 'utf-8');
@@ -147,7 +147,7 @@ for (const file of files) {
       const s = seg.trim();
       let am;
       if ((am = s.match(/^ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?(.+)$/is))) parseColumn(am[1], t);
-      else if ((am = s.match(/^ADD\s+(?:CONSTRAINT\s+\w+\s+)?(PRIMARY\s+KEY|FOREIGN\s+KEY|UNIQUE|CHECK)/i))) parseTableConstraint(s, t);
+      else if (/^ADD\s+(?:CONSTRAINT\s+\w+\s+)?(PRIMARY\s+KEY|FOREIGN\s+KEY|UNIQUE|CHECK)/i.test(s)) parseTableConstraint(s, t);
       else if ((am = s.match(/^DROP\s+COLUMN\s+(?:IF\s+EXISTS\s+)?("?)([a-zA-Z_]\w*)\1/i))) t.cols.delete(am[2].toLowerCase());
       else if ((am = s.match(/^RENAME\s+COLUMN\s+("?[a-zA-Z_]\w*"?)\s+TO\s+("?[a-zA-Z_]\w*"?)/i))) {
         const from = am[1].replace(/"/g, '').toLowerCase(), to = am[2].replace(/"/g, '').toLowerCase();
