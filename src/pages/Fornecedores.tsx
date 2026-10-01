@@ -27,6 +27,18 @@ import { SupplierTable } from '@/components/fornecedores/SupplierTable';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { isValidCNPJ, isValidPhoneBR } from '@/lib/validators/brDocuments';
 
+interface SupplierFormState {
+  cnpj: string;
+  phone: string;
+}
+
+const supplierFormErrors = (s: SupplierFormState) => {
+  const cnpjError = s.cnpj.trim() !== '' && !isValidCNPJ(s.cnpj) ? 'CNPJ inválido' : null;
+  const phoneError =
+    s.phone.trim() !== '' && !isValidPhoneBR(s.phone) ? 'Telefone inválido' : null;
+  return { cnpjError, phoneError, hasErrors: Boolean(cnpjError || phoneError) };
+};
+
 export default function Fornecedores() {
   const { suppliers, suppliersLoading, riskAssessments, createSupplier, isCreating } =
     useSuppliers();
@@ -42,17 +54,10 @@ export default function Fornecedores() {
     lead_time_days: 7,
   });
 
-  const cnpjError =
-    newSupplier.cnpj.trim() !== '' && !isValidCNPJ(newSupplier.cnpj)
-      ? 'CNPJ inválido'
-      : null;
-  const phoneError =
-    newSupplier.phone.trim() !== '' && !isValidPhoneBR(newSupplier.phone)
-      ? 'Telefone inválido'
-      : null;
+  const { cnpjError, phoneError, hasErrors } = supplierFormErrors(newSupplier);
 
   const handleCreate = () => {
-    if (cnpjError || phoneError) return;
+    if (hasErrors) return;
     createSupplier(newSupplier);
     setIsOpen(false);
     setNewSupplier({
@@ -224,9 +229,7 @@ export default function Fornecedores() {
                     </Button>
                     <Button
                       onClick={handleCreate}
-                      disabled={
-                        !newSupplier.name || isCreating || !!cnpjError || !!phoneError
-                      }
+                      disabled={!newSupplier.name || isCreating || hasErrors}
                     >
                       {isCreating ? 'Salvando...' : 'Salvar'}
                     </Button>
