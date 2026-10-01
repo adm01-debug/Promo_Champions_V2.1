@@ -125,7 +125,7 @@ export default defineConfig({
       // precisam deles. Removê-los do preload evita ~193 KB gzip antecipados; os
       // chunks continuam sendo baixados sob demanda quando o lazy() é resolvido.
       resolveDependencies: (_filename, deps) =>
-        deps.filter(dep => !/vendor-(pdf|markdown)-/.test(dep)),
+        deps.filter((dep) => !/vendor-(pdf|markdown)-/.test(dep)),
     },
     rollupOptions: {
       output: {

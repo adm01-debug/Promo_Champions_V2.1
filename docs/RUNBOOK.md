@@ -1,7 +1,6 @@
 # 🚀 Runbook Operacional — Promo Champions
 
 ## Índice
-
 1. [Deploy](#deploy)
 2. [Rollback](#rollback)
 3. [Incidentes](#incidentes)
@@ -13,21 +12,18 @@
 ## Deploy
 
 ### Deploy Padrão (via Lovable)
-
 1. Commit na branch principal via Lovable
 2. Build automático é disparado
 3. Preview disponível imediatamente
 4. Publicar via botão "Publish" no Lovable
 
 ### Validação Pré-Deploy
-
 ```bash
 npm run health     # typecheck + lint + tests
 npm run build      # build de produção
 ```
 
 ### Deploy de Edge Functions
-
 - Edge Functions são deployadas automaticamente pelo Lovable
 - Para testar antes: use `curl_edge_functions` no painel
 
@@ -36,13 +32,11 @@ npm run build      # build de produção
 ## Rollback
 
 ### Rollback Rápido (< 2 min)
-
 1. Acessar **Lovable** → histórico de versões
 2. Selecionar versão anterior estável
 3. Restaurar
 
 ### Rollback de Migrations
-
 - Migrations não são automaticamente reversíveis
 - Para reverter: criar nova migration com `DROP`/`ALTER` inverso
 - **NUNCA** deletar migrations existentes
@@ -53,15 +47,14 @@ npm run build      # build de produção
 
 ### Severidades
 
-| Nível | Critério                            | SLA            |
-| ----- | ----------------------------------- | -------------- |
-| 🔴 P1 | Sistema fora do ar / Perda de dados | < 30 min       |
-| 🟠 P2 | Feature crítica quebrada            | < 2 horas      |
-| 🟡 P3 | Bug não-bloqueante                  | < 24 horas     |
-| 🟢 P4 | Melhoria / cosmético                | Próximo sprint |
+| Nível | Critério | SLA |
+|-------|----------|-----|
+| 🔴 P1 | Sistema fora do ar / Perda de dados | < 30 min |
+| 🟠 P2 | Feature crítica quebrada | < 2 horas |
+| 🟡 P3 | Bug não-bloqueante | < 24 horas |
+| 🟢 P4 | Melhoria / cosmético | Próximo sprint |
 
 ### Procedimento de Incidente
-
 1. **Detectar** — via monitoramento, alerta ou report de usuário
 2. **Classificar** — atribuir severidade (P1-P4)
 3. **Comunicar** — notificar stakeholders
@@ -80,11 +73,11 @@ total. Usar tier gratuito de UptimeRobot, BetterStack ou Checkly.
 
 ### Monitores a cadastrar (intervalo 60s)
 
-| Nome               | URL                                                            | Espera                                                                                             |
-| ------------------ | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Frontend (Lovable) | `https://championgifts.lovable.app/`                           | HTTP 200                                                                                           |
-| Supabase Auth      | `https://usyxfpqlsspldubptrdl.supabase.co/auth/v1/health`      | HTTP 200                                                                                           |
-| Edge Functions     | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 (function `health` — pacote da Dimensão 8; até lá, monitorar uma function leve existente) |
+| Nome | URL | Espera |
+|------|-----|--------|
+| Frontend (Lovable) | `https://championgifts.lovable.app/` | HTTP 200 |
+| Supabase Auth | `https://usyxfpqlsspldubptrdl.supabase.co/auth/v1/health` | HTTP 200 |
+| Edge Functions | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 (function `health` — pacote da Dimensão 8; até lá, monitorar uma function leve existente) |
 
 ### Alertas
 
@@ -111,34 +104,29 @@ e confirmar que o alerta externo chega em <5 min.
 ## Troubleshooting
 
 ### DB Lento
-
 1. Verificar queries lentas: `SELECT * FROM pg_stat_activity WHERE state = 'active'`
 2. Checar índices: queries sem índice? Adicionar via migration
 3. Connection pool: verificar se pooler está ativo
 
 ### Edge Function Timeout
-
 1. Verificar logs da function
 2. Checar se chamadas externas (Bitrix24, Resend) estão respondendo
 3. Implementar timeout explícito com `AbortController`
 
 ### Erro 401/403 em API
-
 1. Token expirado? Verificar refresh token flow
 2. RLS blocking? Testar query como service_role
 3. Role incorreto? Verificar `user_roles` table
 
 ### Push Notifications Não Chegam
-
 1. Verificar `push_subscriptions` table — subscription existe?
 2. Verificar VAPID keys — estão configuradas nos secrets?
 3. Service Worker registrado? Checar `navigator.serviceWorker.getRegistration()`
 
 ### Build Falha
-
 ```bash
 npm run typecheck   # Erros de tipo
-npm run lint        # Erros de lint
+npm run lint        # Erros de lint  
 npm run test        # Testes quebrados
 ```
 
@@ -146,24 +134,22 @@ npm run test        # Testes quebrados
 
 ## Contatos
 
-| Papel      | Responsável                |
-| ---------- | -------------------------- |
-| Lead Dev   | Configurar no README       |
-| DevOps     | Lovable Cloud (automático) |
-| Suporte DB | Lovable Cloud Dashboard    |
+| Papel | Responsável |
+|-------|-------------|
+| Lead Dev | Configurar no README |
+| DevOps | Lovable Cloud (automático) |
+| Suporte DB | Lovable Cloud Dashboard |
 
 ## Callback V4 (Promo Gifts V4)
 
 Fila de notificações do CRM para o V4 (mudanças de status de quotes, criação de pedidos).
 
 ### Como ligar
-
 1. Publique o endpoint receptor no V4 (POST + header `x-api-key`).
 2. Configure os secrets no CRM: `V4_CALLBACK_URL` e `V4_CALLBACK_API_KEY`.
 3. O cron do dispatcher `notify-v4-quote-status` drena a fila automaticamente.
 
 ### Como verificar
-
 - Painel: `/admin/v4-callbacks` (admin) — KPIs, banner de status e tabela de dead letters.
 - Logs estruturados JSON no console da edge function:
   - `v4_callback_disabled` — secrets ausentes; contém `pending` (backlog).
@@ -173,7 +159,6 @@ Fila de notificações do CRM para o V4 (mudanças de status de quotes, criaçã
   - `v4_callback_exhausted` — atingiu 5 tentativas; **alerta operacional**.
 
 ### Como reprocessar
-
 - Painel `/admin/v4-callbacks`: selecione itens e use **Reprocessar** (agenda retry para agora) ou **Resetar tentativas** (zera contador). Também é possível **Arquivar** manualmente.
 - Botão **Executar dispatcher** força uma rodada imediata.
 
@@ -186,11 +171,11 @@ Fila de notificações do CRM para o V4 (mudanças de status de quotes, criaçã
 Existem dois geradores de `orders` associados a um quote — quem cria depende
 do status em que o quote entra:
 
-| Status semeado     | Trigger dispara?                       | Cria order               | Prefixo                 | `orders_conversion_seq` |
-| ------------------ | -------------------------------------- | ------------------------ | ----------------------- | ----------------------- |
-| `draft`            | não                                    | —                        | —                       | não avança              |
-| `approved`         | **sim** (`trg_convert_quote_to_order`) | order `PED-…`            | `PED-`                  | não avança              |
-| `accepted` / `won` | não                                    | RPC cria via `nextval()` | `ORC-YYYYMMDD-NNNNNNNN` | **avança +1**           |
+| Status semeado | Trigger dispara? | Cria order | Prefixo | `orders_conversion_seq` |
+|---|---|---|---|---|
+| `draft`             | não | — | — | não avança |
+| `approved`          | **sim** (`trg_convert_quote_to_order`) | order `PED-…` | `PED-` | não avança |
+| `accepted` / `won`  | não | RPC cria via `nextval()` | `ORC-YYYYMMDD-NNNNNNNN` | **avança +1** |
 
 Consequência prática:
 
@@ -280,6 +265,7 @@ Concorrência específica:
 Necessário porque `quotes.sale_id` tem FK para `sales`, o que bloqueia
 deleção direta na ordem inversa.
 
+
 ---
 
 ## Quote-to-Sale — Diagnóstico de Invariantes
@@ -287,7 +273,6 @@ deleção direta na ordem inversa.
 Suíte de invariantes que DEVEM sempre ser verdadeiras em produção. Se qualquer uma falhar, seguir o playbook correspondente.
 
 ### Execução rápida
-
 ```bash
 # Verificação automatizada (exit 0 = tudo OK)
 bun run scripts/verify-quote-to-sale-invariants.ts
@@ -297,47 +282,38 @@ psql "$PGURL" -f supabase/tests/quote-to-sale-stress.sql
 ```
 
 ### Invariante 1 — Zero `order_number` duplicados
-
 ```sql
 SELECT order_number, COUNT(*) FROM public.orders
 GROUP BY order_number HAVING COUNT(*) > 1;
 ```
-
 **Se falhar:** identificar a duplicata mais nova, mover itens para a mais antiga (`UPDATE order_items SET order_id = <antiga>`), depois `DELETE FROM orders WHERE id = <nova>`. Investigar log do dispatcher para descobrir se `fn_convert_quote_to_sale` foi chamada em paralelo com bypass do lock advisory.
 
 ### Invariante 2 — Zero `sales` órfãos
-
 ```sql
 SELECT s.id FROM public.sales s
 LEFT JOIN public.quotes q ON q.sale_id = s.id
 WHERE q.id IS NULL;
 ```
-
 **Se falhar:** provável falha de cleanup manual. Antes de deletar, confirmar que o `sale.id` não é referenciado por `commissions`, `sale_notifications_audit`, `follow_up_notifications`. Rodar `cleanupQuote`-equivalente manual antes do `DELETE FROM sales`.
 
 ### Invariante 3 — Zero quotes com múltiplas orders
-
 ```sql
 SELECT quote_id, COUNT(*) FROM public.orders
 WHERE quote_id IS NOT NULL
 GROUP BY quote_id HAVING COUNT(*) > 1;
 ```
-
 **Se falhar:** race trigger×RPC vazou. Escolher a order que tem `sale_id` associado (via `quotes.sale_id → sales.id → orders`), mesclar itens da outra e deletar a órfã.
 
 ### Invariante 4 — `orders_conversion_seq` monotônica
-
 ```sql
 SELECT last_value FROM public.orders_conversion_seq;
 SELECT MAX(SPLIT_PART(order_number,'-',3)::BIGINT)
 FROM public.orders WHERE order_number LIKE 'ORC-%';
 ```
-
 Sequence DEVE ser ≥ max sufixo. **Se atrás:** `SELECT setval('public.orders_conversion_seq', <max>, true)`.
 
 ### Cenários de teste cobertos (E2E)
-
-- Reuso approved (PED-_), criação won (ORC-_)
+- Reuso approved (PED-*), criação won (ORC-*)
 - Concorrência x5 em ambos os paths
 - Race trigger×RPC no mesmo quote
 - Backfill, reenvio, audit_logs, error paths
