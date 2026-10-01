@@ -64,6 +64,12 @@ jobs:
       - name: Committed secrets scan
         run: npm run security:secrets
 
+      # dependency-cruiser (ciclos, violação de camada, imports prod→test) rodava
+      # só no qa-exhaustive semanal — uma violação podia viver em main até 7
+      # dias. Roda em toda PR agora, como parte do gate obrigatório.
+      - name: Dependency Cruiser — camadas e ciclos
+        run: npm run deps:check
+
       - name: Graphify wrapper tests
         run: npm run graphify:test
 
@@ -152,6 +158,13 @@ jobs:
 
       - name: Deno lint (supabase/functions)
         run: deno lint
+
+      # Lint não pega erro de tipo. O check real sai pelo deno task check —
+      # o gate roda via ratchet: existem 58 erros legados em 31 arquivos
+      # (scripts/deno-typecheck-baseline.json); erro novo em arquivo limpo ou
+      # total acima da baseline reprova a PR, e a baseline só desce.
+      - name: Deno type-check (supabase/functions, ratchet)
+        run: node scripts/check-deno-types.mjs
 
   e2e:
     name: E2E Tests
