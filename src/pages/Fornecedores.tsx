@@ -25,7 +25,7 @@ import {
 import { useSuppliers } from '@/hooks/useSuppliers';
 import { SupplierTable } from '@/components/fornecedores/SupplierTable';
 import { PageTransition } from '@/components/transitions/PageTransition';
-import { isValidCNPJ } from '@/lib/validators/brDocuments';
+import { isValidCNPJ, isValidPhoneBR } from '@/lib/validators/brDocuments';
 
 export default function Fornecedores() {
   const { suppliers, suppliersLoading, riskAssessments, createSupplier, isCreating } =
@@ -46,9 +46,13 @@ export default function Fornecedores() {
     newSupplier.cnpj.trim() !== '' && !isValidCNPJ(newSupplier.cnpj)
       ? 'CNPJ inválido'
       : null;
+  const phoneError =
+    newSupplier.phone.trim() !== '' && !isValidPhoneBR(newSupplier.phone)
+      ? 'Telefone inválido'
+      : null;
 
   const handleCreate = () => {
-    if (cnpjError) return;
+    if (cnpjError || phoneError) return;
     createSupplier(newSupplier);
     setIsOpen(false);
     setNewSupplier({
@@ -180,6 +184,9 @@ export default function Fornecedores() {
                           }
                           placeholder="(00) 00000-0000"
                         />
+                        {phoneError && (
+                          <p className="text-xs text-destructive">{phoneError}</p>
+                        )}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -217,7 +224,9 @@ export default function Fornecedores() {
                     </Button>
                     <Button
                       onClick={handleCreate}
-                      disabled={!newSupplier.name || isCreating || !!cnpjError}
+                      disabled={
+                        !newSupplier.name || isCreating || !!cnpjError || !!phoneError
+                      }
                     >
                       {isCreating ? 'Salvando...' : 'Salvar'}
                     </Button>
