@@ -34,6 +34,7 @@ import {
 import {
   usePricingIntelligence,
   type PricingHealth,
+  type PricingIntelligenceResponse,
 } from '@/hooks/usePricingIntelligence';
 import { cn } from '@/lib/utils';
 const DiscountOptimizer = lazy(() =>
@@ -83,6 +84,41 @@ const healthMeta: Record<
     desc: 'Erosão de margem significativa. Ação imediata necessária.',
   },
 };
+
+function PricingAnalysisCards({ data }: { data: PricingIntelligenceResponse }) {
+  return (
+    <>
+      {/* Revenue Leakage Map */}
+      <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
+        <RevenueLeakageCard
+          totalLost={data.kpis.revenue_lost}
+          discountLost={data.leakage_segments?.discount ?? 0}
+          competitorLost={data.leakage_segments?.competitor ?? 0}
+          marginErosion={data.leakage_segments?.erosion ?? 0}
+        />
+      </Suspense>
+
+      {/* Price Elasticity Chart */}
+      <Suspense fallback={<Skeleton className="h-80 w-full rounded-xl" />}>
+        <PriceElasticityChart
+          data={data.elasticity?.points}
+          optimalPrice={data.elasticity?.optimal_price ?? undefined}
+          productName={data.elasticity?.product_name ?? undefined}
+        />
+      </Suspense>
+
+      {/* Simulator */}
+      <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
+        <DiscountOptimizer
+          baseWinRate={data.optimizer?.base_win_rate}
+          discountElasticity={data.optimizer?.discount_elasticity}
+          avgDealValue={data.optimizer?.avg_deal_value}
+          avgMargin={data.optimizer?.avg_margin}
+        />
+      </Suspense>
+    </>
+  );
+}
 
 export function PricingIntelligenceHub() {
   const [days, setDays] = useState<7 | 30 | 90>(30);
@@ -289,34 +325,7 @@ export function PricingIntelligenceHub() {
         />
       </div>
 
-      {/* Revenue Leakage Map */}
-      <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
-        <RevenueLeakageCard
-          totalLost={k.revenue_lost}
-          discountLost={data.leakage_segments?.discount ?? 0}
-          competitorLost={data.leakage_segments?.competitor ?? 0}
-          marginErosion={data.leakage_segments?.erosion ?? 0}
-        />
-      </Suspense>
-
-      {/* Price Elasticity Chart */}
-      <Suspense fallback={<Skeleton className="h-80 w-full rounded-xl" />}>
-        <PriceElasticityChart
-          data={data.elasticity?.points}
-          optimalPrice={data.elasticity?.optimal_price ?? undefined}
-          productName={data.elasticity?.product_name ?? undefined}
-        />
-      </Suspense>
-
-      {/* Simulator */}
-      <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
-        <DiscountOptimizer
-          baseWinRate={data.optimizer?.base_win_rate}
-          discountElasticity={data.optimizer?.discount_elasticity}
-          avgDealValue={data.optimizer?.avg_deal_value}
-          avgMargin={data.optimizer?.avg_margin}
-        />
-      </Suspense>
+      <PricingAnalysisCards data={data} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Distribution chart */}

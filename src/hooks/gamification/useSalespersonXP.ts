@@ -125,45 +125,48 @@ interface AppConfigRow {
   value: unknown;
 }
 
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function applyLevelThresholds(value: unknown) {
+  if (!Array.isArray(value)) return;
+  const thresholds = value.filter(
+    (v): v is number => typeof v === 'number' && Number.isFinite(v)
+  );
+  if (thresholds.length > 0) {
+    LEVEL_THRESHOLDS.splice(0, LEVEL_THRESHOLDS.length, ...thresholds);
+  }
+}
+
+function applyLevelInfo(value: unknown) {
+  if (!isPlainObject(value)) return;
+  const entries = value as Record<string, { title?: string; color?: string; emoji?: string }>;
+  for (const [lvl, info] of Object.entries(entries)) {
+    const n = Number(lvl);
+    if (!Number.isInteger(n) || n < 1 || !info || typeof info !== 'object') continue;
+    LEVEL_INFO[n] = {
+      title: info.title ?? LEVEL_INFO[n]?.title ?? '',
+      color: info.color ?? LEVEL_INFO[n]?.color ?? '',
+      emoji: info.emoji ?? LEVEL_INFO[n]?.emoji ?? '',
+    };
+  }
+}
+
+function applyXpRewards(value: unknown) {
+  if (!isPlainObject(value)) return;
+  Object.assign(XP_REWARDS, value);
+}
+
+const XP_CONFIG_APPLIERS: Record<(typeof XP_CONFIG_KEYS)[number], (v: unknown) => void> = {
+  'xp.level_thresholds': applyLevelThresholds,
+  'xp.level_info': applyLevelInfo,
+  'xp.rewards': applyXpRewards,
+};
+
 function applyXpConfig(rows: AppConfigRow[]) {
   for (const row of rows) {
-    if (row.key === 'xp.level_thresholds' && Array.isArray(row.value)) {
-      const thresholds = row.value.filter(
-        (v): v is number => typeof v === 'number' && Number.isFinite(v)
-      );
-      if (thresholds.length > 0) {
-        LEVEL_THRESHOLDS.splice(0, LEVEL_THRESHOLDS.length, ...thresholds);
-      }
-    }
-
-    if (
-      row.key === 'xp.level_info' &&
-      row.value !== null &&
-      typeof row.value === 'object' &&
-      !Array.isArray(row.value)
-    ) {
-      for (const [lvl, info] of Object.entries(
-        row.value as Record<string, { title?: string; color?: string; emoji?: string }>
-      )) {
-        const n = Number(lvl);
-        if (Number.isInteger(n) && n >= 1 && info && typeof info === 'object') {
-          LEVEL_INFO[n] = {
-            title: info.title ?? LEVEL_INFO[n]?.title ?? '',
-            color: info.color ?? LEVEL_INFO[n]?.color ?? '',
-            emoji: info.emoji ?? LEVEL_INFO[n]?.emoji ?? '',
-          };
-        }
-      }
-    }
-
-    if (
-      row.key === 'xp.rewards' &&
-      row.value !== null &&
-      typeof row.value === 'object' &&
-      !Array.isArray(row.value)
-    ) {
-      Object.assign(XP_REWARDS, row.value);
-    }
+    XP_CONFIG_APPLIERS[row.key as (typeof XP_CONFIG_KEYS)[number]]?.(row.value);
   }
 }
 
