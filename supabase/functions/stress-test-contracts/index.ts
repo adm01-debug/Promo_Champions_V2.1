@@ -1,16 +1,32 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import {
   WebhookContracts,
   validateWebhookPayload,
 } from '../_shared/webhook-validator.ts';
 
+const MAX_ITERATIONS = 1000;
+
 Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  // Chamada vem do painel admin via supabase.functions.invoke — requer JWT
+  // de usuário válido (fuzzing consome CPU; não deve ser anônimo).
   try {
-    const { iterations = 100, targetContract = 'crmEvent' } = await req.json();
+    await getUserClient(req);
+  } catch (authErr) {
+    const isUnauth = authErr instanceof UnauthorizedError;
+    return new Response(
+      JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  try {
+    const { iterations: rawIterations = 100, targetContract = 'crmEvent' } = await req.json();
+    const iterations = Math.min(Math.max(1, Math.floor(rawIterations) || 1), MAX_ITERATIONS);
 
     // @ts-expect-error: Dynamic access by string key
     const schema = WebhookContracts[targetContract];
@@ -67,7 +83,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     });
   } catch (e) {
     console.error('stress-test-contracts error:', e);
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
