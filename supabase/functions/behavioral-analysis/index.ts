@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 interface AnalysisRequest {
   interactionId?: string;
@@ -22,6 +23,10 @@ interface AnalysisResult {
 Deno.serve(withRequestId('behavioral-analysis', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "behavioral-analysis", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const { interactionId, text, contactName, channel, dealId } = (await req.json()) as AnalysisRequest;

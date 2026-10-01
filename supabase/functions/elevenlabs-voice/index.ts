@@ -5,6 +5,7 @@ import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 Deno.serve(
   withRequestId('elevenlabs-voice', async (req, _ctx) => {
@@ -12,6 +13,10 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: 'elevenlabs-voice', limit: 10, windowSeconds: 60 });
+    if (rl) return rl;
 
     try {
       const { text, voiceId, action = 'tts' } = await req.json();

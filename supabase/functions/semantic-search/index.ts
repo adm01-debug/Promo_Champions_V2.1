@@ -3,6 +3,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateString, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 interface SearchRequest {
   query: string;
@@ -29,6 +30,10 @@ Deno.serve(withRequestId("semantic-search", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "semantic-search", limit: 30, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const { query, limit = 20 } = (await req.json()) as SearchRequest;

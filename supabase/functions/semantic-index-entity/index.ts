@@ -3,6 +3,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
@@ -84,6 +85,10 @@ const VALID_ENTITY_TYPES = Object.keys(TABLE_BY_TYPE) as EntityType[];
 Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "semantic-index-entity", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const { entity_type, entity_id, force = false } = (await req.json()) as IndexRequest;

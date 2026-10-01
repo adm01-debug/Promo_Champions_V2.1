@@ -4,6 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 interface PredictBody {
   sale_id?: string;
@@ -376,6 +377,10 @@ async function batchPredict(limit: number): Promise<Response> {
 
 Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: 'predict-deal-velocity', limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
   try {
     const body: PredictBody = await req.json().catch(() => ({}));
     if (body.batch) {

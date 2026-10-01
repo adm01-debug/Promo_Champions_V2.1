@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 
 
@@ -114,6 +115,10 @@ async function generateAdvancedActions(supabase: ReturnType<typeof createClient>
 Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "predict-quota-attainment", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const supabase = createClient(

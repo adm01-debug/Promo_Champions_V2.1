@@ -3,6 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -120,6 +121,10 @@ async function callAi(
 Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: 'analyze-stage-conversion', limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
   try {
     const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
     const days = Math.min(365, Math.max(7, Number(body.days) || 90));
