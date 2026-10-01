@@ -24716,6 +24716,10 @@ export type Database = {
       }
       verify_and_enable_sms: { Args: { p_code: string }; Returns: boolean }
       verify_and_enable_totp: { Args: { p_token: string }; Returns: Json }
+      verify_reauth_request: {
+        Args: { p_request_id: string; p_password?: string }
+        Returns: boolean
+      }
       verify_mfa_code: {
         Args: { p_code: string; p_method?: string }
         Returns: boolean
