@@ -25,5 +25,36 @@ export const clientService = {
   async deleteClient(id: string) {
     const { error } = await supabase.from('clients').delete().eq('id', id);
     if (error) throw error;
+  },
+
+  async importClients(records: { name: string; email: string | null; phone: string | null; company: string | null }[]) {
+    const { error } = await supabase.from('clients').insert(records);
+    if (error) throw error;
+  },
+
+  async getClientsForExport() {
+    const { data, error } = await supabase
+      .from('clients')
+      .select('name, email, phone, company, total_value')
+      .limit(1000);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async mergeClients({
+    targetId,
+    duplicateIds,
+    preferredFields,
+  }: {
+    targetId: string;
+    duplicateIds: string[];
+    preferredFields: Record<string, string>;
+  }) {
+    const { error } = await supabase.rpc('merge_clients', {
+      target_id: targetId,
+      duplicate_ids: duplicateIds,
+      preferred_fields: preferredFields,
+    });
+    if (error) throw error;
   }
 };

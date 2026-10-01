@@ -1,29 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { Clock, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
+import { useCronJobStats } from "@/hooks/admin/useConnectionMetrics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
-interface CronRun {
-  jobid: number;
-  jobname: string | null;
-  status: string;
-  return_message: string | null;
-  start_time: string;
-  end_time: string | null;
-  duration_ms: number | null;
-}
-
-async function fetchCronStats(): Promise<CronRun[]> {
-  const { data, error } = await supabase.rpc("admin_get_cron_job_stats", { _limit: 50 });
-  if (error) throw error;
-  return (data ?? []) as CronRun[];
-}
 
 function StatusBadge({ status }: { status: string }) {
   const ok = status === "succeeded";
@@ -36,11 +20,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export function CronJobsPanel() {
-  const { data, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ["admin", "cron-job-stats"],
-    queryFn: fetchCronStats,
-    staleTime: 30_000,
-  });
+  const { data, isLoading, refetch, isFetching } = useCronJobStats();
 
   return (
     <Card>

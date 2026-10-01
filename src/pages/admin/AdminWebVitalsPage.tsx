@@ -5,26 +5,13 @@
  * (LCP > 2.5s, CLS > 0.1, INP > 200ms). Agrupa por rota + device.
  */
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useWebVitalsP75 } from '@/hooks/admin/useWebVitalsP75';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-interface Row {
-  day: string;
-  route: string;
-  device_type: 'mobile' | 'tablet' | 'desktop' | 'unknown';
-  metric_name: string;
-  samples: number;
-  p50: number | null;
-  p75: number | null;
-  p95: number | null;
-  budget_p75: number | null;
-}
 
 function formatValue(metric: string, value: number | null): string {
   if (value === null || value === undefined) return '—';
@@ -41,16 +28,7 @@ export default function AdminWebVitalsPage() {
   const [device, setDevice] = useState<string>('all');
   const [search, setSearch] = useState('');
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['admin', 'web-vitals-p75'],
-    queryFn: async (): Promise<Row[]> => {
-      const { data, error } = await supabase.rpc('fn_admin_web_vitals_p75' as never);
-      if (error) throw error;
-      return (data ?? []) as Row[];
-    },
-    refetchInterval: 120_000,
-    staleTime: 60_000,
-  });
+  const { data, isLoading, isError, error } = useWebVitalsP75();
 
   const filtered = useMemo(() => {
     if (!data) return [];

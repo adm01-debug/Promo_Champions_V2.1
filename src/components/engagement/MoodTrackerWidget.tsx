@@ -5,8 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Heart, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTodayMood, useSubmitMood } from "@/hooks/engagement/useMoodEntry";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -20,52 +19,31 @@ const MOODS = [
 
 function MoodTrackerWidgetImpl({ className }: { className?: string }) {
   const { salesperson } = useAuth();
-  const queryClient = useQueryClient();
   const [selectedMood, setSelectedMood] = useState<number | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const { data: todayMood } = useQuery({
-    queryKey: ["mood-today", salesperson?.id, today],
-    queryFn: async () => {
-      if (!salesperson?.id) return null;
-      const { data, error } = await supabase
-        .from("mood_entries")
-        .select("mood_value")
-        .eq("salesperson_id", salesperson.id)
-        .eq("entry_date", today)
-        .maybeSingle();
-      if (error || !data) return null;
-      return data.mood_value;
-    },
-    enabled: !!salesperson?.id,
-  });
+  const { data: todayMood } = useTodayMood(salesperson?.id, today);
 
-  const submitMood = useMutation({
-    mutationFn: async (moodValue: number) => {
-      if (!salesperson?.id) throw new Error("Not authenticated");
-      const { error } = await supabase.from("mood_entries").upsert(
-        { salesperson_id: salesperson.id, entry_date: today, mood_value: moodValue },
-        { onConflict: "salesperson_id,entry_date" }
-      );
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setHasSubmitted(true);
-      queryClient.invalidateQueries({ queryKey: ["mood-today"] });
-      toast.success("Humor registrado! 💪");
-    },
-  });
+  const submitMood = useSubmitMood(salesperson?.id, today);
 
   const currentMood = todayMood ?? selectedMood;
   const alreadySubmitted = todayMood !== null || hasSubmitted;
 
-  const handleSelect = useCallback((value: number) => {
-    if (alreadySubmitted) return;
-    setSelectedMood(value);
-    submitMood.mutate(value);
-  }, [alreadySubmitted, submitMood]);
+  const handleSelect = useCallback(
+    (value: number) => {
+      if (alreadySubmitted) return;
+      setSelectedMood(value);
+      submitMood.mutate(value, {
+        onSuccess: () => {
+          setHasSubmitted(true);
+          toast.success("Humor registrado! 💪");
+        },
+      });
+    },
+    [alreadySubmitted, submitMood]
+  );
 
   return (
     <Card className={cn("overflow-hidden", className)}>
