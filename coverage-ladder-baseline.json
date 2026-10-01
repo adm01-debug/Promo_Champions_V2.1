@@ -1,0 +1,35 @@
+{
+  "_comment": "Escada de cobertura por módulo crítico. Cada piso foi medido na cobertura real (truncado em 0.1pp) e só pode subir — `npm run coverage:ladder` reprova queda. Plano de subida gradual: docs/estado/15_PLANO_COBERTURA_MODULOS.md. Regenere com `npm run coverage:baseline:update`.",
+  "modules": {
+    "src/lib/validators/": {
+      "lines": 100
+    },
+    "src/lib/schemas/": {
+      "lines": 100
+    },
+    "src/lib/markupHelpers": {
+      "lines": 100
+    },
+    "src/lib/gamification.ts": {
+      "lines": 100
+    },
+    "src/lib/race/": {
+      "lines": 72.7
+    },
+    "src/lib/orderTracking/": {
+      "lines": 100
+    },
+    "src/lib/bi/": {
+      "lines": 26.7
+    },
+    "src/lib/revenueForecast/": {
+      "lines": 100
+    },
+    "src/services/": {
+      "lines": 18.7
+    },
+    "src/hooks/reports/": {
+      "lines": 67.1
+    }
+  }
+}
