@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable complexity -- codemod de migração one-off, não é código de produto */
 /**
  * Codemod MONEY — centraliza formatação monetária em @/lib/money.
  *
