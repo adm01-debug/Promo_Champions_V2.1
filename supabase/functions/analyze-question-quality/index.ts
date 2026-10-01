@@ -1,6 +1,6 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface Turn {
   speaker?: string;
@@ -61,20 +61,7 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const authHeader = req.headers.get("Authorization") ?? "";
-
-    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: claims } = await userClient.auth.getClaims(authHeader.replace("Bearer ", ""));
-    if (!claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const caller = await getUserClient(req);
 
     const body = await req.json().catch(() => ({}));
     const recordingId = body?.recording_id;
@@ -85,8 +72,11 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
       });
     }
 
-    const admin = createClient(supabaseUrl, serviceKey);
-    const { data: rec, error: recErr } = await admin
+    // Escritas em call_questions/call_question_analysis exigem bypass de RLS;
+    // a leitura do recording usa o client do usuário para garantir que o
+    // chamador só analise gravações que ele pode ver.
+    const admin = getServiceClient("escrita em call_questions/call_question_analysis (RLS)");
+    const { data: rec, error: recErr } = await caller.client
       .from("call_recordings")
       .select("id, duration_seconds, diarization, transcript")
       .eq("id", recordingId)
@@ -186,6 +176,12 @@ Deno.serve(withRequestId('analyze-question-quality', async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('analyze-question-quality error:', e);
     const msg = e instanceof Error ? e.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {
