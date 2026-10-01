@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useSalespeopleList } from '@/hooks/sales/useSalespeopleList';
 import { Deal } from '@/hooks/usePipeline';
+import { toBusinessDate } from "@/lib/date";
 
 interface MacroConfig {
   id: string;
@@ -150,13 +151,11 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
       for (const action of macro.actions) {
         switch (action.type) {
           case 'change_stage':
-            await supabase
-              .from('sales')
-              .update({
-                status: action.params.stage,
-                updated_at: new Date().toISOString(),
-              })
-              .eq('id', deal.id);
+            // Transição via RPC da máquina de estados
+            await supabase.rpc('transition_sale_status' as never, {
+              p_sale_id: deal.id,
+              p_new_status: action.params.stage,
+            } as never);
             break;
 
           case 'create_task':
@@ -170,7 +169,7 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
                 task_type: (action.params.task_type || 'follow_up') as never,
                 sale_id: deal.id,
                 salesperson_id: deal.salesperson_id,
-                due_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                due_date: toBusinessDate(Date.now() + 86400000),
               },
             ]);
             break;

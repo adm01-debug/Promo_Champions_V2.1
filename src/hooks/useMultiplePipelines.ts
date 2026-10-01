@@ -142,18 +142,14 @@ export const useMoveDealMultiPipeline = () => {
       newStage: string;
       pipelineId: string;
     }) => {
-      const { data, error } = await supabase
-        .from('sales')
-        .update({
-          status: newStage,
-          pipeline_id: pipelineId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', dealId)
-        .select()
-        .single();
+      // Transição via RPC da máquina de estados (valida status_origem -> destino)
+      const { error } = await supabase.rpc('transition_sale_status' as never, {
+        p_sale_id: dealId,
+        p_new_status: newStage,
+        p_pipeline_id: pipelineId,
+      } as never);
       if (error) throw error;
-      return data;
+      return { id: dealId, status: newStage };
     },
     onSuccess: (_data, { newStage }) => {
       toast.success(`Deal movido para ${newStage}`);

@@ -212,10 +212,15 @@ export function useUpdateQuoteStatus() {
         if (status === 'expired') newPipelineStatus = 'closed';
 
         if (newPipelineStatus) {
-          await supabase
-            .from('sales')
-            .update({ status: newPipelineStatus })
-            .eq('id', quote.sale_id);
+          // Transição via RPC da máquina de estados (rejeita saltos inválidos)
+          const { error: saleError } = await supabase.rpc(
+            'transition_sale_status' as never,
+            {
+              p_sale_id: quote.sale_id,
+              p_new_status: newPipelineStatus,
+            } as never
+          );
+          if (saleError) throw saleError;
         }
       }
     },

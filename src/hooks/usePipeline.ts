@@ -92,15 +92,14 @@ export const useMoveDeal = () => {
   
   return useMutation({
     mutationFn: async ({ dealId, newStage }: { dealId: string; newStage: PipelineStageId }) => {
-      const { data, error } = await supabase
-        .from('sales')
-        .update({ status: newStage, updated_at: new Date().toISOString() })
-        .eq('id', dealId)
-        .select()
-        .single();
-      
+      // Transição via RPC da máquina de estados (valida status_origem -> destino)
+      const { error } = await supabase.rpc('transition_sale_status' as never, {
+        p_sale_id: dealId,
+        p_new_status: newStage,
+      } as never);
+
       if (error) throw error;
-      return data;
+      return { id: dealId, status: newStage };
     },
     // Optimistic update for smooth drag & drop
     onMutate: async ({ dealId, newStage }) => {
