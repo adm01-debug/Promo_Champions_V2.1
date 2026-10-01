@@ -26,15 +26,16 @@ export const useProducts = (filters?: { category?: string }) => {
       let query = supabase
         .from('products')
         .select('*')
+        .is('deleted_at', null)
         .order('name');
-      
+
       if (filters?.category) {
         query = query.eq('category', filters.category);
       }
-      
+
       const { data, error } = await query;
       if (error) throw error;
-      
+
       return (data || []) as Product[];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
@@ -60,11 +61,12 @@ export const useTopProducts = (limit: number = 10) => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .is('deleted_at', null)
         .order('sales_count', { ascending: false })
         .limit(limit);
-      
+
       if (error) throw error;
-      
+
       return (data || []).map(p => ({
         id: p.id,
         name: p.name,
@@ -83,7 +85,7 @@ export const useTopProducts = (limit: number = 10) => {
 
 export const useCreateProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (input: {
       name: string;
@@ -104,7 +106,7 @@ export const useCreateProduct = () => {
         })
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -120,12 +122,20 @@ export const useCreateProduct = () => {
 
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ id, name, price, category, status, sku, stock_quantity }: { 
-      id: string; 
-      name?: string; 
-      price?: number; 
+    mutationFn: async ({
+      id,
+      name,
+      price,
+      category,
+      status,
+      sku,
+      stock_quantity,
+    }: {
+      id: string;
+      name?: string;
+      price?: number;
       category?: string;
       status?: string;
       sku?: string;
@@ -145,22 +155,22 @@ export const useUpdateProduct = () => {
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
     // Optimistic update
-    onMutate: async (newData) => {
+    onMutate: async newData => {
       await queryClient.cancelQueries({ queryKey: ['products'] });
       const previousProducts = queryClient.getQueryData(['products']);
-      
+
       queryClient.setQueryData(['products'], (old: Product[] | undefined) => {
         if (!old) return old;
-        return old.map(product => 
+        return old.map(product =>
           product.id === newData.id ? { ...product, ...newData } : product
         );
       });
-      
+
       return { previousProducts };
     },
     onSuccess: () => {
@@ -178,26 +188,32 @@ export const useUpdateProduct = () => {
 
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (productId: string) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { error } = await supabase
         .from('products')
-        .delete()
+        .update({
+          deleted_at: new Date().toISOString(),
+          deleted_by: user?.id ?? null,
+        })
         .eq('id', productId);
-      
+
       if (error) throw error;
     },
     // Optimistic update
-    onMutate: async (productId) => {
+    onMutate: async productId => {
       await queryClient.cancelQueries({ queryKey: ['products'] });
       const previousProducts = queryClient.getQueryData(['products']);
-      
+
       queryClient.setQueryData(['products'], (old: Product[] | undefined) => {
         if (!old) return old;
         return old.filter(product => product.id !== productId);
       });
-      
+
       return { previousProducts };
     },
     onSuccess: () => {

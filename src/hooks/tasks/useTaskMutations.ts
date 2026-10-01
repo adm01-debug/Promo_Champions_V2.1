@@ -178,7 +178,13 @@ export const useDeleteTask = () => {
 
   return useMutation({
     mutationFn: async (taskId: string) => {
-      const { error } = await supabase.from('tasks').delete().eq('id', taskId);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('tasks')
+        .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+        .eq('id', taskId);
 
       if (error) throw error;
     },
