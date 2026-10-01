@@ -1,4 +1,3 @@
-import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Filter, X, Download, Activity } from "lucide-react";
 import { Input } from "@/components/ui/input";

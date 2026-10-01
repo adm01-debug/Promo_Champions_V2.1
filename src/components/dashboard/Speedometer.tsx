@@ -233,7 +233,6 @@ export const Speedometer = memo(
     const cy = s / 2;
     const outerRadius = s / 2 - 8;
     const arcRadius = s / 2 - 28;
-    const _innerRadius = s / 2 - 50;
     const startAngle = -225;
     const endAngle = 45;
     const arcLength = endAngle - startAngle;

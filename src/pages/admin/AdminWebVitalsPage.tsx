@@ -32,7 +32,7 @@ function formatValue(metric: string, value: number | null): string {
   return `${value.toFixed(0)} ms`;
 }
 
-function ratingFor(metric: string, p75: number | null, budget: number | null): 'good' | 'poor' | 'unknown' {
+function ratingFor(_metric: string, p75: number | null, budget: number | null): 'good' | 'poor' | 'unknown' {
   if (p75 === null || budget === null) return 'unknown';
   return p75 <= budget ? 'good' : 'poor';
 }

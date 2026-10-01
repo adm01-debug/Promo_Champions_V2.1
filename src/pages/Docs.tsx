@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import {
   Card,

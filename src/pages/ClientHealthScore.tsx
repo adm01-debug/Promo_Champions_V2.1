@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { isWonSaleStatus } from '@/constants';
 import { Helmet } from 'react-helmet-async';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
