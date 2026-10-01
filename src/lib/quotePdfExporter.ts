@@ -107,8 +107,13 @@ export async function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
     summaryData.push(['Subtotal produtos:', fmt(productSubtotal)]);
     if (persTotal > 0) summaryData.push(['Personalização:', fmt(persTotal)]);
     if (discount > 0) {
-      const pct = ((discount / (productSubtotal + persTotal)) * 100).toFixed(0);
-      summaryData.push([`Desconto (${pct}%):`, `-${fmt(discount)}`]);
+      const discountBase = productSubtotal + persTotal;
+      // Guard de divisão por zero: subtotal 0 não gera percentual (NaN/Infinity)
+      const label =
+        discountBase > 0
+          ? `Desconto (${((discount / discountBase) * 100).toFixed(0)}%):`
+          : 'Desconto:';
+      summaryData.push([label, `-${fmt(discount)}`]);
     }
   }
   summaryData.push(['TOTAL:', fmt(Number(quote.total_value))]);
