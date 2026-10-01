@@ -151,6 +151,63 @@ Deno.test("INV-5 — concurrent requests never share requestId", async () => {
   assertEquals(ids.size, N);
 });
 
+// INV-7 — userId do JWT (claim `sub`, sem verificação de assinatura) entra no
+// contexto e nos logs; ausente/malformado => null, nunca quebra o request.
+function fakeJwt(payload: Record<string, unknown>): string {
+  const b64url = (o: Record<string, unknown>) =>
+    btoa(JSON.stringify(o)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return `${b64url({ alg: "none", typ: "JWT" })}.${b64url(payload)}.assinatura-falsa`;
+}
+
+Deno.test("INV-7 — JWT com sub popula ctx.userId e o campo userId do log", async () => {
+  const sub = "11111111-2222-3333-4444-555555555555";
+  let seen: { requestId: string; userId: string | null } | null = null;
+  const wrapped = withRequestId("fuzz-userid", (_req, ctx) => {
+    seen = { requestId: ctx.requestId, userId: ctx.userId };
+    return Promise.resolve(new Response("ok"));
+  });
+  const req = new Request("http://x/", {
+    headers: { Authorization: `Bearer ${fakeJwt({ sub, role: "authenticated" })}` },
+  });
+
+  const infos: string[] = [];
+  const origInfo = console.info;
+  console.info = (line: unknown) => infos.push(String(line));
+  try {
+    const res = await wrapped(req);
+    await res.text();
+  } finally {
+    console.info = origInfo;
+  }
+
+  assertEquals(seen!.userId, sub);
+  const completed = infos
+    .map(l => { try { return JSON.parse(l) as Record<string, unknown>; } catch { return null; } })
+    .find(e => e && e.message === "request_completed");
+  assert(completed, "esperava log request_completed");
+  assertEquals(completed!.userId, sub);
+});
+
+Deno.test("INV-7b — sem Authorization ou com bearer inválido userId fica null", async () => {
+  const cases: HeadersInit[] = [
+    {}, // sem header
+    { Authorization: `Bearer ${fakeJwt({ role: "anon" })}` }, // JWT sem sub
+    { Authorization: "Bearer nao-e-jwt" },
+    { Authorization: "Basic dXNlcjpwYXNz" },
+  ];
+  for (const headers of cases) {
+    let seen: string | null | undefined;
+    const wrapped = withRequestId("fuzz-userid-null", (_req, ctx) => {
+      seen = ctx.userId;
+      return Promise.resolve(new Response("ok"));
+    });
+    const res = await wrapped(new Request("http://x/", { headers }));
+    assertEquals(res.status, 200);
+    assertEquals(seen, null, `userId deveria ser null para ${JSON.stringify(headers)}`);
+    await res.text();
+  }
+});
+
 Deno.test("simulation summary — hundreds of scenarios OK", () => {
   const total = 200 + INVALID_TRANSPORTABLE_IDS.length + RUNTIME_BLOCKED_IDS.length + 100 + 100 + 500;
   console.info(`✓ ${total} cenários de propagação X-Request-Id passaram`);
