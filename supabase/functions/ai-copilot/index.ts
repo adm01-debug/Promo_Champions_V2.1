@@ -5,6 +5,7 @@ import {
   validateWebhookPayload,
   WebhookContracts,
 } from '../_shared/webhook-validator.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
@@ -199,7 +200,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
       userMessage = context.question || 'O que devo fazer agora?';
     }
 
-    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
+import { NOMINATIM_SEARCH_URL } from '@/config/external';
 import {
   Select,
   SelectContent,
@@ -91,7 +92,7 @@ async function geocodeLocation(
   if (geocodeCache.has(key)) return geocodeCache.get(key)!;
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(location)}`,
+      `${NOMINATIM_SEARCH_URL}?format=json&limit=1&q=${encodeURIComponent(location)}`,
       { headers: { 'User-Agent': 'SalesArena/1.0' } }
     );
     const data = await res.json();

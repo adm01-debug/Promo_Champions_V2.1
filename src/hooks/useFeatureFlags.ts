@@ -80,7 +80,19 @@ export function useFeatureFlags() {
     [flagMap, user?.id]
   );
 
-  return { flags, isEnabled, isLoading };
+  /**
+   * Semântica de kill-switch: flag ausente na tabela => `fallback`
+   * (default true = feature ligada até o admin desligar explicitamente).
+   */
+  const isEnabledOrDefault = useCallback(
+    (key: string, fallback = true): boolean => {
+      if (!flagMap.has(key)) return fallback;
+      return isEnabled(key);
+    },
+    [flagMap, isEnabled]
+  );
+
+  return { flags, isEnabled, isEnabledOrDefault, isLoading };
 }
 
 /**
@@ -89,4 +101,13 @@ export function useFeatureFlags() {
 export function useFeatureFlag(key: string): boolean {
   const { isEnabled } = useFeatureFlags();
   return isEnabled(key);
+}
+
+/**
+ * Kill-switch: feature ligada por padrão enquanto a flag não existir na
+ * tabela; basta criar a linha com is_enabled=false para desligar.
+ */
+export function useFeatureGate(key: string, fallback = true): boolean {
+  const { isEnabledOrDefault } = useFeatureFlags();
+  return isEnabledOrDefault(key, fallback);
 }

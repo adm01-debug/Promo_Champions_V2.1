@@ -21,6 +21,7 @@ import {
   collectErrors,
   validationErrorResponse,
 } from "../_shared/validation.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 type Mode = "briefing" | "chat" | "proactive_nudge";
 
@@ -326,7 +327,7 @@ Deno.serve(
       }
 
       const MODEL = "google/gemini-2.5-flash";
-      const upstream = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const upstream = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({ model: MODEL, messages, stream: true }),

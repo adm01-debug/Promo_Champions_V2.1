@@ -3,6 +3,7 @@ import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.4
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface Sale {
   id: string;
@@ -262,7 +263,7 @@ Ações de coaching pendentes: ${ctx.pendingCoachingActions}
 Menções a concorrentes: ${ctx.competitorMentions}
 Próximo passo definido: ${ctx.hasNextStep ? 'sim' : 'não'}`;
 
-    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({

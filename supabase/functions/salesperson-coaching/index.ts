@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -165,7 +166,7 @@ ${context.topWinReasons.map(r => `- ${r.reason}: ${r.count}x (${r.percentage}%)`
 
 Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações recomendadas.`;
 
-    const aiResponse = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResponse = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

@@ -6,6 +6,7 @@ import { OnboardingChecklist } from '@/components/onboarding/OnboardingChecklist
 import { StatCard } from '@/components/dashboard/StatCard';
 import { DashboardEmptyState } from '@/components/dashboard/DashboardEmptyState';
 import { CompetitiveStatusBar } from '@/components/gamification/CompetitiveStatusBar';
+import { CANONICAL_URL } from '@/config/external';
 // Removed unused useDashboardKPIs import
 import {
   useDashboardKPIsPeriod,
@@ -168,7 +169,7 @@ const Index = () => {
           name="keywords"
           content="vendas, dashboard, performance, CRM, inteligência comercial"
         />
-        <link rel="canonical" href="https://promochampions.com.br/dashboard" />
+        <link rel="canonical" href={`${CANONICAL_URL}/dashboard`} />
         <script type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',

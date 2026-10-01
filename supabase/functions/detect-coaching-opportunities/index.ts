@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface MetricRow {
   salesperson_id: string;
@@ -127,7 +128,7 @@ Deno.serve(withRequestId("detect-coaching-opportunities", async (req, _ctx) => {
       if (apiKey && topGaps.length > 0) {
         try {
           const prompt = `Vendedor: ${sp.name}. Top ${topGaps.length} gaps de performance vs equipe:\n${topGaps.map((g, i) => `${i + 1}. ${METRICS_META[g.key].label}: atual ${g.current.toFixed(2)}, equipe ${g.benchmark.toFixed(2)} (gap ${g.gap.toFixed(0)}%)`).join("\n")}\n\nGere uma ação de coaching curta e específica (máx 120 chars) para CADA gap. Responda em JSON: {"actions": ["ação 1", "ação 2", "ação 3"]}`;
-          const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
             method: "POST",
             headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({

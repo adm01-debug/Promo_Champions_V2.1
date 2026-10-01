@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL, LOVABLE_AI_EMBEDDINGS_URL } from "../_shared/ai-gateway.ts";
 
 interface VisualSearchRequest {
   image: string; // data URL or base64
@@ -31,7 +32,7 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
     const imageUrl = image.startsWith("data:") ? image : `data:image/jpeg;base64,${image}`;
 
     // 1. Analyze image via Gemini multimodal
-    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -141,7 +142,7 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
       .join(" ");
 
     // Generate query embedding for true semantic search
-    const embRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", {
+    const embRes = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

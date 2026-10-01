@@ -17,6 +17,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { QuoteCadenceDetailDrawer } from '@/components/cadences/quote/QuoteCadenceDetailDrawer';
 import { QuoteCadenceEmptyState } from '@/components/cadences/quote/QuoteCadenceEmptyState';
 import type { QuoteCadenceRow } from '@/hooks/cadences/useQuoteCadences';
+import { APP_URL } from '@/config/external';
 import {
   QuoteCadenceFilters,
   emptyQuoteCadenceFilters,
@@ -121,12 +122,12 @@ export default function QuoteCadencesPage() {
         />
         <link
           rel="canonical"
-          href="https://championgifts.lovable.app/cadencias-orcamentos"
+          href={`${APP_URL}/cadencias-orcamentos`}
         />
         <meta property="og:type" content="website" />
         <meta
           property="og:url"
-          content="https://championgifts.lovable.app/cadencias-orcamentos"
+          content={`${APP_URL}/cadencias-orcamentos`}
         />
         <meta property="og:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
@@ -135,7 +136,7 @@ export default function QuoteCadencesPage() {
         />
         <meta
           property="og:image"
-          content="https://championgifts.lovable.app/favicon.ico"
+          content={`${APP_URL}/favicon.ico`}
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Cadência de Orçamentos | Promo Champions" />

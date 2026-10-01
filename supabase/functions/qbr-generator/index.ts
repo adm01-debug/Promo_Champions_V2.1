@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 
 
@@ -64,7 +65,7 @@ Deno.serve(withRequestId("qbr-generator", async (req, _ctx) => {
     let recommendations: string[] = [];
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
     if (lovableKey) {
-      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
         method: "POST",
         headers: { Authorization: `Bearer ${lovableKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -86,7 +87,7 @@ Deno.serve(withRequestId("qbr-generator", async (req, _ctx) => {
         const data = await aiRes.json();
         narrative = data.choices?.[0]?.message?.content ?? "";
 
-        const recRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const recRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
           method: "POST",
           headers: { Authorization: `Bearer ${lovableKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
