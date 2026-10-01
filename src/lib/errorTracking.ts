@@ -31,10 +31,51 @@ const FLUSH_INTERVAL = 30_000; // 30s
 const MAX_BUFFER = 50;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
 
+// Sentry — error tracking centralizado (grouping, alertas de novos issues,
+// release tracking). Carregado sob demanda só quando VITE_SENTRY_DSN existe;
+// a tabela error_logs continua como fallback local.
+let sentry: typeof import('@sentry/react') | null = null;
+let sentryInitAttempted = false;
+
+async function initSentry(): Promise<void> {
+  if (sentryInitAttempted) return;
+  sentryInitAttempted = true;
+  const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
+  if (!dsn) return;
+  try {
+    const sdk = await import('@sentry/react');
+    sdk.init({
+      dsn,
+      environment: import.meta.env.MODE,
+      sendDefaultPii: false,
+    });
+    sentry = sdk;
+    for (const b of BREADCRUMBS) {
+      sdk.addBreadcrumb({
+        message: b.message,
+        category: b.category,
+        data: (b.data ?? {}) as Record<string, unknown>,
+        timestamp: b.timestamp / 1000,
+      });
+    }
+  } catch {
+    sentry = null;
+  }
+}
+
 export function addBreadcrumb(message: string, category?: string, data?: unknown): void {
   BREADCRUMBS.push({ message, timestamp: Date.now(), category, data });
   if (BREADCRUMBS.length > MAX_BREADCRUMBS) {
     BREADCRUMBS.shift();
+  }
+  try {
+    sentry?.addBreadcrumb({
+      message,
+      category,
+      data: (data ?? {}) as Record<string, unknown>,
+    });
+  } catch {
+    /* nunca quebrar o caller por causa do SDK */
   }
 }
 
@@ -123,6 +164,19 @@ export function captureError(
 
   ERROR_BUFFER.push(tracked);
 
+  try {
+    sentry?.captureException(error instanceof Error ? error : new Error(msg), {
+      extra: {
+        severity: tracked.severity,
+        category: tracked.category,
+        component: tracked.component,
+        metadata: tracked.metadata,
+      },
+    });
+  } catch {
+    /* idem: tracking nunca pode lançar */
+  }
+
   // Auto-recovery for chunk errors
   if (category === 'network' && msg.toLowerCase().includes('chunk')) {
     const lastReload = localStorage.getItem('last-error-reload');
@@ -154,6 +208,8 @@ export function captureException(error: unknown, component?: string): void {
 
 export function initErrorTracking(): void {
   if (flushTimer) return;
+
+  void initSentry();
 
   // Flush periodically
   flushTimer = setInterval(() => void flushErrors(), FLUSH_INTERVAL);
