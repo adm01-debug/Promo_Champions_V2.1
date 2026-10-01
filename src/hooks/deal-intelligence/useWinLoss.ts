@@ -39,23 +39,6 @@ export interface WinLossInsight {
   created_at: string;
 }
 
-export const useWinLossAnalyses = (filters?: { outcome?: 'won' | 'lost' }) =>
-  useQuery({
-    queryKey: ['win-loss-analyses', filters],
-    queryFn: async () => {
-      let q = supabase
-        .from('win_loss_analyses')
-        .select('*')
-        .order('analyzed_at', { ascending: false });
-      if (filters?.outcome) q = q.eq('outcome', filters.outcome);
-      const { data, error } = await q.limit(500);
-      if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as WinLossAnalysis[];
-    },
-    staleTime: 60_000,
-  });
-
 export const useWinLossPatterns = (type?: WinLossPattern['pattern_type']) =>
   useQuery({
     queryKey: ['win-loss-patterns', type],

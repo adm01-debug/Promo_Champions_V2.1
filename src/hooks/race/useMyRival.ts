@@ -1,6 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
 
 export interface MyRival {
@@ -72,19 +71,3 @@ export function useMyRival(args: {
   });
 }
 
-export function useSetMyRival() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (input: { season_id: string; car_id: string; rival_car_id: string }) => {
-      const { error } = await supabase
-        .from('race_rivalries_persistent')
-        .upsert(input, { onConflict: 'season_id,car_id' });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success('⚔️ Rival definido!');
-      qc.invalidateQueries({ queryKey: ['my-rival'] });
-    },
-    onError: (e: Error) => toast.error(e.message || 'Erro ao definir rival'),
-  });
-}

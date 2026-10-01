@@ -64,48 +64,6 @@ export function useCommissionBonusAwards(opts?: {
   });
 }
 
-export function useCreateBonusAward() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (input: {
-      bonus_id: string;
-      salesperson_id: string;
-      period_month?: string;
-      computed_amount: number;
-      bonus_kind: 'fixed' | 'percentage';
-      admin_notes?: string | null;
-    }) => {
-      const payload = {
-        bonus_id: input.bonus_id,
-        salesperson_id: input.salesperson_id,
-        period_month: input.period_month ?? currentPeriodMonth(),
-        computed_amount: input.computed_amount,
-        bonus_kind: input.bonus_kind,
-        admin_notes: input.admin_notes ?? null,
-      };
-      const { data, error } = await supabase
-        .from('commission_bonus_awards')
-        .insert(payload)
-        .select()
-        .single();
-      if (error) throw error;
-      return data as CommissionBonusAward;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: AWARDS_KEY });
-      toast.success('Premiação registrada');
-    },
-    onError: (e: unknown) => {
-      const msg = e instanceof Error ? e.message : 'Erro ao registrar premiação';
-      // Chave única
-      if (/duplicate|unique/i.test(msg)) {
-        toast.error('Já existe premiação para esse vendedor/bônus no mês.');
-      } else {
-        toast.error(msg);
-      }
-    },
-  });
-}
 
 export function useUpdateAwardStatus() {
   const qc = useQueryClient();

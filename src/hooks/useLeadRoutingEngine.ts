@@ -72,19 +72,3 @@ export function useToggleRoutingRule() {
   });
 }
 
-export function useAutoAssignLead() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (saleId: string) => {
-      const { data, error } = await supabase.rpc("auto_assign_lead", { _sale_id: saleId });
-      if (error) throw error;
-      return data?.[0];
-    },
-    onSuccess: () => {
-      toast.success("Lead atribuído automaticamente");
-      qc.invalidateQueries({ queryKey: ["lead-assignments"] });
-      qc.invalidateQueries({ queryKey: ["sales"] });
-    },
-    onError: (e: Error) => toast.error(`Falha ao atribuir: ${e.message}`),
-  });
-}

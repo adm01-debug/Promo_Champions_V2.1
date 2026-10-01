@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -30,22 +29,6 @@ export interface ScheduledSend {
   created_at: string;
 }
 
-export function useSendTimeProfile(saleId: string | undefined) {
-  return useQuery({
-    queryKey: ['send-time-profile', saleId],
-    enabled: !!saleId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('send_time_profiles')
-        .select('*')
-        .eq('sale_id', saleId!)
-        .maybeSingle();
-      if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as SendTimeProfile | null) ?? null;
-    },
-  });
-}
 
 export function useOptimizeSendTime() {
   const qc = useQueryClient();
@@ -76,91 +59,6 @@ export function useOptimizeSendTime() {
   });
 }
 
-export function useScheduleOptimalSend() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (input: {
-      sale_id: string;
-      channel: string;
-      payload: Record<string, unknown>;
-      force_now?: boolean;
-    }) => {
-      const { data, error } = await supabase.functions.invoke('schedule-optimal-send', {
-        body: input,
-      });
-      if (error) throw new Error(error.message);
-      if ((data as { error?: string })?.error)
-        throw new Error((data as { error: string }).error);
-      return data as {
-        id: string;
-        scheduled_for: string;
-        source: string;
-        confidence: number;
-      };
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['scheduled-sends'] }),
-    onError: (e: Error) =>
-      toast({ title: 'Erro ao agendar', description: e.message, variant: 'destructive' }),
-  });
-}
-
-export function useScheduledSends(status: ScheduledSend['status'] | 'all' = 'pending') {
-  const qc = useQueryClient();
-  const q = useQuery({
-    queryKey: ['scheduled-sends', status],
-    queryFn: async () => {
-      let q = supabase
-        .from('scheduled_sends')
-        .select('*')
-        .order('scheduled_for', { ascending: true })
-        .limit(200);
-      if (status !== 'all') q = q.eq('status', status);
-      const { data, error } = await q;
-      if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as ScheduledSend[];
-    },
-  });
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('scheduled-sends-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'scheduled_sends' },
-        () => qc.invalidateQueries({ queryKey: ['scheduled-sends'] })
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [qc]);
-
-  return q;
-}
-
-export function useCancelScheduledSend() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('scheduled_sends')
-        .update({ status: 'cancelled' })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['scheduled-sends'] });
-      toast({ title: 'Envio cancelado' });
-    },
-    onError: (e: Error) =>
-      toast({
-        title: 'Erro ao cancelar',
-        description: e.message,
-        variant: 'destructive',
-      }),
-  });
-}
 
 export function useGlobalSendTimeStats() {
   return useQuery({

@@ -51,23 +51,6 @@ export const useWorkflows = () =>
     },
   });
 
-export const useWorkflow = (id: string | undefined) =>
-  useQuery({
-    queryKey: ['workflow', id],
-    enabled: !!id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('workflows')
-        .select('*')
-        .eq('id', id!)
-        .single();
-      if (error) throw error;
-      /* eslint-disable no-restricted-syntax */
-      return data as unknown as Workflow;
-      /* eslint-enable no-restricted-syntax */
-    },
-  });
-
 export const useWorkflowExecutions = (workflowId: string | undefined) =>
   useQuery({
     queryKey: ['workflow-executions', workflowId],

@@ -65,21 +65,6 @@ export const useDealStageVelocity = (saleId: string | undefined) =>
     staleTime: CACHE_TIMES.STALE_TIME,
   });
 
-export const useStageBaselinesAll = () =>
-  useQuery({
-    queryKey: ["stage-baselines-all"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("stage_velocity_baselines")
-        .select("*")
-        .eq("segment", "all")
-        .order("p75_hours", { ascending: false });
-      if (error) throw error;
-      return (data || []) as StageBaseline[];
-    },
-    staleTime: CACHE_TIMES.STALE_TIME,
-  });
-
 export const useStuckDeals = (limit = 20) =>
   useQuery({
     queryKey: ["stuck-deals", limit],

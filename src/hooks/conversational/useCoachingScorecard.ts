@@ -33,34 +33,6 @@ export function useCoachingScorecard(recordingId: string | undefined | null) {
   return query;
 }
 
-export function useSalespersonCoachingAggregate(salespersonId: string | undefined | null) {
-  const qc = useQueryClient();
-  const query = useQuery({
-    queryKey: ["coaching-aggregate", salespersonId],
-    enabled: !!salespersonId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("salesperson_coaching_aggregates")
-        .select("*")
-        .eq("salesperson_id", salespersonId!)
-        .maybeSingle();
-      if (error) throw error;
-      return data as SalespersonAggregate | null;
-    },
-  });
-
-  useEffect(() => {
-    if (!salespersonId) return;
-    const ch = supabase
-      .channel(`sca-${salespersonId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "salesperson_coaching_aggregates", filter: `salesperson_id=eq.${salespersonId}` },
-        () => qc.invalidateQueries({ queryKey: ["coaching-aggregate", salespersonId] }))
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [salespersonId, qc]);
-
-  return query;
-}
 
 export function useCoachingLeaderboard(limit = 10) {
   return useQuery({

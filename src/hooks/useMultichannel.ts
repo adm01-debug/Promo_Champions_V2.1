@@ -85,23 +85,6 @@ export const useCreateTemplate = () => {
   });
 };
 
-export const useUpdateTemplate = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<MessageTemplate>) => {
-      const { error } = await supabase
-        .from('message_templates')
-        .update(updates)
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['message-templates'] });
-      toast.success('Template atualizado');
-    },
-    onError: () => toast.error('Erro ao atualizar template'),
-  });
-};
 
 export const useDeleteTemplate = () => {
   const qc = useQueryClient();
@@ -147,56 +130,6 @@ export const useChannelInteractions = (filters?: {
   });
 };
 
-export const useCreateInteraction = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (interaction: {
-      channel: Channel;
-      direction: Direction;
-      contact_name: string;
-      contact_info?: string;
-      message_preview?: string;
-      status?: InteractionStatus;
-      template_id?: string;
-      deal_id?: string;
-      salesperson_id: string;
-    }) => {
-      const { data, error } = await supabase
-        .from('channel_interactions')
-        .insert(interaction)
-        .select()
-        .single();
-      if (error) throw error;
-
-      // If template was used, increment usage count
-      if (interaction.template_id) {
-        try {
-          const { data: tpl } = await supabase
-            .from('message_templates')
-            .select('usage_count')
-            .eq('id', interaction.template_id)
-            .single();
-          if (tpl) {
-            await supabase
-              .from('message_templates')
-              .update({ usage_count: (tpl.usage_count || 0) + 1 })
-              .eq('id', interaction.template_id);
-          }
-        } catch {
-          // Silent fail — usage count is non-critical
-        }
-      }
-
-      return data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['channel-interactions'] });
-      qc.invalidateQueries({ queryKey: ['message-templates'] });
-      toast.success('Interação registrada');
-    },
-    onError: () => toast.error('Erro ao registrar interação'),
-  });
-};
 
 // ─── Channel Stats ─────────────────────────────────────────────────
 export const useChannelStats = (days = 30) => {

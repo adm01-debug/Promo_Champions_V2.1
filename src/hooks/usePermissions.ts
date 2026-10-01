@@ -86,12 +86,3 @@ export const usePermissions = () => {
   };
 };
 
-export const useCanAccess = (resource: string, action: 'read' | 'write' | 'delete') => {
-  const { canAccess, isLoading } = usePermissions();
-  return { canAccess: canAccess(resource, action), isLoading };
-};
-
-export const useHasPermission = (permission: Permission) => {
-  const { hasPermission, isLoading } = usePermissions();
-  return { hasPermission: hasPermission(permission), isLoading };
-};

@@ -119,58 +119,6 @@ export function useChallengesWithProgress(salespersonId?: string) {
   };
 }
 
-export function useUpdateChallengeProgress() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      challengeId,
-      salespersonId,
-      incrementBy = 1,
-    }: {
-      challengeId: string;
-      salespersonId: string;
-      incrementBy?: number;
-    }) => {
-      // Check if progress exists
-      const { data: existing } = await supabase
-        .from("challenge_progress")
-        .select("*")
-        .eq("challenge_id", challengeId)
-        .eq("salesperson_id", salespersonId)
-        .single();
-
-      if (existing) {
-        const newValue = existing.current_value + incrementBy;
-        const { data, error } = await supabase
-          .from("challenge_progress")
-          .update({ current_value: newValue })
-          .eq("id", existing.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      } else {
-        const { data, error } = await supabase
-          .from("challenge_progress")
-          .insert({
-            challenge_id: challengeId,
-            salesperson_id: salespersonId,
-            current_value: incrementBy,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["challenge-progress"] });
-    },
-  });
-}
 
 export function useClaimChallengeReward() {
   const queryClient = useQueryClient();

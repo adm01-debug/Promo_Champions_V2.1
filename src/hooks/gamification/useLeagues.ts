@@ -142,19 +142,6 @@ export function useLeagues() {
   });
 }
 
-export function useLeagueDefinitions() {
-  return useQuery({
-    queryKey: ['league-definitions'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('leagues')
-        .select('*')
-        .order('tier', { ascending: true });
-      if (error) throw error;
-      return data || [];
-    },
-  });
-}
 
 export function useJoinLeague() {
   const queryClient = useQueryClient();

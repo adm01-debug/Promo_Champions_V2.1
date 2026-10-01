@@ -35,24 +35,6 @@ export function useICPData() {
   });
 }
 
-export function useICPDataByClientId(clientId: string | undefined) {
-  return useQuery({
-    queryKey: ["icp-data", clientId],
-    queryFn: async () => {
-      if (!clientId) return null;
-
-      const { data, error } = await supabase
-        .from("icp_data")
-        .select("*")
-        .eq("client_id", clientId)
-        .maybeSingle();
-
-      if (error) throw error;
-      return data as ICPData | null;
-    },
-    enabled: !!clientId,
-  });
-}
 
 export function useICPDataMap() {
   const { data: icpData, isLoading } = useICPData();
