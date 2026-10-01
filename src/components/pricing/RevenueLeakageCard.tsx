@@ -1,4 +1,4 @@
-import { memo, useState, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import {
   TrendingDown,
@@ -6,12 +6,11 @@ import {
   ShieldOff,
   Sparkles,
   Info,
-  PieChart,
   ArrowDownRight,
   ArrowUpRight,
   Zap,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -73,7 +72,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
   competitorLost,
   marginErosion,
 }: Props) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const total = discountLost + competitorLost + marginErosion || 1;
 
   const items = [
@@ -85,16 +83,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
       bg: 'bg-warning',
       recommendation:
         'Revisar alçadas de aprovação e treinar equipe em negociação baseada em valor.',
-      subItems: [
-        {
-          name: 'Descontos > 20%',
-          impact: 'R$ ' + (discountLost * 0.6).toLocaleString('pt-BR'),
-        },
-        {
-          name: 'Promoções não autorizadas',
-          impact: 'R$ ' + (discountLost * 0.4).toLocaleString('pt-BR'),
-        },
-      ],
     },
     {
       label: 'Pressão Competitiva',
@@ -104,16 +92,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
       bg: 'bg-destructive',
       recommendation:
         'Ajustar posicionamento de preço ou destacar diferenciais exclusivos em relação à concorrência.',
-      subItems: [
-        {
-          name: 'Guerra de preços - Setor Tech',
-          impact: 'R$ ' + (competitorLost * 0.75).toLocaleString('pt-BR'),
-        },
-        {
-          name: 'Match de preço automático',
-          impact: 'R$ ' + (competitorLost * 0.25).toLocaleString('pt-BR'),
-        },
-      ],
     },
     {
       label: 'Erosão de Margem',
@@ -123,23 +101,16 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
       bg: 'bg-info',
       recommendation:
         'Implementar gatilhos de reajuste por inflação ou custos variáveis nos contratos.',
-      subItems: [
-        {
-          name: 'Aumento de custo logístico',
-          impact: 'R$ ' + (marginErosion * 0.5).toLocaleString('pt-BR'),
-        },
-        {
-          name: 'Ineficiência tributária',
-          impact: 'R$ ' + (marginErosion * 0.5).toLocaleString('pt-BR'),
-        },
-      ],
     },
   ];
 
+  // Segmento dominante → insight textual derivado dos dados reais.
+  const dominant = items.reduce((a, b) => (b.value > a.value ? b : a), items[0]);
+
   const handleApplyRecovery = () => {
-    toast.success('Plano de Recuperação Iniciado', {
+    toast.success('Plano de Recuperação', {
       description:
-        'A IA está revisando as sugestões de preços e ajustando as alçadas de desconto.',
+        'Revise os segmentos medidos acima e ajuste as alçadas de desconto junto ao gestor comercial.',
       duration: 5000,
     });
   };
@@ -176,12 +147,9 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
           </div>
 
           <p className="text-xs text-muted-foreground mt-4 leading-relaxed italic font-medium">
-            Receita perdida no período por ineficiências detectadas no pricing. A IA
-            projeta recuperação de{' '}
-            <span className="text-success font-bold">
-              R$ {(totalLost * 0.42).toLocaleString('pt-BR')}
-            </span>{' '}
-            se as recomendações forem aplicadas.
+            Receita perdida no período por ineficiências medidas no pricing
+            (desconto vs. referência, perdas para concorrentes e vendas abaixo do
+            custo).
           </p>
 
           <div className="flex flex-col gap-3 mt-8">
@@ -193,15 +161,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
               <Sparkles className="h-4 w-4" />
               INICIAR RECUPERAÇÃO
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full h-11 border-white/10 bg-white/5 hover:bg-white/10 text-xs font-bold gap-2"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              <PieChart className="h-4 w-4" />
-              {isExpanded ? 'RECOLHER ANÁLISE' : 'VER ANÁLISE DETALHADA'}
-            </Button>
           </div>
         </div>
 
@@ -212,11 +171,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
               <Info className="h-4 w-4 text-primary" />
               Composição do Vazamento
             </h3>
-            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-              <span>Frequência: Semanal</span>
-              <div className="h-1 w-1 rounded-full bg-muted-foreground" />
-              <span className="text-success">Confiança: 98%</span>
-            </div>
           </div>
 
           <TooltipProvider>
@@ -287,31 +241,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                             </motion.div>
                           </div>
 
-                          {/* Sub- breakdown expandido */}
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="mt-4 pl-12 space-y-2"
-                              >
-                                {item.subItems.map((sub, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="flex items-center justify-between text-[10px] border-l border-white/10 pl-4 py-1"
-                                  >
-                                    <span className="text-muted-foreground font-medium">
-                                      {sub.name}
-                                    </span>
-                                    <span className="font-mono font-bold">
-                                      {sub.impact}
-                                    </span>
-                                  </div>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent
@@ -327,14 +256,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                         <p className="text-muted-foreground mb-3 leading-relaxed">
                           {item.recommendation}
                         </p>
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
-                          <span className="text-[10px] text-muted-foreground">
-                            Potencial de Ganho:
-                          </span>
-                          <span className="text-[10px] text-success font-black">
-                            +{fmtBRL(item.value * 0.4)}
-                          </span>
-                        </div>
                       </TooltipContent>
                     </Tooltip>
                   </motion.div>
@@ -353,11 +274,11 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                 IA Strategic Insight
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                A pressão competitiva no setor Tech está gerando um "efeito cascata" nos
-                seus descontos. Recomendo desvincular a aprovação de descontos acima de
-                15% do time de vendas e centralizar no Price Committee para recuperar{' '}
-                <span className="text-foreground font-bold">R$ 42.500</span> em margem
-                bruta até o final do trimestre.
+                O maior vazamento medido no período é{' '}
+                <span className="text-foreground font-bold">
+                  {dominant.label} ({fmtBRL(dominant.value)})
+                </span>
+                . {dominant.recommendation}
               </p>
             </div>
           </div>

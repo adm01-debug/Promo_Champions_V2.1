@@ -56,8 +56,20 @@ export interface PricingIntelligenceResponse {
     product_name: string;
     our_price: number;
     competitor_price: number;
+    competitor_name?: string | null;
     threat_level: "high" | "medium" | "low";
   }[];
+  elasticity?: {
+    product_name: string | null;
+    points: { price: number; win_rate: number; volume: number }[];
+    optimal_price: number | null;
+  };
+  optimizer?: {
+    base_win_rate: number;
+    discount_elasticity: number;
+    avg_deal_value: number;
+    avg_margin: number;
+  };
 }
 
 export function usePricingIntelligence(days: 7 | 30 | 90 = 30) {

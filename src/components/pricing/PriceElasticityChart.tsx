@@ -30,32 +30,18 @@ interface ElasticityPoint {
 interface Props {
   data?: ElasticityPoint[];
   optimalPrice?: number;
+  productName?: string;
 }
-
-const generateMockData = (): ElasticityPoint[] => {
-  const data: ElasticityPoint[] = [];
-  for (let i = 0; i < 25; i++) {
-    const price = 1000 + i * 200;
-    // Simulated elasticity curve: win_rate decreases as price increases, with peak around 2200
-    const idealOffset = Math.abs(price - 2200);
-    const win_rate = Math.max(
-      10,
-      80 - (idealOffset / 100) * 2 + (Math.random() - 0.5) * 15
-    );
-    data.push({
-      price,
-      win_rate: Math.round(win_rate),
-      volume: Math.round(20 + Math.random() * 80),
-    });
-  }
-  return data;
-};
 
 export const PriceElasticityChart = memo(function PriceElasticityChart({
   data,
-  optimalPrice = 2200,
+  optimalPrice,
+  productName,
 }: Props) {
-  const chartData = useMemo(() => data ?? generateMockData(), [data]);
+  // Sem fallback sintético: só exibimos pontos medidos no histórico real.
+  const chartData = useMemo(() => data ?? [], [data]);
+  const hasData = chartData.length > 0 && optimalPrice != null;
+  const optPrice = optimalPrice ?? 0;
 
   return (
     <Card className="glass border-white/5 overflow-hidden shadow-2xl bg-slate-950/40 relative">
@@ -77,33 +63,42 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
                   variant="outline"
                   className="text-[8px] font-black uppercase py-0 border-primary/30 text-primary"
                 >
-                  Live Model
+                  Dados reais
                 </Badge>
               </div>
               <CardDescription className="text-xs font-medium">
-                Correlação neural entre preço praticado e probabilidade de conversão
-                (Win-Rate).
+                Correlação medida entre preço praticado e probabilidade de conversão
+                (Win-Rate){productName ? ` — ${productName}` : ''}.
               </CardDescription>
             </div>
           </div>
-          <div className="flex items-center gap-4 bg-background/40 p-3 rounded-2xl border border-white/5 shadow-xl">
-            <div className="flex flex-col items-end">
-              <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
-                Price Shield Proteção
-              </span>
-              <Badge className="gap-2 bg-success text-white border-none shadow-[0_0_20px_rgba(34,197,94,0.4)] font-black text-xs px-4 py-1.5 rounded-full">
-                <ShieldCheck className="h-3.5 w-3.5 fill-current" />
-                PREÇO ÓTIMO:{' '}
-                {optimalPrice.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                })}
-              </Badge>
+          {optimalPrice != null && (
+            <div className="flex items-center gap-4 bg-background/40 p-3 rounded-2xl border border-white/5 shadow-xl">
+              <div className="flex flex-col items-end">
+                <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
+                  Price Shield Proteção
+                </span>
+                <Badge className="gap-2 bg-success text-white border-none shadow-[0_0_20px_rgba(34,197,94,0.4)] font-black text-xs px-4 py-1.5 rounded-full">
+                  <ShieldCheck className="h-3.5 w-3.5 fill-current" />
+                  PREÇO ÓTIMO:{' '}
+                  {optimalPrice.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </Badge>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="h-80 p-4">
+        {!hasData && (
+          <div className="h-full flex items-center justify-center text-sm text-muted-foreground text-center px-6">
+            Histórico insuficiente para medir a curva de elasticidade
+            (é preciso um produto com pelo menos 10 deals no período).
+          </div>
+        )}
+        {hasData && (
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -130,7 +125,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
                 if (active && payload && payload.length) {
                   const data = payload[0].payload as ElasticityPoint;
                   const isNearOptimal =
-                    Math.abs(data.price - optimalPrice) / optimalPrice < 0.1;
+                    optPrice > 0 && Math.abs(data.price - optPrice) / optPrice < 0.1;
 
                   return (
                     <div className="bg-popover border border-border p-3 rounded-lg shadow-xl text-xs max-w-[200px]">
@@ -170,7 +165,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
               }}
             />
             <ReferenceLine
-              x={optimalPrice * 0.9}
+              x={optPrice * 0.9}
               stroke="hsl(var(--success))"
               strokeDasharray="3 3"
               label={{
@@ -181,7 +176,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
               }}
             />
             <ReferenceLine
-              x={optimalPrice * 1.1}
+              x={optPrice * 1.1}
               stroke="hsl(var(--warning))"
               strokeDasharray="3 3"
               label={{
@@ -192,7 +187,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
               }}
             />
             <ReferenceLine
-              x={optimalPrice}
+              x={optPrice}
               stroke="hsl(var(--primary))"
               strokeWidth={3}
               label={{
@@ -211,6 +206,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
             />
           </ScatterChart>
         </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );

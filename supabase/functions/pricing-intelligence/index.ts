@@ -10,6 +10,22 @@ interface SaleRow {
   salesperson_id: string | null;
   status: string;
   created_at: string;
+  lost_to_competitor_id: string | null;
+}
+
+interface ProductRow {
+  id: string;
+  name: string;
+  price: number;
+  default_cost: number | null;
+}
+
+interface CompetitorPriceRow {
+  product_id: string | null;
+  price: number;
+  recorded_at: string | null;
+  products: { name: string; price: number } | { name: string; price: number }[] | null;
+  competitors_registry: { name: string } | { name: string }[] | null;
 }
 
 interface SalespersonAgg {
@@ -77,7 +93,7 @@ Deno.serve(
       const [{ data: sales, error: salesErr }, { data: people }] = await Promise.all([
         supabase
           .from('sales')
-          .select('id,amount,category,product_name,salesperson_id,status,created_at')
+          .select('id,amount,category,product_name,salesperson_id,status,created_at,lost_to_competitor_id')
           .gte('created_at', startDate)
           .limit(5000),
         supabase.from('salespeople_public').select('id,name').limit(500),
@@ -207,6 +223,144 @@ Deno.serve(
 
       const health = pricingHealth(avgDiscountPct, alertRatio);
 
+      // ── Vazamento segmentado com dados reais ──────────────────────────────
+      // competitor: receita de deals perdidos atribuídos a concorrente
+      //             (sales.lost_to_competitor_id).
+      const competitorLost = rows
+        .filter(r => r.status === 'lost' && r.lost_to_competitor_id)
+        .reduce((s, r) => s + Number(r.amount), 0);
+
+      // erosion: valor vendido abaixo do custo cadastrado do produto
+      //          (products.default_cost). Sem custo → não há como medir → 0.
+      const { data: products } = await supabase
+        .from('products')
+        .select('id,name,price,default_cost');
+      const productByName = new Map<string, ProductRow>(
+        ((products ?? []) as ProductRow[]).map(p => [p.name, p])
+      );
+      let marginErosion = 0;
+      let marginSum = 0;
+      let marginN = 0;
+      consideredRows.forEach(s => {
+        const prod = productByName.get(s.product_name);
+        if (prod?.default_cost != null && prod.default_cost > 0) {
+          const amt = Number(s.amount);
+          marginErosion += Math.max(0, Number(prod.default_cost) - amt);
+          if (amt > 0) {
+            marginSum += (amt - Number(prod.default_cost)) / amt;
+            marginN++;
+          }
+        }
+      });
+      const avgMargin = marginN ? marginSum / marginN : 0;
+
+      // ── Radar de concorrência real (competitors_pricing) ─────────────────
+      const { data: compPricing } = await supabase
+        .from('competitors_pricing')
+        .select(
+          'product_id, price, recorded_at, products(name, price), competitors_registry(name)'
+        )
+        .order('recorded_at', { ascending: false })
+        .limit(500);
+
+      const latestCompByProduct = new Map<string, CompetitorPriceRow>();
+      ((compPricing ?? []) as CompetitorPriceRow[]).forEach(r => {
+        if (r.product_id && !latestCompByProduct.has(r.product_id)) {
+          latestCompByProduct.set(r.product_id, r);
+        }
+      });
+      const competitorThreats = Array.from(latestCompByProduct.values())
+        .map(r => {
+          const prod = Array.isArray(r.products) ? r.products[0] : r.products;
+          const comp = Array.isArray(r.competitors_registry)
+            ? r.competitors_registry[0]
+            : r.competitors_registry;
+          if (!prod) return null;
+          const our = Number(prod.price);
+          const theirs = Number(r.price);
+          if (!(theirs > 0) || !(our > 0) || theirs >= our) return null;
+          return {
+            product_name: String(prod.name),
+            our_price: our,
+            competitor_price: theirs,
+            competitor_name: comp?.name ?? null,
+            threat_level: (theirs < our * 0.9 ? 'high' : 'medium') as 'high' | 'medium',
+          };
+        })
+        .filter((t): t is NonNullable<typeof t> => t !== null)
+        .sort((a, b) => a.competitor_price / a.our_price - b.competitor_price / b.our_price)
+        .slice(0, 5);
+
+      // ── Elasticidade medida no histórico real ────────────────────────────
+      const wonSet = new Set(wonRows.map(r => r.id));
+
+      // Win-rate por faixa de desconto → slope linear (elasticidade medida).
+      const discWinBuckets = [0, 0.1, 0.2, 0.3].map(min => ({ min, n: 0, won: 0 }));
+      rows.forEach(s => {
+        const ref = productRefPrice.get(s.product_name) ?? Number(s.amount);
+        const d = ref > 0 ? Math.max(0, (ref - Number(s.amount)) / ref) : 0;
+        let b = discWinBuckets[0];
+        for (const cand of discWinBuckets) if (d >= cand.min) b = cand;
+        b.n++;
+        if (wonSet.has(s.id)) b.won++;
+      });
+      const xs: number[] = [];
+      const ys: number[] = [];
+      discWinBuckets.forEach((b, i) => {
+        if (b.n >= 3) {
+          xs.push(i * 0.1 + 0.05);
+          ys.push(b.won / b.n);
+        }
+      });
+      let discountElasticity = 0;
+      if (xs.length >= 2) {
+        const mx = xs.reduce((a, v) => a + v, 0) / xs.length;
+        const my = ys.reduce((a, v) => a + v, 0) / ys.length;
+        const num = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0);
+        const den = xs.reduce((s, x) => s + (x - mx) * (x - mx), 0);
+        if (den > 0) discountElasticity = num / den;
+      }
+      const baseWinRate =
+        discWinBuckets[0].n > 0
+          ? discWinBuckets[0].won / discWinBuckets[0].n
+          : rows.length
+            ? wonRows.length / rows.length
+            : 0;
+
+      // Curva real preço × win-rate do produto com mais deals (≥10).
+      let elasticityProduct: string | null = null;
+      const elasticityPoints: { price: number; win_rate: number; volume: number }[] = [];
+      let optimalPrice: number | null = null;
+      const topProduct = Array.from(productPrices.entries()).sort(
+        (a, b) => b[1].length - a[1].length
+      )[0];
+      if (topProduct && topProduct[1].length >= 10) {
+        elasticityProduct = topProduct[0];
+        const productRows = rows
+          .filter(r => r.product_name === topProduct[0])
+          .sort((a, b) => Number(a.amount) - Number(b.amount));
+        const BUCKETS = 8;
+        for (let i = 0; i < BUCKETS; i++) {
+          const slice = productRows.slice(
+            Math.floor((i * productRows.length) / BUCKETS),
+            Math.floor(((i + 1) * productRows.length) / BUCKETS)
+          );
+          if (!slice.length) continue;
+          const won = slice.filter(r => wonSet.has(r.id)).length;
+          elasticityPoints.push({
+            price: Math.round(median(slice.map(r => Number(r.amount)))),
+            win_rate: Math.round((won / slice.length) * 100),
+            volume: slice.length,
+          });
+        }
+        // Ótimo = bucket que maximiza win_rate × preço (receita esperada por deal).
+        if (elasticityPoints.length) {
+          optimalPrice = elasticityPoints.reduce((best, p) =>
+            (p.win_rate / 100) * p.price > (best.win_rate / 100) * best.price ? p : best
+          ).price;
+        }
+      }
+
       return new Response(
         JSON.stringify({
           days,
@@ -222,19 +376,22 @@ Deno.serve(
             alert_ratio: alertRatio,
           },
           leakage_segments: {
-            discount: revenueLost * 0.58,
-            competitor: revenueLost * 0.27,
-            erosion: revenueLost * 0.15,
+            discount: revenueLost,
+            competitor: competitorLost,
+            erosion: marginErosion,
           },
-          competitor_threats: productRecommendations
-            .filter(p => p.win_rate < 0.4)
-            .map(p => ({
-              product_name: p.product_name,
-              our_price: p.median_price,
-              competitor_price: p.median_price * 0.85,
-              threat_level: p.win_rate < 0.2 ? 'high' : 'medium',
-            }))
-            .slice(0, 3),
+          competitor_threats: competitorThreats,
+          elasticity: {
+            product_name: elasticityProduct,
+            points: elasticityPoints,
+            optimal_price: optimalPrice,
+          },
+          optimizer: {
+            base_win_rate: baseWinRate,
+            discount_elasticity: discountElasticity,
+            avg_deal_value: avgTicket,
+            avg_margin: avgMargin,
+          },
           distribution,
           top_discounters: topDiscounters,
           product_recommendations: productRecommendations,

@@ -17,19 +17,58 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-export const DiscountOptimizer = () => {
+interface Props {
+  /** Win-rate medido na faixa de ~0% de desconto (0-1). */
+  baseWinRate?: number;
+  /** Variação de win-rate por ponto percentual de desconto (slope medido). */
+  discountElasticity?: number;
+  /** Ticket médio real do período. */
+  avgDealValue?: number;
+  /** Margem média real medida via products.default_cost (0-1). */
+  avgMargin?: number;
+}
+
+export const DiscountOptimizer = ({
+  baseWinRate,
+  discountElasticity,
+  avgDealValue,
+  avgMargin,
+}: Props) => {
   const [discount, setDiscount] = useState([10]);
 
-  // Mock elasticity logic: lower discount = lower win rate but higher margin
-  const winRateBase = 0.35;
-  const winRateElasticity = 0.8; // change in winrate per % discount
-  const currentWinRate = winRateBase + (discount[0] / 100) * winRateElasticity;
+  // Parâmetros medidos no histórico (edge pricing-intelligence); sem dados
+  // suficientes exibimos nota em vez de simular com números inventados.
+  const hasData =
+    baseWinRate != null &&
+    discountElasticity != null &&
+    avgDealValue != null &&
+    avgMargin != null &&
+    avgDealValue > 0;
 
-  const dealValue = 50000;
-  const marginBase = 0.6;
-  const currentMargin = marginBase - discount[0] / 100;
+  const wrBase = baseWinRate ?? 0;
+  const elasticity = discountElasticity ?? 0;
+  const dealValue = avgDealValue ?? 0;
+  const marginBase = avgMargin ?? 0;
 
+  const d = discount[0] / 100;
+  const currentWinRate = Math.min(1, Math.max(0, wrBase + elasticity * d));
+  const currentMargin = Math.max(0, marginBase - d);
   const expectedProfit = dealValue * currentMargin * currentWinRate;
+
+  // Desconto que maximiza lucro esperado sob o modelo medido
+  // (varre 0-40% em passos de 1 ponto percentual).
+  let bestDiscount = 0;
+  let bestProfit = -1;
+  for (let cand = 0; cand <= 40; cand++) {
+    const dc = cand / 100;
+    const wr = Math.min(1, Math.max(0, wrBase + elasticity * dc));
+    const mg = Math.max(0, marginBase - dc);
+    const p = dealValue * mg * wr;
+    if (p > bestProfit) {
+      bestProfit = p;
+      bestDiscount = cand;
+    }
+  }
 
   return (
     <Card className="glass border-primary/30 bg-gradient-to-br from-slate-950 to-slate-900 shadow-2xl relative overflow-hidden group">
@@ -48,16 +87,24 @@ export const DiscountOptimizer = () => {
                 Price Elasticity Simulator
               </CardTitle>
               <CardDescription className="text-xs font-medium uppercase tracking-widest text-primary/70">
-                IA-Powered Revenue Optimization
+                Modelo medido no histórico do período
               </CardDescription>
             </div>
           </div>
-          <Badge className="bg-primary text-primary-foreground border-none font-black text-[10px] px-3 py-1 shadow-lg animate-pulse">
-            NEURAL ENGINE v4
+          <Badge className="bg-primary text-primary-foreground border-none font-black text-[10px] px-3 py-1 shadow-lg">
+            DADOS REAIS
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-8">
+        {!hasData && (
+          <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-sm text-muted-foreground">
+            Histórico insuficiente para medir os parâmetros do simulador
+            (win-rate por desconto, ticket médio e margem por custo cadastrado).
+            O bloco fica oculto até haver dados reais.
+          </div>
+        )}
+        {hasData && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-sm font-bold flex items-center gap-2">
@@ -69,8 +116,8 @@ export const DiscountOptimizer = () => {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="max-w-xs text-xs">
-                      A elasticidade é calculada com base no histórico de deals similares
-                      fechados nos últimos 12 meses.
+                      A elasticidade é medida com base no win-rate real por faixa de
+                      desconto dos deals do período selecionado.
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -91,7 +138,10 @@ export const DiscountOptimizer = () => {
             <span>Volume Máximo</span>
           </div>
         </div>
+        )}
 
+        {hasData && (
+        <>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <MetricBlock
             label="Win-Rate Previsto"
@@ -117,12 +167,15 @@ export const DiscountOptimizer = () => {
             </h4>
           </div>
           <p className="text-sm text-card-foreground/80 leading-relaxed italic">
-            "Para este deal, um desconto de{' '}
-            <span className="font-bold text-primary">12%</span> maximiza o lucro esperado
-            (R$ {expectedProfit.toLocaleString()}). Acima de 18%, a erosão de margem
-            supera o ganho de volume."
+            "Para o ticket médio medido, um desconto de{' '}
+            <span className="font-bold text-primary">{bestDiscount}%</span> maximiza o
+            lucro esperado (R$ {expectedProfit.toLocaleString('pt-BR')} no nível
+            selecionado). Acima desse ponto, a erosão de margem supera o ganho de
+            win-rate medido."
           </p>
         </div>
+        </>
+        )}
       </CardContent>
     </Card>
   );
