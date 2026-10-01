@@ -13,6 +13,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { ExecInsightsBanner } from '@/components/reports/ExecInsightsBanner';
 import { QBRStoryGenerator } from '@/components/reports/QBRStoryGenerator';
 import { PageTransition } from "@/components/transitions/PageTransition";
+import { isWonSaleStatus, isLostSaleStatus, isOpenSaleStatus } from '@/constants';
 
 const CHART_COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(142 71% 45%)', 'hsl(var(--destructive))', 'hsl(var(--secondary))'];
 
@@ -50,9 +51,9 @@ const RelatoriosExecutivos = () => {
 
   const metrics = useMemo(() => {
     if (!salesData) return null;
-    const won = salesData.filter(s => s.status === 'won');
-    const lost = salesData.filter(s => s.status === 'lost');
-    const open = salesData.filter(s => !['won', 'lost', 'abandoned'].includes(s.status));
+    const won = salesData.filter(s => isWonSaleStatus(s.status));
+    const lost = salesData.filter(s => isLostSaleStatus(s.status));
+    const open = salesData.filter(s => isOpenSaleStatus(s.status) && s.status !== 'abandoned');
     const totalRevenue = won.reduce((sum, s) => sum + (s.amount || 0), 0);
     const avgTicket = won.length > 0 ? totalRevenue / won.length : 0;
     const conversionRate = (won.length + lost.length) > 0 ? (won.length / (won.length + lost.length)) * 100 : 0;
@@ -64,7 +65,7 @@ const RelatoriosExecutivos = () => {
     if (!salesData || !salespeople) return [];
     const spMap = new Map(salespeople.map(sp => [sp.id, sp.name]));
     const revenue: Record<string, { name: string; revenue: number; deals: number }> = {};
-    salesData.filter(s => s.status === 'won').forEach(sale => {
+    salesData.filter(s => isWonSaleStatus(s.status)).forEach(sale => {
       const name = spMap.get(sale.salesperson_id || '') || 'N/A';
       if (!revenue[name]) revenue[name] = { name, revenue: 0, deals: 0 };
       revenue[name].revenue += sale.amount || 0;

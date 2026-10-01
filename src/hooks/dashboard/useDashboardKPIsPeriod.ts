@@ -17,6 +17,7 @@ import {
   format,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { isWonSaleStatus } from "@/constants";
 
 export type KPIPeriod = "week" | "current_month" | "last_month" | "quarter" | "year";
 
@@ -163,7 +164,7 @@ const fetchData = async (
     const periodMetrics = allMetrics.filter(m => m.date >= sStr && m.date <= eMetricStr);
     const periodTasks = allTasks.filter(t => t.created_at >= sStr && t.created_at <= eStr);
 
-    const completed = periodSales.filter((s) => s.status === "completed");
+    const completed = periodSales.filter((s) => isWonSaleStatus(s.status));
     const totalRevenue = completed.reduce((sum, s) => sum + Number(s.amount), 0);
     const firstSaleRevenue = completed
       .filter(s => s.is_first_sale)
@@ -188,8 +189,8 @@ const fetchData = async (
     let conversionRate = 0;
     if (salespersonId) {
       if (role === 'sdr') {
-        const qualifiedCount = periodSales.filter(s => 
-          ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
+        const qualifiedCount = periodSales.filter(s =>
+          isWonSaleStatus(s.status) || ["qualified", "proposal", "negotiation"].includes(s.status)
         ).length;
         conversionRate = periodSales.length > 0 ? (qualifiedCount / periodSales.length) * 100 : 0;
       } else {
@@ -210,8 +211,8 @@ const fetchData = async (
       t.task_type === 'meeting' && (salespersonId ? t.salesperson_id === salespersonId : true)
     ).length;
 
-    const qualifiedLeads = periodSales.filter(s => 
-      ["qualified", "proposal", "negotiation", "completed"].includes(s.status)
+    const qualifiedLeads = periodSales.filter(s =>
+      isWonSaleStatus(s.status) || ["qualified", "proposal", "negotiation"].includes(s.status)
     ).length;
 
     return { 
