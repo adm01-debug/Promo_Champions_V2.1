@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { computeAtRiskDeals, type LossPattern, type OpenDeal } from "./scoring.ts";
 
 const EXCLUDED_STATUSES = ["won", "lost", "completed"];
@@ -24,6 +25,20 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
   const startedAt = Date.now();
 
   try {
+    // Retorna deals em risco de toda a organização (lê todas as sales):
+    // restrito a admin/manager.
+    const caller = await getUserClient(req);
+    const { data: isManager, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isManager) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     let body: RequestBody = {};
     if (req.method === "POST") {
       try {
@@ -89,6 +104,11 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('detect-winloss-at-risk error:', e);
     const message = e instanceof Error ? e.message : "unknown";
     log("error", { message, duration_ms: Date.now() - startedAt });
