@@ -58,3 +58,4 @@ graphify-out/graph.html
 .graphify-local/
 graphify-out/cache/
 **/graphify-out/cache/
+sql-coverage-matrix.md
