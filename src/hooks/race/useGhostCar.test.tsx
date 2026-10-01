@@ -86,9 +86,11 @@ const currentSeason = {
   name: 'Atual',
   start_date: new Date(now - 86_400_000).toISOString(),
   end_date: new Date(now + 86_400_000).toISOString(),
-  status: 'active',
+  status: 'active' as const,
   role_type: 'closer',
   winner_id: null,
+  track_type: 'circuit' as const,
+  goal_amount: 0,
 };
 
 describe('useGhostCar — histórico sem N+1', () => {

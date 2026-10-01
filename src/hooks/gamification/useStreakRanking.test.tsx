@@ -19,6 +19,9 @@ vi.mock('@/integrations/supabase/client', () => {
       not: () => thenable,
       order: () => thenable,
       limit: () => thenable,
+      // fetchAllRows chama .range(from, to); devolve todas as linhas do mock
+      // (sempre < pageSize, então a paginação termina na primeira página).
+      range: () => thenable,
       in: (column: string, values: unknown[]) => {
         inCalls.push({ column, values });
         return thenable;
