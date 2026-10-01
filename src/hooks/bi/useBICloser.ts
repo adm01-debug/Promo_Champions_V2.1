@@ -24,6 +24,7 @@ import {
   transformClientInsights,
   transformChartData,
 } from '@/hooks/bi/useBICloserTransformers';
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 export interface BICloserData {
   totalRevenue: number;
@@ -209,13 +210,9 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
 
       // Pipeline
       const pipelineValue = pipelineDeals.reduce((sum, d) => sum + Number(d.amount), 0);
-      const stageProbabilities: Record<string, number> = {
-        qualified: 0.3,
-        proposal: 0.6,
-        negotiation: 0.8,
-      };
+      const stageProbabilities = await fetchStageProbabilities();
       const weightedPipeline = pipelineDeals.reduce(
-        (sum, d) => sum + Number(d.amount) * (stageProbabilities[d.status] || 0.3),
+        (sum, d) => sum + Number(d.amount) * (stageProbabilities[d.status] ?? 0.3),
         0
       );
       const pipelineByStage = ['qualified', 'proposal', 'negotiation'].map(stage => ({
@@ -224,7 +221,7 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
         value: pipelineDeals
           .filter(d => d.status === stage)
           .reduce((sum, d) => sum + Number(d.amount), 0),
-        probability: stageProbabilities[stage] || 0.3,
+        probability: stageProbabilities[stage] ?? 0.3,
       }));
       const avgDaysInPipeline =
         pipelineDeals.length > 0

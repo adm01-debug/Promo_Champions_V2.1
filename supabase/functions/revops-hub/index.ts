@@ -2,17 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
-
-
-
-const STAGE_WEIGHTS: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.15,
-  qualified: 0.3,
-  proposal: 0.55,
-  negotiation: 0.75,
-  closed: 0.95,
-};
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -71,10 +61,11 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     const wonDeals = sales.filter((s) => s.status === "completed" && s.created_at >= since);
     const lostDeals = sales.filter((s) => s.status === "lost" && s.created_at >= since);
 
-    // Pipeline coverage e weighted forecast
+    // Pipeline coverage e weighted forecast — pesos vêm de public.stage_probabilities
+    const stageProbs = await getStageProbabilities(supabase);
     const totalPipeline = openDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);
     const weightedForecast = openDeals.reduce(
-      (sum, d) => sum + Number(d.amount || 0) * (STAGE_WEIGHTS[d.stage] ?? 0.1),
+      (sum, d) => sum + Number(d.amount || 0) * (stageProbs[d.stage] ?? 0.1),
       0,
     );
     const closedRevenue = wonDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);

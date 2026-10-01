@@ -6,20 +6,7 @@ import { validateUUID, validateEnum, collectErrors, validationErrorResponse } fr
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
-
-
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.25,
-  proposal: 0.5,
-  negotiation: 0.75,
-  closed_won: 1,
-  closed_lost: 0,
-  won: 1,
-  lost: 0,
-};
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 interface OpenDeal {
   amount: number;
@@ -139,6 +126,9 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
     const supabase = getServiceClient("grava predições, alertas e forecasts de quota de toda a equipe");
 
+    // Probabilidade base por estágio — fonte única stage_probabilities
+    const stageProbabilities = await getStageProbabilities(supabase);
+
     const body = await req.json().catch(() => ({}));
 
     const errs = collectErrors([
@@ -243,7 +233,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
       const openDeals: OpenDeal[] = (openBySp.get(sp.id) ?? []).map((d) => {
         const stage = String(d.stage ?? "lead").toLowerCase();
-        const probability = latestScore.get(d.id) ?? STAGE_PROBABILITY[stage] ?? 0.1;
+        const probability = latestScore.get(d.id) ?? stageProbabilities[stage] ?? 0.1;
         return { amount: Number(d.amount ?? 0), probability };
       });
 

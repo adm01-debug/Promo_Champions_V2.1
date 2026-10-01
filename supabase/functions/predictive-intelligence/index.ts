@@ -7,20 +7,7 @@ import {
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
-
-const STAGE_PROB: Record<string, number> = {
-  pending: 0.1,
-  lead: 0.1,
-  prospecting: 0.2,
-  qualified: 0.3,
-  in_progress: 0.3,
-  proposal: 0.55,
-  negotiation: 0.8,
-  completed: 1.0,
-  won: 1.0,
-  cancelled: 0,
-  lost: 0,
-};
+import { getStageProbabilities } from '../_shared/stage-probabilities.ts';
 
 interface PredictiveSnapshot {
   forecast: {
@@ -124,7 +111,8 @@ Deno.serve(
         scoreMap.set(r.sale_id, r.total_score)
       );
 
-      // FORECAST
+      // FORECAST — probabilidades por estágio vêm de public.stage_probabilities
+      const stageProbs = await getStageProbabilities(supabase);
       let weighted = 0,
         best = 0,
         worst = 0;
@@ -140,7 +128,7 @@ Deno.serve(
       }> = [];
 
       openDeals.forEach(d => {
-        const baseProb = STAGE_PROB[d.status] ?? 0.1;
+        const baseProb = stageProbs[d.status] ?? 0.1;
         const score = scoreMap.get(d.id);
         const scoreMult = score ? (score > 70 ? 1.2 : score > 40 ? 1.0 : 0.8) : 1.0;
         const prob = Math.min(0.95, baseProb * scoreMult);

@@ -7,6 +7,7 @@ import {
   type StageHistoryEntry,
 } from "../_shared/deal-probability-calc.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -68,10 +69,22 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     // Calculate probability for each deal
     const probabilities: Record<string, { probability: number; factors: string[] }> = {};
 
+    // Probabilidades por estágio vêm de public.stage_probabilities (fração 0-1);
+    // o cálculo compartilhado trabalha em percentual 0-100.
+    const stageProbs = await getStageProbabilities(supabase);
+    const stageProbsPct = Object.fromEntries(
+      Object.entries(stageProbs).map(([k, v]) => [k, v * 100]),
+    );
+
     for (const raw of deals || []) {
       const deal = raw as unknown as DealProbabilityInput;
       const dealHistory = stageHistoryByDealId.get(deal.id) ?? [];
-      probabilities[deal.id] = computeDealProbability(deal, dealHistory);
+      probabilities[deal.id] = computeDealProbability(
+        deal,
+        dealHistory,
+        Date.now(),
+        stageProbsPct,
+      );
     }
 
     console.info(
