@@ -23,11 +23,11 @@ export function useLevelUpCelebration() {
 
   // Clear celebrated events on component unmount
   useEffect(() => {
+    const celebratedLevels = celebratedLevelsRef.current;
+    const celebratedMilestones = celebratedMilestonesRef.current;
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-      celebratedLevelsRef.current.clear();
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-      celebratedMilestonesRef.current.clear();
+      celebratedLevels.clear();
+      celebratedMilestones.clear();
     };
   }, []);
 

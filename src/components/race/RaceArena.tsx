@@ -397,7 +397,7 @@ export function RaceArena({
     if (mutated) setPitStopCars(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chave de comparacao rasa intencional (comportamento pre-existente verificado)
     sorted.map(c => `${c.car_id}:${Math.floor(Number(c.progress) * 500)}`).join('|'),
     reducedMotion,
   ]);

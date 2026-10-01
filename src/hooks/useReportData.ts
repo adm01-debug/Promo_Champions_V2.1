@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus } from '@/constants';
@@ -121,7 +121,7 @@ export function useReportMetrics(dateRange: DateRange) {
   const metricsQuery = useDailyMetrics(dateRange);
   const categoryQuery = useCategoryMetrics(dateRange);
 
-  const calculateMetrics = () => {
+  const calculateMetrics = useCallback(() => {
     if (!salesQuery.data || salesQuery.data.length === 0) {
       return {
         totalRevenue: 0,
@@ -211,9 +211,9 @@ export function useReportMetrics(dateRange: DateRange) {
       conversionChange: Number(conversionChange.toFixed(1)),
       ticketChange: Number(ticketChange.toFixed(1)),
     };
-  };
+  }, [salesQuery.data, metricsQuery.data]);
 
-  const formatRevenueData = () => {
+  const formatRevenueData = useCallback(() => {
     if (!metricsQuery.data) return [];
 
     return metricsQuery.data.map(m => ({
@@ -221,9 +221,9 @@ export function useReportMetrics(dateRange: DateRange) {
       receita: Number(m.revenue),
       meta: Number(m.revenue_goal),
     }));
-  };
+  }, [metricsQuery.data]);
 
-  const formatCategoryData = () => {
+  const formatCategoryData = useCallback(() => {
     if (!categoryQuery.data) return [];
 
     const colors: Record<string, string> = {
@@ -245,9 +245,9 @@ export function useReportMetrics(dateRange: DateRange) {
       value: Number(c.percentage),
       color: colors[c.category] || 'hsl(200, 80%, 50%)',
     }));
-  };
+  }, [categoryQuery.data]);
 
-  const formatSalesData = () => {
+  const formatSalesData = useCallback(() => {
     if (!salesQuery.data) return [];
 
     // Group by day/week/month depending on period
@@ -263,16 +263,12 @@ export function useReportMetrics(dateRange: DateRange) {
     );
 
     return Object.entries(grouped).map(([dia, vendas]) => ({ dia, vendas }));
-  };
+  }, [salesQuery.data]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const metrics = useMemo(() => calculateMetrics(), [salesQuery.data, metricsQuery.data]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const revenueData = useMemo(() => formatRevenueData(), [metricsQuery.data]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const categoryData = useMemo(() => formatCategoryData(), [categoryQuery.data]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-  const salesData = useMemo(() => formatSalesData(), [salesQuery.data]);
+  const metrics = useMemo(() => calculateMetrics(), [calculateMetrics]);
+  const revenueData = useMemo(() => formatRevenueData(), [formatRevenueData]);
+  const categoryData = useMemo(() => formatCategoryData(), [formatCategoryData]);
+  const salesData = useMemo(() => formatSalesData(), [formatSalesData]);
 
   return {
     sales: salesQuery.data || [],

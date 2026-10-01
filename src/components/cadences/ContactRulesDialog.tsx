@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -17,14 +17,7 @@ export function ContactRulesDialog() {
     prioritize_human: true,
   });
 
-  useEffect(() => {
-    if (open) {
-      fetchRules();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const fetchRules = async () => {
+  const fetchRules = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -45,7 +38,13 @@ export function ContactRulesDialog() {
     if (pref?.contact_rules) {
       setRules(pref.contact_rules as typeof rules);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      void fetchRules();
+    }
+  }, [open, fetchRules]);
 
   const handleSave = async () => {
     setLoading(true);
