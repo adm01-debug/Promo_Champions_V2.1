@@ -405,11 +405,11 @@ jobs:
     name: Notify on failure
     runs-on: ubuntu-latest
     timeout-minutes: 3
-    # e2e e lighthouse ficam de fora até os secrets de E2E existirem — hoje
-    # falham/estouram timeout por ambiente, e alarme cronicamente falso ensina
-    # a ignorar alarmes.
+    # lighthouse fica de fora — falha por ambiente, e alarme cronicamente falso
+    # ensina a ignorar alarmes. e2e entra: credencial inválida agora falha de
+    # verdade (antes virava skip verde), então precisa de notificação.
     needs:
-      [lint-and-typecheck, security-audit, test, edge-functions-lint, build, bundle-size]
+      [lint-and-typecheck, security-audit, test, edge-functions-lint, e2e, build, bundle-size]
     if: failure()
     steps:
       # Sem o secret SLACK_CI_WEBHOOK_URL configurado, o step apenas loga —
