@@ -30,12 +30,29 @@ verify_jwt = false
 [functions.email-bulk-retry]
 verify_jwt = false
 
+# Telemetria pública: sem JWT; proteção por rate-limit + validação estrita
+# de payload no handler (amostras anônimas de Web Vitals).
 [functions.log-web-vitals]
 verify_jwt = false
 
+# Webhooks externos de cotação (V4 legado e PromoGifts): sem JWT; assinatura
+# HMAC dedicada verificada no handler (QUOTE_SYNC_WEBHOOK_SECRET /
+# PROMOGIFTS_WEBHOOK_SECRET).
 [functions.receive-quote-sync]
 verify_jwt = false
 
+# Webhook do gift_store: sem JWT; chave dedicada x-api-key
+# (QUOTE_SYNC_API_KEY) validada no handler.
+[functions.receive-quote-webhook]
+verify_jwt = false
+
+# Embed público de relatórios: sem JWT; token opaco por embed (x-embed-token)
+# validado no handler com rate-limit e allowlist de entidades/colunas.
+[functions.report-embed-public]
+verify_jwt = false
+
+# Descadastro público (RFC 8058 / List-Unsubscribe): sem JWT; token HMAC por
+# destinatário + rate-limit no handler.
 [functions.email-unsubscribe]
 verify_jwt = false
 
