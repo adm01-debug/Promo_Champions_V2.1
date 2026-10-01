@@ -298,3 +298,29 @@ Deno.test("reconciliação operacional cobre jobs quebrados sem expor segredos",
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
 });
+
+Deno.test("crons de saúde WAL/webhook seguem o mesmo padrão interno", async () => {
+  const sql = await readMigration(
+    "20261001144000_schedule_wal_and_webhook_health_crons.sql",
+  );
+
+  for (const [jobName, endpoint] of [
+    ["wal-health-alert-5min", "wal-health-alert"],
+    ["winloss-webhook-health-monitor-15min", "winloss-webhook-health-monitor"],
+  ]) {
+    assertMatch(sql, new RegExp(`'${endpoint}'`, "i"));
+    assertMatch(sql, new RegExp(`cron\\.unschedule\\('${jobName}'`, "i"));
+    assertMatch(sql, new RegExp(`cron\\.schedule\\([\\s\\S]*'${jobName}'`, "i"));
+    assertMatch(
+      sql,
+      new RegExp(`trigger_internal_edge_job\\(''${endpoint}''\\)`, "i"),
+    );
+  }
+
+  assertMatch(sql, /p_function_name\s*=\s*ANY\s*\(ARRAY/i);
+  assertMatch(sql, /'X-Cron-Secret',\s*v_cron_secret/i);
+  assertMatch(sql, /SET\s+search_path\s*=\s*public,\s*net/i);
+  assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+});

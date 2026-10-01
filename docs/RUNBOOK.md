@@ -4,7 +4,8 @@
 1. [Deploy](#deploy)
 2. [Rollback](#rollback)
 3. [Incidentes](#incidentes)
-4. [Troubleshooting](#troubleshooting)
+4. [Monitoramento Externo de Uptime](#monitoramento-externo-de-uptime)
+5. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -73,6 +74,42 @@ npm run build      # build de produção
 5. **Mitigar** — hotfix ou rollback
 6. **Resolver** — fix definitivo com testes
 7. **Post-mortem** — documentar causa raiz e ações preventivas
+
+---
+
+## Monitoramento Externo de Uptime
+
+Todo monitoramento **in-app** (alertas em edge functions, tabela error_logs)
+morre junto com o sistema — só um monitor externo detecta indisponibilidade
+total. Usar tier gratuito de UptimeRobot, BetterStack ou Checkly.
+
+### Monitores a cadastrar (intervalo 60s)
+
+| Nome | URL | Espera |
+|------|-----|--------|
+| Frontend (Lovable) | `https://championgifts.lovable.app/` | HTTP 200 |
+| Supabase Auth | `https://usyxfpqlsspldubptrdl.supabase.co/auth/v1/health` | HTTP 200 |
+| Edge Functions | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 (function `health` — pacote da Dimensão 8; até lá, monitorar uma function leve existente) |
+
+### Alertas
+
+- Canal **independente do app**: e-mail do responsável + canal Slack dedicado
+  (webhook do provedor de uptime, não o `SLACK_WEBHOOK_URL` interno).
+- Limiar: marcar DOWN após 2 falhas consecutivas (~2 min), alerta <5 min.
+- Status page pública (opcional): o próprio provedor gera — link a registrar
+  aqui quando criado: _pendente_.
+
+### Verificação do monitor
+
+Teste trimestral: pausar o deploy no Lovable ou bloquear o domínio no monitor
+e confirmar que o alerta externo chega em <5 min.
+
+### Runbook quando o externo dispara
+
+1. Frontend DOWN + Auth UP → problema no Lovable → rollback (seção acima).
+2. Auth/Functions DOWN → incidente Supabase → status.supabase.com + abrir
+   ticket no dashboard.
+3. Tudo DOWN → indisponibilidade de DNS/região → acionar DR_PLAN §2.2.
 
 ---
 

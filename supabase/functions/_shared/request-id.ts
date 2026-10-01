@@ -16,6 +16,29 @@ export function extractOrMintRequestId(req: Request): string {
   return crypto.randomUUID();
 }
 
+/**
+ * Extrai o `sub` do JWT do Authorization header SEM verificar a assinatura.
+ * Serve apenas para correlação em logs — nunca para decisão de autorização.
+ * Retorna null quando não há bearer token ou o payload não é um JWT válido.
+ */
+export function extractUserIdFromJwt(req: Request): string | null {
+  const auth = req.headers.get("Authorization");
+  if (!auth || !auth.startsWith("Bearer ")) return null;
+  const token = auth.slice("Bearer ".length).trim();
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+  try {
+    const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = payload + "=".repeat((4 - (payload.length % 4)) % 4);
+    const decoded = JSON.parse(atob(padded)) as { sub?: unknown };
+    return typeof decoded.sub === "string" && decoded.sub.length > 0
+      ? decoded.sub
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export function withRequestIdHeader(headers: HeadersInit | undefined, requestId: string): Headers {
   const h = new Headers(headers ?? {});
   h.set(REQ_ID_HEADER, requestId);
@@ -35,12 +58,14 @@ export function logWithRequestId(
   requestId: string,
   message: string,
   extra: Record<string, unknown> = {},
+  userId: string | null = null,
 ): void {
   const entry = {
     ts: new Date().toISOString(),
     level,
     fn: fnName,
     requestId,
+    userId,
     message,
     ...extra,
   };
@@ -52,6 +77,8 @@ export function logWithRequestId(
 
 export interface RequestIdContext {
   requestId: string;
+  /** `sub` do access_token do chamador (só correlação, sem verificação). */
+  userId: string | null;
   log: (level: "info" | "warn" | "error", message: string, extra?: Record<string, unknown>) => void;
 }
 
@@ -65,9 +92,11 @@ export function withRequestId(
 ): (req: Request) => Promise<Response> {
   return async (req: Request): Promise<Response> => {
     const requestId = extractOrMintRequestId(req);
+    const userId = extractUserIdFromJwt(req);
     const ctx: RequestIdContext = {
       requestId,
-      log: (level, message, extra) => logWithRequestId(level, fnName, requestId, message, extra),
+      userId,
+      log: (level, message, extra) => logWithRequestId(level, fnName, requestId, message, extra, userId),
     };
     const started = Date.now();
     try {

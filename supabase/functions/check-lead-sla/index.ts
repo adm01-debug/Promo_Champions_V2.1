@@ -44,7 +44,7 @@ Deno.serve(withRequestId('check-lead-sla', async (req, ctx) => {
       id, client_name, product_name, amount, status, created_at, salesperson_id,
       salespeople ( id, name, email )
     `)
-    .not('status', 'in', '(completed,lost)')
+    .not('status', 'in', '(completed,won,closed,lost,cancelled)')
     .limit(10000);
 
   if (leadsError) {
