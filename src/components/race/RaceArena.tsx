@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { RaceTrack } from './RaceTrack';
-import { RaceCar } from './RaceCar';
-import { ReactionFloater } from './ReactionFloater';
-import { ReactionBar } from './ReactionBar';
+import { RaceCarsLayer } from './RaceCarsLayer';
+import { RaceTrackEffects } from './RaceTrackEffects';
+import { RaceLiveTiming } from './RaceLiveTiming';
+import { RaceLapBadge } from './RaceLapBadge';
+import { RaceArenaOverlays } from './RaceArenaOverlays';
 import { RaceMiniMap } from './RaceMiniMap';
 import { CommentaryBubble } from './CommentaryBubble';
 
@@ -28,7 +30,6 @@ import { PitLane } from './PitLane';
 import { RaceMuteToggle } from './RaceMuteToggle';
 import { RaceReplayButton } from './RaceReplayButton';
 import { RaceEasterEggs } from './RaceEasterEggs';
-import { RankBadge } from './RankBadge';
 
 import { useScreenShake } from '@/hooks/race/useScreenShake';
 import { useRaceSounds } from '@/hooks/race/useRaceSounds';
@@ -76,8 +77,6 @@ interface RaceArenaProps {
   };
 }
 
-const PATTERN_BY_NUMBER = ['stripes', 'dots', 'checker'] as const;
-
 export function RaceArena({
   cars,
   boostingIds,
@@ -98,7 +97,6 @@ export function RaceArena({
   const carIds = sorted.map(c => c.car_id);
   const { data: reactionsData = [], liveBurst } = useRaceReactions(carIds, seasonId);
   const allReactions = [...liveBurst, ...reactionsData];
-  const [hoveredCar, setHoveredCar] = useState<string | null>(null);
 
   const { commentary, pushCommentary } = useRaceCommentaryLogic();
   const { tickerEvents, pushTickerEvent, broadcastEvents, pushBroadcast } =
@@ -465,264 +463,30 @@ export function RaceArena({
               color={leader.primary_color}
             />
           )}
-          {sorted.map((car, idx) => {
-            const lane = (idx - sorted.length / 2) * 8;
-            const pos = getPositionOnTrack(Number(car.progress), lane);
-            const isMe =
-              currentUserSalespersonId && car.salesperson_id === currentUserSalespersonId;
-            const carReactions = allReactions.filter(r => r.target_car_id === car.car_id);
-            const pattern = colorblindMode
-              ? PATTERN_BY_NUMBER[car.car_number % PATTERN_BY_NUMBER.length]
-              : null;
-            return (
-              <motion.g
-                key={car.car_id}
-                initial={false}
-                animate={{ x: pos.x, y: pos.y, rotate: pos.rotation }}
-                transition={transition}
-                onMouseEnter={() => setHoveredCar(car.car_id)}
-                onMouseLeave={() => setHoveredCar(c => (c === car.car_id ? null : c))}
-                style={{ cursor: 'pointer' }}
-              >
-                {isMe && (
-                  <>
-                    <motion.circle
-                      r={38}
-                      fill="none"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2.5}
-                      opacity={0.85}
-                      animate={
-                        reducedMotion
-                          ? undefined
-                          : { r: [34, 46, 34], opacity: [0.9, 0.25, 0.9] }
-                      }
-                      transition={
-                        reducedMotion
-                          ? undefined
-                          : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
-                      }
-                    />
-                    <motion.circle
-                      r={28}
-                      fill="hsl(var(--primary))"
-                      opacity={0.18}
-                      animate={
-                        reducedMotion ? undefined : { opacity: [0.25, 0.08, 0.25] }
-                      }
-                      transition={
-                        reducedMotion
-                          ? undefined
-                          : { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
-                      }
-                    />
-                  </>
-                )}
-                <ellipse
-                  cx={1.5}
-                  cy={4}
-                  rx={15}
-                  ry={4.5}
-                  fill="hsl(0 0% 0%)"
-                  opacity={0.28}
-                  style={{ filter: 'blur(1.5px)' }}
-                  pointerEvents="none"
-                />
-                <RaceCar
-                  primaryColor={car.primary_color}
-                  secondaryColor={car.secondary_color}
-                  style={car.car_style}
-                  showTrail={boostingIds?.has(car.salesperson_id) ?? false}
-                  pattern={pattern}
-                  overtakeFlash={flashingCars.has(car.car_id)}
-                  tireWear={tireWearByCar.get(car.car_id) ?? 1}
-                  drsActive={drsActiveByCar.get(car.car_id) ?? false}
-                  rank={idx + 1}
-                  pitStop={pitStopCars.has(car.car_id)}
-                  fastestSector={fastestCarId === car.car_id}
-                  aeroTurbulence={aeroTurbByCar.get(car.car_id) ?? false}
-                />
-                {carReactions.length > 0 && (
-                  <g transform="translate(20, -32)">
-                    <rect
-                      x={-10}
-                      y={-8}
-                      width={20}
-                      height={14}
-                      rx={7}
-                      fill="hsl(var(--background))"
-                      stroke="hsl(var(--border))"
-                      strokeWidth={1}
-                    />
-                    <text
-                      y={2}
-                      textAnchor="middle"
-                      fontSize={9}
-                      fontWeight={800}
-                      fill="hsl(var(--foreground))"
-                      style={{ fontFamily: 'system-ui, sans-serif' }}
-                    >
-                      {carReactions.length}
-                    </text>
-                  </g>
-                )}
-                <ReactionFloater reactions={carReactions} />
-                {isMe && (
-                  <g transform={`rotate(${-pos.rotation}) translate(0, -42)`}>
-                    <rect
-                      x={-18}
-                      y={-9}
-                      width={36}
-                      height={14}
-                      rx={7}
-                      fill="hsl(var(--primary))"
-                      stroke="hsl(var(--background))"
-                      strokeWidth={1.5}
-                    />
-                    <text
-                      y={1}
-                      textAnchor="middle"
-                      fontSize={9}
-                      fontWeight={900}
-                      fill="hsl(var(--primary-foreground))"
-                      style={{
-                        fontFamily: 'system-ui, sans-serif',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      VOCÊ
-                    </text>
-                  </g>
-                )}
-                <g transform={`rotate(${-pos.rotation})`}>
-                  {(() => {
-                    const name = car.salesperson_name?.split(' ')[0] ?? '';
-                    const chipW = Math.max(38, name.length * 7 + 12);
-                    const yBase = isMe ? -52 : -28;
-                    return (
-                      <>
-                        <rect
-                          x={-chipW / 2}
-                          y={yBase - 9}
-                          width={chipW}
-                          height={14}
-                          rx={7}
-                          fill="hsl(var(--background) / 0.85)"
-                          stroke="hsl(var(--border))"
-                          strokeWidth={0.8}
-                        />
-                        <text
-                          y={yBase + 1}
-                          textAnchor="middle"
-                          fontSize={10}
-                          fontWeight={700}
-                          fill="hsl(var(--foreground))"
-                          style={{
-                            fontFamily: 'system-ui, sans-serif',
-                            letterSpacing: '0.02em',
-                          }}
-                        >
-                          {name}
-                        </text>
-                      </>
-                    );
-                  })()}
-                </g>
 
-                <foreignObject
-                  x={-50}
-                  y={20}
-                  width={100}
-                  height={36}
-                  style={{ overflow: 'visible' }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <ReactionBar
-                      carId={car.car_id}
-                      seasonId={seasonId}
-                      visible={hoveredCar === car.car_id}
-                    />
-                  </div>
-                </foreignObject>
-              </motion.g>
-            );
-          })}
+          <RaceCarsLayer
+            sorted={sorted}
+            boostingIds={boostingIds}
+            currentUserSalespersonId={currentUserSalespersonId}
+            allReactions={allReactions}
+            colorblindMode={colorblindMode}
+            flashingCars={flashingCars}
+            tireWearByCar={tireWearByCar}
+            drsActiveByCar={drsActiveByCar}
+            pitStopCars={pitStopCars}
+            fastestCarId={fastestCarId}
+            aeroTurbByCar={aeroTurbByCar}
+            seasonId={seasonId}
+            reducedMotion={reducedMotion}
+            transition={transition}
+          />
 
-          {leaderPos && !noFx && (
-            <motion.circle
-              cx={leaderPos.x}
-              cy={leaderPos.y}
-              r={120}
-              fill="url(#leaderSpotlight)"
-              initial={false}
-              animate={{ cx: leaderPos.x, cy: leaderPos.y }}
-              transition={{ type: 'spring', stiffness: 40, damping: 20 }}
-              pointerEvents="none"
-            />
-          )}
-
-          <AnimatePresence>
-            {dustBursts.map(burst => (
-              <g
-                key={burst.id}
-                transform={`translate(${burst.x} ${burst.y})`}
-                pointerEvents="none"
-              >
-                {[0, 1, 2, 3].map(i => {
-                  const angle = (i / 4) * Math.PI * 2;
-                  const dx = Math.cos(angle) * 18;
-                  const dy = Math.sin(angle) * 12 - 8;
-                  return (
-                    <motion.circle
-                      key={i}
-                      r={3 + i * 0.5}
-                      fill="hsl(var(--race-runoff))"
-                      filter="url(#dustBlur)"
-                      initial={{ x: 0, y: 0, opacity: 0.7 }}
-                      animate={{ x: dx, y: dy, opacity: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 1.1, ease: 'easeOut', delay: i * 0.04 }}
-                    />
-                  );
-                })}
-              </g>
-            ))}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {sectorBadges.map(b => (
-              <motion.g
-                key={b.id}
-                transform={`translate(${b.x} ${b.y})`}
-                initial={{ opacity: 0, scale: 0.6, y: 8 }}
-                animate={{ opacity: 1, scale: 1, y: -10 }}
-                exit={{ opacity: 0, scale: 0.95, y: -22 }}
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                pointerEvents="none"
-              >
-                <rect
-                  x={-22}
-                  y={-12}
-                  width={44}
-                  height={18}
-                  rx={4}
-                  fill="hsl(142 76% 38%)"
-                  stroke="hsl(0 0% 100%)"
-                  strokeWidth={1.2}
-                />
-                <text
-                  y={1}
-                  textAnchor="middle"
-                  fontSize={10}
-                  fontWeight={900}
-                  fill="hsl(0 0% 100%)"
-                  style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}
-                >
-                  {b.name} ✓
-                </text>
-              </motion.g>
-            ))}
-          </AnimatePresence>
+          <RaceTrackEffects
+            leaderPos={leaderPos}
+            noFx={noFx}
+            dustBursts={dustBursts}
+            sectorBadges={sectorBadges}
+          />
 
           {showGapLine && leaderPosForLine && secondPos && (
             <g pointerEvents="none">
@@ -758,48 +522,17 @@ export function RaceArena({
         {weatherOverlay}
       </motion.div>
 
-      <div
-        className="pointer-events-none absolute inset-0 z-[5] rounded-3xl"
-        style={{
-          background:
-            'radial-gradient(circle at 92% 8%, hsl(48 100% 75% / 0.22) 0%, hsl(45 95% 65% / 0.08) 30%, transparent 65%)',
-          mixBlendMode: 'screen',
-        }}
-        aria-hidden
+      <RaceArenaOverlays
+        yellowFlag={currentFlag === 'yellow' && !reducedMotion}
+        replayOverlay={replayOverlay}
+        showFinaleFlag={showFinaleFlag}
       />
 
-      {currentFlag === 'yellow' && !reducedMotion && (
-        <div
-          className="pointer-events-none absolute inset-0 z-[6] rounded-3xl"
-          style={{
-            background: 'hsl(45 95% 55% / 0.15)',
-            animation: 'race-track-yellow-overlay 0.7s ease-in-out infinite',
-          }}
-          aria-hidden
-        />
-      )}
-
-      <div
-        className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-xl border border-border/50 backdrop-blur-md shadow-lg"
-        style={{
-          background: 'hsl(var(--background) / 0.78)',
-          padding: viewMode.isFocus ? '6px 14px' : '6px 12px',
-        }}
-        aria-label={`Volta ${lapInfo.current} de ${lapInfo.total}`}
-      >
-        <div className="flex items-baseline gap-2">
-          <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            Lap
-          </span>
-          <span
-            className={`tabular-nums text-foreground ${viewMode.isFocus ? 'text-[18px] font-black' : 'text-[15px] font-black'}`}
-            style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '-0.02em' }}
-          >
-            {lapInfo.current}
-            <span className="text-muted-foreground/70 font-normal">/{lapInfo.total}</span>
-          </span>
-        </div>
-      </div>
+      <RaceLapBadge
+        current={lapInfo.current}
+        total={lapInfo.total}
+        isFocus={viewMode.isFocus}
+      />
 
       <RaceControlPanel
         flag={currentFlag}
@@ -840,49 +573,7 @@ export function RaceArena({
 
       {viewMode.showTicker && <RaceEventTicker events={tickerEvents} />}
 
-      {top5.length > 0 && (
-        <div
-          className="absolute top-3 right-3 z-20 rounded-xl border border-border/50 backdrop-blur-md px-3 py-2 shadow-lg"
-          style={{
-            background: 'hsl(var(--background) / 0.78)',
-            minWidth: 210,
-          }}
-        >
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[9px] font-black uppercase tracking-[0.18em] text-muted-foreground">
-              Live Timing
-            </span>
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-destructive" />
-            </span>
-          </div>
-          <div className="space-y-1">
-            {top5.map((c, i) => {
-              const gap = i === 0 ? null : leaderProgress - Number(c.progress);
-              const gapStr = gap === null ? 'LEADER' : `+${(gap * 100).toFixed(2)}%`;
-              return (
-                <div key={c.car_id} className="flex items-center gap-2">
-                  <RankBadge rank={i + 1} />
-                  <span className="flex-1 truncate text-[11px] font-medium text-foreground/90">
-                    {c.salesperson_name?.split(' ')[0]}
-                  </span>
-                  <span
-                    className={`font-mono tabular-nums w-12 text-right ${
-                      i === 0
-                        ? 'text-[11px] font-black text-primary'
-                        : 'text-[10px] font-bold text-muted-foreground'
-                    }`}
-                    style={{ letterSpacing: '-0.02em' }}
-                  >
-                    {gapStr}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <RaceLiveTiming entries={top5} leaderProgress={leaderProgress} />
 
       {viewMode.showCommentary && <CommentaryBubble line={commentary} />}
 
@@ -891,52 +582,6 @@ export function RaceArena({
         disabled={!lastOvertakeRef.current}
         isPlaying={replayOverlay}
       />
-
-      <AnimatePresence>
-        {replayOverlay && (
-          <motion.div
-            key="replay-overlay"
-            className="pointer-events-none absolute inset-0 z-30 rounded-3xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              boxShadow:
-                'inset 0 0 0 4px hsl(var(--destructive) / 0.85), inset 0 0 60px hsl(0 0% 0% / 0.45)',
-              animation: 'race-replay-pulse 1.4s ease-in-out infinite',
-            }}
-          >
-            <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-destructive/90 px-3 py-1 shadow-lg">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-background" />
-              <span className="text-[11px] font-black uppercase tracking-[0.22em] text-background">
-                Replay
-              </span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showFinaleFlag && (
-          <motion.div
-            key="finale-flag"
-            className="pointer-events-none absolute inset-y-0 right-0 z-30 w-[34%]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              backgroundImage:
-                'repeating-conic-gradient(hsl(0 0% 8%) 0% 25%, hsl(0 0% 100%) 0% 50%)',
-              backgroundSize: '36px 36px',
-              boxShadow: '-30px 0 60px -10px hsl(0 0% 0% / 0.5)',
-              animation: 'race-checkered-flag 2.2s cubic-bezier(0.22, 1, 0.36, 1) both',
-              transformOrigin: 'right center',
-            }}
-            aria-label="Bandeira de chegada"
-          />
-        )}
-      </AnimatePresence>
 
       <StartLights trigger={startLightsTrigger} />
 
