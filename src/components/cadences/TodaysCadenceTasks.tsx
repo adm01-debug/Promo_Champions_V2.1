@@ -142,7 +142,7 @@ export function TodaysCadenceTasks() {
         });
       }
     } catch (err) {
-      console.error('Erro ao aplicar regras de desfecho:', err);
+      log.error('outcome_rules_failed', { error: err instanceof Error ? err.message : String(err) });
     }
   };
 
@@ -190,7 +190,7 @@ export function TodaysCadenceTasks() {
             ]);
           }
         } catch (err) {
-          console.error('Erro ao salvar resultado da ligação:', err);
+          log.error('call_result_save_failed', { error: err instanceof Error ? err.message : String(err) });
         }
       }
 
