@@ -6,12 +6,43 @@ import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
+import {
+  getUserClient,
+  getServiceClient,
+  UnauthorizedError,
+  type AuthenticatedContext,
+} from '../_shared/auth-client.ts';
+import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
+import {
+  createSignedOAuthState,
+  verifySignedOAuthState,
+} from '../_shared/oauth-state.ts';
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
 const BITRIX24_CLIENT_SECRET = Deno.env.get('BITRIX24_CLIENT_SECRET');
+const BITRIX24_STATE_SECRET = Deno.env.get('BITRIX24_STATE_SECRET');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+// Janela curta do state OAuth: o callback precisa acontecer logo após o
+// authorize, então 10 minutos bastam e limitam reuso de URL copiada.
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
+
+async function isAdminOrManager(ctx: AuthenticatedContext): Promise<boolean> {
+  const { data, error } = await ctx.client.rpc('is_admin_or_manager' as never, {
+    _user_id: ctx.userId,
+  } as never);
+  if (error) throw new Error(`role_check_failed:${error.message}`);
+  return Boolean(data);
+}
+
+function jsonResponse(body: unknown, status: number, corsHeaders: Record<string, string>) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
 
 Deno.serve(
   withRequestId('bitrix24-oauth', async (req, _ctx) => {
@@ -29,18 +60,65 @@ Deno.serve(
         throw new Error('Bitrix24 credentials not configured');
       }
 
-      // Generate authorization URL
+      // Generate authorization URL — só admin/manager pode iniciar o fluxo.
       if (action === 'authorize') {
+        const caller = await getUserClient(req);
+        if (!(await isAdminOrManager(caller))) {
+          return jsonResponse(
+            { error: 'admin_or_manager_role_required' },
+            403,
+            corsHeaders
+          );
+        }
+        if (!BITRIX24_STATE_SECRET) {
+          throw new Error('BITRIX24_STATE_SECRET not configured');
+        }
+
+        const state = await createSignedOAuthState(
+          caller.userId,
+          BITRIX24_STATE_SECRET,
+          OAUTH_STATE_TTL_MS
+        );
         const redirectUri = `${SUPABASE_URL}/functions/v1/bitrix24-oauth`;
-        const authUrl = `https://${BITRIX24_DOMAIN}/oauth/authorize/?client_id=${BITRIX24_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}`;
+        const authUrl = `https://${BITRIX24_DOMAIN}/oauth/authorize/?client_id=${BITRIX24_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`;
 
         return new Response(JSON.stringify({ authUrl }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      // Handle OAuth callback with authorization code
+      // Handle OAuth callback with authorization code — exige o state
+      // assinado emitido pelo authorize e revalida o papel do usuário.
       if (code) {
+        if (!BITRIX24_STATE_SECRET) {
+          throw new Error('BITRIX24_STATE_SECRET not configured');
+        }
+        const state = await verifySignedOAuthState(
+          url.searchParams.get('state'),
+          BITRIX24_STATE_SECRET
+        );
+        if (!state) {
+          return jsonResponse({ error: 'invalid_or_expired_state' }, 401, corsHeaders);
+        }
+
+        // O callback chega do browser do Bitrix24 sem JWT: validamos o papel
+        // do usuário embutido no state via service_role antes de gravar tokens.
+        const supabase = getServiceClient(
+          'callback OAuth Bitrix24: revalida papel do autorizador e grava tokens com bypass de RLS'
+        );
+        const { data: stillAllowed, error: roleError } = await supabase.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: state.userId } as never
+        );
+        if (roleError) throw new Error(`role_check_failed:${roleError.message}`);
+        if (!stillAllowed) {
+          return jsonResponse(
+            { error: 'admin_or_manager_role_required' },
+            403,
+            corsHeaders
+          );
+        }
+
         const redirectUri = `${SUPABASE_URL}/functions/v1/bitrix24-oauth`;
 
         const tokenResponse = await withEdgeCircuitBreaker(
@@ -71,8 +149,6 @@ Deno.serve(
         const tokens = await tokenResponse.json();
 
         // Store tokens in portfolio_settings
-        const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-
         await supabase.from('portfolio_settings').upsert(
           [
             {
@@ -95,6 +171,18 @@ Deno.serve(
           ],
           { onConflict: 'setting_key' }
         );
+
+        // Trilha de auditoria: quem autorizou e quando.
+        const { error: auditError } = await supabase.from('audit_logs').insert({
+          actor_id: state.userId,
+          action: 'bitrix24_oauth_authorized',
+          entity_type: 'integration',
+          entity_id: 'bitrix24',
+          metadata: { domain: BITRIX24_DOMAIN },
+        });
+        if (auditError) {
+          console.error('Bitrix24 OAuth audit log failed:', auditError.message);
+        }
 
         // Return success HTML page
         return new Response(
@@ -123,8 +211,19 @@ Deno.serve(
         );
       }
 
-      // Refresh token
+      // Refresh token — apenas chamadas internas (service_role) ou admin/manager.
       if (action === 'refresh') {
+        if (!isInternalServiceRequest(req)) {
+          const caller = await getUserClient(req);
+          if (!(await isAdminOrManager(caller))) {
+            return jsonResponse(
+              { error: 'admin_or_manager_role_required' },
+              403,
+              corsHeaders
+            );
+          }
+        }
+
         const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
         const { data: refreshTokenData } = await supabase
@@ -220,6 +319,9 @@ Deno.serve(
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return jsonResponse({ error: error.message }, 401, corsHeaders);
+      }
       if (error instanceof CircuitBreakerOpenError) {
         return new Response(
           JSON.stringify({

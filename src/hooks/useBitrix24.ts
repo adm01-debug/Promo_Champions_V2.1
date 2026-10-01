@@ -77,8 +77,13 @@ export function useBitrix24() {
     mutationFn: async (): Promise<string> => {
       const projectUrl = import.meta.env.VITE_SUPABASE_URL;
       const authUrl = `${projectUrl}/functions/v1/bitrix24-oauth?action=authorize`;
-      
-      const response = await fetch(authUrl);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const response = await fetch(authUrl, {
+        headers: {
+          Authorization: `Bearer ${sessionData.session?.access_token ?? ""}`,
+        },
+      });
       const result = await response.json();
       
       if (result.error) {
@@ -152,7 +157,12 @@ export function useBitrix24() {
   const refreshToken = useMutation({
     mutationFn: async () => {
       const projectUrl = import.meta.env.VITE_SUPABASE_URL;
-      const response = await fetch(`${projectUrl}/functions/v1/bitrix24-oauth?action=refresh`);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const response = await fetch(`${projectUrl}/functions/v1/bitrix24-oauth?action=refresh`, {
+        headers: {
+          Authorization: `Bearer ${sessionData.session?.access_token ?? ""}`,
+        },
+      });
       const result = await response.json();
       
       if (result.error) {
