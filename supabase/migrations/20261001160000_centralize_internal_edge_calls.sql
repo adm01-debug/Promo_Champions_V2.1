@@ -54,8 +54,15 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Evita rebroadcast da mesma venda concluída.
-  IF NEW.broadcast_sent_at IS NOT NULL AND TG_OP = 'UPDATE' AND OLD.status = 'completed' THEN
+  -- Dispara apenas na transição para 'completed' (INSERT ou UPDATE que muda
+  -- o status). Se o enqueue falhar, a venda fica com broadcast_sent_at nulo e
+  -- o erro em edge_call_failures — sem re-tentar a cada update posterior.
+  IF TG_OP = 'UPDATE' AND OLD.status = 'completed' THEN
+    RETURN NEW;
+  END IF;
+
+  -- Evita rebroadcast da mesma venda já entregue.
+  IF NEW.broadcast_sent_at IS NOT NULL THEN
     RETURN NEW;
   END IF;
 
