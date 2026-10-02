@@ -45,7 +45,10 @@ export const TrackWeatherOverlay: FC<Props> = ({ condition }) => {
   const lineOpacity = condition === 'storm' ? 0.18 : 0.12;
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl"
+    >
       <svg
         className="absolute inset-0 h-full w-full"
         preserveAspectRatio="none"

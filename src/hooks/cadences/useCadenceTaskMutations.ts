@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function useCompleteCadenceTask() {
   const queryClient = useQueryClient();
@@ -8,13 +8,13 @@ export function useCompleteCadenceTask() {
   return useMutation({
     mutationFn: async ({ taskId, notes }: { taskId: string; notes?: string }) => {
       const { data, error } = await supabase
-        .from("cadence_tasks")
+        .from('cadence_tasks')
         .update({
-          status: "completed",
+          status: 'completed',
           completed_at: new Date().toISOString(),
           notes,
         })
-        .eq("id", taskId)
+        .eq('id', taskId)
         .select()
         .single();
 
@@ -22,13 +22,13 @@ export function useCompleteCadenceTask() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["prospect-cadences"] });
-      queryClient.invalidateQueries({ queryKey: ["lead-detailed-logs"] });
-      toast.success("Tarefa concluída!");
+      queryClient.invalidateQueries({ queryKey: ['todays-cadence-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['prospect-cadences'] });
+      queryClient.invalidateQueries({ queryKey: ['lead-detailed-logs'] });
+      toast.success('Tarefa concluída!');
     },
-    onError: (error) => {
-      toast.error("Erro ao concluir tarefa");
+    onError: error => {
+      toast.error('Erro ao concluir tarefa');
       if (import.meta.env.DEV) {
         console.error(error);
       }
@@ -42,12 +42,12 @@ export function useSkipCadenceTask() {
   return useMutation({
     mutationFn: async ({ taskId, notes }: { taskId: string; notes?: string }) => {
       const { data, error } = await supabase
-        .from("cadence_tasks")
+        .from('cadence_tasks')
         .update({
-          status: "skipped",
+          status: 'skipped',
           notes,
         })
-        .eq("id", taskId)
+        .eq('id', taskId)
         .select()
         .single();
 
@@ -55,12 +55,12 @@ export function useSkipCadenceTask() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todays-cadence-tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["lead-detailed-logs"] });
-      toast.success("Tarefa pulada!");
+      queryClient.invalidateQueries({ queryKey: ['todays-cadence-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['lead-detailed-logs'] });
+      toast.success('Tarefa pulada!');
     },
-    onError: (error) => {
-      toast.error("Erro ao pular tarefa");
+    onError: error => {
+      toast.error('Erro ao pular tarefa');
       if (import.meta.env.DEV) {
         console.error(error);
       }

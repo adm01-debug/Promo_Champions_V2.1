@@ -1,6 +1,11 @@
 import { FC } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { TrackConditionsResult } from '@/hooks/race/useTrackConditions';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +22,8 @@ const TONE: Record<TrackConditionsResult['condition'], string> = {
 
 export const TrackConditionsBadge: FC<Props> = ({ conditions }) => {
   const reduce = useReducedMotion();
-  const animate = !reduce && (conditions.condition === 'sunny' || conditions.condition === 'storm');
+  const animate =
+    !reduce && (conditions.condition === 'sunny' || conditions.condition === 'storm');
 
   return (
     <TooltipProvider delayDuration={150}>
@@ -28,20 +34,27 @@ export const TrackConditionsBadge: FC<Props> = ({ conditions }) => {
             aria-label={`Condições da pista: ${conditions.label}`}
             className={cn(
               'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold cursor-help select-none',
-              TONE[conditions.condition],
+              TONE[conditions.condition]
             )}
             animate={animate ? { scale: [1, 1.05, 1] } : undefined}
-            transition={animate ? { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } : undefined}
+            transition={
+              animate ? { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } : undefined
+            }
           >
-            <span aria-hidden className="text-base leading-none">{conditions.emoji}</span>
+            <span aria-hidden className="text-base leading-none">
+              {conditions.emoji}
+            </span>
             <span>{conditions.label}</span>
           </motion.div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[240px]">
-          <p className="font-semibold">{conditions.emoji} {conditions.label}</p>
+          <p className="font-semibold">
+            {conditions.emoji} {conditions.label}
+          </p>
           <p className="mt-1 text-xs text-muted-foreground">{conditions.description}</p>
           <p className="mt-1 text-[10px] text-muted-foreground">
-            {conditions.recentDeals} eventos nas últimas 2h · intensidade {conditions.intensity.toFixed(2)}x
+            {conditions.recentDeals} eventos nas últimas 2h · intensidade{' '}
+            {conditions.intensity.toFixed(2)}x
           </p>
         </TooltipContent>
       </Tooltip>

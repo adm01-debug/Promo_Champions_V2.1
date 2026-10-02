@@ -106,12 +106,7 @@ export const AppSidebar = memo(function AppSidebar() {
   }, [location.pathname]);
 
   const userType = useMemo(():
-    | 'admin'
-    | 'manager'
-    | 'sdr'
-    | 'closer'
-    | 'hybrid'
-    | 'salesperson' => {
+    'admin' | 'manager' | 'sdr' | 'closer' | 'hybrid' | 'salesperson' => {
     const role = currentUserRole?.role;
     if (role === 'admin') return 'admin';
     if (role === 'manager') return 'manager';

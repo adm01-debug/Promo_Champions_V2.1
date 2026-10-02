@@ -45,7 +45,13 @@ interface CS360OrdersDialogProps {
   orderPage: number;
   setOrderPage: (page: number) => void;
   totalPages: number;
-  ordersByStatus: Array<{ key: string; label?: string; count?: number; color?: string; icon?: React.ComponentType<{ className?: string }> }>;
+  ordersByStatus: Array<{
+    key: string;
+    label?: string;
+    count?: number;
+    color?: string;
+    icon?: React.ComponentType<{ className?: string }>;
+  }>;
   orderModalStatus: string | null;
 }
 

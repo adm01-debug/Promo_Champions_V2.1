@@ -1,20 +1,33 @@
-import { memo } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Star, Flame } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { CustomFieldsDisplay } from "@/components/salespeople/CustomFieldsDisplay";
+import { memo } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Star, Flame } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import { CustomFieldsDisplay } from '@/components/salespeople/CustomFieldsDisplay';
 
 interface VendedorHeaderProps {
-  salesperson: { id: string; name: string; email: string | null; avatar_url: string | null; commission_rate: number };
+  salesperson: {
+    id: string;
+    name: string;
+    email: string | null;
+    avatar_url: string | null;
+    commission_rate: number;
+  };
   goalProgress: number;
   salespersonId?: string;
 }
 
-export const VendedorHeader = memo(function VendedorHeader({ salesperson, goalProgress, salespersonId }: VendedorHeaderProps) {
+export const VendedorHeader = memo(function VendedorHeader({
+  salesperson,
+  goalProgress,
+  salespersonId,
+}: VendedorHeaderProps) {
   return (
     <div className="opacity-0 animate-fade-in-up">
-      <Link to="/vendedores" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 transition-colors">
+      <Link
+        to="/vendedores"
+        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 transition-colors"
+      >
         <ArrowLeft className="h-4 w-4" />
         <span className="text-sm">Voltar para Ranking</span>
       </Link>
@@ -22,9 +35,15 @@ export const VendedorHeader = memo(function VendedorHeader({ salesperson, goalPr
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative">
             <Avatar className="h-24 w-24 ring-4 ring-primary/30 shadow-xl">
-              <AvatarImage src={salesperson.avatar_url || undefined} alt={salesperson.name} />
+              <AvatarImage
+                src={salesperson.avatar_url || undefined}
+                alt={salesperson.name}
+              />
               <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold">
-                {salesperson.name.split(" ").map(n => n[0]).join("")}
+                {salesperson.name
+                  .split(' ')
+                  .map(n => n[0])
+                  .join('')}
               </AvatarFallback>
             </Avatar>
             {goalProgress >= 100 && (
@@ -51,12 +70,28 @@ export const VendedorHeader = memo(function VendedorHeader({ salesperson, goalPr
           <div className="flex flex-col items-center gap-1">
             <span className="text-sm text-muted-foreground">Progresso da Meta</span>
             <div className="relative w-32 h-32">
-              <svg className="w-full h-full transform -rotate-90" aria-label={`Progresso: ${goalProgress.toFixed(0)}%`}>
-                <circle cx="64" cy="64" r="56" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
-                <circle cx="64" cy="64" r="56" fill="none"
-                  stroke={goalProgress >= 100 ? "hsl(var(--success))" : "url(#gradient)"}
-                  strokeWidth="8" strokeLinecap="round"
-                  strokeDasharray={`${Math.min(goalProgress, 100) * 3.52} 352`} />
+              <svg
+                className="w-full h-full transform -rotate-90"
+                aria-label={`Progresso: ${goalProgress.toFixed(0)}%`}
+              >
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  fill="none"
+                  stroke="hsl(var(--muted))"
+                  strokeWidth="8"
+                />
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="56"
+                  fill="none"
+                  stroke={goalProgress >= 100 ? 'hsl(var(--success))' : 'url(#gradient)'}
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={`${Math.min(goalProgress, 100) * 3.52} 352`}
+                />
                 <defs>
                   <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="hsl(var(--primary))" />
@@ -65,7 +100,12 @@ export const VendedorHeader = memo(function VendedorHeader({ salesperson, goalPr
                 </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className={cn("text-2xl font-black", goalProgress >= 100 ? "text-success" : "gradient-text")}>
+                <span
+                  className={cn(
+                    'text-2xl font-black',
+                    goalProgress >= 100 ? 'text-success' : 'gradient-text'
+                  )}
+                >
                   {goalProgress.toFixed(0)}%
                 </span>
               </div>

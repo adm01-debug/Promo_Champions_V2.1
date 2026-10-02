@@ -1,13 +1,13 @@
-import { CalendarDays, TrendingUp, Brain } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { 
+import { CalendarDays, TrendingUp, Brain } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from '@/components/ui/tooltip';
 
 interface IntensityPoint {
   month: number;
@@ -42,26 +42,45 @@ export function ClientSeasonalityHeatmap({ data }: ClientSeasonalityHeatmapProps
     <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
       <div className="absolute bottom-0 right-0 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[100px] -mr-64 -mb-32" />
       <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 mb-10">
-        <CalendarDays className="size-6 text-primary" /> Sazonalidade <span className="text-primary">Estratégica</span>
+        <CalendarDays className="size-6 text-primary" /> Sazonalidade{' '}
+        <span className="text-primary">Estratégica</span>
       </h3>
 
       <div className="grid grid-cols-1 gap-12 relative z-10">
         <div className="space-y-4">
-          <div className="grid gap-2 items-center" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
-            <div className="text-[9px] font-black text-muted-foreground uppercase">Cliente</div>
+          <div
+            className="grid gap-2 items-center"
+            style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}
+          >
+            <div className="text-[9px] font-black text-muted-foreground uppercase">
+              Cliente
+            </div>
             {data.months.map((month, i) => {
               const monthIndex = i + 1;
-              const point = data.clientIntensity.find(p => Number(p.month) === monthIndex);
+              const point = data.clientIntensity.find(
+                p => Number(p.month) === monthIndex
+              );
               const intensity = point?.intensity || 0;
               return (
                 <TooltipProvider key={month}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <motion.div className={cn("h-14 rounded-lg cursor-help border border-white/5 hover:border-white/20 transition-all shadow-sm", getIntensityColor(intensity), monthIndex === currentMonth && "ring-2 ring-violet-600 ring-offset-2 ring-offset-background")} />
+                      <motion.div
+                        className={cn(
+                          'h-14 rounded-lg cursor-help border border-white/5 hover:border-white/20 transition-all shadow-sm',
+                          getIntensityColor(intensity),
+                          monthIndex === currentMonth &&
+                            'ring-2 ring-violet-600 ring-offset-2 ring-offset-background'
+                        )}
+                      />
                     </TooltipTrigger>
                     <TooltipContent className="bg-popover/95 backdrop-blur-md border-primary/20">
-                      <p className="font-black uppercase text-[10px] text-primary">{month}</p>
-                      <p className="text-xs font-bold">Intensidade: {intensity.toFixed(1)}%</p>
+                      <p className="font-black uppercase text-[10px] text-primary">
+                        {month}
+                      </p>
+                      <p className="text-xs font-bold">
+                        Intensidade: {intensity.toFixed(1)}%
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -69,20 +88,34 @@ export function ClientSeasonalityHeatmap({ data }: ClientSeasonalityHeatmapProps
             })}
           </div>
 
-          <div className="grid gap-2 items-center" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
-            <div className="text-[9px] font-black text-muted-foreground uppercase">Setor</div>
+          <div
+            className="grid gap-2 items-center"
+            style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}
+          >
+            <div className="text-[9px] font-black text-muted-foreground uppercase">
+              Setor
+            </div>
             {data.months.map((month, i) => {
               const monthIndex = i + 1;
-              const point = data.industryIntensity.find(p => Number(p.month) === monthIndex);
+              const point = data.industryIntensity.find(
+                p => Number(p.month) === monthIndex
+              );
               const intensity = point?.intensity || 0;
               return (
                 <TooltipProvider key={month}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <motion.div className={cn("h-14 rounded-lg opacity-60 cursor-help border border-white/5 hover:border-white/20 transition-all", getIntensityColor(intensity))} />
+                      <motion.div
+                        className={cn(
+                          'h-14 rounded-lg opacity-60 cursor-help border border-white/5 hover:border-white/20 transition-all',
+                          getIntensityColor(intensity)
+                        )}
+                      />
                     </TooltipTrigger>
                     <TooltipContent className="bg-popover/95 backdrop-blur-md border-primary/20">
-                      <p className="font-black uppercase text-[10px] text-primary">{month}</p>
+                      <p className="font-black uppercase text-[10px] text-primary">
+                        {month}
+                      </p>
                       <p className="text-xs font-bold">Setor: {intensity.toFixed(1)}%</p>
                     </TooltipContent>
                   </Tooltip>
@@ -91,10 +124,18 @@ export function ClientSeasonalityHeatmap({ data }: ClientSeasonalityHeatmapProps
             })}
           </div>
 
-          <div className="grid gap-2" style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}>
+          <div
+            className="grid gap-2"
+            style={{ gridTemplateColumns: '80px repeat(12, minmax(0, 1fr))' }}
+          >
             <div />
-            {data.months.map((month) => (
-              <p key={month} className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest">{month}</p>
+            {data.months.map(month => (
+              <p
+                key={month}
+                className="text-[9px] font-black text-center text-muted-foreground uppercase tracking-widest"
+              >
+                {month}
+              </p>
             ))}
           </div>
         </div>
@@ -105,8 +146,12 @@ export function ClientSeasonalityHeatmap({ data }: ClientSeasonalityHeatmapProps
               <TrendingUp className="size-6" />
             </div>
             <div>
-              <p className="text-[10px] text-violet-300 font-black uppercase tracking-widest mb-1">Próximo Pico Estimado</p>
-              <p className="text-lg font-black text-violet-400 uppercase italic">{data.nextPeak.month}</p>
+              <p className="text-[10px] text-violet-300 font-black uppercase tracking-widest mb-1">
+                Próximo Pico Estimado
+              </p>
+              <p className="text-lg font-black text-violet-400 uppercase italic">
+                {data.nextPeak.month}
+              </p>
             </div>
           </div>
 
@@ -115,9 +160,12 @@ export function ClientSeasonalityHeatmap({ data }: ClientSeasonalityHeatmapProps
               <Brain className="size-6" />
             </div>
             <div>
-              <h4 className="text-sm font-black uppercase tracking-widest text-violet-400 mb-1">Insight Estratégico</h4>
+              <h4 className="text-sm font-black uppercase tracking-widest text-violet-400 mb-1">
+                Insight Estratégico
+              </h4>
               <p className="text-xs text-card-foreground font-medium leading-relaxed">
-                {data.nextPeak.insight} Recomendamos preparar promoções direcionadas e estoque extra com 30 dias de antecedência.
+                {data.nextPeak.insight} Recomendamos preparar promoções direcionadas e
+                estoque extra com 30 dias de antecedência.
               </p>
             </div>
           </div>

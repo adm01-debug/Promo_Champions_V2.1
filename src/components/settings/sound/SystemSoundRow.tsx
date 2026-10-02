@@ -1,11 +1,17 @@
-import { memo } from "react";
-import { Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SystemSoundType } from "@/hooks/useSystemSoundSettings";
-import { LucideIcon } from "lucide-react";
+import { memo } from 'react';
+import { Play } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { SystemSoundType } from '@/hooks/useSystemSoundSettings';
+import { LucideIcon } from 'lucide-react';
 
 interface SystemSoundRowProps {
   icon: LucideIcon;
@@ -54,21 +60,24 @@ const SystemSoundRowInner = function SystemSoundRow({
           <>
             <Select
               value={sound}
-              onValueChange={(v) => onSoundChange(v as SystemSoundType)}
+              onValueChange={v => onSoundChange(v as SystemSoundType)}
               disabled={!enabled}
             >
               <SelectTrigger className="w-28 h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {soundOptions.map((opt) => (
-                  <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
+                {soundOptions.map(opt => (
+                  <SelectItem key={opt.id} value={opt.id}>
+                    {opt.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Button
               variant="ghost"
-              size="icon" aria-label="Reproduzir"
+              size="icon"
+              aria-label="Reproduzir"
               className="h-8 w-8"
               onClick={() => onPreview(sound)}
               disabled={!enabled || sound === 'none' || volume === 0}
@@ -81,5 +90,5 @@ const SystemSoundRowInner = function SystemSoundRow({
       </div>
     </div>
   );
-}
+};
 export const SystemSoundRow = memo(SystemSoundRowInner);

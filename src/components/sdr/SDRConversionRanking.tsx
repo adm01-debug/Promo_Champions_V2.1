@@ -4,7 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { ArrowRightLeft, CalendarCheck, UserCheck, TrendingUp, Crown, Medal } from 'lucide-react';
+import {
+  ArrowRightLeft,
+  CalendarCheck,
+  UserCheck,
+  TrendingUp,
+  Crown,
+  Medal,
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -104,7 +111,8 @@ function useSDRConversionRanking(period: PeriodFilter) {
         const meetingsScheduled = sdrActivities.length;
 
         // Conversion rate: meetings scheduled / total leads
-        const conversionRate = totalLeads > 0 ? (meetingsScheduled / totalLeads) * 100 : 0;
+        const conversionRate =
+          totalLeads > 0 ? (meetingsScheduled / totalLeads) * 100 : 0;
 
         return {
           id: sdr.id,
@@ -133,7 +141,11 @@ function SDRConversionRankingImpl({ period }: SDRConversionRankingProps) {
   const { data: sdrs, isLoading } = useSDRConversionRanking(period);
 
   const periodLabel =
-    period === 'week' ? 'esta semana' : period === 'month' ? 'este mês' : 'este trimestre';
+    period === 'week'
+      ? 'esta semana'
+      : period === 'month'
+        ? 'este mês'
+        : 'este trimestre';
 
   const maxMeetings = sdrs?.[0]?.meetingsScheduled || 1;
 
@@ -284,7 +296,10 @@ function SDRConversionRankingImpl({ period }: SDRConversionRankingProps) {
 
             {/* Progress bar */}
             <div className="mt-2">
-              <Progress value={(sdr.meetingsScheduled / maxMeetings) * 100} className="h-1.5" />
+              <Progress
+                value={(sdr.meetingsScheduled / maxMeetings) * 100}
+                className="h-1.5"
+              />
             </div>
           </div>
         ))}

@@ -2,7 +2,10 @@
 # Este arquivo define quem é responsável por revisar alterações em partes específicas do código
 
 # Regra global - owner principal do projeto
-* @adm01-debug
+# @promo-ops = conta de serviço/segundo admin a provisionar (bus factor):
+# criar a conta no GitHub, convidá-la como colaboradora com acesso Write e
+# substituir este handle se o nome final for diferente. Ver docs/DR_PLAN.md.
+* @adm01-debug @promo-ops
 
 # Frontend
 /src/components/ @adm01-debug
@@ -10,13 +13,13 @@
 /src/styles/ @adm01-debug
 
 # Backend e Database
-/supabase/ @adm01-debug
-/supabase/migrations/ @adm01-debug
-/supabase/functions/ @adm01-debug
+/supabase/ @adm01-debug @promo-ops
+/supabase/migrations/ @adm01-debug @promo-ops
+/supabase/functions/ @adm01-debug @promo-ops
 
 # Configurações e CI/CD
-/.github/ @adm01-debug
-/.github/workflows/ @adm01-debug
+/.github/ @adm01-debug @promo-ops
+/.github/workflows/ @adm01-debug @promo-ops
 /vite.config.ts @adm01-debug
 /tsconfig.json @adm01-debug
 

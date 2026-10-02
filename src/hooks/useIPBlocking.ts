@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export interface BlockedIP {
   id: string;
@@ -31,12 +31,12 @@ export function useBlockedIPs() {
   const { user } = useAuth();
 
   const { data: blockedIPs, isLoading } = useQuery({
-    queryKey: ["blocked-ips"],
+    queryKey: ['blocked-ips'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("blocked_ips")
-        .select("*")
-        .order("blocked_at", { ascending: false });
+        .from('blocked_ips')
+        .select('*')
+        .order('blocked_at', { ascending: false });
 
       if (error) throw error;
       return data as BlockedIP[];
@@ -56,7 +56,7 @@ export function useBlockedIPs() {
       is_permanent?: boolean;
     }) => {
       const { data, error } = await supabase
-        .from("blocked_ips")
+        .from('blocked_ips')
         .upsert(
           {
             ip_address,
@@ -65,7 +65,7 @@ export function useBlockedIPs() {
             expires_at: is_permanent ? null : expires_at,
             is_permanent: is_permanent ?? false,
           },
-          { onConflict: "ip_address" }
+          { onConflict: 'ip_address' }
         )
         .select()
         .single();
@@ -74,29 +74,29 @@ export function useBlockedIPs() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blocked-ips"] });
-      toast.success("IP bloqueado com sucesso");
+      queryClient.invalidateQueries({ queryKey: ['blocked-ips'] });
+      toast.success('IP bloqueado com sucesso');
     },
     onError: () => {
-      toast.error("Erro ao bloquear IP");
+      toast.error('Erro ao bloquear IP');
     },
   });
 
   const unblockIP = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("blocked_ips").delete().eq("id", id);
+      const { error } = await supabase.from('blocked_ips').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blocked-ips"] });
-      toast.success("IP desbloqueado");
+      queryClient.invalidateQueries({ queryKey: ['blocked-ips'] });
+      toast.success('IP desbloqueado');
     },
     onError: () => {
-      toast.error("Erro ao desbloquear IP");
+      toast.error('Erro ao desbloquear IP');
     },
   });
 
-  const activeBlockedIPs = blockedIPs?.filter((ip) => {
+  const activeBlockedIPs = blockedIPs?.filter(ip => {
     if (ip.is_permanent) return true;
     if (!ip.expires_at) return true;
     return new Date(ip.expires_at) > new Date();
@@ -119,12 +119,12 @@ export function useIPWhitelist() {
   const { user } = useAuth();
 
   const { data: whitelist, isLoading } = useQuery({
-    queryKey: ["ip-whitelist"],
+    queryKey: ['ip-whitelist'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("ip_whitelist")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('ip_whitelist')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as WhitelistedIP[];
@@ -140,7 +140,7 @@ export function useIPWhitelist() {
       description?: string;
     }) => {
       const { data, error } = await supabase
-        .from("ip_whitelist")
+        .from('ip_whitelist')
         .insert({
           ip_address,
           description,
@@ -153,25 +153,25 @@ export function useIPWhitelist() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ip-whitelist"] });
-      toast.success("IP adicionado à whitelist");
+      queryClient.invalidateQueries({ queryKey: ['ip-whitelist'] });
+      toast.success('IP adicionado à whitelist');
     },
     onError: () => {
-      toast.error("Erro ao adicionar IP");
+      toast.error('Erro ao adicionar IP');
     },
   });
 
   const removeFromWhitelist = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("ip_whitelist").delete().eq("id", id);
+      const { error } = await supabase.from('ip_whitelist').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ip-whitelist"] });
-      toast.success("IP removido da whitelist");
+      queryClient.invalidateQueries({ queryKey: ['ip-whitelist'] });
+      toast.success('IP removido da whitelist');
     },
     onError: () => {
-      toast.error("Erro ao remover IP");
+      toast.error('Erro ao remover IP');
     },
   });
 
@@ -186,4 +186,9 @@ export function useIPWhitelist() {
 }
 
 // Re-export from security monitoring for backward compatibility
-export { useCheckIPStatus, useLoginAttempts, useLogLoginAttempt, useSecurityStats } from "@/hooks/useSecurityMonitoring";
+export {
+  useCheckIPStatus,
+  useLoginAttempts,
+  useLogLoginAttempt,
+  useSecurityStats,
+} from '@/hooks/useSecurityMonitoring';

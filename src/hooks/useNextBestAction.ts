@@ -4,8 +4,10 @@ import { isOpenSaleStatus, isWonSaleStatus } from '@/constants';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 export type NextActionPriority = 'high' | 'medium' | 'low';
-export type NextActionCategory = 'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
-export type NextActionChannel = 'phone' | 'email' | 'linkedin' | 'whatsapp' | 'in_person' | null;
+export type NextActionCategory =
+  'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
+export type NextActionChannel =
+  'phone' | 'email' | 'linkedin' | 'whatsapp' | 'in_person' | null;
 
 export interface NextBestAction {
   title: string;
@@ -30,7 +32,10 @@ export interface NextBestActionResult {
   suggestions: NextBestAction[];
 }
 
-async function invokeNBA(salespersonId: string, limit = 5): Promise<NextBestActionResult> {
+async function invokeNBA(
+  salespersonId: string,
+  limit = 5
+): Promise<NextBestActionResult> {
   try {
     const { data, error } = await supabase.functions.invoke('next-best-action', {
       body: { salespersonId, limit },
@@ -64,7 +69,9 @@ export const useNextBestAction = () => {
   });
 };
 
-async function generateLocalSuggestions(salespersonId: string): Promise<NextBestActionResult> {
+async function generateLocalSuggestions(
+  salespersonId: string
+): Promise<NextBestActionResult> {
   const { data: sp } = await supabase
     .from('salespeople')
     .select('name')
@@ -159,7 +166,9 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
       (now - new Date(a.created_at).getTime()) / 60000 < 60 // Última hora
   );
 
-  const priceClicks = highInterestEvents.filter(e => (e.activity_type as string) === 'price_click');
+  const priceClicks = highInterestEvents.filter(
+    e => (e.activity_type as string) === 'price_click'
+  );
   const proposalViews = highInterestEvents.filter(
     e => (e.activity_type as string) === 'proposal_view'
   );
@@ -176,7 +185,9 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
       channel: 'phone',
       expectedImpact: 'Negociar condições finais enquanto o lead está quente.',
     });
-    console.info(`[Intent Log] Triggered: Multi-Price Clicks - Count: ${priceClicks.length}`);
+    console.info(
+      `[Intent Log] Triggered: Multi-Price Clicks - Count: ${priceClicks.length}`
+    );
   } else if (proposalViews.length > 0) {
     suggestions.unshift({
       title: 'Ligar Agora: Proposta Aberta',
@@ -196,10 +207,14 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   const lastResponse = allActivities.find(
     a => a.activity_type === 'email' && (a.outcome as string) === 'connected'
   );
-  if (lastResponse && (now - new Date(lastResponse.created_at).getTime()) / 86400000 < 1) {
+  if (
+    lastResponse &&
+    (now - new Date(lastResponse.created_at).getTime()) / 86400000 < 1
+  ) {
     suggestions.unshift({
       title: 'Follow-up Imediato: Resposta Recebida',
-      description: 'Lead respondeu recentemente. Prioridade máxima para manter o momentum.',
+      description:
+        'Lead respondeu recentemente. Prioridade máxima para manter o momentum.',
       rationale: 'Histórico recente: Resposta do lead nas últimas 24h.',
       actionType: 'follow_up',
       priority: 'high',
@@ -210,7 +225,8 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
   }
 
   const highInterestDeals = allSales.filter(
-    s => s.status === 'proposal' && (now - new Date(s.updated_at).getTime()) / 86400000 < 2
+    s =>
+      s.status === 'proposal' && (now - new Date(s.updated_at).getTime()) / 86400000 < 2
   );
   if (highInterestDeals.length > 0) {
     suggestions.push({
@@ -229,7 +245,9 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
     });
   }
 
-  const proposals = allSales.filter(s => s.status === 'proposal' || s.status === 'Proposta');
+  const proposals = allSales.filter(
+    s => s.status === 'proposal' || s.status === 'Proposta'
+  );
   if (proposals.length > 0) {
     suggestions.push({
       title: `Acompanhar ${proposals.length} proposta(s) enviada(s)`,
@@ -273,7 +291,11 @@ async function generateLocalSuggestions(salespersonId: string): Promise<NextBest
 
   return {
     insight,
-    summary: { totalDeals: openDeals.length, atRisk: stagnantDeals.length, goalProgress: 0 },
+    summary: {
+      totalDeals: openDeals.length,
+      atRisk: stagnantDeals.length,
+      goalProgress: 0,
+    },
     suggestions: suggestions.slice(0, 5),
   };
 }

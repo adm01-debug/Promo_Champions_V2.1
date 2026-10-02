@@ -1,4 +1,4 @@
-import { DIMENSION_LABELS, classifyHealth, healthHsl } from "./coachingHelpers";
+import { DIMENSION_LABELS, classifyHealth, healthHsl } from './coachingHelpers';
 
 interface Props {
   talk: number;
@@ -8,17 +8,23 @@ interface Props {
   moments: number;
 }
 
-export const ScorecardDimensionsBar = ({ talk, questions, objections, sentiment, moments }: Props) => {
+export const ScorecardDimensionsBar = ({
+  talk,
+  questions,
+  objections,
+  sentiment,
+  moments,
+}: Props) => {
   const rows = [
-    { key: "talk", score: talk },
-    { key: "questions", score: questions },
-    { key: "objections", score: objections },
-    { key: "sentiment", score: sentiment },
-    { key: "moments", score: moments },
+    { key: 'talk', score: talk },
+    { key: 'questions', score: questions },
+    { key: 'objections', score: objections },
+    { key: 'sentiment', score: sentiment },
+    { key: 'moments', score: moments },
   ];
   return (
     <div className="space-y-2">
-      {rows.map((r) => {
+      {rows.map(r => {
         const h = classifyHealth(r.score);
         const pct = Math.max(0, Math.min(100, r.score));
         return (
@@ -27,9 +33,14 @@ export const ScorecardDimensionsBar = ({ talk, questions, objections, sentiment,
               {DIMENSION_LABELS[r.key]}
             </span>
             <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: healthHsl(h) }} />
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${pct}%`, backgroundColor: healthHsl(h) }}
+              />
             </div>
-            <span className="text-xs tabular-nums w-8 text-right font-medium">{Math.round(r.score)}</span>
+            <span className="text-xs tabular-nums w-8 text-right font-medium">
+              {Math.round(r.score)}
+            </span>
           </div>
         );
       })}

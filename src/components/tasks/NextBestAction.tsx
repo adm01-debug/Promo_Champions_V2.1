@@ -15,7 +15,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Sparkles, Loader2, Phone, Users, Mail, Clock, FileText, MoreHorizontal, Plus, Lightbulb, Zap, MessageSquare } from 'lucide-react';
+import {
+  Sparkles,
+  Loader2,
+  Phone,
+  Users,
+  Mail,
+  Clock,
+  FileText,
+  MoreHorizontal,
+  Plus,
+  Lightbulb,
+  Zap,
+  MessageSquare,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { cn } from '@/lib/utils';
 import { getLocalISODate } from '@/utils/dateHelpers';
@@ -31,7 +44,10 @@ interface ActionSuggestion {
 }
 
 const priorityConfig = {
-  high: { label: 'Alta', className: 'bg-status-error/20 text-status-error border-status-error/30' },
+  high: {
+    label: 'Alta',
+    className: 'bg-status-error/20 text-status-error border-status-error/30',
+  },
   medium: {
     label: 'Média',
     className: 'bg-status-warning/20 text-status-warning border-status-warning/30',
@@ -69,7 +85,16 @@ export function NextBestAction() {
 
   const handleCreateTask = (suggestion: ActionSuggestion) => {
     // Map suggestion action types to supported TaskTypes
-    let taskType: 'call' | 'email' | 'meeting' | 'follow_up' | 'other' | 'proposal' | 'discount' | 'linkedin' | 'whatsapp' = 'other';
+    let taskType:
+      | 'call'
+      | 'email'
+      | 'meeting'
+      | 'follow_up'
+      | 'other'
+      | 'proposal'
+      | 'discount'
+      | 'linkedin'
+      | 'whatsapp' = 'other';
     const type = suggestion.actionType;
 
     if (type === 'call' || type === 'call_now') taskType = 'call';
@@ -119,7 +144,9 @@ export function NextBestAction() {
                   <div className="flex items-center gap-2">
                     <Avatar className="h-5 w-5">
                       <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="text-[10px]">{sp.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="text-[10px]">
+                        {sp.name.charAt(0)}
+                      </AvatarFallback>
                     </Avatar>
                     {sp.name}
                   </div>
@@ -158,14 +185,15 @@ export function NextBestAction() {
 
             <div className="space-y-3">
               <h4 className="text-xs font-display font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                Ações Recomendadas para <span className="text-primary">{selectedPerson?.name}</span>
-                :
+                Ações Recomendadas para{' '}
+                <span className="text-primary">{selectedPerson?.name}</span>:
               </h4>
 
-              {nextBestAction.data.suggestions.map((suggestion) => {
+              {nextBestAction.data.suggestions.map(suggestion => {
                 const actionType =
-                  actionTypeConfig[suggestion.actionType as keyof typeof actionTypeConfig] ||
-                  actionTypeConfig.other;
+                  actionTypeConfig[
+                    suggestion.actionType as keyof typeof actionTypeConfig
+                  ] || actionTypeConfig.other;
                 const ActionIcon = actionType.icon;
                 const priority = priorityConfig[suggestion.priority];
 
@@ -180,7 +208,9 @@ export function NextBestAction() {
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start gap-3 flex-1">
-                        <div className={cn('p-2 rounded-lg bg-muted/50', actionType.color)}>
+                        <div
+                          className={cn('p-2 rounded-lg bg-muted/50', actionType.color)}
+                        >
                           <ActionIcon
                             className={cn(
                               'h-4 w-4',
@@ -219,7 +249,9 @@ export function NextBestAction() {
                         </div>
                       </div>
                       <Button
-                        variant={suggestion.actionType === 'call_now' ? 'default' : 'secondary'}
+                        variant={
+                          suggestion.actionType === 'call_now' ? 'default' : 'secondary'
+                        }
                         size="sm"
                         className={cn(
                           'shrink-0 text-xs h-8',

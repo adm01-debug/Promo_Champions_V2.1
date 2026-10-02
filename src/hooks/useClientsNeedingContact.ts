@@ -63,7 +63,7 @@ export const useClientsNeedingContact = ({ salespersonId, limit = 10 }: Options 
         }
       >();
 
-      (sales || []).forEach((s) => {
+      (sales || []).forEach(s => {
         const key = (s.client_id as string | null) || `name:${s.client_name}`;
         if (!key) return;
         const entry = grouped.get(key) ?? {
@@ -78,12 +78,16 @@ export const useClientsNeedingContact = ({ salespersonId, limit = 10 }: Options 
       });
 
       const clientIds = Array.from(grouped.values())
-        .map((g) => g.clientId)
+        .map(g => g.clientId)
         .filter((id): id is string => !!id);
 
-      const contactMap = new Map<string, { phone: string | null; email: string | null }>();
+      const contactMap = new Map<
+        string,
+        { phone: string | null; email: string | null }
+      >();
       if (clientIds.length > 0) {
-        let clients: Array<{ id: string; phone: string | null; email: string | null }> = [];
+        let clients: Array<{ id: string; phone: string | null; email: string | null }> =
+          [];
         try {
           clients = await chunkedIn<{
             id: string;
@@ -91,18 +95,18 @@ export const useClientsNeedingContact = ({ salespersonId, limit = 10 }: Options 
             email: string | null;
           }>(
             clientIds,
-            (chunk) =>
+            chunk =>
               supabase
                 .from('clients')
                 .select('id, phone, email')
                 .in('id', chunk as string[]),
-            { parallel: true, label: 'clients-needing-contact' },
+            { parallel: true, label: 'clients-needing-contact' }
           );
         } catch {
           // Preserva o comportamento anterior: sem dados de contato, o alerta continua utilizável.
           clients = [];
         }
-        clients.forEach((c) =>
+        clients.forEach(c =>
           contactMap.set(c.id, { phone: c.phone ?? null, email: c.email ?? null })
         );
       }
@@ -110,7 +114,7 @@ export const useClientsNeedingContact = ({ salespersonId, limit = 10 }: Options 
       const now = new Date();
       const results: ClientContactAlert[] = [];
 
-      grouped.forEach((entry) => {
+      grouped.forEach(entry => {
         const dates = entry.dates.sort((a, b) => a.getTime() - b.getTime());
         const last = dates[dates.length - 1];
         const daysSince = differenceInDays(now, last);

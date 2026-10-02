@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CIRecording {
   id: string;
@@ -40,11 +40,12 @@ export interface CIData {
 
 export function useConversationalIntelligence(days = 30) {
   return useQuery({
-    queryKey: ["conversational-intelligence", days],
+    queryKey: ['conversational-intelligence', days],
     queryFn: async (): Promise<CIData> => {
       const session = await supabase.auth.getSession();
       const token =
-        session.data.session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        session.data.session?.access_token ??
+        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/conversational-intelligence?days=${days}`;
       const res = await fetch(url, {
         headers: {

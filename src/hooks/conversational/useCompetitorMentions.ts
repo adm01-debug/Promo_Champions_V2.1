@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface CompetitorMention {
   id: string;
@@ -15,14 +15,14 @@ export interface CompetitorMention {
 
 export function useCompetitorMentions(recordingId?: string) {
   return useQuery({
-    queryKey: ["competitor-mentions", recordingId],
+    queryKey: ['competitor-mentions', recordingId],
     queryFn: async () => {
       if (!recordingId) return [];
       const { data, error } = await supabase
-        .from("competitor_mentions")
-        .select("*")
-        .eq("recording_id", recordingId)
-        .order("timestamp_sec", { ascending: true, nullsFirst: false });
+        .from('competitor_mentions')
+        .select('*')
+        .eq('recording_id', recordingId)
+        .order('timestamp_sec', { ascending: true, nullsFirst: false });
       if (error) throw error;
       return (data as CompetitorMention[]) ?? [];
     },
@@ -35,17 +35,20 @@ export function useDetectCompetitors() {
   return useMutation({
     mutationFn: async (recording_id: string) => {
       const { data, error } = await supabase.functions.invoke(
-        "detect-competitor-mentions",
-        { body: { recording_id } },
+        'detect-competitor-mentions',
+        { body: { recording_id } }
       );
       if (error) throw error;
-      return data as { mentions_count: number; competitors: { name: string; count: number }[] };
+      return data as {
+        mentions_count: number;
+        competitors: { name: string; count: number }[];
+      };
     },
     onSuccess: (data, recording_id) => {
-      qc.invalidateQueries({ queryKey: ["competitor-mentions", recording_id] });
+      qc.invalidateQueries({ queryKey: ['competitor-mentions', recording_id] });
       toast.success(`${data.mentions_count} menções detectadas`);
     },
-    onError: (e) =>
-      toast.error(`Falha na detecção: ${e instanceof Error ? e.message : "erro"}`),
+    onError: e =>
+      toast.error(`Falha na detecção: ${e instanceof Error ? e.message : 'erro'}`),
   });
 }

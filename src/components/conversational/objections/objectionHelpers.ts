@@ -1,7 +1,9 @@
-export type ObjectionType = "price" | "timing" | "authority" | "need" | "competition" | "trust" | "other";
-export type ResponseQuality = "acknowledged" | "reframed" | "resolved" | "deflected" | "ignored";
-export type ResolutionStatus = "resolved" | "partial" | "unresolved";
-export type ObjectionHealth = "poor" | "fair" | "good" | "excellent";
+export type ObjectionType =
+  'price' | 'timing' | 'authority' | 'need' | 'competition' | 'trust' | 'other';
+export type ResponseQuality =
+  'acknowledged' | 'reframed' | 'resolved' | 'deflected' | 'ignored';
+export type ResolutionStatus = 'resolved' | 'partial' | 'unresolved';
+export type ObjectionHealth = 'poor' | 'fair' | 'good' | 'excellent';
 
 export interface ObjectionAnalysis {
   id: string;
@@ -44,61 +46,65 @@ export interface ObjectionLibraryEntry {
 
 export function objectionTypeLabel(t: ObjectionType): string {
   return {
-    price: "Preço",
-    timing: "Timing",
-    authority: "Autoridade",
-    need: "Necessidade",
-    competition: "Concorrência",
-    trust: "Confiança",
-    other: "Outras",
+    price: 'Preço',
+    timing: 'Timing',
+    authority: 'Autoridade',
+    need: 'Necessidade',
+    competition: 'Concorrência',
+    trust: 'Confiança',
+    other: 'Outras',
   }[t];
 }
 
 export function objectionTypeHsl(t: ObjectionType): string {
   return {
-    price: "hsl(var(--destructive))",
-    timing: "hsl(var(--warning))",
-    authority: "hsl(var(--info))",
-    need: "hsl(var(--primary))",
-    competition: "hsl(var(--accent))",
-    trust: "hsl(var(--success, var(--primary)))",
-    other: "hsl(var(--muted-foreground))",
+    price: 'hsl(var(--destructive))',
+    timing: 'hsl(var(--warning))',
+    authority: 'hsl(var(--info))',
+    need: 'hsl(var(--primary))',
+    competition: 'hsl(var(--accent))',
+    trust: 'hsl(var(--success, var(--primary)))',
+    other: 'hsl(var(--muted-foreground))',
   }[t];
 }
 
 export function qualityLabel(q: ResponseQuality): string {
   return {
-    resolved: "Resolvida",
-    reframed: "Reframe",
-    acknowledged: "Reconhecida",
-    deflected: "Desviou",
-    ignored: "Ignorada",
+    resolved: 'Resolvida',
+    reframed: 'Reframe',
+    acknowledged: 'Reconhecida',
+    deflected: 'Desviou',
+    ignored: 'Ignorada',
   }[q];
 }
 
 export function statusLabel(s: ResolutionStatus): string {
-  return { resolved: "Resolvida", partial: "Parcial", unresolved: "Não resolvida" }[s];
+  return { resolved: 'Resolvida', partial: 'Parcial', unresolved: 'Não resolvida' }[s];
 }
 
-export function statusBadgeVariant(s: ResolutionStatus): "destructive" | "warning" | "high" {
-  if (s === "resolved") return "high";
-  if (s === "partial") return "warning";
-  return "destructive";
+export function statusBadgeVariant(
+  s: ResolutionStatus
+): 'destructive' | 'warning' | 'high' {
+  if (s === 'resolved') return 'high';
+  if (s === 'partial') return 'warning';
+  return 'destructive';
 }
 
 export function healthLabel(h: ObjectionHealth): string {
-  return { poor: "Crítico", fair: "Regular", good: "Bom", excellent: "Excelente" }[h];
+  return { poor: 'Crítico', fair: 'Regular', good: 'Bom', excellent: 'Excelente' }[h];
 }
 
-export function healthBadgeVariant(h: ObjectionHealth): "destructive" | "warning" | "info" | "high" {
-  if (h === "excellent") return "high";
-  if (h === "good") return "info";
-  if (h === "fair") return "warning";
-  return "destructive";
+export function healthBadgeVariant(
+  h: ObjectionHealth
+): 'destructive' | 'warning' | 'info' | 'high' {
+  if (h === 'excellent') return 'high';
+  if (h === 'good') return 'info';
+  if (h === 'fair') return 'warning';
+  return 'destructive';
 }
 
 export function fmtTime(sec: number): string {
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }

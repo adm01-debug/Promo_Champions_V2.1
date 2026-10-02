@@ -21,7 +21,9 @@ export function MyRaceCarMiniCard({ salespersonId }: MyRaceCarMiniCardProps) {
       if (!salespersonId) return null;
       const { data } = await supabase
         .from('race_cars')
-        .select('car_number, primary_color, secondary_color, nickname, total_wins, total_overtakes')
+        .select(
+          'car_number, primary_color, secondary_color, nickname, total_wins, total_overtakes'
+        )
         .eq('salesperson_id', salespersonId)
         .maybeSingle();
       return data;
@@ -34,7 +36,7 @@ export function MyRaceCarMiniCard({ salespersonId }: MyRaceCarMiniCardProps) {
 
   if (!salespersonId || !car) return null;
 
-  const myEntry = leaderboard.find((e) => e.salesperson_id === salespersonId);
+  const myEntry = leaderboard.find(e => e.salesperson_id === salespersonId);
   const rank = myEntry?.rank ?? '-';
   const progress = Math.round(Number(myEntry?.progress ?? 0) * 100);
 
@@ -63,7 +65,9 @@ export function MyRaceCarMiniCard({ salespersonId }: MyRaceCarMiniCardProps) {
             #{car.car_number}
           </motion.div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate">{car.nickname || 'Sem apelido'}</p>
+            <p className="text-sm font-semibold truncate">
+              {car.nickname || 'Sem apelido'}
+            </p>
             <p className="text-xs text-muted-foreground">
               Posição <strong>#{rank}</strong> · {progress}% da meta
             </p>
@@ -73,9 +77,13 @@ export function MyRaceCarMiniCard({ salespersonId }: MyRaceCarMiniCardProps) {
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-1 text-muted-foreground">
             <Trophy className="w-3 h-3 text-amber-500" />
-            <span>{car.total_wins} vitórias · {car.total_overtakes} ultrapassagens</span>
+            <span>
+              {car.total_wins} vitórias · {car.total_overtakes} ultrapassagens
+            </span>
           </div>
-          <Badge variant="secondary" className="text-xs">{badges.length} 🏆</Badge>
+          <Badge variant="secondary" className="text-xs">
+            {badges.length} 🏆
+          </Badge>
         </div>
       </CardContent>
     </Card>

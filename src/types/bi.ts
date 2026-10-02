@@ -33,7 +33,12 @@ export interface BIGestorData {
   revenueByMonth: { month: string; value: number }[];
   conversionByMonth: { month: string; rate: number }[];
   dealsBySource: { source: string; count: number; value: number }[];
-  abcClients: { classification: string; count: number; revenue: number; percentage: number }[];
+  abcClients: {
+    classification: string;
+    count: number;
+    revenue: number;
+    percentage: number;
+  }[];
   stagnantDeals: number;
   missedGoals: number;
   lowActivitySalespeople: number;
@@ -76,4 +81,3 @@ export interface BIVendedorData {
     riskSignalsTotal: number;
   };
 }
-

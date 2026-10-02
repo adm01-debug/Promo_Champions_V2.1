@@ -1,31 +1,35 @@
-import { useState } from "react";
-import { BookOpen, Lightbulb, ExternalLink } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useObjectionLibrary } from "@/hooks/conversational/useObjectionAnalysis";
-import { type ObjectionType, objectionTypeLabel, objectionTypeHsl } from "./objectionHelpers";
+import { useState } from 'react';
+import { BookOpen, Lightbulb, ExternalLink } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useObjectionLibrary } from '@/hooks/conversational/useObjectionAnalysis';
+import {
+  type ObjectionType,
+  objectionTypeLabel,
+  objectionTypeHsl,
+} from './objectionHelpers';
 
 interface Props {
   onSelect?: (recordingId: string) => void;
 }
 
-const TYPE_TABS: Array<{ value: ObjectionType | "all"; label: string }> = [
-  { value: "all", label: "Todas" },
-  { value: "price", label: "Preço" },
-  { value: "timing", label: "Timing" },
-  { value: "authority", label: "Autoridade" },
-  { value: "need", label: "Necessidade" },
-  { value: "competition", label: "Concorrência" },
-  { value: "trust", label: "Confiança" },
+const TYPE_TABS: Array<{ value: ObjectionType | 'all'; label: string }> = [
+  { value: 'all', label: 'Todas' },
+  { value: 'price', label: 'Preço' },
+  { value: 'timing', label: 'Timing' },
+  { value: 'authority', label: 'Autoridade' },
+  { value: 'need', label: 'Necessidade' },
+  { value: 'competition', label: 'Concorrência' },
+  { value: 'trust', label: 'Confiança' },
 ];
 
 export function ObjectionLibraryPanel({ onSelect }: Props) {
-  const [tab, setTab] = useState<ObjectionType | "all">("all");
+  const [tab, setTab] = useState<ObjectionType | 'all'>('all');
   const { data, isLoading } = useObjectionLibrary({
-    type: tab === "all" ? undefined : tab,
+    type: tab === 'all' ? undefined : tab,
     limit: 10,
   });
 
@@ -37,13 +41,14 @@ export function ObjectionLibraryPanel({ onSelect }: Props) {
           <CardTitle className="text-section-title">Biblioteca de objeções</CardTitle>
         </div>
         <p className="text-xs text-muted-foreground">
-          Padrões mais frequentes detectados nas calls — clique para ver a melhor resposta.
+          Padrões mais frequentes detectados nas calls — clique para ver a melhor
+          resposta.
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
-        <Tabs value={tab} onValueChange={(v) => setTab(v as ObjectionType | "all")}>
+        <Tabs value={tab} onValueChange={v => setTab(v as ObjectionType | 'all')}>
           <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-transparent p-0">
-            {TYPE_TABS.map((t) => (
+            {TYPE_TABS.map(t => (
               <TabsTrigger
                 key={t.value}
                 value={t.value}
@@ -67,7 +72,7 @@ export function ObjectionLibraryPanel({ onSelect }: Props) {
           </div>
         ) : (
           <div className="space-y-2">
-            {data.map((entry) => (
+            {data.map(entry => (
               <div
                 key={entry.id}
                 className="rounded-lg border bg-card/40 p-3 transition-colors hover:bg-card/70"
@@ -94,9 +99,11 @@ export function ObjectionLibraryPanel({ onSelect }: Props) {
                       <div className="flex gap-2 rounded-md bg-success/5 p-2 text-xs">
                         <Lightbulb
                           className="mt-0.5 h-3 w-3 shrink-0"
-                          style={{ color: "hsl(var(--success, var(--primary)))" }}
+                          style={{ color: 'hsl(var(--success, var(--primary)))' }}
                         />
-                        <p className="text-muted-foreground">{entry.best_response_text}</p>
+                        <p className="text-muted-foreground">
+                          {entry.best_response_text}
+                        </p>
                       </div>
                     ) : (
                       <p className="text-xs italic text-muted-foreground">

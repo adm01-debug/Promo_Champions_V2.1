@@ -1,23 +1,38 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Loader2, PlayCircle, Play, ClipboardCopy } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { toast } from "sonner";
-import { useIntegrationConnections, useTestConnection } from "@/hooks/admin/useIntegrationConnections";
-import { useCredentialsSource } from "./useCredentialsSource";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Progress } from '@/components/ui/progress';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  PlayCircle,
+  Play,
+  ClipboardCopy,
+} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
+import {
+  useIntegrationConnections,
+  useTestConnection,
+} from '@/hooks/admin/useIntegrationConnections';
+import { useCredentialsSource } from './useCredentialsSource';
 import {
   buildMarkdownReport,
   loadSnapshot,
   saveSnapshot,
   truncate,
   type SmokeItemResult,
-} from "./smokeTestHelpers";
+} from './smokeTestHelpers';
 
 export function SmokeTestChecklist() {
   const { data: conns = [] } = useIntegrationConnections();
@@ -26,7 +41,7 @@ export function SmokeTestChecklist() {
 
   const [results, setResults] = useState<Record<string, SmokeItemResult>>({});
   const [includeDisabled, setIncludeDisabled] = useState(false);
-  const [running, setRunning] = useState<"all" | string | null>(null);
+  const [running, setRunning] = useState<'all' | string | null>(null);
   const [hasRun, setHasRun] = useState(false);
 
   // Hidrata snapshot ao montar
@@ -40,8 +55,8 @@ export function SmokeTestChecklist() {
 
   const visible = useMemo(() => {
     return conns
-      .filter((c) => (includeDisabled ? true : c.enabled))
-      .filter((c) => (source === "all" ? true : c.source === source));
+      .filter(c => (includeDisabled ? true : c.enabled))
+      .filter(c => (source === 'all' ? true : c.source === source));
   }, [conns, includeDisabled, source]);
 
   const stats = useMemo(() => {
@@ -51,10 +66,10 @@ export function SmokeTestChecklist() {
     let ran = 0;
     for (const c of visible) {
       const r = results[c.id];
-      if (r?.status === "ok") {
+      if (r?.status === 'ok') {
         passed += 1;
         ran += 1;
-      } else if (r?.status === "fail") {
+      } else if (r?.status === 'fail') {
         failed += 1;
         ran += 1;
       }
@@ -63,7 +78,7 @@ export function SmokeTestChecklist() {
   }, [visible, results]);
 
   const updateResult = (id: string, patch: SmokeItemResult) => {
-    setResults((prev) => {
+    setResults(prev => {
       const next = { ...prev, [id]: patch };
       saveSnapshot(next);
       return next;
@@ -71,19 +86,19 @@ export function SmokeTestChecklist() {
   };
 
   const runOne = async (id: string) => {
-    setResults((prev) => ({ ...prev, [id]: { status: "running" } }));
+    setResults(prev => ({ ...prev, [id]: { status: 'running' } }));
     try {
       const res = await test.mutateAsync(id);
       updateResult(id, {
-        status: res?.ok ? "ok" : "fail",
+        status: res?.ok ? 'ok' : 'fail',
         latency_ms: res?.latency_ms,
         error: res?.error ?? undefined,
         ran_at: new Date().toISOString(),
       });
     } catch (e) {
       updateResult(id, {
-        status: "fail",
-        error: e instanceof Error ? e.message : "Erro desconhecido",
+        status: 'fail',
+        error: e instanceof Error ? e.message : 'Erro desconhecido',
         ran_at: new Date().toISOString(),
       });
     }
@@ -92,7 +107,7 @@ export function SmokeTestChecklist() {
 
   const runAll = async () => {
     if (visible.length === 0) return;
-    setRunning("all");
+    setRunning('all');
     for (const c of visible) {
       setRunning(c.id);
       await runOne(c.id);
@@ -108,17 +123,19 @@ export function SmokeTestChecklist() {
 
   const copyReport = async () => {
     const md = buildMarkdownReport(
-      visible.map((c) => ({ id: c.id, label: c.label, result: results[c.id] })),
+      visible.map(c => ({ id: c.id, label: c.label, result: results[c.id] }))
     );
     try {
       await navigator.clipboard.writeText(md);
-      toast.success("Relatório copiado");
+      toast.success('Relatório copiado');
     } catch {
-      toast.error("Não foi possível copiar");
+      toast.error('Não foi possível copiar');
     }
   };
 
-  const isRunningAll = running === "all" || (running !== null && running !== null && visible.some((c) => c.id === running));
+  const isRunningAll =
+    running === 'all' ||
+    (running !== null && running !== null && visible.some(c => c.id === running));
   const progressValue = stats.total > 0 ? Math.round((stats.ran / stats.total) * 100) : 0;
 
   return (
@@ -129,11 +146,17 @@ export function SmokeTestChecklist() {
             <CardTitle className="text-section-title">Smoke test</CardTitle>
             {hasRun && (
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-success/10 text-success border-success/30">
+                <Badge
+                  variant="outline"
+                  className="bg-success/10 text-success border-success/30"
+                >
                   {stats.passed}/{stats.total} passaram
                 </Badge>
                 {stats.failed > 0 && (
-                  <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">
+                  <Badge
+                    variant="outline"
+                    className="bg-destructive/10 text-destructive border-destructive/30"
+                  >
                     {stats.failed} falharam
                   </Badge>
                 )}
@@ -173,55 +196,55 @@ export function SmokeTestChecklist() {
         {visible.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             {conns.length === 0
-              ? "Cadastre conexões para rodar o smoke test."
-              : "Nenhuma conexão para os filtros atuais."}
+              ? 'Cadastre conexões para rodar o smoke test.'
+              : 'Nenhuma conexão para os filtros atuais.'}
           </p>
         ) : (
           <TooltipProvider delayDuration={200}>
             <ul className="space-y-2">
-              {visible.map((c) => {
+              {visible.map(c => {
                 const r = results[c.id];
-                const status = r?.status ?? "idle";
+                const status = r?.status ?? 'idle';
                 const isDisabled = !c.enabled;
                 const statusLabel =
-                  status === "running"
-                    ? "Em execução"
-                    : status === "ok"
-                      ? "Sucesso"
-                      : status === "fail"
-                        ? "Falha"
-                        : "Não executado";
+                  status === 'running'
+                    ? 'Em execução'
+                    : status === 'ok'
+                      ? 'Sucesso'
+                      : status === 'fail'
+                        ? 'Falha'
+                        : 'Não executado';
                 return (
                   <li
                     key={c.id}
                     className={`flex items-center justify-between gap-3 border border-border/40 rounded-lg px-3 py-2 ${
-                      isDisabled ? "opacity-60" : ""
+                      isDisabled ? 'opacity-60' : ''
                     }`}
                     aria-label={`${c.label} — ${statusLabel}`}
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {status === "running" && (
+                      {status === 'running' && (
                         <Loader2
                           className="h-4 w-4 animate-spin text-primary shrink-0"
                           aria-label="Em execução"
                           role="img"
                         />
                       )}
-                      {status === "ok" && (
+                      {status === 'ok' && (
                         <CheckCircle2
                           className="h-4 w-4 text-success shrink-0"
                           aria-label="Sucesso"
                           role="img"
                         />
                       )}
-                      {status === "fail" && (
+                      {status === 'fail' && (
                         <XCircle
                           className="h-4 w-4 text-destructive shrink-0"
                           aria-label="Falha"
                           role="img"
                         />
                       )}
-                      {status === "idle" && (
+                      {status === 'idle' && (
                         <div
                           className="h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0 ml-1"
                           aria-label="Não executado"
@@ -229,7 +252,9 @@ export function SmokeTestChecklist() {
                         />
                       )}
                       <span className="text-sm font-medium truncate">{c.label}</span>
-                      <span className="text-xs text-muted-foreground uppercase shrink-0">{c.kind}</span>
+                      <span className="text-xs text-muted-foreground uppercase shrink-0">
+                        {c.kind}
+                      </span>
                       {isDisabled && (
                         <Badge
                           variant="outline"
@@ -239,7 +264,7 @@ export function SmokeTestChecklist() {
                           Desativada
                         </Badge>
                       )}
-                      {status === "fail" && r?.error && (
+                      {status === 'fail' && r?.error && (
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span
@@ -251,7 +276,9 @@ export function SmokeTestChecklist() {
                             </span>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-md">
-                            <p className="text-xs whitespace-pre-wrap break-words">{r.error}</p>
+                            <p className="text-xs whitespace-pre-wrap break-words">
+                              {r.error}
+                            </p>
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -267,7 +294,10 @@ export function SmokeTestChecklist() {
                       )}
                       {r?.ran_at && (
                         <span className="text-xs text-muted-foreground hidden md:inline">
-                          {formatDistanceToNow(new Date(r.ran_at), { addSuffix: true, locale: ptBR })}
+                          {formatDistanceToNow(new Date(r.ran_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
                         </span>
                       )}
                       <Button

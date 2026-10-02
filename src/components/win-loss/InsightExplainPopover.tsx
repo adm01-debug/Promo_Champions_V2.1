@@ -1,7 +1,7 @@
-import { Sparkles, Loader2 } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { useInsightExplanation } from "@/hooks/win-loss/useInsightExplanation";
+import { Sparkles, Loader2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { useInsightExplanation } from '@/hooks/win-loss/useInsightExplanation';
 
 interface Props {
   insightId: string;
@@ -12,14 +12,16 @@ interface Props {
 /** Renders a small markdown-lite block (bold + line breaks). */
 const renderLite = (text: string): JSX.Element => (
   <div className="space-y-1.5">
-    {text.split("\n").map((line, i) => {
+    {text.split('\n').map((line, i) => {
       const parts = line.split(/(\*\*[^*]+\*\*)/g);
       return (
         <p key={i} className="text-xs leading-relaxed">
           {parts.map((p, j) =>
-            p.startsWith("**") && p.endsWith("**")
-              ? <strong key={j}>{p.slice(2, -2)}</strong>
-              : <span key={j}>{p}</span>,
+            p.startsWith('**') && p.endsWith('**') ? (
+              <strong key={j}>{p.slice(2, -2)}</strong>
+            ) : (
+              <span key={j}>{p}</span>
+            )
           )}
         </p>
       );

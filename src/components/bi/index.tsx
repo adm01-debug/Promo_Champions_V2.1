@@ -1,18 +1,18 @@
-import * as React from "react";
+import * as React from 'react';
 
-export { BIFilterBar } from "./BIFilterBar";
-export { BIMetricCard } from "./BIMetricCard";
-export { BIProjectionCard } from "./BIProjectionCard";
-export { BIClientList } from "./BIClientList";
-export { BICloserCharts } from "./BICloserCharts";
-export { BICloserHeader } from "./BICloserHeader";
-export { BISDRCharts } from "./BISDRCharts";
-export { BIVendedorCharts } from "./BIVendedorCharts";
-export { BISalesInsights } from "./BISalesInsights";
-export { BIProductCard } from "./BIProductCard";
-export { BITopClientsSection } from "./BITopClientsSection";
-export { BIVendasMacro } from "./BIVendasMacro";
-export { BIGestorTeamSection } from "./BIGestorTeamSection";
+export { BIFilterBar } from './BIFilterBar';
+export { BIMetricCard } from './BIMetricCard';
+export { BIProjectionCard } from './BIProjectionCard';
+export { BIClientList } from './BIClientList';
+export { BICloserCharts } from './BICloserCharts';
+export { BICloserHeader } from './BICloserHeader';
+export { BISDRCharts } from './BISDRCharts';
+export { BIVendedorCharts } from './BIVendedorCharts';
+export { BISalesInsights } from './BISalesInsights';
+export { BIProductCard } from './BIProductCard';
+export { BITopClientsSection } from './BITopClientsSection';
+export { BIVendasMacro } from './BIVendasMacro';
+export { BIGestorTeamSection } from './BIGestorTeamSection';
 
 // Stub components for legacy imports — accept extra unknown props without leaking `any`
 interface BIStubProps extends Record<string, unknown> {
@@ -22,7 +22,9 @@ interface BIStubProps extends Record<string, unknown> {
 }
 
 export const BIMetricsGrid: React.FC<BIStubProps> = ({ children, className }) => (
-  <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-4 ${className ?? ""}`}>{children}</div>
+  <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-4 ${className ?? ''}`}>
+    {children}
+  </div>
 );
 
 export const BIComparisonCard: React.FC<BIStubProps> = ({ title, children }) => (

@@ -5,7 +5,6 @@ import { CarHelmetTooltip } from './CarHelmetTooltip';
 import type { LiveryPattern } from './raceColors';
 import { CarExhaust } from './CarExhaust';
 
-
 interface RaceCarProps {
   /** Número do piloto. Quando ausente/null, nenhum numeral é renderizado no chassi. */
   number?: number | null;
@@ -47,34 +46,40 @@ interface RaceCarProps {
  * Sombra projetada destacada, carroceria com brilho, rodas com aros,
  * cockpit/spoiler conforme estilo. Aponta para a direita →.
  */
-const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner({
-  number,
-  primaryColor,
-  secondaryColor,
-  style,
-  scale = 1.15,
-  showTrail = false,
-  pattern = null,
-  overtakeFlash = false,
-  tireWear = 1,
-  drsActive = false,
-  rank,
-  pitStop = false,
-  fastestSector = false,
-  aeroTurbulence = false,
-  livery = 'solid',
-  liveryAccent,
-  liveryUid,
-  teamColor = null,
-  pilotName,
-}, ref) {
+const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner(
+  {
+    number,
+    primaryColor,
+    secondaryColor,
+    style,
+    scale = 1.15,
+    showTrail = false,
+    pattern = null,
+    overtakeFlash = false,
+    tireWear = 1,
+    drsActive = false,
+    rank,
+    pitStop = false,
+    fastestSector = false,
+    aeroTurbulence = false,
+    livery = 'solid',
+    liveryAccent,
+    liveryUid,
+    teamColor = null,
+    pilotName,
+  },
+  ref
+) {
   const [helmetVisible, setHelmetVisible] = useState(false);
   const hoverTimerRef = useRef<number | null>(null);
   const tooltipId = `helmet-tip-${number ?? 'anon'}`;
 
-  useEffect(() => () => {
-    if (hoverTimerRef.current != null) window.clearTimeout(hoverTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (hoverTimerRef.current != null) window.clearTimeout(hoverTimerRef.current);
+    },
+    []
+  );
 
   const onEnter = () => {
     if (!pilotName || rank === undefined) return;
@@ -87,7 +92,13 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
   };
 
   const patternFillId =
-    pattern === 'stripes' ? 'cbStripes' : pattern === 'dots' ? 'cbDots' : pattern === 'checker' ? 'cbChecker' : null;
+    pattern === 'stripes'
+      ? 'cbStripes'
+      : pattern === 'dots'
+        ? 'cbDots'
+        : pattern === 'checker'
+          ? 'cbChecker'
+          : null;
 
   const isF1 = style === 'f1';
   const isKart = style === 'kart';
@@ -122,7 +133,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       {showTrail && (
         <>
           {/* Skid marks (rastro de pneu) — 2 linhas paralelas que esmaecem */}
-          {[-wheelOffsetY, wheelOffsetY].map((wy) => (
+          {[-wheelOffsetY, wheelOffsetY].map(wy => (
             <motion.rect
               key={`skid-${wy}`}
               x={-bodyW / 2 - 60}
@@ -157,7 +168,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
             animate={{ opacity: [0, 0.95, 0], scaleX: [0.3, 1.5, 2] }}
             transition={{ duration: 0.6, repeat: 3 }}
           />
-          {[0, 1, 2, 3].map((i) => (
+          {[0, 1, 2, 3].map(i => (
             <motion.circle
               key={i}
               cx={-bodyW / 2 - 4}
@@ -170,11 +181,16 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
                 x: [-2, -22 - i * 3, -36 - i * 4],
                 y: [(i - 1.5) * 3, (i - 1.5) * 5, (i - 1.5) * 7],
               }}
-              transition={{ duration: 0.5 + i * 0.05, repeat: 3, delay: i * 0.04, ease: 'easeOut' }}
+              transition={{
+                duration: 0.5 + i * 0.05,
+                repeat: 3,
+                delay: i * 0.04,
+                ease: 'easeOut',
+              }}
             />
           ))}
           {/* Mario-Kart turbo particles (cor do carro) */}
-          {[0, 1, 2, 3, 4].map((i) => {
+          {[0, 1, 2, 3, 4].map(i => {
             const angle = (i - 2) * 0.35;
             return (
               <motion.circle
@@ -189,7 +205,12 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
                   cx: [-bodyW / 2 - 2, -bodyW / 2 - 26 - i * 6, -bodyW / 2 - 50 - i * 8],
                   cy: [0, Math.sin(angle) * 10, Math.sin(angle) * 18],
                 }}
-                transition={{ duration: 0.6, repeat: 3, delay: i * 0.05, ease: 'easeOut' }}
+                transition={{
+                  duration: 0.6,
+                  repeat: 3,
+                  delay: i * 0.05,
+                  ease: 'easeOut',
+                }}
               />
             );
           })}
@@ -245,7 +266,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
             style={{ filter: 'blur(6px)' }}
           />
           {/* Faíscas douradas atrás (rastro de brilho) */}
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2].map(i => (
             <motion.circle
               key={`spark-${i}`}
               cy={(i - 1) * 3}
@@ -279,8 +300,20 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
         filter="url(#carShadowBlur)"
       />
       {/* Sombra projetada (offset baixo, blur visual via dupla elipse) */}
-      <ellipse cx={3} cy={bodyH / 2 + 6} rx={bodyW / 2 + 1} ry={3.5} fill="rgba(0,0,0,0.18)" />
-      <ellipse cx={3} cy={bodyH / 2 + 5} rx={bodyW / 2 - 2} ry={2.5} fill="rgba(0,0,0,0.28)" />
+      <ellipse
+        cx={3}
+        cy={bodyH / 2 + 6}
+        rx={bodyW / 2 + 1}
+        ry={3.5}
+        fill="rgba(0,0,0,0.18)"
+      />
+      <ellipse
+        cx={3}
+        cy={bodyH / 2 + 5}
+        rx={bodyW / 2 - 2}
+        ry={2.5}
+        fill="rgba(0,0,0,0.28)"
+      />
 
       {/* ===== Rodas traseiras (renderizadas antes do corpo) ===== */}
       <g>
@@ -315,7 +348,14 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
             stroke="#1f2937"
             strokeWidth={0.9}
           />
-          <rect x={-bodyW / 2 - 3} y={-1} width={5} height={2} fill="#0f172a" opacity={0.5} />
+          <rect
+            x={-bodyW / 2 - 3}
+            y={-1}
+            width={5}
+            height={2}
+            fill="#0f172a"
+            opacity={0.5}
+          />
         </>
       )}
 
@@ -342,8 +382,22 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       />
 
       {/* duas linhas finas de detalhe */}
-      <rect x={-bodyW / 2 + 5} y={-bodyH / 2 + 3} width={bodyW - 10} height={0.8} fill={secondaryColor} opacity={0.5} />
-      <rect x={-bodyW / 2 + 5} y={bodyH / 2 - 3.8} width={bodyW - 10} height={0.8} fill={secondaryColor} opacity={0.5} />
+      <rect
+        x={-bodyW / 2 + 5}
+        y={-bodyH / 2 + 3}
+        width={bodyW - 10}
+        height={0.8}
+        fill={secondaryColor}
+        opacity={0.5}
+      />
+      <rect
+        x={-bodyW / 2 + 5}
+        y={bodyH / 2 - 3.8}
+        width={bodyW - 10}
+        height={0.8}
+        fill={secondaryColor}
+        opacity={0.5}
+      />
 
       {/* faixa lateral da escuderia (sutil, abaixo da livery) */}
       {teamColor && (
@@ -454,25 +508,69 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
             stroke="#1f2937"
             strokeWidth={0.9}
           />
-          <rect x={bodyW / 2 - 1} y={-1} width={4} height={2} fill="#0f172a" opacity={0.5} />
+          <rect
+            x={bodyW / 2 - 1}
+            y={-1}
+            width={4}
+            height={2}
+            fill="#0f172a"
+            opacity={0.5}
+          />
         </>
       )}
 
       {/* faróis dianteiros */}
       {!isKart && (
         <>
-          <ellipse cx={bodyW / 2 - 2} cy={-bodyH / 2 + 4} rx={1.5} ry={1.2} fill="#fef9c3" opacity={0.95} />
-          <ellipse cx={bodyW / 2 - 2} cy={bodyH / 2 - 4} rx={1.5} ry={1.2} fill="#fef9c3" opacity={0.95} />
+          <ellipse
+            cx={bodyW / 2 - 2}
+            cy={-bodyH / 2 + 4}
+            rx={1.5}
+            ry={1.2}
+            fill="#fef9c3"
+            opacity={0.95}
+          />
+          <ellipse
+            cx={bodyW / 2 - 2}
+            cy={bodyH / 2 - 4}
+            rx={1.5}
+            ry={1.2}
+            fill="#fef9c3"
+            opacity={0.95}
+          />
         </>
       )}
       {/* luzes traseiras */}
-      <rect x={-bodyW / 2 + 0.5} y={-bodyH / 2 + 3} width={1.6} height={2.5} rx={0.5} fill="#dc2626" opacity={0.9} />
-      <rect x={-bodyW / 2 + 0.5} y={bodyH / 2 - 5.5} width={1.6} height={2.5} rx={0.5} fill="#dc2626" opacity={0.9} />
+      <rect
+        x={-bodyW / 2 + 0.5}
+        y={-bodyH / 2 + 3}
+        width={1.6}
+        height={2.5}
+        rx={0.5}
+        fill="#dc2626"
+        opacity={0.9}
+      />
+      <rect
+        x={-bodyW / 2 + 0.5}
+        y={bodyH / 2 - 5.5}
+        width={1.6}
+        height={2.5}
+        rx={0.5}
+        fill="#dc2626"
+        opacity={0.9}
+      />
 
       {/* ===== Número do piloto (renderizado apenas quando explicitamente passado > 0) ===== */}
       {number != null && number > 0 && (
         <>
-          <circle cx={-bodyW / 2 + 14} cy={0} r={5.5} fill={secondaryColor} stroke="#0f172a" strokeWidth={0.8} />
+          <circle
+            cx={-bodyW / 2 + 14}
+            cy={0}
+            r={5.5}
+            fill={secondaryColor}
+            stroke="#0f172a"
+            strokeWidth={0.8}
+          />
           <text
             x={-bodyW / 2 + 14}
             y={0}
@@ -537,10 +635,21 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
         const w = Math.max(0, Math.min(1, tireWear));
         const barW = bodyW * 0.7;
         const fillW = barW * w;
-        const color = w > 0.66 ? 'hsl(142 70% 45%)' : w > 0.33 ? 'hsl(45 95% 55%)' : 'hsl(0 80% 55%)';
+        const color =
+          w > 0.66 ? 'hsl(142 70% 45%)' : w > 0.33 ? 'hsl(45 95% 55%)' : 'hsl(0 80% 55%)';
         return (
-          <g transform={`translate(${-barW / 2} ${bodyH / 2 + 8.5})`} pointerEvents="none">
-            <rect x={-0.5} y={-0.5} width={barW + 1} height={2.4} rx={1.2} fill="hsl(0 0% 0% / 0.45)" />
+          <g
+            transform={`translate(${-barW / 2} ${bodyH / 2 + 8.5})`}
+            pointerEvents="none"
+          >
+            <rect
+              x={-0.5}
+              y={-0.5}
+              width={barW + 1}
+              height={2.4}
+              rx={1.2}
+              fill="hsl(0 0% 0% / 0.45)"
+            />
             <rect x={0} y={0} width={fillW} height={1.8} rx={0.9} fill={color} />
           </g>
         );
@@ -553,8 +662,24 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <rect x={-9} y={-4.5} width={18} height={8} rx={2} fill="hsl(142 76% 38%)" stroke="hsl(0 0% 100%)" strokeWidth={0.6} />
-            <text y={2} textAnchor="middle" fontSize={6} fontWeight={900} fill="hsl(0 0% 100%)" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}>
+            <rect
+              x={-9}
+              y={-4.5}
+              width={18}
+              height={8}
+              rx={2}
+              fill="hsl(142 76% 38%)"
+              stroke="hsl(0 0% 100%)"
+              strokeWidth={0.6}
+            />
+            <text
+              y={2}
+              textAnchor="middle"
+              fontSize={6}
+              fontWeight={900}
+              fill="hsl(0 0% 100%)"
+              style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.06em' }}
+            >
               DRS
             </text>
           </motion.g>
@@ -562,76 +687,100 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       )}
 
       {/* ===== Rank badge — destacado e centralizado acima do carro ===== */}
-      {rank !== undefined && rank > 0 && (() => {
-        const isPodium = rank <= 3;
-        const isLeader = rank === 1;
-        const medalColor =
-          rank === 1 ? 'hsl(45 95% 55%)' :
-          rank === 2 ? 'hsl(0 0% 80%)' :
-          rank === 3 ? 'hsl(28 78% 52%)' :
-          'hsl(0 0% 15%)';
-        const ringColor =
-          rank === 1 ? 'hsl(45 95% 55%)' :
-          rank === 2 ? 'hsl(0 0% 80%)' :
-          rank === 3 ? 'hsl(28 78% 52%)' :
-          'hsl(0 0% 100% / 0.6)';
-        const fg = isPodium ? 'hsl(20 30% 14%)' : 'hsl(0 0% 100%)';
-        return (
-          <motion.g
-            transform={`translate(0 ${-bodyH / 2 - 16})`}
-            key={`rank-${rank}`}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={
-              isLeader
-                ? { scale: [1, 1.08, 1], opacity: 1 }
-                : { scale: [0.8, 1.45, 0.92, 1], opacity: 1 }
-            }
-            transition={
-              isLeader
-                ? { scale: { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }, opacity: { duration: 0.3 } }
-                : { duration: 0.6, ease: 'easeOut' }
-            }
-            pointerEvents="none"
-            style={isPodium ? { filter: `drop-shadow(0 0 4px ${medalColor})` } : undefined}
-          >
-            <circle r={13} fill="hsl(0 0% 0% / 0.6)" />
-            <circle r={11} fill={medalColor} stroke="hsl(0 0% 100%)" strokeWidth={2.2} />
-            {isPodium && (
-              <circle r={12.4} fill="none" stroke={ringColor} strokeWidth={1} opacity={0.85} />
-            )}
-            <text
-              y={3.8}
-              textAnchor="middle"
-              fontSize={11}
-              fontWeight={900}
-              fill={fg}
-              style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '-0.03em' }}
+      {rank !== undefined &&
+        rank > 0 &&
+        (() => {
+          const isPodium = rank <= 3;
+          const isLeader = rank === 1;
+          const medalColor =
+            rank === 1
+              ? 'hsl(45 95% 55%)'
+              : rank === 2
+                ? 'hsl(0 0% 80%)'
+                : rank === 3
+                  ? 'hsl(28 78% 52%)'
+                  : 'hsl(0 0% 15%)';
+          const ringColor =
+            rank === 1
+              ? 'hsl(45 95% 55%)'
+              : rank === 2
+                ? 'hsl(0 0% 80%)'
+                : rank === 3
+                  ? 'hsl(28 78% 52%)'
+                  : 'hsl(0 0% 100% / 0.6)';
+          const fg = isPodium ? 'hsl(20 30% 14%)' : 'hsl(0 0% 100%)';
+          return (
+            <motion.g
+              transform={`translate(0 ${-bodyH / 2 - 16})`}
+              key={`rank-${rank}`}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={
+                isLeader
+                  ? { scale: [1, 1.08, 1], opacity: 1 }
+                  : { scale: [0.8, 1.45, 0.92, 1], opacity: 1 }
+              }
+              transition={
+                isLeader
+                  ? {
+                      scale: { duration: 1.6, repeat: Infinity, ease: 'easeInOut' },
+                      opacity: { duration: 0.3 },
+                    }
+                  : { duration: 0.6, ease: 'easeOut' }
+              }
+              pointerEvents="none"
+              style={
+                isPodium ? { filter: `drop-shadow(0 0 4px ${medalColor})` } : undefined
+              }
             >
-              P{rank}
-            </text>
-            {isLeader && (
-              <motion.g
-                transform="translate(0 -20)"
-                animate={{ y: [0, -2, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ filter: 'drop-shadow(0 0 3px hsl(45 95% 55%))' }}
-              >
-                {/* Coroa dourada simples */}
-                <path
-                  d="M -6 2 L -6 -2 L -3 0 L 0 -4 L 3 0 L 6 -2 L 6 2 Z"
-                  fill="hsl(45 95% 55%)"
-                  stroke="hsl(20 30% 14%)"
-                  strokeWidth={0.6}
-                  strokeLinejoin="round"
+              <circle r={13} fill="hsl(0 0% 0% / 0.6)" />
+              <circle
+                r={11}
+                fill={medalColor}
+                stroke="hsl(0 0% 100%)"
+                strokeWidth={2.2}
+              />
+              {isPodium && (
+                <circle
+                  r={12.4}
+                  fill="none"
+                  stroke={ringColor}
+                  strokeWidth={1}
+                  opacity={0.85}
                 />
-                <circle cx={-6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
-                <circle cx={0} cy={-4} r={1} fill="hsl(48 100% 75%)" />
-                <circle cx={6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
-              </motion.g>
-            )}
-          </motion.g>
-        );
-      })()}
+              )}
+              <text
+                y={3.8}
+                textAnchor="middle"
+                fontSize={11}
+                fontWeight={900}
+                fill={fg}
+                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '-0.03em' }}
+              >
+                P{rank}
+              </text>
+              {isLeader && (
+                <motion.g
+                  transform="translate(0 -20)"
+                  animate={{ y: [0, -2, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  style={{ filter: 'drop-shadow(0 0 3px hsl(45 95% 55%))' }}
+                >
+                  {/* Coroa dourada simples */}
+                  <path
+                    d="M -6 2 L -6 -2 L -3 0 L 0 -4 L 3 0 L 6 -2 L 6 2 Z"
+                    fill="hsl(45 95% 55%)"
+                    stroke="hsl(20 30% 14%)"
+                    strokeWidth={0.6}
+                    strokeLinejoin="round"
+                  />
+                  <circle cx={-6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
+                  <circle cx={0} cy={-4} r={1} fill="hsl(48 100% 75%)" />
+                  <circle cx={6} cy={-2} r={0.9} fill="hsl(48 100% 70%)" />
+                </motion.g>
+              )}
+            </motion.g>
+          );
+        })()}
 
       {/* ===== Pit stop overlay (pneus piscando + glow amarelo) ===== */}
       {pitStop && (
@@ -667,8 +816,24 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
             />
           ))}
           <g transform={`translate(0 ${-bodyH / 2 - 16})`}>
-            <rect x={-12} y={-5} width={24} height={9} rx={2} fill="hsl(45 95% 55%)" stroke="hsl(0 0% 10%)" strokeWidth={0.6} />
-            <text y={2} textAnchor="middle" fontSize={6.5} fontWeight={900} fill="hsl(20 30% 18%)" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.08em' }}>
+            <rect
+              x={-12}
+              y={-5}
+              width={24}
+              height={9}
+              rx={2}
+              fill="hsl(45 95% 55%)"
+              stroke="hsl(0 0% 10%)"
+              strokeWidth={0.6}
+            />
+            <text
+              y={2}
+              textAnchor="middle"
+              fontSize={6.5}
+              fontWeight={900}
+              fill="hsl(20 30% 18%)"
+              style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.08em' }}
+            >
               PIT
             </text>
           </g>
@@ -678,7 +843,7 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
       {/* ===== Aero turbulence (rajadas de vento na traseira em alta velocidade) ===== */}
       {aeroTurbulence && (
         <g pointerEvents="none">
-          {[0, 1, 2].map((i) => {
+          {[0, 1, 2].map(i => {
             const yOff = (i - 1) * 4.5;
             return (
               <motion.line
@@ -718,11 +883,24 @@ const RaceCarInner = forwardRef<SVGGElement, RaceCarProps>(function RaceCarInner
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           pointerEvents="none"
         >
-          <rect x={-18} y={-6} width={36} height={11} rx={2.5}
-            fill="hsl(271 91% 55%)" stroke="hsl(0 0% 100%)" strokeWidth={0.8} />
-          <text y={2.2} textAnchor="middle" fontSize={6.5} fontWeight={900}
+          <rect
+            x={-18}
+            y={-6}
+            width={36}
+            height={11}
+            rx={2.5}
+            fill="hsl(271 91% 55%)"
+            stroke="hsl(0 0% 100%)"
+            strokeWidth={0.8}
+          />
+          <text
+            y={2.2}
+            textAnchor="middle"
+            fontSize={6.5}
+            fontWeight={900}
             fill="hsl(0 0% 100%)"
-            style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.12em' }}>
+            style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.12em' }}
+          >
             FASTEST
           </text>
         </motion.g>

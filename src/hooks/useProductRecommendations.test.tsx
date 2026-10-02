@@ -24,8 +24,9 @@ vi.mock('@/integrations/supabase/client', () => {
         inCalls.push({ column, values });
         return thenable;
       },
-      then: (resolve: (v: { data: unknown[]; error: { message: string } | null }) => unknown) =>
-        Promise.resolve({ data: thenable.data, error: thenable.error }).then(resolve),
+      then: (
+        resolve: (v: { data: unknown[]; error: { message: string } | null }) => unknown
+      ) => Promise.resolve({ data: thenable.data, error: thenable.error }).then(resolve),
     };
     return thenable;
   };
@@ -71,12 +72,14 @@ describe('useProductRecommendations — regressão Onda J/K', () => {
   });
 
   it('particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn', async () => {
-    const { result } = renderHook(() => useProductRecommendations('target-product'), { wrapper });
+    const { result } = renderHook(() => useProductRecommendations('target-product'), {
+      wrapper,
+    });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     // 1º call é `.in('product_id', ...)` opcional? Não — o 1º sales.select usa .eq/.not, sem .in.
     // Todos os `.in()` observados devem ser cross-sell chunks em `client_id`.
-    const clientChunks = inCalls.filter((c) => c.column === 'client_id');
+    const clientChunks = inCalls.filter(c => c.column === 'client_id');
     expect(clientChunks).toHaveLength(3);
     expect(clientChunks[0].values).toHaveLength(100);
     expect(clientChunks[1].values).toHaveLength(100);
@@ -84,15 +87,17 @@ describe('useProductRecommendations — regressão Onda J/K', () => {
   });
 
   it('agrega counts ignorando product_id null e tolera product_name/amount nulos', async () => {
-    const { result } = renderHook(() => useProductRecommendations('target-product'), { wrapper });
+    const { result } = renderHook(() => useProductRecommendations('target-product'), {
+      wrapper,
+    });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     const recs = result.current.data ?? [];
     // 2 produtos válidos (prod-a e prod-b). null id foi ignorado.
-    expect(recs.map((r) => r.id).sort()).toEqual(['prod-a', 'prod-b']);
-    const b = recs.find((r) => r.id === 'prod-b');
-    expect(b?.name).toBe('');       // null_safe → ''
-    expect(b?.price).toBe(0);       // null_safe → 0
+    expect(recs.map(r => r.id).sort()).toEqual(['prod-a', 'prod-b']);
+    const b = recs.find(r => r.id === 'prod-b');
+    expect(b?.name).toBe(''); // null_safe → ''
+    expect(b?.price).toBe(0); // null_safe → 0
     // Confidence é count/clientIds.length. Cada produto aparece 1× por chunk × 3 chunks = 3.
     expect(recs[0].confidence).toBeGreaterThan(0);
   });

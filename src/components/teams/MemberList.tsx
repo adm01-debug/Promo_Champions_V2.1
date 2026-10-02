@@ -1,16 +1,10 @@
-import React from "react";
+import React from 'react';
 import { FC, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
-import { 
-  UserPlus, 
-  Search,
-  Mail,
-  Phone,
-  MoreHorizontal 
-} from 'lucide-react';
+import { UserPlus, Search, Mail, Phone, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -54,16 +48,20 @@ export const MemberList: FC<MemberListProps> = ({
 }) => {
   const [search, setSearch] = useState('');
 
-  const filteredMembers = members.filter(m =>
-    m.name.toLowerCase().includes(search.toLowerCase()) ||
-    m.email.toLowerCase().includes(search.toLowerCase())
+  const filteredMembers = members.filter(
+    m =>
+      m.name.toLowerCase().includes(search.toLowerCase()) ||
+      m.email.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className={cn('space-y-4', className)}>
       {showSearch && (
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <Input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -91,9 +89,7 @@ export const MemberList: FC<MemberListProps> = ({
                 <Badge variant={roleLabels[member.role].variant}>
                   {roleLabels[member.role].label}
                 </Badge>
-                {!member.isActive && (
-                  <Badge variant="destructive">Inativo</Badge>
-                )}
+                {!member.isActive && <Badge variant="destructive">Inativo</Badge>}
               </div>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
@@ -111,9 +107,10 @@ export const MemberList: FC<MemberListProps> = ({
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" aria-label="Mais opções" 
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Mais opções"
                   className="h-8 w-8"
                   onClick={e => e.stopPropagation()}
                 >
@@ -124,7 +121,7 @@ export const MemberList: FC<MemberListProps> = ({
                 <DropdownMenuItem onClick={() => onEditMember?.(member)}>
                   Editar
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => onRemoveMember?.(member)}
                   className="text-destructive"
                 >
