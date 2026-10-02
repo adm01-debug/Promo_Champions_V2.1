@@ -43,7 +43,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     );
 
     // Fetch stage history for velocity analysis
-    const stageHistory = await chunkedIn<StageHistoryEntry>(
+    const stageHistory = await chunkedIn<StageHistoryEntry & { sale_id: string }>(
       dealIds,
       (chunk) =>
         supabase
