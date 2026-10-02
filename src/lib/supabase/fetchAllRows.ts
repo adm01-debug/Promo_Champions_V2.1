@@ -21,13 +21,13 @@ interface QueryError {
 interface RangeableQuery {
   range(
     from: number,
-    to: number,
+    to: number
   ): PromiseLike<{ data: unknown; error: QueryError | null }>;
 }
 
 export async function fetchAllRows<Row>(
   makeQuery: () => RangeableQuery,
-  { pageSize = 1000, maxRows = 10_000 }: FetchAllRowsOptions = {},
+  { pageSize = 1000, maxRows = 10_000 }: FetchAllRowsOptions = {}
 ): Promise<Row[]> {
   const rows: Row[] = [];
 

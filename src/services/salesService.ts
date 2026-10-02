@@ -4,7 +4,11 @@ import { ptBR } from 'date-fns/locale';
 import { Sale, CreateSaleInput } from '@/types/sales';
 import { SALE_STATUS_LABELS } from '@/constants';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
-import { summarizeMarkup, type MarkupSummary, type MarkupTier } from '@/lib/markupHelpers';
+import {
+  summarizeMarkup,
+  type MarkupSummary,
+  type MarkupTier,
+} from '@/lib/markupHelpers';
 
 /** Colunas da view `sales_with_markup` usadas pelo card de venda (sem `*`). */
 const SALES_LIST_COLUMNS = `
@@ -56,7 +60,10 @@ export interface SalesPage {
   total: number;
 }
 
-export type SalesListFilters = Pick<SalesPageQuery, 'searchTerm' | 'status' | 'markupTier'>;
+export type SalesListFilters = Pick<
+  SalesPageQuery,
+  'searchTerm' | 'status' | 'markupTier'
+>;
 
 const buildSalesListQuery = (select: string, filters: SalesListFilters) => {
   let query = supabase.from('sales_with_markup').select(select, { count: 'exact' });
@@ -91,10 +98,7 @@ const buildSalesListQuery = (select: string, filters: SalesListFilters) => {
   return query;
 };
 
-const SALES_SORT_COLUMNS: Record<
-  SalesSortKey,
-  { column: string; ascending: boolean }
-> = {
+const SALES_SORT_COLUMNS: Record<SalesSortKey, { column: string; ascending: boolean }> = {
   date_desc: { column: 'created_at', ascending: false },
   date_asc: { column: 'created_at', ascending: true },
   value_desc: { column: 'amount', ascending: false },
@@ -207,7 +211,10 @@ export const salesService = {
 
     if (error) throw error;
     // eslint-disable-next-line no-restricted-syntax
-    return { rows: ((data || []) as unknown as SaleRow[]).map(mapSaleRow), total: count ?? 0 };
+    return {
+      rows: ((data || []) as unknown as SaleRow[]).map(mapSaleRow),
+      total: count ?? 0,
+    };
   },
 
   /**
@@ -217,7 +224,7 @@ export const salesService = {
    */
   async getSalesMarkupSummary(filters: SalesListFilters): Promise<MarkupSummary> {
     const rows = await fetchAllRows<{ markup_pct: number | null }>(() =>
-      buildSalesListQuery('markup_pct', filters).order('id', { ascending: true }),
+      buildSalesListQuery('markup_pct', filters).order('id', { ascending: true })
     );
     return summarizeMarkup(rows.map(r => r.markup_pct));
   },

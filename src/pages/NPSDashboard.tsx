@@ -239,9 +239,7 @@ export default function NPSDashboard() {
               itemHeight={64}
               className="rounded-none border-0 bg-transparent"
               renderItem={survey => (
-                <div
-                  className="h-16 p-3 flex items-center justify-between hover:bg-muted/30 transition-colors border-b border-border/30"
-                >
+                <div className="h-16 p-3 flex items-center justify-between hover:bg-muted/30 transition-colors border-b border-border/30">
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={cn(

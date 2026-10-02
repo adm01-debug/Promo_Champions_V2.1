@@ -6,21 +6,17 @@ const CLIENT_LIST_COLUMNS =
   'id, name, email, phone, company, total_value, lead_source, lat, lng, created_at, updated_at';
 
 export type ClientSortKey =
-  | 'name_asc'
-  | 'name_desc'
-  | 'value_desc'
-  | 'value_asc'
-  | 'date_desc'
-  | 'date_asc';
+  'name_asc' | 'name_desc' | 'value_desc' | 'value_asc' | 'date_desc' | 'date_asc';
 
-const CLIENT_SORT_COLUMNS: Record<ClientSortKey, { column: string; ascending: boolean }> = {
-  name_asc: { column: 'name', ascending: true },
-  name_desc: { column: 'name', ascending: false },
-  value_desc: { column: 'total_value', ascending: false },
-  value_asc: { column: 'total_value', ascending: true },
-  date_desc: { column: 'created_at', ascending: false },
-  date_asc: { column: 'created_at', ascending: true },
-};
+const CLIENT_SORT_COLUMNS: Record<ClientSortKey, { column: string; ascending: boolean }> =
+  {
+    name_asc: { column: 'name', ascending: true },
+    name_desc: { column: 'name', ascending: false },
+    value_desc: { column: 'total_value', ascending: false },
+    value_asc: { column: 'total_value', ascending: true },
+    date_desc: { column: 'created_at', ascending: false },
+    date_asc: { column: 'created_at', ascending: true },
+  };
 
 export interface ClientsPageQuery {
   search?: string;
@@ -48,14 +44,12 @@ export const clientService = {
     page = 1,
     pageSize = 12,
   }: ClientsPageQuery = {}): Promise<ClientsPage> {
-    let query = supabase
-      .from('clients')
-      .select(CLIENT_LIST_COLUMNS, { count: 'exact' });
+    let query = supabase.from('clients').select(CLIENT_LIST_COLUMNS, { count: 'exact' });
 
     const term = search.trim().replace(/[,()*]/g, ' ');
     if (term) {
       query = query.or(
-        `name.ilike.%${term}%,company.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`,
+        `name.ilike.%${term}%,company.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
       );
     }
 
@@ -83,9 +77,7 @@ export const clientService = {
       .limit(10);
     if (error) throw error;
     const rows = (data || []) as Client[];
-    return (
-      rows.find(c => c.name.trim().toLowerCase() === term.toLowerCase()) ?? null
-    );
+    return rows.find(c => c.name.trim().toLowerCase() === term.toLowerCase()) ?? null;
   },
 
   async createClient(input: Partial<Client> & Record<string, unknown>) {
