@@ -1,6 +1,10 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from "../_shared/request-id.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 
 
@@ -9,19 +13,14 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-    const userClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claims, error: authError } = await userClient.auth.getClaims(token);
-    if (authError || !claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      throw error;
     }
 
     const { powerup_id } = await req.json();
@@ -29,13 +28,14 @@ Deno.serve(withRequestId("collect-race-powerup", async (req, _ctx) => {
       return new Response(JSON.stringify({ error: 'Missing powerup_id' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const admin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    // Bypass de RLS necessário: grava race_events/race_badges que o usuário
+    // não escreve diretamente; posse do power-up é validada abaixo.
+    const admin = getServiceClient(
+      "grava race_events e race_badges apos validar posse do power-up",
     );
 
     // resolve salesperson do usuário
-    const { data: sp } = await admin.from('salespeople').select('id').eq('auth_user_id', claims.claims.sub).maybeSingle();
+    const { data: sp } = await admin.from('salespeople').select('id').eq('auth_user_id', caller.userId).maybeSingle();
     if (!sp) return new Response(JSON.stringify({ error: 'Salesperson not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     // busca powerup

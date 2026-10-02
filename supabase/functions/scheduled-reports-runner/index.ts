@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -103,6 +104,32 @@ Deno.serve(withRequestId("scheduled-reports-runner", async (req, _ctx) => {
 
   try {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+
+    // Autorização: apenas chamada interna (service_role ou X-Cron-Secret do pg_cron).
+    try {
+      const authorized = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await admin
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+      if (!authorized) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      console.error("scheduled-reports-runner authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json().catch(() => ({}));
     const forceId: string | undefined = body.schedule_id;
 

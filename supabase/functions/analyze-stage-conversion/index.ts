@@ -3,6 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -121,6 +122,34 @@ Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
+    // Autorização: exige usuário autenticado com papel admin/manager (recomputa métricas globais).
+    try {
+      const caller = await getUserClient(req);
+      const { data: allowed, error: roleError } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleError) throw roleError;
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('analyze-stage-conversion authorization failed:', error);
+      return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
     const days = Math.min(365, Math.max(7, Number(body.days) || 90));
     const ownerId: string | null = body.owner_id ?? null;

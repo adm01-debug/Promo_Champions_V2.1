@@ -1,6 +1,6 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { computeAtRiskDeals, type LossPattern, type OpenDeal } from "./scoring.ts";
 
 const EXCLUDED_STATUSES = ["won", "lost", "completed"];
@@ -24,6 +24,11 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
   const startedAt = Date.now();
 
   try {
+    // Read-only sobre win_loss_patterns e sales (RLS: SELECT liberado a
+    // autenticados): o client do usuário já basta — nenhum dado além do que o
+    // chamador pode ler diretamente é exposto.
+    const caller = await getUserClient(req);
+
     let body: RequestBody = {};
     if (req.method === "POST") {
       try {
@@ -40,10 +45,7 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
       ? body.limit
       : 20;
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    const supabase = caller.client;
 
     const [{ data: patternsRaw, error: pErr }, { data: salesRaw, error: sErr }] = await Promise.all([
       supabase
@@ -89,6 +91,11 @@ Deno.serve(withRequestId("detect-winloss-at-risk", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('detect-winloss-at-risk error:', e);
     const message = e instanceof Error ? e.message : "unknown";
     log("error", { message, duration_ms: Date.now() - startedAt });

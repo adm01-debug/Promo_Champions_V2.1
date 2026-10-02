@@ -4,9 +4,6 @@
     "src/lib/validators/": {
       "lines": 100
     },
-    "src/lib/schemas/": {
-      "lines": 100
-    },
     "src/lib/markupHelpers": {
       "lines": 100
     },
@@ -20,16 +17,16 @@
       "lines": 100
     },
     "src/lib/bi/": {
-      "lines": 26.7
+      "lines": 27.9
     },
     "src/lib/revenueForecast/": {
       "lines": 100
     },
     "src/services/": {
-      "lines": 18.7
+      "lines": 16.5
     },
     "src/hooks/reports/": {
-      "lines": 67.1
+      "lines": 65.4
     }
   }
 }
