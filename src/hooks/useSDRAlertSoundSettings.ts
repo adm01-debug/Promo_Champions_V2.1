@@ -45,40 +45,46 @@ export function useSDRAlertSoundSettings() {
     localStorage.setItem(VOLUME_STORAGE_KEY, volume.toString());
   }, [volume]);
 
-  const playSound = useCallback((soundType: SDRAlertSoundType = selectedSound) => {
-    if (soundType === 'none' || volume === 0) return;
+  const playSound = useCallback(
+    (soundType: SDRAlertSoundType = selectedSound) => {
+      if (soundType === 'none' || volume === 0) return;
 
-    switch (soundType) {
-      case 'warning':
-        playOscillator(523, 0, 0.15, 0.35 * volume, 'triangle');
-        playOscillator(659, 0.15, 0.15, 0.35 * volume, 'triangle');
-        playOscillator(523, 0.35, 0.15, 0.3 * volume, 'triangle');
-        playOscillator(659, 0.5, 0.2, 0.3 * volume, 'triangle');
-        break;
-      
-      case 'notification':
-        playOscillator(440, 0, 0.12, 0.25 * volume, 'sine');
-        playOscillator(554, 0.12, 0.12, 0.25 * volume, 'sine');
-        playOscillator(659, 0.24, 0.18, 0.3 * volume, 'sine');
-        break;
-      
-      case 'gentle':
-        playOscillator(587, 0, 0.4, 0.25 * volume, 'sine');
-        playOscillator(880, 0.15, 0.3, 0.15 * volume, 'sine');
-        break;
-      
-      case 'chime':
-        playOscillator(784, 0, 0.25, 0.3 * volume, 'sine');
-        playOscillator(988, 0.1, 0.25, 0.25 * volume, 'sine');
-        playOscillator(1175, 0.2, 0.35, 0.2 * volume, 'sine');
-        playOscillator(784, 0.4, 0.15, 0.15 * volume, 'sine');
-        break;
-    }
-  }, [playOscillator, selectedSound, volume]);
+      switch (soundType) {
+        case 'warning':
+          playOscillator(523, 0, 0.15, 0.35 * volume, 'triangle');
+          playOscillator(659, 0.15, 0.15, 0.35 * volume, 'triangle');
+          playOscillator(523, 0.35, 0.15, 0.3 * volume, 'triangle');
+          playOscillator(659, 0.5, 0.2, 0.3 * volume, 'triangle');
+          break;
 
-  const previewSound = useCallback((soundType: SDRAlertSoundType) => {
-    playSound(soundType);
-  }, [playSound]);
+        case 'notification':
+          playOscillator(440, 0, 0.12, 0.25 * volume, 'sine');
+          playOscillator(554, 0.12, 0.12, 0.25 * volume, 'sine');
+          playOscillator(659, 0.24, 0.18, 0.3 * volume, 'sine');
+          break;
+
+        case 'gentle':
+          playOscillator(587, 0, 0.4, 0.25 * volume, 'sine');
+          playOscillator(880, 0.15, 0.3, 0.15 * volume, 'sine');
+          break;
+
+        case 'chime':
+          playOscillator(784, 0, 0.25, 0.3 * volume, 'sine');
+          playOscillator(988, 0.1, 0.25, 0.25 * volume, 'sine');
+          playOscillator(1175, 0.2, 0.35, 0.2 * volume, 'sine');
+          playOscillator(784, 0.4, 0.15, 0.15 * volume, 'sine');
+          break;
+      }
+    },
+    [playOscillator, selectedSound, volume]
+  );
+
+  const previewSound = useCallback(
+    (soundType: SDRAlertSoundType) => {
+      playSound(soundType);
+    },
+    [playSound]
+  );
 
   return {
     selectedSound,

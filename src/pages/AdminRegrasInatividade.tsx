@@ -52,7 +52,7 @@ const AdminRegrasInatividade = () => {
   React.useEffect(() => {
     if (rules) {
       const map: Record<string, RuleRow> = {};
-      rules.forEach((r) => (map[r.id] = { ...r }));
+      rules.forEach(r => (map[r.id] = { ...r }));
       setDraft(map);
     }
   }, [rules]);
@@ -86,14 +86,19 @@ const AdminRegrasInatividade = () => {
   const resetStage = (row: RuleRow) => {
     const def = DEFAULTS[row.stage];
     if (!def) return;
-    setDraft((d) => ({
+    setDraft(d => ({
       ...d,
-      [row.id]: { ...row, mild_days: def[0], moderate_days: def[1], critical_days: def[2] },
+      [row.id]: {
+        ...row,
+        mild_days: def[0],
+        moderate_days: def[1],
+        critical_days: def[2],
+      },
     }));
   };
 
   const update = (id: string, patch: Partial<RuleRow>) =>
-    setDraft((d) => ({ ...d, [id]: { ...d[id], ...patch } }));
+    setDraft(d => ({ ...d, [id]: { ...d[id], ...patch } }));
 
   const rows = Object.values(draft);
 
@@ -113,10 +118,18 @@ const AdminRegrasInatividade = () => {
               <Timer className="h-6 w-6 text-primary" /> Regras de Inatividade
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Defina, por estágio do pipeline, quantos dias sem atividade caracterizam alerta{' '}
-              <Badge variant="outline" className="mx-1">leve</Badge>
-              <Badge variant="outline" className="mx-1">moderado</Badge>
-              <Badge variant="outline" className="mx-1">crítico</Badge>.
+              Defina, por estágio do pipeline, quantos dias sem atividade caracterizam
+              alerta{' '}
+              <Badge variant="outline" className="mx-1">
+                leve
+              </Badge>
+              <Badge variant="outline" className="mx-1">
+                moderado
+              </Badge>
+              <Badge variant="outline" className="mx-1">
+                crítico
+              </Badge>
+              .
             </p>
           </motion.div>
 
@@ -128,21 +141,28 @@ const AdminRegrasInatividade = () => {
             </div>
           ) : (
             <motion.div variants={itemVariants} className="space-y-3">
-              {rows.map((row) => (
+              {rows.map(row => (
                 <Card key={row.id} className="p-4 md:p-5 glass border-border/40">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <span className="font-display font-semibold text-base">{row.label}</span>
-                      <Badge variant="outline" className="text-[10px]">{row.stage}</Badge>
+                      <span className="font-display font-semibold text-base">
+                        {row.label}
+                      </span>
+                      <Badge variant="outline" className="text-[10px]">
+                        {row.stage}
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label htmlFor={`enabled-${row.id}`} className="text-xs text-muted-foreground">
+                      <Label
+                        htmlFor={`enabled-${row.id}`}
+                        className="text-xs text-muted-foreground"
+                      >
                         Ativa
                       </Label>
                       <Switch
                         id={`enabled-${row.id}`}
                         checked={row.enabled}
-                        onCheckedChange={(v) => update(row.id, { enabled: v })}
+                        onCheckedChange={v => update(row.id, { enabled: v })}
                       />
                     </div>
                   </div>
@@ -153,8 +173,10 @@ const AdminRegrasInatividade = () => {
                         type="number"
                         min={1}
                         value={row.mild_days}
-                        onChange={(e) =>
-                          update(row.id, { mild_days: parseInt(e.target.value || '0', 10) })
+                        onChange={e =>
+                          update(row.id, {
+                            mild_days: parseInt(e.target.value || '0', 10),
+                          })
                         }
                       />
                     </div>
@@ -164,8 +186,10 @@ const AdminRegrasInatividade = () => {
                         type="number"
                         min={1}
                         value={row.moderate_days}
-                        onChange={(e) =>
-                          update(row.id, { moderate_days: parseInt(e.target.value || '0', 10) })
+                        onChange={e =>
+                          update(row.id, {
+                            moderate_days: parseInt(e.target.value || '0', 10),
+                          })
                         }
                       />
                     </div>
@@ -175,8 +199,10 @@ const AdminRegrasInatividade = () => {
                         type="number"
                         min={1}
                         value={row.critical_days}
-                        onChange={(e) =>
-                          update(row.id, { critical_days: parseInt(e.target.value || '0', 10) })
+                        onChange={e =>
+                          update(row.id, {
+                            critical_days: parseInt(e.target.value || '0', 10),
+                          })
                         }
                       />
                     </div>

@@ -77,7 +77,9 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
               )}
               {isPositive ? '+' : ''}
               {change}%{' '}
-              <span className="text-muted-foreground/60 font-normal ml-0.5">vs anterior</span>
+              <span className="text-muted-foreground/60 font-normal ml-0.5">
+                vs anterior
+              </span>
             </div>
           </div>
         </div>

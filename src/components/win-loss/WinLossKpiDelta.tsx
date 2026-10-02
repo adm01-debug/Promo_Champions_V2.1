@@ -1,5 +1,5 @@
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Props {
   value: number; // % delta with sign
@@ -10,7 +10,10 @@ interface Props {
 export function WinLossKpiDelta({ value, invert = false, label }: Props) {
   if (!isFinite(value) || Math.abs(value) < 0.5) {
     return (
-      <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground" title={label}>
+      <span
+        className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground"
+        title={label}
+      >
         <Minus className="h-2.5 w-2.5" /> 0%
       </span>
     );
@@ -20,8 +23,8 @@ export function WinLossKpiDelta({ value, invert = false, label }: Props) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-0.5 text-[10px] font-medium tabular-nums",
-        positive ? "text-emerald-600" : "text-rose-600",
+        'inline-flex items-center gap-0.5 text-[10px] font-medium tabular-nums',
+        positive ? 'text-emerald-600' : 'text-rose-600'
       )}
       title={label ?? `Variação: ${value.toFixed(1)}%`}
       aria-label={label ?? `Variação ${value.toFixed(1)}%`}

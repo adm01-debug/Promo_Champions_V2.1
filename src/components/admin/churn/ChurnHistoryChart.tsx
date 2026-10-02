@@ -45,7 +45,12 @@ interface Row {
   created_at: string;
 }
 
-export const ChurnHistoryChart: React.FC<Props> = ({ from, to, level, salespersonId }) => {
+export const ChurnHistoryChart: React.FC<Props> = ({
+  from,
+  to,
+  level,
+  salespersonId,
+}) => {
   const { data, isLoading } = useQuery({
     queryKey: ['churn-history-chart', { from, to, level, salespersonId }],
     queryFn: async (): Promise<Row[]> => {
@@ -68,17 +73,19 @@ export const ChurnHistoryChart: React.FC<Props> = ({ from, to, level, salesperso
   const chartData = React.useMemo(() => {
     if (!data) return [];
     const days = eachDayOfInterval({ start: parseISO(from), end: parseISO(to) });
-    const buckets = new Map<string, { low: number; medium: number; high: number; critical: number }>();
-    days.forEach((d) =>
-      buckets.set(format(d, 'yyyy-MM-dd'), { low: 0, medium: 0, high: 0, critical: 0 }),
+    const buckets = new Map<
+      string,
+      { low: number; medium: number; high: number; critical: number }
+    >();
+    days.forEach(d =>
+      buckets.set(format(d, 'yyyy-MM-dd'), { low: 0, medium: 0, high: 0, critical: 0 })
     );
-    data.forEach((r) => {
+    data.forEach(r => {
       const key = format(new Date(r.created_at), 'yyyy-MM-dd');
       const b = buckets.get(key);
       if (!b) return;
       const lvl = ((r.metadata ?? {}) as Record<string, unknown>).level as
-        | Exclude<Level, 'all'>
-        | undefined;
+        Exclude<Level, 'all'> | undefined;
       if (lvl && lvl in b) b[lvl] += 1;
     });
     return Array.from(buckets.entries()).map(([date, v]) => ({
@@ -90,7 +97,7 @@ export const ChurnHistoryChart: React.FC<Props> = ({ from, to, level, salesperso
 
   const total = chartData.reduce(
     (acc, d) => acc + d.low + d.medium + d.high + d.critical,
-    0,
+    0
   );
 
   return (
@@ -115,8 +122,15 @@ export const ChurnHistoryChart: React.FC<Props> = ({ from, to, level, salesperso
       ) : (
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
+            <BarChart
+              data={chartData}
+              margin={{ top: 4, right: 8, bottom: 0, left: -16 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="hsl(var(--border))"
+                opacity={0.4}
+              />
               <XAxis
                 dataKey="label"
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
@@ -133,10 +147,10 @@ export const ChurnHistoryChart: React.FC<Props> = ({ from, to, level, salesperso
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                labelFormatter={(l) => `Dia ${l}`}
+                labelFormatter={l => `Dia ${l}`}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              {(['low', 'medium', 'high', 'critical'] as const).map((k) => (
+              {(['low', 'medium', 'high', 'critical'] as const).map(k => (
                 <Bar
                   key={k}
                   dataKey={k}

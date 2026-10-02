@@ -1,21 +1,40 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, ChevronUp, ChevronDown, Minus, Crown, Medal, Award, Zap } from "lucide-react";
-import { useFuturisticRanking, type RankingRow } from "@/hooks/gamification/useFuturisticRanking";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { useMemo } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Trophy,
+  ChevronUp,
+  ChevronDown,
+  Minus,
+  Crown,
+  Medal,
+  Award,
+  Zap,
+} from 'lucide-react';
+import {
+  useFuturisticRanking,
+  type RankingRow,
+} from '@/hooks/gamification/useFuturisticRanking';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import { useMemo } from 'react';
 
 const fmtBRL = (v: number) =>
-  `R$ ${v.toLocaleString("pt-BR", {
+  `R$ ${v.toLocaleString('pt-BR', {
     maximumFractionDigits: 0,
-    notation: v >= 100000 ? "compact" : "standard",
+    notation: v >= 100000 ? 'compact' : 'standard',
   })}`;
 
 const positionAccent = (pos: number) => {
-  if (pos === 1) return { color: "text-warning", glow: "hsl(var(--warning) / 0.4)", icon: Crown };
-  if (pos === 2) return { color: "text-muted-foreground", glow: "hsl(var(--muted-foreground) / 0.3)", icon: Medal };
-  if (pos === 3) return { color: "text-accent", glow: "hsl(var(--accent) / 0.4)", icon: Award };
-  return { color: "text-primary", glow: "hsl(var(--primary) / 0.25)", icon: Trophy };
+  if (pos === 1)
+    return { color: 'text-warning', glow: 'hsl(var(--warning) / 0.4)', icon: Crown };
+  if (pos === 2)
+    return {
+      color: 'text-muted-foreground',
+      glow: 'hsl(var(--muted-foreground) / 0.3)',
+      icon: Medal,
+    };
+  if (pos === 3)
+    return { color: 'text-accent', glow: 'hsl(var(--accent) / 0.4)', icon: Award };
+  return { color: 'text-primary', glow: 'hsl(var(--primary) / 0.25)', icon: Trophy };
 };
 
 const DeltaBadge = ({ delta }: { delta: number | null }) => {
@@ -30,8 +49,7 @@ const DeltaBadge = ({ delta }: { delta: number | null }) => {
   if (delta === 0) {
     return (
       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-muted/40 text-muted-foreground border border-border/40">
-        <Minus className="h-2.5 w-2.5" />
-        0
+        <Minus className="h-2.5 w-2.5" />0
       </span>
     );
   }
@@ -39,19 +57,31 @@ const DeltaBadge = ({ delta }: { delta: number | null }) => {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border",
+        'inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border',
         up
-          ? "bg-success/10 text-success border-success/30"
-          : "bg-destructive/10 text-destructive border-destructive/30",
+          ? 'bg-success/10 text-success border-success/30'
+          : 'bg-destructive/10 text-destructive border-destructive/30'
       )}
     >
-      {up ? <ChevronUp className="h-2.5 w-2.5" /> : <ChevronDown className="h-2.5 w-2.5" />}
+      {up ? (
+        <ChevronUp className="h-2.5 w-2.5" />
+      ) : (
+        <ChevronDown className="h-2.5 w-2.5" />
+      )}
       {Math.abs(delta)}
     </span>
   );
 };
 
-const RankingRowCard = ({ row, maxRevenue, index }: { row: RankingRow; maxRevenue: number; index: number }) => {
+const RankingRowCard = ({
+  row,
+  maxRevenue,
+  index,
+}: {
+  row: RankingRow;
+  maxRevenue: number;
+  index: number;
+}) => {
   const accent = positionAccent(row.position);
   const Icon = accent.icon;
   const pct = maxRevenue > 0 ? (row.revenue / maxRevenue) * 100 : 0;
@@ -68,26 +98,28 @@ const RankingRowCard = ({ row, maxRevenue, index }: { row: RankingRow; maxRevenu
       {isTop3 && (
         <div
           className="absolute inset-0 rounded-xl opacity-30 blur-xl pointer-events-none transition-opacity group-hover:opacity-60"
-          style={{ background: `radial-gradient(circle at 0% 50%, ${accent.glow}, transparent 60%)` }}
+          style={{
+            background: `radial-gradient(circle at 0% 50%, ${accent.glow}, transparent 60%)`,
+          }}
         />
       )}
       <div
         className={cn(
-          "relative flex items-center gap-3 p-3 rounded-xl border bg-gradient-to-r from-card/95 to-card/70 backdrop-blur-xl transition-all hover:border-primary/40",
-          isTop3 ? "border-border/60" : "border-border/40",
+          'relative flex items-center gap-3 p-3 rounded-xl border bg-gradient-to-r from-card/95 to-card/70 backdrop-blur-xl transition-all hover:border-primary/40',
+          isTop3 ? 'border-border/60' : 'border-border/40'
         )}
       >
         {/* Position number */}
         <div className="relative flex flex-col items-center justify-center w-10 shrink-0">
           <div
             className={cn(
-              "font-mono font-black text-2xl tabular-nums leading-none",
-              accent.color,
+              'font-mono font-black text-2xl tabular-nums leading-none',
+              accent.color
             )}
           >
-            {String(row.position).padStart(2, "0")}
+            {String(row.position).padStart(2, '0')}
           </div>
-          {isTop3 && <Icon className={cn("h-3 w-3 mt-0.5", accent.color)} />}
+          {isTop3 && <Icon className={cn('h-3 w-3 mt-0.5', accent.color)} />}
         </div>
 
         {/* Avatar */}
@@ -109,34 +141,44 @@ const RankingRowCard = ({ row, maxRevenue, index }: { row: RankingRow; maxRevenu
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
-              transition={{ duration: 1, delay: 0.2 + index * 0.04, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                duration: 1,
+                delay: 0.2 + index * 0.04,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               className={cn(
-                "absolute inset-y-0 left-0 rounded-full",
+                'absolute inset-y-0 left-0 rounded-full',
                 row.position === 1
-                  ? "bg-gradient-to-r from-warning via-warning to-warning/70"
+                  ? 'bg-gradient-to-r from-warning via-warning to-warning/70'
                   : row.position === 2
-                  ? "bg-gradient-to-r from-muted-foreground/60 to-muted-foreground"
-                  : row.position === 3
-                  ? "bg-gradient-to-r from-accent to-accent/70"
-                  : "bg-gradient-to-r from-primary/60 to-primary",
+                    ? 'bg-gradient-to-r from-muted-foreground/60 to-muted-foreground'
+                    : row.position === 3
+                      ? 'bg-gradient-to-r from-accent to-accent/70'
+                      : 'bg-gradient-to-r from-primary/60 to-primary'
               )}
             />
           </div>
           <div className="flex items-center justify-between mt-1.5 gap-2">
             <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
-              {row.deals} {row.deals === 1 ? "venda" : "vendas"}
+              {row.deals} {row.deals === 1 ? 'venda' : 'vendas'}
             </span>
             <div className="flex items-center gap-1.5">
               <span
                 className={cn(
-                  "text-[10px] font-mono font-bold",
-                  row.revenueChangePct >= 0 ? "text-success" : "text-destructive",
+                  'text-[10px] font-mono font-bold',
+                  row.revenueChangePct >= 0 ? 'text-success' : 'text-destructive'
                 )}
               >
-                {row.revenueChangePct >= 0 ? "+" : ""}
+                {row.revenueChangePct >= 0 ? '+' : ''}
                 {row.revenueChangePct.toFixed(1)}%
               </span>
-              <span className={cn("font-display font-black text-4xl tabular-nums", accent.color)} style={{ textShadow: `0 0 45px ${accent.glow}` }}>
+              <span
+                className={cn(
+                  'font-display font-black text-4xl tabular-nums',
+                  accent.color
+                )}
+                style={{ textShadow: `0 0 45px ${accent.glow}` }}
+              >
                 {fmtBRL(row.revenue)}
               </span>
             </div>
@@ -150,7 +192,7 @@ const RankingRowCard = ({ row, maxRevenue, index }: { row: RankingRow; maxRevenu
 export const FuturisticRanking = () => {
   const { data: rows = [], isLoading } = useFuturisticRanking();
 
-  const maxRevenue = useMemo(() => Math.max(...rows.map((r) => r.revenue), 1), [rows]);
+  const maxRevenue = useMemo(() => Math.max(...rows.map(r => r.revenue), 1), [rows]);
 
   return (
     <motion.section
@@ -190,7 +232,7 @@ export const FuturisticRanking = () => {
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{
             backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-            backgroundSize: "24px 24px",
+            backgroundSize: '24px 24px',
           }}
         />
         {isLoading ? (
@@ -202,13 +244,20 @@ export const FuturisticRanking = () => {
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <Trophy className="h-10 w-10 text-muted-foreground/40 mb-2" />
-            <p className="text-sm text-muted-foreground">Nenhum vendedor ranqueado ainda este mês.</p>
+            <p className="text-sm text-muted-foreground">
+              Nenhum vendedor ranqueado ainda este mês.
+            </p>
           </div>
         ) : (
           <div className="relative space-y-2 max-h-[520px] overflow-y-auto pr-1">
             <AnimatePresence>
               {rows.map((row, i) => (
-                <RankingRowCard key={row.id} row={row} maxRevenue={maxRevenue} index={i} />
+                <RankingRowCard
+                  key={row.id}
+                  row={row}
+                  maxRevenue={maxRevenue}
+                  index={i}
+                />
               ))}
             </AnimatePresence>
           </div>

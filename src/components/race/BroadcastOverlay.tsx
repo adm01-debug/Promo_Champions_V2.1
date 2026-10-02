@@ -38,11 +38,14 @@ export function BroadcastOverlay({ events, flag = 'green' }: Props) {
 
   useEffect(() => {
     if (events.length <= 1) return;
-    const id = window.setInterval(() => setIdx((i) => (i + 1) % events.length), 12_000);
+    const id = window.setInterval(() => setIdx(i => (i + 1) % events.length), 12_000);
     return () => window.clearInterval(id);
   }, [events.length]);
 
-  const current = useMemo(() => events[idx % Math.max(1, events.length)] ?? null, [events, idx]);
+  const current = useMemo(
+    () => events[idx % Math.max(1, events.length)] ?? null,
+    [events, idx]
+  );
   if (!current) return null;
   const badge = KIND_BADGE[current.kind];
 
@@ -66,7 +69,9 @@ export function BroadcastOverlay({ events, flag = 'green' }: Props) {
             className="flex items-center justify-center px-2"
             style={{ background: badge.bg, minWidth: 48 }}
           >
-            <span className="text-base" aria-hidden>{FLAG_ICON[flag]}</span>
+            <span className="text-base" aria-hidden>
+              {FLAG_ICON[flag]}
+            </span>
           </div>
           {/* Badge tipo */}
           <div

@@ -164,9 +164,7 @@ export const QuickActionsMenu = React.memo(({ deal }: QuickActionsMenuProps) => 
               {
                 title: `${action.params.title} - ${deal.client_name}`,
                 priority: (action.params.priority || 'medium') as
-                  | 'high'
-                  | 'medium'
-                  | 'low',
+                  'high' | 'medium' | 'low',
                 task_type: (action.params.task_type || 'follow_up') as never,
                 sale_id: deal.id,
                 salesperson_id: deal.salesperson_id,

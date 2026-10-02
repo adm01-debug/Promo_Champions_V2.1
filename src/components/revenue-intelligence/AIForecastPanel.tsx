@@ -1,17 +1,19 @@
-import { FC, useState } from "react";
-import { RevenueForecastCard } from "./RevenueForecastCard";
-import { ForecastDealsTable } from "./ForecastDealsTable";
-import { BuyingCommitteeMap } from "./BuyingCommitteeMap";
-import { ForecastNarrative } from "./ForecastNarrative";
+import { FC, useState } from 'react';
+import { RevenueForecastCard } from './RevenueForecastCard';
+import { ForecastDealsTable } from './ForecastDealsTable';
+import { BuyingCommitteeMap } from './BuyingCommitteeMap';
+import { ForecastNarrative } from './ForecastNarrative';
 import {
   ForecastPeriodType,
   useRevenueForecast,
-} from "@/hooks/revenue-intelligence/useRevenueForecast";
-import { getCurrentPeriodStart } from "./forecastHelpers";
+} from '@/hooks/revenue-intelligence/useRevenueForecast';
+import { getCurrentPeriodStart } from './forecastHelpers';
 
 export const AIForecastPanel: FC = () => {
-  const [periodType, setPeriodType] = useState<ForecastPeriodType>("month");
-  const [periodStart, setPeriodStart] = useState<string>(() => getCurrentPeriodStart("month"));
+  const [periodType, setPeriodType] = useState<ForecastPeriodType>('month');
+  const [periodStart, setPeriodStart] = useState<string>(() =>
+    getCurrentPeriodStart('month')
+  );
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const { data } = useRevenueForecast(periodType, periodStart, null);
 
@@ -30,10 +32,7 @@ export const AIForecastPanel: FC = () => {
         ownerId={null}
       />
       <ForecastNarrative forecastId={data?.id} cachedNarrative={data?.ai_summary} />
-      <ForecastDealsTable 
-        forecastId={data?.id} 
-        onSelectSale={setSelectedSaleId}
-      />
+      <ForecastDealsTable forecastId={data?.id} onSelectSale={setSelectedSaleId} />
       {selectedSaleId && (
         <div className="mt-6">
           <BuyingCommitteeMap saleId={selectedSaleId} />

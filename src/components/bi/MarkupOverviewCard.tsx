@@ -54,12 +54,12 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
             <Download className="h-3.5 w-3.5 mr-1" />
             CSV
           </Button>
-          <Select value={String(days)} onValueChange={(v) => setDays(Number(v))}>
+          <Select value={String(days)} onValueChange={v => setDays(Number(v))}>
             <SelectTrigger className="h-8 w-[110px]" aria-label="Período do markup">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {PERIODS.map((p) => (
+              {PERIODS.map(p => (
                 <SelectItem key={p} value={String(p)}>
                   {p} dias
                 </SelectItem>
@@ -68,7 +68,6 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
           </Select>
         </div>
       </CardHeader>
-
 
       <CardContent className="space-y-4">
         {isLoading || !summary ? (
@@ -98,13 +97,22 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {(['excellent', 'healthy', 'critical', 'unknown'] as const).map((tier) => (
+              {(['excellent', 'healthy', 'critical', 'unknown'] as const).map(tier => (
                 <Badge
                   key={tier}
                   variant="outline"
-                  className={cn('gap-1', classifyMarkup(
-                    tier === 'excellent' ? 50 : tier === 'healthy' ? 30 : tier === 'critical' ? 5 : null,
-                  ).className)}
+                  className={cn(
+                    'gap-1',
+                    classifyMarkup(
+                      tier === 'excellent'
+                        ? 50
+                        : tier === 'healthy'
+                          ? 30
+                          : tier === 'critical'
+                            ? 5
+                            : null
+                    ).className
+                  )}
                 >
                   {MARKUP_TIER_LABELS[tier]}: {summary.counts[tier]}
                 </Badge>
@@ -112,11 +120,13 @@ export const MarkupOverviewCard = memo(({ className }: Props) => {
             </div>
 
             <div className="space-y-2">
-              <p className="text-label text-muted-foreground">Top vendedores por markup médio</p>
+              <p className="text-label text-muted-foreground">
+                Top vendedores por markup médio
+              </p>
               {topSellers.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Sem vendas atribuídas.</p>
               ) : (
-                topSellers.map((s) => (
+                topSellers.map(s => (
                   <div
                     key={s.salespersonId}
                     className="flex items-center justify-between gap-2 rounded-md border border-border/60 px-3 py-2"

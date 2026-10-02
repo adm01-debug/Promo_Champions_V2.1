@@ -35,9 +35,14 @@ export function useSalesStreaks() {
       const results: SalesStreak[] = (salespeople || []).map(sp => {
         const streak = streaks?.find(s => s.salesperson_id === sp.id);
         const currentStreak = streak?.current_streak || 0;
-        const multiplier = currentStreak >= 10 ? 3.0 :
-          currentStreak >= 5 ? 2.0 :
-          currentStreak >= 2 ? 1.5 : 1.0;
+        const multiplier =
+          currentStreak >= 10
+            ? 3.0
+            : currentStreak >= 5
+              ? 2.0
+              : currentStreak >= 2
+                ? 1.5
+                : 1.0;
 
         return {
           id: streak?.id || sp.id,

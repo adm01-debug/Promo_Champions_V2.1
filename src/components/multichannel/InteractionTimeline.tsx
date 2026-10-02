@@ -1,38 +1,46 @@
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChannelInteraction } from "@/hooks/useMultichannel";
-import { ArrowUpRight, ArrowDownLeft, MessageCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { format, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ChannelInteraction } from '@/hooks/useMultichannel';
+import { ArrowUpRight, ArrowDownLeft, MessageCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const STATUS_COLORS: Record<string, string> = {
-  sent: "bg-info/20 text-info border-info/30",
-  delivered: "bg-status-info/20 text-status-info border-status-info/30",
-  read: "bg-status-success/20 text-status-success border-status-success/30",
-  replied: "bg-primary/20 text-primary border-primary/30",
-  failed: "bg-status-error/20 text-status-error border-status-error/30",
-  scheduled: "bg-status-warning/20 text-status-warning border-status-warning/30",
+  sent: 'bg-info/20 text-info border-info/30',
+  delivered: 'bg-status-info/20 text-status-info border-status-info/30',
+  read: 'bg-status-success/20 text-status-success border-status-success/30',
+  replied: 'bg-primary/20 text-primary border-primary/30',
+  failed: 'bg-status-error/20 text-status-error border-status-error/30',
+  scheduled: 'bg-status-warning/20 text-status-warning border-status-warning/30',
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  sent: "Enviado",
-  delivered: "Entregue",
-  read: "Lido",
-  replied: "Respondido",
-  failed: "Falhou",
-  scheduled: "Agendado",
+  sent: 'Enviado',
+  delivered: 'Entregue',
+  read: 'Lido',
+  replied: 'Respondido',
+  failed: 'Falhou',
+  scheduled: 'Agendado',
 };
 
 interface Props {
   interactions: ChannelInteraction[];
   isLoading: boolean;
   searchTerm: string;
-  channelConfig: Record<string, { label: string; icon: typeof MessageCircle; color: string }>;
+  channelConfig: Record<
+    string,
+    { label: string; icon: typeof MessageCircle; color: string }
+  >;
 }
 
-export function InteractionTimeline({ interactions, isLoading, searchTerm, channelConfig }: Props) {
+export function InteractionTimeline({
+  interactions,
+  isLoading,
+  searchTerm,
+  channelConfig,
+}: Props) {
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -43,8 +51,8 @@ export function InteractionTimeline({ interactions, isLoading, searchTerm, chann
     );
   }
 
-  const filtered = interactions.filter(i =>
-    !searchTerm || i.contact_name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filtered = interactions.filter(
+    i => !searchTerm || i.contact_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (filtered.length === 0) {
@@ -71,30 +79,41 @@ export function InteractionTimeline({ interactions, isLoading, searchTerm, chann
           >
             <div className="flex items-start gap-3">
               {/* Channel Icon */}
-              <div className={cn("p-2 rounded-lg bg-muted/50 shrink-0")}>
-                <Icon className={cn("h-4 w-4", cfg?.color || "text-muted-foreground")} />
+              <div className={cn('p-2 rounded-lg bg-muted/50 shrink-0')}>
+                <Icon className={cn('h-4 w-4', cfg?.color || 'text-muted-foreground')} />
               </div>
 
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-semibold text-sm truncate">{interaction.contact_name}</span>
-                  {interaction.direction === "outbound" ? (
+                  <span className="font-semibold text-sm truncate">
+                    {interaction.contact_name}
+                  </span>
+                  {interaction.direction === 'outbound' ? (
                     <ArrowUpRight className="h-3 w-3 text-status-info shrink-0" />
                   ) : (
                     <ArrowDownLeft className="h-3 w-3 text-status-success shrink-0" />
                   )}
-                  <Badge variant="outline" className={cn("text-[10px] shrink-0", statusCls)}>
+                  <Badge
+                    variant="outline"
+                    className={cn('text-[10px] shrink-0', statusCls)}
+                  >
                     {STATUS_LABELS[interaction.status] || interaction.status}
                   </Badge>
                 </div>
                 {interaction.message_preview && (
-                  <p className="text-xs text-muted-foreground truncate">{interaction.message_preview}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {interaction.message_preview}
+                  </p>
                 )}
                 <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground">
                   <span>{cfg?.label}</span>
                   <span>•</span>
-                  <span>{format(parseISO(interaction.created_at), "dd MMM HH:mm", { locale: ptBR })}</span>
+                  <span>
+                    {format(parseISO(interaction.created_at), 'dd MMM HH:mm', {
+                      locale: ptBR,
+                    })}
+                  </span>
                   {interaction.contact_info && (
                     <>
                       <span>•</span>

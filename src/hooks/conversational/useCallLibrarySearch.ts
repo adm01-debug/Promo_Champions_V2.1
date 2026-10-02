@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 export interface CallLibraryResult {
   id: string;
@@ -16,10 +16,10 @@ export interface CallLibraryResult {
 export function useSearchCallLibrary(query: string, limit = 20) {
   const debounced = useDebouncedValue(query, 350);
   return useQuery({
-    queryKey: ["call-library-search", debounced, limit],
+    queryKey: ['call-library-search', debounced, limit],
     queryFn: async (): Promise<CallLibraryResult[]> => {
       if (!debounced.trim()) return [];
-      const { data, error } = await supabase.rpc("search_call_library", {
+      const { data, error } = await supabase.rpc('search_call_library', {
         _query: debounced,
         _limit: limit,
       });

@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import type { EngagementTier } from "@/components/engagement/EmailScore/engagementScoreHelpers";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import type { EngagementTier } from '@/components/engagement/EmailScore/engagementScoreHelpers';
 
 export interface EmailEngagementScore {
   id: string;
@@ -41,13 +41,13 @@ export interface EngagementLeaderboardEntry {
 
 export function useEmailEngagementScore(saleId?: string) {
   return useQuery({
-    queryKey: ["email-engagement-score", saleId],
+    queryKey: ['email-engagement-score', saleId],
     queryFn: async () => {
       if (!saleId) return null;
       const { data, error } = await supabase
-        .from("email_engagement_scores")
-        .select("*")
-        .eq("sale_id", saleId)
+        .from('email_engagement_scores')
+        .select('*')
+        .eq('sale_id', saleId)
         .maybeSingle();
       if (error) throw error;
       return data as EmailEngagementScore | null;
@@ -59,16 +59,16 @@ export function useEmailEngagementScore(saleId?: string) {
 
 export function useEngagementScoreHistory(saleId?: string, days = 30) {
   return useQuery({
-    queryKey: ["email-engagement-history", saleId, days],
+    queryKey: ['email-engagement-history', saleId, days],
     queryFn: async () => {
       if (!saleId) return [];
       const since = new Date(Date.now() - days * 86400000).toISOString();
       const { data, error } = await supabase
-        .from("email_engagement_score_history")
-        .select("captured_at, score, tier")
-        .eq("sale_id", saleId)
-        .gte("captured_at", since)
-        .order("captured_at", { ascending: true });
+        .from('email_engagement_score_history')
+        .select('captured_at, score, tier')
+        .eq('sale_id', saleId)
+        .gte('captured_at', since)
+        .order('captured_at', { ascending: true });
       if (error) throw error;
       return (data ?? []) as EngagementHistoryPoint[];
     },
@@ -79,9 +79,11 @@ export function useEngagementScoreHistory(saleId?: string, days = 30) {
 
 export function useEmailEngagementLeaderboard(limit = 20) {
   return useQuery({
-    queryKey: ["email-engagement-leaderboard", limit],
+    queryKey: ['email-engagement-leaderboard', limit],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_engagement_leaderboard", { _limit: limit });
+      const { data, error } = await supabase.rpc('get_engagement_leaderboard', {
+        _limit: limit,
+      });
       if (error) throw error;
       return (data ?? []) as EngagementLeaderboardEntry[];
     },
@@ -93,15 +95,19 @@ export function useRecomputeEngagementScores() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (params?: { sale_ids?: string[]; recompute_all?: boolean }) => {
-      const { data, error } = await supabase.functions.invoke("email-engagement-scorer", {
+      const { data, error } = await supabase.functions.invoke('email-engagement-scorer', {
         body: params ?? { recompute_all: true },
       });
       if (error) throw error;
-      return data as { ok: boolean; updated: number; by_tier: Record<EngagementTier, number> };
+      return data as {
+        ok: boolean;
+        updated: number;
+        by_tier: Record<EngagementTier, number>;
+      };
     },
-    onSuccess: (res) => {
-      qc.invalidateQueries({ queryKey: ["email-engagement-score"] });
-      qc.invalidateQueries({ queryKey: ["email-engagement-leaderboard"] });
+    onSuccess: res => {
+      qc.invalidateQueries({ queryKey: ['email-engagement-score'] });
+      qc.invalidateQueries({ queryKey: ['email-engagement-leaderboard'] });
       toast.success(`Engajamento recalculado: ${res.updated} contatos`);
     },
     onError: (e: Error) => toast.error(`Falha ao recalcular: ${e.message}`),

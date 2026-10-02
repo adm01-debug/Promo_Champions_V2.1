@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface HealthFactor {
   label: string;
-  status: "good" | "warning" | "bad";
+  status: 'good' | 'warning' | 'bad';
   value: string;
 }
 
@@ -13,7 +13,7 @@ export interface AccountHealth {
   tier: string;
   health_status: string;
   health_score: number;
-  churn_risk: "low" | "medium" | "high" | "critical";
+  churn_risk: 'low' | 'medium' | 'high' | 'critical';
   expansion_potential: number;
   days_since_last_activity: number;
   total_revenue: number;
@@ -38,12 +38,12 @@ export interface CustomerSuccessSummary {
 
 export function useCustomerSuccess() {
   return useQuery({
-    queryKey: ["customer-success-hub"],
+    queryKey: ['customer-success-hub'],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke<{
         accounts: AccountHealth[];
         summary: CustomerSuccessSummary;
-      }>("customer-success-hub", { body: {} });
+      }>('customer-success-hub', { body: {} });
       if (error) throw error;
       return data!;
     },

@@ -8,9 +8,16 @@ interface Props {
 }
 
 const KONAMI = [
-  'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
-  'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
-  'b', 'a',
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
 ] as const;
 
 /**
@@ -52,7 +59,9 @@ export function RaceEasterEggs({ showFireworks }: Props) {
               background:
                 'linear-gradient(115deg, hsl(0 90% 55%), hsl(35 95% 55%), hsl(50 95% 55%), hsl(140 75% 50%), hsl(195 90% 55%), hsl(245 80% 60%), hsl(290 80% 55%))',
               backgroundSize: '300% 100%',
-              animation: reducedMotion ? undefined : 'race-rainbow-road 3s linear infinite',
+              animation: reducedMotion
+                ? undefined
+                : 'race-rainbow-road 3s linear infinite',
               mixBlendMode: 'overlay',
             }}
             aria-hidden
@@ -79,7 +88,12 @@ export function RaceEasterEggs({ showFireworks }: Props) {
               { cx: 35, cy: 50, color: 'hsl(290 80% 60%)', delay: 1.2 },
               { cx: 65, cy: 48, color: 'hsl(140 75% 50%)', delay: 1.6 },
             ].map((f, i) => (
-              <g key={i} style={{ animation: `race-fireworks-burst 1.6s ease-out ${f.delay}s both` }}>
+              <g
+                key={i}
+                style={{
+                  animation: `race-fireworks-burst 1.6s ease-out ${f.delay}s both`,
+                }}
+              >
                 {Array.from({ length: 12 }).map((_, j) => {
                   const angle = (j / 12) * Math.PI * 2;
                   const r = 6;

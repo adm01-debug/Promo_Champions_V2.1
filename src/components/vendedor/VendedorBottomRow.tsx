@@ -41,7 +41,9 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
                   <p className="text-sm text-muted-foreground">{deal.product_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">R$ {Number(deal.amount).toLocaleString('pt-BR')}</p>
+                  <p className="font-bold">
+                    R$ {Number(deal.amount).toLocaleString('pt-BR')}
+                  </p>
                   <span
                     className={cn(
                       'text-xs px-2 py-0.5 rounded-full',
@@ -61,7 +63,9 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-muted-foreground">Nenhuma venda registrada</div>
+          <div className="text-center py-8 text-muted-foreground">
+            Nenhuma venda registrada
+          </div>
         )}
       </div>
 
@@ -85,7 +89,9 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
                     <p className="text-sm text-muted-foreground">{task.product_name}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold">R$ {Number(task.amount).toLocaleString('pt-BR')}</p>
+                    <p className="font-bold">
+                      R$ {Number(task.amount).toLocaleString('pt-BR')}
+                    </p>
                     <p className="text-xs text-warning">{daysSince} dias parado</p>
                   </div>
                 </div>

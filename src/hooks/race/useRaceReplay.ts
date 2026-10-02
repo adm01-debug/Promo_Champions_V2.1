@@ -28,14 +28,17 @@ export function useRaceReplay(): UseRaceReplayResult {
   const [currentFrame, setCurrentFrame] = useState<ReplaySnapshot | null>(null);
   const rafRef = useRef<number | null>(null);
 
-  const recordSnapshot = useCallback((cars: RaceLeaderboardEntry[]) => {
-    if (isPlaying) return;
-    const snap: ReplaySnapshot = {
-      at: Date.now(),
-      positions: cars.map((c) => ({ id: c.car_id, progress: Number(c.progress) })),
-    };
-    buffer.current = [...buffer.current, snap].slice(-MAX_SNAPSHOTS);
-  }, [isPlaying]);
+  const recordSnapshot = useCallback(
+    (cars: RaceLeaderboardEntry[]) => {
+      if (isPlaying) return;
+      const snap: ReplaySnapshot = {
+        at: Date.now(),
+        positions: cars.map(c => ({ id: c.car_id, progress: Number(c.progress) })),
+      };
+      buffer.current = [...buffer.current, snap].slice(-MAX_SNAPSHOTS);
+    },
+    [isPlaying]
+  );
 
   const startReplay = useCallback(() => {
     const snaps = buffer.current;
@@ -54,8 +57,8 @@ export function useRaceReplay(): UseRaceReplayResult {
       const frac = idxFloat - idxLow;
       const a = snaps[idxLow];
       const b = snaps[idxHigh];
-      const positions = a.positions.map((p) => {
-        const bp = b.positions.find((x) => x.id === p.id);
+      const positions = a.positions.map(p => {
+        const bp = b.positions.find(x => x.id === p.id);
         const prog = bp ? p.progress + (bp.progress - p.progress) * frac : p.progress;
         return { id: p.id, progress: prog };
       });
@@ -72,9 +75,12 @@ export function useRaceReplay(): UseRaceReplayResult {
     rafRef.current = requestAnimationFrame(tick);
   }, [isPlaying]);
 
-  useEffect(() => () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    },
+    []
+  );
 
   return {
     recordSnapshot,

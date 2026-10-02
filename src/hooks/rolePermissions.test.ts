@@ -27,7 +27,7 @@ const REPO_ROOT = path.resolve(__dirname, '../..');
 const MIGRATIONS_DIR = path.join(REPO_ROOT, 'supabase/migrations');
 const SYNC_MIGRATION = path.join(
   MIGRATIONS_DIR,
-  '20261001211000_role_permissions_frontend_sync.sql',
+  '20261001211000_role_permissions_frontend_sync.sql'
 );
 
 /** Ações PostgREST que cada verbo lógico exige na tabela mapeada. */
@@ -49,7 +49,7 @@ interface LivePolicies {
 function computeLivePolicies(): LivePolicies {
   const files = fs
     .readdirSync(MIGRATIONS_DIR)
-    .filter((f) => f.endsWith('.sql'))
+    .filter(f => f.endsWith('.sql'))
     .sort();
   const live: LivePolicies = {};
   const createRe =
@@ -65,7 +65,7 @@ function computeLivePolicies(): LivePolicies {
       live[t] ??= new Map();
       const actions = live[t].get(name) ?? new Set<string>();
       if (!action || action.toUpperCase() === 'ALL') {
-        ['SELECT', 'INSERT', 'UPDATE', 'DELETE'].forEach((a) => actions.add(a));
+        ['SELECT', 'INSERT', 'UPDATE', 'DELETE'].forEach(a => actions.add(a));
       } else {
         actions.add(action.toUpperCase());
       }
@@ -82,7 +82,7 @@ function computeLivePolicies(): LivePolicies {
 function coveredActions(live: LivePolicies, table: string): Set<string> {
   const out = new Set<string>();
   for (const actions of live[table]?.values() ?? []) {
-    actions.forEach((a) => out.add(a));
+    actions.forEach(a => out.add(a));
   }
   return out;
 }
@@ -94,7 +94,7 @@ describe('fonte única de permissões (role-permissions.json)', () => {
     expect(
       actual,
       'role_permissions_frontend_sync.sql diverge do JSON — rode ' +
-        '`node scripts/generate-role-permissions-seed.mjs --write`',
+        '`node scripts/generate-role-permissions-seed.mjs --write`'
     ).toBe(expected);
   });
 
@@ -113,17 +113,19 @@ describe('fonte única de permissões (role-permissions.json)', () => {
         if (tables.length === 0) continue; // permissão de app, sem tabela
         for (const table of tables) {
           const covered = coveredActions(live, table);
-          const ok = required.some((a) => covered.has(a));
+          const ok = required.some(a => covered.has(a));
           if (!ok) {
             missing.push(
-              `${role} promete "${perm}" mas ${table} não tem policy viva para ${required.join('/')}`,
+              `${role} promete "${perm}" mas ${table} não tem policy viva para ${required.join('/')}`
             );
           }
         }
       }
     }
 
-    expect(missing, `Permissões sem lastro em policy:\n${missing.join('\n')}`).toEqual([]);
+    expect(missing, `Permissões sem lastro em policy:\n${missing.join('\n')}`).toEqual(
+      []
+    );
   });
 
   it('papeis e recursos declarados usam o vocabulário esperado', () => {
@@ -140,7 +142,7 @@ describe('fonte única de permissões (role-permissions.json)', () => {
         expect(extra, `permissão malformada: ${perm}`).toBeUndefined();
         expect(
           (config.resourceTables as Record<string, unknown>)[resource] !== undefined,
-          `recurso "${resource}" sem entrada em resourceTables`,
+          `recurso "${resource}" sem entrada em resourceTables`
         ).toBe(true);
         expect(validActions.has(action), `ação inválida em "${perm}"`).toBe(true);
       }

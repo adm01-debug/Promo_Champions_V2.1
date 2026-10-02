@@ -19,7 +19,9 @@ export const usePermissions = () => {
   const { data: permissions, isLoading } = useQuery<UserPermissions>({
     queryKey: ['user-permissions'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { data: roleData } = await supabase

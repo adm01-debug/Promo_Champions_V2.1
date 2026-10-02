@@ -54,8 +54,10 @@ export function usePipelineVelocity() {
         const spCompleted = completedSales.filter(s => s.salesperson_id === sp.id);
         const spAllSales = allSales.filter(s => s.salesperson_id === sp.id);
         const totalRevenue = spCompleted.reduce((sum, s) => sum + Number(s.amount), 0);
-        const avgDealSize = spCompleted.length > 0 ? totalRevenue / spCompleted.length : 0;
-        const winRate = spAllSales.length > 0 ? spCompleted.length / spAllSales.length : 0;
+        const avgDealSize =
+          spCompleted.length > 0 ? totalRevenue / spCompleted.length : 0;
+        const winRate =
+          spAllSales.length > 0 ? spCompleted.length / spAllSales.length : 0;
 
         // Calculate avg cycle time from stage history
         const stageHoursMap: Record<string, number[]> = {};
@@ -65,7 +67,10 @@ export function usePipelineVelocity() {
         spCompleted.forEach(sale => {
           const stages = stageHistory
             .filter(sh => sh.sale_id === sale.id)
-            .sort((a, b) => new Date(a.entered_at).getTime() - new Date(b.entered_at).getTime());
+            .sort(
+              (a, b) =>
+                new Date(a.entered_at).getTime() - new Date(b.entered_at).getTime()
+            );
 
           if (stages.length > 0) {
             const firstEntry = new Date(stages[0].entered_at);
@@ -78,7 +83,10 @@ export function usePipelineVelocity() {
 
           stages.forEach(sh => {
             if (sh.exited_at) {
-              const hours = differenceInHours(new Date(sh.exited_at), new Date(sh.entered_at));
+              const hours = differenceInHours(
+                new Date(sh.exited_at),
+                new Date(sh.entered_at)
+              );
               if (!stageHoursMap[sh.stage]) stageHoursMap[sh.stage] = [];
               stageHoursMap[sh.stage].push(hours);
             }

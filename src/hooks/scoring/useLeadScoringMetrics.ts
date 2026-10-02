@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ScoreDistribution {
   range: string;
@@ -18,7 +18,7 @@ export function useLeadScoringMetrics() {
         .maybeSingle();
 
       if (error) throw error;
-      
+
       // Fallback: Calculate distribution on the fly if no metrics captured yet
       if (!data) {
         const { data: scores } = await supabase.from('lead_scores').select('score');
@@ -27,7 +27,7 @@ export function useLeadScoringMetrics() {
           '21-40': 0,
           '41-60': 0,
           '61-80': 0,
-          '81-100': 0
+          '81-100': 0,
         };
 
         (scores || []).forEach(s => {
@@ -39,25 +39,32 @@ export function useLeadScoringMetrics() {
         });
 
         return {
-          avg_score: scores?.length ? scores.reduce((a, b) => a + b.score, 0) / scores.length : 0,
-          distribution: Object.entries(distribution).map(([range, count]) => ({ range, count }))
+          avg_score: scores?.length
+            ? scores.reduce((a, b) => a + b.score, 0) / scores.length
+            : 0,
+          distribution: Object.entries(distribution).map(([range, count]) => ({
+            range,
+            count,
+          })),
         };
       }
 
       const distObj = data.distribution as Record<string, number>;
-      const distribution = Object.entries(distObj).map(([range, count]) => ({
-        range,
-        count
-      })).sort((a, b) => {
-        const startA = parseInt(a.range.split('-')[0]);
-        const startB = parseInt(b.range.split('-')[0]);
-        return startA - startB;
-      });
+      const distribution = Object.entries(distObj)
+        .map(([range, count]) => ({
+          range,
+          count,
+        }))
+        .sort((a, b) => {
+          const startA = parseInt(a.range.split('-')[0]);
+          const startB = parseInt(b.range.split('-')[0]);
+          return startA - startB;
+        });
 
       return {
         ...data,
-        distribution
+        distribution,
       };
-    }
+    },
   });
 }

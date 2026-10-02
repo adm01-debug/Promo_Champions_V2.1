@@ -1,5 +1,17 @@
-export type ActivityType = 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'note' | 'other';
-export type ActivityOutcome = 'connected' | 'no_answer' | 'scheduled' | 'voicemail' | 'busy' | 'callback' | 'not_interested' | 'qualified' | 'bad_timing' | 'wrong_person' | 'unsubscribed';
+export type ActivityType =
+  'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp' | 'note' | 'other';
+export type ActivityOutcome =
+  | 'connected'
+  | 'no_answer'
+  | 'scheduled'
+  | 'voicemail'
+  | 'busy'
+  | 'callback'
+  | 'not_interested'
+  | 'qualified'
+  | 'bad_timing'
+  | 'wrong_person'
+  | 'unsubscribed';
 
 export interface ActivityRecord {
   id: string;

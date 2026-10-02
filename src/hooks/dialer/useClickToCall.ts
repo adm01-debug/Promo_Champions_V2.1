@@ -62,7 +62,7 @@ export const useCallSession = (callSid: string | null) => {
   return useQuery({
     queryKey: ['twilio-session', callSid],
     enabled: !!callSid,
-    refetchInterval: (q) => {
+    refetchInterval: q => {
       const s = (q.state.data as TwilioSession | undefined)?.status;
       if (!s || ['initiated', 'ringing', 'in-progress'].includes(s)) return 2000;
       return false;

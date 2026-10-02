@@ -133,9 +133,7 @@ export default function Estoque() {
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
               </div>
               <div>
-                <h1 className="text-page-title uppercase italic">
-                  Logistics Command
-                </h1>
+                <h1 className="text-page-title uppercase italic">Logistics Command</h1>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">
                     Inventory Engine v3.5

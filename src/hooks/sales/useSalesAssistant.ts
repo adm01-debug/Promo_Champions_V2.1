@@ -83,11 +83,12 @@ export const useSalesAssistant = (
       const countRows: CountRow[] = convIds.length
         ? await chunkedIn<CountRow>(
             convIds,
-            (chunk) => supabase
-              .from('chat_messages')
-              .select('conversation_id')
-              .in('conversation_id', chunk as string[]),
-            { parallel: true, label: 'sales-assistant.msg-count' },
+            chunk =>
+              supabase
+                .from('chat_messages')
+                .select('conversation_id')
+                .in('conversation_id', chunk as string[]),
+            { parallel: true, label: 'sales-assistant.msg-count' }
           )
         : [];
       const countMap: Record<string, number> = {};
@@ -152,14 +153,14 @@ export const useSalesAssistant = (
         const { error: msgError } = await supabase
           .from('chat_messages')
           .insert({ conversation_id: conversationId, role, content });
-        
+
         if (msgError) throw msgError;
 
         const { error: convError } = await supabase
           .from('chat_conversations')
           .update({ updated_at: new Date().toISOString() })
           .eq('id', conversationId);
-          
+
         if (convError) throw convError;
       } catch (error) {
         console.error('Error saving message:', error);
@@ -197,7 +198,10 @@ export const useSalesAssistant = (
         return;
       }
 
-      const conversationHistory = messages.map(m => ({ role: m.role, content: m.content }));
+      const conversationHistory = messages.map(m => ({
+        role: m.role,
+        content: m.content,
+      }));
 
       try {
         const {
@@ -235,7 +239,12 @@ export const useSalesAssistant = (
 
         setMessages(prev => [
           ...prev,
-          { id: assistantMsgId, role: 'assistant' as const, content: '', timestamp: new Date() },
+          {
+            id: assistantMsgId,
+            role: 'assistant' as const,
+            content: '',
+            timestamp: new Date(),
+          },
         ]);
 
         if (reader) {
@@ -406,7 +415,8 @@ export const useDealAssistant = (dealId: string) => {
       const lastActivity = deal.activities?.[0];
       if (lastActivity) {
         const daysSinceActivity =
-          (Date.now() - new Date(lastActivity.created_at).getTime()) / (1000 * 60 * 60 * 24);
+          (Date.now() - new Date(lastActivity.created_at).getTime()) /
+          (1000 * 60 * 60 * 24);
         if (daysSinceActivity > 7) {
           insights.push({
             type: 'risk',
@@ -443,12 +453,18 @@ export const useDealAssistant = (dealId: string) => {
       purpose: 'follow-up' | 'proposal' | 'check-in' | 'closing';
       context?: string;
     }) => {
-      const { data: deal } = await supabase.from('sales').select('*').eq('id', dealId).single();
+      const { data: deal } = await supabase
+        .from('sales')
+        .select('*')
+        .eq('id', dealId)
+        .single();
       if (!deal) throw new Error('Deal not found');
       return createEmailTemplate(params.purpose, deal, params.context);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales-assistant', 'insights', dealId] });
+      queryClient.invalidateQueries({
+        queryKey: ['sales-assistant', 'insights', dealId],
+      });
     },
   });
 
