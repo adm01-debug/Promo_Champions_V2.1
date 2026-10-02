@@ -8,10 +8,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 
-
-import {
-  PieChart,
-} from 'recharts';
+import { PieChart } from 'recharts';
 import {
   DollarSign,
   ShoppingBag,
@@ -104,7 +101,13 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const categories = useMemo(() => extractCategories(data?.orders), [data?.orders]);
 
   const filteredOrders = useMemo(
-    () => filterOrders(data?.orders, { searchTerm, statusFilter, categoryFilter, valueRange }),
+    () =>
+      filterOrders(data?.orders, {
+        searchTerm,
+        statusFilter,
+        categoryFilter,
+        valueRange,
+      }),
     [data?.orders, searchTerm, statusFilter, categoryFilter, valueRange]
   );
 
@@ -116,8 +119,6 @@ export function Client360View({ clientName }: Client360ViewProps) {
         Nenhum dado encontrado para este cliente.
       </div>
     );
-
-
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 p-6 selection:bg-primary selection:text-primary-foreground">
@@ -178,11 +179,9 @@ export function Client360View({ clientName }: Client360ViewProps) {
       {/* KPIs Estratégicos com Comparativo de Segmento */}
       <Client360KpiCards data={data} />
 
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Gráfico de Evolução LTV */}
         <LtvChart data={data.spendingHistory} />
-
 
         {/* Mix de Categorias */}
         <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden">

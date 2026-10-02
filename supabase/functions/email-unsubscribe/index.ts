@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { escapeHtml } from "../_shared/html-escape.ts";
 import { normalizeEmail, verifyUnsubscribeToken } from "../_shared/unsubscribe.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { htmlSecurityHeaders } from "../_shared/security-headers.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -22,10 +23,7 @@ ${content}
     headers: {
       ...corsHeaders,
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store",
-      "Referrer-Policy": "no-referrer",
-      "X-Content-Type-Options": "nosniff",
-      "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+      ...htmlSecurityHeaders,
     },
   });
 }

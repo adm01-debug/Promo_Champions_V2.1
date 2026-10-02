@@ -33,7 +33,9 @@ export function useCompetitiveRanking() {
         .from('competitive_ranking' as never)
         .select('*')
         .order('rank', { ascending: true })
-        .returns<Array<{ rank: number | null; total_sales: number | null; [k: string]: unknown }>>();
+        .returns<
+          Array<{ rank: number | null; total_sales: number | null; [k: string]: unknown }>
+        >();
 
       if (error) {
         console.error('Error fetching competitive ranking from view:', error);

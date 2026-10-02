@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useFunnelStatusCounts } from '@/hooks/dashboard/useFunnelStatusCounts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Filter, Zap } from 'lucide-react';
 import {
@@ -15,23 +14,13 @@ import {
 } from 'recharts';
 import { motion } from 'framer-motion';
 
-const STAGE_ORDER = ['pending', 'qualified', 'proposal', 'negotiation', 'completed'];
-const STAGE_LABELS: Record<string, string> = {
-  pending: 'Leads',
-  qualified: 'Verified',
-  proposal: 'Proposal',
-  negotiation: 'Sync',
-  completed: 'Locked',
-};
-const STAGE_COLORS = [
-  'rgba(14, 165, 233, 0.4)',
-  'rgba(14, 165, 233, 0.55)',
-  'rgba(14, 165, 233, 0.7)',
-  'rgba(14, 165, 233, 0.85)',
-  'rgba(34, 197, 94, 0.8)',
-];
-
-const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ value: number; payload: { stage?: string; name?: string } }> }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: { stage?: string; name?: string } }>;
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-3 rounded-lg shadow-2xl border-l-4 border-l-primary">
@@ -51,26 +40,7 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<
 };
 
 export const FunnelChart: FC = React.memo(() => {
-  const { data, isLoading } = useQuery({
-    queryKey: ['funnel-chart-real'],
-    queryFn: async () => {
-      const { data: sales, error } = await supabase.from('sales').select('status');
-      if (error) throw error;
-
-      const counts: Record<string, number> = {};
-      (sales || []).forEach(s => {
-        const status = s.status || 'pending';
-        counts[status] = (counts[status] || 0) + 1;
-      });
-
-      return STAGE_ORDER.map((stage, i) => ({
-        stage: STAGE_LABELS[stage] || stage,
-        value: counts[stage] || 0,
-        color: STAGE_COLORS[i],
-      }));
-    },
-    staleTime: 60_000,
-  });
+  const { data, isLoading } = useFunnelStatusCounts();
 
   if (isLoading) {
     return (

@@ -1,7 +1,7 @@
-import * as React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface FloatingAction {
   icon: React.ReactNode;
@@ -49,7 +49,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   };
 
   return (
-    <div className={cn("fixed z-50", positionClasses[position], className)}>
+    <div className={cn('fixed z-50', positionClasses[position], className)}>
       {/* Action buttons */}
       <AnimatePresence>
         {isOpen && (
@@ -63,30 +63,32 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
               <motion.button
                 key={index}
                 initial={{ opacity: 0, scale: 0, y: 20 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
+                animate={{
+                  opacity: 1,
+                  scale: 1,
                   y: 0,
-                  transition: { delay: index * 0.05 }
+                  transition: { delay: index * 0.05 },
                 }}
-                exit={{ 
-                  opacity: 0, 
-                  scale: 0, 
+                exit={{
+                  opacity: 0,
+                  scale: 0,
                   y: 20,
-                  transition: { delay: (actions.length - index) * 0.03 }
+                  transition: { delay: (actions.length - index) * 0.03 },
                 }}
                 onClick={() => handleAction(action)}
                 className={cn(
-                  "flex items-center gap-3 pl-4 pr-5 py-3 rounded-full",
-                  "bg-card border border-border shadow-lg",
-                  "hover:bg-accent/10 active:scale-95 transition-all",
-                  "text-sm font-medium whitespace-nowrap"
+                  'flex items-center gap-3 pl-4 pr-5 py-3 rounded-full',
+                  'bg-card border border-border shadow-lg',
+                  'hover:bg-accent/10 active:scale-95 transition-all',
+                  'text-sm font-medium whitespace-nowrap'
                 )}
               >
-                <span className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center",
-                  action.color || "bg-primary text-primary-foreground"
-                )}>
+                <span
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center',
+                    action.color || 'bg-primary text-primary-foreground'
+                  )}
+                >
                   {action.icon}
                 </span>
                 {action.label}
@@ -115,10 +117,10 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         animate={{ rotate: isOpen ? 45 : 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         className={cn(
-          "w-14 h-14 rounded-full flex items-center justify-center",
-          "bg-primary text-primary-foreground shadow-lg",
-          "hover:bg-primary/90 active:scale-95 transition-all",
-          "shadow-glow-primary"
+          'w-14 h-14 rounded-full flex items-center justify-center',
+          'bg-primary text-primary-foreground shadow-lg',
+          'hover:bg-primary/90 active:scale-95 transition-all',
+          'shadow-glow-primary'
         )}
       >
         {mainIcon || (isOpen ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />)}

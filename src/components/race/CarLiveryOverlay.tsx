@@ -42,13 +42,30 @@ export function CarLiveryOverlay({
       </defs>
       <g clipPath={`url(#${clipId})`}>
         {pattern === 'pride-rainbow' && <PrideRainbow x={x} y={y} w={bodyW} h={bodyH} />}
-        {pattern === 'pride-rainbow-diagonal' && <PrideRainbowDiagonal x={x} y={y} w={bodyW} h={bodyH} />}
+        {pattern === 'pride-rainbow-diagonal' && (
+          <PrideRainbowDiagonal x={x} y={y} w={bodyW} h={bodyH} />
+        )}
         {pattern === 'pride-trans' && <PrideTrans x={x} y={y} w={bodyW} h={bodyH} />}
         {pattern === 'pride-bi' && <PrideBi x={x} y={y} w={bodyW} h={bodyH} />}
-        {pattern === 'flames' && <Flames x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? '#fbbf24'} secondary={secondary} />}
-        {pattern === 'stripes' && <Stripes x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? secondary} />}
-        {pattern === 'checkers' && <Checkers x={x} y={y} w={bodyW} h={bodyH} secondary={secondary} />}
-        {pattern === 'dots' && <Dots x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? secondary} />}
+        {pattern === 'flames' && (
+          <Flames
+            x={x}
+            y={y}
+            w={bodyW}
+            h={bodyH}
+            accent={accent ?? '#fbbf24'}
+            secondary={secondary}
+          />
+        )}
+        {pattern === 'stripes' && (
+          <Stripes x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? secondary} />
+        )}
+        {pattern === 'checkers' && (
+          <Checkers x={x} y={y} w={bodyW} h={bodyH} secondary={secondary} />
+        )}
+        {pattern === 'dots' && (
+          <Dots x={x} y={y} w={bodyW} h={bodyH} accent={accent ?? secondary} />
+        )}
       </g>
     </g>
   );
@@ -62,13 +79,30 @@ function PrideRainbow({ x, y, w, h }: { x: number; y: number; w: number; h: numb
   return (
     <g opacity={0.92}>
       {colors.map((c, i) => (
-        <rect key={c} x={x} y={y + i * stripeH} width={w} height={stripeH + 0.3} fill={c} />
+        <rect
+          key={c}
+          x={x}
+          y={y + i * stripeH}
+          width={w}
+          height={stripeH + 0.3}
+          fill={c}
+        />
       ))}
     </g>
   );
 }
 
-function PrideRainbowDiagonal({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
+function PrideRainbowDiagonal({
+  x,
+  y,
+  w,
+  h,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}) {
   const colors = ['#e40303', '#ff8c00', '#ffed00', '#008026', '#004dff', '#750787'];
   // Listras diagonais finas e repetidas cobrindo o corpo (rotacionadas -25°)
   const stripeW = 3;
@@ -100,7 +134,14 @@ function PrideTrans({ x, y, w, h }: { x: number; y: number; w: number; h: number
   return (
     <g opacity={0.95}>
       {colors.map((c, i) => (
-        <rect key={`${c}-${i}`} x={x} y={y + i * stripeH} width={w} height={stripeH + 0.3} fill={c} />
+        <rect
+          key={`${c}-${i}`}
+          x={x}
+          y={y + i * stripeH}
+          width={w}
+          height={stripeH + 0.3}
+          fill={c}
+        />
       ))}
     </g>
   );
@@ -125,7 +166,21 @@ function PrideBi({ x, y, w, h }: { x: number; y: number; w: number; h: number })
   );
 }
 
-function Flames({ x, y, w, h, accent, secondary }: { x: number; y: number; w: number; h: number; accent: string; secondary: string }) {
+function Flames({
+  x,
+  y,
+  w,
+  h,
+  accent,
+  secondary,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  accent: string;
+  secondary: string;
+}) {
   // Chamas saindo da traseira (esquerda)
   const points: string[] = [];
   const flameLen = w * 0.55;
@@ -156,7 +211,19 @@ function Flames({ x, y, w, h, accent, secondary }: { x: number; y: number; w: nu
   );
 }
 
-function Stripes({ x, y, w, h, accent }: { x: number; y: number; w: number; h: number; accent: string }) {
+function Stripes({
+  x,
+  y,
+  w,
+  h,
+  accent,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  accent: string;
+}) {
   const stripeW = 2.2;
   const gap = w * 0.18;
   return (
@@ -167,7 +234,19 @@ function Stripes({ x, y, w, h, accent }: { x: number; y: number; w: number; h: n
   );
 }
 
-function Checkers({ x, y, w, h, secondary }: { x: number; y: number; w: number; h: number; secondary: string }) {
+function Checkers({
+  x,
+  y,
+  w,
+  h,
+  secondary,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  secondary: string;
+}) {
   const cell = 3;
   const cols = Math.ceil(w / cell);
   const rows = Math.ceil(h / cell);
@@ -176,7 +255,15 @@ function Checkers({ x, y, w, h, secondary }: { x: number; y: number; w: number; 
     for (let j = 0; j < rows; j++) {
       if ((i + j) % 2 === 0) {
         tiles.push(
-          <rect key={`${i}-${j}`} x={x + i * cell} y={y + j * cell} width={cell} height={cell} fill={secondary} opacity={0.85} />,
+          <rect
+            key={`${i}-${j}`}
+            x={x + i * cell}
+            y={y + j * cell}
+            width={cell}
+            height={cell}
+            fill={secondary}
+            opacity={0.85}
+          />
         );
       }
     }
@@ -184,7 +271,19 @@ function Checkers({ x, y, w, h, secondary }: { x: number; y: number; w: number; 
   return <g>{tiles}</g>;
 }
 
-function Dots({ x, y, w, h, accent }: { x: number; y: number; w: number; h: number; accent: string }) {
+function Dots({
+  x,
+  y,
+  w,
+  h,
+  accent,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  accent: string;
+}) {
   const dots = [];
   const r = 1.6;
   const stepX = 5;
@@ -194,7 +293,9 @@ function Dots({ x, y, w, h, accent }: { x: number; y: number; w: number; h: numb
       const cx = x + 3 + i * stepX + (j % 2 === 0 ? 0 : stepX / 2);
       const cy = y + 3 + j * stepY;
       if (cx < x + w - 2 && cy < y + h - 1) {
-        dots.push(<circle key={`${i}-${j}`} cx={cx} cy={cy} r={r} fill={accent} opacity={0.9} />);
+        dots.push(
+          <circle key={`${i}-${j}`} cx={cx} cy={cy} r={r} fill={accent} opacity={0.9} />
+        );
       }
     }
   }

@@ -113,9 +113,7 @@ export default function BusinessIntelligencePage() {
             <div className="space-y-6 animate-in fade-in duration-700">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-8">
-                  {clientBI && (
-                    <ClientOverview360 data={clientBI.customer360} />
-                  )}
+                  {clientBI && <ClientOverview360 data={clientBI.customer360} />}
                 </div>
                 <div className="lg:col-span-4">
                   {clientBI && <EmpiricalRecommendations data={clientBI.expertCurated} />}

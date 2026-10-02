@@ -1,11 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Award, TrendingUp, AlertTriangle, Lightbulb, CheckCircle2, Zap } from "lucide-react";
-import { motion } from "framer-motion";
-import { useSDRMetrics } from "@/hooks/useSDRMetrics";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Award,
+  TrendingUp,
+  AlertTriangle,
+  Lightbulb,
+  CheckCircle2,
+  Zap,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useSDRMetrics } from '@/hooks/useSDRMetrics';
 
 export function PerformanceCoaching() {
-  const { data: metrics } = useSDRMetrics("month");
+  const { data: metrics } = useSDRMetrics('month');
 
   const generateInsights = () => {
     if (!metrics) return { strengths: [], improvements: [] };
@@ -20,23 +27,29 @@ export function PerformanceCoaching() {
 
     // Dinamic insights based on real metrics
     if (schedulingRate > 20) {
-      strengths.push(`Alta taxa de agendamento (${schedulingRate.toFixed(1)}%) - Acima da média do setor`);
+      strengths.push(
+        `Alta taxa de agendamento (${schedulingRate.toFixed(1)}%) - Acima da média do setor`
+      );
     } else if (schedulingRate > 10) {
       strengths.push(`Taxa de agendamento estável (${schedulingRate.toFixed(1)}%)`);
     } else {
-      improvements.push(`Taxa de agendamento crítica (${schedulingRate.toFixed(1)}%) - Requer revisão de script`);
+      improvements.push(
+        `Taxa de agendamento crítica (${schedulingRate.toFixed(1)}%) - Requer revisão de script`
+      );
     }
 
     if (leads > 50) {
       strengths.push(`Bom fluxo de entrada (${leads} novos leads no período)`);
     } else {
-      improvements.push(`Fluxo de prospecção baixo (${leads} leads) - Meta sugerida: 15+ semana`);
+      improvements.push(
+        `Fluxo de prospecção baixo (${leads} leads) - Meta sugerida: 15+ semana`
+      );
     }
 
     if (qualified / leads > 0.4) {
-      strengths.push("Perfil de leads altamente alinhado ao ICP");
+      strengths.push('Perfil de leads altamente alinhado ao ICP');
     } else {
-      improvements.push("Alta taxa de desqualificação - Ajustar critérios de entrada");
+      improvements.push('Alta taxa de desqualificação - Ajustar critérios de entrada');
     }
 
     if (active > 20) {
@@ -58,7 +71,10 @@ export function PerformanceCoaching() {
             <Award className="h-4 w-4 text-yellow-500" />
             Coaching de Performance
           </CardTitle>
-          <Badge variant="outline" className="text-[10px] bg-yellow-500/10 text-yellow-600 border-yellow-500/20">
+          <Badge
+            variant="outline"
+            className="text-[10px] bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+          >
             AI Mentor
           </Badge>
         </div>
@@ -69,11 +85,13 @@ export function PerformanceCoaching() {
           <div className="p-5 space-y-4">
             <div className="flex items-center gap-2 text-success">
               <TrendingUp className="h-4 w-4" />
-              <h4 className="text-xs font-bold uppercase tracking-wider">Pontos Fortes</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider">
+                Pontos Fortes
+              </h4>
             </div>
             <ul className="space-y-3">
               {strengths.map((item, i) => (
-                <motion.li 
+                <motion.li
                   key={i}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -91,11 +109,13 @@ export function PerformanceCoaching() {
           <div className="p-5 space-y-4 bg-warning/5">
             <div className="flex items-center gap-2 text-warning">
               <Lightbulb className="h-4 w-4" />
-              <h4 className="text-xs font-bold uppercase tracking-wider">Oportunidades</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider">
+                Oportunidades
+              </h4>
             </div>
             <ul className="space-y-3">
               {improvements.map((item, i) => (
-                <motion.li 
+                <motion.li
                   key={i}
                   initial={{ opacity: 0, x: 10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -113,7 +133,8 @@ export function PerformanceCoaching() {
         <div className="p-4 bg-primary/10 border-t border-primary/20">
           <p className="text-[11px] font-medium text-primary flex items-center gap-2">
             <Zap className="h-3.5 w-3.5" />
-            Dica do dia: "Personalize os primeiros 30 segundos do pitch usando o Insight de Ouro do CRM."
+            Dica do dia: "Personalize os primeiros 30 segundos do pitch usando o Insight
+            de Ouro do CRM."
           </p>
         </div>
       </CardContent>

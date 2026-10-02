@@ -54,6 +54,7 @@ import {
 } from '@/types';
 import type { Json } from '@/integrations/supabase/types';
 
+import { formatBRL } from '@/lib/money';
 export default function AdminComercial() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('metas');
@@ -579,12 +580,7 @@ export default function AdminComercial() {
                                 newValue={
                                   (req.new_values as Record<string, Json>)?.amount
                                 }
-                                formatter={val =>
-                                  new Intl.NumberFormat('pt-BR', {
-                                    style: 'currency',
-                                    currency: 'BRL',
-                                  }).format(Number(val))
-                                }
+                                formatter={val => formatBRL(Number(val), { decimals: 2 })}
                               />
                             )}
                             {req.type === 'commission' && (

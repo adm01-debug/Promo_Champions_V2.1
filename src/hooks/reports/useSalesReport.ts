@@ -1,7 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getLocalISODate } from '@/utils/dateHelpers';
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths } from 'date-fns';
+import {
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  subWeeks,
+  subMonths,
+} from 'date-fns';
 import {
   buildKpis,
   buildKpiDeltas,
@@ -42,12 +49,16 @@ export function useSalesReport(period: ReportPeriod, refDate: Date) {
       const [curRes, prevRes, spRes] = await Promise.all([
         supabase
           .from('sales_with_markup')
-          .select('id, amount, status, created_at, client_name, product_name, salesperson_id, markup_pct')
+          .select(
+            'id, amount, status, created_at, client_name, product_name, salesperson_id, markup_pct'
+          )
           .gte('created_at', start.toISOString())
           .lte('created_at', end.toISOString()),
         supabase
           .from('sales_with_markup')
-          .select('id, amount, status, created_at, client_name, product_name, salesperson_id, markup_pct')
+          .select(
+            'id, amount, status, created_at, client_name, product_name, salesperson_id, markup_pct'
+          )
           .gte('created_at', prevStart.toISOString())
           .lte('created_at', prevEnd.toISOString()),
         supabase.from('salespeople_public').select('id, name'),

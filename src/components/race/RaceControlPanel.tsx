@@ -13,7 +13,10 @@ interface RaceControlPanelProps {
   overtakesTotal: number;
 }
 
-const FLAG_META: Record<RaceFlag, { label: string; color: string; bg: string; pattern?: string }> = {
+const FLAG_META: Record<
+  RaceFlag,
+  { label: string; color: string; bg: string; pattern?: string }
+> = {
   green: { label: 'PISTA LIVRE', color: 'hsl(0 0% 100%)', bg: 'hsl(142 76% 38%)' },
   yellow: { label: 'CUIDADO', color: 'hsl(20 30% 18%)', bg: 'hsl(45 95% 55%)' },
   red: { label: 'PARALISADA', color: 'hsl(0 0% 100%)', bg: 'hsl(0 80% 50%)' },
@@ -40,7 +43,12 @@ function formatDuration(ms: number): string {
  * Painel lateral "Race Control" — bandeira atual, tempo decorrido, próximo evento,
  * total de ultrapassagens. Glassmorphism vertical compacto.
  */
-export function RaceControlPanel({ flag, startedAt, endsAt, overtakesTotal }: RaceControlPanelProps) {
+export function RaceControlPanel({
+  flag,
+  startedAt,
+  endsAt,
+  overtakesTotal,
+}: RaceControlPanelProps) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 30_000);
@@ -77,7 +85,10 @@ export function RaceControlPanel({ flag, startedAt, endsAt, overtakesTotal }: Ra
           style={{
             background: meta.pattern ?? meta.bg,
             backgroundSize: meta.pattern ? '14px 14px' : undefined,
-            animation: flag === 'yellow' ? 'race-yellow-flag-flash 0.7s ease-in-out infinite' : undefined,
+            animation:
+              flag === 'yellow'
+                ? 'race-yellow-flag-flash 0.7s ease-in-out infinite'
+                : undefined,
           }}
         >
           <div
@@ -95,15 +106,25 @@ export function RaceControlPanel({ flag, startedAt, endsAt, overtakesTotal }: Ra
       {/* Métricas */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Decorrido</span>
-          <span className="text-[10px] font-mono font-black tabular-nums text-foreground">{elapsed}</span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Decorrido
+          </span>
+          <span className="text-[10px] font-mono font-black tabular-nums text-foreground">
+            {elapsed}
+          </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Restante</span>
-          <span className="text-[10px] font-mono font-black tabular-nums text-foreground">{remaining}</span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Restante
+          </span>
+          <span className="text-[10px] font-mono font-black tabular-nums text-foreground">
+            {remaining}
+          </span>
         </div>
         <div className="flex items-center justify-between border-t border-border/40 pt-1.5">
-          <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Overtakes</span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Overtakes
+          </span>
           <motion.span
             key={overtakesTotal}
             initial={{ scale: 1.4, color: 'hsl(45 95% 55%)' }}

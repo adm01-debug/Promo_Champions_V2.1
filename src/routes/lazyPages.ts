@@ -77,7 +77,9 @@ export const RevenueIntelligence = lazyWithPrefetch(
   () => import('@/pages/RevenueIntelligence')
 );
 export const RevenueForecast = lazyWithPrefetch(() => import('@/pages/RevenueForecast'));
-export const RevenueForecastV2 = lazyWithPrefetch(() => import('@/pages/RevenueForecastV2'));
+export const RevenueForecastV2 = lazyWithPrefetch(
+  () => import('@/pages/RevenueForecastV2')
+);
 export const AccountBasedSelling = lazyWithPrefetch(
   () => import('@/pages/AccountBasedSelling')
 );
@@ -109,13 +111,27 @@ export const ApprovalWorkflows = lazyWithPrefetch(
 );
 export const CommissionRules = lazyWithPrefetch(() => import('@/pages/CommissionRules'));
 export const AdminPremiacoes = lazyWithPrefetch(() => import('@/pages/AdminPremiacoes'));
-export const AdminAuditoriaPremiacoes = lazyWithPrefetch(() => import('@/pages/AdminAuditoriaPremiacoes'));
-export const AdminFilaTarefasAutomaticas = lazyWithPrefetch(() => import('@/pages/AdminFilaTarefasAutomaticas'));
-export const AdminRegrasInatividade = lazyWithPrefetch(() => import('@/pages/AdminRegrasInatividade'));
-export const AdminAlertasChurn = lazyWithPrefetch(() => import('@/pages/AdminAlertasChurn'));
-export const AdminHistoricoAlertasChurn = lazyWithPrefetch(() => import('@/pages/AdminHistoricoAlertasChurn'));
-export const AdminSupressaoEmails = lazyWithPrefetch(() => import('@/pages/AdminSupressaoEmails'));
-export const MinhasPremiacoes = lazyWithPrefetch(() => import('@/pages/MinhasPremiacoes'));
+export const AdminAuditoriaPremiacoes = lazyWithPrefetch(
+  () => import('@/pages/AdminAuditoriaPremiacoes')
+);
+export const AdminFilaTarefasAutomaticas = lazyWithPrefetch(
+  () => import('@/pages/AdminFilaTarefasAutomaticas')
+);
+export const AdminRegrasInatividade = lazyWithPrefetch(
+  () => import('@/pages/AdminRegrasInatividade')
+);
+export const AdminAlertasChurn = lazyWithPrefetch(
+  () => import('@/pages/AdminAlertasChurn')
+);
+export const AdminHistoricoAlertasChurn = lazyWithPrefetch(
+  () => import('@/pages/AdminHistoricoAlertasChurn')
+);
+export const AdminSupressaoEmails = lazyWithPrefetch(
+  () => import('@/pages/AdminSupressaoEmails')
+);
+export const MinhasPremiacoes = lazyWithPrefetch(
+  () => import('@/pages/MinhasPremiacoes')
+);
 export const Webhooks = lazyWithPrefetch(() => import('@/pages/WebhooksPage'));
 export const AuditLogs = lazyWithPrefetch(() => import('@/pages/AuditLogsPage'));
 export const SLATracking = lazyWithPrefetch(() => import('@/pages/SLATrackingPage'));
@@ -330,5 +346,9 @@ export const RetryTestStatusPage = lazyWithPrefetch(
 );
 export const OrderDetailPage = lazyWithPrefetch(() => import('@/pages/OrderDetailPage'));
 export const SalesReportPage = lazyWithPrefetch(() => import('@/pages/SalesReportPage'));
-export const AcompanhamentoPedidos = lazyWithPrefetch(() => import('@/pages/AcompanhamentoPedidos'));
-export const AcompanhamentoPedidoDetalhe = lazyWithPrefetch(() => import('@/pages/AcompanhamentoPedidoDetalhe'));
+export const AcompanhamentoPedidos = lazyWithPrefetch(
+  () => import('@/pages/AcompanhamentoPedidos')
+);
+export const AcompanhamentoPedidoDetalhe = lazyWithPrefetch(
+  () => import('@/pages/AcompanhamentoPedidoDetalhe')
+);

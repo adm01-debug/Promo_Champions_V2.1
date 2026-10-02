@@ -1,14 +1,14 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { AlertTriangle, RefreshCw, Search } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { AlertTriangle, RefreshCw, Search } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface DlqRow {
   id: string;
@@ -21,21 +21,21 @@ interface DlqRow {
   created_at: string;
 }
 
-const reasonVariant: Record<string, "destructive" | "secondary" | "outline"> = {
-  rate_limited: "secondary",
-  payment_required: "destructive",
-  provider_error: "destructive",
-  empty_narrative: "outline",
+const reasonVariant: Record<string, 'destructive' | 'secondary' | 'outline'> = {
+  rate_limited: 'secondary',
+  payment_required: 'destructive',
+  provider_error: 'destructive',
+  empty_narrative: 'outline',
 };
 
 async function fetchDlq(reasonFilter: string): Promise<DlqRow[]> {
   let query = supabase
-    .from("forecast_narrative_dead_letters" as never)
-    .select("*")
-    .order("created_at", { ascending: false })
+    .from('forecast_narrative_dead_letters' as never)
+    .select('*')
+    .order('created_at', { ascending: false })
     .limit(50);
   if (reasonFilter.trim()) {
-    query = query.ilike("reason", `%${reasonFilter.trim()}%`);
+    query = query.ilike('reason', `%${reasonFilter.trim()}%`);
   }
   const { data, error } = await query;
   if (error) throw error;
@@ -43,9 +43,9 @@ async function fetchDlq(reasonFilter: string): Promise<DlqRow[]> {
 }
 
 export function ForecastNarrativeDlqPanel() {
-  const [reasonFilter, setReasonFilter] = useState("");
+  const [reasonFilter, setReasonFilter] = useState('');
   const { data, isLoading, error, refetch, isFetching } = useQuery({
-    queryKey: ["admin", "forecast-narrative-dlq", reasonFilter],
+    queryKey: ['admin', 'forecast-narrative-dlq', reasonFilter],
     queryFn: () => fetchDlq(reasonFilter),
     refetchInterval: 60_000,
     staleTime: 30_000,
@@ -56,7 +56,7 @@ export function ForecastNarrativeDlqPanel() {
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     return {
       total: data.length,
-      last24h: data.filter((r) => new Date(r.created_at).getTime() >= cutoff).length,
+      last24h: data.filter(r => new Date(r.created_at).getTime() >= cutoff).length,
     };
   }, [data]);
 
@@ -69,7 +69,8 @@ export function ForecastNarrativeDlqPanel() {
             Dead Letter Queue — Forecast Narrative
           </CardTitle>
           <p className="text-xs text-muted-foreground mt-1">
-            Falhas persistidas do AI Gateway (rate-limit, 402, provider error, resposta vazia).
+            Falhas persistidas do AI Gateway (rate-limit, 402, provider error, resposta
+            vazia).
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -83,7 +84,7 @@ export function ForecastNarrativeDlqPanel() {
             disabled={isFetching}
             aria-label="Recarregar"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </CardHeader>
@@ -93,7 +94,7 @@ export function ForecastNarrativeDlqPanel() {
           <Input
             placeholder="Filtrar por reason (rate_limited, provider_error...)"
             value={reasonFilter}
-            onChange={(e) => setReasonFilter(e.target.value)}
+            onChange={e => setReasonFilter(e.target.value)}
             className="pl-9 h-9 text-sm"
           />
         </div>
@@ -112,14 +113,16 @@ export function ForecastNarrativeDlqPanel() {
           </p>
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto">
-            {data.map((row) => (
+            {data.map(row => (
               <div
                 key={row.id}
                 className="border border-border/40 rounded-md p-3 text-xs space-y-1 bg-muted/20"
               >
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
-                    <Badge variant={reasonVariant[row.reason] ?? "outline"}>{row.reason}</Badge>
+                    <Badge variant={reasonVariant[row.reason] ?? 'outline'}>
+                      {row.reason}
+                    </Badge>
                     {row.http_status && (
                       <Badge variant="outline" className="font-mono">
                         {row.http_status}
@@ -127,7 +130,10 @@ export function ForecastNarrativeDlqPanel() {
                     )}
                   </div>
                   <span className="text-muted-foreground">
-                    {formatDistanceToNow(new Date(row.created_at), { addSuffix: true, locale: ptBR })}
+                    {formatDistanceToNow(new Date(row.created_at), {
+                      addSuffix: true,
+                      locale: ptBR,
+                    })}
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground font-mono text-[10px]">
@@ -135,7 +141,9 @@ export function ForecastNarrativeDlqPanel() {
                   {row.request_id && <span>req: {row.request_id.slice(0, 12)}…</span>}
                 </div>
                 {row.error_detail && (
-                  <p className="text-muted-foreground line-clamp-2 break-all">{row.error_detail}</p>
+                  <p className="text-muted-foreground line-clamp-2 break-all">
+                    {row.error_detail}
+                  </p>
                 )}
               </div>
             ))}

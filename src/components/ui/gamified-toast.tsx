@@ -1,12 +1,32 @@
-import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { 
-  Trophy, Zap, Gift, Target, Flame, Coins, Crown,
-  CheckCircle2, AlertCircle, Info, XCircle
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import {
+  Trophy,
+  Zap,
+  Gift,
+  Target,
+  Flame,
+  Coins,
+  Crown,
+  CheckCircle2,
+  AlertCircle,
+  Info,
+  XCircle,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type ToastType = "xp" | "coins" | "achievement" | "levelUp" | "streak" | "reward" | "quest" | "success" | "error" | "warning" | "info";
+type ToastType =
+  | 'xp'
+  | 'coins'
+  | 'achievement'
+  | 'levelUp'
+  | 'streak'
+  | 'reward'
+  | 'quest'
+  | 'success'
+  | 'error'
+  | 'warning'
+  | 'info';
 
 interface GamifiedToastOptions {
   title: string;
@@ -17,50 +37,113 @@ interface GamifiedToastOptions {
   duration?: number;
 }
 
-const toastStyles: Record<ToastType, { 
-  icon: React.ReactNode; 
-  gradient: string; 
-  textColor: string;
-  emoji?: string;
-}> = {
-  xp: { icon: <Zap className="w-5 h-5" />, gradient: "from-info/20 to-accent/20", textColor: "text-info", emoji: "⚡" },
-  coins: { icon: <Coins className="w-5 h-5" />, gradient: "from-coins/20 to-warning/20", textColor: "text-coins", emoji: "🪙" },
-  achievement: { icon: <Trophy className="w-5 h-5" />, gradient: "from-primary/20 to-live-pulse/20", textColor: "text-primary", emoji: "🏆" },
-  levelUp: { icon: <Crown className="w-5 h-5" />, gradient: "from-coins/20 to-rank-gold/20", textColor: "text-coins", emoji: "👑" },
-  streak: { icon: <Flame className="w-5 h-5" />, gradient: "from-streak/20 to-destructive/20", textColor: "text-streak", emoji: "🔥" },
-  reward: { icon: <Gift className="w-5 h-5" />, gradient: "from-live-pulse/20 to-destructive/20", textColor: "text-live-pulse", emoji: "🎁" },
-  quest: { icon: <Target className="w-5 h-5" />, gradient: "from-success/20 to-accent/20", textColor: "text-success", emoji: "🎯" },
-  success: { icon: <CheckCircle2 className="w-5 h-5" />, gradient: "from-success/20 to-accent/20", textColor: "text-success" },
-  error: { icon: <XCircle className="w-5 h-5" />, gradient: "from-destructive/20 to-live-pulse/20", textColor: "text-destructive" },
-  warning: { icon: <AlertCircle className="w-5 h-5" />, gradient: "from-warning/20 to-streak/20", textColor: "text-warning" },
-  info: { icon: <Info className="w-5 h-5" />, gradient: "from-info/20 to-primary/20", textColor: "text-info" },
+const toastStyles: Record<
+  ToastType,
+  {
+    icon: React.ReactNode;
+    gradient: string;
+    textColor: string;
+    emoji?: string;
+  }
+> = {
+  xp: {
+    icon: <Zap className="w-5 h-5" />,
+    gradient: 'from-info/20 to-accent/20',
+    textColor: 'text-info',
+    emoji: '⚡',
+  },
+  coins: {
+    icon: <Coins className="w-5 h-5" />,
+    gradient: 'from-coins/20 to-warning/20',
+    textColor: 'text-coins',
+    emoji: '🪙',
+  },
+  achievement: {
+    icon: <Trophy className="w-5 h-5" />,
+    gradient: 'from-primary/20 to-live-pulse/20',
+    textColor: 'text-primary',
+    emoji: '🏆',
+  },
+  levelUp: {
+    icon: <Crown className="w-5 h-5" />,
+    gradient: 'from-coins/20 to-rank-gold/20',
+    textColor: 'text-coins',
+    emoji: '👑',
+  },
+  streak: {
+    icon: <Flame className="w-5 h-5" />,
+    gradient: 'from-streak/20 to-destructive/20',
+    textColor: 'text-streak',
+    emoji: '🔥',
+  },
+  reward: {
+    icon: <Gift className="w-5 h-5" />,
+    gradient: 'from-live-pulse/20 to-destructive/20',
+    textColor: 'text-live-pulse',
+    emoji: '🎁',
+  },
+  quest: {
+    icon: <Target className="w-5 h-5" />,
+    gradient: 'from-success/20 to-accent/20',
+    textColor: 'text-success',
+    emoji: '🎯',
+  },
+  success: {
+    icon: <CheckCircle2 className="w-5 h-5" />,
+    gradient: 'from-success/20 to-accent/20',
+    textColor: 'text-success',
+  },
+  error: {
+    icon: <XCircle className="w-5 h-5" />,
+    gradient: 'from-destructive/20 to-live-pulse/20',
+    textColor: 'text-destructive',
+  },
+  warning: {
+    icon: <AlertCircle className="w-5 h-5" />,
+    gradient: 'from-warning/20 to-streak/20',
+    textColor: 'text-warning',
+  },
+  info: {
+    icon: <Info className="w-5 h-5" />,
+    gradient: 'from-info/20 to-primary/20',
+    textColor: 'text-info',
+  },
 };
 
-const ToastContent = ({ title, description, type, amount, icon: customIcon }: GamifiedToastOptions) => {
+const ToastContent = ({
+  title,
+  description,
+  type,
+  amount,
+  icon: customIcon,
+}: GamifiedToastOptions) => {
   const style = toastStyles[type];
-  
+
   return (
     <motion.div
       initial={{ x: 50, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 50, opacity: 0 }}
       className={cn(
-        "relative flex items-center gap-3 p-4 rounded-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] bg-[#0d1117]/80 backdrop-blur-xl",
-        "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:opacity-20 before:-z-10",
+        'relative flex items-center gap-3 p-4 rounded-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] bg-[#0d1117]/80 backdrop-blur-xl',
+        'before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:opacity-20 before:-z-10'
       )}
     >
       <motion.div
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
-        className={cn("flex items-center justify-center w-10 h-10 rounded-full bg-background/80 shadow-inner", style.textColor)}
+        transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+        className={cn(
+          'flex items-center justify-center w-10 h-10 rounded-full bg-background/80 shadow-inner',
+          style.textColor
+        )}
       >
         {customIcon || style.icon}
       </motion.div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <motion.p 
+          <motion.p
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.15 }}
@@ -73,15 +156,18 @@ const ToastContent = ({ title, description, type, amount, icon: customIcon }: Ga
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 15, delay: 0.2 }}
-              className={cn("px-2 py-0.5 rounded-full text-xs font-bold bg-background/80", style.textColor)}
+              transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.2 }}
+              className={cn(
+                'px-2 py-0.5 rounded-full text-xs font-bold bg-background/80',
+                style.textColor
+              )}
             >
               +{amount}
             </motion.span>
           )}
         </div>
         {description && (
-          <motion.p 
+          <motion.p
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -92,13 +178,17 @@ const ToastContent = ({ title, description, type, amount, icon: customIcon }: Ga
         )}
       </div>
 
-      {["levelUp", "achievement", "reward"].includes(type) && (
-        <motion.div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+      {['levelUp', 'achievement', 'reward'].includes(type) && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
           {[...Array(5)].map((_, i) => (
             <motion.div
               key={i}
-              className={cn("absolute w-1 h-1 rounded-full", style.textColor)}
-              style={{ left: `${20 + i * 15}%`, top: "50%" }}
+              className={cn('absolute w-1 h-1 rounded-full', style.textColor)}
+              style={{ left: `${20 + i * 15}%`, top: '50%' }}
               animate={{ y: [0, -20, 0], opacity: [0, 1, 0], scale: [0, 1, 0] }}
               transition={{ duration: 1, delay: i * 0.1, repeat: 2 }}
             />
@@ -111,27 +201,106 @@ const ToastContent = ({ title, description, type, amount, icon: customIcon }: Ga
 
 export const gamifiedToast = {
   xp: (amount: number, description?: string) =>
-    toast.custom(() => <ToastContent title={`+${amount} XP Ganhos!`} description={description || "Continue assim!"} type="xp" amount={amount} />, { duration: 3000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={`+${amount} XP Ganhos!`}
+          description={description || 'Continue assim!'}
+          type="xp"
+          amount={amount}
+        />
+      ),
+      { duration: 3000 }
+    ),
   coins: (amount: number, description?: string) =>
-    toast.custom(() => <ToastContent title={`+${amount} Moedas!`} description={description || "Moedas adicionadas à sua conta"} type="coins" amount={amount} />, { duration: 3000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={`+${amount} Moedas!`}
+          description={description || 'Moedas adicionadas à sua conta'}
+          type="coins"
+          amount={amount}
+        />
+      ),
+      { duration: 3000 }
+    ),
   achievement: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description || "Nova conquista desbloqueada!"} type="achievement" />, { duration: 4000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={title}
+          description={description || 'Nova conquista desbloqueada!'}
+          type="achievement"
+        />
+      ),
+      { duration: 4000 }
+    ),
   levelUp: (level: number) =>
-    toast.custom(() => <ToastContent title={`Level ${level} Alcançado!`} description="Parabéns pela evolução!" type="levelUp" />, { duration: 5000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={`Level ${level} Alcançado!`}
+          description="Parabéns pela evolução!"
+          type="levelUp"
+        />
+      ),
+      { duration: 5000 }
+    ),
   streak: (days: number) =>
-    toast.custom(() => <ToastContent title={`${days} Dias de Streak!`} description="Mantenha o ritmo!" type="streak" />, { duration: 3000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={`${days} Dias de Streak!`}
+          description="Mantenha o ritmo!"
+          type="streak"
+        />
+      ),
+      { duration: 3000 }
+    ),
   reward: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description || "Você ganhou uma recompensa!"} type="reward" />, { duration: 4000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={title}
+          description={description || 'Você ganhou uma recompensa!'}
+          type="reward"
+        />
+      ),
+      { duration: 4000 }
+    ),
   quest: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description || "Missão completada!"} type="quest" />, { duration: 3000 }),
+    toast.custom(
+      () => (
+        <ToastContent
+          title={title}
+          description={description || 'Missão completada!'}
+          type="quest"
+        />
+      ),
+      { duration: 3000 }
+    ),
   success: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description} type="success" />, { duration: 3000 }),
+    toast.custom(
+      () => <ToastContent title={title} description={description} type="success" />,
+      { duration: 3000 }
+    ),
   error: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description} type="error" />, { duration: 4000 }),
+    toast.custom(
+      () => <ToastContent title={title} description={description} type="error" />,
+      { duration: 4000 }
+    ),
   warning: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description} type="warning" />, { duration: 4000 }),
+    toast.custom(
+      () => <ToastContent title={title} description={description} type="warning" />,
+      { duration: 4000 }
+    ),
   info: (title: string, description?: string) =>
-    toast.custom(() => <ToastContent title={title} description={description} type="info" />, { duration: 3000 }),
+    toast.custom(
+      () => <ToastContent title={title} description={description} type="info" />,
+      { duration: 3000 }
+    ),
   custom: (options: GamifiedToastOptions) =>
-    toast.custom(() => <ToastContent {...options} />, { duration: options.duration || 3000 }),
+    toast.custom(() => <ToastContent {...options} />, {
+      duration: options.duration || 3000,
+    }),
 };

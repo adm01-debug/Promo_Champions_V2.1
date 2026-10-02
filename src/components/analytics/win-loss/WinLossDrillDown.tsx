@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, Package, Clock, Trophy, XCircle } from 'lucide-react';
+import { formatBRL } from '@/lib/money';
 
 interface SP {
   name: string;
@@ -24,7 +25,7 @@ interface Detail {
   salespeople?: { name?: string } | null;
 }
 
-const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const currency = (v: number) => formatBRL(v, { decimals: 2 });
 
 const SalespersonList: FC<{ items: SP[] }> = memo(({ items }) => (
   <Card className="glass border-border/40 lg:col-span-1">
@@ -48,8 +49,14 @@ const SalespersonList: FC<{ items: SP[] }> = memo(({ items }) => (
                   </Badge>
                 </div>
                 <div className="flex gap-1 items-center">
-                  <div className="h-1.5 bg-success/40 rounded-full" style={{ width: `${(sp.wins / total) * 100}%` }} />
-                  <div className="h-1.5 bg-destructive/40 rounded-full" style={{ width: `${(sp.losses / total) * 100}%` }} />
+                  <div
+                    className="h-1.5 bg-success/40 rounded-full"
+                    style={{ width: `${(sp.wins / total) * 100}%` }}
+                  />
+                  <div
+                    className="h-1.5 bg-destructive/40 rounded-full"
+                    style={{ width: `${(sp.losses / total) * 100}%` }}
+                  />
                 </div>
                 <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                   <span>{sp.wins} vitórias</span>
@@ -79,7 +86,9 @@ const ProductList: FC<{ items: Prod[] }> = memo(({ items }) => (
           {items.map((p, i) => (
             <div key={i} className="p-4 hover:bg-primary/5 transition-colors">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium truncate max-w-[150px]">{p.name}</span>
+                <span className="text-sm font-medium truncate max-w-[150px]">
+                  {p.name}
+                </span>
                 <span className="text-xs font-bold text-primary">{p.winRate}% WR</span>
               </div>
               <div className="flex items-center justify-between text-[11px]">
@@ -118,19 +127,23 @@ const RecentList: FC<{ items: Detail[] }> = memo(({ items }) => {
                     ) : (
                       <XCircle className="h-3.5 w-3.5 text-destructive" />
                     )}
-                    <span className="text-xs font-medium">{d.sales?.client_name || 'Desconhecido'}</span>
+                    <span className="text-xs font-medium">
+                      {d.sales?.client_name || 'Desconhecido'}
+                    </span>
                   </div>
                   <span className="text-[10px] text-muted-foreground">
                     {new Date(d.created_at).toLocaleDateString()}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground line-clamp-1 italic">"{d.reason}"</p>
+                <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                  "{d.reason}"
+                </p>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="outline" className="text-[9px] px-1 py-0">
                     {d.salespeople?.name || 'Vendedor'}
                   </Badge>
                   <span className="text-[9px] font-bold text-primary">
-                    {d.sales?.amount ? currency.format(d.sales.amount) : ''}
+                    {d.sales?.amount ? currency(d.sales.amount) : ''}
                   </span>
                 </div>
               </div>

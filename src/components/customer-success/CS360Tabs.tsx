@@ -111,7 +111,9 @@ export function CS360Tabs({
       <TabsContent value="overview" className="space-y-4 mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-section-title text-sm">Top contas em risco</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              Top contas em risco
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {accounts
@@ -194,7 +196,9 @@ export function CS360Tabs({
       <TabsContent value="renewals" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-section-title text-sm">Pipeline de renovação</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              Pipeline de renovação
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {renewals.length === 0 ? (
@@ -274,7 +278,9 @@ export function CS360Tabs({
       <TabsContent value="usage" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-section-title text-sm">Adoção de produto</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              Adoção de produto
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             {usage.length === 0 ? (
@@ -315,7 +321,9 @@ export function CS360Tabs({
       <TabsContent value="onboarding" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader>
-            <CardTitle className="text-section-title text-sm">Jornadas de onboarding</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              Jornadas de onboarding
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             {onboarding.length === 0 ? (
@@ -407,7 +415,9 @@ export function CS360Tabs({
       <TabsContent value="surveys" className="mt-4">
         <Card className="glass border-border/50">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-section-title text-sm">Respostas CSAT / CES</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              Respostas CSAT / CES
+            </CardTitle>
             {accounts[0] && (
               <SurveyTriggerDialog
                 accountId={accounts[0].id}

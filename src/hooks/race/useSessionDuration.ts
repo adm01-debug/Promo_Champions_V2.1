@@ -13,7 +13,10 @@ interface Opts {
  * Após `fatigueThresholdMs`, retorna `fatigued = true` para componentes
  * reduzirem microinterações automaticamente.
  */
-export function useSessionDuration({ fatigueThresholdMs = 10 * 60 * 1000, notify = true }: Opts = {}) {
+export function useSessionDuration({
+  fatigueThresholdMs = 10 * 60 * 1000,
+  notify = true,
+}: Opts = {}) {
   const [elapsed, setElapsed] = useState(0);
   const [fatigued, setFatigued] = useState(false);
   const startedAtRef = useRef<number>(Date.now());

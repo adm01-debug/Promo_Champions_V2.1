@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ImpactRow {
   session_id: string;
@@ -35,9 +35,11 @@ export interface CoachingImpactResponse {
 
 export const useCoachingImpact = () => {
   return useQuery<CoachingImpactResponse>({
-    queryKey: ["coaching-impact"],
+    queryKey: ['coaching-impact'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("coaching-impact-summary", { body: {} });
+      const { data, error } = await supabase.functions.invoke('coaching-impact-summary', {
+        body: {},
+      });
       if (error) throw error;
       return data as CoachingImpactResponse;
     },

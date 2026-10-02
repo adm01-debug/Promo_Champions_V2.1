@@ -1,16 +1,20 @@
-import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { Package } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BackButton } from "@/components/navigation/BackButton";
-import { OrderStatusTimeline } from "@/components/orders/OrderStatusTimeline";
-import { OrderItemsCard } from "@/components/orders/OrderItemsCard";
-import { OrderSummaryCard } from "@/components/orders/OrderSummaryCard";
-import { useOrder } from "@/hooks/orders/useOrder";
-import { formatDateTime, statusLabel, statusTone } from "@/components/orders/orderHelpers";
+import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Package } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BackButton } from '@/components/navigation/BackButton';
+import { OrderStatusTimeline } from '@/components/orders/OrderStatusTimeline';
+import { OrderItemsCard } from '@/components/orders/OrderItemsCard';
+import { OrderSummaryCard } from '@/components/orders/OrderSummaryCard';
+import { useOrder } from '@/hooks/orders/useOrder';
+import {
+  formatDateTime,
+  statusLabel,
+  statusTone,
+} from '@/components/orders/orderHelpers';
 
 export default function AcompanhamentoPedidoDetalhe() {
   const { id } = useParams<{ id: string }>();
@@ -20,14 +24,19 @@ export default function AcompanhamentoPedidoDetalhe() {
   return (
     <div className="container mx-auto max-w-5xl px-4 py-6 space-y-6">
       <Helmet>
-        <title>{order ? `Pedido #${order.order_number}` : "Pedido"} | Acompanhamento</title>
+        <title>
+          {order ? `Pedido #${order.order_number}` : 'Pedido'} | Acompanhamento
+        </title>
         <meta
           name="description"
           content="Consulte os status, itens e eventos efetivamente registrados para este pedido."
         />
       </Helmet>
 
-      <BackButton label="Voltar para Acompanhamento" fallbackPath="/acompanhamento-pedidos" />
+      <BackButton
+        label="Voltar para Acompanhamento"
+        fallbackPath="/acompanhamento-pedidos"
+      />
 
       {isLoading && <OrderDetailSkeleton />}
 
@@ -54,7 +63,8 @@ export default function AcompanhamentoPedidoDetalhe() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Este pedido não existe, não está mais disponível ou você não tem permissão para visualizá-lo.
+              Este pedido não existe, não está mais disponível ou você não tem permissão
+              para visualizá-lo.
             </p>
             <Button asChild>
               <Link to="/acompanhamento-pedidos">Ver acompanhamento</Link>
@@ -69,10 +79,13 @@ export default function AcompanhamentoPedidoDetalhe() {
             <div>
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-primary" />
-                <h1 className="font-display text-2xl font-semibold tracking-tight">Pedido #{order.order_number}</h1>
+                <h1 className="font-display text-2xl font-semibold tracking-tight">
+                  Pedido #{order.order_number}
+                </h1>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Criado em {formatDateTime(order.created_at)} · Última atualização em {formatDateTime(order.updated_at)}
+                Criado em {formatDateTime(order.created_at)} · Última atualização em{' '}
+                {formatDateTime(order.updated_at)}
               </p>
             </div>
             <Badge variant={statusTone(order.status)} size="lg">

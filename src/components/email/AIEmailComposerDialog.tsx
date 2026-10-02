@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Sparkles, RefreshCw, Send, Copy, Clock, Lightbulb } from "lucide-react";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Sparkles, RefreshCw, Send, Copy, Clock, Lightbulb } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -9,22 +9,33 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "@/hooks/use-toast";
-import { useComposeEmail, useSendComposedEmail, type ComposeEmailResult } from "@/hooks/email/useComposeEmail";
+} from '@/components/ui/select';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { toast } from '@/hooks/use-toast';
+import {
+  useComposeEmail,
+  useSendComposedEmail,
+  type ComposeEmailResult,
+} from '@/hooks/email/useComposeEmail';
 import {
   GOAL_OPTIONS,
   TONE_OPTIONS,
@@ -35,7 +46,7 @@ import {
   mapFormToComposeInput,
   type ComposeFormValues,
   type RecipientType,
-} from "./aiEmailHelpers";
+} from './aiEmailHelpers';
 
 interface Props {
   open: boolean;
@@ -52,16 +63,16 @@ export function AIEmailComposerDialog({
   open,
   onOpenChange,
   recipientId,
-  recipientType = "manual",
+  recipientType = 'manual',
   recipientEmail,
   recipientName,
   recipientCompany,
   clientId,
 }: Props) {
   const [result, setResult] = useState<ComposeEmailResult | null>(null);
-  const [editedSubject, setEditedSubject] = useState("");
-  const [editedBody, setEditedBody] = useState("");
-  const [toEmail, setToEmail] = useState(recipientEmail ?? "");
+  const [editedSubject, setEditedSubject] = useState('');
+  const [editedBody, setEditedBody] = useState('');
+  const [toEmail, setToEmail] = useState(recipientEmail ?? '');
 
   const compose = useComposeEmail();
   const send = useSendComposedEmail();
@@ -78,7 +89,7 @@ export function AIEmailComposerDialog({
       recipientName,
       recipientCompany,
     });
-    
+
     const data = await compose.mutateAsync(input);
     setResult(data);
     setEditedSubject(data.subject);
@@ -87,7 +98,10 @@ export function AIEmailComposerDialog({
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(`Assunto: ${editedSubject}\n\n${editedBody}`);
-    toast({ title: "Copiado", description: "Assunto e corpo copiados para a área de transferência." });
+    toast({
+      title: 'Copiado',
+      description: 'Assunto e corpo copiados para a área de transferência.',
+    });
   };
 
   const handleSend = async () => {
@@ -106,8 +120,8 @@ export function AIEmailComposerDialog({
   const handleClose = (v: boolean) => {
     if (!v) {
       setResult(null);
-      setEditedSubject("");
-      setEditedBody("");
+      setEditedSubject('');
+      setEditedBody('');
       compose.reset();
     }
     onOpenChange(v);
@@ -142,9 +156,17 @@ export function AIEmailComposerDialog({
                   <FormItem>
                     <FormLabel>Objetivo</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
-                        {GOAL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        {GOAL_OPTIONS.map(o => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -158,9 +180,17 @@ export function AIEmailComposerDialog({
                   <FormItem>
                     <FormLabel>Tom</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
-                        {TONE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        {TONE_OPTIONS.map(o => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -174,9 +204,17 @@ export function AIEmailComposerDialog({
                   <FormItem>
                     <FormLabel>Idioma</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
-                        {LANGUAGE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        {LANGUAGE_OPTIONS.map(o => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -190,9 +228,17 @@ export function AIEmailComposerDialog({
                   <FormItem>
                     <FormLabel>Tamanho</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
                       <SelectContent>
-                        {LENGTH_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        {LENGTH_OPTIONS.map(o => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -219,9 +265,15 @@ export function AIEmailComposerDialog({
               )}
             />
 
-            <Button type="submit" loading={compose.isPending} loadingText="Gerando..." className="w-full" variant="glow">
+            <Button
+              type="submit"
+              loading={compose.isPending}
+              loadingText="Gerando..."
+              className="w-full"
+              variant="glow"
+            >
               <Sparkles className="h-4 w-4" />
-              {result ? "Regenerar" : "Gerar com IA"}
+              {result ? 'Regenerar' : 'Gerar com IA'}
             </Button>
           </form>
         </Form>
@@ -242,7 +294,7 @@ export function AIEmailComposerDialog({
               <Input
                 id="ai-subject"
                 value={editedSubject}
-                onChange={(e) => setEditedSubject(e.target.value)}
+                onChange={e => setEditedSubject(e.target.value)}
                 maxLength={120}
               />
             </div>
@@ -252,7 +304,7 @@ export function AIEmailComposerDialog({
               <Textarea
                 id="ai-body"
                 value={editedBody}
-                onChange={(e) => setEditedBody(e.target.value)}
+                onChange={e => setEditedBody(e.target.value)}
                 rows={10}
                 className="font-mono text-sm"
               />
@@ -261,7 +313,10 @@ export function AIEmailComposerDialog({
             {result.follow_up_hint && (
               <div className="flex gap-2 text-sm text-muted-foreground bg-muted/40 rounded-md p-3">
                 <Lightbulb className="h-4 w-4 shrink-0 mt-0.5 text-status-warning" />
-                <span><strong className="text-foreground">Follow-up:</strong> {result.follow_up_hint}</span>
+                <span>
+                  <strong className="text-foreground">Follow-up:</strong>{' '}
+                  {result.follow_up_hint}
+                </span>
               </div>
             )}
 
@@ -271,7 +326,7 @@ export function AIEmailComposerDialog({
                 id="ai-to"
                 type="email"
                 value={toEmail}
-                onChange={(e) => setToEmail(e.target.value)}
+                onChange={e => setToEmail(e.target.value)}
                 placeholder="contato@empresa.com"
               />
             </div>
@@ -280,10 +335,20 @@ export function AIEmailComposerDialog({
               <Button variant="outline" onClick={handleCopy} className="gap-1">
                 <Copy className="h-4 w-4" /> Copiar
               </Button>
-              <Button variant="outline" onClick={() => form.handleSubmit(handleGenerate)()} loading={compose.isPending}>
+              <Button
+                variant="outline"
+                onClick={() => form.handleSubmit(handleGenerate)()}
+                loading={compose.isPending}
+              >
                 <RefreshCw className="h-4 w-4" /> Regenerar
               </Button>
-              <Button onClick={handleSend} loading={send.isPending} disabled={!toEmail} variant="glow-success" className="gap-1">
+              <Button
+                onClick={handleSend}
+                loading={send.isPending}
+                disabled={!toEmail}
+                variant="glow-success"
+                className="gap-1"
+              >
                 <Send className="h-4 w-4" /> Enviar agora
               </Button>
             </DialogFooter>

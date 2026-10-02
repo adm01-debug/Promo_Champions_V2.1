@@ -3,7 +3,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ShieldAlert } from 'lucide-react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -39,8 +45,8 @@ export const CampaignHealthAlertsCard = React.memo(function CampaignHealthAlerts
           Alertas automáticos de campanha
         </CardTitle>
         <CardDescription>
-          Verificação a cada 30 minutos: descadastro acima do limite, falhas de envio e campanhas
-          paradas — com janela de silêncio para evitar repetição.
+          Verificação a cada 30 minutos: descadastro acima do limite, falhas de envio e
+          campanhas paradas — com janela de silêncio para evitar repetição.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -53,7 +59,7 @@ export const CampaignHealthAlertsCard = React.memo(function CampaignHealthAlerts
             Nenhum alerta registrado. Suas campanhas estão dentro dos limites.
           </p>
         ) : (
-          alerts.map((a) => (
+          alerts.map(a => (
             <div
               key={a.id}
               className="flex items-start justify-between gap-3 rounded-lg border bg-muted/20 p-3"
@@ -61,11 +67,15 @@ export const CampaignHealthAlertsCard = React.memo(function CampaignHealthAlerts
               <div className="min-w-0 space-y-1">
                 <p className="text-sm">{a.message}</p>
                 <p className="text-xs text-muted-foreground">
-                  {format(new Date(a.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                  {format(new Date(a.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                    locale: ptBR,
+                  })}
                 </p>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
-                <Badge variant={SEVERITY_VARIANT[a.severity]}>{TYPE_LABEL[a.alert_type]}</Badge>
+                <Badge variant={SEVERITY_VARIANT[a.severity]}>
+                  {TYPE_LABEL[a.alert_type]}
+                </Badge>
               </div>
             </div>
           ))

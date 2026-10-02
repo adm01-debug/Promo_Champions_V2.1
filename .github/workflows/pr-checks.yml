@@ -88,6 +88,11 @@ jobs:
       - name: Run TypeScript check
         run: npm run typecheck
 
+      # Gate de formatação: depois do Prettier em massa (PR de higiene),
+      # nenhum arquivo de src/ pode regredir de formato.
+      - name: Prettier format check
+        run: npm run format:check
+
       - name: Committed secrets scan
         run: npm run security:secrets
 
@@ -144,6 +149,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Garante que todo padrão declarado nos configs casa specs reais e que
+      # nenhum spec no disco ficou fora de todos os padrões (drift silencioso).
+      - name: Test config drift guard
+        run: npm run test:config
+
       # --retry=2 + JSON por spec alimentam o relatório de flakies: um teste que
       # só passa na retentativa fica registrado (retry>0) em vez de passar
       # silenciosamente. O gate final é do flaky-report, não do exit do vitest.
@@ -181,6 +191,11 @@ jobs:
       # O escopo é src/** inteiro e este passo garante que o número real só sobe.
       - name: Coverage ratchet (nunca cai)
         run: npm run coverage:ratchet
+
+      # Escada: o ratchet global pode diluir uma queda num módulo crítico.
+      # Pisos por módulo em coverage-ladder-baseline.json reprovam isso.
+      - name: Coverage ladder (pisos por módulo crítico)
+        run: npm run coverage:ladder
 
   edge-functions-lint:
     name: Edge Functions Lint (deno)
@@ -354,7 +369,10 @@ jobs:
     # completa: URL, publishable key e conta E2E. Configuração parcial falha
     # imediatamente para não produzir timeouts ou falso sinal de cobertura.
     # Sem nenhum segredo, a suíte é marcada explicitamente como skipped.
+    # environment: pr-preview — secrets ficam restritos a este job; fork PRs
+    # não acessam o ambiente (GitHub bloqueia deployments de fork por padrão).
     if: (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
 

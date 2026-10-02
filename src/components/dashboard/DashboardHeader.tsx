@@ -1,21 +1,32 @@
-import { useAuth } from "@/contexts/AuthContext";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Button } from "@/components/ui/button";
-import { FileDown, Sparkles, Sun, Moon, Coffee, Terminal, Radio, Monitor, Zap, BarChart3 } from "lucide-react";
-import { generateCurrentMonthReport } from "@/lib/generateMonthlyReport";
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useDashboardTheme } from "@/contexts/DashboardThemeContext";
-import { cn } from "@/lib/utils";
+import { useAuth } from '@/contexts/AuthContext';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
+import {
+  FileDown,
+  Sparkles,
+  Sun,
+  Moon,
+  Coffee,
+  Terminal,
+  Radio,
+  Monitor,
+  Zap,
+  BarChart3,
+} from 'lucide-react';
+import { generateCurrentMonthReport } from '@/lib/generateMonthlyReport';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
+import { cn } from '@/lib/utils';
 
 const motivationalTips = [
-  "SYSTEM STATUS: PEAK PERFORMANCE REQUIRED 🎯",
-  "OBJECTIVE: DOMINAR O CIRCUITO 💪",
-  "NEW RECORD DETECTED WITHIN REACH 🏆",
-  "FOCUS PROTOCOL: ACTIVE 🚀",
-  "TARGET ACQUISITION: META STRIKE ⭐",
+  'SYSTEM STATUS: PEAK PERFORMANCE REQUIRED 🎯',
+  'OBJECTIVE: DOMINAR O CIRCUITO 💪',
+  'NEW RECORD DETECTED WITHIN REACH 🏆',
+  'FOCUS PROTOCOL: ACTIVE 🚀',
+  'TARGET ACQUISITION: META STRIKE ⭐',
 ];
 
 export const DashboardHeader = () => {
@@ -25,12 +36,17 @@ export const DashboardHeader = () => {
   const today = format(new Date(), "EEEE, d 'De' MMMM", { locale: ptBR });
   const [exporting, setExporting] = useState(false);
 
-  const { greeting, icon: GreetingIcon, color } = useMemo(() => {
+  const {
+    greeting,
+    icon: GreetingIcon,
+    color,
+  } = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 6) return { greeting: "Boa madrugada", icon: Moon, color: "text-indigo-400" };
-    if (hour < 12) return { greeting: "Bom dia", icon: Coffee, color: "text-amber-400" };
-    if (hour < 18) return { greeting: "Boa tarde", icon: Sun, color: "text-orange-400" };
-    return { greeting: "Boa noite", icon: Moon, color: "text-indigo-400" };
+    if (hour < 6)
+      return { greeting: 'Boa madrugada', icon: Moon, color: 'text-indigo-400' };
+    if (hour < 12) return { greeting: 'Bom dia', icon: Coffee, color: 'text-amber-400' };
+    if (hour < 18) return { greeting: 'Boa tarde', icon: Sun, color: 'text-orange-400' };
+    return { greeting: 'Boa noite', icon: Moon, color: 'text-indigo-400' };
   }, []);
 
   const tip = useMemo(() => {
@@ -38,7 +54,7 @@ export const DashboardHeader = () => {
     return motivationalTips[dayIndex];
   }, []);
 
-  const firstName = salesperson?.name?.split(" ")[0] || "Operator";
+  const firstName = salesperson?.name?.split(' ')[0] || 'Operator';
 
   const handleExportPDF = async () => {
     setExporting(true);
@@ -63,10 +79,10 @@ export const DashboardHeader = () => {
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div className="flex items-center gap-5">
           <div className="relative shrink-0">
-            <motion.div 
+            <motion.div
               animate={{ opacity: [0.4, 0.8, 0.4] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="absolute inset-0 bg-primary/20 blur-xl rounded-full" 
+              className="absolute inset-0 bg-primary/20 blur-xl rounded-full"
             />
             <div className="relative h-14 w-14 flex items-center justify-center rounded-2xl bg-black/60 border border-primary/40 shadow-[inset_0_0_15px_rgba(14,165,233,0.1)]">
               <GreetingIcon className={`h-7 w-7 ${color}`} />
@@ -76,23 +92,35 @@ export const DashboardHeader = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/60">Session Established</span>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/60">
+                Session Established
+              </span>
               <div className="h-[1px] w-8 bg-primary/20" />
             </div>
             <h1 className="text-page-title sm:text-4xl uppercase text-foreground">
-              {greeting}, <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary animate-pulse" style={{ textShadow: '0 0 25px rgba(14,165,233,0.5)' }}>{firstName}</span>
+              {greeting},{' '}
+              <span
+                className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary animate-pulse"
+                style={{ textShadow: '0 0 25px rgba(14,165,233,0.5)' }}
+              >
+                {firstName}
+              </span>
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/10">
                 <Radio className="h-3 w-3 text-success animate-pulse" />
-                <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider">{today}</p>
+                <p className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-wider">
+                  {today}
+                </p>
               </div>
               <div className="flex items-center gap-2 text-primary/80">
                 <Sparkles className="h-3 w-3 animate-bounce" />
-                <p className="text-[10px] font-mono font-bold uppercase tracking-widest">{tip}</p>
+                <p className="text-[10px] font-mono font-bold uppercase tracking-widest">
+                  {tip}
+                </p>
               </div>
             </div>
           </div>
@@ -103,24 +131,31 @@ export const DashboardHeader = () => {
             variant="outline"
             size="sm"
             onClick={toggleTheme}
-            aria-label={theme === "cyber" ? "Ativar Modo Padrão" : "Ativar Modo Cyber"}
+            aria-label={theme === 'cyber' ? 'Ativar Modo Padrão' : 'Ativar Modo Cyber'}
             className={cn(
-              "h-9 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]",
-              theme === "cyber" ? "bg-black/60 shadow-[0_0_15_rgba(14,165,233,0.1)]" : "bg-background"
+              'h-9 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]',
+              theme === 'cyber'
+                ? 'bg-black/60 shadow-[0_0_15_rgba(14,165,233,0.1)]'
+                : 'bg-background'
             )}
           >
-            {theme === "cyber" ? <Zap className="h-3.5 w-3.5 mr-2" aria-hidden="true" /> : <Monitor className="h-3.5 w-3.5 mr-2" aria-hidden="true" />}
-            {theme === "cyber" ? "Standard Mode" : "Cyber Mode"}
+            {theme === 'cyber' ? (
+              <Zap className="h-3.5 w-3.5 mr-2" aria-hidden="true" />
+            ) : (
+              <Monitor className="h-3.5 w-3.5 mr-2" aria-hidden="true" />
+            )}
+            {theme === 'cyber' ? 'Standard Mode' : 'Cyber Mode'}
           </Button>
-          
+
           <Button
             variant="outline"
             size="sm"
             aria-label="Ir para Central de Business Intelligence"
             onClick={() => {
-              if (salesperson?.role === 'sdr') navigate("/bi-sdr");
-              else if (salesperson?.role === 'closer' || salesperson?.role === 'hybrid') navigate("/bi-closer");
-              else navigate("/bi-gestor");
+              if (salesperson?.role === 'sdr') navigate('/bi-sdr');
+              else if (salesperson?.role === 'closer' || salesperson?.role === 'hybrid')
+                navigate('/bi-closer');
+              else navigate('/bi-gestor');
             }}
             className="h-9 bg-black/40 border-primary/30 text-primary hover:bg-primary/10 text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
@@ -132,20 +167,22 @@ export const DashboardHeader = () => {
             size="sm"
             onClick={handleExportPDF}
             disabled={exporting}
-            aria-label={exporting ? "Gerando relatório..." : "Exportar relatório mensal para PDF"}
+            aria-label={
+              exporting ? 'Gerando relatório...' : 'Exportar relatório mensal para PDF'
+            }
             className="h-9 bg-primary text-primary-foreground shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_25px_rgba(14,165,233,0.5)] transition-all text-[10px] font-mono font-bold uppercase tracking-[0.2em]"
           >
             <FileDown className="h-3.5 w-3.5 mr-2" aria-hidden="true" />
-            {exporting ? "Compiling..." : "Export HUD"}
+            {exporting ? 'Compiling...' : 'Export HUD'}
           </Button>
         </div>
       </div>
-      
+
       {/* Scanline decoration */}
-      <motion.div 
+      <motion.div
         className="absolute top-0 left-0 w-full h-[1px] bg-primary/10"
-        animate={{ top: ["0%", "100%", "0%"] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        animate={{ top: ['0%', '100%', '0%'] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
       />
     </div>
   );

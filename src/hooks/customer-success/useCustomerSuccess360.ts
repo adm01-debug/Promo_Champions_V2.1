@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CS360Summary {
   total_accounts: number;
@@ -101,7 +101,7 @@ export interface CS360ExpansionRow {
 export interface CS360SurveyRow {
   id: string;
   account_id: string | null;
-  survey_type: "csat" | "ces";
+  survey_type: 'csat' | 'ces';
   score: number | null;
   comment: string | null;
   sent_at: string;
@@ -133,9 +133,12 @@ export interface CS360Response {
 
 export function useCustomerSuccess360() {
   return useQuery({
-    queryKey: ["customer-success-360"],
+    queryKey: ['customer-success-360'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke<CS360Response>("customer-success-360", { body: {} });
+      const { data, error } = await supabase.functions.invoke<CS360Response>(
+        'customer-success-360',
+        { body: {} }
+      );
       if (error) throw error;
       return data!;
     },

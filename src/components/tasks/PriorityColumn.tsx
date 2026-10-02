@@ -11,40 +11,43 @@ interface PriorityColumnProps {
   activeId: string | null;
 }
 
-const priorityConfig: Record<string, { 
-  label: string; 
-  icon: LucideIcon; 
-  color: string;
-  bgColor: string;
-  borderColor: string;
-}> = {
-  urgent: { 
-    label: 'Urgente', 
-    icon: Flame, 
+const priorityConfig: Record<
+  string,
+  {
+    label: string;
+    icon: LucideIcon;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+  }
+> = {
+  urgent: {
+    label: 'Urgente',
+    icon: Flame,
     color: 'text-destructive',
     bgColor: 'bg-destructive/5',
-    borderColor: 'border-destructive/20'
+    borderColor: 'border-destructive/20',
   },
-  high: { 
-    label: 'Prioridade Alta', 
-    icon: Flame, 
+  high: {
+    label: 'Prioridade Alta',
+    icon: Flame,
     color: 'text-status-error',
     bgColor: 'bg-status-error/5',
-    borderColor: 'border-status-error/20'
+    borderColor: 'border-status-error/20',
   },
-  medium: { 
-    label: 'Prioridade Média', 
-    icon: ClipboardList, 
+  medium: {
+    label: 'Prioridade Média',
+    icon: ClipboardList,
     color: 'text-status-warning',
     bgColor: 'bg-status-warning/5',
-    borderColor: 'border-status-warning/20'
+    borderColor: 'border-status-warning/20',
   },
-  low: { 
-    label: 'Prioridade Baixa', 
-    icon: CheckCircle, 
+  low: {
+    label: 'Prioridade Baixa',
+    icon: CheckCircle,
     color: 'text-status-success',
     bgColor: 'bg-status-success/5',
-    borderColor: 'border-status-success/20'
+    borderColor: 'border-status-success/20',
   },
 };
 
@@ -59,18 +62,18 @@ export function PriorityColumn({ priority, tasks, activeId }: PriorityColumnProp
   const taskIds = tasks.map(task => task.id);
 
   return (
-    <div 
+    <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col rounded-xl border p-4 min-h-[300px] transition-all",
+        'flex flex-col rounded-xl border p-4 min-h-[300px] transition-all',
         config.bgColor,
         config.borderColor,
-        isOver && "ring-2 ring-primary/50 bg-primary/5"
+        isOver && 'ring-2 ring-primary/50 bg-primary/5'
       )}
     >
       <div className="flex items-center gap-2 mb-4">
-        <Icon className={cn("h-5 w-5", config.color)} />
-        <h3 className={cn("font-semibold", config.color)}>{config.label}</h3>
+        <Icon className={cn('h-5 w-5', config.color)} />
+        <h3 className={cn('font-semibold', config.color)}>{config.label}</h3>
         <span className="ml-auto text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
           {tasks.length}
         </span>
@@ -78,18 +81,16 @@ export function PriorityColumn({ priority, tasks, activeId }: PriorityColumnProp
 
       <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
         <div className="flex-1 space-y-2">
-          {tasks.map((task) => (
-            <DraggableTaskCard 
-              key={task.id} 
+          {tasks.map(task => (
+            <DraggableTaskCard
+              key={task.id}
               task={task}
               isDragging={activeId === task.id}
             />
           ))}
           {tasks.length === 0 && (
             <div className="flex items-center justify-center h-24 border-2 border-dashed border-border/50 rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                Arraste tarefas aqui
-              </p>
+              <p className="text-sm text-muted-foreground">Arraste tarefas aqui</p>
             </div>
           )}
         </div>

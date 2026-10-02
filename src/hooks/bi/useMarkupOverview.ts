@@ -34,7 +34,10 @@ export function useMarkupOverview(days: number) {
 
       const rows = (salesRes.data ?? []) as MarkupSaleRow[];
       const nameById = new Map<string, string>(
-        ((sellersRes.data ?? []) as Array<{ id: string; name: string }>).map((s) => [s.id, s.name]),
+        ((sellersRes.data ?? []) as Array<{ id: string; name: string }>).map(s => [
+          s.id,
+          s.name,
+        ])
       );
 
       return aggregateMarkupOverview(rows, nameById);

@@ -1,5 +1,5 @@
-import React, { type ReactNode } from "react";
-import { ErrorBoundary } from "./ErrorBoundary";
+import React, { type ReactNode } from 'react';
+import { ErrorBoundary } from './ErrorBoundary';
 
 /**
  * HOC wrapper around <ErrorBoundary>. Lives in its own module so that
@@ -7,7 +7,7 @@ import { ErrorBoundary } from "./ErrorBoundary";
  */
 export function withErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  fallback?: ReactNode,
+  fallback?: ReactNode
 ) {
   const WithErrorBoundary = (props: P) => (
     <ErrorBoundary fallback={fallback}>
@@ -15,7 +15,7 @@ export function withErrorBoundary<P extends object>(
     </ErrorBoundary>
   );
   WithErrorBoundary.displayName = `withErrorBoundary(${
-    WrappedComponent.displayName || WrappedComponent.name || "Component"
+    WrappedComponent.displayName || WrappedComponent.name || 'Component'
   })`;
   return WithErrorBoundary;
 }

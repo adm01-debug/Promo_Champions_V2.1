@@ -1,19 +1,19 @@
-import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { chunkedIn } from "@/lib/supabase/chunkedIn";
-import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
+import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 export interface CohortCell {
   createdMonth: string; // YYYY-MM (lead created)
-  closedMonth: string;  // YYYY-MM (analyzed)
+  closedMonth: string; // YYYY-MM (analyzed)
   total: number;
   wins: number;
   winRate: number;
 }
 
 const monthKey = (d: Date): string =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
 /**
  * Build cohort matrix: rows = lead-creation month, cols = closing month.
@@ -23,16 +23,22 @@ export const useWinLossCohort = (rows: WLAnalysisRow[]) => {
   const ids = useMemo(() => rows.map(r => r.sale_id), [rows]);
 
   const { data: salesCreated = {} } = useQuery({
-    queryKey: ["wl-cohort-sales", ids.sort().join(",")],
+    queryKey: ['wl-cohort-sales', ids.sort().join(',')],
     enabled: ids.length > 0,
     queryFn: async (): Promise<Record<string, string>> => {
       const data = await chunkedIn<{ id: string; created_at: string }>(
         ids,
-        (chunk) => supabase.from("sales").select("id, created_at").in("id", chunk as string[]),
-        { parallel: true, label: "wl.cohort.sales" },
+        chunk =>
+          supabase
+            .from('sales')
+            .select('id, created_at')
+            .in('id', chunk as string[]),
+        { parallel: true, label: 'wl.cohort.sales' }
       );
       const map: Record<string, string> = {};
-      data.forEach(s => { map[s.id] = s.created_at; });
+      data.forEach(s => {
+        map[s.id] = s.created_at;
+      });
       return map;
     },
     staleTime: 60_000,
@@ -48,11 +54,11 @@ export const useWinLossCohort = (rows: WLAnalysisRow[]) => {
       const k = `${ck}||${xk}`;
       const cur = grouped.get(k) ?? { wins: 0, total: 0 };
       cur.total++;
-      if (r.outcome === "won") cur.wins++;
+      if (r.outcome === 'won') cur.wins++;
       grouped.set(k, cur);
     });
     const cells: CohortCell[] = Array.from(grouped.entries()).map(([k, v]) => {
-      const [createdMonth, closedMonth] = k.split("||");
+      const [createdMonth, closedMonth] = k.split('||');
       return {
         createdMonth,
         closedMonth,

@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 interface Particle {
   id: number;
@@ -18,19 +18,19 @@ interface ComboExplosionProps {
 }
 
 const TIER_COLORS = [
-  ["#94a3b8", "#64748b"], // Normal - gray
-  ["#3b82f6", "#60a5fa"], // Aquecendo - blue
-  ["#f97316", "#fb923c"], // Em Chamas - orange
-  ["#ef4444", "#f87171"], // Imparável - red
-  ["#f59e0b", "#fbbf24"], // LENDÁRIO - amber/gold
+  ['#94a3b8', '#64748b'], // Normal - gray
+  ['#3b82f6', '#60a5fa'], // Aquecendo - blue
+  ['#f97316', '#fb923c'], // Em Chamas - orange
+  ['#ef4444', '#f87171'], // Imparável - red
+  ['#f59e0b', '#fbbf24'], // LENDÁRIO - amber/gold
 ];
 
 const TIER_EMOJIS = [
-  ["⭐"],
-  ["⚡", "💫"],
-  ["🔥", "💥", "✨"],
-  ["💀", "🔥", "⚡", "💥"],
-  ["👑", "🏆", "💎", "🔥", "⚡"],
+  ['⭐'],
+  ['⚡', '💫'],
+  ['🔥', '💥', '✨'],
+  ['💀', '🔥', '⚡', '💥'],
+  ['👑', '🏆', '💎', '🔥', '⚡'],
 ];
 
 export function ComboExplosion({ trigger, tier, onComplete }: ComboExplosionProps) {
@@ -95,7 +95,7 @@ export function ComboExplosion({ trigger, tier, onComplete }: ComboExplosionProp
           />
 
           {/* Particles */}
-          {particles.map((particle) => (
+          {particles.map(particle => (
             <motion.div
               key={particle.id}
               initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
@@ -108,7 +108,7 @@ export function ComboExplosion({ trigger, tier, onComplete }: ComboExplosionProp
               }}
               transition={{
                 duration: 0.8 + Math.random() * 0.5,
-                ease: "easeOut",
+                ease: 'easeOut',
               }}
               className="absolute"
             >

@@ -1,6 +1,6 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database } from "lucide-react";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Database } from 'lucide-react';
 
 interface OffenderStats {
   count: number;
@@ -8,13 +8,16 @@ interface OffenderStats {
   maxMs: number;
 }
 
-const formatDuration = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${ms}ms`;
+const formatDuration = (ms: number) =>
+  ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${ms}ms`;
 
 interface TelemetryTopOffendersProps {
   offenders: [string, OffenderStats][];
 }
 
-export const TelemetryTopOffenders = React.memo(function TelemetryTopOffenders({ offenders }: TelemetryTopOffendersProps) {
+export const TelemetryTopOffenders = React.memo(function TelemetryTopOffenders({
+  offenders,
+}: TelemetryTopOffendersProps) {
   if (offenders.length === 0) return null;
 
   return (
@@ -28,11 +31,20 @@ export const TelemetryTopOffenders = React.memo(function TelemetryTopOffenders({
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {offenders.map(([name, stats]) => (
-            <div key={name} className="p-3 rounded-lg border border-border/50 bg-muted/30">
-              <p className="font-mono text-sm font-medium truncate" title={name}>{name}</p>
+            <div
+              key={name}
+              className="p-3 rounded-lg border border-border/50 bg-muted/30"
+            >
+              <p className="font-mono text-sm font-medium truncate" title={name}>
+                {name}
+              </p>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-muted-foreground">{stats.count}× alertas</span>
-                <span className="text-xs text-destructive">max {formatDuration(stats.maxMs)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {stats.count}× alertas
+                </span>
+                <span className="text-xs text-destructive">
+                  max {formatDuration(stats.maxMs)}
+                </span>
               </div>
               <p className="text-[10px] text-muted-foreground mt-0.5">
                 média: {formatDuration(Math.round(stats.totalMs / stats.count))}

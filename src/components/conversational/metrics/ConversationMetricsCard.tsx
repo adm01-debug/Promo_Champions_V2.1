@@ -1,18 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, RefreshCcw, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Activity, RefreshCcw, Loader2 } from 'lucide-react';
 import {
   useConversationMetrics,
   useAnalyzeConversationMetrics,
-} from "@/hooks/conversational/useConversationMetrics";
-import { TalkRatioDonut } from "./TalkRatioDonut";
-import { PaceGauge } from "./PaceGauge";
-import { EngagementBreakdown } from "./EngagementBreakdown";
-import { healthBadgeVariant, healthLabel } from "./metricsHelpers";
+} from '@/hooks/conversational/useConversationMetrics';
+import { TalkRatioDonut } from './TalkRatioDonut';
+import { PaceGauge } from './PaceGauge';
+import { EngagementBreakdown } from './EngagementBreakdown';
+import { healthBadgeVariant, healthLabel } from './metricsHelpers';
 
-interface Props { recordingId: string; }
+interface Props {
+  recordingId: string;
+}
 
 export function ConversationMetricsCard({ recordingId }: Props) {
   const { data, isLoading } = useConversationMetrics(recordingId);
@@ -37,10 +39,12 @@ export function ConversationMetricsCard({ recordingId }: Props) {
           onClick={() => analyze.mutate(recordingId)}
           disabled={analyze.isPending}
         >
-          {analyze.isPending
-            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            : <RefreshCcw className="h-3.5 w-3.5" />}
-          {data ? "Recalcular" : "Calcular"}
+          {analyze.isPending ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <RefreshCcw className="h-3.5 w-3.5" />
+          )}
+          {data ? 'Recalcular' : 'Calcular'}
         </Button>
       </CardHeader>
       <CardContent>
@@ -54,7 +58,9 @@ export function ConversationMetricsCard({ recordingId }: Props) {
           <div className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <div className="mb-1 text-xs font-medium text-muted-foreground">Talk Ratio</div>
+                <div className="mb-1 text-xs font-medium text-muted-foreground">
+                  Talk Ratio
+                </div>
                 <TalkRatioDonut
                   seller={data.seller_talk_ratio}
                   client={data.client_talk_ratio}
@@ -62,15 +68,26 @@ export function ConversationMetricsCard({ recordingId }: Props) {
                 />
               </div>
               <div>
-                <div className="mb-1 text-xs font-medium text-muted-foreground">Cadência (vendedor)</div>
-                <PaceGauge wpm={data.seller_words_per_minute} paceScore={data.pace_score} />
+                <div className="mb-1 text-xs font-medium text-muted-foreground">
+                  Cadência (vendedor)
+                </div>
+                <PaceGauge
+                  wpm={data.seller_words_per_minute}
+                  paceScore={data.pace_score}
+                />
               </div>
             </div>
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <div className="text-xs font-medium text-muted-foreground">Engajamento</div>
+                <div className="text-xs font-medium text-muted-foreground">
+                  Engajamento
+                </div>
                 <div className="text-xs text-muted-foreground">
-                  Score: <span className="font-semibold text-foreground">{Math.round(data.engagement_score)}</span>/100
+                  Score:{' '}
+                  <span className="font-semibold text-foreground">
+                    {Math.round(data.engagement_score)}
+                  </span>
+                  /100
                 </div>
               </div>
               <EngagementBreakdown metrics={data} />

@@ -70,7 +70,7 @@ const PodiumSlot: FC<SlotProps> = ({ entry, meta, reducedMotion }) => {
       className={cn(
         'relative flex flex-1 min-w-0 items-center gap-2.5 rounded-lg border bg-card/60 px-3 py-2 backdrop-blur',
         'border-border hover:border-primary/30 transition-colors',
-        isLeader && 'sm:-translate-y-1 sm:px-3.5 sm:py-2.5',
+        isLeader && 'sm:-translate-y-1 sm:px-3.5 sm:py-2.5'
       )}
       aria-label={`${meta.label}: ${entry.salesperson_name}`}
     >
@@ -86,14 +86,20 @@ const PodiumSlot: FC<SlotProps> = ({ entry, meta, reducedMotion }) => {
       )}
 
       <div className="relative shrink-0">
-        <Avatar className={cn(avatarSize, 'ring-2 ring-offset-2 ring-offset-background', meta.ringClass)}>
+        <Avatar
+          className={cn(
+            avatarSize,
+            'ring-2 ring-offset-2 ring-offset-background',
+            meta.ringClass
+          )}
+        >
           <AvatarImage src={entry.avatar_url ?? undefined} alt={entry.salesperson_name} />
           <AvatarFallback>{entry.salesperson_name?.[0] ?? '?'}</AvatarFallback>
         </Avatar>
         <div
           className={cn(
             'absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black border-2 border-background',
-            meta.bgClass,
+            meta.bgClass
           )}
           aria-hidden
         >
@@ -103,15 +109,24 @@ const PodiumSlot: FC<SlotProps> = ({ entry, meta, reducedMotion }) => {
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1">
-          <span aria-hidden className="text-xs">{meta.emoji}</span>
-          <p className={cn('truncate font-semibold', meta.size === 'lg' ? 'text-sm' : 'text-xs')}>
+          <span aria-hidden className="text-xs">
+            {meta.emoji}
+          </span>
+          <p
+            className={cn(
+              'truncate font-semibold',
+              meta.size === 'lg' ? 'text-sm' : 'text-xs'
+            )}
+          >
             {entry.salesperson_name}
           </p>
         </div>
         <p
           className={cn(
             'font-display font-black tabular-nums leading-tight',
-            meta.size === 'lg' ? 'text-base text-foreground' : 'text-sm text-muted-foreground',
+            meta.size === 'lg'
+              ? 'text-base text-foreground'
+              : 'text-sm text-muted-foreground'
           )}
         >
           {fmtCompact(Number(entry.total_sales))}
@@ -161,17 +176,18 @@ export const MiniPodium: FC<Props> = ({ entries, className }) => {
         hidden: {},
         visible: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
       }}
-      className={cn(
-        'flex flex-col sm:flex-row items-stretch gap-2 pt-3',
-        className,
-      )}
+      className={cn('flex flex-col sm:flex-row items-stretch gap-2 pt-3', className)}
     >
       {ordered.map(({ entry, meta }) => (
         <motion.div
           key={entry.car_id}
           variants={{
             hidden: { opacity: 0, y: 8 },
-            visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 22 } },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { type: 'spring', stiffness: 200, damping: 22 },
+            },
           }}
           className="flex-1 min-w-0"
         >

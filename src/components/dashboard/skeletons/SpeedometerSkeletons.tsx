@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export const SpeedometerSkeleton = () => (
   <div className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 p-5 overflow-hidden animate-pulse">
@@ -13,7 +13,7 @@ export const SpeedometerSkeleton = () => (
       <div className="relative w-[180px] h-[120px] overflow-hidden">
         <div
           className="absolute inset-0 rounded-full border-[10px] border-border/40 border-b-transparent"
-          style={{ transform: "rotate(45deg)" }}
+          style={{ transform: 'rotate(45deg)' }}
         />
         <div className="absolute inset-x-0 bottom-3 flex flex-col items-center gap-1.5">
           <div className="h-6 w-20 rounded bg-muted/50" />
@@ -27,7 +27,7 @@ export const SpeedometerSkeleton = () => (
 export const ComparativeStripSkeleton = ({ className }: { className?: string }) => (
   <div
     className={cn(
-      "rounded-xl border border-border/50 bg-gradient-to-r from-card/80 via-card to-card/80 p-4 animate-pulse",
+      'rounded-xl border border-border/50 bg-gradient-to-r from-card/80 via-card to-card/80 p-4 animate-pulse',
       className
     )}
   >
