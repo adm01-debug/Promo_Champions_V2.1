@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const GoalSchema = z.object({
   amount: z.number().min(0),
@@ -15,7 +15,7 @@ export const CommissionSchema = z.object({
 });
 
 export const ApprovalRequestSchema = z.object({
-  type: z.enum(["goal", "scoring_rule", "commission"]),
+  type: z.enum(['goal', 'scoring_rule', 'commission']),
   entity_id: z.string().uuid(),
   new_values: z.record(z.string(), z.any()),
   old_values: z.record(z.string(), z.any()).optional(),

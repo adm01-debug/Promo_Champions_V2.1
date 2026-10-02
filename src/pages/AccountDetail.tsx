@@ -1,13 +1,13 @@
-import { Helmet } from "react-helmet-async";
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Building2, Globe, Briefcase, MessageSquare } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAccount, useAccountSummary } from "@/hooks/engagement/useAccountEngagement";
-import { AccountScoreBadge } from "@/components/engagement/Account/AccountScoreBadge";
-import { AccountCoverageBar } from "@/components/engagement/Account/AccountCoverageBar";
-import { BuyingCommitteeCard } from "@/components/engagement/Account/BuyingCommitteeCard";
+import { Helmet } from 'react-helmet-async';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, Building2, Globe, Briefcase, MessageSquare } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAccount, useAccountSummary } from '@/hooks/engagement/useAccountEngagement';
+import { AccountScoreBadge } from '@/components/engagement/Account/AccountScoreBadge';
+import { AccountCoverageBar } from '@/components/engagement/Account/AccountCoverageBar';
+import { BuyingCommitteeCard } from '@/components/engagement/Account/BuyingCommitteeCard';
 
 export default function AccountDetail() {
   const { accountId } = useParams<{ accountId: string }>();
@@ -28,7 +28,10 @@ export default function AccountDetail() {
     <>
       <Helmet>
         <title>{account.name} · Conta ABM | Promo Champions</title>
-        <meta name="description" content={`Detalhes ABM da conta ${account.name}, comitê e engajamento consolidado.`} />
+        <meta
+          name="description"
+          content={`Detalhes ABM da conta ${account.name}, comitê e engajamento consolidado.`}
+        />
         <link rel="canonical" href={`/engagement/abm/${account.id}`} />
       </Helmet>
 
@@ -50,11 +53,20 @@ export default function AccountDetail() {
                 </CardTitle>
                 <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                   {account.industry && (
-                    <span className="inline-flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{account.industry}</span>
+                    <span className="inline-flex items-center gap-1">
+                      <Briefcase className="h-3.5 w-3.5" />
+                      {account.industry}
+                    </span>
                   )}
                   {account.website && (
-                    <a href={account.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-primary">
-                      <Globe className="h-3.5 w-3.5" />{account.website}
+                    <a
+                      href={account.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 hover:text-primary"
+                    >
+                      <Globe className="h-3.5 w-3.5" />
+                      {account.website}
                     </a>
                   )}
                 </div>
@@ -65,7 +77,10 @@ export default function AccountDetail() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Stat label="Score consolidado" value={account.account_score ?? 0} />
-              <Stat label="Contatos engajados" value={`${account.engaged_contacts ?? 0}`} />
+              <Stat
+                label="Contatos engajados"
+                value={`${account.engaged_contacts ?? 0}`}
+              />
               <Stat label="Champions" value={account.champion_count ?? 0} />
               <Stat label="Decisores" value={account.decision_maker_count ?? 0} />
             </div>

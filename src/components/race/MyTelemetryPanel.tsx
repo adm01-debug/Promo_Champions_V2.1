@@ -63,7 +63,7 @@ export function MyTelemetryPanel({
     >
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen(o => !o)}
         className="flex w-full items-center justify-between px-3 py-1.5 hover:bg-muted/40 transition-colors"
       >
         <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-muted-foreground">
@@ -93,7 +93,8 @@ export function MyTelemetryPanel({
                   className="text-[12px] font-black tabular-nums text-foreground"
                   style={{ fontFamily: 'JetBrains Mono, monospace' }}
                 >
-                  {avgDealsPerDay.toFixed(1)}<span className="text-[8px] text-muted-foreground"> deals/d</span>
+                  {avgDealsPerDay.toFixed(1)}
+                  <span className="text-[8px] text-muted-foreground"> deals/d</span>
                 </span>
               </div>
               {/* Best lap */}
@@ -127,7 +128,10 @@ export function MyTelemetryPanel({
                   <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     Pneus
                   </span>
-                  <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: fatigueColor }}>
+                  <span
+                    className="text-[9px] font-black uppercase tracking-wider"
+                    style={{ color: fatigueColor }}
+                  >
                     {fatigueLabel}
                   </span>
                 </div>
@@ -154,7 +158,9 @@ export function MyTelemetryPanel({
                     <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
                       <div
                         className="h-full bg-primary transition-all duration-500"
-                        style={{ width: `${Math.max(0, Math.min(100, nextGoalPercent))}%` }}
+                        style={{
+                          width: `${Math.max(0, Math.min(100, nextGoalPercent))}%`,
+                        }}
                       />
                     </div>
                   )}

@@ -56,7 +56,9 @@ export const MFATotpTab = React.memo(function MFATotpTab({
     };
   }, [qrCodeUrl]);
 
-  const manualSecret = qrCodeUrl ? (/[?&]secret=([A-Z2-7]+)/i.exec(qrCodeUrl)?.[1] ?? null) : null;
+  const manualSecret = qrCodeUrl
+    ? (/[?&]secret=([A-Z2-7]+)/i.exec(qrCodeUrl)?.[1] ?? null)
+    : null;
 
   const handleInit = async () => {
     setIsSettingUp(true);

@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface ForecastResult {
   product_id: string;
@@ -47,25 +47,25 @@ export function useDemandForecast() {
   const generateForecasts = useMutation({
     mutationFn: async (): Promise<ForecastResponse> => {
       const { data, error } = await supabase.functions.invoke('demand-forecast', {
-        body: { action: 'generate-forecasts' }
+        body: { action: 'generate-forecasts' },
       });
 
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       toast({
-        title: "Previsões geradas",
+        title: 'Previsões geradas',
         description: `${data.total_products} produtos analisados. ${data.critical_items} itens críticos.`,
       });
       queryClient.invalidateQueries({ queryKey: ['demand-forecasts'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-levels'] });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Erro ao gerar previsões",
+        title: 'Erro ao gerar previsões',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -76,14 +76,16 @@ export function useDemandForecast() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('demand_forecasts')
-        .select(`
+        .select(
+          `
           *,
           products (
             name,
             price,
             sales_count
           )
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -97,13 +99,15 @@ export function useDemandForecast() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('inventory_levels')
-        .select(`
+        .select(
+          `
           *,
           products (
             name,
             price
           )
-        `)
+        `
+        )
         .order('current_stock', { ascending: true });
 
       if (error) throw error;
@@ -113,12 +117,12 @@ export function useDemandForecast() {
 
   // Update inventory level
   const updateInventory = useMutation({
-    mutationFn: async ({ 
-      productId, 
-      currentStock, 
-      minStock, 
-      maxStock, 
-      reorderPoint 
+    mutationFn: async ({
+      productId,
+      currentStock,
+      minStock,
+      maxStock,
+      reorderPoint,
     }: {
       productId: string;
       currentStock: number;
@@ -128,16 +132,19 @@ export function useDemandForecast() {
     }) => {
       const { data, error } = await supabase
         .from('inventory_levels')
-        .upsert({
-          product_id: productId,
-          current_stock: currentStock,
-          min_stock_level: minStock ?? 10,
-          max_stock_level: maxStock ?? 100,
-          reorder_point: reorderPoint ?? 20,
-          updated_at: new Date().toISOString(),
-        }, {
-          onConflict: 'product_id',
-        })
+        .upsert(
+          {
+            product_id: productId,
+            current_stock: currentStock,
+            min_stock_level: minStock ?? 10,
+            max_stock_level: maxStock ?? 100,
+            reorder_point: reorderPoint ?? 20,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: 'product_id',
+          }
+        )
         .select()
         .single();
 
@@ -146,16 +153,16 @@ export function useDemandForecast() {
     },
     onSuccess: () => {
       toast({
-        title: "Estoque atualizado",
-        description: "Nível de estoque salvo com sucesso.",
+        title: 'Estoque atualizado',
+        description: 'Nível de estoque salvo com sucesso.',
       });
       queryClient.invalidateQueries({ queryKey: ['inventory-levels'] });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Erro ao atualizar estoque",
+        title: 'Erro ao atualizar estoque',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -174,14 +181,12 @@ export function useDemandForecast() {
       reason?: string;
     }) => {
       // Record the movement
-      const { error: movementError } = await supabase
-        .from('stock_movements')
-        .insert({
-          product_id: productId,
-          movement_type: movementType,
-          quantity,
-          reason,
-        });
+      const { error: movementError } = await supabase.from('stock_movements').insert({
+        product_id: productId,
+        movement_type: movementType,
+        quantity,
+        reason,
+      });
 
       if (movementError) throw movementError;
 
@@ -203,16 +208,17 @@ export function useDemandForecast() {
         newStock = quantity; // adjustment sets absolute value
       }
 
-      const { error: updateError } = await supabase
-        .from('inventory_levels')
-        .upsert({
+      const { error: updateError } = await supabase.from('inventory_levels').upsert(
+        {
           product_id: productId,
           current_stock: newStock,
           last_restock_date: movementType === 'in' ? new Date().toISOString() : undefined,
           updated_at: new Date().toISOString(),
-        }, {
+        },
+        {
           onConflict: 'product_id',
-        });
+        }
+      );
 
       if (updateError) throw updateError;
 
@@ -220,17 +226,17 @@ export function useDemandForecast() {
     },
     onSuccess: () => {
       toast({
-        title: "Movimentação registrada",
-        description: "Estoque atualizado com sucesso.",
+        title: 'Movimentação registrada',
+        description: 'Estoque atualizado com sucesso.',
       });
       queryClient.invalidateQueries({ queryKey: ['inventory-levels'] });
       queryClient.invalidateQueries({ queryKey: ['stock-movements'] });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Erro na movimentação",
+        title: 'Erro na movimentação',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -241,12 +247,14 @@ export function useDemandForecast() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('stock_movements')
-        .select(`
+        .select(
+          `
           *,
           products (
             name
           )
-        `)
+        `
+        )
         .order('created_at', { ascending: false })
         .limit(100);
 
@@ -262,13 +270,13 @@ export function useDemandForecast() {
     lastForecastResult: generateForecasts.data,
     storedForecasts,
     forecastsLoading,
-    
+
     // Inventory
     inventoryLevels,
     inventoryLoading,
     updateInventory: updateInventory.mutate,
     isUpdatingInventory: updateInventory.isPending,
-    
+
     // Movements
     recordMovement: recordMovement.mutate,
     isRecordingMovement: recordMovement.isPending,

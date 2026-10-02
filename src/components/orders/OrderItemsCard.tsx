@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatBRL } from "./orderHelpers";
-import type { OrderItemRow } from "@/hooks/orders/useOrder";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatBRL } from './orderHelpers';
+import type { OrderItemRow } from '@/hooks/orders/useOrder';
 
 export function OrderItemsCard({ items }: { items: OrderItemRow[] }) {
   return (
@@ -12,7 +12,7 @@ export function OrderItemsCard({ items }: { items: OrderItemRow[] }) {
         {items.length === 0 && (
           <p className="text-sm text-muted-foreground">Nenhum item neste pedido.</p>
         )}
-        {items.map((item) => (
+        {items.map(item => (
           <div
             key={item.id}
             className="flex items-start justify-between gap-4 border-b border-border/40 pb-3 last:border-0 last:pb-0"

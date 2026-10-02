@@ -67,10 +67,7 @@ export function ComboStreakBadge({
   if (isLoading) {
     return (
       <div
-        className={cn(
-          'h-6 w-16 rounded-full bg-muted/50 animate-pulse',
-          className,
-        )}
+        className={cn('h-6 w-16 rounded-full bg-muted/50 animate-pulse', className)}
         aria-hidden
       />
     );
@@ -83,7 +80,7 @@ export function ComboStreakBadge({
       <div
         className={cn(
           'inline-flex items-center gap-1.5 rounded-full bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground',
-          className,
+          className
         )}
         aria-label="Sem sequência ativa"
       >
@@ -114,7 +111,7 @@ export function ComboStreakBadge({
         'relative inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 overflow-hidden',
         bg,
         ring,
-        className,
+        className
       )}
       role="status"
       aria-label={`Sequência de ${streakDays} dias consecutivos com vendas`}

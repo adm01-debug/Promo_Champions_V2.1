@@ -115,7 +115,8 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
             Roda da Sorte
             <Badge variant="outline" className="text-xs ml-auto">
               <Sparkles className="h-3 w-3 mr-1" />
-              {availableSpins} giro{availableSpins !== 1 ? 's' : ''} disponíve{availableSpins !== 1 ? 'is' : 'l'}
+              {availableSpins} giro{availableSpins !== 1 ? 's' : ''} disponíve
+              {availableSpins !== 1 ? 'is' : 'l'}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -165,11 +166,17 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
               className="gap-2 bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 text-primary-foreground shadow-lg"
             >
               <RotateCw className={cn('h-4 w-4', isSpinning && 'animate-spin')} />
-              {isSpinning ? 'Girando...' : availableSpins > 0 ? 'Girar a Roda!' : 'Sem giros'}
+              {isSpinning
+                ? 'Girando...'
+                : availableSpins > 0
+                  ? 'Girar a Roda!'
+                  : 'Sem giros'}
             </Button>
 
             {!salespersonId && (
-              <p className="text-xs text-muted-foreground">Faça login para girar a roda</p>
+              <p className="text-xs text-muted-foreground">
+                Faça login para girar a roda
+              </p>
             )}
           </div>
 
@@ -181,10 +188,16 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
               </p>
               <div className="space-y-1">
                 {history.slice(0, 5).map(s => (
-                  <div key={s.id} className="flex items-center justify-between text-xs py-1">
+                  <div
+                    key={s.id}
+                    className="flex items-center justify-between text-xs py-1"
+                  >
                     <span className="font-medium text-foreground">{s.prize_label}</span>
                     <span className="text-muted-foreground">
-                      {formatDistanceToNow(new Date(s.spun_at), { addSuffix: true, locale: ptBR })}
+                      {formatDistanceToNow(new Date(s.spun_at), {
+                        addSuffix: true,
+                        locale: ptBR,
+                      })}
                     </span>
                   </div>
                 ))}
@@ -196,6 +209,5 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
     </div>
   );
 };
-
 
 export const PrizeWheel = React.memo(PrizeWheelComponent);

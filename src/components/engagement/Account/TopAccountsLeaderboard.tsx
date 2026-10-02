@@ -1,11 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useTopAccounts } from "@/hooks/engagement/useAccountEngagement";
-import { AccountScoreBadge } from "./AccountScoreBadge";
-import { AccountCoverageBar } from "./AccountCoverageBar";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Trophy } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTopAccounts } from '@/hooks/engagement/useAccountEngagement';
+import { AccountScoreBadge } from './AccountScoreBadge';
+import { AccountCoverageBar } from './AccountCoverageBar';
 
 interface Props {
   limit?: number;
@@ -25,7 +25,9 @@ export function TopAccountsLeaderboard({ limit = 20 }: Props) {
       <CardContent>
         {isLoading ? (
           <div className="space-y-2">
-            {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
           </div>
         ) : data.length === 0 ? (
           <div className="text-sm text-muted-foreground py-6 text-center">
@@ -46,15 +48,24 @@ export function TopAccountsLeaderboard({ limit = 20 }: Props) {
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm truncate">{acc.name}</span>
                       {acc.industry && (
-                        <Badge variant="outline" size="sm">{acc.industry}</Badge>
+                        <Badge variant="outline" size="sm">
+                          {acc.industry}
+                        </Badge>
                       )}
                     </div>
                     <div className="mt-1.5 max-w-xs">
-                      <AccountCoverageBar coverage={acc.coverage} engaged={acc.engaged_contacts} />
+                      <AccountCoverageBar
+                        coverage={acc.coverage}
+                        engaged={acc.engaged_contacts}
+                      />
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <AccountScoreBadge tier={acc.tier} score={acc.account_score} size="sm" />
+                    <AccountScoreBadge
+                      tier={acc.tier}
+                      score={acc.account_score}
+                      size="sm"
+                    />
                     {acc.champion_count > 0 && (
                       <span className="text-[10px] text-muted-foreground">
                         👑 {acc.champion_count} · 🛡 {acc.decision_maker_count}

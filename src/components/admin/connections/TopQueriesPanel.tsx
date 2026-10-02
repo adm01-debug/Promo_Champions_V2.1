@@ -1,13 +1,26 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Activity, RefreshCw, RotateCcw } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Activity, RefreshCw, RotateCcw } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface TopQuery {
   query: string;
@@ -22,18 +35,21 @@ interface TopQuery {
 const fmt = (n: number) =>
   n >= 1000 ? `${(n / 1000).toFixed(1)}s` : `${n.toFixed(1)}ms`;
 
-const fmtNum = (n: number) => new Intl.NumberFormat("pt-BR").format(n);
+const fmtNum = (n: number) => new Intl.NumberFormat('pt-BR').format(n);
 
 export function TopQueriesPanel() {
   const qc = useQueryClient();
   const [limit] = useState(15);
 
   const { data, isLoading, isFetching, refetch, error } = useQuery({
-    queryKey: ["admin-top-queries", limit],
+    queryKey: ['admin-top-queries', limit],
     queryFn: async (): Promise<TopQuery[]> => {
-      const { data, error } = await supabase.rpc("admin_top_queries" as never, {
-        _limit: limit,
-      } as never);
+      const { data, error } = await supabase.rpc(
+        'admin_top_queries' as never,
+        {
+          _limit: limit,
+        } as never
+      );
       if (error) throw error;
       return (data ?? []) as TopQuery[];
     },
@@ -43,12 +59,12 @@ export function TopQueriesPanel() {
 
   const resetMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.rpc("admin_reset_query_stats" as never);
+      const { error } = await supabase.rpc('admin_reset_query_stats' as never);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Estatísticas de queries reiniciadas");
-      qc.invalidateQueries({ queryKey: ["admin-top-queries"] });
+      toast.success('Estatísticas de queries reiniciadas');
+      qc.invalidateQueries({ queryKey: ['admin-top-queries'] });
     },
     onError: (e: Error) => toast.error(`Falha ao reiniciar: ${e.message}`),
   });
@@ -79,13 +95,17 @@ export function TopQueriesPanel() {
             disabled={isFetching}
             aria-label="Atualizar"
           >
-            <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
-              if (confirm("Reiniciar contadores de pg_stat_statements? Métricas históricas serão perdidas.")) {
+              if (
+                confirm(
+                  'Reiniciar contadores de pg_stat_statements? Métricas históricas serão perdidas.'
+                )
+              ) {
                 resetMutation.mutate();
               }
             }}
@@ -142,10 +162,10 @@ export function TopQueriesPanel() {
                       <span
                         className={
                           q.mean_exec_ms > 100
-                            ? "text-destructive"
+                            ? 'text-destructive'
                             : q.mean_exec_ms > 20
-                              ? "text-warning"
-                              : ""
+                              ? 'text-warning'
+                              : ''
                         }
                       >
                         {q.mean_exec_ms.toFixed(2)}ms
@@ -158,9 +178,7 @@ export function TopQueriesPanel() {
                       {q.hit_ratio !== null ? (
                         <span
                           className={
-                            q.hit_ratio < 90
-                              ? "text-warning"
-                              : "text-muted-foreground"
+                            q.hit_ratio < 90 ? 'text-warning' : 'text-muted-foreground'
                           }
                         >
                           {q.hit_ratio}%

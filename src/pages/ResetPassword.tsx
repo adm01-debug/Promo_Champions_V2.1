@@ -1,21 +1,27 @@
-import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Loader2, Lock, CheckCircle } from "lucide-react";
-import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { classifyPasswordError } from "@/lib/auth/passwordErrorMessages";
+import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { toast } from 'sonner';
+import { Loader2, Lock, CheckCircle } from 'lucide-react';
+import { z } from 'zod';
+import { supabase } from '@/integrations/supabase/client';
+import { classifyPasswordError } from '@/lib/auth/passwordErrorMessages';
 
-const passwordSchema = z.string().min(8, "Senha deve ter pelo menos 8 caracteres");
+const passwordSchema = z.string().min(8, 'Senha deve ter pelo menos 8 caracteres');
 
 export default function ResetPassword() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
@@ -23,10 +29,12 @@ export default function ResetPassword() {
   useEffect(() => {
     // Check if we have a valid session from the reset link
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) {
-        toast.error("Link de recuperação inválido ou expirado");
-        navigate("/auth");
+        toast.error('Link de recuperação inválido ou expirado');
+        navigate('/auth');
       }
     };
     checkSession();
@@ -45,7 +53,7 @@ export default function ResetPassword() {
     }
 
     if (password !== confirmPassword) {
-      toast.error("As senhas não coincidem");
+      toast.error('As senhas não coincidem');
       return;
     }
 
@@ -61,9 +69,9 @@ export default function ResetPassword() {
       toast.error(classifyPasswordError(error).message);
     } else {
       setIsSuccess(true);
-      toast.success("Senha atualizada com sucesso!");
+      toast.success('Senha atualizada com sucesso!');
       setTimeout(() => {
-        navigate("/");
+        navigate('/');
       }, 2000);
     }
   };
@@ -75,21 +83,21 @@ export default function ResetPassword() {
           <title>Redefinir Senha | Promo Champions</title>
           <meta name="description" content="Redefina sua senha de acesso" />
         </Helmet>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
-        <Card className="w-full max-w-md glass border-border/40 hover-lift-sm">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-success/20 flex items-center justify-center">
-                <CheckCircle className="h-8 w-8 text-success" />
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+          <Card className="w-full max-w-md glass border-border/40 hover-lift-sm">
+            <CardContent className="pt-6">
+              <div className="text-center space-y-4">
+                <div className="mx-auto w-16 h-16 rounded-full bg-success/20 flex items-center justify-center">
+                  <CheckCircle className="h-8 w-8 text-success" />
+                </div>
+                <h2 className="text-section-title">Senha Atualizada!</h2>
+                <p className="text-muted-foreground">
+                  Você será redirecionado para o dashboard em instantes...
+                </p>
               </div>
-              <h2 className="text-section-title">Senha Atualizada!</h2>
-              <p className="text-muted-foreground">
-                Você será redirecionado para o dashboard em instantes...
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
       </>
     );
   }
@@ -101,9 +109,7 @@ export default function ResetPassword() {
           <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
             <Lock className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-page-title gradient-text">
-            Nova Senha
-          </h1>
+          <h1 className="text-page-title gradient-text">Nova Senha</h1>
           <p className="text-muted-foreground">
             Digite sua nova senha para recuperar o acesso
           </p>
@@ -125,7 +131,7 @@ export default function ResetPassword() {
                   type="password"
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                 />
               </div>
@@ -136,18 +142,22 @@ export default function ResetPassword() {
                   type="password"
                   placeholder="••••••••"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full gradient-primary" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full gradient-primary"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Atualizando...
                   </>
                 ) : (
-                  "Atualizar Senha"
+                  'Atualizar Senha'
                 )}
               </Button>
             </form>

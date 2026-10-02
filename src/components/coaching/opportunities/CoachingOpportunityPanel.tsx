@@ -1,10 +1,10 @@
-import { FC } from "react";
-import { motion } from "framer-motion";
-import { CoachingOpportunitySummary } from "./CoachingOpportunitySummary";
-import { CoachingGapByRepTable } from "./CoachingGapByRepTable";
-import { CoachingSkillFocusChart } from "./CoachingSkillFocusChart";
-import { CoachingSeverityHeatmap } from "./CoachingSeverityHeatmap";
-import { CoachingActionsPanel } from "./CoachingActionsPanel";
+import { FC } from 'react';
+import { motion } from 'framer-motion';
+import { CoachingOpportunitySummary } from './CoachingOpportunitySummary';
+import { CoachingGapByRepTable } from './CoachingGapByRepTable';
+import { CoachingSkillFocusChart } from './CoachingSkillFocusChart';
+import { CoachingSeverityHeatmap } from './CoachingSeverityHeatmap';
+import { CoachingActionsPanel } from './CoachingActionsPanel';
 
 export const CoachingOpportunityPanel: FC = () => (
   <motion.div

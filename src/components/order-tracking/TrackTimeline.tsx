@@ -1,24 +1,36 @@
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { formatDateTime, type StageDef } from "@/lib/orderTracking/stages";
-import type { TrackingStageProgress } from "@/hooks/orders/useOrderTracking";
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { formatDateTime, type StageDef } from '@/lib/orderTracking/stages';
+import type { TrackingStageProgress } from '@/hooks/orders/useOrderTracking';
 
 interface Props {
   title: string;
   stages: StageDef[];
   progress: TrackingStageProgress[];
-  accent?: "primary" | "success" | "warning";
+  accent?: 'primary' | 'success' | 'warning';
 }
 
 const accentMap = {
-  primary: { done: "bg-primary/15 border-primary text-primary", current: "bg-primary/20 border-primary text-primary", line: "bg-primary" },
-  success: { done: "bg-success/15 border-success text-success", current: "bg-success/20 border-success text-success", line: "bg-success" },
-  warning: { done: "bg-warning/15 border-warning text-warning", current: "bg-warning/20 border-warning text-warning", line: "bg-warning" },
+  primary: {
+    done: 'bg-primary/15 border-primary text-primary',
+    current: 'bg-primary/20 border-primary text-primary',
+    line: 'bg-primary',
+  },
+  success: {
+    done: 'bg-success/15 border-success text-success',
+    current: 'bg-success/20 border-success text-success',
+    line: 'bg-success',
+  },
+  warning: {
+    done: 'bg-warning/15 border-warning text-warning',
+    current: 'bg-warning/20 border-warning text-warning',
+    line: 'bg-warning',
+  },
 } as const;
 
-export function TrackTimeline({ title, stages, progress, accent = "primary" }: Props) {
+export function TrackTimeline({ title, stages, progress, accent = 'primary' }: Props) {
   const tones = accentMap[accent];
-  const byKey = new Map(progress.map((p) => [p.key, p]));
+  const byKey = new Map(progress.map(p => [p.key, p]));
 
   return (
     <div className="space-y-4">
@@ -27,9 +39,9 @@ export function TrackTimeline({ title, stages, progress, accent = "primary" }: P
         {stages.map((step, idx) => {
           const Icon = step.icon;
           const p = byKey.get(step.key);
-          const state = p?.state ?? "pending";
-          const isDone = state === "done";
-          const isCurrent = state === "current";
+          const state = p?.state ?? 'pending';
+          const isDone = state === 'done';
+          const isCurrent = state === 'current';
           const isLast = idx === stages.length - 1;
 
           return (
@@ -44,27 +56,38 @@ export function TrackTimeline({ title, stages, progress, accent = "primary" }: P
                 <span
                   aria-hidden
                   className={cn(
-                    "absolute left-[19px] top-10 h-[calc(100%-0.25rem)] w-px",
-                    isDone ? tones.line : "bg-border",
+                    'absolute left-[19px] top-10 h-[calc(100%-0.25rem)] w-px',
+                    isDone ? tones.line : 'bg-border'
                   )}
                 />
               )}
               <div
                 className={cn(
-                  "relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors",
+                  'relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors',
                   isDone && tones.done,
                   isCurrent && tones.current,
-                  !isDone && !isCurrent && "bg-muted border-border text-muted-foreground",
+                  !isDone && !isCurrent && 'bg-muted border-border text-muted-foreground'
                 )}
               >
                 {isCurrent && (
-                  <span className={cn("absolute inset-0 rounded-full animate-ping", `bg-${accent}/20`)} aria-hidden />
+                  <span
+                    className={cn(
+                      'absolute inset-0 rounded-full animate-ping',
+                      `bg-${accent}/20`
+                    )}
+                    aria-hidden
+                  />
                 )}
                 <Icon className="h-5 w-5 relative" />
               </div>
               <div className="flex-1 pt-1">
                 <div className="flex items-baseline justify-between gap-2">
-                  <p className={cn("font-medium text-sm", !isDone && !isCurrent && "text-muted-foreground")}>
+                  <p
+                    className={cn(
+                      'font-medium text-sm',
+                      !isDone && !isCurrent && 'text-muted-foreground'
+                    )}
+                  >
                     {step.label}
                   </p>
                   {isCurrent && (
@@ -79,7 +102,7 @@ export function TrackTimeline({ title, stages, progress, accent = "primary" }: P
                     ? `Concluído em ${formatDateTime(p.completedAt)}`
                     : isCurrent && p?.startedAt
                       ? `Iniciado em ${formatDateTime(p.startedAt)}`
-                      : "Aguardando"}
+                      : 'Aguardando'}
                 </p>
               </div>
             </motion.li>

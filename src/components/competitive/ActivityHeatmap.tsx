@@ -104,7 +104,10 @@ const ActivityHeatmapComponent: FC = () => {
             {/* Hour labels */}
             <div className="flex gap-1 mb-1 ml-10">
               {HOURS.map(h => (
-                <div key={h} className="flex-1 text-[9px] text-muted-foreground text-center">
+                <div
+                  key={h}
+                  className="flex-1 text-[9px] text-muted-foreground text-center"
+                >
                   {h}h
                 </div>
               ))}
@@ -112,7 +115,9 @@ const ActivityHeatmapComponent: FC = () => {
             {/* Grid */}
             {DAYS.map((day, di) => (
               <div key={day} className="flex gap-1 mb-1 items-center">
-                <span className="text-[10px] text-muted-foreground w-8 text-right mr-1">{day}</span>
+                <span className="text-[10px] text-muted-foreground w-8 text-right mr-1">
+                  {day}
+                </span>
                 {HOURS.map((_, hi) => {
                   const val = data?.grid[di]?.[hi] || 0;
                   return (
@@ -134,11 +139,15 @@ const ActivityHeatmapComponent: FC = () => {
             {/* Legend */}
             <div className="flex items-center gap-2 mt-3 justify-end">
               <span className="text-[9px] text-muted-foreground">Menos</span>
-              {['bg-muted/20', 'bg-success/40', 'bg-success/60', 'bg-success/80', 'bg-success'].map(
-                c => (
-                  <div key={c} className={cn('h-3 w-3 rounded-sm', c)} />
-                )
-              )}
+              {[
+                'bg-muted/20',
+                'bg-success/40',
+                'bg-success/60',
+                'bg-success/80',
+                'bg-success',
+              ].map(c => (
+                <div key={c} className={cn('h-3 w-3 rounded-sm', c)} />
+              ))}
               <span className="text-[9px] text-muted-foreground">Mais</span>
             </div>
           </div>

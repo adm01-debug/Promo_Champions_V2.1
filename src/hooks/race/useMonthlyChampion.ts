@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RoleType } from "@/hooks/race/useRaceSeasonByRole";
+import type { RoleType } from '@/hooks/race/useRaceSeasonByRole';
 
 export interface MonthlyChampionData {
   season_id: string;
@@ -73,7 +73,9 @@ export function useMonthlyChampion(roleType: RoleType) {
   });
 
   const champion = query.data;
-  const alreadySeen = champion ? !!localStorage.getItem(SEEN_KEY(champion.season_id)) : true;
+  const alreadySeen = champion
+    ? !!localStorage.getItem(SEEN_KEY(champion.season_id))
+    : true;
   const shouldShow = !!champion && !alreadySeen && !dismissed;
 
   const dismiss = () => {
@@ -81,7 +83,9 @@ export function useMonthlyChampion(roleType: RoleType) {
     setDismissed(true);
   };
 
-  useEffect(() => { setDismissed(false); }, [champion?.season_id]);
+  useEffect(() => {
+    setDismissed(false);
+  }, [champion?.season_id]);
 
   return { champion, shouldShow, dismiss, isLoading: query.isLoading };
 }

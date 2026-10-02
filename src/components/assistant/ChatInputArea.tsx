@@ -53,7 +53,9 @@ export function ChatInputArea({
     <div className="p-4 border-t border-border/50 bg-background/50">
       {hasDealContext && (
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Tipo:</span>
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+            Tipo:
+          </span>
           <div className="flex gap-1 flex-wrap">
             <Badge
               variant={selectedQuestionType === 'auto' ? 'default' : 'outline'}
@@ -62,7 +64,7 @@ export function ChatInputArea({
             >
               ✨ Auto
             </Badge>
-            {QUESTION_TYPES.map((type) => (
+            {QUESTION_TYPES.map(type => (
               <Badge
                 key={type.value}
                 variant={selectedQuestionType === type.value ? 'default' : 'outline'}
@@ -75,7 +77,9 @@ export function ChatInputArea({
           </div>
           {selectedQuestionType === 'auto' && input.trim() && (
             <span className="text-[10px] text-muted-foreground">
-              → {QUESTION_TYPES.find(t => t.value === detectQuestionType(input))?.label || 'Geral'}
+              →{' '}
+              {QUESTION_TYPES.find(t => t.value === detectQuestionType(input))?.label ||
+                'Geral'}
             </span>
           )}
         </div>
@@ -85,7 +89,7 @@ export function ChatInputArea({
           <Textarea
             ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Digite sua pergunta..."
             className="min-h-[44px] max-h-[120px] resize-none pr-20"
@@ -101,8 +105,16 @@ export function ChatInputArea({
             />
           </div>
         </div>
-        <Button onClick={() => onSend()} disabled={!input.trim() || isLoading} className="shrink-0">
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+        <Button
+          onClick={() => onSend()}
+          disabled={!input.trim() || isLoading}
+          className="shrink-0"
+        >
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Send className="h-4 w-4" />
+          )}
         </Button>
       </div>
       <p className="text-[10px] text-muted-foreground mt-2 text-center">

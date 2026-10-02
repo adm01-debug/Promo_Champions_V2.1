@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,18 +6,18 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Settings, Trash2, Plus } from "lucide-react";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Settings, Trash2, Plus } from 'lucide-react';
 import {
   useCompetitorsRegistry,
   useUpsertCompetitor,
   useDeleteCompetitor,
   type CompetitorRegistry,
-} from "@/hooks/conversational/useCompetitorsRegistry";
+} from '@/hooks/conversational/useCompetitorsRegistry';
 
 export function CompetitorsAdminDialog() {
   const [open, setOpen] = useState(false);
@@ -25,11 +25,11 @@ export function CompetitorsAdminDialog() {
   const upsert = useUpsertCompetitor();
   const del = useDeleteCompetitor();
   const [editing, setEditing] = useState<Partial<CompetitorRegistry> | null>(null);
-  const [aliasesText, setAliasesText] = useState("");
+  const [aliasesText, setAliasesText] = useState('');
 
   const startEdit = (c?: CompetitorRegistry) => {
-    setEditing(c ?? { name: "", aliases: [], is_active: true });
-    setAliasesText((c?.aliases ?? []).join(", "));
+    setEditing(c ?? { name: '', aliases: [], is_active: true });
+    setAliasesText((c?.aliases ?? []).join(', '));
   };
 
   const save = async () => {
@@ -38,8 +38,8 @@ export function CompetitorsAdminDialog() {
       ...editing,
       name: editing.name.trim(),
       aliases: aliasesText
-        .split(",")
-        .map((s) => s.trim())
+        .split(',')
+        .map(s => s.trim())
         .filter(Boolean),
     });
     setEditing(null);
@@ -65,7 +65,7 @@ export function CompetitorsAdminDialog() {
               Adicionar concorrente
             </Button>
             <div className="space-y-1 max-h-80 overflow-y-auto">
-              {(competitors ?? []).map((c) => (
+              {(competitors ?? []).map(c => (
                 <div
                   key={c.id}
                   className="flex items-center justify-between p-2 rounded border border-border hover:bg-muted/50"
@@ -74,7 +74,7 @@ export function CompetitorsAdminDialog() {
                     <p className="font-medium text-sm">{c.name}</p>
                     {c.aliases.length > 0 && (
                       <p className="text-xs text-muted-foreground truncate">
-                        Aliases: {c.aliases.join(", ")}
+                        Aliases: {c.aliases.join(', ')}
                       </p>
                     )}
                   </div>
@@ -82,11 +82,7 @@ export function CompetitorsAdminDialog() {
                     <Button size="sm" variant="ghost" onClick={() => startEdit(c)}>
                       Editar
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => del.mutate(c.id)}
-                    >
+                    <Button size="sm" variant="ghost" onClick={() => del.mutate(c.id)}>
                       <Trash2 className="h-3 w-3 text-destructive" />
                     </Button>
                   </div>
@@ -104,8 +100,8 @@ export function CompetitorsAdminDialog() {
             <div>
               <Label>Nome *</Label>
               <Input
-                value={editing.name ?? ""}
-                onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                value={editing.name ?? ''}
+                onChange={e => setEditing({ ...editing, name: e.target.value })}
                 placeholder="Ex: Salesforce"
               />
             </div>
@@ -113,15 +109,15 @@ export function CompetitorsAdminDialog() {
               <Label>Aliases (separados por vírgula)</Label>
               <Input
                 value={aliasesText}
-                onChange={(e) => setAliasesText(e.target.value)}
+                onChange={e => setAliasesText(e.target.value)}
                 placeholder="SF, sales force, sfdc"
               />
             </div>
             <div>
               <Label>Battle Card padrão (UUID, opcional)</Label>
               <Input
-                value={editing.default_battle_card_id ?? ""}
-                onChange={(e) =>
+                value={editing.default_battle_card_id ?? ''}
+                onChange={e =>
                   setEditing({
                     ...editing,
                     default_battle_card_id: e.target.value || null,
@@ -134,7 +130,7 @@ export function CompetitorsAdminDialog() {
               <Label>Ativo</Label>
               <Switch
                 checked={editing.is_active ?? true}
-                onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
+                onCheckedChange={v => setEditing({ ...editing, is_active: v })}
               />
             </div>
             <DialogFooter>

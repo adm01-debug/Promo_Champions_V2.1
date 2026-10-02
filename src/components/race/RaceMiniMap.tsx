@@ -43,9 +43,10 @@ export function RaceMiniMap({ cars, currentUserSalespersonId }: RaceMiniMapProps
           strokeDasharray="14 12"
           opacity={0.7}
         />
-        {cars.map((c) => {
+        {cars.map(c => {
           const pos = getPositionOnTrack(Number(c.progress), 0);
-          const isMe = currentUserSalespersonId && c.salesperson_id === currentUserSalespersonId;
+          const isMe =
+            currentUserSalespersonId && c.salesperson_id === currentUserSalespersonId;
           return (
             <g key={c.car_id}>
               {isMe && (

@@ -1,9 +1,13 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Braces } from "lucide-react";
-import { AVAILABLE_MERGE_TAGS, applyMergeTags, type MergeTagContext } from "@/lib/mergeTags";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Braces } from 'lucide-react';
+import {
+  AVAILABLE_MERGE_TAGS,
+  applyMergeTags,
+  type MergeTagContext,
+} from '@/lib/mergeTags';
 
 interface MergeTagPickerProps {
   onInsert: (tagToken: string) => void;
@@ -12,13 +16,30 @@ interface MergeTagPickerProps {
 }
 
 const SAMPLE_CTX: MergeTagContext = {
-  sale: { client_name: "João Silva", amount: 12500, stage: "qualified", category: "Brindes Premium", source: "Linkedin" },
-  client: { name: "João Silva", company: "Acme Ltda", email: "joao@acme.com", phone: "(11) 9 9999-9999" },
-  salesperson: { name: "Maria", email: "maria@empresa.com" },
+  sale: {
+    client_name: 'João Silva',
+    amount: 12500,
+    stage: 'qualified',
+    category: 'Brindes Premium',
+    source: 'Linkedin',
+  },
+  client: {
+    name: 'João Silva',
+    company: 'Acme Ltda',
+    email: 'joao@acme.com',
+    phone: '(11) 9 9999-9999',
+  },
+  salesperson: { name: 'Maria', email: 'maria@empresa.com' },
 };
 
-export function MergeTagPicker({ onInsert, preview, previewContext }: MergeTagPickerProps) {
-  const grouped = AVAILABLE_MERGE_TAGS.reduce<Record<string, typeof AVAILABLE_MERGE_TAGS>>((acc, tag) => {
+export function MergeTagPicker({
+  onInsert,
+  preview,
+  previewContext,
+}: MergeTagPickerProps) {
+  const grouped = AVAILABLE_MERGE_TAGS.reduce<
+    Record<string, typeof AVAILABLE_MERGE_TAGS>
+  >((acc, tag) => {
     (acc[tag.group] ??= []).push(tag);
     return acc;
   }, {});
@@ -38,9 +59,11 @@ export function MergeTagPicker({ onInsert, preview, previewContext }: MergeTagPi
           <div className="p-3 space-y-3">
             {Object.entries(grouped).map(([group, tags]) => (
               <div key={group} className="space-y-1.5">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{group}</p>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  {group}
+                </p>
                 <div className="flex flex-wrap gap-1">
-                  {tags.map((t) => (
+                  {tags.map(t => (
                     <button
                       key={t.key}
                       type="button"
@@ -56,9 +79,15 @@ export function MergeTagPicker({ onInsert, preview, previewContext }: MergeTagPi
             ))}
             {rendered && (
               <div className="pt-2 border-t border-border/40">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Pré-visualização</p>
-                <div className="text-xs whitespace-pre-wrap rounded-md bg-muted/30 p-2">{rendered}</div>
-                <Badge variant="secondary" className="text-[9px] mt-1">dados de exemplo</Badge>
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                  Pré-visualização
+                </p>
+                <div className="text-xs whitespace-pre-wrap rounded-md bg-muted/30 p-2">
+                  {rendered}
+                </div>
+                <Badge variant="secondary" className="text-[9px] mt-1">
+                  dados de exemplo
+                </Badge>
               </div>
             )}
           </div>

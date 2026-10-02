@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap, Trophy } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface StreakMilestoneOverlayProps {
   isVisible: boolean;
@@ -57,9 +57,18 @@ export function StreakMilestoneOverlay({
             {[...Array(20)].map((_, i) => (
               <motion.div
                 key={i}
-                initial={{ y: '100vh', x: `${Math.random() * 100}vw`, scale: Math.random() * 0.5 + 0.5 }}
+                initial={{
+                  y: '100vh',
+                  x: `${Math.random() * 100}vw`,
+                  scale: Math.random() * 0.5 + 0.5,
+                }}
                 animate={{ y: '-20vh', x: `${Math.random() * 100}vw` }}
-                transition={{ duration: Math.random() * 3 + 2, repeat: Infinity, delay: Math.random() * 2, ease: "easeOut" }}
+                transition={{
+                  duration: Math.random() * 3 + 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 2,
+                  ease: 'easeOut',
+                }}
                 className="absolute text-2xl"
                 style={{ filter: 'blur(1px)' }}
               >
@@ -72,51 +81,109 @@ export function StreakMilestoneOverlay({
             initial={{ scale: 0, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", duration: 0.7, bounce: 0.5 }}
+            transition={{ type: 'spring', duration: 0.7, bounce: 0.5 }}
             className="relative"
           >
             <div className="absolute inset-0 -m-16 rounded-full bg-gradient-to-t from-destructive via-streak to-coins opacity-40 blur-3xl animate-pulse" />
             <div className="absolute inset-0 -m-8 rounded-full bg-gradient-to-t from-streak via-rank-gold to-coins opacity-30 blur-2xl" />
-            
-            <div className={cn(
-              "relative glass-card p-10 rounded-3xl text-center",
-              "border-2 border-streak/50 shadow-2xl",
-              "min-w-[320px] bg-gradient-to-b from-background/95 to-background/80"
-            )}>
-              <motion.div animate={{ y: [-5, 5, -5], rotate: [-5, 5, -5] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute -top-6 -left-6 text-4xl">🔥</motion.div>
-              <motion.div animate={{ y: [5, -5, 5], rotate: [5, -5, 5] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }} className="absolute -top-6 -right-6 text-4xl">🔥</motion.div>
-              <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-3xl">⭐</motion.div>
+
+            <div
+              className={cn(
+                'relative glass-card p-10 rounded-3xl text-center',
+                'border-2 border-streak/50 shadow-2xl',
+                'min-w-[320px] bg-gradient-to-b from-background/95 to-background/80'
+              )}
+            >
+              <motion.div
+                animate={{ y: [-5, 5, -5], rotate: [-5, 5, -5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="absolute -top-6 -left-6 text-4xl"
+              >
+                🔥
+              </motion.div>
+              <motion.div
+                animate={{ y: [5, -5, 5], rotate: [5, -5, 5] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+                className="absolute -top-6 -right-6 text-4xl"
+              >
+                🔥
+              </motion.div>
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-3xl"
+              >
+                ⭐
+              </motion.div>
 
               <AnimatePresence>
                 {showContent && (
                   <>
-                    <motion.div initial={{ scale: 0, rotate: -180 }} animate={{ scale: [1, 1.15, 1], rotate: 0 }}
-                      transition={{ scale: { duration: 0.8, repeat: Infinity, repeatDelay: 0.5 }, rotate: { duration: 0.5, type: "spring" } }}
-                      className="text-7xl mb-4 drop-shadow-lg">{milestoneIcon}</motion.div>
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: [1, 1.15, 1], rotate: 0 }}
+                      transition={{
+                        scale: { duration: 0.8, repeat: Infinity, repeatDelay: 0.5 },
+                        rotate: { duration: 0.5, type: 'spring' },
+                      }}
+                      className="text-7xl mb-4 drop-shadow-lg"
+                    >
+                      {milestoneIcon}
+                    </motion.div>
 
-                    <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="mb-3">
+                    <motion.div
+                      initial={{ y: 30, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="mb-3"
+                    >
                       <span className="text-2xl font-display font-bold bg-gradient-to-r from-streak via-amber-500 to-coins bg-clip-text text-transparent uppercase tracking-wider">
                         {milestoneTitle}
                       </span>
                     </motion.div>
 
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4, type: "spring", bounce: 0.6 }} className="relative mb-2">
-                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-streak to-destructive bg-clip-text text-transparent">{streakDays}</span>
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.4, type: 'spring', bounce: 0.6 }}
+                      className="relative mb-2"
+                    >
+                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-streak to-destructive bg-clip-text text-transparent">
+                        {streakDays}
+                      </span>
                       <span className="text-2xl font-bold text-streak ml-2">dias</span>
                     </motion.div>
 
                     {xpReward > 0 && (
-                      <motion.div initial={{ scale: 0, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ delay: 0.6, type: "spring" }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rank-gold/20 to-streak/20 border border-rank-gold/30 mb-3">
-                        <Zap className="h-5 w-5 text-rank-gold" /><span className="text-lg font-bold text-rank-gold">+{xpReward} XP</span>
+                      <motion.div
+                        initial={{ scale: 0, y: 20 }}
+                        animate={{ scale: 1, y: 0 }}
+                        transition={{ delay: 0.6, type: 'spring' }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rank-gold/20 to-streak/20 border border-rank-gold/30 mb-3"
+                      >
+                        <Zap className="h-5 w-5 text-rank-gold" />
+                        <span className="text-lg font-bold text-rank-gold">
+                          +{xpReward} XP
+                        </span>
                       </motion.div>
                     )}
 
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="flex items-center justify-center gap-2 text-muted-foreground mt-3">
-                      <Trophy className="h-4 w-4 text-rank-gold" /><span className="font-medium">{salespersonName}</span>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.8 }}
+                      className="flex items-center justify-center gap-2 text-muted-foreground mt-3"
+                    >
+                      <Trophy className="h-4 w-4 text-rank-gold" />
+                      <span className="font-medium">{salespersonName}</span>
                     </motion.div>
 
-                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.5, 1] }} transition={{ delay: 1.5, duration: 2, repeat: Infinity }} className="text-xs text-muted-foreground mt-5">
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 1, 0.5, 1] }}
+                      transition={{ delay: 1.5, duration: 2, repeat: Infinity }}
+                      className="text-xs text-muted-foreground mt-5"
+                    >
                       Clique para continuar
                     </motion.p>
                   </>

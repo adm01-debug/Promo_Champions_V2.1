@@ -9,7 +9,10 @@ interface FollowUpValueAtRiskProps {
   onSelectCritical: () => void;
 }
 
-export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAtRiskProps) {
+export function FollowUpValueAtRisk({
+  leads,
+  onSelectCritical,
+}: FollowUpValueAtRiskProps) {
   const statusProbabilities: Record<string, number> = {
     lead: 0.1,
     qualified: 0.3,
@@ -21,11 +24,14 @@ export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAt
   const totalValue = leads.reduce((sum, l) => sum + (l.amount || 0), 0);
   const weightedValue = leads.reduce((sum, l) => {
     // Usar a probabilidade calibrada se disponível, caso contrário usar a média por status
-    const prob = l.probability !== undefined ? l.probability : (statusProbabilities[l.status] || 0.1);
-    return sum + ((l.amount || 0) * prob);
+    const prob =
+      l.probability !== undefined ? l.probability : statusProbabilities[l.status] || 0.1;
+    return sum + (l.amount || 0) * prob;
   }, 0);
-  
-  const criticalCount = leads.filter(l => l.temperature === 'cold' || l.temperature === 'frozen').length;
+
+  const criticalCount = leads.filter(
+    l => l.temperature === 'cold' || l.temperature === 'frozen'
+  ).length;
 
   if (totalValue === 0) return null;
 
@@ -41,7 +47,9 @@ export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAt
             <TrendingDown className="h-6 w-6 text-destructive" />
           </div>
           <div className="flex-1">
-            <div className="text-sm text-muted-foreground">Valor em Risco (leads esfriando)</div>
+            <div className="text-sm text-muted-foreground">
+              Valor em Risco (leads esfriando)
+            </div>
             <div className="text-2xl font-bold text-destructive">
               R$ {weightedValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               <span className="text-sm font-normal text-muted-foreground ml-2">
@@ -53,7 +61,12 @@ export function FollowUpValueAtRisk({ leads, onSelectCritical }: FollowUpValueAt
             </div>
           </div>
           {criticalCount > 0 && (
-            <Button variant="destructive" size="sm" onClick={onSelectCritical} className="shrink-0">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={onSelectCritical}
+              className="shrink-0"
+            >
               <Target className="h-4 w-4 mr-2" />
               Selecionar {criticalCount} Críticos
             </Button>

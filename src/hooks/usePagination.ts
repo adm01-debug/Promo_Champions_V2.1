@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from 'react';
 
 interface UsePaginationOptions {
   initialPage?: number;
@@ -25,12 +25,12 @@ export function usePagination<T>(
   items: T[],
   options: UsePaginationOptions = {}
 ): UsePaginationResult<T> {
-  const { 
-    initialPage = 1, 
+  const {
+    initialPage = 1,
     initialItemsPerPage = 10,
-    itemsPerPageOptions = [10, 25, 50, 100]
+    itemsPerPageOptions = [10, 25, 50, 100],
   } = options;
-  
+
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
 
@@ -39,7 +39,7 @@ export function usePagination<T>(
 
   // Reset to page 1 if current page exceeds total pages (e.g., after filtering)
   const safePage = Math.min(currentPage, totalPages);
-  
+
   useEffect(() => {
     if (safePage !== currentPage) {
       setCurrentPage(safePage);

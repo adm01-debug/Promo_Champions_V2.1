@@ -58,29 +58,29 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({
   const styles = variantStyles[variant];
 
   const toggleExpanded = useCallback(() => {
-    setIsExpanded((prev) => !prev);
+    setIsExpanded(prev => !prev);
   }, []);
 
   return (
     <motion.div
       layout
       className={cn(
-        "rounded-xl border overflow-hidden transition-all",
+        'rounded-xl border overflow-hidden transition-all',
         styles.border,
         styles.bg,
-        isExpanded && "shadow-md",
+        isExpanded && 'shadow-md',
         className
       )}
     >
       {/* Accent bar */}
-      <div className={cn("h-1", styles.accent)} />
+      <div className={cn('h-1', styles.accent)} />
 
       {/* Header */}
       <button
         onClick={toggleExpanded}
         className={cn(
-          "w-full p-4 flex items-center gap-3 text-left",
-          "transition-colors hover:bg-muted/50"
+          'w-full p-4 flex items-center gap-3 text-left',
+          'transition-colors hover:bg-muted/50'
         )}
         aria-expanded={isExpanded}
       >
@@ -104,9 +104,7 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({
 
         {/* Preview (collapsed state) */}
         {!isExpanded && preview && (
-          <div className="hidden sm:block flex-shrink-0">
-            {preview}
-          </div>
+          <div className="hidden sm:block flex-shrink-0">{preview}</div>
         )}
 
         {/* Expand indicator */}
@@ -129,9 +127,7 @@ export const ExpandableCard: FC<ExpandableCardProps> = ({
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
             <div className="px-4 pb-4 border-t border-border/50">
-              <div className="pt-4">
-                {children}
-              </div>
+              <div className="pt-4">{children}</div>
 
               {/* Actions */}
               {actions && (
@@ -177,14 +173,14 @@ export const QuickActionCard: FC<QuickActionCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
       className={cn(
-        "relative rounded-xl border p-4 overflow-hidden",
+        'relative rounded-xl border p-4 overflow-hidden',
         styles.border,
         styles.bg,
         className
       )}
     >
       {/* Accent */}
-      <div className={cn("absolute left-0 top-0 bottom-0 w-1", styles.accent)} />
+      <div className={cn('absolute left-0 top-0 bottom-0 w-1', styles.accent)} />
 
       <div className="flex items-start gap-3 pl-2">
         {/* Icon */}
@@ -204,9 +200,9 @@ export const QuickActionCard: FC<QuickActionCardProps> = ({
             <button
               onClick={onAction}
               className={cn(
-                "px-4 py-1.5 rounded-lg text-sm font-medium",
-                "bg-primary text-primary-foreground",
-                "transition-all hover:bg-primary/90 active:scale-95"
+                'px-4 py-1.5 rounded-lg text-sm font-medium',
+                'bg-primary text-primary-foreground',
+                'transition-all hover:bg-primary/90 active:scale-95'
               )}
             >
               {actionLabel}

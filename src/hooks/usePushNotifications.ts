@@ -21,39 +21,40 @@ export function usePushNotifications() {
     isSubscribed: false,
     isLoading: true,
     permission: 'default',
-    serviceWorkerRegistration: null
+    serviceWorkerRegistration: null,
   });
 
   // Check if push notifications are supported
   const checkSupport = useCallback(() => {
-    return 'serviceWorker' in navigator && 
-           'PushManager' in window && 
-           'Notification' in window;
+    return (
+      'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
+    );
   }, []);
 
   // Register service worker
-  const registerServiceWorker = useCallback(async (): Promise<ServiceWorkerRegistration | null> => {
-    try {
-      const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/'
-      });
-      log.info('service_worker_registered', { scope: registration.scope });
-      return registration;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        log.error('service_worker_registration_failed', {
-          error: error instanceof Error ? error.message : String(error),
+  const registerServiceWorker =
+    useCallback(async (): Promise<ServiceWorkerRegistration | null> => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/',
         });
+        log.info('service_worker_registered', { scope: registration.scope });
+        return registration;
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          log.error('service_worker_registration_failed', {
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+        return null;
       }
-      return null;
-    }
-  }, []);
+    }, []);
 
   // Get VAPID public key from backend
   const getVapidKey = useCallback(async (): Promise<string | null> => {
     try {
       const { data, error } = await supabase.functions.invoke('push-subscribe', {
-        body: { action: 'get-vapid-key' }
+        body: { action: 'get-vapid-key' },
       });
 
       if (error) throw error;
@@ -68,14 +69,12 @@ export function usePushNotifications() {
 
   // Convert VAPID key to Uint8Array
   const urlBase64ToUint8Array = useCallback((base64String: string): Uint8Array => {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-    
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
-    
+
     for (let i = 0; i < rawData.length; ++i) {
       outputArray[i] = rawData.charCodeAt(i);
     }
@@ -128,7 +127,7 @@ export function usePushNotifications() {
       const applicationServerKey = urlBase64ToUint8Array(vapidKey);
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: applicationServerKey.buffer as ArrayBuffer
+        applicationServerKey: applicationServerKey.buffer as ArrayBuffer,
       });
 
       // Save subscription to backend
@@ -136,8 +135,8 @@ export function usePushNotifications() {
         body: {
           action: 'subscribe',
           user_id: user.id,
-          subscription: subscription.toJSON()
-        }
+          subscription: subscription.toJSON(),
+        },
       });
 
       if (error) throw error;
@@ -159,7 +158,13 @@ export function usePushNotifications() {
       setState(prev => ({ ...prev, isLoading: false }));
       return false;
     }
-  }, [user?.id, state.serviceWorkerRegistration, registerServiceWorker, getVapidKey, urlBase64ToUint8Array]);
+  }, [
+    user?.id,
+    state.serviceWorkerRegistration,
+    registerServiceWorker,
+    getVapidKey,
+    urlBase64ToUint8Array,
+  ]);
 
   // Unsubscribe from push notifications
   const unsubscribe = useCallback(async (): Promise<boolean> => {
@@ -169,7 +174,8 @@ export function usePushNotifications() {
 
     try {
       if (state.serviceWorkerRegistration) {
-        const subscription = await state.serviceWorkerRegistration.pushManager.getSubscription();
+        const subscription =
+          await state.serviceWorkerRegistration.pushManager.getSubscription();
         if (subscription) {
           await subscription.unsubscribe();
         }
@@ -179,8 +185,8 @@ export function usePushNotifications() {
       await supabase.functions.invoke('push-subscribe', {
         body: {
           action: 'unsubscribe',
-          user_id: user.id
-        }
+          user_id: user.id,
+        },
       });
 
       toast.success('Notificações desativadas');
@@ -207,9 +213,9 @@ export function usePushNotifications() {
     new Notification('Teste de Notificação Push 🔔', {
       body: 'Se você está vendo isso, as notificações estão funcionando!',
       icon: '/favicon.ico',
-      tag: 'test-push'
+      tag: 'test-push',
     });
-    
+
     toast.success('Notificação de teste enviada!');
   }, [state.permission]);
 
@@ -225,7 +231,7 @@ export function usePushNotifications() {
           setState(prev => ({
             ...prev,
             isSupported: false,
-            isLoading: false
+            isLoading: false,
           }));
         }
         return;
@@ -257,19 +263,21 @@ export function usePushNotifications() {
           isSubscribed: isSubscribed || permission === 'granted',
           isLoading: false,
           permission,
-          serviceWorkerRegistration: registration
+          serviceWorkerRegistration: registration,
         });
       }
     };
 
     init();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [checkSupport]);
 
   return {
     ...state,
     subscribe,
     unsubscribe,
-    sendTestNotification
+    sendTestNotification,
   };
 }

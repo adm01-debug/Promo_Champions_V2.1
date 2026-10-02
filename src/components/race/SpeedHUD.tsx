@@ -15,7 +15,11 @@ export function SpeedHUD({ speedKmh, leaderName }: SpeedHUDProps) {
   const clamped = Math.max(0, Math.min(360, speedKmh));
   const angle = -120 + (clamped / 360) * 240;
   const colorBand =
-    clamped > 280 ? 'hsl(0 80% 55%)' : clamped > 180 ? 'hsl(45 95% 55%)' : 'hsl(142 70% 45%)';
+    clamped > 280
+      ? 'hsl(0 80% 55%)'
+      : clamped > 180
+        ? 'hsl(45 95% 55%)'
+        : 'hsl(142 70% 45%)';
 
   return (
     <div
@@ -47,7 +51,7 @@ export function SpeedHUD({ speedKmh, leaderName }: SpeedHUDProps) {
           style={{ transition: 'stroke-dashoffset 0.4s ease-out, stroke 0.3s' }}
         />
         {/* tick marks */}
-        {[0, 0.25, 0.5, 0.75, 1].map((t) => {
+        {[0, 0.25, 0.5, 0.75, 1].map(t => {
           const a = (-120 + t * 240) * (Math.PI / 180);
           const x1 = 42 + Math.cos(a) * 26;
           const y1 = 48 + Math.sin(a) * 26;
@@ -81,10 +85,15 @@ export function SpeedHUD({ speedKmh, leaderName }: SpeedHUDProps) {
         <circle cx={42} cy={48} r={2.5} fill="hsl(var(--foreground))" />
       </svg>
       <div className="text-center mt-0.5">
-        <span className="text-[14px] font-black tabular-nums text-foreground" style={{ fontFamily: 'system-ui, sans-serif' }}>
+        <span
+          className="text-[14px] font-black tabular-nums text-foreground"
+          style={{ fontFamily: 'system-ui, sans-serif' }}
+        >
           {Math.round(clamped)}
         </span>
-        <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground ml-1">km/h</span>
+        <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground ml-1">
+          km/h
+        </span>
       </div>
     </div>
   );

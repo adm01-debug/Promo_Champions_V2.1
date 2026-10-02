@@ -87,7 +87,10 @@ export function useSalesGoals(month?: Date) {
   return useQuery({
     queryKey: ['sales_goals', monthStr],
     queryFn: async () => {
-      const { data, error } = await supabase.from('sales_goals').select('*').eq('month', monthStr);
+      const { data, error } = await supabase
+        .from('sales_goals')
+        .select('*')
+        .eq('month', monthStr);
 
       if (error) throw error;
       return data as SalesGoal[];

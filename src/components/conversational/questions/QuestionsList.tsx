@@ -1,27 +1,38 @@
-import { useState } from "react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import { categoryLabel, depthLabel, type CallQuestion, type QuestionCategory } from "./questionHelpers";
+import { useState } from 'react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
+import {
+  categoryLabel,
+  depthLabel,
+  type CallQuestion,
+  type QuestionCategory,
+} from './questionHelpers';
 
 interface Props {
   questions: CallQuestion[];
 }
 
 function formatTs(sec: number): string {
-  if (!sec || sec < 0) return "—";
+  if (!sec || sec < 0) return '—';
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function badgeVariant(c: QuestionCategory): "destructive" | "warning" | "info" | "high" | "secondary" {
-  if (c === "leading") return "destructive";
-  if (c === "impact") return "high";
-  if (c === "discovery") return "info";
-  if (c === "open") return "warning";
-  return "secondary";
+function badgeVariant(
+  c: QuestionCategory
+): 'destructive' | 'warning' | 'info' | 'high' | 'secondary' {
+  if (c === 'leading') return 'destructive';
+  if (c === 'impact') return 'high';
+  if (c === 'discovery') return 'info';
+  if (c === 'open') return 'warning';
+  return 'secondary';
 }
 
 export const QuestionsList = ({ questions }: Props) => {
@@ -40,11 +51,13 @@ export const QuestionsList = ({ questions }: Props) => {
       <CollapsibleTrigger asChild>
         <Button variant="ghost" size="sm" className="w-full justify-between">
           <span>Ver {questions.length} perguntas detectadas</span>
-          <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}
+          />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 mt-2 max-h-72 overflow-y-auto pr-1">
-        {questions.map((q) => (
+        {questions.map(q => (
           <div key={q.id} className="border rounded-md p-2 text-xs space-y-1 bg-muted/30">
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-1 flex-wrap">
@@ -55,7 +68,9 @@ export const QuestionsList = ({ questions }: Props) => {
                   {depthLabel(q.depth)}
                 </Badge>
               </div>
-              <span className="text-muted-foreground tabular-nums">{formatTs(q.start_estimate)}</span>
+              <span className="text-muted-foreground tabular-nums">
+                {formatTs(q.start_estimate)}
+              </span>
             </div>
             <p className="text-foreground/90 leading-snug">{q.text}</p>
           </div>
