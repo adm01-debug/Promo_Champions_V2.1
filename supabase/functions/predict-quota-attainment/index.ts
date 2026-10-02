@@ -1,6 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
@@ -116,10 +117,22 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    // Grava predições, alertas e forecasts de quota em lote: restrito a admin/manager.
+    const { data: isManager, error: roleErr } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
     );
+    if (roleErr) throw roleErr;
+    if (!isManager) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabase = getServiceClient("grava predições, alertas e forecasts de quota de toda a equipe");
 
     const body = await req.json().catch(() => ({}));
 
@@ -362,6 +375,11 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("predict-quota-attainment error", e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,

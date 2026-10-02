@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart3 } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -9,18 +9,18 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-} from "recharts";
+} from 'recharts';
 
 interface Props {
   data: Record<string, unknown>[];
 }
 
 const CHANNEL_COLORS: Record<string, string> = {
-  whatsapp: "hsl(142, 70%, 45%)",
-  email: "hsl(var(--primary))",
-  linkedin: "hsl(210, 80%, 50%)",
-  sms: "hsl(var(--status-warning))",
-  phone: "hsl(var(--status-info))",
+  whatsapp: 'hsl(142, 70%, 45%)',
+  email: 'hsl(var(--primary))',
+  linkedin: 'hsl(210, 80%, 50%)',
+  sms: 'hsl(var(--status-warning))',
+  phone: 'hsl(var(--status-info))',
 };
 
 export function ChannelChart({ data }: Props) {
@@ -52,25 +52,55 @@ export function ChannelChart({ data }: Props) {
                 dataKey="date"
                 tick={{ fontSize: 10 }}
                 tickFormatter={(v: string) => {
-                  const d = new Date(v + "T00:00:00");
+                  const d = new Date(v + 'T00:00:00');
                   return `${d.getDate()}/${d.getMonth() + 1}`;
                 }}
               />
               <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
               <Tooltip
                 contentStyle={{
-                  background: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
+                  background: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px',
                   fontSize: 12,
                 }}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="whatsapp" name="WhatsApp" fill={CHANNEL_COLORS.whatsapp} radius={[2, 2, 0, 0]} stackId="a" />
-              <Bar dataKey="email" name="Email" fill={CHANNEL_COLORS.email} radius={[2, 2, 0, 0]} stackId="a" />
-              <Bar dataKey="linkedin" name="Linkedin" fill={CHANNEL_COLORS.linkedin} radius={[2, 2, 0, 0]} stackId="a" />
-              <Bar dataKey="sms" name="SMS" fill={CHANNEL_COLORS.sms} radius={[2, 2, 0, 0]} stackId="a" />
-              <Bar dataKey="phone" name="Telefone" fill={CHANNEL_COLORS.phone} radius={[2, 2, 0, 0]} stackId="a" />
+              <Bar
+                dataKey="whatsapp"
+                name="WhatsApp"
+                fill={CHANNEL_COLORS.whatsapp}
+                radius={[2, 2, 0, 0]}
+                stackId="a"
+              />
+              <Bar
+                dataKey="email"
+                name="Email"
+                fill={CHANNEL_COLORS.email}
+                radius={[2, 2, 0, 0]}
+                stackId="a"
+              />
+              <Bar
+                dataKey="linkedin"
+                name="Linkedin"
+                fill={CHANNEL_COLORS.linkedin}
+                radius={[2, 2, 0, 0]}
+                stackId="a"
+              />
+              <Bar
+                dataKey="sms"
+                name="SMS"
+                fill={CHANNEL_COLORS.sms}
+                radius={[2, 2, 0, 0]}
+                stackId="a"
+              />
+              <Bar
+                dataKey="phone"
+                name="Telefone"
+                fill={CHANNEL_COLORS.phone}
+                radius={[2, 2, 0, 0]}
+                stackId="a"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

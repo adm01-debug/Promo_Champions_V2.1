@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import {
   Card,
@@ -22,9 +21,7 @@ const DocsPage = () => {
             <BookOpen className="h-4 w-4" />
             System Documentation
           </div>
-          <h1 className="text-page-title text-foreground">
-            Guidelines de Componentes
-          </h1>
+          <h1 className="text-page-title text-foreground">Guidelines de Componentes</h1>
           <p className="text-muted-foreground text-lg max-w-2xl">
             Manual de excelência visual e funcional para os principais blocos de
             construção do ecossistema Promo Champions.

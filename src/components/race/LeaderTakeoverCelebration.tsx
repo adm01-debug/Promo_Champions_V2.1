@@ -19,13 +19,41 @@ async function fireConfetti(primary: string, secondary: string) {
     const colors = [primary, secondary, warning];
     const defaults = { zIndex: 9999, disableForReducedMotion: true };
 
-    confetti({ ...defaults, particleCount: 120, spread: 90, startVelocity: 55, origin: { x: 0.5, y: 0.55 }, colors });
+    confetti({
+      ...defaults,
+      particleCount: 120,
+      spread: 90,
+      startVelocity: 55,
+      origin: { x: 0.5, y: 0.55 },
+      colors,
+    });
     setTimeout(() => {
-      confetti({ ...defaults, particleCount: 80, spread: 70, angle: 60, origin: { x: 0, y: 0.7 }, colors });
-      confetti({ ...defaults, particleCount: 80, spread: 70, angle: 120, origin: { x: 1, y: 0.7 }, colors });
+      confetti({
+        ...defaults,
+        particleCount: 80,
+        spread: 70,
+        angle: 60,
+        origin: { x: 0, y: 0.7 },
+        colors,
+      });
+      confetti({
+        ...defaults,
+        particleCount: 80,
+        spread: 70,
+        angle: 120,
+        origin: { x: 1, y: 0.7 },
+        colors,
+      });
     }, 200);
     setTimeout(() => {
-      confetti({ ...defaults, particleCount: 60, spread: 120, startVelocity: 35, origin: { x: 0.5, y: 0.4 }, colors });
+      confetti({
+        ...defaults,
+        particleCount: 60,
+        spread: 120,
+        startVelocity: 35,
+        origin: { x: 0.5, y: 0.4 },
+        colors,
+      });
     }, 500);
   } catch {
     /* noop — confetti é estritamente decorativo */
@@ -88,7 +116,10 @@ export function LeaderTakeoverCelebration({ takeover, onClear, onPlaySound }: Pr
               >
                 <Crown
                   className="w-16 h-16 drop-shadow-lg"
-                  style={{ color: takeover.primaryColor, filter: `drop-shadow(0 0 12px ${takeover.primaryColor})` }}
+                  style={{
+                    color: takeover.primaryColor,
+                    filter: `drop-shadow(0 0 12px ${takeover.primaryColor})`,
+                  }}
                   aria-hidden
                 />
               </motion.div>

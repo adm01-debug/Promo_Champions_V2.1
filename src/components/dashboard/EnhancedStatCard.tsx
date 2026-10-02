@@ -1,11 +1,17 @@
-import React from "react";
+import React from 'react';
 import { FC } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, Minus, LucideIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 interface EnhancedStatCardProps {
   title: string;
   value: string | number;
@@ -35,31 +41,32 @@ const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
   loading,
   className,
   onClick,
-  sparklineData
+  sparklineData,
 }) => {
   // Determine trend from change if not provided
-  const effectiveTrend = trend ?? (change ? (change > 0 ? 'up' : change < 0 ? 'down' : 'neutral') : 'neutral');
-  
+  const effectiveTrend =
+    trend ?? (change ? (change > 0 ? 'up' : change < 0 ? 'down' : 'neutral') : 'neutral');
+
   const trendColors = {
     up: 'text-success',
     down: 'text-destructive',
-    neutral: 'text-muted-foreground'
+    neutral: 'text-muted-foreground',
   };
 
   const trendIcons = {
     up: TrendingUp,
     down: TrendingDown,
-    neutral: Minus
+    neutral: Minus,
   };
 
   const TrendIcon = trendIcons[effectiveTrend];
 
   const formatValue = (val: string | number) => {
     if (typeof val === 'string') return val;
-    
+
     switch (format) {
       case 'currency':
-        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+        return formatBRL(val, { decimals: 2 });
       case 'percentage':
         return `${val.toFixed(1)}%`;
       default:
@@ -94,7 +101,7 @@ const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
       whileHover={onClick ? { scale: 1.02 } : undefined}
       whileTap={onClick ? { scale: 0.98 } : undefined}
     >
-      <Card 
+      <Card
         className={cn(
           'transition-all duration-200',
           onClick && 'cursor-pointer hover:shadow-md hover:border-primary/30',
@@ -115,25 +122,32 @@ const EnhancedStatCardBase: FC<EnhancedStatCardProps> = ({
         <CardContent>
           <div className="flex items-end justify-between">
             <div>
-              <motion.div 
+              <motion.div
                 className="text-metric"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
                 {formatValue(value)}
               </motion.div>
-              
+
               {(change !== undefined || trendLabel) && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className={cn('flex items-center gap-1 mt-1 text-sm', trendColors[effectiveTrend])}>
+                      <div
+                        className={cn(
+                          'flex items-center gap-1 mt-1 text-sm',
+                          trendColors[effectiveTrend]
+                        )}
+                      >
                         <TrendIcon className="w-4 h-4" />
                         {change !== undefined && (
                           <span className="font-medium">{formatChange(change)}</span>
                         )}
                         {trendLabel && (
-                          <span className="text-muted-foreground text-xs">{trendLabel}</span>
+                          <span className="text-muted-foreground text-xs">
+                            {trendLabel}
+                          </span>
                         )}
                       </div>
                     </TooltipTrigger>

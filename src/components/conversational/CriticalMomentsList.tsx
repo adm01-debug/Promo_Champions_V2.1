@@ -1,15 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, Check, CircleSlash, Sparkles, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertTriangle, Check, CircleSlash, Sparkles, Play } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   useCriticalMoments,
   useDetectCriticalMoments,
   useUpdateCriticalMoment,
-} from "@/hooks/conversational/useCriticalMoments";
-import { CriticalMomentBadge } from "./CriticalMomentBadge";
-import { formatTs, SEVERITY_TONE } from "./criticalMomentsHelpers";
+} from '@/hooks/conversational/useCriticalMoments';
+import { CriticalMomentBadge } from './CriticalMomentBadge';
+import { formatTs, SEVERITY_TONE } from './criticalMomentsHelpers';
 
 interface Props {
   recordingId: string;
@@ -36,7 +36,11 @@ export const CriticalMomentsList = ({ recordingId, onSeek }: Props) => {
           className="h-7 gap-1.5 text-xs"
         >
           <Sparkles className="h-3 w-3" />
-          {detect.isPending ? "Detectando..." : moments?.length ? "Redetectar" : "Detectar"}
+          {detect.isPending
+            ? 'Detectando...'
+            : moments?.length
+              ? 'Redetectar'
+              : 'Detectar'}
         </Button>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -47,17 +51,17 @@ export const CriticalMomentsList = ({ recordingId, onSeek }: Props) => {
             Sem momentos críticos detectados ainda. Clique em "Detectar".
           </div>
         ) : (
-          moments.map((m) => {
+          moments.map(m => {
             const tone = SEVERITY_TONE[m.severity];
-            const dimmed = m.status === "dismissed" || m.status === "actioned";
+            const dimmed = m.status === 'dismissed' || m.status === 'actioned';
             return (
               <div
                 key={m.id}
                 className={cn(
-                  "rounded-lg border p-3 transition-opacity",
+                  'rounded-lg border p-3 transition-opacity',
                   tone.border,
                   tone.bg,
-                  dimmed && "opacity-60",
+                  dimmed && 'opacity-60'
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -73,7 +77,7 @@ export const CriticalMomentsList = ({ recordingId, onSeek }: Props) => {
                         {formatTs(m.timestamp_sec)}
                       </button>
                       <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                        {m.status === "new" ? "novo" : m.status}
+                        {m.status === 'new' ? 'novo' : m.status}
                       </span>
                     </div>
                     {m.quote && (
@@ -82,7 +86,9 @@ export const CriticalMomentsList = ({ recordingId, onSeek }: Props) => {
                       </p>
                     )}
                     {m.context && (
-                      <p className="text-[11px] text-muted-foreground line-clamp-2">{m.context}</p>
+                      <p className="text-[11px] text-muted-foreground line-clamp-2">
+                        {m.context}
+                      </p>
                     )}
                     {m.suggested_action && (
                       <p className="text-[11px] font-medium text-foreground/90">
@@ -91,24 +97,24 @@ export const CriticalMomentsList = ({ recordingId, onSeek }: Props) => {
                     )}
                   </div>
                   <div className="flex shrink-0 flex-col gap-1">
-                    {m.status !== "actioned" && (
+                    {m.status !== 'actioned' && (
                       <Button
                         size="sm"
                         variant="ghost"
                         className="h-6 w-6 p-0"
                         title="Marcar como tratado"
-                        onClick={() => update.mutate({ id: m.id, status: "actioned" })}
+                        onClick={() => update.mutate({ id: m.id, status: 'actioned' })}
                       >
                         <Check className="h-3.5 w-3.5 text-status-success" />
                       </Button>
                     )}
-                    {m.status !== "dismissed" && (
+                    {m.status !== 'dismissed' && (
                       <Button
                         size="sm"
                         variant="ghost"
                         className="h-6 w-6 p-0"
                         title="Descartar"
-                        onClick={() => update.mutate({ id: m.id, status: "dismissed" })}
+                        onClick={() => update.mutate({ id: m.id, status: 'dismissed' })}
                       >
                         <CircleSlash className="h-3.5 w-3.5 text-muted-foreground" />
                       </Button>

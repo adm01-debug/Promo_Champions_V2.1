@@ -4,6 +4,7 @@ import { Trophy, Star, PartyPopper, Zap, Sparkles, type LucideIcon } from 'lucid
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 
+import { formatBRL } from '@/lib/money';
 interface VictoryOverlayProps {
   isVisible: boolean;
   title: string;
@@ -139,10 +140,7 @@ export function VictoryOverlay({
                         transition={{ delay: 0.6, type: 'spring' }}
                         className="inline-block px-5 py-2 rounded-2xl bg-status-success/10 border border-status-success/30 text-status-success font-black italic shadow-lg"
                       >
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        }).format(value)}
+                        {formatBRL(value, { decimals: 2 })}
                       </motion.div>
                     )}
 

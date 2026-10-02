@@ -1,22 +1,45 @@
-import { memo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, TrendingUp } from "lucide-react";
+import { memo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DollarSign, TrendingUp } from 'lucide-react';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, PieChart, Pie, Cell
-} from "recharts";
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 
-const COLORS = ["hsl(var(--primary))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
-const formatCurrency = (value: number) => `R$ ${value.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`;
-
+import { formatBRL } from '@/lib/money';
+const COLORS = [
+  'hsl(var(--primary))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
+];
 interface BICloserChartsProps {
   revenueByDay: { day: string; value: number }[];
   dealsByCategory: { category: string; value: number }[];
   revenueByMonth: { month: string; value: number }[];
 }
 
-export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, dealsByCategory, revenueByMonth }: BICloserChartsProps) {
-  const tooltipStyle = { backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px" };
+export const BICloserCharts = memo(function BICloserCharts({
+  revenueByDay,
+  dealsByCategory,
+  revenueByMonth,
+}: BICloserChartsProps) {
+  const tooltipStyle = {
+    backgroundColor: 'hsl(var(--card))',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: '12px',
+  };
 
   return (
     <>
@@ -36,15 +59,44 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
                 <AreaChart data={revenueByDay}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <stop
+                        offset="5%"
+                        stopColor="hsl(var(--primary))"
+                        stopOpacity={0.4}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="hsl(var(--primary))"
+                        stopOpacity={0}
+                      />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
-                  <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                  <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatCurrency(value), "Faturamento"]} />
-                  <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} fill="url(#colorRevenue)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                    strokeOpacity={0.5}
+                  />
+                  <XAxis
+                    dataKey="day"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    formatter={(value: number) => [formatBRL(value), 'Faturamento']}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={3}
+                    fill="url(#colorRevenue)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -59,52 +111,97 @@ export const BICloserCharts = memo(function BICloserCharts({ revenueByDay, deals
         </Card>
 
         <Card className="glass-card">
-          <CardHeader><CardTitle className="text-section-title">Por Categoria</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-section-title">Por Categoria</CardTitle>
+          </CardHeader>
           <CardContent>
             {dealsByCategory.length > 0 ? (
               <>
                 <ResponsiveContainer width="100%" height={180}>
                   <PieChart>
-                    <Pie data={dealsByCategory} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value">
+                    <Pie
+                      data={dealsByCategory}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
                       {dealsByCategory.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => [formatCurrency(value)]} contentStyle={tooltipStyle} />
+                    <Tooltip
+                      formatter={(value: number) => [formatBRL(value)]}
+                      contentStyle={tooltipStyle}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="space-y-2 mt-2">
                   {dealsByCategory.map((cat, idx) => (
-                    <div key={cat.category} className="flex items-center gap-2 text-sm hover-scale-sm cursor-default">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
+                    <div
+                      key={cat.category}
+                      className="flex items-center gap-2 text-sm hover-scale-sm cursor-default"
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: COLORS[idx % COLORS.length] }}
+                      />
                       <span className="truncate">{cat.category}</span>
-                      <span className="ml-auto font-bold">{formatCurrency(cat.value)}</span>
+                      <span className="ml-auto font-bold">{formatBRL(cat.value)}</span>
                     </div>
                   ))}
                 </div>
               </>
             ) : (
-              <div className="h-[180px] flex items-center justify-center text-muted-foreground">Sem dados</div>
+              <div className="h-[180px] flex items-center justify-center text-muted-foreground">
+                Sem dados
+              </div>
             )}
           </CardContent>
         </Card>
       </div>
 
       <Card className="glass-card">
-        <CardHeader><CardTitle className="text-section-title">Evolução Mensal (Histórico)</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="text-section-title">
+            Evolução Mensal (Histórico)
+          </CardTitle>
+        </CardHeader>
         <CardContent>
           {revenueByMonth.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={revenueByMonth}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(value: number) => [formatCurrency(value), "Faturamento"]} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                  strokeOpacity={0.5}
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  formatter={(value: number) => [formatBRL(value), 'Faturamento']}
+                />
                 <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[250px] flex items-center justify-center text-muted-foreground">Sem dados históricos</div>
+            <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+              Sem dados históricos
+            </div>
           )}
         </CardContent>
       </Card>

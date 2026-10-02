@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CheckSquare, ListTodo, Plus } from "lucide-react";
-import { priorityMeta, type ActionItem } from "./meetingSummaryHelpers";
-import { useCreateActivitiesFromSummary } from "@/hooks/conversational/useCreateActivitiesFromSummary";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CheckSquare, ListTodo, Plus } from 'lucide-react';
+import { priorityMeta, type ActionItem } from './meetingSummaryHelpers';
+import { useCreateActivitiesFromSummary } from '@/hooks/conversational/useCreateActivitiesFromSummary';
 
 interface Props {
   recordingId: string;
@@ -36,7 +36,7 @@ export const ActionItemsList = ({ recordingId, items }: Props) => {
       </CardHeader>
       <CardContent className="space-y-2">
         {items.map((it, i) => {
-          const meta = priorityMeta[it.priority] ?? priorityMeta["média"];
+          const meta = priorityMeta[it.priority] ?? priorityMeta['média'];
           return (
             <div
               key={i}
@@ -46,14 +46,16 @@ export const ActionItemsList = ({ recordingId, items }: Props) => {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium leading-snug">{it.title}</p>
                 <div className="flex flex-wrap items-center gap-2 mt-1.5">
-                  <Badge variant="outline" className={meta.className + " text-xs"}>
+                  <Badge variant="outline" className={meta.className + ' text-xs'}>
                     {meta.label}
                   </Badge>
                   {it.due_hint && (
                     <span className="text-xs text-muted-foreground">⏱ {it.due_hint}</span>
                   )}
                   {it.owner_hint && (
-                    <span className="text-xs text-muted-foreground">👤 {it.owner_hint}</span>
+                    <span className="text-xs text-muted-foreground">
+                      👤 {it.owner_hint}
+                    </span>
                   )}
                 </div>
               </div>

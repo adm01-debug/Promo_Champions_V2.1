@@ -1,7 +1,7 @@
 # 📋 PROMO CHAMPIONS — Mapeamento Completo de Funcionalidades
 
 > Análise exaustiva do código-fonte (`src/pages`, `src/hooks`, `src/components`, `supabase/functions`) e do banco de dados.
-> Última atualização: 2026-04-16
+> Atualizado em: 2026-04-16
 
 ---
 

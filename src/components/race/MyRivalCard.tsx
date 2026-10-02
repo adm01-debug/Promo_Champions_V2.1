@@ -69,11 +69,16 @@ export function MyRivalCard({
           <div
             className={cn(
               'text-sm font-display font-black tabular-nums',
-              ahead ? 'text-success' : 'text-destructive',
+              ahead ? 'text-success' : 'text-destructive'
             )}
-            aria-label={ahead ? `Você está ${gapAbs.toFixed(1)}% à frente` : `Você está ${gapAbs.toFixed(1)}% atrás`}
+            aria-label={
+              ahead
+                ? `Você está ${gapAbs.toFixed(1)}% à frente`
+                : `Você está ${gapAbs.toFixed(1)}% atrás`
+            }
           >
-            {ahead ? '+' : '−'}{gapAbs.toFixed(1)}%
+            {ahead ? '+' : '−'}
+            {gapAbs.toFixed(1)}%
           </div>
           <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
             #{rival.rival_car_number}

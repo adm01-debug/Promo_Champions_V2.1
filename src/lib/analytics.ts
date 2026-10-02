@@ -9,7 +9,7 @@
  *
  * Falhas são engolidas — analytics jamais deve quebrar o app.
  */
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 
 // Session id estável por aba do navegador
 const SESSION_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -31,7 +31,7 @@ export function setAnalyticsSalesperson(id: string | null) {
 }
 
 function getDeviceType(): string {
-  return window.innerWidth < 768 ? "mobile" : "desktop";
+  return window.innerWidth < 768 ? 'mobile' : 'desktop';
 }
 
 /**
@@ -41,7 +41,7 @@ function getDeviceType(): string {
 export async function trackPageEnter(
   route: string,
   pageTitle: string,
-  referrer: string | null,
+  referrer: string | null
 ) {
   await flushCurrentPage();
 
@@ -80,7 +80,7 @@ export async function flushCurrentPage() {
   const exitedAt = new Date();
   const durationSeconds = Math.max(
     0,
-    Math.round((exitedAt.getTime() - page.enteredAt) / 1000),
+    Math.round((exitedAt.getTime() - page.enteredAt) / 1000)
   );
 
   // Descartar pings triviais (<1s sem interação) — reduz ruído e writes.
@@ -89,7 +89,7 @@ export async function flushCurrentPage() {
   if (trivial) return;
 
   try {
-    await supabase.from("page_analytics").insert({
+    await supabase.from('page_analytics').insert({
       salesperson_id: salespersonId,
       route: page.route,
       page_title: page.pageTitle,
@@ -107,14 +107,14 @@ export async function flushCurrentPage() {
 }
 
 // Flush ao fechar a aba / sair para outra origem
-if (typeof window !== "undefined") {
-  window.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") {
+if (typeof window !== 'undefined') {
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
       flushCurrentPage();
     }
   });
 
-  window.addEventListener("beforeunload", () => {
+  window.addEventListener('beforeunload', () => {
     flushCurrentPage();
   });
 }

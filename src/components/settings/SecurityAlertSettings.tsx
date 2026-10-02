@@ -1,14 +1,20 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ShieldCheck, Settings2, Loader2, AlertTriangle } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ShieldCheck, Settings2, Loader2, AlertTriangle } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface SecurityAlertSettingsData {
   id: string;
@@ -20,20 +26,20 @@ interface SecurityAlertSettingsData {
 export function SecurityAlertSettings() {
   const { isAdmin, isLoadingCurrentRole } = useUserRoles();
   const queryClient = useQueryClient();
-  
+
   const [spikeThreshold, setSpikeThreshold] = useState(5);
   const [timeWindowHours, setTimeWindowHours] = useState(1);
   const [cooldownHours, setCooldownHours] = useState(24);
 
   const { data: settings, isLoading } = useQuery({
-    queryKey: ["security-alert-settings"],
+    queryKey: ['security-alert-settings'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("security_alert_settings")
-        .select("*")
+        .from('security_alert_settings')
+        .select('*')
         .limit(1)
         .single();
-      
+
       if (error) throw error;
       return data as SecurityAlertSettingsData;
     },
@@ -50,27 +56,27 @@ export function SecurityAlertSettings() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<SecurityAlertSettingsData>) => {
-      if (!settings?.id) throw new Error("Settings not found");
-      
+      if (!settings?.id) throw new Error('Settings not found');
+
       const { error } = await supabase
-        .from("security_alert_settings")
+        .from('security_alert_settings')
         .update(data)
-        .eq("id", settings.id);
-      
+        .eq('id', settings.id);
+
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["security-alert-settings"] });
+      queryClient.invalidateQueries({ queryKey: ['security-alert-settings'] });
       toast({
-        title: "Configurações salvas",
-        description: "As configurações de alerta foram atualizadas.",
+        title: 'Configurações salvas',
+        description: 'As configurações de alerta foram atualizadas.',
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Erro ao salvar",
-        description: error.message || "Não foi possível salvar as configurações.",
-        variant: "destructive",
+        title: 'Erro ao salvar',
+        description: error.message || 'Não foi possível salvar as configurações.',
+        variant: 'destructive',
       });
     },
   });
@@ -78,9 +84,9 @@ export function SecurityAlertSettings() {
   const handleSave = () => {
     if (spikeThreshold < 1 || timeWindowHours < 1 || cooldownHours < 1) {
       toast({
-        title: "Valores inválidos",
-        description: "Todos os valores devem ser maiores que zero.",
-        variant: "destructive",
+        title: 'Valores inválidos',
+        description: 'Todos os valores devem ser maiores que zero.',
+        variant: 'destructive',
       });
       return;
     }
@@ -114,11 +120,11 @@ export function SecurityAlertSettings() {
     return null;
   }
 
-  const hasChanges = settings && (
-    spikeThreshold !== settings.spike_threshold ||
-    timeWindowHours !== settings.time_window_hours ||
-    cooldownHours !== settings.cooldown_hours
-  );
+  const hasChanges =
+    settings &&
+    (spikeThreshold !== settings.spike_threshold ||
+      timeWindowHours !== settings.time_window_hours ||
+      cooldownHours !== settings.cooldown_hours);
 
   return (
     <Card>
@@ -144,7 +150,7 @@ export function SecurityAlertSettings() {
               min={1}
               max={100}
               value={spikeThreshold}
-              onChange={(e) => setSpikeThreshold(parseInt(e.target.value) || 1)}
+              onChange={e => setSpikeThreshold(parseInt(e.target.value) || 1)}
             />
             <p className="text-xs text-muted-foreground">
               Número de tentativas por usuário para disparar alerta
@@ -162,7 +168,7 @@ export function SecurityAlertSettings() {
               min={1}
               max={48}
               value={timeWindowHours}
-              onChange={(e) => setTimeWindowHours(parseInt(e.target.value) || 1)}
+              onChange={e => setTimeWindowHours(parseInt(e.target.value) || 1)}
             />
             <p className="text-xs text-muted-foreground">
               Período para contagem de tentativas
@@ -180,7 +186,7 @@ export function SecurityAlertSettings() {
               min={1}
               max={168}
               value={cooldownHours}
-              onChange={(e) => setCooldownHours(parseInt(e.target.value) || 1)}
+              onChange={e => setCooldownHours(parseInt(e.target.value) || 1)}
             />
             <p className="text-xs text-muted-foreground">
               Tempo entre alertas do mesmo tipo

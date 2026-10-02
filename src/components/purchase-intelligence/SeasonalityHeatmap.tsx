@@ -1,20 +1,30 @@
-import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { 
-  CalendarDays, 
-  Clock, 
-  TrendingUp, 
-  Sparkles, 
+import { useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  CalendarDays,
+  Clock,
+  TrendingUp,
+  Sparkles,
   ChevronRight,
   Info,
-  CalendarCheck
-} from "lucide-react";
-import { useGlobalSeasonality } from "@/hooks/purchase-intelligence/usePurchaseIntelligence";
-import { DOW_LABELS_PT, MONTH_LABELS_PT, formatBRL, intensityColor } from "./purchaseIntelligenceHelpers";
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
+  CalendarCheck,
+} from 'lucide-react';
+import { useGlobalSeasonality } from '@/hooks/purchase-intelligence/usePurchaseIntelligence';
+import {
+  DOW_LABELS_PT,
+  MONTH_LABELS_PT,
+  formatBRL,
+  intensityColor,
+} from './purchaseIntelligenceHelpers';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
 
 export function SeasonalityHeatmap() {
   const { data, isLoading } = useGlobalSeasonality();
@@ -36,7 +46,7 @@ export function SeasonalityHeatmap() {
   // Logic for "Best Moment" highlight
   const bestMoment = useMemo(() => {
     let topVal = 0;
-    let key = "";
+    let key = '';
     Object.entries(matrix.grid).forEach(([k, v]) => {
       if (v.revenue > topVal) {
         topVal = v.revenue;
@@ -44,8 +54,8 @@ export function SeasonalityHeatmap() {
       }
     });
     if (!key) return null;
-    const [m, d] = key.split("-").map(Number);
-    return { month: MONTH_LABELS_PT[m-1], dow: DOW_LABELS_PT[d], revenue: topVal };
+    const [m, d] = key.split('-').map(Number);
+    return { month: MONTH_LABELS_PT[m - 1], dow: DOW_LABELS_PT[d], revenue: topVal };
   }, [matrix]);
 
   if (isLoading) return <Skeleton className="h-[600px] rounded-2xl" />;
@@ -61,12 +71,15 @@ export function SeasonalityHeatmap() {
               </div>
               Inteligência de Sazonalidade Global
             </CardTitle>
-            <p className="text-xs text-muted-foreground max-w-md">Cruzamento matricial de Mês × Dia da Semana para identificar picos históricos de conversão.</p>
+            <p className="text-xs text-muted-foreground max-w-md">
+              Cruzamento matricial de Mês × Dia da Semana para identificar picos
+              históricos de conversão.
+            </p>
           </div>
 
           <div className="flex gap-4">
             {bestMoment && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-center gap-3"
@@ -75,9 +88,12 @@ export function SeasonalityHeatmap() {
                   <TrendingUp className="h-4 w-4" />
                 </div>
                 <div className="space-y-0.5">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-primary/70">Pico de Demanda</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-primary/70">
+                    Pico de Demanda
+                  </div>
                   <div className="text-sm font-bold flex items-center gap-1.5">
-                    {bestMoment.month} <ChevronRight className="h-3 w-3" /> {bestMoment.dow}
+                    {bestMoment.month} <ChevronRight className="h-3 w-3" />{' '}
+                    {bestMoment.dow}
                   </div>
                 </div>
               </motion.div>
@@ -93,7 +109,7 @@ export function SeasonalityHeatmap() {
               <thead>
                 <tr>
                   <th className="w-24"></th>
-                  {DOW_LABELS_PT.map((d) => (
+                  {DOW_LABELS_PT.map(d => (
                     <th key={d} className="pb-4">
                       <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">
                         {d}
@@ -113,9 +129,14 @@ export function SeasonalityHeatmap() {
                     {DOW_LABELS_PT.map((_, dIdx) => {
                       const k = `${mIdx + 1}-${dIdx}`;
                       const cell = matrix.grid[k];
-                      const isTop = bestMoment && bestMoment.month === mLabel && bestMoment.dow === DOW_LABELS_PT[dIdx];
-                      const bg = cell ? intensityColor(cell.revenue, matrix.max) : "hsl(var(--muted) / 0.1)";
-                      
+                      const isTop =
+                        bestMoment &&
+                        bestMoment.month === mLabel &&
+                        bestMoment.dow === DOW_LABELS_PT[dIdx];
+                      const bg = cell
+                        ? intensityColor(cell.revenue, matrix.max)
+                        : 'hsl(var(--muted) / 0.1)';
+
                       return (
                         <td key={k} className="p-0">
                           <Tooltip>
@@ -140,25 +161,38 @@ export function SeasonalityHeatmap() {
                               </motion.div>
                             </TooltipTrigger>
                             {cell && (
-                              <TooltipContent className="p-0 border-none bg-transparent shadow-2xl" sideOffset={8}>
-                                <motion.div 
+                              <TooltipContent
+                                className="p-0 border-none bg-transparent shadow-2xl"
+                                sideOffset={8}
+                              >
+                                <motion.div
                                   initial={{ opacity: 0, y: 5 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   className="bg-card border border-primary/30 p-4 rounded-xl space-y-3 w-56 backdrop-blur-xl"
                                 >
                                   <div className="flex items-center gap-2 border-b border-border/50 pb-2">
                                     <CalendarCheck className="h-4 w-4 text-primary" />
-                                    <div className="text-sm font-bold">{mLabel} · {DOW_LABELS_PT[dIdx]}</div>
+                                    <div className="text-sm font-bold">
+                                      {mLabel} · {DOW_LABELS_PT[dIdx]}
+                                    </div>
                                   </div>
-                                  
+
                                   <div className="space-y-2">
                                     <div className="bg-primary/5 p-2 rounded-lg flex justify-between items-center border border-primary/10">
-                                      <span className="text-[10px] font-bold text-muted-foreground uppercase">Volume Histórico</span>
-                                      <span className="text-sm font-black text-primary">{formatBRL(cell.revenue)}</span>
+                                      <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                                        Volume Histórico
+                                      </span>
+                                      <span className="text-sm font-black text-primary">
+                                        {formatBRL(cell.revenue)}
+                                      </span>
                                     </div>
                                     <div className="flex justify-between items-center px-2">
-                                      <span className="text-[10px] font-bold text-muted-foreground uppercase">Frequência</span>
-                                      <span className="text-xs font-bold">{cell.deals} Vendas</span>
+                                      <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                                        Frequência
+                                      </span>
+                                      <span className="text-xs font-bold">
+                                        {cell.deals} Vendas
+                                      </span>
                                     </div>
                                   </div>
 
@@ -167,7 +201,13 @@ export function SeasonalityHeatmap() {
                                       <Clock className="h-3 w-3" /> Horário Recomendado
                                     </div>
                                     <div className="mt-1 text-xs font-medium text-foreground">
-                                      10:30h — 11:45h <Badge variant="outline" className="text-[8px] h-3 ml-2">IA Estima</Badge>
+                                      10:30h — 11:45h{' '}
+                                      <Badge
+                                        variant="outline"
+                                        className="text-[8px] h-3 ml-2"
+                                      >
+                                        IA Estima
+                                      </Badge>
                                     </div>
                                   </div>
                                 </motion.div>
@@ -190,9 +230,15 @@ export function SeasonalityHeatmap() {
             <Info className="h-5 w-5" />
           </div>
           <div className="space-y-1">
-            <h4 className="text-sm font-bold text-foreground">Diretriz de Execução Tática</h4>
+            <h4 className="text-sm font-bold text-foreground">
+              Diretriz de Execução Tática
+            </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              O heatmap de sazonalidade reflete o comportamento agregado de todo o ecossistema. Use estes picos para planejar campanhas de reativação massiva. Células com maior densidade térmica indicam períodos onde a propensão ao fechamento é <span className="text-primary font-bold">3.4x maior</span> que a média base.
+              O heatmap de sazonalidade reflete o comportamento agregado de todo o
+              ecossistema. Use estes picos para planejar campanhas de reativação massiva.
+              Células com maior densidade térmica indicam períodos onde a propensão ao
+              fechamento é <span className="text-primary font-bold">3.4x maior</span> que
+              a média base.
             </p>
           </div>
         </div>
@@ -200,11 +246,16 @@ export function SeasonalityHeatmap() {
 
       <div className="p-4 bg-muted/20 border-t border-border/50 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-3 w-3 text-primary" /> Sazonalidade Predita para Próximos 90 Dias
+          <Sparkles className="h-3 w-3 text-primary" /> Sazonalidade Predita para Próximos
+          90 Dias
         </div>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-primary" /> Histórico Real</span>
-          <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full border border-primary" /> Projeção IA</span>
+          <span className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-primary" /> Histórico Real
+          </span>
+          <span className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full border border-primary" /> Projeção IA
+          </span>
         </div>
       </div>
     </Card>

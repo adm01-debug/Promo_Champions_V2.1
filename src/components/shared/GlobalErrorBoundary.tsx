@@ -1,8 +1,8 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCcw, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { captureError } from "@/lib/errorTracking";
-import { recoverFromStaleAssetError } from "@/lib/staleAssetRecovery";
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCcw, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { captureError } from '@/lib/errorTracking';
+import { recoverFromStaleAssetError } from '@/lib/staleAssetRecovery';
 
 interface Props {
   children: ReactNode;
@@ -27,9 +27,9 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     void recoverFromStaleAssetError(error);
 
     captureError(error, {
-      severity: "critical",
-      category: "ui",
-      component: "GlobalErrorBoundary",
+      severity: 'critical',
+      category: 'ui',
+      component: 'GlobalErrorBoundary',
       metadata: {
         componentStack: errorInfo.componentStack,
       },
@@ -43,24 +43,29 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
   private handleGoHome = () => {
     this.setState({ hasError: false, error: null });
-    window.location.href = "/";
+    window.location.href = '/';
   };
 
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-6" role="alert" aria-live="assertive">
+        <div
+          className="min-h-screen bg-background flex items-center justify-center p-6"
+          role="alert"
+          aria-live="assertive"
+        >
           <div className="max-w-md w-full glass border-destructive/20 rounded-3xl p-8 text-center space-y-6 animate-in fade-in zoom-in duration-300 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2">
             <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center border border-destructive/20">
               <AlertTriangle className="h-8 w-8 text-destructive animate-pulse" />
             </div>
-            
+
             <div className="space-y-2">
               <h2 className="text-2xl font-black uppercase tracking-tighter italic text-foreground">
                 Falha Crítica Detectada
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                O sistema encontrou uma instabilidade inesperada. A equipe técnica já foi notificada automaticamente via Enterprise Error Monitor.
+                O sistema encontrou uma instabilidade inesperada. A equipe técnica já foi
+                notificada automaticamente via Enterprise Error Monitor.
               </p>
             </div>
 
@@ -73,14 +78,14 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             )}
 
             <div className="flex flex-col gap-3">
-              <Button 
+              <Button
                 onClick={this.handleReset}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest py-6 rounded-2xl shadow-lg shadow-primary/20"
               >
                 <RefreshCcw className="h-4 w-4 mr-2" />
                 Recarregar Sistema
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={this.handleGoHome}
                 className="w-full border-primary/20 hover:bg-primary/5 font-black uppercase tracking-widest py-6 rounded-2xl"

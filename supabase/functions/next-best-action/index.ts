@@ -1,11 +1,9 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
 
 const MAX_LIMIT = 10;
@@ -43,6 +41,9 @@ Deno.serve(withRequestId("next-best-action", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
     const body = await req.json();
     const { salespersonId, limit = 5 } = body as { salespersonId: string; limit?: number };
 
@@ -53,7 +54,26 @@ Deno.serve(withRequestId("next-best-action", async (req, _ctx) => {
 
     const safeLimit = Math.min(Math.max(1, Number(limit) || 5), MAX_LIMIT);
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = getServiceClient("lê pipeline completo do vendedor alvo para gerar sugestões de IA");
+
+    // Só o próprio vendedor (ou admin/manager) pode pedir sugestões sobre sua carteira.
+    const { data: callerSp } = await supabase
+      .from("salespeople")
+      .select("id")
+      .eq("auth_user_id", caller.userId)
+      .maybeSingle();
+    if (callerSp?.id !== salespersonId) {
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
     const now = Date.now();
     const todayIso = new Date().toISOString();
 
@@ -395,6 +415,12 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error("next-best-action error:", error);
     return new Response(JSON.stringify({ error: msg }), {

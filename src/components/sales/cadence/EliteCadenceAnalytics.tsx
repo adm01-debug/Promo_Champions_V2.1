@@ -34,12 +34,14 @@ export function EliteCadenceAnalytics() {
 
       const statsByChannel: Record<string, { total: number; completed: number }> = {};
 
-      stepStats?.forEach((task: { status?: string; cadence_step?: { action_type?: string } | null }) => {
-        const type = task.cadence_step?.action_type || 'other';
-        if (!statsByChannel[type]) statsByChannel[type] = { total: 0, completed: 0 };
-        statsByChannel[type].total++;
-        if (task.status === 'completed') statsByChannel[type].completed++;
-      });
+      stepStats?.forEach(
+        (task: { status?: string; cadence_step?: { action_type?: string } | null }) => {
+          const type = task.cadence_step?.action_type || 'other';
+          if (!statsByChannel[type]) statsByChannel[type] = { total: 0, completed: 0 };
+          statsByChannel[type].total++;
+          if (task.status === 'completed') statsByChannel[type].completed++;
+        }
+      );
 
       const channels = Object.entries(statsByChannel)
         .map(([type, s]) => ({
@@ -225,35 +227,37 @@ export function EliteCadenceAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {metrics?.channels.map((channel: { type: string; rate: number; total: number }) => (
-                <div key={channel.type} className="flex items-center gap-4">
-                  <div className="w-20 text-[10px] font-bold uppercase text-muted-foreground">
-                    {channel.type}
+              {metrics?.channels.map(
+                (channel: { type: string; rate: number; total: number }) => (
+                  <div key={channel.type} className="flex items-center gap-4">
+                    <div className="w-20 text-[10px] font-bold uppercase text-muted-foreground">
+                      {channel.type}
+                    </div>
+                    <div className="flex-1 h-8 bg-muted/20 rounded-lg overflow-hidden flex items-center px-1">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${channel.rate}%` }}
+                        className={`h-6 rounded-md flex items-center justify-end px-2 transition-all ${
+                          channel.rate > 70
+                            ? 'bg-success/40 text-success'
+                            : channel.rate > 40
+                              ? 'bg-warning/40 text-warning'
+                              : 'bg-destructive/40 text-destructive'
+                        }`}
+                      >
+                        <span className="text-[10px] font-bold">
+                          {channel.rate.toFixed(1)}%
+                        </span>
+                      </motion.div>
+                    </div>
+                    <div className="w-12 text-right">
+                      <Badge variant="secondary" className="text-[10px]">
+                        {channel.total}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex-1 h-8 bg-muted/20 rounded-lg overflow-hidden flex items-center px-1">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${channel.rate}%` }}
-                      className={`h-6 rounded-md flex items-center justify-end px-2 transition-all ${
-                        channel.rate > 70
-                          ? 'bg-success/40 text-success'
-                          : channel.rate > 40
-                            ? 'bg-warning/40 text-warning'
-                            : 'bg-destructive/40 text-destructive'
-                      }`}
-                    >
-                      <span className="text-[10px] font-bold">
-                        {channel.rate.toFixed(1)}%
-                      </span>
-                    </motion.div>
-                  </div>
-                  <div className="w-12 text-right">
-                    <Badge variant="secondary" className="text-[10px]">
-                      {channel.total}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </CardContent>
         </Card>

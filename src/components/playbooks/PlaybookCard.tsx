@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -8,28 +7,28 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Copy } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { PlaybookItemRow } from "./PlaybookItemRow";
+} from '@dnd-kit/sortable';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { PlaybookItemRow } from './PlaybookItemRow';
 import {
   useCreatePlaybookItem,
   useDeletePlaybookItem,
   useUpdatePlaybookItem,
   useReorderPlaybookItems,
   useDuplicatePlaybook,
-} from "@/hooks/usePlaybooks";
-import type { Playbook } from "@/hooks/usePlaybooks";
+} from '@/hooks/usePlaybooks';
+import type { Playbook } from '@/hooks/usePlaybooks';
 
 interface PlaybookCardProps {
   playbook: Playbook;
@@ -44,7 +43,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
   const reorderItems = useReorderPlaybookItems();
   const duplicatePlaybook = useDuplicatePlaybook();
 
-  const [newContent, setNewContent] = useState("");
+  const [newContent, setNewContent] = useState('');
   const [isRequired, setIsRequired] = useState(false);
 
   const sensors = useSensors(
@@ -63,7 +62,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
       is_required: isRequired,
     });
 
-    setNewContent("");
+    setNewContent('');
     setIsRequired(false);
   };
 
@@ -73,8 +72,8 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
       if (!over || active.id === over.id || !playbook.items) return;
 
       const items = [...playbook.items];
-      const oldIndex = items.findIndex((i) => i.id === active.id);
-      const newIndex = items.findIndex((i) => i.id === over.id);
+      const oldIndex = items.findIndex(i => i.id === active.id);
+      const newIndex = items.findIndex(i => i.id === over.id);
 
       if (oldIndex === -1 || newIndex === -1) return;
 
@@ -95,7 +94,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
     updateItem.mutate({ id, content, is_required: isReq });
   };
 
-  const itemIds = playbook.items?.map((i) => i.id) || [];
+  const itemIds = playbook.items?.map(i => i.id) || [];
 
   return (
     <Card
@@ -105,7 +104,9 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
     >
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
-          <div className={cn("w-1.5 h-full min-h-[2rem] rounded-full shadow-sm", stageColor)} />
+          <div
+            className={cn('w-1.5 h-full min-h-[2rem] rounded-full shadow-sm', stageColor)}
+          />
           <div className="flex-1">
             <CardTitle className="text-section-title">{playbook.title}</CardTitle>
             {playbook.description && (
@@ -114,7 +115,8 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
           </div>
           <Button
             variant="ghost"
-            size="icon" aria-label="Copiar"
+            size="icon"
+            aria-label="Copiar"
             className="h-8 w-8 hover:bg-primary/10"
             onClick={() => duplicatePlaybook.mutate(playbook.id)}
             title="Duplicar playbook"
@@ -130,14 +132,18 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             <div className="space-y-2">
-              {playbook.items?.map((item) => (
+              {playbook.items?.map(item => (
                 <PlaybookItemRow
                   key={item.id}
                   item={item}
-                  onDelete={(id) => deleteItem.mutate(id)}
+                  onDelete={id => deleteItem.mutate(id)}
                   onUpdate={handleUpdateItem}
                 />
               ))}
@@ -150,9 +156,9 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
           <Input
             placeholder="Adicionar novo item..."
             value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleAddItem();
+            onChange={e => setNewContent(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleAddItem();
             }}
             className="flex-1 border-border/40 focus:border-primary/50 transition-colors"
           />
@@ -160,10 +166,13 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
             <Checkbox
               id={`required-${playbook.id}`}
               checked={isRequired}
-              onCheckedChange={(checked) => setIsRequired(checked as boolean)}
+              onCheckedChange={checked => setIsRequired(checked as boolean)}
               className="border-border/50"
             />
-            <label htmlFor={`required-${playbook.id}`} className="text-xs text-muted-foreground whitespace-nowrap">
+            <label
+              htmlFor={`required-${playbook.id}`}
+              className="text-xs text-muted-foreground whitespace-nowrap"
+            >
               Obrigatório
             </label>
           </div>

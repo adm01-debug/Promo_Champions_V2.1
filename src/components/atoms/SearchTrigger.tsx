@@ -1,8 +1,11 @@
-import React, { forwardRef, memo } from "react";
-import { Search } from "lucide-react";
+import { forwardRef, memo } from 'react';
+import { Search } from 'lucide-react';
 
-export const SearchTrigger = memo(forwardRef<HTMLButtonElement, { onClick: () => void }>(
-  function SearchTrigger({ onClick }, ref) {
+export const SearchTrigger = memo(
+  forwardRef<HTMLButtonElement, { onClick: () => void }>(function SearchTrigger(
+    { onClick },
+    ref
+  ) {
     return (
       <button
         ref={ref}
@@ -16,7 +19,7 @@ export const SearchTrigger = memo(forwardRef<HTMLButtonElement, { onClick: () =>
         </kbd>
       </button>
     );
-  }
-));
+  })
+);
 
-SearchTrigger.displayName = "SearchTrigger";
+SearchTrigger.displayName = 'SearchTrigger';

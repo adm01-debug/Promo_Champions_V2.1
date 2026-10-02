@@ -68,7 +68,8 @@ export function useRaceCommentary({
           })),
           recentEvents: recentEvents.slice(0, 3).map(ev => ({
             type: ev.event_type,
-            actor: leaderboard.find(l => l.salesperson_id === ev.salesperson_id)?.salesperson_name,
+            actor: leaderboard.find(l => l.salesperson_id === ev.salesperson_id)
+              ?.salesperson_name,
           })),
           context,
           secondsToEnd,
@@ -81,7 +82,12 @@ export function useRaceCommentary({
         if (!text) return;
         setItems(prev =>
           [
-            { id: `${context}-${now}`, text, context, generated_at: new Date().toISOString() },
+            {
+              id: `${context}-${now}`,
+              text,
+              context,
+              generated_at: new Date().toISOString(),
+            },
             ...prev,
           ].slice(0, MAX_HISTORY)
         );
@@ -98,9 +104,15 @@ export function useRaceCommentary({
   // Detecta mudança de líder
   useEffect(() => {
     if (!enabled || leaderboard.length === 0) return;
-    const sorted = [...leaderboard].sort((a, b) => Number(b.progress) - Number(a.progress));
+    const sorted = [...leaderboard].sort(
+      (a, b) => Number(b.progress) - Number(a.progress)
+    );
     const leaderId = sorted[0]?.salesperson_id ?? null;
-    if (lastLeaderRef.current !== null && leaderId && lastLeaderRef.current !== leaderId) {
+    if (
+      lastLeaderRef.current !== null &&
+      leaderId &&
+      lastLeaderRef.current !== leaderId
+    ) {
       generate('leader_change');
     }
     lastLeaderRef.current = leaderId;

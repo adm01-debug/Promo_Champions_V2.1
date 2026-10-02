@@ -12,6 +12,7 @@ import { BarChart3, Trophy, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { RechartsTooltipProps } from '@/types/recharts';
 
+import { formatBRL } from '@/lib/money';
 interface SalespersonData {
   id: string;
   name: string;
@@ -36,13 +37,13 @@ const CustomTooltipContent = ({ active, payload }: RechartsTooltipProps) => {
           <p className="text-xs text-muted-foreground flex justify-between gap-4">
             Vendas:
             <span className="text-foreground font-medium">
-              R$ {data.totalSales.toLocaleString('pt-BR')}
+              {formatBRL(data.totalSales)}
             </span>
           </p>
           <p className="text-xs text-muted-foreground flex justify-between gap-4">
             Meta:
             <span className="text-foreground font-medium">
-              R$ {data.goalAmount.toLocaleString('pt-BR')}
+              {formatBRL(data.goalAmount)}
             </span>
           </p>
           <p className="text-xs text-muted-foreground flex justify-between gap-4">

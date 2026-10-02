@@ -1,9 +1,15 @@
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Shield, Check, X } from "lucide-react";
-import { AppRole } from "@/hooks/useUserRoles";
-import { roleConfig, resourceLabels, actionLabels } from "./PermissionRoleCards";
+import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Shield, Check, X } from 'lucide-react';
+import { AppRole } from '@/hooks/useUserRoles';
+import { roleConfig, resourceLabels, actionLabels } from './PermissionRoleCards';
 
 interface Permission {
   id: string;
@@ -39,7 +45,7 @@ export const PermissionComparisonTable = React.memo(function PermissionCompariso
             <thead>
               <tr className="border-b">
                 <th className="text-left py-3 px-4 font-medium">Permissão</th>
-                {roles.map((role) => (
+                {roles.map(role => (
                   <th key={role} className="text-center py-3 px-4">
                     <Badge className={roleConfig[role].color}>
                       {roleConfig[role].icon}
@@ -57,12 +63,17 @@ export const PermissionComparisonTable = React.memo(function PermissionCompariso
                       {resourceLabels[resource] || resource}
                     </td>
                   </tr>
-                  {perms.map((perm) => (
-                    <tr key={perm.id} className="border-b hover:bg-muted/30 transition-colors">
+                  {perms.map(perm => (
+                    <tr
+                      key={perm.id}
+                      className="border-b hover:bg-muted/30 transition-colors"
+                    >
                       <td className="py-2 px-4">
-                        <span className="font-medium">{actionLabels[perm.action] || perm.action}</span>
+                        <span className="font-medium">
+                          {actionLabels[perm.action] || perm.action}
+                        </span>
                       </td>
-                      {roles.map((role) => {
+                      {roles.map(role => {
                         const hasPerm = hasRolePermission(role, perm.id);
                         return (
                           <td key={role} className="text-center py-2 px-4">

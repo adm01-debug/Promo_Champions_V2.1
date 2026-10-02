@@ -20,7 +20,11 @@ interface RaceTrackProps {
  * cena ampliada (800x1333) para ocupar ~75% da área visível, com grama nas bordas.
  */
 export function RaceTrack({
-  children, yellowFlag = false, waveTrigger = 0, leaderName, leaderGap,
+  children,
+  yellowFlag = false,
+  waveTrigger = 0,
+  leaderName,
+  leaderGap,
 }: RaceTrackProps) {
   return (
     <svg
@@ -34,7 +38,13 @@ export function RaceTrack({
       {/* Pista + cenário relativos à pista, deslocados para o centro da cena */}
       <g transform={`translate(${TRACK_OFFSET.x} ${TRACK_OFFSET.y})`}>
         <TrackPond />
-        <TrackScenery layer="outer" yellowFlag={yellowFlag} waveTrigger={waveTrigger} leaderName={leaderName} leaderGap={leaderGap} />
+        <TrackScenery
+          layer="outer"
+          yellowFlag={yellowFlag}
+          waveTrigger={waveTrigger}
+          leaderName={leaderName}
+          leaderGap={leaderGap}
+        />
         <TrackAsphalt />
         <TrackBarriers />
         <TrackStartGantry />
@@ -44,4 +54,3 @@ export function RaceTrack({
     </svg>
   );
 }
-

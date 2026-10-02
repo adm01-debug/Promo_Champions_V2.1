@@ -1,12 +1,12 @@
-import { memo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ExternalLink, FileBarChart, AlertCircle } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useCustomReport } from "@/hooks/reporting/useCustomReports";
-import { useReportExecution } from "@/hooks/reporting/useReportExecution";
-import { ReportPreview } from "@/components/reporting/ReportPreview";
+import { memo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ExternalLink, FileBarChart, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useCustomReport } from '@/hooks/reporting/useCustomReports';
+import { useReportExecution } from '@/hooks/reporting/useReportExecution';
+import { ReportPreview } from '@/components/reporting/ReportPreview';
 
 interface Props {
   reportId?: string;
@@ -14,15 +14,25 @@ interface Props {
 }
 
 export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
-  const { data: report, isLoading: loadingReport, error: reportError } = useCustomReport(reportId);
-  const { data: result, isLoading: loadingExec, error: execError } = useReportExecution(reportId);
+  const {
+    data: report,
+    isLoading: loadingReport,
+    error: reportError,
+  } = useCustomReport(reportId);
+  const {
+    data: result,
+    isLoading: loadingExec,
+    error: execError,
+  } = useReportExecution(reportId);
 
   if (!reportId) {
     return (
       <Card className="h-full">
         <CardContent className="flex flex-col items-center justify-center h-full py-10 text-center gap-2">
           <FileBarChart className="h-8 w-8 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">Selecione um relatório customizado</p>
+          <p className="text-sm text-muted-foreground">
+            Selecione um relatório customizado
+          </p>
           <Button asChild variant="outline" size="sm" className="mt-2">
             <Link to="/relatorios/builder">Abrir builder</Link>
           </Button>
@@ -34,8 +44,12 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
   if (loadingReport) {
     return (
       <Card className="h-full">
-        <CardHeader className="pb-2"><Skeleton className="h-5 w-40" /></CardHeader>
-        <CardContent><Skeleton className="w-full" style={{ height }} /></CardContent>
+        <CardHeader className="pb-2">
+          <Skeleton className="h-5 w-40" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="w-full" style={{ height }} />
+        </CardContent>
       </Card>
     );
   }
@@ -52,7 +66,7 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
   }
 
   const cfg = report.config ?? {};
-  const vizType = (cfg as { viz_type?: string }).viz_type ?? "table";
+  const vizType = (cfg as { viz_type?: string }).viz_type ?? 'table';
   const columns = (cfg as { columns?: string[] }).columns ?? [];
 
   return (
@@ -68,7 +82,7 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
           </Link>
         </Button>
       </CardHeader>
-      <CardContent className="pt-0" style={{ maxHeight: height, overflow: "auto" }}>
+      <CardContent className="pt-0" style={{ maxHeight: height, overflow: 'auto' }}>
         <ReportPreview
           result={result}
           isLoading={loadingExec}
@@ -80,4 +94,4 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
     </Card>
   );
 });
-CustomReportWidget.displayName = "CustomReportWidget";
+CustomReportWidget.displayName = 'CustomReportWidget';

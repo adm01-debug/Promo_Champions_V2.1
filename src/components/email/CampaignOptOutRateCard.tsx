@@ -3,7 +3,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { AlertTriangle, Megaphone } from 'lucide-react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -33,10 +39,10 @@ export const CampaignOptOutRateCard = React.memo(function CampaignOptOutRateCard
   const rows = useMemo(
     () =>
       [...(data ?? [])]
-        .filter((r) => r.sent_count > 0)
+        .filter(r => r.sent_count > 0)
         .sort((a, b) => b.opt_out_rate - a.opt_out_rate || b.sent_count - a.sent_count)
         .slice(0, 10),
-    [data],
+    [data]
   );
 
   if (isLoading) return <Skeleton className="h-64 rounded-xl" />;
@@ -59,8 +65,8 @@ export const CampaignOptOutRateCard = React.memo(function CampaignOptOutRateCard
           Descadastro por campanha
         </CardTitle>
         <CardDescription>
-          Últimos 90 dias. Descadastros atribuídos apenas quando ocorrem após o envio. Alerta acima
-          de {OPT_OUT_RISK_THRESHOLD}%.
+          Últimos 90 dias. Descadastros atribuídos apenas quando ocorrem após o envio.
+          Alerta acima de {OPT_OUT_RISK_THRESHOLD}%.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -80,18 +86,27 @@ export const CampaignOptOutRateCard = React.memo(function CampaignOptOutRateCard
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map(row => {
                 const risky = row.opt_out_rate >= OPT_OUT_RISK_THRESHOLD;
                 return (
                   <TableRow key={row.job_id}>
-                    <TableCell className="font-medium">{campaignLabel(row.prompt)}</TableCell>
+                    <TableCell className="font-medium">
+                      {campaignLabel(row.prompt)}
+                    </TableCell>
                     <TableCell className="text-muted-foreground text-xs">
                       {format(new Date(row.created_at), 'dd/MM/yy', { locale: ptBR })}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">{row.sent_count}</TableCell>
-                    <TableCell className="text-right tabular-nums">{row.opted_out_count}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {row.sent_count}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {row.opted_out_count}
+                    </TableCell>
                     <TableCell className="text-right">
-                      <Badge variant={risky ? 'destructive' : 'secondary'} className="gap-1">
+                      <Badge
+                        variant={risky ? 'destructive' : 'secondary'}
+                        className="gap-1"
+                      >
                         {risky && <AlertTriangle className="h-3 w-3" aria-hidden />}
                         {row.opt_out_rate.toFixed(2)}%
                       </Badge>

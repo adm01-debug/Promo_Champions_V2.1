@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { VoiceId, VOICE_OPTIONS } from "@/hooks/useElevenLabsVoice";
+import { VoiceId, VOICE_OPTIONS } from '@/hooks/useElevenLabsVoice';
 
 export type ResponseMode = 'text' | 'audio' | 'both';
 
@@ -51,8 +51,8 @@ export function useSalespersonPreferences() {
   });
 
   const updatePreferences = useMutation({
-    mutationFn: async (updates: { 
-      ai_assistant_name?: string; 
+    mutationFn: async (updates: {
+      ai_assistant_name?: string;
       ai_assistant_avatar?: string | null;
       response_mode?: ResponseMode;
       voice_id?: string;
@@ -77,12 +77,10 @@ export function useSalespersonPreferences() {
         if (error) throw error;
       } else {
         // Insert new
-        const { error } = await supabase
-          .from('salesperson_preferences')
-          .insert({
-            salesperson_id: salesperson.id,
-            ...updates,
-          });
+        const { error } = await supabase.from('salesperson_preferences').insert({
+          salesperson_id: salesperson.id,
+          ...updates,
+        });
 
         if (error) throw error;
       }
@@ -91,7 +89,7 @@ export function useSalespersonPreferences() {
       queryClient.invalidateQueries({ queryKey: ['salesperson-preferences'] });
       toast.success('Preferências atualizadas!');
     },
-    onError: (error) => {
+    onError: error => {
       if (import.meta.env.DEV) {
         console.error('Error updating preferences:', error);
       }

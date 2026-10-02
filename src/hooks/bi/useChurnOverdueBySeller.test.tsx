@@ -2,6 +2,7 @@ import { createElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { buildSalesperson } from '@/test/factories';
 
 const sellerChunks: string[][] = [];
 const taskRows = Array.from({ length: 201 }, (_, index) => ({
@@ -22,7 +23,7 @@ vi.mock('@/integrations/supabase/client', () => {
       in: (column: string, values: string[]) => {
         if (column === 'id') {
           sellerChunks.push([...values]);
-          data = values.map(id => ({ id, name: `Vendedor ${id}` }));
+          data = values.map(id => buildSalesperson({ id, name: `Vendedor ${id}` }));
         }
         return query;
       },

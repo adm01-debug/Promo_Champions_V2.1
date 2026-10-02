@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Sparkles } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RefreshCw, Sparkles } from 'lucide-react';
 import {
   useAnalyzeStageConversion,
   useStageBottlenecks,
   useStageConversion,
-} from "@/hooks/deal-intelligence/useStageConversion";
-import { ConversionFunnelChart } from "./ConversionFunnelChart";
-import { StageBottleneckCard } from "./StageBottleneckCard";
+} from '@/hooks/deal-intelligence/useStageConversion';
+import { ConversionFunnelChart } from './ConversionFunnelChart';
+import { StageBottleneckCard } from './StageBottleneckCard';
 
 export function ConversionOptimizerPanel() {
   const { data: metrics, isLoading: lm } = useStageConversion();
@@ -35,7 +35,9 @@ export function ConversionOptimizerPanel() {
           onClick={() => analyze.mutate({ days: 90 })}
           disabled={analyze.isPending}
         >
-          <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${analyze.isPending ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-3.5 w-3.5 mr-1.5 ${analyze.isPending ? 'animate-spin' : ''}`}
+          />
           Recalcular
         </Button>
       </div>
@@ -44,18 +46,21 @@ export function ConversionOptimizerPanel() {
         <div className="space-y-3">
           <Skeleton className="h-64 w-full" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-64 w-full" />)}
+            {[1, 2, 3].map(i => (
+              <Skeleton key={i} className="h-64 w-full" />
+            ))}
           </div>
         </div>
       ) : !hasData ? (
         <div className="text-center py-12 text-sm text-muted-foreground border border-dashed border-border/50 rounded-xl">
-          Sem análise disponível. Clique em <strong>Recalcular</strong> para gerar insights de conversão.
+          Sem análise disponível. Clique em <strong>Recalcular</strong> para gerar
+          insights de conversão.
         </div>
       ) : (
         <>
           <ConversionFunnelChart metrics={metrics ?? []} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {(insights ?? []).map((ins) => (
+            {(insights ?? []).map(ins => (
               <StageBottleneckCard key={ins.id} insight={ins} />
             ))}
           </div>

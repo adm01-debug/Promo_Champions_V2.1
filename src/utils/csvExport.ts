@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 /**
  * Neutralizes CSV formula injection (CWE-1236): a cell whose first character is
  * one of = + - @ TAB CR is treated as a formula by Excel/Sheets. Prefix it with a
@@ -72,10 +73,7 @@ export function formatPercentForExport(value: number): string {
  * Format currency for export
  */
 export function formatCurrencyForExport(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value);
+  return formatBRL(value, { decimals: 2 });
 }
 
 /**

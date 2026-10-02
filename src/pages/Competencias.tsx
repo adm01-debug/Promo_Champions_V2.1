@@ -1,4 +1,3 @@
-import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useCompetencyData } from '@/hooks/useCompetencyData';
 import {
@@ -67,9 +66,7 @@ const Competencias = () => {
             className="flex flex-col md:flex-row md:items-center justify-between gap-4"
           >
             <div>
-              <h1 className="text-page-title">
-                Mapa de Competências
-              </h1>
+              <h1 className="text-page-title">Mapa de Competências</h1>
               <p className="text-muted-foreground">
                 Análise de skills, gaps e plano de evolução contínua.
               </p>

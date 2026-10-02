@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface NextBestWLDeal {
   saleId: string;
@@ -26,17 +26,19 @@ interface SaleRow {
  */
 export function useNextBestWinLossDeal() {
   return useQuery({
-    queryKey: ["wl-next-best-deal"],
+    queryKey: ['wl-next-best-deal'],
     queryFn: async (): Promise<NextBestWLDeal | null> => {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       const { data, error } = await supabase
-        .from("sales")
-        .select("id, account_id, client_name, amount, status, category, updated_at, salesperson_id")
-        .not("status", "in", "(won,lost)")
-        .lte("updated_at", sevenDaysAgo.toISOString())
-        .order("amount", { ascending: false, nullsFirst: false })
+        .from('sales')
+        .select(
+          'id, account_id, client_name, amount, status, category, updated_at, salesperson_id'
+        )
+        .not('status', 'in', '(won,lost)')
+        .lte('updated_at', sevenDaysAgo.toISOString())
+        .order('amount', { ascending: false, nullsFirst: false })
         .limit(1);
 
       if (error) throw error;
@@ -44,14 +46,16 @@ export function useNextBestWinLossDeal() {
       if (!row) return null;
 
       const days = row.updated_at
-        ? Math.round((Date.now() - new Date(row.updated_at).getTime()) / (1000 * 60 * 60 * 24))
+        ? Math.round(
+            (Date.now() - new Date(row.updated_at).getTime()) / (1000 * 60 * 60 * 24)
+          )
         : 0;
 
       return {
         saleId: row.id,
         accountId: row.account_id,
-        clientName: row.client_name ?? "Cliente",
-        reason: `Maior ticket parado há ${days} dias (${row.category ?? "sem categoria"}).`,
+        clientName: row.client_name ?? 'Cliente',
+        reason: `Maior ticket parado há ${days} dias (${row.category ?? 'sem categoria'}).`,
         suggestedScript:
           "Reconectar com pergunta de valor: 'Desde nossa última conversa, o que mudou na prioridade desse projeto?' — depois reposicionar próximo passo concreto.",
         amount: row.amount,

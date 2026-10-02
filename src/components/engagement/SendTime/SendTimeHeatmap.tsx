@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface Props {
   hourDistribution: number[];
@@ -6,14 +6,14 @@ interface Props {
   compact?: boolean;
 }
 
-const DOW = ["D", "S", "T", "Q", "Q", "S", "S"];
+const DOW = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 export function SendTimeHeatmap({ hourDistribution, dowDistribution, compact }: Props) {
   const hourMax = Math.max(1, ...hourDistribution);
   const dowMax = Math.max(1, ...dowDistribution);
 
   return (
-    <div className={cn("space-y-2", compact ? "text-[9px]" : "text-xs")}>
+    <div className={cn('space-y-2', compact ? 'text-[9px]' : 'text-xs')}>
       <div>
         <div className="text-muted-foreground mb-1">Por hora</div>
         <div className="flex items-end gap-[2px] h-10">

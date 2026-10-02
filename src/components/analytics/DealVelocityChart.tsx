@@ -2,8 +2,26 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useDealVelocity } from '@/hooks/deal-intelligence/useDealAnalyticsVelocity';
-import { Clock, AlertTriangle, Zap, Timer, TrendingUp, TrendingDown, Activity, Maximize2 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import {
+  Clock,
+  AlertTriangle,
+  Zap,
+  Timer,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  Maximize2,
+} from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
@@ -11,14 +29,20 @@ interface DealVelocityChartProps {
   salespersonId?: string;
 }
 
-function ChangeIndicator({ change, inverted = false }: { change?: number; inverted?: boolean }) {
+function ChangeIndicator({
+  change,
+  inverted = false,
+}: {
+  change?: number;
+  inverted?: boolean;
+}) {
   if (change === undefined || change === 0) return null;
-  
+
   // For velocity, negative change (faster) is good
   const isPositive = inverted ? change < 0 : change > 0;
   const Icon = isPositive ? TrendingUp : TrendingDown;
   const color = isPositive ? 'text-status-success' : 'text-status-error';
-  
+
   return (
     <span className={`inline-flex items-center gap-0.5 text-xs font-medium ${color}`}>
       <Icon className="h-3 w-3" />
@@ -35,7 +59,10 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
 
   if (isLoading) {
     return (
-      <Card variant="elevated" className="glass border-border/40 dark:border-glow animate-fade-in">
+      <Card
+        variant="elevated"
+        className="glass border-border/40 dark:border-glow animate-fade-in"
+      >
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
             <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
@@ -48,7 +75,11 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
           <div className="animate-pulse space-y-4">
             <div className="grid grid-cols-3 gap-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-24 bg-muted/50 rounded-xl animate-shimmer" style={{ animationDelay: `${i * 100}ms` }} />
+                <div
+                  key={i}
+                  className="h-24 bg-muted/50 rounded-xl animate-shimmer"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                />
               ))}
             </div>
             <div className="h-48 bg-muted/50 rounded-xl animate-shimmer" />
@@ -62,7 +93,10 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
   const totalDeals = data?.stages.reduce((acc, s) => acc + s.totalDeals, 0) || 0;
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow hover-lift transition-all duration-300 animate-fade-in">
+    <Card
+      variant="elevated"
+      className="glass border-border/40 dark:border-glow hover-lift transition-all duration-300 animate-fade-in"
+    >
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title flex items-center gap-2 group/title">
@@ -84,9 +118,9 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
               </Badge>
             )}
             {!isDedicatedPage && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-8 w-8 rounded-full hover:bg-primary/10 transition-colors"
                 onClick={() => navigate('/analytics/deal-velocity')}
               >
@@ -102,8 +136,12 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
             <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
               <Clock className="h-10 w-10 opacity-50" />
             </div>
-            <p className="text-sm font-display font-medium gradient-text">Nenhum histórico de etapas registrado</p>
-            <p className="text-xs text-muted-foreground mt-1">O tempo médio será calculado conforme deals avançam</p>
+            <p className="text-sm font-display font-medium gradient-text">
+              Nenhum histórico de etapas registrado
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              O tempo médio será calculado conforme deals avançam
+            </p>
           </div>
         ) : (
           <>
@@ -114,65 +152,105 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                   <Timer className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">{data.totalAvgDays.toFixed(1)}d</p>
+                  <p className="text-2xl font-bold font-display gradient-text transition-transform duration-300 group-hover:scale-105">
+                    {data.totalAvgDays.toFixed(1)}d
+                  </p>
                   <ChangeIndicator change={data.totalChange} inverted />
                 </div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Ciclo Total</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">
+                  Ciclo Total
+                </p>
               </div>
-              <div 
+              <div
                 className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-status-success/50 hover-glow-success"
                 style={{ animationDelay: '50ms' }}
               >
                 <div className="p-2.5 rounded-xl bg-status-success/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-success/20">
                   <Zap className="h-4 w-4 text-status-success" />
                 </div>
-                <p className="text-sm font-bold text-status-success transition-transform duration-300 group-hover:scale-105 truncate px-1">{data.fastestStage}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Mais Rápida</p>
+                <p className="text-sm font-bold text-status-success transition-transform duration-300 group-hover:scale-105 truncate px-1">
+                  {data.fastestStage}
+                </p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">
+                  Mais Rápida
+                </p>
               </div>
-              <div 
+              <div
                 className="glass rounded-xl p-4 text-center border border-status-warning/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-status-warning/50"
                 style={{ animationDelay: '100ms' }}
               >
                 <div className="p-2.5 rounded-xl bg-status-warning/20 shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-status-warning/20">
                   <AlertTriangle className="h-4 w-4 text-status-warning" />
                 </div>
-                <p className="text-sm font-bold text-status-warning transition-transform duration-300 group-hover:scale-105 truncate px-1">{data.slowestStage}</p>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">Gargalo</p>
+                <p className="text-sm font-bold text-status-warning transition-transform duration-300 group-hover:scale-105 truncate px-1">
+                  {data.slowestStage}
+                </p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-display mt-1">
+                  Gargalo
+                </p>
               </div>
             </div>
 
             {/* Bar Chart */}
-            <div className="h-52 animate-fade-in glass rounded-xl p-4 border border-border/30" style={{ animationDelay: '150ms' }}>
+            <div
+              className="h-52 animate-fade-in glass rounded-xl p-4 border border-border/30"
+              style={{ animationDelay: '150ms' }}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.stages} layout="vertical">
                   <defs>
                     <linearGradient id="velocityBarGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1}/>
-                      <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity={0.8}/>
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+                      <stop
+                        offset="100%"
+                        stopColor="hsl(var(--accent))"
+                        stopOpacity={0.8}
+                      />
                     </linearGradient>
-                    <linearGradient id="bottleneckBarGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity={1}/>
-                      <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity={0.6}/>
+                    <linearGradient
+                      id="bottleneckBarGradient"
+                      x1="0"
+                      y1="0"
+                      x2="1"
+                      y2="0"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="hsl(var(--destructive))"
+                        stopOpacity={1}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="hsl(var(--destructive))"
+                        stopOpacity={0.6}
+                      />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                  <XAxis 
-                    type="number" 
-                    tickFormatter={(v) => `${v.toFixed(1)}d`} 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={10} 
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                    opacity={0.3}
                   />
-                  <YAxis 
-                    type="category" 
-                    dataKey="stage" 
-                    width={90} 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={11} 
+                  <XAxis
+                    type="number"
+                    tickFormatter={v => `${v.toFixed(1)}d`}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={10}
                   />
-                  <Tooltip 
-                    formatter={(value: number | string) => [`${Number(value).toFixed(2)} dias (${(Number(value) * 24).toFixed(0)}h)`, 'Tempo Médio']}
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--card))', 
+                  <YAxis
+                    type="category"
+                    dataKey="stage"
+                    width={90}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                  />
+                  <Tooltip
+                    formatter={(value: number | string) => [
+                      `${Number(value).toFixed(2)} dias (${(Number(value) * 24).toFixed(0)}h)`,
+                      'Tempo Médio',
+                    ]}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
                       borderColor: 'hsl(var(--border))',
                       borderRadius: '12px',
                       boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
@@ -182,13 +260,17 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                   />
                   <Bar dataKey="avgDays" radius={[0, 8, 8, 0]}>
                     {data.stages.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={entry.bottleneck ? 'url(#bottleneckBarGradient)' : 'url(#velocityBarGradient)'}
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          entry.bottleneck
+                            ? 'url(#bottleneckBarGradient)'
+                            : 'url(#velocityBarGradient)'
+                        }
                         style={{
-                          filter: entry.bottleneck 
-                            ? 'drop-shadow(0 4px 8px hsl(var(--destructive) / 0.3))' 
-                            : 'drop-shadow(0 4px 8px hsl(var(--primary) / 0.2))'
+                          filter: entry.bottleneck
+                            ? 'drop-shadow(0 4px 8px hsl(var(--destructive) / 0.3))'
+                            : 'drop-shadow(0 4px 8px hsl(var(--primary) / 0.2))',
                         }}
                       />
                     ))}
@@ -205,25 +287,34 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
               </h4>
               <div className="grid grid-cols-5 gap-2">
                 {data.stages.map((stage, index) => (
-                  <div 
+                  <div
                     key={stage.stage}
                     className={`p-3 rounded-xl text-center transition-all duration-300 hover-lift cursor-pointer animate-fade-in group ${
-                      stage.bottleneck 
-                        ? 'glass border border-destructive/30 hover:border-destructive/50 hover:shadow-destructive/20' 
+                      stage.bottleneck
+                        ? 'glass border border-destructive/30 hover:border-destructive/50 hover:shadow-destructive/20'
                         : 'glass border border-border/30 hover:border-primary/40'
                     }`}
                     style={{ animationDelay: `${(index + 4) * 50}ms` }}
                   >
-                    <p className="text-xs font-display font-medium truncate transition-colors group-hover:text-primary">{stage.stage}</p>
+                    <p className="text-xs font-display font-medium truncate transition-colors group-hover:text-primary">
+                      {stage.stage}
+                    </p>
                     <div className="flex items-center justify-center gap-1">
-                      <p className={`text-lg font-bold font-display transition-transform duration-300 group-hover:scale-110 ${stage.bottleneck ? 'text-destructive' : 'gradient-text'}`}>
+                      <p
+                        className={`text-lg font-bold font-display transition-transform duration-300 group-hover:scale-110 ${stage.bottleneck ? 'text-destructive' : 'gradient-text'}`}
+                      >
                         {stage.avgDays.toFixed(1)}d
                       </p>
                       <ChangeIndicator change={stage.change} inverted />
                     </div>
-                    <p className="text-xs text-muted-foreground transition-colors group-hover:text-foreground/70">{stage.totalDeals} deals</p>
+                    <p className="text-xs text-muted-foreground transition-colors group-hover:text-foreground/70">
+                      {stage.totalDeals} deals
+                    </p>
                     {stage.bottleneck && (
-                      <Badge variant="destructive" className="text-[10px] mt-1.5 px-1.5 py-0 h-5 animate-pulse">
+                      <Badge
+                        variant="destructive"
+                        className="text-[10px] mt-1.5 px-1.5 py-0 h-5 animate-pulse"
+                      >
                         <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
                         Gargalo
                       </Badge>

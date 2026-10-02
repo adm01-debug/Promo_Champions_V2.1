@@ -323,9 +323,7 @@ export function WorkflowBuilder() {
             <Card>
               <CardContent className="p-8 text-center">
                 <Zap className="h-12 w-12 mx-auto mb-3 text-muted-foreground/30" />
-                <h3 className="text-section-title mb-1">
-                  Nenhuma automação criada
-                </h3>
+                <h3 className="text-section-title mb-1">Nenhuma automação criada</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Crie sua primeira regra "se/então" para automatizar ações no pipeline
                 </p>

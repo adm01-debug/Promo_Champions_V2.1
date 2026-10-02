@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, subMonths, format } from "date-fns";
-import { isWonSaleStatus } from "@/constants";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, subMonths, format } from 'date-fns';
+import { isWonSaleStatus } from '@/constants';
 
 export interface RevenueHistoryPoint {
   period: string;
@@ -14,24 +14,24 @@ export interface RevenueHistoryPoint {
  */
 export function useRevenueHistory(monthsBack: number = 18) {
   return useQuery<RevenueHistoryPoint[]>({
-    queryKey: ["revenue-history-v2", monthsBack],
+    queryKey: ['revenue-history-v2', monthsBack],
     queryFn: async () => {
       const start = startOfMonth(subMonths(new Date(), monthsBack));
       const { data, error } = await supabase
-        .from("sales")
-        .select("amount, status, created_at")
-        .gte("created_at", start.toISOString());
+        .from('sales')
+        .select('amount, status, created_at')
+        .gte('created_at', start.toISOString());
       if (error) throw error;
 
       const buckets = new Map<string, number>();
       for (let i = monthsBack; i >= 0; i--) {
-        const key = format(startOfMonth(subMonths(new Date(), i)), "yyyy-MM");
+        const key = format(startOfMonth(subMonths(new Date(), i)), 'yyyy-MM');
         buckets.set(key, 0);
       }
 
-      (data ?? []).forEach((row) => {
+      (data ?? []).forEach(row => {
         if (!isWonSaleStatus(row.status)) return;
-        const key = format(startOfMonth(new Date(row.created_at)), "yyyy-MM");
+        const key = format(startOfMonth(new Date(row.created_at)), 'yyyy-MM');
         if (buckets.has(key)) {
           buckets.set(key, (buckets.get(key) ?? 0) + (row.amount ?? 0));
         }

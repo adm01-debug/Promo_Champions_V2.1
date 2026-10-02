@@ -1,8 +1,21 @@
-import React, { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCw, Home, Bug, ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { captureError } from "@/lib/errorTracking";
+import { Component, ErrorInfo, ReactNode } from 'react';
+import {
+  AlertTriangle,
+  RefreshCw,
+  Home,
+  Bug,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { captureError } from '@/lib/errorTracking';
 
 interface Props {
   children: ReactNode;
@@ -35,18 +48,18 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({ errorInfo });
-    
+
     // Track error centrally
     captureError(error, {
-      component: errorInfo.componentStack?.split("\n")[1]?.trim() ?? "unknown",
-      category: "ui",
+      component: errorInfo.componentStack?.split('\n')[1]?.trim() ?? 'unknown',
+      category: 'ui',
       metadata: { componentStack: errorInfo.componentStack?.slice(0, 500) },
     });
 
     // Log error to console in development
     if (import.meta.env.DEV) {
-      console.error("ErrorBoundary caught an error:", error);
-      console.error("Component stack:", errorInfo.componentStack);
+      console.error('ErrorBoundary caught an error:', error);
+      console.error('Component stack:', errorInfo.componentStack);
     }
 
     // Call optional error handler
@@ -58,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   handleGoHome = (): void => {
-    window.location.href = "/";
+    window.location.href = '/';
   };
 
   handleRetry = (): void => {
@@ -104,14 +117,14 @@ export class ErrorBoundary extends Component<Props, State> {
                       {error.name}: {error.message}
                     </p>
                   </div>
-                  
+
                   {errorInfo?.componentStack && (
                     <button
                       onClick={this.toggleStackTrace}
                       className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <Bug className="h-3 w-3" />
-                      {showStackTrace ? "Ocultar" : "Mostrar"} stack trace
+                      {showStackTrace ? 'Ocultar' : 'Mostrar'} stack trace
                       {showStackTrace ? (
                         <ChevronUp className="h-3 w-3" />
                       ) : (
@@ -119,7 +132,7 @@ export class ErrorBoundary extends Component<Props, State> {
                       )}
                     </button>
                   )}
-                  
+
                   {showStackTrace && errorInfo?.componentStack && (
                     <pre className="p-3 rounded-lg bg-muted/50 text-xs font-mono text-muted-foreground overflow-auto max-h-40 whitespace-pre-wrap">
                       {errorInfo.componentStack}
@@ -129,25 +142,19 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
 
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button
-                  onClick={this.handleRetry}
-                  className="flex-1 gradient-primary"
-                >
+                <Button onClick={this.handleRetry} className="flex-1 gradient-primary">
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Tentar novamente
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={this.handleGoHome}
-                  className="flex-1"
-                >
+                <Button variant="outline" onClick={this.handleGoHome} className="flex-1">
                   <Home className="h-4 w-4 mr-2" />
                   Ir para início
                 </Button>
               </div>
 
               <p className="text-xs text-center text-muted-foreground">
-                Se o problema persistir, tente recarregar a página ou entre em contato com o suporte.
+                Se o problema persistir, tente recarregar a página ou entre em contato com
+                o suporte.
               </p>
             </CardContent>
           </Card>

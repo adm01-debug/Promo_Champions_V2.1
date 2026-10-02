@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { SkillGapSummary } from "./SkillGapSummary";
-import { SkillRadarChart } from "./SkillRadarChart";
-import { SkillMaturityMatrix } from "./SkillMaturityMatrix";
-import { SkillTrackCards } from "./SkillTrackCards";
+import { FC } from 'react';
+import { SkillGapSummary } from './SkillGapSummary';
+import { SkillRadarChart } from './SkillRadarChart';
+import { SkillMaturityMatrix } from './SkillMaturityMatrix';
+import { SkillTrackCards } from './SkillTrackCards';
 
 export const SkillGapAnalyzerPanel: FC = () => (
   <div className="space-y-6">

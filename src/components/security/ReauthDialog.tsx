@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,43 +6,44 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useReauthentication } from "@/hooks/useReauthentication";
-import { Lock, AlertTriangle, Loader2 } from "lucide-react";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useReauthentication } from '@/hooks/useReauthentication';
+import { Lock, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface ReauthDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
-  action: 'password_change' | 'email_change' | 'mfa_config' | 'admin_action' | 'delete_account';
+  action:
+    'password_change' | 'email_change' | 'mfa_config' | 'admin_action' | 'delete_account';
   title?: string;
   description?: string;
 }
 
 const ACTION_LABELS: Record<string, { title: string; description: string }> = {
   password_change: {
-    title: "Alterar Senha",
-    description: "Para alterar sua senha, confirme sua identidade.",
+    title: 'Alterar Senha',
+    description: 'Para alterar sua senha, confirme sua identidade.',
   },
   email_change: {
-    title: "Alterar Email",
-    description: "Para alterar seu email, confirme sua identidade.",
+    title: 'Alterar Email',
+    description: 'Para alterar seu email, confirme sua identidade.',
   },
   mfa_config: {
-    title: "Configurar MFA",
-    description: "Para modificar configurações de segurança, confirme sua identidade.",
+    title: 'Configurar MFA',
+    description: 'Para modificar configurações de segurança, confirme sua identidade.',
   },
   admin_action: {
-    title: "Ação Administrativa",
-    description: "Esta ação requer verificação adicional.",
+    title: 'Ação Administrativa',
+    description: 'Esta ação requer verificação adicional.',
   },
   delete_account: {
-    title: "Excluir Conta",
-    description: "Esta ação é irreversível. Confirme sua identidade para continuar.",
+    title: 'Excluir Conta',
+    description: 'Esta ação é irreversível. Confirme sua identidade para continuar.',
   },
 };
 
@@ -54,19 +55,23 @@ export const ReauthDialog = ({
   title,
   description,
 }: ReauthDialogProps) => {
-  const { verifyPassword, isVerifying, requestReauth, cancelRequest } = useReauthentication();
-  const [password, setPassword] = useState("");
+  const { verifyPassword, isVerifying, requestReauth, cancelRequest } =
+    useReauthentication();
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [hasRequested, setHasRequested] = useState(false);
 
-  const labels = ACTION_LABELS[action] || { title: "Verificação", description: "Confirme sua identidade." };
+  const labels = ACTION_LABELS[action] || {
+    title: 'Verificação',
+    description: 'Confirme sua identidade.',
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!password) {
-      setError("Digite sua senha");
+      setError('Digite sua senha');
       return;
     }
 
@@ -77,20 +82,20 @@ export const ReauthDialog = ({
     }
 
     const success = await verifyPassword(password);
-    
+
     if (success) {
-      setPassword("");
+      setPassword('');
       setHasRequested(false);
       onSuccess();
       onOpenChange(false);
     } else {
-      setError("Senha incorreta. Tente novamente.");
+      setError('Senha incorreta. Tente novamente.');
     }
   };
 
   const handleCancel = () => {
     cancelRequest();
-    setPassword("");
+    setPassword('');
     setError(null);
     setHasRequested(false);
     onOpenChange(false);
@@ -106,9 +111,7 @@ export const ReauthDialog = ({
             </div>
             <div>
               <DialogTitle>{title || labels.title}</DialogTitle>
-              <DialogDescription>
-                {description || labels.description}
-              </DialogDescription>
+              <DialogDescription>{description || labels.description}</DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -119,7 +122,8 @@ export const ReauthDialog = ({
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Atenção: Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente excluídos.
+                  Atenção: Esta ação não pode ser desfeita. Todos os seus dados serão
+                  permanentemente excluídos.
                 </AlertDescription>
               </Alert>
             )}
@@ -131,20 +135,19 @@ export const ReauthDialog = ({
                 type="password"
                 placeholder="Digite sua senha"
                 value={password}
-                onChange={(e) => {
+                onChange={e => {
                   setPassword(e.target.value);
                   setError(null);
                 }}
                 disabled={isVerifying}
                 autoFocus
               />
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
+              {error && <p className="text-sm text-destructive">{error}</p>}
             </div>
 
             <p className="text-xs text-muted-foreground">
-              Por razões de segurança, você precisa confirmar sua senha para realizar esta ação.
+              Por razões de segurança, você precisa confirmar sua senha para realizar esta
+              ação.
             </p>
           </div>
 
@@ -159,7 +162,7 @@ export const ReauthDialog = ({
                   Verificando...
                 </>
               ) : (
-                "Confirmar"
+                'Confirmar'
               )}
             </Button>
           </DialogFooter>

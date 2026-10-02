@@ -1,12 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useMonthlySalesBenchmark } from '@/hooks/reports/useMonthlySalesBenchmark';
 import {
   Select,
   SelectContent,
@@ -29,6 +28,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import type { RechartsTooltipProps } from '@/types/recharts';
 
+import { formatBRLCompact } from '@/lib/money';
 type Period = 'mom' | 'qoq' | 'yoy';
 
 const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
@@ -41,11 +41,7 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
           {entry.name}:{' '}
           <span className="font-semibold text-foreground">
             {typeof entry.value === 'number'
-              ? new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                  notation: 'compact',
-                }).format(entry.value)
+              ? formatBRLCompact(entry.value)
               : entry.value}
           </span>
         </p>
@@ -64,16 +60,7 @@ interface BenchmarkRow {
 const HistoricalBenchmark = () => {
   const [period, setPeriod] = useState<Period>('mom');
 
-  const { data: salesData, isLoading } = useQuery({
-    queryKey: ['historical-benchmark-agg'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_monthly_sales_benchmark', {
-        months_back: 24,
-      });
-      if (error) throw error;
-      return data || [];
-    },
-  });
+  const { data: salesData, isLoading } = useMonthlySalesBenchmark(24);
 
   const monthlyData = useMemo(() => {
     if (!salesData?.length) return [];

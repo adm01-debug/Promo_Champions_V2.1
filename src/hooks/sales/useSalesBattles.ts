@@ -11,7 +11,7 @@ const channelCache = new Map<string, Channel>();
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
-    channelCache.forEach((ch) => supabase.removeChannel(ch));
+    channelCache.forEach(ch => supabase.removeChannel(ch));
     channelCache.clear();
   });
 }
@@ -25,13 +25,15 @@ export function useSalesBattles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('sales_battles')
-        .select(`
+        .select(
+          `
           *,
           battle_participants (
             id, salesperson_id, team_name, current_score,
             salespeople:salesperson_id (name, role)
           )
-        `)
+        `
+        )
         .in('status', ['active', 'completed'])
         .order('created_at', { ascending: false })
         .limit(10);
@@ -49,9 +51,13 @@ export function useSalesBattles() {
     if (!channel) {
       channel = supabase
         .channel(topic)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'battle_participants' }, () => {
-          queryClient.invalidateQueries({ queryKey: ['sales-battles'] });
-        })
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'battle_participants' },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['sales-battles'] });
+          }
+        )
         .subscribe();
       channelCache.set(topic, channel);
     }
@@ -74,7 +80,11 @@ export function useSalesBattles() {
       participant_ids: string[];
     }) => {
       const { participant_ids, ...battleData } = battle;
-      const { data, error } = await supabase.from('sales_battles').insert(battleData).select().single();
+      const { data, error } = await supabase
+        .from('sales_battles')
+        .insert(battleData)
+        .select()
+        .single();
       if (error) throw error;
 
       // Add participants
@@ -82,7 +92,9 @@ export function useSalesBattles() {
         battle_id: data.id,
         salesperson_id: id,
       }));
-      const { error: pError } = await supabase.from('battle_participants').insert(participants);
+      const { error: pError } = await supabase
+        .from('battle_participants')
+        .insert(participants);
       if (pError) throw pError;
 
       return data;
@@ -91,7 +103,13 @@ export function useSalesBattles() {
   });
 
   const updateScore = useMutation({
-    mutationFn: async ({ participantId, newScore }: { participantId: string; newScore: number }) => {
+    mutationFn: async ({
+      participantId,
+      newScore,
+    }: {
+      participantId: string;
+      newScore: number;
+    }) => {
       const { error } = await supabase
         .from('battle_participants')
         .update({ current_score: newScore })

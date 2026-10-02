@@ -1,4 +1,4 @@
-import React, { FC, useState, memo, useMemo } from 'react';
+import { FC, useState, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Kanban, ClipboardList, Menu, Bot, Home } from 'lucide-react';
 import { MobileBottomNav } from './MobileComponents';

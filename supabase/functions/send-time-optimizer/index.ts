@@ -1,10 +1,11 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
-
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 interface OpenEvent {
   tracked_at: string;
@@ -47,10 +48,36 @@ Deno.serve(withRequestId("send-time-optimizer", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const auth = req.headers.get("Authorization");
-    if (!auth) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    // Recalcula perfis de melhor horário de sales de toda a equipe — exige
+    // JWT de usuário válido com papel admin/manager.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw error;
+    }
+    const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isPrivileged) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+    // Bypass de RLS necessário: perfis cobrem tracking events de toda a equipe.
+    const admin = getServiceClient(
+      "otimizacao de horario cobre tracking events de toda a equipe",
+    );
     const body = await req.json().catch(() => ({}));
     const { sale_ids, recompute_all } = body as { sale_ids?: string[]; recompute_all?: boolean };
 
