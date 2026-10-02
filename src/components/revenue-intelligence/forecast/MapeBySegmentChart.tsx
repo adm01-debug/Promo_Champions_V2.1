@@ -1,6 +1,6 @@
-import { FC, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { FC, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   ResponsiveContainer,
   BarChart,
@@ -9,9 +9,9 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-} from "recharts";
-import { useForecastAccuracy } from "@/hooks/revenue-intelligence/useForecastAccuracy";
-import { formatMape } from "./forecastHelpers";
+} from 'recharts';
+import { useForecastAccuracy } from '@/hooks/revenue-intelligence/useForecastAccuracy';
+import { formatMape } from './forecastHelpers';
 
 export const MapeBySegmentChart: FC = () => {
   const { data, isLoading } = useForecastAccuracy(200);
@@ -20,16 +20,16 @@ export const MapeBySegmentChart: FC = () => {
     if (!data) return [];
     const bySeg = new Map<string, { segment: string; mapes: number[] }>();
     for (const row of data) {
-      const seg = row.forecast_snapshots?.segment ?? "geral";
+      const seg = row.forecast_snapshots?.segment ?? 'geral';
       const e = bySeg.get(seg) ?? { segment: seg, mapes: [] };
       e.mapes.push(Number(row.mape ?? 0));
       bySeg.set(seg, e);
     }
-    return Array.from(bySeg.values()).map((e) => ({
+    return Array.from(bySeg.values()).map(e => ({
       segment: e.segment,
       mape:
         Math.round(
-          (e.mapes.reduce((s, v) => s + v, 0) / Math.max(e.mapes.length, 1)) * 100,
+          (e.mapes.reduce((s, v) => s + v, 0) / Math.max(e.mapes.length, 1)) * 100
         ) / 100,
     }));
   }, [data]);
@@ -51,10 +51,7 @@ export const MapeBySegmentChart: FC = () => {
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="segment" className="text-xs" />
-              <YAxis
-                className="text-xs"
-                tickFormatter={(v: number) => `${v}%`}
-              />
+              <YAxis className="text-xs" tickFormatter={(v: number) => `${v}%`} />
               <Tooltip formatter={(v: number | string) => formatMape(Number(v))} />
               <Bar dataKey="mape" name="MAPE" fill="hsl(var(--primary))" />
             </BarChart>

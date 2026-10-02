@@ -21,7 +21,8 @@ export const RaceTransitionWrapper: FC<Props> = ({ children }) => {
     ? location.pathname
     : '/race-arena';
 
-  const isTrack = location.pathname.startsWith('/race-arena/') &&
+  const isTrack =
+    location.pathname.startsWith('/race-arena/') &&
     !location.pathname.startsWith('/race-arena/admin');
 
   const variants = prefersReduced

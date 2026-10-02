@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface TopAccount {
   id: string;
@@ -27,10 +27,14 @@ export interface AccountSummary {
 
 export function useAccount(accountId?: string) {
   return useQuery({
-    queryKey: ["account", accountId],
+    queryKey: ['account', accountId],
     queryFn: async () => {
       if (!accountId) return null;
-      const { data, error } = await supabase.from("accounts").select("*").eq("id", accountId).maybeSingle();
+      const { data, error } = await supabase
+        .from('accounts')
+        .select('*')
+        .eq('id', accountId)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -40,14 +44,14 @@ export function useAccount(accountId?: string) {
 
 export function useAccountContacts(accountId?: string) {
   return useQuery({
-    queryKey: ["account-contacts", accountId],
+    queryKey: ['account-contacts', accountId],
     queryFn: async () => {
       if (!accountId) return [];
       const { data, error } = await supabase
-        .from("account_contacts")
-        .select("*")
-        .eq("account_id", accountId)
-        .order("influence_level", { ascending: false });
+        .from('account_contacts')
+        .select('*')
+        .eq('account_id', accountId)
+        .order('influence_level', { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
@@ -57,10 +61,12 @@ export function useAccountContacts(accountId?: string) {
 
 export function useAccountSummary(accountId?: string) {
   return useQuery({
-    queryKey: ["account-summary", accountId],
+    queryKey: ['account-summary', accountId],
     queryFn: async () => {
       if (!accountId) return null;
-      const { data, error } = await supabase.rpc("get_account_engagement_summary", { _account_id: accountId });
+      const { data, error } = await supabase.rpc('get_account_engagement_summary', {
+        _account_id: accountId,
+      });
       if (error) throw error;
       return (data?.[0] ?? null) as AccountSummary | null;
     },
@@ -70,9 +76,9 @@ export function useAccountSummary(accountId?: string) {
 
 export function useTopAccounts(limit = 20) {
   return useQuery({
-    queryKey: ["top-accounts", limit],
+    queryKey: ['top-accounts', limit],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_top_accounts", { _limit: limit });
+      const { data, error } = await supabase.rpc('get_top_accounts', { _limit: limit });
       if (error) throw error;
       return (data ?? []) as TopAccount[];
     },
@@ -84,16 +90,19 @@ export function useRecomputeAccountEngagement() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (params?: { account_ids?: string[]; recompute_all?: boolean }) => {
-      const { data, error } = await supabase.functions.invoke("account-engagement-aggregator", {
-        body: params ?? { recompute_all: true },
-      });
+      const { data, error } = await supabase.functions.invoke(
+        'account-engagement-aggregator',
+        {
+          body: params ?? { recompute_all: true },
+        }
+      );
       if (error) throw error;
       return data as { ok: boolean; updated: number; by_tier: Record<string, number> };
     },
-    onSuccess: (res) => {
-      qc.invalidateQueries({ queryKey: ["top-accounts"] });
-      qc.invalidateQueries({ queryKey: ["account"] });
-      qc.invalidateQueries({ queryKey: ["account-summary"] });
+    onSuccess: res => {
+      qc.invalidateQueries({ queryKey: ['top-accounts'] });
+      qc.invalidateQueries({ queryKey: ['account'] });
+      qc.invalidateQueries({ queryKey: ['account-summary'] });
       toast.success(`Contas recalculadas: ${res.updated}`);
     },
     onError: (e: Error) => toast.error(`Falha: ${e.message}`),

@@ -1,18 +1,18 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Clock, Zap, Gift, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Trophy, Clock, Zap, Gift, CheckCircle2 } from 'lucide-react';
 import {
   useChallengesWithProgress,
   useClaimChallengeReward,
   CHALLENGE_ICONS,
   CHALLENGE_COLORS,
   type ChallengeWithProgress,
-} from "@/hooks/gamification/useWeeklyChallenges";
+} from '@/hooks/gamification/useWeeklyChallenges';
 
 interface WeeklyChallengesCardProps {
   salespersonId?: string;
@@ -41,8 +41,9 @@ function ChallengeItem({
     });
   };
 
-  const icon = CHALLENGE_ICONS[challenge.challenge_type] || "⚡";
-  const gradientClass = CHALLENGE_COLORS[challenge.challenge_type] || "from-primary to-primary/80";
+  const icon = CHALLENGE_ICONS[challenge.challenge_type] || '⚡';
+  const gradientClass =
+    CHALLENGE_COLORS[challenge.challenge_type] || 'from-primary to-primary/80';
 
   if (compact) {
     return (
@@ -62,7 +63,12 @@ function ChallengeItem({
           </div>
         </div>
         {canClaim && (
-          <Button size="sm" variant="secondary" onClick={handleClaim} disabled={claimReward.isPending}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleClaim}
+            disabled={claimReward.isPending}
+          >
             <Gift className="h-3 w-3" />
           </Button>
         )}
@@ -77,9 +83,9 @@ function ChallengeItem({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, scale: 1.01 }}
       className={cn(
-        "relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br transition-all duration-500 shadow-xl group/challenge",
+        'relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br transition-all duration-500 shadow-xl group/challenge',
         gradientClass,
-        "text-primary-foreground border border-white/10"
+        'text-primary-foreground border border-white/10'
       )}
     >
       {/* Dynamic Background Polish */}
@@ -94,13 +100,17 @@ function ChallengeItem({
               {icon}
             </div>
             <div className="min-w-0">
-              <h4 className="font-display font-black text-lg tracking-tight uppercase italic drop-shadow-sm truncate pr-2">{challenge.title}</h4>
-              <p className="text-[10px] font-medium text-white/70 uppercase tracking-widest line-clamp-1">{challenge.description}</p>
+              <h4 className="font-display font-black text-lg tracking-tight uppercase italic drop-shadow-sm truncate pr-2">
+                {challenge.title}
+              </h4>
+              <p className="text-[10px] font-medium text-white/70 uppercase tracking-widest line-clamp-1">
+                {challenge.description}
+              </p>
             </div>
           </div>
           <Badge className="bg-white/20 text-white border-none shadow-md backdrop-blur-md font-black text-[10px] uppercase tracking-widest px-2.5 py-1">
-            <Zap className="h-3 w-3 mr-1.5 text-yellow-300 animate-pulse" />
-            +{challenge.xp_reward} XP
+            <Zap className="h-3 w-3 mr-1.5 text-yellow-300 animate-pulse" />+
+            {challenge.xp_reward} XP
           </Badge>
         </div>
 
@@ -109,14 +119,15 @@ function ChallengeItem({
           <div className="flex justify-between items-end text-[10px] font-black uppercase tracking-widest px-1">
             <span className="text-white/80">Status da Missão</span>
             <span className="text-lg font-display font-black tracking-tighter italic">
-              {challenge.progress?.current_value || 0} <span className="text-xs text-white/50">/ {challenge.target_value}</span>
+              {challenge.progress?.current_value || 0}{' '}
+              <span className="text-xs text-white/50">/ {challenge.target_value}</span>
             </span>
           </div>
           <div className="relative h-3.5 bg-black/20 rounded-full overflow-hidden border border-white/5 shadow-inner">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${challenge.percentage}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              transition={{ duration: 1, ease: 'easeOut' }}
               className="absolute inset-y-0 left-0 bg-white shadow-[0_0_15px_rgba(255,255,255,0.4)] flex items-center justify-end px-1"
             >
               <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] animate-shimmer" />
@@ -130,10 +141,10 @@ function ChallengeItem({
             <Clock className="h-3 w-3 text-white/80" />
             <span className="text-[9px] font-black uppercase tracking-widest text-white/90">
               {challenge.daysRemaining === 0
-                ? "Fim do Prazo!"
+                ? 'Fim do Prazo!'
                 : challenge.daysRemaining === 1
-                ? "1 dia p/ encerramento"
-                : `${challenge.daysRemaining} dias restantes`}
+                  ? '1 dia p/ encerramento'
+                  : `${challenge.daysRemaining} dias restantes`}
             </span>
           </div>
 
@@ -178,7 +189,10 @@ function ChallengeItem({
   );
 }
 
-export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyChallengesCardProps) {
+export function WeeklyChallengesCard({
+  salespersonId,
+  compact = false,
+}: WeeklyChallengesCardProps) {
   const { challenges, isLoading } = useChallengesWithProgress(salespersonId);
 
   if (isLoading) {
@@ -191,7 +205,7 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <Skeleton key={i} className="h-32 w-full rounded-xl" />
           ))}
         </CardContent>
@@ -218,7 +232,9 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
                 <Clock className="h-3 w-3 text-muted-foreground" />
               </div>
             </div>
-            <p className="text-sm font-medium text-foreground/70">Nenhum desafio ativo no momento</p>
+            <p className="text-sm font-medium text-foreground/70">
+              Nenhum desafio ativo no momento
+            </p>
             <p className="text-xs text-muted-foreground mt-1">Novos desafios em breve!</p>
           </div>
         </CardContent>
@@ -226,8 +242,8 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
     );
   }
 
-  const completedCount = challenges.filter((c) => c.isCompleted).length;
-  const claimedCount = challenges.filter((c) => c.progress?.xp_claimed).length;
+  const completedCount = challenges.filter(c => c.isCompleted).length;
+  const claimedCount = challenges.filter(c => c.progress?.xp_claimed).length;
 
   return (
     <Card>
@@ -244,12 +260,12 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
         </div>
       </CardHeader>
       <CardContent>
-        <div className={compact ? "space-y-2" : "grid gap-4 md:grid-cols-2"}>
-          {challenges.map((challenge) => (
+        <div className={compact ? 'space-y-2' : 'grid gap-4 md:grid-cols-2'}>
+          {challenges.map(challenge => (
             <ChallengeItem
               key={challenge.id}
               challenge={challenge}
-              salespersonId={salespersonId || ""}
+              salespersonId={salespersonId || ''}
               compact={compact}
             />
           ))}
@@ -262,7 +278,8 @@ export function WeeklyChallengesCard({ salespersonId, compact = false }: WeeklyC
             className="mt-4 p-3 bg-primary/10 rounded-lg text-center"
           >
             <p className="text-sm text-primary font-medium">
-              🎉 Você já resgatou {claimedCount} recompensa{claimedCount > 1 ? "s" : ""} esta semana!
+              🎉 Você já resgatou {claimedCount} recompensa{claimedCount > 1 ? 's' : ''}{' '}
+              esta semana!
             </p>
           </motion.div>
         )}

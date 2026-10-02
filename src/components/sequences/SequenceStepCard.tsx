@@ -1,10 +1,10 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CHANNEL_META, formatDelay, type ChannelKey } from "./sequenceHelpers";
-import type { SequenceStep } from "@/hooks/sequences/useSequenceSteps";
-import { Pencil, Trash2, GripVertical } from "lucide-react";
-import { StepVariantBadge } from "./StepVariantBadge";
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { CHANNEL_META, formatDelay, type ChannelKey } from './sequenceHelpers';
+import type { SequenceStep } from '@/hooks/sequences/useSequenceSteps';
+import { Pencil, Trash2, GripVertical } from 'lucide-react';
+import { StepVariantBadge } from './StepVariantBadge';
 
 interface Props {
   step: SequenceStep;
@@ -22,7 +22,9 @@ export function SequenceStepCard({ step, index, onEdit, onDelete }: Props) {
       <div className="flex items-start gap-3">
         <div className="flex flex-col items-center gap-2 pt-1">
           <GripVertical className="h-4 w-4 text-muted-foreground/40" />
-          <Badge variant="outline" className="font-mono text-xs">{index + 1}</Badge>
+          <Badge variant="outline" className="font-mono text-xs">
+            {index + 1}
+          </Badge>
         </div>
         <div className={`p-2 rounded-lg bg-muted ${meta.color}`}>
           <Icon className="h-5 w-5" />

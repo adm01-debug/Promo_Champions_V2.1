@@ -1,29 +1,24 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Phone, Handshake, X } from "lucide-react";
-import { useCreateTeam, useAvailableClosers } from "@/hooks/useTeams";
-import { useSalespeople } from "@/hooks/sales/useSalespeople";
+} from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2, Phone, Handshake, X } from 'lucide-react';
+import { useCreateTeam, useAvailableClosers } from '@/hooks/useTeams';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import {
   Form,
   FormControl,
@@ -31,12 +26,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const teamSchema = z.object({
-  name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome deve ter no máximo 100 caracteres"),
-  sdr_id: z.string().min(1, "SDR é obrigatório"),
-  inactivity_days: z.string().default("365"),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+  sdr_id: z.string().min(1, 'SDR é obrigatório'),
+  inactivity_days: z.string().default('365'),
 });
 
 type TeamFormData = z.infer<typeof teamSchema>;
@@ -56,9 +55,9 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
   const form = useForm<TeamFormData>({
     resolver: zodResolver(teamSchema),
     defaultValues: {
-      name: "",
-      sdr_id: "",
-      inactivity_days: "365",
+      name: '',
+      sdr_id: '',
+      inactivity_days: '365',
     },
   });
 
@@ -67,9 +66,10 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
 
   // Validation: must have exactly 2 Closers
   const closersValid = selectedClosers.length === 2;
-  const validationMessage = selectedClosers.length !== 2 
-    ? `Selecione exatamente 2 Closers (${selectedClosers.length}/2)` 
-    : null;
+  const validationMessage =
+    selectedClosers.length !== 2
+      ? `Selecione exatamente 2 Closers (${selectedClosers.length}/2)`
+      : null;
 
   const handleSubmit = async (data: TeamFormData) => {
     if (!closersValid) return;
@@ -92,7 +92,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
 
   const toggleCloser = (closerId: string) => {
     if (selectedClosers.includes(closerId)) {
-      setSelectedClosers(selectedClosers.filter((id) => id !== closerId));
+      setSelectedClosers(selectedClosers.filter(id => id !== closerId));
     } else if (selectedClosers.length < 2) {
       setSelectedClosers([...selectedClosers, closerId]);
     }
@@ -115,10 +115,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                 <FormItem>
                   <FormLabel>Nome da Atribuição *</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Ex: Atribuição Alpha"
-                    />
+                    <Input {...field} placeholder="Ex: Atribuição Alpha" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,7 +166,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {sdrs.map((sdr) => (
+                      {sdrs.map(sdr => (
                         <SelectItem key={sdr.id} value={sdr.id}>
                           <div className="flex items-center gap-2">
                             <span>{sdr.name}</span>
@@ -197,14 +194,15 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                   {selectedClosers.length}/2
                 </Badge>
               </FormLabel>
-              
+
               <p className="text-xs text-muted-foreground">
-                Selecione os 2 Closers que este SDR vai atender (são concorrentes entre si)
+                Selecione os 2 Closers que este SDR vai atender (são concorrentes entre
+                si)
               </p>
               {selectedClosers.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {selectedClosers.map((closerId) => {
-                    const closer = availableClosers?.find((c) => c.id === closerId);
+                  {selectedClosers.map(closerId => {
+                    const closer = availableClosers?.find(c => c.id === closerId);
                     if (!closer) return null;
                     return (
                       <Badge
@@ -216,7 +214,8 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                         <Button
                           type="button"
                           variant="ghost"
-                          size="icon" aria-label="Fechar"
+                          size="icon"
+                          aria-label="Fechar"
                           className="h-4 w-4 ml-1 hover:bg-destructive/20"
                           onClick={() => toggleCloser(closerId)}
                         >
@@ -230,7 +229,7 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
 
               <ScrollArea className="h-[180px] border rounded-lg p-2">
                 <div className="space-y-2">
-                  {availableClosers?.map((closer) => (
+                  {availableClosers?.map(closer => (
                     <div
                       key={closer.id}
                       className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
@@ -238,7 +237,10 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                     >
                       <Checkbox
                         checked={selectedClosers.includes(closer.id)}
-                        disabled={!selectedClosers.includes(closer.id) && selectedClosers.length >= 2}
+                        disabled={
+                          !selectedClosers.includes(closer.id) &&
+                          selectedClosers.length >= 2
+                        }
                       />
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={closer.avatar_url || undefined} />
@@ -273,7 +275,9 @@ export function CreateTeamDialog({ open, onOpenChange }: CreateTeamDialogProps) 
                 Cancelar
               </Button>
               <Button type="submit" disabled={createTeam.isPending || !closersValid}>
-                {createTeam.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {createTeam.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Criar Atribuição
               </Button>
             </div>

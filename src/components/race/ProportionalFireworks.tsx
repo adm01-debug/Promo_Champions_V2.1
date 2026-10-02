@@ -1,6 +1,9 @@
 import { Fireworks } from './Fireworks';
 import { useEffect, useState } from 'react';
-import { getCelebrationIntensity, type CelebrationInput } from '@/lib/race/getCelebrationIntensity';
+import {
+  getCelebrationIntensity,
+  type CelebrationInput,
+} from '@/lib/race/getCelebrationIntensity';
 import { useRaceCalm } from '@/contexts/RaceCalmContext';
 
 interface Props {

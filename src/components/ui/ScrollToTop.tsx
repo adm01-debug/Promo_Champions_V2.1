@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { ArrowUp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useCallback } from 'react';
+import { ArrowUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 export function ScrollToTop() {
   const [visible, setVisible] = useState(false);
@@ -17,12 +17,12 @@ export function ScrollToTop() {
         setProgress(Math.min((scrollY / docHeight) * 100, 100));
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const scrollUp = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const size = 44;
@@ -42,12 +42,12 @@ export function ScrollToTop() {
           onClick={scrollUp}
           aria-label="Voltar ao topo"
           className={cn(
-            "fixed bottom-24 right-6 z-40 md:bottom-8",
-            "rounded-full relative",
-            "flex items-center justify-center",
-            "hover:scale-110 active:scale-95",
-            "transition-transform duration-200",
-            "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            'fixed bottom-24 right-6 z-40 md:bottom-8',
+            'rounded-full relative',
+            'flex items-center justify-center',
+            'hover:scale-110 active:scale-95',
+            'transition-transform duration-200',
+            'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
           )}
           style={{ width: size, height: size }}
         >

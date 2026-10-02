@@ -25,10 +25,10 @@ export function useCampaignOptOutRates(days = 90) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc(
         'get_campaign_optout_rates' as never,
-        { _days: days } as never,
+        { _days: days } as never
       );
       if (error) throw new Error(error.message);
-      return ((data ?? []) as CampaignOptOutRate[]).map((row) => ({
+      return ((data ?? []) as CampaignOptOutRate[]).map(row => ({
         ...row,
         sent_count: Number(row.sent_count ?? 0),
         opted_out_count: Number(row.opted_out_count ?? 0),

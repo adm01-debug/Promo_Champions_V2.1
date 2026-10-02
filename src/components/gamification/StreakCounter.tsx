@@ -21,56 +21,63 @@ export const StreakCounter: FC<StreakCounterProps> = ({
   type = 'daily',
   size = 'md',
   showBest = true,
-  className
+  className,
 }) => {
   const isOnFire = currentStreak >= 3;
-  const nextMilestone = streakMilestones.find(m => m > currentStreak) || currentStreak + 10;
+  const nextMilestone =
+    streakMilestones.find(m => m > currentStreak) || currentStreak + 10;
   const milestoneProgress = (currentStreak / nextMilestone) * 100;
 
   const typeLabels = {
     daily: 'dias consecutivos',
     weekly: 'semanas consecutivas',
-    sales: 'vendas seguidas'
+    sales: 'vendas seguidas',
   };
 
   const sizeClasses = {
     sm: 'p-3',
     md: 'p-4',
-    lg: 'p-6'
+    lg: 'p-6',
   };
 
   const iconSizes = {
     sm: 20,
     md: 28,
-    lg: 40
+    lg: 40,
   };
 
   const numberSizes = {
     sm: 'text-2xl',
     md: 'text-4xl',
-    lg: 'text-6xl'
+    lg: 'text-6xl',
   };
 
   return (
-    <Card className={cn(
-      "relative overflow-hidden",
-      sizeClasses[size],
-      isOnFire && "bg-gradient-to-br from-streak/10 to-destructive/10 border-streak/30",
-      className
-    )}>
+    <Card
+      className={cn(
+        'relative overflow-hidden',
+        sizeClasses[size],
+        isOnFire && 'bg-gradient-to-br from-streak/10 to-destructive/10 border-streak/30',
+        className
+      )}
+    >
       <div className="flex items-center gap-4">
         <motion.div
-          animate={isOnFire ? {
-            scale: [1, 1.1, 1],
-            rotate: [0, -5, 5, 0]
-          } : undefined}
+          animate={
+            isOnFire
+              ? {
+                  scale: [1, 1.1, 1],
+                  rotate: [0, -5, 5, 0],
+                }
+              : undefined
+          }
           transition={{ repeat: Infinity, duration: 1.5 }}
           className={cn(
-            "flex items-center justify-center rounded-full",
-            isOnFire ? "text-streak" : "text-muted-foreground"
+            'flex items-center justify-center rounded-full',
+            isOnFire ? 'text-streak' : 'text-muted-foreground'
           )}
         >
-          <Flame size={iconSizes[size]} className={isOnFire ? "fill-streak" : ""} />
+          <Flame size={iconSizes[size]} className={isOnFire ? 'fill-streak' : ''} />
         </motion.div>
 
         <div className="flex-1">
@@ -79,13 +86,11 @@ export const StreakCounter: FC<StreakCounterProps> = ({
               key={currentStreak}
               initial={{ scale: 1.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={cn("font-bold", numberSizes[size])}
+              className={cn('font-bold', numberSizes[size])}
             >
               {currentStreak}
             </motion.span>
-            <span className="text-muted-foreground text-sm">
-              {typeLabels[type]}
-            </span>
+            <span className="text-muted-foreground text-sm">{typeLabels[type]}</span>
           </div>
 
           {/* Milestone progress */}
@@ -120,20 +125,20 @@ export const StreakCounter: FC<StreakCounterProps> = ({
             <motion.div
               key={i}
               className="absolute w-2 h-2 bg-streak/50 rounded-full"
-              initial={{ 
-                x: Math.random() * 100, 
+              initial={{
+                x: Math.random() * 100,
                 y: 100,
-                opacity: 0 
+                opacity: 0,
               }}
-              animate={{ 
+              animate={{
                 y: -20,
                 opacity: [0, 1, 0],
-                scale: [0.5, 1, 0.5]
+                scale: [0.5, 1, 0.5],
               }}
-              transition={{ 
-                repeat: Infinity, 
+              transition={{
+                repeat: Infinity,
                 duration: 2 + Math.random() * 2,
-                delay: i * 0.3 
+                delay: i * 0.3,
               }}
             />
           ))}
@@ -150,16 +155,16 @@ interface MiniStreakProps {
 
 export const MiniStreak: FC<MiniStreakProps> = ({ streak, className }) => {
   const isOnFire = streak >= 3;
-  
+
   return (
-    <div className={cn(
-      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
-      isOnFire 
-        ? "bg-streak/20 text-streak" 
-        : "bg-muted text-muted-foreground",
-      className
-    )}>
-      <Flame size={12} className={isOnFire ? "fill-current" : ""} />
+    <div
+      className={cn(
+        'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium',
+        isOnFire ? 'bg-streak/20 text-streak' : 'bg-muted text-muted-foreground',
+        className
+      )}
+    >
+      <Flame size={12} className={isOnFire ? 'fill-current' : ''} />
       {streak}
     </div>
   );

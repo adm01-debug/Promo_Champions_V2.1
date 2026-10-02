@@ -1,0 +1,24 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "promo-champions-v2",
+      "include-v-in-tag": true,
+      "pull-request-title-pattern": "chore(main): release ${version}",
+      "changelog-sections": [
+        { "type": "feat", "section": "Funcionalidades" },
+        { "type": "fix", "section": "Correções" },
+        { "type": "perf", "section": "Performance" },
+        { "type": "revert", "section": "Reverts" },
+        { "type": "docs", "section": "Documentação", "hidden": true },
+        { "type": "style", "section": "Estilos", "hidden": true },
+        { "type": "chore", "section": "Manutenção", "hidden": true },
+        { "type": "refactor", "section": "Refatorações", "hidden": true },
+        { "type": "test", "section": "Testes", "hidden": true },
+        { "type": "build", "section": "Build", "hidden": true },
+        { "type": "ci", "section": "CI", "hidden": true },
+        { "type": "sec", "section": "Segurança" }
+      ]
+    }
+  }
+}

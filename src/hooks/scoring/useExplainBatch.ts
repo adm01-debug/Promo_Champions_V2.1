@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function useExplainBatch() {
   const qc = useQueryClient();
@@ -12,17 +12,17 @@ export function useExplainBatch() {
       const all: Record<string, unknown>[] = [];
       for (const chunk of chunks) {
         const { data, error } = await supabase.functions.invoke(
-          "predictive-scoring-explain",
-          { body: { sale_ids: chunk } },
+          'predictive-scoring-explain',
+          { body: { sale_ids: chunk } }
         );
         if (error) throw error;
         all.push(...(data?.results ?? []));
       }
       return { results: all };
     },
-    onSuccess: (res) => {
+    onSuccess: res => {
       toast.success(`Score IA atualizado em ${res.results.length} deals`);
-      qc.invalidateQueries({ queryKey: ["lead-score-explanation"] });
+      qc.invalidateQueries({ queryKey: ['lead-score-explanation'] });
     },
     onError: (e: Error) => toast.error(`Falha ao reexplicar: ${e.message}`),
   });

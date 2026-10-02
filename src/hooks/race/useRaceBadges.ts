@@ -10,12 +10,37 @@ export interface RaceBadge {
 }
 
 export const RACE_BADGE_CATALOG = [
-  { code: 'pole_position', label: 'Pole Position', emoji: '🏎️', desc: '1º lugar no fim da temporada' },
+  {
+    code: 'pole_position',
+    label: 'Pole Position',
+    emoji: '🏎️',
+    desc: '1º lugar no fim da temporada',
+  },
   { code: 'velocista', label: 'Velocista', emoji: '⚡', desc: '3 vendas em 1 hora' },
-  { code: 'comeback_king', label: 'Comeback King', emoji: '🔥', desc: 'Saiu do último para o top 3' },
-  { code: 'bandeira_quadriculada', label: 'Bandeira Quadriculada', emoji: '🏁', desc: '1º a bater a meta' },
-  { code: 'drift_master', label: 'Drift Master', emoji: '🛞', desc: '5 ultrapassagens na temporada' },
-  { code: 'tri_campeao', label: 'Tri-Campeão', emoji: '🏆', desc: '3 corridas seguidas no pódio' },
+  {
+    code: 'comeback_king',
+    label: 'Comeback King',
+    emoji: '🔥',
+    desc: 'Saiu do último para o top 3',
+  },
+  {
+    code: 'bandeira_quadriculada',
+    label: 'Bandeira Quadriculada',
+    emoji: '🏁',
+    desc: '1º a bater a meta',
+  },
+  {
+    code: 'drift_master',
+    label: 'Drift Master',
+    emoji: '🛞',
+    desc: '5 ultrapassagens na temporada',
+  },
+  {
+    code: 'tri_campeao',
+    label: 'Tri-Campeão',
+    emoji: '🏆',
+    desc: '3 corridas seguidas no pódio',
+  },
 ] as const;
 
 export function useRaceBadges(salespersonId?: string) {

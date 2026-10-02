@@ -1,16 +1,11 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import type { LucideIcon } from 'lucide-react';
 
 export type ArenaCategoryId =
-  | "all"
-  | "ranking"
-  | "competitions"
-  | "profile"
-  | "broadcast"
-  | "tools";
+  'all' | 'ranking' | 'competitions' | 'profile' | 'broadcast' | 'tools';
 
 export interface ArenaCategory {
   id: ArenaCategoryId;
@@ -62,35 +57,35 @@ export const ArenaCategoryHub = memo(function ArenaCategoryHub({
           >
             <Card
               className={cn(
-                "relative overflow-hidden p-4 h-full border transition-all duration-300 group",
+                'relative overflow-hidden p-4 h-full border transition-all duration-300 group',
                 isActive
-                  ? "border-primary/60 bg-primary/5 shadow-lg shadow-primary/10"
-                  : "border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                  ? 'border-primary/60 bg-primary/5 shadow-lg shadow-primary/10'
+                  : 'border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
               )}
             >
               <div
                 className={cn(
-                  "absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none",
+                  'absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none',
                   cat.gradient,
-                  isActive ? "opacity-100" : "group-hover:opacity-60"
+                  isActive ? 'opacity-100' : 'group-hover:opacity-60'
                 )}
               />
               <div className="relative z-10 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <div
                     className={cn(
-                      "p-2 rounded-lg transition-colors",
+                      'p-2 rounded-lg transition-colors',
                       isActive
-                        ? "bg-primary/20 text-primary"
-                        : "bg-white/5 text-muted-foreground group-hover:text-foreground"
+                        ? 'bg-primary/20 text-primary'
+                        : 'bg-white/5 text-muted-foreground group-hover:text-foreground'
                     )}
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <span
                     className={cn(
-                      "text-[10px] font-black uppercase tracking-widest tabular-nums",
-                      isActive ? "text-primary" : "text-muted-foreground/60"
+                      'text-[10px] font-black uppercase tracking-widest tabular-nums',
+                      isActive ? 'text-primary' : 'text-muted-foreground/60'
                     )}
                   >
                     {cat.tabs.length}
@@ -99,8 +94,8 @@ export const ArenaCategoryHub = memo(function ArenaCategoryHub({
                 <div>
                   <p
                     className={cn(
-                      "text-sm font-black uppercase tracking-wider leading-tight",
-                      isActive ? "text-primary" : "text-foreground"
+                      'text-sm font-black uppercase tracking-wider leading-tight',
+                      isActive ? 'text-primary' : 'text-foreground'
                     )}
                   >
                     {cat.label}

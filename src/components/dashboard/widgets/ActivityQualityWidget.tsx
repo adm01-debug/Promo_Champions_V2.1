@@ -1,10 +1,10 @@
-import React from "react";
-import { useActivityQualityScore } from "@/hooks/activities/useActivityQualityScore";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Star } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { useActivityQualityScore } from '@/hooks/activities/useActivityQualityScore';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Star } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 
 export const ActivityQualityWidget = React.memo(function ActivityQualityWidget() {
   const { data, isLoading } = useActivityQualityScore();
@@ -28,10 +28,10 @@ export const ActivityQualityWidget = React.memo(function ActivityQualityWidget()
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "text-xs font-bold w-5 text-center",
-                    i === 0 && "text-rank-gold",
-                    i === 1 && "text-rank-silver",
-                    i === 2 && "text-rank-bronze"
+                    'text-xs font-bold w-5 text-center',
+                    i === 0 && 'text-rank-gold',
+                    i === 1 && 'text-rank-silver',
+                    i === 2 && 'text-rank-bronze'
                   )}
                 >
                   {i + 1}º
@@ -44,10 +44,10 @@ export const ActivityQualityWidget = React.memo(function ActivityQualityWidget()
               <Progress
                 value={sp.qualityScore}
                 className={cn(
-                  "h-1 ml-7",
-                  sp.qualityScore >= 70 && "[&>div]:bg-success",
-                  sp.qualityScore >= 40 && sp.qualityScore < 70 && "[&>div]:bg-warning",
-                  sp.qualityScore < 40 && "[&>div]:bg-destructive"
+                  'h-1 ml-7',
+                  sp.qualityScore >= 70 && '[&>div]:bg-success',
+                  sp.qualityScore >= 40 && sp.qualityScore < 70 && '[&>div]:bg-warning',
+                  sp.qualityScore < 40 && '[&>div]:bg-destructive'
                 )}
               />
             </div>
@@ -62,4 +62,4 @@ export const ActivityQualityWidget = React.memo(function ActivityQualityWidget()
   );
 });
 
-ActivityQualityWidget.displayName = "ActivityQualityWidget";
+ActivityQualityWidget.displayName = 'ActivityQualityWidget';

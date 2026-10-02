@@ -1,39 +1,45 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   CredentialsSourceContext,
   type CredentialsSource,
   type HealthStatusFilter,
-} from "./CredentialsSourceContext";
+} from './CredentialsSourceContext';
 
 export type { CredentialsSource, HealthStatusFilter };
 
-const SOURCE_KEY = "integration-health:source-filter";
-const STATUS_KEY = "integration-health:status-filter";
+const SOURCE_KEY = 'integration-health:source-filter';
+const STATUS_KEY = 'integration-health:status-filter';
 
-const VALID_SOURCES: CredentialsSource[] = ["all", "db", "env", "secret"];
-const VALID_STATUSES: HealthStatusFilter[] = ["all", "healthy", "warning", "failing"];
+const VALID_SOURCES: CredentialsSource[] = ['all', 'db', 'env', 'secret'];
+const VALID_STATUSES: HealthStatusFilter[] = ['all', 'healthy', 'warning', 'failing'];
 
 function readSource(): CredentialsSource {
   try {
     const v = localStorage.getItem(SOURCE_KEY);
-    return v && (VALID_SOURCES as string[]).includes(v) ? (v as CredentialsSource) : "all";
+    return v && (VALID_SOURCES as string[]).includes(v)
+      ? (v as CredentialsSource)
+      : 'all';
   } catch {
-    return "all";
+    return 'all';
   }
 }
 
 function readStatus(): HealthStatusFilter {
   try {
     const v = localStorage.getItem(STATUS_KEY);
-    return v && (VALID_STATUSES as string[]).includes(v) ? (v as HealthStatusFilter) : "all";
+    return v && (VALID_STATUSES as string[]).includes(v)
+      ? (v as HealthStatusFilter)
+      : 'all';
   } catch {
-    return "all";
+    return 'all';
   }
 }
 
 export function CredentialsSourceFilterProvider({ children }: { children: ReactNode }) {
   const [source, setSource] = useState<CredentialsSource>(() => readSource());
-  const [healthStatus, setHealthStatus] = useState<HealthStatusFilter>(() => readStatus());
+  const [healthStatus, setHealthStatus] = useState<HealthStatusFilter>(() =>
+    readStatus()
+  );
 
   useEffect(() => {
     try {
@@ -53,9 +59,11 @@ export function CredentialsSourceFilterProvider({ children }: { children: ReactN
 
   const value = useMemo(
     () => ({ source, setSource, healthStatus, setHealthStatus }),
-    [source, healthStatus],
+    [source, healthStatus]
   );
-  return <CredentialsSourceContext.Provider value={value}>{children}</CredentialsSourceContext.Provider>;
+  return (
+    <CredentialsSourceContext.Provider value={value}>
+      {children}
+    </CredentialsSourceContext.Provider>
+  );
 }
-
-

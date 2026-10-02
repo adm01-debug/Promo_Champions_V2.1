@@ -1,21 +1,19 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Search, Sparkles, Camera, Loader2, Star } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useSemanticSearch, type SemanticProduct } from "@/hooks/useSemanticSearch";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Search, Sparkles, Camera, Loader2, Star } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useSemanticSearch, type SemanticProduct } from '@/hooks/useSemanticSearch';
 import {
   VisualSearchButton,
   type VisualSearchResponse,
   type VisualSearchProduct,
-} from "@/components/search/VisualSearchButton";
+} from '@/components/search/VisualSearchButton';
 
-const formatBRL = (n: number) =>
-  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
+import { formatBRL } from '@/lib/money';
 function ProductCard({ p }: { p: SemanticProduct | VisualSearchProduct }) {
   return (
     <Card className="hover-scale transition-shadow hover:shadow-md">
@@ -28,7 +26,9 @@ function ProductCard({ p }: { p: SemanticProduct | VisualSearchProduct }) {
         </div>
         <p className="text-xs text-muted-foreground">{p.category}</p>
         <div className="flex items-center justify-between pt-1">
-          <span className="font-semibold text-primary">{formatBRL(Number(p.price))}</span>
+          <span className="font-semibold text-primary">
+            {formatBRL(Number(p.price), { decimals: 2 })}
+          </span>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Star className="h-3 w-3 fill-rank-gold text-rank-gold" />
             {Number(p.rating).toFixed(1)}
@@ -41,7 +41,7 @@ function ProductCard({ p }: { p: SemanticProduct | VisualSearchProduct }) {
 }
 
 export default function SmartSearch() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const semantic = useSemanticSearch();
   const [visual, setVisual] = useState<VisualSearchResponse | null>(null);
 
@@ -66,8 +66,8 @@ export default function SmartSearch() {
           Busca Inteligente
         </h1>
         <p className="text-muted-foreground">
-          Descreva o produto em linguagem natural ou envie uma foto. A IA encontra os itens mais
-          relevantes do catálogo.
+          Descreva o produto em linguagem natural ou envie uma foto. A IA encontra os
+          itens mais relevantes do catálogo.
         </p>
       </header>
 
@@ -92,7 +92,7 @@ export default function SmartSearch() {
                 <Input
                   placeholder='ex.: "caneta executiva preta para evento corporativo"'
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={e => setQuery(e.target.value)}
                   disabled={semantic.loading}
                 />
                 <Button type="submit" disabled={semantic.loading || !query.trim()}>
@@ -108,13 +108,15 @@ export default function SmartSearch() {
               {semantic.data && (
                 <div className="mt-4 space-y-2">
                   <div className="flex flex-wrap gap-1.5">
-                    {semantic.data.keywords.map((k) => (
+                    {semantic.data.keywords.map(k => (
                       <Badge key={k} variant="outline" className="text-xs">
                         {k}
                       </Badge>
                     ))}
                     {semantic.data.cached && (
-                      <Badge variant="secondary" className="text-xs">cache</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        cache
+                      </Badge>
                     )}
                   </div>
                   {semantic.data.intent && (
@@ -140,7 +142,7 @@ export default function SmartSearch() {
                 </Card>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {semantic.data.results.map((p) => (
+                  {semantic.data.results.map(p => (
                     <ProductCard key={p.id} p={p} />
                   ))}
                 </div>
@@ -157,8 +159,8 @@ export default function SmartSearch() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                Envie uma foto do produto desejado. A IA identifica o item e procura similares no
-                catálogo.
+                Envie uma foto do produto desejado. A IA identifica o item e procura
+                similares no catálogo.
               </p>
               <VisualSearchButton onResults={setVisual} />
             </CardContent>
@@ -173,24 +175,26 @@ export default function SmartSearch() {
                 <CardContent className="space-y-2 text-sm">
                   {visual.analysis.product_name && (
                     <p>
-                      <span className="font-medium">Identificado:</span>{" "}
+                      <span className="font-medium">Identificado:</span>{' '}
                       {visual.analysis.product_name}
                     </p>
                   )}
                   {visual.analysis.category && (
                     <p>
-                      <span className="font-medium">Categoria:</span> {visual.analysis.category}
+                      <span className="font-medium">Categoria:</span>{' '}
+                      {visual.analysis.category}
                     </p>
                   )}
                   {(visual.analysis.color || visual.analysis.material) && (
                     <p className="text-muted-foreground">
                       {visual.analysis.color && `Cor: ${visual.analysis.color}`}
-                      {visual.analysis.color && visual.analysis.material && " · "}
-                      {visual.analysis.material && `Material: ${visual.analysis.material}`}
+                      {visual.analysis.color && visual.analysis.material && ' · '}
+                      {visual.analysis.material &&
+                        `Material: ${visual.analysis.material}`}
                     </p>
                   )}
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {visual.analysis.keywords?.map((k) => (
+                    {visual.analysis.keywords?.map(k => (
                       <Badge key={k} variant="outline" className="text-xs">
                         {k}
                       </Badge>
@@ -211,7 +215,7 @@ export default function SmartSearch() {
                   </Card>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                    {visual.results.map((p) => (
+                    {visual.results.map(p => (
                       <ProductCard key={p.id} p={p} />
                     ))}
                   </div>

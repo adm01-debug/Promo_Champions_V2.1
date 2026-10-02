@@ -22,11 +22,14 @@ export const useClosingTime = () => {
       // Group by stage and calculate average days
       const stageMap = new Map<string, { totalDays: number; count: number }>();
 
-      stageHistory.forEach((record) => {
+      stageHistory.forEach(record => {
         if (!record.exited_at || !record.entered_at) return;
         const entered = new Date(record.entered_at);
         const exited = new Date(record.exited_at);
-        const days = Math.max(1, Math.ceil((exited.getTime() - entered.getTime()) / (1000 * 60 * 60 * 24)));
+        const days = Math.max(
+          1,
+          Math.ceil((exited.getTime() - entered.getTime()) / (1000 * 60 * 60 * 24))
+        );
 
         const existing = stageMap.get(record.stage) || { totalDays: 0, count: 0 };
         stageMap.set(record.stage, {
@@ -35,8 +38,16 @@ export const useClosingTime = () => {
         });
       });
 
-      const stageOrder = ['lead', 'prospecting', 'qualified', 'proposal', 'negotiation', 'won', 'closed'];
-      
+      const stageOrder = [
+        'lead',
+        'prospecting',
+        'qualified',
+        'proposal',
+        'negotiation',
+        'won',
+        'closed',
+      ];
+
       return Array.from(stageMap.entries())
         .map(([stage, { totalDays, count }]) => ({
           stage: stage.charAt(0).toUpperCase() + stage.slice(1),

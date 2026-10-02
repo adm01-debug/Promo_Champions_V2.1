@@ -1,17 +1,20 @@
-import { motion } from "framer-motion";
-import { useMemo } from "react";
-import { Target, TrendingUp, AlertTriangle, CheckCircle2, Flame, Rocket, Zap } from "lucide-react";
-import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
-import { useAuth } from "@/contexts/AuthContext";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import {
+  Target,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
+  Flame,
+  Rocket,
+  Zap,
+} from 'lucide-react';
+import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
+import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
 
-const fmtBRL = (v: number) =>
-  `R$ ${v.toLocaleString("pt-BR", {
-    maximumFractionDigits: 0,
-    notation: v >= 100000 ? "compact" : "standard",
-  })}`;
-
-type AlertLevel = "critical" | "warning" | "ontrack" | "exceeded" | "no-goal";
+import { formatBRL } from '@/lib/money';
+type AlertLevel = 'critical' | 'warning' | 'ontrack' | 'exceeded' | 'no-goal';
 
 interface AlertConfig {
   level: AlertLevel;
@@ -30,71 +33,71 @@ const buildAlert = (
   projection: number,
   goal: number,
   daysRemaining: number,
-  requiredDaily: number,
+  requiredDaily: number
 ): AlertConfig => {
   if (goal <= 0) {
     return {
-      level: "no-goal",
-      label: "Sem Meta",
-      message: "Nenhuma meta definida para este mês. Fale com o gestor.",
-      color: "text-muted-foreground",
-      bgGradient: "from-muted/20 to-muted/5",
-      border: "border-border/40",
-      glow: "hsl(var(--muted-foreground) / 0.2)",
+      level: 'no-goal',
+      label: 'Sem Meta',
+      message: 'Nenhuma meta definida para este mês. Fale com o gestor.',
+      color: 'text-muted-foreground',
+      bgGradient: 'from-muted/20 to-muted/5',
+      border: 'border-border/40',
+      glow: 'hsl(var(--muted-foreground) / 0.2)',
       Icon: Target,
-      ring: "hsl(var(--muted-foreground))",
+      ring: 'hsl(var(--muted-foreground))',
     };
   }
   if (progress >= 100) {
     return {
-      level: "exceeded",
-      label: "Meta Batida",
+      level: 'exceeded',
+      label: 'Meta Batida',
       message: `🚀 Parabéns! Você superou a meta em ${(progress - 100).toFixed(1)}%. Continue acelerando!`,
-      color: "text-success",
-      bgGradient: "from-success/20 via-success/10 to-success/5",
-      border: "border-success/40",
-      glow: "hsl(var(--success) / 0.45)",
+      color: 'text-success',
+      bgGradient: 'from-success/20 via-success/10 to-success/5',
+      border: 'border-success/40',
+      glow: 'hsl(var(--success) / 0.45)',
       Icon: Rocket,
-      ring: "hsl(var(--success))",
+      ring: 'hsl(var(--success))',
     };
   }
   const projPct = (projection / goal) * 100;
   if (projPct >= 100) {
     return {
-      level: "ontrack",
-      label: "No Ritmo",
+      level: 'ontrack',
+      label: 'No Ritmo',
       message: `Mantendo este ritmo, você fechará o mês em ${projPct.toFixed(0)}% da meta. Excelente!`,
-      color: "text-primary",
-      bgGradient: "from-primary/20 via-primary/10 to-primary/5",
-      border: "border-primary/40",
-      glow: "hsl(var(--primary) / 0.4)",
+      color: 'text-primary',
+      bgGradient: 'from-primary/20 via-primary/10 to-primary/5',
+      border: 'border-primary/40',
+      glow: 'hsl(var(--primary) / 0.4)',
       Icon: CheckCircle2,
-      ring: "hsl(var(--primary))",
+      ring: 'hsl(var(--primary))',
     };
   }
   if (projPct >= 80) {
     return {
-      level: "warning",
-      label: "Atenção",
-      message: `Acelere! Faltam ${fmtBRL(goal - projection)} em ${daysRemaining}d. Precisa de ${fmtBRL(requiredDaily)}/dia.`,
-      color: "text-warning",
-      bgGradient: "from-warning/20 via-warning/10 to-warning/5",
-      border: "border-warning/40",
-      glow: "hsl(var(--warning) / 0.4)",
+      level: 'warning',
+      label: 'Atenção',
+      message: `Acelere! Faltam ${formatBRL(goal - projection)} em ${daysRemaining}d. Precisa de ${formatBRL(requiredDaily)}/dia.`,
+      color: 'text-warning',
+      bgGradient: 'from-warning/20 via-warning/10 to-warning/5',
+      border: 'border-warning/40',
+      glow: 'hsl(var(--warning) / 0.4)',
       Icon: Flame,
-      ring: "hsl(var(--warning))",
+      ring: 'hsl(var(--warning))',
     };
   }
   return {
-    level: "critical",
-    label: "Crítico",
-    message: `🔥 Risco alto! Projeção em ${projPct.toFixed(0)}% da meta. Precisa de ${fmtBRL(requiredDaily)}/dia para reverter.`,
-    color: "text-destructive",
-    bgGradient: "from-destructive/20 via-destructive/10 to-destructive/5",
-    border: "border-destructive/40",
-    glow: "hsl(var(--destructive) / 0.45)",
+    level: 'critical',
+    label: 'Crítico',
+    message: `🔥 Risco alto! Projeção em ${projPct.toFixed(0)}% da meta. Precisa de ${formatBRL(requiredDaily)}/dia para reverter.`,
+    color: 'text-destructive',
+    bgGradient: 'from-destructive/20 via-destructive/10 to-destructive/5',
+    border: 'border-destructive/40',
+    glow: 'hsl(var(--destructive) / 0.45)',
     Icon: AlertTriangle,
-    ring: "hsl(var(--destructive))",
+    ring: 'hsl(var(--destructive))',
   };
 };
 
@@ -104,7 +107,7 @@ export const MyGoalAlertCard = () => {
 
   const myGoal = useMemo(() => {
     if (!salesperson?.id || !goalsData) return null;
-    return goalsData.salespeople.find((sp) => sp.id === salesperson.id) ?? null;
+    return goalsData.salespeople.find(sp => sp.id === salesperson.id) ?? null;
   }, [salesperson?.id, goalsData]);
 
   const alert = useMemo(() => {
@@ -114,7 +117,7 @@ export const MyGoalAlertCard = () => {
       myGoal.projection,
       myGoal.goalAmount,
       goalsData?.daysRemaining ?? 0,
-      myGoal.requiredDailyAverage,
+      myGoal.requiredDailyAverage
     );
   }, [myGoal, goalsData?.daysRemaining]);
 
@@ -125,7 +128,10 @@ export const MyGoalAlertCard = () => {
   if (!myGoal || !alert) return null;
 
   const progressClamped = Math.min(100, myGoal.progress);
-  const projectionClamped = Math.min(100, (myGoal.projection / Math.max(1, myGoal.goalAmount)) * 100);
+  const projectionClamped = Math.min(
+    100,
+    (myGoal.projection / Math.max(1, myGoal.goalAmount)) * 100
+  );
   const Icon = alert.Icon;
 
   // Ring SVG
@@ -148,14 +154,16 @@ export const MyGoalAlertCard = () => {
       {/* Ambient glow */}
       <div
         className="absolute inset-0 rounded-2xl opacity-50 blur-2xl pointer-events-none"
-        style={{ background: `radial-gradient(circle at 30% 50%, ${alert.glow}, transparent 70%)` }}
+        style={{
+          background: `radial-gradient(circle at 30% 50%, ${alert.glow}, transparent 70%)`,
+        }}
       />
 
       <div
         className={cn(
-          "relative rounded-2xl border-2 backdrop-blur-xl p-5 overflow-hidden bg-gradient-to-br",
+          'relative rounded-2xl border-2 backdrop-blur-xl p-5 overflow-hidden bg-gradient-to-br',
           alert.bgGradient,
-          alert.border,
+          alert.border
         )}
       >
         {/* Grid overlay */}
@@ -163,7 +171,7 @@ export const MyGoalAlertCard = () => {
           className="absolute inset-0 opacity-[0.05] pointer-events-none"
           style={{
             backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-            backgroundSize: "20px 20px",
+            backgroundSize: '20px 20px',
           }}
         />
 
@@ -196,7 +204,12 @@ export const MyGoalAlertCard = () => {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={cn("font-display font-black text-2xl tabular-nums leading-none", alert.color)}>
+              <span
+                className={cn(
+                  'font-display font-black text-2xl tabular-nums leading-none',
+                  alert.color
+                )}
+              >
                 {Math.round(myGoal.progress)}%
               </span>
               <span className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-1">
@@ -211,9 +224,9 @@ export const MyGoalAlertCard = () => {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <div
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-black uppercase tracking-[0.18em] border",
+                  'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-black uppercase tracking-[0.18em] border',
                   alert.color,
-                  alert.border,
+                  alert.border
                 )}
               >
                 <Icon className="h-3 w-3" />
@@ -225,13 +238,28 @@ export const MyGoalAlertCard = () => {
             </div>
 
             {/* Message */}
-            <p className={cn("text-sm font-medium leading-snug mb-3", alert.color)}>{alert.message}</p>
+            <p className={cn('text-sm font-medium leading-snug mb-3', alert.color)}>
+              {alert.message}
+            </p>
 
             {/* Metrics grid */}
             <div className="grid grid-cols-3 gap-2 mb-3">
-              <Metric label="Atual" value={fmtBRL(myGoal.currentSales)} accent={alert.color} />
-              <Metric label="Meta" value={fmtBRL(myGoal.goalAmount)} accent="text-foreground" />
-              <Metric label="Projeção" value={fmtBRL(myGoal.projection)} accent={alert.color} icon={TrendingUp} />
+              <Metric
+                label="Atual"
+                value={formatBRL(myGoal.currentSales)}
+                accent={alert.color}
+              />
+              <Metric
+                label="Meta"
+                value={formatBRL(myGoal.goalAmount)}
+                accent="text-foreground"
+              />
+              <Metric
+                label="Projeção"
+                value={formatBRL(myGoal.projection)}
+                accent={alert.color}
+                icon={TrendingUp}
+              />
             </div>
 
             {/* Dual progress bar: actual vs projection */}
@@ -258,12 +286,18 @@ export const MyGoalAlertCard = () => {
               </div>
               <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: alert.ring }} />
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ background: alert.ring }}
+                  />
                   Realizado
                 </span>
                 <span className="flex items-center gap-1">
                   <Zap className="h-2.5 w-2.5" />
-                  Necessário/dia: <span className={cn("font-bold", alert.color)}>{fmtBRL(myGoal.requiredDailyAverage)}</span>
+                  Necessário/dia:{' '}
+                  <span className={cn('font-bold', alert.color)}>
+                    {formatBRL(myGoal.requiredDailyAverage)}
+                  </span>
                 </span>
               </div>
             </div>
@@ -290,7 +324,9 @@ const Metric = ({
       {Icon && <Icon className="h-2.5 w-2.5" />}
       {label}
     </div>
-    <div className={cn("font-display font-black text-sm tabular-nums truncate", accent)}>{value}</div>
+    <div className={cn('font-display font-black text-sm tabular-nums truncate', accent)}>
+      {value}
+    </div>
   </div>
 );
 

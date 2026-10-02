@@ -77,7 +77,7 @@ total. Usar tier gratuito de UptimeRobot, BetterStack ou Checkly.
 |------|-----|--------|
 | Frontend (Lovable) | `https://championgifts.lovable.app/` | HTTP 200 |
 | Supabase Auth | `https://usyxfpqlsspldubptrdl.supabase.co/auth/v1/health` | HTTP 200 |
-| Edge Functions | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 (function `health` — pacote da Dimensão 8; até lá, monitorar uma function leve existente) |
+| Edge Functions | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 com `{"status":"ok","version":...,"timestamp":...}` (function `health`, `verify_jwt = false`) |
 
 ### Alertas
 

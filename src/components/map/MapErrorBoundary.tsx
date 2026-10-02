@@ -1,6 +1,6 @@
-import { Component, ReactNode } from "react";
-import { MapPin, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Component, ReactNode } from 'react';
+import { MapPin, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ export class MapErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     if (import.meta.env.DEV) {
-      console.error("[MapErrorBoundary]", error, info.componentStack);
+      console.error('[MapErrorBoundary]', error, info.componentStack);
     }
   }
 
@@ -31,14 +31,18 @@ export class MapErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="glass rounded-lg flex flex-col items-center justify-center gap-4 p-8" style={{ height: "500px" }}>
+        <div
+          className="glass rounded-lg flex flex-col items-center justify-center gap-4 p-8"
+          style={{ height: '500px' }}
+        >
           <MapPin className="h-12 w-12 text-muted-foreground/50" />
           <div className="text-center space-y-2">
             <h3 className="text-section-title text-foreground">
               Erro ao carregar o mapa
             </h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              Houve um problema ao renderizar o mapa. Isso pode ocorrer por instabilidade na conexão ou incompatibilidade do navegador.
+              Houve um problema ao renderizar o mapa. Isso pode ocorrer por instabilidade
+              na conexão ou incompatibilidade do navegador.
             </p>
             {this.state.error && (
               <p className="text-xs text-destructive font-mono mt-2">

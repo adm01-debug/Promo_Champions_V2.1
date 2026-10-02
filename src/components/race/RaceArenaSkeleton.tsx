@@ -51,7 +51,10 @@ export const RaceArenaSkeleton: FC = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                <div
+                  key={i}
+                  className="flex items-center gap-3 p-2 rounded-lg bg-muted/30"
+                >
                   <Shimmer className="h-5 w-5 rounded" />
                   <Shimmer className="h-8 w-8 rounded-full" />
                   <Shimmer className="h-8 w-8 rounded-full" />

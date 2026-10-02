@@ -1,35 +1,69 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { useIPWhitelist } from "@/hooks/useIPBlocking";
-import { ShieldCheck, Plus, Trash2 } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { z } from "zod";
-import { toast } from "sonner";
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useIPWhitelist } from '@/hooks/useIPBlocking';
+import { ShieldCheck, Plus, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { z } from 'zod';
+import { toast } from 'sonner';
 
-const ipSchema = z.string().regex(
-  /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
-  "IP inválido"
-);
+const ipSchema = z
+  .string()
+  .regex(
+    /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+    'IP inválido'
+  );
 
 export function IPWhitelistPanel() {
-  const { whitelist, isLoading, addToWhitelist, removeFromWhitelist, isAdding } = useIPWhitelist();
+  const { whitelist, isLoading, addToWhitelist, removeFromWhitelist, isAdding } =
+    useIPWhitelist();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [newIP, setNewIP] = useState("");
-  const [description, setDescription] = useState("");
+  const [newIP, setNewIP] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleAddIP = () => {
     try {
       ipSchema.parse(newIP);
     } catch {
-      toast.error("Endereço IP inválido");
+      toast.error('Endereço IP inválido');
       return;
     }
 
@@ -39,8 +73,8 @@ export function IPWhitelistPanel() {
     });
 
     setDialogOpen(false);
-    setNewIP("");
-    setDescription("");
+    setNewIP('');
+    setDescription('');
   };
 
   if (isLoading) {
@@ -80,7 +114,7 @@ export function IPWhitelistPanel() {
                   <Input
                     placeholder="192.168.1.1"
                     value={newIP}
-                    onChange={(e) => setNewIP(e.target.value)}
+                    onChange={e => setNewIP(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -88,7 +122,7 @@ export function IPWhitelistPanel() {
                   <Input
                     placeholder="Servidor de produção, VPN corporativa..."
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={e => setDescription(e.target.value)}
                   />
                 </div>
               </div>
@@ -115,14 +149,14 @@ export function IPWhitelistPanel() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {whitelist?.map((ip) => (
+            {whitelist?.map(ip => (
               <TableRow key={ip.id}>
                 <TableCell className="font-mono">{ip.ip_address}</TableCell>
                 <TableCell className="text-muted-foreground">
-                  {ip.description || "-"}
+                  {ip.description || '-'}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {format(new Date(ip.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+                  {format(new Date(ip.created_at), 'dd/MM/yy HH:mm', { locale: ptBR })}
                 </TableCell>
                 <TableCell>
                   <AlertDialog>
@@ -135,7 +169,8 @@ export function IPWhitelistPanel() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Remover da Whitelist?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          O IP {ip.ip_address} poderá ser afetado por rate limiting novamente.
+                          O IP {ip.ip_address} poderá ser afetado por rate limiting
+                          novamente.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

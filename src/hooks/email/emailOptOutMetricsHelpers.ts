@@ -73,7 +73,7 @@ export function sourceLabel(source: string): string {
 export function aggregateOptOutMetrics(
   records: readonly OptOutRecordLite[],
   now: number = Date.now(),
-  windowDays = 30,
+  windowDays = 30
 ): OptOutMetrics {
   const bySource = new Map<string, number>();
   const byDay = new Map<string, number>();

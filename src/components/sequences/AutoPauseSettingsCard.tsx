@@ -1,7 +1,7 @@
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { ShieldOff, Mail } from "lucide-react";
-import { useUpdateAutoPauseSettings } from "@/hooks/sequences/useAutoPause";
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { ShieldOff, Mail } from 'lucide-react';
+import { useUpdateAutoPauseSettings } from '@/hooks/sequences/useAutoPause';
 
 interface Props {
   sequenceId: string;
@@ -9,7 +9,11 @@ interface Props {
   autoPauseOnBounce: boolean;
 }
 
-export function AutoPauseSettingsCard({ sequenceId, autoPauseOnReply, autoPauseOnBounce }: Props) {
+export function AutoPauseSettingsCard({
+  sequenceId,
+  autoPauseOnReply,
+  autoPauseOnBounce,
+}: Props) {
   const update = useUpdateAutoPauseSettings();
 
   return (
@@ -30,7 +34,7 @@ export function AutoPauseSettingsCard({ sequenceId, autoPauseOnReply, autoPauseO
           id="apr-switch"
           checked={autoPauseOnReply}
           disabled={update.isPending}
-          onCheckedChange={(v) => update.mutate({ id: sequenceId, auto_pause_on_reply: v })}
+          onCheckedChange={v => update.mutate({ id: sequenceId, auto_pause_on_reply: v })}
         />
       </div>
 
@@ -45,12 +49,15 @@ export function AutoPauseSettingsCard({ sequenceId, autoPauseOnReply, autoPauseO
           id="apb-switch"
           checked={autoPauseOnBounce}
           disabled={update.isPending}
-          onCheckedChange={(v) => update.mutate({ id: sequenceId, auto_pause_on_bounce: v })}
+          onCheckedChange={v =>
+            update.mutate({ id: sequenceId, auto_pause_on_bounce: v })
+          }
         />
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Quando ativo, a sequência para de enviar para o contato assim que detectamos resposta, bounce ou atividade inbound.
+        Quando ativo, a sequência para de enviar para o contato assim que detectamos
+        resposta, bounce ou atividade inbound.
       </p>
     </div>
   );

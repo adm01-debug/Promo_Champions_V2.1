@@ -15,13 +15,7 @@ import {
   type StageSeverity,
 } from './velocityHelpers';
 
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
-
+import { formatBRL } from '@/lib/money';
 export function StuckDealsPanel() {
   const { data, isLoading } = useStuckDeals(15);
   const detect = useDetectStuckDeals();

@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     needs: unit-tests
+    # Somente PRs internas — evita expor credenciais em fork PRs.
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
     steps:
@@ -85,6 +88,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: unit-tests
+    # Somente PRs internas (não forks, não Dependabot) — guard que faltava.
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
     steps:

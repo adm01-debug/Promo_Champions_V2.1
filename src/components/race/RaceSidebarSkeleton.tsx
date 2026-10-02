@@ -11,7 +11,11 @@ interface Props {
  */
 export function RaceSidebarSkeleton({ rows = 8 }: Props) {
   return (
-    <Card className="h-full flex flex-col" aria-busy="true" aria-label="Carregando ranking">
+    <Card
+      className="h-full flex flex-col"
+      aria-busy="true"
+      aria-label="Carregando ranking"
+    >
       <CardHeader className="pb-3 space-y-3">
         <Skeleton className="h-16 w-full" />
         <Skeleton className="h-12 w-full" />

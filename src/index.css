@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap');
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,7 +9,8 @@
 @layer base {
   :root {
     /* Font Variables */
-    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans:
+      'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-display: 'Sora', 'Space Grotesk', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
@@ -120,29 +121,56 @@
 
     /* ===== SHADOWS - More Dramatic ===== */
     --shadow-xs: 0 1px 2px 0 hsl(262 50% 10% / 0.05);
-    --shadow-sm: 0 2px 4px -1px hsl(262 50% 10% / 0.08), 0 1px 2px -1px hsl(262 50% 10% / 0.04);
-    --shadow-md: 0 4px 12px -2px hsl(262 50% 10% / 0.1), 0 2px 6px -2px hsl(262 50% 10% / 0.06);
-    --shadow-lg: 0 12px 24px -4px hsl(262 50% 10% / 0.12), 0 4px 8px -2px hsl(262 50% 10% / 0.08);
-    --shadow-xl: 0 24px 48px -8px hsl(262 50% 10% / 0.15), 0 12px 24px -6px hsl(262 50% 10% / 0.1);
-    --shadow-glow-primary: 0 0 40px hsl(262 83% 58% / 0.35), 0 0 20px hsl(262 83% 58% / 0.2);
+    --shadow-sm:
+      0 2px 4px -1px hsl(262 50% 10% / 0.08), 0 1px 2px -1px hsl(262 50% 10% / 0.04);
+    --shadow-md:
+      0 4px 12px -2px hsl(262 50% 10% / 0.1), 0 2px 6px -2px hsl(262 50% 10% / 0.06);
+    --shadow-lg:
+      0 12px 24px -4px hsl(262 50% 10% / 0.12), 0 4px 8px -2px hsl(262 50% 10% / 0.08);
+    --shadow-xl:
+      0 24px 48px -8px hsl(262 50% 10% / 0.15), 0 12px 24px -6px hsl(262 50% 10% / 0.1);
+    --shadow-glow-primary:
+      0 0 40px hsl(262 83% 58% / 0.35), 0 0 20px hsl(262 83% 58% / 0.2);
     --shadow-glow-secondary: 0 0 30px hsl(172 66% 45% / 0.3);
     --shadow-glow-success: 0 0 25px hsl(152 76% 42% / 0.35);
     --shadow-glow-warning: 0 0 25px hsl(38 95% 50% / 0.35);
     --shadow-glow-destructive: 0 0 25px hsl(0 84% 60% / 0.35);
     --shadow-glow-live: 0 0 30px hsl(330 90% 60% / 0.45);
-    --shadow-header: 0 1px 3px hsl(262 25% 12% / 0.08), 0 4px 12px hsl(262 25% 12% / 0.04);
+    --shadow-header:
+      0 1px 3px hsl(262 25% 12% / 0.08), 0 4px 12px hsl(262 25% 12% / 0.04);
 
     /* ===== GRADIENTS - Bold & Expressive ===== */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(280 100% 65%), hsl(310 90% 60%));
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(262 83% 58%),
+      hsl(280 100% 65%),
+      hsl(310 90% 60%)
+    );
     --gradient-secondary: linear-gradient(135deg, hsl(172 66% 45%), hsl(185 90% 48%));
     --gradient-success: linear-gradient(135deg, hsl(152 76% 42%), hsl(165 80% 50%));
-    --gradient-xp: linear-gradient(90deg, hsl(262 90% 65%), hsl(280 100% 70%), hsl(310 90% 60%));
+    --gradient-xp: linear-gradient(
+      90deg,
+      hsl(262 90% 65%),
+      hsl(280 100% 70%),
+      hsl(310 90% 60%)
+    );
     --gradient-gold: linear-gradient(135deg, hsl(45 100% 50%), hsl(38 100% 55%));
     --gradient-surface: linear-gradient(180deg, hsl(220 25% 98%), hsl(220 20% 96%));
-    --gradient-divider: linear-gradient(90deg, transparent, hsl(262 30% 80% / 0.4), transparent);
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58% / 0.1), hsl(185 90% 48% / 0.08), hsl(280 100% 65% / 0.05));
-    --gradient-mesh: radial-gradient(ellipse at 20% 0%, hsl(262 83% 58% / 0.15), transparent 50%), 
-                     radial-gradient(ellipse at 80% 100%, hsl(185 90% 48% / 0.1), transparent 50%);
+    --gradient-divider: linear-gradient(
+      90deg,
+      transparent,
+      hsl(262 30% 80% / 0.4),
+      transparent
+    );
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(262 83% 58% / 0.1),
+      hsl(185 90% 48% / 0.08),
+      hsl(280 100% 65% / 0.05)
+    );
+    --gradient-mesh:
+      radial-gradient(ellipse at 20% 0%, hsl(262 83% 58% / 0.15), transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(185 90% 48% / 0.1), transparent 50%);
 
     /* ===== RACE ARENA - Track tokens (light) ===== */
     --race-grass: 110 32% 48%;
@@ -170,7 +198,8 @@
 
     --font-serif: 'Georgia', 'Times New Roman', serif;
     --shadow-2xs: 0 1px 2px 0 hsl(262 50% 10% / 0.04);
-    --shadow: 0 2px 8px -2px hsl(262 50% 10% / 0.1), 0 1px 3px -1px hsl(262 50% 10% / 0.06);
+    --shadow:
+      0 2px 8px -2px hsl(262 50% 10% / 0.1), 0 1px 3px -1px hsl(262 50% 10% / 0.06);
     --shadow-2xl: 0 32px 64px -12px hsl(262 50% 10% / 0.2);
     --tracking-normal: 0em;
     --spacing: 0.25rem;
@@ -320,7 +349,8 @@
     --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.35), 0 2px 6px -2px hsl(0 0% 0% / 0.2);
     --shadow-lg: 0 12px 24px -4px hsl(0 0% 0% / 0.4), 0 4px 8px -2px hsl(0 0% 0% / 0.25);
     --shadow-xl: 0 24px 48px -8px hsl(0 0% 0% / 0.5), 0 12px 24px -6px hsl(0 0% 0% / 0.3);
-    --shadow-glow-primary: 0 0 50px hsl(262 90% 65% / 0.4), 0 0 25px hsl(262 90% 65% / 0.25);
+    --shadow-glow-primary:
+      0 0 50px hsl(262 90% 65% / 0.4), 0 0 25px hsl(262 90% 65% / 0.25);
     --shadow-glow-secondary: 0 0 40px hsl(172 80% 50% / 0.35);
     --shadow-glow-success: 0 0 35px hsl(152 85% 48% / 0.4);
     --shadow-glow-warning: 0 0 35px hsl(38 100% 55% / 0.4);
@@ -329,18 +359,39 @@
     --shadow-header: 0 1px 0 hsl(262 40% 25% / 0.3), 0 4px 20px hsl(0 0% 0% / 0.4);
 
     /* ===== GRADIENTS ===== */
-    --gradient-primary: linear-gradient(135deg, hsl(262 90% 65%), hsl(280 100% 70%), hsl(310 95% 65%));
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(262 90% 65%),
+      hsl(280 100% 70%),
+      hsl(310 95% 65%)
+    );
     --gradient-secondary: linear-gradient(135deg, hsl(172 80% 50%), hsl(185 100% 55%));
     --gradient-success: linear-gradient(135deg, hsl(152 85% 48%), hsl(165 90% 55%));
     --gradient-warning: linear-gradient(135deg, hsl(38 100% 55%), hsl(45 100% 60%));
-    --gradient-xp: linear-gradient(90deg, hsl(262 100% 70%), hsl(280 100% 75%), hsl(310 95% 65%));
+    --gradient-xp: linear-gradient(
+      90deg,
+      hsl(262 100% 70%),
+      hsl(280 100% 75%),
+      hsl(310 95% 65%)
+    );
     --gradient-gold: linear-gradient(135deg, hsl(45 100% 55%), hsl(38 100% 60%));
     --gradient-surface: linear-gradient(180deg, hsl(230 20% 11%), hsl(230 25% 7%));
-    --gradient-divider: linear-gradient(90deg, transparent, hsl(262 50% 40% / 0.3), transparent);
-    --gradient-hero: linear-gradient(135deg, hsl(262 90% 65% / 0.15), hsl(185 100% 50% / 0.1), hsl(280 100% 70% / 0.08));
-    --gradient-mesh: radial-gradient(ellipse at 20% 0%, hsl(262 90% 65% / 0.2), transparent 50%), 
-                     radial-gradient(ellipse at 80% 100%, hsl(185 100% 50% / 0.15), transparent 50%);
-    
+    --gradient-divider: linear-gradient(
+      90deg,
+      transparent,
+      hsl(262 50% 40% / 0.3),
+      transparent
+    );
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(262 90% 65% / 0.15),
+      hsl(185 100% 50% / 0.1),
+      hsl(280 100% 70% / 0.08)
+    );
+    --gradient-mesh:
+      radial-gradient(ellipse at 20% 0%, hsl(262 90% 65% / 0.2), transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(185 100% 50% / 0.15), transparent 50%);
+
     --sidebar: 230 25% 10%;
     --shadow-2xs: 0 1px 2px 0 hsl(0 0% 0% / 0.15);
     --shadow: 0 2px 8px -2px hsl(0 0% 0% / 0.3), 0 1px 3px -1px hsl(0 0% 0% / 0.2);
@@ -412,7 +463,9 @@
   textarea:focus-visible,
   select:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.25), 0 0 0 4px hsl(var(--primary) / 0.1);
+    box-shadow:
+      0 0 0 2px hsl(var(--primary) / 0.25),
+      0 0 0 4px hsl(var(--primary) / 0.1);
   }
 
   /* Skip focus styles for mouse users */
@@ -444,7 +497,9 @@
   *,
   *::before,
   *::after {
-    transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity, transform, filter;
+    transition-property:
+      background-color, border-color, color, fill, stroke, box-shadow, opacity, transform,
+      filter;
     transition-duration: 250ms;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -454,7 +509,7 @@
   input,
   select,
   textarea,
-  [role="button"],
+  [role='button'],
   .interactive {
     transition-duration: 200ms;
     @apply active:scale-[0.96] transition-transform;
@@ -501,7 +556,9 @@
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
     /* Thin scrollbar */
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border)) transparent;
@@ -535,7 +592,11 @@
    */
 
   /* Display font for headers */
-  h1, h2, h3, h4, .font-display {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
     font-family: var(--font-display);
   }
 
@@ -640,16 +701,16 @@
   /* Focus states */
   :focus-visible {
     @apply outline-none;
-    box-shadow: 
+    box-shadow:
       0 0 0 2px hsl(var(--background)),
       0 0 0 4px hsl(var(--ring)),
       0 0 16px hsl(var(--primary) / 0.2);
   }
 
   button:focus-visible,
-  [role="button"]:focus-visible {
+  [role='button']:focus-visible {
     @apply outline-none;
-    box-shadow: 
+    box-shadow:
       0 0 0 2px hsl(var(--background)),
       0 0 0 4px hsl(var(--primary)),
       0 0 20px hsl(var(--primary) / 0.3);
@@ -659,14 +720,14 @@
   textarea:focus-visible,
   select:focus-visible {
     @apply outline-none border-primary;
-    box-shadow: 
+    box-shadow:
       0 0 0 3px hsl(var(--primary) / 0.1),
       0 0 12px hsl(var(--primary) / 0.15);
   }
 
   a:focus-visible {
     @apply outline-none rounded-sm;
-    box-shadow: 
+    box-shadow:
       0 0 0 2px hsl(var(--background)),
       0 0 0 4px hsl(var(--primary) / 0.5);
   }
@@ -701,11 +762,13 @@
   .hover-lift:hover {
     border-color: hsl(var(--primary) / 0.15);
   }
-  
+
   /* Dark mode: enhanced glow on hover-lift cards */
   .dark .hover-lift:hover {
     border-color: hsl(var(--primary) / 0.25);
-    box-shadow: var(--shadow-lg), 0 0 20px hsl(var(--primary) / 0.08);
+    box-shadow:
+      var(--shadow-lg),
+      0 0 20px hsl(var(--primary) / 0.08);
   }
 
   .hover-lift-sm {
@@ -715,9 +778,11 @@
   .hover-lift-lg {
     @apply transition-all duration-200 hover:-translate-y-2 hover:shadow-xl cursor-pointer;
   }
-  
+
   .dark .hover-lift-lg:hover {
-    box-shadow: var(--shadow-xl), 0 0 30px hsl(var(--primary) / 0.1);
+    box-shadow:
+      var(--shadow-xl),
+      0 0 30px hsl(var(--primary) / 0.1);
   }
 
   /* Scale Effects */
@@ -766,7 +831,9 @@
     @apply transition-shadow duration-300;
   }
   .hover-glow-gold:hover {
-    box-shadow: 0 0 20px hsl(var(--rank-gold) / 0.5), 0 0 40px hsl(var(--rank-gold) / 0.25);
+    box-shadow:
+      0 0 20px hsl(var(--rank-gold) / 0.5),
+      0 0 40px hsl(var(--rank-gold) / 0.25);
   }
 
   /* Press Effects */
@@ -856,7 +923,9 @@
   }
 
   .dark .card-glass-premium:hover {
-    box-shadow: 0 0 32px hsl(var(--primary) / 0.15), 0 0 12px hsl(var(--primary) / 0.08);
+    box-shadow:
+      0 0 32px hsl(var(--primary) / 0.15),
+      0 0 12px hsl(var(--primary) / 0.08);
   }
 
   /* Glass Morphism */
@@ -976,7 +1045,9 @@
       transparent 60%,
       hsl(var(--secondary) / 0.15) 100%
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
@@ -1176,7 +1247,8 @@
       transform: scale(1);
       opacity: 1;
     }
-    75%, 100% {
+    75%,
+    100% {
       transform: scale(2);
       opacity: 0;
     }
@@ -1212,7 +1284,9 @@
   /* ===== MODERN CARD VARIANTS ===== */
   .card-modern {
     @apply relative rounded-2xl border border-border/40 bg-card p-6 transition-all duration-300;
-    box-shadow: 0 4px 6px -1px hsl(0 0% 0% / 0.05), 0 2px 4px -2px hsl(0 0% 0% / 0.05);
+    box-shadow:
+      0 4px 6px -1px hsl(0 0% 0% / 0.05),
+      0 2px 4px -2px hsl(0 0% 0% / 0.05);
   }
 
   .card-modern:hover {
@@ -1233,7 +1307,11 @@
 
   /* ===== GRADIENT BACKGROUNDS ===== */
   .bg-gradient-subtle {
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.3) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--muted) / 0.3) 100%
+    );
   }
 
   .bg-gradient-primary {
@@ -1267,8 +1345,13 @@
   }
 
   @keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 
   /* ===== ANIMATED BORDER ===== */
@@ -1279,7 +1362,12 @@
   .border-animated::before {
     content: '';
     @apply absolute inset-0 rounded-xl;
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary)));
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)),
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
     background-size: 200% 100%;
     animation: border-slide 3s linear infinite;
     z-index: -1;
@@ -1287,8 +1375,12 @@
   }
 
   @keyframes border-slide {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
   }
 
   /* ===== ICON CONTAINERS ===== */
@@ -1396,8 +1488,12 @@
   }
 
   @keyframes progress-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 
   /* ===== DIVIDERS ===== */
@@ -1453,14 +1549,18 @@
 
   /* ===== GRID PATTERNS ===== */
   .grid-pattern {
-    background-image: 
+    background-image:
       linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
       linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
   .dot-pattern {
-    background-image: radial-gradient(circle, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-image: radial-gradient(
+      circle,
+      hsl(var(--border) / 0.4) 1px,
+      transparent 1px
+    );
     background-size: 16px 16px;
   }
 
@@ -1481,14 +1581,30 @@
   }
 
   /* ===== STAGGER ANIMATION DELAYS ===== */
-  .stagger-1 { animation-delay: 50ms; }
-  .stagger-2 { animation-delay: 100ms; }
-  .stagger-3 { animation-delay: 150ms; }
-  .stagger-4 { animation-delay: 200ms; }
-  .stagger-5 { animation-delay: 250ms; }
-  .stagger-6 { animation-delay: 300ms; }
-  .stagger-7 { animation-delay: 350ms; }
-  .stagger-8 { animation-delay: 400ms; }
+  .stagger-1 {
+    animation-delay: 50ms;
+  }
+  .stagger-2 {
+    animation-delay: 100ms;
+  }
+  .stagger-3 {
+    animation-delay: 150ms;
+  }
+  .stagger-4 {
+    animation-delay: 200ms;
+  }
+  .stagger-5 {
+    animation-delay: 250ms;
+  }
+  .stagger-6 {
+    animation-delay: 300ms;
+  }
+  .stagger-7 {
+    animation-delay: 350ms;
+  }
+  .stagger-8 {
+    animation-delay: 400ms;
+  }
 
   /* ===== SKELETON ENHANCED ===== */
   .skeleton-pulse {
@@ -1517,7 +1633,7 @@
   }
 
   .focus-ring:focus-visible {
-    box-shadow: 
+    box-shadow:
       0 0 0 2px hsl(var(--background)),
       0 0 0 4px hsl(var(--primary)),
       0 0 16px hsl(var(--primary) / 0.25);
@@ -1626,7 +1742,7 @@
     .mobile-only {
       display: block !important;
     }
-    
+
     .desktop-only {
       display: none !important;
     }
@@ -1647,7 +1763,7 @@
     .mobile-only {
       display: none !important;
     }
-    
+
     .desktop-only {
       display: block !important;
     }
@@ -1690,7 +1806,7 @@
     display: none !important;
   }
 
-  .focus-hide-sidebar .md\:block[aria-label="Navegação principal"] {
+  .focus-hide-sidebar .md\:block[aria-label='Navegação principal'] {
     display: none !important;
   }
 
@@ -1763,12 +1879,14 @@
   .gradient-border {
     @apply relative;
   }
-  
+
   .gradient-border::before {
     content: '';
     @apply absolute inset-0 rounded-[inherit] p-[1px];
     background: var(--gradient-primary);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0.5;
@@ -1781,14 +1899,16 @@
 
   /* Neon Glow Text */
   .text-glow {
-    text-shadow: 0 0 10px hsl(var(--primary) / 0.5),
-                 0 0 20px hsl(var(--primary) / 0.3),
-                 0 0 40px hsl(var(--primary) / 0.2);
+    text-shadow:
+      0 0 10px hsl(var(--primary) / 0.5),
+      0 0 20px hsl(var(--primary) / 0.3),
+      0 0 40px hsl(var(--primary) / 0.2);
   }
 
   .text-glow-secondary {
-    text-shadow: 0 0 10px hsl(var(--secondary) / 0.5),
-                 0 0 20px hsl(var(--secondary) / 0.3);
+    text-shadow:
+      0 0 10px hsl(var(--secondary) / 0.5),
+      0 0 20px hsl(var(--secondary) / 0.3);
   }
 
   /* Premium Card with Gradient Shine */
@@ -1875,7 +1995,11 @@
   /* Tag/Badge Premium */
   .tag-premium {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.08));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.15),
+      hsl(var(--primary) / 0.08)
+    );
     color: hsl(var(--primary));
     border: 1px solid hsl(var(--primary) / 0.25);
   }
@@ -1909,7 +2033,7 @@
   .btn-premium::after {
     content: '';
     @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(rgba(255,255,255,0.1), transparent);
+    background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
   }
 
   .btn-premium:hover::after {
@@ -1925,9 +2049,10 @@
   /* Focus Ring Premium */
   .focus-ring-premium:focus-visible {
     @apply outline-none;
-    box-shadow: 0 0 0 2px hsl(var(--background)),
-                0 0 0 4px hsl(var(--primary)),
-                0 0 20px hsl(var(--primary) / 0.3);
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--primary)),
+      0 0 20px hsl(var(--primary) / 0.3);
   }
 
   /* ===== Custom Scrollbar — Premium Thin ===== */
@@ -1971,7 +2096,7 @@
 
   button:focus-visible,
   a:focus-visible,
-  [role="button"]:focus-visible,
+  [role='button']:focus-visible,
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
@@ -1988,251 +2113,569 @@
 
 /* ===== RACE ARENA: helicóptero de transmissão ===== */
 @keyframes race-heli-orbit {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes race-heli-rotor {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  [style*="race-heli-orbit"], [style*="race-heli-rotor"] {
+  [style*='race-heli-orbit'],
+  [style*='race-heli-rotor'] {
     animation: none !important;
   }
 }
 /* ===== RACE ARENA: cinematic intro + DRS pulse ===== */
 @keyframes race-cinematic-intro {
-  0%   { transform: scale(1.8); opacity: 0; filter: blur(6px); }
-  60%  { opacity: 1; filter: blur(0); }
-  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+  0% {
+    transform: scale(1.8);
+    opacity: 0;
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
 }
 @keyframes race-drs-pulse {
-  0%, 100% { opacity: 0.45; }
-  50%      { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 @keyframes race-sector-pop {
-  0%   { transform: scale(0.6) translateY(8px); opacity: 0; }
-  30%  { transform: scale(1.1) translateY(0); opacity: 1; }
-  80%  { transform: scale(1) translateY(-4px); opacity: 1; }
-  100% { transform: scale(0.95) translateY(-10px); opacity: 0; }
+  0% {
+    transform: scale(0.6) translateY(8px);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.1) translateY(0);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1) translateY(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+  }
 }
 /* ===== Cycle 29-34 ===== */
 @keyframes race-checkered-flag {
-  0%   { transform: translateX(120%) rotate(2deg); opacity: 0; }
-  18%  { transform: translateX(0%) rotate(-1deg); opacity: 1; }
-  35%  { transform: translateX(-2%) rotate(1.5deg); opacity: 1; }
-  55%  { transform: translateX(1%) rotate(-1deg); opacity: 1; }
-  78%  { transform: translateX(0%) rotate(0deg); opacity: 1; }
-  100% { transform: translateX(110%) rotate(2deg); opacity: 0; }
+  0% {
+    transform: translateX(120%) rotate(2deg);
+    opacity: 0;
+  }
+  18% {
+    transform: translateX(0%) rotate(-1deg);
+    opacity: 1;
+  }
+  35% {
+    transform: translateX(-2%) rotate(1.5deg);
+    opacity: 1;
+  }
+  55% {
+    transform: translateX(1%) rotate(-1deg);
+    opacity: 1;
+  }
+  78% {
+    transform: translateX(0%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(110%) rotate(2deg);
+    opacity: 0;
+  }
 }
 @keyframes race-replay-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.55), inset 0 0 0 2px hsl(var(--destructive) / 0.6); }
-  50%      { box-shadow: 0 0 32px 8px hsl(var(--destructive) / 0.25), inset 0 0 0 2px hsl(var(--destructive) / 1); }
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 hsl(var(--destructive) / 0.55),
+      inset 0 0 0 2px hsl(var(--destructive) / 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 32px 8px hsl(var(--destructive) / 0.25),
+      inset 0 0 0 2px hsl(var(--destructive) / 1);
+  }
 }
 @keyframes race-position-bounce {
-  0%   { transform: scale(1); }
-  35%  { transform: scale(1.45); }
-  70%  { transform: scale(0.92); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.45);
+  }
+  70% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 /* ===== Cycle 35-40: start lights + fireworks ===== */
 @keyframes race-start-light-on {
-  0%   { transform: scale(0.7); filter: brightness(0.5); }
-  60%  { transform: scale(1.18); filter: brightness(1.4); }
-  100% { transform: scale(1); filter: brightness(1); }
+  0% {
+    transform: scale(0.7);
+    filter: brightness(0.5);
+  }
+  60% {
+    transform: scale(1.18);
+    filter: brightness(1.4);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
 }
 @keyframes race-firework-burst {
-  0%   { transform: scale(0); opacity: 1; }
-  60%  { opacity: 1; }
-  100% { transform: scale(3); opacity: 0; }
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
 }
 /* ===== Cycle 41-46: yellow flag flash + heat haze pulse ===== */
 @keyframes race-yellow-flag-flash {
-  0%, 100% { box-shadow: inset 0 0 0 0 hsl(45 95% 55% / 0); filter: brightness(1); }
-  50%      { box-shadow: inset 0 0 0 2px hsl(45 95% 55% / 0.9); filter: brightness(1.18); }
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 0 hsl(45 95% 55% / 0);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: inset 0 0 0 2px hsl(45 95% 55% / 0.9);
+    filter: brightness(1.18);
+  }
 }
 @keyframes race-track-yellow-overlay {
-  0%, 100% { opacity: 0.10; }
-  50%      { opacity: 0.22; }
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.22;
+  }
 }
 
 /* ===== Cycle 47-52: marshal flags + la ola + fastest sector + cinematic zoom ===== */
 @keyframes race-marshal-flag-wave {
-  0%, 100% { transform: rotate(-6deg) scaleX(1); }
-  50%      { transform: rotate(8deg)  scaleX(0.92); }
+  0%,
+  100% {
+    transform: rotate(-6deg) scaleX(1);
+  }
+  50% {
+    transform: rotate(8deg) scaleX(0.92);
+  }
 }
 @keyframes race-la-ola-wave {
-  0%   { transform: translateY(0)    scaleY(1);    opacity: 0.85; }
-  35%  { transform: translateY(-3px) scaleY(1.35); opacity: 1; }
-  70%  { transform: translateY(-1px) scaleY(1.1);  opacity: 0.95; }
-  100% { transform: translateY(0)    scaleY(1);    opacity: 0.85; }
+  0% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0.85;
+  }
+  35% {
+    transform: translateY(-3px) scaleY(1.35);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(-1px) scaleY(1.1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0.85;
+  }
 }
 @keyframes race-fastest-sector-flash {
-  0%, 100% { background-color: hsl(var(--background) / 0.78); box-shadow: 0 0 0 0 hsl(271 91% 55% / 0); }
-  50%      { background-color: hsl(271 91% 55% / 0.32);        box-shadow: 0 0 14px 2px hsl(271 91% 55% / 0.65); }
+  0%,
+  100% {
+    background-color: hsl(var(--background) / 0.78);
+    box-shadow: 0 0 0 0 hsl(271 91% 55% / 0);
+  }
+  50% {
+    background-color: hsl(271 91% 55% / 0.32);
+    box-shadow: 0 0 14px 2px hsl(271 91% 55% / 0.65);
+  }
 }
 @keyframes race-cinematic-zoom {
-  0%   { transform: scale(1);    filter: brightness(1)    saturate(1); }
-  20%  { transform: scale(1.04); filter: brightness(1.08) saturate(1.12); }
-  80%  { transform: scale(1.04); filter: brightness(1.08) saturate(1.12); }
-  100% { transform: scale(1);    filter: brightness(1)    saturate(1); }
+  0% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+  20% {
+    transform: scale(1.04);
+    filter: brightness(1.08) saturate(1.12);
+  }
+  80% {
+    transform: scale(1.04);
+    filter: brightness(1.08) saturate(1.12);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
 }
 
 /* ===== Cycle 53-58: ambient broadcast life ===== */
 @keyframes race-helicopter-fly {
-  0%   { transform: translateX(-80px); }
-  100% { transform: translateX(680px); }
+  0% {
+    transform: translateX(-80px);
+  }
+  100% {
+    transform: translateX(680px);
+  }
 }
 @keyframes race-helicopter-fly-reverse {
-  0%   { transform: translateX(680px) scaleX(-1); }
-  100% { transform: translateX(-80px) scaleX(-1); }
+  0% {
+    transform: translateX(680px) scaleX(-1);
+  }
+  100% {
+    transform: translateX(-80px) scaleX(-1);
+  }
 }
 @keyframes race-helicopter-cross-vertical {
-  0%   { transform: translate(300px, -80px) rotate(90deg); }
-  100% { transform: translate(300px, 1400px) rotate(90deg); }
+  0% {
+    transform: translate(300px, -80px) rotate(90deg);
+  }
+  100% {
+    transform: translate(300px, 1400px) rotate(90deg);
+  }
 }
 @keyframes race-drone-orbit {
-  0%   { transform: rotate(0deg)   translateX(28px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(28px) rotate(-360deg); }
+  0% {
+    transform: rotate(0deg) translateX(28px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(28px) rotate(-360deg);
+  }
 }
 @keyframes race-rotor-spin {
-  0%   { transform: scaleX(1); }
-  50%  { transform: scaleX(0.05); }
-  100% { transform: scaleX(1); }
+  0% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.05);
+  }
+  100% {
+    transform: scaleX(1);
+  }
 }
 @keyframes race-led-flicker {
-  0%, 92%, 100% { opacity: 1; }
-  94%           { opacity: 0.55; }
-  96%           { opacity: 1; }
-  98%           { opacity: 0.7; }
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 0.55;
+  }
+  96% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 0.7;
+  }
 }
 @keyframes race-led-blink-rec {
-  0%, 100% { opacity: 0.25; }
-  50%      { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 @keyframes race-bird-fly {
-  0%   { transform: translate(-40px, 0) scale(0.9); opacity: 0; }
-  10%  { opacity: 0.85; }
-  90%  { opacity: 0.85; }
-  100% { transform: translate(680px, 60px) scale(1); opacity: 0; }
+  0% {
+    transform: translate(-40px, 0) scale(0.9);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(680px, 60px) scale(1);
+    opacity: 0;
+  }
 }
 @keyframes race-bird-flap {
-  0%, 100% { transform: scaleY(1); }
-  50%      { transform: scaleY(0.35); }
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.35);
+  }
 }
 @keyframes race-crowd-jump {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-3px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
 }
 
 /* ===== Iteração final: slipstream + exhaust + blimp + rumble strips + grandstand flags ===== */
 @keyframes race-slipstream-pulse {
-  0%, 100% { opacity: 0.15; transform: translateX(0); }
-  50%      { opacity: 0.7;  transform: translateX(-1.5px); }
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(-1.5px);
+  }
 }
 @keyframes race-exhaust-puff {
-  0%   { opacity: 0.5; transform: scale(0.6); }
-  100% { opacity: 0;   transform: scale(1.6) translateX(-3px); }
+  0% {
+    opacity: 0.5;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6) translateX(-3px);
+  }
 }
 @keyframes race-exhaust-flame {
-  0%, 100% { transform: scale(1, 1)    translateX(0); opacity: 0.95; }
-  50%      { transform: scale(1.2, 0.8) translateX(-1px); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(1, 1) translateX(0);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.2, 0.8) translateX(-1px);
+    opacity: 1;
+  }
 }
 @keyframes race-blimp-drift {
-  0%   { transform: translateX(-120px); }
-  100% { transform: translateX(900px); }
+  0% {
+    transform: translateX(-120px);
+  }
+  100% {
+    transform: translateX(900px);
+  }
 }
 @keyframes race-rumble-strip-flow {
-  0%   { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -28; }
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -28;
+  }
 }
 @keyframes race-grandstand-flag-wave {
-  0%, 100% { transform: skewX(-12deg); }
-  50%      { transform: skewX(10deg); }
+  0%,
+  100% {
+    transform: skewX(-12deg);
+  }
+  50% {
+    transform: skewX(10deg);
+  }
 }
 @keyframes race-fan-sign-bob {
-  0%, 100% { transform: translateY(0)   rotate(-4deg); }
-  50%      { transform: translateY(-3px) rotate(6deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(6deg);
+  }
 }
 
 /* ===== HUD wave: ticker, DRS overlay, screen shake ===== */
 @keyframes race-ticker-fade {
-  0%   { opacity: 0; transform: translateY(-6px) scale(0.96); }
-  100% { opacity: 1; transform: translateY(0)    scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 @keyframes race-drs-zone-pulse {
-  0%, 100% { opacity: 0.55; }
-  50%      { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 @keyframes race-screen-shake {
-  0%, 100% { transform: translate(0, 0); }
-  15%      { transform: translate(-2px, 1px); }
-  30%      { transform: translate(2px, -1px); }
-  45%      { transform: translate(-1px, -2px); }
-  60%      { transform: translate(1px, 2px); }
-  80%      { transform: translate(-1px, 1px); }
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  15% {
+    transform: translate(-2px, 1px);
+  }
+  30% {
+    transform: translate(2px, -1px);
+  }
+  45% {
+    transform: translate(-1px, -2px);
+  }
+  60% {
+    transform: translate(1px, 2px);
+  }
+  80% {
+    transform: translate(-1px, 1px);
+  }
 }
 .race-screen-shake {
   animation: race-screen-shake 0.28s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .race-cinematic-intro { animation: none !important; }
-  .race-drs-pulse { animation: none !important; }
-  .race-sector-pop { animation: none !important; }
-  .race-checkered-flag { animation: none !important; }
-  .race-replay-pulse { animation: none !important; }
-  .race-position-bounce { animation: none !important; }
-  .race-start-light-on { animation: none !important; }
-  .race-firework-burst { animation: none !important; }
-  .race-yellow-flag-flash { animation: none !important; }
-  .race-track-yellow-overlay { animation: none !important; }
-  .race-marshal-flag-wave { animation: none !important; }
-  .race-la-ola-wave { animation: none !important; }
-  .race-fastest-sector-flash { animation: none !important; }
-  .race-cinematic-zoom { animation: none !important; }
-  .race-screen-shake { animation: none !important; }
+  .race-cinematic-intro {
+    animation: none !important;
+  }
+  .race-drs-pulse {
+    animation: none !important;
+  }
+  .race-sector-pop {
+    animation: none !important;
+  }
+  .race-checkered-flag {
+    animation: none !important;
+  }
+  .race-replay-pulse {
+    animation: none !important;
+  }
+  .race-position-bounce {
+    animation: none !important;
+  }
+  .race-start-light-on {
+    animation: none !important;
+  }
+  .race-firework-burst {
+    animation: none !important;
+  }
+  .race-yellow-flag-flash {
+    animation: none !important;
+  }
+  .race-track-yellow-overlay {
+    animation: none !important;
+  }
+  .race-marshal-flag-wave {
+    animation: none !important;
+  }
+  .race-la-ola-wave {
+    animation: none !important;
+  }
+  .race-fastest-sector-flash {
+    animation: none !important;
+  }
+  .race-cinematic-zoom {
+    animation: none !important;
+  }
+  .race-screen-shake {
+    animation: none !important;
+  }
 }
 
 /* ========== Wave 3: Broadcast / Pit / Rainbow / Fireworks ========== */
 @keyframes race-broadcast-slide-in {
-  0%   { transform: translateX(-30px); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+  0% {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 @keyframes race-pit-blink {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.25; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
 }
 @keyframes race-rainbow-road {
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 300% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
 }
 @keyframes race-fireworks-burst {
-  0%   { opacity: 0; transform: scale(0.2); }
-  30%  { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 0; transform: scale(1.3); }
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .race-pit-blink,
-  [style*="race-pit-blink"],
-  [style*="race-rainbow-road"],
-  [style*="race-fireworks-burst"],
-  [style*="race-broadcast-slide-in"] { animation: none !important; }
+  [style*='race-pit-blink'],
+  [style*='race-rainbow-road'],
+  [style*='race-fireworks-burst'],
+  [style*='race-broadcast-slide-in'] {
+    animation: none !important;
+  }
 }
 
 /* Hide Lovable badge */
 #lovable-badge,
 #lovable-badge-v2,
-[id^="lovable-badge"],
-a[href*="lovable.dev"][target="_blank"] {
+[id^='lovable-badge'],
+a[href*='lovable.dev'][target='_blank'] {
   display: none !important;
 }
 
 @layer utilities {
   @keyframes progress {
-    0% { transform: translateX(-100%); }
-    50% { transform: translateX(-20%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(-20%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
   .animate-progress {
     animation: progress 2s infinite linear;
@@ -2248,12 +2691,15 @@ a[href*="lovable.dev"][target="_blank"] {
     background: white !important;
     color: black !important;
   }
-  .glass, .backdrop-blur-md, .backdrop-blur-xl {
+  .glass,
+  .backdrop-blur-md,
+  .backdrop-blur-xl {
     backdrop-filter: none !important;
     background: white !important;
     border: 1px solid #ddd !important;
   }
-  button, .Button {
+  button,
+  .Button {
     display: none !important;
   }
   .Card {
@@ -2261,7 +2707,11 @@ a[href*="lovable.dev"][target="_blank"] {
     box-shadow: none !important;
     border: 1px solid #eee !important;
   }
-  h1, h2, h3, h4, .font-black {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-black {
     color: black !important;
   }
   /* Force grid layout in print if needed */
@@ -2294,4 +2744,3 @@ a[href*="lovable.dev"][target="_blank"] {
     padding: 24px;
   }
 }
-

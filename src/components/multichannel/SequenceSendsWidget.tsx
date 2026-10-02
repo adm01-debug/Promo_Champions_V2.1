@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Send } from "lucide-react";
-import { useOutboundMessagesByDay } from "@/hooks/multichannel/useOutboundMessages";
-import { CHANNEL_LABEL } from "./multichannelHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Send } from 'lucide-react';
+import { useOutboundMessagesByDay } from '@/hooks/multichannel/useOutboundMessages';
+import { CHANNEL_LABEL } from './multichannelHelpers';
 
 export function SequenceSendsWidget() {
   const { data, isLoading } = useOutboundMessagesByDay(7);
@@ -22,7 +22,9 @@ export function SequenceSendsWidget() {
           <div className="grid grid-cols-2 gap-3">
             {Object.entries(data.byChannel).map(([ch, stats]) => (
               <div key={ch} className="border rounded-lg p-3">
-                <p className="text-xs text-muted-foreground">{CHANNEL_LABEL[ch as "whatsapp" | "sms"] ?? ch}</p>
+                <p className="text-xs text-muted-foreground">
+                  {CHANNEL_LABEL[ch as 'whatsapp' | 'sms'] ?? ch}
+                </p>
                 <p className="text-2xl font-bold">{stats.total}</p>
                 <p className="text-xs text-muted-foreground">
                   {stats.sent} enviadas · {stats.failed} falhas
@@ -31,7 +33,9 @@ export function SequenceSendsWidget() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">Nenhum envio nos últimos 7 dias.</p>
+          <p className="text-sm text-muted-foreground">
+            Nenhum envio nos últimos 7 dias.
+          </p>
         )}
       </CardContent>
     </Card>
