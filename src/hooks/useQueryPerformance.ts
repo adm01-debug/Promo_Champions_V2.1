@@ -96,7 +96,11 @@ function addMetric(metric: QueryMetrics) {
     metric.duration > SLOW_QUERY_THRESHOLD_MS &&
     metric.duration <= alertConfig.threshold
   ) {
-    log.debug('slow_query', { queryKey: metric.queryKey, duration: metric.duration, metric });
+    log.debug('slow_query', {
+      queryKey: metric.queryKey,
+      duration: metric.duration,
+      metric,
+    });
   }
 }
 

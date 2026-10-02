@@ -142,7 +142,9 @@ export function TodaysCadenceTasks() {
         });
       }
     } catch (err) {
-      log.error('outcome_rules_failed', { error: err instanceof Error ? err.message : String(err) });
+      log.error('outcome_rules_failed', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
@@ -190,7 +192,9 @@ export function TodaysCadenceTasks() {
             ]);
           }
         } catch (err) {
-          log.error('call_result_save_failed', { error: err instanceof Error ? err.message : String(err) });
+          log.error('call_result_save_failed', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
 

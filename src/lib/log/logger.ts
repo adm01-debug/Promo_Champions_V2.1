@@ -32,7 +32,12 @@ export interface ScopedLogger {
   error: (msg: string, extra?: Record<string, unknown>) => void;
 }
 
-function emit(scope: string, level: LogLevel, msg: string, extra?: Record<string, unknown>): void {
+function emit(
+  scope: string,
+  level: LogLevel,
+  msg: string,
+  extra?: Record<string, unknown>
+): void {
   const entry: LogEntry = {
     ts: new Date().toISOString(),
     level,
