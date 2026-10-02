@@ -1,10 +1,6 @@
 {
   "geradoEm": "2026-10-01T23:41:45.063Z",
-  "flags": [
-    "noUncheckedIndexedAccess",
-    "noUnusedLocals",
-    "noUnusedParameters"
-  ],
+  "flags": ["noUncheckedIndexedAccess", "noUnusedLocals", "noUnusedParameters"],
   "tsconfig": "tsconfig.strict.json",
   "total": 882,
   "byFileAndCode": {

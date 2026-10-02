@@ -19,9 +19,9 @@ interface WebAuthnCredential {
   last_used_at: string | null;
 }
 
-// A Edge Function correspondente está desativada até a validação
-// criptográfica completa de WebAuthn ser reimplementada.
-const PASSKEYS_AVAILABLE = false;
+// Kill switch: a Edge Function `webauthn` faz verificação criptográfica real
+// (SimpleWebAuthn). Se ela precisar ser desligada de novo, volte para false.
+const PASSKEYS_AVAILABLE = true;
 
 export function useWebAuthn() {
   const { user } = useAuth();
@@ -76,7 +76,7 @@ export function useWebAuthn() {
           publicKey: {
             ...options,
             challenge: base64urlToBuffer(options.challenge),
-            user: { ...options.user, id: new TextEncoder().encode(options.user.id) },
+            user: { ...options.user, id: base64urlToBuffer(options.user.id) },
             excludeCredentials: options.excludeCredentials?.map(
               (c: { id: string; type: string }) => ({ ...c, id: base64urlToBuffer(c.id) })
             ),

@@ -2,6 +2,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getServiceClient, getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 const SYSTEM_PROMPT = `Você é um analista B2B sênior. Extraia stakeholders mencionados na transcrição de uma call de vendas.
 Retorne APENAS via tool call. Para cada pessoa identificada com nome próprio, classifique:
@@ -23,6 +24,10 @@ interface Stakeholder {
 Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: 'extract-committee-from-call', limit: 10, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const caller = await getUserClient(req);
