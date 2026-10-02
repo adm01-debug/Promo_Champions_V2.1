@@ -21,7 +21,8 @@ export interface SelectedOrder {
   [key: string]: unknown;
 }
 
-export const formatCurrency = (value: number): string => __formatBRL(value, { decimals: 2 });
+export const formatCurrency = (value: number): string =>
+  __formatBRL(value, { decimals: 2 });
 export function extractCategories(orders: Client360Data['orders'] | undefined): string[] {
   if (!orders) return [];
   const cats = new Set<string>();

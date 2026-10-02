@@ -109,7 +109,7 @@ export const RecentDeals = React.memo(() => {
                   </p>
                   <div className="flex items-center gap-3 mt-0.5">
                     <p className="text-xs font-mono font-black text-foreground tabular-nums">
-                      {formatBRL((deal.amount || 0))}
+                      {formatBRL(deal.amount || 0)}
                     </p>
                     <div className="h-2 w-[1px] bg-white/10" />
                     <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-tighter">

@@ -1,6 +1,6 @@
-import React from "react";
-import { DollarSign, Target, TrendingUp } from "lucide-react";
-import { useCountUp } from "@/hooks/useCountUp";
+import React from 'react';
+import { DollarSign, Target, TrendingUp } from 'lucide-react';
+import { useCountUp } from '@/hooks/useCountUp';
 
 import { formatBRL } from '@/lib/money';
 interface SummaryCardsProps {
@@ -13,13 +13,13 @@ const AnimatedCurrency = React.memo(({ value }: { value: number }) => {
   const animated = useCountUp(value, { duration: 1400 });
   return <>{formatBRL(animated)}</>;
 });
-AnimatedCurrency.displayName = "AnimatedCurrency";
+AnimatedCurrency.displayName = 'AnimatedCurrency';
 
 const AnimatedPercent = React.memo(({ value }: { value: number }) => {
   const animated = useCountUp(value, { duration: 1200, decimals: 1 });
   return <>{animated.toFixed(1)}%</>;
 });
-AnimatedPercent.displayName = "AnimatedPercent";
+AnimatedPercent.displayName = 'AnimatedPercent';
 
 export const SummaryCards = React.memo(function SummaryCards({
   totalSales,
@@ -29,33 +29,33 @@ export const SummaryCards = React.memo(function SummaryCards({
   const cards = [
     {
       icon: DollarSign,
-      label: "Total Vendido",
-      iconBg: "bg-primary/20",
-      iconColor: "text-primary",
+      label: 'Total Vendido',
+      iconBg: 'bg-primary/20',
+      iconColor: 'text-primary',
       content: <AnimatedCurrency value={totalSales} />,
-      delay: "100ms",
+      delay: '100ms',
     },
     {
       icon: Target,
-      label: "Média de Metas",
-      iconBg: "bg-secondary/20",
-      iconColor: "text-secondary",
+      label: 'Média de Metas',
+      iconBg: 'bg-secondary/20',
+      iconColor: 'text-secondary',
       content: <AnimatedPercent value={avgGoalProgress} />,
-      delay: "150ms",
+      delay: '150ms',
     },
     {
       icon: TrendingUp,
-      label: "Comissões Totais",
-      iconBg: "bg-success/20",
-      iconColor: "text-success",
+      label: 'Comissões Totais',
+      iconBg: 'bg-success/20',
+      iconColor: 'text-success',
       content: <AnimatedCurrency value={totalCommissions} />,
-      delay: "200ms",
+      delay: '200ms',
     },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {cards.map((card) => {
+      {cards.map(card => {
         const Icon = card.icon;
         return (
           <div
@@ -64,12 +64,18 @@ export const SummaryCards = React.memo(function SummaryCards({
             style={{ animationDelay: card.delay }}
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className={`p-2.5 rounded-xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}>
+              <div
+                className={`p-2.5 rounded-xl ${card.iconBg} group-hover:scale-110 transition-transform duration-300`}
+              >
                 <Icon className={`h-4.5 w-4.5 ${card.iconColor}`} />
               </div>
-              <span className="text-sm text-muted-foreground font-medium">{card.label}</span>
+              <span className="text-sm text-muted-foreground font-medium">
+                {card.label}
+              </span>
             </div>
-            <p className="text-2xl font-bold tabular-nums tracking-tight">{card.content}</p>
+            <p className="text-2xl font-bold tabular-nums tracking-tight">
+              {card.content}
+            </p>
           </div>
         );
       })}

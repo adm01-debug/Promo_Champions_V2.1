@@ -1,23 +1,38 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { Receipt, RefreshCw, TrendingUp, TrendingDown, User, Building, ShoppingBag } from "lucide-react";
-import { motion } from "framer-motion";
-import { useSalesInsights } from "@/hooks/sales/useSalesInsights";
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import {
+  Receipt,
+  RefreshCw,
+  TrendingUp,
+  TrendingDown,
+  User,
+  Building,
+  ShoppingBag,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useSalesInsights } from '@/hooks/sales/useSalesInsights';
 
 import { formatBRL } from '@/lib/money';
 const ChangeIndicator: FC<{ value: number }> = ({ value }) => {
   if (value === 0) return null;
   const isPositive = value > 0;
   return (
-    <span className={cn(
-      "inline-flex items-center gap-1 text-xs font-semibold",
-      isPositive ? "text-success" : "text-destructive"
-    )}>
-      {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-      {isPositive && "+"}{value.toFixed(1)}%
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 text-xs font-semibold',
+        isPositive ? 'text-success' : 'text-destructive'
+      )}
+    >
+      {isPositive ? (
+        <TrendingUp className="h-3 w-3" />
+      ) : (
+        <TrendingDown className="h-3 w-3" />
+      )}
+      {isPositive && '+'}
+      {value.toFixed(1)}%
     </span>
   );
 };
@@ -27,7 +42,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
 
   if (isLoading) {
     return (
-      <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-6", className)}>
+      <div className={cn('grid grid-cols-1 lg:grid-cols-2 gap-6', className)}>
         {[1, 2].map(i => (
           <Card key={i} className="glass-card">
             <CardContent className="p-6">
@@ -51,7 +66,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
   const topByRepurchase = data?.topByRepurchase || [];
 
   return (
-    <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-6", className)}>
+    <div className={cn('grid grid-cols-1 lg:grid-cols-2 gap-6', className)}>
       {/* Ticket Médio por Cliente */}
       <Card className="glass-card">
         <CardHeader className="pb-3">
@@ -66,7 +81,9 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
           {/* Global KPI */}
           <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 mb-4">
             <div>
-              <p className="text-sm text-muted-foreground font-medium">Ticket Médio Geral</p>
+              <p className="text-sm text-muted-foreground font-medium">
+                Ticket Médio Geral
+              </p>
               <p className="text-2xl font-black gradient-text">{formatBRL(avgTicket)}</p>
             </div>
             <div className="text-right">
@@ -86,13 +103,18 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
                   transition={{ delay: idx * 0.04 }}
                   className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors group"
                 >
-                  <div className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
-                    idx === 0 ? "bg-rank-gold text-rank-gold-foreground" :
-                    idx === 1 ? "bg-rank-silver text-rank-silver-foreground" :
-                    idx === 2 ? "bg-rank-bronze text-rank-bronze-foreground" :
-                    "bg-muted text-muted-foreground"
-                  )}>
+                  <div
+                    className={cn(
+                      'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
+                      idx === 0
+                        ? 'bg-rank-gold text-rank-gold-foreground'
+                        : idx === 1
+                          ? 'bg-rank-silver text-rank-silver-foreground'
+                          : idx === 2
+                            ? 'bg-rank-bronze text-rank-bronze-foreground'
+                            : 'bg-muted text-muted-foreground'
+                    )}
+                  >
                     {idx + 1}
                   </div>
 
@@ -147,11 +169,16 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
           {/* Global KPI */}
           <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-success/10 to-transparent border border-success/20 mb-4">
             <div>
-              <p className="text-sm text-muted-foreground font-medium">Taxa de Recompra Geral</p>
+              <p className="text-sm text-muted-foreground font-medium">
+                Taxa de Recompra Geral
+              </p>
               <div className="flex items-baseline gap-2">
-                <p className="text-2xl font-black text-success">{repurchaseRate.toFixed(1)}%</p>
+                <p className="text-2xl font-black text-success">
+                  {repurchaseRate.toFixed(1)}%
+                </p>
                 <span className="text-xs text-muted-foreground">
-                  ({data?.totalRepurchaseClients || 0} de {data?.totalUniqueClients || 0} clientes)
+                  ({data?.totalRepurchaseClients || 0} de {data?.totalUniqueClients || 0}{' '}
+                  clientes)
                 </span>
               </div>
             </div>
@@ -194,7 +221,9 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
                     <Badge variant="secondary" className="mb-1">
                       {client.purchaseCount} compras
                     </Badge>
-                    <p className="text-xs font-semibold">{formatBRL(client.totalValue)}</p>
+                    <p className="text-xs font-semibold">
+                      {formatBRL(client.totalValue)}
+                    </p>
                   </div>
                 </motion.div>
               ))}

@@ -43,7 +43,7 @@ const RevenueAreaChart = lazy(() => import('@/components/bi/charts/RevenueAreaCh
 const AbcPieChart = lazy(() => import('@/components/bi/charts/AbcPieChart'));
 const SourceBarChart = lazy(() => import('@/components/bi/charts/SourceBarChart'));
 const CohortRetentionHeatmap = lazy(() =>
-  import('@/components/analytics/CohortRetentionHeatmap').then((m) => ({
+  import('@/components/analytics/CohortRetentionHeatmap').then(m => ({
     default: m.CohortRetentionHeatmap,
   }))
 );
@@ -459,9 +459,7 @@ const BIGestor = () => {
                 <ChurnOverdueRankingCard />
                 <MarkupOverviewCard />
                 <CriticalMarkupAlertCard />
-
               </div>
-
 
               <BITopClientsSection className="animate-slide-up" />
               <BISalesInsights className="animate-slide-up" />

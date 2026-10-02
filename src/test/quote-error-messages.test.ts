@@ -18,16 +18,18 @@ describe('parseConvertQuoteError (módulo standalone)', () => {
     'UNKNOWN',
   ];
 
-  it.each(codes.filter((c) => c !== 'UNKNOWN'))(
+  it.each(codes.filter(c => c !== 'UNKNOWN'))(
     'extrai código %s do prefixo padronizado',
-    (code) => {
+    code => {
       expect(parseConvertQuoteError(`[${code}] detalhe qualquer`)).toBe(code);
-    },
+    }
   );
 
   it('normaliza espaços em branco antes do prefixo', () => {
     expect(parseConvertQuoteError('   [FORBIDDEN] com leading spaces')).toBe('FORBIDDEN');
-    expect(parseConvertQuoteError('\n\t[TOTAL_MISMATCH] multi-linha')).toBe('TOTAL_MISMATCH');
+    expect(parseConvertQuoteError('\n\t[TOTAL_MISMATCH] multi-linha')).toBe(
+      'TOTAL_MISMATCH'
+    );
   });
 
   it('devolve UNKNOWN para prefixo inválido ou desconhecido', () => {

@@ -1,18 +1,17 @@
-import { Clock, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useCronJobStats } from "@/hooks/admin/useConnectionMetrics";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-
+import { Clock, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { useCronJobStats } from '@/hooks/admin/useConnectionMetrics';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 function StatusBadge({ status }: { status: string }) {
-  const ok = status === "succeeded";
+  const ok = status === 'succeeded';
   return (
-    <Badge variant={ok ? "outline" : "destructive"} className="gap-1">
+    <Badge variant={ok ? 'outline' : 'destructive'} className="gap-1">
       {ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
       {status}
     </Badge>
@@ -43,7 +42,7 @@ export function CronJobsPanel() {
           disabled={isFetching}
           className="gap-2"
         >
-          <RefreshCw className={cn("h-3.5 w-3.5", isFetching && "animate-spin")} />
+          <RefreshCw className={cn('h-3.5 w-3.5', isFetching && 'animate-spin')} />
           Atualizar
         </Button>
       </CardHeader>
@@ -84,7 +83,7 @@ export function CronJobsPanel() {
                       })}
                     </div>
                     <div className="text-[10px] text-muted-foreground/70 tabular-nums">
-                      {r.duration_ms != null ? `${r.duration_ms} ms` : "—"}
+                      {r.duration_ms != null ? `${r.duration_ms} ms` : '—'}
                     </div>
                   </div>
                 </li>

@@ -1,13 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Settings2, Filter } from "lucide-react";
-import {
-  useRoutingRules,
-  useToggleRoutingRule,
-} from "@/hooks/useLeadRoutingEngine";
-import { formatStrategy, strategyTone } from "./routingHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Settings2, Filter } from 'lucide-react';
+import { useRoutingRules, useToggleRoutingRule } from '@/hooks/useLeadRoutingEngine';
+import { formatStrategy, strategyTone } from './routingHelpers';
 
 import { formatBRL } from '@/lib/money';
 export function RoutingRulesPanel() {
@@ -31,7 +28,7 @@ export function RoutingRulesPanel() {
             <p className="text-sm">Nenhuma regra configurada</p>
           </div>
         ) : (
-          rules.map((rule) => (
+          rules.map(rule => (
             <div
               key={rule.id}
               className="flex items-center justify-between gap-3 rounded-lg border bg-card/50 p-3 hover:bg-card transition-colors"
@@ -42,7 +39,10 @@ export function RoutingRulesPanel() {
                   <Badge variant="outline" className="text-xs">
                     Prioridade {rule.priority}
                   </Badge>
-                  <Badge variant="outline" className={`text-xs ${strategyTone(rule.strategy)}`}>
+                  <Badge
+                    variant="outline"
+                    className={`text-xs ${strategyTone(rule.strategy)}`}
+                  >
                     {formatStrategy(rule.strategy)}
                   </Badge>
                 </div>
@@ -61,7 +61,7 @@ export function RoutingRulesPanel() {
               </div>
               <Switch
                 checked={rule.is_active}
-                onCheckedChange={(v) => toggle.mutate({ id: rule.id, is_active: v })}
+                onCheckedChange={v => toggle.mutate({ id: rule.id, is_active: v })}
                 disabled={toggle.isPending}
               />
             </div>

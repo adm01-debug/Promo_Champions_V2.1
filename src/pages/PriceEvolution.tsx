@@ -282,7 +282,9 @@ const PriceEvolution = () => {
             <motion.div variants={itemVariants}>
               <Card className="glass border-border/40">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-section-title text-sm">Últimas Variações</CardTitle>
+                  <CardTitle className="text-section-title text-sm">
+                    Últimas Variações
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">

@@ -53,9 +53,7 @@ function TvPista({ roleType }: { roleType: RoleType }) {
           <h1 className="text-5xl font-display font-black uppercase tracking-tight leading-none mt-2">
             {roleType === 'closer' ? 'Closers' : 'SDRs'}
           </h1>
-          {season && (
-            <p className="text-sm text-muted-foreground mt-2">{season.name}</p>
-          )}
+          {season && <p className="text-sm text-muted-foreground mt-2">{season.name}</p>}
         </div>
 
         {/* Top 5 podium */}
@@ -114,7 +112,7 @@ export default function RaceArenaTV() {
 
   useEffect(() => {
     const t = window.setInterval(() => {
-      setCurrent((p) => (p === 'closer' ? 'sdr' : 'closer'));
+      setCurrent(p => (p === 'closer' ? 'sdr' : 'closer'));
     }, ROTATION_MS);
     return () => window.clearInterval(t);
   }, []);
@@ -123,7 +121,10 @@ export default function RaceArenaTV() {
     <>
       <Helmet>
         <title>Race Arena TV — Modo Big Screen</title>
-        <meta name="description" content="Modo TV da Race Arena: alterna entre pista de Closers e SDRs em tela cheia, ideal para projeção no escritório." />
+        <meta
+          name="description"
+          content="Modo TV da Race Arena: alterna entre pista de Closers e SDRs em tela cheia, ideal para projeção no escritório."
+        />
       </Helmet>
       <div className="fixed inset-0 bg-background overflow-hidden">
         <AnimatePresence mode="wait">
@@ -131,9 +132,15 @@ export default function RaceArenaTV() {
         </AnimatePresence>
         {/* Indicador de rotação */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-2 rounded-full bg-card/70 backdrop-blur border border-border">
-          <span className={`w-2 h-2 rounded-full transition-colors ${current === 'closer' ? 'bg-primary' : 'bg-muted-foreground/40'}`} />
-          <span className="text-xs font-bold uppercase tracking-wider">{current === 'closer' ? 'Closers' : 'SDRs'}</span>
-          <span className={`w-2 h-2 rounded-full transition-colors ${current === 'sdr' ? 'bg-primary' : 'bg-muted-foreground/40'}`} />
+          <span
+            className={`w-2 h-2 rounded-full transition-colors ${current === 'closer' ? 'bg-primary' : 'bg-muted-foreground/40'}`}
+          />
+          <span className="text-xs font-bold uppercase tracking-wider">
+            {current === 'closer' ? 'Closers' : 'SDRs'}
+          </span>
+          <span
+            className={`w-2 h-2 rounded-full transition-colors ${current === 'sdr' ? 'bg-primary' : 'bg-muted-foreground/40'}`}
+          />
         </div>
       </div>
     </>

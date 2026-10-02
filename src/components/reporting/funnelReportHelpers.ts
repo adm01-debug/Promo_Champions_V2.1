@@ -21,31 +21,36 @@ export interface StageDelta {
 
 export const computeStageDeltas = (
   current: FunnelStageBasic[],
-  previous: FunnelStageBasic[],
+  previous: FunnelStageBasic[]
 ): StageDelta[] => {
-  const prevMap = new Map(previous.map((p) => [p.stage, p]));
-  return current.map((c) => {
+  const prevMap = new Map(previous.map(p => [p.stage, p]));
+  return current.map(c => {
     const p = prevMap.get(c.stage);
     const prevCount = p?.count ?? 0;
     const countDelta = c.count - prevCount;
-    const countDeltaPct = prevCount > 0 ? (countDelta / prevCount) * 100 : c.count > 0 ? 100 : 0;
+    const countDeltaPct =
+      prevCount > 0 ? (countDelta / prevCount) * 100 : c.count > 0 ? 100 : 0;
     return {
       stage: c.stage,
       countDelta,
       countDeltaPct: Math.round(countDeltaPct * 10) / 10,
       valueDelta: c.value - (p?.value ?? 0),
-      conversionDelta: Math.round((c.conversionRate - (p?.conversionRate ?? 0)) * 10) / 10,
+      conversionDelta:
+        Math.round((c.conversionRate - (p?.conversionRate ?? 0)) * 10) / 10,
     };
   });
 };
 
-export const formatDelta = (n: number, type: "pct" | "abs" | "currency" = "abs"): string => {
-  const sign = n > 0 ? "+" : "";
-  if (type === "pct") return `${sign}${n.toFixed(1)}%`;
-  if (type === "currency") {
+export const formatDelta = (
+  n: number,
+  type: 'pct' | 'abs' | 'currency' = 'abs'
+): string => {
+  const sign = n > 0 ? '+' : '';
+  if (type === 'pct') return `${sign}${n.toFixed(1)}%`;
+  if (type === 'currency') {
     return `${sign}${formatBRL(n)}`;
   }
-  return `${sign}${n.toLocaleString("pt-BR")}`;
+  return `${sign}${n.toLocaleString('pt-BR')}`;
 };
 
 /**
@@ -53,7 +58,7 @@ export const formatDelta = (n: number, type: "pct" | "abs" | "currency" = "abs")
  * Uses semantic tokens via hsl(var(--primary)) variations.
  */
 export const getStageColor = (index: number, total: number): string => {
-  if (total <= 1) return "hsl(var(--primary))";
+  if (total <= 1) return 'hsl(var(--primary))';
   // Interpolate alpha/lightness across primary
   const opacity = 1 - (index / total) * 0.45;
   return `hsl(var(--primary) / ${opacity.toFixed(2)})`;

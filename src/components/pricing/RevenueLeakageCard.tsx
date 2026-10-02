@@ -172,9 +172,7 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
           <p className="text-xs text-muted-foreground mt-4 leading-relaxed italic font-medium">
             Receita perdida no período por ineficiências detectadas no pricing. A IA
             projeta recuperação de{' '}
-            <span className="text-success font-bold">
-              {formatBRL((totalLost * 0.42))}
-            </span>{' '}
+            <span className="text-success font-bold">{formatBRL(totalLost * 0.42)}</span>{' '}
             se as recomendações forem aplicadas.
           </p>
 

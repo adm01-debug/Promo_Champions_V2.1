@@ -33,7 +33,7 @@ function generateLocalSummary(deal: {
     (Date.now() - new Date(deal.created_at).getTime()) / 86400000
   );
 
-  const summary = `Deal com ${deal.client_name} de ${formatBRL((deal.amount ?? 0))} está em "${deal.status}" há ${daysSince} dia(s). Total no funil: ${totalDays} dia(s).`;
+  const summary = `Deal com ${deal.client_name} de ${formatBRL(deal.amount ?? 0)} está em "${deal.status}" há ${daysSince} dia(s). Total no funil: ${totalDays} dia(s).`;
 
   const next_steps: string[] = [];
   const risks: string[] = [];

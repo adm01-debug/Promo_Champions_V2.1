@@ -14,7 +14,13 @@ import {
 } from 'recharts';
 import { motion } from 'framer-motion';
 
-const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ value: number; payload: { stage?: string; name?: string } }> }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: { stage?: string; name?: string } }>;
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-3 rounded-lg shadow-2xl border-l-4 border-l-primary">

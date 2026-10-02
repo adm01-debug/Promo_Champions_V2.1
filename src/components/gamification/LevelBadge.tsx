@@ -21,7 +21,7 @@ interface LevelBadgeProps {
 const sizeStyles = {
   sm: 'text-xs px-1.5 py-0.5',
   md: 'text-sm px-2 py-0.5',
-  lg: 'text-base px-3 py-1'
+  lg: 'text-base px-3 py-1',
 };
 
 const levelGradients: Record<number, string> = {
@@ -44,23 +44,23 @@ const getGradientForLevel = (level: number): string => {
   return levelGradients[level] || levelGradients[Math.min(level, 10)];
 };
 
-export const LevelBadge: FC<LevelBadgeProps> = ({ 
-  totalXP, 
+export const LevelBadge: FC<LevelBadgeProps> = ({
+  totalXP,
   showTitle = false,
   size = 'md',
   showTooltip = true,
-  className 
+  className,
 }) => {
   const levelInfo = getLevelFromXP(totalXP);
   const gradient = getGradientForLevel(levelInfo.level);
 
   const BadgeContent = (
     <motion.div whileHover={{ scale: 1.05 }}>
-      <Badge 
-        variant="outline" 
+      <Badge
+        variant="outline"
         className={cn(
-          "font-medium",
-          "bg-gradient-to-r",
+          'font-medium',
+          'bg-gradient-to-r',
           gradient,
           sizeStyles[size],
           className
@@ -76,14 +76,15 @@ export const LevelBadge: FC<LevelBadgeProps> = ({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {BadgeContent}
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{BadgeContent}</TooltipTrigger>
         <TooltipContent>
           <div className="text-center">
-            <p className="font-semibold">{levelInfo.emoji} {levelInfo.title}</p>
+            <p className="font-semibold">
+              {levelInfo.emoji} {levelInfo.title}
+            </p>
             <p className="text-xs text-muted-foreground">
-              Nível {levelInfo.level} • {Math.round(levelInfo.progressPercent)}% para o próximo
+              Nível {levelInfo.level} • {Math.round(levelInfo.progressPercent)}% para o
+              próximo
             </p>
           </div>
         </TooltipContent>
@@ -101,7 +102,7 @@ interface LevelUpNotificationProps {
 export const LevelUpNotification: FC<LevelUpNotificationProps> = ({
   previousLevel,
   newLevel,
-  onClose
+  onClose,
 }) => {
   const newLevelInfo = getLevelInfo(newLevel);
 
@@ -117,21 +118,21 @@ export const LevelUpNotification: FC<LevelUpNotificationProps> = ({
         initial={{ rotate: -10 }}
         animate={{ rotate: 0 }}
         className="bg-card border rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <motion.div
-          animate={{ 
+          animate={{
             scale: [1, 1.2, 1],
-            rotate: [0, 10, -10, 0]
+            rotate: [0, 10, -10, 0],
           }}
           transition={{ repeat: 3, duration: 0.5 }}
           className="text-6xl mb-4"
         >
           {newLevelInfo.emoji}
         </motion.div>
-        
+
         <h2 className="text-section-title mb-2">Level Up!</h2>
-        
+
         <div className="flex items-center justify-center gap-4 mb-4">
           <span className="text-2xl text-muted-foreground">{previousLevel}</span>
           <motion.span
@@ -143,11 +144,9 @@ export const LevelUpNotification: FC<LevelUpNotificationProps> = ({
           </motion.span>
           <span className="text-4xl font-bold text-primary">{newLevel}</span>
         </div>
-        
-        <p className="text-lg font-medium text-primary mb-2">
-          {newLevelInfo.title}
-        </p>
-        
+
+        <p className="text-lg font-medium text-primary mb-2">{newLevelInfo.title}</p>
+
         <p className="text-muted-foreground text-sm">
           Parabéns! Você alcançou um novo nível!
         </p>

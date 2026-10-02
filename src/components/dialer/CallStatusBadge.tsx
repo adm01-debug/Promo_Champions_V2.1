@@ -12,7 +12,10 @@ const STATUS_LABEL: Record<string, string> = {
   canceled: 'Cancelada',
 };
 
-const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANT: Record<
+  string,
+  'default' | 'secondary' | 'destructive' | 'outline'
+> = {
   initiated: 'secondary',
   ringing: 'secondary',
   'in-progress': 'default',
@@ -26,7 +29,10 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | '
 export const CallStatusBadge = ({ status }: { status: string }) => {
   const isLive = ['initiated', 'ringing', 'in-progress'].includes(status);
   return (
-    <Badge variant={STATUS_VARIANT[status] ?? 'outline'} className={cn(isLive && 'animate-pulse')}>
+    <Badge
+      variant={STATUS_VARIANT[status] ?? 'outline'}
+      className={cn(isLive && 'animate-pulse')}
+    >
       {STATUS_LABEL[status] ?? status}
     </Badge>
   );

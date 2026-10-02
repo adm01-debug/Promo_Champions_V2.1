@@ -69,9 +69,7 @@ const renderWithProviders = (ui: React.ReactNode) => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <DashboardThemeProvider>
-          <BrowserRouter>
-            {ui}
-          </BrowserRouter>
+          <BrowserRouter>{ui}</BrowserRouter>
         </DashboardThemeProvider>
       </QueryClientProvider>
     </HelmetProvider>

@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { EMAIL_VARIABLES } from "./emailComposerHelpers";
+import { Badge } from '@/components/ui/badge';
+import { EMAIL_VARIABLES } from './emailComposerHelpers';
 
 interface Props {
   onInsert: (token: string) => void;
@@ -8,7 +8,7 @@ interface Props {
 export function EmailVariablesHelper({ onInsert }: Props) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      {EMAIL_VARIABLES.map((v) => (
+      {EMAIL_VARIABLES.map(v => (
         <button
           key={v.token}
           type="button"

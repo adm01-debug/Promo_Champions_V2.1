@@ -1,13 +1,26 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AGENT_META, type AgentTargetType, type AgentType } from "./agentHelpers";
-import { useStartAgentRun } from "@/hooks/agents/useStartAgentRun";
-import { Loader2, Sparkles } from "lucide-react";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AGENT_META, type AgentTargetType, type AgentType } from './agentHelpers';
+import { useStartAgentRun } from '@/hooks/agents/useStartAgentRun';
+import { Loader2, Sparkles } from 'lucide-react';
 
 interface Props {
   open: boolean;
@@ -24,8 +37,10 @@ export function AgentLauncherDialog({
   defaultTargetId,
   defaultAgentType,
 }: Props) {
-  const [agentType, setAgentType] = useState<AgentType>(defaultAgentType ?? "qualify_lead");
-  const [goal, setGoal] = useState("");
+  const [agentType, setAgentType] = useState<AgentType>(
+    defaultAgentType ?? 'qualify_lead'
+  );
+  const [goal, setGoal] = useState('');
   const [autoExecute, setAutoExecute] = useState(false);
   const start = useStartAgentRun();
 
@@ -38,7 +53,7 @@ export function AgentLauncherDialog({
       auto_execute: autoExecute,
     });
     onOpenChange(false);
-    setGoal("");
+    setGoal('');
   };
 
   const meta = AGENT_META[agentType];
@@ -60,11 +75,15 @@ export function AgentLauncherDialog({
         <div className="space-y-4">
           <div className="space-y-2">
             <Label>Tipo de agente</Label>
-            <Select value={agentType} onValueChange={(v) => setAgentType(v as AgentType)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select value={agentType} onValueChange={v => setAgentType(v as AgentType)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {Object.entries(AGENT_META).map(([k, m]) => (
-                  <SelectItem key={k} value={k}>{m.label}</SelectItem>
+                  <SelectItem key={k} value={k}>
+                    {m.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -77,7 +96,7 @@ export function AgentLauncherDialog({
             <Label>Objetivo (opcional)</Label>
             <Textarea
               value={goal}
-              onChange={(e) => setGoal(e.target.value)}
+              onChange={e => setGoal(e.target.value)}
               placeholder="Ex.: Reativar lead após 30 dias sem contato com mensagem de valor."
               rows={3}
             />
@@ -90,12 +109,18 @@ export function AgentLauncherDialog({
                 Sem essa opção, ações ficam aguardando sua aprovação.
               </p>
             </div>
-            <Switch id="auto-exec" checked={autoExecute} onCheckedChange={setAutoExecute} />
+            <Switch
+              id="auto-exec"
+              checked={autoExecute}
+              onCheckedChange={setAutoExecute}
+            />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
           <Button onClick={submit} disabled={start.isPending}>
             {start.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Iniciar agente

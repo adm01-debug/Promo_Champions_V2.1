@@ -5,39 +5,41 @@ export function daysUntil(date: string | null): number | null {
   return Math.floor((new Date(date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 }
 
-export function renewalSemaphore(days: number | null): "green" | "yellow" | "orange" | "red" | "gray" {
-  if (days === null) return "gray";
-  if (days < 0) return "red";
-  if (days <= 30) return "red";
-  if (days <= 60) return "orange";
-  if (days <= 90) return "yellow";
-  return "green";
+export function renewalSemaphore(
+  days: number | null
+): 'green' | 'yellow' | 'orange' | 'red' | 'gray' {
+  if (days === null) return 'gray';
+  if (days < 0) return 'red';
+  if (days <= 30) return 'red';
+  if (days <= 60) return 'orange';
+  if (days <= 90) return 'yellow';
+  return 'green';
 }
 
 export const RENEWAL_STATUS_LABEL: Record<string, string> = {
-  upcoming: "A vencer",
-  at_risk: "Em risco",
-  renewed: "Renovado",
-  churned: "Churn",
-  lost: "Perdido",
+  upcoming: 'A vencer',
+  at_risk: 'Em risco',
+  renewed: 'Renovado',
+  churned: 'Churn',
+  lost: 'Perdido',
 };
 
 export const TICKET_STATUS_LABEL: Record<string, string> = {
-  open: "Aberto",
-  pending: "Pendente",
-  resolved: "Resolvido",
-  closed: "Fechado",
+  open: 'Aberto',
+  pending: 'Pendente',
+  resolved: 'Resolvido',
+  closed: 'Fechado',
 };
 
 export const ONBOARDING_STATUS_LABEL: Record<string, string> = {
-  not_started: "Não iniciado",
-  in_progress: "Em progresso",
-  completed: "Concluído",
-  stalled: "Travado",
+  not_started: 'Não iniciado',
+  in_progress: 'Em progresso',
+  completed: 'Concluído',
+  stalled: 'Travado',
 };
 
 export const EXPANSION_TYPE_LABEL: Record<string, string> = {
-  upsell: "Upsell",
-  cross_sell: "Cross-sell",
-  expansion: "Expansão",
+  upsell: 'Upsell',
+  cross_sell: 'Cross-sell',
+  expansion: 'Expansão',
 };

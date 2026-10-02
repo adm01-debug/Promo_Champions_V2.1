@@ -55,7 +55,10 @@ export function DRSZoneOverlay() {
                 fontSize={9}
                 fontWeight={900}
                 fill="hsl(0 0% 100%)"
-                style={{ fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.1em' }}
+                style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  letterSpacing: '0.1em',
+                }}
               >
                 DRS
               </text>

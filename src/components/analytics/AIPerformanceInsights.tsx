@@ -23,26 +23,28 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
         type: 'growth',
         icon: TrendingUp,
         color: 'text-blue-500',
-        bg: 'bg-blue-500/10'
+        bg: 'bg-blue-500/10',
       },
       {
         id: 'velocity',
         title: 'Gargalo de Velocidade',
-        description: 'O ciclo médio de fechamento aumentou 12% nos últimos 7 dias. Foco em deals parados na fase de negociação.',
+        description:
+          'O ciclo médio de fechamento aumentou 12% nos últimos 7 dias. Foco em deals parados na fase de negociação.',
         type: 'warning',
         icon: AlertCircle,
         color: 'text-orange-500',
-        bg: 'bg-orange-500/10'
+        bg: 'bg-orange-500/10',
       },
       {
         id: 'conversion',
         title: 'Alta Conversão Detectada',
-        description: 'A taxa de conversão de Leads -> MQL subiu para 45% com a nova cadência de automação.',
+        description:
+          'A taxa de conversão de Leads -> MQL subiu para 45% com a nova cadência de automação.',
         type: 'success',
         icon: CheckCircle2,
         color: 'text-green-500',
-        bg: 'bg-green-500/10'
-      }
+        bg: 'bg-green-500/10',
+      },
     ];
 
     return results;
@@ -71,7 +73,7 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
             className="group relative p-4 rounded-2xl bg-accent/20 border border-white/5 hover:border-primary/20 transition-all cursor-default overflow-hidden"
           >
             <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            
+
             <div className="flex gap-4">
               <div className={`mt-1 p-2 rounded-xl ${insight.bg} shrink-0`}>
                 <insight.icon className={`h-4 w-4 ${insight.color}`} />
@@ -89,7 +91,11 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
                     Ação Recomendada:
                   </span>
                   <span className="text-[9px] text-muted-foreground italic font-medium">
-                    {index === 0 ? "Agendar mentoria" : index === 1 ? "Revisar pipeline" : "Escalar automação"}
+                    {index === 0
+                      ? 'Agendar mentoria'
+                      : index === 1
+                        ? 'Revisar pipeline'
+                        : 'Escalar automação'}
                   </span>
                 </div>
               </div>
@@ -101,4 +107,4 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
   );
 });
 
-AIPerformanceInsights.displayName = "AIPerformanceInsights";
+AIPerformanceInsights.displayName = 'AIPerformanceInsights';

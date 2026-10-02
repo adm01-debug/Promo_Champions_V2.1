@@ -1,9 +1,9 @@
-import { Helmet } from "react-helmet-async";
-import { useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Home, ArrowLeft, Search } from "lucide-react";
+import { Helmet } from 'react-helmet-async';
+import { useLocation, Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Home, ArrowLeft, Search } from 'lucide-react';
 
 const NotFound = () => {
   const location = useLocation();
@@ -34,11 +34,20 @@ const NotFound = () => {
 
           <h1 className="text-xl font-display font-bold mb-2">Página não encontrada</h1>
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-            A rota <code className="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">{location.pathname}</code> não existe ou foi movida.
+            A rota{' '}
+            <code className="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">
+              {location.pathname}
+            </code>{' '}
+            não existe ou foi movida.
           </p>
 
           <div className="flex items-center justify-center gap-3">
-            <Button variant="outline" size="sm" onClick={() => window.history.back()} className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.history.back()}
+              className="gap-2"
+            >
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>

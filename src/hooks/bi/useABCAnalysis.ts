@@ -59,8 +59,7 @@ function classifyABC(items: { name: string; revenue: number }[]): ABCItem[] {
     const percentage = (item.revenue / totalRevenue) * 100;
     const cumulativePercentage = (cumulative / totalRevenue) * 100;
     const classification: 'A' | 'B' | 'C' =
-      cumulativePercentage <= 80 ? 'A' :
-      cumulativePercentage <= 95 ? 'B' : 'C';
+      cumulativePercentage <= 80 ? 'A' : cumulativePercentage <= 95 ? 'B' : 'C';
 
     return {
       name: item.name,
@@ -89,15 +88,27 @@ export const useABCAnalysis = () => {
       (sales || []).forEach(sale => {
         const amount = sale.amount || 0;
         if (sale.product_name) {
-          productMap.set(sale.product_name, (productMap.get(sale.product_name) || 0) + amount);
+          productMap.set(
+            sale.product_name,
+            (productMap.get(sale.product_name) || 0) + amount
+          );
         }
         if (sale.client_name) {
-          clientMap.set(sale.client_name, (clientMap.get(sale.client_name) || 0) + amount);
+          clientMap.set(
+            sale.client_name,
+            (clientMap.get(sale.client_name) || 0) + amount
+          );
         }
       });
 
-      const productItems = Array.from(productMap.entries()).map(([name, revenue]) => ({ name, revenue }));
-      const clientItems = Array.from(clientMap.entries()).map(([name, revenue]) => ({ name, revenue }));
+      const productItems = Array.from(productMap.entries()).map(([name, revenue]) => ({
+        name,
+        revenue,
+      }));
+      const clientItems = Array.from(clientMap.entries()).map(([name, revenue]) => ({
+        name,
+        revenue,
+      }));
 
       const products = classifyABC(productItems);
       const clients = classifyABC(clientItems);
@@ -111,56 +122,79 @@ export const useABCAnalysis = () => {
       // Simulated Neural Insights based on data
       const neuralInsights: NeuralInsight[] = [
         {
-          title: "Concentração Crítica em A",
+          title: 'Concentração Crítica em A',
           description: `Seus principais 3 clientes geram ${((clients.slice(0, 3).reduce((s, i) => s + i.revenue, 0) / (sales?.reduce((s, i) => s + (i.amount || 0), 0) || 1)) * 100).toFixed(1)}% da receita. Risco alto de churn.`,
-          type: "warning",
-          score: 5
+          type: 'warning',
+          score: 5,
         },
         {
-          title: "Expansão em Segmento B",
-          description: "O segmento B cresceu 14% este mês. Recomendamos upselling para migração para classe A.",
-          type: "opportunity",
-          score: 4
+          title: 'Expansão em Segmento B',
+          description:
+            'O segmento B cresceu 14% este mês. Recomendamos upselling para migração para classe A.',
+          type: 'opportunity',
+          score: 4,
         },
         {
-          title: "Predição de Cross-Sell",
-          description: "Clientes que compram Produto X têm 85% de chance de aceitar upgrade para Pacote Elite.",
-          type: "trend",
-          score: 4
-        }
+          title: 'Predição de Cross-Sell',
+          description:
+            'Clientes que compram Produto X têm 85% de chance de aceitar upgrade para Pacote Elite.',
+          type: 'trend',
+          score: 4,
+        },
       ];
 
       const matrixShifts: MatrixShift[] = [
-        { name: "Cliente VIP S/A", from: "B", to: "A", change: 25, reason: "Aumento de recorrência" },
-        { name: "Distribuidora Beta", from: "A", to: "B", change: -12, reason: "Redução de pedidos semanais" },
-        { name: "Tech Solutions", from: "C", to: "B", change: 40, reason: "Novo contrato assinado" }
+        {
+          name: 'Cliente VIP S/A',
+          from: 'B',
+          to: 'A',
+          change: 25,
+          reason: 'Aumento de recorrência',
+        },
+        {
+          name: 'Distribuidora Beta',
+          from: 'A',
+          to: 'B',
+          change: -12,
+          reason: 'Redução de pedidos semanais',
+        },
+        {
+          name: 'Tech Solutions',
+          from: 'C',
+          to: 'B',
+          change: 40,
+          reason: 'Novo contrato assinado',
+        },
       ];
 
       const automations: Automation[] = [
         {
-          id: "1",
-          title: "Escudo de Retenção Classe A",
-          description: "Dispara check-in personalizado automático via WhatsApp para clientes Classe A com 15 dias sem compra.",
-          target: "Classe A",
-          impact: "+15% Retenção",
-          type: "retention"
+          id: '1',
+          title: 'Escudo de Retenção Classe A',
+          description:
+            'Dispara check-in personalizado automático via WhatsApp para clientes Classe A com 15 dias sem compra.',
+          target: 'Classe A',
+          impact: '+15% Retenção',
+          type: 'retention',
         },
         {
-          id: "2",
-          title: "Upgrade Velocity B->A",
-          description: "Envia oferta exclusiva de upgrade para clientes Classe B que atingirem 90% do teto do segmento.",
-          target: "Classe B",
-          impact: "+22% Receita",
-          type: "expansion"
+          id: '2',
+          title: 'Upgrade Velocity B->A',
+          description:
+            'Envia oferta exclusiva de upgrade para clientes Classe B que atingirem 90% do teto do segmento.',
+          target: 'Classe B',
+          impact: '+22% Receita',
+          type: 'expansion',
         },
         {
-          id: "3",
-          title: "Reativação Neural",
-          description: "Identifica padrões de churn em Classe C e dispara sequência de re-engajamento automatizada.",
-          target: "Classe C",
-          impact: "+8% Recuperação",
-          type: "reactivation"
-        }
+          id: '3',
+          title: 'Reativação Neural',
+          description:
+            'Identifica padrões de churn em Classe C e dispara sequência de re-engajamento automatizada.',
+          target: 'Classe C',
+          impact: '+8% Recuperação',
+          type: 'reactivation',
+        },
       ];
 
       return {
@@ -173,10 +207,9 @@ export const useABCAnalysis = () => {
         totalRevenue: (sales || []).reduce((sum, s) => sum + (s.amount || 0), 0),
         neuralInsights,
         matrixShifts,
-        automations
+        automations,
       };
     },
     staleTime: 1000 * 60 * 30,
   });
 };
-

@@ -106,7 +106,10 @@ const RankingCompetitivo = () => {
                   Acompanhe a competição entre vendedores em tempo real
                 </p>
               </div>
-              <Badge variant="outline" className="self-start md:self-auto text-sm px-4 py-2">
+              <Badge
+                variant="outline"
+                className="self-start md:self-auto text-sm px-4 py-2"
+              >
                 <Calendar className="h-4 w-4 mr-2" />
                 {format(new Date(), 'MMMM yyyy', { locale: ptBR })}
               </Badge>
@@ -155,7 +158,9 @@ const RankingCompetitivo = () => {
                       <div>
                         <p className="text-sm text-muted-foreground">{stat.label}</p>
                         <p className="text-metric">{stat.value}</p>
-                        <p className={`text-sm ${stat.subColor || 'text-muted-foreground'}`}>
+                        <p
+                          className={`text-sm ${stat.subColor || 'text-muted-foreground'}`}
+                        >
                           {stat.sub}
                         </p>
                       </div>
@@ -204,7 +209,8 @@ const RankingCompetitivo = () => {
                       value: String(
                         xpData?.length
                           ? Math.round(
-                              xpData.reduce((s, x) => s + (x.current_level || 1), 0) / xpData.length
+                              xpData.reduce((s, x) => s + (x.current_level || 1), 0) /
+                                xpData.length
                             )
                           : 1
                       ),
@@ -216,10 +222,13 @@ const RankingCompetitivo = () => {
                     {
                       label: 'Maior Nível',
                       value: String(
-                        xpData?.length ? Math.max(...xpData.map(x => x.current_level || 1)) : 1
+                        xpData?.length
+                          ? Math.max(...xpData.map(x => x.current_level || 1))
+                          : 1
                       ),
                       sub: xpData?.length
-                        ? getLevelInfo(Math.max(...xpData.map(x => x.current_level || 1))).title
+                        ? getLevelInfo(Math.max(...xpData.map(x => x.current_level || 1)))
+                            .title
                         : 'Iniciante',
                       icon: Trophy,
                       color: 'text-rank-gold',
@@ -253,7 +262,9 @@ const RankingCompetitivo = () => {
                     role: string;
                   } | null;
                   const levelInfo = getLevelInfo(xpRecord.current_level || 1);
-                  const { xpInLevel, xpToNext } = calculateLevelFromXP(xpRecord.total_xp || 0);
+                  const { xpInLevel, xpToNext } = calculateLevelFromXP(
+                    xpRecord.total_xp || 0
+                  );
                   return (
                     <Card
                       key={xpRecord.id}
@@ -329,7 +340,10 @@ const RankingCompetitivo = () => {
               </TabsContent>
 
               <TabsContent value="history">
-                <HistoryTab monthlyHistory={monthlyHistory || []} formatCurrency={formatBRL} />
+                <HistoryTab
+                  monthlyHistory={monthlyHistory || []}
+                  formatCurrency={formatBRL}
+                />
               </TabsContent>
 
               <TabsContent value="achievements">

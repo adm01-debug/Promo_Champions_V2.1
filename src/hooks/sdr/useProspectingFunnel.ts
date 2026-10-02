@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export function useProspectingFunnel() {
-
   return useQuery({
     queryKey: ['prospecting-funnel'],
     queryFn: async () => {
@@ -60,4 +59,3 @@ export function useProspectingFunnel() {
     },
   });
 }
-

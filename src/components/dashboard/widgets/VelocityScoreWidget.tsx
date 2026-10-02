@@ -1,16 +1,24 @@
-import React from "react";
-import { usePipelineVelocity } from "@/hooks/usePipelineVelocity";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Zap } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
+import React from 'react';
+import { usePipelineVelocity } from '@/hooks/usePipelineVelocity';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Zap } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+} from 'recharts';
 
 const VELOCITY_COLORS = [
-  "hsl(var(--success))",
-  "hsl(var(--primary))",
-  "hsl(262, 60%, 65%)",
-  "hsl(var(--warning))",
-  "hsl(var(--muted-foreground))",
+  'hsl(var(--success))',
+  'hsl(var(--primary))',
+  'hsl(262, 60%, 65%)',
+  'hsl(var(--warning))',
+  'hsl(var(--muted-foreground))',
 ];
 
 export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
@@ -21,7 +29,7 @@ export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
   const top5 = (data || []).slice(0, 5);
 
   const chartData = top5.map(sp => ({
-    name: sp.salespersonName.split(" ")[0],
+    name: sp.salespersonName.split(' ')[0],
     velocity: sp.velocityScore,
     days: sp.avgCycleDays,
   }));
@@ -38,20 +46,28 @@ export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
         {chartData.length > 0 ? (
           <div className="space-y-2">
             <ResponsiveContainer width="100%" height={100}>
-              <BarChart data={chartData} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+              <BarChart
+                data={chartData}
+                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+              >
                 <XAxis
                   dataKey="name"
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis hide />
                 <Tooltip
                   formatter={(v: number, name: string) => {
-                    if (name === "velocity") return [v.toLocaleString("pt-BR"), "Score"];
-                    return [`${v}d`, "Ciclo"];
+                    if (name === 'velocity') return [v.toLocaleString('pt-BR'), 'Score'];
+                    return [`${v}d`, 'Ciclo'];
                   }}
-                  contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}
+                  contentStyle={{
+                    borderRadius: 8,
+                    border: 'none',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    fontSize: 11,
+                  }}
                 />
                 <Bar dataKey="velocity" radius={[4, 4, 0, 0]} barSize={20}>
                   {chartData.map((_, i) => (
@@ -77,4 +93,4 @@ export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
   );
 });
 
-VelocityScoreWidget.displayName = "VelocityScoreWidget";
+VelocityScoreWidget.displayName = 'VelocityScoreWidget';

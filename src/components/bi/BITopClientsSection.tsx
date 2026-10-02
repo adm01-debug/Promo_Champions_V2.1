@@ -1,40 +1,48 @@
-import React, { FC, memo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { Trophy, Package, Building, User } from "lucide-react";
-import { motion } from "framer-motion";
-import { useBITopClients, TopClientData, SupplierSalesData, TopCompanyData } from "@/hooks/bi/useBITopClients";
+import React, { FC, memo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { Trophy, Package, Building, User } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  useBITopClients,
+  TopClientData,
+  SupplierSalesData,
+  TopCompanyData,
+} from '@/hooks/bi/useBITopClients';
 
 import { formatBRL } from '@/lib/money';
 const _RANK_COLORS = [
-  "bg-rank-gold",
-  "bg-rank-silver", 
-  "bg-rank-bronze",
-  "bg-chart-2",
-  "bg-chart-3",
-  "bg-chart-4",
-  "bg-chart-5",
-  "bg-primary",
-  "bg-accent",
-  "bg-muted-foreground",
+  'bg-rank-gold',
+  'bg-rank-silver',
+  'bg-rank-bronze',
+  'bg-chart-2',
+  'bg-chart-3',
+  'bg-chart-4',
+  'bg-chart-5',
+  'bg-primary',
+  'bg-accent',
+  'bg-muted-foreground',
 ];
 
 const BAR_COLORS = [
-  "from-rank-gold to-rank-gold/60",
-  "from-rank-silver to-rank-silver/60",
-  "from-rank-bronze to-rank-bronze/60",
-  "from-chart-2 to-chart-2/60",
-  "from-chart-3 to-chart-3/60",
-  "from-chart-4 to-chart-4/60",
-  "from-chart-5 to-chart-5/60",
-  "from-primary to-primary/60",
-  "from-accent to-accent/60",
-  "from-muted-foreground to-muted-foreground/60",
+  'from-rank-gold to-rank-gold/60',
+  'from-rank-silver to-rank-silver/60',
+  'from-rank-bronze to-rank-bronze/60',
+  'from-chart-2 to-chart-2/60',
+  'from-chart-3 to-chart-3/60',
+  'from-chart-4 to-chart-4/60',
+  'from-chart-5 to-chart-5/60',
+  'from-primary to-primary/60',
+  'from-accent to-accent/60',
+  'from-muted-foreground to-muted-foreground/60',
 ];
 
 // Top Clients Card
-const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({ clients, maxValue }) => (
+const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({
+  clients,
+  maxValue,
+}) => (
   <Card className="glass-card">
     <CardHeader className="pb-3">
       <CardTitle className="text-section-title flex items-center gap-2">
@@ -59,18 +67,29 @@ const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({ cl
                 <div className="flex items-center gap-2 min-w-0 flex-1">
                   <span className="font-semibold text-sm truncate">{client.name}</span>
                   {client.company && (
-                    <span className="text-xs text-muted-foreground truncate">({client.company})</span>
+                    <span className="text-xs text-muted-foreground truncate">
+                      ({client.company})
+                    </span>
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
-                  <span className="font-bold text-sm">{formatBRL(client.totalValue)}</span>
-                  <span className="text-xs text-muted-foreground">({client.ordersCount} ped.)</span>
+                  <span className="font-bold text-sm">
+                    {formatBRL(client.totalValue)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    ({client.ordersCount} ped.)
+                  </span>
                 </div>
               </div>
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">
                 <div
-                  className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700", BAR_COLORS[idx % BAR_COLORS.length])}
-                  style={{ width: `${maxValue > 0 ? (client.totalValue / maxValue) * 100 : 0}%` }}
+                  className={cn(
+                    'h-full rounded-full bg-gradient-to-r transition-all duration-700',
+                    BAR_COLORS[idx % BAR_COLORS.length]
+                  )}
+                  style={{
+                    width: `${maxValue > 0 ? (client.totalValue / maxValue) * 100 : 0}%`,
+                  }}
                 />
               </div>
             </motion.div>
@@ -88,7 +107,10 @@ const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({ cl
 );
 
 // Supplier Sales Card
-const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }> = ({ suppliers, maxValue }) => (
+const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }> = ({
+  suppliers,
+  maxValue,
+}) => (
   <Card className="glass-card">
     <CardHeader className="pb-3">
       <CardTitle className="text-section-title flex items-center gap-2">
@@ -110,9 +132,13 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
               className="space-y-1.5"
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm truncate flex-1">{supplier.supplierName}</span>
+                <span className="font-semibold text-sm truncate flex-1">
+                  {supplier.supplierName}
+                </span>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
-                  <span className="font-bold text-sm">{formatBRL(supplier.totalValue)}</span>
+                  <span className="font-bold text-sm">
+                    {formatBRL(supplier.totalValue)}
+                  </span>
                   <span className="text-xs text-muted-foreground">
                     {supplier.productsCount} prod. · {supplier.itemsCount} itens
                   </span>
@@ -120,8 +146,13 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
               </div>
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">
                 <div
-                  className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700", BAR_COLORS[idx % BAR_COLORS.length])}
-                  style={{ width: `${maxValue > 0 ? (supplier.totalValue / maxValue) * 100 : 0}%` }}
+                  className={cn(
+                    'h-full rounded-full bg-gradient-to-r transition-all duration-700',
+                    BAR_COLORS[idx % BAR_COLORS.length]
+                  )}
+                  style={{
+                    width: `${maxValue > 0 ? (supplier.totalValue / maxValue) * 100 : 0}%`,
+                  }}
                 />
               </div>
             </motion.div>
@@ -139,7 +170,10 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
 );
 
 // Top Companies Card
-const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = ({ companies, maxValue }) => (
+const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = ({
+  companies,
+  maxValue,
+}) => (
   <Card className="glass-card">
     <CardHeader className="pb-3">
       <CardTitle className="text-section-title flex items-center gap-2">
@@ -161,15 +195,22 @@ const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = 
               className="space-y-1.5"
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm truncate flex-1">{company.company}</span>
+                <span className="font-semibold text-sm truncate flex-1">
+                  {company.company}
+                </span>
                 <span className="text-xs text-muted-foreground shrink-0 ml-2">
                   {company.ordersCount} pedidos · {formatBRL(company.totalValue)}
                 </span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">
                 <div
-                  className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-700", BAR_COLORS[idx % BAR_COLORS.length])}
-                  style={{ width: `${maxValue > 0 ? (company.totalValue / maxValue) * 100 : 0}%` }}
+                  className={cn(
+                    'h-full rounded-full bg-gradient-to-r transition-all duration-700',
+                    BAR_COLORS[idx % BAR_COLORS.length]
+                  )}
+                  style={{
+                    width: `${maxValue > 0 ? (company.totalValue / maxValue) * 100 : 0}%`,
+                  }}
                 />
               </div>
             </motion.div>
@@ -191,7 +232,7 @@ export const BITopClientsSection = memo(({ className }: { className?: string }) 
 
   if (isLoading) {
     return (
-      <div className={cn("grid grid-cols-1 lg:grid-cols-2 gap-6", className)}>
+      <div className={cn('grid grid-cols-1 lg:grid-cols-2 gap-6', className)}>
         {[1, 2].map(i => (
           <Card key={i} className="glass-card">
             <CardContent className="p-6">
@@ -220,7 +261,7 @@ export const BITopClientsSection = memo(({ className }: { className?: string }) 
   const maxCompanyValue = topCompanies[0]?.totalValue || 0;
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn('space-y-6', className)}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <TopClientsCard clients={topClients} maxValue={maxClientValue} />
         <SupplierSalesCard suppliers={supplierSales} maxValue={maxSupplierValue} />
@@ -230,4 +271,4 @@ export const BITopClientsSection = memo(({ className }: { className?: string }) 
   );
 });
 
-BITopClientsSection.displayName = "BITopClientsSection";
+BITopClientsSection.displayName = 'BITopClientsSection';

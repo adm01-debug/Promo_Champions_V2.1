@@ -81,8 +81,7 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
               <SelectContent>
                 {activeSales.map((sale: Sale) => (
                   <SelectItem key={sale.fullId} value={sale.fullId}>
-                    {sale.cliente} -{' '}
-                    {formatBRL(sale.valor, { decimals: 2 })}
+                    {sale.cliente} - {formatBRL(sale.valor, { decimals: 2 })}
                   </SelectItem>
                 ))}
               </SelectContent>

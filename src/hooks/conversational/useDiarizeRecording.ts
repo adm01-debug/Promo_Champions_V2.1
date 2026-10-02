@@ -1,16 +1,17 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function useDiarizeRecording() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (recording_id: string) => {
-      const { data, error } = await supabase.functions.invoke("diarize-call-recording", {
+      const { data, error } = await supabase.functions.invoke('diarize-call-recording', {
         body: { recording_id },
       });
       if (error) throw error;
-      if ((data as { error?: string })?.error) throw new Error((data as { error: string }).error);
+      if ((data as { error?: string })?.error)
+        throw new Error((data as { error: string }).error);
       return data as {
         recording_id: string;
         talk_ratio_seller: number;
@@ -21,10 +22,12 @@ export function useDiarizeRecording() {
       };
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["call-recordings"] });
-      toast.success("Diarização concluída! 🎙️");
+      qc.invalidateQueries({ queryKey: ['call-recordings'] });
+      toast.success('Diarização concluída! 🎙️');
     },
-    onError: (e) =>
-      toast.error(`Falha na diarização: ${e instanceof Error ? e.message : "erro desconhecido"}`),
+    onError: e =>
+      toast.error(
+        `Falha na diarização: ${e instanceof Error ? e.message : 'erro desconhecido'}`
+      ),
   });
 }

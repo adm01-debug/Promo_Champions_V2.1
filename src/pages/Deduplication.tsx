@@ -1,7 +1,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useDeduplicationScan, type DuplicateGroup } from '@/hooks/crm/useDeduplicationScan';
+import {
+  useDeduplicationScan,
+  type DuplicateGroup,
+} from '@/hooks/crm/useDeduplicationScan';
 import { clientService } from '@/services/clientService';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';

@@ -1,11 +1,11 @@
-import React from "react";
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Clock, Target, AlertTriangle } from "lucide-react";
-import { motion } from "framer-motion";
+import React from 'react';
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+import { TrendingUp, TrendingDown, Clock, Target, AlertTriangle } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { formatBRL } from '@/lib/money';
 interface BIProjectionCardProps {
@@ -15,15 +15,18 @@ interface BIProjectionCardProps {
   goalValue: number;
   daysRemaining: number;
   dailyRequired: number;
-  format?: "currency" | "number";
+  format?: 'currency' | 'number';
   className?: string;
 }
 
-const formatValue = (value: number, format: "currency" | "number" = "currency"): string => {
-  if (format === "currency") {
+const formatValue = (
+  value: number,
+  format: 'currency' | 'number' = 'currency'
+): string => {
+  if (format === 'currency') {
     return `${formatBRL(value)}`;
   }
-  return value.toLocaleString("pt-BR", { maximumFractionDigits: 0 });
+  return value.toLocaleString('pt-BR', { maximumFractionDigits: 0 });
 };
 
 export const BIProjectionCard: FC<BIProjectionCardProps> = ({
@@ -33,8 +36,8 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
   goalValue,
   daysRemaining,
   dailyRequired,
-  format = "currency",
-  className
+  format = 'currency',
+  className,
 }) => {
   const progress = goalValue > 0 ? (currentValue / goalValue) * 100 : 0;
   const projectedProgress = goalValue > 0 ? (projectedValue / goalValue) * 100 : 0;
@@ -47,34 +50,42 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className={cn(
-        "glass-card relative overflow-hidden",
-        willMeetGoal ? "border-success/30" : "border-warning/30",
-        className
-      )}>
+      <Card
+        className={cn(
+          'glass-card relative overflow-hidden',
+          willMeetGoal ? 'border-success/30' : 'border-warning/30',
+          className
+        )}
+      >
         {/* Gradient background */}
-        <div className={cn(
-          "absolute inset-0 pointer-events-none",
-          willMeetGoal 
-            ? "bg-gradient-to-br from-success/5 via-transparent to-transparent" 
-            : "bg-gradient-to-br from-warning/5 via-transparent to-transparent"
-        )} />
+        <div
+          className={cn(
+            'absolute inset-0 pointer-events-none',
+            willMeetGoal
+              ? 'bg-gradient-to-br from-success/5 via-transparent to-transparent'
+              : 'bg-gradient-to-br from-warning/5 via-transparent to-transparent'
+          )}
+        />
 
         <CardHeader className="pb-2 relative">
           <CardTitle className="text-section-title flex items-center justify-between">
             <span>{title}</span>
-            <Badge 
-              variant="secondary" 
+            <Badge
+              variant="secondary"
               className={cn(
-                willMeetGoal 
-                  ? "bg-success/10 text-success border-success/20" 
-                  : "bg-warning/10 text-warning border-warning/20"
+                willMeetGoal
+                  ? 'bg-success/10 text-success border-success/20'
+                  : 'bg-warning/10 text-warning border-warning/20'
               )}
             >
               {willMeetGoal ? (
-                <><TrendingUp className="h-3 w-3 mr-1" /> No caminho</>
+                <>
+                  <TrendingUp className="h-3 w-3 mr-1" /> No caminho
+                </>
               ) : (
-                <><AlertTriangle className="h-3 w-3 mr-1" /> Atenção</>
+                <>
+                  <AlertTriangle className="h-3 w-3 mr-1" /> Atenção
+                </>
               )}
             </Badge>
           </CardTitle>
@@ -85,7 +96,9 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
           <div className="flex items-end justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Realizado</p>
-              <p className="text-2xl font-bold gradient-text">{formatValue(currentValue, format)}</p>
+              <p className="text-2xl font-bold gradient-text">
+                {formatValue(currentValue, format)}
+              </p>
             </div>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">Meta</p>
@@ -96,14 +109,18 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">{progress.toFixed(0)}% alcançado</span>
-              <span className="font-medium">{formatValue(goalValue - currentValue, format)} restante</span>
+              <span className="text-muted-foreground">
+                {progress.toFixed(0)}% alcançado
+              </span>
+              <span className="font-medium">
+                {formatValue(goalValue - currentValue, format)} restante
+              </span>
             </div>
             <div className="relative">
               <Progress value={Math.min(progress, 100)} className="h-3" />
               {/* Projection marker */}
               {projectedProgress <= 120 && (
-                <div 
+                <div
                   className="absolute top-0 h-3 w-0.5 bg-primary"
                   style={{ left: `${Math.min(projectedProgress, 100)}%` }}
                 >
@@ -116,18 +133,24 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
           </div>
 
           {/* Projection */}
-          <div className={cn(
-            "p-3 rounded-lg",
-            willMeetGoal ? "bg-success/10" : "bg-warning/10"
-          )}>
+          <div
+            className={cn(
+              'p-3 rounded-lg',
+              willMeetGoal ? 'bg-success/10' : 'bg-warning/10'
+            )}
+          >
             <div className="flex items-center gap-2 mb-2">
-              <Target className={cn("h-4 w-4", willMeetGoal ? "text-success" : "text-warning")} />
+              <Target
+                className={cn('h-4 w-4', willMeetGoal ? 'text-success' : 'text-warning')}
+              />
               <span className="text-sm font-medium">Projeção de Fechamento</span>
             </div>
-            <p className={cn(
-              "text-xl font-bold",
-              willMeetGoal ? "text-success" : "text-warning"
-            )}>
+            <p
+              className={cn(
+                'text-xl font-bold',
+                willMeetGoal ? 'text-success' : 'text-warning'
+              )}
+            >
               {formatValue(projectedValue, format)}
             </p>
             {!willMeetGoal && (
@@ -164,7 +187,7 @@ interface BIComparisonCardProps {
   currentValue: number;
   previousValue: number;
   lastYearValue: number;
-  format?: "currency" | "percent" | "number";
+  format?: 'currency' | 'percent' | 'number';
   className?: string;
 }
 
@@ -173,30 +196,30 @@ export const BIComparisonCard: FC<BIComparisonCardProps> = ({
   currentValue,
   previousValue,
   lastYearValue,
-  format = "currency",
-  className
+  format = 'currency',
+  className,
 }) => {
   const formatVal = (v: number) => {
-    if (format === "currency") return `${formatBRL(v)}`;
-    if (format === "percent") return `${v.toFixed(1)}%`;
-    return v.toLocaleString("pt-BR");
+    if (format === 'currency') return `${formatBRL(v)}`;
+    if (format === 'percent') return `${v.toFixed(1)}%`;
+    return v.toLocaleString('pt-BR');
   };
 
-  const previousChange = previousValue > 0 
-    ? ((currentValue - previousValue) / previousValue) * 100 
-    : 0;
-  const yearChange = lastYearValue > 0 
-    ? ((currentValue - lastYearValue) / lastYearValue) * 100 
-    : 0;
+  const previousChange =
+    previousValue > 0 ? ((currentValue - previousValue) / previousValue) * 100 : 0;
+  const yearChange =
+    lastYearValue > 0 ? ((currentValue - lastYearValue) / lastYearValue) * 100 : 0;
 
   return (
-    <Card className={cn("glass-card", className)}>
+    <Card className={cn('glass-card', className)}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-section-title text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-section-title text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-2xl font-bold gradient-text">{formatVal(currentValue)}</p>
-        
+
         <div className="grid grid-cols-2 gap-4">
           {/* vs Previous Period */}
           <div className="space-y-1">
@@ -207,11 +230,14 @@ export const BIComparisonCard: FC<BIComparisonCardProps> = ({
               ) : (
                 <TrendingDown className="h-4 w-4 text-destructive" />
               )}
-              <span className={cn(
-                "font-medium",
-                previousChange >= 0 ? "text-success" : "text-destructive"
-              )}>
-                {previousChange >= 0 ? "+" : ""}{previousChange.toFixed(1)}%
+              <span
+                className={cn(
+                  'font-medium',
+                  previousChange >= 0 ? 'text-success' : 'text-destructive'
+                )}
+              >
+                {previousChange >= 0 ? '+' : ''}
+                {previousChange.toFixed(1)}%
               </span>
             </div>
             <p className="text-xs text-muted-foreground">{formatVal(previousValue)}</p>
@@ -226,11 +252,14 @@ export const BIComparisonCard: FC<BIComparisonCardProps> = ({
               ) : (
                 <TrendingDown className="h-4 w-4 text-destructive" />
               )}
-              <span className={cn(
-                "font-medium",
-                yearChange >= 0 ? "text-success" : "text-destructive"
-              )}>
-                {yearChange >= 0 ? "+" : ""}{yearChange.toFixed(1)}%
+              <span
+                className={cn(
+                  'font-medium',
+                  yearChange >= 0 ? 'text-success' : 'text-destructive'
+                )}
+              >
+                {yearChange >= 0 ? '+' : ''}
+                {yearChange.toFixed(1)}%
               </span>
             </div>
             <p className="text-xs text-muted-foreground">{formatVal(lastYearValue)}</p>

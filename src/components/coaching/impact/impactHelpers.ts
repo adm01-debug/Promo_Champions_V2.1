@@ -1,18 +1,20 @@
 import { formatBRL } from '@/lib/money';
-export function formatDelta(value: number, suffix = "%"): string {
+export function formatDelta(value: number, suffix = '%'): string {
   if (!Number.isFinite(value) || value === 0) return `0${suffix}`;
-  const sign = value > 0 ? "+" : "";
+  const sign = value > 0 ? '+' : '';
   return `${sign}${value.toFixed(1)}${suffix}`;
 }
 
 export function deltaToneClass(value: number): string {
-  if (!Number.isFinite(value) || Math.abs(value) < 0.5) return "text-muted-foreground";
-  return value > 0 ? "text-success" : "text-destructive";
+  if (!Number.isFinite(value) || Math.abs(value) < 0.5) return 'text-muted-foreground';
+  return value > 0 ? 'text-success' : 'text-destructive';
 }
 
 export function deltaBgClass(value: number): string {
-  if (!Number.isFinite(value) || Math.abs(value) < 0.5) return "bg-muted/40";
-  return value > 0 ? "bg-success/10 border-success/30" : "bg-destructive/10 border-destructive/30";
+  if (!Number.isFinite(value) || Math.abs(value) < 0.5) return 'bg-muted/40';
+  return value > 0
+    ? 'bg-success/10 border-success/30'
+    : 'bg-destructive/10 border-destructive/30';
 }
 
 export function heatmapShade(value: number): string {

@@ -1,11 +1,11 @@
-import React from "react";
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { User, Building, ShoppingBag, TrendingUp, Clock, Star } from "lucide-react";
-import { motion } from "framer-motion";
+import React from 'react';
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { User, Building, ShoppingBag, TrendingUp, Clock, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { formatBRL } from '@/lib/money';
 interface ClientInfo {
@@ -20,7 +20,7 @@ interface ClientInfo {
 interface BIClientListProps {
   title: string;
   clients: ClientInfo[];
-  type?: "top-value" | "top-ticket" | "prospects" | "recent";
+  type?: 'top-value' | 'top-ticket' | 'prospects' | 'recent';
   maxItems?: number;
   className?: string;
 }
@@ -28,25 +28,29 @@ interface BIClientListProps {
 export const BIClientList: FC<BIClientListProps> = ({
   title,
   clients,
-  type = "top-value",
+  type = 'top-value',
   maxItems = 5,
-  className
+  className,
 }) => {
   const displayClients = clients.slice(0, maxItems);
 
   const getIcon = () => {
     switch (type) {
-      case "top-value": return Star;
-      case "top-ticket": return TrendingUp;
-      case "prospects": return Clock;
-      default: return User;
+      case 'top-value':
+        return Star;
+      case 'top-ticket':
+        return TrendingUp;
+      case 'prospects':
+        return Clock;
+      default:
+        return User;
     }
   };
 
   const Icon = getIcon();
 
   return (
-    <Card className={cn("glass-card", className)}>
+    <Card className={cn('glass-card', className)}>
       <CardHeader className="pb-2">
         <CardTitle className="text-section-title flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/10">
@@ -67,14 +71,19 @@ export const BIClientList: FC<BIClientListProps> = ({
                 className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors group"
               >
                 {/* Rank */}
-                {type === "top-value" && (
-                  <div className={cn(
-                    "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
-                    index === 0 ? "bg-rank-gold text-rank-gold-foreground" :
-                    index === 1 ? "bg-rank-silver text-rank-silver-foreground" :
-                    index === 2 ? "bg-rank-bronze text-rank-bronze-foreground" :
-                    "bg-muted text-muted-foreground"
-                  )}>
+                {type === 'top-value' && (
+                  <div
+                    className={cn(
+                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold',
+                      index === 0
+                        ? 'bg-rank-gold text-rank-gold-foreground'
+                        : index === 1
+                          ? 'bg-rank-silver text-rank-silver-foreground'
+                          : index === 2
+                            ? 'bg-rank-bronze text-rank-bronze-foreground'
+                            : 'bg-muted text-muted-foreground'
+                    )}
+                  >
                     {index + 1}
                   </div>
                 )}
@@ -100,10 +109,9 @@ export const BIClientList: FC<BIClientListProps> = ({
                 {/* Value/Metric */}
                 <div className="text-right shrink-0">
                   <p className="font-bold text-sm">
-                    {type === "top-ticket" && client.avgTicket
+                    {type === 'top-ticket' && client.avgTicket
                       ? formatBRL(client.avgTicket)
-                      : formatBRL(client.totalValue)
-                    }
+                      : formatBRL(client.totalValue)}
                   </p>
                   {client.dealsCount !== undefined && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground justify-end">
@@ -140,7 +148,7 @@ interface PurchaseHistoryProps {
   purchases: { date: string; value: number; category: string }[];
 }
 
-export const BIPurchaseHistory: FC<{ 
+export const BIPurchaseHistory: FC<{
   data: PurchaseHistoryProps[];
   className?: string;
 }> = ({ data, className }) => {
@@ -149,7 +157,7 @@ export const BIPurchaseHistory: FC<{
   }
 
   return (
-    <Card className={cn("glass-card", className)}>
+    <Card className={cn('glass-card', className)}>
       <CardHeader className="pb-2">
         <CardTitle className="text-section-title flex items-center gap-2">
           <div className="p-2 rounded-lg bg-primary/10">
@@ -174,13 +182,17 @@ export const BIPurchaseHistory: FC<{
                 </div>
                 <div className="ml-10 space-y-1.5">
                   {client.purchases.slice(0, 5).map((purchase, pIdx) => (
-                    <div 
-                      key={pIdx} 
+                    <div
+                      key={pIdx}
                       className="flex items-center justify-between text-sm p-2 rounded bg-muted/30"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground text-xs">{purchase.date}</span>
-                        <Badge variant="outline" className="text-xs">{purchase.category}</Badge>
+                        <span className="text-muted-foreground text-xs">
+                          {purchase.date}
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          {purchase.category}
+                        </Badge>
                       </div>
                       <span className="font-medium">{formatBRL(purchase.value)}</span>
                     </div>

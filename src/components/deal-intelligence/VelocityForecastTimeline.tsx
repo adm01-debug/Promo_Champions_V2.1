@@ -1,4 +1,4 @@
-import { formatDaysRemaining } from "./velocityHelpers";
+import { formatDaysRemaining } from './velocityHelpers';
 
 interface Props {
   daysInStage: number;
@@ -7,7 +7,12 @@ interface Props {
   currentStage: string;
 }
 
-export function VelocityForecastTimeline({ daysInStage, expectedDays, remainingDays, currentStage }: Props) {
+export function VelocityForecastTimeline({
+  daysInStage,
+  expectedDays,
+  remainingDays,
+  currentStage,
+}: Props) {
   const totalSpan = Math.max(daysInStage + remainingDays, expectedDays, 1);
   const elapsedPct = Math.min(100, (daysInStage / totalSpan) * 100);
   const expectedPct = Math.min(100, (expectedDays / totalSpan) * 100);
@@ -15,8 +20,15 @@ export function VelocityForecastTimeline({ daysInStage, expectedDays, remainingD
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-        <span>Estágio: <span className="font-medium text-foreground/80">{currentStage}</span></span>
-        <span>Falta: <span className="font-medium text-foreground/80">{formatDaysRemaining(remainingDays)}</span></span>
+        <span>
+          Estágio: <span className="font-medium text-foreground/80">{currentStage}</span>
+        </span>
+        <span>
+          Falta:{' '}
+          <span className="font-medium text-foreground/80">
+            {formatDaysRemaining(remainingDays)}
+          </span>
+        </span>
       </div>
       <div className="relative h-2.5 w-full rounded-full bg-muted overflow-hidden">
         {/* Expected baseline marker */}

@@ -94,8 +94,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
               </span>
               <Badge className="gap-2 bg-success text-white border-none shadow-[0_0_20px_rgba(34,197,94,0.4)] font-black text-xs px-4 py-1.5 rounded-full">
                 <ShieldCheck className="h-3.5 w-3.5 fill-current" />
-                PREÇO ÓTIMO:{' '}
-                {formatBRL(optimalPrice, { decimals: 2 })}
+                PREÇO ÓTIMO: {formatBRL(optimalPrice, { decimals: 2 })}
               </Badge>
             </div>
           </div>

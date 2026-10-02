@@ -24,11 +24,15 @@ const isValidPeriod = (v: unknown): v is KPIPeriod =>
   typeof v === 'string' && (VALID as string[]).includes(v);
 
 const formatCurrencyCompact = (v: number) =>
-  v >= 1000
-    ? `R$ ${(v / 1000).toFixed(1)}k`
-    : `${formatBRL(v)}`;
+  v >= 1000 ? `R$ ${(v / 1000).toFixed(1)}k` : `${formatBRL(v)}`;
 
-const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { fullLabel: string; revenue: number; sales: number } }> }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: { fullLabel: string; revenue: number; sales: number } }>;
+}) => {
   if (!active || !payload?.length) return null;
   const point = payload[0].payload;
   return (

@@ -580,9 +580,7 @@ export default function AdminComercial() {
                                 newValue={
                                   (req.new_values as Record<string, Json>)?.amount
                                 }
-                                formatter={val =>
-                                  formatBRL(Number(val), { decimals: 2 })
-                                }
+                                formatter={val => formatBRL(Number(val), { decimals: 2 })}
                               />
                             )}
                             {req.type === 'commission' && (

@@ -1,8 +1,16 @@
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
-import { useCronAlertBreakdown } from "@/hooks/admin/useConnectionMetrics";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BarChart3 } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Legend,
+} from 'recharts';
+import { useCronAlertBreakdown } from '@/hooks/admin/useConnectionMetrics';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BarChart3 } from 'lucide-react';
 
 export function CronAlertBreakdownChart() {
   const { data, isLoading, error } = useCronAlertBreakdown();
@@ -21,11 +29,22 @@ export function CronAlertBreakdownChart() {
         ) : error ? (
           <p className="text-sm text-destructive">Erro: {(error as Error).message}</p>
         ) : !data || data.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Nenhum alerta nas últimas 24h ✅</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Nenhum alerta nas últimas 24h ✅
+          </p>
         ) : (
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={data} layout="vertical" margin={{ left: 40, right: 12, top: 8, bottom: 8 }}>
-              <XAxis type="number" allowDecimals={false} stroke="hsl(var(--muted-foreground))" fontSize={11} />
+            <BarChart
+              data={data}
+              layout="vertical"
+              margin={{ left: 40, right: 12, top: 8, bottom: 8 }}
+            >
+              <XAxis
+                type="number"
+                allowDecimals={false}
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={11}
+              />
               <YAxis
                 type="category"
                 dataKey="jobname"
@@ -35,10 +54,10 @@ export function CronAlertBreakdownChart() {
                 tickFormatter={(v: string) => (v.length > 22 ? `${v.slice(0, 20)}…` : v)}
               />
               <Tooltip
-                cursor={{ fill: "hsl(var(--muted) / 0.4)" }}
+                cursor={{ fill: 'hsl(var(--muted) / 0.4)' }}
                 contentStyle={{
-                  background: "hsl(var(--popover))",
-                  border: "1px solid hsl(var(--border))",
+                  background: 'hsl(var(--popover))',
+                  border: '1px solid hsl(var(--border))',
                   borderRadius: 8,
                   fontSize: 12,
                 }}
@@ -46,8 +65,20 @@ export function CronAlertBreakdownChart() {
                 formatter={(value: number, name: string) => [value, name]}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="stalled" stackId="a" fill="hsl(38 92% 50%)" name="Travados" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="failed" stackId="a" fill="hsl(var(--destructive))" name="Falhas" radius={[0, 4, 4, 0]} />
+              <Bar
+                dataKey="stalled"
+                stackId="a"
+                fill="hsl(38 92% 50%)"
+                name="Travados"
+                radius={[0, 0, 0, 0]}
+              />
+              <Bar
+                dataKey="failed"
+                stackId="a"
+                fill="hsl(var(--destructive))"
+                name="Falhas"
+                radius={[0, 4, 4, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         )}

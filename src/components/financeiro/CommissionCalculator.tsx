@@ -31,7 +31,9 @@ export function CommissionCalculator() {
               <Label className="text-[10px] uppercase font-bold text-muted-foreground">
                 Valor da Venda
               </Label>
-              <span className="text-sm font-black italic">{formatBRL(saleAmount, { decimals: 2 })}</span>
+              <span className="text-sm font-black italic">
+                {formatBRL(saleAmount, { decimals: 2 })}
+              </span>
             </div>
             <Input
               type="number"
@@ -92,7 +94,9 @@ export function CommissionCalculator() {
             <p className="text-[8px] text-muted-foreground uppercase font-bold">
               Acumulado Mês
             </p>
-            <p className="text-xs font-bold">+ {formatBRL(commission * 1.2, { decimals: 2 })}</p>
+            <p className="text-xs font-bold">
+              + {formatBRL(commission * 1.2, { decimals: 2 })}
+            </p>
           </div>
           <div className="p-2 rounded-lg bg-white/5 border border-white/5 text-center">
             <p className="text-[8px] text-muted-foreground uppercase font-bold">

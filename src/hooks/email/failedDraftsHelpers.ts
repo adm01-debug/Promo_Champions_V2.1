@@ -36,7 +36,7 @@ export interface FailedDraftLike {
 /** Classifica um erro como permanente (sem reenvio automático) ou transitório. */
 export function isPermanentError(error: string | null | undefined): boolean {
   if (!error) return false;
-  return PERMANENT_PATTERNS.some((re) => re.test(error));
+  return PERMANENT_PATTERNS.some(re => re.test(error));
 }
 
 /**
@@ -46,7 +46,10 @@ export function isPermanentError(error: string | null | undefined): boolean {
  *  - `scheduled`: há uma nova tentativa marcada no futuro.
  *  - `pending`: elegível na próxima rodada do robô.
  */
-export function classifyDraft(draft: FailedDraftLike, now: Date = new Date()): DraftFailureStatus {
+export function classifyDraft(
+  draft: FailedDraftLike,
+  now: Date = new Date()
+): DraftFailureStatus {
   if (isPermanentError(draft.error)) return 'permanent';
   if (draft.retry_count >= MAX_RETRIES) return 'exhausted';
   if (draft.next_retry_at && new Date(draft.next_retry_at).getTime() > now.getTime()) {
@@ -67,7 +70,7 @@ export function statusLabel(status: DraftFailureStatus): string {
 }
 
 export function statusVariant(
-  status: DraftFailureStatus,
+  status: DraftFailureStatus
 ): 'default' | 'secondary' | 'destructive' | 'outline' {
   if (status === 'permanent') return 'destructive';
   if (status === 'exhausted') return 'secondary';
@@ -103,7 +106,10 @@ export interface FailureSummary {
 }
 
 /** Agrega a lista para os indicadores do topo do painel. */
-export function summarize(drafts: FailedDraftLike[], now: Date = new Date()): FailureSummary {
+export function summarize(
+  drafts: FailedDraftLike[],
+  now: Date = new Date()
+): FailureSummary {
   const summary: FailureSummary = {
     total: drafts.length,
     permanent: 0,

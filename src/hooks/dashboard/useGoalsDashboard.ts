@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
-import { startOfMonth, endOfMonth, differenceInDays, format, getDaysInMonth } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  differenceInDays,
+  format,
+  getDaysInMonth,
+} from 'date-fns';
 
 interface SalespersonGoalData {
   id: string;
@@ -51,23 +57,27 @@ export function useGoalsDashboard() {
       const daysRemaining = totalDays - daysElapsed;
 
       // Fetch all data in parallel for better performance
-      const [salespeopleResult, goalsResult, salesResult, predictionsResult] = await Promise.all([
-        supabase
-          .from('salespeople')
-          .select('id, name, avatar_url, role, commission_rate')
-          .eq('is_active', true),
-        supabase
-          .from('sales_goals')
-          .select('salesperson_id, goal_amount')
-          .eq('month', currentMonth),
-        supabase
-          .from('sales')
-          .select('salesperson_id, amount')
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', monthStart.toISOString())
-          .lte('created_at', monthEnd.toISOString()),
-        supabase.from('quota_attainment_predictions').select('*').eq('period_start', currentMonth),
-      ]);
+      const [salespeopleResult, goalsResult, salesResult, predictionsResult] =
+        await Promise.all([
+          supabase
+            .from('salespeople')
+            .select('id, name, avatar_url, role, commission_rate')
+            .eq('is_active', true),
+          supabase
+            .from('sales_goals')
+            .select('salesperson_id, goal_amount')
+            .eq('month', currentMonth),
+          supabase
+            .from('sales')
+            .select('salesperson_id, amount')
+            .in('status', [...WON_SALE_STATUSES])
+            .gte('created_at', monthStart.toISOString())
+            .lte('created_at', monthEnd.toISOString()),
+          supabase
+            .from('quota_attainment_predictions')
+            .select('*')
+            .eq('period_start', currentMonth),
+        ]);
 
       if (salespeopleResult.error) throw salespeopleResult.error;
       if (goalsResult.error) throw goalsResult.error;
@@ -133,7 +143,8 @@ export function useGoalsDashboard() {
       const teamProgress = totalGoal > 0 ? (totalSales / totalGoal) * 100 : 0;
       const teamDailyAverage = daysElapsed > 0 ? totalSales / daysElapsed : 0;
       const teamProjection = teamDailyAverage * totalDays;
-      const teamRequiredDaily = daysRemaining > 0 ? (totalGoal - totalSales) / daysRemaining : 0;
+      const teamRequiredDaily =
+        daysRemaining > 0 ? (totalGoal - totalSales) / daysRemaining : 0;
 
       // Team commission totals
       const totalCurrentCommission = salespeopleData.reduce(

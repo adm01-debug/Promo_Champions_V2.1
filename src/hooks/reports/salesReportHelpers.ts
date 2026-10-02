@@ -106,7 +106,6 @@ export interface SalesReportData {
   isEmpty: boolean;
 }
 
-
 export const STATUS_LABEL: Record<string, string> = {
   completed: 'Concluídas',
   pending: 'Pendentes',
@@ -130,15 +129,21 @@ export function buildKpis(sales: SaleRow[]): ReportKpis {
 
   // Markup médio considera apenas vendas ganhas com custo conhecido (markup_pct != null).
   const withMarkup = completed
-    .map(s => (s.markup_pct === null || s.markup_pct === undefined ? null : Number(s.markup_pct)))
+    .map(s =>
+      s.markup_pct === null || s.markup_pct === undefined ? null : Number(s.markup_pct)
+    )
     .filter((v): v is number => v !== null && Number.isFinite(v));
   const markupSample = withMarkup.length;
-  const avgMarkup = markupSample > 0 ? withMarkup.reduce((a, b) => a + b, 0) / markupSample : 0;
+  const avgMarkup =
+    markupSample > 0 ? withMarkup.reduce((a, b) => a + b, 0) / markupSample : 0;
 
   return { revenue, salesCount, avgTicket, conversionRate, avgMarkup, markupSample };
 }
 
-export function buildKpiDeltas(current: ReportKpis, previous: ReportKpis): ReportKpiDelta {
+export function buildKpiDeltas(
+  current: ReportKpis,
+  previous: ReportKpis
+): ReportKpiDelta {
   return {
     ...current,
     revenueDelta: calcDelta(current.revenue, previous.revenue),
@@ -267,8 +272,6 @@ export function buildMarkupRanking(
     .slice(0, topN);
 }
 
-
-
 export function buildTopDeals(
   sales: SaleRow[],
   salespeople: SalespersonRow[],
@@ -284,7 +287,9 @@ export function buildTopDeals(
       amount: Number(s.amount ?? 0),
       status: STATUS_LABEL[s.status ?? ''] ?? s.status ?? '—',
       markupPct:
-        s.markup_pct === null || s.markup_pct === undefined || Number.isNaN(Number(s.markup_pct))
+        s.markup_pct === null ||
+        s.markup_pct === undefined ||
+        Number.isNaN(Number(s.markup_pct))
           ? null
           : Number(s.markup_pct),
     }));
@@ -319,7 +324,9 @@ export function buildMarkupSeries(
   if (period === 'weekly') {
     return eachDayOfInterval({ start, end }).map(d => {
       const key = format(d, 'yyyy-MM-dd');
-      const rows = known.filter(s => format(new Date(s.created_at), 'yyyy-MM-dd') === key);
+      const rows = known.filter(
+        s => format(new Date(s.created_at), 'yyyy-MM-dd') === key
+      );
       return { name: format(d, 'EEE', { locale: ptBR }), ...avg(rows) };
     });
   }
@@ -327,7 +334,9 @@ export function buildMarkupSeries(
   return eachWeekOfInterval({ start, end }, { weekStartsOn: 1 }).map((w, i) => {
     const ws = startOfWeek(w, { weekStartsOn: 1 });
     const we = endOfWeek(w, { weekStartsOn: 1 });
-    const rows = known.filter(s => isWithinInterval(new Date(s.created_at), { start: ws, end: we }));
+    const rows = known.filter(s =>
+      isWithinInterval(new Date(s.created_at), { start: ws, end: we })
+    );
     return { name: `Sem ${i + 1}`, ...avg(rows) };
   });
 }

@@ -1,9 +1,14 @@
-import { memo, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Grid3x3 } from "lucide-react";
-import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
-import { useWinLossCohort } from "@/hooks/win-loss/useWinLossCohort";
+import { memo, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Grid3x3 } from 'lucide-react';
+import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
+import { useWinLossCohort } from '@/hooks/win-loss/useWinLossCohort';
 
 interface Props {
   rows: WLAnalysisRow[];
@@ -11,19 +16,24 @@ interface Props {
 }
 
 const cellTone = (winRate: number, total: number): string => {
-  if (total === 0) return "bg-muted/30";
-  if (winRate >= 70) return "bg-emerald-500/80 text-white";
-  if (winRate >= 50) return "bg-emerald-500/50 text-foreground";
-  if (winRate >= 30) return "bg-amber-500/50 text-foreground";
-  return "bg-rose-500/60 text-white";
+  if (total === 0) return 'bg-muted/30';
+  if (winRate >= 70) return 'bg-emerald-500/80 text-white';
+  if (winRate >= 50) return 'bg-emerald-500/50 text-foreground';
+  if (winRate >= 30) return 'bg-amber-500/50 text-foreground';
+  return 'bg-rose-500/60 text-white';
 };
 
-export const WinLossCohortHeatmap = memo(function WinLossCohortHeatmap({ rows, onCellClick }: Props) {
+export const WinLossCohortHeatmap = memo(function WinLossCohortHeatmap({
+  rows,
+  onCellClick,
+}: Props) {
   const { cells, createdMonths, closedMonths } = useWinLossCohort(rows);
 
   const matrix = useMemo(() => {
     const m = new Map<string, { winRate: number; total: number }>();
-    cells.forEach(c => m.set(`${c.createdMonth}||${c.closedMonth}`, { winRate: c.winRate, total: c.total }));
+    cells.forEach(c =>
+      m.set(`${c.createdMonth}||${c.closedMonth}`, { winRate: c.winRate, total: c.total })
+    );
     return m;
   }, [cells]);
 
@@ -37,7 +47,9 @@ export const WinLossCohortHeatmap = memo(function WinLossCohortHeatmap({ rows, o
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground py-8 text-center">Sem dados suficientes para cohort.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Sem dados suficientes para cohort.
+          </p>
         </CardContent>
       </Card>
     );
@@ -54,19 +66,36 @@ export const WinLossCohortHeatmap = memo(function WinLossCohortHeatmap({ rows, o
       <CardContent>
         <TooltipProvider delayDuration={200}>
           <div className="overflow-x-auto">
-            <table className="text-[11px] border-separate border-spacing-1" role="grid" aria-label="Cohort de Win Rate · safra de criação por mês de fechamento">
+            <table
+              className="text-[11px] border-separate border-spacing-1"
+              role="grid"
+              aria-label="Cohort de Win Rate · safra de criação por mês de fechamento"
+            >
               <thead>
                 <tr role="row">
-                  <th className="text-left text-muted-foreground font-normal px-1" scope="col">Criado ↓ / Fechado →</th>
+                  <th
+                    className="text-left text-muted-foreground font-normal px-1"
+                    scope="col"
+                  >
+                    Criado ↓ / Fechado →
+                  </th>
                   {closedMonths.map(cm => (
-                    <th key={cm} className="text-muted-foreground font-normal px-1 tabular-nums" scope="col">{cm}</th>
+                    <th
+                      key={cm}
+                      className="text-muted-foreground font-normal px-1 tabular-nums"
+                      scope="col"
+                    >
+                      {cm}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {createdMonths.map(rm => (
                   <tr key={rm}>
-                    <td className="text-muted-foreground tabular-nums px-1 py-0.5">{rm}</td>
+                    <td className="text-muted-foreground tabular-nums px-1 py-0.5">
+                      {rm}
+                    </td>
                     {closedMonths.map(cm => {
                       const cell = matrix.get(`${rm}||${cm}`);
                       const wr = cell?.winRate ?? 0;
@@ -79,15 +108,21 @@ export const WinLossCohortHeatmap = memo(function WinLossCohortHeatmap({ rows, o
                                 type="button"
                                 disabled={total === 0}
                                 onClick={() => onCellClick?.(rm, cm)}
-                                className={`w-10 h-7 rounded-sm tabular-nums text-[10px] font-medium transition-transform hover:scale-110 ${cellTone(wr, total)} ${total ? "cursor-pointer" : "cursor-default opacity-40"}`}
+                                className={`w-10 h-7 rounded-sm tabular-nums text-[10px] font-medium transition-transform hover:scale-110 ${cellTone(wr, total)} ${total ? 'cursor-pointer' : 'cursor-default opacity-40'}`}
                                 aria-label={`Cohort ${rm} fechado em ${cm}: ${wr.toFixed(0)}% (${total} deals)`}
                               >
-                                {total > 0 ? `${wr.toFixed(0)}` : "·"}
+                                {total > 0 ? `${wr.toFixed(0)}` : '·'}
                               </button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p className="text-xs">Criado: <strong>{rm}</strong> · Fechado: <strong>{cm}</strong></p>
-                              <p className="text-xs">Win Rate: <strong>{wr.toFixed(1)}%</strong> ({total} deals)</p>
+                              <p className="text-xs">
+                                Criado: <strong>{rm}</strong> · Fechado:{' '}
+                                <strong>{cm}</strong>
+                              </p>
+                              <p className="text-xs">
+                                Win Rate: <strong>{wr.toFixed(1)}%</strong> ({total}{' '}
+                                deals)
+                              </p>
                             </TooltipContent>
                           </Tooltip>
                         </td>

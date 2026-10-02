@@ -62,7 +62,7 @@ export const ScenarioSimulator = () => {
   ];
 
   const calculateRevenue = () => {
-    return formatBRL((pipeline[0] * conversion[0] * dealSize[0] * 100), { decimals: 2 });
+    return formatBRL(pipeline[0] * conversion[0] * dealSize[0] * 100, { decimals: 2 });
   };
 
   const handleSimulate = (strategyId?: string) => {

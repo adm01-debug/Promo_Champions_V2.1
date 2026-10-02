@@ -3,7 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 import { DollarSign, TrendingUp, Users } from 'lucide-react';
 
 import { formatBRL } from '@/lib/money';
@@ -23,7 +31,10 @@ const SEGMENT_COLORS = [
   'hsl(var(--chart-5))',
 ];
 
-export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicket?: number }> = ({ currentClientLTV = 4500, currentClientAvgTicket = 1200 }) => {
+export const LTVBySegment: FC<{
+  currentClientLTV?: number;
+  currentClientAvgTicket?: number;
+}> = ({ currentClientLTV = 4500, currentClientAvgTicket = 1200 }) => {
   const { data, isLoading } = useQuery<SegmentLTV[]>({
     queryKey: ['ltv-by-segment'],
     queryFn: async () => {
@@ -43,10 +54,17 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
       const clientMap = new Map(clients?.map(c => [c.name, c]) || []);
 
       // Group sales by client
-      const clientSales = new Map<string, { total: number; count: number; company: string | null }>();
-      
+      const clientSales = new Map<
+        string,
+        { total: number; count: number; company: string | null }
+      >();
+
       (sales || []).forEach(sale => {
-        const existing = clientSales.get(sale.client_name) || { total: 0, count: 0, company: null };
+        const existing = clientSales.get(sale.client_name) || {
+          total: 0,
+          count: 0,
+          company: null,
+        };
         existing.total += Number(sale.amount || 0);
         existing.count += 1;
         const client = clientMap.get(sale.client_name);
@@ -60,15 +78,18 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
       const thresholdHigh = maxLTV * 0.6;
       const thresholdMed = maxLTV * 0.25;
 
-      const segments: Record<string, { totalRev: number; count: number; purchases: number }> = {
+      const segments: Record<
+        string,
+        { totalRev: number; count: number; purchases: number }
+      > = {
         'Premium (Top 20%)': { totalRev: 0, count: 0, purchases: 0 },
-        'Regular': { totalRev: 0, count: 0, purchases: 0 },
-        'Básico': { totalRev: 0, count: 0, purchases: 0 },
+        Regular: { totalRev: 0, count: 0, purchases: 0 },
+        Básico: { totalRev: 0, count: 0, purchases: 0 },
         'Recorrente (3+ compras)': { totalRev: 0, count: 0, purchases: 0 },
         'Único (1 compra)': { totalRev: 0, count: 0, purchases: 0 },
       };
 
-      clientSales.forEach((data) => {
+      clientSales.forEach(data => {
         // By value tier
         if (data.total >= thresholdHigh) {
           segments['Premium (Top 20%)'].totalRev += data.total;
@@ -111,7 +132,9 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
   });
 
   const totalRevenue = data?.reduce((sum, s) => sum + s.totalRevenue, 0) || 0;
-  const avgSegmentLTV = data ? data.reduce((sum, s) => sum + s.avgLTV, 0) / data.length : 0;
+  const avgSegmentLTV = data
+    ? data.reduce((sum, s) => sum + s.avgLTV, 0) / data.length
+    : 0;
 
   return (
     <Card className="glass border-border/50">
@@ -140,33 +163,56 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">LTV vs Média</span>
-                  <Badge variant={currentClientLTV >= avgSegmentLTV ? "success" : "destructive"} className="h-4 text-[9px]">
-                    {currentClientLTV >= avgSegmentLTV ? "+" : ""}{(((currentClientLTV / avgSegmentLTV) - 1) * 100).toFixed(1)}%
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">
+                    LTV vs Média
+                  </span>
+                  <Badge
+                    variant={
+                      currentClientLTV >= avgSegmentLTV ? 'success' : 'destructive'
+                    }
+                    className="h-4 text-[9px]"
+                  >
+                    {currentClientLTV >= avgSegmentLTV ? '+' : ''}
+                    {((currentClientLTV / avgSegmentLTV - 1) * 100).toFixed(1)}%
                   </Badge>
                 </div>
                 <div className="text-xl font-black">{formatBRL(currentClientLTV)}</div>
-                <div className="text-[9px] text-muted-foreground">Média do Segmento: {formatBRL(avgSegmentLTV)}</div>
+                <div className="text-[9px] text-muted-foreground">
+                  Média do Segmento: {formatBRL(avgSegmentLTV)}
+                </div>
               </div>
-              
+
               <div className="p-4 rounded-xl bg-secondary/5 border border-secondary/20 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Ticket Médio</span>
-                  <Badge variant="outline" className="h-4 text-[9px] border-primary/20 text-primary">BENCHMARK</Badge>
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">
+                    Ticket Médio
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="h-4 text-[9px] border-primary/20 text-primary"
+                  >
+                    BENCHMARK
+                  </Badge>
                 </div>
-                <div className="text-xl font-black">{formatBRL(currentClientAvgTicket)}</div>
-                <div className="text-[9px] text-muted-foreground">Potencial: +R$ 450,00</div>
+                <div className="text-xl font-black">
+                  {formatBRL(currentClientAvgTicket)}
+                </div>
+                <div className="text-[9px] text-muted-foreground">
+                  Potencial: +R$ 450,00
+                </div>
               </div>
             </div>
 
             {/* Chart */}
             <div className="pt-4">
-              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">Distribuição de LTV por Segmento</h4>
+              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-4">
+                Distribuição de LTV por Segmento
+              </h4>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={data} layout="vertical" margin={{ left: 0, right: 20 }}>
                   <XAxis
                     type="number"
-                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                    tickFormatter={v => `R$${(v / 1000).toFixed(0)}k`}
                     fontSize={10}
                     stroke="hsl(var(--muted-foreground))"
                     hide
@@ -181,7 +227,10 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                     axisLine={false}
                   />
                   <Tooltip
-                    formatter={(value: number | string) => [`${formatBRL(Number(value))}`, 'LTV Médio']}
+                    formatter={(value: number | string) => [
+                      `${formatBRL(Number(value))}`,
+                      'LTV Médio',
+                    ]}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
@@ -191,7 +240,10 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                   />
                   <Bar dataKey="avgLTV" radius={[0, 4, 4, 0]} barSize={12}>
                     {data.map((_, idx) => (
-                      <Cell key={idx} fill={SEGMENT_COLORS[idx % SEGMENT_COLORS.length]} />
+                      <Cell
+                        key={idx}
+                        fill={SEGMENT_COLORS[idx % SEGMENT_COLORS.length]}
+                      />
                     ))}
                   </Bar>
                 </BarChart>
@@ -201,7 +253,10 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
             {/* Segment cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {data.map((seg, _idx) => (
-                <div key={seg.segment} className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-2">
+                <div
+                  key={seg.segment}
+                  className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-2"
+                >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-medium truncate">{seg.segment}</span>
                     <Badge variant="outline" className="text-[10px] shrink-0">
@@ -210,9 +265,7 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                     </Badge>
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold">
-                      {formatBRL(seg.avgLTV)}
-                    </span>
+                    <span className="text-lg font-bold">{formatBRL(seg.avgLTV)}</span>
                     <span className="text-[10px] text-muted-foreground">LTV médio</span>
                   </div>
                   <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
@@ -221,7 +274,10 @@ export const LTVBySegment: FC<{ currentClientLTV?: number; currentClientAvgTicke
                       {seg.avgPurchases} compras/cliente
                     </span>
                     <span>
-                      {totalRevenue > 0 ? Math.round((seg.totalRevenue / totalRevenue) * 100) : 0}% receita
+                      {totalRevenue > 0
+                        ? Math.round((seg.totalRevenue / totalRevenue) * 100)
+                        : 0}
+                      % receita
                     </span>
                   </div>
                 </div>

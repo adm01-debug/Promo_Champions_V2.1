@@ -5,19 +5,19 @@ import { Timer, TrendingDown, TrendingUp, Minus, Clock, Maximize2 } from 'lucide
 import { useClosingTime, ClosingTimeData } from '@/hooks/useClosingTime';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   Cell,
-  ReferenceLine
+  ReferenceLine,
 } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { RechartsTooltipProps } from "@/types/recharts";
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
   if (active && payload && payload.length) {
@@ -25,7 +25,8 @@ const CustomTooltip = ({ active, payload, label }: RechartsTooltipProps) => {
       <div className="glass rounded-lg p-3 shadow-lg border border-border/50">
         <p className="font-medium text-foreground">{label}</p>
         <p className="text-sm text-muted-foreground">
-          Média: <span className="font-semibold text-primary">{payload[0].value} dias</span>
+          Média:{' '}
+          <span className="font-semibold text-primary">{payload[0].value} dias</span>
         </p>
         <p className="text-xs text-muted-foreground">
           {(payload[0].payload as Record<string, number>).deals} deals analisados
@@ -41,7 +42,7 @@ export const ClosingTimeChart: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isDedicatedPage = location.pathname === '/analytics/closing-time';
-  
+
   const chartData: ClosingTimeData[] = useMemo(() => {
     if (!data || !Array.isArray(data) || data.length === 0) {
       return [
@@ -56,7 +57,9 @@ export const ClosingTimeChart: FC = () => {
 
   const averageClosingTime = useMemo(() => {
     if (chartData.length === 0) return 0;
-    return Math.round(chartData.reduce((acc, curr) => acc + curr.avgDays, 0) / chartData.length);
+    return Math.round(
+      chartData.reduce((acc, curr) => acc + curr.avgDays, 0) / chartData.length
+    );
   }, [chartData]);
 
   const totalDeals = useMemo(() => {
@@ -73,7 +76,8 @@ export const ClosingTimeChart: FC = () => {
   }, [chartData]);
 
   const TrendIcon = trend > 0 ? TrendingUp : trend < 0 ? TrendingDown : Minus;
-  const trendColor = trend > 0 ? 'text-destructive' : trend < 0 ? 'text-success' : 'text-muted-foreground';
+  const trendColor =
+    trend > 0 ? 'text-destructive' : trend < 0 ? 'text-success' : 'text-muted-foreground';
 
   if (isLoading) {
     return (
@@ -101,9 +105,9 @@ export const ClosingTimeChart: FC = () => {
               {totalDeals} deals
             </Badge>
             {!isDedicatedPage && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-7 w-7 rounded-full hover:bg-primary/10 transition-colors"
                 onClick={() => navigate('/analytics/closing-time')}
               >
@@ -134,34 +138,38 @@ export const ClosingTimeChart: FC = () => {
         {/* Chart */}
         <div className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
-              <XAxis 
-                dataKey="stage" 
+              <XAxis
+                dataKey="stage"
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                 tickLine={false}
                 axisLine={false}
               />
-              <YAxis 
+              <YAxis
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `${value}d`}
+                tickFormatter={value => `${value}d`}
               />
               <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine 
-                y={averageClosingTime} 
-                stroke="hsl(var(--primary))" 
+              <ReferenceLine
+                y={averageClosingTime}
+                stroke="hsl(var(--primary))"
                 strokeDasharray="5 5"
                 strokeOpacity={0.5}
               />
               <Bar dataKey="avgDays" radius={[4, 4, 0, 0]}>
                 {chartData.map((entry, index) => (
-                  <Cell 
+                  <Cell
                     key={`cell-${index}`}
-                    fill={entry.avgDays > averageClosingTime 
-                      ? 'hsl(var(--warning))' 
-                      : 'hsl(var(--primary))'
+                    fill={
+                      entry.avgDays > averageClosingTime
+                        ? 'hsl(var(--warning))'
+                        : 'hsl(var(--primary))'
                     }
                     fillOpacity={0.8}
                   />

@@ -297,14 +297,8 @@ const EditFlagDialog: FC<{
               placeholder="admin, manager"
             />
           </div>
-          <Button
-            className="w-full"
-            onClick={handleSave}
-            disabled={updateFlag.isPending}
-          >
-            {updateFlag.isPending && (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            )}
+          <Button className="w-full" onClick={handleSave} disabled={updateFlag.isPending}>
+            {updateFlag.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             Salvar
           </Button>
         </div>

@@ -158,7 +158,10 @@ export const FuturisticSpeedometerDashboard = () => {
       if (fetchError && import.meta.env.DEV)
         console.error('Error fetching settings:', fetchError);
 
-      const updatedValue = { ...((existing?.value as SpeedometerSettings) || {}), ...newSettings };
+      const updatedValue = {
+        ...((existing?.value as SpeedometerSettings) || {}),
+        ...newSettings,
+      };
 
       const { error: upsertError } = await supabase.from('user_app_settings').upsert({
         user_id: user.id,
@@ -292,8 +295,7 @@ export const FuturisticSpeedometerDashboard = () => {
   ];
 
   const fmtBRL = (v: number) => {
-    if (gaugeMode === 'compact')
-      return `${formatBRLCompact(v)}`;
+    if (gaugeMode === 'compact') return `${formatBRLCompact(v)}`;
     if (gaugeMode === 'kilo') return `R$ ${(v / 1000).toFixed(1)}k`;
     return `${formatBRL(v)}`;
   };
@@ -326,9 +328,7 @@ export const FuturisticSpeedometerDashboard = () => {
             <Gauge className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-section-title text-primary">
-              Performance HUD
-            </h2>
+            <h2 className="text-section-title text-primary">Performance HUD</h2>
             <p className="text-[11px] text-muted-foreground font-mono uppercase tracking-wider flex items-center gap-2">
               Telemetria · {PERIOD_LABELS[period].label} · {selectedLabel}
             </p>

@@ -34,7 +34,7 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
   options,
   value,
   onChange,
-  placeholder = "Selecione...",
+  placeholder = 'Selecione...',
   searchable = false,
   clearable = false,
   disabled = false,
@@ -53,19 +53,23 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
 
   // Filter options based on search
   const filteredOptions = searchQuery
-    ? options.filter(opt =>
-        opt.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        opt.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    ? options.filter(
+        opt =>
+          opt.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          opt.description?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : options;
 
   // Group options
-  const groupedOptions = filteredOptions.reduce((acc, opt) => {
-    const group = opt.group || '';
-    if (!acc[group]) acc[group] = [];
-    acc[group].push(opt);
-    return acc;
-  }, {} as Record<string, SelectOption[]>);
+  const groupedOptions = filteredOptions.reduce(
+    (acc, opt) => {
+      const group = opt.group || '';
+      if (!acc[group]) acc[group] = [];
+      acc[group].push(opt);
+      return acc;
+    },
+    {} as Record<string, SelectOption[]>
+  );
 
   // Handle click outside
   useEffect(() => {
@@ -125,12 +129,10 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
   };
 
   return (
-    <div className={cn("relative", className)} ref={containerRef}>
+    <div className={cn('relative', className)} ref={containerRef}>
       {/* Label */}
       {label && (
-        <label className="text-label block text-foreground mb-1.5">
-          {label}
-        </label>
+        <label className="text-label block text-foreground mb-1.5">{label}</label>
       )}
 
       {/* Trigger */}
@@ -140,33 +142,34 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={cn(
-          "w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg",
-          "border bg-background text-left transition-all",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-          error ? "border-destructive" : "border-input",
-          disabled && "opacity-50 cursor-not-allowed",
-          isOpen && "ring-2 ring-primary ring-offset-2"
+          'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg',
+          'border bg-background text-left transition-all',
+          'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+          error ? 'border-destructive' : 'border-input',
+          disabled && 'opacity-50 cursor-not-allowed',
+          isOpen && 'ring-2 ring-primary ring-offset-2'
         )}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        <span className={cn(
-          "flex-1 truncate",
-          !selectedOption && "text-muted-foreground"
-        )}>
+        <span
+          className={cn('flex-1 truncate', !selectedOption && 'text-muted-foreground')}
+        >
           {selectedOption ? (
             <span className="flex items-center gap-2">
               {selectedOption.icon}
               {selectedOption.label}
             </span>
-          ) : placeholder}
+          ) : (
+            placeholder
+          )}
         </span>
 
         <div className="flex items-center gap-1">
           {clearable && value && (
             <button
               type="button"
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 onChange('');
               }}
@@ -185,9 +188,7 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
       </button>
 
       {/* Error message */}
-      {error && (
-        <p className="mt-1.5 text-sm text-destructive">{error}</p>
-      )}
+      {error && <p className="mt-1.5 text-sm text-destructive">{error}</p>}
 
       {/* Helper text */}
       {helperText && !error && (
@@ -203,8 +204,8 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "absolute z-50 w-full mt-1",
-              "bg-popover border border-border rounded-lg shadow-lg overflow-hidden"
+              'absolute z-50 w-full mt-1',
+              'bg-popover border border-border rounded-lg shadow-lg overflow-hidden'
             )}
           >
             <FocusTrap active={isOpen}>
@@ -217,14 +218,14 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
                       ref={searchInputRef}
                       type="text"
                       value={searchQuery}
-                      onChange={(e) => {
+                      onChange={e => {
                         setSearchQuery(e.target.value);
                         setHighlightedIndex(0);
                       }}
                       placeholder="Buscar..."
                       className={cn(
-                        "w-full pl-9 pr-3 py-2 rounded-md bg-muted/50",
-                        "text-sm outline-none focus:ring-2 focus:ring-primary/50"
+                        'w-full pl-9 pr-3 py-2 rounded-md bg-muted/50',
+                        'text-sm outline-none focus:ring-2 focus:ring-primary/50'
                       )}
                     />
                   </div>
@@ -246,7 +247,9 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
                         </div>
                       )}
                       {groupOpts.map((option, _idx) => {
-                        const globalIdx = filteredOptions.findIndex(o => o.value === option.value);
+                        const globalIdx = filteredOptions.findIndex(
+                          o => o.value === option.value
+                        );
                         const isHighlighted = globalIdx === highlightedIndex;
                         const isSelected = option.value === value;
 
@@ -258,11 +261,11 @@ export const EnhancedSelect: FC<EnhancedSelectProps> = ({
                             disabled={option.disabled}
                             onMouseEnter={() => setHighlightedIndex(globalIdx)}
                             className={cn(
-                              "w-full px-3 py-2 flex items-center gap-3 text-left",
-                              "transition-colors",
-                              isHighlighted && "bg-primary/10",
-                              isSelected && "bg-primary/5",
-                              option.disabled && "opacity-50 cursor-not-allowed"
+                              'w-full px-3 py-2 flex items-center gap-3 text-left',
+                              'transition-colors',
+                              isHighlighted && 'bg-primary/10',
+                              isSelected && 'bg-primary/5',
+                              option.disabled && 'opacity-50 cursor-not-allowed'
                             )}
                             role="option"
                             aria-selected={isSelected}

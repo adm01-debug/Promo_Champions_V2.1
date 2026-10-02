@@ -2,7 +2,12 @@ import React, { useMemo } from 'react';
 import { WON_SALE_STATUSES } from '@/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Info, Radio, Zap } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -60,7 +65,10 @@ export const SalesForecast = React.memo(() => {
         return sum + (d.amount || 0) * w;
       }, 0);
 
-      const closedTotal = (closedDeals || []).reduce((sum, d) => sum + (d.amount || 0), 0);
+      const closedTotal = (closedDeals || []).reduce(
+        (sum, d) => sum + (d.amount || 0),
+        0
+      );
       const totalDeals = (openDeals?.length || 0) + (closedDeals?.length || 0);
       const confidence = Math.min(95, Math.max(30, 40 + totalDeals * 0.5));
 
@@ -72,7 +80,10 @@ export const SalesForecast = React.memo(() => {
     staleTime: 120_000,
   });
 
-  const config = useMemo(() => getConfidenceConfig(data?.confidence ?? 50), [data?.confidence]);
+  const config = useMemo(
+    () => getConfidenceConfig(data?.confidence ?? 50),
+    [data?.confidence]
+  );
 
   if (isLoading) {
     return (
@@ -149,7 +160,12 @@ export const SalesForecast = React.memo(() => {
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <span className={cn('text-xs font-mono font-black tabular-nums', config.textColor)}>
+            <span
+              className={cn(
+                'text-xs font-mono font-black tabular-nums',
+                config.textColor
+              )}
+            >
               {confidence}%
             </span>
           </div>

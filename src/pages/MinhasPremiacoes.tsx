@@ -1,6 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Trophy, ChevronLeft, ChevronRight, CalendarDays, Filter, X, Download, Loader2 } from 'lucide-react';
+import {
+  Trophy,
+  ChevronLeft,
+  ChevronRight,
+  CalendarDays,
+  Filter,
+  X,
+  Download,
+  Loader2,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -23,15 +32,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useMyBonusAwards, useMyBonusAwardsRealtime, fetchAllMyBonusAwards } from '@/hooks/useMyBonusAwards';
+import {
+  useMyBonusAwards,
+  useMyBonusAwardsRealtime,
+  fetchAllMyBonusAwards,
+} from '@/hooks/useMyBonusAwards';
 import type { AwardStatus } from '@/hooks/useCommissionBonusAwards';
 import { buildCsv, downloadCsv } from '@/lib/csv';
 
 import { formatBRL } from '@/lib/money';
 const PAGE_SIZE = 10;
 
-const brl = (v: number) =>
-  formatBRL(v, { decimals: 2 });
+const brl = (v: number) => formatBRL(v, { decimals: 2 });
 
 const statusConfig: Record<
   AwardStatus,
@@ -74,8 +86,8 @@ export default function MinhasPremiacoes() {
 
   const kpis = useMemo(() => {
     const rows = data?.rows ?? [];
-    const paid = rows.filter((r) => r.status === 'paid');
-    const pending = rows.filter((r) => r.status === 'pending');
+    const paid = rows.filter(r => r.status === 'paid');
+    const pending = rows.filter(r => r.status === 'pending');
     return {
       totalPaid: paid.reduce((s, r) => s + Number(r.computed_amount || 0), 0),
       totalPending: pending.reduce((s, r) => s + Number(r.computed_amount || 0), 0),
@@ -102,18 +114,32 @@ export default function MinhasPremiacoes() {
         return;
       }
       const csv = buildCsv(rows, [
-        { header: 'Premiação', value: (r) => r.bonus_name ?? '' },
-        { header: 'Período', value: (r) => format(new Date(r.period_month), 'MM/yyyy') },
-        { header: 'Valor (BRL)', value: (r) => Number(r.computed_amount || 0).toFixed(2).replace('.', ',') },
-        { header: 'Status', value: (r) => statusConfig[r.status]?.label ?? r.status },
-        { header: 'Conquistada em', value: (r) => format(new Date(r.awarded_at), 'dd/MM/yyyy HH:mm') },
-        { header: 'Paga em', value: (r) => (r.paid_at ? format(new Date(r.paid_at), 'dd/MM/yyyy HH:mm') : '') },
+        { header: 'Premiação', value: r => r.bonus_name ?? '' },
+        { header: 'Período', value: r => format(new Date(r.period_month), 'MM/yyyy') },
+        {
+          header: 'Valor (BRL)',
+          value: r =>
+            Number(r.computed_amount || 0)
+              .toFixed(2)
+              .replace('.', ','),
+        },
+        { header: 'Status', value: r => statusConfig[r.status]?.label ?? r.status },
+        {
+          header: 'Conquistada em',
+          value: r => format(new Date(r.awarded_at), 'dd/MM/yyyy HH:mm'),
+        },
+        {
+          header: 'Paga em',
+          value: r => (r.paid_at ? format(new Date(r.paid_at), 'dd/MM/yyyy HH:mm') : ''),
+        },
       ]);
       const stamp = format(new Date(), 'yyyy-MM-dd_HH-mm');
       downloadCsv(`minhas-premiacoes_${stamp}.csv`, csv);
       toast.success(`Exportadas ${rows.length} premiação(ões).`);
     } catch (err) {
-      toast.error(`Falha ao exportar: ${err instanceof Error ? err.message : 'erro desconhecido'}`);
+      toast.error(
+        `Falha ao exportar: ${err instanceof Error ? err.message : 'erro desconhecido'}`
+      );
     } finally {
       setExporting(false);
     }
@@ -138,7 +164,8 @@ export default function MinhasPremiacoes() {
           <div className="flex-1">
             <h1 className="text-page-title">Minhas Premiações</h1>
             <p className="text-sm text-muted-foreground">
-              Histórico de conquistas e pagamentos com filtros e atualização em tempo real.
+              Histórico de conquistas e pagamentos com filtros e atualização em tempo
+              real.
             </p>
           </div>
           <Button
@@ -162,11 +189,15 @@ export default function MinhasPremiacoes() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs text-muted-foreground">Total pago (página)</CardTitle>
+              <CardTitle className="text-xs text-muted-foreground">
+                Total pago (página)
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-semibold">{brl(kpis.totalPaid)}</div>
-              <div className="text-xs text-muted-foreground">{kpis.countPaid} pagamento(s)</div>
+              <div className="text-xs text-muted-foreground">
+                {kpis.countPaid} pagamento(s)
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -184,7 +215,9 @@ export default function MinhasPremiacoes() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs text-muted-foreground">Total no filtro</CardTitle>
+              <CardTitle className="text-xs text-muted-foreground">
+                Total no filtro
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-semibold">{data?.total ?? 0}</div>
@@ -199,9 +232,7 @@ export default function MinhasPremiacoes() {
               <div className="text-2xl font-semibold">
                 {page + 1} / {totalPages}
               </div>
-              <div className="text-xs text-muted-foreground">
-                {PAGE_SIZE} por página
-              </div>
+              <div className="text-xs text-muted-foreground">{PAGE_SIZE} por página</div>
             </CardContent>
           </Card>
         </div>
@@ -218,7 +249,7 @@ export default function MinhasPremiacoes() {
               <label className="text-xs text-muted-foreground mb-1 block">Status</label>
               <Select
                 value={status}
-                onValueChange={(v) => {
+                onValueChange={v => {
                   setStatus(v as AwardStatus | 'all');
                   setPage(0);
                 }}
@@ -239,7 +270,7 @@ export default function MinhasPremiacoes() {
               <label className="text-xs text-muted-foreground mb-1 block">Período</label>
               <Select
                 value={period}
-                onValueChange={(v) => {
+                onValueChange={v => {
                   setPeriod(v);
                   setPage(0);
                 }}
@@ -249,7 +280,7 @@ export default function MinhasPremiacoes() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os períodos</SelectItem>
-                  {months.map((m) => (
+                  {months.map(m => (
                     <SelectItem key={m.value} value={m.value}>
                       {m.label}
                     </SelectItem>
@@ -277,7 +308,8 @@ export default function MinhasPremiacoes() {
               </div>
             ) : isError ? (
               <div className="p-8 text-center text-sm text-destructive">
-                Erro ao carregar premiações: {error instanceof Error ? error.message : 'desconhecido'}
+                Erro ao carregar premiações:{' '}
+                {error instanceof Error ? error.message : 'desconhecido'}
               </div>
             ) : (data?.rows ?? []).length === 0 ? (
               <div className="p-10 text-center">
@@ -300,7 +332,7 @@ export default function MinhasPremiacoes() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data!.rows.map((row) => {
+                    {data!.rows.map(row => {
                       const sc = statusConfig[row.status];
                       return (
                         <TableRow key={row.id}>
@@ -309,7 +341,9 @@ export default function MinhasPremiacoes() {
                           </TableCell>
                           <TableCell className="flex items-center gap-1 text-sm">
                             <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
-                            {format(new Date(row.period_month), "MMM/yyyy", { locale: ptBR })}
+                            {format(new Date(row.period_month), 'MMM/yyyy', {
+                              locale: ptBR,
+                            })}
                           </TableCell>
                           <TableCell className="font-semibold">
                             {brl(Number(row.computed_amount || 0))}
@@ -351,7 +385,7 @@ export default function MinhasPremiacoes() {
                 variant="outline"
                 size="sm"
                 disabled={page === 0}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                onClick={() => setPage(p => Math.max(0, p - 1))}
               >
                 <ChevronLeft className="h-4 w-4" /> Anterior
               </Button>
@@ -359,7 +393,7 @@ export default function MinhasPremiacoes() {
                 variant="outline"
                 size="sm"
                 disabled={page + 1 >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setPage(p => p + 1)}
               >
                 Próxima <ChevronRight className="h-4 w-4" />
               </Button>

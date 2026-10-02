@@ -50,7 +50,9 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
         'data:text/csv;charset=utf-8,' +
         headers.join(',') +
         '\n' +
-        rows.map(e => e.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+        rows
+          .map(e => e.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+          .join('\n');
 
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement('a');

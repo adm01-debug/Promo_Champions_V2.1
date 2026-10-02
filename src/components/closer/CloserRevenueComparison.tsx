@@ -113,8 +113,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
         ? 'ESTE MÊS'
         : 'ESTE TRIMESTRE';
 
-  const formatCurrencyFull = (value: number | string) =>
-    `${formatBRL(Number(value))}`;
+  const formatCurrencyFull = (value: number | string) => `${formatBRL(Number(value))}`;
 
   const totalRevenue = closers?.reduce((sum, c) => sum + c.revenue, 0) || 0;
 

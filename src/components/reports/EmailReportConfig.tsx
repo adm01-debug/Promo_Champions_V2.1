@@ -1,13 +1,33 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Clock, FileText, Send, CheckCircle2, Settings2, Download } from 'lucide-react';
+import {
+  Mail,
+  Clock,
+  FileText,
+  Send,
+  CheckCircle2,
+  Settings2,
+  Download,
+} from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -92,7 +112,9 @@ export function EmailReportConfig() {
             <Mail className="h-5 w-5 text-primary" />
             <div>
               <CardTitle className="text-section-title">Relatórios por Email</CardTitle>
-              <CardDescription>Configure o envio automático de relatórios de performance</CardDescription>
+              <CardDescription>
+                Configure o envio automático de relatórios de performance
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -118,7 +140,9 @@ export function EmailReportConfig() {
                 </SelectTrigger>
                 <SelectContent>
                   {FREQUENCIES.map(f => (
-                    <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
+                    <SelectItem key={f.value} value={f.value}>
+                      {f.label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -131,7 +155,9 @@ export function EmailReportConfig() {
               <Input
                 type="time"
                 value={currentValues.preferred_time || '08:00'}
-                onChange={e => setFormState(s => ({ ...s, preferred_time: e.target.value }))}
+                onChange={e =>
+                  setFormState(s => ({ ...s, preferred_time: e.target.value }))
+                }
               />
             </div>
             <div className="flex items-center gap-3 pt-6">
@@ -158,36 +184,45 @@ export function EmailReportConfig() {
                 <div>
                   <p className="text-sm font-medium">Deals Estagnados</p>
                   <p className="text-xs text-muted-foreground">
-                    Deals parados há mais de {currentValues.stagnant_threshold_days || 7} dias
+                    Deals parados há mais de {currentValues.stagnant_threshold_days || 7}{' '}
+                    dias
                   </p>
                 </div>
                 <Switch
                   checked={currentValues.notify_stagnant_deals ?? true}
-                  onCheckedChange={v => setFormState(s => ({ ...s, notify_stagnant_deals: v }))}
+                  onCheckedChange={v =>
+                    setFormState(s => ({ ...s, notify_stagnant_deals: v }))
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">Clientes Inativos</p>
                   <p className="text-xs text-muted-foreground">
-                    Sem interação há mais de {currentValues.inactive_threshold_days || 30} dias
+                    Sem interação há mais de {currentValues.inactive_threshold_days || 30}{' '}
+                    dias
                   </p>
                 </div>
                 <Switch
                   checked={currentValues.notify_inactive_clients ?? true}
-                  onCheckedChange={v => setFormState(s => ({ ...s, notify_inactive_clients: v }))}
+                  onCheckedChange={v =>
+                    setFormState(s => ({ ...s, notify_inactive_clients: v }))
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">Metas em Risco</p>
                   <p className="text-xs text-muted-foreground">
-                    Metas com desempenho abaixo de {currentValues.consecutive_days_threshold || 3} dias consecutivos
+                    Metas com desempenho abaixo de{' '}
+                    {currentValues.consecutive_days_threshold || 3} dias consecutivos
                   </p>
                 </div>
                 <Switch
                   checked={currentValues.notify_at_risk_goals ?? true}
-                  onCheckedChange={v => setFormState(s => ({ ...s, notify_at_risk_goals: v }))}
+                  onCheckedChange={v =>
+                    setFormState(s => ({ ...s, notify_at_risk_goals: v }))
+                  }
                 />
               </div>
             </div>
@@ -196,7 +231,11 @@ export function EmailReportConfig() {
           <Separator />
 
           <div className="flex justify-between gap-3">
-            <Button variant="outline" onClick={() => generateCurrentMonthReport()} className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => generateCurrentMonthReport()}
+              className="gap-2"
+            >
               <Download className="h-4 w-4" />
               Exportar PDF Agora
             </Button>
@@ -228,8 +267,9 @@ export function EmailReportConfig() {
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">
-                Próximo envio: {currentValues.frequency === 'daily' ? 'Amanhã' : 'Segunda-feira'}
-                , às {currentValues.preferred_time || '08:00'}
+                Próximo envio:{' '}
+                {currentValues.frequency === 'daily' ? 'Amanhã' : 'Segunda-feira'}, às{' '}
+                {currentValues.preferred_time || '08:00'}
               </span>
             </div>
             <Separator />

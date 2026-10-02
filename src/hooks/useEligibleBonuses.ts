@@ -18,8 +18,7 @@ interface EvaluationContext {
   monthlyRank: number | null;
 }
 
-const BRL0 = (n: number) =>
-  formatBRL(n);
+const BRL0 = (n: number) => formatBRL(n);
 
 /**
  * Pure evaluator — no I/O. Testable in isolation.

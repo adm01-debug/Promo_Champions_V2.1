@@ -1,10 +1,17 @@
-import React from "react";
-import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { AreaChart, Area, ResponsiveContainer, ReferenceLine, XAxis, Tooltip } from "recharts";
+import React from 'react';
+import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TrendingUp } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import {
+  AreaChart,
+  Area,
+  ResponsiveContainer,
+  ReferenceLine,
+  XAxis,
+  Tooltip,
+} from 'recharts';
 
 import { formatBRL } from '@/lib/money';
 export const ForecastWidget = React.memo(function ForecastWidget() {
@@ -48,11 +55,14 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
       <CardContent className="space-y-2">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-xl font-bold">
-              {formatBRL(projection)}
-            </p>
-            <p className={cn("text-[11px] font-medium", onTrack ? "text-success" : "text-destructive")}>
-              {onTrack ? "✓ No ritmo" : "⚠ Abaixo do ritmo"}
+            <p className="text-xl font-bold">{formatBRL(projection)}</p>
+            <p
+              className={cn(
+                'text-[11px] font-medium',
+                onTrack ? 'text-success' : 'text-destructive'
+              )}
+            >
+              {onTrack ? '✓ No ritmo' : '⚠ Abaixo do ritmo'}
             </p>
           </div>
         </div>
@@ -70,15 +80,41 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
               <Tooltip
                 formatter={(v: number, name: string) => [
                   `${formatBRL(v)}`,
-                  name === "actual" ? "Real" : "Projeção",
+                  name === 'actual' ? 'Real' : 'Projeção',
                 ]}
-                contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}
+                contentStyle={{
+                  borderRadius: 8,
+                  border: 'none',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  fontSize: 11,
+                }}
               />
               {goal > 0 && (
-                <ReferenceLine y={goal} stroke="hsl(var(--warning))" strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceLine
+                  y={goal}
+                  stroke="hsl(var(--warning))"
+                  strokeDasharray="4 4"
+                  strokeWidth={1}
+                />
               )}
-              <Area type="monotone" dataKey="actual" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#actualGrad)" dot={false} connectNulls={false} />
-              <Area type="monotone" dataKey="projected" stroke="hsl(var(--muted-foreground))" strokeWidth={1} strokeDasharray="4 4" fill="none" dot={false} />
+              <Area
+                type="monotone"
+                dataKey="actual"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2}
+                fill="url(#actualGrad)"
+                dot={false}
+                connectNulls={false}
+              />
+              <Area
+                type="monotone"
+                dataKey="projected"
+                stroke="hsl(var(--muted-foreground))"
+                strokeWidth={1}
+                strokeDasharray="4 4"
+                fill="none"
+                dot={false}
+              />
             </AreaChart>
           </ResponsiveContainer>
         )}
@@ -87,4 +123,4 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
   );
 });
 
-ForecastWidget.displayName = "ForecastWidget";
+ForecastWidget.displayName = 'ForecastWidget';

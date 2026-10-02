@@ -35,12 +35,14 @@ export function TerritoriesBoard() {
     <div className="space-y-6">
       {/* Territory Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {territories.map((territory) => (
+        {territories.map(territory => (
           <TerritoryCard
             key={territory.id}
             territory={territory}
             isSelected={selectedId === territory.id}
-            onClick={() => setSelectedId(selectedId === territory.id ? undefined : territory.id)}
+            onClick={() =>
+              setSelectedId(selectedId === territory.id ? undefined : territory.id)
+            }
             icon={typeIcons[territory.territory_type] || typeIcons.region}
           />
         ))}
@@ -65,23 +67,32 @@ export function TerritoriesBoard() {
           <CardContent>
             <ScrollArea className="h-[200px]">
               <div className="space-y-2">
-                {history.map((h) => (
-                  <div key={h.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
+                {history.map(h => (
+                  <div
+                    key={h.id}
+                    className="flex items-center gap-3 p-3 rounded-lg border bg-card"
+                  >
                     <div className="flex-1">
-                      <span className="text-sm font-medium">{h.salesperson?.name || 'Desconhecido'}</span>
+                      <span className="text-sm font-medium">
+                        {h.salesperson?.name || 'Desconhecido'}
+                      </span>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                         <span>{h.deals_count} deals</span>
-                        <span>
-                          {formatBRLCompact(h.revenue_contribution)}
-                        </span>
+                        <span>{formatBRLCompact(h.revenue_contribution)}</span>
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground text-right">
                       {h.conquered_at && (
-                        <div>Conquistou: {format(new Date(h.conquered_at), 'dd/MM/yy', { locale: ptBR })}</div>
+                        <div>
+                          Conquistou:{' '}
+                          {format(new Date(h.conquered_at), 'dd/MM/yy', { locale: ptBR })}
+                        </div>
                       )}
                       {h.lost_at && (
-                        <div className="text-destructive">Perdeu: {format(new Date(h.lost_at), 'dd/MM/yy', { locale: ptBR })}</div>
+                        <div className="text-destructive">
+                          Perdeu:{' '}
+                          {format(new Date(h.lost_at), 'dd/MM/yy', { locale: ptBR })}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -125,7 +136,10 @@ function TerritoryCard({
             </div>
           </div>
           {territory.is_contested && (
-            <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 gap-1">
+            <Badge
+              variant="outline"
+              className="bg-destructive/10 text-destructive border-destructive/20 gap-1"
+            >
               <Swords className="h-3 w-3" />
               Disputado
             </Badge>

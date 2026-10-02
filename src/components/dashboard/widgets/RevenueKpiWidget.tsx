@@ -1,9 +1,9 @@
-import React from "react";
-import { useDashboardKPIs } from "@/hooks/dashboard/useDashboardKPIs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
+import React from 'react';
+import { useDashboardKPIs } from '@/hooks/dashboard/useDashboardKPIs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { formatBRL } from '@/lib/money';
 export const RevenueKpiWidget = React.memo(function RevenueKpiWidget() {
@@ -27,13 +27,24 @@ export const RevenueKpiWidget = React.memo(function RevenueKpiWidget() {
         <p className="text-xl font-extrabold text-foreground tracking-tight">
           {formatBRL(revenue)}
         </p>
-        <div className={cn("flex items-center gap-1 text-[10px] font-medium mt-0.5", isPositive ? "text-success/90" : "text-destructive/90")}>
-          {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-          {isPositive ? "+" : ""}{change}% <span className="text-muted-foreground/60 font-normal">vs anterior</span>
+        <div
+          className={cn(
+            'flex items-center gap-1 text-[10px] font-medium mt-0.5',
+            isPositive ? 'text-success/90' : 'text-destructive/90'
+          )}
+        >
+          {isPositive ? (
+            <TrendingUp className="h-2.5 w-2.5" />
+          ) : (
+            <TrendingDown className="h-2.5 w-2.5" />
+          )}
+          {isPositive ? '+' : ''}
+          {change}%{' '}
+          <span className="text-muted-foreground/60 font-normal">vs anterior</span>
         </div>
       </CardContent>
     </Card>
   );
 });
 
-RevenueKpiWidget.displayName = "RevenueKpiWidget";
+RevenueKpiWidget.displayName = 'RevenueKpiWidget';

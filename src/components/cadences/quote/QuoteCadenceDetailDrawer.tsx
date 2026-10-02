@@ -104,10 +104,8 @@ export function QuoteCadenceDetailDrawer({ row, open, onOpenChange }: Props) {
           </DrawerTitle>
           <DrawerDescription id="quote-cadence-drawer-desc">
             {q?.quote_number ?? 'Orçamento'} ·{' '}
-            {q?.total_value
-              ? formatBRL(q.total_value, { decimals: 2 })
-              : '—'}{' '}
-            · Etapa {row.current_step}
+            {q?.total_value ? formatBRL(q.total_value, { decimals: 2 }) : '—'} · Etapa{' '}
+            {row.current_step}
           </DrawerDescription>
         </DrawerHeader>
 

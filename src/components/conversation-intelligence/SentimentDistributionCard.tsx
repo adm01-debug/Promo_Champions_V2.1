@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import type { RechartsTooltipProps } from "@/types/recharts";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 interface Props {
   data: { sentiment: string; label: string; value: number; color: string }[];
@@ -32,8 +32,15 @@ export const SentimentDistributionCard = ({ data }: Props) => {
         ) : (
           <ResponsiveContainer width="100%" height={220}>
             <PieChart>
-              <Pie data={data} dataKey="value" nameKey="label" innerRadius={48} outerRadius={80} paddingAngle={2}>
-                {data.map((d) => (
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="label"
+                innerRadius={48}
+                outerRadius={80}
+                paddingAngle={2}
+              >
+                {data.map(d => (
                   <Cell key={d.sentiment} fill={d.color} />
                 ))}
               </Pie>

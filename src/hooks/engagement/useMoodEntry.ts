@@ -28,10 +28,12 @@ export function useSubmitMood(salespersonId: string | undefined, today: string) 
   return useMutation({
     mutationFn: async (moodValue: number) => {
       if (!salespersonId) throw new Error('Not authenticated');
-      const { error } = await supabase.from('mood_entries').upsert(
-        { salesperson_id: salespersonId, entry_date: today, mood_value: moodValue },
-        { onConflict: 'salesperson_id,entry_date' }
-      );
+      const { error } = await supabase
+        .from('mood_entries')
+        .upsert(
+          { salesperson_id: salespersonId, entry_date: today, mood_value: moodValue },
+          { onConflict: 'salesperson_id,entry_date' }
+        );
       if (error) throw error;
     },
     onSuccess: () => {

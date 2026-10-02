@@ -1,21 +1,30 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Flame, CalendarDays, Users, Target, ShieldCheck, ShieldAlert, TrendingUp } from "lucide-react";
-import { ClientSelector } from "./ClientSelector";
-import { PurchaseHeatmapGrid } from "./PurchaseHeatmapGrid";
-import { PurchasePredictionCard } from "./PurchasePredictionCard";
-import { SeasonalityHeatmap } from "./SeasonalityHeatmap";
-import { IntelligenceAlerts } from "../dashboard/modules/IntelligenceAlerts";
-import { EmptyStateGuide } from "./EmptyStateGuide";
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { DuplicateBlockAudit } from "./DuplicateBlockAudit";
-import { IntelligenceSettings } from "./IntelligenceSettings";
-import { ClientPurchaseHistory } from "./ClientPurchaseHistory";
-import { LTVBySegment } from "../analytics/LTVBySegment";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Brain,
+  Flame,
+  CalendarDays,
+  Users,
+  Target,
+  ShieldCheck,
+  ShieldAlert,
+  TrendingUp,
+} from 'lucide-react';
+import { ClientSelector } from './ClientSelector';
+import { PurchaseHeatmapGrid } from './PurchaseHeatmapGrid';
+import { PurchasePredictionCard } from './PurchasePredictionCard';
+import { SeasonalityHeatmap } from './SeasonalityHeatmap';
+import { IntelligenceAlerts } from '../dashboard/modules/IntelligenceAlerts';
+import { EmptyStateGuide } from './EmptyStateGuide';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { DuplicateBlockAudit } from './DuplicateBlockAudit';
+import { IntelligenceSettings } from './IntelligenceSettings';
+import { ClientPurchaseHistory } from './ClientPurchaseHistory';
+import { LTVBySegment } from '../analytics/LTVBySegment';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { formatBRL } from '@/lib/money';
 export function PurchaseIntelligenceHub() {
@@ -33,7 +42,7 @@ export function PurchaseIntelligenceHub() {
       </Helmet>
 
       {/* Futuristic HUD Header */}
-      <motion.header 
+      <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card/50 p-6 backdrop-blur-md"
@@ -41,7 +50,7 @@ export function PurchaseIntelligenceHub() {
         <div className="absolute top-0 right-0 p-8 opacity-5">
           <Brain className="h-32 w-32 text-primary" />
         </div>
-        
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
@@ -53,7 +62,8 @@ export function PurchaseIntelligenceHub() {
               </h1>
             </div>
             <p className="text-muted-foreground text-lg max-w-2xl leading-relaxed">
-              Mecanismo tático de IA para prever ciclos de consumo, identificar riscos de churn e dominar a janela ideal de negociação.
+              Mecanismo tático de IA para prever ciclos de consumo, identificar riscos de
+              churn e dominar a janela ideal de negociação.
             </p>
           </div>
 
@@ -63,14 +73,24 @@ export function PurchaseIntelligenceHub() {
                 <Target className="h-3 w-3" /> Score Médio
               </div>
               <div className="text-2xl font-bold">88.4</div>
-              <Badge variant="outline" className="w-fit text-[10px] bg-primary/10 border-primary/20">Alta Precisão</Badge>
+              <Badge
+                variant="outline"
+                className="w-fit text-[10px] bg-primary/10 border-primary/20"
+              >
+                Alta Precisão
+              </Badge>
             </div>
             <div className="flex flex-col gap-1 p-4 rounded-xl bg-success/5 border border-success/10">
               <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-success/70">
                 <ShieldCheck className="h-3 w-3" /> Retenção IA
               </div>
               <div className="text-2xl font-bold text-success">92%</div>
-              <Badge variant="outline" className="w-fit text-[10px] bg-success/10 border-success/20 text-success">+4.2% mês</Badge>
+              <Badge
+                variant="outline"
+                className="w-fit text-[10px] bg-success/10 border-success/20 text-success"
+              >
+                +4.2% mês
+              </Badge>
             </div>
           </div>
           <div className="flex items-center gap-2 mt-4 md:mt-0">
@@ -84,31 +104,43 @@ export function PurchaseIntelligenceHub() {
       ) : (
         <Tabs defaultValue="client" className="space-y-6">
           <TabsList className="bg-muted/50 p-1 border border-border/50 h-12">
-            <TabsTrigger value="client" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger
+              value="client"
+              className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <Users className="h-4 w-4" /> Visão por Cliente
             </TabsTrigger>
-            <TabsTrigger value="global" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger
+              value="global"
+              className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <Flame className="h-4 w-4" /> Heatmap Global
             </TabsTrigger>
-            <TabsTrigger value="seasonality" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger
+              value="seasonality"
+              className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <CalendarDays className="h-4 w-4" /> Sazonalidade
             </TabsTrigger>
-            <TabsTrigger value="audit" className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger
+              value="audit"
+              className="gap-2 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               <ShieldAlert className="h-4 w-4" /> Auditoria de Bloqueios
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="client" className="space-y-6 focus-visible:outline-none">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
             >
               <ClientSelector value={clientId} onChange={setClientId} />
             </motion.div>
-            
+
             <div className="grid lg:grid-cols-12 gap-6">
-              <motion.div 
+              <motion.div
                 className="lg:col-span-4"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -117,29 +149,35 @@ export function PurchaseIntelligenceHub() {
                 <div className="space-y-6">
                   <PurchasePredictionCard clientId={clientId} />
                   <LTVBySegment />
-                  <IntelligenceAlerts 
-                    customAlerts={clientId ? [
-                      {
-                        id: 'ltv-alert',
-                        title: "LTV vs Segmento",
-                        description: "O LTV deste cliente está 15% acima da média do seu segmento de atuação.",
-                        priority: "medium",
-                        impact: "+R$ 12.400",
-                        category: "Insight"
-                      },
-                      {
-                        id: 'ticket-drop-alert',
-                        title: "Queda de Ticket Médio",
-                        description: "Redução de 8% no ticket médio detectada nos últimos 3 meses.",
-                        priority: "high",
-                        impact: "-R$ 1.200/mês",
-                        category: "Alerta"
-                      }
-                    ] : []} 
+                  <IntelligenceAlerts
+                    customAlerts={
+                      clientId
+                        ? [
+                            {
+                              id: 'ltv-alert',
+                              title: 'LTV vs Segmento',
+                              description:
+                                'O LTV deste cliente está 15% acima da média do seu segmento de atuação.',
+                              priority: 'medium',
+                              impact: '+R$ 12.400',
+                              category: 'Insight',
+                            },
+                            {
+                              id: 'ticket-drop-alert',
+                              title: 'Queda de Ticket Médio',
+                              description:
+                                'Redução de 8% no ticket médio detectada nos últimos 3 meses.',
+                              priority: 'high',
+                              impact: '-R$ 1.200/mês',
+                              category: 'Alerta',
+                            },
+                          ]
+                        : []
+                    }
                   />
                 </div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 className="lg:col-span-8 space-y-6"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -157,21 +195,42 @@ export function PurchaseIntelligenceHub() {
                     </CardHeader>
                     <CardContent className="p-0">
                       <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={[
-                          { month: "Jan", gastado: 4500, ltv: 12000 },
-                          { month: "Fev", gastado: 5200, ltv: 14500 },
-                          { month: "Mar", gastado: 4800, ltv: 18000 },
-                          { month: "Abr", gastado: 6100, ltv: 22000 },
-                          { month: "Mai", gastado: 5900, ltv: 25000 },
-                          { month: "Jun", gastado: 7200, ltv: 31000 },
-                        ]}>
-                          <XAxis dataKey="month" fontSize={12} stroke="hsl(var(--muted-foreground))" />
-                          <YAxis fontSize={12} stroke="hsl(var(--muted-foreground))" tickFormatter={(v) => `R$${v/1000}k`} />
-                          <Tooltip 
-                            contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
-                            formatter={(value: number | string) => [`${formatBRL(Number(value))}`]}
+                        <BarChart
+                          data={[
+                            { month: 'Jan', gastado: 4500, ltv: 12000 },
+                            { month: 'Fev', gastado: 5200, ltv: 14500 },
+                            { month: 'Mar', gastado: 4800, ltv: 18000 },
+                            { month: 'Abr', gastado: 6100, ltv: 22000 },
+                            { month: 'Mai', gastado: 5900, ltv: 25000 },
+                            { month: 'Jun', gastado: 7200, ltv: 31000 },
+                          ]}
+                        >
+                          <XAxis
+                            dataKey="month"
+                            fontSize={12}
+                            stroke="hsl(var(--muted-foreground))"
                           />
-                          <Bar dataKey="gastado" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Gastos Mensais" />
+                          <YAxis
+                            fontSize={12}
+                            stroke="hsl(var(--muted-foreground))"
+                            tickFormatter={v => `R$${v / 1000}k`}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: 'hsl(var(--card))',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: '8px',
+                            }}
+                            formatter={(value: number | string) => [
+                              `${formatBRL(Number(value))}`,
+                            ]}
+                          />
+                          <Bar
+                            dataKey="gastado"
+                            fill="hsl(var(--primary))"
+                            radius={[4, 4, 0, 0]}
+                            name="Gastos Mensais"
+                          />
                         </BarChart>
                       </ResponsiveContainer>
                     </CardContent>
@@ -182,28 +241,19 @@ export function PurchaseIntelligenceHub() {
           </TabsContent>
 
           <TabsContent value="audit" className="focus-visible:outline-none">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <DuplicateBlockAudit />
             </motion.div>
           </TabsContent>
 
           <TabsContent value="global" className="focus-visible:outline-none">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <PurchaseHeatmapGrid months={18} />
             </motion.div>
           </TabsContent>
 
           <TabsContent value="seasonality" className="focus-visible:outline-none">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <SeasonalityHeatmap />
             </motion.div>
           </TabsContent>

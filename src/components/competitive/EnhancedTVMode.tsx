@@ -343,7 +343,7 @@ function EnhancedTVModeComponent() {
                     </div>
                     <div className="text-right relative z-10">
                       <div className="text-4xl font-black italic tracking-tighter text-emerald-400 leading-none">
-                        {formatBRL((sale.amount || 0))}
+                        {formatBRL(sale.amount || 0)}
                       </div>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-2 italic">
                         Transação Verificada

@@ -5,7 +5,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, AlertTriangle, Loader2 } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  RefreshCw,
+  BarChart3,
+  AlertTriangle,
+  Loader2,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { formatBRL, formatBRLCompact } from '@/lib/money';
@@ -73,7 +81,7 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
       if (error) throw error;
       return data as { forecasts: ForecastItem[] };
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['demand-forecasts'] });
       toast.success(`${data?.forecasts?.length || 0} previsões geradas!`);
     },
@@ -83,8 +91,12 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
   // Summary from DB forecasts
   const summary = useMemo(() => {
     if (!forecasts || forecasts.length === 0) return null;
-    const totalRevenue = forecasts.reduce((sum, f) => sum + (f.predicted_revenue || 0), 0);
-    const avgConfidence = forecasts.reduce((sum, f) => sum + (f.confidence_score || 0), 0) / forecasts.length;
+    const totalRevenue = forecasts.reduce(
+      (sum, f) => sum + (f.predicted_revenue || 0),
+      0
+    );
+    const avgConfidence =
+      forecasts.reduce((sum, f) => sum + (f.confidence_score || 0), 0) / forecasts.length;
     return { totalRevenue, avgConfidence, count: forecasts.length };
   }, [forecasts]);
 
@@ -142,13 +154,15 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
             </div>
             <div className="p-3 rounded-lg bg-muted/50 text-center">
               <p className="text-xs text-muted-foreground">Confiança Média</p>
-              <p className="text-lg font-bold">{(summary.avgConfidence * 100).toFixed(0)}%</p>
+              <p className="text-lg font-bold">
+                {(summary.avgConfidence * 100).toFixed(0)}%
+              </p>
             </div>
           </div>
         )}
 
         {/* Forecast items from DB */}
-        {(!forecasts || forecasts.length === 0) ? (
+        {!forecasts || forecasts.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">Nenhuma previsão disponível.</p>
@@ -156,7 +170,7 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
           </div>
         ) : (
           <div className="space-y-2 max-h-[300px] overflow-y-auto">
-            {forecasts.slice(0, 10).map((forecast) => (
+            {forecasts.slice(0, 10).map(forecast => (
               <div
                 key={forecast.id}
                 className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent/30 transition-colors"
@@ -164,10 +178,14 @@ export const SalesForecast: FC<SalesForecastProps> = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium truncate">
-                      {forecast.product_id ? `Produto ${forecast.product_id.slice(0, 8)}` : 'Geral'}
+                      {forecast.product_id
+                        ? `Produto ${forecast.product_id.slice(0, 8)}`
+                        : 'Geral'}
                     </span>
                     <Badge variant="outline" className="text-xs">
-                      {forecast.confidence_score ? `${(forecast.confidence_score * 100).toFixed(0)}%` : '—'}
+                      {forecast.confidence_score
+                        ? `${(forecast.confidence_score * 100).toFixed(0)}%`
+                        : '—'}
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">

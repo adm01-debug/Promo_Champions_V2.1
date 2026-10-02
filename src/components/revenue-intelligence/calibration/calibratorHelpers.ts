@@ -1,24 +1,26 @@
 import { formatBRL } from '@/lib/money';
 export const FLAG_LABEL: Record<string, string> = {
-  overconfident: "Super-otimista",
-  underconfident: "Subestimado",
-  aligned: "Alinhado",
+  overconfident: 'Super-otimista',
+  underconfident: 'Subestimado',
+  aligned: 'Alinhado',
 };
 
 export const FLAG_COLOR: Record<string, string> = {
-  overconfident: "hsl(var(--destructive))",
-  underconfident: "hsl(var(--primary))",
-  aligned: "hsl(var(--muted-foreground))",
+  overconfident: 'hsl(var(--destructive))',
+  underconfident: 'hsl(var(--primary))',
+  aligned: 'hsl(var(--muted-foreground))',
 };
 
-export function flagBadgeVariant(flag: string): "default" | "destructive" | "secondary" | "outline" {
-  if (flag === "overconfident") return "destructive";
-  if (flag === "underconfident") return "secondary";
-  return "outline";
+export function flagBadgeVariant(
+  flag: string
+): 'default' | 'destructive' | 'secondary' | 'outline' {
+  if (flag === 'overconfident') return 'destructive';
+  if (flag === 'underconfident') return 'secondary';
+  return 'outline';
 }
 
 export function confidenceLabel(c: string): string {
-  return c === "high" ? "alta" : c === "medium" ? "média" : "baixa";
+  return c === 'high' ? 'alta' : c === 'medium' ? 'média' : 'baixa';
 }
 
 export function formatPct(v: number, digits = 1): string {

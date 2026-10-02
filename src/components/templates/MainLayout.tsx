@@ -1,37 +1,69 @@
 // MainLayout - primary layout wrapper (performance-optimized)
-import { useRef, lazy, Suspense, useEffect, useMemo } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { SmartSkeleton } from "@/components/skeletons/SmartSkeleton";
-import { SearchTrigger } from "@/components/atoms/SearchTrigger";
-import { ThemeToggle } from "@/components/atoms/ThemeToggle";
-import { Sparkles } from "lucide-react";
-import { MobilePageHeader } from "@/components/mobile/MobilePageHeader";
-import { useMobileNavigation } from "@/hooks/useMobileNavigation";
-import { useIsMobile } from "@/hooks/useMediaQuery";
-import { SkipLinks } from "@/components/accessibility/SkipLinks";
-import { FocusModeBreakReminder } from "@/components/focus/FocusModeToggle";
-import { DesktopTopBar } from "@/components/organisms/DesktopTopBar";
-import { ErrorBoundary } from "@/components/errors/ErrorBoundary";
-import { DevOnly } from "@/components/auth/DevOnly";
-import { ScrollToTop } from "@/components/ui/ScrollToTop";
-import { cn } from "@/lib/utils";
-import type { GlobalSearchHandle } from "@/components/molecules/GlobalSearch";
-import { useLocation } from "react-router-dom";
-import { useVoiceNavigation } from "@/hooks/useVoiceNavigation";
-import { CyberArenaBackground } from "@/components/effects/CyberArenaBackground";
+import { useRef, lazy, Suspense, useEffect, useMemo } from 'react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { SmartSkeleton } from '@/components/skeletons/SmartSkeleton';
+import { SearchTrigger } from '@/components/atoms/SearchTrigger';
+import { ThemeToggle } from '@/components/atoms/ThemeToggle';
+import { Sparkles } from 'lucide-react';
+import { MobilePageHeader } from '@/components/mobile/MobilePageHeader';
+import { useMobileNavigation } from '@/hooks/useMobileNavigation';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import { SkipLinks } from '@/components/accessibility/SkipLinks';
+import { FocusModeBreakReminder } from '@/components/focus/FocusModeToggle';
+import { DesktopTopBar } from '@/components/organisms/DesktopTopBar';
+import { ErrorBoundary } from '@/components/errors/ErrorBoundary';
+import { DevOnly } from '@/components/auth/DevOnly';
+import { ScrollToTop } from '@/components/ui/ScrollToTop';
+import { cn } from '@/lib/utils';
+import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
+import { useLocation } from 'react-router-dom';
+import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
+import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
 
 // Lazy load non-critical components
-const GlobalSearch = lazy(() => import("@/components/molecules/GlobalSearch").then(m => ({ default: m.GlobalSearch })));
-const RoleAwareSidebar = lazy(() => import("@/components/organisms/RoleAwareSidebar").then(m => ({ default: m.RoleAwareSidebar })));
-const LayoutRealtimeEffects = lazy(() => import("@/components/organisms/LayoutRealtimeEffects").then(m => ({ default: m.LayoutRealtimeEffects })));
-const CelebrationOverlayProvider = lazy(() => import("@/components/gamification/CelebrationOverlayProvider").then(m => ({ default: m.CelebrationOverlayProvider })));
-const MobileNavigation = lazy(() => import("@/components/mobile/MobileNavigation").then(m => ({ default: m.MobileNavigation })));
-const PersonalAssistantDrawer = lazy(() => import("@/components/assistant/PersonalAssistantDrawer").then(m => ({ default: m.PersonalAssistantDrawer })));
+const GlobalSearch = lazy(() =>
+  import('@/components/molecules/GlobalSearch').then(m => ({ default: m.GlobalSearch }))
+);
+const RoleAwareSidebar = lazy(() =>
+  import('@/components/organisms/RoleAwareSidebar').then(m => ({
+    default: m.RoleAwareSidebar,
+  }))
+);
+const LayoutRealtimeEffects = lazy(() =>
+  import('@/components/organisms/LayoutRealtimeEffects').then(m => ({
+    default: m.LayoutRealtimeEffects,
+  }))
+);
+const CelebrationOverlayProvider = lazy(() =>
+  import('@/components/gamification/CelebrationOverlayProvider').then(m => ({
+    default: m.CelebrationOverlayProvider,
+  }))
+);
+const MobileNavigation = lazy(() =>
+  import('@/components/mobile/MobileNavigation').then(m => ({
+    default: m.MobileNavigation,
+  }))
+);
+const PersonalAssistantDrawer = lazy(() =>
+  import('@/components/assistant/PersonalAssistantDrawer').then(m => ({
+    default: m.PersonalAssistantDrawer,
+  }))
+);
 
-const RouteTracker = lazy(() => import("@/components/analytics/RouteTracker").then(m => ({ default: m.RouteTracker })));
+const RouteTracker = lazy(() =>
+  import('@/components/analytics/RouteTracker').then(m => ({ default: m.RouteTracker }))
+);
 
-const PerformanceMonitor = lazy(() => import("@/components/admin/PerformanceMonitor").then(m => ({ default: m.PerformanceMonitor })));
-const SemanticSearchMount = lazy(() => import("@/components/semantic/SemanticSearchMount").then(m => ({ default: m.SemanticSearchMount })));
+const PerformanceMonitor = lazy(() =>
+  import('@/components/admin/PerformanceMonitor').then(m => ({
+    default: m.PerformanceMonitor,
+  }))
+);
+const SemanticSearchMount = lazy(() =>
+  import('@/components/semantic/SemanticSearchMount').then(m => ({
+    default: m.SemanticSearchMount,
+  }))
+);
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -53,10 +85,10 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   // Dynamic Title Sync for excellence
   useEffect(() => {
-    const baseTitle = "Promo Champions";
+    const baseTitle = 'Promo Champions';
     const pageTitle = currentPageInfo.title;
     const pageSubtitle = currentPageInfo.subtitle;
-    
+
     if (pageTitle && pageTitle !== baseTitle) {
       document.title = `${pageTitle}${pageSubtitle ? ` | ${pageSubtitle}` : ''} | ${baseTitle}`;
     } else {
@@ -65,7 +97,11 @@ export function MainLayout({ children }: MainLayoutProps) {
   }, [currentPageInfo]);
 
   const sidebarFallback = (
-    <nav id="main-navigation" className="hidden md:block" aria-label="Navegação principal">
+    <nav
+      id="main-navigation"
+      className="hidden md:block"
+      aria-label="Navegação principal"
+    >
       <div className="w-72 min-h-screen border-r border-border bg-sidebar px-4 pt-6">
         <div className="space-y-3 pt-14">
           {Array.from({ length: 7 }).map((_, index) => (
@@ -88,7 +124,6 @@ export function MainLayout({ children }: MainLayoutProps) {
         <RouteTracker />
       </Suspense>
 
-      
       <SkipLinks />
       <CyberArenaBackground />
       <div className="min-h-screen flex w-full bg-background/50">
@@ -107,8 +142,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         <main
           id="main-content"
           className={cn(
-            "flex-1 relative flex flex-col bg-background/40 backdrop-blur-[2px]",
-            isMobile && "pb-[calc(5rem+env(safe-area-inset-bottom,0px))]"
+            'flex-1 relative flex flex-col bg-background/40 backdrop-blur-[2px]',
+            isMobile && 'pb-[calc(5rem+env(safe-area-inset-bottom,0px))]'
           )}
           role="main"
           aria-label="Conteúdo principal"
@@ -120,7 +155,9 @@ export function MainLayout({ children }: MainLayoutProps) {
             rightAction={
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={() => window.dispatchEvent(new CustomEvent("semantic-search:open"))}
+                  onClick={() =>
+                    window.dispatchEvent(new CustomEvent('semantic-search:open'))
+                  }
                   className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20 active:scale-90 transition-all touch-none"
                   aria-label="Busca IA"
                 >
@@ -142,9 +179,7 @@ export function MainLayout({ children }: MainLayoutProps) {
           </ErrorBoundary>
 
           {/* Main content area */}
-          <div className="flex-1">
-            {children}
-          </div>
+          <div className="flex-1">{children}</div>
         </main>
 
         <Suspense fallback={null}>

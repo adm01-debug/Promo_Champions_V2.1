@@ -64,7 +64,7 @@ export function classifyMarkup(markupPct: number | null | undefined): MarkupInfo
  */
 export function computeMarkupPct(
   amount: number | null | undefined,
-  totalCost: number | null | undefined,
+  totalCost: number | null | undefined
 ): number | null {
   if (amount === null || amount === undefined) return null;
   if (totalCost === null || totalCost === undefined) return null;
@@ -75,7 +75,7 @@ export function computeMarkupPct(
 
 export function computeMarginAmount(
   amount: number | null | undefined,
-  totalCost: number | null | undefined,
+  totalCost: number | null | undefined
 ): number | null {
   if (amount === null || amount === undefined) return null;
   if (totalCost === null || totalCost === undefined) return null;
@@ -129,7 +129,7 @@ export interface MarkupSummary {
  * Valores null/undefined/NaN contam como "unknown" e não entram na média/mediana.
  */
 export function summarizeMarkup(
-  values: ReadonlyArray<number | null | undefined>,
+  values: ReadonlyArray<number | null | undefined>
 ): MarkupSummary {
   const counts: Record<MarkupTier, number> = {
     excellent: 0,
@@ -155,7 +155,9 @@ export function summarizeMarkup(
     const sorted = [...known].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
     const raw =
-      sorted.length % 2 === 0 ? ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2 : (sorted[mid] as number);
+      sorted.length % 2 === 0
+        ? ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2
+        : (sorted[mid] as number);
     median = Math.round(raw * 100) / 100;
   }
 
@@ -167,4 +169,3 @@ export function summarizeMarkup(
     withCost: known.length,
   };
 }
-

@@ -1,14 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
-import { AlertOctagon, RefreshCw, RotateCw } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useCallback, useEffect, useState } from 'react';
+import { AlertOctagon, RefreshCw, RotateCw } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
 
 interface DeadLetterJob {
   id: string;
@@ -46,14 +52,19 @@ export function DeadLetterIngestPanel() {
   const load = useCallback(async () => {
     setLoading(true);
     const [{ data, error }, { count, error: cErr }] = await Promise.all([
-      supabase.rpc("fn_admin_list_dead_letter_ingest_jobs" as never, { _limit: PAGE_LIMIT } as never),
+      supabase.rpc(
+        'fn_admin_list_dead_letter_ingest_jobs' as never,
+        { _limit: PAGE_LIMIT } as never
+      ),
       supabase
-        .from("call_recording_ingest_jobs")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "dead_letter"),
+        .from('call_recording_ingest_jobs')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'dead_letter'),
     ]);
     if (error) {
-      toast.error("Falha ao carregar jobs em dead-letter", { description: error.message });
+      toast.error('Falha ao carregar jobs em dead-letter', {
+        description: error.message,
+      });
     } else {
       setJobs((data ?? []) as DeadLetterJob[]);
     }
@@ -65,36 +76,39 @@ export function DeadLetterIngestPanel() {
     void load();
     // Realtime subscription — recarrega em qualquer mudança de status dead_letter.
     const channel = supabase
-      .channel("dead-letter-ingest-jobs")
+      .channel('dead-letter-ingest-jobs')
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "call_recording_ingest_jobs" },
-        () => { void load(); },
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'call_recording_ingest_jobs' },
+        () => {
+          void load();
+        }
       )
       .subscribe();
-    return () => { void supabase.removeChannel(channel); };
+    return () => {
+      void supabase.removeChannel(channel);
+    };
   }, [load]);
-
 
   const replay = useCallback(
     async (id: string) => {
       setReplaying(id);
       const { data, error } = await supabase.rpc(
-        "fn_admin_replay_dead_letter_ingest_job" as never,
-        { _job_id: id } as never,
+        'fn_admin_replay_dead_letter_ingest_job' as never,
+        { _job_id: id } as never
       );
       if (error) {
-        toast.error("Falha ao reenfileirar", { description: error.message });
+        toast.error('Falha ao reenfileirar', { description: error.message });
       } else if (data) {
-        toast.success("Job reenfileirado com sucesso");
+        toast.success('Job reenfileirado com sucesso');
         await load();
       } else {
-        toast.warning("Job não encontrado ou já reprocessado");
+        toast.warning('Job não encontrado ou já reprocessado');
       }
       setReplaying(null);
       setConfirmJob(null);
     },
-    [load],
+    [load]
   );
 
   return (
@@ -108,8 +122,13 @@ export function DeadLetterIngestPanel() {
               {totalCount > jobs.length ? `${jobs.length} de ${totalCount}` : jobs.length}
             </Badge>
           </CardTitle>
-          <Button variant="ghost" size="sm" onClick={() => void load()} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => void load()}
+            disabled={loading}
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
         </CardHeader>
         <CardContent>
@@ -119,18 +138,23 @@ export function DeadLetterIngestPanel() {
             </p>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {jobs.map((j) => (
+              {jobs.map(j => (
                 <div
                   key={j.id}
                   className="flex items-start justify-between gap-3 rounded-md border border-border/60 p-3 bg-muted/30"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-mono truncate text-foreground">{j.idempotency_key}</p>
+                    <p className="text-xs font-mono truncate text-foreground">
+                      {j.idempotency_key}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Tentativas: {j.attempts} · Atualizado {new Date(j.updated_at).toLocaleString("pt-BR")}
+                      Tentativas: {j.attempts} · Atualizado{' '}
+                      {new Date(j.updated_at).toLocaleString('pt-BR')}
                     </p>
                     {j.last_error && (
-                      <p className="text-xs text-destructive mt-1 line-clamp-2">{j.last_error}</p>
+                      <p className="text-xs text-destructive mt-1 line-clamp-2">
+                        {j.last_error}
+                      </p>
                     )}
                   </div>
                   <Button
@@ -139,7 +163,9 @@ export function DeadLetterIngestPanel() {
                     onClick={() => setConfirmJob(j)}
                     disabled={replaying === j.id}
                   >
-                    <RotateCw className={`h-3 w-3 mr-1 ${replaying === j.id ? "animate-spin" : ""}`} />
+                    <RotateCw
+                      className={`h-3 w-3 mr-1 ${replaying === j.id ? 'animate-spin' : ''}`}
+                    />
                     Reenfileirar
                   </Button>
                 </div>
@@ -149,13 +175,14 @@ export function DeadLetterIngestPanel() {
         </CardContent>
       </Card>
 
-      <AlertDialog open={!!confirmJob} onOpenChange={(o) => !o && setConfirmJob(null)}>
+      <AlertDialog open={!!confirmJob} onOpenChange={o => !o && setConfirmJob(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Reenfileirar job em dead-letter?</AlertDialogTitle>
             <AlertDialogDescription>
-              O job <span className="font-mono text-xs">{confirmJob?.idempotency_key}</span> será
-              reenviado ao worker imediatamente. Tentativas serão zeradas. Confirmar?
+              O job{' '}
+              <span className="font-mono text-xs">{confirmJob?.idempotency_key}</span>{' '}
+              será reenviado ao worker imediatamente. Tentativas serão zeradas. Confirmar?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

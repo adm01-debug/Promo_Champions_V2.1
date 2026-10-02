@@ -62,7 +62,9 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-muted-foreground">Nenhuma venda registrada</div>
+          <div className="text-center py-8 text-muted-foreground">
+            Nenhuma venda registrada
+          </div>
         )}
       </div>
 

@@ -21,7 +21,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Trophy, CheckCircle2, XCircle, Clock, Wallet, Download, LayoutList, Layers } from 'lucide-react';
+import {
+  Trophy,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Wallet,
+  Download,
+  LayoutList,
+  Layers,
+} from 'lucide-react';
 import {
   useCommissionBonusAwards,
   useUpdateAwardStatus,
@@ -33,13 +42,21 @@ import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { formatBRL } from '@/lib/money';
-const brl = (n: number) =>
-  formatBRL(n, { decimals: 2 });
+const brl = (n: number) => formatBRL(n, { decimals: 2 });
 
 const statusMeta: Record<AwardStatus, { label: string; className: string }> = {
-  pending: { label: 'Pendente', className: 'bg-amber-500/15 text-amber-600 border-amber-500/30' },
-  paid: { label: 'Pago', className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30' },
-  cancelled: { label: 'Cancelado', className: 'bg-muted text-muted-foreground border-border' },
+  pending: {
+    label: 'Pendente',
+    className: 'bg-amber-500/15 text-amber-600 border-amber-500/30',
+  },
+  paid: {
+    label: 'Pago',
+    className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30',
+  },
+  cancelled: {
+    label: 'Cancelado',
+    className: 'bg-muted text-muted-foreground border-border',
+  },
 };
 
 type ViewMode = 'detailed' | 'consolidated';
@@ -61,13 +78,13 @@ function csvEscape(v: string | number | null | undefined): string {
   return s;
 }
 
-function downloadCsv(filename: string, header: string[], rows: (string | number | null)[][]) {
+function downloadCsv(
+  filename: string,
+  header: string[],
+  rows: (string | number | null)[][]
+) {
   const bom = '\uFEFF';
-  const csv =
-    bom +
-    [header, ...rows]
-      .map((r) => r.map(csvEscape).join(';'))
-      .join('\r\n');
+  const csv = bom + [header, ...rows].map(r => r.map(csvEscape).join(';')).join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -98,7 +115,7 @@ export default function AdminAuditoriaPremiacoes() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'commission_bonus_awards' },
-        (payload) => {
+        payload => {
           qc.invalidateQueries({ queryKey: ['commission-bonus-awards'] });
           if (payload.eventType === 'INSERT') {
             const row = payload.new as { computed_amount?: number } | null;
@@ -107,7 +124,7 @@ export default function AdminAuditoriaPremiacoes() {
               description: amount ? brl(amount) : undefined,
             });
           }
-        },
+        }
       )
       .subscribe();
     return () => {
@@ -137,19 +154,24 @@ export default function AdminAuditoriaPremiacoes() {
 
   // Aplica filtros de período e vendedor localmente
   const awards = useMemo(() => {
-    return rawAwards.filter((a) => {
-      if (periodFilter !== 'all' && a.period_month.slice(0, 7) !== periodFilter) return false;
-      if (salespersonFilter !== 'all' && a.salesperson_id !== salespersonFilter) return false;
+    return rawAwards.filter(a => {
+      if (periodFilter !== 'all' && a.period_month.slice(0, 7) !== periodFilter)
+        return false;
+      if (salespersonFilter !== 'all' && a.salesperson_id !== salespersonFilter)
+        return false;
       return true;
     });
   }, [rawAwards, periodFilter, salespersonFilter]);
 
   const kpis = useMemo(() => {
     const total = awards.reduce((acc, a) => acc + Number(a.computed_amount || 0), 0);
-    const pending = awards.filter((a) => a.status === 'pending');
-    const pendingSum = pending.reduce((acc, a) => acc + Number(a.computed_amount || 0), 0);
+    const pending = awards.filter(a => a.status === 'pending');
+    const pendingSum = pending.reduce(
+      (acc, a) => acc + Number(a.computed_amount || 0),
+      0
+    );
     const paidSum = awards
-      .filter((a) => a.status === 'paid')
+      .filter(a => a.status === 'paid')
       .reduce((acc, a) => acc + Number(a.computed_amount || 0), 0);
     return { total, pendingCount: pending.length, pendingSum, paidSum };
   }, [awards]);
@@ -194,8 +216,16 @@ export default function AdminAuditoriaPremiacoes() {
     if (viewMode === 'consolidated') {
       downloadCsv(
         `premiacoes-consolidado-${stamp}.csv`,
-        ['Vendedor', 'Registros', 'Pendente (R$)', 'Pago (R$)', 'Cancelado (R$)', 'Total (R$)', 'Ultima conquista'],
-        consolidated.map((r) => [
+        [
+          'Vendedor',
+          'Registros',
+          'Pendente (R$)',
+          'Pago (R$)',
+          'Cancelado (R$)',
+          'Total (R$)',
+          'Ultima conquista',
+        ],
+        consolidated.map(r => [
           r.salesperson_name,
           r.totalCount,
           r.pendingSum.toFixed(2),
@@ -203,12 +233,21 @@ export default function AdminAuditoriaPremiacoes() {
           r.cancelledSum.toFixed(2),
           r.totalSum.toFixed(2),
           format(parseISO(r.lastAt), 'yyyy-MM-dd HH:mm'),
-        ]),
+        ])
       );
     } else {
       downloadCsv(
         `premiacoes-detalhado-${stamp}.csv`,
-        ['Vendedor', 'Bonus', 'Periodo', 'Tipo', 'Valor', 'Status', 'Concedido em', 'Pago em'],
+        [
+          'Vendedor',
+          'Bonus',
+          'Periodo',
+          'Tipo',
+          'Valor',
+          'Status',
+          'Concedido em',
+          'Pago em',
+        ],
         awards.map((a: AwardWithRefs) => [
           a.salesperson_name ?? '',
           a.bonus_name ?? '',
@@ -218,7 +257,7 @@ export default function AdminAuditoriaPremiacoes() {
           statusMeta[a.status].label,
           format(parseISO(a.awarded_at), 'yyyy-MM-dd HH:mm'),
           a.paid_at ? format(parseISO(a.paid_at), 'yyyy-MM-dd HH:mm') : '',
-        ]),
+        ])
       );
     }
     toast.success('CSV exportado');
@@ -259,7 +298,7 @@ export default function AdminAuditoriaPremiacoes() {
           </div>
           <Select
             value={statusFilter}
-            onValueChange={(v) => setStatusFilter(v as AwardStatus | 'all')}
+            onValueChange={v => setStatusFilter(v as AwardStatus | 'all')}
           >
             <SelectTrigger className="w-44 h-8">
               <SelectValue placeholder="Filtrar status" />
@@ -277,9 +316,9 @@ export default function AdminAuditoriaPremiacoes() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os períodos</SelectItem>
-              {periodOptions.map((p) => (
+              {periodOptions.map(p => (
                 <SelectItem key={p} value={p}>
-                  {format(parseISO(`${p}-01`), "MMM/yy", { locale: ptBR })}
+                  {format(parseISO(`${p}-01`), 'MMM/yy', { locale: ptBR })}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -290,8 +329,10 @@ export default function AdminAuditoriaPremiacoes() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os vendedores</SelectItem>
-              {salespersonOptions.map((s) => (
-                <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+              {salespersonOptions.map(s => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -306,31 +347,40 @@ export default function AdminAuditoriaPremiacoes() {
           <span className="text-muted-foreground">Filtros ativos:</span>
           {periodFilter !== 'all' && (
             <Badge variant="outline" className="gap-1">
-              Período: {format(parseISO(`${periodFilter}-01`), "MMM/yy", { locale: ptBR })}
+              Período:{' '}
+              {format(parseISO(`${periodFilter}-01`), 'MMM/yy', { locale: ptBR })}
               <button
                 type="button"
                 className="ml-1 opacity-60 hover:opacity-100"
                 onClick={() => setPeriodFilter('all')}
                 aria-label="Remover filtro de período"
-              >×</button>
+              >
+                ×
+              </button>
             </Badge>
           )}
           {salespersonFilter !== 'all' && (
             <Badge variant="outline" className="gap-1">
-              Vendedor: {salespersonOptions.find((s) => s.id === salespersonFilter)?.name ?? '—'}
+              Vendedor:{' '}
+              {salespersonOptions.find(s => s.id === salespersonFilter)?.name ?? '—'}
               <button
                 type="button"
                 className="ml-1 opacity-60 hover:opacity-100"
                 onClick={() => setSalespersonFilter('all')}
                 aria-label="Remover filtro de vendedor"
-              >×</button>
+              >
+                ×
+              </button>
             </Badge>
           )}
           <Button
             size="sm"
             variant="ghost"
             className="h-6 px-2 text-xs"
-            onClick={() => { setPeriodFilter('all'); setSalespersonFilter('all'); }}
+            onClick={() => {
+              setPeriodFilter('all');
+              setSalespersonFilter('all');
+            }}
           >
             Limpar tudo
           </Button>
@@ -339,20 +389,36 @@ export default function AdminAuditoriaPremiacoes() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground">Total registrado</CardTitle></CardHeader>
-          <CardContent><p className="text-2xl font-black tabular-nums">{brl(kpis.total)}</p></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Total registrado
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-black tabular-nums">{brl(kpis.total)}</p>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground">Pendentes</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Pendentes
+            </CardTitle>
+          </CardHeader>
           <CardContent>
             <p className="text-2xl font-black tabular-nums text-amber-600 dark:text-amber-400">
               {brl(kpis.pendingSum)}
             </p>
-            <p className="text-[11px] text-muted-foreground">{kpis.pendingCount} registro(s)</p>
+            <p className="text-[11px] text-muted-foreground">
+              {kpis.pendingCount} registro(s)
+            </p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground">Pago</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              Pago
+            </CardTitle>
+          </CardHeader>
           <CardContent>
             <p className="text-2xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
               {brl(kpis.paidSum)}
@@ -360,9 +426,11 @@ export default function AdminAuditoriaPremiacoes() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-xs font-medium text-muted-foreground">
-            {viewMode === 'consolidated' ? 'Vendedores' : 'Registros exibidos'}
-          </CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xs font-medium text-muted-foreground">
+              {viewMode === 'consolidated' ? 'Vendedores' : 'Registros exibidos'}
+            </CardTitle>
+          </CardHeader>
           <CardContent>
             <p className="text-2xl font-black tabular-nums">
               {viewMode === 'consolidated' ? consolidated.length : awards.length}
@@ -403,7 +471,7 @@ export default function AdminAuditoriaPremiacoes() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {consolidated.map((r) => (
+                  {consolidated.map(r => (
                     <TableRow
                       key={r.salesperson_id}
                       className="cursor-pointer hover:bg-muted/40"
@@ -411,13 +479,23 @@ export default function AdminAuditoriaPremiacoes() {
                       title="Clique para ver detalhes deste vendedor"
                     >
                       <TableCell className="font-medium">{r.salesperson_name}</TableCell>
-                      <TableCell className="text-right tabular-nums">{r.totalCount}</TableCell>
-                      <TableCell className="text-right tabular-nums text-amber-600 dark:text-amber-400">{brl(r.pendingSum)}</TableCell>
-                      <TableCell className="text-right tabular-nums text-emerald-600 dark:text-emerald-400">{brl(r.paidSum)}</TableCell>
-                      <TableCell className="text-right tabular-nums text-muted-foreground">{brl(r.cancelledSum)}</TableCell>
-                      <TableCell className="text-right tabular-nums font-semibold">{brl(r.totalSum)}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {r.totalCount}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-amber-600 dark:text-amber-400">
+                        {brl(r.pendingSum)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-emerald-600 dark:text-emerald-400">
+                        {brl(r.paidSum)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums text-muted-foreground">
+                        {brl(r.cancelledSum)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums font-semibold">
+                        {brl(r.totalSum)}
+                      </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
-                        {format(parseISO(r.lastAt), "d MMM yyyy", { locale: ptBR })}
+                        {format(parseISO(r.lastAt), 'd MMM yyyy', { locale: ptBR })}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -439,14 +517,20 @@ export default function AdminAuditoriaPremiacoes() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {awards.map((a) => {
-                    const period = format(parseISO(a.period_month), "MMM/yy", { locale: ptBR });
-                    const awardedAt = format(parseISO(a.awarded_at), "d MMM yyyy", { locale: ptBR });
+                  {awards.map(a => {
+                    const period = format(parseISO(a.period_month), 'MMM/yy', {
+                      locale: ptBR,
+                    });
+                    const awardedAt = format(parseISO(a.awarded_at), 'd MMM yyyy', {
+                      locale: ptBR,
+                    });
                     const isPaid = a.status === 'paid';
                     const isCancelled = a.status === 'cancelled';
                     return (
                       <TableRow key={a.id}>
-                        <TableCell className="font-medium">{a.salesperson_name ?? '—'}</TableCell>
+                        <TableCell className="font-medium">
+                          {a.salesperson_name ?? '—'}
+                        </TableCell>
                         <TableCell>{a.bonus_name ?? '—'}</TableCell>
                         <TableCell className="capitalize">{period}</TableCell>
                         <TableCell className="text-right tabular-nums font-semibold">
@@ -455,18 +539,25 @@ export default function AdminAuditoriaPremiacoes() {
                             : `${Number(a.computed_amount).toFixed(2)}%`}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={statusMeta[a.status].className}>
+                          <Badge
+                            variant="outline"
+                            className={statusMeta[a.status].className}
+                          >
                             {statusMeta[a.status].label}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{awardedAt}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {awardedAt}
+                        </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">
                             {!isPaid && !isCancelled && (
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => updateStatus.mutate({ id: a.id, status: 'paid' })}
+                                onClick={() =>
+                                  updateStatus.mutate({ id: a.id, status: 'paid' })
+                                }
                                 disabled={updateStatus.isPending}
                               >
                                 <Wallet className="h-3.5 w-3.5 mr-1" /> Marcar pago
@@ -476,7 +567,9 @@ export default function AdminAuditoriaPremiacoes() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => updateStatus.mutate({ id: a.id, status: 'pending' })}
+                                onClick={() =>
+                                  updateStatus.mutate({ id: a.id, status: 'pending' })
+                                }
                                 disabled={updateStatus.isPending}
                               >
                                 <Clock className="h-3.5 w-3.5 mr-1" /> Reabrir
@@ -486,7 +579,9 @@ export default function AdminAuditoriaPremiacoes() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => updateStatus.mutate({ id: a.id, status: 'cancelled' })}
+                                onClick={() =>
+                                  updateStatus.mutate({ id: a.id, status: 'cancelled' })
+                                }
                                 disabled={updateStatus.isPending}
                               >
                                 <XCircle className="h-3.5 w-3.5" />

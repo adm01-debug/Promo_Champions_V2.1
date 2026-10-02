@@ -31,8 +31,13 @@ export function NextGoalPanel({
   seasonEnd,
 }: Props) {
   const goal = useNextGoal(entries, currentUserSalespersonId, goalAmount);
-  const predictions = useRacePredictions(entries, { start_date: seasonStart, end_date: seasonEnd });
-  const myPrediction = currentUserSalespersonId ? predictions.get(currentUserSalespersonId) : undefined;
+  const predictions = useRacePredictions(entries, {
+    start_date: seasonStart,
+    end_date: seasonEnd,
+  });
+  const myPrediction = currentUserSalespersonId
+    ? predictions.get(currentUserSalespersonId)
+    : undefined;
   const animatedGap = useCountUp(goal.gapAmount, { duration: 900 });
   const animatedSeason = useCountUp(goal.seasonProgress, { duration: 900, decimals: 1 });
 
@@ -61,7 +66,8 @@ export function NextGoalPanel({
       <Card
         className={cn(
           'relative overflow-hidden p-3 bg-gradient-to-br from-primary/10 via-card to-card border-primary/20',
-          goal.isCloseToOvertake && 'border-warning/60 shadow-[0_0_18px_-4px_hsl(var(--warning)/0.5)]',
+          goal.isCloseToOvertake &&
+            'border-warning/60 shadow-[0_0_18px_-4px_hsl(var(--warning)/0.5)]'
         )}
       >
         {/* Header */}
@@ -129,7 +135,7 @@ export function NextGoalPanel({
             <p
               className={cn(
                 'text-xl font-black font-display tabular-nums leading-tight',
-                isHunting ? 'text-primary' : 'text-success',
+                isHunting ? 'text-primary' : 'text-success'
               )}
             >
               {fmt(animatedGap)}
@@ -141,7 +147,7 @@ export function NextGoalPanel({
                   'h-full rounded-full',
                   isHunting
                     ? 'bg-gradient-to-r from-primary to-warning'
-                    : 'bg-gradient-to-r from-success to-warning',
+                    : 'bg-gradient-to-r from-success to-warning'
                 )}
                 initial={{ width: 0 }}
                 animate={{ width: `${goal.gapPercent}%` }}

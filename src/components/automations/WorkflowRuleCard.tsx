@@ -1,8 +1,8 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,12 +13,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { ArrowRight, Trash2, Play, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { TRIGGER_OPTIONS, ACTION_OPTIONS } from "@/hooks/useWorkflowRules";
+} from '@/components/ui/alert-dialog';
+import { ArrowRight, Trash2, Play, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { TRIGGER_OPTIONS, ACTION_OPTIONS } from '@/hooks/useWorkflowRules';
 
 interface WorkflowRule {
   id: string;
@@ -39,19 +39,26 @@ interface WorkflowRuleCardProps {
   onDelete: (id: string) => void;
 }
 
-export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onToggle, onDelete }: WorkflowRuleCardProps) {
+export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({
+  rule,
+  onToggle,
+  onDelete,
+}: WorkflowRuleCardProps) {
   const trigger = TRIGGER_OPTIONS.find(t => t.value === rule.trigger_type);
   const action = ACTION_OPTIONS.find(a => a.value === rule.action_type);
 
   return (
-    <Card className={cn("transition-all", !rule.is_active && "opacity-60")}>
+    <Card className={cn('transition-all', !rule.is_active && 'opacity-60')}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-display font-semibold truncate">{rule.name}</h3>
-              <Badge variant={rule.is_active ? "default" : "secondary"} className="text-[10px]">
-                {rule.is_active ? "Ativa" : "Inativa"}
+              <Badge
+                variant={rule.is_active ? 'default' : 'secondary'}
+                className="text-[10px]"
+              >
+                {rule.is_active ? 'Ativa' : 'Inativa'}
               </Badge>
             </div>
             {rule.description && (
@@ -62,7 +69,8 @@ export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onT
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-primary/10 text-xs font-medium">
                 <span>{trigger?.icon as never}</span>
                 <span className="text-primary">{trigger?.label}</span>
-                {((rule.trigger_config as Record<string, unknown>)?.days as number | undefined) && (
+                {((rule.trigger_config as Record<string, unknown>)?.days as
+                  number | undefined) && (
                   <Badge variant="outline" className="text-[9px] h-4 px-1">
                     {String((rule.trigger_config as Record<string, unknown>).days)}d
                   </Badge>
@@ -83,7 +91,10 @@ export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onT
               {rule.last_executed_at && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-2.5 w-2.5" />
-                  {formatDistanceToNow(new Date(rule.last_executed_at), { addSuffix: true, locale: ptBR })}
+                  {formatDistanceToNow(new Date(rule.last_executed_at), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
                 </span>
               )}
             </div>
@@ -92,11 +103,16 @@ export const WorkflowRuleCard = React.memo(function WorkflowRuleCard({ rule, onT
           <div className="flex items-center gap-2 shrink-0">
             <Switch
               checked={rule.is_active}
-              onCheckedChange={(checked) => onToggle({ id: rule.id, is_active: checked })}
+              onCheckedChange={checked => onToggle({ id: rule.id, is_active: checked })}
             />
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Excluir regra" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Excluir regra"
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </AlertDialogTrigger>

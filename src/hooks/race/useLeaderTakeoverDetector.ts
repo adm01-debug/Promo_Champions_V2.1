@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface TakeoverEvent {
   id: string;
@@ -15,7 +15,7 @@ export interface TakeoverEvent {
  */
 export function useLeaderTakeoverDetector(
   entries: RaceLeaderboardEntry[],
-  currentUserSalespersonId?: string,
+  currentUserSalespersonId?: string
 ) {
   const prevLeaderIdRef = useRef<string | null | undefined>(undefined);
   const [takeover, setTakeover] = useState<TakeoverEvent | null>(null);
