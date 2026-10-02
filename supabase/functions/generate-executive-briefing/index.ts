@@ -3,10 +3,12 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface BriefingPayload {
@@ -114,7 +116,7 @@ Deno.serve(
 
       // Lovable AI com tool calling
       const aiRes = await fetchWithTimeout(
-        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
         {
           method: 'POST',
           headers: {

@@ -9,6 +9,8 @@ import {
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface ForecastRow {
   salesperson_id: string | null;
@@ -149,7 +151,7 @@ Deno.serve(
 - Gap vs meta: R$ ${gapToGoal.toFixed(0)}`;
 
           const aiRes = await fetchWithTimeout(
-            'https://ai.gateway.lovable.dev/v1/chat/completions',
+            LOVABLE_AI_CHAT_COMPLETIONS_URL,
             {
               method: 'POST',
               headers: {

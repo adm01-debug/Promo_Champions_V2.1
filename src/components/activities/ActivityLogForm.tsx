@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { WA_ME_URL } from '@/config/external';
 import {
   Command,
   CommandEmpty,
@@ -227,7 +228,7 @@ export function ActivityLogForm({
     }
     const cleanPhone = phone.replace(/\D/g, '');
     const text = encodeURIComponent(form.getValues('notes') || 'Olá, tudo bem?');
-    window.open(`https://wa.me/${cleanPhone}?text=${text}`, '_blank');
+    window.open(`${WA_ME_URL}/${cleanPhone}?text=${text}`, '_blank');
   };
 
   const handleSubmit = (data: ActivityFormData) => {

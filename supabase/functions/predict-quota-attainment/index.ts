@@ -9,6 +9,7 @@ import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
 
+
 interface OpenDeal {
   amount: number;
   probability: number;

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Deal } from '@/hooks/usePipeline';
 import { cn } from '@/lib/utils';
+import { DICEBEAR_AVATARS_URL } from '@/config/external';
 import {
   DollarSign,
   Calendar,
@@ -144,7 +145,7 @@ export const DealCard = ({
             <TooltipTrigger asChild>
               <div className="relative">
                 <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-primary/20 hover:scale-110 transition-transform">
-                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
+                  <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Felix`} />
                   <AvatarFallback className="text-[6px]">FX</AvatarFallback>
                 </Avatar>
                 <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
@@ -158,7 +159,7 @@ export const DealCard = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all hover:scale-110">
-                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" />
+                <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Anna`} />
                 <AvatarFallback className="text-[6px]">AN</AvatarFallback>
               </Avatar>
             </TooltipTrigger>
@@ -494,7 +495,7 @@ export const DealCard = ({
               <TooltipTrigger>
                 <Avatar className="h-5 w-5 border border-primary/20">
                   <AvatarImage
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${deal.salesperson_id || 'unassigned'}`}
+                    src={`${DICEBEAR_AVATARS_URL}?seed=${deal.salesperson_id || 'unassigned'}`}
                   />
                   <AvatarFallback className="text-[8px]">CL</AvatarFallback>
                 </Avatar>

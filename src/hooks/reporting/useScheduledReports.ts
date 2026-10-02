@@ -67,24 +67,6 @@ export function useCreateScheduledReport() {
   });
 }
 
-export function useUpdateScheduledReport() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...patch }: Partial<ScheduledReport> & { id: string }) => {
-      const { error } = await supabase
-        .from('scheduled_reports')
-        .update(updatePayload('scheduled_reports', patch))
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: KEY });
-      toast.success('Atualizado');
-    },
-    onError: e => toast.error(e instanceof Error ? e.message : 'Erro'),
-  });
-}
-
 export function useDeleteScheduledReport() {
   const qc = useQueryClient();
   return useMutation({

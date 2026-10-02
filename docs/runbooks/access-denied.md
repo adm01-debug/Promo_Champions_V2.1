@@ -5,9 +5,9 @@ monitoramento excede o threshold configurado.
 
 ## Gatilhos
 
-| Métrica | Limite default | Onde configurar |
-| ------- | -------------- | --------------- |
-| negadas por usuário/janela | 10 | `access_denied_alert_settings` (tabela) |
+| Métrica                    | Limite default | Onde configurar                         |
+| -------------------------- | -------------- | --------------------------------------- |
+| negadas por usuário/janela | 10             | `access_denied_alert_settings` (tabela) |
 
 Fonte: RPC/queries da própria função sobre `security_events`
 (`event_type = 'access_denied'`).

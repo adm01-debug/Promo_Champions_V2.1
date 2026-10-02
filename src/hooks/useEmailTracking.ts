@@ -1,7 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 
 export type EmailEventType = 'sent' | 'opened' | 'clicked' | 'bounced' | 'replied';
 
@@ -86,41 +85,5 @@ export function useEmailTrackingStats() {
       };
     },
     enabled: !!salesperson?.id,
-  });
-}
-
-export function useLogEmailEvent() {
-  const queryClient = useQueryClient();
-  const { salesperson } = useAuth();
-
-  return useMutation({
-    mutationFn: async (input: {
-      sale_id?: string;
-      recipient_email: string;
-      subject: string;
-      event_type: EmailEventType;
-      metadata?: Record<string, unknown>;
-    }) => {
-      const { data, error } = await supabase
-        .from('email_tracking_events')
-        .insert({
-          sale_id: input.sale_id || null,
-          salesperson_id: salesperson?.id,
-          recipient_email: input.recipient_email,
-          subject: input.subject,
-          event_type: input.event_type,
-          metadata: input.metadata || {},
-        } as never)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-tracking'] });
-      queryClient.invalidateQueries({ queryKey: ['email-tracking-stats'] });
-    },
-    onError: () => toast.error('Erro ao registrar evento de email'),
   });
 }

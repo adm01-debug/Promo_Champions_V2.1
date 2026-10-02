@@ -177,24 +177,6 @@ export const useCreateAsset = () => {
   });
 };
 
-export const usePlaybookProgress = (playbookId?: string, saleId?: string) => {
-  return useQuery({
-    queryKey: ['playbook-progress', playbookId, saleId],
-    enabled: !!playbookId && !!saleId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('playbook_progress')
-        .select('*')
-        .eq('playbook_item_id', playbookId!)
-        .eq('sale_id', saleId!)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      return data;
-    },
-  });
-};
-
 export const useTogglePlaybookItem = () => {
   const qc = useQueryClient();
   return useMutation({

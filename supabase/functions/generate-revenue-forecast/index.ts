@@ -4,6 +4,7 @@ import { chunkedIn } from '../_shared/chunked-in.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 
@@ -174,7 +175,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (apiKey && dealList.length > 0) {
       try {
-        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({

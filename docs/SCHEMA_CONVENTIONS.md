@@ -27,8 +27,8 @@ Referenciada pelo CLAUDE.md §1 (regras de migration).
 - Nunca recriar policy `USING (true)` aberta a `anon` (hardening de
   2026-08-31 removeu todas).
 - Funções privilegiadas: `SECURITY DEFINER` + `SET search_path = public`
-  + `REVOKE ALL ... FROM PUBLIC, anon` + `GRANT` mínimo + checagem de role
-  no corpo. Preferir `SECURITY INVOKER` quando possível.
+  - `REVOKE ALL ... FROM PUBLIC, anon` + `GRANT` mínimo + checagem de role
+    no corpo. Preferir `SECURITY INVOKER` quando possível.
 
 ## updated_at obrigatório
 

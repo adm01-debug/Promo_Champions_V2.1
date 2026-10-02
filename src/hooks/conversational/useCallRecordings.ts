@@ -150,23 +150,6 @@ export function useCallInsight(recordingId?: string) {
   });
 }
 
-export function useCallTranscript(recordingId?: string) {
-  return useQuery({
-    queryKey: ['call-transcript', recordingId],
-    queryFn: async () => {
-      if (!recordingId) return null;
-      const { data, error } = await supabase
-        .from('call_transcripts')
-        .select('*')
-        .eq('recording_id', recordingId)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!recordingId,
-  });
-}
-
 export function useCreateRecordingWithAnalysis() {
   const qc = useQueryClient();
   return useMutation({

@@ -4,11 +4,11 @@ Monitora entregas de webhooks de win/loss e alerta sobre degradação.
 
 ## Gatilhos (settings em `winloss_alert_settings`, defaults entre parênteses)
 
-| Kind | Condição |
-| ---- | -------- |
-| `consecutive_failures` | ≥ 5 falhas consecutivas numa assinatura |
-| `high_retry_rate` | taxa de retry > 50% com ≥ 10 entregas na janela (30min) |
-| `attempts_exhausted` | todas as 3 tentativas de um request falharam |
+| Kind                   | Condição                                                |
+| ---------------------- | ------------------------------------------------------- |
+| `consecutive_failures` | ≥ 5 falhas consecutivas numa assinatura                 |
+| `high_retry_rate`      | taxa de retry > 50% com ≥ 10 entregas na janela (30min) |
+| `attempts_exhausted`   | todas as 3 tentativas de um request falharam            |
 
 Anti-spam: supressão por `suppress_minutes` (60min) por kind/request.
 

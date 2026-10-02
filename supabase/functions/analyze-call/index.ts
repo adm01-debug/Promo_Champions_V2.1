@@ -5,6 +5,7 @@ import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const MAX_TRANSCRIPT_LENGTH = 20_000;
 
@@ -61,7 +62,7 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
     });
 
     // Análise via Lovable AI
-    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

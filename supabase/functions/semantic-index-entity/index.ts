@@ -11,6 +11,7 @@ import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
+import { LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
 
 type EntityType =
   | 'client'
@@ -123,7 +124,7 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/embeddings', {
+  const res = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({

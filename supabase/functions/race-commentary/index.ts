@@ -1,6 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface CommentaryRequest {
   seasonName?: string;
@@ -107,7 +108,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
 
     let aiResp: Response;
     try {
-      aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      aiResp = await fetch(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,

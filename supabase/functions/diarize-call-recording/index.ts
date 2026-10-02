@@ -3,6 +3,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface Turn {
   speaker: 'seller' | 'client' | 'unknown';
@@ -110,7 +111,7 @@ function computeStats(turns: Turn[]) {
 }
 
 async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] | null> {
-  const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,

@@ -5,10 +5,10 @@ operacional dispara quando o próprio envio falha.
 
 ## Gatilhos
 
-| Condição | Ação |
-| -------- | ---- |
+| Condição                              | Ação                                                   |
+| ------------------------------------- | ------------------------------------------------------ |
 | POST no Slack falha (4xx/5xx/timeout) | log `slack_post_failed` + texto com link deste runbook |
-| Query de deals falha | resposta 500 + log `deal_risk_query_failed` |
+| Query de deals falha                  | resposta 500 + log `deal_risk_query_failed`            |
 
 Fonte: `SLACK_WEBHOOK_URL` (digest) — não confundir com
 `SLACK_ALERT_WEBHOOK_URL` (canal de escalação).

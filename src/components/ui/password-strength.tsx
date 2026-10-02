@@ -9,6 +9,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PWNED_PASSWORDS_RANGE_URL } from '@/config/external';
 
 interface PasswordStrengthProps {
   password: string;
@@ -38,7 +39,7 @@ async function checkLeakedPassword(
     const hash = await sha1(password);
     const prefix = hash.substring(0, 5);
     const suffix = hash.substring(5);
-    const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`, {
+    const response = await fetch(`${PWNED_PASSWORDS_RANGE_URL}/${prefix}`, {
       headers: { 'Add-Padding': 'true' },
     });
     if (!response.ok) return { leaked: false, count: 0 };

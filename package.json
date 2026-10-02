@@ -49,7 +49,8 @@
     "graphify:catalog": "node scripts/graphify/catalog-adapter.mjs",
     "graphify:reconcile": "node scripts/graphify/reconcile-catalog.mjs",
     "graphify:docs": "node scripts/graphify/docs-index.mjs",
-    "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs"
+    "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs",
+    "debt:report": "node scripts/debt-report.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -104,6 +105,7 @@
     "framer-motion": "^13.2.0",
     "fuse.js": "^7.4.1",
     "html-to-image": "^1.11.13",
+    "html2canvas": "^1.4.1",
     "input-otp": "^1.5.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",

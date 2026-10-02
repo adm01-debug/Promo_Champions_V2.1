@@ -14,6 +14,7 @@ import {
   type ResolverArgs,
 } from './queryResolvers.ts';
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 const MAX_QUESTION_LENGTH = 1000;
@@ -212,7 +213,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     ];
 
     // First call: model decides which tool to invoke
-    const firstRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const firstRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -309,7 +310,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     }
 
     // Second call: model writes the final natural-language answer
-    const secondRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const secondRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({

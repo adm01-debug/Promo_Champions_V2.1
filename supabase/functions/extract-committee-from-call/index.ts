@@ -3,6 +3,8 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { getServiceClient, getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 const SYSTEM_PROMPT = `Você é um analista B2B sênior. Extraia stakeholders mencionados na transcrição de uma call de vendas.
 Retorne APENAS via tool call. Para cada pessoa identificada com nome próprio, classifique:
@@ -71,7 +73,7 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       });
     }
 
-    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

@@ -1,8 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
-import { WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface WinLossAnalysis {
   id: string;
@@ -41,22 +39,6 @@ export interface WinLossInsight {
   created_at: string;
 }
 
-export const useWinLossAnalyses = (filters?: { outcome?: 'won' | 'lost' }) =>
-  useQuery({
-    queryKey: ['win-loss-analyses', filters],
-    queryFn: async () => {
-      let q = supabase
-        .from('win_loss_analyses')
-        .select('*')
-        .order('analyzed_at', { ascending: false });
-      if (filters?.outcome) q = q.eq('outcome', filters.outcome);
-      const { data, error } = await q.limit(500);
-      if (error) throw error;
-      return parseRows<WinLossAnalysis>(data);
-    },
-    staleTime: 60_000,
-  });
-
 export const useWinLossPatterns = (type?: WinLossPattern['pattern_type']) =>
   useQuery({
     queryKey: ['win-loss-patterns', type],
@@ -68,7 +50,8 @@ export const useWinLossPatterns = (type?: WinLossPattern['pattern_type']) =>
       if (type) q = q.eq('pattern_type', type);
       const { data, error } = await q.limit(200);
       if (error) throw error;
-      return parseRows<WinLossPattern>(data);
+      // eslint-disable-next-line no-restricted-syntax
+      return (data ?? []) as unknown as WinLossPattern[];
     },
     staleTime: 60_000,
   });
@@ -83,7 +66,8 @@ export const useWinLossInsights = () =>
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
-      return parseRows<WinLossInsight>(data);
+      // eslint-disable-next-line no-restricted-syntax
+      return (data ?? []) as unknown as WinLossInsight[];
     },
     staleTime: 60_000,
   });
@@ -103,8 +87,8 @@ export const useWinLossSummary = () =>
         cycle_days: number | null;
         amount: number | null;
       }>;
-      const wins = rows.filter(r => r.outcome === WIN_LOSS_OUTCOME.WON);
-      const losses = rows.filter(r => r.outcome === WIN_LOSS_OUTCOME.LOST);
+      const wins = rows.filter(r => r.outcome === 'won');
+      const losses = rows.filter(r => r.outcome === 'lost');
       const total = rows.length || 1;
       const avg = (arr: Array<number | null>) => {
         const v = arr.filter((x): x is number => x != null);

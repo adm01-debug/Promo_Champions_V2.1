@@ -29,49 +29,6 @@ export interface RateLimitCheckResult {
   reset_at: string;
 }
 
-// Hook para verificar rate limit
-export function useRateLimitCheck() {
-  const checkRateLimit = async (
-    identifier: string,
-    action: string
-  ): Promise<RateLimitCheckResult> => {
-    const { data, error } = await supabase.rpc('check_rate_limit', {
-      p_identifier: identifier,
-      p_action: action,
-    });
-
-    if (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error checking rate limit:', error);
-      }
-      return { allowed: true, remaining: 999, reset_at: new Date().toISOString() };
-    }
-
-    const result = data?.[0];
-    return {
-      allowed: result?.allowed ?? true,
-      remaining: result?.remaining ?? 999,
-      reset_at: result?.reset_at ?? new Date().toISOString(),
-    };
-  };
-
-  const logRateLimitAttempt = async (
-    identifier: string,
-    identifierType: 'ip' | 'user' | 'email',
-    action: string,
-    blocked: boolean = false
-  ) => {
-    await supabase.rpc('log_rate_limit', {
-      p_identifier: identifier,
-      p_identifier_type: identifierType,
-      p_action: action,
-      p_blocked: blocked,
-    });
-  };
-
-  return { checkRateLimit, logRateLimitAttempt };
-}
-
 // Hook para gerenciar configurações de rate limit
 export function useRateLimitSettings() {
   const queryClient = useQueryClient();

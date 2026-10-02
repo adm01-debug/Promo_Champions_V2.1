@@ -4,11 +4,11 @@ Alerta quando a replicação/WAL do Postgres excede limites.
 
 ## Gatilhos
 
-| Métrica | Limite default | Env |
-| ------- | -------------- | --- |
-| `max_slot_lag_bytes` | 64 MiB | `WAL_MAX_SLOT_LAG_BYTES` |
-| `long_running_tx` | > 0 | — |
-| `wal_size_bytes` | 500 MiB | `WAL_SIZE_ALERT_BYTES` |
+| Métrica              | Limite default | Env                      |
+| -------------------- | -------------- | ------------------------ |
+| `max_slot_lag_bytes` | 64 MiB         | `WAL_MAX_SLOT_LAG_BYTES` |
+| `long_running_tx`    | > 0            | —                        |
+| `wal_size_bytes`     | 500 MiB        | `WAL_SIZE_ALERT_BYTES`   |
 
 Fonte: `public.v_platform_wal_health` (service_role).
 

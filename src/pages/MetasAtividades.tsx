@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PRAVATAR_URL } from '@/config/external';
 import {
   Target,
   TrendingUp,
@@ -281,7 +282,7 @@ export default function MetasAtividades() {
                       {[1, 2, 3, 4].map(i => (
                         <div key={i} className="relative group/avatar cursor-pointer">
                           <Avatar className="border-2 border-background h-12 w-12 ring-2 ring-primary/20 shadow-xl transition-transform group-hover/avatar:-translate-y-2">
-                            <AvatarImage src={`https://i.pravatar.cc/150?u=${i + 20}`} />
+                            <AvatarImage src={`${PRAVATAR_URL}?u=${i + 20}`} />
                             <AvatarFallback>U{i}</AvatarFallback>
                           </Avatar>
                           <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success border-2 border-background rounded-full shadow-sm" />

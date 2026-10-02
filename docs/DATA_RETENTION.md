@@ -29,13 +29,13 @@ de qualquer tabela de log passar de ~10 GB **ou** o purge diário exceder
 
 ## 2. Política-alvo (versionada em `data_retention_policies`)
 
-| Tabela | Janela | Coluna-tempo | Motivo |
-|---|---|---|---|
-| `audit_log`, `audit_logs`, `data_access_log`, `security_events` | 365d | `created_at`/`changed_at` | valor jurídico/forense (ADR-007 excluiu auditoria do 90d; aqui ganha janela própria de 12m) |
-| `login_attempts`, `login_alerts`, `access_denied_logs` | 180d | `created_at` | investigação de segurança |
-| `website_visitor_logs` | 90d | `identified_at` | LGPD — e só sem consentimento ativo (regra especial na função) |
-| `query_telemetry`, `web_vitals_samples`, `salesperson_performance_telemetry`, `error_logs`, `integration_logs`, `session_activity` | 90d | `created_at`/`timestamp` | telemetria operacional |
-| `webhook_inbound_dedupe`, `webhook_inbound_log`, `rate_limit_logs` | 30d | `received_at`/`created_at` | janela de retry/replay |
+| Tabela                                                                                                                             | Janela | Coluna-tempo               | Motivo                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------------------- | ------------------------------------------------------------------------------------------- |
+| `audit_log`, `audit_logs`, `data_access_log`, `security_events`                                                                    | 365d   | `created_at`/`changed_at`  | valor jurídico/forense (ADR-007 excluiu auditoria do 90d; aqui ganha janela própria de 12m) |
+| `login_attempts`, `login_alerts`, `access_denied_logs`                                                                             | 180d   | `created_at`               | investigação de segurança                                                                   |
+| `website_visitor_logs`                                                                                                             | 90d    | `identified_at`            | LGPD — e só sem consentimento ativo (regra especial na função)                              |
+| `query_telemetry`, `web_vitals_samples`, `salesperson_performance_telemetry`, `error_logs`, `integration_logs`, `session_activity` | 90d    | `created_at`/`timestamp`   | telemetria operacional                                                                      |
+| `webhook_inbound_dedupe`, `webhook_inbound_log`, `rate_limit_logs`                                                                 | 30d    | `received_at`/`created_at` | janela de retry/replay                                                                      |
 
 Tabelas **fora** do purge automático (decisão consciente): `audit trail`
 financeiro (`sale_notifications_audit`, `quote_conversion_audit`,

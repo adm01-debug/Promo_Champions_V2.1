@@ -10,6 +10,7 @@ import { WinLossReasonMatrix } from '@/components/win-loss/WinLossReasonMatrix';
 import { SalespersonWinLossTable } from '@/components/win-loss/SalespersonWinLossTable';
 import { CompetitorBattleCard } from '@/components/win-loss/CompetitorBattleCard';
 import { ActionableInsightsPanel } from '@/components/win-loss/ActionableInsightsPanel';
+import { APP_URL } from '@/config/external';
 import {
   WinLossDealsDrawer,
   type DrawerFilter,
@@ -68,7 +69,7 @@ import { useWinLossInsights } from '@/hooks/deal-intelligence/useWinLoss';
 import type { SavedView } from '@/hooks/win-loss/useWinLossSavedViews';
 import { WIN_LOSS_OUTCOME } from '@/constants';
 
-const SITE = 'https://championgifts.lovable.app';
+const SITE = APP_URL;
 
 export default function WinLossIntelligence() {
   const insightsRef = useRef<HTMLDivElement | null>(null);

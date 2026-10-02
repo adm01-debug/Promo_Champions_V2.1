@@ -3,6 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface ExtractedStakeholder {
   name: string;
@@ -104,7 +105,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     const ownerId = sp?.user_id || user.id;
 
     // Call Lovable AI with tool calling
-    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,

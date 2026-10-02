@@ -3,6 +3,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 
 
@@ -107,7 +108,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       .join("\n")}`;
 
     const aiRes = await fetchWithTimeout(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
       {
         method: "POST",
         headers: {
