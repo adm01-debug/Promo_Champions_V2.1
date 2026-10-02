@@ -36,7 +36,7 @@ const productSchema = z.object({
     .min(1, 'Nome é obrigatório')
     .max(100, 'Nome deve ter no máximo 100 caracteres'),
   sku: z.string().trim().min(1, 'SKU é obrigatório'),
-  category: z.string().default('Assinatura'),
+  category: z.string(),
   price: z
     .string()
     .min(1, 'Preço é obrigatório')
@@ -44,7 +44,7 @@ const productSchema = z.object({
       const num = parseFloat(val);
       return !isNaN(num) && num >= 0;
     }, 'Preço deve ser um valor válido'),
-  stock_quantity: z.string().default('0'),
+  stock_quantity: z.string(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
