@@ -56,7 +56,7 @@ function globToRegExp(glob: string): RegExp {
       const alts = glob
         .slice(i + 1, end)
         .split(',')
-        .map((a) => a.replace(ESCAPE_RE, '\\$&'));
+        .map(a => a.replace(ESCAPE_RE, '\\$&'));
       out += `(?:${alts.join('|')})`;
       i = end;
     } else {
@@ -66,24 +66,27 @@ function globToRegExp(glob: string): RegExp {
   return new RegExp(`^${out}$`);
 }
 
-const srcFiles = walk(join(ROOT, 'src')).map((f) => relative(ROOT, f));
+const srcFiles = walk(join(ROOT, 'src')).map(f => relative(ROOT, f));
 const readConfig = (name: string) => readFileSync(join(ROOT, name), 'utf-8');
 
 /** Extrai valores de um array literal de strings, ex.: ['a', 'b']. */
 function stringArray(source: string, key: string): string[] {
   const m = source.match(new RegExp(`${key}:\\s*\\[([^\\]]*)\\]`));
   if (!m) return [];
-  return [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+  return [...m[1].matchAll(/'([^']+)'/g)].map(x => x[1]);
 }
 
 /** Extrai literal regex ou string de `key:` num bloco de texto. */
 function literalPatterns(block: string, key: string): RegExp[] {
   const out: RegExp[] = [];
-  const re = new RegExp(`${key}:\\s*(\\[[^\\]]*\\]|\\/[^\\n]+?\\/[a-z]*|'[^']*'|"[^"]*")`, 'g');
+  const re = new RegExp(
+    `${key}:\\s*(\\[[^\\]]*\\]|\\/[^\\n]+?\\/[a-z]*|'[^']*'|"[^"]*")`,
+    'g'
+  );
   for (const m of block.matchAll(re)) {
     const raw = m[1];
     const items = raw.startsWith('[')
-      ? [...raw.matchAll(/\/[^\n]+?\/[a-z]*|'[^']*'|"[^"]*"/g)].map((x) => x[0])
+      ? [...raw.matchAll(/\/[^\n]+?\/[a-z]*|'[^']*'|"[^"]*"/g)].map(x => x[0])
       : [raw];
     for (const item of items) {
       if (item.startsWith('/')) {
@@ -108,18 +111,20 @@ function pathLiteral(source: string, key: string): string | null {
 
   // O include de specs é o array que contém '{test,spec}' (o include de
   // coverage vem depois e cobre todo src/**).
-  const includeBlocks = [...source.matchAll(/include:\s*\[([^\]]*)\]/g)].map((m) => m[1]);
-  const specIncludeRaw = includeBlocks.find((b) => b.includes('{test,spec}'));
+  const includeBlocks = [...source.matchAll(/include:\s*\[([^\]]*)\]/g)].map(m => m[1]);
+  const specIncludeRaw = includeBlocks.find(b => b.includes('{test,spec}'));
   if (!specIncludeRaw) {
-    failures.push('vitest.config.ts: guard não encontrou o include de specs (formato mudou?)');
+    failures.push(
+      'vitest.config.ts: guard não encontrou o include de specs (formato mudou?)'
+    );
   }
   const include = specIncludeRaw
-    ? [...specIncludeRaw.matchAll(/'([^']+)'/g)].map((x) => x[1])
+    ? [...specIncludeRaw.matchAll(/'([^']+)'/g)].map(x => x[1])
     : [];
   const exclude = stringArray(source, 'exclude');
 
   for (const pattern of include) {
-    if (!srcFiles.some((f) => globToRegExp(pattern).test(f))) {
+    if (!srcFiles.some(f => globToRegExp(pattern).test(f))) {
       failures.push(`vitest.config.ts: include '${pattern}' não casa nenhum arquivo`);
     }
   }
@@ -127,16 +132,18 @@ function pathLiteral(source: string, key: string): string | null {
   // Qualquer spec sob src/ precisa estar coberto pelo include declarado —
   // senão entra no disco mas nunca roda.
   const SPEC_RE = /\.(test|spec)\.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$/;
-  for (const file of srcFiles.filter((f) => SPEC_RE.test(f))) {
+  for (const file of srcFiles.filter(f => SPEC_RE.test(f))) {
     const covered =
-      include.some((g) => globToRegExp(g).test(file)) &&
-      !exclude.some((g) => globToRegExp(g).test(file));
+      include.some(g => globToRegExp(g).test(file)) &&
+      !exclude.some(g => globToRegExp(g).test(file));
     if (!covered) failures.push(`spec órfão do vitest (fora do include): ${file}`);
   }
 
   for (const setup of stringArray(source, 'setupFiles')) {
     if (!existsSync(join(ROOT, setup.replace(/^\.\//, '')))) {
-      failures.push(`vitest.config.ts: setupFiles aponta para arquivo inexistente: ${setup}`);
+      failures.push(
+        `vitest.config.ts: setupFiles aponta para arquivo inexistente: ${setup}`
+      );
     }
   }
 }
@@ -151,8 +158,8 @@ function checkPlaywright(label: string): void {
     return;
   }
   const specs = walk(absDir)
-    .map((f) => relative(absDir, f))
-    .filter((f) => f.endsWith('.spec.ts') || f.endsWith('.spec.tsx'));
+    .map(f => relative(absDir, f))
+    .filter(f => f.endsWith('.spec.ts') || f.endsWith('.spec.tsx'));
 
   const globalSetup = pathLiteral(source, 'globalSetup');
   if (globalSetup && !existsSync(join(ROOT, globalSetup.replace(/^\.\//, '')))) {
@@ -162,7 +169,7 @@ function checkPlaywright(label: string): void {
   // testMatch top-level (usado pelo config a11y)
   const topLevel = source.split('projects:')[0] ?? source;
   for (const re of literalPatterns(topLevel, 'testMatch')) {
-    if (!specs.some((s) => re.test(s))) {
+    if (!specs.some(s => re.test(s))) {
       failures.push(`${label}: testMatch ${re} não casa nenhum spec em ${testDir}`);
     }
   }
@@ -181,14 +188,14 @@ function checkPlaywright(label: string): void {
     const match = literalPatterns(chunk, 'testMatch');
     const ignore = literalPatterns(chunk, 'testIgnore');
     const selected = specs.filter(
-      (s) =>
-        (match.length === 0 || match.some((re) => re.test(s))) &&
-        !ignore.some((re) => re.test(s)),
+      s =>
+        (match.length === 0 || match.some(re => re.test(s))) &&
+        !ignore.some(re => re.test(s))
     );
     if (selected.length === 0) {
       failures.push(`${label}: projeto '${name}' seleciona zero specs em ${testDir}`);
     }
-    selected.forEach((s) => covered.add(s));
+    selected.forEach(s => covered.add(s));
   }
   for (const spec of specs) {
     if (!covered.has(spec)) {
@@ -205,9 +212,11 @@ if (failures.length > 0) {
   console.error('\n❌ Drift de configuração de testes detectado:\n');
   for (const f of failures) console.error(`   • ${f}`);
   console.error(
-    '\nUm padrão sem arquivos esconde specs mortos; um spec fora de todos os padrões nunca executa.\n',
+    '\nUm padrão sem arquivos esconde specs mortos; um spec fora de todos os padrões nunca executa.\n'
   );
   process.exit(1);
 }
 
-console.log('✅ Todos os padrões de spec declarados casam arquivos e nenhum spec está órfão.');
+console.log(
+  '✅ Todos os padrões de spec declarados casam arquivos e nenhum spec está órfão.'
+);

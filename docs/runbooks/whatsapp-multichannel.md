@@ -13,12 +13,12 @@
 
 ## Configuração
 
-| Item | Onde |
-|------|------|
-| Credenciais Meta Cloud (`phone_number_id`, `access_token`) | tabela de credenciais de provider, via `/admin/conexoes` |
-| Credenciais Twilio/Z-API | idem |
-| URL do status webhook | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/multichannel-status-webhook` (registrar no painel do provider) |
-| Mensagens enviadas | tabela `outbound_messages` |
+| Item                                                       | Onde                                                                                                                  |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Credenciais Meta Cloud (`phone_number_id`, `access_token`) | tabela de credenciais de provider, via `/admin/conexoes`                                                              |
+| Credenciais Twilio/Z-API                                   | idem                                                                                                                  |
+| URL do status webhook                                      | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/multichannel-status-webhook` (registrar no painel do provider) |
+| Mensagens enviadas                                         | tabela `outbound_messages`                                                                                            |
 
 ## Sinais de falha
 

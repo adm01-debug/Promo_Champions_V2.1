@@ -5,23 +5,23 @@ Base: `main` @ `dde5aff` (01/10/2026), 8 workflows em `.github/workflows/`, rule
 
 ## Diagnóstico — o que está quebrado hoje (evidência real)
 
-| # | Achado | Evidência |
-|---|--------|-----------|
-| D1 | **`main` vermelha desde 01/10 15:34.** 5 workflows falham em todo push | runs 36886395795 / -895 / -499 / -805 |
-| D2 | `deno.lock` desatualizado em `main` → quebra **Edge Lint, Bundle, Request-Id, Cron Monitoring** de uma vez | job 110460025200: `deno.lock desatualizado` |
-| D3 | `npm audit` falha por **dompurify (high)**. O fix já existe no Dependabot (#186), parado | job 110460025054 |
-| D4 | **Supabase Types Drift** falha em TODA PR com migration: compara com o banco de **produção**, que ainda não recebeu a migration | PR #200: `deleted_by`/`delete_reason` |
-| D5 | **Quote-to-Sale** falha em 4 de 4 PRs (invariants sai com exit 2, Playwright vermelho) e roda em qualquer mudança de `supabase/functions/**`. O log não mostra a causa | runs 36916073960, 36911308415 |
-| D6 | **E2E, Quote-to-Sale e Invariants rodam contra o banco de PRODUÇÃO** (`usyxfpqlsspldubptrdl`) com usuário real | `pr-checks.yml:243`, `quote-to-sale-e2e.yml:63-131` |
-| D7 | Runs de `push:main` aparecem como **cancelled**: o GitHub mantém só 1 run pendente por grupo de concorrência e descarta o anterior | runs 36885861617, 36885366163 |
-| D8 | Os required checks são só 3 (Lint, Unit, Build), com `strict=false`, 0 aprovações e sem code owner. Com vários agentes mergeando em paralelo, PR desatualizada entra e quebra a `main` (foi o que aconteceu em D2) | ruleset 22148182 |
-| D9 | **CODEOWNERS inválido**: `@promo-ops` não existe (6 erros) | API codeowners/errors |
-| D10 | `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` e `SUPABASE_ACCESS_TOKEN` são **secrets de repo**: qualquer branch de qualquer agente lê. `SUPABASE_DB_URL` não é usado por nenhum workflow | lista de secrets + grep |
-| D11 | Actions liberadas para "all" e `sha_pinning_required=false`, embora todas já estejam pinadas por SHA | actions/permissions |
-| D12 | Lighthouse publica relatório em `temporary-public-storage` (link público), e `.lighthouserc.json` define `url` e `staticDistDir` ao mesmo tempo | `.lighthouserc.json` |
-| D13 | No QA semanal, o Lighthouse nunca falha (`|| echo warning`). O build sai sem as envs do Supabase (tela branca), então Lighthouse e a11y medem página vazia | `qa-exhaustive.yml:93-134` |
-| D14 | Workflows agendados (QA semanal, Cron Monitoring diário, CodeQL) falham em silêncio: não há notificação, e o Slack de `pr-checks` nunca foi configurado | secrets sem `SLACK_CI_WEBHOOK_URL` |
-| D15 | 7 PRs abertas mexem em CI/workflows ao mesmo tempo (#184, #189, #195, #198 e Dependabot #178) | lista de PRs |
+| #   | Achado                                                                                                                                                                                                             | Evidência                                           |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| D1  | **`main` vermelha desde 01/10 15:34.** 5 workflows falham em todo push                                                                                                                                             | runs 36886395795 / -895 / -499 / -805               |
+| D2  | `deno.lock` desatualizado em `main` → quebra **Edge Lint, Bundle, Request-Id, Cron Monitoring** de uma vez                                                                                                         | job 110460025200: `deno.lock desatualizado`         |
+| D3  | `npm audit` falha por **dompurify (high)**. O fix já existe no Dependabot (#186), parado                                                                                                                           | job 110460025054                                    |
+| D4  | **Supabase Types Drift** falha em TODA PR com migration: compara com o banco de **produção**, que ainda não recebeu a migration                                                                                    | PR #200: `deleted_by`/`delete_reason`               |
+| D5  | **Quote-to-Sale** falha em 4 de 4 PRs (invariants sai com exit 2, Playwright vermelho) e roda em qualquer mudança de `supabase/functions/**`. O log não mostra a causa                                             | runs 36916073960, 36911308415                       |
+| D6  | **E2E, Quote-to-Sale e Invariants rodam contra o banco de PRODUÇÃO** (`usyxfpqlsspldubptrdl`) com usuário real                                                                                                     | `pr-checks.yml:243`, `quote-to-sale-e2e.yml:63-131` |
+| D7  | Runs de `push:main` aparecem como **cancelled**: o GitHub mantém só 1 run pendente por grupo de concorrência e descarta o anterior                                                                                 | runs 36885861617, 36885366163                       |
+| D8  | Os required checks são só 3 (Lint, Unit, Build), com `strict=false`, 0 aprovações e sem code owner. Com vários agentes mergeando em paralelo, PR desatualizada entra e quebra a `main` (foi o que aconteceu em D2) | ruleset 22148182                                    |
+| D9  | **CODEOWNERS inválido**: `@promo-ops` não existe (6 erros)                                                                                                                                                         | API codeowners/errors                               |
+| D10 | `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` e `SUPABASE_ACCESS_TOKEN` são **secrets de repo**: qualquer branch de qualquer agente lê. `SUPABASE_DB_URL` não é usado por nenhum workflow                         | lista de secrets + grep                             |
+| D11 | Actions liberadas para "all" e `sha_pinning_required=false`, embora todas já estejam pinadas por SHA                                                                                                               | actions/permissions                                 |
+| D12 | Lighthouse publica relatório em `temporary-public-storage` (link público), e `.lighthouserc.json` define `url` e `staticDistDir` ao mesmo tempo                                                                    | `.lighthouserc.json`                                |
+| D13 | No QA semanal, o Lighthouse nunca falha (`                                                                                                                                                                         |                                                     | echo warning`). O build sai sem as envs do Supabase (tela branca), então Lighthouse e a11y medem página vazia | `qa-exhaustive.yml:93-134` |
+| D14 | Workflows agendados (QA semanal, Cron Monitoring diário, CodeQL) falham em silêncio: não há notificação, e o Slack de `pr-checks` nunca foi configurado                                                            | secrets sem `SLACK_CI_WEBHOOK_URL`                  |
+| D15 | 7 PRs abertas mexem em CI/workflows ao mesmo tempo (#184, #189, #195, #198 e Dependabot #178)                                                                                                                      | lista de PRs                                        |
 
 ---
 
@@ -56,7 +56,7 @@ Base: `main` @ `dde5aff` (01/10/2026), 8 workflows em `.github/workflows/`, rule
 ## FASE 3 — Segurança da supply chain de Actions (P1)
 
 20. Ligar `sha_pinning_required=true` no repo, já que tudo está pinado.
-21. Trocar `allowed_actions: all` por `selected`, com allowlist (actions/*, github/*, denoland/*, supabase/*, astral-sh/*, treosh/*).
+21. Trocar `allowed_actions: all` por `selected`, com allowlist (actions/_, github/_, denoland/_, supabase/_, astral-sh/_, treosh/_).
 22. Adicionar `actionlint` como job em PRs que tocam `.github/workflows/**`.
 23. Adicionar `zizmor` (auditoria de segurança de workflows): injection, `permissions` excessivas, `persist-credentials`.
 24. `persist-credentials: false` em todos os `actions/checkout` (nenhum job faz push).
@@ -159,22 +159,22 @@ Base: `main` @ `dde5aff` (01/10/2026), 8 workflows em `.github/workflows/`, rule
 97. Smoke test pós-deploy: chamar o health das funções críticas e a URL do Lovable após o merge.
 98. Ligar o `.github/workflows/README.md` ao estado real (falta o `edge-functions-input-validation` do #195; CodeQL também roda em PR) e validar com um check de sincronia.
 99. `npm run ci` local espelhando exatamente os required checks (hoje faltam deno lint, request-id e lockfile).
-100. Revisão final: matriz workflow × gatilho × required × secrets × custo/min, publicada em `docs/estado/CI_ESTADO_<data>.md`, e reauditoria em 30 dias.
+100.  Revisão final: matriz workflow × gatilho × required × secrets × custo/min, publicada em `docs/estado/CI_ESTADO_<data>.md`, e reauditoria em 30 dias.
 
 ---
 
 ## Execução sugerida (PRs pequenas, uma por assunto)
 
-| Onda | Etapas | Merge |
-|------|--------|-------|
-| A — main verde | 4–8 | autônomo (fix de config) |
-| B — ruleset/CODEOWNERS | 9–19 | **aguarda você** (governança) |
-| C — hardening de Actions | 20–32 | **aguarda você** (CI/segredos) |
-| D — secrets/ambientes | 33–40 | **aguarda você** |
-| E — sair de produção | 41–48 | **aguarda você** (custo + arquitetura) |
-| F — falsos vermelhos | 49–59 | aguarda você (CI) |
-| G — QA semanal | 60–69 | aguarda você (CI) |
-| H — performance | 70–83 | aguarda você (CI) |
-| I/J/K — observabilidade, Dependabot, deploy | 84–100 | aguarda você |
+| Onda                                        | Etapas | Merge                                  |
+| ------------------------------------------- | ------ | -------------------------------------- |
+| A — main verde                              | 4–8    | autônomo (fix de config)               |
+| B — ruleset/CODEOWNERS                      | 9–19   | **aguarda você** (governança)          |
+| C — hardening de Actions                    | 20–32  | **aguarda você** (CI/segredos)         |
+| D — secrets/ambientes                       | 33–40  | **aguarda você**                       |
+| E — sair de produção                        | 41–48  | **aguarda você** (custo + arquitetura) |
+| F — falsos vermelhos                        | 49–59  | aguarda você (CI)                      |
+| G — QA semanal                              | 60–69  | aguarda você (CI)                      |
+| H — performance                             | 70–83  | aguarda você (CI)                      |
+| I/J/K — observabilidade, Dependabot, deploy | 84–100 | aguarda você                           |
 
 Pela regra 8 do seu fluxo Git, toda PR que mexe em CI/segredos fica aberta para o seu merge.

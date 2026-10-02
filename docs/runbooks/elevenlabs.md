@@ -15,10 +15,10 @@ Voz da assistente de IA — TTS/STT via `api.elevenlabs.io` usando
 
 ## Configuração
 
-| Item | Onde |
-|------|------|
-| `ELEVENLABS_API_KEY` | Secret das edge functions |
-| Voz/idioma padrão | Configuração da assistente em Settings (frontend) |
+| Item                 | Onde                                              |
+| -------------------- | ------------------------------------------------- |
+| `ELEVENLABS_API_KEY` | Secret das edge functions                         |
+| Voz/idioma padrão    | Configuração da assistente em Settings (frontend) |
 
 ## Sinais de falha
 

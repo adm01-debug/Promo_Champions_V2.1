@@ -12,12 +12,12 @@ git checkout -b hotfix/<descricao-curta>   # ex.: hotfix/webhook-401
 
 ## 2. Gates de CI — o que pode e o que não pode ser contornado
 
-| Check | Regra |
-|-------|-------|
-| `pr-checks` (lint, typecheck, tests) | **Nunca** pular — rodar escopo afetado localmente antes do push |
-| `edge-functions-*` (lint/bundle/request-id) | Obrigatório quando toca `supabase/functions/` |
-| E2E / quote-to-sale | Pode falhar por credenciais/ambiente pré-existente — documentar no PR o motivo, com link para o job |
-| Quality gates opcionais (Lighthouse, audit) | Não-bloqueantes por natureza; não usar como desculpa para pular os obrigatórios |
+| Check                                       | Regra                                                                                               |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pr-checks` (lint, typecheck, tests)        | **Nunca** pular — rodar escopo afetado localmente antes do push                                     |
+| `edge-functions-*` (lint/bundle/request-id) | Obrigatório quando toca `supabase/functions/`                                                       |
+| E2E / quote-to-sale                         | Pode falhar por credenciais/ambiente pré-existente — documentar no PR o motivo, com link para o job |
+| Quality gates opcionais (Lighthouse, audit) | Não-bloqueantes por natureza; não usar como desculpa para pular os obrigatórios                     |
 
 **Bypass permitido** apenas quando: (a) a falha é comprovadamente
 pré-existente na `main` (mesmo job vermelho antes do hotfix) e (b) o

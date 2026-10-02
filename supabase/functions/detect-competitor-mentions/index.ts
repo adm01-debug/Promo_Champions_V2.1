@@ -1,8 +1,10 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
-
-
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 interface DiarizationSegment {
   start?: number;
@@ -15,147 +17,163 @@ function escapeRegExp(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
-
-  try {
-    const caller = await getUserClient(req);
-
-    const { recording_id } = await req.json();
-    if (!recording_id || typeof recording_id !== "string") {
-      return new Response(JSON.stringify({ error: "recording_id is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+Deno.serve(
+  withRequestId("detect-competitor-mentions", async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === "OPTIONS") {
+      return new Response("ok", { headers: corsHeaders });
     }
 
-    // competitors_registry é global e competitor_mentions exige bypass de RLS;
-    // a leitura do recording usa o client do usuário (RLS) para garantir que o
-    // chamador só analise gravações que ele pode ver.
-    const admin = getServiceClient("registry global + escrita em competitor_mentions (RLS)");
+    try {
+      const caller = await getUserClient(req);
 
-    const { data: rec, error: rErr } = await caller.client
-      .from("call_recordings")
-      .select("id, transcript, diarization, salesperson_id")
-      .eq("id", recording_id)
-      .maybeSingle();
+      const { recording_id } = await req.json();
+      if (!recording_id || typeof recording_id !== "string") {
+        return new Response(
+          JSON.stringify({ error: "recording_id is required" }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
 
-    if (rErr || !rec) {
-      return new Response(JSON.stringify({ error: "Recording not found" }), {
-        status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const transcript = (rec.transcript ?? "").toString();
-    if (!transcript) {
-      return new Response(
-        JSON.stringify({ mentions_count: 0, competitors: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      // competitors_registry é global e competitor_mentions exige bypass de RLS;
+      // a leitura do recording usa o client do usuário (RLS) para garantir que o
+      // chamador só analise gravações que ele pode ver.
+      const admin = getServiceClient(
+        "registry global + escrita em competitor_mentions (RLS)",
       );
-    }
 
-    const { data: registry } = await admin
-      .from("competitors_registry")
-      .select("id, name, aliases, default_battle_card_id")
-      .eq("is_active", true)
-      .limit(200);
+      const { data: rec, error: rErr } = await caller.client
+        .from("call_recordings")
+        .select("id, transcript, diarization, salesperson_id")
+        .eq("id", recording_id)
+        .maybeSingle();
 
-    if (!registry?.length) {
-      return new Response(
-        JSON.stringify({ mentions_count: 0, competitors: [] }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      if (rErr || !rec) {
+        return new Response(JSON.stringify({ error: "Recording not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const transcript = (rec.transcript ?? "").toString();
+      if (!transcript) {
+        return new Response(
+          JSON.stringify({ mentions_count: 0, competitors: [] }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      const { data: registry } = await admin
+        .from("competitors_registry")
+        .select("id, name, aliases, default_battle_card_id")
+        .eq("is_active", true)
+        .limit(200);
+
+      if (!registry?.length) {
+        return new Response(
+          JSON.stringify({ mentions_count: 0, competitors: [] }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      // Clear previous mentions for this recording (re-detect idempotently)
+      await admin.from("competitor_mentions").delete().eq(
+        "recording_id",
+        recording_id,
       );
-    }
 
-    // Clear previous mentions for this recording (re-detect idempotently)
-    await admin.from("competitor_mentions").delete().eq("recording_id", recording_id);
+      const segments: DiarizationSegment[] = Array.isArray(rec.diarization)
+        ? (rec.diarization as DiarizationSegment[])
+        : [];
 
-    const segments: DiarizationSegment[] = Array.isArray(rec.diarization)
-      ? (rec.diarization as DiarizationSegment[])
-      : [];
+      const mentionsToInsert: Array<{
+        recording_id: string;
+        competitor_id: string;
+        competitor_name: string;
+        timestamp_sec: number | null;
+        context_snippet: string;
+        battle_card_id: string | null;
+      }> = [];
 
-    const mentionsToInsert: Array<{
-      recording_id: string;
-      competitor_id: string;
-      competitor_name: string;
-      timestamp_sec: number | null;
-      context_snippet: string;
-      battle_card_id: string | null;
-    }> = [];
+      const competitorsHit: Record<string, number> = {};
 
-    const competitorsHit: Record<string, number> = {};
+      for (const c of registry) {
+        const terms = [c.name, ...(c.aliases ?? [])].filter(Boolean);
+        for (const term of terms) {
+          const re = new RegExp(`\\b${escapeRegExp(term)}\\b`, "gi");
+          let m: RegExpExecArray | null;
+          while ((m = re.exec(transcript)) !== null) {
+            const idx = m.index;
+            const start = Math.max(0, idx - 100);
+            const end = Math.min(transcript.length, idx + term.length + 100);
+            const snippet = transcript.slice(start, end).trim();
 
-    for (const c of registry) {
-      const terms = [c.name, ...(c.aliases ?? [])].filter(Boolean);
-      for (const term of terms) {
-        const re = new RegExp(`\\b${escapeRegExp(term)}\\b`, "gi");
-        let m: RegExpExecArray | null;
-        while ((m = re.exec(transcript)) !== null) {
-          const idx = m.index;
-          const start = Math.max(0, idx - 100);
-          const end = Math.min(transcript.length, idx + term.length + 100);
-          const snippet = transcript.slice(start, end).trim();
-
-          // approximate timestamp by char position → segment
-          let timestamp: number | null = null;
-          if (segments.length) {
-            let cumulative = 0;
-            for (const seg of segments) {
-              const segLen = (seg.text ?? "").length + 1;
-              if (cumulative + segLen >= idx) {
-                timestamp = Math.round(seg.start ?? 0);
-                break;
+            // approximate timestamp by char position → segment
+            let timestamp: number | null = null;
+            if (segments.length) {
+              let cumulative = 0;
+              for (const seg of segments) {
+                const segLen = (seg.text ?? "").length + 1;
+                if (cumulative + segLen >= idx) {
+                  timestamp = Math.round(seg.start ?? 0);
+                  break;
+                }
+                cumulative += segLen;
               }
-              cumulative += segLen;
             }
-          }
 
-          mentionsToInsert.push({
-            recording_id,
-            competitor_id: c.id,
-            competitor_name: c.name,
-            timestamp_sec: timestamp,
-            context_snippet: snippet,
-            battle_card_id: c.default_battle_card_id ?? null,
-          });
-          competitorsHit[c.name] = (competitorsHit[c.name] ?? 0) + 1;
+            mentionsToInsert.push({
+              recording_id,
+              competitor_id: c.id,
+              competitor_name: c.name,
+              timestamp_sec: timestamp,
+              context_snippet: snippet,
+              battle_card_id: c.default_battle_card_id ?? null,
+            });
+            competitorsHit[c.name] = (competitorsHit[c.name] ?? 0) + 1;
+          }
         }
       }
-    }
 
-    if (mentionsToInsert.length) {
-      const { error: insErr } = await admin
-        .from("competitor_mentions")
-        .insert(mentionsToInsert);
-      if (insErr) throw insErr;
-    }
+      if (mentionsToInsert.length) {
+        const { error: insErr } = await admin
+          .from("competitor_mentions")
+          .insert(mentionsToInsert);
+        if (insErr) throw insErr;
+      }
 
-    return new Response(
-      JSON.stringify({
-        mentions_count: mentionsToInsert.length,
-        competitors: Object.entries(competitorsHit).map(([name, count]) => ({
-          name,
-          count,
-        })),
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  } catch (e) {
-    if (e instanceof UnauthorizedError) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          mentions_count: mentionsToInsert.length,
+          competitors: Object.entries(competitorsHit).map(([name, count]) => ({
+            name,
+            count,
+          })),
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    } catch (e) {
+      if (e instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("detect-competitor-mentions error", e);
+      return new Response(
+        JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
-    console.error("detect-competitor-mentions error", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
-  }
-}));
+  }),
+);

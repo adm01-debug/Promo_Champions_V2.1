@@ -1,6 +1,7 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { checkAudioSignature } from '../_shared/file-signature.ts';
 import {
@@ -25,8 +26,9 @@ Deno.serve(
 
     try {
       // Require a valid Supabase JWT — prevents anonymous billing abuse
+      let userId: string;
       try {
-        await getUserClient(req);
+        ({ userId } = await getUserClient(req));
       } catch (authErr) {
         const isUnauth = authErr instanceof UnauthorizedError;
         return new Response(
@@ -34,6 +36,14 @@ Deno.serve(
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      const rateLimited = enforceRateLimit(req, {
+        name: 'elevenlabs-stt',
+        key: userId,
+        limit: 30,
+        windowSeconds: 60,
+      });
+      if (rateLimited) return rateLimited;
 
       const { audio } = await req.json();
 

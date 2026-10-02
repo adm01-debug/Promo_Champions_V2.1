@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -32,26 +33,47 @@ const RankingCompetitivo = () => {
   const { data: monthlyHistory } = useQuery({
     queryKey: ['ranking-monthly-history'],
     queryFn: async () => {
-      const months = [];
+      const monthRanges: { date: Date; start: Date; end: Date }[] = [];
       for (let i = 5; i >= 0; i--) {
         const date = subMonths(new Date(), i);
-        const start = startOfMonth(date);
-        const end = endOfMonth(date);
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('salesperson_id, amount')
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', start.toISOString())
-          .lte('created_at', end.toISOString());
-        const totalSales = (sales || []).reduce((sum, s) => sum + Number(s.amount), 0);
-        months.push({
-          month: format(date, 'MMM', { locale: ptBR }),
-          fullMonth: format(date, 'MMMM yyyy', { locale: ptBR }),
-          totalSales,
-          dealsCount: (sales || []).length,
+        monthRanges.push({
+          date,
+          start: startOfMonth(date),
+          end: endOfMonth(date),
         });
       }
-      return months;
+
+      const firstMonth = monthRanges[0];
+      const lastMonth = monthRanges[monthRanges.length - 1];
+      if (!firstMonth || !lastMonth) return [];
+
+      // Uma única query paginada cobrindo os 6 meses (evita N+1); o
+      // agrupamento por mês é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('salesperson_id, amount, created_at')
+            .in('status', [...WON_SALE_STATUSES])
+            .gte('created_at', firstMonth.start.toISOString())
+            .lte('created_at', lastMonth.end.toISOString())
+            .range(from, to),
+        { label: 'RankingCompetitivo:sales' }
+      );
+
+      return monthRanges.map(({ date, start, end }) => {
+        const monthSales = sales.filter(s => {
+          const createdAt = new Date(s.created_at);
+          return createdAt >= start && createdAt <= end;
+        });
+        return {
+          month: format(date, 'MMM', { locale: ptBR }),
+          fullMonth: format(date, 'MMMM yyyy', { locale: ptBR }),
+          totalSales: monthSales.reduce((sum, s) => sum + Number(s.amount), 0),
+          dealsCount: monthSales.length,
+        };
+      });
     },
   });
 

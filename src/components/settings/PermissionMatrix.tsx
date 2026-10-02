@@ -119,21 +119,30 @@ export function PermissionMatrix() {
       enable: boolean;
     }) => {
       const resourcePerms = permissions?.filter(p => p.resource === resource) ?? [];
-      for (const perm of resourcePerms) {
-        const hasPerm = hasRolePermission(role, perm.id);
-        if (enable && !hasPerm) {
-          const { error } = await supabase
-            .from('role_permissions')
-            .insert({ role, permission_id: perm.id });
-          if (error) throw error;
-        } else if (!enable && hasPerm) {
-          const { error } = await supabase
-            .from('role_permissions')
-            .delete()
-            .eq('role', role)
-            .eq('permission_id', perm.id);
-          if (error) throw error;
-        }
+      // Writes agregados em até 2 queries (evita N+1 por permissão).
+      const toInsert = resourcePerms.filter(
+        perm => enable && !hasRolePermission(role, perm.id)
+      );
+      const toDelete = resourcePerms.filter(
+        perm => !enable && hasRolePermission(role, perm.id)
+      );
+
+      if (toInsert.length > 0) {
+        const { error } = await supabase
+          .from('role_permissions')
+          .insert(toInsert.map(perm => ({ role, permission_id: perm.id })));
+        if (error) throw error;
+      }
+      if (toDelete.length > 0) {
+        const { error } = await supabase
+          .from('role_permissions')
+          .delete()
+          .eq('role', role)
+          .in(
+            'permission_id',
+            toDelete.map(perm => perm.id)
+          );
+        if (error) throw error;
       }
     },
     onSuccess: () => {
