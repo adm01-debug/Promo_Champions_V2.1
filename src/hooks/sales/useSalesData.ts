@@ -5,6 +5,7 @@ import { useRetryMutation } from '@/hooks/useRetryMutation';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 import { triggerRaceEvent } from '@/hooks/race/useRaceTrigger';
 import { salesService } from '@/services/salesService';
+import type { SalesListFilters, SalesPageQuery } from '@/services/salesService';
 import { CreateSaleInput } from '@/types/sales';
 import type { SemanticEntityType } from '@/components/semantic/semanticSearchHelpers';
 
@@ -20,6 +21,28 @@ export const useSalesData = (searchTerm?: string) => {
     queryFn: () => salesService.getSales(searchTerm),
     staleTime: 30000,
     gcTime: 1000 * 60 * 5,
+  });
+};
+
+/** Página server-side da lista /vendas (range + count no PostgREST). */
+export const useSalesPage = (query: SalesPageQuery) => {
+  return useQuery({
+    queryKey: ['sales-list', 'page', query],
+    queryFn: () => salesService.getSalesPage(query),
+    staleTime: 30000,
+    gcTime: 1000 * 60 * 5,
+    placeholderData: prev => prev,
+  });
+};
+
+/** Resumo de markup sobre TODAS as linhas do filtro atual (não só a página). */
+export const useSalesMarkupSummary = (filters: SalesListFilters) => {
+  return useQuery({
+    queryKey: ['sales-list', 'markup-summary', filters],
+    queryFn: () => salesService.getSalesMarkupSummary(filters),
+    staleTime: 30000,
+    gcTime: 1000 * 60 * 5,
+    placeholderData: prev => prev,
   });
 };
 

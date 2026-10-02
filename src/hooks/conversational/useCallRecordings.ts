@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -52,20 +58,78 @@ export interface CallInsight {
   questions_asked: number;
 }
 
+/**
+ * Colunas usadas pela lista + painel de detalhe (sem `*` — evita puxar
+ * `participants`/`metadata`, que nenhum consumidor lê).
+ */
+const CALL_RECORDING_COLUMNS = `
+  id,
+  salesperson_id,
+  sale_id,
+  client_id,
+  title,
+  audio_url,
+  duration_seconds,
+  recorded_at,
+  status,
+  created_at,
+  transcript,
+  transcript_language,
+  transcribed_at,
+  transcription_error,
+  talk_ratio_seller,
+  talk_ratio_client,
+  longest_monologue_sec,
+  interruptions_count,
+  turns_count,
+  diarization,
+  diarized_at,
+  summary,
+  action_items,
+  decisions,
+  objections_summary,
+  next_steps,
+  key_topics,
+  sentiment,
+  summarized_at
+`;
+
+export const CALL_RECORDINGS_PAGE_SIZE = 50;
+
+/**
+ * Lista de gravações paginada por `.range()` (50 por página).
+ * `data` retorna o array achatado das páginas — compatível com o uso anterior;
+ * `hasNextPage`/`fetchNextPage` alimentam o botão "Carregar mais".
+ */
 export function useCallRecordings(saleId?: string) {
-  return useQuery({
+  const query = useInfiniteQuery({
     queryKey: ['call-recordings', saleId ?? 'all'],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }) => {
       let q = supabase
         .from('call_recordings')
-        .select('*')
-        .order('recorded_at', { ascending: false });
+        .select(CALL_RECORDING_COLUMNS)
+        .order('recorded_at', { ascending: false })
+        .order('id', { ascending: true })
+        .range(pageParam, pageParam + CALL_RECORDINGS_PAGE_SIZE - 1);
       if (saleId) q = q.eq('sale_id', saleId);
       const { data, error } = await q;
       if (error) throw error;
-      return (data as CallRecording[]) ?? [];
+      // eslint-disable-next-line no-restricted-syntax
+      return (data as unknown as CallRecording[]) ?? [];
     },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length < CALL_RECORDINGS_PAGE_SIZE
+        ? undefined
+        : allPages.length * CALL_RECORDINGS_PAGE_SIZE,
   });
+
+  const data = useMemo(
+    () => (query.data ? query.data.pages.flat() : undefined),
+    [query.data]
+  );
+
+  return { ...query, data };
 }
 
 export function useCallInsight(recordingId?: string) {

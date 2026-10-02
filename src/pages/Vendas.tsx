@@ -4,25 +4,21 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 import { Input } from '@/components/ui/input';
 import { VendasLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SavedFiltersBar } from '@/components/filters/SavedFiltersBar';
-import Fuse from 'fuse.js';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
-import { useSalesData } from '@/hooks/sales/useSalesData';
+import { useSalesPage, useSalesMarkupSummary } from '@/hooks/sales/useSalesData';
+import type { SalesSortKey } from '@/services/salesService';
 import { CreateSaleDialog } from '@/components/sales/CreateSaleDialog';
 import { FilterPopover, SortOption } from '@/components/shared/FilterPopover';
-import { usePagination } from '@/hooks/usePagination';
 import { TablePagination } from '@/components/shared/TablePagination';
 import { SaleHUDCard } from '@/components/sales/SaleHUDCard';
 import {
-  classifyMarkup,
   formatMarkupPct,
-  summarizeMarkup,
   MARKUP_TIER_LABELS,
   type MarkupTier,
 } from '@/lib/markupHelpers';
-import { isLostSaleStatus } from '@/constants';
 
 const sortOptions: SortOption[] = [
   { label: 'Mais recente', value: 'date_desc', direction: 'desc' },
@@ -57,99 +53,53 @@ const VALID_TIERS: ReadonlyArray<string> = [
   'unknown',
 ];
 
+const EMPTY_SUMMARY = {
+  average: null,
+  median: null,
+  counts: { excellent: 0, healthy: 0, critical: 0, unknown: 0 },
+  total: 0,
+  withCost: 0,
+} as const;
+
 const Vendas = () => {
   const [searchParams] = useSearchParams();
   const initialMarkup = searchParams.get('markup') ?? '';
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('date_desc');
+  const [sortBy, setSortBy] = useState<SalesSortKey>('date_desc');
   const [statusFilter, setStatusFilter] = useState('');
-  const [markupFilter, setMarkupFilter] = useState(
-    VALID_TIERS.includes(initialMarkup) ? initialMarkup : ''
+  const [markupFilter, setMarkupFilter] = useState<MarkupTier | ''>(
+    VALID_TIERS.includes(initialMarkup) ? (initialMarkup as MarkupTier) : ''
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
-  const { data: sales, isLoading } = useSalesData('');
 
-  // Fuse.js for fuzzy search
-  const fuse = useMemo(() => {
-    if (!sales) return null;
-    return new Fuse(sales, {
-      keys: ['cliente', 'produto', 'id'],
-      threshold: 0.4,
-      ignoreLocation: true,
-      minMatchCharLength: 1,
-    });
-  }, [sales]);
+  const listFilters = {
+    searchTerm: debouncedSearchTerm,
+    status: statusFilter,
+    markupTier: markupFilter,
+  };
 
-  const filteredAndSortedSales = useMemo(() => {
-    if (!sales) return [];
+  const { data: salesPage, isLoading } = useSalesPage({
+    ...listFilters,
+    sortBy,
+    page: currentPage,
+    pageSize: itemsPerPage,
+  });
+  const { data: markupSummaryData } = useSalesMarkupSummary(listFilters);
 
-    // Apply fuzzy search
-    let filtered =
-      debouncedSearchTerm.trim() && fuse
-        ? fuse.search(debouncedSearchTerm).map(result => result.item)
-        : [...sales];
+  const filteredAndSortedSales = salesPage?.rows ?? [];
+  const totalItems = salesPage?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
-    // Apply status filter
-    if (statusFilter) {
-      filtered = filtered.filter(s => s.status === statusFilter);
-    }
+  // Volta para a página 1 quando qualquer filtro muda o conjunto
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchTerm, statusFilter, markupFilter, sortBy, itemsPerPage]);
 
-    // Improved Lost Deals Handling: Filtered list shows lost deals only if specifically requested
-    if (!statusFilter || !isLostSaleStatus(statusFilter)) {
-      filtered = filtered.filter(s => !isLostSaleStatus(s.status));
-    }
-
-    // Apply markup tier filter (faixa de rentabilidade)
-    if (markupFilter) {
-      filtered = filtered.filter(s => classifyMarkup(s.markup_pct).tier === markupFilter);
-    }
-
-    // Apply sorting
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'date_desc':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        case 'date_asc':
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        case 'value_desc':
-          return b.valor - a.valor;
-        case 'value_asc':
-          return a.valor - b.valor;
-        case 'client_asc':
-          return a.cliente.localeCompare(b.cliente);
-        case 'markup_desc': {
-          const av = a.markup_pct ?? Number.NEGATIVE_INFINITY;
-          const bv = b.markup_pct ?? Number.NEGATIVE_INFINITY;
-          return bv - av;
-        }
-        case 'markup_asc': {
-          const av = a.markup_pct ?? Number.POSITIVE_INFINITY;
-          const bv = b.markup_pct ?? Number.POSITIVE_INFINITY;
-          return av - bv;
-        }
-        default:
-          return 0;
-      }
-    });
-  }, [sales, fuse, debouncedSearchTerm, sortBy, statusFilter, markupFilter]);
-
-  const markupSummary = useMemo(
-    () => summarizeMarkup(filteredAndSortedSales.map(s => s.markup_pct)),
-    [filteredAndSortedSales]
-  );
-
-  const {
-    paginatedItems,
-    currentPage,
-    totalPages,
-    goToPage,
-    startIndex,
-    endIndex,
-    totalItems,
-    itemsPerPage,
-    setItemsPerPage,
-    itemsPerPageOptions,
-  } = usePagination(filteredAndSortedSales, { initialItemsPerPage: 10 });
+  const markupSummary = markupSummaryData ?? EMPTY_SUMMARY;
 
   return (
     <>
@@ -182,7 +132,7 @@ const Vendas = () => {
                       </span>
                       <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                       <p className="text-[10px] text-primary font-bold uppercase tracking-wider">
-                        {filteredAndSortedSales.length} DEALS ATIVOS
+                        {totalItems} DEALS ATIVOS
                       </p>
                     </div>
                   </div>
@@ -208,7 +158,7 @@ const Vendas = () => {
                   <FilterPopover
                     sortOptions={sortOptions}
                     currentSort={sortBy}
-                    onSortChange={setSortBy}
+                    onSortChange={v => setSortBy(v as SalesSortKey)}
                     filterOptions={[
                       {
                         label: 'Status',
@@ -220,7 +170,7 @@ const Vendas = () => {
                         label: 'Rentabilidade',
                         options: markupTierOptions,
                         value: markupFilter,
-                        onChange: setMarkupFilter,
+                        onChange: v => setMarkupFilter(v as MarkupTier | ''),
                       },
                     ]}
                   />
@@ -231,11 +181,12 @@ const Vendas = () => {
                   onApplyFilter={filters => {
                     if (filters.searchTerm !== undefined)
                       setSearchTerm(filters.searchTerm as string);
-                    if (filters.sortBy !== undefined) setSortBy(filters.sortBy as string);
+                    if (filters.sortBy !== undefined)
+                      setSortBy(filters.sortBy as SalesSortKey);
                     if (filters.statusFilter !== undefined)
                       setStatusFilter(filters.statusFilter as string);
                     if (filters.markupFilter !== undefined)
-                      setMarkupFilter(filters.markupFilter as string);
+                      setMarkupFilter(filters.markupFilter as MarkupTier | '');
                   }}
                 />
 
@@ -277,7 +228,7 @@ const Vendas = () => {
               {filteredAndSortedSales.length > 0 ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
-                    {paginatedItems.map((sale, index) => (
+                    {filteredAndSortedSales.map((sale, index) => (
                       <SaleHUDCard
                         key={sale.fullId || sale.id}
                         sale={sale}
@@ -288,13 +239,13 @@ const Vendas = () => {
                   <TablePagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={goToPage}
+                    onPageChange={setCurrentPage}
                     startIndex={startIndex}
                     endIndex={endIndex}
                     totalItems={totalItems}
                     itemsPerPage={itemsPerPage}
                     onItemsPerPageChange={setItemsPerPage}
-                    itemsPerPageOptions={itemsPerPageOptions}
+                    itemsPerPageOptions={[10, 20, 50]}
                   />
                 </div>
               ) : (
