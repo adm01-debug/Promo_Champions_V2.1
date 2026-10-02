@@ -51,31 +51,31 @@ font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
 
 ```tsx
 // Backgrounds
-className="bg-background"      // Fundo principal
-className="bg-card"            // Fundo de cards
-className="bg-muted"           // Fundo secundário/sutil
+className = 'bg-background'; // Fundo principal
+className = 'bg-card'; // Fundo de cards
+className = 'bg-muted'; // Fundo secundário/sutil
 
 // Texto
-className="text-foreground"        // Texto principal
-className="text-muted-foreground"  // Texto secundário
-className="text-primary"           // Texto de destaque
+className = 'text-foreground'; // Texto principal
+className = 'text-muted-foreground'; // Texto secundário
+className = 'text-primary'; // Texto de destaque
 
 // Status
-className="text-status-success"    // Verde (sucesso)
-className="text-status-warning"    // Amarelo (atenção)
-className="text-status-error"      // Vermelho (erro)
-className="text-status-info"       // Azul (informação)
-className="text-status-purple"     // Roxo (especial)
+className = 'text-status-success'; // Verde (sucesso)
+className = 'text-status-warning'; // Amarelo (atenção)
+className = 'text-status-error'; // Vermelho (erro)
+className = 'text-status-info'; // Azul (informação)
+className = 'text-status-purple'; // Roxo (especial)
 
 // Ranking
-className="text-rank-gold"         // Dourado (1º lugar)
-className="text-rank-silver"       // Prata (2º lugar)
-className="text-rank-bronze"       // Bronze (3º lugar)
+className = 'text-rank-gold'; // Dourado (1º lugar)
+className = 'text-rank-silver'; // Prata (2º lugar)
+className = 'text-rank-bronze'; // Bronze (3º lugar)
 
 // Gamificação
-className="text-xp"                // Verde XP
-className="text-coins"             // Dourado moedas
-className="text-streak"            // Laranja sequência
+className = 'text-xp'; // Verde XP
+className = 'text-coins'; // Dourado moedas
+className = 'text-streak'; // Laranja sequência
 ```
 
 ---
@@ -113,13 +113,13 @@ import { Card } from "@/components/ui/card";
 
 ```tsx
 // Elevação com sombra
-className="card-elevated"
+className = 'card-elevated';
 
 // Profundidade com borda interna
-className="card-depth"
+className = 'card-depth';
 
 // Glow de borda no dark mode
-className="dark:border-glow"
+className = 'dark:border-glow';
 ```
 
 ---
@@ -242,6 +242,7 @@ import { Button } from "@/components/ui/button";
 ```
 
 **Comportamento:**
+
 - Light mode: `bg-card/80` com `backdrop-blur-xl`
 - Dark mode: `bg-card/70` com borda branca sutil
 
@@ -368,15 +369,17 @@ O sistema de design inclui animações otimizadas para performance e acessibilid
 **Uso com delay stagger:**
 
 ```tsx
-{items.map((item, index) => (
-  <div 
-    key={item.id}
-    className="animate-fade-in"
-    style={{ animationDelay: `${index * 75}ms` }}
-  >
-    {item.content}
-  </div>
-))}
+{
+  items.map((item, index) => (
+    <div
+      key={item.id}
+      className="animate-fade-in"
+      style={{ animationDelay: `${index * 75}ms` }}
+    >
+      {item.content}
+    </div>
+  ));
+}
 ```
 
 ### Animações de Modais e Dialogs
@@ -387,7 +390,7 @@ O sistema de design inclui animações otimizadas para performance e acessibilid
 
 // Aplicado automaticamente em:
 // - Dialog
-// - AlertDialog  
+// - AlertDialog
 // - Popover
 // - DropdownMenu
 ```
@@ -491,36 +494,36 @@ O sistema de design inclui animações otimizadas para performance e acessibilid
 
 ### Tabela de Referência Rápida
 
-| Classe | Duração | Descrição |
-|--------|---------|-----------|
-| `animate-fade-in` | 350ms | Entrada suave com movimento |
-| `animate-fade-in-up` | 500ms | Entrada mais dramática |
-| `animate-fade-in-scale` | 300ms | Entrada com scale |
-| `animate-slide-in` | 300ms | Slide da esquerda |
-| `animate-slide-in-right` | 300ms | Slide da direita |
-| `animate-slide-up` | 300ms | Slide de baixo |
-| `animate-slide-down` | 300ms | Slide de cima |
-| `animate-scale-in` | 350ms | Scale suave |
-| `animate-bounce-in` | 500ms | Entrada com overshoot |
-| `animate-zoom-in` | 200ms | Zoom para modais |
-| `animate-zoom-out` | 200ms | Saída de modais |
-| `animate-flip-in` | 400ms | Flip 3D para cards |
-| `animate-shake` | 500ms | Shake para erros |
-| `animate-wiggle` | 500ms | Rotação única |
-| `animate-wiggle-loop` | 800ms | Rotação contínua |
-| `animate-bounce` | ∞ | Bounce contínuo |
-| `animate-bounce-attention` | 1s | Bounce suave único |
-| `animate-pop` | 300ms | Pop de destaque |
-| `animate-shimmer` | 1.8s | Shimmer loading |
-| `animate-pulse-glow` | 2.5s | Glow pulsante |
-| `animate-glow-pulse` | 2s | Glow de botão |
-| `animate-float` | 3s | Levitação suave |
-| `animate-spin-slow` | 3s | Rotação lenta |
-| `animate-ping-slow` | 2s | Ping lento |
-| `animate-pulse-ring` | 1.5s | Anel expandindo |
-| `animate-flash-success` | 500ms | Flash verde |
-| `animate-flash-error` | 500ms | Flash vermelho |
-| `animate-count-up` | 400ms | Entrada de número |
+| Classe                     | Duração | Descrição                   |
+| -------------------------- | ------- | --------------------------- |
+| `animate-fade-in`          | 350ms   | Entrada suave com movimento |
+| `animate-fade-in-up`       | 500ms   | Entrada mais dramática      |
+| `animate-fade-in-scale`    | 300ms   | Entrada com scale           |
+| `animate-slide-in`         | 300ms   | Slide da esquerda           |
+| `animate-slide-in-right`   | 300ms   | Slide da direita            |
+| `animate-slide-up`         | 300ms   | Slide de baixo              |
+| `animate-slide-down`       | 300ms   | Slide de cima               |
+| `animate-scale-in`         | 350ms   | Scale suave                 |
+| `animate-bounce-in`        | 500ms   | Entrada com overshoot       |
+| `animate-zoom-in`          | 200ms   | Zoom para modais            |
+| `animate-zoom-out`         | 200ms   | Saída de modais             |
+| `animate-flip-in`          | 400ms   | Flip 3D para cards          |
+| `animate-shake`            | 500ms   | Shake para erros            |
+| `animate-wiggle`           | 500ms   | Rotação única               |
+| `animate-wiggle-loop`      | 800ms   | Rotação contínua            |
+| `animate-bounce`           | ∞       | Bounce contínuo             |
+| `animate-bounce-attention` | 1s      | Bounce suave único          |
+| `animate-pop`              | 300ms   | Pop de destaque             |
+| `animate-shimmer`          | 1.8s    | Shimmer loading             |
+| `animate-pulse-glow`       | 2.5s    | Glow pulsante               |
+| `animate-glow-pulse`       | 2s      | Glow de botão               |
+| `animate-float`            | 3s      | Levitação suave             |
+| `animate-spin-slow`        | 3s      | Rotação lenta               |
+| `animate-ping-slow`        | 2s      | Ping lento                  |
+| `animate-pulse-ring`       | 1.5s    | Anel expandindo             |
+| `animate-flash-success`    | 500ms   | Flash verde                 |
+| `animate-flash-error`      | 500ms   | Flash vermelho              |
+| `animate-count-up`         | 400ms   | Entrada de número           |
 
 ### Keyframes Disponíveis
 
@@ -559,39 +562,37 @@ keyframes: {
 
 Os seguintes componentes têm animações integradas automaticamente:
 
-| Componente | Animação |
-|------------|----------|
-| Dialog | `animate-zoom-in` / `animate-zoom-out` |
-| AlertDialog | `animate-zoom-in` / `animate-zoom-out` |
-| Popover | `animate-zoom-in` + `animate-slide-down/up` |
-| DropdownMenu | `animate-zoom-in` / `animate-zoom-out` |
-| Accordion | `animate-accordion-down/up` |
-| Input (com error) | `animate-shake` |
-| FormMessage | `animate-fade-in` |
-| DealCard | `animate-flip-in` |
-| Skeleton | `animate-shimmer` |
+| Componente        | Animação                                    |
+| ----------------- | ------------------------------------------- |
+| Dialog            | `animate-zoom-in` / `animate-zoom-out`      |
+| AlertDialog       | `animate-zoom-in` / `animate-zoom-out`      |
+| Popover           | `animate-zoom-in` + `animate-slide-down/up` |
+| DropdownMenu      | `animate-zoom-in` / `animate-zoom-out`      |
+| Accordion         | `animate-accordion-down/up`                 |
+| Input (com error) | `animate-shake`                             |
+| FormMessage       | `animate-fade-in`                           |
+| DealCard          | `animate-flip-in`                           |
+| Skeleton          | `animate-shimmer`                           |
 
 ### Uso em Notificações
 
 ```tsx
 // Ícone de sino com alertas pendentes
-<Bell className={cn(
-  "h-5 w-5",
-  hasAlerts && "animate-bounce text-warning"
-)} />
+<Bell className={cn('h-5 w-5', hasAlerts && 'animate-bounce text-warning')} />;
 
 // Badge de contagem
-{hasAlerts && (
-  <span className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-destructive animate-pulse">
-    {count}
-  </span>
-)}
+{
+  hasAlerts && (
+    <span className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-destructive animate-pulse">
+      {count}
+    </span>
+  );
+}
 
 // Ícone de configurações pendentes
-<Settings className={cn(
-  "h-4 w-4",
-  hasPendingConfig && "animate-wiggle-loop text-primary"
-)} />
+<Settings
+  className={cn('h-4 w-4', hasPendingConfig && 'animate-wiggle-loop text-primary')}
+/>;
 ```
 
 ---
@@ -689,87 +690,87 @@ Os seguintes componentes já utilizam o design system completo:
 
 ### Dashboard Principal
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| StatCard | `dashboard/StatCard.tsx` | Glass, gradient-primary icons, gradient-text values, shadow badges |
-| KPIGrid | `dashboard/KPIGrid.tsx` | Glass container, gradient-text title, icon containers com bg-primary/10 |
+| Componente | Arquivo                  | Melhorias                                                               |
+| ---------- | ------------------------ | ----------------------------------------------------------------------- |
+| StatCard   | `dashboard/StatCard.tsx` | Glass, gradient-primary icons, gradient-text values, shadow badges      |
+| KPIGrid    | `dashboard/KPIGrid.tsx`  | Glass container, gradient-text title, icon containers com bg-primary/10 |
 
 ### Analytics
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| WinLossAnalysis | `analytics/WinLossAnalysis.tsx` | Summary cards com glass, gradient headers, hover-glow |
-| ConversionFunnel | `analytics/ConversionFunnel.tsx` | Summary cards, gradient-text, elevated variant |
-| DealVelocityChart | `analytics/DealVelocityChart.tsx` | Stats cards com glass, gradient icons |
-| ObjectionsLibrary | `analytics/ObjectionsLibrary.tsx` | Card elevated, gradient header, glass items |
-| ABCAnalysis | `analytics/ABCAnalysis.tsx` | Summary cards elevated, hover-lift, gradient icons |
-| ClosingTimeChart | `analytics/ClosingTimeChart.tsx` | Glass summary, gradient-primary icon, tab cards elevated |
-| ChurnPrediction | `analytics/ChurnPrediction.tsx` | Summary cards com hover-glow, glass client cards |
+| Componente        | Arquivo                           | Melhorias                                                |
+| ----------------- | --------------------------------- | -------------------------------------------------------- |
+| WinLossAnalysis   | `analytics/WinLossAnalysis.tsx`   | Summary cards com glass, gradient headers, hover-glow    |
+| ConversionFunnel  | `analytics/ConversionFunnel.tsx`  | Summary cards, gradient-text, elevated variant           |
+| DealVelocityChart | `analytics/DealVelocityChart.tsx` | Stats cards com glass, gradient icons                    |
+| ObjectionsLibrary | `analytics/ObjectionsLibrary.tsx` | Card elevated, gradient header, glass items              |
+| ABCAnalysis       | `analytics/ABCAnalysis.tsx`       | Summary cards elevated, hover-lift, gradient icons       |
+| ClosingTimeChart  | `analytics/ClosingTimeChart.tsx`  | Glass summary, gradient-primary icon, tab cards elevated |
+| ChurnPrediction   | `analytics/ChurnPrediction.tsx`   | Summary cards com hover-glow, glass client cards         |
 
 ### Pipeline
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| DealCard | `pipeline/DealCard.tsx` | Glass + hover-lift, gradient-text values, conditional badges (lead score/probability), cadence status dropdown, dark:border-glow |
-| PipelineColumn | `pipeline/PipelineColumn.tsx` | Glass headers com card-elevated, gradient-primary deal count badge, gradient-text totals, empty state melhorado |
-| PipelineBoard | `pipeline/PipelineBoard.tsx` | Stats bar com glass + dark:border-glow, font-display values, gradient-text total, button transitions, drag overlay shadow |
+| Componente       | Arquivo                         | Melhorias                                                                                                                                          |
+| ---------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DealCard         | `pipeline/DealCard.tsx`         | Glass + hover-lift, gradient-text values, conditional badges (lead score/probability), cadence status dropdown, dark:border-glow                   |
+| PipelineColumn   | `pipeline/PipelineColumn.tsx`   | Glass headers com card-elevated, gradient-primary deal count badge, gradient-text totals, empty state melhorado                                    |
+| PipelineBoard    | `pipeline/PipelineBoard.tsx`    | Stats bar com glass + dark:border-glow, font-display values, gradient-text total, button transitions, drag overlay shadow                          |
 | AtRiskDealsPanel | `pipeline/AtRiskDealsPanel.tsx` | Glass panel com dark:border-glow, gradient icon container, risk badges coloridos, activity icons com tooltips, AI analysis section com gradient bg |
-| DealTimeline | `pipeline/DealTimeline.tsx` | Gradient timeline dots/line, event-type badges coloridos, glass dialog, gradient icon header, empty state melhorado |
+| DealTimeline     | `pipeline/DealTimeline.tsx`     | Gradient timeline dots/line, event-type badges coloridos, glass dialog, gradient icon header, empty state melhorado                                |
 
 ### Tarefas
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| TaskCard | `tasks/TaskCard.tsx` | Glass + card-elevated, hover-lift, gradient-text client, font-display, styled type icons, complete button transitions |
-| TaskQueue | `tasks/TaskQueue.tsx` | Glass header com dark:border-glow, gradient icon containers, hover-glow stat cards, styled empty state, drag overlay shadow |
-| NextBestAction | `tasks/NextBestAction.tsx` | Glass + card-elevated, gradient-primary button, hover-lift suggestion cards, styled insight box, AI badge gradient |
+| Componente     | Arquivo                    | Melhorias                                                                                                                   |
+| -------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| TaskCard       | `tasks/TaskCard.tsx`       | Glass + card-elevated, hover-lift, gradient-text client, font-display, styled type icons, complete button transitions       |
+| TaskQueue      | `tasks/TaskQueue.tsx`      | Glass header com dark:border-glow, gradient icon containers, hover-glow stat cards, styled empty state, drag overlay shadow |
+| NextBestAction | `tasks/NextBestAction.tsx` | Glass + card-elevated, gradient-primary button, hover-lift suggestion cards, styled insight box, AI badge gradient          |
 
 ### Cadências
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| CadenceCard | `cadences/CadenceCard.tsx` | Card elevated, gradient-text name, primary badges |
+| Componente         | Arquivo                           | Melhorias                                               |
+| ------------------ | --------------------------------- | ------------------------------------------------------- |
+| CadenceCard        | `cadences/CadenceCard.tsx`        | Card elevated, gradient-text name, primary badges       |
 | TodaysCadenceTasks | `cadences/TodaysCadenceTasks.tsx` | Gradient-primary icon, gradient-text title, glow button |
 
 ### Metas
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| GoalsLeaderboard | `goals/GoalsLeaderboard.tsx` | Glass + card-elevated, gradient icon header, styled empty state, border-b header separator |
+| Componente           | Arquivo                          | Melhorias                                                                                                             |
+| -------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| GoalsLeaderboard     | `goals/GoalsLeaderboard.tsx`     | Glass + card-elevated, gradient icon header, styled empty state, border-b header separator                            |
 | CommissionCalculator | `goals/CommissionCalculator.tsx` | Glass + dark:border-glow, hover-lift stat cards com hover-glow, animate-float crown, font-display, styled empty state |
-| SalespersonGoalCard | `goals/SalespersonGoalCard.tsx` | Glass + hover-lift, gradient-text, animate-fire-pulse, xp-shimmer progress, font-display, shadow badges |
-| TeamGoalProgress | `goals/TeamGoalProgress.tsx` | Glass + dark:border-glow, gradient status bar, font-display 4xl values, hover-lift stat cards, styled projection bar |
+| SalespersonGoalCard  | `goals/SalespersonGoalCard.tsx`  | Glass + hover-lift, gradient-text, animate-fire-pulse, xp-shimmer progress, font-display, shadow badges               |
+| TeamGoalProgress     | `goals/TeamGoalProgress.tsx`     | Glass + dark:border-glow, gradient status bar, font-display 4xl values, hover-lift stat cards, styled projection bar  |
 
 ### Gamificação
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
+| Componente             | Arquivo                                   | Melhorias                                                                                                                                                            |
+| ---------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | CompetitiveLeaderboard | `gamification/CompetitiveLeaderboard.tsx` | Glass cards com hover-lift, gradient rank icons com animate-float (1º lugar), fire-pulse animation para deals, font-display, avatar borders, subtle-pulse para líder |
-| LevelBadge | `gamification/LevelBadge.tsx` | Gradient badges com hover:scale, shadow transitions, glass tooltips com dark:border-glow, Star icon fill |
-| XPProgressBar | `gamification/XPProgressBar.tsx` | Gradient progress bar com animate-xp-shimmer, Zap/Sparkles icons, hover indicator dot, glass tooltips, font-display |
-| SalespersonLevelBadge | `gamification/SalespersonLevelBadge.tsx` | Gradient badges, shadow transitions, Star icons, glass tooltips com dark:border-glow |
-| CompetitiveStatusBar | `gamification/CompetitiveStatusBar.tsx` | Glass + card-elevated, gradient rank icons, styled stat boxes, hover-lift, dark:border-glow, button transitions |
+| LevelBadge             | `gamification/LevelBadge.tsx`             | Gradient badges com hover:scale, shadow transitions, glass tooltips com dark:border-glow, Star icon fill                                                             |
+| XPProgressBar          | `gamification/XPProgressBar.tsx`          | Gradient progress bar com animate-xp-shimmer, Zap/Sparkles icons, hover indicator dot, glass tooltips, font-display                                                  |
+| SalespersonLevelBadge  | `gamification/SalespersonLevelBadge.tsx`  | Gradient badges, shadow transitions, Star icons, glass tooltips com dark:border-glow                                                                                 |
+| CompetitiveStatusBar   | `gamification/CompetitiveStatusBar.tsx`   | Glass + card-elevated, gradient rank icons, styled stat boxes, hover-lift, dark:border-glow, button transitions                                                      |
 
 ### SDR Dashboard
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| SDRStatCard | `sdr/SDRStatCard.tsx` | Glass, gradient-text values, gradient-primary icons |
-| TopSDRsRanking | `sdr/TopSDRsRanking.tsx` | Card elevated, gradient headers, avatar fallbacks |
+| Componente     | Arquivo                  | Melhorias                                           |
+| -------------- | ------------------------ | --------------------------------------------------- |
+| SDRStatCard    | `sdr/SDRStatCard.tsx`    | Glass, gradient-text values, gradient-primary icons |
+| TopSDRsRanking | `sdr/TopSDRsRanking.tsx` | Card elevated, gradient headers, avatar fallbacks   |
 
 ### Closer Dashboard
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| CloserStatCard | `closer/CloserStatCard.tsx` | Glass, gradient-text values, gradient-primary icons |
-| TopClosersRanking | `closer/TopClosersRanking.tsx` | Card elevated, gradient headers, avatar fallbacks |
+| Componente        | Arquivo                        | Melhorias                                           |
+| ----------------- | ------------------------------ | --------------------------------------------------- |
+| CloserStatCard    | `closer/CloserStatCard.tsx`    | Glass, gradient-text values, gradient-primary icons |
+| TopClosersRanking | `closer/TopClosersRanking.tsx` | Card elevated, gradient headers, avatar fallbacks   |
 
 ### Páginas
 
-| Componente | Arquivo | Melhorias |
-|------------|---------|-----------|
-| Relatorios | `pages/Relatorios.tsx` | Metric cards com glass, gradient icons |
-| Analytics | `pages/Analytics.tsx` | Header com gradient-primary icon, gradient-text |
+| Componente | Arquivo                | Melhorias                                       |
+| ---------- | ---------------------- | ----------------------------------------------- |
+| Relatorios | `pages/Relatorios.tsx` | Metric cards com glass, gradient icons          |
+| Analytics  | `pages/Analytics.tsx`  | Header com gradient-primary icon, gradient-text |
 
 ---
 
@@ -787,7 +788,7 @@ Os seguintes componentes já utilizam o design system completo:
     <p className="text-xl font-bold gradient-text">Valor</p>
     <p className="text-xs text-muted-foreground uppercase tracking-wider">Label</p>
   </div>
-  
+
   {/* Card Success */}
   <div className="glass rounded-xl p-4 text-center border border-status-success/30 hover-lift cursor-pointer hover-glow-success">
     <div className="p-2 rounded-lg bg-status-success/20 w-fit mx-auto mb-2">
@@ -796,7 +797,7 @@ Os seguintes componentes já utilizam o design system completo:
     <p className="text-xl font-bold text-status-success">Valor</p>
     <p className="text-xs text-muted-foreground uppercase tracking-wider">Label</p>
   </div>
-  
+
   {/* Card Error */}
   <div className="glass rounded-xl p-4 text-center border border-destructive/30 hover-lift cursor-pointer hover-glow-error">
     <div className="p-2 rounded-lg bg-destructive/20 w-fit mx-auto mb-2">
@@ -861,6 +862,7 @@ Os seguintes componentes já utilizam o design system completo:
 ### Resumo Executivo
 
 Esta sessão implementou melhorias significativas no design system do Promo Champions, focando em:
+
 - **Profundidade e contraste** no light mode
 - **Refinamento de bordas/glows** no dark mode
 - **Tipografia consistente** com font-display
@@ -873,26 +875,26 @@ Esta sessão implementou melhorias significativas no design system do Promo Cham
 ### 1. Melhorias no Light Mode
 
 #### Problema Identificado
+
 Cards muito planos, falta de profundidade e contraste insuficiente.
 
 #### Soluções Implementadas
 
-| Aspecto | Antes | Depois |
-|---------|-------|--------|
-| **Sombras** | Simples, 2 camadas | Multi-camada (3 níveis) com mais profundidade |
-| **Bordas** | `border-border` básico | `border-border/80` com melhor definição |
-| **Texto secundário** | `muted-foreground: 40%` lightness | `muted-foreground: 35%` (mais contraste) |
-| **Cards** | Flat | Inset highlights para efeito 3D |
+| Aspecto              | Antes                             | Depois                                        |
+| -------------------- | --------------------------------- | --------------------------------------------- |
+| **Sombras**          | Simples, 2 camadas                | Multi-camada (3 níveis) com mais profundidade |
+| **Bordas**           | `border-border` básico            | `border-border/80` com melhor definição       |
+| **Texto secundário** | `muted-foreground: 40%` lightness | `muted-foreground: 35%` (mais contraste)      |
+| **Cards**            | Flat                              | Inset highlights para efeito 3D               |
 
 ```css
 /* Novas sombras light mode */
---card-shadow: 
-  0 1px 2px 0 hsl(220 30% 30% / 0.04),
-  0 2px 4px 0 hsl(220 30% 30% / 0.04),
+--card-shadow:
+  0 1px 2px 0 hsl(220 30% 30% / 0.04), 0 2px 4px 0 hsl(220 30% 30% / 0.04),
   0 4px 8px -2px hsl(220 30% 30% / 0.06);
 
 /* Card depth com inset */
-box-shadow: 
+box-shadow:
   0 1px 2px 0 hsl(220 30% 30% / 0.04),
   0 3px 10px -3px hsl(220 30% 30% / 0.08),
   inset 0 1px 0 0 hsl(0 0% 100% / 0.7);
@@ -904,11 +906,11 @@ box-shadow:
 
 #### Refinamentos
 
-| Aspecto | Mudança |
-|---------|---------|
-| **Bordas** | Glow sutil com gradiente primário/secundário |
-| **Border glow** | Opacity 0.8 → 1.0 no hover (transição suave) |
-| **Card hover** | Toque de `primary/0.1` no box-shadow |
+| Aspecto              | Mudança                                            |
+| -------------------- | -------------------------------------------------- |
+| **Bordas**           | Glow sutil com gradiente primário/secundário       |
+| **Border glow**      | Opacity 0.8 → 1.0 no hover (transição suave)       |
+| **Card hover**       | Toque de `primary/0.1` no box-shadow               |
 | **Muted foreground** | Aumentado para 65% lightness (melhor legibilidade) |
 
 ```css
@@ -956,17 +958,19 @@ h4: text-lg/xl, font-medium, letter-spacing: -0.015em
 
 #### Melhorias
 
-| Aspecto | Antes | Depois |
-|---------|-------|--------|
-| **Duração** | 250ms | 300ms (mais suave) |
-| **Propriedades** | Básicas | + `filter` para efeitos |
-| **Timing** | ease-out | `cubic-bezier(0.4, 0, 0.2, 1)` |
-| **Acessibilidade** | N/A | `prefers-reduced-motion` respeitado |
+| Aspecto            | Antes    | Depois                              |
+| ------------------ | -------- | ----------------------------------- |
+| **Duração**        | 250ms    | 300ms (mais suave)                  |
+| **Propriedades**   | Básicas  | + `filter` para efeitos             |
+| **Timing**         | ease-out | `cubic-bezier(0.4, 0, 0.2, 1)`      |
+| **Acessibilidade** | N/A      | `prefers-reduced-motion` respeitado |
 
 ```css
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
@@ -979,24 +983,27 @@ h4: text-lg/xl, font-medium, letter-spacing: -0.015em
 
 #### Melhorias
 
-| Elemento | Focus State |
-|----------|-------------|
-| **Geral** | `ring-2 ring-primary/50` + transição suave |
-| **Botões** | Ring + glow sutil (`box-shadow: 0 0 0 4px primary/0.15`) |
-| **Inputs** | Ring + border-primary/60 + glow externo |
-| **Links** | Ring com `rounded-sm` |
-| **Animado** | Pulse animation mais elegante (2s) |
+| Elemento    | Focus State                                              |
+| ----------- | -------------------------------------------------------- |
+| **Geral**   | `ring-2 ring-primary/50` + transição suave               |
+| **Botões**  | Ring + glow sutil (`box-shadow: 0 0 0 4px primary/0.15`) |
+| **Inputs**  | Ring + border-primary/60 + glow externo                  |
+| **Links**   | Ring com `rounded-sm`                                    |
+| **Animado** | Pulse animation mais elegante (2s)                       |
 
 ```css
 /* Focus ring animado */
 @keyframes focus-ring-pulse {
-  0%, 100% { 
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.5),
-                0 0 8px 2px hsl(var(--primary) / 0.15); 
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px hsl(var(--primary) / 0.5),
+      0 0 8px 2px hsl(var(--primary) / 0.15);
   }
-  50% { 
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.4),
-                0 0 12px 4px hsl(var(--primary) / 0.25); 
+  50% {
+    box-shadow:
+      0 0 0 3px hsl(var(--primary) / 0.4),
+      0 0 12px 4px hsl(var(--primary) / 0.25);
   }
 }
 ```
@@ -1007,22 +1014,30 @@ h4: text-lg/xl, font-medium, letter-spacing: -0.015em
 
 #### Novas Classes
 
-| Classe | Descrição |
-|--------|-----------|
-| `card-interactive` | Hover com sombra e borda refinada por modo |
-| `animate-subtle-pulse` | Pulse sutil para chamar atenção (2.5s) |
-| `animate-fade-in-scale` | Fade + scale combinados |
-| `animate-slide-in-right` | Slide da direita |
-| `animate-float` | Flutuação suave (3s) |
+| Classe                   | Descrição                                  |
+| ------------------------ | ------------------------------------------ |
+| `card-interactive`       | Hover com sombra e borda refinada por modo |
+| `animate-subtle-pulse`   | Pulse sutil para chamar atenção (2.5s)     |
+| `animate-fade-in-scale`  | Fade + scale combinados                    |
+| `animate-slide-in-right` | Slide da direita                           |
+| `animate-float`          | Flutuação suave (3s)                       |
 
 #### Click Bounce Refinado
 
 ```css
 @keyframes click-bounce {
-  0% { transform: scale(1); }
-  40% { transform: scale(0.96); }
-  70% { transform: scale(1.02); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.96);
+  }
+  70% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 ```
 
@@ -1032,16 +1047,16 @@ h4: text-lg/xl, font-medium, letter-spacing: -0.015em
 
 #### Diferenças por Modo
 
-| Modo | Background | Border | Shadow |
-|------|------------|--------|--------|
-| **Light** | `card/0.9` | `border/0.8` | Inset branco (50% opacity) |
-| **Dark** | `card/0.75` | Branco 10% | Inset branco (4% opacity) |
+| Modo      | Background  | Border       | Shadow                     |
+| --------- | ----------- | ------------ | -------------------------- |
+| **Light** | `card/0.9`  | `border/0.8` | Inset branco (50% opacity) |
+| **Dark**  | `card/0.75` | Branco 10%   | Inset branco (4% opacity)  |
 
 ```css
 :root .glass {
   background: hsl(var(--card) / 0.9);
   border-color: hsl(var(--border) / 0.8);
-  box-shadow: 
+  box-shadow:
     0 1px 2px 0 hsl(220 30% 30% / 0.03),
     inset 0 1px 0 0 hsl(0 0% 100% / 0.5);
 }
@@ -1078,18 +1093,19 @@ animation: {
 
 ### 9. Tokens de Cor Ajustados
 
-| Token | Light Mode | Dark Mode | Mudança |
-|-------|------------|-----------|---------|
-| `--foreground` | `225 30% 10%` | `0 0% 98%` | Mais escuro no light |
-| `--muted-foreground` | `220 20% 35%` | `225 15% 65%` | Melhor contraste |
-| `--border` | `220 20% 85%` | `225 25% 20%` | Mais definido |
-| `--success` | `142 70% 35%` | `142 70% 50%` | Mais escuro no light |
+| Token                | Light Mode    | Dark Mode     | Mudança              |
+| -------------------- | ------------- | ------------- | -------------------- |
+| `--foreground`       | `225 30% 10%` | `0 0% 98%`    | Mais escuro no light |
+| `--muted-foreground` | `220 20% 35%` | `225 15% 65%` | Melhor contraste     |
+| `--border`           | `220 20% 85%` | `225 25% 20%` | Mais definido        |
+| `--success`          | `142 70% 35%` | `142 70% 50%` | Mais escuro no light |
 
 ---
 
 ### Componentes Atualizados (27+)
 
 #### Atividades (3 componentes)
+
 - `ActivityGoalCard` - Glass progress section, staggered activity animations, group hover states
 - `ActivityStats` - Staggered card entry, hover-glow primary, group icon scale
 - `DailyActivityRanking` - Gradient icon header, staggered ranking entry, group hover states
@@ -1097,10 +1113,12 @@ animation: {
 - `KPIGrid` - Glass container, gradient-text title
 
 #### Analytics (7 componentes)
+
 - `WinLossAnalysis`, `ConversionFunnel`, `DealVelocityChart`
 - `ObjectionsLibrary`, `ABCAnalysis`, `ClosingTimeChart`, `ChurnPrediction`
 
 #### Pipeline (5 componentes)
+
 - `DealCard` - Glass + hover-lift, conditional badges, cadence dropdown
 - `PipelineColumn` - Glass headers, gradient deal count badge
 - `PipelineBoard` - Stats bar glass, drag overlay shadow
@@ -1108,21 +1126,25 @@ animation: {
 - `DealTimeline` - Gradient timeline, event-type badges, glass dialog
 
 #### Tarefas (3 componentes)
+
 - `TaskCard` - Glass, hover-lift, gradient-text
 - `TaskQueue` - Glass header, hover-glow stat cards
 - `NextBestAction` - Glass + gradient, hover-lift suggestions
 
 #### Cadências (2 componentes)
+
 - `CadenceCard` - Glass + hover-lift/hover-glow, gradient icon header, staggered step animations, group hover states
 - `TodaysCadenceTasks` - Animated loading skeletons, conditional pulse badge, staggered task entry, gradient client names
 
 #### Metas (4 componentes)
+
 - `GoalsLeaderboard` - Glass, gradient icon header
 - `CommissionCalculator` - Hover-lift cards, animate-float crown
 - `SalespersonGoalCard` - Fire-pulse, xp-shimmer progress
 - `TeamGoalProgress` - Gradient status bar, hover-lift stats
 
 #### Gamificação (5 componentes)
+
 - `CompetitiveLeaderboard` - Hover-lift, animate-float/subtle-pulse
 - `LevelBadge` - Gradient badges, hover:scale, glass tooltips
 - `XPProgressBar` - Shimmer progress, icon indicators
@@ -1130,6 +1152,7 @@ animation: {
 - `CompetitiveStatusBar` - Styled stat boxes, gradient icons
 
 #### SDR/Closer Dashboards (8 componentes)
+
 - `SDRStatCard` - Group hover scale, gradient icon variants, font-display titles
 - `ProspectingFunnel` - Gradient header, staggered bar animations, glow effects on bars
 - `LeadTemperatureChart` - Gradient header, legend hover states, pie cell shadows
@@ -1140,6 +1163,7 @@ animation: {
 - `TopClosersRanking` - Staggered entry, group hover states, gradient rank badges
 
 #### Páginas (2 componentes)
+
 - `Relatorios`, `Analytics`
 
 ---
@@ -1155,4 +1179,4 @@ animation: {
 
 ---
 
-*Atualizado em: 2024-12*
+_Atualizado em: 2024-12_

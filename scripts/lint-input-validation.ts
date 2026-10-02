@@ -19,16 +19,19 @@
 //   1 drift detectado (violadores ou entradas stale)
 //   2 erro inesperado
 
-import { walk } from "jsr:@std/fs/walk";
+import { walk } from 'jsr:@std/fs/walk';
 
-const FUNCTIONS_DIR = "supabase/functions";
-const ALLOWLIST_PATH = "scripts/input-validation-lint-allowlist.txt";
+const FUNCTIONS_DIR = 'supabase/functions';
+const ALLOWLIST_PATH = 'scripts/input-validation-lint-allowlist.txt';
 
 async function loadAllowlist(): Promise<Set<string>> {
   try {
     const raw = await Deno.readTextFile(ALLOWLIST_PATH);
     return new Set(
-      raw.split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#")),
+      raw
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l && !l.startsWith('#'))
     );
   } catch {
     return new Set();
@@ -48,16 +51,14 @@ async function scanFunctions(): Promise<FnScan[]> {
   const validatorPattern =
     /from\s+["'][^"']*_shared\/(?:validation|webhook-validator)\.ts["']/;
 
-  for await (
-    const entry of walk(FUNCTIONS_DIR, {
-      includeDirs: false,
-      match: [/\/index\.ts$/],
-      skip: [/\/_shared\//, /\/node_modules\//],
-    })
-  ) {
-    const parts = entry.path.split("/");
+  for await (const entry of walk(FUNCTIONS_DIR, {
+    includeDirs: false,
+    match: [/\/index\.ts$/],
+    skip: [/\/_shared\//, /\/node_modules\//],
+  })) {
+    const parts = entry.path.split('/');
     const name = parts[parts.length - 2];
-    if (!name || name.startsWith("_")) continue;
+    if (!name || name.startsWith('_')) continue;
     const src = await Deno.readTextFile(entry.path);
     results.push({
       name,
@@ -85,31 +86,33 @@ function main() {
       }
     }
 
-    const compliant = scans.filter((s) => s.writesToDb && s.importsValidator).length;
-    const writers = scans.filter((s) => s.writesToDb).length;
+    const compliant = scans.filter(s => s.writesToDb && s.importsValidator).length;
+    const writers = scans.filter(s => s.writesToDb).length;
 
-    console.log(`✓ ${compliant}/${writers} edge functions com escrita importam validador compartilhado`);
+    console.log(
+      `✓ ${compliant}/${writers} edge functions com escrita importam validador compartilhado`
+    );
     console.log(`  allowlisted (legacy): ${allow.size}`);
 
     if (violators.length === 0 && stale.length === 0) {
-      console.log("✓ input-validation lint: no drift");
+      console.log('✓ input-validation lint: no drift');
       return 0;
     }
 
     if (violators.length > 0) {
       console.error(
-        `\n✗ ${violators.length} edge function(s) com escrita SEM validação de entrada e FORA do allowlist:`,
+        `\n✗ ${violators.length} edge function(s) com escrita SEM validação de entrada e FORA do allowlist:`
       );
       for (const v of violators) console.error(`   - ${v}`);
       console.error(
-        "\n  Valide o payload com _shared/validation.ts (validateString/validateUUID/validateNumber/validateEnum + collectErrors + validationErrorResponse) " +
-          "ou _shared/webhook-validator.ts nos webhooks com contrato. Exceções legadas documentadas: scripts/input-validation-lint-allowlist.txt.",
+        '\n  Valide o payload com _shared/validation.ts (validateString/validateUUID/validateNumber/validateEnum + collectErrors + validationErrorResponse) ' +
+          'ou _shared/webhook-validator.ts nos webhooks com contrato. Exceções legadas documentadas: scripts/input-validation-lint-allowlist.txt.'
       );
     }
 
     if (stale.length > 0) {
       console.error(
-        `\n✗ ${stale.length} stale allowlist entry(ies) — já importam validador compartilhado, remover do allowlist:`,
+        `\n✗ ${stale.length} stale allowlist entry(ies) — já importam validador compartilhado, remover do allowlist:`
       );
       for (const s of stale) console.error(`   - ${s}`);
     }
@@ -123,7 +126,7 @@ if (import.meta.main) {
     const code = await main();
     Deno.exit(code);
   } catch (err) {
-    console.error("lint crashed:", err instanceof Error ? err.stack : err);
+    console.error('lint crashed:', err instanceof Error ? err.stack : err);
     Deno.exit(2);
   }
 }

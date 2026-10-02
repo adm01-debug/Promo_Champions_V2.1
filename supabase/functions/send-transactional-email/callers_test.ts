@@ -12,8 +12,9 @@ Deno.test("compositor individual usa o contrato transacional para outreach", asy
   const sender = source.slice(senderStart);
 
   assert(senderStart >= 0, "o hook de envio composto deve existir");
+  // src/ é formatado pelo prettier (aspas simples); a asserção aceita os dois estilos.
   assert(
-    sender.includes('invoke("send-transactional-email"'),
+    /invoke\(\s*['"]send-transactional-email['"]/.test(sender),
     "o compositor deve chamar a edge transacional",
   );
   assert(
@@ -21,7 +22,7 @@ Deno.test("compositor individual usa o contrato transacional para outreach", asy
     "e-mail não pode ser enviado pelo dispatcher de WhatsApp/SMS",
   );
   assert(
-    sender.includes('purpose: "outreach"'),
+    /purpose:\s*['"]outreach['"]/.test(sender),
     "o compositor deve respeitar opt-out",
   );
 });
