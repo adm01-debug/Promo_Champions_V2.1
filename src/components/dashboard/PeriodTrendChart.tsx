@@ -16,6 +16,7 @@ import { TrendChartSkeleton } from './skeletons/SpeedometerSkeletons';
 import { PERIOD_LABELS, type KPIPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 const PERIOD_STORAGE_KEY = 'dashboard.speedometer.period';
 const VALID: KPIPeriod[] = ['current_month', 'last_month', 'quarter', 'year'];
 
@@ -23,11 +24,15 @@ const isValidPeriod = (v: unknown): v is KPIPeriod =>
   typeof v === 'string' && (VALID as string[]).includes(v);
 
 const formatCurrencyCompact = (v: number) =>
-  v >= 1000
-    ? `R$ ${(v / 1000).toFixed(1)}k`
-    : `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+  v >= 1000 ? `R$ ${(v / 1000).toFixed(1)}k` : `${formatBRL(v)}`;
 
-const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { fullLabel: string; revenue: number; sales: number } }> }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: { fullLabel: string; revenue: number; sales: number } }>;
+}) => {
   if (!active || !payload?.length) return null;
   const point = payload[0].payload;
   return (

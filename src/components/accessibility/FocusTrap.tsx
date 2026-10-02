@@ -24,7 +24,7 @@ export const FocusTrap: FC<FocusTrapProps> = ({
 
   const getFocusableElements = useCallback(() => {
     if (!containerRef.current) return [];
-    
+
     const focusableSelectors = [
       'button:not([disabled])',
       'a[href]',
@@ -40,29 +40,32 @@ export const FocusTrap: FC<FocusTrapProps> = ({
     ).filter(el => el.offsetParent !== null); // Filter out hidden elements
   }, []);
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!active || e.key !== 'Tab') return;
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!active || e.key !== 'Tab') return;
 
-    const focusableElements = getFocusableElements();
-    if (focusableElements.length === 0) return;
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) return;
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
 
-    if (e.shiftKey) {
-      // Shift + Tab
-      if (document.activeElement === firstElement) {
-        e.preventDefault();
-        lastElement?.focus();
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
       }
-    } else {
-      // Tab
-      if (document.activeElement === lastElement) {
-        e.preventDefault();
-        firstElement?.focus();
-      }
-    }
-  }, [active, getFocusableElements]);
+    },
+    [active, getFocusableElements]
+  );
 
   // Store previous active element and set initial focus
   useEffect(() => {

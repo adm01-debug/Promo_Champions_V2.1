@@ -30,7 +30,7 @@ export function CategoryPie({ data }: CategoryPieProps) {
               paddingAngle={8}
               dataKey="value"
             >
-              {data.map((entry, index) => (
+              {data.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % 5]} />
               ))}
             </Pie>

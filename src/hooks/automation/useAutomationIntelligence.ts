@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface AutomationSuggestion {
   id: string;
@@ -8,7 +8,7 @@ export interface AutomationSuggestion {
   description: string;
   trigger_type: string;
   estimated_time_saved_minutes: number;
-  priority: "high" | "medium" | "low";
+  priority: 'high' | 'medium' | 'low';
   rationale: string;
   template: {
     name: string;
@@ -36,9 +36,11 @@ interface IntelligenceResponse {
 
 export const useAutomationIntelligence = () => {
   return useQuery<IntelligenceResponse>({
-    queryKey: ["automation-intelligence"],
+    queryKey: ['automation-intelligence'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("automation-suggestions", { body: {} });
+      const { data, error } = await supabase.functions.invoke('automation-suggestions', {
+        body: {},
+      });
       if (error) throw error;
       return data as IntelligenceResponse;
     },
@@ -50,9 +52,9 @@ export const useAutomationIntelligence = () => {
 export const useApplyAutomationTemplate = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (template: AutomationSuggestion["template"]) => {
+    mutationFn: async (template: AutomationSuggestion['template']) => {
       const { data, error } = await supabase
-        .from("automation_workflows")
+        .from('automation_workflows')
         .insert({
           name: template.name,
           trigger_type: template.trigger_type,
@@ -67,9 +69,9 @@ export const useApplyAutomationTemplate = () => {
       return data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["automation-workflows"] });
-      qc.invalidateQueries({ queryKey: ["automation-intelligence"] });
-      toast.success("Automação criada e ativada!");
+      qc.invalidateQueries({ queryKey: ['automation-workflows'] });
+      qc.invalidateQueries({ queryKey: ['automation-intelligence'] });
+      toast.success('Automação criada e ativada!');
     },
     onError: (e: Error) => toast.error(`Erro ao aplicar template: ${e.message}`),
   });

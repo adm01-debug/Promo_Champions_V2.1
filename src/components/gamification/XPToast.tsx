@@ -1,6 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import { useState, createContext, useContext, useCallback, useMemo, ReactNode } from 'react';
+import {
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from 'react';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 interface XPNotification {
@@ -27,15 +34,18 @@ export function useXPToast() {
 export function XPToastProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<XPNotification[]>([]);
 
-  const showXP = useCallback((amount: number, reason: string, type: 'xp' | 'streak' | 'level_up' = 'xp') => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setNotifications(prev => [...prev, { id, amount, reason, type }]);
+  const showXP = useCallback(
+    (amount: number, reason: string, type: 'xp' | 'streak' | 'level_up' = 'xp') => {
+      const id = Math.random().toString(36).substring(2, 9);
+      setNotifications(prev => [...prev, { id, amount, reason, type }]);
 
-    // Auto-remove after animation
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    }, 3000);
-  }, []);
+      // Auto-remove after animation
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      }, 3000);
+    },
+    []
+  );
 
   const value = useMemo(() => ({ showXP }), [showXP]);
 
@@ -56,7 +66,7 @@ function XPToastContainer({ notifications }: { notifications: XPNotification[] }
       aria-label="Notificações de XP"
     >
       <AnimatePresence>
-        {notifications.map((notification) => (
+        {notifications.map(notification => (
           <XPToastItem key={notification.id} notification={notification} />
         ))}
       </AnimatePresence>
@@ -68,17 +78,28 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
   const { amount, reason, type } = notification;
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const bgColor = type === 'level_up' 
-    ? 'from-coins/90 to-rank-gold/90' 
-    : type === 'streak' 
-      ? 'from-streak/90 to-destructive/90'
-      : 'from-primary/90 to-primary/70';
+  const bgColor =
+    type === 'level_up'
+      ? 'from-coins/90 to-rank-gold/90'
+      : type === 'streak'
+        ? 'from-streak/90 to-destructive/90'
+        : 'from-primary/90 to-primary/70';
 
   const Icon = type === 'level_up' ? TrendingUp : type === 'streak' ? Zap : Sparkles;
 
   const motionProps = prefersReducedMotion
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.15 } }
-    : { initial: { opacity: 0, x: 100, scale: 0.8 }, animate: { opacity: 1, x: 0, scale: 1 }, exit: { opacity: 0, x: 100, scale: 0.8 }, transition: { type: 'spring' as const, stiffness: 500, damping: 30 } };
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0.15 },
+      }
+    : {
+        initial: { opacity: 0, x: 100, scale: 0.8 },
+        animate: { opacity: 1, x: 0, scale: 1 },
+        exit: { opacity: 0, x: 100, scale: 0.8 },
+        transition: { type: 'spring' as const, stiffness: 500, damping: 30 },
+      };
 
   return (
     <motion.div
@@ -122,22 +143,22 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
             {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
-                initial={{ 
-                  x: '50%', 
-                  y: '50%', 
+                initial={{
+                  x: '50%',
+                  y: '50%',
                   scale: 0,
-                  opacity: 1 
+                  opacity: 1,
                 }}
-                animate={{ 
-                  x: `${Math.random() * 100}%`, 
+                animate={{
+                  x: `${Math.random() * 100}%`,
                   y: `${Math.random() * 100}%`,
                   scale: [0, 1, 0],
-                  opacity: [1, 1, 0]
+                  opacity: [1, 1, 0],
                 }}
-                transition={{ 
+                transition={{
                   duration: 0.8,
                   delay: 0.1 + i * 0.05,
-                  ease: 'easeOut'
+                  ease: 'easeOut',
                 }}
                 className="absolute w-1 h-1 bg-primary-foreground rounded-full"
               />

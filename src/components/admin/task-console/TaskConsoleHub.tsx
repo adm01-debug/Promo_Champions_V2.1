@@ -15,7 +15,7 @@ import { ptBR } from 'date-fns/locale';
 
 export function TaskConsoleHub() {
   const { data: assignments, isLoading } = useTaskAssignments();
-  const pendingCount = (assignments || []).filter((a) => a.status === 'submitted').length;
+  const pendingCount = (assignments || []).filter(a => a.status === 'submitted').length;
 
   return (
     <div className="space-y-6">
@@ -28,22 +28,43 @@ export function TaskConsoleHub() {
 
       <Tabs defaultValue="catalog" className="w-full">
         <TabsList className="grid grid-cols-5 w-full max-w-3xl">
-          <TabsTrigger value="catalog"><ListChecks className="mr-2 h-4 w-4" />Catálogo</TabsTrigger>
-          <TabsTrigger value="squads"><Shield className="mr-2 h-4 w-4" />Squads</TabsTrigger>
-          <TabsTrigger value="assignments"><Users className="mr-2 h-4 w-4" />Atribuições</TabsTrigger>
-          <TabsTrigger value="approvals">
-            <ClipboardCheck className="mr-2 h-4 w-4" />Aprovações
-            {pendingCount > 0 && <Badge variant="destructive" className="ml-2">{pendingCount}</Badge>}
+          <TabsTrigger value="catalog">
+            <ListChecks className="mr-2 h-4 w-4" />
+            Catálogo
           </TabsTrigger>
-          <TabsTrigger value="xp"><Sparkles className="mr-2 h-4 w-4" />Ajustes XP</TabsTrigger>
+          <TabsTrigger value="squads">
+            <Shield className="mr-2 h-4 w-4" />
+            Squads
+          </TabsTrigger>
+          <TabsTrigger value="assignments">
+            <Users className="mr-2 h-4 w-4" />
+            Atribuições
+          </TabsTrigger>
+          <TabsTrigger value="approvals">
+            <ClipboardCheck className="mr-2 h-4 w-4" />
+            Aprovações
+            {pendingCount > 0 && (
+              <Badge variant="destructive" className="ml-2">
+                {pendingCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="xp">
+            <Sparkles className="mr-2 h-4 w-4" />
+            Ajustes XP
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="squads" className="mt-6">
-          <Card className="p-6"><SquadManager /></Card>
+          <Card className="p-6">
+            <SquadManager />
+          </Card>
         </TabsContent>
 
         <TabsContent value="catalog" className="mt-6">
-          <Card className="p-6"><TaskCatalogManager /></Card>
+          <Card className="p-6">
+            <TaskCatalogManager />
+          </Card>
         </TabsContent>
 
         <TabsContent value="assignments" className="mt-6">
@@ -51,7 +72,9 @@ export function TaskConsoleHub() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-display text-lg">Atribuições ativas</h3>
-                <p className="text-sm text-muted-foreground">Veja e atribua novas tarefas aos vendedores.</p>
+                <p className="text-sm text-muted-foreground">
+                  Veja e atribua novas tarefas aos vendedores.
+                </p>
               </div>
               <TaskAssignmentDialog />
             </div>
@@ -59,25 +82,40 @@ export function TaskConsoleHub() {
               <Skeleton className="h-32 w-full" />
             ) : (
               <div className="space-y-2">
-                {(assignments || []).slice(0, 30).map((a) => (
-                  <div key={a.id} className="flex items-center justify-between p-3 rounded border">
+                {(assignments || []).slice(0, 30).map(a => (
+                  <div
+                    key={a.id}
+                    className="flex items-center justify-between p-3 rounded border"
+                  >
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium truncate">{a.catalog?.title || 'Tarefa'}</p>
+                      <p className="font-medium truncate">
+                        {a.catalog?.title || 'Tarefa'}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        {a.due_date ? `Entrega: ${format(new Date(a.due_date), "dd/MM/yyyy", { locale: ptBR })}` : 'Sem prazo'}
+                        {a.due_date
+                          ? `Entrega: ${format(new Date(a.due_date), 'dd/MM/yyyy', { locale: ptBR })}`
+                          : 'Sem prazo'}
                       </p>
                     </div>
-                    <Badge variant="outline" className={STATUS_TONES[a.status]}>{STATUS_LABELS[a.status]}</Badge>
+                    <Badge variant="outline" className={STATUS_TONES[a.status]}>
+                      {STATUS_LABELS[a.status]}
+                    </Badge>
                   </div>
                 ))}
-                {!assignments?.length && <p className="text-sm text-muted-foreground text-center py-6">Nenhuma atribuição</p>}
+                {!assignments?.length && (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    Nenhuma atribuição
+                  </p>
+                )}
               </div>
             )}
           </Card>
         </TabsContent>
 
         <TabsContent value="approvals" className="mt-6">
-          <Card className="p-6"><PendingApprovalsQueue /></Card>
+          <Card className="p-6">
+            <PendingApprovalsQueue />
+          </Card>
         </TabsContent>
 
         <TabsContent value="xp" className="mt-6">

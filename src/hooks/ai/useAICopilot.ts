@@ -33,11 +33,13 @@ export function useAICopilot() {
   const [isDismissed, setIsDismissed] = useState(false);
   const location = useLocation();
   const loadingRef = useRef(false);
-  
+
   const { data: salesperson } = useQuery({
     queryKey: ['current-salesperson-copilot'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
       const { data } = await supabase
         .from('salespeople')
@@ -52,52 +54,55 @@ export function useAICopilot() {
   const lastPageRef = useRef<string>('');
   const cooldownRef = useRef<number>(0);
 
-  const fetchSuggestion = useCallback(async (action: string = 'page_suggestion', extra?: string) => {
-    if (loadingRef.current) return;
-    
-    // Cooldown: minimum 30s between auto-suggestions
-    const now = Date.now();
-    if (action === 'page_suggestion' && now - cooldownRef.current < 30000) return;
-    cooldownRef.current = now;
+  const fetchSuggestion = useCallback(
+    async (action: string = 'page_suggestion', extra?: string) => {
+      if (loadingRef.current) return;
 
-    loadingRef.current = true;
-    setIsLoading(true);
-    try {
-      const page = PAGE_CONTEXT_MAP[location.pathname] || location.pathname;
-      
-      const { data, error } = await supabase.functions.invoke('ai-copilot', {
-        body: {
-          context: { page, extra },
-          salespersonId: salesperson?.id,
-          action,
-        },
-      });
+      // Cooldown: minimum 30s between auto-suggestions
+      const now = Date.now();
+      if (action === 'page_suggestion' && now - cooldownRef.current < 30000) return;
+      cooldownRef.current = now;
 
-      if (error) throw error;
-      if (data?.suggestion) {
-        setSuggestion({
-          text: data.suggestion,
-          timestamp: Date.now(),
-          page: location.pathname,
+      loadingRef.current = true;
+      setIsLoading(true);
+      try {
+        const page = PAGE_CONTEXT_MAP[location.pathname] || location.pathname;
+
+        const { data, error } = await supabase.functions.invoke('ai-copilot', {
+          body: {
+            context: { page, extra },
+            salespersonId: salesperson?.id,
+            action,
+          },
         });
-        setIsOpen(true);
-        setIsDismissed(false);
+
+        if (error) throw error;
+        if (data?.suggestion) {
+          setSuggestion({
+            text: data.suggestion,
+            timestamp: Date.now(),
+            page: location.pathname,
+          });
+          setIsOpen(true);
+          setIsDismissed(false);
+        }
+      } catch (_err) {
+        // Errors handled silently in prod to avoid noise
+      } finally {
+        loadingRef.current = false;
+        setIsLoading(false);
       }
-    } catch (_err) {
-      // Errors handled silently in prod to avoid noise
-    } finally {
-      loadingRef.current = false;
-      setIsLoading(false);
-    }
-  }, [location.pathname, salesperson?.id]);
+    },
+    [location.pathname, salesperson?.id]
+  );
 
   // Auto-suggest on page change
   useEffect(() => {
     if (location.pathname === lastPageRef.current) return;
     lastPageRef.current = location.pathname;
-    
+
     if (location.pathname === '/assistente') return;
-    
+
     const timer = setTimeout(() => {
       if (!isDismissed) {
         fetchSuggestion('page_suggestion');
@@ -107,16 +112,21 @@ export function useAICopilot() {
     return () => clearTimeout(timer);
   }, [location.pathname, isDismissed, fetchSuggestion]);
 
-  const askCopilot = useCallback((question: string) => {
-    fetchSuggestion('quick_answer', question);
-  }, [fetchSuggestion]);
+  const askCopilot = useCallback(
+    (question: string) => {
+      fetchSuggestion('quick_answer', question);
+    },
+    [fetchSuggestion]
+  );
 
   /**
    * SKILL: Narrativa de forecast
    * Explica o forecast atual em linguagem natural (usa cache semântico via forecast-narrative).
    */
   const getForecastNarrative = useCallback(
-    async (forecastId: string): Promise<{ narrative?: string; cached?: boolean; error?: string }> => {
+    async (
+      forecastId: string
+    ): Promise<{ narrative?: string; cached?: boolean; error?: string }> => {
       loadingRef.current = true;
       setIsLoading(true);
       try {
@@ -145,7 +155,7 @@ export function useAICopilot() {
         setIsLoading(false);
       }
     },
-    [location.pathname, salesperson?.id],
+    [location.pathname, salesperson?.id]
   );
 
   /**
@@ -185,7 +195,7 @@ export function useAICopilot() {
         setIsLoading(false);
       }
     },
-    [location.pathname, salesperson?.id],
+    [location.pathname, salesperson?.id]
   );
 
   const dismiss = useCallback(() => {

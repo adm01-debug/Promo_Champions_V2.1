@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
 
 export type Channel = 'whatsapp' | 'email' | 'linkedin' | 'sms' | 'phone';
@@ -51,8 +52,7 @@ export const useMessageTemplates = (channel?: Channel) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as MessageTemplate[];
+      return parseRows<MessageTemplate>(data);
     },
   });
 };
@@ -141,8 +141,7 @@ export const useChannelInteractions = (filters?: {
 
       const { data, error } = await query;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as ChannelInteraction[];
+      return parseRows<ChannelInteraction>(data);
     },
   });
 };
@@ -212,11 +211,10 @@ export const useChannelStats = (days = 30) => {
         .gte('created_at', since.toISOString());
 
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      const interactions = (data || []) as unknown as Pick<
-        ChannelInteraction,
-        'channel' | 'direction' | 'status' | 'created_at'
-      >[];
+      const interactions =
+        parseRows<
+          Pick<ChannelInteraction, 'channel' | 'direction' | 'status' | 'created_at'>
+        >(data);
 
       const channels: Channel[] = ['whatsapp', 'email', 'linkedin', 'sms', 'phone'];
       const stats = channels.map(ch => {

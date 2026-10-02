@@ -1,14 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, ArrowRight, Lightbulb, TrendingDown } from "lucide-react";
-import type { StageBottleneckInsight } from "@/hooks/deal-intelligence/useStageConversion";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { AlertTriangle, ArrowRight, Lightbulb, TrendingDown } from 'lucide-react';
+import type { StageBottleneckInsight } from '@/hooks/deal-intelligence/useStageConversion';
 import {
   formatPct,
   impactLabel,
   severityClasses,
   severityLabel,
   stageLabel,
-} from "./conversionHelpers";
+} from './conversionHelpers';
 
 interface Props {
   insight: StageBottleneckInsight;
@@ -27,7 +27,8 @@ export function StageBottleneckCard({ insight }: Props) {
               {stageLabel(insight.stage)}
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">
-              Conversão: <span className="font-semibold tabular-nums text-foreground">
+              Conversão:{' '}
+              <span className="font-semibold tabular-nums text-foreground">
                 {formatPct(insight.conversion_rate)}
               </span>
             </p>
@@ -53,7 +54,9 @@ export function StageBottleneckCard({ insight }: Props) {
               {insight.top_loss_reasons.slice(0, 3).map((r, i) => (
                 <li key={i} className="flex items-center justify-between text-xs">
                   <span className="text-foreground/80 truncate">{r.reason}</span>
-                  <Badge variant="secondary" className="ml-2 tabular-nums">{r.count}</Badge>
+                  <Badge variant="secondary" className="ml-2 tabular-nums">
+                    {r.count}
+                  </Badge>
                 </li>
               ))}
             </ul>
@@ -67,7 +70,10 @@ export function StageBottleneckCard({ insight }: Props) {
             </h4>
             <ul className="space-y-2">
               {insight.recommendations.slice(0, 5).map((r, i) => (
-                <li key={i} className="text-xs bg-muted/40 rounded-lg p-2.5 border border-border/30">
+                <li
+                  key={i}
+                  className="text-xs bg-muted/40 rounded-lg p-2.5 border border-border/30"
+                >
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <span className="font-medium text-foreground flex items-center gap-1.5">
                       <ArrowRight className="h-3 w-3 text-primary" /> {r.title}

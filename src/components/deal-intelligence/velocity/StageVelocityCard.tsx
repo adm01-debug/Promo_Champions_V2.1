@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, RefreshCw, Lightbulb } from "lucide-react";
-import { useDealStageVelocity, useDetectStuckDeals } from "@/hooks/deal-intelligence/useStageVelocity";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Activity, RefreshCw, Lightbulb } from 'lucide-react';
+import {
+  useDealStageVelocity,
+  useDetectStuckDeals,
+} from '@/hooks/deal-intelligence/useStageVelocity';
 import {
   formatHours,
   severityBarColor,
   severityClasses,
   severityLabel,
   stageLabel,
-} from "./velocityHelpers";
-import { StageTransitionsTimeline } from "./StageTransitionsTimeline";
+} from './velocityHelpers';
+import { StageTransitionsTimeline } from './StageTransitionsTimeline';
 
 interface Props {
   saleId: string;
@@ -60,7 +63,9 @@ export function StageVelocityCard({ saleId }: Props) {
             className="h-7 w-7 p-0"
             aria-label="Recalcular alertas"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${detect.isPending ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${detect.isPending ? 'animate-spin' : ''}`}
+            />
           </Button>
         </div>
       </CardHeader>
@@ -73,7 +78,10 @@ export function StageVelocityCard({ saleId }: Props) {
                   <span className="text-muted-foreground">Estágio: </span>
                   <span className="font-medium">{stageLabel(alert.current_stage)}</span>
                 </div>
-                <Badge variant="outline" className={`text-[10px] ${severityClasses(alert.severity)}`}>
+                <Badge
+                  variant="outline"
+                  className={`text-[10px] ${severityClasses(alert.severity)}`}
+                >
                   {severityLabel(alert.severity)}
                 </Badge>
               </div>
@@ -111,7 +119,9 @@ export function StageVelocityCard({ saleId }: Props) {
             {alert.recommendation && (
               <div className="p-2 rounded-md border border-primary/20 bg-primary/5 flex gap-2">
                 <Lightbulb className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-foreground/90 leading-snug">{alert.recommendation}</p>
+                <p className="text-xs text-foreground/90 leading-snug">
+                  {alert.recommendation}
+                </p>
               </div>
             )}
           </>

@@ -1,23 +1,30 @@
-import { FC } from "react";
-import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { formatBRL, type TopDeal } from "@/hooks/reports/salesReportHelpers";
-import { classifyMarkup, formatMarkupPct } from "@/lib/markupHelpers";
+import { FC } from 'react';
+import { Card } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { formatBRL, type TopDeal } from '@/hooks/reports/salesReportHelpers';
+import { classifyMarkup, formatMarkupPct } from '@/lib/markupHelpers';
 
-const statusTone = (status: string): "success" | "warning" | "destructive" | "muted" => {
+const statusTone = (status: string): 'success' | 'warning' | 'destructive' | 'muted' => {
   const s = status.toLowerCase();
-  if (s.includes("conclu")) return "success";
-  if (s.includes("cancel")) return "destructive";
-  if (s.includes("pend") || s.includes("propos") || s.includes("negoc")) return "warning";
-  return "muted";
+  if (s.includes('conclu')) return 'success';
+  if (s.includes('cancel')) return 'destructive';
+  if (s.includes('pend') || s.includes('propos') || s.includes('negoc')) return 'warning';
+  return 'muted';
 };
 
 const toneClass: Record<string, string> = {
-  success: "border-success/30 bg-success/10 text-success",
-  warning: "border-warning/30 bg-warning/10 text-warning",
-  destructive: "border-destructive/30 bg-destructive/10 text-destructive",
-  muted: "border-border bg-muted text-muted-foreground",
+  success: 'border-success/30 bg-success/10 text-success',
+  warning: 'border-warning/30 bg-warning/10 text-warning',
+  destructive: 'border-destructive/30 bg-destructive/10 text-destructive',
+  muted: 'border-border bg-muted text-muted-foreground',
 };
 
 export const SalesTopDealsTable: FC<{ data: TopDeal[] }> = ({ data }) => (
@@ -49,10 +56,18 @@ export const SalesTopDealsTable: FC<{ data: TopDeal[] }> = ({ data }) => (
                   <TableCell className="font-medium">{d.client}</TableCell>
                   <TableCell>{d.product}</TableCell>
                   <TableCell>{d.salesperson}</TableCell>
-                  <TableCell className="text-right tabular-nums">{formatBRL(d.amount)}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {formatBRL(d.amount)}
+                  </TableCell>
                   <TableCell className="text-right">
-                    <Badge variant="outline" className={markup.className} title={markup.label}>
-                      {markup.value === null ? "Sem custo" : formatMarkupPct(markup.value)}
+                    <Badge
+                      variant="outline"
+                      className={markup.className}
+                      title={markup.label}
+                    >
+                      {markup.value === null
+                        ? 'Sem custo'
+                        : formatMarkupPct(markup.value)}
                     </Badge>
                   </TableCell>
                   <TableCell>

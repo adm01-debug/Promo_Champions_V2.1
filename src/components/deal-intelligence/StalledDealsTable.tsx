@@ -1,24 +1,29 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, RefreshCw, AlertTriangle } from "lucide-react";
-import { useDealHealthBatch, useRecalculateDealHealth, type HealthTier } from "@/hooks/deal-intelligence/useDealHealth";
-import { DealHealthScoreBadge } from "./DealHealthScoreBadge";
-import { tierLabel } from "./dealHealthHelpers";
-import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles, RefreshCw, AlertTriangle } from 'lucide-react';
+import {
+  useDealHealthBatch,
+  useRecalculateDealHealth,
+  type HealthTier,
+} from '@/hooks/deal-intelligence/useDealHealth';
+import { DealHealthScoreBadge } from './DealHealthScoreBadge';
+import { tierLabel } from './dealHealthHelpers';
+import { useState } from 'react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const TIER_FILTERS: { value: HealthTier | "all"; label: string }[] = [
-  { value: "all", label: "Todos" },
-  { value: "critical", label: "Crítico" },
-  { value: "at_risk", label: "Em risco" },
-  { value: "watch", label: "Atenção" },
-  { value: "healthy", label: "Saudáveis" },
+const TIER_FILTERS: { value: HealthTier | 'all'; label: string }[] = [
+  { value: 'all', label: 'Todos' },
+  { value: 'critical', label: 'Crítico' },
+  { value: 'at_risk', label: 'Em risco' },
+  { value: 'watch', label: 'Atenção' },
+  { value: 'healthy', label: 'Saudáveis' },
 ];
 
 export function StalledDealsTable() {
-  const [filter, setFilter] = useState<HealthTier | "all">("all");
-  const tiers = filter === "all" ? ["critical", "at_risk", "watch"] as HealthTier[] : [filter];
+  const [filter, setFilter] = useState<HealthTier | 'all'>('all');
+  const tiers =
+    filter === 'all' ? (['critical', 'at_risk', 'watch'] as HealthTier[]) : [filter];
   const { data, isLoading, refetch, isRefetching } = useDealHealthBatch({ tiers });
   const recalc = useRecalculateDealHealth();
 
@@ -28,7 +33,10 @@ export function StalledDealsTable() {
   };
 
   return (
-    <Card variant="elevated" className="glass border-border/40 dark:border-glow card-elevated animate-fade-in">
+    <Card
+      variant="elevated"
+      className="glass border-border/40 dark:border-glow card-elevated animate-fade-in"
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-section-title flex items-center gap-2">
@@ -44,15 +52,23 @@ export function StalledDealsTable() {
               onClick={handleBatchRecalc}
               disabled={recalc.isPending || isRefetching}
             >
-              <RefreshCw className={`h-3.5 w-3.5 mr-1 ${recalc.isPending ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-3.5 w-3.5 mr-1 ${recalc.isPending ? 'animate-spin' : ''}`}
+              />
               Recalcular tudo
             </Button>
           </div>
         </div>
-        <Tabs value={filter} onValueChange={(v) => setFilter(v as HealthTier | "all")} className="mt-2">
+        <Tabs
+          value={filter}
+          onValueChange={v => setFilter(v as HealthTier | 'all')}
+          className="mt-2"
+        >
           <TabsList>
-            {TIER_FILTERS.map((t) => (
-              <TabsTrigger key={t.value} value={t.value} className="text-xs">{t.label}</TabsTrigger>
+            {TIER_FILTERS.map(t => (
+              <TabsTrigger key={t.value} value={t.value} className="text-xs">
+                {t.label}
+              </TabsTrigger>
             ))}
           </TabsList>
         </Tabs>
@@ -71,18 +87,25 @@ export function StalledDealsTable() {
           </div>
         ) : (
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
-            {data.map((d) => {
+            {data.map(d => {
               const sale = d.sales;
               return (
                 <div
                   key={d.id}
                   className="flex items-center gap-3 p-3 rounded-lg glass border border-border/30 hover:border-primary/40 transition-all"
                 >
-                  <DealHealthScoreBadge score={d.health_score} tier={d.tier as HealthTier} size="md" />
+                  <DealHealthScoreBadge
+                    score={d.health_score}
+                    tier={d.tier as HealthTier}
+                    size="md"
+                  />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{sale?.client_name || "—"}</p>
+                    <p className="text-sm font-medium truncate">
+                      {sale?.client_name || '—'}
+                    </p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {sale?.product_name} · {tierLabel(d.tier as HealthTier)} · {d.days_in_stage ?? 0}d no estágio
+                      {sale?.product_name} · {tierLabel(d.tier as HealthTier)} ·{' '}
+                      {d.days_in_stage ?? 0}d no estágio
                     </p>
                   </div>
                   <Button
@@ -92,7 +115,9 @@ export function StalledDealsTable() {
                     disabled={recalc.isPending}
                     className="h-7 w-7 p-0 shrink-0"
                   >
-                    <RefreshCw className={`h-3.5 w-3.5 ${recalc.isPending ? "animate-spin" : ""}`} />
+                    <RefreshCw
+                      className={`h-3.5 w-3.5 ${recalc.isPending ? 'animate-spin' : ''}`}
+                    />
                   </Button>
                 </div>
               );

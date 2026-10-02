@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     needs: unit-tests
+    # Somente PRs internas — evita expor credenciais em fork PRs.
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
     steps:
@@ -85,6 +88,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: unit-tests
+    # Somente PRs internas (não forks, não Dependabot) — guard que faltava.
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
     steps:
@@ -118,20 +124,47 @@ jobs:
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
           fi
-      - name: Install Playwright
-        if: steps.skip.outputs.run == 'true'
-        run: npx playwright install --with-deps chromium
-      - name: Playwright — quote-to-sale specs
+      # Mesmo contrato do pr-checks.yml: secrets presentes porém inválidos
+      # falham o job (antes viravam skip verde); falha transitória de rede
+      # (exit 3) segue skip legítimo com warning.
+      - name: Verificar validade das credenciais Supabase
+        id: precheck
         if: steps.skip.outputs.run == 'true'
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+        run: |
+          set +e
+          node scripts/e2e-precheck.mjs
+          CODE=$?
+          set -e
+          if [ "$CODE" -eq 0 ]; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          elif [ "$CODE" -eq 3 ]; then
+            echo "valid=skip" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Credenciais E2E configuradas, mas inválidas. Corrija ou remova a configuração parcial; não é seguro aprovar o gate sem executar os cenários."
+            exit 1
+          fi
+      - name: Install Playwright
+        if: steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Playwright — quote-to-sale specs
+        if: steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          # global-setup exige o project ref para persistir a sessão. O precheck
+          # o deriva da URL verificada (<ref>.supabase.co); o secret vira só
+          # fallback para hosts fora de *.supabase.co.
+          VITE_SUPABASE_PROJECT_ID: ${{ steps.precheck.outputs.project_ref || secrets.VITE_SUPABASE_PROJECT_ID }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: npx playwright test tests/e2e/quote-to-sale-*.spec.ts
       - name: Upload report
-        if: always() && steps.skip.outputs.run == 'true'
+        if: always() && steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: playwright-quote-to-sale-report

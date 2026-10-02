@@ -3,6 +3,8 @@ import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.4
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 type LogLevel = 'info' | 'warn' | 'error';
 type AlertKind = 'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
@@ -289,6 +291,61 @@ Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => 
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
+
+    // SEC: antes desta verificação, qualquer chamada com a anon key executava
+    // o monitor completo como service_role (leitura de assinaturas/entregas,
+    // escrita de alertas e disparo de e-mails). Agora só passa o pg_cron
+    // (service_role ou X-Cron-Secret via trigger_internal_edge_job) ou um
+    // usuário com papel admin/manager.
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from('_internal_secrets')
+          .select('value')
+          .eq('key', 'coaching_cron_secret')
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (authError) {
+      structuredLog('error', { msg: 'cron_authorization_unavailable', ...describeError(authError) }, requestId);
+      return new Response(
+        JSON.stringify({ error: 'authorization_unavailable', requestId }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+      );
+    }
+
+    if (!authorizedByCron) {
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          structuredLog('warn', { msg: 'auth_forbidden', userId: caller.userId }, requestId);
+          return new Response(
+            JSON.stringify({ error: 'forbidden', requestId }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+          );
+        }
+      } catch (authError) {
+        if (authError instanceof UnauthorizedError) {
+          structuredLog('warn', { msg: 'auth_unauthorized' }, requestId);
+          return new Response(
+            JSON.stringify({ error: 'unauthorized', requestId }),
+            { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+          );
+        }
+        structuredLog('error', { msg: 'authorization_failed', ...describeError(authError) }, requestId);
+        return new Response(
+          JSON.stringify({ error: 'authorization_unavailable', requestId }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
+        );
+      }
+    }
 
     const settings = await loadSettings(supabase, requestId);
 

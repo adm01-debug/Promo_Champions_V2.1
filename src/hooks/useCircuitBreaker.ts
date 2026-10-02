@@ -7,7 +7,13 @@ import {
 } from './circuitBreakerUtils';
 
 // Re-export everything from utils for backward compatibility
-export { CircuitBreakerError, withCircuitBreaker, getAllCircuitStates, resetCircuit, resetAllCircuits } from './circuitBreakerUtils';
+export {
+  CircuitBreakerError,
+  withCircuitBreaker,
+  getAllCircuitStates,
+  resetCircuit,
+  resetAllCircuits,
+} from './circuitBreakerUtils';
 export { DEFAULT_CONFIG as CIRCUIT_BREAKER_DEFAULTS } from './circuitBreakerUtils';
 
 import { DEFAULT_CONFIG } from './circuitBreakerUtils';
@@ -30,19 +36,22 @@ export function useCircuitBreaker(name: string, config: CircuitBreakerConfig = {
     return getOrCreateCircuit(name);
   }, [name]);
 
-  const setState = useCallback((updates: Partial<CircuitBreakerState>) => {
-    const current = getOrCreateCircuit(name);
-    const previousState = current.state;
-    Object.assign(current, updates);
-    
-    if (updates.state && updates.state !== previousState) {
-      configRef.current.onStateChange?.(updates.state, previousState);
-      if (updates.state === 'OPEN') configRef.current.onOpen?.(current.failures);
-      else if (updates.state === 'CLOSED') configRef.current.onClose?.();
-    }
-    
-    forceUpdate({});
-  }, [name]);
+  const setState = useCallback(
+    (updates: Partial<CircuitBreakerState>) => {
+      const current = getOrCreateCircuit(name);
+      const previousState = current.state;
+      Object.assign(current, updates);
+
+      if (updates.state && updates.state !== previousState) {
+        configRef.current.onStateChange?.(updates.state, previousState);
+        if (updates.state === 'OPEN') configRef.current.onOpen?.(current.failures);
+        else if (updates.state === 'CLOSED') configRef.current.onClose?.();
+      }
+
+      forceUpdate({});
+    },
+    [name]
+  );
 
   const shouldAllowRequest = useCallback((): boolean => {
     const circuit = getState();
@@ -73,7 +82,12 @@ export function useCircuitBreaker(name: string, config: CircuitBreakerConfig = {
     if (circuit.state === 'HALF_OPEN') {
       const newHalfOpenAttempts = circuit.halfOpenAttempts + 1;
       if (newHalfOpenAttempts >= halfOpenMaxAttempts) {
-        setState({ state: 'OPEN', failures: newFailures, lastFailure: Date.now(), halfOpenAttempts: 0 });
+        setState({
+          state: 'OPEN',
+          failures: newFailures,
+          lastFailure: Date.now(),
+          halfOpenAttempts: 0,
+        });
       } else {
         setState({ failures: newFailures, halfOpenAttempts: newHalfOpenAttempts });
       }
@@ -88,17 +102,20 @@ export function useCircuitBreaker(name: string, config: CircuitBreakerConfig = {
     setState({ state: 'CLOSED', failures: 0, lastFailure: null, halfOpenAttempts: 0 });
   }, [setState]);
 
-  const execute = useCallback(async <T>(fn: () => Promise<T>): Promise<T> => {
-    if (!shouldAllowRequest()) throw new CircuitBreakerError(name);
-    try {
-      const result = await fn();
-      recordSuccess();
-      return result;
-    } catch (error) {
-      recordFailure();
-      throw error;
-    }
-  }, [name, shouldAllowRequest, recordSuccess, recordFailure]);
+  const execute = useCallback(
+    async <T>(fn: () => Promise<T>): Promise<T> => {
+      if (!shouldAllowRequest()) throw new CircuitBreakerError(name);
+      try {
+        const result = await fn();
+        recordSuccess();
+        return result;
+      } catch (error) {
+        recordFailure();
+        throw error;
+      }
+    },
+    [name, shouldAllowRequest, recordSuccess, recordFailure]
+  );
 
   return {
     execute,

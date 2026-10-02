@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface InsightImpact {
   id: string;
@@ -57,7 +58,7 @@ export function useInsightsImpact() {
       const winRateIn = (rows: AnalysisRow[]) => {
         const total = rows.length;
         if (!total) return 0;
-        const wins = rows.filter(r => r.outcome === 'won').length;
+        const wins = rows.filter(r => r.outcome === WIN_LOSS_OUTCOME.WON).length;
         return (wins / total) * 100;
       };
 

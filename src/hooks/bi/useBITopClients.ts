@@ -37,19 +37,24 @@ export function useBITopClients() {
       const monthStart = startOfMonth(now);
       const monthEnd = endOfMonth(now);
 
-      const [salesRes, clientsRes, supplierOrdersRes, supplierOrderItemsRes, suppliersRes] =
-        await Promise.all([
-          supabase
-            .from('sales')
-            .select('client_name, amount, status, created_at')
-            .in('status', [...WON_SALE_STATUSES])
-            .gte('created_at', monthStart.toISOString())
-            .lte('created_at', monthEnd.toISOString()),
-          supabase.from('clients').select('name, company'),
-          supabase.from('supplier_orders').select('id, supplier_id, total_amount, status'),
-          supabase.from('supplier_order_items').select('order_id, product_id, quantity'),
-          supabase.from('suppliers').select('id, name'),
-        ]);
+      const [
+        salesRes,
+        clientsRes,
+        supplierOrdersRes,
+        supplierOrderItemsRes,
+        suppliersRes,
+      ] = await Promise.all([
+        supabase
+          .from('sales')
+          .select('client_name, amount, status, created_at')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString()),
+        supabase.from('clients').select('name, company'),
+        supabase.from('supplier_orders').select('id, supplier_id, total_amount, status'),
+        supabase.from('supplier_order_items').select('order_id, product_id, quantity'),
+        supabase.from('suppliers').select('id, name'),
+      ]);
 
       const sales = salesRes.data || [];
       const clients = clientsRes.data || [];
@@ -84,7 +89,8 @@ export function useBITopClients() {
       // Top companies by revenue
       const companyMap = new Map<string, { totalValue: number; ordersCount: number }>();
       sales.forEach(s => {
-        const company = clientCompanyMap.get(s.client_name.toLowerCase()) || 'Sem empresa';
+        const company =
+          clientCompanyMap.get(s.client_name.toLowerCase()) || 'Sem empresa';
         const existing = companyMap.get(company) || { totalValue: 0, ordersCount: 0 };
         existing.totalValue += Number(s.amount);
         existing.ordersCount += 1;

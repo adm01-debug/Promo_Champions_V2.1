@@ -2,6 +2,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface HealthFactor {
   label: string;
@@ -37,6 +38,34 @@ Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceKey);
+
+    // Autorização: exige usuário autenticado com papel admin/manager (dashboard agrega dados de todas as contas).
+    try {
+      const caller = await getUserClient(req);
+      const { data: allowed, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleError) throw roleError;
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("customer-success-hub authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const { data: accounts } = await supabase
       .from('accounts')

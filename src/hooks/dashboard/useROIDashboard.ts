@@ -97,7 +97,8 @@ export function useROIDashboard(periodMonths: number = 3) {
         const commissionPaid = totalRevenue * (sp.commission_rate || 0.1);
         const estimatedCost = BASE_SALARY_MONTHLY * periodMonths + commissionPaid;
 
-        const roi = estimatedCost > 0 ? ((totalRevenue - estimatedCost) / estimatedCost) * 100 : 0;
+        const roi =
+          estimatedCost > 0 ? ((totalRevenue - estimatedCost) / estimatedCost) * 100 : 0;
 
         // CAC: cost to acquire each client (approx by won deals)
         const cac = wonSales.length > 0 ? estimatedCost / wonSales.length : 0;
@@ -109,10 +110,13 @@ export function useROIDashboard(periodMonths: number = 3) {
         // Payback: how many days to recover cost
         const daysInPeriod = periodMonths * 30;
         const revenuePerDay = daysInPeriod > 0 ? totalRevenue / daysInPeriod : 0;
-        const paybackDays = revenuePerDay > 0 ? Math.round(estimatedCost / revenuePerDay) : 999;
+        const paybackDays =
+          revenuePerDay > 0 ? Math.round(estimatedCost / revenuePerDay) : 999;
 
-        const conversionRate = spSales.length > 0 ? (wonSales.length / spSales.length) * 100 : 0;
-        const revenuePerActivity = spActivities.length > 0 ? totalRevenue / spActivities.length : 0;
+        const conversionRate =
+          spSales.length > 0 ? (wonSales.length / spSales.length) * 100 : 0;
+        const revenuePerActivity =
+          spActivities.length > 0 ? totalRevenue / spActivities.length : 0;
 
         return {
           id: sp.id,
@@ -154,7 +158,8 @@ export function useROIDashboard(periodMonths: number = 3) {
 
     const totalRevenue = roiData.reduce((s, r) => s + r.totalRevenue, 0);
     const totalCosts = roiData.reduce((s, r) => s + r.estimatedCost, 0);
-    const overallROI = totalCosts > 0 ? ((totalRevenue - totalCosts) / totalCosts) * 100 : 0;
+    const overallROI =
+      totalCosts > 0 ? ((totalRevenue - totalCosts) / totalCosts) * 100 : 0;
     const avgCAC = roiData.reduce((s, r) => s + r.cac, 0) / roiData.length;
     const avgLTV = roiData.reduce((s, r) => s + r.ltv, 0) / roiData.length;
     const avgPayback = roiData.reduce((s, r) => s + r.paybackDays, 0) / roiData.length;

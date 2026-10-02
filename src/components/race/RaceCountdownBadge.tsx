@@ -40,7 +40,9 @@ export function RaceCountdownBadge({ endsAt }: RaceCountdownBadgeProps) {
       style={{ background: 'hsl(var(--background) / 0.78)' }}
       aria-label={`Tempo restante: ${label}`}
     >
-      <Timer className={`w-3 h-3 ${urgent ? 'text-destructive' : 'text-muted-foreground'}`} />
+      <Timer
+        className={`w-3 h-3 ${urgent ? 'text-destructive' : 'text-muted-foreground'}`}
+      />
       <div className="flex items-baseline gap-1">
         <span className="text-[8px] font-black uppercase tracking-[0.22em] text-muted-foreground">
           Termina em

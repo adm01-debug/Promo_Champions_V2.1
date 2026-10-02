@@ -1,8 +1,8 @@
-import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Clock, Users, AlertTriangle, Mail } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Clock, Users, AlertTriangle, Mail } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface SDRDetail {
   id: string;
@@ -22,7 +22,9 @@ interface AlertHistoryItemProps {
   };
 }
 
-export const AlertHistoryItem = React.memo(function AlertHistoryItem({ item }: AlertHistoryItemProps) {
+export const AlertHistoryItem = React.memo(function AlertHistoryItem({
+  item,
+}: AlertHistoryItemProps) {
   return (
     <div className="p-3 rounded-lg bg-muted/30 border border-border/30 space-y-2 hover:bg-muted/50 transition-colors">
       <div className="flex items-center justify-between">
@@ -32,8 +34,11 @@ export const AlertHistoryItem = React.memo(function AlertHistoryItem({ item }: A
             {format(new Date(item.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
           </span>
         </div>
-        <Badge variant={item.triggered_by === "manual" ? "secondary" : "outline"} className="text-xs">
-          {item.triggered_by === "manual" ? "Manual" : "Automático"}
+        <Badge
+          variant={item.triggered_by === 'manual' ? 'secondary' : 'outline'}
+          className="text-xs"
+        >
+          {item.triggered_by === 'manual' ? 'Manual' : 'Automático'}
         </Badge>
       </div>
 
@@ -53,7 +58,7 @@ export const AlertHistoryItem = React.memo(function AlertHistoryItem({ item }: A
         <div className="pt-2 border-t border-border/30">
           <p className="text-xs text-muted-foreground mb-1">SDRs afetados:</p>
           <div className="flex flex-wrap gap-1">
-            {item.sdr_details.map((sdr) => (
+            {item.sdr_details.map(sdr => (
               <Badge key={sdr.id} variant="destructive" className="text-xs gap-1">
                 {sdr.name} ({sdr.consecutiveDays}d)
               </Badge>
@@ -65,7 +70,7 @@ export const AlertHistoryItem = React.memo(function AlertHistoryItem({ item }: A
       {item.admin_emails?.length > 0 && (
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Mail className="h-3 w-3" />
-          Enviado para: {item.admin_emails.slice(0, 2).join(", ")}
+          Enviado para: {item.admin_emails.slice(0, 2).join(', ')}
           {item.admin_emails.length > 2 && ` +${item.admin_emails.length - 2}`}
         </div>
       )}

@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ShoppingBag, ArrowUpRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ShoppingBag, ArrowUpRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface BIProductCardProps {
   name: string;
@@ -14,27 +14,31 @@ interface BIProductCardProps {
   className?: string;
 }
 
-export const BIProductCard = ({ 
-  name, 
-  sales, 
-  growth, 
-  confidence, 
-  imageUrl, 
+export const BIProductCard = ({
+  name,
+  sales,
+  growth,
+  confidence,
+  imageUrl,
   productId,
-  className 
+  className,
 }: BIProductCardProps) => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        "flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group",
+        'flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group',
         className
       )}
     >
       <div className="flex items-center gap-4">
         {imageUrl ? (
-          <img src={imageUrl} alt={name} className="size-12 rounded-lg object-cover bg-black/20" />
+          <img
+            src={imageUrl}
+            alt={name}
+            className="size-12 rounded-lg object-cover bg-black/20"
+          />
         ) : (
           <div className="size-12 bg-primary/20 rounded-xl flex items-center justify-center text-primary">
             <ShoppingBag className="size-6" />
@@ -64,9 +68,9 @@ export const BIProductCard = ({
           </Badge>
         )}
         {productId && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="size-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20 text-primary hover:bg-primary hover:text-white"
           >
             <ArrowUpRight className="size-4" />

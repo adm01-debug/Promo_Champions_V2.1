@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface ICPParameters {
   id: string;
@@ -16,12 +16,12 @@ export interface ICPParameters {
 
 export function useICPConfig() {
   return useQuery({
-    queryKey: ["icp-parameters"],
+    queryKey: ['icp-parameters'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("icp_parameters")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('icp_parameters')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
@@ -37,21 +37,21 @@ export function useUpdateICPConfig() {
   return useMutation({
     mutationFn: async (params: Partial<ICPParameters>) => {
       const { data: existing } = await supabase
-        .from("icp_parameters")
-        .select("id")
+        .from('icp_parameters')
+        .select('id')
         .limit(1)
         .maybeSingle();
 
       let error;
       if (existing) {
         const { error: updateError } = await supabase
-          .from("icp_parameters")
+          .from('icp_parameters')
           .update(params)
-          .eq("id", existing.id);
+          .eq('id', existing.id);
         error = updateError;
       } else {
         const { error: insertError } = await supabase
-          .from("icp_parameters")
+          .from('icp_parameters')
           .insert([params]);
         error = insertError;
       }
@@ -59,12 +59,12 @@ export function useUpdateICPConfig() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["icp-parameters"] });
-      queryClient.invalidateQueries({ queryKey: ["icp-data"] });
-      toast.success("Parâmetros ICP atualizados com sucesso");
+      queryClient.invalidateQueries({ queryKey: ['icp-parameters'] });
+      queryClient.invalidateQueries({ queryKey: ['icp-data'] });
+      toast.success('Parâmetros ICP atualizados com sucesso');
     },
-    onError: (error) => {
-      toast.error("Erro ao atualizar parâmetros");
+    onError: error => {
+      toast.error('Erro ao atualizar parâmetros');
       console.error(error);
     },
   });

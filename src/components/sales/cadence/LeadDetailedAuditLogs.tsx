@@ -1,9 +1,15 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLeadDetailedLogs } from '@/hooks/cadences/useLeadLogs';
-import { Activity, Zap, ArrowRight, Bell, CheckCircle2, type LucideIcon } from 'lucide-react';
+import {
+  Activity,
+  Zap,
+  ArrowRight,
+  Bell,
+  CheckCircle2,
+  type LucideIcon,
+} from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';

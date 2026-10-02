@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 
+import { formatBRL } from '@/lib/money';
 const RANK_COLORS = [
   'from-rank-gold to-coins',
   'from-rank-silver to-rank-silver/70',
@@ -54,11 +55,14 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
   }
 
   return (
-    <div className={cn(
-      'space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700',
-      isFullscreen && 'fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl p-8 overflow-auto',
-      className
-    )}>
+    <div
+      className={cn(
+        'space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700',
+        isFullscreen &&
+          'fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl p-8 overflow-auto',
+        className
+      )}
+    >
       <Card className="glass border-white/5 shadow-2xl overflow-hidden relative">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-64 -mt-64 animate-pulse" />
         <div className="bg-white/5 backdrop-blur-xl relative z-10">
@@ -80,10 +84,18 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                 </div>
               </CardTitle>
               <div className="flex gap-3">
-                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-4 py-1.5 h-10 flex items-center">
+                <Badge
+                  variant="outline"
+                  className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-4 py-1.5 h-10 flex items-center"
+                >
                   Update: 60s
                 </Badge>
-                <Button variant="outline" size="sm" onClick={toggleFullscreen} className="gap-2 h-10 px-4 border-white/10 bg-white/5 hover:bg-white/10 transition-all text-xs font-black uppercase tracking-widest">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleFullscreen}
+                  className="gap-2 h-10 px-4 border-white/10 bg-white/5 hover:bg-white/10 transition-all text-xs font-black uppercase tracking-widest"
+                >
                   <Maximize2 className="h-4 w-4" />
                   {isFullscreen ? 'Sair' : 'TV Mode'}
                 </Button>
@@ -95,18 +107,53 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
             {/* Team KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { label: 'Receita do Time', value: `R$ ${(totalTeamRevenue / 1000).toFixed(0)}k`, color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20', icon: TrendingUp },
-                { label: 'Deals Fechados', value: totalDeals, color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: Flame },
-                { label: 'Competidores', value: ranking?.length || 0, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: Monitor }
+                {
+                  label: 'Receita do Time',
+                  value: `R$ ${(totalTeamRevenue / 1000).toFixed(0)}k`,
+                  color: 'text-primary',
+                  bg: 'bg-primary/10',
+                  border: 'border-primary/20',
+                  icon: TrendingUp,
+                },
+                {
+                  label: 'Deals Fechados',
+                  value: totalDeals,
+                  color: 'text-emerald-500',
+                  bg: 'bg-emerald-500/10',
+                  border: 'border-emerald-500/20',
+                  icon: Flame,
+                },
+                {
+                  label: 'Competidores',
+                  value: ranking?.length || 0,
+                  color: 'text-amber-500',
+                  bg: 'bg-amber-500/10',
+                  border: 'border-amber-500/20',
+                  icon: Monitor,
+                },
               ].map((kpi, idx) => (
-                <div key={idx} className={cn("rounded-3xl p-6 text-center border relative overflow-hidden group/kpi", kpi.bg, kpi.border)}>
-                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/kpi:scale-110 transition-transform">
+                <div
+                  key={idx}
+                  className={cn(
+                    'rounded-3xl p-6 text-center border relative overflow-hidden group/kpi',
+                    kpi.bg,
+                    kpi.border
+                  )}
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/kpi:scale-110 transition-transform">
                     <kpi.icon className="size-12" />
                   </div>
-                  <p className={cn("text-4xl font-black italic tracking-tighter mb-1", kpi.color)}>
+                  <p
+                    className={cn(
+                      'text-4xl font-black italic tracking-tighter mb-1',
+                      kpi.color
+                    )}
+                  >
                     {kpi.value}
                   </p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">{kpi.label}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">
+                    {kpi.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -123,10 +170,12 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                   <Flame className="h-6 w-6" />
                 </div>
                 <span className="text-sm font-medium text-foreground relative z-10">
-                  <span className="font-black italic uppercase tracking-tighter text-emerald-400 mr-2">Top Performance:</span>
+                  <span className="font-black italic uppercase tracking-tighter text-emerald-400 mr-2">
+                    Top Performance:
+                  </span>
                   <strong>{lastDeal.name}</strong> lidera a arena com{' '}
                   <strong className="text-emerald-400 font-black">
-                    R$ {lastDeal.value.toLocaleString('pt-BR')}
+                    {formatBRL(lastDeal.value)}
                   </strong>
                 </span>
               </motion.div>
@@ -152,7 +201,9 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                       transition={{ delay: i * 0.1, type: 'spring', stiffness: 200 }}
                       className={cn(
                         'relative flex items-center gap-6 p-6 rounded-2xl border overflow-hidden transition-all duration-500 group/row',
-                        i === 0 ? 'bg-rank-gold/10 border-rank-gold/30 shadow-2xl shadow-rank-gold/10' : 'bg-white/5 border-white/5 hover:bg-white/10'
+                        i === 0
+                          ? 'bg-rank-gold/10 border-rank-gold/30 shadow-2xl shadow-rank-gold/10'
+                          : 'bg-white/5 border-white/5 hover:bg-white/10'
                       )}
                     >
                       {/* Animated bar background */}
@@ -163,13 +214,21 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                         )}
                         initial={{ width: 0 }}
                         animate={{ width: `${barWidth}%` }}
-                        transition={{ delay: i * 0.1 + 0.3, duration: 1, ease: 'circOut' }}
+                        transition={{
+                          delay: i * 0.1 + 0.3,
+                          duration: 1,
+                          ease: 'circOut',
+                        }}
                       />
 
-                      <div className={cn(
-                        'relative z-10 h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-2xl',
-                        i < 3 ? `bg-gradient-to-br ${RANK_COLORS[i]} text-primary-foreground` : 'bg-white/10 text-muted-foreground'
-                      )}>
+                      <div
+                        className={cn(
+                          'relative z-10 h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-2xl',
+                          i < 3
+                            ? `bg-gradient-to-br ${RANK_COLORS[i]} text-primary-foreground`
+                            : 'bg-white/10 text-muted-foreground'
+                        )}
+                      >
                         {i < 3 ? (
                           <Crown className={cn('h-7 w-7', i === 0 && 'animate-bounce')} />
                         ) : (
@@ -181,7 +240,11 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                         <Avatar className="h-14 w-14 border-2 border-background shadow-2xl group-hover/row:scale-110 transition-transform duration-500">
                           <AvatarImage src={person.avatar_url || undefined} />
                           <AvatarFallback className="text-sm font-black bg-primary/20 text-primary">
-                            {person.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            {person.name
+                              .split(' ')
+                              .map(n => n[0])
+                              .join('')
+                              .slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                         {i === 0 && (
@@ -192,14 +255,21 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                       </div>
 
                       <div className="relative z-10 flex-1 min-w-0">
-                        <p className={cn(
-                          'font-black italic uppercase tracking-tighter truncate leading-none mb-2',
-                          i === 0 ? 'text-xl' : 'text-base'
-                        )}>
+                        <p
+                          className={cn(
+                            'font-black italic uppercase tracking-tighter truncate leading-none mb-2',
+                            i === 0 ? 'text-xl' : 'text-base'
+                          )}
+                        >
                           {person.name}
                         </p>
                         <div className="flex items-center gap-3">
-                          <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-white/5 border-white/10">{person.dealsCount} deals</Badge>
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] font-black uppercase tracking-widest bg-white/5 border-white/10"
+                          >
+                            {person.dealsCount} deals
+                          </Badge>
                           {person.dealsCount >= 5 && (
                             <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
                               <Flame className="h-3 w-3" /> On Fire
@@ -209,16 +279,24 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                       </div>
 
                       <div className="relative z-10 text-right">
-                        <p className={cn(
-                          'font-black italic tracking-tighter leading-none mb-1',
-                          i === 0 ? 'text-3xl text-rank-gold' : 'text-xl text-foreground'
-                        )}>
+                        <p
+                          className={cn(
+                            'font-black italic tracking-tighter leading-none mb-1',
+                            i === 0
+                              ? 'text-3xl text-rank-gold'
+                              : 'text-xl text-foreground'
+                          )}
+                        >
                           R$ {(person.totalSales / 1000).toFixed(0)}k
                         </p>
                         {i > 0 && (
                           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center justify-end gap-1.5 opacity-60">
                             <TrendingUp className="h-3 w-3" />
-                            GAP: R$ {((topFive[0].totalSales - person.totalSales) / 1000).toFixed(0)}k
+                            GAP: R${' '}
+                            {((topFive[0].totalSales - person.totalSales) / 1000).toFixed(
+                              0
+                            )}
+                            k
                           </p>
                         )}
                       </div>
@@ -233,6 +311,5 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
     </div>
   );
 };
-
 
 export const LiveScoreboard = React.memo(LiveScoreboardComponent);

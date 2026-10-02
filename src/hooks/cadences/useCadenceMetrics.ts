@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CadenceMetrics {
   cadence_id: string;
@@ -22,9 +22,9 @@ export interface CadenceMetrics {
 
 export function useCadenceMetrics(cadenceId?: string, days: number = 30) {
   return useQuery({
-    queryKey: ["cadence-metrics", cadenceId ?? "all", days],
+    queryKey: ['cadence-metrics', cadenceId ?? 'all', days],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_cadence_metrics", {
+      const { data, error } = await supabase.rpc('get_cadence_metrics', {
         _cadence_id: cadenceId ?? undefined,
         _days: days,
       });

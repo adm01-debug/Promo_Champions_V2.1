@@ -1,8 +1,13 @@
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
-import { Info, Clock } from "lucide-react";
-import { useToggleSendTimeOptimization } from "@/hooks/sequences/useSendTimeOptimization";
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from '@/components/ui/tooltip';
+import { Info, Clock } from 'lucide-react';
+import { useToggleSendTimeOptimization } from '@/hooks/sequences/useSendTimeOptimization';
 
 interface Props {
   sequenceId: string;
@@ -30,8 +35,9 @@ export function SendTimeOptimizationToggle({ sequenceId, enabled }: Props) {
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-xs">
                   <p className="text-xs">
-                    Quando ativado, a sequência aprende o melhor horário de cada contato (com base em opens, clicks e replies)
-                    e adia envios de e-mail/Linkedin para a próxima janela ótima dentro de 24h.
+                    Quando ativado, a sequência aprende o melhor horário de cada contato
+                    (com base em opens, clicks e replies) e adia envios de e-mail/Linkedin
+                    para a próxima janela ótima dentro de 24h.
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -45,7 +51,7 @@ export function SendTimeOptimizationToggle({ sequenceId, enabled }: Props) {
           id="sto-switch"
           checked={enabled}
           disabled={toggle.isPending}
-          onCheckedChange={(v) => toggle.mutate({ id: sequenceId, enabled: v })}
+          onCheckedChange={v => toggle.mutate({ id: sequenceId, enabled: v })}
         />
       </div>
     </TooltipProvider>

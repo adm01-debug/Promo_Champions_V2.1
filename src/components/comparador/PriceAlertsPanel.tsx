@@ -1,10 +1,10 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, TrendingDown, TrendingUp } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, TrendingDown, TrendingUp } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface PriceAlert {
   id: string;
@@ -49,31 +49,41 @@ export const PriceAlertsPanel = React.memo(function PriceAlertsPanel({
       <CardContent>
         {alerts.length > 0 ? (
           <div className="space-y-2 max-h-60 overflow-y-auto">
-            {alerts.slice(0, 10).map((alert) => (
+            {alerts.slice(0, 10).map(alert => (
               <div
                 key={alert.id}
-                className={`p-3 rounded-lg border ${alert.is_read ? "bg-muted/30" : "bg-background"}`}
+                className={`p-3 rounded-lg border ${alert.is_read ? 'bg-muted/30' : 'bg-background'}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    {alert.alert_type === "price_drop" ? (
+                    {alert.alert_type === 'price_drop' ? (
                       <TrendingDown className="h-4 w-4 text-status-success" />
                     ) : (
                       <TrendingUp className="h-4 w-4 text-destructive" />
                     )}
                     <span className="font-medium">{alert.products?.name}</span>
                     <span className="text-muted-foreground">•</span>
-                    <span className="text-sm text-muted-foreground">{alert.suppliers?.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {alert.suppliers?.name}
+                    </span>
                   </div>
-                  <Badge variant={alert.alert_type === "price_drop" ? "default" : "destructive"}>
+                  <Badge
+                    variant={
+                      alert.alert_type === 'price_drop' ? 'default' : 'destructive'
+                    }
+                  >
                     {alert.price_change_percent?.toFixed(1)}%
                   </Badge>
                 </div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  {alert.old_price && formatCurrency(alert.old_price)} → {formatCurrency(alert.new_price)}
+                  {alert.old_price && formatCurrency(alert.old_price)} →{' '}
+                  {formatCurrency(alert.new_price)}
                   <span className="ml-2">•</span>
                   <span className="ml-2">
-                    {formatDistanceToNow(new Date(alert.created_at), { addSuffix: true, locale: ptBR })}
+                    {formatDistanceToNow(new Date(alert.created_at), {
+                      addSuffix: true,
+                      locale: ptBR,
+                    })}
                   </span>
                 </div>
               </div>
@@ -81,7 +91,8 @@ export const PriceAlertsPanel = React.memo(function PriceAlertsPanel({
           </div>
         ) : (
           <p className="text-muted-foreground text-center py-4">
-            Nenhum alerta de preço. Alertas são criados automaticamente quando preços variam mais de 5%.
+            Nenhum alerta de preço. Alertas são criados automaticamente quando preços
+            variam mais de 5%.
           </p>
         )}
       </CardContent>

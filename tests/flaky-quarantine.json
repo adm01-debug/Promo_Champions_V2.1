@@ -1,0 +1,4 @@
+{
+  "_doc": "Quarentena de specs flaky. Cada entrada: id = '<arquivo-do-vitest>::<fullName da assertion>' (ver relatório em test-results/vitest.json) ou apenas '<arquivo>' para quarentenar a suíte inteira; 'ate' = prazo máximo (YYYY-MM-DD) — vencida, a spec volta a reprovar o build; 'motivo' e 'issue' documentam a causa. Specs listadas aqui rodam normalmente mas suas falhas não reprovam o build (::warning:: no CI). Use só para flakes conhecidos em investigação — nunca para esconder regressão.",
+  "specs": []
+}

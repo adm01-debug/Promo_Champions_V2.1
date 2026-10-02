@@ -2,6 +2,7 @@ import React from 'react';
 import { isWonSaleStatus } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,29 +17,48 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
   const { data: trend, isLoading: trendLoading } = useQuery({
     queryKey: ['conversion-trend-widget'],
     queryFn: async () => {
-      const weeks: { week: string; rate: number }[] = [];
       const now = new Date();
+      const weekRanges: { weekStart: Date; weekEnd: Date }[] = [];
       for (let i = 7; i >= 0; i--) {
         const weekEnd = new Date(now);
         weekEnd.setDate(weekEnd.getDate() - i * 7);
         const weekStart = new Date(weekEnd);
         weekStart.setDate(weekStart.getDate() - 7);
+        weekRanges.push({ weekStart, weekEnd });
+      }
 
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('status')
-          .gte('created_at', weekStart.toISOString())
-          .lte('created_at', weekEnd.toISOString());
+      const firstWeek = weekRanges[0];
+      const lastWeek = weekRanges[weekRanges.length - 1];
+      if (!firstWeek || !lastWeek) return [];
 
-        const total = sales?.length || 0;
-        const won = sales?.filter(s => isWonSaleStatus(s.status)).length || 0;
+      // Uma única query paginada cobrindo as 8 semanas (evita N+1); o
+      // agrupamento por semana é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('status, created_at')
+            .gte('created_at', firstWeek.weekStart.toISOString())
+            .lte('created_at', lastWeek.weekEnd.toISOString())
+            .range(from, to),
+        { label: 'ConversionRateWidget:sales' }
+      );
+
+      return weekRanges.map(({ weekStart, weekEnd }) => {
+        const weekSales = sales.filter(s => {
+          const createdAt = new Date(s.created_at);
+          return createdAt >= weekStart && createdAt <= weekEnd;
+        });
+
+        const total = weekSales.length;
+        const won = weekSales.filter(s => isWonSaleStatus(s.status)).length;
         const rate = total > 0 ? Math.round((won / total) * 100) : 0;
-        weeks.push({
+        return {
           week: `${weekStart.getDate()}/${weekStart.getMonth() + 1}`,
           rate,
-        });
-      }
-      return weeks;
+        };
+      });
     },
     staleTime: 120_000,
   });
@@ -77,7 +97,9 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
               )}
               {isPositive ? '+' : ''}
               {change}%{' '}
-              <span className="text-muted-foreground/60 font-normal ml-0.5">vs anterior</span>
+              <span className="text-muted-foreground/60 font-normal ml-0.5">
+                vs anterior
+              </span>
             </div>
           </div>
         </div>

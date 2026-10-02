@@ -54,12 +54,12 @@ export function useMobileNavigation() {
 
   const currentPageInfo = useMemo((): PageInfo => {
     const path = location.pathname;
-    
+
     // Exact match first
     if (routeInfoMap[path]) {
       return routeInfoMap[path];
     }
-    
+
     // Try to match parent routes (e.g., /clientes/123 -> /clientes)
     const pathParts = path.split('/').filter(Boolean);
     if (pathParts.length > 1) {
@@ -67,13 +67,13 @@ export function useMobileNavigation() {
       if (routeInfoMap[parentPath]) {
         return {
           ...routeInfoMap[parentPath],
-          subtitle: 'Detalhes'
+          subtitle: 'Detalhes',
         };
       }
     }
-    
+
     // Fallback title
-    return { title: "PROMO CHAMPIONS" };
+    return { title: 'PROMO CHAMPIONS' };
   }, [location.pathname]);
 
   const goBack = useCallback(() => {
@@ -98,6 +98,6 @@ export function useMobileNavigation() {
     isHomePage,
     canGoBack,
     isMobile,
-    currentPath: location.pathname
+    currentPath: location.pathname,
   };
 }

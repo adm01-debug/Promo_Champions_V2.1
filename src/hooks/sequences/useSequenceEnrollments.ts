@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface SequenceEnrollment {
   id: string;
@@ -31,14 +31,14 @@ export interface SequenceStepExecution {
 
 export function useSequenceEnrollments(sequenceId: string | undefined) {
   return useQuery({
-    queryKey: ["sequence-enrollments", sequenceId],
+    queryKey: ['sequence-enrollments', sequenceId],
     queryFn: async () => {
       if (!sequenceId) return [];
       const { data, error } = await supabase
-        .from("sequence_enrollments")
-        .select("*")
-        .eq("sequence_id", sequenceId)
-        .order("started_at", { ascending: false });
+        .from('sequence_enrollments')
+        .select('*')
+        .eq('sequence_id', sequenceId)
+        .order('started_at', { ascending: false });
       if (error) throw error;
       return (data ?? []) as SequenceEnrollment[];
     },
@@ -48,14 +48,14 @@ export function useSequenceEnrollments(sequenceId: string | undefined) {
 
 export function useEnrollmentExecutions(enrollmentId: string | undefined) {
   return useQuery({
-    queryKey: ["sequence-executions", enrollmentId],
+    queryKey: ['sequence-executions', enrollmentId],
     queryFn: async () => {
       if (!enrollmentId) return [];
       const { data, error } = await supabase
-        .from("sequence_step_executions")
-        .select("*")
-        .eq("enrollment_id", enrollmentId)
-        .order("executed_at", { ascending: false });
+        .from('sequence_step_executions')
+        .select('*')
+        .eq('enrollment_id', enrollmentId)
+        .order('executed_at', { ascending: false });
       if (error) throw error;
       return (data ?? []) as SequenceStepExecution[];
     },

@@ -8,6 +8,7 @@ import { useAutoAwardBonuses } from '@/hooks/useAutoAwardBonuses';
 import type { BonusType } from '@/hooks/useCommissionBonuses';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 const typeLabels: Record<BonusType, string> = {
   first_sale: 'Primeira Venda',
   milestone: 'Marco',
@@ -25,9 +26,7 @@ const typeStyles: Record<BonusType, string> = {
 };
 
 const formatValue = (kind: 'fixed' | 'percentage', amount: number) =>
-  kind === 'fixed'
-    ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(amount)
-    : `${Number(amount).toFixed(2)}%`;
+  kind === 'fixed' ? formatBRL(amount, { decimals: 2 }) : `${Number(amount).toFixed(2)}%`;
 
 interface Props {
   salespersonId: string | undefined;
@@ -39,15 +38,13 @@ function BonusRow({ b }: { b: EligibleBonus }) {
     <li
       className={cn(
         'flex items-start gap-3 rounded-lg border p-3 transition-colors',
-        b.achieved
-          ? 'border-emerald-500/30 bg-emerald-500/5'
-          : 'border-border bg-card/50',
+        b.achieved ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-border bg-card/50'
       )}
     >
       <div
         className={cn(
           'h-8 w-8 rounded-md flex items-center justify-center shrink-0',
-          b.achieved ? 'bg-emerald-500/15 text-emerald-500' : 'bg-primary/10 text-primary',
+          b.achieved ? 'bg-emerald-500/15 text-emerald-500' : 'bg-primary/10 text-primary'
         )}
       >
         {b.achieved ? <Award className="h-4 w-4" /> : <Target className="h-4 w-4" />}
@@ -65,7 +62,10 @@ function BonusRow({ b }: { b: EligibleBonus }) {
         </p>
 
         {!b.achieved && (
-          <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden" aria-label={`Progresso ${pct}%`}>
+          <div
+            className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden"
+            aria-label={`Progresso ${pct}%`}
+          >
             <div
               className="h-full bg-primary/70 transition-all"
               style={{ width: `${pct}%` }}
@@ -76,7 +76,7 @@ function BonusRow({ b }: { b: EligibleBonus }) {
         <p
           className={cn(
             'text-sm font-bold mt-1 tabular-nums',
-            b.achieved ? 'text-emerald-500' : 'text-muted-foreground',
+            b.achieved ? 'text-emerald-500' : 'text-muted-foreground'
           )}
         >
           {b.achieved ? '+ ' : ''}
@@ -100,7 +100,6 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
   }, [bonuses]);
 
   useAutoAwardBonuses(achieved, salespersonId);
-
 
   if (isLoading) {
     return (
@@ -133,12 +132,18 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
           </div>
           <div className="flex gap-2">
             {achieved.length > 0 && (
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30">
+              <Badge
+                variant="outline"
+                className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30"
+              >
                 {achieved.length} conquistado{achieved.length === 1 ? '' : 's'}
               </Badge>
             )}
             {inProgress.length > 0 && (
-              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+              <Badge
+                variant="outline"
+                className="bg-primary/10 text-primary border-primary/30"
+              >
                 {inProgress.length} em progresso
               </Badge>
             )}
@@ -151,7 +156,9 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
               Conquistados
             </p>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {achieved.map((b) => <BonusRow key={b.id} b={b} />)}
+              {achieved.map(b => (
+                <BonusRow key={b.id} b={b} />
+              ))}
             </ul>
           </section>
         )}
@@ -162,7 +169,9 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
               Próximos marcos
             </p>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {inProgress.map((b) => <BonusRow key={b.id} b={b} />)}
+              {inProgress.map(b => (
+                <BonusRow key={b.id} b={b} />
+              ))}
             </ul>
           </section>
         )}

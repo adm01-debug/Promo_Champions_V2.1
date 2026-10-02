@@ -45,15 +45,19 @@ export function MiniMap({ cars, currentUserSalespersonId }: MiniMapProps) {
         />
         {/* linha de largada (horizontal no topo) */}
         <line
-          x1={210} y1={95} x2={390} y2={95}
+          x1={210}
+          y1={95}
+          x2={390}
+          y2={95}
           stroke="hsl(var(--primary))"
           strokeWidth={6}
           opacity={0.9}
         />
         {/* dots dos carros */}
-        {cars.map((c) => {
+        {cars.map(c => {
           const pos = getPositionOnTrack(Number(c.progress), 0);
-          const isMe = currentUserSalespersonId && c.salesperson_id === currentUserSalespersonId;
+          const isMe =
+            currentUserSalespersonId && c.salesperson_id === currentUserSalespersonId;
           return (
             <g key={c.car_id}>
               {isMe && (

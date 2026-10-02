@@ -3,7 +3,7 @@
 > Guia exaustivo para implementação do sistema de monitoramento de performance de banco de dados em projetos Lovable/Supabase.
 
 **Versão:** 1.0  
-**Última atualização:** 23/03/2026  
+**Atualizado em:** 2026-03-23  
 **Cobertura de testes:** 229 testes automatizados (100% passando)
 
 ---
@@ -63,12 +63,12 @@ O módulo de telemetria monitora automaticamente **todas as queries** executadas
 
 ### Componentes
 
-| Componente | Localização | Responsabilidade |
-|---|---|---|
-| `emitTelemetry()` | `supabase/functions/external-db-bridge/index.ts` | Classificação + log + persistência |
-| `query_telemetry` | Tabela Supabase (local) | Armazenamento de dados |
-| `AdminTelemetriaPage` | `src/pages/admin/AdminTelemetriaPage.tsx` | Dashboard principal |
-| `TelemetryCharts` | `src/components/admin/telemetry/TelemetryCharts.tsx` | Gráficos de tendência |
+| Componente            | Localização                                          | Responsabilidade                   |
+| --------------------- | ---------------------------------------------------- | ---------------------------------- |
+| `emitTelemetry()`     | `supabase/functions/external-db-bridge/index.ts`     | Classificação + log + persistência |
+| `query_telemetry`     | Tabela Supabase (local)                              | Armazenamento de dados             |
+| `AdminTelemetriaPage` | `src/pages/admin/AdminTelemetriaPage.tsx`            | Dashboard principal                |
+| `TelemetryCharts`     | `src/components/admin/telemetry/TelemetryCharts.tsx` | Gráficos de tendência              |
 
 ### Diagrama de Dependências
 
@@ -97,22 +97,22 @@ external-db-bridge (Edge Function)
 CREATE TABLE public.query_telemetry (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at timestamptz NOT NULL DEFAULT now(),
-  
+
   -- Identificação da query
   operation text NOT NULL,           -- 'select', 'insert', 'update', 'delete', 'rpc'
   table_name text,                   -- Nome da tabela consultada (null para RPCs)
   rpc_name text,                     -- Nome da função RPC (null para queries diretas)
-  
+
   -- Métricas de performance
   duration_ms integer NOT NULL,      -- Tempo de execução em milissegundos
   severity text NOT NULL DEFAULT 'slow',  -- 'slow' | 'very_slow' | 'error'
-  
+
   -- Contexto da query
   record_count integer,              -- Número de registros retornados
   query_limit integer,               -- LIMIT usado na query
   query_offset integer,              -- OFFSET usado na query
   count_mode text,                   -- 'exact' | 'planned' | 'none'
-  
+
   -- Informações adicionais
   error_message text,                -- Mensagem de erro (se severity = 'error')
   user_id uuid                       -- ID do usuário que executou a query
@@ -171,8 +171,8 @@ CREATE INDEX idx_query_telemetry_table ON public.query_telemetry (table_name);
 ### Constantes de Threshold
 
 ```typescript
-const SLOW_QUERY_THRESHOLD_MS = 3000;       // Alerta: query > 3 segundos
-const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;   // Alerta crítico: query > 8 segundos
+const SLOW_QUERY_THRESHOLD_MS = 3000; // Alerta: query > 3 segundos
+const VERY_SLOW_QUERY_THRESHOLD_MS = 8000; // Alerta crítico: query > 8 segundos
 ```
 
 ### Função `emitTelemetry()`
@@ -181,32 +181,37 @@ Esta é a função central do sistema. Deve ser chamada **após cada query** ao 
 
 ```typescript
 function emitTelemetry(meta: {
-  operation: string;       // 'select' | 'insert' | 'update' | 'delete' | 'rpc'
-  table?: string;          // Nome da tabela (para queries diretas)
-  rpcName?: string;        // Nome da função RPC
-  limit?: number;          // LIMIT da query
-  offset?: number;         // OFFSET da query
-  countMode?: string;      // Modo de contagem usado
-  durationMs: number;      // Tempo de execução (performance.now() delta)
-  recordCount?: number;    // Registros retornados
+  operation: string; // 'select' | 'insert' | 'update' | 'delete' | 'rpc'
+  table?: string; // Nome da tabela (para queries diretas)
+  rpcName?: string; // Nome da função RPC
+  limit?: number; // LIMIT da query
+  offset?: number; // OFFSET da query
+  countMode?: string; // Modo de contagem usado
+  durationMs: number; // Tempo de execução (performance.now() delta)
+  recordCount?: number; // Registros retornados
   status: 'ok' | 'error' | 'slow' | 'very_slow';
-  error?: string;          // Mensagem de erro (se houver)
-  userId?: string | null;  // ID do usuário autenticado
+  error?: string; // Mensagem de erro (se houver)
+  userId?: string | null; // ID do usuário autenticado
 }) {
   // 1. Gerar ícone visual baseado no status
-  const icon = meta.status === 'very_slow' ? '🔴' 
-             : meta.status === 'slow' ? '🟡' 
-             : meta.status === 'error' ? '❌' 
-             : '✅';
-  
+  const icon =
+    meta.status === 'very_slow'
+      ? '🔴'
+      : meta.status === 'slow'
+        ? '🟡'
+        : meta.status === 'error'
+          ? '❌'
+          : '✅';
+
   // 2. Montar linha de log estruturada
   const target = meta.rpcName || meta.table || 'unknown';
-  const line = `${icon} [telemetry] ${meta.operation}:${target} ${meta.durationMs}ms` +
+  const line =
+    `${icon} [telemetry] ${meta.operation}:${target} ${meta.durationMs}ms` +
     ` | records=${meta.recordCount ?? '-'}` +
     ` limit=${meta.limit ?? '-'}` +
     ` offset=${meta.offset ?? '-'}` +
     ` count=${meta.countMode ?? '-'}`;
-  
+
   // 3. Emitir log com nível apropriado
   if (meta.status === 'very_slow') {
     console.warn(`⚠️ VERY SLOW QUERY: ${line}`);
@@ -226,21 +231,25 @@ function emitTelemetry(meta: {
       if (localUrl && serviceKey) {
         const localClient = createClient(localUrl, serviceKey);
         // Fire-and-forget: não aguardar resposta
-        localClient.from('query_telemetry').insert({
-          operation: meta.operation,
-          table_name: meta.table || null,
-          rpc_name: meta.rpcName || null,
-          duration_ms: meta.durationMs,
-          record_count: meta.recordCount ?? null,
-          query_limit: meta.limit ?? null,
-          query_offset: meta.offset ?? null,
-          count_mode: meta.countMode || null,
-          severity: meta.status,
-          error_message: meta.error || null,
-          user_id: meta.userId || null,
-        }).then(({ error: insertErr }) => {
-          if (insertErr) console.warn('[telemetry-persist] Insert failed:', insertErr.message);
-        });
+        localClient
+          .from('query_telemetry')
+          .insert({
+            operation: meta.operation,
+            table_name: meta.table || null,
+            rpc_name: meta.rpcName || null,
+            duration_ms: meta.durationMs,
+            record_count: meta.recordCount ?? null,
+            query_limit: meta.limit ?? null,
+            query_offset: meta.offset ?? null,
+            count_mode: meta.countMode || null,
+            severity: meta.status,
+            error_message: meta.error || null,
+            user_id: meta.userId || null,
+          })
+          .then(({ error: insertErr }) => {
+            if (insertErr)
+              console.warn('[telemetry-persist] Insert failed:', insertErr.message);
+          });
       }
     } catch (e) {
       // Fire-and-forget: NUNCA bloquear a resposta principal
@@ -289,30 +298,52 @@ emitTelemetry({
 ```typescript
 // Dentro da Edge Function handler:
 const selectStart = performance.now();
-const { data: selectData, error: selectError, count } = await externalClient
+const {
+  data: selectData,
+  error: selectError,
+  count,
+} = await externalClient
   .from(table)
   .select(selectColumns, { count: countMode === 'none' ? undefined : countMode })
   .range(offset, offset + limit - 1);
 const selectDuration = Math.round(performance.now() - selectStart);
 
-console.info(`Selected ${selectData?.length ?? 0} of ${count ?? 'n/a'} records from ${table}`);
+console.info(
+  `Selected ${selectData?.length ?? 0} of ${count ?? 'n/a'} records from ${table}`
+);
 
 if (selectError) {
   emitTelemetry({
-    operation: 'select', table, limit, offset, countMode,
-    durationMs: selectDuration, status: 'error', error: selectError.message
+    operation: 'select',
+    table,
+    limit,
+    offset,
+    countMode,
+    durationMs: selectDuration,
+    status: 'error',
+    error: selectError.message,
   });
   return new Response(JSON.stringify({ error: selectError.message }), {
-    status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    status: 400,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 }
 
-const selectStatus = selectDuration >= VERY_SLOW_QUERY_THRESHOLD_MS ? 'very_slow'
-  : selectDuration >= SLOW_QUERY_THRESHOLD_MS ? 'slow' : 'ok';
+const selectStatus =
+  selectDuration >= VERY_SLOW_QUERY_THRESHOLD_MS
+    ? 'very_slow'
+    : selectDuration >= SLOW_QUERY_THRESHOLD_MS
+      ? 'slow'
+      : 'ok';
 emitTelemetry({
-  operation: 'select', table, limit, offset, countMode,
-  durationMs: selectDuration, status: selectStatus,
-  recordCount: selectData?.length ?? 0
+  operation: 'select',
+  table,
+  limit,
+  offset,
+  countMode,
+  durationMs: selectDuration,
+  status: selectStatus,
+  recordCount: selectData?.length ?? 0,
 });
 ```
 
@@ -333,11 +364,11 @@ emitTelemetry({
 ### Dependências
 
 ```typescript
-import { useState } from "react";
-import { format } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { TelemetryCharts } from "@/components/admin/telemetry/TelemetryCharts";
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { TelemetryCharts } from '@/components/admin/telemetry/TelemetryCharts';
 ```
 
 ### Interface de Dados
@@ -353,7 +384,7 @@ interface TelemetryRow {
   query_limit: number | null;
   query_offset: number | null;
   count_mode: string | null;
-  severity: string;              // 'slow' | 'very_slow' | 'error'
+  severity: string; // 'slow' | 'very_slow' | 'error'
   error_message: string | null;
   user_id: string | null;
   created_at: string;
@@ -363,34 +394,39 @@ interface TelemetryRow {
 ### Filtros Suportados
 
 ```typescript
-type SeverityFilter = "all" | "slow" | "very_slow" | "error";
-type TimeFilter = "1h" | "6h" | "24h" | "7d" | "custom";
+type SeverityFilter = 'all' | 'slow' | 'very_slow' | 'error';
+type TimeFilter = '1h' | '6h' | '24h' | '7d' | 'custom';
 ```
 
 ### Query de Dados (React Query)
 
 ```typescript
-const { data: rows = [], isLoading, refetch, isRefetching } = useQuery<TelemetryRow[]>({
-  queryKey: ["query-telemetry", severityFilter, timeFilter, customDateFrom, customDateTo],
+const {
+  data: rows = [],
+  isLoading,
+  refetch,
+  isRefetching,
+} = useQuery<TelemetryRow[]>({
+  queryKey: ['query-telemetry', severityFilter, timeFilter, customDateFrom, customDateTo],
   queryFn: async () => {
     const { from, to } = getTimeThreshold();
     let query = supabase
-      .from("query_telemetry")
-      .select("*")
-      .gte("created_at", from)
-      .lte("created_at", to)
-      .order("created_at", { ascending: false })
+      .from('query_telemetry')
+      .select('*')
+      .gte('created_at', from)
+      .lte('created_at', to)
+      .order('created_at', { ascending: false })
       .limit(500);
 
-    if (severityFilter !== "all") {
-      query = query.eq("severity", severityFilter);
+    if (severityFilter !== 'all') {
+      query = query.eq('severity', severityFilter);
     }
 
     const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
-  refetchInterval: 30000,  // Auto-refresh a cada 30 segundos
+  refetchInterval: 30000, // Auto-refresh a cada 30 segundos
   staleTime: 10000,
 });
 ```
@@ -399,12 +435,13 @@ const { data: rows = [], isLoading, refetch, isRefetching } = useQuery<Telemetry
 
 ```typescript
 // Cards de sumário
-const verySlow = rows.filter(r => r.severity === "very_slow").length;
-const slow = rows.filter(r => r.severity === "slow").length;
-const errors = rows.filter(r => r.severity === "error").length;
-const avgDuration = rows.length > 0
-  ? Math.round(rows.reduce((s, r) => s + r.duration_ms, 0) / rows.length)
-  : 0;
+const verySlow = rows.filter(r => r.severity === 'very_slow').length;
+const slow = rows.filter(r => r.severity === 'slow').length;
+const errors = rows.filter(r => r.severity === 'error').length;
+const avgDuration =
+  rows.length > 0
+    ? Math.round(rows.reduce((s, r) => s + r.duration_ms, 0) / rows.length)
+    : 0;
 ```
 
 ### Cálculo de Top Offenders
@@ -412,7 +449,7 @@ const avgDuration = rows.length > 0
 ```typescript
 const tableStats = new Map<string, { count: number; totalMs: number; maxMs: number }>();
 for (const r of rows) {
-  const key = r.rpc_name || r.table_name || "unknown";
+  const key = r.rpc_name || r.table_name || 'unknown';
   const prev = tableStats.get(key) || { count: 0, totalMs: 0, maxMs: 0 };
   tableStats.set(key, {
     count: prev.count + 1,
@@ -457,7 +494,7 @@ const getSeverityBadge = (severity: string) => {
 ```typescript
 const handleCleanup = async () => {
   const threshold = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  await supabase.from("query_telemetry").delete().lt("created_at", threshold);
+  await supabase.from('query_telemetry').delete().lt('created_at', threshold);
   refetch();
 };
 ```
@@ -486,13 +523,18 @@ interface TelemetryChartsProps {
 Agrupa dados em buckets temporais baseados no filtro de período:
 
 ```typescript
-const bucketMs = timeFilter === "1h" ? 5 * 60 * 1000    // 5 min
-  : timeFilter === "6h" ? 30 * 60 * 1000                // 30 min
-  : timeFilter === "24h" ? 60 * 60 * 1000               // 1 hora
-  : 6 * 60 * 60 * 1000;                                 // 6 horas (para 7d)
+const bucketMs =
+  timeFilter === '1h'
+    ? 5 * 60 * 1000 // 5 min
+    : timeFilter === '6h'
+      ? 30 * 60 * 1000 // 30 min
+      : timeFilter === '24h'
+        ? 60 * 60 * 1000 // 1 hora
+        : 6 * 60 * 60 * 1000; // 6 horas (para 7d)
 ```
 
 **Séries:**
+
 - `muitoLentas` (very_slow) — cor `hsl(var(--destructive))`
 - `lentas` (slow) — cor `hsl(45, 93%, 47%)` (amarelo)
 - `erros` (error) — cor `hsl(0, 84%, 60%)` (vermelho)
@@ -500,6 +542,7 @@ const bucketMs = timeFilter === "1h" ? 5 * 60 * 1000    // 5 min
 #### 2. Duração Média / Máxima (AreaChart)
 
 **Séries:**
+
 - `maxMs` — Duração máxima no bucket
 - `mediaMs` — Duração média no bucket
 
@@ -512,10 +555,10 @@ Mostra as top 8 tabelas com mais alertas, usando layout `vertical`.
 ```typescript
 function formatBucketTime(ts: number, timeFilter: string): string {
   const d = new Date(ts);
-  if (timeFilter === "7d") {
-    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  if (timeFilter === '7d') {
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   }
-  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 ```
 
@@ -528,30 +571,39 @@ function formatBucketTime(ts: number, timeFilter: string): string {
 ```typescript
 const handleExportCSV = () => {
   const headers = [
-    "Data/Hora", "Operação", "Tabela/RPC", "Duração (ms)", "Severidade",
-    "Registros", "Limit", "Offset", "Count Mode", "Erro"
+    'Data/Hora',
+    'Operação',
+    'Tabela/RPC',
+    'Duração (ms)',
+    'Severidade',
+    'Registros',
+    'Limit',
+    'Offset',
+    'Count Mode',
+    'Erro',
   ];
 
   const csvRows = rows.map(r => [
-    new Date(r.created_at).toLocaleString("pt-BR"),
+    new Date(r.created_at).toLocaleString('pt-BR'),
     r.operation,
-    r.table_name || r.rpc_name || "-",
+    r.table_name || r.rpc_name || '-',
     r.duration_ms,
     r.severity,
-    r.record_count ?? "-",
-    r.query_limit ?? "-",
-    r.query_offset ?? "-",
-    r.count_mode ?? "-",
-    (r.error_message || "").replace(/"/g, '""'),
+    r.record_count ?? '-',
+    r.query_limit ?? '-',
+    r.query_offset ?? '-',
+    r.count_mode ?? '-',
+    (r.error_message || '').replace(/"/g, '""'),
   ]);
 
   // BOM UTF-8 para compatibilidade com Excel
-  const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
   // ... download automático
 };
 ```
 
 **Detalhes importantes:**
+
 - **BOM UTF-8** (`\uFEFF`) no início do arquivo para Excel reconhecer acentos
 - Aspas duplas escapadas no campo de erro
 - Nome do arquivo: `telemetria_YYYY-MM-DD_filtro.csv`
@@ -560,16 +612,20 @@ const handleExportCSV = () => {
 
 ```typescript
 const handleExportPDF = async () => {
-  const { default: jsPDF } = await import("jspdf");          // Dynamic import
-  const { default: autoTable } = await import("jspdf-autotable");
+  const { default: jsPDF } = await import('jspdf'); // Dynamic import
+  const { default: autoTable } = await import('jspdf-autotable');
 
-  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
   // Cabeçalho
   doc.setFontSize(16);
-  doc.text("Telemetria de Queries", 14, 15);
+  doc.text('Telemetria de Queries', 14, 15);
   doc.setFontSize(9);
-  doc.text(`Exportado em ${now.toLocaleString("pt-BR")} · Período: ${periodLabel}`, 14, 22);
+  doc.text(
+    `Exportado em ${now.toLocaleString('pt-BR')} · Período: ${periodLabel}`,
+    14,
+    22
+  );
 
   // Tabela
   autoTable(doc, {
@@ -586,6 +642,7 @@ const handleExportPDF = async () => {
 ```
 
 **Dependências:**
+
 - `jspdf` (v4.2.1+)
 - `jspdf-autotable` (v5.0.7+)
 
@@ -600,7 +657,7 @@ CREATE POLICY "Admins can read telemetry"
   TO authenticated
   USING (has_role(auth.uid(), 'admin'));
 
--- Somente admins podem DELETAR dados de telemetria  
+-- Somente admins podem DELETAR dados de telemetria
 CREATE POLICY "Admins can delete telemetry"
   ON public.query_telemetry FOR DELETE
   TO authenticated
@@ -622,12 +679,12 @@ CREATE POLICY "Authenticated users can insert own telemetry"
 
 ### Visão Geral: 229 Testes
 
-| Arquivo | Testes | Escopo |
-|---|---|---|
-| `tests/lib/telemetry-logic.test.ts` | 77 | Lógica pura: thresholds, severidade, offenders, formatação, CSV/PDF, buckets |
-| `tests/components/TelemetryCharts.test.tsx` | 38 | Componente de gráficos: rendering, dados, responsividade |
-| `tests/pages/AdminTelemetriaPage.test.tsx` | 47 | Página completa: UI, filtros, exportação, interações |
-| `tests/lib/external-db-bridge-telemetry.test.ts` | 67 | Edge function: emitTelemetry, classificação, cache, mapeamento |
+| Arquivo                                          | Testes | Escopo                                                                       |
+| ------------------------------------------------ | ------ | ---------------------------------------------------------------------------- |
+| `tests/lib/telemetry-logic.test.ts`              | 77     | Lógica pura: thresholds, severidade, offenders, formatação, CSV/PDF, buckets |
+| `tests/components/TelemetryCharts.test.tsx`      | 38     | Componente de gráficos: rendering, dados, responsividade                     |
+| `tests/pages/AdminTelemetriaPage.test.tsx`       | 47     | Página completa: UI, filtros, exportação, interações                         |
+| `tests/lib/external-db-bridge-telemetry.test.ts` | 67     | Edge function: emitTelemetry, classificação, cache, mapeamento               |
 
 ### Padrão de Teste: Lógica Pura
 
@@ -672,7 +729,7 @@ const wrapper = ({ children }) => (
 
 it('renders charts when data is provided', () => {
   const rows = [
-    { id: '1', duration_ms: 5000, severity: 'slow', table_name: 'products', 
+    { id: '1', duration_ms: 5000, severity: 'slow', table_name: 'products',
       rpc_name: null, created_at: new Date().toISOString() }
   ];
   render(<TelemetryCharts rows={rows} timeFilter="24h" />, { wrapper });
@@ -762,19 +819,19 @@ Copie os 4 arquivos de teste e execute para validar a implementação.
 
 ## 11. Configurações e Thresholds
 
-| Configuração | Valor | Onde |
-|---|---|---|
-| Threshold lento | 3.000 ms | Edge Function |
-| Threshold muito lento | 8.000 ms | Edge Function |
-| Auto-refresh do dashboard | 30.000 ms | Frontend (React Query) |
-| Stale time dos dados | 10.000 ms | Frontend (React Query) |
-| Limite de registros no dashboard | 500 | Frontend (query) |
-| Retenção de dados (limpeza manual) | 7 dias | Frontend (handleCleanup) |
-| Top offenders exibidos | 8 | Frontend (topOffenders) |
-| Bucket size (1h) | 5 min | TelemetryCharts |
-| Bucket size (6h) | 30 min | TelemetryCharts |
-| Bucket size (24h) | 1 hora | TelemetryCharts |
-| Bucket size (7d) | 6 horas | TelemetryCharts |
+| Configuração                       | Valor     | Onde                     |
+| ---------------------------------- | --------- | ------------------------ |
+| Threshold lento                    | 3.000 ms  | Edge Function            |
+| Threshold muito lento              | 8.000 ms  | Edge Function            |
+| Auto-refresh do dashboard          | 30.000 ms | Frontend (React Query)   |
+| Stale time dos dados               | 10.000 ms | Frontend (React Query)   |
+| Limite de registros no dashboard   | 500       | Frontend (query)         |
+| Retenção de dados (limpeza manual) | 7 dias    | Frontend (handleCleanup) |
+| Top offenders exibidos             | 8         | Frontend (topOffenders)  |
+| Bucket size (1h)                   | 5 min     | TelemetryCharts          |
+| Bucket size (6h)                   | 30 min    | TelemetryCharts          |
+| Bucket size (24h)                  | 1 hora    | TelemetryCharts          |
+| Bucket size (7d)                   | 6 horas   | TelemetryCharts          |
 
 ### Ajustando Thresholds
 
@@ -831,10 +888,11 @@ const VERY_SLOW_QUERY_THRESHOLD_MS = 15000;
 ```
 
 ### Formato:
+
 ```
 {icon} [telemetry] {operation}:{target} {duration}ms | records={count} limit={limit} offset={offset} count={countMode}
 ```
 
 ---
 
-*Documentação gerada automaticamente para uso interno. Todos os snippets de código são extraídos diretamente do sistema em produção.*
+_Documentação gerada automaticamente para uso interno. Todos os snippets de código são extraídos diretamente do sistema em produção._

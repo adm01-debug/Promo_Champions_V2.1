@@ -1,7 +1,9 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { collectErrors, validateNumber, validateString } from '../_shared/validation.ts';
 
 const PRIVATE_IP_RE =
   /^(localhost|127\.|0\.0\.0\.0|10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|::1|fd[0-9a-f]{2}:|169\.254\.)/i;
@@ -19,35 +21,31 @@ Deno.serve(withRequestId('simulate-load', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  // Require valid JWT — this endpoint can generate significant outbound traffic
-  const authHeader = req.headers.get('Authorization');
-  if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Authorization header required' }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-  const authClient = createClient(supabaseUrl, supabaseAnonKey, {
-    global: { headers: { Authorization: authHeader } },
-  });
-  const {
-    data: { user },
-    error: authError,
-  } = await authClient.auth.getUser();
-  if (authError || !user) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
-      status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+  // Requer JWT de usuário válido ou chamada interna com service_role —
+  // endpoint gera tráfego de saída significativo. Nenhum chamador existe no
+  // repo (ferramenta ops); os dois caminhos são aceitos por compatibilidade.
+  if (!isInternalServiceRequest(req)) {
+    try {
+      await getUserClient(req);
+    } catch (authErr) {
+      const isUnauth = authErr instanceof UnauthorizedError;
+      return new Response(
+        JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
   }
 
   try {
     const { concurrency = 10, total = 100, targetUrl } = await req.json().catch(() => ({}));
 
-    if (!targetUrl) {
-      return new Response(JSON.stringify({ error: 'targetUrl is required' }), {
+    const payloadErrors = collectErrors([
+      validateString(targetUrl, 'targetUrl', { required: true, maxLength: 2048 }),
+      validateNumber(concurrency, 'concurrency'),
+      validateNumber(total, 'total'),
+    ]);
+    if (payloadErrors.length) {
+      return new Response(JSON.stringify({ error: 'dados_invalidos', details: payloadErrors }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });

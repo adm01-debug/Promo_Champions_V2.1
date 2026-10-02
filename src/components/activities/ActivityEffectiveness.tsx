@@ -1,14 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useActivityStats } from "@/hooks/activities/useActivities";
-import { Target, Zap, TrendingUp, BarChart3 } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useActivityStats } from '@/hooks/activities/useActivities';
+import { Target, Zap, TrendingUp, BarChart3 } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
 export function ActivityEffectiveness() {
   const { data: stats } = useActivityStats();
 
   // Calculation logic
   const total = stats?.total ?? 0;
-  const connected = (stats?.byOutcome.connected ?? 0) + (stats?.byOutcome.scheduled ?? 0) + (stats?.byOutcome.qualified ?? 0) + (stats?.byOutcome.callback ?? 0);
+  const connected =
+    (stats?.byOutcome.connected ?? 0) +
+    (stats?.byOutcome.scheduled ?? 0) +
+    (stats?.byOutcome.qualified ?? 0) +
+    (stats?.byOutcome.callback ?? 0);
   const scheduled = stats?.byOutcome.scheduled ?? 0;
   const qualified = stats?.byOutcome.qualified ?? 0;
   const badTiming = stats?.byOutcome.bad_timing ?? 0;
@@ -23,37 +27,37 @@ export function ActivityEffectiveness() {
 
   const metrics = [
     {
-      label: "Taxa de Conexão",
+      label: 'Taxa de Conexão',
       value: connectionRate,
       icon: Zap,
-      description: "Contatos efetivos vs tentativas",
-      color: "text-amber-500",
-      progressColor: "bg-amber-500"
+      description: 'Contatos efetivos vs tentativas',
+      color: 'text-amber-500',
+      progressColor: 'bg-amber-500',
     },
     {
-      label: "Taxa de Agendamento",
+      label: 'Taxa de Agendamento',
       value: schedulingRate,
       icon: Target,
-      description: "Agendamentos vs conexões",
-      color: "text-blue-500",
-      progressColor: "bg-blue-500"
+      description: 'Agendamentos vs conexões',
+      color: 'text-blue-500',
+      progressColor: 'bg-blue-500',
     },
     {
-      label: "Taxa de Qualificação",
+      label: 'Taxa de Qualificação',
       value: qualificationRate,
       icon: TrendingUp,
-      description: "Leads qualificados vs conexões",
-      color: "text-emerald-500",
-      progressColor: "bg-emerald-500"
+      description: 'Leads qualificados vs conexões',
+      color: 'text-emerald-500',
+      progressColor: 'bg-emerald-500',
     },
     {
-      label: "Taxa de Rejeição",
+      label: 'Taxa de Rejeição',
       value: total > 0 ? ((badTiming + wrongPerson + unsubscribed) / total) * 100 : 0,
       icon: TrendingUp,
-      description: "Descarte vs tentativas",
-      color: "text-red-500",
-      progressColor: "bg-red-500"
-    }
+      description: 'Descarte vs tentativas',
+      color: 'text-red-500',
+      progressColor: 'bg-red-500',
+    },
   ];
 
   return (
@@ -65,7 +69,7 @@ export function ActivityEffectiveness() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {metrics.map((metric) => (
+        {metrics.map(metric => (
           <div key={metric.label} className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -74,35 +78,47 @@ export function ActivityEffectiveness() {
                 </div>
                 <div>
                   <p className="text-xs font-medium">{metric.label}</p>
-                  <p className="text-[10px] text-muted-foreground">{metric.description}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {metric.description}
+                  </p>
                 </div>
               </div>
               <span className="text-sm font-bold font-display">
                 {metric.value.toFixed(1)}%
               </span>
             </div>
-            <Progress value={metric.value} className={`h-1.5 ${metric.progressColor}/20`} />
+            <Progress
+              value={metric.value}
+              className={`h-1.5 ${metric.progressColor}/20`}
+            />
           </div>
         ))}
-        
+
         <div className="pt-2 border-t border-border/40">
           <div className="grid grid-cols-3 gap-2">
             <div className="text-center p-2 rounded-lg bg-muted/20">
-              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Conversão</p>
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                Conversão
+              </p>
               <p className="text-sm font-bold font-display gradient-text">
-                {total > 0 ? ((scheduled + qualified) / total * 100).toFixed(1) : "0.0"}%
+                {total > 0 ? (((scheduled + qualified) / total) * 100).toFixed(1) : '0.0'}
+                %
               </p>
             </div>
             <div className="text-center p-2 rounded-lg bg-muted/20">
-              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Média Duração</p>
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                Média Duração
+              </p>
               <p className="text-sm font-bold font-display">
                 {(stats?.avgDuration ?? 0).toFixed(0)}m
               </p>
             </div>
             <div className="text-center p-2 rounded-lg bg-muted/20">
-              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Perda (Ghost)</p>
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">
+                Perda (Ghost)
+              </p>
               <p className="text-sm font-bold font-display text-red-400">
-                {total > 0 ? ((noAnswer + voicemail) / total * 100).toFixed(1) : "0.0"}%
+                {total > 0 ? (((noAnswer + voicemail) / total) * 100).toFixed(1) : '0.0'}%
               </p>
             </div>
           </div>

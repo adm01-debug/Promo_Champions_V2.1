@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface PortfolioSetting {
   id: string;
@@ -21,9 +21,7 @@ export function usePortfolioSettings() {
   return useQuery({
     queryKey: ['portfolio-settings'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('portfolio_settings')
-        .select('*');
+      const { data, error } = await supabase.from('portfolio_settings').select('*');
 
       if (error) throw error;
 
@@ -42,7 +40,15 @@ export function useUpdatePortfolioSetting() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ key, value, description }: { key: string; value: string; description?: string }) => {
+    mutationFn: async ({
+      key,
+      value,
+      description,
+    }: {
+      key: string;
+      value: string;
+      description?: string;
+    }) => {
       // Check if setting exists
       const { data: existing } = await supabase
         .from('portfolio_settings')
@@ -54,23 +60,21 @@ export function useUpdatePortfolioSetting() {
         // Update existing
         const { error } = await supabase
           .from('portfolio_settings')
-          .update({ 
+          .update({
             setting_value: value,
             description: description || null,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('setting_key', key);
 
         if (error) throw error;
       } else {
         // Insert new
-        const { error } = await supabase
-          .from('portfolio_settings')
-          .insert({ 
-            setting_key: key, 
-            setting_value: value,
-            description: description || null
-          });
+        const { error } = await supabase.from('portfolio_settings').insert({
+          setting_key: key,
+          setting_value: value,
+          description: description || null,
+        });
 
         if (error) throw error;
       }
@@ -81,7 +85,7 @@ export function useUpdatePortfolioSetting() {
       queryClient.invalidateQueries({ queryKey: ['portfolio-settings'] });
       toast.success('Configuração salva com sucesso');
     },
-    onError: (error) => {
+    onError: error => {
       if (import.meta.env.DEV) {
         console.error('Error updating setting:', error);
       }

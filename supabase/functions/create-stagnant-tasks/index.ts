@@ -1,13 +1,11 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
-
-
-
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -16,7 +14,36 @@ Deno.serve(withRequestId("create-stagnant-tasks", async (req, _ctx) => {
   }
 
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Cria tarefas de follow-up para deals de todos os vendedores — exige
+    // JWT de usuário com papel admin/manager.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw error;
+    }
+    const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isPrivileged) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Bypass de RLS necessário: varre sales e cria tasks de toda a equipe.
+    const supabase = getServiceClient(
+      "criacao de tarefas estagnadas cobre deals de toda a equipe",
+    );
     
     // Get stagnant threshold from notification preferences (default 14 days)
     const { data: prefs } = await supabase

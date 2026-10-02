@@ -66,6 +66,7 @@ import { useWinLossAnomalies } from '@/hooks/win-loss/useWinLossAnomalies';
 import { useWinLossDigest } from '@/hooks/win-loss/useWinLossDigest';
 import { useWinLossInsights } from '@/hooks/deal-intelligence/useWinLoss';
 import type { SavedView } from '@/hooks/win-loss/useWinLossSavedViews';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 const SITE = 'https://championgifts.lovable.app';
 
@@ -165,7 +166,9 @@ export default function WinLossIntelligence() {
   const onCohort = (created: string, closed: string) =>
     openDrawer(`Cohort ${created} → ${closed}`);
   const onCycleBin = (bin: string, outcome: 'won' | 'lost') =>
-    openDrawer(`Ciclo ${bin} · ${outcome === 'won' ? 'Won' : 'Lost'}`, { outcome });
+    openDrawer(`Ciclo ${bin} · ${outcome === WIN_LOSS_OUTCOME.WON ? 'Won' : 'Lost'}`, {
+      outcome,
+    });
   const onLossLeaf = (stage: string, reason: string) =>
     openDrawer(`${reason} · ${stage}`, { outcome: 'lost', reason, stage });
 

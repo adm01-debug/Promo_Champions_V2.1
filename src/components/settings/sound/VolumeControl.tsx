@@ -1,6 +1,6 @@
-import { Volume2, VolumeX } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
+import { Volume2, VolumeX } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 
 interface VolumeControlProps {
   label?: string;
@@ -8,7 +8,11 @@ interface VolumeControlProps {
   onVolumeChange: (v: number) => void;
 }
 
-export function VolumeControl({ label = "Volume", volume, onVolumeChange }: VolumeControlProps) {
+export function VolumeControl({
+  label = 'Volume',
+  volume,
+  onVolumeChange,
+}: VolumeControlProps) {
   return (
     <div className="space-y-3">
       <Label className="text-label">{label}</Label>

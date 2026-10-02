@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 interface SalespersonPerformance {
   id: string;
   name: string;
@@ -10,8 +10,9 @@ interface SalespersonPerformance {
   conversionRate?: number;
   dealsCount?: number;
 }
-import { Crown, Medal, Trophy, TrendingUp, Users, Percent } from "lucide-react";
+import { Crown, Medal, Trophy, TrendingUp, Users, Percent } from 'lucide-react';
 
+import { formatBRLCompact } from '@/lib/money';
 interface PerformanceRankingCardProps {
   data: SalespersonPerformance[] | undefined;
   isLoading: boolean;
@@ -37,13 +38,13 @@ const getRankIcon = (rank: number) => {
 const getRankBadgeStyle = (rank: number) => {
   switch (rank) {
     case 1:
-      return "bg-gradient-to-r from-coins/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins";
+      return 'bg-gradient-to-r from-coins/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins';
     case 2:
-      return "bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/30 text-muted-foreground dark:text-muted-foreground";
+      return 'bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/30 text-muted-foreground dark:text-muted-foreground';
     case 3:
-      return "bg-gradient-to-r from-rank-gold/20 to-streak/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold";
+      return 'bg-gradient-to-r from-rank-gold/20 to-streak/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold';
     default:
-      return "bg-muted";
+      return 'bg-muted';
   }
 };
 
@@ -88,7 +89,9 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
             <div
               key={sp.id}
               className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                (sp.rank ?? idx + 1) <= 3 ? getRankBadgeStyle(sp.rank ?? idx + 1) : "bg-muted/50 border-border/50"
+                (sp.rank ?? idx + 1) <= 3
+                  ? getRankBadgeStyle(sp.rank ?? idx + 1)
+                  : 'bg-muted/50 border-border/50'
               }`}
             >
               <div className="flex-shrink-0">{getRankIcon(sp.rank ?? idx + 1)}</div>
@@ -105,11 +108,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                   <span className="flex items-center gap-1">
                     <TrendingUp className="h-3 w-3" />
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                      notation: "compact",
-                    }).format(sp.totalSales)}
+                    {formatBRLCompact(sp.totalSales)}
                   </span>
                   <span className="flex items-center gap-1">
                     <Percent className="h-3 w-3" />
@@ -123,9 +122,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
               </div>
 
               <div className="text-right">
-                <p className="text-lg font-bold gradient-text">
-                  {sp.dealsCount ?? 0}
-                </p>
+                <p className="text-lg font-bold gradient-text">{sp.dealsCount ?? 0}</p>
                 <p className="text-xs text-muted-foreground">vendas</p>
               </div>
             </div>

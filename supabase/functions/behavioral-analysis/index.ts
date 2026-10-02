@@ -1,7 +1,7 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface AnalysisRequest {
   interactionId?: string;
@@ -24,6 +24,8 @@ Deno.serve(withRequestId('behavioral-analysis', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    await getUserClient(req);
+
     const { interactionId, text, contactName, channel, dealId } = (await req.json()) as AnalysisRequest;
 
     if (!text || text.length < 100) {
@@ -81,12 +83,10 @@ Retorne APENAS JSON válido, sem markdown.`;
     const content = aiData.choices?.[0]?.message?.content ?? "{}";
     const analysis: AnalysisResult = JSON.parse(content);
 
-    // Persist analysis when an interactionId is provided
+    // Persist analysis when an interactionId is provided — automation_runs
+    // exige bypass de RLS (insert restrito a service_role).
     if (interactionId) {
-      const supabase = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      );
+      const supabase = getServiceClient("insert de auditoria em automation_runs (RLS)");
 
       await supabase.from("automation_runs").insert({
         workflow_id: "00000000-0000-0000-0000-000000000000",
@@ -107,6 +107,12 @@ Retorne APENAS JSON válido, sem markdown.`;
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("behavioral-analysis error:", error);
     const msg = error instanceof Error ? error.message : "Unknown error";
     return new Response(JSON.stringify({ error: msg }), {

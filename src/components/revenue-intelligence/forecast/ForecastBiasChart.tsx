@@ -1,6 +1,6 @@
-import { FC, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { FC, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   ResponsiveContainer,
   BarChart,
@@ -10,9 +10,9 @@ import {
   Tooltip,
   CartesianGrid,
   Legend,
-} from "recharts";
-import { useConfidenceScores } from "@/hooks/revenue-intelligence/useForecastAccuracy";
-import { sourceLabel } from "./forecastHelpers";
+} from 'recharts';
+import { useConfidenceScores } from '@/hooks/revenue-intelligence/useForecastAccuracy';
+import { sourceLabel } from './forecastHelpers';
 
 export const ForecastBiasChart: FC = () => {
   const { data, isLoading } = useConfidenceScores();

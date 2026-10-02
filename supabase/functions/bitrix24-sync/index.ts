@@ -7,6 +7,11 @@ import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
+import {
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
 const BITRIX24_CLIENT_ID = Deno.env.get('BITRIX24_CLIENT_ID');
@@ -618,6 +623,58 @@ Deno.serve(
       }
 
       const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+      // SEC: antes desta verificação, qualquer chamada com a anon key executava
+      // um sync bidirecional completo (escrita em clients/sales + chamadas à
+      // API do Bitrix) como service_role. Agora só passa job interno
+      // (service_role ou X-Cron-Secret) ou usuário com papel admin/manager.
+      let authorizedByCron = false;
+      try {
+        authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+          const { data, error } = await supabase
+            .from('_internal_secrets')
+            .select('value')
+            .eq('key', 'coaching_cron_secret')
+            .maybeSingle();
+          if (error) throw error;
+          return (data as { value?: string | null } | null)?.value;
+        });
+      } catch (authError) {
+        console.error('bitrix24-sync cron authorization unavailable:', authError);
+        return new Response(
+          JSON.stringify({ success: false, error: 'authorization_unavailable' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (!authorizedByCron) {
+        try {
+          const caller = await getUserClient(req);
+          const { data: allowed, error: roleError } = await caller.client.rpc(
+            'is_admin_or_manager' as never,
+            { _user_id: caller.userId } as never
+          );
+          if (roleError) throw roleError;
+          if (!allowed) {
+            return new Response(
+              JSON.stringify({ success: false, error: 'forbidden' }),
+              { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+        } catch (authError) {
+          if (authError instanceof UnauthorizedError) {
+            return new Response(
+              JSON.stringify({ success: false, error: 'unauthorized' }),
+              { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          console.error('bitrix24-sync authorization failed:', authError);
+          return new Response(
+            JSON.stringify({ success: false, error: 'authorization_unavailable' }),
+            { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
 
       const body = await req.json().catch(() => ({}));
       const action = body.action || 'sync-all';

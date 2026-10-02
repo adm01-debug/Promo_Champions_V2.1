@@ -2,9 +2,9 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
@@ -130,23 +130,24 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+    // Autorização: exige usuário autenticado (JWT válido) — o agente executa em nome do chamador.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("ai-agent-orchestrator authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: claims } = await userClient.auth.getClaims(authHeader.replace("Bearer ", ""));
-    if (!claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const userClient = caller.client;
 
     const { agent_type, target_entity_type, target_entity_id, goal, auto_execute = false } =
       await req.json();
@@ -235,12 +236,12 @@ Deno.serve(withRequestId('ai-agent-orchestrator', async (req, _ctx) => {
                   activity_type: "note",
                   outcome: "neutral",
                   notes: args.note,
-                  salesperson_id: claims.claims.sub,
+                  salesperson_id: caller.userId,
                 });
                 toolOutput = { executed: true };
               } else if (name === "schedule_followup") {
                 await admin.from("agenda_events").insert({
-                  salesperson_id: claims.claims.sub,
+                  salesperson_id: caller.userId,
                   title: args.title,
                   scheduled_at: args.scheduled_at,
                   description: args.description ?? null,
