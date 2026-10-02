@@ -45,6 +45,7 @@ import { useLeadScores, useCalculateLeadScores } from '@/hooks/useLeadScoring';
 import { useActiveCadencesBySaleIds } from '@/hooks/useCadences';
 import { useICPByClientName } from '@/hooks/useICPData';
 
+import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 export const PipelineBoard = () => {
@@ -381,11 +382,7 @@ export const PipelineBoard = () => {
                 Ganho Potencial
               </span>
               <span className="text-xs font-black text-foreground">
-                {new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                  notation: 'compact',
-                }).format(weightedTotalValue * (ticketSimulation / 100))}
+                {formatBRLCompact(weightedTotalValue * (ticketSimulation / 100))}
               </span>
             </div>
           </div>
@@ -565,8 +562,7 @@ export const PipelineBoard = () => {
                   activeCadence={activeCadences?.[activeDeal.id]}
                   icpData={
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
-                      | { is_icp_match: boolean; grupo_nicho?: string }
-                      | undefined
+                      { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
                 />
               </div>

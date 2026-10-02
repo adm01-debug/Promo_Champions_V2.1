@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useMemo } from 'react';
 import { format } from 'date-fns';
-import { MainLayout } from '@/components/templates/MainLayout';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -280,7 +279,7 @@ export default function AdminTelemetriaPage() {
             content="Métricas e monitoramento de performance do sistema"
           />
         </Helmet>
-        <MainLayout>
+        <>
           <div className="space-y-6 p-6 max-w-7xl mx-auto">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-3">
@@ -419,7 +418,7 @@ export default function AdminTelemetriaPage() {
 
             <TelemetryTable rows={rows} isLoading={isLoading} />
           </div>
-        </MainLayout>
+        </>
       </>
     </PageTransition>
   );

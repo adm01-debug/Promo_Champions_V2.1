@@ -1,12 +1,12 @@
-import { useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { useEmbeddedReportPreview } from "@/hooks/reporting/useEmbeddedReportPreview";
-import { EmbeddedReportView } from "@/components/reporting/EmbeddedReportView";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Crown } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { useEmbeddedReportPreview } from '@/hooks/reporting/useEmbeddedReportPreview';
+import { EmbeddedReportView } from '@/components/reporting/EmbeddedReportView';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertCircle, Crown } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function EmbedReportPage() {
   const { token } = useParams<{ token: string }>();
@@ -15,7 +15,7 @@ export default function EmbedReportPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Helmet>
-        <title>{data?.name ?? "Relatório embutido"}</title>
+        <title>{data?.name ?? 'Relatório embutido'}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -30,9 +30,11 @@ export default function EmbedReportPage() {
         {error && (
           <Card className="p-12 border-destructive/40 text-center">
             <AlertCircle className="h-10 w-10 mx-auto text-destructive mb-3" />
-            <h2 className="font-display text-lg">Não foi possível carregar o relatório</h2>
+            <h2 className="font-display text-lg">
+              Não foi possível carregar o relatório
+            </h2>
             <p className="text-sm text-muted-foreground mt-1">
-              {error instanceof Error ? error.message : "Erro desconhecido"}
+              {error instanceof Error ? error.message : 'Erro desconhecido'}
             </p>
           </Card>
         )}
@@ -42,7 +44,11 @@ export default function EmbedReportPage() {
             <header>
               <h1 className="text-page-title">{data.name}</h1>
               <p className="text-xs text-muted-foreground mt-1">
-                Gerado em {format(new Date(data.generated_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} · {data.rows.length} registros
+                Gerado em{' '}
+                {format(new Date(data.generated_at), "dd/MM/yyyy 'às' HH:mm", {
+                  locale: ptBR,
+                })}{' '}
+                · {data.rows.length} registros
               </p>
             </header>
             <EmbeddedReportView payload={data} />
@@ -54,7 +60,9 @@ export default function EmbedReportPage() {
         <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-primary/10">
           <Crown className="h-3 w-3 text-primary" />
         </span>
-        <span>Powered by <span className="font-medium text-foreground">Promo Champions</span></span>
+        <span>
+          Powered by <span className="font-medium text-foreground">Promo Champions</span>
+        </span>
       </footer>
     </div>
   );

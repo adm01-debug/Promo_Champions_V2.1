@@ -41,13 +41,11 @@ export function parseMultichannelStatusPayload(
       throw new Error("payload JSON inválido");
     }
     const payload = value as {
-      entry?: Array<
-        {
-          changes?: Array<
-            { value?: { statuses?: Array<{ id?: unknown; status?: unknown }> } }
-          >;
-        }
-      >;
+      entry?: Array<{
+        changes?: Array<{
+          value?: { statuses?: Array<{ id?: unknown; status?: unknown }> };
+        }>;
+      }>;
       messageId?: unknown;
       id?: unknown;
       status?: unknown;
@@ -86,136 +84,185 @@ export function normalizeMessageStatus(
 
 // Webhook público para Twilio / Meta Cloud / Z-API.
 // Cada callback precisa ser autenticado antes de acessar o banco com service_role.
-Deno.serve(withRequestId("multichannel-status-webhook", async (req, _ctx) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-  if (req.method === "GET") {
-    const url = new URL(req.url);
-    const handshake = verifyMetaWebhookHandshake(
-      url,
+Deno.serve(
+  withRequestId("multichannel-status-webhook", async (req, _ctx) => {
+    if (req.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
+    if (req.method === "GET") {
+      const url = new URL(req.url);
+      const handshake = verifyMetaWebhookHandshake(
+        url,
+        (name) => Deno.env.get(name),
+      );
+      if (!handshake.ok) {
+        return json({ ok: false, error: handshake.code }, handshake.status);
+      }
+      return new Response(url.searchParams.get("hub.challenge")!, {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "text/plain; charset=utf-8",
+        },
+      });
+    }
+    if (req.method !== "POST") {
+      return json({ ok: false, error: "method_not_allowed" }, 405);
+    }
+
+    // Proteção de volume antes do trabalho de HMAC/parse (assinatura já barra
+    // conteúdo forjado; isto barra flood).
+    const limited = enforceRateLimit(req, {
+      name: "multichannel-status-webhook",
+      limit: 300,
+      windowSeconds: 60,
+    });
+    if (limited) return limited;
+
+    const rawBody = await readUtf8BodyWithinLimit(
+      req,
+      MAX_MULTICHANNEL_STATUS_BODY_BYTES,
+    );
+    if (rawBody === null) {
+      return json({ ok: false, error: "payload_too_large" }, 413);
+    }
+    const authentication = await authenticateMultichannelStatusWebhook(
+      req.headers,
+      rawBody,
+      req.url,
       (name) => Deno.env.get(name),
     );
-    if (!handshake.ok) {
-      return json({ ok: false, error: handshake.code }, handshake.status);
-    }
-    return new Response(url.searchParams.get("hub.challenge")!, {
-      headers: { ...corsHeaders, "Content-Type": "text/plain; charset=utf-8" },
-    });
-  }
-  if (req.method !== "POST") {
-    return json({ ok: false, error: "method_not_allowed" }, 405);
-  }
-
-  // Proteção de volume antes do trabalho de HMAC/parse (assinatura já barra
-  // conteúdo forjado; isto barra flood).
-  const limited = enforceRateLimit(req, {
-    name: "multichannel-status-webhook",
-    limit: 300,
-    windowSeconds: 60,
-  });
-  if (limited) return limited;
-
-  const rawBody = await readUtf8BodyWithinLimit(
-    req,
-    MAX_MULTICHANNEL_STATUS_BODY_BYTES,
-  );
-  if (rawBody === null) {
-    return json({ ok: false, error: "payload_too_large" }, 413);
-  }
-  const authentication = await authenticateMultichannelStatusWebhook(
-    req.headers,
-    rawBody,
-    req.url,
-    (name) => Deno.env.get(name),
-  );
-  if (!authentication.ok) {
-    return json(
-      { ok: false, error: authentication.code },
-      authentication.status,
-    );
-  }
-
-  let event: ParsedStatusEvent;
-  try {
-    event = parseMultichannelStatusPayload(
-      rawBody,
-      req.headers.get("content-type") ?? "",
-    );
-  } catch {
-    return json({ ok: false, error: "invalid_payload" }, 400);
-  }
-
-  const normalized = normalizeMessageStatus(event.status);
-  if (!event.providerMessageId || !normalized) {
-    return json({ ok: true, ignored: true });
-  }
-
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !serviceRoleKey) {
-    return json({ ok: false, error: "server_misconfigured" }, 503);
-  }
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-  try {
-    const { data: msg, error: lookupError } = await supabase
-      .from("outbound_messages")
-      .select("id, enrollment_id")
-      .eq("provider_message_id", event.providerMessageId)
-      .maybeSingle();
-    if (lookupError) throw lookupError;
-
-    if (!msg) {
-      return json({ ok: true, ignored: true, reason: "message_not_found" });
+    if (!authentication.ok) {
+      return json(
+        { ok: false, error: authentication.code },
+        authentication.status,
+      );
     }
 
-    const occurredAt = new Date().toISOString();
-    const update: Record<string, unknown> = { status: normalized };
-    if (normalized === "delivered") update.delivered_at = occurredAt;
-    if (normalized === "read") update.read_at = occurredAt;
-
-    // O predicado de estado é um compare-and-swap: callbacks atrasados não
-    // regredem o estado, e dois replays de `read` não chegam ao engajamento.
-    const { data: advanced, error: updateError } = await supabase
-      .from("outbound_messages")
-      .update(update)
-      .eq("id", msg.id)
-      .in("status", previousStatusesFor(normalized))
-      .select("id, enrollment_id");
-    if (updateError) throw updateError;
-
-    const advancedMessage = advanced?.[0];
-    if (!advancedMessage) {
-      return json({ ok: true, ignored: true, reason: "stale_or_replayed" });
+    let event: ParsedStatusEvent;
+    try {
+      event = parseMultichannelStatusPayload(
+        rawBody,
+        req.headers.get("content-type") ?? "",
+      );
+    } catch {
+      return json({ ok: false, error: "invalid_payload" }, 400);
     }
 
-    // Só quem ganhou o compare-and-swap de read registra a abertura.
-    if (normalized === "read" && advancedMessage.enrollment_id) {
-      const { data: enr, error: enrollmentError } = await supabase
-        .from("sequence_enrollments")
-        .select("contact_id, contact_type")
-        .eq("id", advancedMessage.enrollment_id)
-        .maybeSingle();
-      if (enrollmentError) throw enrollmentError;
-      if (enr?.contact_id && enr?.contact_type) {
-        const { error: engagementError } = await supabase.rpc(
-          "record_engagement_signal",
-          {
-            _contact_id: enr.contact_id,
-            _contact_type: enr.contact_type,
-            _signal: "open",
-            _occurred_at: occurredAt,
-          },
-        );
-        if (engagementError) throw engagementError;
+    const normalized = normalizeMessageStatus(event.status);
+    if (!event.providerMessageId || !normalized) {
+      return json({ ok: true, ignored: true });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceRoleKey) {
+      return json({ ok: false, error: "server_misconfigured" }, 503);
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+    let dedupeReservationId: string | null = null;
+    const releaseDedupeReservation = async () => {
+      if (!dedupeReservationId) return;
+      const { error: releaseError } = await supabase
+        .from("webhook_inbound_dedupe")
+        .delete()
+        .eq("id", dedupeReservationId);
+      if (releaseError) {
+        console.error("dedupe release failed", releaseError);
       }
-    }
+      dedupeReservationId = null;
+    };
 
-    return json({ ok: true });
-  } catch (error) {
-    console.error("multichannel-status-webhook error", error);
-    return json({ ok: false, error: "processing_failed" }, 500);
-  }
-}));
+    try {
+      // Dedupe (mesmo padrão de receive-quote-sync): reserva única por
+      // provedor + id da mensagem + status ANTES de qualquer efeito colateral;
+      // um reenvio idêntico cai no 23505 e é ignorado.
+      const { data: dedupeReservation, error: dedupeError } = await supabase
+        .from("webhook_inbound_dedupe")
+        .insert({
+          correlation_key:
+            `multichannel-status:${authentication.provider}:${event.providerMessageId}:${normalized}`,
+          event: `message-status:${normalized}`,
+          source: `multichannel:${authentication.provider}`,
+          payload: {
+            provider_message_id: event.providerMessageId,
+            status: event.status,
+          },
+        })
+        .select("id")
+        .single();
+      if (dedupeError) {
+        if ((dedupeError as { code?: string }).code === "23505") {
+          return json({ ok: true, ignored: true, reason: "duplicate_ignored" });
+        }
+        throw dedupeError;
+      }
+      dedupeReservationId = (dedupeReservation as { id?: string } | null)?.id ??
+        null;
+
+      const { data: msg, error: lookupError } = await supabase
+        .from("outbound_messages")
+        .select("id, enrollment_id")
+        .eq("provider_message_id", event.providerMessageId)
+        .maybeSingle();
+      if (lookupError) throw lookupError;
+
+      if (!msg) {
+        // Mensagem pode ainda não existir; libera a reserva para que um
+        // reenvio legítimo possa processar depois.
+        await releaseDedupeReservation();
+        return json({ ok: true, ignored: true, reason: "message_not_found" });
+      }
+
+      const occurredAt = new Date().toISOString();
+      const update: Record<string, unknown> = { status: normalized };
+      if (normalized === "delivered") update.delivered_at = occurredAt;
+      if (normalized === "read") update.read_at = occurredAt;
+
+      // O predicado de estado é um compare-and-swap: callbacks atrasados não
+      // regredem o estado, e dois replays de `read` não chegam ao engajamento.
+      const { data: advanced, error: updateError } = await supabase
+        .from("outbound_messages")
+        .update(update)
+        .eq("id", msg.id)
+        .in("status", previousStatusesFor(normalized))
+        .select("id, enrollment_id");
+      if (updateError) throw updateError;
+
+      const advancedMessage = advanced?.[0];
+      if (!advancedMessage) {
+        await releaseDedupeReservation();
+        return json({ ok: true, ignored: true, reason: "stale_or_replayed" });
+      }
+
+      // Só quem ganhou o compare-and-swap de read registra a abertura.
+      if (normalized === "read" && advancedMessage.enrollment_id) {
+        const { data: enr, error: enrollmentError } = await supabase
+          .from("sequence_enrollments")
+          .select("contact_id, contact_type")
+          .eq("id", advancedMessage.enrollment_id)
+          .maybeSingle();
+        if (enrollmentError) throw enrollmentError;
+        if (enr?.contact_id && enr?.contact_type) {
+          const { error: engagementError } = await supabase.rpc(
+            "record_engagement_signal",
+            {
+              _contact_id: enr.contact_id,
+              _contact_type: enr.contact_type,
+              _signal: "open",
+              _occurred_at: occurredAt,
+            },
+          );
+          if (engagementError) throw engagementError;
+        }
+      }
+
+      return json({ ok: true });
+    } catch (error) {
+      await releaseDedupeReservation();
+      console.error("multichannel-status-webhook error", error);
+      return json({ ok: false, error: "processing_failed" }, 500);
+    }
+  }),
+);

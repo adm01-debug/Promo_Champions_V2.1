@@ -1,8 +1,8 @@
-import { memo } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { memo } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
-type Variant = "kpi" | "chart" | "table" | "insight";
+type Variant = 'kpi' | 'chart' | 'table' | 'insight';
 
 interface Props {
   variant: Variant;
@@ -19,7 +19,7 @@ export const WinLossSectionSkeleton = memo(function WinLossSectionSkeleton({
   height,
   rows = 5,
 }: Props) {
-  if (variant === "kpi") {
+  if (variant === 'kpi') {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -33,18 +33,24 @@ export const WinLossSectionSkeleton = memo(function WinLossSectionSkeleton({
       </div>
     );
   }
-  if (variant === "chart") {
+  if (variant === 'chart') {
     return (
       <Card className="border-border/50">
-        <CardHeader className="pb-2"><Skeleton className="h-4 w-40" /></CardHeader>
-        <CardContent><Skeleton className="w-full" style={{ height: height ?? 240 }} /></CardContent>
+        <CardHeader className="pb-2">
+          <Skeleton className="h-4 w-40" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="w-full" style={{ height: height ?? 240 }} />
+        </CardContent>
       </Card>
     );
   }
-  if (variant === "table") {
+  if (variant === 'table') {
     return (
       <Card className="border-border/50">
-        <CardHeader className="pb-2"><Skeleton className="h-4 w-48" /></CardHeader>
+        <CardHeader className="pb-2">
+          <Skeleton className="h-4 w-48" />
+        </CardHeader>
         <CardContent className="space-y-2">
           {Array.from({ length: rows }).map((_, i) => (
             <Skeleton key={i} className="h-9 w-full" />
@@ -55,7 +61,9 @@ export const WinLossSectionSkeleton = memo(function WinLossSectionSkeleton({
   }
   return (
     <Card className="border-border/50">
-      <CardHeader className="pb-2"><Skeleton className="h-4 w-32" /></CardHeader>
+      <CardHeader className="pb-2">
+        <Skeleton className="h-4 w-32" />
+      </CardHeader>
       <CardContent className="space-y-2">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="space-y-1.5">

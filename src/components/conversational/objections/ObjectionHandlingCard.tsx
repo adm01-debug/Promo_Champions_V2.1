@@ -1,17 +1,17 @@
-import { ShieldCheck, RefreshCw } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ShieldCheck, RefreshCw } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   useObjectionAnalysis,
   useCallObjections,
   useAnalyzeObjectionHandling,
-} from "@/hooks/conversational/useObjectionAnalysis";
-import { ObjectionTypeDonut } from "./ObjectionTypeDonut";
-import { ObjectionResolutionBar } from "./ObjectionResolutionBar";
-import { ObjectionsList } from "./ObjectionsList";
-import { healthBadgeVariant, healthLabel } from "./objectionHelpers";
+} from '@/hooks/conversational/useObjectionAnalysis';
+import { ObjectionTypeDonut } from './ObjectionTypeDonut';
+import { ObjectionResolutionBar } from './ObjectionResolutionBar';
+import { ObjectionsList } from './ObjectionsList';
+import { healthBadgeVariant, healthLabel } from './objectionHelpers';
 
 interface Props {
   recordingId: string;
@@ -37,7 +37,7 @@ export function ObjectionHandlingCard({ recordingId }: Props) {
             disabled={analyze.isPending}
             className="h-7 gap-1 text-xs"
           >
-            <RefreshCw className={`h-3 w-3 ${analyze.isPending ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-3 w-3 ${analyze.isPending ? 'animate-spin' : ''}`} />
             Recalcular
           </Button>
         </div>
@@ -55,22 +55,29 @@ export function ObjectionHandlingCard({ recordingId }: Props) {
               <div>
                 <p className="text-3xl font-bold tabular-nums">
                   {Math.round(analysis.handling_score)}
-                  <span className="ml-1 text-sm font-normal text-muted-foreground">/100</span>
+                  <span className="ml-1 text-sm font-normal text-muted-foreground">
+                    /100
+                  </span>
                 </p>
                 <p className="text-xs text-muted-foreground">Handling score</p>
               </div>
-              <Badge variant={healthBadgeVariant(analysis.health)}>{healthLabel(analysis.health)}</Badge>
+              <Badge variant={healthBadgeVariant(analysis.health)}>
+                {healthLabel(analysis.health)}
+              </Badge>
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-center">
               <Stat label="Total" value={analysis.total_objections} />
-              <Stat label="Resp. média" value={`${analysis.avg_response_time_seconds.toFixed(1)}s`} />
+              <Stat
+                label="Resp. média"
+                value={`${analysis.avg_response_time_seconds.toFixed(1)}s`}
+              />
               <Stat
                 label="Taxa resolvida"
                 value={
                   analysis.total_objections
                     ? `${Math.round((analysis.resolved_count / analysis.total_objections) * 100)}%`
-                    : "—"
+                    : '—'
                 }
               />
             </div>

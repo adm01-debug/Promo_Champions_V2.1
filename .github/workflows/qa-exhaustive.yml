@@ -158,3 +158,29 @@ jobs:
             TOTAL=$(node -e "const r=require('./a11y-report.json');console.log((r.suites||[]).reduce((a,s)=>a+(s.specs||[]).length,0))" 2>/dev/null || echo "n/a")
             echo "  - Specs a11y executadas: $TOTAL" >> $GITHUB_STEP_SUMMARY
           fi
+
+  # Schedule semanal que falha em silêncio (auditoria 2026-10). Notifica no
+  # Slack quando SLACK_CI_WEBHOOK_URL existir — mesmo padrão do pr-checks.yml.
+  notify-failure:
+    name: Notify on failure
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    needs: [qa-exhaustive]
+    if: failure()
+    steps:
+      - name: Slack notification (opcional)
+        env:
+          SLACK_CI_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK_URL }}
+          GH_REPO: ${{ github.repository }}
+          GH_WORKFLOW: ${{ github.workflow }}
+          GH_EVENT: ${{ github.event_name }}
+          GH_SERVER: ${{ github.server_url }}
+          GH_RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ -z "$SLACK_CI_WEBHOOK_URL" ]; then
+            echo "SLACK_CI_WEBHOOK_URL não configurado — pulando notificação Slack."
+            exit 0
+          fi
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            -d "{\"text\":\"🔴 CI falhou: $GH_REPO — $GH_WORKFLOW ($GH_EVENT) — $GH_SERVER/$GH_REPO/actions/runs/$GH_RUN_ID\"}" \
+            "$SLACK_CI_WEBHOOK_URL"

@@ -18,7 +18,7 @@ export function CareerTimeline({ salespersonId }: Props) {
   if (isLoading) {
     return (
       <div className="space-y-2">
-        {[0, 1, 2].map((i) => (
+        {[0, 1, 2].map(i => (
           <Skeleton key={i} className="h-20 w-full rounded-lg" />
         ))}
       </div>
@@ -80,7 +80,10 @@ export function CareerTimeline({ salespersonId }: Props) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-sm truncate">{e.season_name}</p>
-                    <Badge variant="outline" className="h-4 px-1 text-[10px] uppercase shrink-0">
+                    <Badge
+                      variant="outline"
+                      className="h-4 px-1 text-[10px] uppercase shrink-0"
+                    >
                       {e.role_type}
                     </Badge>
                   </div>
@@ -93,7 +96,9 @@ export function CareerTimeline({ salespersonId }: Props) {
                   <div className="font-display font-black text-sm tabular-nums">
                     {fmtCompact(e.total_sales)}
                   </div>
-                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">pts</div>
+                  <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    pts
+                  </div>
                 </div>
               </CardContent>
             </Card>

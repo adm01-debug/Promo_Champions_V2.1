@@ -9,6 +9,7 @@ import type {
 import { GitBranch } from 'lucide-react';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 import { stageLabel } from '@/components/deal-intelligence/winloss/winLossHelpers';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 interface Props {
   rows: WLAnalysisRow[];
@@ -40,7 +41,7 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
   const data: Node[] = useMemo(() => {
     const grouped = new Map<string, Map<string, number>>();
     rows
-      .filter(r => r.outcome === 'lost')
+      .filter(r => r.outcome === WIN_LOSS_OUTCOME.LOST)
       .forEach(r => {
         const stage = r.lost_stage ?? '—';
         const reason = r.primary_reason ?? '—';

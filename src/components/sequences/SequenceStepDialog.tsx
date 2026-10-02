@@ -1,17 +1,32 @@
-import { useRef, useState } from "react";
-import { Sparkles } from "lucide-react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useUpsertSequenceStep, type SequenceStep } from "@/hooks/sequences/useSequenceSteps";
-import { CHANNEL_META, type ChannelKey } from "./sequenceHelpers";
-import { AIEmailComposerPanel } from "./AIEmailComposerPanel";
-import { EmailVariablesHelper } from "./EmailVariablesHelper";
-import { StepVariantsManager } from "./StepVariantsManager";
+import { useRef, useState } from 'react';
+import { Sparkles } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  useUpsertSequenceStep,
+  type SequenceStep,
+} from '@/hooks/sequences/useSequenceSteps';
+import { CHANNEL_META, type ChannelKey } from './sequenceHelpers';
+import { AIEmailComposerPanel } from './AIEmailComposerPanel';
+import { EmailVariablesHelper } from './EmailVariablesHelper';
+import { StepVariantsManager } from './StepVariantsManager';
 
 interface Props {
   open: boolean;
@@ -21,14 +36,22 @@ interface Props {
   nextOrder: number;
 }
 
-export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextOrder }: Props) {
-  const [channel, setChannel] = useState<ChannelKey>(step?.channel as ChannelKey ?? "email");
+export function SequenceStepDialog({
+  open,
+  onOpenChange,
+  sequenceId,
+  step,
+  nextOrder,
+}: Props) {
+  const [channel, setChannel] = useState<ChannelKey>(
+    (step?.channel as ChannelKey) ?? 'email'
+  );
   const [days, setDays] = useState(step?.delay_days ?? 0);
   const [hours, setHours] = useState(step?.delay_hours ?? 0);
-  const [subject, setSubject] = useState(step?.subject ?? "");
-  const [body, setBody] = useState(step?.body ?? "");
+  const [subject, setSubject] = useState(step?.subject ?? '');
+  const [body, setBody] = useState(step?.body ?? '');
   const [whatsappTemplateId, setWhatsappTemplateId] = useState(
-    (step as { whatsapp_template_id?: string } | null)?.whatsapp_template_id ?? "",
+    (step as { whatsapp_template_id?: string } | null)?.whatsapp_template_id ?? ''
   );
   const [showAI, setShowAI] = useState(false);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
@@ -37,7 +60,7 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
   const insertVariable = (token: string) => {
     const el = bodyRef.current;
     if (!el) {
-      setBody((b) => b + token);
+      setBody(b => b + token);
       return;
     }
     const start = el.selectionStart ?? body.length;
@@ -61,27 +84,31 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
       delay_hours: Number(hours),
       subject: subject || null,
       body: body || null,
-      whatsapp_template_id: channel === "whatsapp" ? (whatsappTemplateId || null) : null,
+      whatsapp_template_id: channel === 'whatsapp' ? whatsappTemplateId || null : null,
     } as Parameters<typeof upsert.mutateAsync>[0]);
     onOpenChange(false);
   };
 
-  const supportsAI = channel === "email" || channel === "linkedin";
+  const supportsAI = channel === 'email' || channel === 'linkedin';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{step ? "Editar passo" : "Novo passo"}</DialogTitle>
+          <DialogTitle>{step ? 'Editar passo' : 'Novo passo'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
             <Label>Canal</Label>
-            <Select value={channel} onValueChange={(v) => setChannel(v as ChannelKey)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select value={channel} onValueChange={v => setChannel(v as ChannelKey)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 {Object.entries(CHANNEL_META).map(([k, m]) => (
-                  <SelectItem key={k} value={k}>{m.label}</SelectItem>
+                  <SelectItem key={k} value={k}>
+                    {m.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -89,20 +116,31 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Aguardar (dias)</Label>
-              <Input type="number" min={0} value={days} onChange={(e) => setDays(Number(e.target.value))} />
+              <Input
+                type="number"
+                min={0}
+                value={days}
+                onChange={e => setDays(Number(e.target.value))}
+              />
             </div>
             <div>
               <Label>Aguardar (horas)</Label>
-              <Input type="number" min={0} max={23} value={hours} onChange={(e) => setHours(Number(e.target.value))} />
+              <Input
+                type="number"
+                min={0}
+                max={23}
+                value={hours}
+                onChange={e => setHours(Number(e.target.value))}
+              />
             </div>
           </div>
 
-          {channel === "whatsapp" && (
+          {channel === 'whatsapp' && (
             <div>
               <Label>WhatsApp Template ID (opcional)</Label>
               <Input
                 value={whatsappTemplateId}
-                onChange={(e) => setWhatsappTemplateId(e.target.value)}
+                onChange={e => setWhatsappTemplateId(e.target.value)}
                 placeholder="ex: hello_world (template aprovado Meta)"
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -153,8 +191,12 @@ export function SequenceStepDialog({ open, onOpenChange, sequenceId, step, nextO
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleSave} loading={upsert.isPending}>Salvar passo</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} loading={upsert.isPending}>
+            Salvar passo
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -189,7 +231,11 @@ function SingleContent({
       {supportsAI && (
         <div>
           <Label>Assunto</Label>
-          <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Re: Proposta..." />
+          <Input
+            value={subject}
+            onChange={e => setSubject(e.target.value)}
+            placeholder="Re: Proposta..."
+          />
         </div>
       )}
       <div>
@@ -201,10 +247,10 @@ function SingleContent({
               size="sm"
               variant="ghost"
               className="h-7 text-primary hover:text-primary"
-              onClick={() => setShowAI((v) => !v)}
+              onClick={() => setShowAI(v => !v)}
             >
               <Sparkles className="h-3.5 w-3.5 mr-1" />
-              {showAI ? "Ocultar IA" : "Compor com IA"}
+              {showAI ? 'Ocultar IA' : 'Compor com IA'}
             </Button>
           )}
         </div>
@@ -212,7 +258,7 @@ function SingleContent({
           ref={bodyRef}
           rows={6}
           value={body}
-          onChange={(e) => setBody(e.target.value)}
+          onChange={e => setBody(e.target.value)}
           placeholder="Olá {{nome}}..."
         />
         {supportsAI && (

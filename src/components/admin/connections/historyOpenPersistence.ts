@@ -1,12 +1,14 @@
-const STORAGE_KEY = "integration-health:open-history";
-const LAST_KEY = "integration-health:last-opened";
+const STORAGE_KEY = 'integration-health:open-history';
+const LAST_KEY = 'integration-health:last-opened';
 
 function readSet(): Set<string> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return new Set();
     const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? new Set(arr.filter((v): v is string => typeof v === "string")) : new Set();
+    return Array.isArray(arr)
+      ? new Set(arr.filter((v): v is string => typeof v === 'string'))
+      : new Set();
   } catch {
     return new Set();
   }
@@ -52,4 +54,3 @@ export function getLastOpenedConnectionId(): string | null {
     return null;
   }
 }
-

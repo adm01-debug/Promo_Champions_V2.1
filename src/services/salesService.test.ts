@@ -15,6 +15,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 import { salesService } from './salesService';
+import { buildSale } from '@/test/factories';
 
 interface Chain {
   select: typeof selectMock;
@@ -39,13 +40,13 @@ function buildChain(response: { data: unknown; error: unknown }): Chain {
   limitMock.mockReturnValue(
     Object.assign(chain, {
       then: (resolve: (v: unknown) => unknown) => Promise.resolve(response).then(resolve),
-    }),
+    })
   );
   // or é o terminal awaitable quando há searchTerm
   orMock.mockReturnValue(
     Object.assign(chain, {
       then: (resolve: (v: unknown) => unknown) => Promise.resolve(response).then(resolve),
-    }),
+    })
   );
   return chain;
 }
@@ -57,15 +58,17 @@ beforeEach(() => {
 describe('salesService.getSales', () => {
   it('mapeia rows do Supabase para o formato do domínio', async () => {
     const row = {
-      id: 'abcdef1234-uuid',
-      amount: 1500,
-      status: 'completed',
-      created_at: '2026-01-15T12:00:00Z',
+      ...buildSale({
+        id: 'abcdef1234-uuid',
+        amount: 1500,
+        status: 'completed',
+        created_at: '2026-01-15T12:00:00Z',
+        client_id: 'c-1',
+        product_id: 'p-1',
+        salesperson_id: 'sp-1',
+      }),
       client: { name: 'ACME' },
       product: { name: 'Produto X', sku: 'SKU-1' },
-      client_id: 'c-1',
-      product_id: 'p-1',
-      salesperson_id: 'sp-1',
     };
     buildChain({ data: [row], error: null });
     fromMock.mockImplementation(() => ({
@@ -99,15 +102,17 @@ describe('salesService.getSales', () => {
 
   it('faz fallback para client_name/product_name quando joins vêm nulos', async () => {
     const row = {
-      id: 'ffffffff-uuid',
-      amount: null,
-      status: 'pending',
-      created_at: '2026-02-01T09:00:00Z',
+      ...buildSale({
+        id: 'ffffffff-uuid',
+        amount: null,
+        status: 'pending',
+        created_at: '2026-02-01T09:00:00Z',
+        client_name: 'Fallback Cli',
+        product_name: 'Fallback Prod',
+        sku: 'SKU-DIRECT',
+      }),
       client: null,
       product: null,
-      client_name: 'Fallback Cli',
-      product_name: 'Fallback Prod',
-      sku: 'SKU-DIRECT',
     };
     selectMock.mockReturnValue({ order: orderMock });
     orderMock.mockReturnValue({ limit: limitMock });

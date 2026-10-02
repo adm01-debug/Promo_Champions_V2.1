@@ -1,6 +1,6 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCw, Home, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw, Home, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   children: ReactNode;
@@ -23,8 +23,8 @@ export class PageErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     if (import.meta.env.DEV) {
-      console.error("PageErrorBoundary caught an error:", error);
-      console.error("Component stack:", errorInfo.componentStack);
+      console.error('PageErrorBoundary caught an error:', error);
+      console.error('Component stack:', errorInfo.componentStack);
     }
   }
 
@@ -33,7 +33,7 @@ export class PageErrorBoundary extends Component<Props, State> {
   };
 
   handleGoHome = (): void => {
-    window.location.href = "/";
+    window.location.href = '/';
   };
 
   handleGoBack = (): void => {
@@ -48,7 +48,7 @@ export class PageErrorBoundary extends Component<Props, State> {
             <div className="mx-auto p-4 rounded-full bg-destructive/20 w-fit">
               <AlertTriangle className="h-12 w-12 text-destructive" />
             </div>
-            
+
             <div className="space-y-2">
               <h1 className="text-metric">Erro na Página</h1>
               <p className="text-muted-foreground">
@@ -73,21 +73,13 @@ export class PageErrorBoundary extends Component<Props, State> {
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Recarregar página
               </Button>
-              
+
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={this.handleGoBack}
-                  className="flex-1"
-                >
+                <Button variant="outline" onClick={this.handleGoBack} className="flex-1">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Voltar
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={this.handleGoHome}
-                  className="flex-1"
-                >
+                <Button variant="outline" onClick={this.handleGoHome} className="flex-1">
                   <Home className="h-4 w-4 mr-2" />
                   Início
                 </Button>

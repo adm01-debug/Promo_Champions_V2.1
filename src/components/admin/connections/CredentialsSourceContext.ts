@@ -1,7 +1,7 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
-export type CredentialsSource = "all" | "db" | "env" | "secret";
-export type HealthStatusFilter = "all" | "healthy" | "warning" | "failing";
+export type CredentialsSource = 'all' | 'db' | 'env' | 'secret';
+export type HealthStatusFilter = 'all' | 'healthy' | 'warning' | 'failing';
 
 interface Ctx {
   source: CredentialsSource;

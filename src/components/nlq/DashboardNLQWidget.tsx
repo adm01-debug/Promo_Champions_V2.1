@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Card, CardContent } from "@/components/ui/card";
-import { NLQInput } from "./NLQInput";
-import { NLQAnswerCard } from "./NLQAnswerCard";
-import { useNLQ } from "@/hooks/nlq/useNLQ";
+import { useState } from 'react';
+import { Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Card, CardContent } from '@/components/ui/card';
+import { NLQInput } from './NLQInput';
+import { NLQAnswerCard } from './NLQAnswerCard';
+import { useNLQ } from '@/hooks/nlq/useNLQ';
 
 export function DashboardNLQWidget() {
   const [open, setOpen] = useState(false);
@@ -21,10 +21,14 @@ export function DashboardNLQWidget() {
             </div>
             <div>
               <div className="text-sm font-semibold">Pergunte à IA</div>
-              <div className="text-xs text-muted-foreground">Ex.: "Quanto vendi em março?"</div>
+              <div className="text-xs text-muted-foreground">
+                Ex.: "Quanto vendi em março?"
+              </div>
             </div>
           </div>
-          <Button variant="glow" size="sm" onClick={() => setOpen(true)}>Perguntar</Button>
+          <Button variant="glow" size="sm" onClick={() => setOpen(true)}>
+            Perguntar
+          </Button>
         </CardContent>
       </Card>
 
@@ -32,7 +36,8 @@ export function DashboardNLQWidget() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-section-title flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" /> Pergunte qualquer coisa sobre seus dados
+              <Sparkles className="h-4 w-4 text-primary" /> Pergunte qualquer coisa sobre
+              seus dados
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">

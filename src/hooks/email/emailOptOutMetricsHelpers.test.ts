@@ -17,7 +17,7 @@ describe('aggregateOptOutMetrics', () => {
     expect(m.deltaPct).toBeNull();
     expect(m.breakdown).toEqual([]);
     expect(m.daily).toHaveLength(30);
-    expect(m.daily.every((d) => d.count === 0)).toBe(true);
+    expect(m.daily.every(d => d.count === 0)).toBe(true);
   });
 
   it('conta janelas de 7 e 30 dias corretamente', () => {
@@ -29,7 +29,7 @@ describe('aggregateOptOutMetrics', () => {
         { created_at: iso(29), source: 'manual' },
         { created_at: iso(40), source: 'manual' },
       ],
-      NOW,
+      NOW
     );
     expect(m.total).toBe(5);
     expect(m.last7).toBe(2);
@@ -45,7 +45,7 @@ describe('aggregateOptOutMetrics', () => {
         { created_at: iso(9), source: 'a' },
         { created_at: iso(10), source: 'a' },
       ],
-      NOW,
+      NOW
     );
     expect(m.last7).toBe(3);
     expect(m.deltaPct).toBe(50);
@@ -59,7 +59,7 @@ describe('aggregateOptOutMetrics', () => {
         { created_at: iso(2), source: 'unsubscribe_link' },
         { created_at: iso(3), source: 'unsubscribe_link' },
       ],
-      NOW,
+      NOW
     );
     expect(m.breakdown[0]).toEqual({ source: 'unsubscribe_link', count: 3, pct: 75 });
     expect(m.breakdown[1]).toEqual({ source: 'spam_complaint', count: 1, pct: 25 });
@@ -71,7 +71,7 @@ describe('aggregateOptOutMetrics', () => {
         { created_at: 'não-é-data', source: 'manual' },
         { created_at: iso(1), source: 'manual' },
       ],
-      NOW,
+      NOW
     );
     expect(m.last7).toBe(1);
     expect(m.total).toBe(2);
@@ -86,7 +86,7 @@ describe('aggregateOptOutMetrics', () => {
     const m = aggregateOptOutMetrics([{ created_at: iso(0), source: 'a' }], NOW);
     expect(m.daily[m.daily.length - 1].date).toBe('2026-07-26');
     expect(m.daily[m.daily.length - 1].count).toBe(1);
-    const dates = m.daily.map((d) => d.date);
+    const dates = m.daily.map(d => d.date);
     expect([...dates].sort()).toEqual(dates);
   });
 

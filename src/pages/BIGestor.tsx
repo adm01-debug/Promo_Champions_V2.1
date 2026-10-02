@@ -38,11 +38,12 @@ import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
 
+import { formatBRL } from '@/lib/money';
 const RevenueAreaChart = lazy(() => import('@/components/bi/charts/RevenueAreaChart'));
 const AbcPieChart = lazy(() => import('@/components/bi/charts/AbcPieChart'));
 const SourceBarChart = lazy(() => import('@/components/bi/charts/SourceBarChart'));
 const CohortRetentionHeatmap = lazy(() =>
-  import('@/components/analytics/CohortRetentionHeatmap').then((m) => ({
+  import('@/components/analytics/CohortRetentionHeatmap').then(m => ({
     default: m.CohortRetentionHeatmap,
   }))
 );
@@ -61,8 +62,6 @@ const STAGE_LABELS: Record<string, string> = {
 const BIGestor = () => {
   const { data, isLoading } = useBIGestor();
   const navigate = useNavigate();
-  const formatCurrency = (value: number | string) =>
-    `R$ ${Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
@@ -122,25 +121,25 @@ const BIGestor = () => {
                 {[
                   {
                     title: 'Faturamento Time',
-                    value: formatCurrency(data?.totalTeamRevenue || 0),
+                    value: formatBRL(data?.totalTeamRevenue || 0),
                     icon: DollarSign,
                     change: data?.teamRevenueChange,
                     variant: 'primary',
                   },
                   {
                     title: 'Meta Time',
-                    value: formatCurrency(data?.totalTeamGoal || 0),
+                    value: formatBRL(data?.totalTeamGoal || 0),
                     icon: Target,
                     progress: data?.teamGoalProgress,
                   },
                   {
                     title: 'Pipeline Total',
-                    value: formatCurrency(data?.totalPipelineValue || 0),
+                    value: formatBRL(data?.totalPipelineValue || 0),
                     icon: Briefcase,
                   },
                   {
                     title: 'Forecast Ponderado',
-                    value: formatCurrency(data?.weightedForecast || 0),
+                    value: formatBRL(data?.weightedForecast || 0),
                     icon: TrendingUp,
                     variant: 'success',
                   },
@@ -266,7 +265,7 @@ const BIGestor = () => {
                         <Suspense fallback={<ChartFallback height={250} />}>
                           <RevenueAreaChart
                             data={data.revenueByMonth}
-                            formatCurrency={formatCurrency}
+                            formatCurrency={formatBRL}
                           />
                         </Suspense>
                       </LazyVisible>
@@ -303,7 +302,7 @@ const BIGestor = () => {
                           <Suspense fallback={<ChartFallback height={160} />}>
                             <AbcPieChart
                               data={data.abcClients}
-                              formatCurrency={formatCurrency}
+                              formatCurrency={formatBRL}
                             />
                           </Suspense>
                         </LazyVisible>
@@ -329,7 +328,7 @@ const BIGestor = () => {
                                 • {abc.count} vendedores
                               </span>
                               <span className="ml-auto font-bold">
-                                {formatCurrency(abc.revenue)}
+                                {formatBRL(abc.revenue)}
                               </span>
                             </div>
                           ))}
@@ -395,7 +394,7 @@ const BIGestor = () => {
                             <span className="text-muted-foreground">
                               {stage.count} •{' '}
                               <span className="font-semibold text-foreground">
-                                {formatCurrency(stage.value)}
+                                {formatBRL(stage.value)}
                               </span>
                             </span>
                           </div>
@@ -434,7 +433,7 @@ const BIGestor = () => {
                         <Suspense fallback={<ChartFallback height={220} />}>
                           <SourceBarChart
                             data={data.dealsBySource}
-                            formatCurrency={formatCurrency}
+                            formatCurrency={formatBRL}
                           />
                         </Suspense>
                       </LazyVisible>
@@ -452,7 +451,7 @@ const BIGestor = () => {
                 topPerformers={data?.topPerformers || []}
                 underperformers={data?.underperformers || []}
                 salespeoplePerformance={data?.salespeoplePerformance || []}
-                formatCurrency={formatCurrency}
+                formatCurrency={formatBRL}
               />
 
               <div className="grid gap-4 md:grid-cols-2 animate-slide-up">
@@ -460,9 +459,7 @@ const BIGestor = () => {
                 <ChurnOverdueRankingCard />
                 <MarkupOverviewCard />
                 <CriticalMarkupAlertCard />
-
               </div>
-
 
               <BITopClientsSection className="animate-slide-up" />
               <BISalesInsights className="animate-slide-up" />

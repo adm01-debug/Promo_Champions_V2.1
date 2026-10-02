@@ -1,4 +1,8 @@
-import { summarizeMarkup, type MarkupSummary, formatMarkupPct } from '@/lib/markupHelpers';
+import {
+  summarizeMarkup,
+  type MarkupSummary,
+  formatMarkupPct,
+} from '@/lib/markupHelpers';
 import { buildCsv } from '@/lib/csv';
 
 /** Linha bruta vinda da view `sales_with_markup`. */
@@ -29,9 +33,9 @@ export const CRITICAL_MARKUP_THRESHOLD = 20;
  */
 export function aggregateMarkupOverview(
   rows: ReadonlyArray<MarkupSaleRow>,
-  nameById: ReadonlyMap<string, string>,
+  nameById: ReadonlyMap<string, string>
 ): MarkupOverview {
-  const summary = summarizeMarkup(rows.map((r) => r.markup_pct));
+  const summary = summarizeMarkup(rows.map(r => r.markup_pct));
 
   const values = new Map<string, number[]>();
   const totals = new Map<string, number>();
@@ -79,10 +83,13 @@ export function aggregateMarkupOverview(
 
 /** CSV de rentabilidade por vendedor (pt-BR, ';', BOM). */
 export function buildMarkupSellersCsv(sellers: ReadonlyArray<MarkupSellerRow>): string {
-  return buildCsv([...sellers], [
-    { header: 'Vendedor', value: (r) => r.name },
-    { header: 'Markup médio', value: (r) => formatMarkupPct(r.average) },
-    { header: 'Vendas', value: (r) => r.total },
-    { header: 'Vendas críticas (<20%)', value: (r) => r.criticalCount },
-  ]);
+  return buildCsv(
+    [...sellers],
+    [
+      { header: 'Vendedor', value: r => r.name },
+      { header: 'Markup médio', value: r => formatMarkupPct(r.average) },
+      { header: 'Vendas', value: r => r.total },
+      { header: 'Vendas críticas (<20%)', value: r => r.criticalCount },
+    ]
+  );
 }

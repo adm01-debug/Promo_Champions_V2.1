@@ -117,7 +117,7 @@ export const PerformanceMonitor = memo(function PerformanceMonitor({
             <Button
               variant="ghost"
               size="icon"
-              aria-label={expanded ? "Recolher" : "Expandir"}
+              aria-label={expanded ? 'Recolher' : 'Expandir'}
               className="h-5 w-5"
               onClick={() => setExpanded(e => !e)}
             >

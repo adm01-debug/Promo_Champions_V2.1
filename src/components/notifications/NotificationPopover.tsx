@@ -1,6 +1,6 @@
-import { type ReactNode } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { NotificationCenter } from "./NotificationCenter";
+import { type ReactNode } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { NotificationCenter } from './NotificationCenter';
 
 interface NotificationPopoverProps {
   children: ReactNode;

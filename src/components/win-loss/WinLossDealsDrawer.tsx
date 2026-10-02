@@ -6,6 +6,7 @@ import { stageLabel } from '@/components/deal-intelligence/winloss/winLossHelper
 import { supabase } from '@/integrations/supabase/client';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 import { VirtualDealsList } from './VirtualDealsList';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface DrawerFilter {
   outcome?: 'won' | 'lost';
@@ -92,7 +93,7 @@ export function WinLossDealsDrawer({ open, onOpenChange, title, rows, filter }: 
             <div className="flex flex-wrap gap-1 pt-1">
               {filter.outcome && (
                 <Badge variant="secondary" className="text-[10px]">
-                  {filter.outcome === 'won' ? 'Won' : 'Lost'}
+                  {filter.outcome === WIN_LOSS_OUTCOME.WON ? 'Won' : 'Lost'}
                 </Badge>
               )}
               {filter.reason && (

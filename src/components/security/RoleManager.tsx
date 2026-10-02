@@ -3,17 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { 
-  Users, 
-  Shield, 
-  Lock, 
-  Plus, 
-  Edit, 
-  Trash2,
-  X,
-  Eye,
-  AlertTriangle
-} from 'lucide-react';
+import { Users, Shield, Lock, Plus, Edit, Trash2, X, AlertTriangle } from 'lucide-react';
 
 interface Permission {
   id: string;
@@ -42,7 +32,7 @@ export const RoleManager: FC<RoleManagerProps> = ({
   roles,
   onCreateRole,
   onEditRole,
-  onDeleteRole
+  onDeleteRole,
 }) => {
   return (
     <Card className="p-4">
@@ -53,7 +43,9 @@ export const RoleManager: FC<RoleManagerProps> = ({
           </div>
           <div>
             <h3 className="font-semibold">Gerenciador de Funções</h3>
-            <p className="text-sm text-muted-foreground">Configure permissões por função</p>
+            <p className="text-sm text-muted-foreground">
+              Configure permissões por função
+            </p>
           </div>
         </div>
         <Button onClick={onCreateRole}>
@@ -63,9 +55,9 @@ export const RoleManager: FC<RoleManagerProps> = ({
       </div>
 
       <div className="space-y-3">
-        {roles.map((role) => (
-          <div 
-            key={role.id} 
+        {roles.map(role => (
+          <div
+            key={role.id}
             className="flex items-center justify-between p-4 border rounded-lg hover:border-primary/50 transition-colors"
           >
             <div className="flex items-center gap-4">
@@ -80,12 +72,15 @@ export const RoleManager: FC<RoleManagerProps> = ({
                 <div className="flex items-center gap-2">
                   <h4 className="font-medium">{role.name}</h4>
                   {role.isSystem && (
-                    <Badge variant="secondary" className="text-xs">Sistema</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Sistema
+                    </Badge>
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">{role.description}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {role.userCount} usuário(s) • {role.permissions.filter(p => p.enabled).length} permissões
+                  {role.userCount} usuário(s) •{' '}
+                  {role.permissions.filter(p => p.enabled).length} permissões
                 </p>
               </div>
             </div>
@@ -94,9 +89,9 @@ export const RoleManager: FC<RoleManagerProps> = ({
                 <Edit className="h-4 w-4" />
               </Button>
               {!role.isSystem && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="text-destructive"
                   onClick={() => onDeleteRole?.(role.id)}
                 >
@@ -123,26 +118,28 @@ interface PermissionGridProps {
 export const PermissionGrid: FC<PermissionGridProps> = ({
   permissions,
   onToggle,
-  readOnly
+  readOnly,
 }) => {
   return (
     <div className="space-y-6">
-      {permissions.map((category) => (
+      {permissions.map(category => (
         <div key={category.category}>
           <h4 className="font-medium mb-3">{category.category}</h4>
           <div className="space-y-2">
-            {category.items.map((permission) => (
-              <div 
+            {category.items.map(permission => (
+              <div
                 key={permission.id}
                 className="flex items-center justify-between p-3 border rounded-lg"
               >
                 <div>
                   <p className="font-medium">{permission.name}</p>
-                  <p className="text-sm text-muted-foreground">{permission.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {permission.description}
+                  </p>
                 </div>
                 <Switch
                   checked={permission.enabled}
-                  onCheckedChange={(enabled) => onToggle?.(permission.id, enabled)}
+                  onCheckedChange={enabled => onToggle?.(permission.id, enabled)}
                   disabled={readOnly}
                 />
               </div>
@@ -173,14 +170,8 @@ export const AccessControl: FC<AccessControlProps> = ({
   currentAccess,
   onAddUser,
   onRemoveUser,
-  onChangeLevel
+  onChangeLevel,
 }) => {
-  const levelLabels = {
-    view: { label: 'Visualizar', icon: Eye },
-    edit: { label: 'Editar', icon: Edit },
-    admin: { label: 'Administrador', icon: Shield }
-  };
-
   return (
     <Card className="p-4">
       <div className="flex items-center justify-between mb-4">
@@ -197,11 +188,12 @@ export const AccessControl: FC<AccessControlProps> = ({
       </div>
 
       <div className="space-y-2">
-        {currentAccess.map((access) => {
-          const _level = levelLabels[access.level];
-          
+        {currentAccess.map(access => {
           return (
-            <div key={access.userId} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+            <div
+              key={access.userId}
+              className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   {access.userName.charAt(0)}
@@ -212,15 +204,16 @@ export const AccessControl: FC<AccessControlProps> = ({
                 <select
                   className="p-2 rounded border bg-background text-sm"
                   value={access.level}
-                  onChange={(e) => onChangeLevel?.(access.userId, e.target.value)}
+                  onChange={e => onChangeLevel?.(access.userId, e.target.value)}
                 >
                   <option value="view">Visualizar</option>
                   <option value="edit">Editar</option>
                   <option value="admin">Administrador</option>
                 </select>
-                <Button 
-                  variant="ghost" 
-                  size="icon" aria-label="Fechar"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Fechar"
                   onClick={() => onRemoveUser?.(access.userId)}
                 >
                   <X className="h-4 w-4" />
@@ -249,24 +242,29 @@ interface SecurityAlertProps {
 export const SecurityAlerts: FC<SecurityAlertProps> = ({
   alerts,
   onDismiss,
-  onAction
+  onAction,
 }) => {
   const typeStyles = {
     warning: 'border-warning bg-warning/10',
     critical: 'border-destructive bg-destructive/10',
-    info: 'border-info bg-info/10'
+    info: 'border-info bg-info/10',
   };
 
   return (
     <div className="space-y-3">
-      {alerts.map((alert) => (
+      {alerts.map(alert => (
         <Card key={alert.id} className={`p-4 border-l-4 ${typeStyles[alert.type]}`}>
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-3">
-              <AlertTriangle className={`h-5 w-5 ${
-                alert.type === 'critical' ? 'text-destructive' : 
-                alert.type === 'warning' ? 'text-warning' : 'text-info'
-              }`} />
+              <AlertTriangle
+                className={`h-5 w-5 ${
+                  alert.type === 'critical'
+                    ? 'text-destructive'
+                    : alert.type === 'warning'
+                      ? 'text-warning'
+                      : 'text-info'
+                }`}
+              />
               <div>
                 <h4 className="font-medium">{alert.title}</h4>
                 <p className="text-sm text-muted-foreground">{alert.description}</p>

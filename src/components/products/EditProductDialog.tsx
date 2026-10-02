@@ -1,12 +1,18 @@
-import { useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useUpdateProduct, Product } from "@/hooks/useProducts";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useUpdateProduct, Product } from '@/hooks/useProducts';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -14,22 +20,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const editProductSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Nome é obrigatório")
-    .max(100, "Nome deve ter no máximo 100 caracteres"),
-  sku: z.string().trim().min(1, "SKU é obrigatório"),
-  category: z.string().default("Assinatura"),
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+  sku: z.string().trim().min(1, 'SKU é obrigatório'),
+  category: z.string(),
   price: z
     .string()
-    .min(1, "Preço é obrigatório")
-    .refine((val) => !isNaN(parseFloat(val)), "Preço inválido")
-    .refine((val) => parseFloat(val) >= 0, "Preço deve ser positivo"),
-  stock_quantity: z.string().default("0"),
+    .min(1, 'Preço é obrigatório')
+    .refine(val => !isNaN(parseFloat(val)), 'Preço inválido')
+    .refine(val => parseFloat(val) >= 0, 'Preço deve ser positivo'),
+  stock_quantity: z.string(),
 });
 
 type EditProductFormData = z.infer<typeof editProductSchema>;
@@ -40,28 +46,35 @@ interface EditProductDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDialogProps) => {
+export const EditProductDialog = ({
+  product,
+  open,
+  onOpenChange,
+}: EditProductDialogProps) => {
   const updateProduct = useUpdateProduct();
 
   const form = useForm<EditProductFormData>({
     resolver: zodResolver(editProductSchema),
     defaultValues: {
-      name: "",
-      sku: "",
-      category: "Assinatura",
-      price: "0",
-      stock_quantity: "0",
+      name: '',
+      sku: '',
+      category: 'Assinatura',
+      price: '0',
+      stock_quantity: '0',
     },
   });
 
   useEffect(() => {
     if (product) {
       form.reset({
-        name: product.name || "",
-        sku: (product as { sku?: string; stock_quantity?: number }).sku || "",
-        category: product.category || "Assinatura",
-        price: product.price?.toString() || "0",
-        stock_quantity: (product as { sku?: string; stock_quantity?: number }).stock_quantity?.toString() || "0",
+        name: product.name || '',
+        sku: (product as { sku?: string; stock_quantity?: number }).sku || '',
+        category: product.category || 'Assinatura',
+        price: product.price?.toString() || '0',
+        stock_quantity:
+          (
+            product as { sku?: string; stock_quantity?: number }
+          ).stock_quantity?.toString() || '0',
       });
     }
   }, [product, form]);
@@ -90,7 +103,9 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="text-section-title gradient-text">Editar Produto</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">
+            Editar Produto
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -193,8 +208,12 @@ export const EditProductDialog = ({ product, open, onOpenChange }: EditProductDi
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" className="gradient-primary" disabled={updateProduct.isPending}>
-                {updateProduct.isPending ? "Salvando..." : "Salvar"}
+              <Button
+                type="submit"
+                className="gradient-primary"
+                disabled={updateProduct.isPending}
+              >
+                {updateProduct.isPending ? 'Salvando...' : 'Salvar'}
               </Button>
             </div>
           </form>

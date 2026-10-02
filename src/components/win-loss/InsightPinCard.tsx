@@ -1,13 +1,13 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Pin, Sparkles, MessageSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Pin, Sparkles, MessageSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   severityClasses,
   severityLabel,
   insightTypeLabel,
   type Severity,
-} from "@/components/deal-intelligence/winloss/winLossHelpers";
+} from '@/components/deal-intelligence/winloss/winLossHelpers';
 
 interface PinInsight {
   id: string;
@@ -26,7 +26,11 @@ const severityWeight: Record<string, number> = { risk: 3, opportunity: 2, info: 
 
 export function InsightPinCard({ insights, onCopilot }: Props) {
   const top = [...insights]
-    .sort((a, b) => (severityWeight[b.severity ?? "info"] ?? 0) - (severityWeight[a.severity ?? "info"] ?? 0))
+    .sort(
+      (a, b) =>
+        (severityWeight[b.severity ?? 'info'] ?? 0) -
+        (severityWeight[a.severity ?? 'info'] ?? 0)
+    )
     .slice(0, 3);
 
   if (!top.length) return null;
@@ -40,11 +44,17 @@ export function InsightPinCard({ insights, onCopilot }: Props) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {top.map(i => {
-            const sev = (i.severity ?? "info") as Severity;
+            const sev = (i.severity ?? 'info') as Severity;
             return (
-              <div key={i.id} className="rounded-lg border border-border/50 p-2.5 bg-card">
+              <div
+                key={i.id}
+                className="rounded-lg border border-border/50 p-2.5 bg-card"
+              >
                 <div className="flex items-start justify-between gap-1 mb-1">
-                  <Badge variant="outline" className={`text-[10px] ${severityClasses[sev]}`}>
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] ${severityClasses[sev]}`}
+                  >
                     {severityLabel[sev]}
                   </Badge>
                   <Badge variant="outline" className="text-[10px]">
@@ -52,7 +62,9 @@ export function InsightPinCard({ insights, onCopilot }: Props) {
                   </Badge>
                 </div>
                 <p className="text-xs font-medium line-clamp-2">{i.title}</p>
-                <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1">{i.description}</p>
+                <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1">
+                  {i.description}
+                </p>
                 {onCopilot && (
                   <Button
                     size="sm"

@@ -1,12 +1,24 @@
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Check, X, Dumbbell, Play, Sparkles, Loader2, MessageSquarePlus } from "lucide-react";
-import { useCoachingActions, useUpdateCoachingAction, useExtractCoaching } from "@/hooks/conversational/useCoachingActions";
-import { useUserRoles } from "@/hooks/useUserRoles";
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Check,
+  X,
+  Dumbbell,
+  Play,
+  Sparkles,
+  Loader2,
+  MessageSquarePlus,
+} from 'lucide-react';
+import {
+  useCoachingActions,
+  useUpdateCoachingAction,
+  useExtractCoaching,
+} from '@/hooks/conversational/useCoachingActions';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import {
   CATEGORY_ICONS,
   CATEGORY_LABELS,
@@ -16,8 +28,8 @@ import {
   formatTimestamp,
   sortBySeverity,
   type CoachingAction,
-} from "./coachingHelpers";
-import { cn } from "@/lib/utils";
+} from './coachingHelpers';
+import { cn } from '@/lib/utils';
 
 interface Props {
   recordingId: string;
@@ -46,7 +58,9 @@ export const CoachingActionsList = ({ recordingId, onSeek }: Props) => {
           <Sparkles className="h-4 w-4 text-primary" />
           <h3 className="font-semibold text-sm">Coaching IA</h3>
           {actions.length > 0 && (
-            <Badge variant="outline" className="text-xs">{actions.length}</Badge>
+            <Badge variant="outline" className="text-xs">
+              {actions.length}
+            </Badge>
           )}
         </div>
         <Button
@@ -60,7 +74,7 @@ export const CoachingActionsList = ({ recordingId, onSeek }: Props) => {
           ) : (
             <Sparkles className="h-3.5 w-3.5" />
           )}
-          <span className="ml-1.5">{actions.length > 0 ? "Regerar" : "Gerar"}</span>
+          <span className="ml-1.5">{actions.length > 0 ? 'Regerar' : 'Gerar'}</span>
         </Button>
       </div>
 
@@ -70,7 +84,7 @@ export const CoachingActionsList = ({ recordingId, onSeek }: Props) => {
         </div>
       ) : (
         <div className="space-y-2">
-          {actions.map((a) => (
+          {actions.map(a => (
             <ActionRow key={a.id} action={a} onSeek={onSeek} />
           ))}
         </div>
@@ -79,21 +93,27 @@ export const CoachingActionsList = ({ recordingId, onSeek }: Props) => {
   );
 };
 
-function ActionRow({ action, onSeek }: { action: CoachingAction; onSeek?: (s: number) => void }) {
+function ActionRow({
+  action,
+  onSeek,
+}: {
+  action: CoachingAction;
+  onSeek?: (s: number) => void;
+}) {
   const update = useUpdateCoachingAction();
   const { isAdmin, isManager } = useUserRoles();
   const canManage = isAdmin || isManager;
   const [noteOpen, setNoteOpen] = useState(false);
-  const [note, setNote] = useState(action.manager_note ?? "");
+  const [note, setNote] = useState(action.manager_note ?? '');
   const Icon = CATEGORY_ICONS[action.category];
 
-  const isResolved = action.status !== "pending";
+  const isResolved = action.status !== 'pending';
 
   return (
     <div
       className={cn(
-        "rounded-md border p-3 space-y-2 transition-colors",
-        isResolved && "opacity-60 bg-muted/30",
+        'rounded-md border p-3 space-y-2 transition-colors',
+        isResolved && 'opacity-60 bg-muted/30'
       )}
     >
       <div className="flex items-start gap-2">
@@ -103,7 +123,9 @@ function ActionRow({ action, onSeek }: { action: CoachingAction; onSeek?: (s: nu
             <Badge variant="outline" className="text-[10px] h-5">
               {CATEGORY_LABELS[action.category]}
             </Badge>
-            <Badge className={cn("text-[10px] h-5 border", SEVERITY_BADGE[action.severity])}>
+            <Badge
+              className={cn('text-[10px] h-5 border', SEVERITY_BADGE[action.severity])}
+            >
               {SEVERITY_LABELS[action.severity]}
             </Badge>
             {action.timestamp_sec != null && onSeek && (
@@ -139,17 +161,37 @@ function ActionRow({ action, onSeek }: { action: CoachingAction; onSeek?: (s: nu
 
       {!isResolved && (
         <div className="flex items-center gap-1.5 pl-6">
-          <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => update.mutate({ id: action.id, status: "accepted" })}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 text-xs"
+            onClick={() => update.mutate({ id: action.id, status: 'accepted' })}
+          >
             <Check className="h-3 w-3 mr-1" /> Aceitar
           </Button>
-          <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => update.mutate({ id: action.id, status: "practiced" })}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 text-xs"
+            onClick={() => update.mutate({ id: action.id, status: 'practiced' })}
+          >
             <Dumbbell className="h-3 w-3 mr-1" /> Pratiquei
           </Button>
-          <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground" onClick={() => update.mutate({ id: action.id, status: "dismissed" })}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 text-xs text-muted-foreground"
+            onClick={() => update.mutate({ id: action.id, status: 'dismissed' })}
+          >
             <X className="h-3 w-3 mr-1" /> Dispensar
           </Button>
           {canManage && (
-            <Button size="sm" variant="ghost" className="h-7 text-xs ml-auto" onClick={() => setNoteOpen((v) => !v)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 text-xs ml-auto"
+              onClick={() => setNoteOpen(v => !v)}
+            >
               <MessageSquarePlus className="h-3 w-3 mr-1" /> Nota
             </Button>
           )}
@@ -160,7 +202,7 @@ function ActionRow({ action, onSeek }: { action: CoachingAction; onSeek?: (s: nu
         <div className="pl-6 space-y-1.5">
           <Textarea
             value={note}
-            onChange={(e) => setNote(e.target.value)}
+            onChange={e => setNote(e.target.value)}
             placeholder="Comentário do gestor..."
             rows={2}
             className="text-xs"

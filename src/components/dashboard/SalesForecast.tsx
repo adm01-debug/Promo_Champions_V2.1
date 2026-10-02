@@ -2,12 +2,18 @@ import React, { useMemo } from 'react';
 import { WON_SALE_STATUSES } from '@/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Info, Radio, Zap } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 const STAGE_WEIGHTS: Record<string, number> = {
   pending: 0.05,
   qualified: 0.2,
@@ -59,7 +65,10 @@ export const SalesForecast = React.memo(() => {
         return sum + (d.amount || 0) * w;
       }, 0);
 
-      const closedTotal = (closedDeals || []).reduce((sum, d) => sum + (d.amount || 0), 0);
+      const closedTotal = (closedDeals || []).reduce(
+        (sum, d) => sum + (d.amount || 0),
+        0
+      );
       const totalDeals = (openDeals?.length || 0) + (closedDeals?.length || 0);
       const confidence = Math.min(95, Math.max(30, 40 + totalDeals * 0.5));
 
@@ -71,7 +80,10 @@ export const SalesForecast = React.memo(() => {
     staleTime: 120_000,
   });
 
-  const config = useMemo(() => getConfidenceConfig(data?.confidence ?? 50), [data?.confidence]);
+  const config = useMemo(
+    () => getConfidenceConfig(data?.confidence ?? 50),
+    [data?.confidence]
+  );
 
   if (isLoading) {
     return (
@@ -113,7 +125,7 @@ export const SalesForecast = React.memo(() => {
             className="text-3xl font-mono font-black tracking-tighter text-foreground tabular-nums"
             style={{ textShadow: '0 0 20px rgba(255,255,255,0.1)' }}
           >
-            R$ {forecast.toLocaleString('pt-BR')}
+            {formatBRL(forecast)}
           </motion.p>
           <div className="flex items-center justify-center gap-2 mt-2">
             <span className="h-1.5 w-1.5 rounded-full bg-primary/40" />
@@ -148,7 +160,12 @@ export const SalesForecast = React.memo(() => {
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <span className={cn('text-xs font-mono font-black tabular-nums', config.textColor)}>
+            <span
+              className={cn(
+                'text-xs font-mono font-black tabular-nums',
+                config.textColor
+              )}
+            >
               {confidence}%
             </span>
           </div>

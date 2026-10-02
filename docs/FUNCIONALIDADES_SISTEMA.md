@@ -1,7 +1,7 @@
 # 📋 Levantamento Completo de Funcionalidades — Sales Arena
 
 > Documento gerado a partir de toda a conversa e memórias do projeto.  
-> Última atualização: 2026-03-15
+> Atualizado em: 2026-03-15
 
 ---
 
@@ -41,6 +41,7 @@
 ## 1. Dashboards
 
 ### 1.1 Dashboard Gestão (Home `/`)
+
 - **Hero Metric** de Faturamento (card 2x maior com tipografia 5xl e elementos decorativos)
 - KPIs principais: Faturamento, Vendas, Ticket Médio, Taxa de Conversão, Novos Clientes
 - **Count-up animations** nos números (easeOutCubic, 1.4s)
@@ -50,12 +51,14 @@
 - Filtros por período (semana/mês/trimestre)
 
 ### 1.2 Dashboard SDR (`/sdr`)
+
 - Métricas de atividades do SDR (ligações, e-mails, reuniões agendadas)
 - Volume de atividades vs resultados
 - Taxa de conexão e agendamento
 - Progresso de metas de atividades
 
 ### 1.3 Dashboard Closer (`/closer`)
+
 - Métricas de fechamento
 - Pipeline de negócios em andamento
 - Orçamentos pendentes
@@ -136,6 +139,7 @@
 ## 8. Desafios (Diários & Semanais) (`/desafios`)
 
 ### 8.1 Desafios Diários
+
 - Geração automática por data
 - Tipos de desafio variados
 - Progresso rastreado (`daily_challenge_progress`)
@@ -143,6 +147,7 @@
 - Status: ativo/inativo
 
 ### 8.2 Desafios Semanais
+
 - Progresso rastreado (`challenge_progress`)
 - Claim de XP ao completar
 - Vinculado a vendedor específico
@@ -191,20 +196,24 @@
 ## 12. Analytics & BI
 
 ### 12.1 Analytics (`/analytics`)
+
 - **Win/Loss Analysis** — razões de ganho/perda por vendedor e produto
 - **Deal Velocity** — tempo médio em cada estágio do funil
 - **Conversion Analysis** — taxas de conversão entre estágios, identificação de gargalos
 - **Objections Library** — objeções comuns e respostas, score de efetividade, contagem de uso
 
 ### 12.2 BI SDR (`/bi-sdr`)
+
 - Business Intelligence específico para SDRs
 - Métricas de prospecção e qualificação
 
 ### 12.3 BI Closer (`/bi-closer`)
+
 - Business Intelligence específico para Closers
 - Métricas de fechamento e receita
 
 ### 12.4 BI Gestão (`/bi-gestor`)
+
 - Business Intelligence para gestores
 - Visão macro do time e operação
 
@@ -350,12 +359,14 @@
 ## 26. Autenticação & Segurança
 
 ### 26.1 Autenticação
+
 - Login/Signup com verificação de email
 - **MFA (Multi-Factor Authentication)** — verificação em dois fatores
 - **Passkeys** — autenticação biométrica/hardware
 - MFA verification attempts logging
 
 ### 26.2 Segurança
+
 - **Geo-blocking** — bloqueio por região geográfica (`geo_blocked_regions`, `geo_access_logs`)
 - **IP Whitelist** — lista branca de IPs permitidos
 - **Blocked IPs** — IPs bloqueados com razão e expiração
@@ -367,6 +378,7 @@
 - **Email Logs** — registro de todos os emails enviados pelo sistema
 
 ### 26.3 Integrações de Segurança
+
 - Device fingerprinting
 - User agent tracking
 - IP address logging
@@ -377,6 +389,7 @@
 ## 27. Navegação & UX
 
 ### 27.1 Sidebar (AppSidebar)
+
 - **3 modos de visualização**: SDR, Closer, Gestão
 - Switcher de modo para admin/manager
 - Menus contextuais por perfil (5 itens principais + ferramentas)
@@ -387,6 +400,7 @@
 - Loading skeleton durante carregamento de roles
 
 ### 27.2 Layout Principal
+
 - **MainLayout** com sidebar + header + conteúdo
 - Header com título dinâmico por rota
 - Badge de notificação dinâmica no header
@@ -396,28 +410,28 @@
 
 ## 28. Quick Wins Implementados
 
-| # | Quick Win | Status |
-|---|-----------|--------|
-| 1 | Empty states ilustrados com CTAs actionable | ✅ Implementado |
-| 2 | Hero metric no faturamento (card 2x maior) | ✅ Implementado |
-| 3 | Notificação badge dinâmica (dados reais) | ✅ Implementado |
-| 4 | Count-up animation nos números do dashboard | ✅ Implementado |
-| 5 | Mini leaderboard no dashboard | ✅ Implementado |
+| #   | Quick Win                                   | Status          |
+| --- | ------------------------------------------- | --------------- |
+| 1   | Empty states ilustrados com CTAs actionable | ✅ Implementado |
+| 2   | Hero metric no faturamento (card 2x maior)  | ✅ Implementado |
+| 3   | Notificação badge dinâmica (dados reais)    | ✅ Implementado |
+| 4   | Count-up animation nos números do dashboard | ✅ Implementado |
+| 5   | Mini leaderboard no dashboard               | ✅ Implementado |
 
 ---
 
 ## 📊 Resumo Quantitativo
 
-| Categoria | Quantidade |
-|-----------|-----------|
-| Páginas/Rotas | 44+ |
-| Hooks customizados | 130+ |
-| Edge Functions | 26 |
-| Tabelas no banco | 55+ |
-| Tipos de atividade | 6 (call, email, meeting, linkedin, whatsapp, note) |
-| Outcomes rastreados | 8 |
-| Modos de visualização | 3 (SDR, Closer, Gestão) |
-| Roles de usuário | 4 (admin, manager, sales_rep, sales_ops) |
+| Categoria             | Quantidade                                         |
+| --------------------- | -------------------------------------------------- |
+| Páginas/Rotas         | 44+                                                |
+| Hooks customizados    | 130+                                               |
+| Edge Functions        | 26                                                 |
+| Tabelas no banco      | 55+                                                |
+| Tipos de atividade    | 6 (call, email, meeting, linkedin, whatsapp, note) |
+| Outcomes rastreados   | 8                                                  |
+| Modos de visualização | 3 (SDR, Closer, Gestão)                            |
+| Roles de usuário      | 4 (admin, manager, sales_rep, sales_ops)           |
 
 ---
 
@@ -452,79 +466,79 @@
 
 ### Resultado por Módulo
 
-| # | Módulo | Arquivo(s) | Status |
-|---|--------|-----------|--------|
-| 1 | Dashboard Gestão | `Index.tsx` (217 linhas) + 22 componentes em `dashboard/` | ✅ **IMPLEMENTADO** |
-| 2 | Dashboard SDR | `SDRDashboard.tsx` + `useSDRMetrics` | ✅ **IMPLEMENTADO** |
-| 3 | Dashboard Closer | `CloserDashboard.tsx` + `useCloserMetrics` | ✅ **IMPLEMENTADO** |
-| 4 | Pipeline Kanban | `Pipeline.tsx` + `PipelineBoard` + `AtRiskDealsPanel` + `usePipeline` | ✅ **IMPLEMENTADO** |
-| 5 | Atividades | `Atividades.tsx` + `ActivityLogForm` + `ActivityList` + `ActivityStats` | ✅ **IMPLEMENTADO** |
-| 6 | Clientes | `Clientes.tsx` + `useClients` | ✅ **IMPLEMENTADO** |
-| 7 | Vendas | `Vendas.tsx` + `useSalesData` | ✅ **IMPLEMENTADO** |
-| 8 | Orçamentos | `Orcamentos.tsx` (341 linhas) + `QuoteDetailDialog` + `useQuotes` | ✅ **IMPLEMENTADO** |
-| 9 | Gamificação & Ranking | `RankingCompetitivo.tsx` (585 linhas) + XP + Levels + Badges | ✅ **IMPLEMENTADO** |
-| 10 | Desafios | `DesafiosSemanais.tsx` (233 linhas) + `HistoricoDesafiosDiarios.tsx` | ✅ **IMPLEMENTADO** |
-| 11 | Cadências | `Cadencias.tsx` (147 linhas) + `CadenceCard` + `TodaysCadenceTasks` | ✅ **IMPLEMENTADO** |
-| 12 | Tarefas | `Tarefas.tsx` + `TaskQueue` + `NextBestAction` + `useStagnantTasks` | ✅ **IMPLEMENTADO** |
-| 13 | Assistente IA | `Assistente.tsx` + `SalesAssistantChat` (819 linhas) + Voice | ✅ **IMPLEMENTADO** |
-| 14 | Analytics | `Analytics.tsx` (218 linhas) + 11 sub-componentes (WinLoss, DealVelocity, Coaching, etc.) | ✅ **IMPLEMENTADO** |
-| 15 | BI SDR/Closer/Gestor/Vendedor | `BISDR.tsx` + `BICloser.tsx` + `BIGestor.tsx` + `BIVendedor.tsx` | ✅ **IMPLEMENTADO** |
-| 16 | Relatórios | `Relatorios.tsx` + `RelatorioAtividades.tsx` | ✅ **IMPLEMENTADO** |
-| 17 | Metas | `Metas.tsx` (175 linhas) + `TeamGoalProgress` + `GoalsLeaderboard` + `CommissionCalculator` | ✅ **IMPLEMENTADO** |
-| 18 | Times | `Times.tsx` + `TeamCard` + `MemberList` + `CreateTeamDialog` + `EditTeamDialog` | ✅ **IMPLEMENTADO** |
-| 19 | Vendedores | `Vendedores.tsx` + `VendedorDashboard.tsx` + `useSalespeople` | ✅ **IMPLEMENTADO** |
-| 20 | Portfólio | `Portfolio.tsx` (456 linhas) + `useClientPortfolio` + routing | ✅ **IMPLEMENTADO** |
-| 21 | ICP | `ICP.tsx` (437 linhas) + `useICPData` | ✅ **IMPLEMENTADO** |
-| 22 | Playbooks | `Playbooks.tsx` + `PlaybooksManager` + `usePlaybooks` | ✅ **IMPLEMENTADO** |
-| 23 | Fonte de Leads | `FonteLeads.tsx` + `LeadSourceMetrics` + `LeadSourceTrendChart` | ✅ **IMPLEMENTADO** |
-| 24 | Metas Atividades | `MetasAtividades.tsx` (243 linhas) + `ActivityGoalCard` + `DailyActivityRanking` | ✅ **IMPLEMENTADO** |
-| 25 | Assinatura Digital | `AssinaturaDigital.tsx` (435 linhas) + `useDigitalSignatures` | ✅ **IMPLEMENTADO** |
-| 26 | Notificações | `Notificacoes.tsx` (536 linhas) + `useNotificationPreferences` + `SoundSettings` | ✅ **IMPLEMENTADO** |
-| 27 | Configurações | `Configuracoes.tsx` | ✅ **IMPLEMENTADO** |
-| 28 | Admin | `AdminDashboard.tsx` + `useUserRoles` + `usePermissions` | ✅ **IMPLEMENTADO** |
-| 29 | Auth | `Auth.tsx` (401 linhas) + `useLoginRateLimiter` + `useMFA` + `useWebAuthn` | ✅ **IMPLEMENTADO** |
-| 30 | Segurança | `useIPBlocking` + `useSessionManagement` + Geo-blocking hooks | ✅ **IMPLEMENTADO** |
+| #   | Módulo                        | Arquivo(s)                                                                                  | Status              |
+| --- | ----------------------------- | ------------------------------------------------------------------------------------------- | ------------------- |
+| 1   | Dashboard Gestão              | `Index.tsx` (217 linhas) + 22 componentes em `dashboard/`                                   | ✅ **IMPLEMENTADO** |
+| 2   | Dashboard SDR                 | `SDRDashboard.tsx` + `useSDRMetrics`                                                        | ✅ **IMPLEMENTADO** |
+| 3   | Dashboard Closer              | `CloserDashboard.tsx` + `useCloserMetrics`                                                  | ✅ **IMPLEMENTADO** |
+| 4   | Pipeline Kanban               | `Pipeline.tsx` + `PipelineBoard` + `AtRiskDealsPanel` + `usePipeline`                       | ✅ **IMPLEMENTADO** |
+| 5   | Atividades                    | `Atividades.tsx` + `ActivityLogForm` + `ActivityList` + `ActivityStats`                     | ✅ **IMPLEMENTADO** |
+| 6   | Clientes                      | `Clientes.tsx` + `useClients`                                                               | ✅ **IMPLEMENTADO** |
+| 7   | Vendas                        | `Vendas.tsx` + `useSalesData`                                                               | ✅ **IMPLEMENTADO** |
+| 8   | Orçamentos                    | `Orcamentos.tsx` (341 linhas) + `QuoteDetailDialog` + `useQuotes`                           | ✅ **IMPLEMENTADO** |
+| 9   | Gamificação & Ranking         | `RankingCompetitivo.tsx` (585 linhas) + XP + Levels + Badges                                | ✅ **IMPLEMENTADO** |
+| 10  | Desafios                      | `DesafiosSemanais.tsx` (233 linhas) + `HistoricoDesafiosDiarios.tsx`                        | ✅ **IMPLEMENTADO** |
+| 11  | Cadências                     | `Cadencias.tsx` (147 linhas) + `CadenceCard` + `TodaysCadenceTasks`                         | ✅ **IMPLEMENTADO** |
+| 12  | Tarefas                       | `Tarefas.tsx` + `TaskQueue` + `NextBestAction` + `useStagnantTasks`                         | ✅ **IMPLEMENTADO** |
+| 13  | Assistente IA                 | `Assistente.tsx` + `SalesAssistantChat` (819 linhas) + Voice                                | ✅ **IMPLEMENTADO** |
+| 14  | Analytics                     | `Analytics.tsx` (218 linhas) + 11 sub-componentes (WinLoss, DealVelocity, Coaching, etc.)   | ✅ **IMPLEMENTADO** |
+| 15  | BI SDR/Closer/Gestor/Vendedor | `BISDR.tsx` + `BICloser.tsx` + `BIGestor.tsx` + `BIVendedor.tsx`                            | ✅ **IMPLEMENTADO** |
+| 16  | Relatórios                    | `Relatorios.tsx` + `RelatorioAtividades.tsx`                                                | ✅ **IMPLEMENTADO** |
+| 17  | Metas                         | `Metas.tsx` (175 linhas) + `TeamGoalProgress` + `GoalsLeaderboard` + `CommissionCalculator` | ✅ **IMPLEMENTADO** |
+| 18  | Times                         | `Times.tsx` + `TeamCard` + `MemberList` + `CreateTeamDialog` + `EditTeamDialog`             | ✅ **IMPLEMENTADO** |
+| 19  | Vendedores                    | `Vendedores.tsx` + `VendedorDashboard.tsx` + `useSalespeople`                               | ✅ **IMPLEMENTADO** |
+| 20  | Portfólio                     | `Portfolio.tsx` (456 linhas) + `useClientPortfolio` + routing                               | ✅ **IMPLEMENTADO** |
+| 21  | ICP                           | `ICP.tsx` (437 linhas) + `useICPData`                                                       | ✅ **IMPLEMENTADO** |
+| 22  | Playbooks                     | `Playbooks.tsx` + `PlaybooksManager` + `usePlaybooks`                                       | ✅ **IMPLEMENTADO** |
+| 23  | Fonte de Leads                | `FonteLeads.tsx` + `LeadSourceMetrics` + `LeadSourceTrendChart`                             | ✅ **IMPLEMENTADO** |
+| 24  | Metas Atividades              | `MetasAtividades.tsx` (243 linhas) + `ActivityGoalCard` + `DailyActivityRanking`            | ✅ **IMPLEMENTADO** |
+| 25  | Assinatura Digital            | `AssinaturaDigital.tsx` (435 linhas) + `useDigitalSignatures`                               | ✅ **IMPLEMENTADO** |
+| 26  | Notificações                  | `Notificacoes.tsx` (536 linhas) + `useNotificationPreferences` + `SoundSettings`            | ✅ **IMPLEMENTADO** |
+| 27  | Configurações                 | `Configuracoes.tsx`                                                                         | ✅ **IMPLEMENTADO** |
+| 28  | Admin                         | `AdminDashboard.tsx` + `useUserRoles` + `usePermissions`                                    | ✅ **IMPLEMENTADO** |
+| 29  | Auth                          | `Auth.tsx` (401 linhas) + `useLoginRateLimiter` + `useMFA` + `useWebAuthn`                  | ✅ **IMPLEMENTADO** |
+| 30  | Segurança                     | `useIPBlocking` + `useSessionManagement` + Geo-blocking hooks                               | ✅ **IMPLEMENTADO** |
 
 ### Edge Functions (26 verificadas)
 
-| # | Função | Propósito |
-|---|--------|-----------|
-| 1 | `access-denied-alerts` | Alertas de pico de acessos negados |
-| 2 | `activity-goal-alerts` | CRON 15h: alertas de metas de atividade |
-| 3 | `auto-reassign-inactive` | Reatribuição de clientes inativos |
-| 4 | `bitrix24-oauth` | OAuth Bitrix24 |
-| 5 | `bitrix24-sync` | Sincronização de dados Bitrix24 |
-| 6 | `challenge-expiration-alerts` | Alertas de desafios expirando |
-| 7 | `check-lead-sla` | Verificação de SLA de leads |
-| 8 | `create-stagnant-tasks` | Tarefas automáticas para deals estagnados |
-| 9 | `deal-probability` | Cálculo de probabilidade de fechamento |
-| 10 | `demand-forecast` | Previsão de demanda |
-| 11 | `detect-at-risk-deals` | Detecção de deals em risco |
-| 12 | `elevenlabs-stt` | Speech-to-Text |
-| 13 | `elevenlabs-tts` | Text-to-Speech |
-| 14 | `lead-scoring` | Pontuação de leads |
-| 15 | `new-device-alert` | Alerta de novo dispositivo |
-| 16 | `next-best-action` | Próxima melhor ação (IA) |
-| 17 | `push-subscribe` | Push notifications subscription |
-| 18 | `receive-quote-webhook` | Webhook de orçamentos externos |
-| 19 | `rotate-daily-challenges` | Rotação de desafios diários |
-| 20 | `sales-assistant-chat` | Chat IA do assistente |
-| 21 | `salesperson-coaching` | Coaching personalizado IA |
-| 22 | `sdr-consecutive-alerts` | Alertas SDR dias consecutivos |
-| 23 | `send-alert-notifications` | Envio de alertas por email |
-| 24 | `send-password-reset` | Reset de senha |
-| 25 | `send-push-notification` | Push notification |
-| 26 | `webauthn` | Autenticação WebAuthn/Passkeys |
+| #   | Função                        | Propósito                                 |
+| --- | ----------------------------- | ----------------------------------------- |
+| 1   | `access-denied-alerts`        | Alertas de pico de acessos negados        |
+| 2   | `activity-goal-alerts`        | CRON 15h: alertas de metas de atividade   |
+| 3   | `auto-reassign-inactive`      | Reatribuição de clientes inativos         |
+| 4   | `bitrix24-oauth`              | OAuth Bitrix24                            |
+| 5   | `bitrix24-sync`               | Sincronização de dados Bitrix24           |
+| 6   | `challenge-expiration-alerts` | Alertas de desafios expirando             |
+| 7   | `check-lead-sla`              | Verificação de SLA de leads               |
+| 8   | `create-stagnant-tasks`       | Tarefas automáticas para deals estagnados |
+| 9   | `deal-probability`            | Cálculo de probabilidade de fechamento    |
+| 10  | `demand-forecast`             | Previsão de demanda                       |
+| 11  | `detect-at-risk-deals`        | Detecção de deals em risco                |
+| 12  | `elevenlabs-stt`              | Speech-to-Text                            |
+| 13  | `elevenlabs-tts`              | Text-to-Speech                            |
+| 14  | `lead-scoring`                | Pontuação de leads                        |
+| 15  | `new-device-alert`            | Alerta de novo dispositivo                |
+| 16  | `next-best-action`            | Próxima melhor ação (IA)                  |
+| 17  | `push-subscribe`              | Push notifications subscription           |
+| 18  | `receive-quote-webhook`       | Webhook de orçamentos externos            |
+| 19  | `rotate-daily-challenges`     | Rotação de desafios diários               |
+| 20  | `sales-assistant-chat`        | Chat IA do assistente                     |
+| 21  | `salesperson-coaching`        | Coaching personalizado IA                 |
+| 22  | `sdr-consecutive-alerts`      | Alertas SDR dias consecutivos             |
+| 23  | `send-alert-notifications`    | Envio de alertas por email                |
+| 24  | `send-password-reset`         | Reset de senha                            |
+| 25  | `send-push-notification`      | Push notification                         |
+| 26  | `webauthn`                    | Autenticação WebAuthn/Passkeys            |
 
 ### Quick Wins (5/5)
 
-| # | Quick Win | Evidência | Status |
-|---|-----------|-----------|--------|
-| 1 | Empty states ilustrados | `DashboardEmptyState.tsx` com 4 tipos + CTAs | ✅ |
-| 2 | Hero metric faturamento | `StatCard.tsx` variante `hero` integrada | ✅ |
-| 3 | Badge dinâmica notificações | `useUnreadNotificationsCount.ts` + `MainLayout.tsx` | ✅ |
-| 4 | Count-up animations | `useCountUp.ts` hook com easeOutCubic | ✅ |
-| 5 | Mini leaderboard | `MiniLeaderboard.tsx` com `useCompetitiveRanking` | ✅ |
+| #   | Quick Win                   | Evidência                                           | Status |
+| --- | --------------------------- | --------------------------------------------------- | ------ |
+| 1   | Empty states ilustrados     | `DashboardEmptyState.tsx` com 4 tipos + CTAs        | ✅     |
+| 2   | Hero metric faturamento     | `StatCard.tsx` variante `hero` integrada            | ✅     |
+| 3   | Badge dinâmica notificações | `useUnreadNotificationsCount.ts` + `MainLayout.tsx` | ✅     |
+| 4   | Count-up animations         | `useCountUp.ts` hook com easeOutCubic               | ✅     |
+| 5   | Mini leaderboard            | `MiniLeaderboard.tsx` com `useCompetitiveRanking`   | ✅     |
 
 ### Hooks Customizados (100+ verificados)
 
@@ -543,21 +557,25 @@ Todos os hooks em `src/hooks/` estão conectados a dados reais do Supabase — n
 ## 🚀 Módulos World-Class (10/10)
 
 ### 🎙️ Conversational Intelligence (`/conversational-intelligence`)
+
 - Análise de gravações de chamadas via IA (Gemini 2.5 Flash).
 - Sentimento, talk-ratio, tópicos, objeções e dicas de coaching automáticas.
 - Storage privado (`call-recordings`) com RLS.
 
 ### 📈 Revenue Intelligence (`/revenue-intelligence`) — Manager
+
 - Deal Health Score determinístico (RPC `calculate_deal_health`).
 - Forecast 30/60/90 ponderado vs. raw (RPC `get_revenue_forecast`).
 - Painel de sinais de risco com resolução manual.
 
 ### 🏢 Account-Based Selling (`/abm`)
+
 - Hierarquia de contas (Strategic/Enterprise/Mid-Market/SMB).
 - Buying Committee (Decisor, Champion, Influenciador, Bloqueador).
 - Account Score automatizado via RPC `calculate_account_score`.
 
 ### ⚡ Workflow Automation Builder (`/workflow-builder`) — Manager
+
 - Construtor no-code: gatilho → condições → ações.
 - Edge Function `execute-workflow` orquestra criação de tarefas, atualização de estágio e log de atividade.
 - Histórico de runs com duração, status e payload.
@@ -565,6 +583,7 @@ Todos os hooks em `src/hooks/` estão conectados a dados reais do Supabase — n
 - Hook unificado `useAutomationRules` + `useAutomationLogs` + `useToggleAutomationRule`.
 
 ### 🧠 Análise Comportamental Automática (DISC + EQ + Vieses)
+
 - Edge Function `behavioral-analysis` (Gemini 2.5 Flash) analisa interações com 100+ caracteres.
 - Retorna **perfil DISC** (primário/secundário + scores), **Inteligência Emocional** (empatia, autoconsciência, social) e **vieses cognitivos** (anchoring, confirmation, etc.) com severidade.
 - Recomendação estratégica de abordagem por contato.
@@ -574,4 +593,3 @@ Todos os hooks em `src/hooks/` estão conectados a dados reais do Supabase — n
 ---
 
 > **Este documento representa a fonte única de verdade para todas as funcionalidades do sistema Sales Arena.**
-

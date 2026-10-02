@@ -1,7 +1,7 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 Deno.serve(withRequestId("detect-at-risk-deals", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -19,11 +19,11 @@ Deno.serve(withRequestId("detect-at-risk-deals", async (req, _ctx) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Análise read-only de um deal: o client do usuário aplica RLS, então o
+    // chamador só analisa deals que ele pode ver.
+    const supabase = (await getUserClient(req)).client;
 
     // Fetch deal data
     const { data: deal, error: dealError } = await supabase
@@ -211,6 +211,12 @@ ${JSON.stringify(context, null, 2)}`;
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     console.error('Error in detect-at-risk-deals:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
