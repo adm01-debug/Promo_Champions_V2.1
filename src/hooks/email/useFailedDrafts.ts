@@ -29,7 +29,7 @@ export function useFailedDrafts() {
       const { data, error } = await supabase
         .from('email_bulk_drafts')
         .select(
-          'id, job_id, recipient_email, recipient_name, subject, error, retry_count, next_retry_at, last_error_at, approved',
+          'id, job_id, recipient_email, recipient_name, subject, error, retry_count, next_retry_at, last_error_at, approved'
         )
         .is('sent_at', null)
         .not('error', 'is', null)
@@ -68,7 +68,7 @@ export function useManualRetryDrafts() {
       const nextRetryAt = new Date().toISOString();
       await chunkedIn<{ id: string }>(
         ids,
-        (chunk) =>
+        chunk =>
           supabase
             .from('email_bulk_drafts')
             .update({
@@ -78,10 +78,12 @@ export function useManualRetryDrafts() {
             })
             .in('id', chunk as string[])
             .select('id'),
-        { label: 'email.manual-retry-drafts' },
+        { label: 'email.manual-retry-drafts' }
       );
 
-      const { data, error } = await supabase.functions.invoke('email-bulk-retry', { body: {} });
+      const { data, error } = await supabase.functions.invoke('email-bulk-retry', {
+        body: {},
+      });
       if (error) throw new Error(error.message);
 
       const payload = (data ?? {}) as Partial<ManualRetryResult>;
@@ -108,13 +110,13 @@ export function useDiscardDrafts() {
       if (ids.length === 0) throw new Error('Selecione ao menos um rascunho.');
       await chunkedIn<{ id: string }>(
         ids,
-        (chunk) =>
+        chunk =>
           supabase
             .from('email_bulk_drafts')
             .update({ approved: false, next_retry_at: null })
             .in('id', chunk as string[])
             .select('id'),
-        { label: 'email.discard-drafts' },
+        { label: 'email.discard-drafts' }
       );
       return ids.length;
     },

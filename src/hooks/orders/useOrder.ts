@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { OrderStatus } from "@/components/orders/orderHelpers";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { OrderStatus } from '@/components/orders/orderHelpers';
 
 export interface OrderRow {
   id: string;
@@ -40,7 +40,7 @@ export interface OrderDetail {
 
 export function useOrder(orderId: string | undefined) {
   return useQuery({
-    queryKey: ["order", orderId],
+    queryKey: ['order', orderId],
     enabled: !!orderId,
     queryFn: async (): Promise<OrderDetail | null> => {
       if (!orderId) return null;
@@ -48,18 +48,27 @@ export function useOrder(orderId: string | undefined) {
       // A visibilidade é definida no banco por RLS (dono, vendedor atribuído ou gestão).
       // Um filtro adicional por user_id faria gestores e vendedores perderem pedidos autorizados.
       const { data: order, error: orderErr } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("id", orderId)
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
         .maybeSingle();
 
       if (orderErr) throw orderErr;
       if (!order) return null;
 
-      const [{ data: items, error: itemsErr }, { data: events, error: eventsErr }] = await Promise.all([
-        supabase.from("order_items").select("*").eq("order_id", orderId).order("created_at"),
-        supabase.from("order_status_events").select("*").eq("order_id", orderId).order("created_at"),
-      ]);
+      const [{ data: items, error: itemsErr }, { data: events, error: eventsErr }] =
+        await Promise.all([
+          supabase
+            .from('order_items')
+            .select('*')
+            .eq('order_id', orderId)
+            .order('created_at'),
+          supabase
+            .from('order_status_events')
+            .select('*')
+            .eq('order_id', orderId)
+            .order('created_at'),
+        ]);
 
       if (itemsErr) throw itemsErr;
       if (eventsErr) throw eventsErr;

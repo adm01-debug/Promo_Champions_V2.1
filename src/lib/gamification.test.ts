@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { getLevelFromXP, getLevelInfo, getXPForNextLevel, formatXP, LEVELS } from './gamification';
+import {
+  getLevelFromXP,
+  getLevelInfo,
+  getXPForNextLevel,
+  formatXP,
+  LEVELS,
+} from './gamification';
 
 describe('getLevelFromXP', () => {
   it('retorna nível 1 para XP 0', () => {
@@ -53,8 +59,8 @@ describe('getLevelInfo', () => {
 
 describe('getXPForNextLevel', () => {
   it('devolve XP restante para próximo nível', () => {
-    expect(getXPForNextLevel(50)).toBe(50);   // 100-50
-    expect(getXPForNextLevel(250)).toBe(50);  // 300-250
+    expect(getXPForNextLevel(50)).toBe(50); // 100-50
+    expect(getXPForNextLevel(250)).toBe(50); // 300-250
   });
 
   it('devolve 0 no nível máximo', () => {

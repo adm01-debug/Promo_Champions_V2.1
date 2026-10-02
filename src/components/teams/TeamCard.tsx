@@ -1,19 +1,19 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  GitBranch, 
-  Phone, 
-  Handshake, 
-  Edit, 
-  Trash2, 
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  GitBranch,
+  Phone,
+  Handshake,
+  Edit,
+  Trash2,
   Calendar,
-  UserPlus
-} from "lucide-react";
-import { Team } from "@/hooks/useTeams";
-import { cn } from "@/lib/utils";
+  UserPlus,
+} from 'lucide-react';
+import { Team } from '@/hooks/useTeams';
+import { cn } from '@/lib/utils';
 
 interface TeamCardProps {
   team: Team;
@@ -27,30 +27,36 @@ function TeamCardImpl({ team, onEdit, onDelete }: TeamCardProps) {
   const isComplete = hasSDR && closerCount >= 2;
 
   return (
-    <Card className={cn(
-      "card-elevated hover-lift transition-all duration-300",
-      !team.is_active && "opacity-60"
-    )}>
+    <Card
+      className={cn(
+        'card-elevated hover-lift transition-all duration-300',
+        !team.is_active && 'opacity-60'
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className={cn(
-              "p-2.5 rounded-xl",
-              isComplete ? "gradient-primary" : "bg-muted"
-            )}>
-              <GitBranch className={cn(
-                "h-5 w-5",
-                isComplete ? "text-primary-foreground" : "text-muted-foreground"
-              )} />
+            <div
+              className={cn(
+                'p-2.5 rounded-xl',
+                isComplete ? 'gradient-primary' : 'bg-muted'
+              )}
+            >
+              <GitBranch
+                className={cn(
+                  'h-5 w-5',
+                  isComplete ? 'text-primary-foreground' : 'text-muted-foreground'
+                )}
+              />
             </div>
             <div>
               <CardTitle className="text-section-title">{team.name}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
-                <Badge 
-                  variant={team.is_active ? "default" : "secondary"}
+                <Badge
+                  variant={team.is_active ? 'default' : 'secondary'}
                   className="text-xs"
                 >
-                  {team.is_active ? "Ativo" : "Inativo"}
+                  {team.is_active ? 'Ativo' : 'Inativo'}
                 </Badge>
                 <Badge variant="outline" className="text-xs">
                   <Calendar className="h-3 w-3 mr-1" />
@@ -62,7 +68,8 @@ function TeamCardImpl({ team, onEdit, onDelete }: TeamCardProps) {
           <div className="flex gap-1">
             <Button
               variant="ghost"
-              size="icon" aria-label="Editar"
+              size="icon"
+              aria-label="Editar"
               className="h-8 w-8 hover-scale-sm"
               onClick={() => onEdit(team)}
             >
@@ -70,7 +77,8 @@ function TeamCardImpl({ team, onEdit, onDelete }: TeamCardProps) {
             </Button>
             <Button
               variant="ghost"
-              size="icon" aria-label="Excluir"
+              size="icon"
+              aria-label="Excluir"
               className="h-8 w-8 text-destructive hover:text-destructive hover-scale-sm"
               onClick={() => onDelete(team)}
             >
@@ -112,22 +120,23 @@ function TeamCardImpl({ team, onEdit, onDelete }: TeamCardProps) {
               <Handshake className="h-4 w-4" />
               <span>Closers Atendidos</span>
             </div>
-            <Badge 
-              variant={closerCount >= 2 ? "default" : "outline"} 
+            <Badge
+              variant={closerCount >= 2 ? 'default' : 'outline'}
               className={cn(
-                "text-xs",
-                closerCount >= 2 && "bg-status-success/20 text-status-success border-status-success/30"
+                'text-xs',
+                closerCount >= 2 &&
+                  'bg-status-success/20 text-status-success border-status-success/30'
               )}
             >
               {closerCount}/2
             </Badge>
           </div>
-          
+
           <div className="space-y-2">
             {team.closers && team.closers.length > 0 ? (
-              team.closers.map((closer) => (
-                <div 
-                  key={closer.id} 
+              team.closers.map(closer => (
+                <div
+                  key={closer.id}
                   className="flex items-center gap-3 p-2 rounded-lg bg-muted/50"
                 >
                   <Avatar className="h-8 w-8">
@@ -145,7 +154,7 @@ function TeamCardImpl({ team, onEdit, onDelete }: TeamCardProps) {
                 <span className="text-sm">Nenhum Closer atribuído</span>
               </div>
             )}
-            
+
             {closerCount < 2 && closerCount > 0 && (
               <div className="flex items-center gap-2 p-2 rounded-lg border border-dashed border-warning/30 text-warning">
                 <UserPlus className="h-4 w-4" />

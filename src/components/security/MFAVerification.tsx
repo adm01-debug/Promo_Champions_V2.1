@@ -1,12 +1,18 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMFA } from "@/hooks/useMFA";
-import { useState } from "react";
-import { Lock, QrCode, Phone, Key, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useMFA } from '@/hooks/useMFA';
+import { useState } from 'react';
+import { Lock, QrCode, Phone, Key, ArrowRight } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface MFAVerificationProps {
   onSuccess: () => void;
@@ -15,31 +21,31 @@ interface MFAVerificationProps {
 
 export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) => {
   const { settings, verifyMFA, isLoading } = useMFA();
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [activeTab, setActiveTab] = useState<'totp' | 'sms' | 'backup'>(
-    (settings?.preferred_method === 'totp' || settings?.preferred_method === 'sms') 
-      ? settings.preferred_method 
+    settings?.preferred_method === 'totp' || settings?.preferred_method === 'sms'
+      ? settings.preferred_method
       : 'totp'
   );
 
   const handleVerify = async () => {
     if (code.length < 6) {
-      toast.error("Código inválido");
+      toast.error('Código inválido');
       return;
     }
 
     setIsVerifying(true);
-    
+
     const method = activeTab === 'backup' ? 'backup_code' : activeTab;
     const success = await verifyMFA(code, method);
-    
+
     if (success) {
       onSuccess();
     }
-    
+
     setIsVerifying(false);
-    setCode("");
+    setCode('');
   };
 
   if (isLoading) {
@@ -63,13 +69,14 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
           </div>
         </div>
         <CardTitle>Verificação em Duas Etapas</CardTitle>
-        <CardDescription>
-          Digite o código de verificação para continuar
-        </CardDescription>
+        <CardDescription>Digite o código de verificação para continuar</CardDescription>
       </CardHeader>
-      
+
       <CardContent>
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'totp' | 'sms' | 'backup')}>
+        <Tabs
+          value={activeTab}
+          onValueChange={v => setActiveTab(v as 'totp' | 'sms' | 'backup')}
+        >
           <TabsList className="grid w-full grid-cols-3">
             {settings?.totp_enabled && (
               <TabsTrigger value="totp" className="flex items-center gap-1">
@@ -113,9 +120,11 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
               <Input
                 id="code"
                 type="text"
-                placeholder={activeTab === 'backup' ? "XXXXXXXX" : "000000"}
+                placeholder={activeTab === 'backup' ? 'XXXXXXXX' : '000000'}
                 value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+                onChange={e =>
+                  setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))
+                }
                 maxLength={activeTab === 'backup' ? 8 : 6}
                 className="text-center text-lg tracking-widest"
                 autoComplete="one-time-code"
@@ -123,21 +132,17 @@ export const MFAVerification = ({ onSuccess, onCancel }: MFAVerificationProps) =
               />
             </div>
 
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={handleVerify}
               disabled={isVerifying || code.length < 6}
             >
-              {isVerifying ? "Verificando..." : "Verificar"}
+              {isVerifying ? 'Verificando...' : 'Verificar'}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
             {onCancel && (
-              <Button 
-                variant="ghost" 
-                className="w-full"
-                onClick={onCancel}
-              >
+              <Button variant="ghost" className="w-full" onClick={onCancel}>
                 Cancelar
               </Button>
             )}

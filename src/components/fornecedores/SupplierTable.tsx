@@ -1,9 +1,22 @@
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Truck, Mail, Phone } from "lucide-react";
+import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Truck, Mail, Phone } from 'lucide-react';
 
 interface Supplier {
   id: string;
@@ -31,7 +44,10 @@ const getReliabilityBadge = (score: number | null) => {
   return <Badge variant="destructive">Baixo</Badge>;
 };
 
-export const SupplierTable = React.memo(function SupplierTable({ suppliers, isLoading }: SupplierTableProps) {
+export const SupplierTable = React.memo(function SupplierTable({
+  suppliers,
+  isLoading,
+}: SupplierTableProps) {
   return (
     <Card className="glass border-border/40">
       <CardHeader>
@@ -40,7 +56,11 @@ export const SupplierTable = React.memo(function SupplierTable({ suppliers, isLo
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}</div>
+          <div className="space-y-3">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </div>
         ) : suppliers && suppliers.length > 0 ? (
           <Table>
             <TableHeader>
@@ -54,28 +74,50 @@ export const SupplierTable = React.memo(function SupplierTable({ suppliers, isLo
               </TableRow>
             </TableHeader>
             <TableBody>
-              {suppliers.map((supplier) => (
+              {suppliers.map(supplier => (
                 <TableRow key={supplier.id}>
                   <TableCell>
                     <div>
                       <div className="font-medium">{supplier.name}</div>
-                      {supplier.cnpj && <div className="text-xs text-muted-foreground">{supplier.cnpj}</div>}
+                      {supplier.cnpj && (
+                        <div className="text-xs text-muted-foreground">
+                          {supplier.cnpj}
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      {supplier.contact_name && <div className="text-sm">{supplier.contact_name}</div>}
+                      {supplier.contact_name && (
+                        <div className="text-sm">{supplier.contact_name}</div>
+                      )}
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        {supplier.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{supplier.email}</span>}
-                        {supplier.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{supplier.phone}</span>}
+                        {supplier.email && (
+                          <span className="flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {supplier.email}
+                          </span>
+                        )}
+                        {supplier.phone && (
+                          <span className="flex items-center gap-1">
+                            <Phone className="h-3 w-3" />
+                            {supplier.phone}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-center">{supplier.lead_time_days} dias</TableCell>
-                  <TableCell className="text-center">{supplier.payment_terms}</TableCell>
-                  <TableCell className="text-center">{getReliabilityBadge(supplier.reliability_score)}</TableCell>
                   <TableCell className="text-center">
-                    <Badge variant={supplier.is_active ? "default" : "secondary"}>{supplier.is_active ? "Ativo" : "Inativo"}</Badge>
+                    {supplier.lead_time_days} dias
+                  </TableCell>
+                  <TableCell className="text-center">{supplier.payment_terms}</TableCell>
+                  <TableCell className="text-center">
+                    {getReliabilityBadge(supplier.reliability_score)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant={supplier.is_active ? 'default' : 'secondary'}>
+                      {supplier.is_active ? 'Ativo' : 'Inativo'}
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}

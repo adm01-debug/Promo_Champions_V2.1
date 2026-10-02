@@ -1,36 +1,53 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CheckCircle2, XCircle, Eye, MessageSquare, Mail, Phone, Clock, User } from "lucide-react";
-import type { PendingAction } from "@/types/sales";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  CheckCircle2,
+  XCircle,
+  Eye,
+  MessageSquare,
+  Mail,
+  Phone,
+  Clock,
+  User,
+} from 'lucide-react';
+import type { PendingAction } from '@/types/sales';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 const MOCK_PENDING: PendingAction[] = [
   {
-    id: "1",
-    lead_id: "lead_123",
-    lead_name: "Gabriel Medeiros",
-    template_id: "temp_1",
-    template_name: "Follow-up Intenção de Compra",
-    type: "whatsapp",
-    content: "Olá Gabriel! Vi que você acessou os preços da proposta VIP agora pouco. Ficou alguma dúvida sobre os itens que conversamos?",
-    status: "pending",
+    id: '1',
+    lead_id: 'lead_123',
+    lead_name: 'Gabriel Medeiros',
+    template_id: 'temp_1',
+    template_name: 'Follow-up Intenção de Compra',
+    type: 'whatsapp',
+    content:
+      'Olá Gabriel! Vi que você acessou os preços da proposta VIP agora pouco. Ficou alguma dúvida sobre os itens que conversamos?',
+    status: 'pending',
     created_at: new Date().toISOString(),
   },
   {
-    id: "2",
-    lead_id: "lead_456",
-    lead_name: "Juliana Silva",
-    template_id: "temp_2",
-    template_name: "Script de Reativação SINGU",
-    type: "call",
-    content: "Ligar para Juliana (SINGU VIP). Última compra há 45 dias. Oferecer 10% de desconto no serviço preferido (Manicure).",
-    status: "pending",
+    id: '2',
+    lead_id: 'lead_456',
+    lead_name: 'Juliana Silva',
+    template_id: 'temp_2',
+    template_name: 'Script de Reativação SINGU',
+    type: 'call',
+    content:
+      'Ligar para Juliana (SINGU VIP). Última compra há 45 dias. Oferecer 10% de desconto no serviço preferido (Manicure).',
+    status: 'pending',
     created_at: new Date(Date.now() - 3600000).toISOString(),
-  }
+  },
 ];
 
 export function ApprovalQueue() {
@@ -38,12 +55,12 @@ export function ApprovalQueue() {
 
   const handleApprove = (id: string) => {
     setQueue(prev => prev.filter(a => a.id !== id));
-    toast.success("Mensagem aprovada e enviada.");
+    toast.success('Mensagem aprovada e enviada.');
   };
 
   const handleReject = (id: string) => {
     setQueue(prev => prev.filter(a => a.id !== id));
-    toast.error("Mensagem descartada.");
+    toast.error('Mensagem descartada.');
   };
 
   return (
@@ -72,14 +89,17 @@ export function ApprovalQueue() {
                 <p className="text-sm">Nenhuma mensagem aguardando aprovação.</p>
               </div>
             ) : (
-              queue.map((item) => (
-                <div 
-                  key={item.id} 
+              queue.map(item => (
+                <div
+                  key={item.id}
                   className={cn(
-                    "group relative border rounded-xl p-4 transition-all hover:shadow-md bg-background",
-                    "border-l-4",
-                    item.type === 'whatsapp' ? "border-l-green-500" : 
-                    item.type === 'email' ? "border-l-blue-500" : "border-l-orange-500"
+                    'group relative border rounded-xl p-4 transition-all hover:shadow-md bg-background',
+                    'border-l-4',
+                    item.type === 'whatsapp'
+                      ? 'border-l-green-500'
+                      : item.type === 'email'
+                        ? 'border-l-blue-500'
+                        : 'border-l-orange-500'
                   )}
                 >
                   <div className="flex justify-between items-start mb-3">
@@ -92,24 +112,27 @@ export function ApprovalQueue() {
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                         <Clock className="h-3 w-3" />
-                        {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(item.created_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                         <span>•</span>
                         <User className="h-3 w-3" />
                         {item.template_name}
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button 
-                        size="icon-sm" 
-                        variant="ghost" 
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
                         className="text-status-success hover:bg-status-success/10"
                         onClick={() => handleApprove(item.id)}
                       >
                         <CheckCircle2 className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        size="icon-sm" 
-                        variant="ghost" 
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
                         className="text-destructive hover:bg-destructive/10"
                         onClick={() => handleReject(item.id)}
                       >
@@ -117,7 +140,7 @@ export function ApprovalQueue() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="bg-muted/30 rounded-lg p-3 text-sm text-muted-foreground italic relative">
                     <div className="absolute top-0 right-0 p-1 opacity-20">
                       {item.type === 'whatsapp' && <MessageSquare className="h-4 w-4" />}

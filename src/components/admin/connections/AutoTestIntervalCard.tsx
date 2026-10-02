@@ -1,12 +1,18 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { updatePayload } from "@/lib/supabase/typed-payloads";
-import { useEffect, useState } from "react";
-import { Clock } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { updatePayload } from '@/lib/supabase/typed-payloads';
+import { useEffect, useState } from 'react';
+import { Clock } from 'lucide-react';
 
 interface Settings {
   id: string;
@@ -17,11 +23,11 @@ interface Settings {
 
 function useAutotestSettings() {
   return useQuery({
-    queryKey: ["integration-autotest-settings"],
+    queryKey: ['integration-autotest-settings'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("integration_autotest_settings")
-        .select("id, interval_minutes, failure_window_minutes, enabled")
+        .from('integration_autotest_settings')
+        .select('id, interval_minutes, failure_window_minutes, enabled')
         .limit(1)
         .maybeSingle();
       if (error) throw error;
@@ -46,14 +52,15 @@ export function AutoTestIntervalCard() {
   const save = useMutation({
     mutationFn: async (next: { interval_minutes?: number; enabled?: boolean }) => {
       if (!data) return;
-      const patch = updatePayload("integration_autotest_settings", next);
+      const patch = updatePayload('integration_autotest_settings', next);
       const { error } = await supabase
-        .from("integration_autotest_settings")
+        .from('integration_autotest_settings')
         .update(patch)
-        .eq("id", data.id);
+        .eq('id', data.id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["integration-autotest-settings"] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ['integration-autotest-settings'] }),
   });
 
   return (
@@ -66,11 +73,16 @@ export function AutoTestIntervalCard() {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label htmlFor="autotest-enabled" className="text-sm">Auto-teste ativo</Label>
+          <Label htmlFor="autotest-enabled" className="text-sm">
+            Auto-teste ativo
+          </Label>
           <Switch
             id="autotest-enabled"
             checked={enabled}
-            onCheckedChange={(v) => { setEnabled(v); save.mutate({ enabled: v }); }}
+            onCheckedChange={v => {
+              setEnabled(v);
+              save.mutate({ enabled: v });
+            }}
           />
         </div>
         <div>
@@ -80,8 +92,10 @@ export function AutoTestIntervalCard() {
             min={5}
             max={1440}
             value={val}
-            onChange={(e) => setVal(Number(e.target.value))}
-            onBlur={() => save.mutate({ interval_minutes: Math.min(1440, Math.max(5, val)) })}
+            onChange={e => setVal(Number(e.target.value))}
+            onBlur={() =>
+              save.mutate({ interval_minutes: Math.min(1440, Math.max(5, val)) })
+            }
           />
         </div>
       </CardContent>

@@ -1,11 +1,11 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { CACHE_TIMES } from "@/constants";
-import { useEffect } from "react";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { CACHE_TIMES } from '@/constants';
+import { useEffect } from 'react';
 
 export interface TeamActivity {
   id: string;
-  type: "sale" | "activity" | "deal_move" | "client_new";
+  type: 'sale' | 'activity' | 'deal_move' | 'client_new';
   description: string;
   salesperson_name: string;
   avatar_url: string | null;
@@ -36,12 +36,12 @@ interface SalespersonMap {
 }
 
 const ACTIVITY_LABELS: Record<string, string> = {
-  call: "Ligação",
-  email: "Email",
-  meeting: "Reunião",
-  whatsapp: "WhatsApp",
-  linkedin: "Linkedin",
-  visit: "Visita",
+  call: 'Ligação',
+  email: 'Email',
+  meeting: 'Reunião',
+  whatsapp: 'WhatsApp',
+  linkedin: 'Linkedin',
+  visit: 'Visita',
 };
 
 export const useTeamActivityFeed = (limit = 20) => {
@@ -58,14 +58,14 @@ export const useTeamActivityFeed = (limit = 20) => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'sales' },
         () => {
-          queryClient.invalidateQueries({ queryKey: ["team-activity-feed"] });
+          queryClient.invalidateQueries({ queryKey: ['team-activity-feed'] });
         }
       )
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'activities' },
         () => {
-          queryClient.invalidateQueries({ queryKey: ["team-activity-feed"] });
+          queryClient.invalidateQueries({ queryKey: ['team-activity-feed'] });
         }
       )
       .subscribe();
@@ -76,47 +76,45 @@ export const useTeamActivityFeed = (limit = 20) => {
   }, [queryClient]);
 
   return useQuery<TeamActivity[]>({
-    queryKey: ["team-activity-feed", limit],
+    queryKey: ['team-activity-feed', limit],
     queryFn: async () => {
       // Fetch salespeople for name resolution
       const { data: people } = await supabase
-        .from("salespeople")
-        .select("id, name, avatar_url")
-        .eq("is_active", true);
+        .from('salespeople')
+        .select('id, name, avatar_url')
+        .eq('is_active', true);
 
       const spMap: SalespersonMap = {};
-      (people || []).forEach((p) => {
+      (people || []).forEach(p => {
         spMap[p.id] = { name: p.name, avatar_url: p.avatar_url };
       });
 
       const resolve = (spId: string | null) =>
-        spId && spMap[spId]
-          ? spMap[spId]
-          : { name: "Sistema", avatar_url: null };
+        spId && spMap[spId] ? spMap[spId] : { name: 'Sistema', avatar_url: null };
 
       // Fetch recent sales
       const { data: sales } = await supabase
-        .from("sales")
-        .select("id, client_name, amount, status, created_at, salesperson_id")
-        .order("created_at", { ascending: false })
+        .from('sales')
+        .select('id, client_name, amount, status, created_at, salesperson_id')
+        .order('created_at', { ascending: false })
         .limit(limit);
 
       // Fetch recent activities
       const { data: activities } = await supabase
-        .from("activities")
-        .select("id, activity_type, contact_name, outcome, created_at, salesperson_id")
-        .order("created_at", { ascending: false })
+        .from('activities')
+        .select('id, activity_type, contact_name, outcome, created_at, salesperson_id')
+        .order('created_at', { ascending: false })
         .limit(limit);
 
       const feed: TeamActivity[] = [];
 
-      (sales as SaleRow[] || []).forEach((s) => {
+      ((sales as SaleRow[]) || []).forEach(s => {
         const sp = resolve(s.salesperson_id);
         feed.push({
           id: `sale-${s.id}`,
-          type: s.status === "won" ? "sale" : "deal_move",
+          type: s.status === 'won' ? 'sale' : 'deal_move',
           description:
-            s.status === "won"
+            s.status === 'won'
               ? `Fechou venda com ${s.client_name}`
               : `Moveu ${s.client_name} para ${s.status}`,
           salesperson_name: sp.name,
@@ -126,20 +124,22 @@ export const useTeamActivityFeed = (limit = 20) => {
         });
       });
 
-      (activities as ActivityRow[] || []).forEach((a) => {
+      ((activities as ActivityRow[]) || []).forEach(a => {
         const sp = resolve(a.salesperson_id);
         const label = ACTIVITY_LABELS[a.activity_type] || a.activity_type;
         feed.push({
           id: `act-${a.id}`,
-          type: "activity",
-          description: `${label} com ${a.contact_name || "contato"} — ${a.outcome}`,
+          type: 'activity',
+          description: `${label} com ${a.contact_name || 'contato'} — ${a.outcome}`,
           salesperson_name: sp.name,
           avatar_url: sp.avatar_url,
           created_at: a.created_at,
         });
       });
 
-      feed.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      feed.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
       return feed.slice(0, limit);
     },
     staleTime: CACHE_TIMES.STALE_TIME,

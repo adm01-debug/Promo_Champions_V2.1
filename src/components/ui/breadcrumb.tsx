@@ -3,10 +3,9 @@ import { Slot } from '@radix-ui/react-slot';
 
 import { cn } from '@/lib/utils';
 
-const Breadcrumb = React.forwardRef<
-  HTMLElement,
-  React.ComponentPropsWithoutRef<'nav'>
->(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />);
+const Breadcrumb = React.forwardRef<HTMLElement, React.ComponentPropsWithoutRef<'nav'>>(
+  ({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />
+);
 Breadcrumb.displayName = 'Breadcrumb';
 
 const BreadcrumbList = React.forwardRef<
@@ -85,10 +84,7 @@ const BreadcrumbSeparator = ({
 );
 BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
 
-const BreadcrumbEllipsis = ({
-  className,
-  ...props
-}: React.ComponentProps<'span'>) => (
+const BreadcrumbEllipsis = ({ className, ...props }: React.ComponentProps<'span'>) => (
   <span
     role="presentation"
     aria-hidden="true"

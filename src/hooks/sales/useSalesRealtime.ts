@@ -43,7 +43,8 @@ export function useSalesRealtime(
       if (isAdmin || isManager) return true;
       if (!sellerRole || !currentSalespersonRole) return true;
       if (currentSalespersonRole === 'hybrid') return true;
-      if (currentSalespersonRole === 'sdr') return sellerRole === 'sdr' || sellerRole === 'hybrid';
+      if (currentSalespersonRole === 'sdr')
+        return sellerRole === 'sdr' || sellerRole === 'hybrid';
       if (currentSalespersonRole === 'closer')
         return sellerRole === 'closer' || sellerRole === 'hybrid';
       return true;

@@ -1,12 +1,12 @@
-import { FC, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, RefreshCw, AlertCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
+import { FC, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   forecastId: string | undefined;
@@ -23,21 +23,21 @@ export const ForecastNarrative: FC<Props> = ({ forecastId, cachedNarrative }) =>
 
   const gen = useMutation({
     mutationFn: async (): Promise<NarrativeResponse> => {
-      if (!forecastId) throw new Error("Forecast ainda não calculado");
+      if (!forecastId) throw new Error('Forecast ainda não calculado');
       const { data, error } = await supabase.functions.invoke<NarrativeResponse>(
-        "forecast-narrative",
-        { body: { forecast_id: forecastId } },
+        'forecast-narrative',
+        { body: { forecast_id: forecastId } }
       );
       if (error) throw error;
-      if (!data?.narrative) throw new Error("Resposta vazia da IA");
+      if (!data?.narrative) throw new Error('Resposta vazia da IA');
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       setNarrative(data.narrative);
-      toast.success("Narrativa gerada");
+      toast.success('Narrativa gerada');
     },
     onError: (err: Error) => {
-      toast.error(err.message || "Falha ao gerar narrativa");
+      toast.error(err.message || 'Falha ao gerar narrativa');
     },
   });
 
@@ -52,13 +52,15 @@ export const ForecastNarrative: FC<Props> = ({ forecastId, cachedNarrative }) =>
         </div>
         <Button
           size="sm"
-          variant={narrative ? "outline" : "default"}
+          variant={narrative ? 'outline' : 'default'}
           onClick={() => gen.mutate()}
           disabled={isDisabled}
-          aria-label={narrative ? "Regenerar narrativa" : "Gerar narrativa"}
+          aria-label={narrative ? 'Regenerar narrativa' : 'Gerar narrativa'}
         >
-          <RefreshCw className={`h-3.5 w-3.5 mr-2 ${gen.isPending ? "animate-spin" : ""}`} />
-          {narrative ? "Regenerar" : "Explicar forecast"}
+          <RefreshCw
+            className={`h-3.5 w-3.5 mr-2 ${gen.isPending ? 'animate-spin' : ''}`}
+          />
+          {narrative ? 'Regenerar' : 'Explicar forecast'}
         </Button>
       </div>
 
@@ -95,8 +97,9 @@ export const ForecastNarrative: FC<Props> = ({ forecastId, cachedNarrative }) =>
           >
             <AlertCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
             <span>
-              Clique em <strong className="text-foreground">Explicar forecast</strong> para uma leitura
-              executiva em português com drivers, riscos e recomendação acionável.
+              Clique em <strong className="text-foreground">Explicar forecast</strong>{' '}
+              para uma leitura executiva em português com drivers, riscos e recomendação
+              acionável.
             </span>
           </motion.div>
         )}

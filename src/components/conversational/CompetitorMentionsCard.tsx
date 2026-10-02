@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Swords, ChevronDown, ChevronUp, Clock, RefreshCw } from "lucide-react";
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Swords, ChevronDown, ChevronUp, Clock, RefreshCw } from 'lucide-react';
 import {
   useCompetitorMentions,
   useDetectCompetitors,
-} from "@/hooks/conversational/useCompetitorMentions";
-import { BattleCardSuggestion } from "./BattleCardSuggestion";
+} from '@/hooks/conversational/useCompetitorMentions';
+import { BattleCardSuggestion } from './BattleCardSuggestion';
 
 interface Props {
   recordingId: string;
@@ -17,7 +17,7 @@ interface Props {
 function formatTimestamp(seconds: number) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 export function CompetitorMentionsCard({ recordingId, onSeek }: Props) {
@@ -62,20 +62,21 @@ export function CompetitorMentionsCard({ recordingId, onSeek }: Props) {
         </p>
       )}
 
-      {competitorNames.map((name) => {
+      {competitorNames.map(name => {
         const group = grouped[name];
         const isOpen = expanded[name];
         return (
           <div key={name} className="border border-border rounded-lg overflow-hidden">
             <button
               type="button"
-              onClick={() => setExpanded((s) => ({ ...s, [name]: !s[name] }))}
+              onClick={() => setExpanded(s => ({ ...s, [name]: !s[name] }))}
               className="w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors text-left"
             >
               <div className="flex items-center gap-2">
                 <span className="font-medium text-sm">{name}</span>
                 <Badge variant="secondary" className="text-[10px]">
-                  {group.mentions!.length} menç{group.mentions!.length === 1 ? "ão" : "ões"}
+                  {group.mentions!.length} menç
+                  {group.mentions!.length === 1 ? 'ão' : 'ões'}
                 </Badge>
               </div>
               {isOpen ? (
@@ -88,9 +89,12 @@ export function CompetitorMentionsCard({ recordingId, onSeek }: Props) {
             {isOpen && (
               <div className="p-3 pt-0 space-y-2">
                 {group.battleCardId && (
-                  <BattleCardSuggestion battleCardId={group.battleCardId} competitorName={name} />
+                  <BattleCardSuggestion
+                    battleCardId={group.battleCardId}
+                    competitorName={name}
+                  />
                 )}
-                {group.mentions!.map((m) => (
+                {group.mentions!.map(m => (
                   <div
                     key={m.id}
                     className="text-xs bg-muted/30 rounded p-2 space-y-1 border border-border/50"

@@ -1,9 +1,12 @@
-import { FC } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import { useQuotaAttainmentAlerts, useAcknowledgeQuotaAlert } from "@/hooks/revenue/useQuotaAttainment";
+import { FC } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  useQuotaAttainmentAlerts,
+  useAcknowledgeQuotaAlert,
+} from '@/hooks/revenue/useQuotaAttainment';
 
 export const QuotaAttainmentAlertsPanel: FC = () => {
   const { data: alerts = [], isLoading } = useQuotaAttainmentAlerts();
@@ -15,7 +18,9 @@ export const QuotaAttainmentAlertsPanel: FC = () => {
         <CardTitle className="text-section-title flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-warning" />
           Alertas ativos
-          <Badge variant="secondary" className="ml-auto">{alerts.length}</Badge>
+          <Badge variant="secondary" className="ml-auto">
+            {alerts.length}
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -26,14 +31,17 @@ export const QuotaAttainmentAlertsPanel: FC = () => {
             <p className="text-sm">Nenhum alerta ativo. Time no ritmo.</p>
           </div>
         )}
-        {alerts.map((a) => (
+        {alerts.map(a => (
           <div
             key={a.id}
             className="flex items-start gap-3 rounded-lg border border-border/50 bg-card p-3"
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <Badge variant={a.severity === "critical" ? "destructive" : "outline"} className="text-[10px]">
+                <Badge
+                  variant={a.severity === 'critical' ? 'destructive' : 'outline'}
+                  className="text-[10px]"
+                >
                   {a.severity.toUpperCase()}
                 </Badge>
                 <p className="text-sm font-medium truncate">{a.message}</p>

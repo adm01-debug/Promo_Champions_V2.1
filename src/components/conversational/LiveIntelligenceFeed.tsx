@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Brain, Zap, Shield, AlertTriangle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Brain, Zap, Shield, AlertTriangle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Insight {
   id: string;
@@ -25,15 +25,16 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
         title: 'Concorrente Detectado: SalesForce',
         description: 'Lead mencionou migração. Use o Battlecard de ROI vs Enterprise.',
         timestamp: new Date().toISOString(),
-        priority: 'high'
+        priority: 'high',
       },
       {
         id: '2',
         type: 'objection',
         title: 'Objeção de Preço',
-        description: 'Detectado tom defensivo ao falar de orçamento. Sugestão: Explore plano parcelado.',
+        description:
+          'Detectado tom defensivo ao falar de orçamento. Sugestão: Explore plano parcelado.',
         timestamp: new Date().toISOString(),
-        priority: 'medium'
+        priority: 'medium',
       },
       {
         id: '3',
@@ -41,8 +42,8 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
         title: 'Pico de Engajamento',
         description: 'Tom de voz positivo detectado ao falar de automação.',
         timestamp: new Date().toISOString(),
-        priority: 'low'
-      }
+        priority: 'low',
+      },
     ];
 
     const timer = setTimeout(() => {
@@ -54,10 +55,14 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
 
   const getIcon = (type: Insight['type']) => {
     switch (type) {
-      case 'competitor': return <Shield className="h-4 w-4 text-rank-gold" />;
-      case 'objection': return <AlertTriangle className="h-4 w-4 text-destructive" />;
-      case 'sentiment': return <Sparkles className="h-4 w-4 text-success" />;
-      default: return <Brain className="h-4 w-4 text-primary" />;
+      case 'competitor':
+        return <Shield className="h-4 w-4 text-rank-gold" />;
+      case 'objection':
+        return <AlertTriangle className="h-4 w-4 text-destructive" />;
+      case 'sentiment':
+        return <Sparkles className="h-4 w-4 text-success" />;
+      default:
+        return <Brain className="h-4 w-4 text-primary" />;
     }
   };
 
@@ -71,7 +76,10 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
             <div className="absolute inset-0 bg-primary/40 blur-md rounded-full animate-ping" />
           </div>
           Neural Battlecard Hub
-          <Badge variant="outline" className="ml-auto text-[8px] font-black bg-primary/10 text-primary border-primary/30 px-2 py-0">
+          <Badge
+            variant="outline"
+            className="ml-auto text-[8px] font-black bg-primary/10 text-primary border-primary/30 px-2 py-0"
+          >
             REAL-TIME FEED
           </Badge>
         </CardTitle>

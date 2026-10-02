@@ -1,27 +1,33 @@
-import { useState } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { useCallRecordings } from "@/hooks/conversational/useCallRecordings";
-import { MeetingSummaryCard } from "./MeetingSummaryCard";
-import { ActionItemsList } from "./ActionItemsList";
-import { DecisionsAndObjectionsPanel } from "./DecisionsAndObjectionsPanel";
-import { NextStepsTimeline } from "./NextStepsTimeline";
-import { SummarizeButton } from "./SummarizeButton";
-import { CompetitorMentionsCard } from "./CompetitorMentionsCard";
-import { CoachingActionsList } from "./CoachingActionsList";
-import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
-import { useExtractCommitteeFromCall } from "@/hooks/deal-intelligence/useCommitteeCoverage";
-import { SentimentTimelineChart } from "./SentimentTimelineChart";
-import { CriticalMomentsList } from "./CriticalMomentsList";
-import { useCriticalMoments } from "@/hooks/conversational/useCriticalMoments";
-import { ConversationMetricsCard } from "./metrics/ConversationMetricsCard";
-import { QuestionQualityCard } from "./questions/QuestionQualityCard";
-import { ObjectionHandlingCard } from "./objections/ObjectionHandlingCard";
-import { CoachingScorecardCard } from "./coaching/CoachingScorecardCard";
-import { CallFeedbackForm } from "./CallFeedbackForm";
-import { Skeleton } from "@/components/ui/skeleton";
-import { IntentTracker, type Intent } from "./IntentTracker";
-import type { ActionItem, Decision, NextStep, Objection } from "./meetingSummaryHelpers";
+import { useState } from 'react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
+import { useCallRecordings } from '@/hooks/conversational/useCallRecordings';
+import { MeetingSummaryCard } from './MeetingSummaryCard';
+import { ActionItemsList } from './ActionItemsList';
+import { DecisionsAndObjectionsPanel } from './DecisionsAndObjectionsPanel';
+import { NextStepsTimeline } from './NextStepsTimeline';
+import { SummarizeButton } from './SummarizeButton';
+import { CompetitorMentionsCard } from './CompetitorMentionsCard';
+import { CoachingActionsList } from './CoachingActionsList';
+import { Button } from '@/components/ui/button';
+import { Users } from 'lucide-react';
+import { useExtractCommitteeFromCall } from '@/hooks/deal-intelligence/useCommitteeCoverage';
+import { SentimentTimelineChart } from './SentimentTimelineChart';
+import { CriticalMomentsList } from './CriticalMomentsList';
+import { useCriticalMoments } from '@/hooks/conversational/useCriticalMoments';
+import { ConversationMetricsCard } from './metrics/ConversationMetricsCard';
+import { QuestionQualityCard } from './questions/QuestionQualityCard';
+import { ObjectionHandlingCard } from './objections/ObjectionHandlingCard';
+import { CoachingScorecardCard } from './coaching/CoachingScorecardCard';
+import { CallFeedbackForm } from './CallFeedbackForm';
+import { Skeleton } from '@/components/ui/skeleton';
+import { IntentTracker, type Intent } from './IntentTracker';
+import type { ActionItem, Decision, NextStep, Objection } from './meetingSummaryHelpers';
 
 interface Props {
   recordingId: string | null;
@@ -30,32 +36,36 @@ interface Props {
 
 export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
   const { data: recordings, isLoading } = useCallRecordings();
-  const rec = recordings?.find((r) => r.id === recordingId) ?? null;
+  const rec = recordings?.find(r => r.id === recordingId) ?? null;
   const { data: moments } = useCriticalMoments(rec?.id);
 
-  const derivedIntents: Intent[] = (rec?.objections_summary as Objection[] ?? []).map((o, idx) => ({
-    type: o.category === "preço" ? "objection" : "followup",
-    label: o.text,
-    confidence: 0.85,
-    timestamp_sec: 120 + idx * 45, // mock timestamp
-    excerpt: o.text
-  }));
+  const derivedIntents: Intent[] = ((rec?.objections_summary as Objection[]) ?? []).map(
+    (o, idx) => ({
+      type: o.category === 'preço' ? 'objection' : 'followup',
+      label: o.text,
+      confidence: 0.85,
+      timestamp_sec: 120 + idx * 45, // mock timestamp
+      excerpt: o.text,
+    })
+  );
 
-  if (rec?.key_topics?.includes("Competitor")) {
+  if (rec?.key_topics?.includes('Competitor')) {
     derivedIntents.push({
-      type: "comparison",
-      label: "Menção a Concorrente",
+      type: 'comparison',
+      label: 'Menção a Concorrente',
       confidence: 0.92,
       timestamp_sec: 300,
-      excerpt: "O cliente mencionou o concorrente principal ao falar sobre preço."
+      excerpt: 'O cliente mencionou o concorrente principal ao falar sobre preço.',
     });
   }
 
   return (
-    <Sheet open={!!recordingId} onOpenChange={(o) => !o && onClose()}>
+    <Sheet open={!!recordingId} onOpenChange={o => !o && onClose()}>
       <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader className="mb-4">
-          <SheetTitle className="text-section-title pr-6">{rec?.title ?? "Carregando..."}</SheetTitle>
+          <SheetTitle className="text-section-title pr-6">
+            {rec?.title ?? 'Carregando...'}
+          </SheetTitle>
           <SheetDescription>Resumo executivo gerado por IA</SheetDescription>
         </SheetHeader>
 
@@ -96,10 +106,10 @@ export const RecordingSummaryDrawer = ({ recordingId, onClose }: Props) => {
             />
             <NextStepsTimeline steps={(rec.next_steps as NextStep[]) ?? []} />
             <IntentTracker recordingId={rec.id} intents={derivedIntents} />
-            <SentimentTimelineChart 
-              recordingId={rec.id} 
-              moments={moments ?? []} 
-              intents={derivedIntents} 
+            <SentimentTimelineChart
+              recordingId={rec.id}
+              moments={moments ?? []}
+              intents={derivedIntents}
             />
             <ConversationMetricsCard recordingId={rec.id} />
             <QuestionQualityCard recordingId={rec.id} />
@@ -126,7 +136,7 @@ function ExtractCommitteeButton({ recordingId }: { recordingId: string }) {
       className="gap-1"
     >
       <Users className="h-3.5 w-3.5" />
-      {extract.isPending ? "Mapeando..." : "Mapear comitê"}
+      {extract.isPending ? 'Mapeando...' : 'Mapear comitê'}
     </Button>
   );
 }

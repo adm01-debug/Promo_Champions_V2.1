@@ -3,7 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, History, Plus, Loader2, MessageSquare } from 'lucide-react';
 import { useSalesAssistant } from '@/hooks/sales/useSalesAssistant';
@@ -22,56 +28,99 @@ import { useToast } from '@/hooks/use-toast';
 export function SalesAssistantChat() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string | null>(null);
   const [input, setInput] = useState('');
-  const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | 'auto'>('auto');
+  const [selectedQuestionType, setSelectedQuestionType] = useState<QuestionType | 'auto'>(
+    'auto'
+  );
   const [showHistory, setShowHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastSpokenMessageRef = useRef<string | null>(null);
   const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
-  const { aiAssistantName, responseMode, voiceId: savedVoiceId } = useSalespersonPreferences();
+  const {
+    aiAssistantName,
+    responseMode,
+    voiceId: savedVoiceId,
+  } = useSalespersonPreferences();
   const isTTSEnabled = responseMode === 'audio' || responseMode === 'both';
   const selectedPerson = salespeople?.find(s => s.id === selectedSalesperson);
 
   const {
-    messages, isLoading, sendMessage,
-    conversations, loadingConversations, currentConversationId,
-    loadConversation, newConversation, deleteConversation, searchConversations,
-    dealContext, setDealContext,
+    messages,
+    isLoading,
+    sendMessage,
+    conversations,
+    loadingConversations,
+    currentConversationId,
+    loadConversation,
+    newConversation,
+    deleteConversation,
+    searchConversations,
+    dealContext,
+    setDealContext,
   } = useSalesAssistant(selectedSalesperson, aiAssistantName, selectedPerson?.name);
 
-  const { addEntry: addChatHistoryEntry } = useDealChatHistory(dealContext?.dealId || null);
+  const { addEntry: addChatHistoryEntry } = useDealChatHistory(
+    dealContext?.dealId || null
+  );
 
   const {
-    speak, stopSpeaking, isSpeaking, isLoadingTTS,
-    startListening, stopListening, isListening, isProcessingSTT, transcript,
+    speak,
+    stopSpeaking,
+    isSpeaking,
+    isLoadingTTS,
+    startListening,
+    stopListening,
+    isListening,
+    isProcessingSTT,
+    transcript,
     isApiConfigured,
   } = useElevenLabsVoice({
     defaultVoiceId: savedVoiceId,
     onSpeakStart: () => {},
     onSpeakEnd: () => {},
-    onError: (error) => toast({ title: 'Erro de voz', description: error, variant: 'destructive' }),
+    onError: error =>
+      toast({ title: 'Erro de voz', description: error, variant: 'destructive' }),
   });
 
   // Auto-speak new assistant messages
   useEffect(() => {
     if (!isTTSEnabled || messages.length === 0) return;
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage && lastMessage.role === 'assistant' && lastMessage.content && lastMessage.id !== lastSpokenMessageRef.current && !isLoading) {
+    if (
+      lastMessage &&
+      lastMessage.role === 'assistant' &&
+      lastMessage.content &&
+      lastMessage.id !== lastSpokenMessageRef.current &&
+      !isLoading
+    ) {
       lastSpokenMessageRef.current = lastMessage.id;
       speak(lastMessage.content);
     }
   }, [messages, isTTSEnabled, isLoading, speak]);
 
-  useEffect(() => { if (transcript) setInput(transcript); }, [transcript]);
-  useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [messages]);
+  useEffect(() => {
+    if (transcript) setInput(transcript);
+  }, [transcript]);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages]);
 
   const handleSend = (overrideType?: QuestionType) => {
     if (!input.trim() || isLoading) return;
     const question = input.trim();
-    const questionType = overrideType || (selectedQuestionType === 'auto' ? detectQuestionType(question) : selectedQuestionType);
+    const questionType =
+      overrideType ||
+      (selectedQuestionType === 'auto'
+        ? detectQuestionType(question)
+        : selectedQuestionType);
     if (dealContext?.dealId && selectedSalesperson) {
-      addChatHistoryEntry.mutate({ dealId: dealContext.dealId, salespersonId: selectedSalesperson, question, questionType });
+      addChatHistoryEntry.mutate({
+        dealId: dealContext.dealId,
+        salespersonId: selectedSalesperson,
+        question,
+        questionType,
+      });
     }
     sendMessage(question);
     setInput('');
@@ -81,18 +130,32 @@ export function SalesAssistantChat() {
     if (isLoading) return;
     const questionType = type || detectQuestionType(prompt);
     if (dealContext?.dealId && selectedSalesperson) {
-      addChatHistoryEntry.mutate({ dealId: dealContext.dealId, salespersonId: selectedSalesperson, question: prompt, questionType });
+      addChatHistoryEntry.mutate({
+        dealId: dealContext.dealId,
+        salespersonId: selectedSalesperson,
+        question: prompt,
+        questionType,
+      });
     }
     sendMessage(prompt);
   };
 
   const handleToggleListening = useCallback(() => {
-    if (isListening) { stopListening(); } else { startListening(); toast({ title: 'Escutando...', description: 'Fale sua pergunta.' }); }
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+      toast({ title: 'Escutando...', description: 'Fale sua pergunta.' });
+    }
   }, [isListening, startListening, stopListening, toast]);
 
-  const handleManualSpeak = useCallback((text: string) => {
-    if (isSpeaking) stopSpeaking(); else if (text) speak(text);
-  }, [isSpeaking, stopSpeaking, speak]);
+  const handleManualSpeak = useCallback(
+    (text: string) => {
+      if (isSpeaking) stopSpeaking();
+      else if (text) speak(text);
+    },
+    [isSpeaking, stopSpeaking, speak]
+  );
 
   if (showHistory) {
     return (
@@ -125,15 +188,22 @@ export function SalesAssistantChat() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Select value={selectedSalesperson || ''} onValueChange={setSelectedSalesperson}>
-              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Selecionar vendedor" /></SelectTrigger>
+            <Select
+              value={selectedSalesperson || ''}
+              onValueChange={setSelectedSalesperson}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Selecionar vendedor" />
+              </SelectTrigger>
               <SelectContent>
-                {salespeople?.map((person) => (
+                {salespeople?.map(person => (
                   <SelectItem key={person.id} value={person.id}>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-5 w-5">
                         <AvatarImage src={person.avatar_url || ''} />
-                        <AvatarFallback className="text-[10px]">{person.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="text-[10px]">
+                          {person.name.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <span className="truncate">{person.name}</span>
                     </div>
@@ -142,12 +212,26 @@ export function SalesAssistantChat() {
               </SelectContent>
             </Select>
             {selectedSalesperson && (
-              <Button variant="ghost" size="icon" onClick={() => setShowHistory(true)} className="text-muted-foreground hover:text-foreground" title="Histórico de conversas" aria-label="Histórico de conversas">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowHistory(true)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Histórico de conversas"
+                aria-label="Histórico de conversas"
+              >
                 <History className="h-4 w-4" />
               </Button>
             )}
             {messages.length > 0 && (
-              <Button variant="ghost" size="icon" onClick={newConversation} className="text-muted-foreground hover:text-foreground" title="Nova conversa" aria-label="Nova conversa">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={newConversation}
+                className="text-muted-foreground hover:text-foreground"
+                title="Nova conversa"
+                aria-label="Nova conversa"
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             )}
@@ -157,20 +241,53 @@ export function SalesAssistantChat() {
         {selectedSalesperson && (
           <div className="flex items-center gap-2">
             <DealContextSelector
-              selectedDeal={dealContext ? { id: dealContext.dealId, client_name: dealContext.clientName, product_name: dealContext.productName, amount: dealContext.amount, status: dealContext.status, created_at: '' } : null}
-              onSelectDeal={(deal) => deal ? setDealContext({ dealId: deal.id, clientName: deal.client_name, productName: deal.product_name, amount: deal.amount, status: deal.status }) : setDealContext(null)}
+              selectedDeal={
+                dealContext
+                  ? {
+                      id: dealContext.dealId,
+                      client_name: dealContext.clientName,
+                      product_name: dealContext.productName,
+                      amount: dealContext.amount,
+                      status: dealContext.status,
+                      created_at: '',
+                    }
+                  : null
+              }
+              onSelectDeal={deal =>
+                deal
+                  ? setDealContext({
+                      dealId: deal.id,
+                      clientName: deal.client_name,
+                      productName: deal.product_name,
+                      amount: deal.amount,
+                      status: deal.status,
+                    })
+                  : setDealContext(null)
+              }
               salespersonId={selectedSalesperson}
             />
-            {dealContext && <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">🎯 Análise contextual ativada</Badge>}
+            {dealContext && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-primary/10 text-primary border-primary/20"
+              >
+                🎯 Análise contextual ativada
+              </Badge>
+            )}
           </div>
         )}
 
         {dealContext && (
           <div className="flex flex-wrap gap-1.5 pt-1">
-            {DEAL_CONTEXT_PROMPTS.map((prompt) => (
-              <Badge key={prompt.label} variant="outline" className="cursor-pointer hover:bg-primary/10 hover:border-primary/30 transition-colors py-1 px-2.5 text-xs"
-                onClick={() => handleQuickPrompt(prompt.prompt, prompt.type)}>
-                <span className="mr-1">{prompt.icon}</span>{prompt.label}
+            {DEAL_CONTEXT_PROMPTS.map(prompt => (
+              <Badge
+                key={prompt.label}
+                variant="outline"
+                className="cursor-pointer hover:bg-primary/10 hover:border-primary/30 transition-colors py-1 px-2.5 text-xs"
+                onClick={() => handleQuickPrompt(prompt.prompt, prompt.type)}
+              >
+                <span className="mr-1">{prompt.icon}</span>
+                {prompt.label}
               </Badge>
             ))}
           </div>
@@ -180,44 +297,81 @@ export function SalesAssistantChat() {
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         {dealContext && (
           <div className="px-4 pt-3">
-            <DealPreviewCard dealId={dealContext.dealId} clientName={dealContext.clientName} productName={dealContext.productName} amount={dealContext.amount} status={dealContext.status} onAskAssistant={handleQuickPrompt} />
+            <DealPreviewCard
+              dealId={dealContext.dealId}
+              clientName={dealContext.clientName}
+              productName={dealContext.productName}
+              amount={dealContext.amount}
+              status={dealContext.status}
+              onAskAssistant={handleQuickPrompt}
+            />
           </div>
         )}
 
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6">
-              <div className="p-4 rounded-full bg-primary/10 mb-4"><MessageSquare className="h-8 w-8 text-primary" /></div>
+              <div className="p-4 rounded-full bg-primary/10 mb-4">
+                <MessageSquare className="h-8 w-8 text-primary" />
+              </div>
               <h3 className="font-semibold mb-2">Como posso ajudar?</h3>
-              <p className="text-sm text-muted-foreground mb-6 max-w-sm">Pergunte sobre técnicas de vendas, negociação, objeções ou peça motivação!</p>
+              <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+                Pergunte sobre técnicas de vendas, negociação, objeções ou peça motivação!
+              </p>
               <div className="flex flex-wrap gap-2 justify-center max-w-md">
-                {QUICK_PROMPTS.map((prompt) => (
-                  <Badge key={prompt.label} variant="secondary" className="cursor-pointer hover:bg-primary/20 transition-colors py-1.5 px-3"
-                    onClick={() => handleQuickPrompt(prompt.label, prompt.type)}>
-                    <span className="mr-1.5">{prompt.icon}</span>{prompt.label}
+                {QUICK_PROMPTS.map(prompt => (
+                  <Badge
+                    key={prompt.label}
+                    variant="secondary"
+                    className="cursor-pointer hover:bg-primary/20 transition-colors py-1.5 px-3"
+                    onClick={() => handleQuickPrompt(prompt.label, prompt.type)}
+                  >
+                    <span className="mr-1.5">{prompt.icon}</span>
+                    {prompt.label}
                   </Badge>
                 ))}
               </div>
             </div>
           ) : (
             <div className="space-y-4">
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} salespersonAvatar={selectedPerson?.avatar_url || undefined}
-                  showAudioButton={responseMode === 'audio' || responseMode === 'both'} onPlayAudio={handleManualSpeak} isSpeaking={isSpeaking} isLoadingTTS={isLoadingTTS} />
+              {messages.map(message => (
+                <MessageBubble
+                  key={message.id}
+                  message={message}
+                  salespersonAvatar={selectedPerson?.avatar_url || undefined}
+                  showAudioButton={responseMode === 'audio' || responseMode === 'both'}
+                  onPlayAudio={handleManualSpeak}
+                  isSpeaking={isSpeaking}
+                  isLoadingTTS={isLoadingTTS}
+                />
               ))}
-              {isLoading && messages[messages.length - 1]?.role === 'assistant' && !messages[messages.length - 1]?.content && (
-                <div className="flex items-center gap-2 text-muted-foreground text-sm"><Loader2 className="h-4 w-4 animate-spin" />Pensando...</div>
-              )}
+              {isLoading &&
+                messages[messages.length - 1]?.role === 'assistant' &&
+                !messages[messages.length - 1]?.content && (
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Pensando...
+                  </div>
+                )}
             </div>
           )}
         </ScrollArea>
 
         <ChatInputArea
-          input={input} setInput={setInput} isLoading={isLoading} onSend={handleSend}
-          selectedQuestionType={selectedQuestionType} setSelectedQuestionType={setSelectedQuestionType}
-          hasDealContext={!!dealContext} selectedSalesperson={selectedSalesperson} selectedPersonName={selectedPerson?.name}
-          isListening={isListening} onToggleListening={handleToggleListening} isProcessingSTT={isProcessingSTT}
-          responseMode={responseMode} isApiConfigured={isApiConfigured}
+          input={input}
+          setInput={setInput}
+          isLoading={isLoading}
+          onSend={handleSend}
+          selectedQuestionType={selectedQuestionType}
+          setSelectedQuestionType={setSelectedQuestionType}
+          hasDealContext={!!dealContext}
+          selectedSalesperson={selectedSalesperson}
+          selectedPersonName={selectedPerson?.name}
+          isListening={isListening}
+          onToggleListening={handleToggleListening}
+          isProcessingSTT={isProcessingSTT}
+          responseMode={responseMode}
+          isApiConfigured={isApiConfigured}
         />
       </CardContent>
     </Card>

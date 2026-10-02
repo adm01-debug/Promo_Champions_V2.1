@@ -14,7 +14,7 @@
  * The signature uses a djb2 hash (32-bit hex) instead of raw concatenation,
  * keeping keys short while preserving anti-collision guarantees.
  */
-import type { BandMode } from "@/hooks/win-loss/useWinLossScenarios";
+import type { BandMode } from '@/hooks/win-loss/useWinLossScenarios';
 
 export interface ScenarioChartKeyPoint {
   period?: string;
@@ -35,8 +35,7 @@ export interface ScenarioChartKeyInput {
   confidenceLevel?: number;
 }
 
-const isBadNumber = (n: unknown): boolean =>
-  typeof n !== "number" || !Number.isFinite(n);
+const isBadNumber = (n: unknown): boolean => typeof n !== 'number' || !Number.isFinite(n);
 
 /** djb2 — small, fast, deterministic, no deps. */
 function djb2(str: string): string {
@@ -44,7 +43,7 @@ function djb2(str: string): string {
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
   }
-  return (hash >>> 0).toString(16).padStart(8, "0");
+  return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
 export function buildScenarioChartKey({
@@ -57,16 +56,16 @@ export function buildScenarioChartKey({
   confidenceLevel = 0.95,
 }: ScenarioChartKeyInput): string {
   if (!data || data.length === 0 || fitN === 0) {
-    return "scenario-empty";
+    return 'scenario-empty';
   }
 
   if (fitN < 3) {
-    const first = data[0]?.period ?? "x";
+    const first = data[0]?.period ?? 'x';
     return `scenario-insufficient-${fitN}-${first}`;
   }
 
   let partial = false;
-  let payload = "";
+  let payload = '';
   for (const d of data) {
     if (
       !d.period ||
@@ -81,9 +80,9 @@ export function buildScenarioChartKey({
   }
 
   const sig = djb2(payload);
-  const safeStd = Number.isFinite(stdDev) ? stdDev.toFixed(2) : "0.00";
-  const safeZ = Number.isFinite(confidenceZ) ? confidenceZ.toFixed(2) : "1.00";
-  const safeLvl = Number.isFinite(confidenceLevel) ? confidenceLevel.toFixed(2) : "0.95";
+  const safeStd = Number.isFinite(stdDev) ? stdDev.toFixed(2) : '0.00';
+  const safeZ = Number.isFinite(confidenceZ) ? confidenceZ.toFixed(2) : '1.00';
+  const safeLvl = Number.isFinite(confidenceLevel) ? confidenceLevel.toFixed(2) : '0.95';
 
-  return `scenario-${bandMode}-z${safeZ}-l${safeLvl}-h${horizon}-n${data.length}-fit${fitN}-σ${safeStd}-${sig}${partial ? "-partial" : ""}`;
+  return `scenario-${bandMode}-z${safeZ}-l${safeLvl}-h${horizon}-n${data.length}-fit${fitN}-σ${safeStd}-${sig}${partial ? '-partial' : ''}`;
 }

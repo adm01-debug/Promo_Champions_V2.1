@@ -1,11 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { WebhookStatsWindow } from "@/hooks/win-loss/useWebhookDeliveryStats";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { WebhookStatsWindow } from '@/hooks/win-loss/useWebhookDeliveryStats';
 
 const WINDOW_HOURS: Record<WebhookStatsWindow, number> = {
-  "24h": 24,
-  "7d": 24 * 7,
-  "30d": 24 * 30,
+  '24h': 24,
+  '7d': 24 * 7,
+  '30d': 24 * 30,
 };
 
 export interface AttemptDeliveryRow {
@@ -43,28 +43,28 @@ const HARD_LIMIT = 500;
  */
 export function useWebhookAttemptSlice(
   attempt: number | null,
-  windowKey: WebhookStatsWindow,
+  windowKey: WebhookStatsWindow
 ) {
   return useQuery({
-    queryKey: ["winloss-webhook-attempt-slice", attempt, windowKey],
+    queryKey: ['winloss-webhook-attempt-slice', attempt, windowKey],
     enabled: attempt !== null,
     staleTime: 15_000,
     queryFn: async (): Promise<AttemptSliceData> => {
       if (attempt === null) return { rows: [], subscriptions: [], truncated: false };
 
       const since = new Date(
-        Date.now() - WINDOW_HOURS[windowKey] * 60 * 60 * 1000,
+        Date.now() - WINDOW_HOURS[windowKey] * 60 * 60 * 1000
       ).toISOString();
 
       const { data, error } = await supabase
-        .from("winloss_webhook_deliveries")
+        .from('winloss_webhook_deliveries')
         .select(
-          "id, subscription_id, event, attempt, status, succeeded, error_message, duration_ms, created_at, winloss_webhook_subscriptions(url)",
+          'id, subscription_id, event, attempt, status, succeeded, error_message, duration_ms, created_at, winloss_webhook_subscriptions(url)'
         )
-        .eq("attempt", attempt)
-        .eq("succeeded", false)
-        .gte("created_at", since)
-        .order("created_at", { ascending: false })
+        .eq('attempt', attempt)
+        .eq('succeeded', false)
+        .gte('created_at', since)
+        .order('created_at', { ascending: false })
         .limit(HARD_LIMIT + 1);
 
       if (error) throw error;
@@ -85,7 +85,7 @@ export function useWebhookAttemptSlice(
       const truncated = raw.length > HARD_LIMIT;
       const trimmed = truncated ? raw.slice(0, HARD_LIMIT) : raw;
 
-      const rows: AttemptDeliveryRow[] = trimmed.map((r) => ({
+      const rows: AttemptDeliveryRow[] = trimmed.map(r => ({
         id: r.id,
         subscription_id: r.subscription_id,
         subscription_url: r.winloss_webhook_subscriptions?.url ?? null,

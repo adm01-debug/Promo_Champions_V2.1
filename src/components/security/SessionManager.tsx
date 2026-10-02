@@ -1,22 +1,27 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useSessionManagement } from "@/hooks/useSessionManagement";
-import { 
-  Monitor, 
-  Smartphone, 
-  Tablet, 
-  Globe, 
-  Clock, 
-   
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useSessionManagement } from '@/hooks/useSessionManagement';
+import {
+  Monitor,
+  Smartphone,
+  Tablet,
+  Globe,
+  Clock,
   LogOut,
   Shield,
-  RefreshCw
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+  RefreshCw,
+} from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const getDeviceIcon = (deviceInfo: Record<string, unknown> | null) => {
   const os = String(deviceInfo?.os ?? '').toLowerCase();
@@ -56,7 +61,7 @@ export const SessionManager = () => {
           <Skeleton className="h-4 w-72 mt-2" />
         </CardHeader>
         <CardContent className="space-y-4">
-          {[1, 2].map((i) => (
+          {[1, 2].map(i => (
             <Skeleton key={i} className="h-24 w-full" />
           ))}
         </CardContent>
@@ -81,18 +86,13 @@ export const SessionManager = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-sm font-medium">
-                {sessions.length} {sessions.length === 1 ? 'sessão ativa' : 'sessões ativas'}
+                {sessions.length}{' '}
+                {sessions.length === 1 ? 'sessão ativa' : 'sessões ativas'}
               </p>
-              <p className="text-xs text-muted-foreground">
-                Duração máxima: 24 horas
-              </p>
+              <p className="text-xs text-muted-foreground">Duração máxima: 24 horas</p>
             </div>
             {sessions.length > 1 && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={terminateOtherSessions}
-              >
+              <Button variant="outline" size="sm" onClick={terminateOtherSessions}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Encerrar outras
               </Button>
@@ -103,14 +103,20 @@ export const SessionManager = () => {
 
       {/* Session List */}
       <div className="space-y-4">
-        {sessions.map((session) => {
+        {sessions.map(session => {
           const isCurrent = session.id === currentSession?.id;
           const deviceInfo = session.device_info || {};
-          const lastActivity = session.last_activity 
-            ? formatDistanceToNow(new Date(session.last_activity), { addSuffix: true, locale: ptBR })
+          const lastActivity = session.last_activity
+            ? formatDistanceToNow(new Date(session.last_activity), {
+                addSuffix: true,
+                locale: ptBR,
+              })
             : 'N/A';
-          const expiresAt = session.expires_at 
-            ? formatDistanceToNow(new Date(session.expires_at), { addSuffix: true, locale: ptBR })
+          const expiresAt = session.expires_at
+            ? formatDistanceToNow(new Date(session.expires_at), {
+                addSuffix: true,
+                locale: ptBR,
+              })
             : 'N/A';
 
           return (
@@ -124,7 +130,8 @@ export const SessionManager = () => {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <p className="font-medium">
-                          {getBrowserName(session.user_agent)} em {String(deviceInfo.os ?? 'Unknown OS')}
+                          {getBrowserName(session.user_agent)} em{' '}
+                          {String(deviceInfo.os ?? 'Unknown OS')}
                         </p>
                         {isCurrent && (
                           <Badge variant="default" className="text-xs">
@@ -132,7 +139,7 @@ export const SessionManager = () => {
                           </Badge>
                         )}
                       </div>
-                      
+
                       <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                         {session.ip_address && (
                           <span className="flex items-center gap-1">
@@ -145,7 +152,7 @@ export const SessionManager = () => {
                           Ativo {lastActivity}
                         </span>
                       </div>
-                      
+
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         <span>Expira {expiresAt}</span>
                         {session.refresh_count > 0 && (
@@ -160,16 +167,12 @@ export const SessionManager = () => {
 
                   <div className="flex gap-2">
                     {isCurrent && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={refreshSession}
-                      >
+                      <Button variant="outline" size="sm" onClick={refreshSession}>
                         <RefreshCw className="h-4 w-4" />
                       </Button>
                     )}
                     <Button
-                      variant={isCurrent ? "destructive" : "outline"}
+                      variant={isCurrent ? 'destructive' : 'outline'}
                       size="sm"
                       onClick={() => terminateSession(session.id)}
                     >
@@ -187,9 +190,7 @@ export const SessionManager = () => {
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertTitle>Nenhuma sessão ativa</AlertTitle>
-          <AlertDescription>
-            Não há sessões ativas no momento.
-          </AlertDescription>
+          <AlertDescription>Não há sessões ativas no momento.</AlertDescription>
         </Alert>
       )}
     </div>

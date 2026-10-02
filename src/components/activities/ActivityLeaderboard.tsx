@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSDRLeaderboard } from "@/hooks/activities/useActivities";
-import { Trophy, Medal, Target } from "lucide-react";
-import { motion } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useSDRLeaderboard } from '@/hooks/activities/useActivities';
+import { Trophy, Medal, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export function ActivityLeaderboard() {
   const { data: leaderboard, isLoading } = useSDRLeaderboard();
@@ -32,7 +32,9 @@ export function ActivityLeaderboard() {
                 <AvatarFallback>{topThree[1].name[0]}</AvatarFallback>
               </Avatar>
               <Medal className="h-4 w-4 text-slate-300" />
-              <p className="text-[10px] font-bold truncate max-w-[60px]">{topThree[1].name}</p>
+              <p className="text-[10px] font-bold truncate max-w-[60px]">
+                {topThree[1].name}
+              </p>
               <p className="text-xs font-black text-slate-400">{topThree[1].count}</p>
             </div>
           )}
@@ -56,7 +58,9 @@ export function ActivityLeaderboard() {
                 <AvatarFallback>{topThree[2].name[0]}</AvatarFallback>
               </Avatar>
               <Medal className="h-4 w-4 text-amber-600" />
-              <p className="text-[10px] font-bold truncate max-w-[60px]">{topThree[2].name}</p>
+              <p className="text-[10px] font-bold truncate max-w-[60px]">
+                {topThree[2].name}
+              </p>
               <p className="text-xs font-black text-amber-700">{topThree[2].count}</p>
             </div>
           )}
@@ -65,7 +69,7 @@ export function ActivityLeaderboard() {
         {/* List of others */}
         <div className="space-y-3">
           {others.map((sdr, index) => (
-            <motion.div 
+            <motion.div
               key={sdr.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -73,7 +77,9 @@ export function ActivityLeaderboard() {
               className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold text-muted-foreground w-4">{index + 4}</span>
+                <span className="text-[10px] font-bold text-muted-foreground w-4">
+                  {index + 4}
+                </span>
                 <Avatar className="h-6 w-6">
                   <AvatarImage src={sdr.avatar || undefined} />
                   <AvatarFallback>{sdr.name[0]}</AvatarFallback>
@@ -88,7 +94,8 @@ export function ActivityLeaderboard() {
           ))}
           {leaderboard?.length === 0 && (
             <p className="text-[10px] text-center text-muted-foreground py-8 italic">
-              Nenhuma atividade registrada hoje. <br />Que tal ser o primeiro? 🔥
+              Nenhuma atividade registrada hoje. <br />
+              Que tal ser o primeiro? 🔥
             </p>
           )}
         </div>

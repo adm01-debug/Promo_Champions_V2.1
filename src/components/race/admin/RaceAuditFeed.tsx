@@ -33,29 +33,49 @@ export function RaceAuditFeed() {
   });
 
   useEffect(() => {
-    const ch = supabase.channel('admin-race-audit')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'race_events' }, () => {
-        qc.invalidateQueries({ queryKey: ['admin-race-audit'] });
-      })
+    const ch = supabase
+      .channel('admin-race-audit')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'race_events' },
+        () => {
+          qc.invalidateQueries({ queryKey: ['admin-race-audit'] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [qc]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-section-title flex items-center gap-2"><ScrollText className="w-5 h-5" /> Auditoria de eventos da corrida</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2">
+          <ScrollText className="w-5 h-5" /> Auditoria de eventos da corrida
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="space-y-2">{[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-10" />)}</div>
+          <div className="space-y-2">
+            {[1, 2, 3, 4].map(i => (
+              <Skeleton key={i} className="h-10" />
+            ))}
+          </div>
         ) : data.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-6 text-center">Sem eventos registrados.</p>
+          <p className="text-sm text-muted-foreground py-6 text-center">
+            Sem eventos registrados.
+          </p>
         ) : (
           <div className="space-y-1.5 max-h-[500px] overflow-y-auto">
-            {data.map((e) => (
-              <div key={e.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/40 transition-colors text-sm">
-                <Badge variant="outline" className="text-[10px] uppercase">{e.event_type}</Badge>
+            {data.map(e => (
+              <div
+                key={e.id}
+                className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/40 transition-colors text-sm"
+              >
+                <Badge variant="outline" className="text-[10px] uppercase">
+                  {e.event_type}
+                </Badge>
                 <span className="flex-1 truncate text-muted-foreground font-mono text-xs">
                   {e.metadata ? JSON.stringify(e.metadata) : '—'}
                 </span>

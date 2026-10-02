@@ -41,7 +41,9 @@ export function toFiniteNumber(value: unknown, fallback = 0): number {
 }
 
 /** Normaliza uma linha da RPC, protegendo contra nulos e strings numéricas. */
-export function normalizeDeliveryRow(raw: Partial<CampaignDeliveryStatRow>): CampaignDeliveryStatRow {
+export function normalizeDeliveryRow(
+  raw: Partial<CampaignDeliveryStatRow>
+): CampaignDeliveryStatRow {
   return {
     job_id: String(raw.job_id ?? ''),
     prompt: String(raw.prompt ?? ''),
@@ -83,7 +85,7 @@ export function completionRate(row: CampaignDeliveryStatRow): number {
  */
 export function classifyDelivery(
   row: CampaignDeliveryStatRow,
-  now: Date = new Date(),
+  now: Date = new Date()
 ): DeliveryHealth {
   if (failureRate(row) > DELIVERY_THRESHOLDS.failureRatePercent) return 'falhando';
 
@@ -125,9 +127,9 @@ export interface DeliverySummary {
 /** Agrega as linhas em um resumo global. */
 export function summarizeDelivery(
   rows: CampaignDeliveryStatRow[],
-  now: Date = new Date(),
+  now: Date = new Date()
 ): DeliverySummary {
-  const withThroughput = rows.filter((r) => r.throughput_per_minute > 0);
+  const withThroughput = rows.filter(r => r.throughput_per_minute > 0);
   return {
     campaigns: rows.length,
     sent: rows.reduce((acc, r) => acc + r.sent_count, 0),
@@ -139,9 +141,9 @@ export function summarizeDelivery(
         ? Math.round(
             (withThroughput.reduce((acc, r) => acc + r.throughput_per_minute, 0) /
               withThroughput.length) *
-              100,
+              100
           ) / 100
         : 0,
-    unhealthy: rows.filter((r) => classifyDelivery(r, now) !== 'ok').length,
+    unhealthy: rows.filter(r => classifyDelivery(r, now) !== 'ok').length,
   };
 }

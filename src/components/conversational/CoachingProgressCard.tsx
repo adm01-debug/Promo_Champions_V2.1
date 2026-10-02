@@ -1,9 +1,14 @@
-import { useMemo } from "react";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles } from "lucide-react";
-import { useCoachingProgress } from "@/hooks/conversational/useCoachingProgress";
-import { CATEGORY_LABELS, STATUS_LABELS, type CoachingCategory, type CoachingStatus } from "./coachingHelpers";
+import { useMemo } from 'react';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles } from 'lucide-react';
+import { useCoachingProgress } from '@/hooks/conversational/useCoachingProgress';
+import {
+  CATEGORY_LABELS,
+  STATUS_LABELS,
+  type CoachingCategory,
+  type CoachingStatus,
+} from './coachingHelpers';
 
 interface Props {
   salespersonId: string;
@@ -11,10 +16,10 @@ interface Props {
 }
 
 const STATUS_COLORS: Record<CoachingStatus, string> = {
-  pending: "bg-muted",
-  accepted: "bg-info",
-  practiced: "bg-success",
-  dismissed: "bg-muted-foreground/40",
+  pending: 'bg-muted',
+  accepted: 'bg-info',
+  practiced: 'bg-success',
+  dismissed: 'bg-muted-foreground/40',
 };
 
 export const CoachingProgressCard = ({ salespersonId, days = 30 }: Props) => {
@@ -25,7 +30,7 @@ export const CoachingProgressCard = ({ salespersonId, days = 30 }: Props) => {
     const total = rows.reduce((s, r) => s + Number(r.count), 0);
     const byStatus: Record<string, number> = {};
     const byCategory: Record<string, number> = {};
-    rows.forEach((r) => {
+    rows.forEach(r => {
       byStatus[r.status] = (byStatus[r.status] ?? 0) + Number(r.count);
       byCategory[r.category] = (byCategory[r.category] ?? 0) + Number(r.count);
     });
@@ -41,7 +46,9 @@ export const CoachingProgressCard = ({ salespersonId, days = 30 }: Props) => {
           <Sparkles className="h-4 w-4 text-primary" />
           <h3 className="font-semibold text-sm">Coaching IA — últimos {days} dias</h3>
         </div>
-        <p className="text-xs text-muted-foreground">Nenhuma ação de coaching no período.</p>
+        <p className="text-xs text-muted-foreground">
+          Nenhuma ação de coaching no período.
+        </p>
       </Card>
     );
   }
@@ -61,20 +68,30 @@ export const CoachingProgressCard = ({ salespersonId, days = 30 }: Props) => {
       <div className="space-y-1.5">
         <p className="text-xs text-muted-foreground">Por status</p>
         <div className="flex h-3 rounded-full overflow-hidden bg-muted">
-          {(["practiced", "accepted", "pending", "dismissed"] as CoachingStatus[]).map((st) => {
-            const v = stats.byStatus[st] ?? 0;
-            const pct = (v / stats.total) * 100;
-            if (pct === 0) return null;
-            return <div key={st} className={STATUS_COLORS[st]} style={{ width: `${pct}%` }} />;
-          })}
+          {(['practiced', 'accepted', 'pending', 'dismissed'] as CoachingStatus[]).map(
+            st => {
+              const v = stats.byStatus[st] ?? 0;
+              const pct = (v / stats.total) * 100;
+              if (pct === 0) return null;
+              return (
+                <div
+                  key={st}
+                  className={STATUS_COLORS[st]}
+                  style={{ width: `${pct}%` }}
+                />
+              );
+            }
+          )}
         </div>
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-muted-foreground">
-          {(["practiced", "accepted", "pending", "dismissed"] as CoachingStatus[]).map((st) => (
-            <span key={st} className="flex items-center gap-1">
-              <span className={`h-2 w-2 rounded-full ${STATUS_COLORS[st]}`} />
-              {STATUS_LABELS[st]} ({stats.byStatus[st] ?? 0})
-            </span>
-          ))}
+          {(['practiced', 'accepted', 'pending', 'dismissed'] as CoachingStatus[]).map(
+            st => (
+              <span key={st} className="flex items-center gap-1">
+                <span className={`h-2 w-2 rounded-full ${STATUS_COLORS[st]}`} />
+                {STATUS_LABELS[st]} ({stats.byStatus[st] ?? 0})
+              </span>
+            )
+          )}
         </div>
       </div>
 

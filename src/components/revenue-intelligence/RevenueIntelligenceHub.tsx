@@ -1,34 +1,107 @@
-import { FC, lazy, Suspense, useState } from "react";
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useRevenueIntelligenceHub, useRunPipelineInspection } from "@/hooks/revenue/useRevenueIntelligenceHub";
-import { ForecastCategoriesPanel } from "./ForecastCategoriesPanel";
-import { CoverageRatioGauge } from "./CoverageRatioGauge";
+import { FC, lazy, Suspense, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  useRevenueIntelligenceHub,
+  useRunPipelineInspection,
+} from '@/hooks/revenue/useRevenueIntelligenceHub';
+import { ForecastCategoriesPanel } from './ForecastCategoriesPanel';
+import { CoverageRatioGauge } from './CoverageRatioGauge';
 
 // Lazy-loaded tab hubs — cada aba só baixa seu módulo quando ativada.
 // Reduz o bundle inicial da rota /revenue-intelligence em ~70%.
-const WinRateBreakdownChart = lazy(() => import("./WinRateBreakdownChart").then(m => ({ default: m.WinRateBreakdownChart })));
-const PipelineInspectionTable = lazy(() => import("./PipelineInspectionTable").then(m => ({ default: m.PipelineInspectionTable })));
-const QBRGeneratorPanel = lazy(() => import("./QBRGeneratorPanel").then(m => ({ default: m.QBRGeneratorPanel })));
-const BuyingCommitteeMap = lazy(() => import("./BuyingCommitteeMap").then(m => ({ default: m.BuyingCommitteeMap })));
-const AIForecastPanel = lazy(() => import("./AIForecastPanel").then(m => ({ default: m.AIForecastPanel })));
-const WinProbabilityCalibrationPanel = lazy(() => import("./calibration/WinProbabilityCalibrationPanel").then(m => ({ default: m.WinProbabilityCalibrationPanel })));
-const WinProbabilityCalibratorPanel = lazy(() => import("./calibration/WinProbabilityCalibratorPanel").then(m => ({ default: m.WinProbabilityCalibratorPanel })));
-const QuotaAttainmentPredictor = lazy(() => import("./quota/QuotaAttainmentPredictor").then(m => ({ default: m.QuotaAttainmentPredictor })));
-const QuotaPredictorAdvancedPanel = lazy(() => import("./quota/QuotaPredictorAdvancedPanel").then(m => ({ default: m.QuotaPredictorAdvancedPanel })));
-const ForecastAccuracySummary = lazy(() => import("./forecast/ForecastAccuracySummary").then(m => ({ default: m.ForecastAccuracySummary })));
-const ForecastVsActualChart = lazy(() => import("./forecast/ForecastVsActualChart").then(m => ({ default: m.ForecastVsActualChart })));
-const ForecastBiasChart = lazy(() => import("./forecast/ForecastBiasChart").then(m => ({ default: m.ForecastBiasChart })));
-const ConfidenceScoresTable = lazy(() => import("./forecast/ConfidenceScoresTable").then(m => ({ default: m.ConfidenceScoresTable })));
-const MapeBySegmentChart = lazy(() => import("./forecast/MapeBySegmentChart").then(m => ({ default: m.MapeBySegmentChart })));
-const DealHealthHub = lazy(() => import("@/components/deal-intelligence/health/DealHealthHub").then(m => ({ default: m.DealHealthHub })));
-const WinLossHub = lazy(() => import("@/components/deal-intelligence/winloss/WinLossHub").then(m => ({ default: m.WinLossHub })));
-const LeadRoutingHub = lazy(() => import("@/components/lead-routing/LeadRoutingHub").then(m => ({ default: m.LeadRoutingHub })));
-const ConversationHub = lazy(() => import("@/components/conversation-intelligence/ConversationHub").then(m => ({ default: m.ConversationHub })));
-const PipelinePulseHub = lazy(() => import("@/components/pipeline-pulse/PipelinePulseHub").then(m => ({ default: m.PipelinePulseHub })));
-const BriefingHub = lazy(() => import("@/components/executive-briefing/BriefingHub").then(m => ({ default: m.BriefingHub })));
-const PipelineStrategicReview = lazy(() => import("@/components/intelligence/PipelineStrategicReview").then(m => ({ default: m.PipelineStrategicReview })));
+const WinRateBreakdownChart = lazy(() =>
+  import('./WinRateBreakdownChart').then(m => ({ default: m.WinRateBreakdownChart }))
+);
+const PipelineInspectionTable = lazy(() =>
+  import('./PipelineInspectionTable').then(m => ({ default: m.PipelineInspectionTable }))
+);
+const QBRGeneratorPanel = lazy(() =>
+  import('./QBRGeneratorPanel').then(m => ({ default: m.QBRGeneratorPanel }))
+);
+const BuyingCommitteeMap = lazy(() =>
+  import('./BuyingCommitteeMap').then(m => ({ default: m.BuyingCommitteeMap }))
+);
+const AIForecastPanel = lazy(() =>
+  import('./AIForecastPanel').then(m => ({ default: m.AIForecastPanel }))
+);
+const WinProbabilityCalibrationPanel = lazy(() =>
+  import('./calibration/WinProbabilityCalibrationPanel').then(m => ({
+    default: m.WinProbabilityCalibrationPanel,
+  }))
+);
+const WinProbabilityCalibratorPanel = lazy(() =>
+  import('./calibration/WinProbabilityCalibratorPanel').then(m => ({
+    default: m.WinProbabilityCalibratorPanel,
+  }))
+);
+const QuotaAttainmentPredictor = lazy(() =>
+  import('./quota/QuotaAttainmentPredictor').then(m => ({
+    default: m.QuotaAttainmentPredictor,
+  }))
+);
+const QuotaPredictorAdvancedPanel = lazy(() =>
+  import('./quota/QuotaPredictorAdvancedPanel').then(m => ({
+    default: m.QuotaPredictorAdvancedPanel,
+  }))
+);
+const ForecastAccuracySummary = lazy(() =>
+  import('./forecast/ForecastAccuracySummary').then(m => ({
+    default: m.ForecastAccuracySummary,
+  }))
+);
+const ForecastVsActualChart = lazy(() =>
+  import('./forecast/ForecastVsActualChart').then(m => ({
+    default: m.ForecastVsActualChart,
+  }))
+);
+const ForecastBiasChart = lazy(() =>
+  import('./forecast/ForecastBiasChart').then(m => ({ default: m.ForecastBiasChart }))
+);
+const ConfidenceScoresTable = lazy(() =>
+  import('./forecast/ConfidenceScoresTable').then(m => ({
+    default: m.ConfidenceScoresTable,
+  }))
+);
+const MapeBySegmentChart = lazy(() =>
+  import('./forecast/MapeBySegmentChart').then(m => ({ default: m.MapeBySegmentChart }))
+);
+const DealHealthHub = lazy(() =>
+  import('@/components/deal-intelligence/health/DealHealthHub').then(m => ({
+    default: m.DealHealthHub,
+  }))
+);
+const WinLossHub = lazy(() =>
+  import('@/components/deal-intelligence/winloss/WinLossHub').then(m => ({
+    default: m.WinLossHub,
+  }))
+);
+const LeadRoutingHub = lazy(() =>
+  import('@/components/lead-routing/LeadRoutingHub').then(m => ({
+    default: m.LeadRoutingHub,
+  }))
+);
+const ConversationHub = lazy(() =>
+  import('@/components/conversation-intelligence/ConversationHub').then(m => ({
+    default: m.ConversationHub,
+  }))
+);
+const PipelinePulseHub = lazy(() =>
+  import('@/components/pipeline-pulse/PipelinePulseHub').then(m => ({
+    default: m.PipelinePulseHub,
+  }))
+);
+const BriefingHub = lazy(() =>
+  import('@/components/executive-briefing/BriefingHub').then(m => ({
+    default: m.BriefingHub,
+  }))
+);
+const PipelineStrategicReview = lazy(() =>
+  import('@/components/intelligence/PipelineStrategicReview').then(m => ({
+    default: m.PipelineStrategicReview,
+  }))
+);
 
 const TabFallback: FC = () => (
   <div className="space-y-3">
@@ -39,8 +112,10 @@ const TabFallback: FC = () => (
 );
 
 export const RevenueIntelligenceHub: FC = () => {
-  const [dimension, setDimension] = useState<"category" | "source" | "product">("category");
-  const [activeTab, setActiveTab] = useState("briefing");
+  const [dimension, setDimension] = useState<'category' | 'source' | 'product'>(
+    'category'
+  );
+  const [activeTab, setActiveTab] = useState('briefing');
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const { data, isLoading } = useRevenueIntelligenceHub(90, dimension);
   const inspection = useRunPipelineInspection();
@@ -68,7 +143,8 @@ export const RevenueIntelligenceHub: FC = () => {
       <header>
         <h1 className="text-page-title font-display">Revenue Intelligence</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Forecast roll-up, win rate, coverage, comitê de compra, inspeção de pipeline e QBR automático.
+          Forecast roll-up, win rate, coverage, comitê de compra, inspeção de pipeline e
+          QBR automático.
         </p>
       </header>
 
@@ -167,9 +243,9 @@ export const RevenueIntelligenceHub: FC = () => {
               flagCounts={data.pipeline_inspection.flag_counts}
               onRunInspection={() => inspection.mutate()}
               isRunning={inspection.isPending}
-              onSelectSale={(id) => {
+              onSelectSale={id => {
                 setSelectedSaleId(id);
-                setActiveTab("buying-committee");
+                setActiveTab('buying-committee');
               }}
             />
           </TabsContent>
@@ -187,7 +263,8 @@ export const RevenueIntelligenceHub: FC = () => {
               <BuyingCommitteeMap saleId={selectedSaleId} />
             ) : (
               <div className="py-12 text-center text-sm text-muted-foreground bg-card/50 rounded-xl border border-dashed border-border">
-                Selecione um deal na aba "Pipeline Inspection" para visualizar o comitê de compra.
+                Selecione um deal na aba "Pipeline Inspection" para visualizar o comitê de
+                compra.
               </div>
             )}
           </TabsContent>

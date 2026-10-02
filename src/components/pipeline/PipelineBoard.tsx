@@ -565,8 +565,7 @@ export const PipelineBoard = () => {
                   activeCadence={activeCadences?.[activeDeal.id]}
                   icpData={
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
-                      | { is_icp_match: boolean; grupo_nicho?: string }
-                      | undefined
+                      { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
                 />
               </div>

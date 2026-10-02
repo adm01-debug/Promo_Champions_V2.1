@@ -1,9 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
-export type EmailEventType = "sent" | "opened" | "clicked" | "bounced" | "replied";
+export type EmailEventType = 'sent' | 'opened' | 'clicked' | 'bounced' | 'replied';
 
 export interface EmailTrackingEvent {
   id: string;
@@ -32,16 +32,16 @@ export function useEmailTracking() {
   const { salesperson } = useAuth();
 
   return useQuery({
-    queryKey: ["email-tracking", salesperson?.id],
+    queryKey: ['email-tracking', salesperson?.id],
     queryFn: async (): Promise<EmailTrackingEvent[]> => {
       const query = supabase
-        .from("email_tracking_events")
-        .select("*")
-        .order("tracked_at", { ascending: false })
+        .from('email_tracking_events')
+        .select('*')
+        .order('tracked_at', { ascending: false })
         .limit(200);
 
       if (salesperson?.id) {
-        query.eq("salesperson_id", salesperson.id);
+        query.eq('salesperson_id', salesperson.id);
       }
 
       const { data, error } = await query;
@@ -56,25 +56,23 @@ export function useEmailTrackingStats() {
   const { salesperson } = useAuth();
 
   return useQuery({
-    queryKey: ["email-tracking-stats", salesperson?.id],
+    queryKey: ['email-tracking-stats', salesperson?.id],
     queryFn: async (): Promise<EmailTrackingStats> => {
-      const query = supabase
-        .from("email_tracking_events")
-        .select("event_type");
+      const query = supabase.from('email_tracking_events').select('event_type');
 
       if (salesperson?.id) {
-        query.eq("salesperson_id", salesperson.id);
+        query.eq('salesperson_id', salesperson.id);
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
       const events = data || [];
-      const sent = events.filter(e => e.event_type === "sent").length;
-      const opened = events.filter(e => e.event_type === "opened").length;
-      const clicked = events.filter(e => e.event_type === "clicked").length;
-      const replied = events.filter(e => e.event_type === "replied").length;
-      const bounced = events.filter(e => e.event_type === "bounced").length;
+      const sent = events.filter(e => e.event_type === 'sent').length;
+      const opened = events.filter(e => e.event_type === 'opened').length;
+      const clicked = events.filter(e => e.event_type === 'clicked').length;
+      const replied = events.filter(e => e.event_type === 'replied').length;
+      const bounced = events.filter(e => e.event_type === 'bounced').length;
 
       return {
         total_sent: sent,
@@ -104,7 +102,7 @@ export function useLogEmailEvent() {
       metadata?: Record<string, unknown>;
     }) => {
       const { data, error } = await supabase
-        .from("email_tracking_events")
+        .from('email_tracking_events')
         .insert({
           sale_id: input.sale_id || null,
           salesperson_id: salesperson?.id,
@@ -120,9 +118,9 @@ export function useLogEmailEvent() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["email-tracking"] });
-      queryClient.invalidateQueries({ queryKey: ["email-tracking-stats"] });
+      queryClient.invalidateQueries({ queryKey: ['email-tracking'] });
+      queryClient.invalidateQueries({ queryKey: ['email-tracking-stats'] });
     },
-    onError: () => toast.error("Erro ao registrar evento de email"),
+    onError: () => toast.error('Erro ao registrar evento de email'),
   });
 }

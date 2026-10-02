@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import { Pause } from "lucide-react";
-import { autoPauseLabel, autoPauseVariant } from "./autoReplyHelpers";
+import { Badge } from '@/components/ui/badge';
+import { Pause } from 'lucide-react';
+import { autoPauseLabel, autoPauseVariant } from './autoReplyHelpers';
 
 interface Props {
   reason: string | null | undefined;

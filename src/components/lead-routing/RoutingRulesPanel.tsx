@@ -1,13 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Settings2, Filter } from "lucide-react";
-import {
-  useRoutingRules,
-  useToggleRoutingRule,
-} from "@/hooks/useLeadRoutingEngine";
-import { formatStrategy, strategyTone } from "./routingHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Settings2, Filter } from 'lucide-react';
+import { useRoutingRules, useToggleRoutingRule } from '@/hooks/useLeadRoutingEngine';
+import { formatStrategy, strategyTone } from './routingHelpers';
 
 export function RoutingRulesPanel() {
   const { data: rules, isLoading } = useRoutingRules();
@@ -30,7 +27,7 @@ export function RoutingRulesPanel() {
             <p className="text-sm">Nenhuma regra configurada</p>
           </div>
         ) : (
-          rules.map((rule) => (
+          rules.map(rule => (
             <div
               key={rule.id}
               className="flex items-center justify-between gap-3 rounded-lg border bg-card/50 p-3 hover:bg-card transition-colors"
@@ -41,7 +38,10 @@ export function RoutingRulesPanel() {
                   <Badge variant="outline" className="text-xs">
                     Prioridade {rule.priority}
                   </Badge>
-                  <Badge variant="outline" className={`text-xs ${strategyTone(rule.strategy)}`}>
+                  <Badge
+                    variant="outline"
+                    className={`text-xs ${strategyTone(rule.strategy)}`}
+                  >
                     {formatStrategy(rule.strategy)}
                   </Badge>
                 </div>
@@ -52,7 +52,7 @@ export function RoutingRulesPanel() {
                 )}
                 <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                   {rule.filter_min_value && (
-                    <span>Min: R$ {rule.filter_min_value.toLocaleString("pt-BR")}</span>
+                    <span>Min: R$ {rule.filter_min_value.toLocaleString('pt-BR')}</span>
                   )}
                   {rule.filter_state && <span>UF: {rule.filter_state}</span>}
                   {rule.filter_source && <span>Origem: {rule.filter_source}</span>}
@@ -60,7 +60,7 @@ export function RoutingRulesPanel() {
               </div>
               <Switch
                 checked={rule.is_active}
-                onCheckedChange={(v) => toggle.mutate({ id: rule.id, is_active: v })}
+                onCheckedChange={v => toggle.mutate({ id: rule.id, is_active: v })}
                 disabled={toggle.isPending}
               />
             </div>
