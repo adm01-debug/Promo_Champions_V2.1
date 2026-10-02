@@ -8,6 +8,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+import { formatBRL as __formatBRL } from '@/lib/money';
 export type OrderStatus =
   'pending' | 'confirmed' | 'preparing' | 'shipped' | 'delivered' | 'cancelled';
 
@@ -59,9 +60,7 @@ export function statusIndex(status: OrderStatus): number {
   return STATUS_STEPS.findIndex(s => s.key === status);
 }
 
-const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-export const formatBRL = (value: number) => brl.format(value);
-
+export const formatBRL = (value: number) => __formatBRL(value, { decimals: 2 });
 export const formatDateTime = (iso: string) =>
   new Date(iso).toLocaleString('pt-BR', {
     day: '2-digit',

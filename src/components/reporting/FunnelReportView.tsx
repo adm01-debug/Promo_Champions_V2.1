@@ -45,6 +45,7 @@ import {
 import { useFunnelComparison } from '@/hooks/reporting/useFunnelComparison';
 import { formatDelta, getStageColor, getStageWidth } from './funnelReportHelpers';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   defaultTimeframe?: number;
   showTimeframeSelector?: boolean;
@@ -258,11 +259,7 @@ export const FunnelReportView = memo(
                       className="h-full rounded-md flex items-center px-3"
                     >
                       <span className="text-xs font-semibold text-primary-foreground mix-blend-difference">
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                          maximumFractionDigits: 0,
-                        }).format(s.value)}
+                        {formatBRL(s.value)}
                       </span>
                     </motion.div>
                   </div>

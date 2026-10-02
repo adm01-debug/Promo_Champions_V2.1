@@ -6,6 +6,7 @@ import { ProgressRing } from '@/components/ui/ProgressRing';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
+import { formatBRL } from '@/lib/money';
 interface GoalProgressProps {
   current: number;
   goal: number;
@@ -109,7 +110,7 @@ export const GoalProgress = React.memo(function GoalProgress({
                     Current
                   </p>
                   <p className="text-sm font-mono font-black text-foreground truncate">
-                    R$ {current.toLocaleString('pt-BR')}
+                    {formatBRL(current)}
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-black/60 border border-white/10 text-right shadow-inner">
@@ -117,7 +118,7 @@ export const GoalProgress = React.memo(function GoalProgress({
                     Target
                   </p>
                   <p className="text-sm font-mono font-black text-foreground truncate">
-                    R$ {goal.toLocaleString('pt-BR')}
+                    {formatBRL(goal)}
                   </p>
                 </div>
               </div>
@@ -127,9 +128,7 @@ export const GoalProgress = React.memo(function GoalProgress({
                   <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   <p className="text-[9px] font-mono uppercase tracking-widest text-primary/80">
                     Remaining:{' '}
-                    <span className="font-bold text-primary">
-                      R$ {remaining.toLocaleString('pt-BR')}
-                    </span>
+                    <span className="font-bold text-primary">{formatBRL(remaining)}</span>
                   </p>
                 </div>
               ) : (

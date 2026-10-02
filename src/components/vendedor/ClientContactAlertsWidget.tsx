@@ -24,6 +24,7 @@ import {
 } from '@/hooks/useClientsNeedingContact';
 import { WA_ME_URL } from '@/config/external';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   salespersonId?: string;
 }
@@ -214,10 +215,7 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                       )}
                       <span>{alert.purchaseCount}x compras</span>
                       <span className="font-medium text-foreground">
-                        R${' '}
-                        {alert.totalRevenue.toLocaleString('pt-BR', {
-                          maximumFractionDigits: 0,
-                        })}
+                        {formatBRL(alert.totalRevenue)}
                       </span>
                       {alert.churnRisk > 0 && (
                         <span className={cn('font-medium', style.color)}>

@@ -47,6 +47,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { DevKpiDebugPanel } from '@/components/dashboard/DevKpiDebugPanel';
 
+import { formatBRL } from '@/lib/money';
 // Lazy-loaded modules for better performance
 const OverviewModule = lazy(() =>
   import('@/components/dashboard/modules/OverviewModule').then(m => ({
@@ -145,9 +146,6 @@ const Index = () => {
   if (section && !isValidSection) {
     return <Navigate to="/404" replace />;
   }
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const isSDR = salesperson?.role === 'sdr';
 
@@ -278,11 +276,11 @@ const Index = () => {
                   ) : hasRevenue ? (
                     <StatCard
                       title="Faturamento Total"
-                      value={formatCurrency(kpis?.current.totalRevenue ?? 0)}
+                      value={formatBRL(kpis?.current.totalRevenue ?? 0)}
                       numericValue={kpis?.current.totalRevenue ?? 0}
                       change={kpis?.changes.revenue ?? 0}
                       previousValue={
-                        kpis ? formatCurrency(kpis.previous.totalRevenue) : undefined
+                        kpis ? formatBRL(kpis.previous.totalRevenue) : undefined
                       }
                       icon={DollarSign}
                       variant="primary"
@@ -312,12 +310,12 @@ const Index = () => {
                     ) : (
                       <StatCard
                         title="Venda Ativação"
-                        value={formatCurrency(kpis?.current.firstSaleRevenue ?? 0)}
+                        value={formatBRL(kpis?.current.firstSaleRevenue ?? 0)}
                         numericValue={kpis?.current.firstSaleRevenue ?? 0}
                         change={kpis?.changes.firstSaleRevenue ?? 0}
                         previousValue={
                           kpis
-                            ? formatCurrency(kpis.previous.firstSaleRevenue ?? 0)
+                            ? formatBRL(kpis.previous.firstSaleRevenue ?? 0)
                             : undefined
                         }
                         icon={Zap}
@@ -340,12 +338,12 @@ const Index = () => {
                     ) : (
                       <StatCard
                         title="Venda Carteira"
-                        value={formatCurrency(kpis?.current.recurringRevenue ?? 0)}
+                        value={formatBRL(kpis?.current.recurringRevenue ?? 0)}
                         numericValue={kpis?.current.recurringRevenue ?? 0}
                         change={kpis?.changes.recurringRevenue ?? 0}
                         previousValue={
                           kpis
-                            ? formatCurrency(kpis.previous.recurringRevenue ?? 0)
+                            ? formatBRL(kpis.previous.recurringRevenue ?? 0)
                             : undefined
                         }
                         icon={RotateCcw}

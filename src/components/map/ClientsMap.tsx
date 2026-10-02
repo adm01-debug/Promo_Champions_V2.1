@@ -31,6 +31,7 @@ import { MapPin, Filter, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
+import { formatBRL } from '@/lib/money';
 // Fix default marker icon
 // @ts-expect-error - _getIconUrl is an internal Leaflet property not in the type definitions
 delete L.Icon.Default.prototype._getIconUrl;
@@ -149,10 +150,7 @@ const MarkerClusterGroup = memo(function MarkerClusterGroup({
         icon: getMarkerIcon(client.total_value),
       });
 
-      const formattedValue = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(client.total_value);
+      const formattedValue = formatBRL(client.total_value, { decimals: 2 });
       const popup = `
         <div style="min-width:200px;font-size:12px;font-family:system-ui;">
           <p style="font-weight:700;font-size:14px;margin:0 0 4px">${client.name}</p>
@@ -341,11 +339,7 @@ export const ClientsMap = () => {
               <Label className="text-xs text-muted-foreground">
                 Valor mínimo:{' '}
                 <span className="text-primary font-mono font-bold">
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                    maximumFractionDigits: 0,
-                  }).format(minValue)}
+                  {formatBRL(minValue)}
                 </span>
               </Label>
               <Slider

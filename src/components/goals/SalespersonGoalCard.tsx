@@ -5,6 +5,7 @@ import { TrendingUp, Target } from 'lucide-react';
 import { SalespersonLevelBadge } from '@/components/gamification/SalespersonLevelBadge';
 import { CARBON_FIBRE_TEXTURE_URL } from '@/config/external';
 
+import { formatBRL } from '@/lib/money';
 interface SalespersonGoalCardProps {
   id?: string;
   name: string;
@@ -47,9 +48,6 @@ function SalespersonGoalCardImpl({
   predictedAttainment,
   paceStatus,
 }: SalespersonGoalCardProps) {
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
-
   const progressCapped = Math.min(progress, 100);
   const isTopPerformer = rank <= 3;
   const hasExceededGoal = progress >= 100;
@@ -175,7 +173,7 @@ function SalespersonGoalCardImpl({
               Resultado Real
             </span>
             <span className="text-sm font-black tracking-tight">
-              {formatCurrency(currentSales)}
+              {formatBRL(currentSales)}
             </span>
           </div>
           <div className="text-right flex flex-col">
@@ -183,7 +181,7 @@ function SalespersonGoalCardImpl({
               Objetivo
             </span>
             <span className="text-sm font-black tracking-tight">
-              {formatCurrency(goalAmount)}
+              {formatBRL(goalAmount)}
             </span>
           </div>
         </div>
@@ -217,7 +215,7 @@ function SalespersonGoalCardImpl({
               </span>
             </div>
             <p className="text-sm font-black gradient-text">
-              {formatCurrency(dailyAverage)}/dia
+              {formatBRL(dailyAverage)}/dia
             </p>
           </div>
 
@@ -247,7 +245,7 @@ function SalespersonGoalCardImpl({
                   : 'text-status-success'
               }`}
             >
-              {formatCurrency(requiredDailyAverage)}/dia
+              {formatBRL(requiredDailyAverage)}/dia
             </p>
           </div>
         </div>

@@ -1,0 +1,69 @@
+name: PR Review SLA
+
+# Lembrete de SLA de revisão: toda PR aberta há mais de 48h sem nenhuma
+# revisão (approve/changes-requested/comment de review) recebe um comentário
+# marcando o CODEOWNERS/autor. Roda em dias úteis às 12:00 UTC (09:00 BRT).
+# Para não virar spam, só comenta se o último lembrete de SLA tiver mais de 48h.
+
+on:
+  schedule:
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review-sla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SLA_HOURS: '48'
+    steps:
+      - name: Comentar em PRs sem review há >48h
+        run: |
+          set -euo pipefail
+          NOW=$(date +%s)
+          CUTOFF=$((SLA_HOURS * 3600))
+          REMINDER_MIN_AGE=$((SLA_HOURS * 3600))
+
+          gh pr list --state open --limit 200 \
+            --json number,title,url,createdAt,author,reviews,isDraft \
+            > /tmp/open_prs.json
+
+          COUNT=$(jq 'length' /tmp/open_prs.json)
+          echo "PRs abertas: $COUNT"
+
+          for i in $(seq 0 $((COUNT - 1))); do
+            PR=$(jq -c ".[$i]" /tmp/open_prs.json)
+            NUMBER=$(jq -r '.number' <<<"$PR")
+            URL=$(jq -r '.url' <<<"$PR")
+            TITLE=$(jq -r '.title' <<<"$PR")
+            AUTHOR=$(jq -r '.author.login' <<<"$PR")
+            DRAFT=$(jq -r '.isDraft' <<<"$PR")
+            CREATED=$(date -d "$(jq -r '.createdAt' <<<"$PR")" +%s)
+            AGE=$((NOW - CREATED))
+            REVIEWS=$(jq '.reviews | length' <<<"$PR")
+
+            # Drafts e PRs novas não entram no SLA.
+            [ "$DRAFT" = "true" ] && continue
+            [ "$AGE" -lt "$CUTOFF" ] && continue
+            [ "$REVIEWS" -gt 0 ] && continue
+
+            # Não repetir lembrete se o último foi há <48h.
+            LAST_REMINDER=$(gh api "repos/{owner}/{repo}/issues/$NUMBER/comments" \
+              --jq '[.[] | select(.body | contains("SLA de revisão")) | .created_at] | last // ""' || true)
+            if [ -n "$LAST_REMINDER" ]; then
+              LAST_TS=$(date -d "$LAST_REMINDER" +%s)
+              if [ $((NOW - LAST_TS)) -lt "$REMINDER_MIN_AGE" ]; then
+                echo "PR #$NUMBER: lembrete recente, pulando."
+                continue
+              fi
+            fi
+
+            HOURS=$((AGE / 3600))
+            echo "PR #$NUMBER: ${HOURS}h sem review — postando lembrete."
+            gh pr comment "$NUMBER" --body "⏰ **SLA de revisão**: esta PR está aberta há ${HOURS}h sem nenhuma revisão. @${AUTHOR}, por favor peça re-review ou mova para draft se ainda não está pronta."
+          done

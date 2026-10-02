@@ -12,6 +12,7 @@ interface SalespersonPerformance {
 }
 import { Crown, Medal, Trophy, TrendingUp, Users, Percent } from 'lucide-react';
 
+import { formatBRLCompact } from '@/lib/money';
 interface PerformanceRankingCardProps {
   data: SalespersonPerformance[] | undefined;
   isLoading: boolean;
@@ -107,11 +108,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                   <span className="flex items-center gap-1">
                     <TrendingUp className="h-3 w-3" />
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                      notation: 'compact',
-                    }).format(sp.totalSales)}
+                    {formatBRLCompact(sp.totalSales)}
                   </span>
                   <span className="flex items-center gap-1">
                     <Percent className="h-3 w-3" />

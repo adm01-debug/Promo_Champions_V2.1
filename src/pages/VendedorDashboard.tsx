@@ -37,6 +37,7 @@ import { PersonalAssistantSummaryCard } from '@/components/dashboard/PersonalAss
 import { ClientContactAlertsWidget } from '@/components/vendedor/ClientContactAlertsWidget';
 import { useNavigate } from 'react-router-dom';
 
+import { formatBRL } from '@/lib/money';
 interface Sale {
   id: string;
   client_name: string;
@@ -327,21 +328,21 @@ const VendedorDashboard = () => {
                 },
                 {
                   title: 'Comissão Estimada',
-                  value: `R$ ${animatedCommission.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                  value: `${formatBRL(animatedCommission)}`,
                   icon: TrendingUp,
                   variant: 'success' as const,
                   delay: '200ms',
                 },
                 {
                   title: 'Meta Individual',
-                  value: `R$ ${animatedGoal.toLocaleString('pt-BR')}`,
+                  value: `${formatBRL(animatedGoal)}`,
                   icon: Target,
                   variant: 'default' as const,
                   delay: '150ms',
                 },
                 {
                   title: 'Pipeline Ativo',
-                  value: `R$ ${animatedPipeline.toLocaleString('pt-BR')}`,
+                  value: `${formatBRL(animatedPipeline)}`,
                   icon: ShoppingBag,
                   variant: 'default' as const,
                   delay: '250ms',

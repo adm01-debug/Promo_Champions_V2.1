@@ -14,13 +14,7 @@ import type {
   RiskBreakdown,
 } from '@/hooks/win-loss/useAtRiskFromPatterns';
 
-const fmtBRL = (n: number | null | undefined) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
-
+import { formatBRL } from '@/lib/money';
 const tone = (score: number) =>
   score >= 75
     ? 'border-destructive/40 bg-destructive/10 text-destructive'
@@ -167,7 +161,7 @@ function DealHeader({ deal, side }: { deal: AtRiskDealFromPattern; side: 'A' | '
         {deal.client_name ?? 'Cliente'}
       </p>
       <p className="text-[10px] text-muted-foreground tabular-nums">
-        {fmtBRL(deal.amount)} · {deal.stage ?? '—'}
+        {formatBRL(deal.amount)} · {deal.stage ?? '—'}
       </p>
       <p
         className="text-[10px] text-muted-foreground truncate"

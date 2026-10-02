@@ -40,6 +40,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkline } from './Sparkline';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
+import { formatBRLCompact } from '@/lib/money';
 interface DealCardProps {
   deal: Deal;
   probability?: {
@@ -86,14 +87,6 @@ export const DealCard = ({
   const allPlaybookItems = playbooks?.flatMap(pb => pb.items || []) || [];
   const completedCount = progress?.length || 0;
   const totalCount = allPlaybookItems.length;
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      notation: 'compact',
-    }).format(value);
-  };
 
   // Etapa 8: Bulk Operations Mode
   const [isSelected] = useState(false);
@@ -316,7 +309,7 @@ export const DealCard = ({
             ) : (
               <div className="flex items-center gap-1 group/edit">
                 <span className="font-display font-bold text-sm gradient-text">
-                  {formatCurrency(deal.amount)}
+                  {formatBRLCompact(deal.amount)}
                 </span>
                 <Edit2
                   className="h-2.5 w-2.5 opacity-0 group-hover/edit:opacity-100 cursor-pointer transition-opacity"

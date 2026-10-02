@@ -8,6 +8,7 @@ import { ICPData } from '@/hooks/useICPData';
 import { Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
+import { formatBRLCompact } from '@/lib/money';
 interface DealProbability {
   probability: number;
   factors: string[];
@@ -59,14 +60,6 @@ export const PipelineColumn = ({
   }, [deals, leadScores]);
 
   const totalValue = deals.reduce((sum, deal) => sum + deal.amount, 0);
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      notation: 'compact',
-    }).format(value);
-  };
 
   return (
     <div
@@ -136,7 +129,7 @@ export const PipelineColumn = ({
         <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-tighter">
           VOL:{' '}
           <span className="font-display font-black text-foreground">
-            {formatCurrency(totalValue)}
+            {formatBRLCompact(totalValue)}
           </span>
         </p>
       </div>

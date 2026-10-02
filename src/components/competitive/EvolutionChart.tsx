@@ -16,6 +16,7 @@ import { useEvolutionCurves } from '@/hooks/useEvolutionCurves';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
+import { formatBRL } from '@/lib/money';
 const COLORS = [
   'hsl(262, 83%, 58%)', // primary
   'hsl(172, 66%, 45%)', // secondary
@@ -136,13 +137,7 @@ const EvolutionChartComponent: FC = () => {
               tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
-              formatter={(value: number) =>
-                new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                  maximumFractionDigits: 0,
-                }).format(value)
-              }
+              formatter={(value: number) => formatBRL(value)}
               labelFormatter={label => {
                 const d = new Date(label);
                 return d.toLocaleDateString('pt-BR');

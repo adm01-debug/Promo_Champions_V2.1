@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRLCompact } from '@/lib/money';
 export function TerritoriesBoard() {
   const { data: territories = [], isLoading } = useTerritories();
   const [selectedId, setSelectedId] = useState<string | undefined>();
@@ -77,13 +78,7 @@ export function TerritoriesBoard() {
                       </span>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                         <span>{h.deals_count} deals</span>
-                        <span>
-                          {new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            notation: 'compact',
-                          }).format(h.revenue_contribution)}
-                        </span>
+                        <span>{formatBRLCompact(h.revenue_contribution)}</span>
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground text-right">
@@ -176,11 +171,7 @@ function TerritoryCard({
           <div className="p-2 rounded-lg bg-muted/50 text-center">
             <p className="text-xs text-muted-foreground">Receita</p>
             <p className="font-bold text-sm">
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-                notation: 'compact',
-              }).format(territory.total_revenue)}
+              {formatBRLCompact(territory.total_revenue)}
             </p>
           </div>
         </div>

@@ -5,16 +5,10 @@ import { useSeasonComparison } from '@/hooks/win-loss/useSeasonComparison';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   rows: WLAnalysisRow[];
 }
-
-const fmtBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
 
 const Delta = ({
   value,
@@ -88,7 +82,7 @@ export const SeasonComparisonPanel = memo(function SeasonComparisonPanel({
               Receita
             </p>
             <p className="text-lg font-semibold tabular-nums">
-              {fmtBRL(current.totalAmount)}
+              {formatBRL(current.totalAmount)}
             </p>
             <Delta
               value={(deltas.totalAmount / Math.max(1, previous.totalAmount)) * 100}

@@ -1,5 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { usePipelineHealthScore } from '@/hooks/pipeline/usePipelineHealthScore';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Shield, TrendingUp, Info, Zap } from 'lucide-react';
@@ -11,39 +10,9 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 export const PipelineHealthScore = () => {
-  const { data: metrics, isLoading } = useQuery({
-    queryKey: ['pipeline-health'],
-    queryFn: async () => {
-      // Usamos a view de forecast para pegar dados de pipeline aberto e meta
-      const { data, error } = await supabase.from('revenue_forecast_view').select('*');
-      if (error) throw error;
-
-      const agg = data.reduce(
-        (acc, r) => {
-          acc.total_pipeline += Number(r.total_open_pipeline) || 0;
-          acc.weighted_forecast += Number(r.weighted_forecast) || 0;
-          acc.monthly_goal += Number(r.monthly_goal) || 0;
-          return acc;
-        },
-        { total_pipeline: 0, weighted_forecast: 0, monthly_goal: 0 }
-      );
-
-      // Pipeline Coverage (Standard target is 3x or 4x)
-      const coverage = agg.monthly_goal > 0 ? agg.total_pipeline / agg.monthly_goal : 0;
-      const weightedCoverage =
-        agg.monthly_goal > 0 ? agg.weighted_forecast / agg.monthly_goal : 0;
-
-      return {
-        ...agg,
-        coverage,
-        weightedCoverage,
-        health: coverage >= 3 ? 'Excellent' : coverage >= 2 ? 'Healthy' : 'At Risk',
-        commit: agg.total_pipeline * 0.4, // Simplified logic for commit
-        upside: agg.total_pipeline * 0.7, // Simplified logic for upside
-      };
-    },
-  });
+  const { data: metrics, isLoading } = usePipelineHealthScore();
 
   if (isLoading) return null;
 
@@ -112,7 +81,7 @@ export const PipelineHealthScore = () => {
             Pipeline Ponderado
           </div>
           <p className="text-xl font-black tracking-tighter text-foreground">
-            R$ {metrics?.weighted_forecast.toLocaleString('pt-BR')}
+            {formatBRL(metrics?.weighted_forecast)}
           </p>
         </div>
 
@@ -122,7 +91,7 @@ export const PipelineHealthScore = () => {
               Commit (Pessimista)
             </span>
             <p className="text-sm font-black text-emerald-500/80">
-              R$ {metrics?.commit.toLocaleString('pt-BR')}
+              {formatBRL(metrics?.commit)}
             </p>
           </div>
           <div className="space-y-0.5">
@@ -130,7 +99,7 @@ export const PipelineHealthScore = () => {
               Upside (Otimista)
             </span>
             <p className="text-sm font-black text-primary/80">
-              R$ {metrics?.upside.toLocaleString('pt-BR')}
+              {formatBRL(metrics?.upside)}
             </p>
           </div>
         </div>

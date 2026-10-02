@@ -6,6 +6,7 @@ import { DollarSign, Sparkles, Trophy, Zap, ArrowUpRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 interface SalespersonCommission {
   id: string;
   name: string;
@@ -31,9 +32,6 @@ export function CommissionCalculator({
   totalProjectedCommission,
   isLoading,
 }: CommissionCalculatorProps) {
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
   // Sort by projected commission descending
   const sortedSalespeople = [...salespeople].sort(
     (a, b) => b.projectedCommission - a.projectedCommission
@@ -95,7 +93,7 @@ export function CommissionCalculator({
               </span>
             </div>
             <p className="text-2xl font-display font-black text-status-success italic tracking-tighter relative z-10 leading-none drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]">
-              {formatCurrency(totalCurrentCommission)}
+              {formatBRL(totalCurrentCommission, { decimals: 2 })}
             </p>
           </div>
           <div className="p-5 rounded-2xl glass border border-primary/20 hover-lift cursor-pointer transition-all bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden group/stats">
@@ -109,7 +107,7 @@ export function CommissionCalculator({
               </span>
             </div>
             <p className="text-2xl font-display font-black gradient-text italic tracking-tighter relative z-10 leading-none">
-              {formatCurrency(totalProjectedCommission)}
+              {formatBRL(totalProjectedCommission, { decimals: 2 })}
             </p>
           </div>
         </div>
@@ -167,7 +165,7 @@ export function CommissionCalculator({
                         </div>
                         <div className="text-right">
                           <p className="font-display font-black text-status-success text-sm italic tracking-tighter">
-                            {formatCurrency(sp.currentCommission)}
+                            {formatBRL(sp.currentCommission, { decimals: 2 })}
                           </p>
                         </div>
                       </div>

@@ -32,6 +32,7 @@ import { SkillGapAnalyzerPanel } from './skills/SkillGapAnalyzerPanel';
 import { CoachingSessionPlanner } from './sessions/CoachingSessionPlanner';
 import { CoachingImpactTracker } from './impact/CoachingImpactTracker';
 
+import { formatBRL } from '@/lib/money';
 const PRIORITY_STYLES: Record<
   CoachingTarget['priority'],
   {
@@ -244,7 +245,7 @@ export function CoachingIntelligenceHub() {
                               <div className="space-y-0.5">
                                 <p className="text-muted-foreground">Ticket médio</p>
                                 <p className="font-semibold">
-                                  R$ {t.avg_deal_size.toLocaleString('pt-BR')}
+                                  {formatBRL(t.avg_deal_size)}
                                 </p>
                               </div>
                             </div>
