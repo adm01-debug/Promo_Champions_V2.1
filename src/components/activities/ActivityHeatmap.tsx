@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 
 import { useActivities } from '@/hooks/activities/useActivities';
 import { format, subDays, isSameDay } from 'date-fns';
-import { toBusinessDate } from "@/lib/date";
+import { toBusinessDate } from '@/lib/date';
 
 const HEATMAP_DAYS = 35;
 

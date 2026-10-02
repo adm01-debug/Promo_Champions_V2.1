@@ -15,4 +15,4 @@ export {
   toBusinessMonthStart,
   toBusinessMonthEnd,
   toBusinessHourKey,
-} from "../../supabase/functions/_shared/business-date";
+} from '../../supabase/functions/_shared/business-date';

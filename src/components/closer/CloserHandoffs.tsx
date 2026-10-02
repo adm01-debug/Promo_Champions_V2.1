@@ -49,10 +49,13 @@ export function CloserHandoffs() {
   const acceptLead = async (saleId: string) => {
     try {
       // Transição via RPC da máquina de estados (qualified -> proposal)
-      const { error } = await supabase.rpc('transition_sale_status' as never, {
-        p_sale_id: saleId,
-        p_new_status: 'proposal',
-      } as never);
+      const { error } = await supabase.rpc(
+        'transition_sale_status' as never,
+        {
+          p_sale_id: saleId,
+          p_new_status: 'proposal',
+        } as never
+      );
 
       if (error) throw error;
 

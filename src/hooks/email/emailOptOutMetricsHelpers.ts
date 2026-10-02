@@ -3,7 +3,7 @@
  * Mantidas fora do hook para permitir testes determinísticos.
  */
 
-import { toBusinessDate } from "@/lib/date";
+import { toBusinessDate } from '@/lib/date';
 
 export interface OptOutRecordLite {
   /** ISO timestamp de criação do registro. */
@@ -75,7 +75,7 @@ export function sourceLabel(source: string): string {
 export function aggregateOptOutMetrics(
   records: readonly OptOutRecordLite[],
   now: number = Date.now(),
-  windowDays = 30,
+  windowDays = 30
 ): OptOutMetrics {
   const bySource = new Map<string, number>();
   const byDay = new Map<string, number>();

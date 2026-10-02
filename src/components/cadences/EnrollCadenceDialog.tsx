@@ -1,13 +1,30 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { useCadences, useCadenceSteps, useEnrollInCadence, Cadence } from "@/hooks/useCadences";
-import { useSalespeople } from "@/hooks/sales/useSalespeople";
-import { CadenceCard } from "./CadenceCard";
-import { Play } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import {
+  useCadences,
+  useCadenceSteps,
+  useEnrollInCadence,
+  Cadence,
+} from '@/hooks/useCadences';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
+import { CadenceCard } from './CadenceCard';
+import { Play } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface EnrollCadenceDialogProps {
   saleId: string;
@@ -15,10 +32,14 @@ interface EnrollCadenceDialogProps {
   trigger?: React.ReactNode;
 }
 
-export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCadenceDialogProps) {
+export function EnrollCadenceDialog({
+  saleId,
+  clientName,
+  trigger,
+}: EnrollCadenceDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedCadenceId, setSelectedCadenceId] = useState<string | null>(null);
-  const [salespersonId, setSalespersonId] = useState<string>("");
+  const [salespersonId, setSalespersonId] = useState<string>('');
 
   const { data: cadences } = useCadences();
   const { data: salespeople } = useSalespeople();
@@ -38,14 +59,18 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
 
     setOpen(false);
     setSelectedCadenceId(null);
-    setSalespersonId("");
+    setSalespersonId('');
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" size="sm" className="gap-2 border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-colors">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-colors"
+          >
             <Play className="h-3.5 w-3.5" />
             Iniciar Cadência
           </Button>
@@ -64,8 +89,10 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
         <div className="space-y-4 py-4">
           <div className="p-3 rounded-lg bg-gradient-to-r from-muted/50 to-muted/30 border border-border/30">
             <p className="text-sm">
-              <span className="text-muted-foreground">Prospect:</span>{" "}
-              <span className="font-display font-semibold gradient-text">{clientName}</span>
+              <span className="text-muted-foreground">Prospect:</span>{' '}
+              <span className="font-display font-semibold gradient-text">
+                {clientName}
+              </span>
             </p>
           </div>
 
@@ -115,7 +142,7 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
             onClick={handleEnroll}
             disabled={!selectedCadenceId || enrollInCadence.isPending}
           >
-            {enrollInCadence.isPending ? "Inscrevendo..." : "Iniciar Cadência"}
+            {enrollInCadence.isPending ? 'Inscrevendo...' : 'Iniciar Cadência'}
           </Button>
         </div>
       </DialogContent>
@@ -123,17 +150,17 @@ export function EnrollCadenceDialog({ saleId, clientName, trigger }: EnrollCaden
   );
 }
 
-function CadenceCardWithSteps({ 
-  cadence, 
-  isSelected, 
-  onSelect 
-}: { 
-  cadence: Cadence; 
-  isSelected: boolean; 
+function CadenceCardWithSteps({
+  cadence,
+  isSelected,
+  onSelect,
+}: {
+  cadence: Cadence;
+  isSelected: boolean;
   onSelect: () => void;
 }) {
   const { data: steps } = useCadenceSteps(cadence.id);
-  
+
   return (
     <CadenceCard
       cadence={cadence}

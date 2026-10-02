@@ -26,89 +26,94 @@ interface PreloadLinkProps extends Omit<HTMLMotionProps<'a'>, 'href'> {
  * PreloadLink - An optimized Link component that preloads the target route
  * on hover or touch to achieve near-instant navigation.
  */
-export const PreloadLink = memo(forwardRef<HTMLAnchorElement, PreloadLinkProps>(
-  ({
-    to,
-    children,
-    className,
-    replace,
-    component,
-    onClick,
-    onMouseEnter,
-    onTouchStart,
-    id,
-    ...props
-  }, ref) => {
-    const navigate = useNavigate();
-    const location = useLocation();
+export const PreloadLink = memo(
+  forwardRef<HTMLAnchorElement, PreloadLinkProps>(
+    (
+      {
+        to,
+        children,
+        className,
+        replace,
+        component,
+        onClick,
+        onMouseEnter,
+        onTouchStart,
+        id,
+        ...props
+      },
+      ref
+    ) => {
+      const navigate = useNavigate();
+      const location = useLocation();
 
-    const preloadRoute = useCallback(() => {
-      if (!to || to.startsWith('#') || prefetchedTargets.has(to)) return;
-      prefetchedTargets.add(to);
+      const preloadRoute = useCallback(() => {
+        if (!to || to.startsWith('#') || prefetchedTargets.has(to)) return;
+        prefetchedTargets.add(to);
 
-      const isInternalRoute = isSafeInternalPath(to);
-      if (!isInternalRoute) {
-        const link = document.createElement('link');
-        link.rel = to.endsWith('.js') ? 'modulepreload' : 'prefetch';
-        link.href = to;
-        document.head.appendChild(link);
-      }
+        const isInternalRoute = isSafeInternalPath(to);
+        if (!isInternalRoute) {
+          const link = document.createElement('link');
+          link.rel = to.endsWith('.js') ? 'modulepreload' : 'prefetch';
+          link.href = to;
+          document.head.appendChild(link);
+        }
 
-      if (component?.prefetch) {
-        void component.prefetch();
-      }
-    }, [to, component]);
+        if (component?.prefetch) {
+          void component.prefetch();
+        }
+      }, [to, component]);
 
-    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-      onClick?.(e);
-      if (e.defaultPrevented) return;
+      const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        onClick?.(e);
+        if (e.defaultPrevented) return;
 
-      // Links externos HTTP(S) e âncoras continuam sob controle do navegador.
-      if (isSafeExternalHttpUrl(to) || to.startsWith('#')) {
-        return;
-      }
+        // Links externos HTTP(S) e âncoras continuam sob controle do navegador.
+        if (isSafeExternalHttpUrl(to) || to.startsWith('#')) {
+          return;
+        }
 
-      if (!isSafeInternalPath(to)) {
+        if (!isSafeInternalPath(to)) {
+          e.preventDefault();
+          return;
+        }
+
+        if (location.pathname === to) {
+          e.preventDefault();
+          return;
+        }
+
         e.preventDefault();
-        return;
-      }
+        triggerHaptic('light');
+        navigate(to, { replace });
+      };
 
-      if (location.pathname === to) {
-        e.preventDefault();
-        return;
-      }
-      
-      e.preventDefault();
-      triggerHaptic('light');
-      navigate(to, { replace });
-    };
+      const handleMouseEnter: PreloadLinkProps['onMouseEnter'] = event => {
+        onMouseEnter?.(event);
+        preloadRoute();
+      };
 
-    const handleMouseEnter: PreloadLinkProps['onMouseEnter'] = event => {
-      onMouseEnter?.(event);
-      preloadRoute();
-    };
+      const handleTouchStart: PreloadLinkProps['onTouchStart'] = event => {
+        onTouchStart?.(event);
+        preloadRoute();
+      };
 
-    const handleTouchStart: PreloadLinkProps['onTouchStart'] = event => {
-      onTouchStart?.(event);
-      preloadRoute();
-    };
-
-    return (
-      <motion.a
-        {...props}
-        ref={ref}
-        id={id}
-        href={safeNavigationHref(to)}
-        onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onTouchStart={handleTouchStart}
-        className={className}
-        whileTap={{ scale: 0.98 }}
-      >
-        {children}
-      </motion.a>
-    );
-  }
-));
+      return (
+        <motion.a
+          {...props}
+          ref={ref}
+          id={id}
+          href={safeNavigationHref(to)}
+          onClick={handleClick}
+          onMouseEnter={handleMouseEnter}
+          onTouchStart={handleTouchStart}
+          className={className}
+          whileTap={{ scale: 0.98 }}
+        >
+          {children}
+        </motion.a>
+      );
+    }
+  )
+);
 
 PreloadLink.displayName = 'PreloadLink';

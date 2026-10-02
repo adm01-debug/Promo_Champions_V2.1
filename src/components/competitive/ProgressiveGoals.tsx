@@ -25,12 +25,17 @@ const LEVEL_COLORS: Record<number, string> = {
 };
 
 const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId }) => {
-  const { goals, isLoading, getLabel, getLevelTitle } = useProgressiveGoals(salespersonId);
+  const { goals, isLoading, getLabel, getLevelTitle } =
+    useProgressiveGoals(salespersonId);
 
   if (isLoading) {
-    return <div className="space-y-3">
-      {[1, 2].map(i => <div key={i} className="h-28 rounded-xl bg-muted/30 animate-pulse" />)}
-    </div>;
+    return (
+      <div className="space-y-3">
+        {[1, 2].map(i => (
+          <div key={i} className="h-28 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
   if (!goals.length) {
@@ -40,7 +45,8 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
           <Target className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
           <p className="text-sm font-medium text-foreground">Metas Progressivas</p>
           <p className="text-xs text-muted-foreground mt-1">
-            Suas metas se adaptam automaticamente ao seu desempenho. Complete vendas para iniciar!
+            Suas metas se adaptam automaticamente ao seu desempenho. Complete vendas para
+            iniciar!
           </p>
         </CardContent>
       </Card>
@@ -70,9 +76,16 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
       {goals.map((goal, i) => {
         const label = getLabel(goal.goal_type);
         const levelTitle = getLevelTitle(goal.current_level);
-        const pct = goal.current_target > 0 ? Math.min(100, Math.round((goal.current_progress / goal.current_target) * 100)) : 0;
+        const pct =
+          goal.current_target > 0
+            ? Math.min(
+                100,
+                Math.round((goal.current_progress / goal.current_target) * 100)
+              )
+            : 0;
         const nextTarget = Math.round(goal.current_target * goal.multiplier);
-        const levelColor = LEVEL_COLORS[Math.min(goal.current_level, 10)] || LEVEL_COLORS[1];
+        const levelColor =
+          LEVEL_COLORS[Math.min(goal.current_level, 10)] || LEVEL_COLORS[1];
 
         return (
           <motion.div
@@ -89,7 +102,12 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
                     <div>
                       <p className="text-sm font-bold text-foreground">{label.label}</p>
                       <div className="flex items-center gap-1.5">
-                        <Badge className={cn('text-[10px] h-4 bg-gradient-to-r text-primary-foreground border-0', levelColor)}>
+                        <Badge
+                          className={cn(
+                            'text-[10px] h-4 bg-gradient-to-r text-primary-foreground border-0',
+                            levelColor
+                          )}
+                        >
                           Nv.{goal.current_level} • {levelTitle}
                         </Badge>
                       </div>
@@ -100,7 +118,9 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
                       <Zap className="h-3 w-3" />
                       {goal.total_xp_earned} XP total
                     </div>
-                    <p className="text-[10px] text-muted-foreground">{goal.completed_levels} níveis concluídos</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {goal.completed_levels} níveis concluídos
+                    </p>
                   </div>
                 </div>
 
@@ -108,10 +128,12 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">
-                      {label.unit}{goal.current_progress.toLocaleString('pt-BR')}
+                      {label.unit}
+                      {goal.current_progress.toLocaleString('pt-BR')}
                     </span>
                     <span className="font-semibold text-foreground">
-                      Meta: {label.unit}{goal.current_target.toLocaleString('pt-BR')}
+                      Meta: {label.unit}
+                      {goal.current_target.toLocaleString('pt-BR')}
                     </span>
                   </div>
                   <Progress value={pct} className="h-3" />
@@ -124,7 +146,8 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
                   <div className="flex-1">
                     <p className="text-[10px] text-muted-foreground">Próximo nível</p>
                     <p className="text-xs font-medium text-foreground">
-                      {label.unit}{nextTarget.toLocaleString('pt-BR')} ({goal.multiplier}x)
+                      {label.unit}
+                      {nextTarget.toLocaleString('pt-BR')} ({goal.multiplier}x)
                     </p>
                   </div>
                   <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -137,6 +160,5 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
     </div>
   );
 };
-
 
 export const ProgressiveGoals = React.memo(ProgressiveGoalsComponent);

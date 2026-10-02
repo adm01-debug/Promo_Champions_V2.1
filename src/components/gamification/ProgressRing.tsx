@@ -23,7 +23,7 @@ export const ProgressRing: FC<ProgressRingProps> = ({
   showPercent = true,
   children,
   className,
-  animated = true
+  animated = true,
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -31,14 +31,16 @@ export const ProgressRing: FC<ProgressRingProps> = ({
   const offset = circumference - (clampedProgress / 100) * circumference;
 
   const CircleComponent = animated ? motion.circle : 'circle';
-  const circleProps = animated ? {
-    initial: { strokeDashoffset: circumference },
-    animate: { strokeDashoffset: offset },
-    transition: { duration: 1, ease: 'easeOut' as const }
-  } : {};
+  const circleProps = animated
+    ? {
+        initial: { strokeDashoffset: circumference },
+        animate: { strokeDashoffset: offset },
+        transition: { duration: 1, ease: 'easeOut' as const },
+      }
+    : {};
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center", className)}>
+    <div className={cn('relative inline-flex items-center justify-center', className)}>
       <svg width={size} height={size} className="transform -rotate-90">
         {/* Background circle */}
         <circle
@@ -64,11 +66,12 @@ export const ProgressRing: FC<ProgressRingProps> = ({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        {children || (showPercent && (
-          <span className="text-sm font-semibold text-foreground">
-            {Math.round(clampedProgress)}%
-          </span>
-        ))}
+        {children ||
+          (showPercent && (
+            <span className="text-sm font-semibold text-foreground">
+              {Math.round(clampedProgress)}%
+            </span>
+          ))}
       </div>
     </div>
   );

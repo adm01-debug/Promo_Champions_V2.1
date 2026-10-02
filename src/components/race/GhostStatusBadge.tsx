@@ -1,5 +1,10 @@
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import type { GhostCarResult } from '@/hooks/race/useGhostCar';
 
@@ -47,7 +52,8 @@ export function GhostStatusBadge({ ghost }: Props) {
             {ghost.bestSeasonName && ` ("${ghost.bestSeasonName}")`}.
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Ghost: {(ghost.ghostProgress * 100).toFixed(1)}% · Você: {(ghost.myProgress * 100).toFixed(1)}%
+            Ghost: {(ghost.ghostProgress * 100).toFixed(1)}% · Você:{' '}
+            {(ghost.myProgress * 100).toFixed(1)}%
           </p>
         </TooltipContent>
       </Tooltip>

@@ -1,18 +1,20 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { PageTransition, itemVariants } from "@/components/transitions/PageTransition";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ReportBuilder } from "@/components/reporting/ReportBuilder";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ReportBuilder } from '@/components/reporting/ReportBuilder';
 import {
-  useCustomReports, useCustomReport, useDeleteCustomReport,
-} from "@/hooks/reporting/useCustomReports";
-import { ENTITY_LABELS } from "@/hooks/reporting/reportBuilderHelpers";
-import { Plus, FileBarChart2, Trash2, ArrowLeft, Users } from "lucide-react";
+  useCustomReports,
+  useCustomReport,
+  useDeleteCustomReport,
+} from '@/hooks/reporting/useCustomReports';
+import { ENTITY_LABELS } from '@/hooks/reporting/reportBuilderHelpers';
+import { Plus, FileBarChart2, Trash2, ArrowLeft, Users } from 'lucide-react';
 
 export default function CustomReports() {
   const { id } = useParams<{ id: string }>();
@@ -33,12 +35,24 @@ export default function CustomReports() {
         <PageTransition>
           <div className="container max-w-7xl mx-auto p-4 md:p-6 space-y-4">
             <motion.div variants={itemVariants} className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/relatorios-custom")} className="gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/relatorios-custom')}
+                className="gap-2"
+              >
                 <ArrowLeft className="h-4 w-4" /> Voltar
               </Button>
-              <h1 className="text-page-title font-display">{single.data?.name ?? "Carregando…"}</h1>
+              <h1 className="text-page-title font-display">
+                {single.data?.name ?? 'Carregando…'}
+              </h1>
             </motion.div>
-            {single.data && <ReportBuilder initialReport={single.data} onSaved={() => single.refetch()} />}
+            {single.data && (
+              <ReportBuilder
+                initialReport={single.data}
+                onSaved={() => single.refetch()}
+              />
+            )}
             {single.isLoading && <Skeleton className="h-96" />}
           </div>
         </PageTransition>
@@ -56,12 +70,17 @@ export default function CustomReports() {
         <PageTransition>
           <div className="container max-w-7xl mx-auto p-4 md:p-6 space-y-4">
             <motion.div variants={itemVariants} className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setCreating(false)} className="gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCreating(false)}
+                className="gap-2"
+              >
                 <ArrowLeft className="h-4 w-4" /> Voltar
               </Button>
               <h1 className="text-page-title font-display">Novo Relatório</h1>
             </motion.div>
-            <ReportBuilder onSaved={(r) => navigate(`/relatorios-custom/${r.id}`)} />
+            <ReportBuilder onSaved={r => navigate(`/relatorios-custom/${r.id}`)} />
           </div>
         </PageTransition>
       </>
@@ -73,11 +92,17 @@ export default function CustomReports() {
     <>
       <Helmet>
         <title>Relatórios Personalizados | Promo Champions</title>
-        <meta name="description" content="Crie relatórios sem código com drag-and-drop, filtros e múltiplas visualizações." />
+        <meta
+          name="description"
+          content="Crie relatórios sem código com drag-and-drop, filtros e múltiplas visualizações."
+        />
       </Helmet>
       <PageTransition>
         <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
-          <motion.div variants={itemVariants} className="flex items-center justify-between">
+          <motion.div
+            variants={itemVariants}
+            className="flex items-center justify-between"
+          >
             <div>
               <h1 className="text-page-title font-display">Relatórios Personalizados</h1>
               <p className="text-sm text-muted-foreground mt-1">
@@ -91,12 +116,20 @@ export default function CustomReports() {
 
           {list.isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-32" />)}
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-32" />
+              ))}
             </div>
           ) : list.data && list.data.length > 0 ? (
-            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {list.data.map((r) => (
-                <Card key={r.id} className="p-4 glass border-border/40 hover:border-primary/40 transition-colors group">
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
+              {list.data.map(r => (
+                <Card
+                  key={r.id}
+                  className="p-4 glass border-border/40 hover:border-primary/40 transition-colors group"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div className="p-2 rounded-lg bg-primary/10">
                       <FileBarChart2 className="h-5 w-5 text-primary" />
@@ -115,7 +148,7 @@ export default function CustomReports() {
                   >
                     <p className="font-medium text-sm line-clamp-1">{r.name}</p>
                     <p className="text-xs text-muted-foreground line-clamp-2 mt-1 min-h-[32px]">
-                      {r.description || "Sem descrição"}
+                      {r.description || 'Sem descrição'}
                     </p>
                     <Badge variant="secondary" className="text-[10px] mt-2">
                       {ENTITY_LABELS[r.entity] ?? r.entity}

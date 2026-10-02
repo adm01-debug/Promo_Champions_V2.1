@@ -147,9 +147,8 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
           </div>
 
           <p className="text-xs text-muted-foreground mt-4 leading-relaxed italic font-medium">
-            Receita perdida no período por ineficiências medidas no pricing
-            (desconto vs. referência, perdas para concorrentes e vendas abaixo do
-            custo).
+            Receita perdida no período por ineficiências medidas no pricing (desconto vs.
+            referência, perdas para concorrentes e vendas abaixo do custo).
           </p>
 
           <div className="flex flex-col gap-3 mt-8">
@@ -240,7 +239,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                               <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 animate-pulse" />
                             </motion.div>
                           </div>
-
                         </div>
                       </TooltipTrigger>
                       <TooltipContent

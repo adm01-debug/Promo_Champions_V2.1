@@ -7,11 +7,36 @@ interface Props {
   onChange: (mode: RaceViewMode) => void;
 }
 
-const OPTIONS: Array<{ value: RaceViewMode; label: string; icon: typeof Eye; hint: string }> = [
-  { value: 'focus', label: 'Foco', icon: Target, hint: 'Pista + top-5 + 1 KPI (default)' },
-  { value: 'immersive', label: 'Imersivo', icon: Eye, hint: 'Só pista, zero HUD lateral' },
-  { value: 'competitive', label: 'Competitivo', icon: Trophy, hint: 'Pista + comentários + broadcast' },
-  { value: 'analysis', label: 'Análise', icon: BarChart3, hint: 'Tudo + métricas detalhadas' },
+const OPTIONS: Array<{
+  value: RaceViewMode;
+  label: string;
+  icon: typeof Eye;
+  hint: string;
+}> = [
+  {
+    value: 'focus',
+    label: 'Foco',
+    icon: Target,
+    hint: 'Pista + top-5 + 1 KPI (default)',
+  },
+  {
+    value: 'immersive',
+    label: 'Imersivo',
+    icon: Eye,
+    hint: 'Só pista, zero HUD lateral',
+  },
+  {
+    value: 'competitive',
+    label: 'Competitivo',
+    icon: Trophy,
+    hint: 'Pista + comentários + broadcast',
+  },
+  {
+    value: 'analysis',
+    label: 'Análise',
+    icon: BarChart3,
+    hint: 'Tudo + métricas detalhadas',
+  },
 ];
 
 /**
@@ -25,7 +50,7 @@ export function RaceViewModeToggle({ mode, onChange }: Props) {
       aria-label="Modo de visualização"
       className="inline-flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5 shadow-sm"
     >
-      {OPTIONS.map((opt) => {
+      {OPTIONS.map(opt => {
         const Icon = opt.icon;
         const active = opt.value === mode;
         return (
@@ -40,7 +65,7 @@ export function RaceViewModeToggle({ mode, onChange }: Props) {
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
               active
                 ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-background/60',
+                : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
             )}
           >
             <Icon className="w-3.5 h-3.5" aria-hidden />

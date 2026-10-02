@@ -7,10 +7,19 @@ import { Sliders, Target } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { ScoringRulesEditor } from './ScoringRulesEditor';
-import { useRaceScoringRules, useUpsertScoringRule, METRIC_LABELS } from '@/hooks/race/useRaceScoringRules';
+import {
+  useRaceScoringRules,
+  useUpsertScoringRule,
+  METRIC_LABELS,
+} from '@/hooks/race/useRaceScoringRules';
 import { toast } from 'sonner';
 
-interface Season { id: string; name: string; role_type: 'closer' | 'sdr'; status: string }
+interface Season {
+  id: string;
+  name: string;
+  role_type: 'closer' | 'sdr';
+  status: string;
+}
 
 function SeasonRulesRow({ season }: { season: Season }) {
   const { data: rules = [] } = useRaceScoringRules(season.id);
@@ -22,17 +31,30 @@ function SeasonRulesRow({ season }: { season: Season }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold truncate">{season.name}</span>
-          <Badge variant="outline" className="text-xs">{season.role_type === 'closer' ? '🎯' : '📞'} {season.role_type}</Badge>
-          <Badge variant={season.status === 'active' ? 'default' : 'secondary'} className="text-xs">{season.status}</Badge>
+          <Badge variant="outline" className="text-xs">
+            {season.role_type === 'closer' ? '🎯' : '📞'} {season.role_type}
+          </Badge>
+          <Badge
+            variant={season.status === 'active' ? 'default' : 'secondary'}
+            className="text-xs"
+          >
+            {season.status}
+          </Badge>
         </div>
         <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-1">
           {rules.length === 0 ? (
             <span>Sem regras configuradas</span>
-          ) : rules.map((r) => (
-            <span key={r.metric_code} title={`peso ${r.weight} · ${r.points_per_unit} pts/un`}>
-              {METRIC_LABELS[r.metric_code]?.icon} {METRIC_LABELS[r.metric_code]?.label} ({r.weight}×)
-            </span>
-          ))}
+          ) : (
+            rules.map(r => (
+              <span
+                key={r.metric_code}
+                title={`peso ${r.weight} · ${r.points_per_unit} pts/un`}
+              >
+                {METRIC_LABELS[r.metric_code]?.icon} {METRIC_LABELS[r.metric_code]?.label}{' '}
+                ({r.weight}×)
+              </span>
+            ))
+          )}
         </div>
       </div>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
@@ -43,15 +65,19 @@ function SeasonRulesRow({ season }: { season: Season }) {
         onOpenChange={setOpen}
         roleType={season.role_type}
         initialRules={rules}
-        onConfirm={async (newRules) => {
+        onConfirm={async newRules => {
           try {
-            await Promise.all(newRules.map((r) => upsert.mutateAsync({
-              season_id: season.id,
-              metric_code: r.metric_code,
-              weight: r.weight,
-              points_per_unit: r.points_per_unit,
-              label: r.label,
-            })));
+            await Promise.all(
+              newRules.map(r =>
+                upsert.mutateAsync({
+                  season_id: season.id,
+                  metric_code: r.metric_code,
+                  weight: r.weight,
+                  points_per_unit: r.points_per_unit,
+                  label: r.label,
+                })
+              )
+            );
             toast.success('Regras atualizadas! Leaderboard será recalculado.');
           } catch (e) {
             toast.error(`Erro: ${e instanceof Error ? e.message : 'desconhecido'}`);
@@ -78,15 +104,27 @@ export function SeasonRulesPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-section-title flex items-center gap-2"><Target className="w-5 h-5" /> Regras de pontuação por temporada</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2">
+          <Target className="w-5 h-5" /> Regras de pontuação por temporada
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="space-y-2">{[1, 2].map((i) => <Skeleton key={i} className="h-14" />)}</div>
+          <div className="space-y-2">
+            {[1, 2].map(i => (
+              <Skeleton key={i} className="h-14" />
+            ))}
+          </div>
         ) : data.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-6 text-center">Crie uma temporada para configurar regras.</p>
+          <p className="text-sm text-muted-foreground py-6 text-center">
+            Crie uma temporada para configurar regras.
+          </p>
         ) : (
-          <div>{data.map((s) => <SeasonRulesRow key={s.id} season={s} />)}</div>
+          <div>
+            {data.map(s => (
+              <SeasonRulesRow key={s.id} season={s} />
+            ))}
+          </div>
         )}
       </CardContent>
     </Card>

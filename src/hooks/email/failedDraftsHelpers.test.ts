@@ -12,7 +12,13 @@ import {
 const NOW = new Date('2026-07-26T12:00:00.000Z');
 
 function draft(over: Partial<FailedDraftLike> = {}): FailedDraftLike {
-  return { id: 'd1', error: 'connection reset', retry_count: 0, next_retry_at: null, ...over };
+  return {
+    id: 'd1',
+    error: 'connection reset',
+    retry_count: 0,
+    next_retry_at: null,
+    ...over,
+  };
 }
 
 describe('isPermanentError', () => {
@@ -30,22 +36,25 @@ describe('isPermanentError', () => {
     'sender_not_configured',
     'invalid_recipient',
     'mailbox does not exist',
-  ])('marca "%s" como permanente', (msg) => {
+  ])('marca "%s" como permanente', msg => {
     expect(isPermanentError(msg)).toBe(true);
   });
 
   it.each(['429 rate limit', 'timeout', 'ECONNRESET'])(
     'mantém "%s" como transitório',
-    (msg) => {
+    msg => {
       expect(isPermanentError(msg)).toBe(false);
-    },
+    }
   );
 });
 
 describe('classifyDraft', () => {
   it('prioriza erro permanente sobre agendamento', () => {
     expect(
-      classifyDraft(draft({ error: 'opted_out', next_retry_at: '2099-01-01T00:00:00Z' }), NOW),
+      classifyDraft(
+        draft({ error: 'opted_out', next_retry_at: '2099-01-01T00:00:00Z' }),
+        NOW
+      )
     ).toBe('permanent');
   });
 
@@ -56,12 +65,14 @@ describe('classifyDraft', () => {
 
   it('reconhece reenvio agendado no futuro', () => {
     expect(classifyDraft(draft({ next_retry_at: '2026-07-26T13:00:00.000Z' }), NOW)).toBe(
-      'scheduled',
+      'scheduled'
     );
   });
 
   it('trata agendamento vencido como pendente', () => {
-    expect(classifyDraft(draft({ next_retry_at: '2026-07-26T11:59:59.000Z' }), NOW)).toBe('pending');
+    expect(classifyDraft(draft({ next_retry_at: '2026-07-26T11:59:59.000Z' }), NOW)).toBe(
+      'pending'
+    );
   });
 
   it('trata ausência de agendamento como pendente', () => {
@@ -91,7 +102,7 @@ describe('summarize', () => {
           error: mod === 0 ? 'opted_out' : 'provider unavailable',
           retry_count: mod === 1 ? MAX_RETRIES : 1,
           next_retry_at: mod === 2 ? '2026-07-26T18:00:00.000Z' : null,
-        }),
+        })
       );
     }
     const s = summarize(drafts, NOW);

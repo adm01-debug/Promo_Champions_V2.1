@@ -42,8 +42,7 @@ export function useChurnOverdueBySeller(days = 30, limit = 5) {
         };
         entry.total += 1;
         if (t.status === 'completed') entry.completed += 1;
-        else if (t.due_date && new Date(t.due_date).getTime() < now)
-          entry.overdue += 1;
+        else if (t.due_date && new Date(t.due_date).getTime() < now) entry.overdue += 1;
         map.set(t.salesperson_id, entry);
       }
 
@@ -52,14 +51,14 @@ export function useChurnOverdueBySeller(days = 30, limit = 5) {
 
       const sellers = await chunkedIn<{ id: string; name: string | null }>(
         ids,
-        (chunk) =>
+        chunk =>
           supabase
             .from('salespeople')
             .select('id,name')
             .in('id', chunk as string[]),
-        { parallel: true, label: 'bi.churn-overdue-sellers' },
+        { parallel: true, label: 'bi.churn-overdue-sellers' }
       );
-      const nameMap = new Map(sellers.map((s) => [s.id, s.name]));
+      const nameMap = new Map(sellers.map(s => [s.id, s.name]));
 
       return [...map.entries()]
         .map<ChurnOverdueBySellerRow>(([id, v]) => ({
@@ -69,7 +68,7 @@ export function useChurnOverdueBySeller(days = 30, limit = 5) {
           total: v.total,
           completionRate: v.total > 0 ? (v.completed / v.total) * 100 : 0,
         }))
-        .filter((r) => r.overdue > 0)
+        .filter(r => r.overdue > 0)
         .sort((a, b) => b.overdue - a.overdue)
         .slice(0, limit);
     },

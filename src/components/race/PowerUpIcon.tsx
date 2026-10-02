@@ -23,13 +23,23 @@ export function PowerUpIcon({ type, x, y, onClick, collected }: PowerUpIconProps
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: [0.9, 1.1, 0.9], opacity: 1 }}
       exit={{ scale: 0, opacity: 0 }}
-      transition={{ scale: { repeat: Infinity, duration: 1.2 }, opacity: { duration: 0.4 } }}
+      transition={{
+        scale: { repeat: Infinity, duration: 1.2 },
+        opacity: { duration: 0.4 },
+      }}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
       onClick={onClick}
     >
       <circle r={18} fill={c.glow} opacity={0.35} />
       <circle r={12} fill={c.bg} stroke="#fff" strokeWidth={2} />
-      <text textAnchor="middle" dy={5} fontSize={14} fontWeight={900} fill="#fff" style={{ fontFamily: 'system-ui' }}>
+      <text
+        textAnchor="middle"
+        dy={5}
+        fontSize={14}
+        fontWeight={900}
+        fill="#fff"
+        style={{ fontFamily: 'system-ui' }}
+      >
         {c.icon}
       </text>
     </motion.g>

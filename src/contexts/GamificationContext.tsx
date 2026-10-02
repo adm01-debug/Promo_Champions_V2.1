@@ -1,14 +1,25 @@
-import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from "react";
-import { LevelUpCelebration } from "@/components/ui/level-up-celebration";
-import { gamifiedToast } from "@/components/ui/gamified-toast";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from 'react';
+import { LevelUpCelebration } from '@/components/ui/level-up-celebration';
+import { gamifiedToast } from '@/components/ui/gamified-toast';
 
 interface GamificationContextType {
-  celebrateLevelUp: (previousLevel: number, newLevel: number, rewards?: {
-    xp?: number;
-    coins?: number;
-    title?: string;
-    badge?: string;
-  }) => void;
+  celebrateLevelUp: (
+    previousLevel: number,
+    newLevel: number,
+    rewards?: {
+      xp?: number;
+      coins?: number;
+      title?: string;
+      badge?: string;
+    }
+  ) => void;
   toast: typeof gamifiedToast;
   rewardXP: (amount: number, description?: string) => void;
   rewardCoins: (amount: number, description?: string) => void;
@@ -22,7 +33,7 @@ const GamificationContext = createContext<GamificationContextType | null>(null);
 export function useGamification() {
   const context = useContext(GamificationContext);
   if (!context) {
-    throw new Error("useGamification must be used within GamificationProvider");
+    throw new Error('useGamification must be used within GamificationProvider');
   }
   return context;
 }
@@ -43,27 +54,59 @@ export function GamificationProvider({ children }: GamificationProviderProps) {
     rewards?: { xp?: number; coins?: number; title?: string; badge?: string };
   }>({ isOpen: false, previousLevel: 1, newLevel: 2 });
 
-  const celebrateLevelUp = useCallback((
-    previousLevel: number, newLevel: number,
-    rewards?: { xp?: number; coins?: number; title?: string; badge?: string }
-  ) => {
-    setLevelUpState({ isOpen: true, previousLevel, newLevel, rewards });
-  }, []);
+  const celebrateLevelUp = useCallback(
+    (
+      previousLevel: number,
+      newLevel: number,
+      rewards?: { xp?: number; coins?: number; title?: string; badge?: string }
+    ) => {
+      setLevelUpState({ isOpen: true, previousLevel, newLevel, rewards });
+    },
+    []
+  );
 
   const closeLevelUp = useCallback(() => {
     setLevelUpState(prev => ({ ...prev, isOpen: false }));
   }, []);
 
-  const rewardXP = useCallback((amount: number, description?: string) => gamifiedToast.xp(amount, description), []);
-  const rewardCoins = useCallback((amount: number, description?: string) => gamifiedToast.coins(amount, description), []);
-  const unlockAchievement = useCallback((title: string, description?: string) => gamifiedToast.achievement(title, description), []);
-  const completeQuest = useCallback((title: string, description?: string) => gamifiedToast.quest(title, description), []);
+  const rewardXP = useCallback(
+    (amount: number, description?: string) => gamifiedToast.xp(amount, description),
+    []
+  );
+  const rewardCoins = useCallback(
+    (amount: number, description?: string) => gamifiedToast.coins(amount, description),
+    []
+  );
+  const unlockAchievement = useCallback(
+    (title: string, description?: string) =>
+      gamifiedToast.achievement(title, description),
+    []
+  );
+  const completeQuest = useCallback(
+    (title: string, description?: string) => gamifiedToast.quest(title, description),
+    []
+  );
   const updateStreak = useCallback((days: number) => gamifiedToast.streak(days), []);
 
-  const value = useMemo<GamificationContextType>(() => ({
-    celebrateLevelUp, toast: gamifiedToast,
-    rewardXP, rewardCoins, unlockAchievement, completeQuest, updateStreak,
-  }), [celebrateLevelUp, rewardXP, rewardCoins, unlockAchievement, completeQuest, updateStreak]);
+  const value = useMemo<GamificationContextType>(
+    () => ({
+      celebrateLevelUp,
+      toast: gamifiedToast,
+      rewardXP,
+      rewardCoins,
+      unlockAchievement,
+      completeQuest,
+      updateStreak,
+    }),
+    [
+      celebrateLevelUp,
+      rewardXP,
+      rewardCoins,
+      unlockAchievement,
+      completeQuest,
+      updateStreak,
+    ]
+  );
 
   return (
     <GamificationContext.Provider value={value}>

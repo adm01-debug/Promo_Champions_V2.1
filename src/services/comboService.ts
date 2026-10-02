@@ -1,12 +1,12 @@
-import { supabase } from "@/integrations/supabase/client";
-import { toBusinessDate } from "@/lib/date";
+import { supabase } from '@/integrations/supabase/client';
+import { toBusinessDate } from '@/lib/date';
 
 export const COMBO_TIERS = [
-  { minActions: 0, multiplier: 1.0, label: "Normal", color: "#94a3b8", emoji: "⭐" },
-  { minActions: 3, multiplier: 1.5, label: "Aquecendo", color: "#3b82f6", emoji: "⚡" },
-  { minActions: 5, multiplier: 2.0, label: "Em Chamas!", color: "#f97316", emoji: "🔥" },
-  { minActions: 8, multiplier: 2.5, label: "Imparável!", color: "#ef4444", emoji: "💥" },
-  { minActions: 12, multiplier: 3.0, label: "LENDÁRIO!", color: "#f59e0b", emoji: "👑" },
+  { minActions: 0, multiplier: 1.0, label: 'Normal', color: '#94a3b8', emoji: '⭐' },
+  { minActions: 3, multiplier: 1.5, label: 'Aquecendo', color: '#3b82f6', emoji: '⚡' },
+  { minActions: 5, multiplier: 2.0, label: 'Em Chamas!', color: '#f97316', emoji: '🔥' },
+  { minActions: 8, multiplier: 2.5, label: 'Imparável!', color: '#ef4444', emoji: '💥' },
+  { minActions: 12, multiplier: 3.0, label: 'LENDÁRIO!', color: '#f59e0b', emoji: '👑' },
 ];
 
 export const comboService = {
@@ -34,10 +34,10 @@ export const comboService = {
   async getTodayCombo(salespersonId: string) {
     const today = toBusinessDate();
     const { data, error } = await supabase
-      .from("combo_tracking")
-      .select("*")
-      .eq("salesperson_id", salespersonId)
-      .eq("combo_date", today)
+      .from('combo_tracking')
+      .select('*')
+      .eq('salesperson_id', salespersonId)
+      .eq('combo_date', today)
       .maybeSingle();
 
     if (error) throw error;
@@ -46,14 +46,14 @@ export const comboService = {
 
   async registerAction(salespersonId: string) {
     const today = toBusinessDate();
-    
+
     // Try to get existing combo
     const combo = await this.getTodayCombo(salespersonId);
 
     if (!combo) {
       // Create new combo for today
       const { data, error } = await supabase
-        .from("combo_tracking")
+        .from('combo_tracking')
         .insert({
           salesperson_id: salespersonId,
           combo_date: today,
@@ -76,7 +76,7 @@ export const comboService = {
     const tierChanged = newTierIndex > oldTierIndex;
 
     const { data, error } = await supabase
-      .from("combo_tracking")
+      .from('combo_tracking')
       .update({
         actions_count: newCount,
         current_multiplier: newTier.multiplier,
@@ -84,7 +84,7 @@ export const comboService = {
         max_tier_today: Math.max(combo.max_tier_today, newTierIndex),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", combo.id)
+      .eq('id', combo.id)
       .select()
       .single();
 

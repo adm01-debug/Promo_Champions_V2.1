@@ -1,20 +1,27 @@
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CheckCircle2, XCircle, MinusCircle, User2, Loader2 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useReplayAuditForDeadLetter, type ReplayAuditEntry } from "@/hooks/win-loss/useReplayAudit";
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { CheckCircle2, XCircle, MinusCircle, User2, Loader2 } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  useReplayAuditForDeadLetter,
+  type ReplayAuditEntry,
+} from '@/hooks/win-loss/useReplayAudit';
 
 interface ReplayAuditTrailProps {
   deadLetterId: string;
 }
 
 function StatusIcon({ entry }: { entry: ReplayAuditEntry }) {
-  if (entry.status_label === "succeeded") {
-    return <CheckCircle2 className="h-3.5 w-3.5 text-status-success shrink-0" aria-hidden />;
+  if (entry.status_label === 'succeeded') {
+    return (
+      <CheckCircle2 className="h-3.5 w-3.5 text-status-success shrink-0" aria-hidden />
+    );
   }
-  if (entry.status_label === "skipped") {
-    return <MinusCircle className="h-3.5 w-3.5 text-muted-foreground shrink-0" aria-hidden />;
+  if (entry.status_label === 'skipped') {
+    return (
+      <MinusCircle className="h-3.5 w-3.5 text-muted-foreground shrink-0" aria-hidden />
+    );
   }
   return <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" aria-hidden />;
 }
@@ -55,18 +62,18 @@ export function ReplayAuditTrail({ deadLetterId }: ReplayAuditTrailProps) {
                 </Badge>
                 <StatusIcon entry={e} />
                 <span className="font-medium text-foreground capitalize">
-                  {e.status_label === "succeeded"
-                    ? "Sucesso"
-                    : e.status_label === "skipped"
-                    ? "Ignorado"
-                    : "Falha"}
+                  {e.status_label === 'succeeded'
+                    ? 'Sucesso'
+                    : e.status_label === 'skipped'
+                      ? 'Ignorado'
+                      : 'Falha'}
                 </span>
                 {e.http_status > 0 && (
                   <Badge variant="secondary" className="text-[10px] py-0 px-1.5">
                     HTTP {e.http_status}
                   </Badge>
                 )}
-                {typeof e.attempts === "number" && (
+                {typeof e.attempts === 'number' && (
                   <Badge variant="outline" className="text-[10px] py-0 px-1.5">
                     {e.attempts}× retry
                   </Badge>
@@ -82,7 +89,7 @@ export function ReplayAuditTrail({ deadLetterId }: ReplayAuditTrailProps) {
             <div className="mt-1 flex items-center gap-1 text-muted-foreground">
               <User2 className="h-3 w-3" />
               <span className="truncate">
-                {e.actor_email ?? e.actor_user_id.slice(0, 8) + "…"}
+                {e.actor_email ?? e.actor_user_id.slice(0, 8) + '…'}
               </span>
             </div>
             {e.error && (

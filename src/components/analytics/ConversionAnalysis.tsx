@@ -2,7 +2,15 @@ import { FC, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,7 +35,8 @@ export const ConversionAnalysis: FC<ConversionAnalysisProps> = ({
 }) => {
   const totalDeals = data[0]?.count || 0;
   const wonDeals = data[data.length - 1]?.count || 0;
-  const overallConversion = totalDeals > 0 ? ((wonDeals / totalDeals) * 100).toFixed(1) : '0';
+  const overallConversion =
+    totalDeals > 0 ? ((wonDeals / totalDeals) * 100).toFixed(1) : '0';
 
   return (
     <Card className={cn('p-4', className)}>
@@ -94,10 +103,9 @@ export const WinLossReasonChart: FC<WinLossReasonChartProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'wins' | 'losses'>('wins');
 
-
   return (
     <Card className={cn('p-4', className)}>
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'wins' | 'losses')}>
+      <Tabs value={activeTab} onValueChange={v => setActiveTab(v as 'wins' | 'losses')}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Razões de Win/Loss</h3>
           <TabsList>

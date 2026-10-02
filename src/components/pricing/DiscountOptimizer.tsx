@@ -99,82 +99,82 @@ export const DiscountOptimizer = ({
       <CardContent className="space-y-8">
         {!hasData && (
           <div className="p-4 rounded-xl border border-white/10 bg-white/5 text-sm text-muted-foreground">
-            Histórico insuficiente para medir os parâmetros do simulador
-            (win-rate por desconto, ticket médio e margem por custo cadastrado).
-            O bloco fica oculto até haver dados reais.
+            Histórico insuficiente para medir os parâmetros do simulador (win-rate por
+            desconto, ticket médio e margem por custo cadastrado). O bloco fica oculto até
+            haver dados reais.
           </div>
         )}
         {hasData && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-bold flex items-center gap-2">
-              Nível de Desconto Sugerido
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <HelpCircle className="size-3.5 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs text-xs">
-                      A elasticidade é medida com base no win-rate real por faixa de
-                      desconto dos deals do período selecionado.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </label>
-            <span className="text-2xl font-black text-primary">{discount[0]}%</span>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-bold flex items-center gap-2">
+                Nível de Desconto Sugerido
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle className="size-3.5 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-xs text-xs">
+                        A elasticidade é medida com base no win-rate real por faixa de
+                        desconto dos deals do período selecionado.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </label>
+              <span className="text-2xl font-black text-primary">{discount[0]}%</span>
+            </div>
+            <Slider
+              value={discount}
+              onValueChange={setDiscount}
+              max={40}
+              step={1}
+              className="py-4"
+            />
+            <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <span>Margem Máxima</span>
+              <span>Equilíbrio</span>
+              <span>Volume Máximo</span>
+            </div>
           </div>
-          <Slider
-            value={discount}
-            onValueChange={setDiscount}
-            max={40}
-            step={1}
-            className="py-4"
-          />
-          <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-            <span>Margem Máxima</span>
-            <span>Equilíbrio</span>
-            <span>Volume Máximo</span>
-          </div>
-        </div>
         )}
 
         {hasData && (
-        <>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <MetricBlock
-            label="Win-Rate Previsto"
-            value={`${(currentWinRate * 100).toFixed(1)}%`}
-            icon={Percent}
-            subValue={discount[0] > 15 ? 'Probabilidade Alta' : 'Resistência Média'}
-            status={discount[0] > 20 ? 'warning' : 'success'}
-          />
-          <MetricBlock
-            label="Margem de Contribuição"
-            value={`${(currentMargin * 100).toFixed(1)}%`}
-            icon={TrendingUp}
-            subValue={`R$ ${(dealValue * currentMargin).toLocaleString()} por deal`}
-            status={currentMargin < 0.4 ? 'critical' : 'success'}
-          />
-        </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <MetricBlock
+                label="Win-Rate Previsto"
+                value={`${(currentWinRate * 100).toFixed(1)}%`}
+                icon={Percent}
+                subValue={discount[0] > 15 ? 'Probabilidade Alta' : 'Resistência Média'}
+                status={discount[0] > 20 ? 'warning' : 'success'}
+              />
+              <MetricBlock
+                label="Margem de Contribuição"
+                value={`${(currentMargin * 100).toFixed(1)}%`}
+                icon={TrendingUp}
+                subValue={`R$ ${(dealValue * currentMargin).toLocaleString()} por deal`}
+                status={currentMargin < 0.4 ? 'critical' : 'success'}
+              />
+            </div>
 
-        <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-primary" />
-              Recomendação Estratégica
-            </h4>
-          </div>
-          <p className="text-sm text-card-foreground/80 leading-relaxed italic">
-            "Para o ticket médio medido, um desconto de{' '}
-            <span className="font-bold text-primary">{bestDiscount}%</span> maximiza o
-            lucro esperado (R$ {expectedProfit.toLocaleString('pt-BR')} no nível
-            selecionado). Acima desse ponto, a erosão de margem supera o ganho de
-            win-rate medido."
-          </p>
-        </div>
-        </>
+            <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                  <CheckCircle2 className="size-4 text-primary" />
+                  Recomendação Estratégica
+                </h4>
+              </div>
+              <p className="text-sm text-card-foreground/80 leading-relaxed italic">
+                "Para o ticket médio medido, um desconto de{' '}
+                <span className="font-bold text-primary">{bestDiscount}%</span> maximiza o
+                lucro esperado (R$ {expectedProfit.toLocaleString('pt-BR')} no nível
+                selecionado). Acima desse ponto, a erosão de margem supera o ganho de
+                win-rate medido."
+              </p>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

@@ -141,7 +141,10 @@ function applyLevelThresholds(value: unknown) {
 
 function applyLevelInfo(value: unknown) {
   if (!isPlainObject(value)) return;
-  const entries = value as Record<string, { title?: string; color?: string; emoji?: string }>;
+  const entries = value as Record<
+    string,
+    { title?: string; color?: string; emoji?: string }
+  >;
   for (const [lvl, info] of Object.entries(entries)) {
     const n = Number(lvl);
     if (!Number.isInteger(n) || n < 1 || !info || typeof info !== 'object') continue;
@@ -158,11 +161,12 @@ function applyXpRewards(value: unknown) {
   Object.assign(XP_REWARDS, value);
 }
 
-const XP_CONFIG_APPLIERS: Record<(typeof XP_CONFIG_KEYS)[number], (v: unknown) => void> = {
-  'xp.level_thresholds': applyLevelThresholds,
-  'xp.level_info': applyLevelInfo,
-  'xp.rewards': applyXpRewards,
-};
+const XP_CONFIG_APPLIERS: Record<(typeof XP_CONFIG_KEYS)[number], (v: unknown) => void> =
+  {
+    'xp.level_thresholds': applyLevelThresholds,
+    'xp.level_info': applyLevelInfo,
+    'xp.rewards': applyXpRewards,
+  };
 
 function applyXpConfig(rows: AppConfigRow[]) {
   for (const row of rows) {

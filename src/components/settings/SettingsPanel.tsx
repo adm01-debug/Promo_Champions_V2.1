@@ -5,13 +5,14 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  User, 
-  Bell, 
-  Palette, 
-  Save,
-} from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { User, Bell, Palette, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ProfileSettings {
@@ -57,27 +58,33 @@ export const SettingsPanel: FC<SettingsPanelProps> = ({
   onSaveAppearance,
   className,
 }) => {
-  const [profile, setProfile] = useState<ProfileSettings>(initialProfile || {
-    name: '',
-    email: '',
-    timezone: 'America/Sao_Paulo',
-    language: 'pt-BR',
-  });
+  const [profile, setProfile] = useState<ProfileSettings>(
+    initialProfile || {
+      name: '',
+      email: '',
+      timezone: 'America/Sao_Paulo',
+      language: 'pt-BR',
+    }
+  );
 
-  const [notifications, setNotifications] = useState<NotificationSettings>(initialNotifications || {
-    emailNotifications: true,
-    pushNotifications: true,
-    dealAlerts: true,
-    taskReminders: true,
-    goalUpdates: true,
-    teamActivity: false,
-  });
+  const [notifications, setNotifications] = useState<NotificationSettings>(
+    initialNotifications || {
+      emailNotifications: true,
+      pushNotifications: true,
+      dealAlerts: true,
+      taskReminders: true,
+      goalUpdates: true,
+      teamActivity: false,
+    }
+  );
 
-  const [appearance, setAppearance] = useState<AppearanceSettings>(initialAppearance || {
-    theme: 'system',
-    compactMode: false,
-    animationsEnabled: true,
-  });
+  const [appearance, setAppearance] = useState<AppearanceSettings>(
+    initialAppearance || {
+      theme: 'system',
+      compactMode: false,
+      animationsEnabled: true,
+    }
+  );
 
   return (
     <Tabs defaultValue="profile" className={cn('', className)}>
@@ -215,7 +222,9 @@ export const SettingsPanel: FC<SettingsPanelProps> = ({
             <Label>Tema</Label>
             <Select
               value={appearance.theme}
-              onValueChange={v => setAppearance(a => ({ ...a, theme: v as 'light' | 'dark' | 'system' }))}
+              onValueChange={v =>
+                setAppearance(a => ({ ...a, theme: v as 'light' | 'dark' | 'system' }))
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -265,9 +274,7 @@ const SettingsToggle: FC<SettingsToggleProps> = ({
   <div className="flex items-center justify-between">
     <div>
       <p className="font-medium text-sm">{label}</p>
-      {description && (
-        <p className="text-xs text-muted-foreground">{description}</p>
-      )}
+      {description && <p className="text-xs text-muted-foreground">{description}</p>}
     </div>
     <Switch checked={checked} onCheckedChange={onChange} />
   </div>

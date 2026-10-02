@@ -92,12 +92,15 @@ export const useUpdateCommissionStatus = () => {
       // pending -> approved -> paid (+ cancelamentos) e carimba
       // approved_at/approved_by, paid_at/paid_by no servidor.
       const actor = (await supabase.auth.getUser()).data.user;
-      const { error } = await supabase.rpc('transition_commission_status' as never, {
-        p_commission_id: id,
-        p_new_status: status,
-        p_actor: actor?.id ?? null,
-        p_payment_notes: payment_notes ?? null,
-      } as never);
+      const { error } = await supabase.rpc(
+        'transition_commission_status' as never,
+        {
+          p_commission_id: id,
+          p_new_status: status,
+          p_actor: actor?.id ?? null,
+          p_payment_notes: payment_notes ?? null,
+        } as never
+      );
       if (error) throw error;
     },
     onSuccess: (_d, vars) => {

@@ -1,7 +1,5 @@
-import {
-  severityFromScore as contractSeverityFromScore,
-} from "../../../supabase/functions/_shared/winloss-contract";
-import type { RiskSeverity } from "../../../supabase/functions/_shared/winloss-contract";
+import { severityFromScore as contractSeverityFromScore } from '../../../supabase/functions/_shared/winloss-contract';
+import type { RiskSeverity } from '../../../supabase/functions/_shared/winloss-contract';
 
 export type { RiskSeverity };
 

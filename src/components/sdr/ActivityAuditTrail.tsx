@@ -1,17 +1,17 @@
-import { useAuditLogs } from "@/hooks/admin/useAuditLogs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollText, User, Activity, Clock } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { useAuditLogs } from '@/hooks/admin/useAuditLogs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollText, User, Activity, Clock } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 const ACTION_COLORS: Record<string, string> = {
-  create: "bg-status-success/10 text-status-success border-status-success/30",
-  update: "bg-primary/10 text-primary border-primary/30",
-  delete: "bg-destructive/10 text-destructive border-destructive/30",
+  create: 'bg-status-success/10 text-status-success border-status-success/30',
+  update: 'bg-primary/10 text-primary border-primary/30',
+  delete: 'bg-destructive/10 text-destructive border-destructive/30',
 };
 
 export function ActivityAuditTrail() {
@@ -42,13 +42,21 @@ export function ActivityAuditTrail() {
         ) : (
           <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-4">
-              {logs.map((log) => (
-                <div key={log.id} className="relative pl-6 pb-4 border-l border-primary/10 last:pb-0">
+              {logs.map(log => (
+                <div
+                  key={log.id}
+                  className="relative pl-6 pb-4 border-l border-primary/10 last:pb-0"
+                >
                   <div className="absolute left-[-5px] top-0 h-2.5 w-2.5 rounded-full bg-primary/40 ring-4 ring-background" />
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className={cn("text-[9px] h-4 px-1 uppercase", 
-                        ACTION_COLORS[log.action] ?? "bg-muted text-muted-foreground")}>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-[9px] h-4 px-1 uppercase',
+                          ACTION_COLORS[log.action] ?? 'bg-muted text-muted-foreground'
+                        )}
+                      >
                         {log.action}
                       </Badge>
                       <span className="text-[11px] font-medium text-foreground truncate">
@@ -57,10 +65,15 @@ export function ActivityAuditTrail() {
                     </div>
                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                       <User className="h-3 w-3" />
-                      <span>{log.actor_email?.split('@')[0] || "Sistema"}</span>
+                      <span>{log.actor_email?.split('@')[0] || 'Sistema'}</span>
                       <span>•</span>
                       <Clock className="h-3 w-3" />
-                      <span>{formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: ptBR })}</span>
+                      <span>
+                        {formatDistanceToNow(new Date(log.created_at), {
+                          addSuffix: true,
+                          locale: ptBR,
+                        })}
+                      </span>
                     </div>
                   </div>
                 </div>

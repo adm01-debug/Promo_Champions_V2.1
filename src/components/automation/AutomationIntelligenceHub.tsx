@@ -1,23 +1,45 @@
-import { Helmet } from "react-helmet-async";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, Zap, TrendingUp, Clock, CheckCircle2, AlertCircle, Plus, Activity } from "lucide-react";
-import { useAutomationIntelligence, useApplyAutomationTemplate, type AutomationSuggestion } from "@/hooks/automation/useAutomationIntelligence";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Helmet } from 'react-helmet-async';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Sparkles,
+  Zap,
+  TrendingUp,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Plus,
+  Activity,
+} from 'lucide-react';
+import {
+  useAutomationIntelligence,
+  useApplyAutomationTemplate,
+  type AutomationSuggestion,
+} from '@/hooks/automation/useAutomationIntelligence';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
-const PRIORITY_STYLES: Record<AutomationSuggestion["priority"], string> = {
-  high: "border-destructive/40 bg-destructive/5",
-  medium: "border-warning/40 bg-warning/5",
-  low: "border-border bg-muted/20",
+const PRIORITY_STYLES: Record<AutomationSuggestion['priority'], string> = {
+  high: 'border-destructive/40 bg-destructive/5',
+  medium: 'border-warning/40 bg-warning/5',
+  low: 'border-border bg-muted/20',
 };
 
-const PRIORITY_BADGE: Record<AutomationSuggestion["priority"], "destructive" | "default" | "secondary"> = {
-  high: "destructive",
-  medium: "default",
-  low: "secondary",
+const PRIORITY_BADGE: Record<
+  AutomationSuggestion['priority'],
+  'destructive' | 'default' | 'secondary'
+> = {
+  high: 'destructive',
+  medium: 'default',
+  low: 'secondary',
 };
 
 export function AutomationIntelligenceHub() {
@@ -29,7 +51,9 @@ export function AutomationIntelligenceHub() {
       <div className="p-6 space-y-6">
         <Skeleton className="h-12 w-1/3" />
         <div className="grid gap-4 md:grid-cols-4">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28" />)}
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-28" />
+          ))}
         </div>
         <Skeleton className="h-96" />
       </div>
@@ -43,7 +67,10 @@ export function AutomationIntelligenceHub() {
     <>
       <Helmet>
         <title>Automação Inteligente | Promo Champions</title>
-        <meta name="description" content="Hub unificado de automações com sugestões de IA e métricas de ROI" />
+        <meta
+          name="description"
+          content="Hub unificado de automações com sugestões de IA e métricas de ROI"
+        />
       </Helmet>
       <div className="p-6 space-y-6">
         {/* Header */}
@@ -74,7 +101,10 @@ export function AutomationIntelligenceHub() {
               </CardDescription>
               <CardTitle className="text-section-title text-3xl">
                 {data?.active_workflows ?? 0}
-                <span className="text-sm text-muted-foreground font-normal"> / {data?.total_workflows ?? 0}</span>
+                <span className="text-sm text-muted-foreground font-normal">
+                  {' '}
+                  / {data?.total_workflows ?? 0}
+                </span>
               </CardTitle>
             </CardHeader>
           </Card>
@@ -83,7 +113,9 @@ export function AutomationIntelligenceHub() {
               <CardDescription className="flex items-center gap-2">
                 <Activity className="h-4 w-4" /> Execuções (30d)
               </CardDescription>
-              <CardTitle className="text-section-title text-3xl">{roi?.total_runs_30d ?? 0}</CardTitle>
+              <CardTitle className="text-section-title text-3xl">
+                {roi?.total_runs_30d ?? 0}
+              </CardTitle>
             </CardHeader>
           </Card>
           <Card>
@@ -91,11 +123,16 @@ export function AutomationIntelligenceHub() {
               <CardDescription className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" /> Taxa de sucesso
               </CardDescription>
-              <CardTitle className={cn(
-                "text-3xl",
-                (roi?.success_rate_pct ?? 0) >= 90 ? "text-success" :
-                (roi?.success_rate_pct ?? 0) >= 70 ? "text-warning" : "text-destructive",
-              )}>
+              <CardTitle
+                className={cn(
+                  'text-3xl',
+                  (roi?.success_rate_pct ?? 0) >= 90
+                    ? 'text-success'
+                    : (roi?.success_rate_pct ?? 0) >= 70
+                      ? 'text-warning'
+                      : 'text-destructive'
+                )}
+              >
                 {roi?.success_rate_pct ?? 0}%
               </CardTitle>
             </CardHeader>
@@ -128,16 +165,30 @@ export function AutomationIntelligenceHub() {
               <div className="text-center py-12 space-y-2">
                 <CheckCircle2 className="h-12 w-12 text-success mx-auto" />
                 <p className="font-medium">Tudo otimizado!</p>
-                <p className="text-sm text-muted-foreground">Não há novas sugestões no momento. Suas automações estão cobrindo bem os cenários principais.</p>
+                <p className="text-sm text-muted-foreground">
+                  Não há novas sugestões no momento. Suas automações estão cobrindo bem os
+                  cenários principais.
+                </p>
               </div>
             ) : (
-              suggestions.map((s) => (
-                <div key={s.id} className={cn("rounded-lg border p-4 space-y-3 transition-colors", PRIORITY_STYLES[s.priority])}>
+              suggestions.map(s => (
+                <div
+                  key={s.id}
+                  className={cn(
+                    'rounded-lg border p-4 space-y-3 transition-colors',
+                    PRIORITY_STYLES[s.priority]
+                  )}
+                >
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div className="space-y-1 flex-1 min-w-[260px]">
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold">{s.title}</h3>
-                        <Badge variant={PRIORITY_BADGE[s.priority]} className="capitalize">{s.priority}</Badge>
+                        <Badge
+                          variant={PRIORITY_BADGE[s.priority]}
+                          className="capitalize"
+                        >
+                          {s.priority}
+                        </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">{s.description}</p>
                     </div>
@@ -158,7 +209,8 @@ export function AutomationIntelligenceHub() {
                     </span>
                     <span className="flex items-center gap-1">
                       <TrendingUp className="h-3 w-3" />
-                      Trigger: <code className="px-1 rounded bg-muted">{s.trigger_type}</code>
+                      Trigger:{' '}
+                      <code className="px-1 rounded bg-muted">{s.trigger_type}</code>
                     </span>
                   </div>
                   <div className="flex items-start gap-2 text-xs bg-background/60 rounded p-2">
@@ -187,7 +239,9 @@ export function AutomationIntelligenceHub() {
           <Card className="hover:shadow-elegant transition-shadow">
             <CardHeader>
               <CardTitle className="text-section-title">Builder visual</CardTitle>
-              <CardDescription>Crie workflows complexos com editor drag-and-drop</CardDescription>
+              <CardDescription>
+                Crie workflows complexos com editor drag-and-drop
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild variant="outline" size="sm" className="w-full">
@@ -198,7 +252,9 @@ export function AutomationIntelligenceHub() {
           <Card className="hover:shadow-elegant transition-shadow">
             <CardHeader>
               <CardTitle className="text-section-title">Aprovações</CardTitle>
-              <CardDescription>Workflows de aprovação para descontos e negociações</CardDescription>
+              <CardDescription>
+                Workflows de aprovação para descontos e negociações
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild variant="outline" size="sm" className="w-full">

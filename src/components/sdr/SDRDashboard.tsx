@@ -24,63 +24,65 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 // Above-the-fold heavy modules (split into own chunks, load eagerly when visible)
 const SchedulingRateGauge = lazy(() =>
-  import('./SchedulingRateGauge').then(m => ({ default: m.SchedulingRateGauge })),
+  import('./SchedulingRateGauge').then(m => ({ default: m.SchedulingRateGauge }))
 );
 const RecentProspects = lazy(() =>
-  import('./RecentProspects').then(m => ({ default: m.RecentProspects })),
+  import('./RecentProspects').then(m => ({ default: m.RecentProspects }))
 );
 const SDRAdvancedFilters = lazy(() =>
-  import('./SDRAdvancedFilters').then(m => ({ default: m.SDRAdvancedFilters })),
+  import('./SDRAdvancedFilters').then(m => ({ default: m.SDRAdvancedFilters }))
 );
 const SDRIntelligenceHighlights = lazy(() =>
-  import('./SDRIntelligenceHighlights').then(m => ({ default: m.SDRIntelligenceHighlights })),
+  import('./SDRIntelligenceHighlights').then(m => ({
+    default: m.SDRIntelligenceHighlights,
+  }))
 );
 const SDRCommandBar = lazy(() =>
-  import('./SDRCommandBar').then(m => ({ default: m.SDRCommandBar })),
+  import('./SDRCommandBar').then(m => ({ default: m.SDRCommandBar }))
 );
 
 // Heavy / chart-bearing modules — only load when needed
 const ProspectingFunnel = lazy(() =>
-  import('./ProspectingFunnel').then(m => ({ default: m.ProspectingFunnel })),
+  import('./ProspectingFunnel').then(m => ({ default: m.ProspectingFunnel }))
 );
 const PredictiveSuccessMap = lazy(() =>
-  import('./PredictiveSuccessMap').then(m => ({ default: m.PredictiveSuccessMap })),
+  import('./PredictiveSuccessMap').then(m => ({ default: m.PredictiveSuccessMap }))
 );
 const SDRAchievementTracker = lazy(() =>
-  import('./SDRAchievementTracker').then(m => ({ default: m.SDRAchievementTracker })),
+  import('./SDRAchievementTracker').then(m => ({ default: m.SDRAchievementTracker }))
 );
 const SDRActivityTrend = lazy(() =>
-  import('./SDRActivityTrend').then(m => ({ default: m.SDRActivityTrend })),
+  import('./SDRActivityTrend').then(m => ({ default: m.SDRActivityTrend }))
 );
 const SDRConversionEvolution = lazy(() =>
-  import('./SDRConversionEvolution').then(m => ({ default: m.SDRConversionEvolution })),
+  import('./SDRConversionEvolution').then(m => ({ default: m.SDRConversionEvolution }))
 );
 const SDRConversionRanking = lazy(() =>
-  import('./SDRConversionRanking').then(m => ({ default: m.SDRConversionRanking })),
+  import('./SDRConversionRanking').then(m => ({ default: m.SDRConversionRanking }))
 );
 const TopSDRsRanking = lazy(() =>
-  import('./TopSDRsRanking').then(m => ({ default: m.TopSDRsRanking })),
+  import('./TopSDRsRanking').then(m => ({ default: m.TopSDRsRanking }))
 );
 const ActivityAuditTrail = lazy(() =>
-  import('./ActivityAuditTrail').then(m => ({ default: m.ActivityAuditTrail })),
+  import('./ActivityAuditTrail').then(m => ({ default: m.ActivityAuditTrail }))
 );
 const SDRConversationInsights = lazy(() =>
-  import('./SDRConversationInsights').then(m => ({ default: m.SDRConversationInsights })),
+  import('./SDRConversationInsights').then(m => ({ default: m.SDRConversationInsights }))
 );
 const MQLQualificationForm = lazy(() =>
-  import('./MQLQualificationForm').then(m => ({ default: m.MQLQualificationForm })),
+  import('./MQLQualificationForm').then(m => ({ default: m.MQLQualificationForm }))
 );
 const SDRAlertHistory = lazy(() =>
-  import('./SDRAlertHistory').then(m => ({ default: m.SDRAlertHistory })),
+  import('./SDRAlertHistory').then(m => ({ default: m.SDRAlertHistory }))
 );
 const SDRSequenceOrchestrator = lazy(() =>
-  import('./SDRSequenceOrchestrator').then(m => ({ default: m.SDRSequenceOrchestrator })),
+  import('./SDRSequenceOrchestrator').then(m => ({ default: m.SDRSequenceOrchestrator }))
 );
 const PerformanceCoaching = lazy(() =>
-  import('./PerformanceCoaching').then(m => ({ default: m.PerformanceCoaching })),
+  import('./PerformanceCoaching').then(m => ({ default: m.PerformanceCoaching }))
 );
 const TargetSimulator = lazy(() =>
-  import('./TargetSimulator').then(m => ({ default: m.TargetSimulator })),
+  import('./TargetSimulator').then(m => ({ default: m.TargetSimulator }))
 );
 
 const ChartFallback = ({ height = 280 }: { height?: number }) => (
@@ -167,7 +169,7 @@ const SDRDashboardInner = () => {
 
           <Tabs
             value={period}
-            onValueChange={(v: string) => setPeriod(v as "week" | "month" | "quarter")}
+            onValueChange={(v: string) => setPeriod(v as 'week' | 'month' | 'quarter')}
             className="w-auto"
           >
             <TabsList className="h-8 bg-muted/30">
@@ -192,7 +194,11 @@ const SDRDashboardInner = () => {
         </div>
       </div>
 
-      <LazyVisible minHeight={72} fallback={<ChartFallback height={72} />} rootMargin="600px">
+      <LazyVisible
+        minHeight={72}
+        fallback={<ChartFallback height={72} />}
+        rootMargin="600px"
+      >
         <Suspense fallback={<ChartFallback height={72} />}>
           <SDRAdvancedFilters onSearch={setSearchTerm} onFilterChange={setFilters} />
         </Suspense>
@@ -200,14 +206,22 @@ const SDRDashboardInner = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <div className="lg:col-span-8">
-          <LazyVisible minHeight={180} fallback={<ChartFallback height={180} />} rootMargin="600px">
+          <LazyVisible
+            minHeight={180}
+            fallback={<ChartFallback height={180} />}
+            rootMargin="600px"
+          >
             <Suspense fallback={<ChartFallback height={180} />}>
               <SDRCommandBar />
             </Suspense>
           </LazyVisible>
         </div>
         <div className="lg:col-span-4">
-          <LazyVisible minHeight={180} fallback={<ChartFallback height={180} />} rootMargin="600px">
+          <LazyVisible
+            minHeight={180}
+            fallback={<ChartFallback height={180} />}
+            rootMargin="600px"
+          >
             <Suspense fallback={<ChartFallback height={180} />}>
               <SDRIntelligenceHighlights />
             </Suspense>
@@ -228,7 +242,11 @@ const SDRDashboardInner = () => {
         {/* Core Conversion & Funnel */}
         <div className="lg:col-span-8 space-y-6">
           <motion.div variants={itemVariants}>
-            <LazyVisible minHeight={260} fallback={<ChartFallback height={260} />} rootMargin="600px">
+            <LazyVisible
+              minHeight={260}
+              fallback={<ChartFallback height={260} />}
+              rootMargin="600px"
+            >
               <Suspense fallback={<ChartFallback height={260} />}>
                 <SchedulingRateGauge
                   rate={metrics?.current.schedulingRate || 0}
@@ -262,7 +280,11 @@ const SDRDashboardInner = () => {
         {/* Intelligence Sidepanel */}
         <div className="lg:col-span-4 space-y-6">
           <motion.div variants={itemVariants}>
-            <LazyVisible minHeight={420} fallback={<ChartFallback height={420} />} rootMargin="600px">
+            <LazyVisible
+              minHeight={420}
+              fallback={<ChartFallback height={420} />}
+              rootMargin="600px"
+            >
               <Suspense fallback={<ChartFallback height={420} />}>
                 <RecentProspects
                   onSelectLead={(id, name, score) => {

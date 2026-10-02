@@ -21,15 +21,24 @@ export function BulkActionBar({ count, onApprove, onReject, onClear, loading }: 
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
         >
           <div className="flex items-center gap-3 bg-background border border-border shadow-lg rounded-full px-4 py-2">
-            <span className="text-sm font-medium px-2">{count} selecionado{count > 1 ? 's' : ''}</span>
+            <span className="text-sm font-medium px-2">
+              {count} selecionado{count > 1 ? 's' : ''}
+            </span>
             <div className="h-5 w-px bg-border" />
             <Button size="sm" onClick={onApprove} disabled={loading}>
-              <Check className="mr-1 h-4 w-4" />Aprovar todas
+              <Check className="mr-1 h-4 w-4" />
+              Aprovar todas
             </Button>
             <Button size="sm" variant="outline" onClick={onReject} disabled={loading}>
-              <X className="mr-1 h-4 w-4" />Rejeitar
+              <X className="mr-1 h-4 w-4" />
+              Rejeitar
             </Button>
-            <Button size="icon" variant="ghost" aria-label="Limpar seleção" onClick={onClear}>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Limpar seleção"
+              onClick={onClear}
+            >
               <MinusCircle className="h-4 w-4" />
             </Button>
           </div>

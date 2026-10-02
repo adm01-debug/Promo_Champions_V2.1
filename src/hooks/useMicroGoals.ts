@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
-import { toBusinessMonthStart } from "@/lib/date";
+import { toBusinessMonthStart } from '@/lib/date';
 
 export interface MicroGoal {
   id: string;
@@ -58,7 +58,11 @@ export function useMicroGoals(salespersonId?: string) {
       });
 
       const sorted = Array.from(salesBySp.entries())
-        .map(([id, total]) => ({ id, total, name: salespeople.find(s => s.id === id)?.name || '' }))
+        .map(([id, total]) => ({
+          id,
+          total,
+          name: salespeople.find(s => s.id === id)?.name || '',
+        }))
         .sort((a, b) => b.total - a.total);
 
       const myIndex = sorted.findIndex(s => s.id === salespersonId);

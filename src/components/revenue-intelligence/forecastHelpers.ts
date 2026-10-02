@@ -1,5 +1,5 @@
 import { getLocalISODate } from '@/utils/dateHelpers';
-import { toBusinessDate } from "@/lib/date";
+import { toBusinessDate } from '@/lib/date';
 
 export const formatBRL = (n: number) =>
   new Intl.NumberFormat('pt-BR', {

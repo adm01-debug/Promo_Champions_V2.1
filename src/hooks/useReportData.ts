@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus } from '@/constants';
 import { startOfDay, endOfDay } from 'date-fns';
-import { toBusinessDate } from "@/lib/date";
+import { toBusinessDate } from '@/lib/date';
 
 interface DateRange {
   from: Date | undefined;

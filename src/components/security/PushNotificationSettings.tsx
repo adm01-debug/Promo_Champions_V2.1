@@ -1,9 +1,23 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, BellRing, TestTube, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import {
+  Bell,
+  BellOff,
+  BellRing,
+  TestTube,
+  Loader2,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export const PushNotificationSettings: React.FC = () => {
@@ -28,7 +42,11 @@ export const PushNotificationSettings: React.FC = () => {
   const getPermissionBadge = () => {
     switch (permission) {
       case 'granted':
-        return <Badge variant="default" className="bg-success">Permitido</Badge>;
+        return (
+          <Badge variant="default" className="bg-success">
+            Permitido
+          </Badge>
+        );
       case 'denied':
         return <Badge variant="destructive">Bloqueado</Badge>;
       default:
@@ -45,7 +63,8 @@ export const PushNotificationSettings: React.FC = () => {
             Notificações Push Não Suportadas
           </CardTitle>
           <CardDescription>
-            Seu navegador não suporta notificações push. Tente usar um navegador moderno como Chrome, Firefox ou Edge.
+            Seu navegador não suporta notificações push. Tente usar um navegador moderno
+            como Chrome, Firefox ou Edge.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -155,7 +174,10 @@ export const PushNotificationSettings: React.FC = () => {
         {/* Info */}
         <div className="text-xs text-muted-foreground space-y-1">
           <p>• Notificações são enviadas mesmo quando o navegador está fechado</p>
-          <p>• Alertas incluem: login de dispositivo novo, bloqueio de IP, tentativas suspeitas</p>
+          <p>
+            • Alertas incluem: login de dispositivo novo, bloqueio de IP, tentativas
+            suspeitas
+          </p>
           <p>• Você pode desativar a qualquer momento</p>
         </div>
       </CardContent>

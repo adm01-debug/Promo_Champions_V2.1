@@ -28,9 +28,9 @@ export interface ChunkedInOptions {
 export async function chunkedIn<T>(
   ids: readonly string[] | readonly number[],
   runner: (chunk: Array<string | number>) => PostgrestLike<T>,
-  opts: ChunkedInOptions = {},
+  opts: ChunkedInOptions = {}
 ): Promise<T[]> {
-  const { chunkSize = 100, parallel = false, label = "chunkedIn" } = opts;
+  const { chunkSize = 100, parallel = false, label = 'chunkedIn' } = opts;
   if (!ids || ids.length === 0) return [];
 
   const chunks: Array<Array<string | number>> = [];
@@ -40,9 +40,9 @@ export async function chunkedIn<T>(
 
   const collected: T[] = [];
   if (parallel) {
-    const results = await Promise.all(chunks.map((c) => runner(c)));
+    const results = await Promise.all(chunks.map(c => runner(c)));
     for (const r of results) {
-      if (r.error) throw new Error(`${label}: ${r.error.message ?? "unknown error"}`);
+      if (r.error) throw new Error(`${label}: ${r.error.message ?? 'unknown error'}`);
       if (r.data) collected.push(...r.data);
     }
     return collected;
@@ -50,7 +50,7 @@ export async function chunkedIn<T>(
 
   for (const c of chunks) {
     const r = await runner(c);
-    if (r.error) throw new Error(`${label}: ${r.error.message ?? "unknown error"}`);
+    if (r.error) throw new Error(`${label}: ${r.error.message ?? 'unknown error'}`);
     if (r.data) collected.push(...r.data);
   }
   return collected;

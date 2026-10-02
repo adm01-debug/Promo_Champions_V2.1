@@ -24,13 +24,23 @@ describe('failureTypeLabel', () => {
 
 describe('isPermanentFailureType', () => {
   it('classifica falhas estruturais como permanentes', () => {
-    for (const code of ['supressao', 'destinatario_ausente', 'endereco_invalido', 'hard_bounce']) {
+    for (const code of [
+      'supressao',
+      'destinatario_ausente',
+      'endereco_invalido',
+      'hard_bounce',
+    ]) {
       expect(isPermanentFailureType(code)).toBe(true);
     }
   });
 
   it('classifica falhas transitórias como recuperáveis', () => {
-    for (const code of ['limite_de_vazao', 'rede_indisponivel', 'infra_remetente', 'outro']) {
+    for (const code of [
+      'limite_de_vazao',
+      'rede_indisponivel',
+      'infra_remetente',
+      'outro',
+    ]) {
       expect(isPermanentFailureType(code)).toBe(false);
     }
   });
@@ -44,8 +54,12 @@ describe('recoveryHealth', () => {
 
   it('usa o limiar para falhas transitórias', () => {
     expect(recoveryHealth('rede_indisponivel', RECOVERY_RISK_THRESHOLD)).toBe('ok');
-    expect(recoveryHealth('rede_indisponivel', RECOVERY_RISK_THRESHOLD - 1)).toBe('atencao');
-    expect(recoveryHealth('rede_indisponivel', RECOVERY_RISK_THRESHOLD / 2 - 1)).toBe('critico');
+    expect(recoveryHealth('rede_indisponivel', RECOVERY_RISK_THRESHOLD - 1)).toBe(
+      'atencao'
+    );
+    expect(recoveryHealth('rede_indisponivel', RECOVERY_RISK_THRESHOLD / 2 - 1)).toBe(
+      'critico'
+    );
   });
 
   it('mapeia saúde para variantes semânticas', () => {

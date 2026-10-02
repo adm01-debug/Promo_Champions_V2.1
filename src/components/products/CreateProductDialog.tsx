@@ -1,13 +1,25 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus } from "lucide-react";
-import { useCreateProduct } from "@/hooks/useProducts";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Plus } from 'lucide-react';
+import { useCreateProduct } from '@/hooks/useProducts';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -15,17 +27,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const productSchema = z.object({
-  name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome deve ter no máximo 100 caracteres"),
-  sku: z.string().trim().min(1, "SKU é obrigatório"),
-  category: z.string().default("Assinatura"),
-  price: z.string().min(1, "Preço é obrigatório").refine((val) => {
-    const num = parseFloat(val);
-    return !isNaN(num) && num >= 0;
-  }, "Preço deve ser um valor válido"),
-  stock_quantity: z.string().default("0"),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+  sku: z.string().trim().min(1, 'SKU é obrigatório'),
+  category: z.string().default('Assinatura'),
+  price: z
+    .string()
+    .min(1, 'Preço é obrigatório')
+    .refine(val => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num >= 0;
+    }, 'Preço deve ser um valor válido'),
+  stock_quantity: z.string().default('0'),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -37,11 +56,11 @@ export const CreateProductDialog = () => {
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "",
-      sku: "",
-      category: "Assinatura",
-      price: "",
-      stock_quantity: "0",
+      name: '',
+      sku: '',
+      category: 'Assinatura',
+      price: '',
+      stock_quantity: '0',
     },
   });
 
@@ -80,7 +99,9 @@ export const CreateProductDialog = () => {
       </DialogTrigger>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="text-section-title gradient-text">Novo Produto</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">
+            Novo Produto
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -180,11 +201,19 @@ export const CreateProductDialog = () => {
               )}
             />
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" className="gradient-primary" disabled={createProduct.isPending}>
-                {createProduct.isPending ? "Criando..." : "Criar Produto"}
+              <Button
+                type="submit"
+                className="gradient-primary"
+                disabled={createProduct.isPending}
+              >
+                {createProduct.isPending ? 'Criando...' : 'Criar Produto'}
               </Button>
             </div>
           </form>

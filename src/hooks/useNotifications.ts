@@ -1,13 +1,21 @@
-import { useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export type NotificationCategory =
-  | "general" | "sales" | "goals" | "gamification"
-  | "security" | "system" | "team" | "ai" | "approval" | "commission";
-export type NotificationPriority = "low" | "medium" | "high" | "critical";
+  | 'general'
+  | 'sales'
+  | 'goals'
+  | 'gamification'
+  | 'security'
+  | 'system'
+  | 'team'
+  | 'ai'
+  | 'approval'
+  | 'commission';
+export type NotificationPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export interface AppNotification {
   id: string;
@@ -39,18 +47,18 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   const { category, unreadOnly, limit = 50 } = options;
 
   const query = useQuery({
-    queryKey: ["notifications", user?.id, category, unreadOnly, limit],
+    queryKey: ['notifications', user?.id, category, unreadOnly, limit],
     queryFn: async (): Promise<AppNotification[]> => {
       if (!user?.id) return [];
       let q = supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", user.id)
-        .is("archived_at", null)
-        .order("created_at", { ascending: false })
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .is('archived_at', null)
+        .order('created_at', { ascending: false })
         .limit(limit);
-      if (category) q = q.eq("category", category);
-      if (unreadOnly) q = q.is("read_at", null);
+      if (category) q = q.eq('category', category);
+      if (unreadOnly) q = q.is('read_at', null);
       const { data, error } = await q;
       if (error) throw error;
       return (data || []) as AppNotification[];
@@ -63,17 +71,22 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   useEffect(() => {
     if (!user?.id) return;
     const channelId =
-      typeof crypto !== "undefined" && "randomUUID" in crypto
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
         ? crypto.randomUUID()
         : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
       .channel(`notifications:${user.id}:${channelId}`)
       .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
         () => {
-          queryClient.invalidateQueries({ queryKey: ["notifications"] });
-          queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
+          queryClient.invalidateQueries({ queryKey: ['notifications'] });
+          queryClient.invalidateQueries({ queryKey: ['unread-notifications-count'] });
         }
       )
       .subscribe();
@@ -90,14 +103,14 @@ export function useMarkNotificationRead() {
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("notifications")
+        .from('notifications')
         .update({ read_at: new Date().toISOString() })
-        .eq("id", id);
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-notifications-count'] });
     },
   });
 }
@@ -106,16 +119,17 @@ export function useMarkAllNotificationsRead() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.rpc("mark_all_notifications_read");
+      const { data, error } = await supabase.rpc('mark_all_notifications_read');
       if (error) throw error;
       return data as number;
     },
-    onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
-      if (count && count > 0) toast.success(`${count} notificação(ões) marcadas como lidas`);
+    onSuccess: count => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-notifications-count'] });
+      if (count && count > 0)
+        toast.success(`${count} notificação(ões) marcadas como lidas`);
     },
-    onError: (e: Error) => toast.error("Erro: " + e.message),
+    onError: (e: Error) => toast.error('Erro: ' + e.message),
   });
 }
 
@@ -124,14 +138,14 @@ export function useArchiveNotification() {
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("notifications")
+        .from('notifications')
         .update({ archived_at: new Date().toISOString() })
-        .eq("id", id);
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-notifications-count'] });
     },
   });
 }
@@ -140,12 +154,12 @@ export function useDeleteNotification() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("notifications").delete().eq("id", id);
+      const { error } = await supabase.from('notifications').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["unread-notifications-count"] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-notifications-count'] });
     },
   });
 }
@@ -165,13 +179,13 @@ export interface SendNotificationInput {
 export function useSendNotification() {
   return useMutation({
     mutationFn: async (input: SendNotificationInput) => {
-      const { data, error } = await supabase.rpc("send_notification", {
+      const { data, error } = await supabase.rpc('send_notification', {
         p_user_id: input.user_id,
         p_type: input.type,
         p_title: input.title,
         p_message: input.message,
-        p_category: input.category ?? "general",
-        p_priority: input.priority ?? "medium",
+        p_category: input.category ?? 'general',
+        p_priority: input.priority ?? 'medium',
         p_action_url: input.action_url,
         p_action_label: input.action_label,
         p_metadata: (input.metadata ?? {}) as never,
@@ -179,6 +193,6 @@ export function useSendNotification() {
       if (error) throw error;
       return data as string;
     },
-    onError: (e: Error) => toast.error("Erro ao enviar notificação: " + e.message),
+    onError: (e: Error) => toast.error('Erro ao enviar notificação: ' + e.message),
   });
 }

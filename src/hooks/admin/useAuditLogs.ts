@@ -3,7 +3,7 @@ import { sanitizeCsvCell } from '@/utils/csvExport';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Json } from '@/integrations/supabase/types';
-import { toBusinessDate } from "@/lib/date";
+import { toBusinessDate } from '@/lib/date';
 
 export interface AuditLog {
   id: string;

@@ -1,9 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { TestTube2, Trash2, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { TestTube2, Trash2, Loader2 } from 'lucide-react';
 import {
   useIntegrationConnections,
   useIntegrationHealth,
@@ -11,28 +18,28 @@ import {
   useUpdateConnection,
   useDeleteConnection,
   type IntegrationConnection,
-} from "@/hooks/admin/useIntegrationConnections";
-import { useCredentialsSource } from "./useCredentialsSource";
-import { useMemo } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+} from '@/hooks/admin/useIntegrationConnections';
+import { useCredentialsSource } from './useCredentialsSource';
+import { useMemo } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-const KIND_LABEL: Record<IntegrationConnection["kind"], string> = {
-  database: "Banco",
-  bitrix24: "Bitrix24",
-  n8n: "n8n",
-  mcp: "MCP",
-  webhook: "Webhook",
-  other: "Outro",
+const KIND_LABEL: Record<IntegrationConnection['kind'], string> = {
+  database: 'Banco',
+  bitrix24: 'Bitrix24',
+  n8n: 'n8n',
+  mcp: 'MCP',
+  webhook: 'Webhook',
+  other: 'Outro',
 };
 
-const KIND_COLOR: Record<IntegrationConnection["kind"], string> = {
-  database: "bg-chart-1/20 text-chart-1 border-chart-1/30",
-  bitrix24: "bg-chart-2/20 text-chart-2 border-chart-2/30",
-  n8n: "bg-chart-3/20 text-chart-3 border-chart-3/30",
-  mcp: "bg-chart-4/20 text-chart-4 border-chart-4/30",
-  webhook: "bg-chart-5/20 text-chart-5 border-chart-5/30",
-  other: "bg-muted text-muted-foreground",
+const KIND_COLOR: Record<IntegrationConnection['kind'], string> = {
+  database: 'bg-chart-1/20 text-chart-1 border-chart-1/30',
+  bitrix24: 'bg-chart-2/20 text-chart-2 border-chart-2/30',
+  n8n: 'bg-chart-3/20 text-chart-3 border-chart-3/30',
+  mcp: 'bg-chart-4/20 text-chart-4 border-chart-4/30',
+  webhook: 'bg-chart-5/20 text-chart-5 border-chart-5/30',
+  other: 'bg-muted text-muted-foreground',
 };
 
 export function ConnectionsOverviewTable() {
@@ -44,17 +51,25 @@ export function ConnectionsOverviewTable() {
   const del = useDeleteConnection();
 
   const lastByConn = useMemo(() => {
-    const m = new Map<string, { status: string; checked_at: string; latency_ms: number | null }>();
+    const m = new Map<
+      string,
+      { status: string; checked_at: string; latency_ms: number | null }
+    >();
     for (const ch of checks) {
-      const c = ch as { connection_id: string; status: string; checked_at: string; latency_ms: number | null };
+      const c = ch as {
+        connection_id: string;
+        status: string;
+        checked_at: string;
+        latency_ms: number | null;
+      };
       if (!m.has(c.connection_id)) m.set(c.connection_id, c);
     }
     return m;
   }, [checks]);
 
   const rows = useMemo(() => {
-    if (source === "all") return conns;
-    return conns.filter((c) => c.source === source);
+    if (source === 'all') return conns;
+    return conns.filter(c => c.source === source);
   }, [conns, source]);
 
   return (
@@ -83,7 +98,7 @@ export function ConnectionsOverviewTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((c) => {
+              {rows.map(c => {
                 const last = lastByConn.get(c.id);
                 return (
                   <TableRow key={c.id}>
@@ -94,19 +109,26 @@ export function ConnectionsOverviewTable() {
                     </TableCell>
                     <TableCell className="font-medium">{c.label}</TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className="text-xs uppercase">{c.source}</Badge>
+                      <Badge variant="secondary" className="text-xs uppercase">
+                        {c.source}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {last ? (
                         <div className="flex items-center gap-2">
                           <Badge
-                            variant={last.status === "success" ? "default" : "destructive"}
+                            variant={
+                              last.status === 'success' ? 'default' : 'destructive'
+                            }
                             className="text-xs"
                           >
                             {last.status}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(last.checked_at), { addSuffix: true, locale: ptBR })}
+                            {formatDistanceToNow(new Date(last.checked_at), {
+                              addSuffix: true,
+                              locale: ptBR,
+                            })}
                           </span>
                         </div>
                       ) : (
@@ -114,12 +136,14 @@ export function ConnectionsOverviewTable() {
                       )}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {last?.latency_ms != null ? `${last.latency_ms}ms` : "—"}
+                      {last?.latency_ms != null ? `${last.latency_ms}ms` : '—'}
                     </TableCell>
                     <TableCell>
                       <Switch
                         checked={c.enabled}
-                        onCheckedChange={(checked) => update.mutate({ id: c.id, enabled: checked })}
+                        onCheckedChange={checked =>
+                          update.mutate({ id: c.id, enabled: checked })
+                        }
                       />
                     </TableCell>
                     <TableCell className="text-right">
@@ -130,7 +154,11 @@ export function ConnectionsOverviewTable() {
                           onClick={() => test.mutate(c.id)}
                           disabled={test.isPending}
                         >
-                          {test.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <TestTube2 className="h-4 w-4" />}
+                          {test.isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <TestTube2 className="h-4 w-4" />
+                          )}
                         </Button>
                         <Button
                           variant="ghost"

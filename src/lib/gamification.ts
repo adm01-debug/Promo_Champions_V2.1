@@ -57,7 +57,13 @@ export function getLevelFromXP(totalXP: number): LevelInfo {
 export function getLevelInfo(level: number): Omit<LevelInfo, 'progressPercent'> {
   const clampedLevel = Math.max(1, Math.min(level, LEVELS.length));
   const info = LEVELS[clampedLevel - 1];
-  return { level: info.level, title: info.title, emoji: info.emoji, minXP: info.minXP, maxXP: info.maxXP };
+  return {
+    level: info.level,
+    title: info.title,
+    emoji: info.emoji,
+    minXP: info.minXP,
+    maxXP: info.maxXP,
+  };
 }
 
 export function getXPForNextLevel(totalXP: number): number {

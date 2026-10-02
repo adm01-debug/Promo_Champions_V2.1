@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, endOfMonth } from "date-fns";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 // Weighted scoring: activity type × outcome
 const QUALITY_WEIGHTS: Record<string, Record<string, number>> = {
@@ -23,24 +23,24 @@ export interface ActivityQualityData {
   maxPossibleScore: number;
   breakdown: { type: string; count: number; score: number; avgQuality: number }[];
   rank: number;
-  trend: "up" | "down" | "stable";
+  trend: 'up' | 'down' | 'stable';
 }
 
 export function useActivityQualityScore() {
   return useQuery({
-    queryKey: ["activity-quality-score"],
+    queryKey: ['activity-quality-score'],
     queryFn: async (): Promise<ActivityQualityData[]> => {
       const now = new Date();
       const monthStart = startOfMonth(now);
       const monthEnd = endOfMonth(now);
 
       const [spResult, activitiesResult] = await Promise.all([
-        supabase.from("salespeople").select("id, name, avatar_url").eq("is_active", true),
+        supabase.from('salespeople').select('id, name, avatar_url').eq('is_active', true),
         supabase
-          .from("activities")
-          .select("salesperson_id, activity_type, outcome")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
+          .from('activities')
+          .select('salesperson_id, activity_type, outcome')
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString()),
       ]);
 
       if (spResult.error) throw spResult.error;
@@ -49,14 +49,17 @@ export function useActivityQualityScore() {
       const salespeople = spResult.data || [];
       const activities = activitiesResult.data || [];
 
-      const results: ActivityQualityData[] = salespeople.map((sp) => {
-        const spActivities = activities.filter((a) => a.salesperson_id === sp.id);
+      const results: ActivityQualityData[] = salespeople.map(sp => {
+        const spActivities = activities.filter(a => a.salesperson_id === sp.id);
         let rawScore = 0;
         let maxPossibleScore = 0;
 
-        const typeMap = new Map<string, { count: number; score: number; total: number }>();
+        const typeMap = new Map<
+          string,
+          { count: number; score: number; total: number }
+        >();
 
-        spActivities.forEach((act) => {
+        spActivities.forEach(act => {
           const typeWeights = QUALITY_WEIGHTS[act.activity_type] || QUALITY_WEIGHTS.task;
           const weight = typeWeights[act.outcome] || typeWeights.neutral;
           const maxWeight = typeWeights.positive;
@@ -64,14 +67,19 @@ export function useActivityQualityScore() {
           rawScore += weight;
           maxPossibleScore += maxWeight;
 
-          const existing = typeMap.get(act.activity_type) || { count: 0, score: 0, total: 0 };
+          const existing = typeMap.get(act.activity_type) || {
+            count: 0,
+            score: 0,
+            total: 0,
+          };
           existing.count++;
           existing.score += weight;
           existing.total += maxWeight;
           typeMap.set(act.activity_type, existing);
         });
 
-        const qualityScore = maxPossibleScore > 0 ? Math.round((rawScore / maxPossibleScore) * 100) : 0;
+        const qualityScore =
+          maxPossibleScore > 0 ? Math.round((rawScore / maxPossibleScore) * 100) : 0;
 
         const breakdown = Array.from(typeMap.entries()).map(([type, data]) => ({
           type,
@@ -92,7 +100,7 @@ export function useActivityQualityScore() {
           maxPossibleScore,
           breakdown,
           rank: 0,
-          trend: "stable" as const,
+          trend: 'stable' as const,
         };
       });
 

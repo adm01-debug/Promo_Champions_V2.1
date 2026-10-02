@@ -25,7 +25,11 @@ interface Props {
 }
 
 function fmt(n: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(n);
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(n);
 }
 
 export function RaceLeaderboardSidebar({
@@ -41,7 +45,10 @@ export function RaceLeaderboardSidebar({
   // O ranking pode renderizar com 1 frame de atraso para manter UI responsiva.
   const deferredEntries = useDeferredValue(entries);
   const leader = deferredEntries[0];
-  const predictions = useRacePredictions(deferredEntries, { start_date: seasonStart, end_date: seasonEnd });
+  const predictions = useRacePredictions(deferredEntries, {
+    start_date: seasonStart,
+    end_date: seasonEnd,
+  });
   const [hoveredRivalId, setHoveredRivalId] = useState<string | null>(null);
 
   return (
@@ -71,7 +78,8 @@ export function RaceLeaderboardSidebar({
       <CardContent className="flex-1 overflow-y-auto space-y-2">
         <AnimatePresence>
           {deferredEntries.map((e, i) => {
-            const gap = leader && i > 0 ? Number(leader.total_sales) - Number(e.total_sales) : 0;
+            const gap =
+              leader && i > 0 ? Number(leader.total_sales) - Number(e.total_sales) : 0;
             return (
               <motion.div
                 key={e.car_id}
@@ -82,13 +90,18 @@ export function RaceLeaderboardSidebar({
                 transition={{ type: 'spring', stiffness: 200, damping: 22 }}
                 className={cn(
                   'flex items-center gap-3 p-2 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors',
-                  hoveredRivalId === e.car_id && 'ring-2 ring-warning ring-offset-1 ring-offset-background outline-dashed outline-2 outline-warning/60',
+                  hoveredRivalId === e.car_id &&
+                    'ring-2 ring-warning ring-offset-1 ring-offset-background outline-dashed outline-2 outline-warning/60'
                 )}
               >
                 <RankBadge rank={i + 1} size="md" />
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black border-2"
-                  style={{ background: e.primary_color, color: e.secondary_color, borderColor: e.secondary_color }}
+                  style={{
+                    background: e.primary_color,
+                    color: e.secondary_color,
+                    borderColor: e.secondary_color,
+                  }}
                 >
                   {e.car_number}
                 </div>
@@ -100,14 +113,22 @@ export function RaceLeaderboardSidebar({
                   <div className="flex justify-between items-baseline gap-1">
                     <p className="text-sm font-semibold truncate">{e.salesperson_name}</p>
                     <div className="flex items-center gap-1 shrink-0">
-                      <PredictedRankBadge prediction={predictions.get(e.salesperson_id)} />
-                      <span className="text-xs text-muted-foreground tabular-nums">{Math.round(Number(e.progress) * 100)}%</span>
+                      <PredictedRankBadge
+                        prediction={predictions.get(e.salesperson_id)}
+                      />
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        {Math.round(Number(e.progress) * 100)}%
+                      </span>
                     </div>
                   </div>
                   <Progress value={Number(e.progress) * 100} className="h-1.5 mt-1" />
                   <div className="flex justify-between mt-0.5">
-                    <span className="text-[10px] text-muted-foreground">{fmt(Number(e.total_sales))}</span>
-                    {gap > 0 && <span className="text-[10px] text-destructive">-{fmt(gap)}</span>}
+                    <span className="text-[10px] text-muted-foreground">
+                      {fmt(Number(e.total_sales))}
+                    </span>
+                    {gap > 0 && (
+                      <span className="text-[10px] text-destructive">-{fmt(gap)}</span>
+                    )}
                   </div>
                 </div>
               </motion.div>

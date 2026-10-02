@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Flame } from "lucide-react";
-import { useEngagementLeaderboard } from "@/hooks/engagement/useEngagementScore";
-import { EngagementScoreBadge } from "./EngagementScoreBadge";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Flame } from 'lucide-react';
+import { useEngagementLeaderboard } from '@/hooks/engagement/useEngagementScore';
+import { EngagementScoreBadge } from './EngagementScoreBadge';
 
 interface Props {
   limit?: number;
@@ -22,7 +22,7 @@ export function EngagementLeaderboardWidget({ limit = 10 }: Props) {
       <CardContent>
         {isLoading ? (
           <div className="space-y-2">
-            {[1, 2, 3, 4, 5].map((i) => (
+            {[1, 2, 3, 4, 5].map(i => (
               <Skeleton key={i} className="h-10 w-full" />
             ))}
           </div>
@@ -41,10 +41,10 @@ export function EngagementLeaderboardWidget({ limit = 10 }: Props) {
                   {idx + 1}.
                 </span>
                 <span className="text-sm flex-1 truncate font-medium">
-                  {entry.contact_name ?? "Sem nome"}
+                  {entry.contact_name ?? 'Sem nome'}
                 </span>
                 <span className="text-[10px] text-muted-foreground capitalize">
-                  {entry.contact_type === "lead" ? "Lead" : "Cliente"}
+                  {entry.contact_type === 'lead' ? 'Lead' : 'Cliente'}
                 </span>
                 <EngagementScoreBadge score={entry.score} tier={entry.tier} size="sm" />
               </li>

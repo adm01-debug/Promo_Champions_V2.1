@@ -70,17 +70,24 @@ describe('contrato front/edge — matriz de ações', () => {
 
   it('summarizeActionMatrix classifica o ramo que suggestedActionFor executa', () => {
     // win-override: pattern win_factor ou outcome won → frase positiva única.
-    expect(edge.suggestedActionFor('win_factor', 'negotiation', { severity: 'high' }))
-      .toBe(contract.WIN_OVERRIDE_ACTION);
-    expect(edge.suggestedActionFor('loss_factor', 'negotiation', { severity: 'critical', outcome: 'won' }))
-      .toBe(contract.WIN_OVERRIDE_ACTION);
+    expect(
+      edge.suggestedActionFor('win_factor', 'negotiation', { severity: 'high' })
+    ).toBe(contract.WIN_OVERRIDE_ACTION);
+    expect(
+      edge.suggestedActionFor('loss_factor', 'negotiation', {
+        severity: 'critical',
+        outcome: 'won',
+      })
+    ).toBe(contract.WIN_OVERRIDE_ACTION);
     for (const sev of SEVERITIES) {
       expect(summarizeActionMatrix('win_factor', sev).kind).toBe('win-override');
       expect(summarizeActionMatrix('loss_factor', sev, 'won').kind).toBe('win-override');
     }
 
     // matrix: tipos canônicos produzem frases do próprio ramo (≠ override, ≠ default).
-    const defaultPhrase = edge.suggestedActionFor('outro_tipo', 'x', { severity: 'medium' });
+    const defaultPhrase = edge.suggestedActionFor('outro_tipo', 'x', {
+      severity: 'medium',
+    });
     for (const type of ['loss_factor', 'stuck_stage', 'competitor']) {
       for (const sev of SEVERITIES) {
         const action = edge.suggestedActionFor(type, 'negotiation', { severity: sev });

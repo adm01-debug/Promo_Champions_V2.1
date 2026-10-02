@@ -112,7 +112,9 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
             <p className="text-sm text-muted-foreground">Reagendar para:</p>
             <p className="font-medium text-primary capitalize">
               {formatDate(newDate)}
-              {newTime && <span className="ml-2 text-muted-foreground">às {newTime}</span>}
+              {newTime && (
+                <span className="ml-2 text-muted-foreground">às {newTime}</span>
+              )}
             </p>
           </div>
 
@@ -121,7 +123,9 @@ export function RescheduleDialog({ task, onClose, allTasks }: RescheduleDialogPr
             <div className="flex items-center justify-between">
               <Label>Selecionar Tarefas</Label>
               <Button variant="ghost" size="sm" onClick={handleSelectAll}>
-                {selectedTasks.length === allTasks.length ? 'Desmarcar Todas' : 'Selecionar Todas'}
+                {selectedTasks.length === allTasks.length
+                  ? 'Desmarcar Todas'
+                  : 'Selecionar Todas'}
               </Button>
             </div>
 

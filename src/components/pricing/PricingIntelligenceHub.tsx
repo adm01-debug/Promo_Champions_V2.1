@@ -425,8 +425,8 @@ export function PricingIntelligenceHub() {
             <div className="divide-y divide-white/5">
               {(!data.competitor_threats || data.competitor_threats.length === 0) && (
                 <div className="p-6 text-sm text-muted-foreground text-center">
-                  Nenhum preço de concorrente registrado em
-                  competitors_pricing — sem dados para o radar.
+                  Nenhum preço de concorrente registrado em competitors_pricing — sem
+                  dados para o radar.
                 </div>
               )}
               {(data.competitor_threats ?? []).map((threat, i) => (

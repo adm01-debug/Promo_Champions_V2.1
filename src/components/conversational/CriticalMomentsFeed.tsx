@@ -1,12 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useMyCriticalMomentsFeed } from "@/hooks/conversational/useCriticalMoments";
-import { CriticalMomentBadge } from "./CriticalMomentBadge";
-import { formatTs } from "./criticalMomentsHelpers";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertTriangle, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useMyCriticalMomentsFeed } from '@/hooks/conversational/useCriticalMoments';
+import { CriticalMomentBadge } from './CriticalMomentBadge';
+import { formatTs } from './criticalMomentsHelpers';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface Props {
   onOpenRecording?: (recordingId: string, ts: number) => void;
@@ -35,7 +35,7 @@ export const CriticalMomentsFeed = ({ onOpenRecording, limit = 20 }: Props) => {
             Sem alertas no momento. Tudo sob controle ✨
           </div>
         ) : (
-          data.map((m) => (
+          data.map(m => (
             <div
               key={m.id}
               className="rounded-lg border bg-background/40 p-2.5 transition-colors hover:bg-background/70"
@@ -43,7 +43,10 @@ export const CriticalMomentsFeed = ({ onOpenRecording, limit = 20 }: Props) => {
               <div className="flex flex-wrap items-center gap-2">
                 <CriticalMomentBadge type={m.moment_type} severity={m.severity} compact />
                 <span className="text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(m.created_at), { addSuffix: true, locale: ptBR })}
+                  {formatDistanceToNow(new Date(m.created_at), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
                 </span>
               </div>
               {m.call_recordings?.title && (

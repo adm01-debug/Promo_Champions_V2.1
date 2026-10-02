@@ -17,7 +17,9 @@ const WinLossKpiCardsBase: FC<Props> = ({ totalWins, totalLosses, winRate }) => 
         </div>
         <div>
           <p className="text-2xl font-bold font-display">{totalWins}</p>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Vitórias</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">
+            Vitórias
+          </p>
         </div>
       </CardContent>
     </Card>
@@ -39,7 +41,9 @@ const WinLossKpiCardsBase: FC<Props> = ({ totalWins, totalLosses, winRate }) => 
         </div>
         <div>
           <p className="text-2xl font-bold font-display">{winRate}%</p>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Win Rate Geral</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">
+            Win Rate Geral
+          </p>
         </div>
       </CardContent>
     </Card>

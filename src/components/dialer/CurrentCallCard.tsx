@@ -23,7 +23,7 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
   const snooze = useSnoozeItem();
 
   useEffect(() => {
-    const t = setInterval(() => setSeconds((s) => s + 1), 1000);
+    const t = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => clearInterval(t);
   }, [itemId]);
 
@@ -31,8 +31,17 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
     queryKey: ['sale-detail', saleId],
     enabled: !!saleId,
     queryFn: async () => {
-      const { data } = await supabase.from('sales').select('id, client_name, status, amount').eq('id', saleId).maybeSingle();
-      return data as { id: string; client_name: string; status: string; amount: number } | null;
+      const { data } = await supabase
+        .from('sales')
+        .select('id, client_name, status, amount')
+        .eq('id', saleId)
+        .maybeSingle();
+      return data as {
+        id: string;
+        client_name: string;
+        status: string;
+        amount: number;
+      } | null;
     },
   });
 
@@ -65,7 +74,9 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
             <Phone className="h-5 w-5 text-primary animate-pulse" />
             <CardTitle className="text-section-title">Em ligação</CardTitle>
           </div>
-          <Badge variant="outline" className="font-mono">{mm}:{ss}</Badge>
+          <Badge variant="outline" className="font-mono">
+            {mm}:{ss}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -77,25 +88,42 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
           <div className="flex gap-2 mt-2">
             <Badge variant="secondary">Score: {score.toFixed(0)}</Badge>
             {sale?.status && <Badge variant="outline">{sale.status}</Badge>}
-            {sale?.amount && <Badge variant="outline">R$ {sale.amount.toLocaleString('pt-BR')}</Badge>}
+            {sale?.amount && (
+              <Badge variant="outline">R$ {sale.amount.toLocaleString('pt-BR')}</Badge>
+            )}
           </div>
         </div>
 
         {history && history.length > 0 && (
           <div className="space-y-1 text-xs">
-            <p className="font-semibold text-muted-foreground uppercase">Últimas chamadas</p>
-            {history.slice(0, 3).map((h) => (
+            <p className="font-semibold text-muted-foreground uppercase">
+              Últimas chamadas
+            </p>
+            {history.slice(0, 3).map(h => (
               <div key={h.id} className="flex justify-between text-muted-foreground">
                 <span>{dispositionLabel(h.disposition)}</span>
-                <span>{formatDistanceToNow(new Date(h.created_at), { locale: ptBR, addSuffix: true })}</span>
+                <span>
+                  {formatDistanceToNow(new Date(h.created_at), {
+                    locale: ptBR,
+                    addSuffix: true,
+                  })}
+                </span>
               </div>
             ))}
           </div>
         )}
 
         <div className="flex flex-wrap gap-2 pt-2">
-          <ClickToCallButton toNumber={contactPhone} saleId={saleId} queueItemId={itemId} />
-          <Button variant="outline" size="sm" onClick={() => snooze.mutate({ item_id: itemId, snooze_minutes: 60 })}>
+          <ClickToCallButton
+            toNumber={contactPhone}
+            saleId={saleId}
+            queueItemId={itemId}
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => snooze.mutate({ item_id: itemId, snooze_minutes: 60 })}
+          >
             <Clock className="h-4 w-4 mr-1" /> Adiar 1h
           </Button>
           <Button variant="outline" size="sm" onClick={onSkip}>

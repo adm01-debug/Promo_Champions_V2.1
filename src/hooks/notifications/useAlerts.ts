@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInDays, parseISO } from 'date-fns';
-import { toBusinessMonthStart } from "@/lib/date";
+import { toBusinessMonthStart } from '@/lib/date';
 
 export type AlertType = 'stagnant_deal' | 'inactive_client' | 'at_risk_goal';
 export type AlertSeverity = 'warning' | 'critical';

@@ -1,16 +1,24 @@
-import React from "react";
-import { useGoalsDashboard } from "@/hooks/dashboard/useGoalsDashboard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
+import React from 'react';
+import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Trophy } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+} from 'recharts';
 
 const RANK_COLORS = [
-  "hsl(var(--primary))",
-  "hsl(262, 70%, 65%)",
-  "hsl(262, 60%, 70%)",
-  "hsl(262, 50%, 75%)",
-  "hsl(262, 40%, 80%)",
+  'hsl(var(--primary))',
+  'hsl(262, 70%, 65%)',
+  'hsl(262, 60%, 70%)',
+  'hsl(262, 50%, 75%)',
+  'hsl(262, 40%, 80%)',
 ];
 
 export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
@@ -18,12 +26,10 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
-  const ranked = (data?.salespeople || [])
-    .filter(sp => sp.currentSales > 0)
-    .slice(0, 5);
+  const ranked = (data?.salespeople || []).filter(sp => sp.currentSales > 0).slice(0, 5);
 
   const chartData = ranked.map(sp => ({
-    name: sp.name.split(" ")[0],
+    name: sp.name.split(' ')[0],
     value: sp.currentSales,
     full: sp.name,
   }));
@@ -39,22 +45,31 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
       <CardContent>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={140}>
-            <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            >
               <XAxis type="number" hide />
               <YAxis
                 type="category"
                 dataKey="name"
                 width={55}
-                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 formatter={(v: number) => [
-                  `R$ ${v.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-                  "Receita",
+                  `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                  'Receita',
                 ]}
-                contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 11 }}
+                contentStyle={{
+                  borderRadius: 8,
+                  border: 'none',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  fontSize: 11,
+                }}
               />
               <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={14}>
                 {chartData.map((_, i) => (
@@ -64,11 +79,13 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-xs text-muted-foreground text-center py-4">Sem dados do time</p>
+          <p className="text-xs text-muted-foreground text-center py-4">
+            Sem dados do time
+          </p>
         )}
       </CardContent>
     </Card>
   );
 });
 
-TeamRankingWidget.displayName = "TeamRankingWidget";
+TeamRankingWidget.displayName = 'TeamRankingWidget';

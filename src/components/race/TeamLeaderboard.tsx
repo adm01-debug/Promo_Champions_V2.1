@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { ChevronDown, Users2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { useRaceTeams } from '@/hooks/race/useRaceTeams';
 import { fmtCompact } from './raceFormatters';
@@ -36,21 +40,32 @@ export function TeamLeaderboard({ seasonId, defaultOpen = false, className }: Pr
                 <Users2 className="w-4 h-4 text-primary" />
               </div>
               <div className="text-left">
-                <h3 className="font-display font-bold text-sm leading-none">🏎️ Escuderias</h3>
+                <h3 className="font-display font-bold text-sm leading-none">
+                  🏎️ Escuderias
+                </h3>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  {isLoading ? '…' : `${teams.length} equipe${teams.length === 1 ? '' : 's'}`}
+                  {isLoading
+                    ? '…'
+                    : `${teams.length} equipe${teams.length === 1 ? '' : 's'}`}
                 </p>
               </div>
             </div>
             <ChevronDown
-              className={cn('w-4 h-4 text-muted-foreground transition-transform', open && 'rotate-180')}
+              className={cn(
+                'w-4 h-4 text-muted-foreground transition-transform',
+                open && 'rotate-180'
+              )}
               aria-hidden
             />
           </button>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <ul role="list" aria-label="Ranking de escuderias" className="px-3 pb-3 space-y-1.5">
+          <ul
+            role="list"
+            aria-label="Ranking de escuderias"
+            className="px-3 pb-3 space-y-1.5"
+          >
             {teams.map((t, i) => (
               <motion.li
                 key={t.id}

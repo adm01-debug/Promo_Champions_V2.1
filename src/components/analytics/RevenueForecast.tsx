@@ -16,7 +16,14 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { differenceInDays, parseISO, startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
+import {
+  differenceInDays,
+  parseISO,
+  startOfMonth,
+  endOfMonth,
+  subMonths,
+  format,
+} from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   AreaChart,
@@ -120,7 +127,8 @@ export const RevenueForecast: FC = () => {
     }, 0);
 
     // Combined forecast (60% linear + 40% pipeline)
-    const combinedForecast = linearProjection * 0.6 + (currentRevenue + weightedPipeline) * 0.4;
+    const combinedForecast =
+      linearProjection * 0.6 + (currentRevenue + weightedPipeline) * 0.4;
 
     // Pipeline by stage
     const stages = Object.keys(STAGE_PROBABILITIES);
@@ -157,7 +165,9 @@ export const RevenueForecast: FC = () => {
     // Confidence based on days passed and goal proximity
     const goalProgress = totalGoal > 0 ? (currentRevenue / totalGoal) * 100 : 0;
     const paceScore =
-      totalGoal > 0 ? (((currentRevenue / daysPassed) * totalDays) / totalGoal) * 100 : 100;
+      totalGoal > 0
+        ? (((currentRevenue / daysPassed) * totalDays) / totalGoal) * 100
+        : 100;
     const confidence = Math.min(
       95,
       Math.max(20, (daysPassed / totalDays) * 50 + Math.min(50, paceScore * 0.5))
@@ -166,8 +176,10 @@ export const RevenueForecast: FC = () => {
     // Pipeline velocity (avg days in pipeline)
     const avgDaysInPipeline =
       pipeline.length > 0
-        ? pipeline.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) /
-          pipeline.length
+        ? pipeline.reduce(
+            (sum, d) => sum + differenceInDays(now, parseISO(d.created_at)),
+            0
+          ) / pipeline.length
         : 0;
 
     return {
@@ -211,7 +223,8 @@ export const RevenueForecast: FC = () => {
     );
   }
 
-  const fmt = (v: number | string) => `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+  const fmt = (v: number | string) =>
+    `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   return (
     <div className="space-y-4">
@@ -255,8 +268,15 @@ export const RevenueForecast: FC = () => {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={forecast.chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+            <AreaChart
+              data={forecast.chartData}
+              margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="hsl(var(--border))"
+                opacity={0.3}
+              />
               <XAxis
                 dataKey="month"
                 tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
@@ -310,7 +330,9 @@ export const RevenueForecast: FC = () => {
         <Card className="border-none shadow-lg">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-section-title text-sm">Pipeline Ponderado</CardTitle>
+              <CardTitle className="text-section-title text-sm">
+                Pipeline Ponderado
+              </CardTitle>
               <Badge variant="outline" className="text-xs">
                 {forecast.pipelineCount} deals • {fmt(forecast.pipelineTotal)}
               </Badge>
@@ -321,7 +343,9 @@ export const RevenueForecast: FC = () => {
               <div key={stage.stage} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-foreground capitalize">{stage.stage}</span>
+                    <span className="font-medium text-foreground capitalize">
+                      {stage.stage}
+                    </span>
                     <Badge variant="secondary" className="text-[10px] h-4">
                       {stage.count}
                     </Badge>
@@ -331,7 +355,9 @@ export const RevenueForecast: FC = () => {
                     <span className="text-muted-foreground line-through mr-2">
                       {fmt(stage.total)}
                     </span>
-                    <span className="font-semibold text-primary">{fmt(stage.weighted)}</span>
+                    <span className="font-semibold text-primary">
+                      {fmt(stage.weighted)}
+                    </span>
                   </div>
                 </div>
                 <Progress value={stage.probability} className="h-1.5" />
@@ -339,7 +365,9 @@ export const RevenueForecast: FC = () => {
             ))}
             <div className="pt-2 border-t border-border/30 flex justify-between text-sm">
               <span className="font-medium text-foreground">Total Ponderado</span>
-              <span className="font-bold text-primary">{fmt(forecast.weightedPipeline)}</span>
+              <span className="font-bold text-primary">
+                {fmt(forecast.weightedPipeline)}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -347,7 +375,9 @@ export const RevenueForecast: FC = () => {
         {/* Velocity & projections */}
         <Card className="border-none shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-section-title text-sm">Velocidade & Projeções</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              Velocidade & Projeções
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -421,8 +451,8 @@ export const RevenueForecast: FC = () => {
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-1">
-                  <AlertTriangle className="h-4 w-4" /> Faltam {fmt(Math.abs(forecast.gapToGoal))}{' '}
-                  para atingir a meta
+                  <AlertTriangle className="h-4 w-4" /> Faltam{' '}
+                  {fmt(Math.abs(forecast.gapToGoal))} para atingir a meta
                 </span>
               )}
             </div>
