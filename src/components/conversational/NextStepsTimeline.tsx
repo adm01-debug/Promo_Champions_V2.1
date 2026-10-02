@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import type { NextStep } from "./meetingSummaryHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight, Calendar, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { NextStep } from './meetingSummaryHelpers';
 
 interface Props {
   steps: NextStep[];
@@ -37,11 +37,16 @@ export const NextStepsTimeline = ({ steps }: Props) => {
                   {s.deadline_hint && (
                     <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
                       <Calendar className="size-3 text-primary/70" />
-                      Prazo sugerido: <span className="text-card-foreground">{s.deadline_hint}</span>
+                      Prazo sugerido:{' '}
+                      <span className="text-card-foreground">{s.deadline_hint}</span>
                     </div>
                   )}
                 </div>
-                <Button variant="ghost" size="icon" className="size-8 rounded-full shrink-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-8 rounded-full shrink-0 bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
                   <Plus className="size-4" />
                 </Button>
               </div>

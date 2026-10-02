@@ -70,7 +70,10 @@ export function useDailyBriefing({
       gapToLeaderPercent: gap,
       streakDays,
       goldenWindow: window,
-      cta: gap !== null && gap < 5 ? 'A liderança está ao alcance.' : 'Hoje é dia de acelerar.',
+      cta:
+        gap !== null && gap < 5
+          ? 'A liderança está ao alcance.'
+          : 'Hoje é dia de acelerar.',
     };
   }, [entries, currentUserSalespersonId, streakDays, preferredHour]);
 

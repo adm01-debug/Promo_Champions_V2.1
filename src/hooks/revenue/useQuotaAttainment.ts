@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-export type RiskLevel = "safe" | "on_track" | "at_risk" | "critical";
+export type RiskLevel = 'safe' | 'on_track' | 'at_risk' | 'critical';
 
 export interface QuotaPrediction {
   id: string;
@@ -30,7 +30,7 @@ export interface QuotaAlert {
   id: string;
   prediction_id: string;
   salesperson_id: string;
-  severity: "info" | "warning" | "critical";
+  severity: 'info' | 'warning' | 'critical';
   message: string;
   recommended_action: string | null;
   acknowledged: boolean;
@@ -40,12 +40,12 @@ export interface QuotaAlert {
 export function useQuotaAttainmentPredictions() {
   const qc = useQueryClient();
   const query = useQuery({
-    queryKey: ["quota-attainment-predictions"],
+    queryKey: ['quota-attainment-predictions'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("quota_attainment_predictions")
-        .select("*, salesperson:salespeople(name)")
-        .order("calculated_at", { ascending: false })
+        .from('quota_attainment_predictions')
+        .select('*, salesperson:salespeople(name)')
+        .order('calculated_at', { ascending: false })
         .limit(200);
       if (error) throw error;
       const seen = new Set<string>();
@@ -61,10 +61,14 @@ export function useQuotaAttainmentPredictions() {
 
   useEffect(() => {
     const ch = supabase
-      .channel("quota-predictions-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "quota_attainment_predictions" }, () => {
-        qc.invalidateQueries({ queryKey: ["quota-attainment-predictions"] });
-      })
+      .channel('quota-predictions-rt')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'quota_attainment_predictions' },
+        () => {
+          qc.invalidateQueries({ queryKey: ['quota-attainment-predictions'] });
+        }
+      )
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
@@ -77,13 +81,13 @@ export function useQuotaAttainmentPredictions() {
 export function useQuotaAttainmentAlerts() {
   const qc = useQueryClient();
   const query = useQuery({
-    queryKey: ["quota-attainment-alerts"],
+    queryKey: ['quota-attainment-alerts'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("quota_attainment_alerts")
-        .select("*")
-        .eq("acknowledged", false)
-        .order("created_at", { ascending: false })
+        .from('quota_attainment_alerts')
+        .select('*')
+        .eq('acknowledged', false)
+        .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
       return (data ?? []) as QuotaAlert[];
@@ -92,10 +96,14 @@ export function useQuotaAttainmentAlerts() {
 
   useEffect(() => {
     const ch = supabase
-      .channel("quota-alerts-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "quota_attainment_alerts" }, () => {
-        qc.invalidateQueries({ queryKey: ["quota-attainment-alerts"] });
-      })
+      .channel('quota-alerts-rt')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'quota_attainment_alerts' },
+        () => {
+          qc.invalidateQueries({ queryKey: ['quota-attainment-alerts'] });
+        }
+      )
       .subscribe();
     return () => {
       supabase.removeChannel(ch);
@@ -108,14 +116,19 @@ export function useQuotaAttainmentAlerts() {
 export function useRunQuotaPrediction() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { period?: "month" | "quarter"; salesperson_id?: string | null } = {}) => {
-      const { data, error } = await supabase.functions.invoke("predict-quota-attainment", { body: input });
+    mutationFn: async (
+      input: { period?: 'month' | 'quarter'; salesperson_id?: string | null } = {}
+    ) => {
+      const { data, error } = await supabase.functions.invoke(
+        'predict-quota-attainment',
+        { body: input }
+      );
       if (error) throw error;
       return data as { predictions_count: number; alerts_count: number };
     },
-    onSuccess: (d) => {
-      qc.invalidateQueries({ queryKey: ["quota-attainment-predictions"] });
-      qc.invalidateQueries({ queryKey: ["quota-attainment-alerts"] });
+    onSuccess: d => {
+      qc.invalidateQueries({ queryKey: ['quota-attainment-predictions'] });
+      qc.invalidateQueries({ queryKey: ['quota-attainment-alerts'] });
       toast.success(`${d.predictions_count} predições · ${d.alerts_count} alertas`);
     },
     onError: (e: Error) => toast.error(e.message),
@@ -127,13 +140,13 @@ export function useAcknowledgeQuotaAlert() {
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from("quota_attainment_alerts")
+        .from('quota_attainment_alerts')
         .update({ acknowledged: true })
-        .eq("id", id);
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["quota-attainment-alerts"] });
+      qc.invalidateQueries({ queryKey: ['quota-attainment-alerts'] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

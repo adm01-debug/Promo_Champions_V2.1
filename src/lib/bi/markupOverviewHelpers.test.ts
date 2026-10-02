@@ -24,9 +24,9 @@ describe('aggregateMarkupOverview', () => {
         { salesperson_id: 'v1', markup_pct: 30 },
         { salesperson_id: 'v2', markup_pct: 60 },
       ],
-      names,
+      names
     );
-    expect(r.sellers.map((s) => s.name)).toEqual(['Bruno', 'Ana']);
+    expect(r.sellers.map(s => s.name)).toEqual(['Bruno', 'Ana']);
     expect(r.sellers[0]?.average).toBe(60);
     expect(r.sellers[1]?.average).toBe(40);
   });
@@ -38,7 +38,7 @@ describe('aggregateMarkupOverview', () => {
         { salesperson_id: 'v1', markup_pct: CRITICAL_MARKUP_THRESHOLD },
         { salesperson_id: 'v1', markup_pct: -5 },
       ],
-      names,
+      names
     );
     expect(r.sellers[0]?.criticalCount).toBe(2);
     expect(r.sellers[0]?.total).toBe(3);
@@ -50,14 +50,17 @@ describe('aggregateMarkupOverview', () => {
         { salesperson_id: 'v1', markup_pct: null },
         { salesperson_id: 'v1', markup_pct: 40 },
       ],
-      names,
+      names
     );
     expect(r.sellers[0]?.total).toBe(2);
     expect(r.sellers[0]?.average).toBe(40);
   });
 
   it('vendedor apenas com vendas sem custo tem média nula', () => {
-    const r = aggregateMarkupOverview([{ salesperson_id: 'v1', markup_pct: null }], names);
+    const r = aggregateMarkupOverview(
+      [{ salesperson_id: 'v1', markup_pct: null }],
+      names
+    );
     expect(r.sellers[0]?.average).toBeNull();
     expect(r.sellers[0]?.criticalCount).toBe(0);
   });
@@ -68,7 +71,7 @@ describe('aggregateMarkupOverview', () => {
         { salesperson_id: null, markup_pct: 90 },
         { salesperson_id: 'v1', markup_pct: 10 },
       ],
-      names,
+      names
     );
     expect(r.sellers).toHaveLength(1);
     expect(r.summary.total).toBe(2);
@@ -85,9 +88,9 @@ describe('aggregateMarkupOverview', () => {
         { salesperson_id: 'v2', markup_pct: 30 },
         { salesperson_id: 'v1', markup_pct: 30 },
       ],
-      names,
+      names
     );
-    expect(r.sellers.map((s) => s.name)).toEqual(['Ana', 'Bruno']);
+    expect(r.sellers.map(s => s.name)).toEqual(['Ana', 'Bruno']);
   });
 });
 

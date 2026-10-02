@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { isWonSaleStatus, isLostSaleStatus } from '@/constants';
 
 export interface ScriptVariantStats {
   variant: string;
@@ -70,8 +71,8 @@ export function useScriptABTest() {
           losses: 0,
           winRate: 0,
         };
-        if (r.status === 'won') cur.wins++;
-        else if (r.status === 'lost') cur.losses++;
+        if (isWonSaleStatus(r.status)) cur.wins++;
+        else if (isLostSaleStatus(r.status)) cur.losses++;
         cur.total = cur.wins + cur.losses;
         cur.winRate = cur.total ? (cur.wins / cur.total) * 100 : 0;
         map.set(v, cur);

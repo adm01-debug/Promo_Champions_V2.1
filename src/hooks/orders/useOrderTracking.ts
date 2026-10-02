@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { OrderStatus } from "@/components/orders/orderHelpers";
-import type { StageState, TrackingStageKey } from "@/lib/orderTracking/stages";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { OrderStatus } from '@/components/orders/orderHelpers';
+import type { StageState, TrackingStageKey } from '@/lib/orderTracking/stages';
 
 /**
  * Contrato legado do componente de timeline granular. A listagem atual não o
@@ -38,26 +38,26 @@ type RawTrackingOrder = {
 };
 
 const ORDER_STATUSES: ReadonlySet<OrderStatus> = new Set([
-  "pending",
-  "confirmed",
-  "preparing",
-  "shipped",
-  "delivered",
-  "cancelled",
+  'pending',
+  'confirmed',
+  'preparing',
+  'shipped',
+  'delivered',
+  'cancelled',
 ]);
 
 const ORDER_TRACKING_SELECT =
-  "id, order_number, status, total, created_at, updated_at, cancellation_reason, client:clients(name)";
+  'id, order_number, status, total, created_at, updated_at, cancellation_reason, client:clients(name)';
 
 function toOrderStatus(status: string): OrderStatus {
   if (!ORDER_STATUSES.has(status as OrderStatus)) {
-    throw new Error("Foi encontrado um pedido com status não suportado.");
+    throw new Error('Foi encontrado um pedido com status não suportado.');
   }
 
   return status as OrderStatus;
 }
 
-function clientName(client: RawTrackingOrder["client"]): string | null {
+function clientName(client: RawTrackingOrder['client']): string | null {
   if (Array.isArray(client)) return client[0]?.name ?? null;
   return client?.name ?? null;
 }
@@ -81,13 +81,13 @@ function projectOrder(row: RawTrackingOrder): TrackingOrder {
  */
 export function useOrderTracking() {
   return useQuery({
-    queryKey: ["order-tracking-list"],
+    queryKey: ['order-tracking-list'],
     staleTime: 60_000,
     queryFn: async (): Promise<TrackingOrder[]> => {
       const { data, error } = await supabase
-        .from("orders")
+        .from('orders')
         .select(ORDER_TRACKING_SELECT)
-        .order("created_at", { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(100);
 
       if (error) throw error;
@@ -103,15 +103,15 @@ export function useOrderTracking() {
  */
 export function useOrderTrackingDetail(orderId: string | undefined) {
   return useQuery({
-    queryKey: ["order-tracking-detail", orderId],
+    queryKey: ['order-tracking-detail', orderId],
     enabled: Boolean(orderId),
     queryFn: async (): Promise<TrackingOrder | null> => {
       if (!orderId) return null;
 
       const { data, error } = await supabase
-        .from("orders")
+        .from('orders')
         .select(ORDER_TRACKING_SELECT)
-        .eq("id", orderId)
+        .eq('id', orderId)
         .maybeSingle();
 
       if (error) throw error;

@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { startOfDay, endOfDay } from "date-fns";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { startOfDay, endOfDay } from 'date-fns';
 
 export interface ActivityGoal {
   id: string;
@@ -47,11 +47,9 @@ export interface ActivityGoalProgress {
 
 export function useActivityGoals() {
   return useQuery({
-    queryKey: ["activity-goals"],
+    queryKey: ['activity-goals'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("activity_goals")
-        .select("*");
+      const { data, error } = await supabase.from('activity_goals').select('*');
 
       if (error) throw error;
       return data as ActivityGoal[];
@@ -61,7 +59,7 @@ export function useActivityGoals() {
 
 export function useActivityGoalProgress() {
   return useQuery({
-    queryKey: ["activity-goal-progress"],
+    queryKey: ['activity-goal-progress'],
     queryFn: async () => {
       const today = new Date();
       const dayStart = startOfDay(today).toISOString();
@@ -69,25 +67,25 @@ export function useActivityGoalProgress() {
 
       // Fetch salespeople
       const { data: salespeople, error: spError } = await supabase
-        .from("salespeople")
-        .select("id, name, avatar_url, role")
-        .eq("is_active", true);
+        .from('salespeople')
+        .select('id, name, avatar_url, role')
+        .eq('is_active', true);
 
       if (spError) throw spError;
 
       // Fetch goals
       const { data: goals, error: goalsError } = await supabase
-        .from("activity_goals")
-        .select("*");
+        .from('activity_goals')
+        .select('*');
 
       if (goalsError) throw goalsError;
 
       // Fetch today's activities
       const { data: activities, error: actError } = await supabase
-        .from("activities")
-        .select("salesperson_id, activity_type")
-        .gte("created_at", dayStart)
-        .lte("created_at", dayEnd);
+        .from('activities')
+        .select('salesperson_id, activity_type')
+        .gte('created_at', dayStart)
+        .lte('created_at', dayEnd);
 
       if (actError) throw actError;
 
@@ -97,10 +95,18 @@ export function useActivityGoalProgress() {
         const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
 
         const currentCalls = spActivities.filter(a => a.activity_type === 'call').length;
-        const currentEmails = spActivities.filter(a => a.activity_type === 'email').length;
-        const currentMeetings = spActivities.filter(a => a.activity_type === 'meeting').length;
-        const currentLinkedin = spActivities.filter(a => a.activity_type === 'linkedin').length;
-        const currentWhatsapp = spActivities.filter(a => a.activity_type === 'whatsapp').length;
+        const currentEmails = spActivities.filter(
+          a => a.activity_type === 'email'
+        ).length;
+        const currentMeetings = spActivities.filter(
+          a => a.activity_type === 'meeting'
+        ).length;
+        const currentLinkedin = spActivities.filter(
+          a => a.activity_type === 'linkedin'
+        ).length;
+        const currentWhatsapp = spActivities.filter(
+          a => a.activity_type === 'whatsapp'
+        ).length;
 
         const goalCalls = spGoals?.calls_goal || 0;
         const goalEmails = spGoals?.emails_goal || 0;
@@ -108,7 +114,7 @@ export function useActivityGoalProgress() {
         const goalLinkedin = spGoals?.linkedin_goal || 0;
         const goalWhatsapp = spGoals?.whatsapp_goal || 0;
 
-        const calcProgress = (current: number, goal: number) => 
+        const calcProgress = (current: number, goal: number) =>
           goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
 
         const progressCalls = calcProgress(currentCalls, goalCalls);
@@ -117,10 +123,22 @@ export function useActivityGoalProgress() {
         const progressLinkedin = calcProgress(currentLinkedin, goalLinkedin);
         const progressWhatsapp = calcProgress(currentWhatsapp, goalWhatsapp);
 
-        const totalGoals = [goalCalls, goalEmails, goalMeetings, goalLinkedin, goalWhatsapp].filter(g => g > 0).length;
-        const overallProgress = totalGoals > 0
-          ? (progressCalls + progressEmails + progressMeetings + progressLinkedin + progressWhatsapp) / totalGoals
-          : 0;
+        const totalGoals = [
+          goalCalls,
+          goalEmails,
+          goalMeetings,
+          goalLinkedin,
+          goalWhatsapp,
+        ].filter(g => g > 0).length;
+        const overallProgress =
+          totalGoals > 0
+            ? (progressCalls +
+                progressEmails +
+                progressMeetings +
+                progressLinkedin +
+                progressWhatsapp) /
+              totalGoals
+            : 0;
 
         return {
           salesperson_id: sp.id,
@@ -166,7 +184,7 @@ export function useUpsertActivityGoal() {
   return useMutation({
     mutationFn: async (input: Omit<ActivityGoal, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
-        .from("activity_goals")
+        .from('activity_goals')
         .upsert(input, { onConflict: 'salesperson_id' })
         .select()
         .single();
@@ -175,12 +193,12 @@ export function useUpsertActivityGoal() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["activity-goals"] });
-      queryClient.invalidateQueries({ queryKey: ["activity-goal-progress"] });
-      toast.success("Metas de atividades atualizadas!");
+      queryClient.invalidateQueries({ queryKey: ['activity-goals'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-goal-progress'] });
+      toast.success('Metas de atividades atualizadas!');
     },
-    onError: (_error) => {
-      toast.error("Erro ao salvar metas");
+    onError: _error => {
+      toast.error('Erro ao salvar metas');
     },
   });
 }

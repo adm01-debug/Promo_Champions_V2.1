@@ -19,7 +19,7 @@ export const WinLossAnalysis: FC = () => {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {[1, 2, 3, 4].map((i) => (
+        {[1, 2, 3, 4].map(i => (
           <Card key={i} className="glass border-border/40">
             <CardHeader>
               <Skeleton className="h-5 w-32" />
@@ -41,7 +41,9 @@ export const WinLossAnalysis: FC = () => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-success" />
-            <h3 className="font-display font-semibold gradient-text">Análise de Ganhos e Perdas</h3>
+            <h3 className="font-display font-semibold gradient-text">
+              Análise de Ganhos e Perdas
+            </h3>
           </div>
           <Button
             variant="ghost"
@@ -55,7 +57,11 @@ export const WinLossAnalysis: FC = () => {
         </div>
       )}
 
-      <WinLossKpiCards totalWins={data.totalWins} totalLosses={data.totalLosses} winRate={data.winRate} />
+      <WinLossKpiCards
+        totalWins={data.totalWins}
+        totalLosses={data.totalLosses}
+        winRate={data.winRate}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <WinLossMonthlyTrend data={data.monthlyTrend} />

@@ -38,3 +38,29 @@ jobs:
         uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4
         with:
           category: '/language:javascript-typescript'
+
+  # Roda em schedule (segunda 04:23 UTC) e falhava em silêncio (auditoria
+  # 2026-10). Notifica no Slack quando SLACK_CI_WEBHOOK_URL existir.
+  notify-failure:
+    name: Notify on failure
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    needs: [analyze]
+    if: failure()
+    steps:
+      - name: Slack notification (opcional)
+        env:
+          SLACK_CI_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK_URL }}
+          GH_REPO: ${{ github.repository }}
+          GH_WORKFLOW: ${{ github.workflow }}
+          GH_EVENT: ${{ github.event_name }}
+          GH_SERVER: ${{ github.server_url }}
+          GH_RUN_ID: ${{ github.run_id }}
+        run: |
+          if [ -z "$SLACK_CI_WEBHOOK_URL" ]; then
+            echo "SLACK_CI_WEBHOOK_URL não configurado — pulando notificação Slack."
+            exit 0
+          fi
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            -d "{\"text\":\"🔴 CI falhou: $GH_REPO — $GH_WORKFLOW ($GH_EVENT) — $GH_SERVER/$GH_REPO/actions/runs/$GH_RUN_ID\"}" \
+            "$SLACK_CI_WEBHOOK_URL"

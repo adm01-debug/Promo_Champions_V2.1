@@ -1,6 +1,6 @@
-import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { formatDelta, heatmapShade } from "./impactHelpers";
+import { Card } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { formatDelta, heatmapShade } from './impactHelpers';
 
 interface Props {
   data: Array<{ skill: string; avg_delta: number; sessions: number }>;
@@ -28,7 +28,9 @@ export function SkillImpactHeatmap({ data }: Props) {
             style={{ background: heatmapShade(d.avg_delta) }}
           >
             <p className="text-xs font-medium text-foreground/90 truncate">{d.skill}</p>
-            <p className="text-lg font-display font-bold mt-1">{formatDelta(d.avg_delta)}</p>
+            <p className="text-lg font-display font-bold mt-1">
+              {formatDelta(d.avg_delta)}
+            </p>
             <p className="text-[10px] text-muted-foreground">{d.sessions} sessões</p>
           </motion.div>
         ))}

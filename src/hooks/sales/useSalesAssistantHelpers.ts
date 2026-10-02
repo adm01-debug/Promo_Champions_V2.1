@@ -17,7 +17,10 @@ interface EmailTemplate {
   tone: 'formal' | 'casual' | 'urgent';
 }
 
-export function generateNextActions(deal: Record<string, unknown>, insights: SalesInsight[]): string[] {
+export function generateNextActions(
+  deal: Record<string, unknown>,
+  insights: SalesInsight[]
+): string[] {
   const actions: string[] = [];
 
   switch (deal.status) {
@@ -50,16 +53,18 @@ export function generateNextActions(deal: Record<string, unknown>, insights: Sal
   return actions.slice(0, 5);
 }
 
-export function analyzeSentiment(activities: Array<Record<string, unknown>>): 'positive' | 'neutral' | 'negative' {
+export function analyzeSentiment(
+  activities: Array<Record<string, unknown>>
+): 'positive' | 'neutral' | 'negative' {
   const recentActivities = activities.slice(0, 5);
-  
-  const sentiments = recentActivities
-    .filter(a => a.outcome)
-    .map(a => a.outcome);
+
+  const sentiments = recentActivities.filter(a => a.outcome).map(a => a.outcome);
 
   if (sentiments.length === 0) return 'neutral';
 
-  const positiveCount = sentiments.filter(s => s === 'positive' || s === 'success').length;
+  const positiveCount = sentiments.filter(
+    s => s === 'positive' || s === 'success'
+  ).length;
   const negativeCount = sentiments.filter(s => s === 'negative' || s === 'failed').length;
 
   if (positiveCount > negativeCount) return 'positive';
@@ -81,14 +86,14 @@ export function createEmailTemplate(
 
 I wanted to follow up on our recent conversation about ${deal.product_name}.
 
-${context || 'I hope you\'ve had a chance to review the information I shared.'}
+${context || "I hope you've had a chance to review the information I shared."}
 
 Would you have time for a brief call this week to discuss next steps?
 
 Best regards`,
       tone: 'casual',
     },
-    'proposal': {
+    proposal: {
       subject: `Proposal for ${deal.product_name}`,
       body: `Dear ${clientName},
 
@@ -122,7 +127,7 @@ Looking forward to hearing from you.
 Best regards`,
       tone: 'casual',
     },
-    'closing': {
+    closing: {
       subject: `Ready to move forward? - ${deal.product_name}`,
       body: `Dear ${clientName},
 

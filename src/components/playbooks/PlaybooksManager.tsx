@@ -1,35 +1,35 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { usePlaybooks } from "@/hooks/usePlaybooks";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Search, Users, Star, FileText, Handshake } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { PlaybookCard } from "./PlaybookCard";
-import { PlaybookAdherenceStats } from "./PlaybookAdherenceStats";
-import { PlaybookEmptyState } from "./PlaybookEmptyState";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { usePlaybooks } from '@/hooks/usePlaybooks';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BookOpen, Search, Users, Star, FileText, Handshake } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { PlaybookCard } from './PlaybookCard';
+import { PlaybookAdherenceStats } from './PlaybookAdherenceStats';
+import { PlaybookEmptyState } from './PlaybookEmptyState';
 
 const stageConfig = {
-  lead: { label: "Lead", icon: Users, color: "bg-muted-foreground" },
-  qualified: { label: "Qualificado", icon: Star, color: "bg-status-info" },
-  proposal: { label: "Proposta", icon: FileText, color: "bg-status-purple" },
-  negotiation: { label: "Negociação", icon: Handshake, color: "bg-status-warning" },
+  lead: { label: 'Lead', icon: Users, color: 'bg-muted-foreground' },
+  qualified: { label: 'Qualificado', icon: Star, color: 'bg-status-info' },
+  proposal: { label: 'Proposta', icon: FileText, color: 'bg-status-purple' },
+  negotiation: { label: 'Negociação', icon: Handshake, color: 'bg-status-warning' },
 };
 
-const stages = ["lead", "qualified", "proposal", "negotiation"] as const;
+const stages = ['lead', 'qualified', 'proposal', 'negotiation'] as const;
 
 export const PlaybooksManager = () => {
   const { data: playbooks, isLoading } = usePlaybooks();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeStage, setActiveStage] = useState<(typeof stages)[number]>("lead");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeStage, setActiveStage] = useState<(typeof stages)[number]>('lead');
 
   if (isLoading) {
     return (
       <div className="space-y-4 animate-fade-in">
         <Skeleton className="h-10 w-48 animate-shimmer" />
         <div className="grid gap-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <Skeleton
               key={i}
               className="h-48 animate-shimmer"
@@ -41,13 +41,13 @@ export const PlaybooksManager = () => {
     );
   }
 
-  const filteredPlaybooks = (playbooks || []).filter((pb) => {
+  const filteredPlaybooks = (playbooks || []).filter(pb => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
       pb.title.toLowerCase().includes(q) ||
       pb.description?.toLowerCase().includes(q) ||
-      pb.items?.some((item) => item.content.toLowerCase().includes(q))
+      pb.items?.some(item => item.content.toLowerCase().includes(q))
     );
   });
 
@@ -71,7 +71,9 @@ export const PlaybooksManager = () => {
           </div>
           <div>
             <h2 className="text-section-title gradient-text">Playbooks de Vendas</h2>
-            <p className="text-muted-foreground text-sm">Guias e checklists para cada etapa do funil</p>
+            <p className="text-muted-foreground text-sm">
+              Guias e checklists para cada etapa do funil
+            </p>
           </div>
         </div>
 
@@ -80,7 +82,7 @@ export const PlaybooksManager = () => {
           <Input
             placeholder="Buscar playbooks ou itens..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="pl-9 border-border/40 focus:border-primary/50"
           />
         </div>
@@ -90,7 +92,11 @@ export const PlaybooksManager = () => {
       <PlaybookAdherenceStats />
 
       {/* Tabs */}
-      <Tabs value={activeStage} onValueChange={(v) => setActiveStage(v as typeof stages[number])} className="w-full">
+      <Tabs
+        value={activeStage}
+        onValueChange={v => setActiveStage(v as (typeof stages)[number])}
+        className="w-full"
+      >
         {/* Hub strip: cards por stage, funcionam como navegação principal + contador */}
         <div
           className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4"
@@ -108,43 +114,54 @@ export const PlaybooksManager = () => {
                 type="button"
                 onClick={() => setActiveStage(stage)}
                 aria-pressed={isActive}
-                aria-label={`${config.label}: ${count} playbook${count === 1 ? "" : "s"}`}
+                aria-label={`${config.label}: ${count} playbook${count === 1 ? '' : 's'}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.97 }}
                 className={cn(
-                  "text-left rounded-xl border p-4 transition-all min-h-11",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  'text-left rounded-xl border p-4 transition-all min-h-11',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                   isActive
-                    ? "border-primary/60 bg-primary/5 shadow-md shadow-primary/10"
-                    : "border-border/40 bg-card/40 hover:border-border hover:bg-card/60"
+                    ? 'border-primary/60 bg-primary/5 shadow-md shadow-primary/10'
+                    : 'border-border/40 bg-card/40 hover:border-border hover:bg-card/60'
                 )}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div
                     className={cn(
-                      "p-2 rounded-lg",
-                      isActive ? "bg-primary/20 text-primary" : "bg-muted/40 text-muted-foreground"
+                      'p-2 rounded-lg',
+                      isActive
+                        ? 'bg-primary/20 text-primary'
+                        : 'bg-muted/40 text-muted-foreground'
                     )}
                   >
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <span
                     className={cn(
-                      "text-xl font-black tabular-nums",
-                      isActive ? "text-primary" : "text-foreground"
+                      'text-xl font-black tabular-nums',
+                      isActive ? 'text-primary' : 'text-foreground'
                     )}
                   >
                     {count}
                   </span>
                 </div>
-                <p className={cn("text-sm font-semibold", isActive ? "text-primary" : "text-foreground")}>
+                <p
+                  className={cn(
+                    'text-sm font-semibold',
+                    isActive ? 'text-primary' : 'text-foreground'
+                  )}
+                >
                   {config.label}
                 </p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
-                  {count === 0 ? "Sem playbooks" : count === 1 ? "1 playbook" : `${count} playbooks`}
+                  {count === 0
+                    ? 'Sem playbooks'
+                    : count === 1
+                      ? '1 playbook'
+                      : `${count} playbooks`}
                 </p>
               </motion.button>
             );
@@ -153,14 +170,14 @@ export const PlaybooksManager = () => {
 
         {/* TabsList escondida — usada apenas para a11y (linkagem tab↔panel) */}
         <TabsList className="sr-only">
-          {stages.map((stage) => (
+          {stages.map(stage => (
             <TabsTrigger key={stage} value={stage}>
               {stageConfig[stage].label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {stages.map((stage) => {
+        {stages.map(stage => {
           const config = stageConfig[stage];
           const stagePlaybooks = groupedByStage[stage] || [];
 
@@ -170,7 +187,7 @@ export const PlaybooksManager = () => {
                 <PlaybookEmptyState
                   stageLabel={config.label}
                   isSearching={!!searchQuery.trim()}
-                  onClearSearch={() => setSearchQuery("")}
+                  onClearSearch={() => setSearchQuery('')}
                 />
               ) : (
                 stagePlaybooks.map((playbook, index) => (

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useCountUp } from '@/hooks/useCountUp';
 import { useDashboardKPIs } from '@/hooks/dashboard/useDashboardKPIs';
 
+import { formatBRL } from '@/lib/money';
 interface _KPIItem {
   label: string;
   value: number;
@@ -30,7 +31,7 @@ const KPIRow = React.memo(function KPIRow({
   const formatted = (() => {
     switch (format) {
       case 'currency':
-        return `R$ ${animated.toLocaleString('pt-BR')}`;
+        return `${formatBRL(animated)}`;
       case 'days':
         return `${animated}d`;
       case 'percent':

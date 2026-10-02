@@ -1,10 +1,22 @@
 import React, { FC, ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { LucideIcon, FileX, Users, DollarSign, Search, Inbox, Target, Zap, Bell, Calendar, ShoppingCart } from 'lucide-react';
+import {
+  LucideIcon,
+  FileX,
+  Users,
+  DollarSign,
+  Search,
+  Inbox,
+  Target,
+  Zap,
+  Bell,
+  Calendar,
+  ShoppingCart,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-type EmptyStateType = 
+type EmptyStateType =
   | 'generic'
   | 'search'
   | 'data'
@@ -37,79 +49,82 @@ interface EmptyStateProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const presets: Record<EmptyStateType, { icon: LucideIcon; title: string; description: string; color: string }> = {
+const presets: Record<
+  EmptyStateType,
+  { icon: LucideIcon; title: string; description: string; color: string }
+> = {
   generic: {
     icon: Inbox,
     title: 'Nenhum item encontrado',
     description: 'Não há dados para exibir no momento.',
-    color: 'text-muted-foreground'
+    color: 'text-muted-foreground',
   },
   search: {
     icon: Search,
     title: 'Nenhum resultado',
     description: 'Tente ajustar os filtros ou termos de busca.',
-    color: 'text-info'
+    color: 'text-info',
   },
   data: {
     icon: FileX,
     title: 'Sem dados disponíveis',
     description: 'Não há dados para exibir. Verifique seus filtros ou tente novamente.',
-    color: 'text-primary'
+    color: 'text-primary',
   },
   clients: {
     icon: Users,
     title: 'Nenhum cliente',
     description: 'Adicione seu primeiro cliente para começar a vender!',
-    color: 'text-success'
+    color: 'text-success',
   },
   sales: {
     icon: ShoppingCart,
     title: 'Nenhuma venda',
     description: 'Suas vendas aparecerão aqui. Que tal prospectar novos clientes?',
-    color: 'text-primary'
+    color: 'text-primary',
   },
   goals: {
     icon: Target,
     title: 'Sem metas definidas',
     description: 'Defina suas metas para acompanhar seu progresso.',
-    color: 'text-streak'
+    color: 'text-streak',
   },
   activities: {
     icon: Zap,
     title: 'Nenhuma atividade',
     description: 'Registre suas atividades para ganhar XP e subir no ranking!',
-    color: 'text-warning'
+    color: 'text-warning',
   },
   notifications: {
     icon: Bell,
     title: 'Tudo em dia!',
     description: 'Você não tem novas notificações.',
-    color: 'text-info'
+    color: 'text-info',
   },
   tasks: {
     icon: Calendar,
     title: 'Sem tarefas pendentes',
     description: 'Ótimo trabalho! Você está em dia com suas tarefas.',
-    color: 'text-success'
+    color: 'text-success',
   },
   deals: {
     icon: DollarSign,
     title: 'Nenhum deal encontrado',
     description: 'Comece criando seu primeiro deal e acompanhe suas oportunidades.',
-    color: 'text-primary'
+    color: 'text-primary',
   },
   inbox: {
     icon: Inbox,
     title: 'Caixa de entrada vazia',
     description: 'Parabéns! Você está em dia com todas as suas tarefas.',
-    color: 'text-success'
+    color: 'text-success',
   },
   custom: {
     icon: Inbox,
     title: '',
     description: '',
-    color: 'text-muted-foreground'
-  }
+    color: 'text-muted-foreground',
+  },
 };
 
 export const EmptyState: FC<EmptyStateProps> = ({
@@ -121,7 +136,7 @@ export const EmptyState: FC<EmptyStateProps> = ({
   secondaryAction,
   illustration,
   className,
-  size = 'md'
+  size = 'md',
 }) => {
   const preset = presets[type];
   const displayTitle = title || preset.title;
@@ -134,7 +149,7 @@ export const EmptyState: FC<EmptyStateProps> = ({
       iconContainer: 'h-16 w-16',
       title: 'text-base',
       description: 'text-xs',
-      buttonSize: 'sm' as const
+      buttonSize: 'sm' as const,
     },
     md: {
       container: 'py-12 px-6',
@@ -142,7 +157,7 @@ export const EmptyState: FC<EmptyStateProps> = ({
       iconContainer: 'h-20 w-20',
       title: 'text-lg',
       description: 'text-sm',
-      buttonSize: 'default' as const
+      buttonSize: 'default' as const,
     },
     lg: {
       container: 'py-16 px-8',
@@ -150,8 +165,8 @@ export const EmptyState: FC<EmptyStateProps> = ({
       iconContainer: 'h-24 w-24',
       title: 'text-xl',
       description: 'text-base',
-      buttonSize: 'lg' as const
-    }
+      buttonSize: 'lg' as const,
+    },
   };
 
   const s = sizeClasses[size];
@@ -159,7 +174,7 @@ export const EmptyState: FC<EmptyStateProps> = ({
   // Handle both ReactNode icon and LucideIcon
   const renderIcon = () => {
     if (illustration) return illustration;
-    
+
     if (icon) {
       // If icon is a React element (passed as <Icon />)
       if (React.isValidElement(icon)) {
@@ -169,7 +184,7 @@ export const EmptyState: FC<EmptyStateProps> = ({
       const IconComponent = icon as LucideIcon;
       return <IconComponent className={cn(s.icon, preset.color)} strokeWidth={1.5} />;
     }
-    
+
     const PresetIcon = preset.icon;
     return <PresetIcon className={cn(s.icon, preset.color)} strokeWidth={1.5} />;
   };
@@ -233,11 +248,7 @@ export const EmptyState: FC<EmptyStateProps> = ({
             </Button>
           )}
           {secondaryAction && (
-            <Button
-              onClick={secondaryAction.onClick}
-              variant="ghost"
-              size={s.buttonSize}
-            >
+            <Button onClick={secondaryAction.onClick} variant="ghost" size={s.buttonSize}>
               {secondaryAction.label}
             </Button>
           )}
@@ -262,38 +273,30 @@ export const NoClients: React.FC<{ onCreate?: () => void }> = ({ onCreate }) => 
   />
 );
 
-export const NoActivities: React.FC = () => (
-  <EmptyState type="activities" />
-);
+export const NoActivities: React.FC = () => <EmptyState type="activities" />;
 
 export const NoSearchResults: React.FC<{ onClear?: () => void }> = ({ onClear }) => (
   <EmptyState
     type="search"
-    action={onClear ? { label: 'Limpar Filtros', onClick: onClear, variant: 'outline' } : undefined}
+    action={
+      onClear
+        ? { label: 'Limpar Filtros', onClick: onClear, variant: 'outline' }
+        : undefined
+    }
   />
 );
 
-export const EmptyInbox: React.FC = () => (
-  <EmptyState type="inbox" />
-);
+export const EmptyInbox: React.FC = () => <EmptyState type="inbox" />;
 
-export const NoData: React.FC = () => (
-  <EmptyState type="data" />
-);
+export const NoData: React.FC = () => <EmptyState type="data" />;
 
 // New exports for more specific use cases
 export const EmptyClients: FC<{ onAdd: () => void }> = ({ onAdd }) => (
-  <EmptyState
-    type="clients"
-    action={{ label: 'Adicionar Cliente', onClick: onAdd }}
-  />
+  <EmptyState type="clients" action={{ label: 'Adicionar Cliente', onClick: onAdd }} />
 );
 
 export const EmptySales: FC<{ onAdd: () => void }> = ({ onAdd }) => (
-  <EmptyState
-    type="sales"
-    action={{ label: 'Nova Venda', onClick: onAdd }}
-  />
+  <EmptyState type="sales" action={{ label: 'Nova Venda', onClick: onAdd }} />
 );
 
 export const EmptySearch: FC<{ onClear: () => void }> = ({ onClear }) => (
@@ -310,10 +313,6 @@ export const EmptyActivities: FC<{ onAdd: () => void }> = ({ onAdd }) => (
   />
 );
 
-export const EmptyNotifications: FC = () => (
-  <EmptyState type="notifications" size="sm" />
-);
+export const EmptyNotifications: FC = () => <EmptyState type="notifications" size="sm" />;
 
-export const EmptyTasks: FC = () => (
-  <EmptyState type="tasks" />
-);
+export const EmptyTasks: FC = () => <EmptyState type="tasks" />;

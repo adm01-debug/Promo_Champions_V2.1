@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RoutingRulesPanel } from "./RoutingRulesPanel";
-import { CapacityDashboard } from "./CapacityDashboard";
-import { RoutingHistoryPanel } from "./RoutingHistoryPanel";
-import { RoutingPerformanceCard } from "./RoutingPerformanceCard";
+import { motion } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RoutingRulesPanel } from './RoutingRulesPanel';
+import { CapacityDashboard } from './CapacityDashboard';
+import { RoutingHistoryPanel } from './RoutingHistoryPanel';
+import { RoutingPerformanceCard } from './RoutingPerformanceCard';
 
 export function LeadRoutingHub() {
   return (

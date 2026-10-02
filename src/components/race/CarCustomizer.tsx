@@ -1,5 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -65,7 +71,11 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
         {/* Preview grande do preset selecionado */}
         <div className="rounded-lg bg-gradient-to-b from-sky-100 to-sky-50 p-6 dark:from-slate-800 dark:to-slate-900">
           <div className="flex items-center justify-center">
-            <svg viewBox="-50 -28 100 56" className="h-32 w-56" aria-label={`Preview ${preset.name}`}>
+            <svg
+              viewBox="-50 -28 100 56"
+              className="h-32 w-56"
+              aria-label={`Preview ${preset.name}`}
+            >
               <RaceCar
                 primaryColor={preset.primary}
                 secondaryColor={preset.secondary}
@@ -94,7 +104,7 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
             id="car-nick"
             maxLength={20}
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={e => setNickname(e.target.value)}
             placeholder="Ex: Relâmpago"
           />
         </div>
@@ -103,8 +113,12 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
         <div>
           <Label>Modelo & Pintura</Label>
           <ScrollArea className="mt-1 h-72 rounded-md border p-2">
-            <div role="radiogroup" aria-label="Modelo e pintura do carro" className="grid grid-cols-4 gap-2">
-              {RACE_CAR_PRESETS.map((p) => (
+            <div
+              role="radiogroup"
+              aria-label="Modelo e pintura do carro"
+              className="grid grid-cols-4 gap-2"
+            >
+              {RACE_CAR_PRESETS.map(p => (
                 <CarPresetCard
                   key={p.id}
                   preset={p}

@@ -23,7 +23,7 @@ export interface EmbeddedReportPayload {
 export function generateEmbedToken(): string {
   const arr = new Uint8Array(24);
   crypto.getRandomValues(arr);
-  return Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export function buildEmbedUrl(token: string): string {
@@ -35,8 +35,12 @@ export function buildIframeSnippet(token: string, height = 600): string {
   return `<iframe src="${url}" width="100%" height="${height}" frameborder="0" loading="lazy" title="Relatório embutido"></iframe>`;
 }
 
-export function tokenStatus(t: ReportEmbedToken): { label: string; tone: "success" | "warning" | "destructive" | "muted" } {
-  if (t.revoked) return { label: "Revogado", tone: "destructive" };
-  if (t.expires_at && new Date(t.expires_at).getTime() < Date.now()) return { label: "Expirado", tone: "warning" };
-  return { label: "Ativo", tone: "success" };
+export function tokenStatus(t: ReportEmbedToken): {
+  label: string;
+  tone: 'success' | 'warning' | 'destructive' | 'muted';
+} {
+  if (t.revoked) return { label: 'Revogado', tone: 'destructive' };
+  if (t.expires_at && new Date(t.expires_at).getTime() < Date.now())
+    return { label: 'Expirado', tone: 'warning' };
+  return { label: 'Ativo', tone: 'success' };
 }

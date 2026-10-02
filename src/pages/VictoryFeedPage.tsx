@@ -15,6 +15,7 @@ import { Trophy, MessageCircle, Send, PartyPopper, Star, ArrowRight } from 'luci
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 const REACTION_EMOJIS = ['🔥', '👏', '🎉', '💪', '❤️', '🏆'];
 
 const EVENT_ICONS: Record<string, { icon: React.ElementType; color: string }> = {
@@ -154,14 +155,11 @@ const VictoryFeedPage = () => {
                               className="text-[11px] font-bold bg-status-success/10 text-status-success border-status-success/30 px-3 py-1"
                               variant="outline"
                             >
-                              💰{' '}
-                              {new Intl.NumberFormat('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL',
-                              }).format(item.value ?? 0)}
+                              💰 {formatBRL(item.value ?? 0, { decimals: 2 })}
                             </Badge>
                           )}
-                          {!!(item.metadata as Record<string, unknown> | null)?.sale_id && (
+                          {!!(item.metadata as Record<string, unknown> | null)
+                            ?.sale_id && (
                             <Button
                               variant="link"
                               size="sm"
@@ -173,7 +171,8 @@ const VictoryFeedPage = () => {
                               Ver Detalhes <ArrowRight className="h-3 w-3" />
                             </Button>
                           )}
-                          {!!(item.metadata as Record<string, unknown> | null)?.battle_id && (
+                          {!!(item.metadata as Record<string, unknown> | null)
+                            ?.battle_id && (
                             <Button
                               variant="link"
                               size="sm"
@@ -217,7 +216,8 @@ const VictoryFeedPage = () => {
                           className="h-8 px-2.5 ml-auto text-xs gap-1.5 text-muted-foreground hover:text-primary transition-colors"
                           onClick={() => {
                             const next = new Set(expandedComments);
-                            if (isExpanded) next.delete(item.id); else next.add(item.id);
+                            if (isExpanded) next.delete(item.id);
+                            else next.add(item.id);
                             setExpandedComments(next);
                           }}
                         >

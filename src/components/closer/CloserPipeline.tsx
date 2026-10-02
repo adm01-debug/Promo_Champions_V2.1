@@ -5,6 +5,7 @@ import { DollarSign, Zap, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 export function CloserPipeline() {
   const { data: pipeline, isLoading } = useCloserPipeline();
 
@@ -76,7 +77,7 @@ export function CloserPipeline() {
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <p className="text-[10px] font-mono font-black text-foreground">
-                      R$ {stage.value.toLocaleString('pt-BR')}
+                      {formatBRL(stage.value)}
                     </p>
                     <p className="text-[8px] font-mono font-bold text-muted-foreground uppercase tracking-widest">
                       {stage.count} DEALS
@@ -122,7 +123,7 @@ export function CloserPipeline() {
                   Active Exposure
                 </p>
                 <p className="text-lg font-mono font-black italic tracking-tighter text-foreground">
-                  R$ {totalValue.toLocaleString('pt-BR')}
+                  {formatBRL(totalValue)}
                 </p>
               </div>
             </div>

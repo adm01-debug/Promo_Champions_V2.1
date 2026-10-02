@@ -22,20 +22,21 @@ export function StartLights({ trigger, onGo }: StartLightsProps) {
     setLitCount(0);
     const timers: number[] = [];
     // Acende 1 luz por segundo
-    [1, 2, 3, 4, 5].forEach((n) => {
+    [1, 2, 3, 4, 5].forEach(n => {
       timers.push(window.setTimeout(() => setLitCount(n), n * 700));
     });
     // Apaga + GO
     timers.push(
-      window.setTimeout(() => {
-        setPhase('go');
-        onGo?.();
-      }, 5 * 700 + 900),
+      window.setTimeout(
+        () => {
+          setPhase('go');
+          onGo?.();
+        },
+        5 * 700 + 900
+      )
     );
-    timers.push(
-      window.setTimeout(() => setPhase('done'), 5 * 700 + 2400),
-    );
-    return () => timers.forEach((t) => window.clearTimeout(t));
+    timers.push(window.setTimeout(() => setPhase('done'), 5 * 700 + 2400));
+    return () => timers.forEach(t => window.clearTimeout(t));
   }, [trigger, onGo]);
 
   if (phase === 'idle' || phase === 'done') return null;
@@ -56,7 +57,7 @@ export function StartLights({ trigger, onGo }: StartLightsProps) {
             className="flex items-center gap-2 rounded-2xl border-2 border-border/70 px-4 py-3 shadow-2xl backdrop-blur-md"
             style={{ background: 'hsl(0 0% 6% / 0.92)' }}
           >
-            {[1, 2, 3, 4, 5].map((n) => {
+            {[1, 2, 3, 4, 5].map(n => {
               const isLit = litCount >= n;
               return (
                 <div
@@ -93,7 +94,11 @@ export function StartLights({ trigger, onGo }: StartLightsProps) {
           >
             <span
               className="text-3xl font-black tracking-[0.3em]"
-              style={{ fontFamily: 'system-ui, sans-serif', color: 'hsl(0 0% 100%)', textShadow: '0 2px 8px hsl(0 0% 0% / 0.6)' }}
+              style={{
+                fontFamily: 'system-ui, sans-serif',
+                color: 'hsl(0 0% 100%)',
+                textShadow: '0 2px 8px hsl(0 0% 0% / 0.6)',
+              }}
             >
               GO!
             </span>

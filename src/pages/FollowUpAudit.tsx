@@ -232,128 +232,130 @@ const FollowUpAudit = () => {
               {isError ? (
                 <div className="rounded-md border p-8 text-center space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    Não foi possível carregar a auditoria. Nenhum dado demonstrativo foi exibido.
+                    Não foi possível carregar a auditoria. Nenhum dado demonstrativo foi
+                    exibido.
                   </p>
                   <Button size="sm" variant="outline" onClick={() => refetch()}>
                     Tentar novamente
                   </Button>
                 </div>
               ) : (
-              <div className="rounded-md border overflow-hidden">
-                <Table>
-                  <TableHeader className="bg-muted/50">
-                    <TableRow>
-                      <TableHead className="w-[180px]">Data/Hora</TableHead>
-                      <TableHead>Lead</TableHead>
-                      <TableHead>Ação</TableHead>
-                      <TableHead>Responsável</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Detalhes</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {logs.length === 0 ? (
+                <div className="rounded-md border overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-muted/50">
                       <TableRow>
-                        <TableCell
-                          colSpan={6}
-                          className="h-32 text-center text-muted-foreground"
-                        >
-                          Nenhum registro encontrado para os filtros aplicados.
-                        </TableCell>
+                        <TableHead className="w-[180px]">Data/Hora</TableHead>
+                        <TableHead>Lead</TableHead>
+                        <TableHead>Ação</TableHead>
+                        <TableHead>Responsável</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Detalhes</TableHead>
                       </TableRow>
-                    ) : (
-                      (logs as AuditLog[]).map((log) => {
-                        const actionKey = log.action_type || 'unknown';
-                        const action = actionIcons[actionKey] || {
-                          icon: History,
-                          color: 'text-muted-foreground',
-                          label: actionKey,
-                        };
-                        const ActionIcon = action.icon;
-
-                        return (
-                          <TableRow
-                            key={log.id ?? ''}
-                            className="hover:bg-muted/30 transition-colors"
+                    </TableHeader>
+                    <TableBody>
+                      {logs.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className="h-32 text-center text-muted-foreground"
                           >
-                            <TableCell className="text-xs font-medium">
-                              {log.created_at
-                                ? format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {
-                                    locale: ptBR,
-                                  })
-                                : '-'}
-                            </TableCell>
-                            <TableCell className="font-semibold">
-                              {log.lead_name}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <ActionIcon className={`h-4 w-4 ${action.color}`} />
-                                <span className="text-sm">{action.label}</span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                                  {log.user_name?.substring(0, 2).toUpperCase() || 'UN'}
+                            Nenhum registro encontrado para os filtros aplicados.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        (logs as AuditLog[]).map(log => {
+                          const actionKey = log.action_type || 'unknown';
+                          const action = actionIcons[actionKey] || {
+                            icon: History,
+                            color: 'text-muted-foreground',
+                            label: actionKey,
+                          };
+                          const ActionIcon = action.icon;
+
+                          return (
+                            <TableRow
+                              key={log.id ?? ''}
+                              className="hover:bg-muted/30 transition-colors"
+                            >
+                              <TableCell className="text-xs font-medium">
+                                {log.created_at
+                                  ? format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {
+                                      locale: ptBR,
+                                    })
+                                  : '-'}
+                              </TableCell>
+                              <TableCell className="font-semibold">
+                                {log.lead_name}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <ActionIcon className={`h-4 w-4 ${action.color}`} />
+                                  <span className="text-sm">{action.label}</span>
                                 </div>
-                                <span className="text-xs">
-                                  {log.user_name || 'Sistema'}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                variant={
-                                  log.status === 'sent' || log.status === 'success'
-                                    ? 'default'
-                                    : log.status === 'failed'
-                                      ? 'destructive'
-                                      : 'secondary'
-                                }
-                                className="text-[10px] uppercase px-1.5 h-5 font-black"
-                              >
-                                {log.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right text-xs">
-                              <div className="flex items-center justify-end gap-2">
-                                {log.retry_count && log.retry_count > 0 && (
-                                  <Badge variant="outline" className="text-[10px]">
-                                    {log.retry_count} retentativas
-                                  </Badge>
-                                )}
-                                {log.action_type === 'whatsapp_sent' && (
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-7 w-7"
-                                    onClick={() =>
-                                      handleRetry({
-                                        action_type: log.action_type ?? '',
-                                        details: log.details as string | { message_preview?: string } | null,
-                                        retry_count: log.retry_count ?? 0,
-                                        id: log.id ?? '',
-                                      })
-                                    }
-                                  >
-                                    <RotateCw className="h-3.5 w-3.5" />
-                                  </Button>
-                                )}
-                                <span className="text-muted-foreground italic truncate max-w-[200px] inline-block">
-                                  {typeof log.details === 'string'
-                                    ? log.details
-                                    : JSON.stringify(log.details)}
-                                </span>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                                    {log.user_name?.substring(0, 2).toUpperCase() || 'UN'}
+                                  </div>
+                                  <span className="text-xs">
+                                    {log.user_name || 'Sistema'}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    log.status === 'sent' || log.status === 'success'
+                                      ? 'default'
+                                      : log.status === 'failed'
+                                        ? 'destructive'
+                                        : 'secondary'
+                                  }
+                                  className="text-[10px] uppercase px-1.5 h-5 font-black"
+                                >
+                                  {log.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right text-xs">
+                                <div className="flex items-center justify-end gap-2">
+                                  {log.retry_count && log.retry_count > 0 && (
+                                    <Badge variant="outline" className="text-[10px]">
+                                      {log.retry_count} retentativas
+                                    </Badge>
+                                  )}
+                                  {log.action_type === 'whatsapp_sent' && (
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-7 w-7"
+                                      onClick={() =>
+                                        handleRetry({
+                                          action_type: log.action_type ?? '',
+                                          details: log.details as
+                                            string | { message_preview?: string } | null,
+                                          retry_count: log.retry_count ?? 0,
+                                          id: log.id ?? '',
+                                        })
+                                      }
+                                    >
+                                      <RotateCw className="h-3.5 w-3.5" />
+                                    </Button>
+                                  )}
+                                  <span className="text-muted-foreground italic truncate max-w-[200px] inline-block">
+                                    {typeof log.details === 'string'
+                                      ? log.details
+                                      : JSON.stringify(log.details)}
+                                  </span>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               )}
             </SkeletonTransition>
           </CardContent>

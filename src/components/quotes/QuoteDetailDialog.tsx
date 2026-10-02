@@ -1,16 +1,31 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Quote, parseQuoteItems, QUOTE_STATUSES, useConvertQuoteToSale } from "@/hooks/useQuotes";
-import { FileDown, Building2, User, Clock, Link2, Package, ShoppingCart, Loader2, CheckCircle2 } from "lucide-react";
-import { format, differenceInDays } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { cn } from "@/lib/utils";
-import { generateQuotePDF } from "@/lib/quotePdfExporter";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import {
+  Quote,
+  parseQuoteItems,
+  QUOTE_STATUSES,
+  useConvertQuoteToSale,
+} from '@/hooks/useQuotes';
+import {
+  FileDown,
+  Building2,
+  User,
+  Clock,
+  Link2,
+  Package,
+  ShoppingCart,
+  Loader2,
+  CheckCircle2,
+} from 'lucide-react';
+import { format, differenceInDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
+import { generateQuotePDF } from '@/lib/quotePdfExporter';
 
-
+import { formatBRL } from '@/lib/money';
 interface QuoteDetailDialogProps {
   quote: Quote | null;
   open: boolean;
@@ -22,22 +37,30 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
   if (!quote) return null;
 
   const items = parseQuoteItems(quote.items);
-  const statusConfig = QUOTE_STATUSES.find(s => s.value === quote.status) || QUOTE_STATUSES[0];
-  const canConvert = ['approved', 'accepted', 'won'].includes(quote.status) && !quote.sale_id;
+  const statusConfig =
+    QUOTE_STATUSES.find(s => s.value === quote.status) || QUOTE_STATUSES[0];
+  const canConvert =
+    ['approved', 'accepted', 'won'].includes(quote.status) && !quote.sale_id;
   const alreadyConverted = Boolean(quote.sale_id);
-
 
   const personalizationTotal = items.reduce(
     (sum, item) => sum + item.personalizations.reduce((ps, p) => ps + p.total_cost, 0),
     0
   );
-  const productSubtotal = items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+  const productSubtotal = items.reduce(
+    (sum, item) => sum + item.quantity * item.unit_price,
+    0
+  );
   const discountAmount = quote.discount_amount || 0;
-  const discountPercent = productSubtotal > 0 ? ((discountAmount / (productSubtotal + personalizationTotal)) * 100).toFixed(0) : "0";
+  const discountPercent =
+    productSubtotal > 0
+      ? ((discountAmount / (productSubtotal + personalizationTotal)) * 100).toFixed(0)
+      : '0';
 
-  const expirationDays = quote.valid_until && (quote.status === "sent" || quote.status === "draft")
-    ? differenceInDays(new Date(quote.valid_until), new Date())
-    : null;
+  const expirationDays =
+    quote.valid_until && (quote.status === 'sent' || quote.status === 'draft')
+      ? differenceInDays(new Date(quote.valid_until), new Date())
+      : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -47,24 +70,32 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
             <div>
               <DialogTitle className="text-section-title flex items-center gap-2">
                 {quote.quote_number ? `Orçamento ${quote.quote_number}` : quote.title}
-                <Badge className={cn("text-xs", statusConfig.color)} variant="outline">
+                <Badge className={cn('text-xs', statusConfig.color)} variant="outline">
                   {statusConfig.label}
                 </Badge>
               </DialogTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Criado em {format(new Date(quote.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                Criado em{' '}
+                {format(new Date(quote.created_at), "dd 'de' MMMM 'de' yyyy", {
+                  locale: ptBR,
+                })}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               {expirationDays !== null && (
-                <Badge variant="outline" className={cn(
-                  "gap-1",
-                  expirationDays < 0 ? "text-destructive border-destructive/30" :
-                  expirationDays <= 3 ? "text-coins border-coins/30" :
-                  "text-muted-foreground"
-                )}>
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'gap-1',
+                    expirationDays < 0
+                      ? 'text-destructive border-destructive/30'
+                      : expirationDays <= 3
+                        ? 'text-coins border-coins/30'
+                        : 'text-muted-foreground'
+                  )}
+                >
                   <Clock className="h-3 w-3" />
-                  {expirationDays < 0 ? "Expirado" : `Expira em ${expirationDays}d`}
+                  {expirationDays < 0 ? 'Expirado' : `Expira em ${expirationDays}d`}
                 </Badge>
               )}
               {quote.pdf_url ? (
@@ -75,13 +106,21 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   </a>
                 </Button>
               ) : (
-                <Button size="sm" variant="outline" className="gap-1" onClick={() => generateQuotePDF(quote, items)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1"
+                  onClick={() => generateQuotePDF(quote, items)}
+                >
                   <FileDown className="h-4 w-4" />
                   Gerar PDF
                 </Button>
               )}
               {alreadyConverted && (
-                <Badge variant="outline" className="gap-1 text-status-success border-status-success/30">
+                <Badge
+                  variant="outline"
+                  className="gap-1 text-status-success border-status-success/30"
+                >
                   <CheckCircle2 className="h-3 w-3" />
                   Convertido em venda
                 </Badge>
@@ -91,7 +130,11 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   size="sm"
                   className="gap-1"
                   disabled={convertToSale.isPending}
-                  onClick={() => convertToSale.mutate(quote.id, { onSuccess: () => onOpenChange(false) })}
+                  onClick={() =>
+                    convertToSale.mutate(quote.id, {
+                      onSuccess: () => onOpenChange(false),
+                    })
+                  }
                 >
                   {convertToSale.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -104,7 +147,6 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
             </div>
           </div>
         </DialogHeader>
-
 
         {/* Company & Contact */}
         <div className="grid grid-cols-2 gap-4 mt-2">
@@ -126,10 +168,10 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
               <User className="h-3.5 w-3.5" />
               Vendedor
             </div>
-            <p className="font-semibold">{quote.salespeople?.name || "—"}</p>
+            <p className="font-semibold">{quote.salespeople?.name || '—'}</p>
             {quote.valid_until && (
               <p className="text-xs text-muted-foreground">
-                Válido até {format(new Date(quote.valid_until), "dd/MM/yyyy")}
+                Válido até {format(new Date(quote.valid_until), 'dd/MM/yyyy')}
               </p>
             )}
           </Card>
@@ -151,10 +193,16 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b bg-muted/30">
-                      <th className="text-left p-3 text-primary font-semibold">Produto</th>
-                      <th className="text-left p-3 text-primary font-semibold">Personalização</th>
+                      <th className="text-left p-3 text-primary font-semibold">
+                        Produto
+                      </th>
+                      <th className="text-left p-3 text-primary font-semibold">
+                        Personalização
+                      </th>
                       <th className="text-right p-3 text-primary font-semibold">Qtd</th>
-                      <th className="text-right p-3 text-primary font-semibold">Unitário</th>
+                      <th className="text-right p-3 text-primary font-semibold">
+                        Unitário
+                      </th>
                       <th className="text-right p-3 text-primary font-semibold">Total</th>
                     </tr>
                   </thead>
@@ -169,7 +217,9 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                               </span>
                             )}
                             {item.color_name && (
-                              <span className="text-xs text-muted-foreground">• {item.color_name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                • {item.color_name}
+                              </span>
                             )}
                           </div>
                           <p className="mt-0.5">{item.product_name}</p>
@@ -179,10 +229,13 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                             <div className="space-y-1">
                               {item.personalizations.map((p, pi) => (
                                 <div key={pi} className="text-xs">
-                                  <span className="font-medium text-primary">✦ {p.technique_name}</span>
+                                  <span className="font-medium text-primary">
+                                    ✦ {p.technique_name}
+                                  </span>
                                   <br />
                                   <span className="text-muted-foreground">
-                                    {p.colors_count} cor{p.colors_count > 1 ? "es" : ""} · {p.positions_count} posição
+                                    {p.colors_count} cor{p.colors_count > 1 ? 'es' : ''} ·{' '}
+                                    {p.positions_count} posição
                                   </span>
                                 </div>
                               ))}
@@ -193,10 +246,10 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                         </td>
                         <td className="p-3 text-right font-medium">{item.quantity}</td>
                         <td className="p-3 text-right">
-                          {item.unit_price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {formatBRL(item.unit_price, { decimals: 2 })}
                         </td>
                         <td className="p-3 text-right font-semibold">
-                          {item.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          {formatBRL(item.subtotal, { decimals: 2 })}
                         </td>
                       </tr>
                     ))}
@@ -213,18 +266,18 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
             <>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal produtos:</span>
-                <span>{productSubtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                <span>{formatBRL(productSubtotal, { decimals: 2 })}</span>
               </div>
               {personalizationTotal > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Personalização:</span>
-                  <span>{personalizationTotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span>{formatBRL(personalizationTotal, { decimals: 2 })}</span>
                 </div>
               )}
               {discountAmount > 0 && (
                 <div className="flex justify-between text-destructive">
                   <span>Desconto ({discountPercent}%):</span>
-                  <span>-{discountAmount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span>-{formatBRL(discountAmount, { decimals: 2 })}</span>
                 </div>
               )}
               <Separator className="my-2" />
@@ -233,7 +286,7 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
           <div className="flex justify-between font-bold text-base">
             <span>Total:</span>
             <span className="text-primary">
-              {Number(quote.total_value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+              {formatBRL(Number(quote.total_value), { decimals: 2 })}
             </span>
           </div>
         </Card>

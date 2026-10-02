@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 export interface SelfBenchmarkMetric {
@@ -66,9 +66,10 @@ export function useSelfBenchmark(salespersonId?: string) {
 
         const revenue = mSales.reduce((sum, s) => sum + Number(s.amount), 0);
         const avgTicket = mSales.length > 0 ? revenue / mSales.length : 0;
-        const wins = mOutcomes.filter(o => o.outcome === 'won').length;
+        const wins = mOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
         const winRate = mOutcomes.length > 0 ? (wins / mOutcomes.length) * 100 : 0;
-        const conversion = mAllSales.length > 0 ? (mSales.length / mAllSales.length) * 100 : 0;
+        const conversion =
+          mAllSales.length > 0 ? (mSales.length / mAllSales.length) * 100 : 0;
 
         return {
           revenue,
@@ -95,7 +96,8 @@ export function useSelfBenchmark(salespersonId?: string) {
         avgVal: number,
         format: 'currency' | 'number' | 'percent'
       ): SelfBenchmarkMetric => {
-        const change = avgVal > 0 ? Math.round(((currentVal - avgVal) / avgVal) * 100) : 0;
+        const change =
+          avgVal > 0 ? Math.round(((currentVal - avgVal) / avgVal) * 100) : 0;
         return {
           label,
           current: Math.round(currentVal),
@@ -111,7 +113,12 @@ export function useSelfBenchmark(salespersonId?: string) {
         buildMetric('Deals Fechados', current.deals, avg('deals'), 'number'),
         buildMetric('Ticket Médio', current.avgTicket, avg('avgTicket'), 'currency'),
         buildMetric('Atividades', current.activities, avg('activities'), 'number'),
-        buildMetric('Taxa de Conversão', current.conversion, avg('conversion'), 'percent'),
+        buildMetric(
+          'Taxa de Conversão',
+          current.conversion,
+          avg('conversion'),
+          'percent'
+        ),
         buildMetric('Win Rate', current.winRate, avg('winRate'), 'percent'),
       ];
     },

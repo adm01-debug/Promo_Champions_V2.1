@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import { usePermissions } from "@/hooks/usePermissions";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ReactNode } from 'react';
+import { usePermissions } from '@/hooks/usePermissions';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export interface PermissionCheck {
   resource: string;

@@ -1,34 +1,57 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
-  Brain, TrendingUp, AlertTriangle, Target, Activity, Sparkles,
-  ChevronRight, Zap, Shield, RefreshCw,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { usePredictiveIntelligence } from "@/hooks/usePredictiveIntelligence";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LeadScoreExplainCard } from "@/components/lead-scoring/LeadScoreExplainCard";
-import { cn } from "@/lib/utils";
-import { PredictiveScenarioPlanner } from "./PredictiveScenarioPlanner";
+  Brain,
+  TrendingUp,
+  AlertTriangle,
+  Target,
+  Activity,
+  Sparkles,
+  ChevronRight,
+  Zap,
+  Shield,
+  RefreshCw,
+} from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { usePredictiveIntelligence } from '@/hooks/usePredictiveIntelligence';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { LeadScoreExplainCard } from '@/components/lead-scoring/LeadScoreExplainCard';
+import { cn } from '@/lib/utils';
+import { PredictiveScenarioPlanner } from './PredictiveScenarioPlanner';
 
-const formatBRL = (v: number) =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
-
+import { formatBRL } from '@/lib/money';
 export function PredictiveIntelligenceDashboard() {
   const [horizon, setHorizon] = useState(90);
-  const { data, isLoading, isFetching, refetch } = usePredictiveIntelligence({ horizonDays: horizon });
+  const { data, isLoading, isFetching, refetch } = usePredictiveIntelligence({
+    horizonDays: horizon,
+  });
 
   return (
     <div className="space-y-6 p-6">
       <Helmet>
         <title>Inteligência Preditiva | PROMO CHAMPIONS</title>
-        <meta name="description" content="Centro unificado de previsões: forecast, churn, win-propensity e insights de IA." />
+        <meta
+          name="description"
+          content="Centro unificado de previsões: forecast, churn, win-propensity e insights de IA."
+        />
       </Helmet>
 
       {/* HEADER */}
@@ -39,11 +62,12 @@ export function PredictiveIntelligenceDashboard() {
             Inteligência Preditiva
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Forecast ponderado, risco de churn, propensão de fechamento e recomendações de IA — em um único hub.
+            Forecast ponderado, risco de churn, propensão de fechamento e recomendações de
+            IA — em um único hub.
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Select value={String(horizon)} onValueChange={(v) => setHorizon(Number(v))}>
+          <Select value={String(horizon)} onValueChange={v => setHorizon(Number(v))}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -54,8 +78,14 @@ export function PredictiveIntelligenceDashboard() {
               <SelectItem value="180">180 dias</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon" aria-label="Atualizar dados" onClick={() => refetch()} disabled={isFetching}>
-            <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Atualizar dados"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            <RefreshCw className={cn('h-4 w-4', isFetching && 'animate-spin')} />
           </Button>
         </div>
       </div>
@@ -117,7 +147,13 @@ export function PredictiveIntelligenceDashboard() {
           label="Confiança"
           value={isLoading ? null : `${data?.forecast.confidence ?? 0}%`}
           sub={`Win-rate 30d: ${data?.trends.win_rate_30d ?? 0}%`}
-          tone={(data?.forecast.confidence ?? 0) >= 60 ? "success" : (data?.forecast.confidence ?? 0) >= 40 ? "warning" : "destructive"}
+          tone={
+            (data?.forecast.confidence ?? 0) >= 60
+              ? 'success'
+              : (data?.forecast.confidence ?? 0) >= 40
+                ? 'warning'
+                : 'destructive'
+          }
         />
         <KpiCard
           icon={<AlertTriangle className="h-4 w-4" />}
@@ -129,9 +165,13 @@ export function PredictiveIntelligenceDashboard() {
         <KpiCard
           icon={<Activity className="h-4 w-4" />}
           label="Velocity Δ"
-          value={isLoading ? null : `${data?.trends.velocity_change_pct ?? 0 > 0 ? "+" : ""}${data?.trends.velocity_change_pct ?? 0}%`}
+          value={
+            isLoading
+              ? null
+              : `${(data?.trends.velocity_change_pct ?? 0 > 0) ? '+' : ''}${data?.trends.velocity_change_pct ?? 0}%`
+          }
           sub={`Ciclo médio: ${data?.trends.avg_deal_cycle_days ?? 0}d`}
-          tone={(data?.trends.velocity_change_pct ?? 0) >= 0 ? "success" : "warning"}
+          tone={(data?.trends.velocity_change_pct ?? 0) >= 0 ? 'success' : 'warning'}
         />
       </div>
 
@@ -151,14 +191,33 @@ export function PredictiveIntelligenceDashboard() {
           <Card>
             <CardHeader>
               <CardTitle className="text-section-title">Cenários de Receita</CardTitle>
-              <CardDescription>Projeção ponderada por estágio, lead score e tempo no estágio.</CardDescription>
+              <CardDescription>
+                Projeção ponderada por estágio, lead score e tempo no estágio.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {isLoading ? <Skeleton className="h-32 w-full" /> : (
+              {isLoading ? (
+                <Skeleton className="h-32 w-full" />
+              ) : (
                 <>
-                  <ScenarioRow label="Pessimista" value={data?.forecast.worst_case ?? 0} max={data?.forecast.best_case ?? 1} tone="destructive" />
-                  <ScenarioRow label="Esperado (ponderado)" value={data?.forecast.weighted_revenue ?? 0} max={data?.forecast.best_case ?? 1} tone="primary" />
-                  <ScenarioRow label="Otimista" value={data?.forecast.best_case ?? 0} max={data?.forecast.best_case ?? 1} tone="success" />
+                  <ScenarioRow
+                    label="Pessimista"
+                    value={data?.forecast.worst_case ?? 0}
+                    max={data?.forecast.best_case ?? 1}
+                    tone="destructive"
+                  />
+                  <ScenarioRow
+                    label="Esperado (ponderado)"
+                    value={data?.forecast.weighted_revenue ?? 0}
+                    max={data?.forecast.best_case ?? 1}
+                    tone="primary"
+                  />
+                  <ScenarioRow
+                    label="Otimista"
+                    value={data?.forecast.best_case ?? 0}
+                    max={data?.forecast.best_case ?? 1}
+                    tone="success"
+                  />
                 </>
               )}
             </CardContent>
@@ -168,13 +227,29 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="health">
           <Card>
             <CardHeader>
-              <CardTitle className="text-section-title">Distribuição da Saúde do Pipeline</CardTitle>
-              <CardDescription>Probabilidade média: {data?.pipeline_health.avg_probability ?? 0}%</CardDescription>
+              <CardTitle className="text-section-title">
+                Distribuição da Saúde do Pipeline
+              </CardTitle>
+              <CardDescription>
+                Probabilidade média: {data?.pipeline_health.avg_probability ?? 0}%
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <HealthBucket label="Saudáveis" count={data?.pipeline_health.healthy ?? 0} tone="success" />
-              <HealthBucket label="Em Risco" count={data?.pipeline_health.at_risk ?? 0} tone="warning" />
-              <HealthBucket label="Críticos" count={data?.pipeline_health.critical ?? 0} tone="destructive" />
+              <HealthBucket
+                label="Saudáveis"
+                count={data?.pipeline_health.healthy ?? 0}
+                tone="success"
+              />
+              <HealthBucket
+                label="Em Risco"
+                count={data?.pipeline_health.at_risk ?? 0}
+                tone="warning"
+              />
+              <HealthBucket
+                label="Críticos"
+                count={data?.pipeline_health.critical ?? 0}
+                tone="destructive"
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -182,25 +257,44 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="churn">
           <Card>
             <CardHeader>
-              <CardTitle className="text-section-title">Clientes em Risco de Churn</CardTitle>
-              <CardDescription>Top 5 clientes com maior risco e maior valor</CardDescription>
+              <CardTitle className="text-section-title">
+                Clientes em Risco de Churn
+              </CardTitle>
+              <CardDescription>
+                Top 5 clientes com maior risco e maior valor
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoading ? <Skeleton className="h-40 w-full" /> : data?.churn.top_at_risk.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-8 text-center">Nenhum cliente em risco crítico no momento. ✨</p>
+              {isLoading ? (
+                <Skeleton className="h-40 w-full" />
+              ) : data?.churn.top_at_risk.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">
+                  Nenhum cliente em risco crítico no momento. ✨
+                </p>
               ) : (
                 <div className="space-y-2">
-                  {data?.churn.top_at_risk.map((c) => (
-                    <div key={c.id} className="flex items-start justify-between gap-3 p-3 rounded-lg border bg-card">
+                  {data?.churn.top_at_risk.map(c => (
+                    <div
+                      key={c.id}
+                      className="flex items-start justify-between gap-3 p-3 rounded-lg border bg-card"
+                    >
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{c.name}</p>
                         <div className="flex flex-wrap gap-1 mt-1.5">
                           {c.reasons.map((r, i) => (
-                            <Badge key={i} variant="outline" className="text-[10px] py-0 px-1.5 h-4">{r}</Badge>
+                            <Badge
+                              key={i}
+                              variant="outline"
+                              className="text-[10px] py-0 px-1.5 h-4"
+                            >
+                              {r}
+                            </Badge>
                           ))}
                         </div>
                       </div>
-                      <Badge variant="destructive" className="flex-shrink-0">{c.risk}%</Badge>
+                      <Badge variant="destructive" className="flex-shrink-0">
+                        {c.risk}%
+                      </Badge>
                     </div>
                   ))}
                 </div>
@@ -212,15 +306,23 @@ export function PredictiveIntelligenceDashboard() {
         <TabsContent value="opportunities">
           <Card>
             <CardHeader>
-              <CardTitle className="text-section-title">Top Oportunidades de Fechamento</CardTitle>
-              <CardDescription>Maior valor esperado (amount × probabilidade)</CardDescription>
+              <CardTitle className="text-section-title">
+                Top Oportunidades de Fechamento
+              </CardTitle>
+              <CardDescription>
+                Maior valor esperado (amount × probabilidade)
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoading ? <Skeleton className="h-40 w-full" /> : data?.win_propensity.top_opportunities.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-8 text-center">Nenhuma oportunidade de alta propensão no momento.</p>
+              {isLoading ? (
+                <Skeleton className="h-40 w-full" />
+              ) : data?.win_propensity.top_opportunities.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-8 text-center">
+                  Nenhuma oportunidade de alta propensão no momento.
+                </p>
               ) : (
                 <div className="space-y-2">
-                  {data?.win_propensity.top_opportunities.map((o) => (
+                  {data?.win_propensity.top_opportunities.map(o => (
                     <Popover key={o.id}>
                       <PopoverTrigger asChild>
                         <button className="w-full flex items-center justify-between gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors text-left">
@@ -229,11 +331,15 @@ export function PredictiveIntelligenceDashboard() {
                               <Brain className="h-3.5 w-3.5 text-primary shrink-0" />
                               {o.client}
                             </p>
-                            <p className="text-xs text-muted-foreground">{formatBRL(o.amount)} · clique para explicação IA</p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatBRL(o.amount)} · clique para explicação IA
+                            </p>
                           </div>
                           <div className="flex items-center gap-2">
                             <Progress value={o.probability * 100} className="w-20 h-2" />
-                            <Badge variant="default" className="flex-shrink-0">{Math.round(o.probability * 100)}%</Badge>
+                            <Badge variant="default" className="flex-shrink-0">
+                              {Math.round(o.probability * 100)}%
+                            </Badge>
                           </div>
                         </button>
                       </PopoverTrigger>
@@ -251,31 +357,42 @@ export function PredictiveIntelligenceDashboard() {
 
       {data?.generated_at && (
         <p className="text-xs text-muted-foreground text-right">
-          Atualizado em {new Date(data.generated_at).toLocaleString("pt-BR")}
+          Atualizado em {new Date(data.generated_at).toLocaleString('pt-BR')}
         </p>
       )}
     </div>
   );
 }
 
-function KpiCard({ icon, label, value, sub, tone }: {
-  icon: React.ReactNode; label: string; value: string | null; sub: string;
-  tone: "primary" | "success" | "warning" | "destructive";
+function KpiCard({
+  icon,
+  label,
+  value,
+  sub,
+  tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | null;
+  sub: string;
+  tone: 'primary' | 'success' | 'warning' | 'destructive';
 }) {
   const toneClasses = {
-    primary: "text-primary bg-primary/10",
-    success: "text-success bg-success/10",
-    warning: "text-warning bg-warning/10",
-    destructive: "text-destructive bg-destructive/10",
+    primary: 'text-primary bg-primary/10',
+    success: 'text-success bg-success/10',
+    warning: 'text-warning bg-warning/10',
+    destructive: 'text-destructive bg-destructive/10',
   };
   return (
     <Card>
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs text-muted-foreground font-medium">{label}</span>
-          <div className={cn("p-1.5 rounded-lg", toneClasses[tone])}>{icon}</div>
+          <div className={cn('p-1.5 rounded-lg', toneClasses[tone])}>{icon}</div>
         </div>
-        {value === null ? <Skeleton className="h-7 w-24" /> : (
+        {value === null ? (
+          <Skeleton className="h-7 w-24" />
+        ) : (
           <p className="text-xl font-bold">{value}</p>
         )}
         <p className="text-[11px] text-muted-foreground mt-1">{sub}</p>
@@ -284,9 +401,23 @@ function KpiCard({ icon, label, value, sub, tone }: {
   );
 }
 
-function ScenarioRow({ label, value, max, tone }: { label: string; value: number; max: number; tone: "primary" | "success" | "destructive" }) {
+function ScenarioRow({
+  label,
+  value,
+  max,
+  tone,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  tone: 'primary' | 'success' | 'destructive';
+}) {
   const pct = max > 0 ? (value / max) * 100 : 0;
-  const barTone = { primary: "bg-primary", success: "bg-success", destructive: "bg-destructive" }[tone];
+  const barTone = {
+    primary: 'bg-primary',
+    success: 'bg-success',
+    destructive: 'bg-destructive',
+  }[tone];
   return (
     <div>
       <div className="flex items-center justify-between text-sm mb-1">
@@ -294,20 +425,31 @@ function ScenarioRow({ label, value, max, tone }: { label: string; value: number
         <span className="font-mono">{formatBRL(value)}</span>
       </div>
       <div className="h-2 bg-muted rounded-full overflow-hidden">
-        <div className={cn("h-full rounded-full transition-all", barTone)} style={{ width: `${pct}%` }} />
+        <div
+          className={cn('h-full rounded-full transition-all', barTone)}
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
   );
 }
 
-function HealthBucket({ label, count, tone }: { label: string; count: number; tone: "success" | "warning" | "destructive" }) {
+function HealthBucket({
+  label,
+  count,
+  tone,
+}: {
+  label: string;
+  count: number;
+  tone: 'success' | 'warning' | 'destructive';
+}) {
   const toneClasses = {
-    success: "border-success/30 bg-success/5 text-success",
-    warning: "border-warning/30 bg-warning/5 text-warning",
-    destructive: "border-destructive/30 bg-destructive/5 text-destructive",
+    success: 'border-success/30 bg-success/5 text-success',
+    warning: 'border-warning/30 bg-warning/5 text-warning',
+    destructive: 'border-destructive/30 bg-destructive/5 text-destructive',
   };
   return (
-    <div className={cn("rounded-lg border p-4 text-center", toneClasses[tone])}>
+    <div className={cn('rounded-lg border p-4 text-center', toneClasses[tone])}>
       <p className="text-3xl font-bold">{count}</p>
       <p className="text-xs font-medium mt-1">{label}</p>
     </div>

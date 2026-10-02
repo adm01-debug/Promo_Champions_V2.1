@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   MapPin,
   Users,
@@ -9,11 +9,11 @@ import {
   Crown,
   Swords,
   ArrowRight,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   ResponsiveContainer,
   BarChart,
@@ -30,62 +30,69 @@ import {
   YAxis,
   Tooltip as RTooltip,
   CartesianGrid,
-} from "recharts";
+} from 'recharts';
 import {
   useTerritoryOptimization,
   type TerritoryHealth,
   type TerritoryStatus,
   type RecommendationPriority,
-} from "@/hooks/useTerritoryOptimization";
-import { cn } from "@/lib/utils";
+} from '@/hooks/useTerritoryOptimization';
+import { cn } from '@/lib/utils';
 
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    maximumFractionDigits: 0,
-  }).format(n);
+import { formatBRL } from '@/lib/money';
 const fmtPct = (n: number) => `${(n * 100).toFixed(0)}%`;
 
-const healthMeta: Record<TerritoryHealth, { label: string; tone: string; ring: string; desc: string }> = {
+const healthMeta: Record<
+  TerritoryHealth,
+  { label: string; tone: string; ring: string; desc: string }
+> = {
   excellent: {
-    label: "Excelente",
-    tone: "bg-success/15 text-success border-success/30",
-    ring: "ring-success/40",
-    desc: "Cobertura e balanceamento ótimos.",
+    label: 'Excelente',
+    tone: 'bg-success/15 text-success border-success/30',
+    ring: 'ring-success/40',
+    desc: 'Cobertura e balanceamento ótimos.',
   },
   healthy: {
-    label: "Saudável",
-    tone: "bg-info/15 text-info border-info/30",
-    ring: "ring-info/40",
-    desc: "Distribuição equilibrada. Continue monitorando.",
+    label: 'Saudável',
+    tone: 'bg-info/15 text-info border-info/30',
+    ring: 'ring-info/40',
+    desc: 'Distribuição equilibrada. Continue monitorando.',
   },
   warning: {
-    label: "Atenção",
-    tone: "bg-warning/15 text-warning border-warning/30",
-    ring: "ring-warning/40",
-    desc: "Há territórios sub-atendidos ou desbalanceamento.",
+    label: 'Atenção',
+    tone: 'bg-warning/15 text-warning border-warning/30',
+    ring: 'ring-warning/40',
+    desc: 'Há territórios sub-atendidos ou desbalanceamento.',
   },
   critical: {
-    label: "Crítico",
-    tone: "bg-destructive/15 text-destructive border-destructive/30",
-    ring: "ring-destructive/40",
-    desc: "Cobertura comprometida. Rebalanceamento urgente.",
+    label: 'Crítico',
+    tone: 'bg-destructive/15 text-destructive border-destructive/30',
+    ring: 'ring-destructive/40',
+    desc: 'Cobertura comprometida. Rebalanceamento urgente.',
   },
 };
 
 const statusMeta: Record<TerritoryStatus, { label: string; cls: string }> = {
-  healthy: { label: "Saudável", cls: "bg-success/10 text-success border-success/30" },
-  underserved: { label: "Sub-atendido", cls: "bg-warning/10 text-warning border-warning/30" },
-  overloaded: { label: "Sobrecarga", cls: "bg-destructive/10 text-destructive border-destructive/30" },
-  stagnant: { label: "Estagnado", cls: "bg-muted text-muted-foreground border-border" },
-  unowned: { label: "Sem dono", cls: "bg-destructive/10 text-destructive border-destructive/30" },
+  healthy: { label: 'Saudável', cls: 'bg-success/10 text-success border-success/30' },
+  underserved: {
+    label: 'Sub-atendido',
+    cls: 'bg-warning/10 text-warning border-warning/30',
+  },
+  overloaded: {
+    label: 'Sobrecarga',
+    cls: 'bg-destructive/10 text-destructive border-destructive/30',
+  },
+  stagnant: { label: 'Estagnado', cls: 'bg-muted text-muted-foreground border-border' },
+  unowned: {
+    label: 'Sem dono',
+    cls: 'bg-destructive/10 text-destructive border-destructive/30',
+  },
 };
 
 const priorityMeta: Record<RecommendationPriority, string> = {
-  high: "bg-destructive/10 text-destructive border-destructive/30",
-  medium: "bg-warning/10 text-warning border-warning/30",
-  low: "bg-info/10 text-info border-info/30",
+  high: 'bg-destructive/10 text-destructive border-destructive/30',
+  medium: 'bg-warning/10 text-warning border-warning/30',
+  low: 'bg-info/10 text-info border-info/30',
 };
 
 export function TerritoryOptimizationHub() {
@@ -94,12 +101,12 @@ export function TerritoryOptimizationHub() {
 
   const loadChart = useMemo(
     () =>
-      (data?.salesperson_loads ?? []).slice(0, 10).map((l) => ({
-        name: l.salesperson_name.split(" ")[0],
+      (data?.salesperson_loads ?? []).slice(0, 10).map(l => ({
+        name: l.salesperson_name.split(' ')[0],
         territorios: l.territories_count,
         receita: Math.round(l.total_revenue),
       })),
-    [data],
+    [data]
   );
 
   if (isLoading) {
@@ -139,7 +146,10 @@ export function TerritoryOptimizationHub() {
             Análise de cobertura, balanceamento de carteiras e recomendações de IA.
           </p>
         </div>
-        <Tabs value={String(days)} onValueChange={(v) => setDays(Number(v) as 30 | 60 | 90)}>
+        <Tabs
+          value={String(days)}
+          onValueChange={v => setDays(Number(v) as 30 | 60 | 90)}
+        >
           <TabsList>
             <TabsTrigger value="30">30 dias</TabsTrigger>
             <TabsTrigger value="60">60 dias</TabsTrigger>
@@ -153,9 +163,9 @@ export function TerritoryOptimizationHub() {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          "rounded-xl border p-5 flex items-center justify-between gap-4 ring-1",
+          'rounded-xl border p-5 flex items-center justify-between gap-4 ring-1',
           meta.tone,
-          meta.ring,
+          meta.ring
         )}
       >
         <div className="flex items-center gap-3">
@@ -172,23 +182,30 @@ export function TerritoryOptimizationHub() {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard icon={MapPin} label="Saudáveis" value={`${k.healthy_count}/${k.total_territories}`} accent="text-success" />
+        <KpiCard
+          icon={MapPin}
+          label="Saudáveis"
+          value={`${k.healthy_count}/${k.total_territories}`}
+          accent="text-success"
+        />
         <KpiCard
           icon={AlertTriangle}
           label="Sub-atendidos"
           value={String(k.underserved_count + k.unowned_count)}
-          accent={k.underserved_count + k.unowned_count > 0 ? "text-warning" : "text-foreground"}
+          accent={
+            k.underserved_count + k.unowned_count > 0 ? 'text-warning' : 'text-foreground'
+          }
         />
         <KpiCard
           icon={Users}
           label="Cobertura média"
           value={fmtPct(k.avg_coverage)}
-          accent={k.avg_coverage < 0.5 ? "text-destructive" : "text-info"}
+          accent={k.avg_coverage < 0.5 ? 'text-destructive' : 'text-info'}
         />
         <KpiCard
           icon={TrendingUp}
           label="Receita potencial perdida"
-          value={fmtCurrency(k.potential_revenue_lost)}
+          value={formatBRL(k.potential_revenue_lost)}
           accent="text-destructive"
         />
       </div>
@@ -211,7 +228,10 @@ export function TerritoryOptimizationHub() {
                 transition={{ delay: idx * 0.04 }}
                 className="flex items-start gap-3 p-4 rounded-lg border bg-card/60 hover:bg-card transition-colors"
               >
-                <Badge variant="outline" className={cn("shrink-0 capitalize", priorityMeta[r.priority])}>
+                <Badge
+                  variant="outline"
+                  className={cn('shrink-0 capitalize', priorityMeta[r.priority])}
+                >
                   {r.priority}
                 </Badge>
                 <div className="flex-1 min-w-0">
@@ -222,7 +242,7 @@ export function TerritoryOptimizationHub() {
                   </p>
                 </div>
                 <Badge variant="outline" className="shrink-0 capitalize text-xs">
-                  {r.type.replace("_", " ")}
+                  {r.type.replace('_', ' ')}
                 </Badge>
               </motion.div>
             ))}
@@ -234,23 +254,33 @@ export function TerritoryOptimizationHub() {
       {loadChart.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-section-title font-sora">Distribuição de carga por vendedor</CardTitle>
+            <CardTitle className="text-section-title font-sora">
+              Distribuição de carga por vendedor
+            </CardTitle>
           </CardHeader>
           <CardContent className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={loadChart}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <XAxis
+                  dataKey="name"
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <RTooltip
                   contentStyle={{
-                    background: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
+                    background: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
                     borderRadius: 8,
                     fontSize: 12,
                   }}
                 />
-                <Bar dataKey="territorios" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                <Bar
+                  dataKey="territorios"
+                  fill="hsl(var(--primary))"
+                  radius={[6, 6, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -260,7 +290,9 @@ export function TerritoryOptimizationHub() {
       {/* Territory table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-section-title font-sora">Territórios analisados</CardTitle>
+          <CardTitle className="text-section-title font-sora">
+            Territórios analisados
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {data.territories.length === 0 ? (
@@ -279,7 +311,7 @@ export function TerritoryOptimizationHub() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.territories.map((t) => (
+                {data.territories.map(t => (
                   <TableRow key={t.id}>
                     <TableCell className="font-medium flex items-center gap-2">
                       {t.territory_name}
@@ -297,13 +329,20 @@ export function TerritoryOptimizationHub() {
                         <span className="text-muted-foreground italic">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">{fmtPct(t.coverage_score)}</TableCell>
-                    <TableCell className="text-right">{fmtCurrency(t.recent_revenue)}</TableCell>
+                    <TableCell className="text-right">
+                      {fmtPct(t.coverage_score)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatBRL(t.recent_revenue)}
+                    </TableCell>
                     <TableCell className="text-right text-muted-foreground">
-                      {fmtCurrency(t.potential_revenue)}
+                      {formatBRL(t.potential_revenue)}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={cn("text-xs", statusMeta[t.status].cls)}>
+                      <Badge
+                        variant="outline"
+                        className={cn('text-xs', statusMeta[t.status].cls)}
+                      >
                         {statusMeta[t.status].label}
                       </Badge>
                     </TableCell>
@@ -334,10 +373,12 @@ function KpiCard({
       <Card>
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">{label}</span>
-            <Icon className={cn("h-4 w-4", accent)} />
+            <span className="text-xs text-muted-foreground uppercase tracking-wider">
+              {label}
+            </span>
+            <Icon className={cn('h-4 w-4', accent)} />
           </div>
-          <div className={cn("text-2xl font-bold font-sora", accent)}>{value}</div>
+          <div className={cn('text-2xl font-bold font-sora', accent)}>{value}</div>
         </CardContent>
       </Card>
     </motion.div>

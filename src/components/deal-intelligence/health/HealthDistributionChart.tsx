@@ -1,26 +1,33 @@
-import { FC, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import type { HealthTier } from "@/hooks/deal-intelligence/useDealHealth";
-import { tierLabel } from "../dealHealthHelpers";
-import { Activity } from "lucide-react";
+import { FC, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import type { HealthTier } from '@/hooks/deal-intelligence/useDealHealth';
+import { tierLabel } from '../dealHealthHelpers';
+import { Activity } from 'lucide-react';
 
 interface Props {
   rows: Array<{ tier: HealthTier }>;
 }
 
 const TIER_HSL: Record<HealthTier, string> = {
-  healthy: "hsl(var(--status-success))",
-  watch: "hsl(var(--info))",
-  at_risk: "hsl(var(--status-warning))",
-  critical: "hsl(var(--destructive))",
+  healthy: 'hsl(var(--status-success))',
+  watch: 'hsl(var(--info))',
+  at_risk: 'hsl(var(--status-warning))',
+  critical: 'hsl(var(--destructive))',
 };
 
 export const HealthDistributionChart: FC<Props> = ({ rows }) => {
   const data = useMemo(() => {
-    const counts: Record<HealthTier, number> = { healthy: 0, watch: 0, at_risk: 0, critical: 0 };
-    rows.forEach((r) => { counts[r.tier] = (counts[r.tier] || 0) + 1; });
-    return (Object.keys(counts) as HealthTier[]).map((t) => ({
+    const counts: Record<HealthTier, number> = {
+      healthy: 0,
+      watch: 0,
+      at_risk: 0,
+      critical: 0,
+    };
+    rows.forEach(r => {
+      counts[r.tier] = (counts[r.tier] || 0) + 1;
+    });
+    return (Object.keys(counts) as HealthTier[]).map(t => ({
       name: tierLabel(t),
       value: counts[t],
       tier: t,
@@ -54,14 +61,14 @@ export const HealthDistributionChart: FC<Props> = ({ rows }) => {
                 paddingAngle={3}
                 dataKey="value"
               >
-                {data.map((d) => (
+                {data.map(d => (
                   <Cell key={d.tier} fill={TIER_HSL[d.tier]} />
                 ))}
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
+                  background: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
                   borderRadius: 8,
                   fontSize: 12,
                 }}

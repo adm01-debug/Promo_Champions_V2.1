@@ -15,10 +15,18 @@ export async function generateCurrentMonthReport() {
   const ps = format(prevStart, 'yyyy-MM-dd');
   const pe = format(prevEnd, 'yyyy-MM-dd');
 
-  const [curSales, prevSales, curMetrics, prevMetrics, topDeals, spData, goals] = await Promise.all(
-    [
-      supabase.from('sales').select('amount, status').gte('created_at', cs).lte('created_at', ce),
-      supabase.from('sales').select('amount, status').gte('created_at', ps).lte('created_at', pe),
+  const [curSales, prevSales, curMetrics, prevMetrics, topDeals, spData, goals] =
+    await Promise.all([
+      supabase
+        .from('sales')
+        .select('amount, status')
+        .gte('created_at', cs)
+        .lte('created_at', ce),
+      supabase
+        .from('sales')
+        .select('amount, status')
+        .gte('created_at', ps)
+        .lte('created_at', pe),
       supabase.from('daily_metrics').select('*').gte('date', cs).lte('date', ce),
       supabase.from('daily_metrics').select('*').gte('date', ps).lte('date', pe),
       supabase
@@ -32,8 +40,7 @@ export async function generateCurrentMonthReport() {
         .from('sales_goals')
         .select('salesperson_id, goal_amount')
         .eq('month', format(now, 'yyyy-MM') + '-01'),
-    ]
-  );
+    ]);
 
   const curCompleted = (curSales.data || []).filter(s => isWonSaleStatus(s.status));
   const prevCompleted = (prevSales.data || []).filter(s => isWonSaleStatus(s.status));
@@ -63,9 +70,10 @@ export async function generateCurrentMonthReport() {
   };
 
   // Build team ranking
-  const goalsMap = new Map((goals.data || []).map(g => [g.salesperson_id, Number(g.goal_amount)]));
+  const goalsMap = new Map(
+    (goals.data || []).map(g => [g.salesperson_id, Number(g.goal_amount)])
+  );
 
-  const _spSalesAgg: Record<string, number> = {};
   (curSales.data || []).forEach(() => {
     // Would need salesperson_id in the query - simplified
   });

@@ -6,3 +6,9 @@ playwright-report
 package-lock.json
 bun.lock
 bun.lockb
+.prettierignore
+# gerado por "supabase gen types" — o check de drift compara com a saída crua do gerador
+src/integrations/supabase/types.ts
+# edge functions seguem o estilo do deno fmt e têm testes que fazem asserção sobre o
+# texto-fonte; reformatar por prettier quebra essas asserções
+supabase/functions

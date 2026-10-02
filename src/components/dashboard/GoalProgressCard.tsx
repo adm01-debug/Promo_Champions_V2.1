@@ -36,13 +36,13 @@ const statusConfig = {
     color: 'text-warning',
     bg: 'bg-warning/10',
   },
-  'behind': {
+  behind: {
     icon: Clock,
     label: 'Atrasado',
     color: 'text-destructive',
     bg: 'bg-destructive/10',
   },
-  'completed': {
+  completed: {
     icon: CheckCircle2,
     label: 'Concluído',
     color: 'text-success',
@@ -62,8 +62,11 @@ const GoalProgressCardBase: FC<GoalProgressCardProps> = ({
 
   return (
     <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-      <Card 
-        className={cn('p-4 cursor-pointer transition-colors hover:border-primary/50', className)}
+      <Card
+        className={cn(
+          'p-4 cursor-pointer transition-colors hover:border-primary/50',
+          className
+        )}
         onClick={onClick}
       >
         <div className="flex items-start justify-between mb-3">
@@ -87,9 +90,7 @@ const GoalProgressCardBase: FC<GoalProgressCardProps> = ({
           <Progress value={percentage} className="h-2" />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{percentage.toFixed(0)}% concluído</span>
-            {goal.deadline && (
-              <span>Prazo: {goal.deadline.toLocaleDateString()}</span>
-            )}
+            {goal.deadline && <span>Prazo: {goal.deadline.toLocaleDateString()}</span>}
           </div>
         </div>
       </Card>
@@ -131,4 +132,4 @@ export const GoalsSummary: FC<GoalsSummaryProps> = React.memo(({ goals, classNam
     </div>
   );
 });
-GoalsSummary.displayName = "GoalsSummary";
+GoalsSummary.displayName = 'GoalsSummary';

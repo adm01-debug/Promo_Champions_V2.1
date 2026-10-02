@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface SalespersonPerformance {
   id: string;
@@ -73,12 +73,17 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
           const completedSales = spSales.filter(s => isWonSaleStatus(s.status));
           const spActivities = (activities || []).filter(a => a.salesperson_id === sp.id);
           const spOutcomes = (outcomes || []).filter(o => o.salesperson_id === sp.id);
-          const wins = spOutcomes.filter(o => o.outcome === 'won').length;
+          const wins = spOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
           const totalOutcomes = spOutcomes.length;
 
-          const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
+          const totalRevenue = completedSales.reduce(
+            (sum, s) => sum + (s.amount || 0),
+            0
+          );
           const spGoal = (goals || []).find(g => g.salesperson_id === sp.id);
-          const goalProgress = spGoal?.goal_amount ? (totalRevenue / spGoal.goal_amount) * 100 : 0;
+          const goalProgress = spGoal?.goal_amount
+            ? (totalRevenue / spGoal.goal_amount) * 100
+            : 0;
 
           return {
             id: sp.id,
@@ -88,12 +93,15 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
             avatarUrl: sp.avatar_url,
             totalSales: completedSales.length,
             totalRevenue,
-            avgDealSize: completedSales.length > 0 ? totalRevenue / completedSales.length : 0,
+            avgDealSize:
+              completedSales.length > 0 ? totalRevenue / completedSales.length : 0,
             winRate: totalOutcomes > 0 ? Math.round((wins / totalOutcomes) * 100) : 0,
             activitiesCount: spActivities.length,
             totalActivities: spActivities.length,
             conversionRate:
-              spSales.length > 0 ? Math.round((completedSales.length / spSales.length) * 100) : 0,
+              spSales.length > 0
+                ? Math.round((completedSales.length / spSales.length) * 100)
+                : 0,
             rank: 0,
             goalProgress: Math.round(goalProgress),
           };
@@ -117,13 +125,17 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
             ? people.reduce((sum, p) => sum + p.totalRevenue, 0) / people.length
             : 0;
         const avgWinRate =
-          people.length > 0 ? people.reduce((sum, p) => sum + p.winRate, 0) / people.length : 0;
+          people.length > 0
+            ? people.reduce((sum, p) => sum + p.winRate, 0) / people.length
+            : 0;
         const avgActivities =
           people.length > 0
             ? people.reduce((sum, p) => sum + p.totalActivities, 0) / people.length
             : 0;
         const avgDealSize =
-          people.length > 0 ? people.reduce((sum, p) => sum + p.avgDealSize, 0) / people.length : 0;
+          people.length > 0
+            ? people.reduce((sum, p) => sum + p.avgDealSize, 0) / people.length
+            : 0;
 
         const topPerformer =
           people.length > 0

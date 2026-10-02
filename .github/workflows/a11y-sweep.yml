@@ -1,0 +1,81 @@
+name: A11y Sweep (UI PRs)
+
+# Onda Q no caminho curto: o sweep de acessibilidade rodava só no QA semanal —
+# uma regressão de a11y podia viver em main até 7 dias. Este workflow dispara
+# apenas em PRs que tocam UI (paths filter) e roda o mesmo axe-core do
+# qa-exhaustive.yml. Rotas que exigem auth são puladas internamente pelo spec
+# (requiresAuth); as públicas e o shell sempre são avaliadas.
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'tailwind.config.ts'
+      - 'playwright.a11y.config.ts'
+      - 'tests/a11y/**'
+      - '.github/workflows/a11y-sweep.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a11y-sweep-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  a11y-sweep:
+    name: A11y sweep (axe-core)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        # Mesmo motivo do job lighthouse do pr-checks: client.ts lança sem
+        # VITE_* no boot; placeholders bastam para servir o shell da /auth.
+        env:
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
+        run: npm run build
+
+      - name: Install Playwright (chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: Run axe sweep
+        run: |
+          npx vite preview --port 5173 --strictPort &
+          PREVIEW_PID=$!
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:5173 > /dev/null; then break; fi
+            sleep 1
+          done
+          set +e
+          npx playwright test -c playwright.a11y.config.ts
+          A11Y_EXIT=$?
+          set -e
+          kill $PREVIEW_PID || true
+          exit $A11Y_EXIT
+
+      - name: Upload a11y report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: a11y-report
+          path: |
+            a11y-report.json
+            a11y-report-html/
+          if-no-files-found: ignore
+          retention-days: 30

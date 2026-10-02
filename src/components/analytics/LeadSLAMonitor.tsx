@@ -51,7 +51,8 @@ export const LeadSLAMonitor: FC = () => {
       (leads || []).forEach(lead => {
         const firstActivity = firstActivityMap.get(lead.id);
         if (firstActivity) {
-          const responseTime = new Date(firstActivity).getTime() - new Date(lead.created_at).getTime();
+          const responseTime =
+            new Date(firstActivity).getTime() - new Date(lead.created_at).getTime();
           const responseMinutes = responseTime / (1000 * 60);
           totalResponseMinutes += responseMinutes;
           respondedCount++;
@@ -70,8 +71,12 @@ export const LeadSLAMonitor: FC = () => {
       return {
         totalLeads: (leads || []).length,
         respondedWithinSLA,
-        slaRate: respondedCount > 0 ? Math.round((respondedWithinSLA / respondedCount) * 100) : 100,
-        avgResponseMinutes: respondedCount > 0 ? Math.round(totalResponseMinutes / respondedCount) : 0,
+        slaRate:
+          respondedCount > 0
+            ? Math.round((respondedWithinSLA / respondedCount) * 100)
+            : 100,
+        avgResponseMinutes:
+          respondedCount > 0 ? Math.round(totalResponseMinutes / respondedCount) : 0,
         overdueleads: overdueCount,
       };
     },
@@ -81,8 +86,12 @@ export const LeadSLAMonitor: FC = () => {
   if (isLoading) {
     return (
       <Card className="glass border-border/40">
-        <CardHeader><Skeleton className="h-5 w-32" /></CardHeader>
-        <CardContent><Skeleton className="h-24 w-full" /></CardContent>
+        <CardHeader>
+          <Skeleton className="h-5 w-32" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-24 w-full" />
+        </CardContent>
       </Card>
     );
   }
@@ -128,7 +137,9 @@ export const LeadSLAMonitor: FC = () => {
             <span className="text-sm text-destructive font-medium">
               {data.overdueleads} leads sem resposta
             </span>
-            <Badge variant="destructive" className="ml-auto text-xs">Urgente</Badge>
+            <Badge variant="destructive" className="ml-auto text-xs">
+              Urgente
+            </Badge>
           </div>
         )}
 

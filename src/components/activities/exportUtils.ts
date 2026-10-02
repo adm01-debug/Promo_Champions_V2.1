@@ -20,9 +20,7 @@ export const exportActivitiesToCSV = (activities: ActivityRecord[]) => {
   const csvContent = [
     headers.join(','),
     ...rows.map(row =>
-      row
-        .map(cell => `"${sanitizeCsvCell(String(cell)).replace(/"/g, '""')}"`)
-        .join(',')
+      row.map(cell => `"${sanitizeCsvCell(String(cell)).replace(/"/g, '""')}"`).join(',')
     ),
   ].join('\n');
 

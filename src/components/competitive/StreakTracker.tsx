@@ -8,10 +8,28 @@ import { cn } from '@/lib/utils';
 import { useSalesStreaks } from '@/hooks/sales/useSalesStreaks';
 
 const STREAK_TIERS = [
-  { min: 10, label: 'Lendário', emoji: '🔥🔥🔥', multiplier: '3x XP', color: 'text-destructive' },
+  {
+    min: 10,
+    label: 'Lendário',
+    emoji: '🔥🔥🔥',
+    multiplier: '3x XP',
+    color: 'text-destructive',
+  },
   { min: 5, label: 'On Fire', emoji: '🔥🔥', multiplier: '2x XP', color: 'text-streak' },
-  { min: 2, label: 'Esquentando', emoji: '🔥', multiplier: '1.5x XP', color: 'text-warning' },
-  { min: 0, label: 'Início', emoji: '❄️', multiplier: '1x XP', color: 'text-muted-foreground' },
+  {
+    min: 2,
+    label: 'Esquentando',
+    emoji: '🔥',
+    multiplier: '1.5x XP',
+    color: 'text-warning',
+  },
+  {
+    min: 0,
+    label: 'Início',
+    emoji: '❄️',
+    multiplier: '1x XP',
+    color: 'text-muted-foreground',
+  },
 ];
 
 function getStreakTier(streak: number) {
@@ -28,7 +46,9 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-xl bg-muted/30 animate-pulse" />)}
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-16 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
       </div>
     );
   }
@@ -59,7 +79,10 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
             {STREAK_TIERS.slice(0, 3).map(tier => (
               <div key={tier.min} className="flex items-center gap-1.5 text-xs">
                 <span>{tier.emoji}</span>
-                <span className="text-muted-foreground">{tier.min}+ dias = <strong className={tier.color}>{tier.multiplier}</strong></span>
+                <span className="text-muted-foreground">
+                  {tier.min}+ dias ={' '}
+                  <strong className={tier.color}>{tier.multiplier}</strong>
+                </span>
               </div>
             ))}
           </div>
@@ -75,21 +98,32 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
                   transition={{ delay: i * 0.08 }}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-xl border transition-all',
-                    s.current_streak >= 10 && 'bg-gradient-to-r from-destructive/10 to-streak/5 border-destructive/30',
-                    s.current_streak >= 5 && s.current_streak < 10 && 'bg-gradient-to-r from-streak/10 to-warning/5 border-streak/30',
-                    s.current_streak >= 2 && s.current_streak < 5 && 'bg-gradient-to-r from-warning/10 to-coins/5 border-warning/30',
+                    s.current_streak >= 10 &&
+                      'bg-gradient-to-r from-destructive/10 to-streak/5 border-destructive/30',
+                    s.current_streak >= 5 &&
+                      s.current_streak < 10 &&
+                      'bg-gradient-to-r from-streak/10 to-warning/5 border-streak/30',
+                    s.current_streak >= 2 &&
+                      s.current_streak < 5 &&
+                      'bg-gradient-to-r from-warning/10 to-coins/5 border-warning/30'
                   )}
                 >
                   <Avatar className="h-9 w-9 border-2 border-background shadow">
                     <AvatarImage src={s.avatar_url || undefined} />
                     <AvatarFallback className="text-xs font-bold bg-primary/10 text-primary">
-                      {s.salesperson_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      {s.salesperson_name
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-foreground truncate">{s.salesperson_name}</span>
+                      <span className="font-bold text-sm text-foreground truncate">
+                        {s.salesperson_name}
+                      </span>
                       <span className="text-sm">{tier.emoji}</span>
                     </div>
                     <p className="text-xs text-muted-foreground">
@@ -98,7 +132,9 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
                   </div>
 
                   <div className="text-right">
-                    <p className={cn('text-lg font-bold', tier.color)}>{s.current_streak}</p>
+                    <p className={cn('text-lg font-bold', tier.color)}>
+                      {s.current_streak}
+                    </p>
                     <p className="text-[10px] text-muted-foreground">dias seguidos</p>
                   </div>
 
@@ -111,7 +147,9 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
           ) : (
             <div className="text-center py-6">
               <Flame className="h-8 w-8 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">Ninguém com streak ativo. Hora de começar! 🚀</p>
+              <p className="text-sm text-muted-foreground">
+                Ninguém com streak ativo. Hora de começar! 🚀
+              </p>
             </div>
           )}
 
@@ -123,9 +161,14 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
               </p>
               <div className="flex flex-wrap gap-2">
                 {inactive.slice(0, 5).map(s => (
-                  <div key={s.salesperson_id} className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/30 rounded-lg px-2 py-1">
+                  <div
+                    key={s.salesperson_id}
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/30 rounded-lg px-2 py-1"
+                  >
                     <Avatar className="h-5 w-5">
-                      <AvatarFallback className="text-[8px]">{s.salesperson_name[0]}</AvatarFallback>
+                      <AvatarFallback className="text-[8px]">
+                        {s.salesperson_name[0]}
+                      </AvatarFallback>
                     </Avatar>
                     {s.salesperson_name.split(' ')[0]}
                   </div>
@@ -138,6 +181,5 @@ const StreakTrackerComponent: FC<StreakTrackerProps> = ({ className }) => {
     </div>
   );
 };
-
 
 export const StreakTracker = React.memo(StreakTrackerComponent);

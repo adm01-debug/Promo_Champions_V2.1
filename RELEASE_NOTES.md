@@ -26,9 +26,10 @@ Consolida cinco frentes de excelência: segurança, bundle, cobertura, novos mó
 
 ## 🧪 Cobertura Tier-1
 
-- Coverage enforced (`vitest.config.ts`): **lines 85 % / branches 75 % / functions 85 %**.
-- Estado atual: **99.43 % lines / 90.25 % branches / 100 % functions** em **220 testes verdes**.
-- Novos módulos no escopo Tier-1: `hooks/reports/salesReportHelpers`, `components/reporting/funnelReportHelpers`, `services/salesService`, `lib/revenueForecast/csvExport`, `lib/auth/passwordErrorMessages`.
+- Coverage enforced (`vitest.config.ts` + `coverage-baseline.json`): piso absoluto **lines/branches/statements 2,5 % / functions 2,0 %** — é um ratchet (só sobe), atualizado por `npm run coverage:baseline:update`.
+- Cobertura real medida em 2026-09-28 (vitest v5, `all: false`): **lines 3,59 % / branches 3,07 % / functions 2,65 % / statements 3,53 %**.
+- ⚠️ _Correção (2026-10-01): a versão anterior destas notas citava "85 % enforced / 99,43 % lines / 220 testes" — números fabricados. Os valores acima são os medidos no código._
+- Módulos com testes dedicados nesta release: `hooks/reports/salesReportHelpers`, `components/reporting/funnelReportHelpers`, `services/salesService`, `lib/revenueForecast/csvExport`, `lib/auth/passwordErrorMessages`.
 
 ## 🚀 Novos módulos funcionais
 
@@ -47,8 +48,8 @@ Consolida cinco frentes de excelência: segurança, bundle, cobertura, novos mó
 
 ## ✅ Validações finais
 
-- `tsgo --noEmit`: **0 erros**.
-- `vitest run --coverage`: **220/220 verdes**, 99.43 % lines.
+- `tsc --noEmit`: **0 erros**.
+- `vitest run`: suíte verde (ver cobertura real na seção acima — os números "99,43 %" citados originalmente não correspondem à medição real).
 - `code--dependency_scan`: **sem vulnerabilidades HIGH/CRITICAL**.
 - `security--get_scan_results`: **0 findings ativos**.
 - Linter Supabase: apenas warnings de `SECURITY DEFINER` executable (aceites intencionais, documentados em security memory).
@@ -64,3 +65,13 @@ Nenhum.
 - Reset de senha rejeita senhas fracas conhecidas — comunicar suporte.
 - `/revenue-forecast-v2` disponível para roles `admin`/`manager` via guard.
 - `jspdf` v4 mantém API compatível com os wrappers atuais (`pdfExporter.ts`, `quotePdfExporter.ts`, `salesReportPdf.ts`).
+
+---
+
+## 📋 Disciplina de release (vigente)
+
+- **Release = publish no Lovable.** Não existe tag/artefato próprio — o que está no ar é o último Publish feito no painel Lovable a partir da `main`.
+- **CHANGELOG.md (raiz) é a fonte semiautomática**: cada merge na `main` deve trazer uma entrada `## AAAA-MM-DD — <título>` no topo, agrupada por tema (🔒 Segurança, ⚡ Performance, 🔧 CI/Tooling, 🧪 Testes, ✨ Funcionalidade, 🐛 Fix). Mensagens de commit seguem Conventional Commits e servem de rascunho para a entrada — quem mergea consolida.
+- **RELEASE_NOTES.md**: um arquivo por release marco (este arquivo é o v2.1.0). Não reescrever releases antigas — corrigir com nota datada, como feito acima.
+- **Passos manuais obrigatórios por release** (não são CI): migrations no banco `usyxfpqlsspldubptrdl`, secrets novos, deploy de edge functions alteradas, Publish no Lovable — checklist em `docs/DEPLOYMENT.md` §6.
+- **Hotfixes**: `docs/HOTFIX.md`; plantão e contatos: `docs/runbooks/on-call.md`.

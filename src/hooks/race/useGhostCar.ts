@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
-import type { RaceSeason } from "@/hooks/race/useRaceSeason";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { RaceSeason } from '@/hooks/race/useRaceSeason';
 
 export type GhostStatus = 'ahead' | 'behind' | 'tied' | 'no-data';
 
@@ -32,7 +32,11 @@ interface FinishedSeasonRow {
  * Calcula o ritmo histórico (PR pessoal) do usuário e onde o ghost car estaria agora.
  * Usa a melhor season anterior (maior progresso final) como referência linear de ritmo.
  */
-export function useGhostCar({ mySalespersonId, currentSeason, leaderboard }: Params): GhostCarResult {
+export function useGhostCar({
+  mySalespersonId,
+  currentSeason,
+  leaderboard,
+}: Params): GhostCarResult {
   const { data: history = [] } = useQuery({
     queryKey: ['ghost-car-history', mySalespersonId],
     enabled: !!mySalespersonId,
@@ -48,38 +52,56 @@ export function useGhostCar({ mySalespersonId, currentSeason, leaderboard }: Par
         .limit(10);
       if (error || !seasons?.length) return [];
 
-      const results: FinishedSeasonRow[] = [];
-      for (const s of seasons) {
-        const { data: lb } = await supabase
-          .from('race_leaderboard_view')
-          .select('progress, salesperson_id')
-          .eq('season_id', s.id)
-          .eq('salesperson_id', mySalespersonId)
-          .maybeSingle();
-        if (lb?.progress !== undefined && lb?.progress !== null) {
-          results.push({
-            id: s.id,
-            name: s.name,
-            start_date: s.start_date,
-            end_date: s.end_date,
-            final_progress: Number(lb.progress),
-          });
-        }
-      }
-      return results;
+      // Uma única query para todas as seasons (evita N+1): o progresso do
+      // usuário é mapeado por season_id.
+      const { data: leaderboardRows, error: lbError } = await supabase
+        .from('race_leaderboard_view')
+        .select('progress, season_id, salesperson_id')
+        .in(
+          'season_id',
+          seasons.map(s => s.id)
+        )
+        .eq('salesperson_id', mySalespersonId);
+      if (lbError || !leaderboardRows?.length) return [];
+
+      const progressBySeason = new Map(
+        leaderboardRows.map(row => [row.season_id, Number(row.progress)])
+      );
+
+      return seasons
+        .filter(s => {
+          const progress = progressBySeason.get(s.id);
+          return progress !== undefined && progress !== null;
+        })
+        .map(s => ({
+          id: s.id,
+          name: s.name,
+          start_date: s.start_date,
+          end_date: s.end_date,
+          final_progress: progressBySeason.get(s.id) as number,
+        }));
     },
   });
 
   return useMemo<GhostCarResult>(() => {
-    const myEntry = leaderboard.find((e) => e.salesperson_id === mySalespersonId);
+    const myEntry = leaderboard.find(e => e.salesperson_id === mySalespersonId);
     const myProgress = Number(myEntry?.progress ?? 0);
 
     if (!mySalespersonId || !currentSeason || history.length === 0) {
-      return { status: 'no-data', ghostProgress: 0, myProgress, delta: 0, bestSeasonName: null };
+      return {
+        status: 'no-data',
+        ghostProgress: 0,
+        myProgress,
+        delta: 0,
+        bestSeasonName: null,
+      };
     }
 
     // Best PR = maior progresso final
-    const best = history.reduce((acc, cur) => (cur.final_progress > acc.final_progress ? cur : acc), history[0]);
+    const best = history.reduce(
+      (acc, cur) => (cur.final_progress > acc.final_progress ? cur : acc),
+      history[0]
+    );
 
     // Tempo decorrido na season atual (0..1)
     const start = new Date(currentSeason.start_date).getTime();

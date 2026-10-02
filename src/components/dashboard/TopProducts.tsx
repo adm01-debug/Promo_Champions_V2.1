@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 export const TopProducts = React.memo(() => {
   const { data: products, isLoading } = useQuery({
     queryKey: ['top-products-dashboard'],
@@ -99,7 +100,7 @@ export const TopProducts = React.memo(() => {
                     <p className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-tighter">
                       Val:{' '}
                       <span className="text-foreground/80 font-bold">
-                        R$ {product.revenue.toLocaleString('pt-BR')}
+                        {formatBRL(product.revenue)}
                       </span>
                     </p>
                   </div>

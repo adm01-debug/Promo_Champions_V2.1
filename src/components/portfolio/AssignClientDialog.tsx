@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,18 +7,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { useSalespeople } from "@/hooks/sales/useSalespeople";
-import { useUnassignedClients, useAssignClient } from "@/hooks/crm/useClientPortfolio";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { useSalespeople } from '@/hooks/sales/useSalespeople';
+import { useUnassignedClients, useAssignClient } from '@/hooks/crm/useClientPortfolio';
+import { Loader2 } from 'lucide-react';
 
 interface AssignClientDialogProps {
   open: boolean;
@@ -31,9 +31,9 @@ export function AssignClientDialog({
   onOpenChange,
   preSelectedSalespersonId,
 }: AssignClientDialogProps) {
-  const [selectedClient, setSelectedClient] = useState<string>("");
+  const [selectedClient, setSelectedClient] = useState<string>('');
   const [selectedSalesperson, setSelectedSalesperson] = useState<string>(
-    preSelectedSalespersonId || ""
+    preSelectedSalespersonId || ''
   );
 
   const { data: salespeople, isLoading: loadingSalespeople } = useSalespeople();
@@ -41,9 +41,7 @@ export function AssignClientDialog({
   const assignClient = useAssignClient();
 
   // Filter to only show Closers and Hybrids (they manage portfolios)
-  const closers = salespeople?.filter(
-    (sp) => sp.role === "closer" || sp.role === "hybrid"
-  );
+  const closers = salespeople?.filter(sp => sp.role === 'closer' || sp.role === 'hybrid');
 
   const handleSubmit = () => {
     if (!selectedClient || !selectedSalesperson) return;
@@ -52,13 +50,13 @@ export function AssignClientDialog({
       {
         clientId: selectedClient,
         salespersonId: selectedSalesperson,
-        source: "manual",
+        source: 'manual',
       },
       {
         onSuccess: () => {
-          setSelectedClient("");
+          setSelectedClient('');
           if (!preSelectedSalespersonId) {
-            setSelectedSalesperson("");
+            setSelectedSalesperson('');
           }
           onOpenChange(false);
         },
@@ -93,7 +91,7 @@ export function AssignClientDialog({
                     Todos os clientes já estão atribuídos
                   </div>
                 ) : (
-                  unassignedClients?.map((client) => (
+                  unassignedClients?.map(client => (
                     <SelectItem key={client.id} value={client.id}>
                       {client.name}
                       {client.company && ` - ${client.company}`}
@@ -120,7 +118,7 @@ export function AssignClientDialog({
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 ) : (
-                  closers?.map((sp) => (
+                  closers?.map(sp => (
                     <SelectItem key={sp.id} value={sp.id}>
                       {sp.name}
                     </SelectItem>
@@ -137,15 +135,9 @@ export function AssignClientDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={
-              !selectedClient ||
-              !selectedSalesperson ||
-              assignClient.isPending
-            }
+            disabled={!selectedClient || !selectedSalesperson || assignClient.isPending}
           >
-            {assignClient.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {assignClient.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Atribuir
           </Button>
         </DialogFooter>

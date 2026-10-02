@@ -77,8 +77,8 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
               <Flag className="w-5 h-5 text-primary" /> Iniciar nova temporada
             </DialogTitle>
             <DialogDescription>
-              Cada papel (Closer/SDR) tem sua própria temporada simultânea com regras de pontuação
-              dedicadas.
+              Cada papel (Closer/SDR) tem sua própria temporada simultânea com regras de
+              pontuação dedicadas.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -107,11 +107,19 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <Label>Início</Label>
-                <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={e => setStartDate(e.target.value)}
+                />
               </div>
               <div>
                 <Label>Fim</Label>
-                <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={e => setEndDate(e.target.value)}
+                />
               </div>
             </div>
             <div>
@@ -134,7 +142,11 @@ export function StartSeasonDialog({ open, onOpenChange }: Props) {
                 </SelectContent>
               </Select>
             </div>
-            <Button variant="outline" className="w-full" onClick={() => setRulesEditorOpen(true)}>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setRulesEditorOpen(true)}
+            >
               <Target className="w-4 h-4 mr-2" />
               {customRules
                 ? `Regras personalizadas (${customRules.length})`

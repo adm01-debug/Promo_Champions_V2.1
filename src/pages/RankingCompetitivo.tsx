@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -24,13 +25,7 @@ import { RankingTab } from '@/components/ranking/RankingTab';
 import { HistoryTab } from '@/components/ranking/HistoryTab';
 import { AchievementsTab } from '@/components/ranking/AchievementsTab';
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-  }).format(value);
-
+import { formatBRL } from '@/lib/money';
 const RankingCompetitivo = () => {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { data: xpData } = useAllSalespeopleXP();
@@ -38,26 +33,47 @@ const RankingCompetitivo = () => {
   const { data: monthlyHistory } = useQuery({
     queryKey: ['ranking-monthly-history'],
     queryFn: async () => {
-      const months = [];
+      const monthRanges: { date: Date; start: Date; end: Date }[] = [];
       for (let i = 5; i >= 0; i--) {
         const date = subMonths(new Date(), i);
-        const start = startOfMonth(date);
-        const end = endOfMonth(date);
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('salesperson_id, amount')
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', start.toISOString())
-          .lte('created_at', end.toISOString());
-        const totalSales = (sales || []).reduce((sum, s) => sum + Number(s.amount), 0);
-        months.push({
-          month: format(date, 'MMM', { locale: ptBR }),
-          fullMonth: format(date, 'MMMM yyyy', { locale: ptBR }),
-          totalSales,
-          dealsCount: (sales || []).length,
+        monthRanges.push({
+          date,
+          start: startOfMonth(date),
+          end: endOfMonth(date),
         });
       }
-      return months;
+
+      const firstMonth = monthRanges[0];
+      const lastMonth = monthRanges[monthRanges.length - 1];
+      if (!firstMonth || !lastMonth) return [];
+
+      // Uma única query paginada cobrindo os 6 meses (evita N+1); o
+      // agrupamento por mês é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('salesperson_id, amount, created_at')
+            .in('status', [...WON_SALE_STATUSES])
+            .gte('created_at', firstMonth.start.toISOString())
+            .lte('created_at', lastMonth.end.toISOString())
+            .range(from, to),
+        { label: 'RankingCompetitivo:sales' }
+      );
+
+      return monthRanges.map(({ date, start, end }) => {
+        const monthSales = sales.filter(s => {
+          const createdAt = new Date(s.created_at);
+          return createdAt >= start && createdAt <= end;
+        });
+        return {
+          month: format(date, 'MMM', { locale: ptBR }),
+          fullMonth: format(date, 'MMMM yyyy', { locale: ptBR }),
+          totalSales: monthSales.reduce((sum, s) => sum + Number(s.amount), 0),
+          dealsCount: monthSales.length,
+        };
+      });
     },
   });
 
@@ -112,7 +128,10 @@ const RankingCompetitivo = () => {
                   Acompanhe a competição entre vendedores em tempo real
                 </p>
               </div>
-              <Badge variant="outline" className="self-start md:self-auto text-sm px-4 py-2">
+              <Badge
+                variant="outline"
+                className="self-start md:self-auto text-sm px-4 py-2"
+              >
                 <Calendar className="h-4 w-4 mr-2" />
                 {format(new Date(), 'MMMM yyyy', { locale: ptBR })}
               </Badge>
@@ -132,7 +151,7 @@ const RankingCompetitivo = () => {
                 },
                 {
                   label: 'Total Equipe',
-                  value: formatCurrency(totalTeamSales),
+                  value: formatBRL(totalTeamSales),
                   sub: `${totalDeals} vendas`,
                   icon: TrendingUp,
                   iconColor: 'text-primary',
@@ -148,7 +167,7 @@ const RankingCompetitivo = () => {
                 },
                 {
                   label: 'Ticket Médio',
-                  value: formatCurrency(totalDeals > 0 ? totalTeamSales / totalDeals : 0),
+                  value: formatBRL(totalDeals > 0 ? totalTeamSales / totalDeals : 0),
                   sub: 'por venda',
                   icon: Target,
                   iconColor: 'text-status-success',
@@ -161,7 +180,9 @@ const RankingCompetitivo = () => {
                       <div>
                         <p className="text-sm text-muted-foreground">{stat.label}</p>
                         <p className="text-metric">{stat.value}</p>
-                        <p className={`text-sm ${stat.subColor || 'text-muted-foreground'}`}>
+                        <p
+                          className={`text-sm ${stat.subColor || 'text-muted-foreground'}`}
+                        >
                           {stat.sub}
                         </p>
                       </div>
@@ -188,7 +209,7 @@ const RankingCompetitivo = () => {
                 <RankingTab
                   ranking={(ranking || []) as never[]}
                   leader={leader as never}
-                  formatCurrency={formatCurrency}
+                  formatCurrency={formatBRL}
                 />
               </TabsContent>
 
@@ -210,7 +231,8 @@ const RankingCompetitivo = () => {
                       value: String(
                         xpData?.length
                           ? Math.round(
-                              xpData.reduce((s, x) => s + (x.current_level || 1), 0) / xpData.length
+                              xpData.reduce((s, x) => s + (x.current_level || 1), 0) /
+                                xpData.length
                             )
                           : 1
                       ),
@@ -222,10 +244,13 @@ const RankingCompetitivo = () => {
                     {
                       label: 'Maior Nível',
                       value: String(
-                        xpData?.length ? Math.max(...xpData.map(x => x.current_level || 1)) : 1
+                        xpData?.length
+                          ? Math.max(...xpData.map(x => x.current_level || 1))
+                          : 1
                       ),
                       sub: xpData?.length
-                        ? getLevelInfo(Math.max(...xpData.map(x => x.current_level || 1))).title
+                        ? getLevelInfo(Math.max(...xpData.map(x => x.current_level || 1)))
+                            .title
                         : 'Iniciante',
                       icon: Trophy,
                       color: 'text-rank-gold',
@@ -259,7 +284,9 @@ const RankingCompetitivo = () => {
                     role: string;
                   } | null;
                   const levelInfo = getLevelInfo(xpRecord.current_level || 1);
-                  const { xpInLevel, xpToNext } = calculateLevelFromXP(xpRecord.total_xp || 0);
+                  const { xpInLevel, xpToNext } = calculateLevelFromXP(
+                    xpRecord.total_xp || 0
+                  );
                   return (
                     <Card
                       key={xpRecord.id}
@@ -335,7 +362,10 @@ const RankingCompetitivo = () => {
               </TabsContent>
 
               <TabsContent value="history">
-                <HistoryTab monthlyHistory={monthlyHistory || []} formatCurrency={formatCurrency} />
+                <HistoryTab
+                  monthlyHistory={monthlyHistory || []}
+                  formatCurrency={formatBRL}
+                />
               </TabsContent>
 
               <TabsContent value="achievements">

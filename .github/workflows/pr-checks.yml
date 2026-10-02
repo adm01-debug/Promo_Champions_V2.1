@@ -9,10 +9,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**/*.md'
-      - '.github/CODEOWNERS'
   workflow_dispatch:
 
 permissions:
@@ -27,10 +23,41 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      has-code: ${{ steps.check.outputs.has_code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "has_code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.sha }}"
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD" \
+            | grep -v '^docs/' \
+            | grep -v '\.md$' \
+            | grep -v '^\.github/CODEOWNERS$' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "has_code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_code=false" >> "$GITHUB_OUTPUT"
+            echo "PR contém apenas docs/markdown — pulando jobs de código."
+          fi
+
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
 
@@ -61,8 +88,24 @@ jobs:
       - name: Run TypeScript check
         run: npm run typecheck
 
+      # Gate de formatação: depois do Prettier em massa (PR de higiene),
+      # nenhum arquivo de src/ pode regredir de formato.
+      - name: Prettier format check
+        run: npm run format:check
+
+      # Flags estritas ainda não zeradas (noUncheckedIndexedAccess, noUnused*):
+      # roda tsc com tsconfig.strict.json e reprova só erros NOVOS vs a baseline
+      # em scripts/typecheck-baseline.json (ver docs/TYPE_DEBT.md).
+      - name: Strict typecheck ratchet (baseline)
+        run: npm run typecheck:baseline
       - name: Committed secrets scan
         run: npm run security:secrets
+
+      # dependency-cruiser (ciclos, violação de camada, imports prod→test) rodava
+      # só no qa-exhaustive semanal — uma violação podia viver em main até 7
+      # dias. Roda em toda PR agora, como parte do gate obrigatório.
+      - name: Dependency Cruiser — camadas e ciclos
+        run: npm run deps:check
 
       - name: Graphify wrapper tests
         run: npm run graphify:test
@@ -74,6 +117,8 @@ jobs:
     name: Security Audit (production deps)
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
     steps:
@@ -115,8 +160,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Unit Tests (with coverage gate)
-        run: npm run test:coverage
+      # Garante que todo padrão declarado nos configs casa specs reais e que
+      # nenhum spec no disco ficou fora de todos os padrões (drift silencioso).
+      - name: Test config drift guard
+        run: npm run test:config
+
+      # --retry=2 + JSON por spec alimentam o relatório de flakies: um teste que
+      # só passa na retentativa fica registrado (retry>0) em vez de passar
+      # silenciosamente. O gate final é do flaky-report, não do exit do vitest.
+      - name: Run Unit Tests (with coverage gate + retry)
+        run: |
+          set +e
+          npx vitest run --coverage --retry=2 \
+            --reporter=default --reporter=json \
+            --outputFile.json=test-results/vitest.json
+          echo "VITEST_EXIT=$?" >> "$GITHUB_ENV"
+          set -e
+
+      # Specs em tests/flaky-quarantine.json rodam mas não reprovam (warn +
+      # prazo); flakes (retry>0) viram ::warning:: + relatório; falha real
+      # reprova aqui — inclusive crash do vitest sem JSON válido.
+      - name: Flaky report + quarantine gate
+        run: |
+          node scripts/flaky-report.mjs \
+            --input test-results/vitest.json \
+            --output test-results/flaky-report.md \
+            --vitest-exit "$VITEST_EXIT"
+          cat test-results/flaky-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload flaky report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: flaky-report
+          path: test-results/flaky-report.md
+          if-no-files-found: ignore
+          retention-days: 30
 
       # O threshold do vitest.config.ts media 16 arquivos escolhidos a dedo
       # (99,9% de <1% do código) e circulava como se fosse a cobertura do sistema.
@@ -124,10 +203,17 @@ jobs:
       - name: Coverage ratchet (nunca cai)
         run: npm run coverage:ratchet
 
+      # Escada: o ratchet global pode diluir uma queda num módulo crítico.
+      # Pisos por módulo em coverage-ladder-baseline.json reprovam isso.
+      - name: Coverage ladder (pisos por módulo crítico)
+        run: npm run coverage:ladder
+
   edge-functions-lint:
     name: Edge Functions Lint (deno)
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
 
@@ -153,6 +239,145 @@ jobs:
       - name: Deno lint (supabase/functions)
         run: deno lint
 
+      # Lint não pega erro de tipo. O check real sai pelo deno task check —
+      # o gate roda via ratchet: existem 58 erros legados em 31 arquivos
+      # (scripts/deno-typecheck-baseline.json); erro novo em arquivo limpo ou
+      # total acima da baseline reprova a PR, e a baseline só desce.
+      - name: Deno type-check (supabase/functions, ratchet)
+        run: node scripts/check-deno-types.mjs
+
+  # Suíte Deno completa das edge functions. Antes só cron-failure-alerter
+  # rodava (cron-monitoring.yml); os outros ~80 arquivos *_test.ts/*.test.ts
+  # nunca executavam em CI. Dois tiers via scripts/deno-test-suite.mjs:
+  #   unit — self-contained, reprova em qualquer falha;
+  #   live — manifesto tests/deno-live-tests.json (precisa de backend/secrets);
+  #          sem secrets pula com ::warning:: listando as suites, e falhas de
+  #          credencial inválida ('Invalid API key') avisam sem reprovar.
+  deno-tests:
+    name: Edge Functions Tests (deno)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: detect-changes
+    # Forks não recebem secrets — o tier live pularia sempre; unit segue útil.
+    if: needs.detect-changes.outputs.has-code == 'true'
+    env:
+      HUSKY: 0
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
+        with:
+          deno-version: v2.9.x
+
+      - name: Cache Deno modules
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/deno
+          key: deno-${{ runner.os }}-${{ hashFiles('deno.lock') }}
+          restore-keys: deno-${{ runner.os }}-
+
+      - name: Sync deno.lock
+        run: deno install --frozen=false
+
+      - name: Deno unit suite (self-contained)
+        run: node scripts/deno-test-suite.mjs --mode unit --verbose
+
+      - name: Deno live suite (secrets-dependent, nunca bloqueia por credencial)
+        run: node scripts/deno-test-suite.mjs --mode live --verbose
+
+  # Executor das suites SQL (supabase/tests/): o que dá para checar sem banco
+  # roda em todo PR (higiene de migrations + matriz de cobertura public);
+  # a execução real contra o banco fica atrás do secret SUPABASE_DB_URL —
+  # ausente, documenta o comando e não reprova.
+  sql-tests:
+    name: SQL Suites (static + remote)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true'
+    env:
+      HUSKY: 0
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+
+      - name: Install psql (para o tier remoto, quando SUPABASE_DB_URL existir)
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends postgresql-client
+
+      - name: SQL suites — static + remote
+        run: scripts/run-sql-tests.sh all
+
+      - name: Upload coverage matrix
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: sql-coverage-matrix
+          path: sql-coverage-matrix.md
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # Smoke de carga real com k6 (scripts/load/k6-smoke.js) — substitui a fachada
+  # anterior, que media OPTIONS num projeto Supabase antigo e engolia falhas.
+  # Não roda carga contra produção em todo PR: exige a var K6_TARGET_BASE_URL
+  # (Repository Settings > Variables) ou workflow_dispatch; sem alvo, deixa o
+  # comando documentado no summary e passa.
+  k6-smoke:
+    name: k6 Load Smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-code == 'true' || github.event_name == 'workflow_dispatch'
+    env:
+      K6_VERSION: v1.8.1
+      K6_BASE_URL: ${{ vars.K6_TARGET_BASE_URL }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install k6
+        run: |
+          curl -fsSL -o /tmp/k6.tar.gz "https://github.com/grafana/k6/releases/download/${K6_VERSION}/k6-${K6_VERSION}-linux-amd64.tar.gz"
+          curl -fsSL -o /tmp/k6-checksums.txt "https://github.com/grafana/k6/releases/download/${K6_VERSION}/k6-${K6_VERSION}-checksums.txt"
+          EXPECTED=$(awk "/k6-${K6_VERSION}-linux-amd64.tar.gz/ {print \$1}" /tmp/k6-checksums.txt)
+          ACTUAL=$(sha256sum /tmp/k6.tar.gz | awk '{print $1}')
+          if [ "$EXPECTED" != "$ACTUAL" ]; then
+            echo "::error::checksum do k6 diverge ($EXPECTED != $ACTUAL)"
+            exit 1
+          fi
+          tar -xzf /tmp/k6.tar.gz -C /tmp
+          sudo cp "/tmp/k6-${K6_VERSION}-linux-amd64/k6" /usr/local/bin/k6
+          k6 version
+
+      - name: Run k6 smoke
+        run: |
+          if [ -z "$K6_BASE_URL" ]; then
+            {
+              echo "### k6 smoke — pulado (sem alvo)"
+              echo ""
+              echo "Defina a var \`K6_TARGET_BASE_URL\` (Settings > Variables) ou rode local:"
+              echo ""
+              echo '```'
+              echo "K6_BASE_URL=https://usyxfpqlsspldubptrdl.supabase.co k6 run scripts/load/k6-smoke.js"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::K6_TARGET_BASE_URL não definido — smoke de carga documentado, não executado."
+            exit 0
+          fi
+          k6 run scripts/load/k6-smoke.js
+
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
@@ -162,7 +387,10 @@ jobs:
     # completa: URL, publishable key e conta E2E. Configuração parcial falha
     # imediatamente para não produzir timeouts ou falso sinal de cobertura.
     # Sem nenhum segredo, a suíte é marcada explicitamente como skipped.
+    # environment: pr-preview — secrets ficam restritos a este job; fork PRs
+    # não acessam o ambiente (GitHub bloqueia deployments de fork por padrão).
     if: (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
 
@@ -240,7 +468,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: usyxfpqlsspldubptrdl
+          # Derivado da URL verificada pelo precheck (fallback: ref conhecido).
+          VITE_SUPABASE_PROJECT_ID: ${{ steps.precheck.outputs.project_ref || 'usyxfpqlsspldubptrdl' }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: npm run test:e2e
@@ -359,8 +588,9 @@ jobs:
     name: Supabase Types Drift
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: detect-changes
     # Not a required check — needs SUPABASE_ACCESS_TOKEN; skips gracefully without it.
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && needs.detect-changes.outputs.has-code == 'true'
     env:
       HUSKY: 0
     steps:
@@ -388,15 +618,34 @@ jobs:
           fi
           echo "Types are in sync with the live schema."
 
+  ci-gate:
+    name: CI Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    # Apenas os 3 jobs que eram required checks antes (security-audit e
+    # edge-functions-lint são informativos — intencionalmente fora do gate).
+    needs: [lint-and-typecheck, test, build]
+    if: always()
+    steps:
+      - name: Check required jobs
+        run: |
+          RESULTS='${{ toJSON(needs) }}'
+          FAILED=$(echo "$RESULTS" | grep -c '"result": "failure"' || true)
+          if [ "$FAILED" -gt 0 ]; then
+            echo "Um ou mais jobs obrigatórios falharam."
+            exit 1
+          fi
+          echo "Todos os checks passaram (ou PR é doc-only e os jobs foram pulados)."
+
   notify-failure:
     name: Notify on failure
     runs-on: ubuntu-latest
     timeout-minutes: 3
-    # e2e e lighthouse ficam de fora até os secrets de E2E existirem — hoje
-    # falham/estouram timeout por ambiente, e alarme cronicamente falso ensina
-    # a ignorar alarmes.
+    # lighthouse fica de fora — falha por ambiente, e alarme cronicamente falso
+    # ensina a ignorar alarmes. e2e entra: credencial inválida agora falha de
+    # verdade (antes virava skip verde), então precisa de notificação.
     needs:
-      [lint-and-typecheck, security-audit, test, edge-functions-lint, build, bundle-size]
+      [lint-and-typecheck, security-audit, test, edge-functions-lint, deno-tests, sql-tests, e2e, build, bundle-size]
     if: failure()
     steps:
       # Sem o secret SLACK_CI_WEBHOOK_URL configurado, o step apenas loga —

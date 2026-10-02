@@ -17,10 +17,19 @@ interface ChurnJustificationRow {
 }
 
 const LEVEL_META: Record<Level, { label: string; tone: string }> = {
-  low: { label: 'Baixo', tone: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' },
-  medium: { label: 'Moderado', tone: 'bg-amber-500/10 text-amber-500 border-amber-500/30' },
+  low: {
+    label: 'Baixo',
+    tone: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30',
+  },
+  medium: {
+    label: 'Moderado',
+    tone: 'bg-amber-500/10 text-amber-500 border-amber-500/30',
+  },
   high: { label: 'Alto', tone: 'bg-orange-500/10 text-orange-500 border-orange-500/30' },
-  critical: { label: 'Crítico', tone: 'bg-destructive/10 text-destructive border-destructive/30' },
+  critical: {
+    label: 'Crítico',
+    tone: 'bg-destructive/10 text-destructive border-destructive/30',
+  },
 };
 
 interface Props {
@@ -35,7 +44,7 @@ export function ClientChurnJustificationCard({ clientName }: Props) {
       const { data, error } = await supabase
         .from('client_churn_alerts_state')
         .select(
-          'last_level, last_days_since, last_expected_interval_days, last_threshold_days, last_alerted_at',
+          'last_level, last_days_since, last_expected_interval_days, last_threshold_days, last_alerted_at'
         )
         .ilike('client_name', clientName)
         .order('last_alerted_at', { ascending: false })
@@ -59,13 +68,18 @@ export function ClientChurnJustificationCard({ clientName }: Props) {
     <div
       className={cn(
         'rounded-2xl border p-4 md:p-5 bg-card/60 backdrop-blur-sm',
-        'flex flex-col md:flex-row md:items-center gap-4 md:gap-6',
+        'flex flex-col md:flex-row md:items-center gap-4 md:gap-6'
       )}
       role="region"
       aria-label="Justificativa do alerta de churn"
     >
       <div className="flex items-center gap-3">
-        <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center', meta.tone)}>
+        <div
+          className={cn(
+            'h-10 w-10 rounded-xl flex items-center justify-center',
+            meta.tone
+          )}
+        >
           <AlertTriangle className="h-5 w-5" aria-hidden />
         </div>
         <div>
@@ -123,7 +137,9 @@ function Metric({
         {icon}
         <span>{label}</span>
       </div>
-      <div className="mt-1 text-lg font-black tracking-tight text-foreground">{value}</div>
+      <div className="mt-1 text-lg font-black tracking-tight text-foreground">
+        {value}
+      </div>
       {hint ? <p className="text-[10px] text-muted-foreground mt-0.5">{hint}</p> : null}
     </div>
   );
