@@ -4,6 +4,7 @@ import { chunkedIn } from "../_shared/chunked-in.ts";
 import {
   computeDealProbability,
   type DealProbabilityInput,
+  type StageHistoryEntry,
 } from "../_shared/deal-probability-calc.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
@@ -42,7 +43,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     );
 
     // Fetch stage history for velocity analysis
-    const stageHistory = await chunkedIn<Record<string, unknown>>(
+    const stageHistory = await chunkedIn<StageHistoryEntry & { sale_id: string }>(
       dealIds,
       (chunk) =>
         supabase
@@ -68,7 +69,7 @@ Deno.serve(withRequestId("deal-probability", async (req, _ctx) => {
     const probabilities: Record<string, { probability: number; factors: string[] }> = {};
 
     for (const raw of deals || []) {
-      const deal = raw as DealProbabilityInput;
+      const deal = raw as unknown as DealProbabilityInput;
       const dealHistory = stageHistoryByDealId.get(deal.id) ?? [];
       probabilities[deal.id] = computeDealProbability(deal, dealHistory);
     }

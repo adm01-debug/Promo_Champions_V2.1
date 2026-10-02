@@ -101,6 +101,12 @@ jobs:
       - name: Committed secrets scan
         run: npm run security:secrets
 
+      # dependency-cruiser (ciclos, violação de camada, imports prod→test) rodava
+      # só no qa-exhaustive semanal — uma violação podia viver em main até 7
+      # dias. Roda em toda PR agora, como parte do gate obrigatório.
+      - name: Dependency Cruiser — camadas e ciclos
+        run: npm run deps:check
+
       - name: Graphify wrapper tests
         run: npm run graphify:test
 
@@ -232,6 +238,13 @@ jobs:
 
       - name: Deno lint (supabase/functions)
         run: deno lint
+
+      # Lint não pega erro de tipo. O check real sai pelo deno task check —
+      # o gate roda via ratchet: existem 58 erros legados em 31 arquivos
+      # (scripts/deno-typecheck-baseline.json); erro novo em arquivo limpo ou
+      # total acima da baseline reprova a PR, e a baseline só desce.
+      - name: Deno type-check (supabase/functions, ratchet)
+        run: node scripts/check-deno-types.mjs
 
   # Suíte Deno completa das edge functions. Antes só cron-failure-alerter
   # rodava (cron-monitoring.yml); os outros ~80 arquivos *_test.ts/*.test.ts
@@ -455,7 +468,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: usyxfpqlsspldubptrdl
+          # Derivado da URL verificada pelo precheck (fallback: ref conhecido).
+          VITE_SUPABASE_PROJECT_ID: ${{ steps.precheck.outputs.project_ref || 'usyxfpqlsspldubptrdl' }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
         run: npm run test:e2e
@@ -627,11 +641,11 @@ jobs:
     name: Notify on failure
     runs-on: ubuntu-latest
     timeout-minutes: 3
-    # e2e e lighthouse ficam de fora até os secrets de E2E existirem — hoje
-    # falham/estouram timeout por ambiente, e alarme cronicamente falso ensina
-    # a ignorar alarmes.
+    # lighthouse fica de fora — falha por ambiente, e alarme cronicamente falso
+    # ensina a ignorar alarmes. e2e entra: credencial inválida agora falha de
+    # verdade (antes virava skip verde), então precisa de notificação.
     needs:
-      [lint-and-typecheck, security-audit, test, edge-functions-lint, deno-tests, sql-tests, build, bundle-size]
+      [lint-and-typecheck, security-audit, test, edge-functions-lint, deno-tests, sql-tests, e2e, build, bundle-size]
     if: failure()
     steps:
       # Sem o secret SLACK_CI_WEBHOOK_URL configurado, o step apenas loga —
