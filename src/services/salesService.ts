@@ -4,6 +4,7 @@ import { ptBR } from 'date-fns/locale';
 import { Sale, CreateSaleInput } from '@/types/sales';
 import { SALE_STATUS_LABELS } from '@/constants';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
+import type { PostgrestLike } from '@/lib/supabase/chunkedIn';
 import {
   summarizeMarkup,
   type MarkupSummary,
@@ -223,10 +224,12 @@ export const salesService = {
    * Seleciona apenas `markup_pct` e percorre janelas de `.range()`.
    */
   async getSalesMarkupSummary(filters: SalesListFilters): Promise<MarkupSummary> {
-    const rows = await fetchAllRows<{ markup_pct: number | null }>((from, to) =>
-      buildSalesListQuery('markup_pct', filters)
-        .order('id', { ascending: true })
-        .range(from, to)
+    const rows = await fetchAllRows<{ markup_pct: number | null }>(
+      (from, to) =>
+        // eslint-disable-next-line no-restricted-syntax
+        buildSalesListQuery('markup_pct', filters)
+          .order('id', { ascending: true })
+          .range(from, to) as unknown as PostgrestLike<{ markup_pct: number | null }>
     );
     return summarizeMarkup(rows.map(r => r.markup_pct));
   },
