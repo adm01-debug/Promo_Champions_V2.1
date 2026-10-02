@@ -1,163 +1,179 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
 
-Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const { salespersonId } = await req.json();
-
-    if (!salespersonId) {
-      return new Response(JSON.stringify({ error: 'salespersonId is required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+Deno.serve(
+  withRequestId('salesperson-coaching', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
-    const caller = await getUserClient(req);
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'salesperson-coaching',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
-    const supabase = getServiceClient("lê outcomes do vendedor alvo e média da equipe para coaching por IA");
+    try {
+      const { salespersonId } = await req.json();
 
-    // Só o próprio vendedor (ou admin/manager) pode pedir coaching sobre sua carteira.
-    const { data: callerSp } = await supabase
-      .from('salespeople')
-      .select('id')
-      .eq('auth_user_id', caller.userId)
-      .maybeSingle();
-    if (callerSp?.id !== salespersonId) {
-      const { data: isManager, error: roleErr } = await caller.client.rpc(
-        'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never,
-      );
-      if (roleErr) throw roleErr;
-      if (!isManager) {
-        return new Response(JSON.stringify({ error: 'forbidden' }), {
-          status: 403,
+      if (!salespersonId) {
+        return new Response(JSON.stringify({ error: 'salespersonId is required' }), {
+          status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-    }
 
-    // Fetch salesperson info
-    const { data: salesperson } = await supabase
-      .from('salespeople')
-      .select('id, name')
-      .eq('id', salespersonId)
-      .single();
+      // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+      const caller = await getUserClient(req);
 
-    if (!salesperson) {
-      return new Response(JSON.stringify({ error: 'Salesperson not found' }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+      const supabase = getServiceClient(
+        'lê outcomes do vendedor alvo e média da equipe para coaching por IA'
+      );
 
-    // Fetch win/loss data for this salesperson (last 90 days)
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+      // Só o próprio vendedor (ou admin/manager) pode pedir coaching sobre sua carteira.
+      const { data: callerSp } = await supabase
+        .from('salespeople')
+        .select('id')
+        .eq('auth_user_id', caller.userId)
+        .maybeSingle();
+      if (callerSp?.id !== salespersonId) {
+        const { data: isManager, error: roleErr } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleErr) throw roleErr;
+        if (!isManager) {
+          return new Response(JSON.stringify({ error: 'forbidden' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      }
 
-    const { data: outcomes } = await supabase
-      .from('deal_outcomes')
-      .select(
-        `
+      // Fetch salesperson info
+      const { data: salesperson } = await supabase
+        .from('salespeople')
+        .select('id, name')
+        .eq('id', salespersonId)
+        .single();
+
+      if (!salesperson) {
+        return new Response(JSON.stringify({ error: 'Salesperson not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Fetch win/loss data for this salesperson (last 90 days)
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+      const { data: outcomes } = await supabase
+        .from('deal_outcomes')
+        .select(
+          `
         *,
         sales:sale_id (product_name, amount, client_name)
       `
-      )
-      .eq('salesperson_id', salespersonId)
-      .gte('created_at', ninetyDaysAgo.toISOString())
-      .limit(5000);
+        )
+        .eq('salesperson_id', salespersonId)
+        .gte('created_at', ninetyDaysAgo.toISOString())
+        .limit(5000);
 
-    // Fetch team average for comparison
-    const { data: teamOutcomes } = await supabase
-      .from('deal_outcomes')
-      .select('outcome, reason')
-      .gte('created_at', ninetyDaysAgo.toISOString())
-      .limit(10000);
+      // Fetch team average for comparison
+      const { data: teamOutcomes } = await supabase
+        .from('deal_outcomes')
+        .select('outcome, reason')
+        .gte('created_at', ninetyDaysAgo.toISOString())
+        .limit(10000);
 
-    // Calculate metrics
-    const wins = outcomes?.filter(o => o.outcome === 'won') || [];
-    const losses = outcomes?.filter(o => o.outcome === 'lost') || [];
-    const totalDeals = wins.length + losses.length;
-    const winRate = totalDeals > 0 ? (wins.length / totalDeals) * 100 : 0;
+      // Calculate metrics
+      const wins = outcomes?.filter(o => o.outcome === 'won') || [];
+      const losses = outcomes?.filter(o => o.outcome === 'lost') || [];
+      const totalDeals = wins.length + losses.length;
+      const winRate = totalDeals > 0 ? (wins.length / totalDeals) * 100 : 0;
 
-    // Count loss reasons
-    const lossReasons: Record<string, number> = {};
-    losses.forEach(l => {
-      lossReasons[l.reason] = (lossReasons[l.reason] || 0) + 1;
-    });
-
-    // Count win reasons
-    const winReasons: Record<string, number> = {};
-    wins.forEach(w => {
-      winReasons[w.reason] = (winReasons[w.reason] || 0) + 1;
-    });
-
-    // Team metrics
-    const teamWins = teamOutcomes?.filter(o => o.outcome === 'won') || [];
-    const teamTotal = teamOutcomes?.length || 1;
-    const teamWinRate = (teamWins.length / teamTotal) * 100;
-
-    // Team loss reasons
-    const teamLossReasons: Record<string, number> = {};
-    teamOutcomes
-      ?.filter(o => o.outcome === 'lost')
-      .forEach(l => {
-        teamLossReasons[l.reason] = (teamLossReasons[l.reason] || 0) + 1;
+      // Count loss reasons
+      const lossReasons: Record<string, number> = {};
+      losses.forEach(l => {
+        lossReasons[l.reason] = (lossReasons[l.reason] || 0) + 1;
       });
 
-    // Prepare context for AI
-    const context = {
-      salesperson: salesperson.name,
-      period: 'últimos 90 dias',
-      totalDeals,
-      wins: wins.length,
-      losses: losses.length,
-      winRate: winRate.toFixed(1),
-      teamWinRate: teamWinRate.toFixed(1),
-      topLossReasons: Object.entries(lossReasons)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([reason, count]) => ({
-          reason,
-          count,
-          percentage: ((count / losses.length) * 100).toFixed(1),
-        })),
-      topWinReasons: Object.entries(winReasons)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([reason, count]) => ({
-          reason,
-          count,
-          percentage: ((count / wins.length) * 100).toFixed(1),
-        })),
-      comparisonToTeam: winRate - teamWinRate,
-      avgDealValue:
-        wins.length > 0
-          ? wins.reduce(
-              (sum, w) =>
-                sum +
-                (Number((w.sales as { amount?: number | string } | null)?.amount) || 0),
-              0
-            ) / wins.length
-          : 0,
-    };
+      // Count win reasons
+      const winReasons: Record<string, number> = {};
+      wins.forEach(w => {
+        winReasons[w.reason] = (winReasons[w.reason] || 0) + 1;
+      });
 
-    console.info('Coaching context:', JSON.stringify(context, null, 2));
+      // Team metrics
+      const teamWins = teamOutcomes?.filter(o => o.outcome === 'won') || [];
+      const teamTotal = teamOutcomes?.length || 1;
+      const teamWinRate = (teamWins.length / teamTotal) * 100;
 
-    // Call AI for coaching insights
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
-    }
+      // Team loss reasons
+      const teamLossReasons: Record<string, number> = {};
+      teamOutcomes
+        ?.filter(o => o.outcome === 'lost')
+        .forEach(l => {
+          teamLossReasons[l.reason] = (teamLossReasons[l.reason] || 0) + 1;
+        });
 
-    const systemPrompt = `Você é um coach de vendas experiente especializado em times de SDR e Closers. 
+      // Prepare context for AI
+      const context = {
+        salesperson: salesperson.name,
+        period: 'últimos 90 dias',
+        totalDeals,
+        wins: wins.length,
+        losses: losses.length,
+        winRate: winRate.toFixed(1),
+        teamWinRate: teamWinRate.toFixed(1),
+        topLossReasons: Object.entries(lossReasons)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([reason, count]) => ({
+            reason,
+            count,
+            percentage: ((count / losses.length) * 100).toFixed(1),
+          })),
+        topWinReasons: Object.entries(winReasons)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([reason, count]) => ({
+            reason,
+            count,
+            percentage: ((count / wins.length) * 100).toFixed(1),
+          })),
+        comparisonToTeam: winRate - teamWinRate,
+        avgDealValue:
+          wins.length > 0
+            ? wins.reduce(
+                (sum, w) =>
+                  sum +
+                  (Number((w.sales as { amount?: number | string } | null)?.amount) || 0),
+                0
+              ) / wins.length
+            : 0,
+      };
+
+      console.info('Coaching context:', JSON.stringify(context, null, 2));
+
+      // Call AI for coaching insights
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      if (!LOVABLE_API_KEY) {
+        throw new Error('LOVABLE_API_KEY not configured');
+      }
+
+      const systemPrompt = `Você é um coach de vendas experiente especializado em times de SDR e Closers. 
 Analise os dados de performance do vendedor e forneça coaching personalizado.
 
 REGRAS:
@@ -168,7 +184,7 @@ REGRAS:
 - Sugira ações concretas que podem ser implementadas imediatamente
 - Responda SEMPRE em português brasileiro`;
 
-    const userPrompt = `Analise os dados de ${context.salesperson} e forneça coaching personalizado:
+      const userPrompt = `Analise os dados de ${context.salesperson} e forneça coaching personalizado:
 
 MÉTRICAS (${context.period}):
 - Total de negociações: ${context.totalDeals}
@@ -186,130 +202,137 @@ ${context.topWinReasons.map(r => `- ${r.reason}: ${r.count}x (${r.percentage}%)`
 
 Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações recomendadas.`;
 
-    const aiResponse = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        tools: [
-          {
-            type: 'function',
-            function: {
-              name: 'provide_coaching',
-              description: 'Fornecer coaching estruturado para o vendedor',
-              parameters: {
-                type: 'object',
-                properties: {
-                  summary: {
-                    type: 'string',
-                    description: 'Resumo geral da performance em 1-2 frases',
-                  },
-                  strengths: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        title: { type: 'string' },
-                        description: { type: 'string' },
+      const aiResponse = await fetchWithTimeout(
+        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: 'provide_coaching',
+                  description: 'Fornecer coaching estruturado para o vendedor',
+                  parameters: {
+                    type: 'object',
+                    properties: {
+                      summary: {
+                        type: 'string',
+                        description: 'Resumo geral da performance em 1-2 frases',
                       },
-                      required: ['title', 'description'],
-                    },
-                    description: 'Pontos fortes identificados (1-3 itens)',
-                  },
-                  improvements: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        title: { type: 'string' },
-                        description: { type: 'string' },
-                        priority: { type: 'string', enum: ['alta', 'média', 'baixa'] },
+                      strengths: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            description: { type: 'string' },
+                          },
+                          required: ['title', 'description'],
+                        },
+                        description: 'Pontos fortes identificados (1-3 itens)',
                       },
-                      required: ['title', 'description', 'priority'],
-                    },
-                    description: 'Áreas de melhoria (2-4 itens)',
-                  },
-                  actions: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        action: { type: 'string' },
-                        timeline: { type: 'string' },
-                        expectedImpact: { type: 'string' },
+                      improvements: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            description: { type: 'string' },
+                            priority: {
+                              type: 'string',
+                              enum: ['alta', 'média', 'baixa'],
+                            },
+                          },
+                          required: ['title', 'description', 'priority'],
+                        },
+                        description: 'Áreas de melhoria (2-4 itens)',
                       },
-                      required: ['action', 'timeline', 'expectedImpact'],
+                      actions: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            action: { type: 'string' },
+                            timeline: { type: 'string' },
+                            expectedImpact: { type: 'string' },
+                          },
+                          required: ['action', 'timeline', 'expectedImpact'],
+                        },
+                        description: 'Ações recomendadas específicas (2-4 itens)',
+                      },
                     },
-                    description: 'Ações recomendadas específicas (2-4 itens)',
+                    required: ['summary', 'strengths', 'improvements', 'actions'],
                   },
                 },
-                required: ['summary', 'strengths', 'improvements', 'actions'],
               },
-            },
+            ],
+            tool_choice: { type: 'function', function: { name: 'provide_coaching' } },
+          }),
+        }
+      );
+
+      if (!aiResponse.ok) {
+        const errorText = await aiResponse.text();
+        console.error('AI API error:', aiResponse.status, errorText);
+        throw new Error(`AI API error: ${aiResponse.status}`);
+      }
+
+      const aiData = await aiResponse.json();
+      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+
+      if (!toolCall?.function?.arguments) {
+        throw new Error('Invalid AI response structure');
+      }
+
+      const coaching = JSON.parse(toolCall.function.arguments);
+
+      return new Response(
+        JSON.stringify({
+          salesperson: {
+            id: salesperson.id,
+            name: salesperson.name,
+            avatar_url: salesperson.avatar_url,
           },
-        ],
-        tool_choice: { type: 'function', function: { name: 'provide_coaching' } },
-      }),
-    });
-
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error('AI API error:', aiResponse.status, errorText);
-      throw new Error(`AI API error: ${aiResponse.status}`);
-    }
-
-    const aiData = await aiResponse.json();
-    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-
-    if (!toolCall?.function?.arguments) {
-      throw new Error('Invalid AI response structure');
-    }
-
-    const coaching = JSON.parse(toolCall.function.arguments);
-
-    return new Response(
-      JSON.stringify({
-        salesperson: {
-          id: salesperson.id,
-          name: salesperson.name,
-          avatar_url: salesperson.avatar_url,
-        },
-        metrics: {
-          totalDeals: context.totalDeals,
-          wins: context.wins,
-          losses: context.losses,
-          winRate: parseFloat(context.winRate),
-          teamWinRate: parseFloat(context.teamWinRate),
-          comparisonToTeam: context.comparisonToTeam,
-          avgDealValue: context.avgDealValue,
-          topLossReasons: context.topLossReasons,
-          topWinReasons: context.topWinReasons,
-        },
-        coaching,
-        generatedAt: new Date().toISOString(),
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (error: unknown) {
-    if (error instanceof UnauthorizedError) {
-      return new Response(JSON.stringify({ error: 'unauthorized' }), {
-        status: 401,
+          metrics: {
+            totalDeals: context.totalDeals,
+            wins: context.wins,
+            losses: context.losses,
+            winRate: parseFloat(context.winRate),
+            teamWinRate: parseFloat(context.teamWinRate),
+            comparisonToTeam: context.comparisonToTeam,
+            avgDealValue: context.avgDealValue,
+            topLossReasons: context.topLossReasons,
+            topWinReasons: context.topWinReasons,
+          },
+          coaching,
+          generatedAt: new Date().toISOString(),
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (error: unknown) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('Coaching error:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to generate coaching';
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    console.error('Coaching error:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Failed to generate coaching';
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}));
+  })
+);

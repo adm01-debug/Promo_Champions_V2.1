@@ -32,10 +32,10 @@ contrato, as baselines ainda abertas e o plano para zerá-las.
 
 ## Baseline `as unknown`
 
-| marco | ocorrências | arquivos |
-|-------|-------------|----------|
-| antes do pacote | 219 | 138 |
-| após este pacote | **155** | **122** |
+| marco            | ocorrências | arquivos |
+| ---------------- | ----------- | -------- |
+| antes do pacote  | 219         | 138      |
+| após este pacote | **155**     | **122**  |
 
 Os ~15 maiores ofensores foram corrigidos neste pacote (leituras do
 Supabase, RPC `fn_convert_quote_to_sale`, casts de client inteiro,
@@ -48,7 +48,7 @@ Todo `as unknown` restante já está individualmente suprimido por
 ponto único e auditável. Ordem sugerida de ataque:
 
 1. **Leituras do Supabase** (maioria): trocar `(data ?? []) as unknown as
-   T[]` por `parseRows<T>(data)` ou remover o cast quando o Row já bate.
+T[]` por `parseRows<T>(data)` ou remover o cast quando o Row já bate.
 2. **Casts de client inteiro** (`supabase as unknown as {...}`): tabelas
    ausentes do types gerado → regenerar os tipos (o banco já tem a tabela)
    ou, quando a tabela realmente não existir, declarar a view/table e
@@ -67,11 +67,11 @@ regra globalmente — o padrão suprimido por site é intencional.
 e `noUnusedParameters` **só na compilação paralela** — o `tsconfig.app.json`
 segue como está até a contagem zerar.
 
-| grupo | erros na baseline (882 total) |
-|-------|-------------------------------|
-| `noUncheckedIndexedAccess` (TS18048 ×383, TS2532 ×346, TS2538 ×6, TS2488 ×1) | 736 |
-| `noUnusedLocals` / `noUnusedParameters` (TS6133) | 13 |
-| erros de atribuição expostos pelas flags (TS2345 ×73, TS2322 ×49, TS2339 ×2, TS2769 ×3, TS6196 ×2, TS2604 ×2, TS2786 ×2) | 133 |
+| grupo                                                                                                                    | erros na baseline (882 total) |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------- |
+| `noUncheckedIndexedAccess` (TS18048 ×383, TS2532 ×346, TS2538 ×6, TS2488 ×1)                                             | 736                           |
+| `noUnusedLocals` / `noUnusedParameters` (TS6133)                                                                         | 13                            |
+| erros de atribuição expostos pelas flags (TS2345 ×73, TS2322 ×49, TS2339 ×2, TS2769 ×3, TS6196 ×2, TS2604 ×2, TS2786 ×2) | 133                           |
 
 Os números exatos vivem em `scripts/typecheck-baseline.json`
 (`npm run typecheck:baseline` — roda no CI de PR e **reprova apenas erros

@@ -1,0 +1,33 @@
+{
+  "$comment": "FONTE ÚNICA de permissões de papel (frontend × banco). O hook usePermissions lê `roles` daqui; scripts/generate-role-permissions-seed.mjs gera a migration que espelha este mapa em public.permissions/role_permissions; o teste src/hooks/rolePermissions.test.ts trava se JSON, migration e policies efetivas divergirem. `resourceTables` mapeia o recurso lógico às tabelas que o policy check deve encontrar (deals → sales: a tabela 'deals' não existe, o pipeline vive em sales; reports é permissão de app sem tabela própria).",
+  "roles": {
+    "admin": ["*"],
+    "manager": [
+      "deals:read",
+      "deals:write",
+      "deals:delete",
+      "clients:read",
+      "clients:write",
+      "clients:delete",
+      "activities:read",
+      "activities:write",
+      "users:read",
+      "reports:read"
+    ],
+    "salesperson": [
+      "deals:read",
+      "deals:write",
+      "clients:read",
+      "clients:write",
+      "activities:read",
+      "activities:write"
+    ]
+  },
+  "resourceTables": {
+    "deals": ["sales"],
+    "clients": ["clients"],
+    "activities": ["activities"],
+    "users": ["user_roles"],
+    "reports": []
+  }
+}

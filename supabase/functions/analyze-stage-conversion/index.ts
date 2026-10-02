@@ -2,8 +2,9 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -86,28 +87,34 @@ async function callAi(
     },
   ];
   try {
-    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Você é um coach de vendas B2B sênior. Responda em português do Brasil.',
-          },
-          {
-            role: 'user',
-            content: `Estágio: ${stage}\nTaxa de conversão: ${rate.toFixed(1)}%\nTop motivos de perda: ${
-              lossReasons.map(r => `${r.reason} (${r.count})`).join(', ') || 'n/a'
-            }\nGere diagnóstico curto + 3-5 ações táticas para destravar este gargalo.`,
-          },
-        ],
-        tools,
-        tool_choice: { type: 'function', function: { name: 'report_bottleneck' } },
-      }),
-    });
+    const resp = await fetchWithTimeout(
+      'https://ai.gateway.lovable.dev/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Você é um coach de vendas B2B sênior. Responda em português do Brasil.',
+            },
+            {
+              role: 'user',
+              content: `Estágio: ${stage}\nTaxa de conversão: ${rate.toFixed(1)}%\nTop motivos de perda: ${
+                lossReasons.map(r => `${r.reason} (${r.count})`).join(', ') || 'n/a'
+              }\nGere diagnóstico curto + 3-5 ações táticas para destravar este gargalo.`,
+            },
+          ],
+          tools,
+          tool_choice: { type: 'function', function: { name: 'report_bottleneck' } },
+        }),
+      }
+    );
     if (!resp.ok) return null;
     const json = await resp.json();
     const args = json.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
@@ -118,213 +125,237 @@ async function callAi(
   }
 }
 
-Deno.serve(withRequestId('analyze-stage-conversion', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
-  try {
-    // Autorização: exige usuário autenticado com papel admin/manager (recomputa métricas globais).
+Deno.serve(
+  withRequestId('analyze-stage-conversion', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'analyze-stage-conversion',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
     try {
-      const caller = await getUserClient(req);
-      const { data: allowed, error: roleError } = await caller.client.rpc(
-        'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never
+      // Autorização: exige usuário autenticado com papel admin/manager (recomputa métricas globais).
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          return new Response(JSON.stringify({ error: 'forbidden' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        console.error('analyze-stage-conversion authorization failed:', error);
+        return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
+      const days = Math.min(365, Math.max(7, Number(body.days) || 90));
+      const ownerId: string | null = body.owner_id ?? null;
+
+      const since = new Date(Date.now() - days * 86400000).toISOString();
+      const periodStart = new Date(Date.now() - days * 86400000)
+        .toISOString()
+        .slice(0, 10);
+      const periodEnd = new Date().toISOString().slice(0, 10);
+
+      // Fetch history
+      const { data: history, error: hErr } = await admin
+        .from('deal_stage_history')
+        .select('sale_id, stage, entered_at, exited_at')
+        .gte('entered_at', since)
+        .limit(50000);
+      if (hErr) throw hErr;
+
+      // Owner filter via sales
+      const saleIds = [
+        ...new Set((history ?? []).map((h: HistoryRow) => h.sale_id).filter(Boolean)),
+      ];
+      const ownerBySale = new Map<string, string | null>();
+      const lostReasonBySale = new Map<string, string | null>();
+      if (saleIds.length) {
+        const sales = await chunkedIn<SaleRow>(
+          saleIds,
+          chunk =>
+            admin
+              .from('sales')
+              .select(
+                'id, status, lost_reason, salesperson_id, salespeople:salesperson_id(auth_user_id)'
+              )
+              .in('id', chunk),
+          { parallel: true, label: 'analyze-stage-conversion.sales' }
+        );
+        for (const s of sales) {
+          ownerBySale.set(s.id, s.salespeople?.auth_user_id ?? null);
+          lostReasonBySale.set(s.id, s.lost_reason ?? null);
+        }
+      }
+
+      // Group transitions by from_stage
+      type Bucket = {
+        entered: Set<string>;
+        converted: Set<string>;
+        lost: Set<string>;
+        days: number[];
+      };
+      const buckets = new Map<string, Bucket>();
+      const get = (k: string) => {
+        if (!buckets.has(k))
+          buckets.set(k, {
+            entered: new Set(),
+            converted: new Set(),
+            lost: new Set(),
+            days: [],
+          });
+        return buckets.get(k)!;
+      };
+
+      for (const row of history ?? []) {
+        if (ownerId && ownerBySale.get(row.sale_id) !== ownerId) continue;
+        const from = (row.stage || '').toLowerCase();
+        if (!STAGE_ORDER.includes(from)) continue;
+        const b = get(from);
+        b.entered.add(row.sale_id);
+        if (row.exited_at) {
+          const d =
+            (new Date(row.exited_at).getTime() - new Date(row.entered_at).getTime()) /
+            86400000;
+          if (d >= 0) b.days.push(d);
+          // Did the sale advance to a later stage?
+          const advanced = (history ?? []).some(
+            (h: HistoryRow) =>
+              h.sale_id === row.sale_id &&
+              STAGE_ORDER.indexOf((h.stage || '').toLowerCase()) >
+                STAGE_ORDER.indexOf(from)
+          );
+          if (advanced) b.converted.add(row.sale_id);
+          else if (lostReasonBySale.get(row.sale_id)) b.lost.add(row.sale_id);
+        }
+      }
+
+      // Build conversion rows + insights — batch upserts + parallel AI calls
+      let upsertedMetrics = 0;
+      let upsertedInsights = 0;
+      const calcAt = new Date().toISOString();
+
+      type StageInput = {
+        from: string;
+        rate: number;
+        topLoss: { reason: string; count: number }[];
+      };
+      const metricsRows: Array<Record<string, unknown>> = [];
+      const stageInputs: StageInput[] = [];
+
+      for (const [from, b] of buckets) {
+        const to = nextStage(from);
+        if (!to) continue;
+        const entered = b.entered.size;
+        const converted = b.converted.size;
+        const lost = b.lost.size;
+        const rate = entered ? (converted / entered) * 100 : 0;
+        const avgDays = b.days.length
+          ? b.days.reduce((s, n) => s + n, 0) / b.days.length
+          : 0;
+
+        metricsRows.push({
+          from_stage: from,
+          to_stage: to,
+          owner_id: ownerId,
+          entered_count: entered,
+          converted_count: converted,
+          lost_count: lost,
+          conversion_rate: Number(rate.toFixed(2)),
+          avg_transition_days: Number(avgDays.toFixed(2)),
+          period_start: periodStart,
+          period_end: periodEnd,
+          calculated_at: calcAt,
+        });
+
+        const reasonCounts = new Map<string, number>();
+        for (const sid of b.lost) {
+          const r = lostReasonBySale.get(sid);
+          if (r) reasonCounts.set(r, (reasonCounts.get(r) || 0) + 1);
+        }
+        const topLoss = [...reasonCounts.entries()]
+          .sort((a, b2) => b2[1] - a[1])
+          .slice(0, 5)
+          .map(([reason, count]) => ({ reason, count }));
+
+        stageInputs.push({ from, rate, topLoss });
+      }
+
+      // Batch upsert all metrics in one query
+      if (metricsRows.length > 0) {
+        const { error: mErr } = await admin
+          .from('stage_conversion_metrics')
+          .upsert(metricsRows, {
+            onConflict: 'from_stage,to_stage,owner_id,period_start',
+          });
+        if (!mErr) upsertedMetrics = metricsRows.length;
+      }
+
+      // Parallel AI calls — all stages simultaneously instead of sequential
+      const aiResults = await Promise.all(
+        stageInputs.map(inp => callAi(inp.from, inp.rate, inp.topLoss))
       );
-      if (roleError) throw roleError;
-      if (!allowed) {
-        return new Response(JSON.stringify({ error: 'forbidden' }), {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+
+      // Collect insight rows
+      const insightRows = stageInputs.map((inp, i) => {
+        const ai = aiResults[i];
+        return {
+          stage: inp.from,
+          owner_id: ownerId,
+          severity: severityFor(inp.rate),
+          conversion_rate: Number(inp.rate.toFixed(2)),
+          top_loss_reasons: inp.topLoss,
+          recommendations: ai?.recommendations ?? [],
+          ai_summary:
+            ai?.ai_summary ?? `Conversão de ${inp.rate.toFixed(0)}% em ${inp.from}.`,
+          calculated_at: calcAt,
+        };
+      });
+
+      // Batch upsert all insights in one query
+      if (insightRows.length > 0) {
+        const { error: iErr } = await admin
+          .from('stage_bottleneck_insights')
+          .upsert(insightRows, { onConflict: 'stage,owner_id' });
+        if (!iErr) upsertedInsights = insightRows.length;
       }
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      console.error('analyze-stage-conversion authorization failed:', error);
-      return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
-        status: 503,
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          metrics: upsertedMetrics,
+          insights: upsertedInsights,
+          days,
+          owner_id: ownerId,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (e) {
+      console.error('analyze-stage-conversion error', e);
+      return new Response(JSON.stringify({ error: String(e) }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
-    const days = Math.min(365, Math.max(7, Number(body.days) || 90));
-    const ownerId: string | null = body.owner_id ?? null;
-
-    const since = new Date(Date.now() - days * 86400000).toISOString();
-    const periodStart = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
-    const periodEnd = new Date().toISOString().slice(0, 10);
-
-    // Fetch history
-    const { data: history, error: hErr } = await admin
-      .from('deal_stage_history')
-      .select('sale_id, stage, entered_at, exited_at')
-      .gte('entered_at', since)
-      .limit(50000);
-    if (hErr) throw hErr;
-
-    // Owner filter via sales
-    const saleIds = [
-      ...new Set((history ?? []).map((h: HistoryRow) => h.sale_id).filter(Boolean)),
-    ];
-    const ownerBySale = new Map<string, string | null>();
-    const lostReasonBySale = new Map<string, string | null>();
-    if (saleIds.length) {
-      const sales = await chunkedIn<SaleRow>(
-        saleIds,
-        (chunk) =>
-          admin
-            .from('sales')
-            .select(
-              'id, status, lost_reason, salesperson_id, salespeople:salesperson_id(auth_user_id)'
-            )
-            .in('id', chunk),
-        { parallel: true, label: 'analyze-stage-conversion.sales' }
-      );
-      for (const s of sales) {
-        ownerBySale.set(s.id, s.salespeople?.auth_user_id ?? null);
-        lostReasonBySale.set(s.id, s.lost_reason ?? null);
-      }
-    }
-
-    // Group transitions by from_stage
-    type Bucket = {
-      entered: Set<string>;
-      converted: Set<string>;
-      lost: Set<string>;
-      days: number[];
-    };
-    const buckets = new Map<string, Bucket>();
-    const get = (k: string) => {
-      if (!buckets.has(k))
-        buckets.set(k, {
-          entered: new Set(),
-          converted: new Set(),
-          lost: new Set(),
-          days: [],
-        });
-      return buckets.get(k)!;
-    };
-
-    for (const row of history ?? []) {
-      if (ownerId && ownerBySale.get(row.sale_id) !== ownerId) continue;
-      const from = (row.stage || '').toLowerCase();
-      if (!STAGE_ORDER.includes(from)) continue;
-      const b = get(from);
-      b.entered.add(row.sale_id);
-      if (row.exited_at) {
-        const d =
-          (new Date(row.exited_at).getTime() - new Date(row.entered_at).getTime()) /
-          86400000;
-        if (d >= 0) b.days.push(d);
-        // Did the sale advance to a later stage?
-        const advanced = (history ?? []).some(
-          (h: HistoryRow) =>
-            h.sale_id === row.sale_id &&
-            STAGE_ORDER.indexOf((h.stage || '').toLowerCase()) > STAGE_ORDER.indexOf(from)
-        );
-        if (advanced) b.converted.add(row.sale_id);
-        else if (lostReasonBySale.get(row.sale_id)) b.lost.add(row.sale_id);
-      }
-    }
-
-    // Build conversion rows + insights — batch upserts + parallel AI calls
-    let upsertedMetrics = 0;
-    let upsertedInsights = 0;
-    const calcAt = new Date().toISOString();
-
-    type StageInput = { from: string; rate: number; topLoss: { reason: string; count: number }[] };
-    const metricsRows: Array<Record<string, unknown>> = [];
-    const stageInputs: StageInput[] = [];
-
-    for (const [from, b] of buckets) {
-      const to = nextStage(from);
-      if (!to) continue;
-      const entered = b.entered.size;
-      const converted = b.converted.size;
-      const lost = b.lost.size;
-      const rate = entered ? (converted / entered) * 100 : 0;
-      const avgDays = b.days.length ? b.days.reduce((s, n) => s + n, 0) / b.days.length : 0;
-
-      metricsRows.push({
-        from_stage: from,
-        to_stage: to,
-        owner_id: ownerId,
-        entered_count: entered,
-        converted_count: converted,
-        lost_count: lost,
-        conversion_rate: Number(rate.toFixed(2)),
-        avg_transition_days: Number(avgDays.toFixed(2)),
-        period_start: periodStart,
-        period_end: periodEnd,
-        calculated_at: calcAt,
-      });
-
-      const reasonCounts = new Map<string, number>();
-      for (const sid of b.lost) {
-        const r = lostReasonBySale.get(sid);
-        if (r) reasonCounts.set(r, (reasonCounts.get(r) || 0) + 1);
-      }
-      const topLoss = [...reasonCounts.entries()]
-        .sort((a, b2) => b2[1] - a[1])
-        .slice(0, 5)
-        .map(([reason, count]) => ({ reason, count }));
-
-      stageInputs.push({ from, rate, topLoss });
-    }
-
-    // Batch upsert all metrics in one query
-    if (metricsRows.length > 0) {
-      const { error: mErr } = await admin
-        .from('stage_conversion_metrics')
-        .upsert(metricsRows, { onConflict: 'from_stage,to_stage,owner_id,period_start' });
-      if (!mErr) upsertedMetrics = metricsRows.length;
-    }
-
-    // Parallel AI calls — all stages simultaneously instead of sequential
-    const aiResults = await Promise.all(stageInputs.map(inp => callAi(inp.from, inp.rate, inp.topLoss)));
-
-    // Collect insight rows
-    const insightRows = stageInputs.map((inp, i) => {
-      const ai = aiResults[i];
-      return {
-        stage: inp.from,
-        owner_id: ownerId,
-        severity: severityFor(inp.rate),
-        conversion_rate: Number(inp.rate.toFixed(2)),
-        top_loss_reasons: inp.topLoss,
-        recommendations: ai?.recommendations ?? [],
-        ai_summary: ai?.ai_summary ?? `Conversão de ${inp.rate.toFixed(0)}% em ${inp.from}.`,
-        calculated_at: calcAt,
-      };
-    });
-
-    // Batch upsert all insights in one query
-    if (insightRows.length > 0) {
-      const { error: iErr } = await admin
-        .from('stage_bottleneck_insights')
-        .upsert(insightRows, { onConflict: 'stage,owner_id' });
-      if (!iErr) upsertedInsights = insightRows.length;
-    }
-
-    return new Response(
-      JSON.stringify({
-        ok: true,
-        metrics: upsertedMetrics,
-        insights: upsertedInsights,
-        days,
-        owner_id: ownerId,
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-  } catch (e) {
-    console.error('analyze-stage-conversion error', e);
-    return new Response(JSON.stringify({ error: String(e) }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}));
+  })
+);

@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { validateWebhookPayload, WebhookContracts, createValidationErrorResponse } from "../_shared/webhook-validator.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { detectFileSignature } from "../_shared/file-signature.ts";
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -238,6 +239,10 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
             const binaryStr = atob(pdf_base64);
             const bytes = new Uint8Array(binaryStr.length);
             for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+            // Magic bytes: o bucket é público — só gravar se for PDF de verdade.
+            if (detectFileSignature(bytes) !== 'pdf') {
+              console.warn(`[receive-quote-webhook] pdf_base64 rejeitado — assinatura não é %PDF`);
+            } else {
             const pdfPath = `proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}.pdf`;
             const { error: uploadErr } = await supabase.storage
               .from("quote-pdfs")
@@ -249,6 +254,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
               if (urlData?.publicUrl) {
                 await supabase.from("quotes").update({ pdf_url: urlData.publicUrl }).eq("id", quoteId);
               }
+            }
             }
           }
         } catch (pdfErr) {
