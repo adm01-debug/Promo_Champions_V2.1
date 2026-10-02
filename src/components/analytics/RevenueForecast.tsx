@@ -16,6 +16,8 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useStageProbabilities } from '@/hooks/useStageProbabilities';
+import { STAGE_PROBABILITY_FALLBACK } from '@/lib/stageProbabilities';
 import {
   differenceInDays,
   parseISO,
@@ -37,15 +39,6 @@ import {
 } from 'recharts';
 
 import { formatBRL } from '@/lib/money';
-const STAGE_PROBABILITIES: Record<string, number> = {
-  pending: 0.1,
-  lead: 0.05,
-  prospecting: 0.15,
-  qualified: 0.3,
-  proposal: 0.5,
-  negotiation: 0.7,
-};
-
 interface SaleRow {
   id: string;
   amount: number;
@@ -105,9 +98,11 @@ function useRevenueForecastData() {
 
 export const RevenueForecast: FC = () => {
   const { data, isLoading } = useRevenueForecastData();
+  const { data: stageProbabilities } = useStageProbabilities();
 
   const forecast = useMemo(() => {
     if (!data) return null;
+    const probs = stageProbabilities ?? STAGE_PROBABILITY_FALLBACK;
     const { currentSales, pipeline, goals, history, now, monthStart, monthEnd } = data;
 
     // Current month revenue
@@ -123,7 +118,7 @@ export const RevenueForecast: FC = () => {
 
     // Weighted pipeline forecast
     const weightedPipeline = pipeline.reduce((sum, d) => {
-      const prob = STAGE_PROBABILITIES[d.status] || 0.1;
+      const prob = probs[d.status] ?? 0.1;
       return sum + Number(d.amount) * prob;
     }, 0);
 
@@ -132,18 +127,18 @@ export const RevenueForecast: FC = () => {
       linearProjection * 0.6 + (currentRevenue + weightedPipeline) * 0.4;
 
     // Pipeline by stage
-    const stages = Object.keys(STAGE_PROBABILITIES);
+    const stages = Object.keys(probs);
     const pipelineByStage = stages
       .map(stage => {
         const deals = pipeline.filter(d => d.status === stage);
         const total = deals.reduce((sum, d) => sum + Number(d.amount), 0);
-        const weighted = total * (STAGE_PROBABILITIES[stage] || 0.1);
+        const weighted = total * (probs[stage] ?? 0.1);
         return {
           stage,
           count: deals.length,
           total,
           weighted,
-          probability: (STAGE_PROBABILITIES[stage] || 0.1) * 100,
+          probability: (probs[stage] ?? 0.1) * 100,
         };
       })
       .filter(s => s.count > 0);
@@ -201,7 +196,7 @@ export const RevenueForecast: FC = () => {
       willHitGoal: combinedForecast >= totalGoal,
       gapToGoal: totalGoal - combinedForecast,
     };
-  }, [data]);
+  }, [data, stageProbabilities]);
 
   if (isLoading) {
     return (

@@ -95,7 +95,10 @@ describe('BI Helpers', () => {
       }, // 80% prob
     ];
 
-    const forecast = computeForecast(pipeline, 5000, 10000, 15, 15);
+    const forecast = computeForecast(pipeline, 5000, 10000, 15, 15, {
+      qualified: 0.3,
+      negotiation: 0.8,
+    });
 
     expect(forecast.weightedForecast).toBe(1000 * 0.3 + 1000 * 0.8);
     expect(forecast.projectedRevenue).toBe(5000 + (5000 / 15) * 15);

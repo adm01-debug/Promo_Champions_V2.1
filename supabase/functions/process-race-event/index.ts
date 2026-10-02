@@ -224,14 +224,14 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       // 2. XP Boost (Power-up): 3 vendas seguidas (independente de tempo)
       const { data: lastSales } = await supabase
         .from('sales')
-        .select('deal_status')
+        .select('status')
         .eq('salesperson_id', salespersonId)
         .order('created_at', { ascending: false })
         .limit(3);
 
       if (
         lastSales?.length === 3 &&
-        lastSales.every(s => s.deal_status === 'completed')
+        lastSales.every(s => ['completed', 'won', 'closed'].includes(s.status))
       ) {
         await grantPowerUp(salespersonId, 'xp_boost', {
           multiplier: 2,
