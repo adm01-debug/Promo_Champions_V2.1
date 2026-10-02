@@ -1,6 +1,5 @@
 {
   "tasks": {
-    "check": "deno check src/main.ts",
     "lint:functions": "deno lint"
   },
   "lint": {
