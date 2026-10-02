@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 interface TerritoryRow {
   id: string;
@@ -83,6 +84,34 @@ Deno.serve(
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
     try {
+      // Autorização: exige usuário autenticado com papel admin/manager (expõe territórios e receita por vendedor).
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          return new Response(JSON.stringify({ error: 'forbidden' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        console.error('territory-optimization authorization failed:', error);
+        return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const url = new URL(req.url);
       const days = Math.max(
         7,
