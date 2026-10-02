@@ -4,6 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
+import { alertFromEmail } from '../_shared/alert-escalation.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
 const resend = new Resend(RESEND_API_KEY);
@@ -183,7 +184,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
           });
           auditRows.push({ ...baseAudit, notification_type: 'in-app', channel: 'in-app', status: 'success' });
         } catch (e) {
-          console.error(`In-app failed for ${recipient.id}:`, e);
+          ctx.log('error', 'in_app_notification_failed', { recipient_id: recipient.id });
           auditRows.push({ ...baseAudit, notification_type: 'in-app', channel: 'in-app', status: 'failed', error_log: String(e) });
         }
       }
@@ -202,7 +203,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
           `;
 
           const emailResponse = await resend.emails.send({
-            from: 'Vendas Elite <vendas@resend.dev>',
+            from: alertFromEmail(),
             to: [recipient.email],
             subject: emailSubject,
             html: emailHtml,
@@ -216,7 +217,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
             error_log: emailResponse.error ? JSON.stringify(emailResponse.error) : null,
           });
         } catch (e) {
-          console.error(`Email failed for ${recipient.id}:`, e);
+          ctx.log('error', 'email_notification_failed', { recipient_id: recipient.id });
           auditRows.push({ ...baseAudit, notification_type: 'email', channel: 'email', status: 'failed', error_log: String(e) });
         }
       }
@@ -227,7 +228,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     // Single batch insert for all audit rows (replaces N individual inserts)
     if (auditRows.length > 0) {
       const { error: auditErr } = await supabase.from('sale_notifications_audit').insert(auditRows);
-      if (auditErr) console.error('[broadcast-sale-notification] Audit batch insert error:', auditErr);
+      if (auditErr) ctx.log('error', 'audit_batch_insert_failed', { error: auditErr.message });
     }
 
     ctx.log('info', 'broadcast_ok', { notified: results.length, sale_id });

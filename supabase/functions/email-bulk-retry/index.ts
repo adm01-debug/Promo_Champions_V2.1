@@ -37,7 +37,8 @@ async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
   return Boolean(data);
 }
 
-Deno.serve(withRequestId("email-bulk-retry", async (req) => {
+Deno.serve(withRequestId("email-bulk-retry", async (req, ctx) => {
+  const log = ctx.log;
   const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: responseCorsHeaders });
@@ -52,9 +53,7 @@ Deno.serve(withRequestId("email-bulk-retry", async (req) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
   if (!SUPABASE_URL || !SERVICE_ROLE) {
-    console.error(
-      "email-bulk-retry misconfigured: missing Supabase service credentials",
-    );
+    log('error', 'service_credentials_missing');
     return json({ error: "service_not_configured" }, 503);
   }
 
@@ -71,7 +70,9 @@ Deno.serve(withRequestId("email-bulk-retry", async (req) => {
       return (data as { value?: string | null } | null)?.value;
     });
   } catch (error) {
-    console.error("email-bulk-retry cron authorization unavailable:", error);
+    log('error', 'cron_authorization_unavailable', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return json({ error: "authorization_unavailable" }, 503);
   }
 
@@ -84,7 +85,7 @@ Deno.serve(withRequestId("email-bulk-retry", async (req) => {
       if (error instanceof UnauthorizedError) {
         return json({ error: "unauthorized" }, 401);
       }
-      console.error("email-bulk-retry authorization failed:", error);
+      log('error', 'authorization_failed');
       return json({ error: "authorization_unavailable" }, 503);
     }
   }
@@ -229,7 +230,7 @@ Deno.serve(withRequestId("email-bulk-retry", async (req) => {
 
     return json({ scanned: drafts.length, retried, gaveUp, skipped, failed });
   } catch (e) {
-    console.error("email-bulk-retry error:", e);
+    log('error', 'email_bulk_retry_failed');
     return json({ error: (e as Error).message }, 500);
   }
 }));

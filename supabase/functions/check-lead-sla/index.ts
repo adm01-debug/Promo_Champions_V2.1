@@ -3,6 +3,8 @@ import { Resend } from 'npm:resend@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { errorEnvelope, jsonResponse } from '../_shared/http-envelope.ts';
+import { alertFromEmail } from '../_shared/alert-escalation.ts';
+import { maskEmail } from '../_shared/pii.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
@@ -71,7 +73,6 @@ Deno.serve(
     // SLA configurável via public.app_config ('sla.lead_critical_hours');
     // o body segue podendo sobrescrever explicitamente.
     let criticalHours: number | null = null;
-
     let notifyEmail = '';
     try {
       const body = await req.json();
@@ -202,12 +203,12 @@ Deno.serve(
 
       try {
         await resend.emails.send({
-          from: 'SLA Alerts <onboarding@resend.dev>',
+          from: alertFromEmail(),
           to: [notifyEmail],
           subject,
           html: emailHtml,
         });
-        ctx.log('info', 'email_sent', { to: notifyEmail });
+        ctx.log('info', 'email_sent', { to: maskEmail(notifyEmail) });
       } catch (emailError: unknown) {
         emailStatus = 'failed';
         errorMessage =
