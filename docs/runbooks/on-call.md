@@ -14,13 +14,13 @@
 
 ## Contatos (preencher)
 
-| Papel | Nome | Contato |
-|-------|------|---------|
-| Plantão primário | {{ NOME_PLANTAO_PRIMARIO }} | {{ CANAL/TELEFONE }} |
-| Backup | {{ NOME_BACKUP }} | {{ CANAL/TELEFONE }} |
-| Dono do produto | {{ NOME_PO }} | {{ CANAL }} |
-| Admin Supabase/Lovable | {{ NOME_ADMIN_INFRA }} | {{ CANAL }} |
-| Conta Twilio/Meta/Resend/ElevenLabs | {{ NOME_DONO_CREDENCIAIS }} | {{ CANAL }} |
+| Papel                               | Nome                        | Contato              |
+| ----------------------------------- | --------------------------- | -------------------- |
+| Plantão primário                    | {{ NOME_PLANTAO_PRIMARIO }} | {{ CANAL/TELEFONE }} |
+| Backup                              | {{ NOME_BACKUP }}           | {{ CANAL/TELEFONE }} |
+| Dono do produto                     | {{ NOME_PO }}               | {{ CANAL }}          |
+| Admin Supabase/Lovable              | {{ NOME_ADMIN_INFRA }}      | {{ CANAL }}          |
+| Conta Twilio/Meta/Resend/ElevenLabs | {{ NOME_DONO_CREDENCIAIS }} | {{ CANAL }}          |
 
 ## Fluxo quando algo cai
 

@@ -1,44 +1,40 @@
 /**
- * fetchAllRows — percorre uma query PostgREST em janelas de `.range()` até
- * esgotar o resultado, superando o teto de ~1000 linhas por request do
- * PostgREST. Útil para agregados client-side que não podem truncar (ex.:
- * resumo de markup da seleção atual).
+ * fetchAllRows — consome todas as páginas de uma query PostgREST.
  *
- * `makeQuery` deve devolver uma query nova a cada chamada (os builders do
- * supabase-js são de uso único) SEM `.range()` — a função aplica a janela.
+ * O PostgREST trunca respostas de lista em ~1000 linhas; uma query agregada
+ * (ex.: 6 meses de vendas numa única consulta) que passe desse teto perde
+ * linhas silenciosamente. Use em vez de `await query` quando o volume
+ * esperado puder exceder o teto:
+ *
+ *   const rows = await fetchAllRows((from, to) =>
+ *     supabase.from('sales').select('id, amount').gte('created_at', start).range(from, to)
+ *   );
  */
+
+import type { PostgrestLike } from './chunkedIn';
+
 export interface FetchAllRowsOptions {
-  /** Linhas por request (padrão 1000 — teto prático do PostgREST). */
   pageSize?: number;
-  /** Trava de segurança contra loops (padrão 10_000 linhas). */
-  maxRows?: number;
+  label?: string;
 }
 
-interface QueryError {
-  message: string;
-}
+export async function fetchAllRows<T>(
+  runner: (from: number, to: number) => PostgrestLike<T>,
+  opts: FetchAllRowsOptions = {}
+): Promise<T[]> {
+  const { pageSize = 1000, label = 'fetchAllRows' } = opts;
 
-interface RangeableQuery {
-  range(
-    from: number,
-    to: number
-  ): PromiseLike<{ data: unknown; error: QueryError | null }>;
-}
-
-export async function fetchAllRows<Row>(
-  makeQuery: () => RangeableQuery,
-  { pageSize = 1000, maxRows = 10_000 }: FetchAllRowsOptions = {}
-): Promise<Row[]> {
-  const rows: Row[] = [];
-
-  for (let offset = 0; offset < maxRows; offset += pageSize) {
-    const { data, error } = await makeQuery().range(offset, offset + pageSize - 1);
-    if (error) throw error;
-
-    const batch = (data ?? []) as Row[];
-    rows.push(...batch);
+  const collected: T[] = [];
+  let from = 0;
+  for (;;) {
+    const r = await runner(from, from + pageSize - 1);
+    if (r.error) {
+      throw new Error(`${label}: ${r.error.message ?? 'unknown error'}`);
+    }
+    const batch = r.data ?? [];
+    collected.push(...batch);
     if (batch.length < pageSize) break;
+    from += pageSize;
   }
-
-  return rows;
+  return collected;
 }

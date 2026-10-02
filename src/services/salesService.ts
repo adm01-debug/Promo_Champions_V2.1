@@ -223,8 +223,10 @@ export const salesService = {
    * Seleciona apenas `markup_pct` e percorre janelas de `.range()`.
    */
   async getSalesMarkupSummary(filters: SalesListFilters): Promise<MarkupSummary> {
-    const rows = await fetchAllRows<{ markup_pct: number | null }>(() =>
-      buildSalesListQuery('markup_pct', filters).order('id', { ascending: true })
+    const rows = await fetchAllRows<{ markup_pct: number | null }>((from, to) =>
+      buildSalesListQuery('markup_pct', filters)
+        .order('id', { ascending: true })
+        .range(from, to)
     );
     return summarizeMarkup(rows.map(r => r.markup_pct));
   },

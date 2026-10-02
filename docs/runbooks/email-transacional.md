@@ -2,24 +2,24 @@
 
 ## O que faz
 
-| Function | Papel |
-|----------|-------|
-| `send-transactional-email` | Envio transacional via Resend (`api.resend.com/emails`, provider "resend") |
-| `email-bulk-send` | Campanhas bulk: monta lote, aplica rodapé de descadastro LGPD + header `List-Unsubscribe` (RFC 8058) e enfileira via RPC `enqueue_email` |
-| `email-bulk-retry` | Re-enfileira jobs falhos de `email_bulk_jobs` |
-| `inbound-email-webhook` | Webhook público (`verify_jwt=false`) de inbound — verifica Svix (Resend) ou assinatura SendGrid |
-| `email-unsubscribe` | Endpoint público GET/POST (HTML) de descadastro |
-| `send-churn-alert-email` / `send-alert-notifications` | Alertas internos por email (também via `enqueue_email`) |
+| Function                                              | Papel                                                                                                                                    |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `send-transactional-email`                            | Envio transacional via Resend (`api.resend.com/emails`, provider "resend")                                                               |
+| `email-bulk-send`                                     | Campanhas bulk: monta lote, aplica rodapé de descadastro LGPD + header `List-Unsubscribe` (RFC 8058) e enfileira via RPC `enqueue_email` |
+| `email-bulk-retry`                                    | Re-enfileira jobs falhos de `email_bulk_jobs`                                                                                            |
+| `inbound-email-webhook`                               | Webhook público (`verify_jwt=false`) de inbound — verifica Svix (Resend) ou assinatura SendGrid                                          |
+| `email-unsubscribe`                                   | Endpoint público GET/POST (HTML) de descadastro                                                                                          |
+| `send-churn-alert-email` / `send-alert-notifications` | Alertas internos por email (também via `enqueue_email`)                                                                                  |
 
 ## Configuração
 
-| Item | Onde |
-|------|------|
-| `RESEND_API_KEY` | Secret das edge functions |
-| `BULK_EMAIL_FROM` | Secret — remetente do bulk; fallback: `churn_alert_settings.email_from` |
-| `ADMIN_NOTIFICATION_EMAIL` | Secret — destinatário de alertas internos |
-| `UNSUBSCRIBE_SECRET` (descadastro) | Secret — valida links de unsubscribe |
-| Jobs bulk | tabela `email_bulk_jobs` (+ tabela de destinatários) |
+| Item                               | Onde                                                                    |
+| ---------------------------------- | ----------------------------------------------------------------------- |
+| `RESEND_API_KEY`                   | Secret das edge functions                                               |
+| `BULK_EMAIL_FROM`                  | Secret — remetente do bulk; fallback: `churn_alert_settings.email_from` |
+| `ADMIN_NOTIFICATION_EMAIL`         | Secret — destinatário de alertas internos                               |
+| `UNSUBSCRIBE_SECRET` (descadastro) | Secret — valida links de unsubscribe                                    |
+| Jobs bulk                          | tabela `email_bulk_jobs` (+ tabela de destinatários)                    |
 
 ## Sinais de falha
 

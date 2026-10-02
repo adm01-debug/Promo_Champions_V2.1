@@ -3,6 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { chunkedIn } from '../_shared/chunked-in.ts';
 
 interface Driver {
   factor: string;
@@ -256,11 +257,16 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
       .select('id')
       .eq('auth_user_id', caller.userId)
       .maybeSingle();
-    const { data: saleRows } = await supabase
-      .from('sales')
-      .select('id, salesperson_id')
-      .in('id', ids);
-    const hasForeign = (saleRows ?? []).some(
+    const saleRows = await chunkedIn<{
+      id: string;
+      salesperson_id: string | null;
+    }>(
+      ids,
+      (chunk) =>
+        supabase.from('sales').select('id, salesperson_id').in('id', chunk),
+      { label: 'predictive-scoring-explain/sales' },
+    );
+    const hasForeign = saleRows.some(
       (s) => s.salesperson_id && s.salesperson_id !== callerSp?.id,
     );
     if (hasForeign) {

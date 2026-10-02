@@ -1,14 +1,29 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import {
   WebhookContracts,
   validateWebhookPayload,
 } from '../_shared/webhook-validator.ts';
 import { collectErrors, validateNumber, validateString } from '../_shared/validation.ts';
 
+const MAX_ITERATIONS = 1000;
+
 Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+
+  // Chamada vem do painel admin via supabase.functions.invoke — requer JWT
+  // de usuário válido (fuzzing consome CPU; não deve ser anônimo).
+  try {
+    await getUserClient(req);
+  } catch (authErr) {
+    const isUnauth = authErr instanceof UnauthorizedError;
+    return new Response(
+      JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
 
   try {
     const parsed: unknown = await req.json().catch(() => ({}));
@@ -24,7 +39,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     };
 
     const payloadErrors = collectErrors([
-      validateNumber(iterations, 'iterations', { integer: true, min: 1, max: 10_000 }),
+      validateNumber(iterations, 'iterations', { integer: true, min: 1, max: MAX_ITERATIONS }),
       validateString(targetContract, 'targetContract', { maxLength: 200 }),
     ]);
     if (payloadErrors.length) {

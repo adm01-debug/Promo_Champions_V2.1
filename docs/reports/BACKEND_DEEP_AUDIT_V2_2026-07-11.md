@@ -23,18 +23,18 @@ O sistema encontra-se em estado **enterprise-grade** com hardening recente já i
 
 ## 2. Snapshot de Saúde (2026-07-11 14:27 UTC)
 
-| Métrica                | Valor           | Status |
-|------------------------|-----------------|--------|
-| Database               | up              | ✅ |
-| PgBouncer              | up              | ✅ |
-| Restarts (since boot)  | 0               | ✅ |
-| Memory                 | 65 %            | 🟡 monitorar |
-| Data disk              | 25 %            | ✅ |
-| Connections            | 19 / 60         | ✅ |
-| Pool clients           | 1 / 200         | ✅ |
-| Database size          | 59.5 MB         | ✅ |
-| WAL size               | 160 MB          | ✅ (dentro do baseline 2.7×) |
-| Rolled-back tx         | 13 114 (cum.)   | 🟡 origem: stress tests |
+| Métrica               | Valor         | Status                       |
+| --------------------- | ------------- | ---------------------------- |
+| Database              | up            | ✅                           |
+| PgBouncer             | up            | ✅                           |
+| Restarts (since boot) | 0             | ✅                           |
+| Memory                | 65 %          | 🟡 monitorar                 |
+| Data disk             | 25 %          | ✅                           |
+| Connections           | 19 / 60       | ✅                           |
+| Pool clients          | 1 / 200       | ✅                           |
+| Database size         | 59.5 MB       | ✅                           |
+| WAL size              | 160 MB        | ✅ (dentro do baseline 2.7×) |
+| Rolled-back tx        | 13 114 (cum.) | 🟡 origem: stress tests      |
 
 ---
 
@@ -42,21 +42,21 @@ O sistema encontra-se em estado **enterprise-grade** com hardening recente já i
 
 ### 3.1 Segurança — 🟢 Sem críticos
 
-| ID  | Severidade | Descrição | Ação |
-|-----|-----------|-----------|------|
-| SEC-04 | Baixa | 124 warns linter `0028/0029` (SECURITY DEFINER exposto). | **Aceito** — cada RPC tem guard interno; documentado em `docs/SECURITY_HARDENING.md`. |
-| SEC-05 | Baixa | 65 % de RAM. | Monitorar; ativar auto-scale se >80 % por 15 min. |
-| SEC-06 | Info  | Nenhum `dangerouslySetInnerHTML`, nenhum `service_role` no frontend. | ✅ Confirmado via grep. |
+| ID     | Severidade | Descrição                                                            | Ação                                                                                  |
+| ------ | ---------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| SEC-04 | Baixa      | 124 warns linter `0028/0029` (SECURITY DEFINER exposto).             | **Aceito** — cada RPC tem guard interno; documentado em `docs/SECURITY_HARDENING.md`. |
+| SEC-05 | Baixa      | 65 % de RAM.                                                         | Monitorar; ativar auto-scale se >80 % por 15 min.                                     |
+| SEC-06 | Info       | Nenhum `dangerouslySetInnerHTML`, nenhum `service_role` no frontend. | ✅ Confirmado via grep.                                                               |
 
 **RLS coverage:** 100 % das tabelas públicas listadas (317 tabelas) têm RLS ativo. Testes `rls-authorization-edge-cases.spec.ts` bloqueiam anon, filtros forjados de `user_id` e IN-clauses com UUIDs inventados.
 
 ### 3.2 Performance — 🟢 Estável
 
-| ID | Severidade | Descrição | Recomendação |
-|----|-----------|-----------|--------------|
-| PERF-02 | Média | 13 114 rollbacks acumulados desde o boot. | Contexto: gerados por `quote-to-sale-stress.sql` (asserts in-band). Sem impacto operacional. **Ação:** filtrar rollbacks de teste do alerta baseline. |
-| PERF-03 | Baixa | Ratio WAL/DB = 2.7×. | Baseline após slot cleanup anterior; alerta Slack em `wal-health-alert` já cobre regressão. |
-| PERF-04 | Info  | 19 conexões, pool 1/200. | Bem abaixo dos limites; sem ação. |
+| ID      | Severidade | Descrição                                 | Recomendação                                                                                                                                          |
+| ------- | ---------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PERF-02 | Média      | 13 114 rollbacks acumulados desde o boot. | Contexto: gerados por `quote-to-sale-stress.sql` (asserts in-band). Sem impacto operacional. **Ação:** filtrar rollbacks de teste do alerta baseline. |
+| PERF-03 | Baixa      | Ratio WAL/DB = 2.7×.                      | Baseline após slot cleanup anterior; alerta Slack em `wal-health-alert` já cobre regressão.                                                           |
+| PERF-04 | Info       | 19 conexões, pool 1/200.                  | Bem abaixo dos limites; sem ação.                                                                                                                     |
 
 ### 3.3 Reliability — 🟢
 
@@ -81,14 +81,14 @@ O sistema encontra-se em estado **enterprise-grade** com hardening recente já i
 
 ## 4. Roadmap de Priorização
 
-| # | ID | Categoria | Prioridade | Esforço | ROI |
-|---|----|-----------|------------|---------|-----|
-| 1 | REL-02 | Reliability | Importante | 6 h | Alto — evita cascata em provider outages |
-| 2 | OBS-02 | Observabilidade | Importante | 4 h | Alto — SLO dashboard único |
-| 3 | OBS-03 | Observabilidade | Importante | 3 h | Médio — correlação de logs |
-| 4 | COST-01 | Custos | Desejável | 4 h | Médio — reduz DB size 15–20 % |
-| 5 | MAINT-01 | Manutenibilidade | Desejável | 8 h | Médio — CI mais rápido |
-| 6 | PERF-02 | Observabilidade | Desejável | 1 h | Baixo — filtrar rollbacks de teste |
+| #   | ID       | Categoria        | Prioridade | Esforço | ROI                                      |
+| --- | -------- | ---------------- | ---------- | ------- | ---------------------------------------- |
+| 1   | REL-02   | Reliability      | Importante | 6 h     | Alto — evita cascata em provider outages |
+| 2   | OBS-02   | Observabilidade  | Importante | 4 h     | Alto — SLO dashboard único               |
+| 3   | OBS-03   | Observabilidade  | Importante | 3 h     | Médio — correlação de logs               |
+| 4   | COST-01  | Custos           | Desejável  | 4 h     | Médio — reduz DB size 15–20 %            |
+| 5   | MAINT-01 | Manutenibilidade | Desejável  | 8 h     | Médio — CI mais rápido                   |
+| 6   | PERF-02  | Observabilidade  | Desejável  | 1 h     | Baixo — filtrar rollbacks de teste       |
 
 **Nada crítico bloqueia produção.** Todos os itens acima são melhorias incrementais.
 
@@ -96,16 +96,16 @@ O sistema encontra-se em estado **enterprise-grade** com hardening recente já i
 
 ## 5. Benchmarking
 
-| Prática                          | Promo Champions | Mercado (P75) | Nota |
-|----------------------------------|----------|---------------|------|
-| RLS coverage                     | 100 %    | 60 %          | 🏆 |
-| SECURITY DEFINER hardening       | Least-priv seletiva | Grant-all authenticated | 🏆 |
-| Idempotência de webhooks         | 3/3 rotas | 1/3          | 🏆 |
-| Testes E2E de RLS                | Sim      | Não usual     | 🏆 |
-| Stress tests com asserts in-band | Sim      | Raro          | 🏆 |
-| Circuit breaker                  | Parcial  | Completo      | ⚠️ |
-| Correlation IDs (X-Request-Id)   | Parcial  | Completo      | ⚠️ |
-| SLO dashboard                    | Fragmentado | Unificado  | ⚠️ |
+| Prática                          | Promo Champions     | Mercado (P75)           | Nota |
+| -------------------------------- | ------------------- | ----------------------- | ---- |
+| RLS coverage                     | 100 %               | 60 %                    | 🏆   |
+| SECURITY DEFINER hardening       | Least-priv seletiva | Grant-all authenticated | 🏆   |
+| Idempotência de webhooks         | 3/3 rotas           | 1/3                     | 🏆   |
+| Testes E2E de RLS                | Sim                 | Não usual               | 🏆   |
+| Stress tests com asserts in-band | Sim                 | Raro                    | 🏆   |
+| Circuit breaker                  | Parcial             | Completo                | ⚠️   |
+| Correlation IDs (X-Request-Id)   | Parcial             | Completo                | ⚠️   |
+| SLO dashboard                    | Fragmentado         | Unificado               | ⚠️   |
 
 ---
 

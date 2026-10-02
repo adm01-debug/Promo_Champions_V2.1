@@ -34,18 +34,22 @@ export function useAutoAwardBonuses(
 
       if (!sp || sp.id !== viewedSalespersonId) return;
 
-      for (const b of achieved) {
-        if (cancelled) return;
-        const key = `${b.id}`;
-        if (dispatched.current.has(key)) continue;
-        dispatched.current.add(key);
+      // RPCs idempotentes e independentes — dispara em paralelo (evita N+1
+      // sequencial de roundtrips).
+      await Promise.all(
+        achieved.map(async b => {
+          if (cancelled) return;
+          const key = `${b.id}`;
+          if (dispatched.current.has(key)) return;
+          dispatched.current.add(key);
 
-        await supabase.rpc('award_bonus_if_eligible', {
-          _bonus_id: b.id,
-          _computed_amount: Number(b.bonus_amount),
-          _bonus_kind: b.bonus_kind,
-        });
-      }
+          await supabase.rpc('award_bonus_if_eligible', {
+            _bonus_id: b.id,
+            _computed_amount: Number(b.bonus_amount),
+            _bonus_kind: b.bonus_kind,
+          });
+        })
+      );
     })();
 
     return () => {

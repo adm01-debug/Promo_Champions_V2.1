@@ -97,6 +97,23 @@ Run locally:
 deno test supabase/functions/_shared/cors_lint_test.ts
 ```
 
+### `ALLOWED_ORIGINS` (configuração de produção)
+
+A allowlist é lida do secret `ALLOWED_ORIGINS` (Supabase Dashboard → Edge
+Functions → Secrets), como lista separada por vírgula. Em produção o valor
+deve conter os domínios reais do app:
+
+```
+ALLOWED_ORIGINS=https://promochampions.com.br,https://championgifts.lovable.app,https://pixels-with-personality-09.lovable.app
+```
+
+- Curingas de subdomínio são aceitos (`*.lovable.app`).
+- Sem o secret → fallback `*` (mantido apenas para dev/server-to-server).
+- Origin fora da lista → a resposta NÃO reflete o Origin enviado, então o
+  browser bloqueia o preflight; Origin permitido → refletido + `Vary: Origin`.
+- Toda function nova para uso de browser deve usar `getCorsHeaders(req)` —
+  o lint test acima barra regressão para CORS estático/duplicado.
+
 ---
 
 ## 3. Other third-party imports
@@ -183,6 +200,15 @@ acesso com `service_role`:
 | `multichannel-status-webhook` | Twilio (`X-Twilio-Signature`) | `TWILIO_AUTH_TOKEN` e, quando a URL pública divergir, `TWILIO_WEBHOOK_URL` |
 |  | Meta Cloud (`X-Hub-Signature-256`) | `META_APP_SECRET`; o handshake também exige `META_WEBHOOK_VERIFY_TOKEN` |
 |  | Integrador HMAC-SHA256 (`X-Webhook-Signature`) | `MULTICHANNEL_WEBHOOK_SECRET` |
+
+### OAuth com state assinado
+
+`bitrix24-oauth` protege o fluxo authorize→callback com `state` HMAC-SHA256
+(`_shared/oauth-state.ts`): o `authorize` exige JWT de admin/manager e emite
+o state assinado; o `callback` rejeita state ausente, adulterado ou expirado
+(401) e revalida o papel do autorizador (403) antes de gravar os tokens em
+`portfolio_settings`. Requer o secret `BITRIX24_STATE_SECRET` (string
+aleatória ≥32 chars) no Supabase Dashboard → Edge Functions → Secrets.
 
 Ausência de segredo/chave retorna `503`; assinatura ausente, ambígua ou inválida
 retorna `401`. Nunca crie uma exceção de JWT sem uma dessas verificações.

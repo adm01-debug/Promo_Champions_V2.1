@@ -6,15 +6,15 @@ Supabase (Postgres + RLS + Auth + Edge Functions Deno).
 
 ## Stack real
 
-| Camada | Tecnologia |
-| ------ | ---------- |
-| Frontend | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, framer-motion |
-| Estado/dados | TanStack Query 5 (server state), React Router 7 (rotas lazy), Context API (auth/session) — **não há Redux nem Zustand** |
-| Backend | Supabase Cloud `usyxfpqlsspldubptrdl` — Postgres, RLS, Auth, ~170 Edge Functions (Deno), 612 migrations |
-| Testes | Vitest + Testing Library, Playwright (E2E), axe (`a11y:sweep`) |
-| Mapas/flows | Leaflet + react-leaflet, @xyflow/react |
-| Export | xlsx, pdf-lib |
-| Deploy | **Lovable Cloud** (não Vercel) — build Vite, SPA estática |
+| Camada          | Tecnologia                                                                                                                        |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend        | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, framer-motion                                                                |
+| Estado/dados    | TanStack Query 5 (server state), React Router 7 (rotas lazy), Context API (auth/session) — **não há Redux nem Zustand**           |
+| Backend         | Supabase Cloud `usyxfpqlsspldubptrdl` — Postgres, RLS, Auth, ~170 Edge Functions (Deno), 612 migrations                           |
+| Testes          | Vitest + Testing Library, Playwright (E2E), axe (`a11y:sweep`)                                                                    |
+| Mapas/flows     | Leaflet + react-leaflet, @xyflow/react                                                                                            |
+| Export          | xlsx, pdf-lib                                                                                                                     |
+| Deploy          | **Lovable Cloud** (não Vercel) — build Vite, SPA estática                                                                         |
 | Observabilidade | `log-web-vitals` (edge function) + painéis admin (`AdminWebVitalsPage`, `AdminPlatformSLOPage`), trilhas de auditoria em Postgres |
 
 ## Layout do `src/`
@@ -103,14 +103,14 @@ webhooks), reports/export e ops. Cron jobs monitorados pelos painéis de
 
 ## Integrações externas
 
-| Serviço | Via |
-| ------- | --- |
-| Twilio | twilio-call-status/twiml/click-to-call |
-| ElevenLabs | elevenlabs-stt/tts/voice |
-| Bitrix24 | bitrix24-oauth, bitrix24-sync |
-| Email transacional | send-transactional-email, email-bulk-send |
-| WhatsApp | send-multichannel-message (Evolution) |
-| Gateway MCP | `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "LOVABLE CLOUD" — aponta para `usyxfpqlsspldubptrdl`; o conector `SUPABASE_PROMO_CHAMPIONS_-_V2_MCP` está morto) |
+| Serviço            | Via                                                                                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Twilio             | twilio-call-status/twiml/click-to-call                                                                                                                                       |
+| ElevenLabs         | elevenlabs-stt/tts/voice                                                                                                                                                     |
+| Bitrix24           | bitrix24-oauth, bitrix24-sync                                                                                                                                                |
+| Email transacional | send-transactional-email, email-bulk-send                                                                                                                                    |
+| WhatsApp           | send-multichannel-message (Evolution)                                                                                                                                        |
+| Gateway MCP        | `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "LOVABLE CLOUD" — aponta para `usyxfpqlsspldubptrdl`; o conector `SUPABASE_PROMO_CHAMPIONS_-_V2_MCP` está morto) |
 
 ## Deploy
 
