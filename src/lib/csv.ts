@@ -24,10 +24,8 @@ function escape(cell: CsvCell): string {
 }
 
 export function buildCsv<T>(rows: T[], columns: CsvColumn<T>[]): string {
-  const head = columns.map((c) => escape(c.header)).join(SEP);
-  const body = rows
-    .map((r) => columns.map((c) => escape(c.value(r))).join(SEP))
-    .join(EOL);
+  const head = columns.map(c => escape(c.header)).join(SEP);
+  const body = rows.map(r => columns.map(c => escape(c.value(r))).join(SEP)).join(EOL);
   return `${BOM}${head}${EOL}${body}${EOL}`;
 }
 

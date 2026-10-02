@@ -1,47 +1,63 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Users, Flame, Thermometer, Snowflake, Clock, Package, Sparkles, Loader2, Building2, Globe } from 'lucide-react';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  Users,
+  Flame,
+  Thermometer,
+  Snowflake,
+  Clock,
+  Package,
+  Sparkles,
+  Loader2,
+  Building2,
+  Globe,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
-import { cn } from "@/lib/utils";
-import { useLeadEnrichment } from "@/hooks/useLeadEnrichment";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { motion } from "framer-motion";
-import { LeadScoreBreakdown } from "./LeadScoreBreakdown";
+import { cn } from '@/lib/utils';
+import { useLeadEnrichment } from '@/hooks/useLeadEnrichment';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { motion } from 'framer-motion';
+import { LeadScoreBreakdown } from './LeadScoreBreakdown';
 
-export function RecentProspects({ 
-  onSelectLead, 
+export function RecentProspects({
+  onSelectLead,
   selectedLeadId,
   searchTerm,
-  filters
-}: { 
-  onSelectLead?: (id: string, name: string, score: number) => void, 
-  selectedLeadId?: string | null,
-  searchTerm?: string,
-  filters?: Record<string, unknown>
+  filters,
+}: {
+  onSelectLead?: (id: string, name: string, score: number) => void;
+  selectedLeadId?: string | null;
+  searchTerm?: string;
+  filters?: Record<string, unknown>;
 }) {
   const { mutate: enrich } = useLeadEnrichment();
   const [enrichingId, setEnrichingId] = useState<string | null>(null);
-  const [internalSelectedLeadId, setInternalSelectedLeadId] = useState<string | null>(null);
-  
-  const currentSelectedId = selectedLeadId !== undefined ? selectedLeadId : internalSelectedLeadId;
+  const [internalSelectedLeadId, setInternalSelectedLeadId] = useState<string | null>(
+    null
+  );
+
+  const currentSelectedId =
+    selectedLeadId !== undefined ? selectedLeadId : internalSelectedLeadId;
 
   const { data: prospects, refetch } = useQuery({
-    queryKey: ["recent-prospects", searchTerm, filters],
+    queryKey: ['recent-prospects', searchTerm, filters],
     queryFn: async () => {
-      let query = supabase
-        .from("sales")
-        .select("*")
-        .in("status", ["lead", "qualified"]);
+      let query = supabase.from('sales').select('*').in('status', ['lead', 'qualified']);
 
       if (searchTerm) {
-        query = query.ilike("client_name", `%${searchTerm}%`);
+        query = query.ilike('client_name', `%${searchTerm}%`);
       }
 
       if (filters?.status && filters.status !== 'all') {
@@ -49,56 +65,88 @@ export function RecentProspects({
       }
 
       const { data: sales } = await query
-        .order("created_at", { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(6);
 
       const saleIds = sales?.map(s => s.id) || [];
-      
+
       const { data: scores } = await supabase
-        .from("lead_scores")
-        .select("sale_id, score")
+        .from('lead_scores')
+        .select('sale_id, score')
         // chunked-in-safe: número de SDRs por conta é finito (~50)
-        .in("sale_id", saleIds);
+        .in('sale_id', saleIds);
 
       const scoreMap = new Map(scores?.map(s => [s.sale_id, s.score]));
 
       return sales?.map(sale => ({
         ...sale,
-        score: scoreMap.get(sale.id) || 0
+        score: scoreMap.get(sale.id) || 0,
       }));
     },
   });
 
   const handleEnrich = (id: string, clientName: string) => {
     setEnrichingId(id);
-    enrich({ leadId: id, companyName: clientName }, {
-      onSuccess: () => {
-        setEnrichingId(null);
-        refetch();
-      },
-      onError: () => setEnrichingId(null)
-    });
+    enrich(
+      { leadId: id, companyName: clientName },
+      {
+        onSuccess: () => {
+          setEnrichingId(null);
+          refetch();
+        },
+        onError: () => setEnrichingId(null),
+      }
+    );
   };
 
   const getTemperature = (score: number) => {
-    if (score >= 75) return { label: "Quente", color: "text-status-error", bgColor: "bg-status-error/10", borderColor: "border-status-error/30", icon: Flame, glowClass: "hover-glow-error" };
-    if (score >= 50) return { label: "Morno", color: "text-status-warning", bgColor: "bg-status-warning/10", borderColor: "border-status-warning/30", icon: Thermometer, glowClass: "hover-glow" };
-    return { label: "Frio", color: "text-status-info", bgColor: "bg-status-info/10", borderColor: "border-status-info/30", icon: Snowflake, glowClass: "" };
+    if (score >= 75)
+      return {
+        label: 'Quente',
+        color: 'text-status-error',
+        bgColor: 'bg-status-error/10',
+        borderColor: 'border-status-error/30',
+        icon: Flame,
+        glowClass: 'hover-glow-error',
+      };
+    if (score >= 50)
+      return {
+        label: 'Morno',
+        color: 'text-status-warning',
+        bgColor: 'bg-status-warning/10',
+        borderColor: 'border-status-warning/30',
+        icon: Thermometer,
+        glowClass: 'hover-glow',
+      };
+    return {
+      label: 'Frio',
+      color: 'text-status-info',
+      bgColor: 'bg-status-info/10',
+      borderColor: 'border-status-info/30',
+      icon: Snowflake,
+      glowClass: '',
+    };
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "lead": return "Lead";
-      case "qualified": return "Qualificado";
-      default: return status;
+      case 'lead':
+        return 'Lead';
+      case 'qualified':
+        return 'Qualificado';
+      default:
+        return status;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "lead": return "bg-status-info/10 text-status-info border-status-info/30";
-      case "qualified": return "bg-status-success/10 text-status-success border-status-success/30";
-      default: return "";
+      case 'lead':
+        return 'bg-status-info/10 text-status-info border-status-info/30';
+      case 'qualified':
+        return 'bg-status-success/10 text-status-success border-status-success/30';
+      default:
+        return '';
     }
   };
 
@@ -113,7 +161,10 @@ export function RecentProspects({
             <span className="gradient-text">Prospects Recentes</span>
           </CardTitle>
           {prospects && prospects.length > 0 && (
-            <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary shadow-sm">
+            <Badge
+              variant="secondary"
+              className="text-[10px] bg-primary/10 text-primary shadow-sm"
+            >
               {prospects.length} prospects
             </Badge>
           )}
@@ -127,39 +178,57 @@ export function RecentProspects({
                 <div className="p-4 rounded-full bg-gradient-to-br from-muted/30 to-muted/10 mb-3 shadow-lg">
                   <Users className="h-10 w-10 opacity-50 animate-pulse" />
                 </div>
-                <p className="text-sm font-display font-medium gradient-text">Nenhum prospect encontrado</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">Novos leads aparecerão aqui</p>
+                <p className="text-sm font-display font-medium gradient-text">
+                  Nenhum prospect encontrado
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  Novos leads aparecerão aqui
+                </p>
               </div>
             )}
             {prospects?.map((prospect, index) => {
               const temp = getTemperature(prospect.score);
               const TempIcon = temp.icon;
-              const enrichment = (prospect as { enrichment_data?: { linkedin_url?: string; company_size?: string | number; industry?: string } }).enrichment_data;
+              const enrichment = (
+                prospect as {
+                  enrichment_data?: {
+                    linkedin_url?: string;
+                    company_size?: string | number;
+                    industry?: string;
+                  };
+                }
+              ).enrichment_data;
               const isEnrichingCurrent = enrichingId === prospect.id;
-              
+
               return (
-                <div 
+                <div
                   key={prospect.id}
                   className={cn(
-                    "flex flex-col gap-2 p-3 rounded-xl glass border hover-lift transition-all group animate-fade-in cursor-pointer",
-                    currentSelectedId === prospect.id ? "ring-2 ring-primary border-primary/50" : temp.borderColor,
+                    'flex flex-col gap-2 p-3 rounded-xl glass border hover-lift transition-all group animate-fade-in cursor-pointer',
+                    currentSelectedId === prospect.id
+                      ? 'ring-2 ring-primary border-primary/50'
+                      : temp.borderColor,
                     temp.glowClass
                   )}
                   onClick={() => {
                     if (onSelectLead) {
                       onSelectLead(prospect.id, prospect.client_name, prospect.score);
                     } else {
-                      setInternalSelectedLeadId(currentSelectedId === prospect.id ? null : prospect.id);
+                      setInternalSelectedLeadId(
+                        currentSelectedId === prospect.id ? null : prospect.id
+                      );
                     }
                   }}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "p-2.5 rounded-lg shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg",
-                      temp.bgColor,
-                      temp.color
-                    )}>
+                    <div
+                      className={cn(
+                        'p-2.5 rounded-lg shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg',
+                        temp.bgColor,
+                        temp.color
+                      )}
+                    >
                       <TempIcon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -183,7 +252,7 @@ export function RecentProspects({
                                 size="icon"
                                 aria-label="Enriquecer dados do prospect"
                                 className="h-7 w-7 rounded-full hover:bg-primary/10"
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
                                   handleEnrich(prospect.id, prospect.client_name);
                                 }}
@@ -202,10 +271,10 @@ export function RecentProspects({
                           </Tooltip>
                         </TooltipProvider>
 
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={cn(
-                            "text-[10px] transition-all group-hover:scale-105 shadow-sm",
+                            'text-[10px] transition-all group-hover:scale-105 shadow-sm',
                             getStatusColor(prospect.status)
                           )}
                         >
@@ -215,9 +284,9 @@ export function RecentProspects({
                       <div className="flex items-center gap-1 justify-end text-[10px] text-muted-foreground">
                         <Clock className="h-2.5 w-2.5" />
                         <span>
-                          {formatDistanceToNow(new Date(prospect.created_at), { 
-                            addSuffix: true, 
-                            locale: ptBR 
+                          {formatDistanceToNow(new Date(prospect.created_at), {
+                            addSuffix: true,
+                            locale: ptBR,
                           })}
                         </span>
                       </div>
@@ -228,13 +297,19 @@ export function RecentProspects({
                   {enrichment && Object.keys(enrichment).length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-border/30">
                       {enrichment.linkedin_url && (
-                        <a href={enrichment.linkedin_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-primary hover:underline">
+                        <a
+                          href={enrichment.linkedin_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+                        >
                           <Linkedin className="h-2.5 w-2.5" /> Linkedin
                         </a>
                       )}
                       {enrichment.company_size && (
                         <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                          <Building2 className="h-2.5 w-2.5" /> {enrichment.company_size} emp.
+                          <Building2 className="h-2.5 w-2.5" /> {enrichment.company_size}{' '}
+                          emp.
                         </span>
                       )}
                       {enrichment.industry && (
@@ -246,12 +321,15 @@ export function RecentProspects({
                   )}
 
                   {currentSelectedId === prospect.id && !onSelectLead && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
+                      animate={{ opacity: 1, height: 'auto' }}
                       className="mt-3 pt-3 border-t border-border/40"
                     >
-                      <LeadScoreBreakdown leadName={prospect.client_name} score={prospect.score} />
+                      <LeadScoreBreakdown
+                        leadName={prospect.client_name}
+                        score={prospect.score}
+                      />
                     </motion.div>
                   )}
                 </div>

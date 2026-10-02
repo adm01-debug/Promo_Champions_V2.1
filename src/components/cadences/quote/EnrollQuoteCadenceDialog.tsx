@@ -1,13 +1,19 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useCadences, useCadenceSteps } from "@/hooks/cadences/useCadenceQueries";
-import { useEnrollQuoteInCadence } from "@/hooks/cadences/useQuoteCadences";
-import { CadenceCard } from "@/components/cadences/CadenceCard";
-import { Send } from "lucide-react";
-import type { Cadence } from "@/hooks/cadences/useCadenceQueries";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useCadences, useCadenceSteps } from '@/hooks/cadences/useCadenceQueries';
+import { useEnrollQuoteInCadence } from '@/hooks/cadences/useQuoteCadences';
+import { CadenceCard } from '@/components/cadences/CadenceCard';
+import { Send } from 'lucide-react';
+import type { Cadence } from '@/hooks/cadences/useCadenceQueries';
 
 interface Props {
   quoteId: string;
@@ -22,9 +28,9 @@ export function EnrollQuoteCadenceDialog({ quoteId, clientName, trigger }: Props
   const enroll = useEnrollQuoteInCadence();
 
   // Filtra apenas cadências de quote_followup ativas
-  const list = (cadences ?? []).filter((c) => {
+  const list = (cadences ?? []).filter(c => {
     const t = (c as Cadence & { cadence_type?: string }).cadence_type;
-    return c.is_active && (t === "quote_followup" || !t);
+    return c.is_active && (t === 'quote_followup' || !t);
   });
 
   const handle = async () => {
@@ -54,7 +60,7 @@ export function EnrollQuoteCadenceDialog({ quoteId, clientName, trigger }: Props
         <div className="space-y-4 py-2">
           <div className="p-3 rounded-lg bg-muted/30 border border-border/30">
             <p className="text-sm">
-              <span className="text-muted-foreground">Cliente:</span>{" "}
+              <span className="text-muted-foreground">Cliente:</span>{' '}
               <span className="font-display font-semibold">{clientName}</span>
             </p>
           </div>
@@ -63,20 +69,32 @@ export function EnrollQuoteCadenceDialog({ quoteId, clientName, trigger }: Props
             {list.length === 0 ? (
               <div className="text-sm text-muted-foreground p-6 text-center bg-muted/20 rounded-lg border border-dashed border-border/50">
                 <p className="font-medium">Nenhuma cadência de follow-up disponível</p>
-                <p className="text-xs mt-1">Crie uma cadência do tipo "Follow-up de Orçamento"</p>
+                <p className="text-xs mt-1">
+                  Crie uma cadência do tipo "Follow-up de Orçamento"
+                </p>
               </div>
             ) : (
               <ScrollArea className="h-[280px] pr-3">
                 <div className="space-y-3">
-                  {list.map((c) => (
-                    <CadenceWithSteps key={c.id} cadence={c} selected={selectedId === c.id} onSelect={() => setSelectedId(c.id)} />
+                  {list.map(c => (
+                    <CadenceWithSteps
+                      key={c.id}
+                      cadence={c}
+                      selected={selectedId === c.id}
+                      onSelect={() => setSelectedId(c.id)}
+                    />
                   ))}
                 </div>
               </ScrollArea>
             )}
           </div>
-          <Button variant="default" className="w-full" onClick={handle} disabled={!selectedId || enroll.isPending}>
-            {enroll.isPending ? "Iniciando..." : "Iniciar Follow-up"}
+          <Button
+            variant="default"
+            className="w-full"
+            onClick={handle}
+            disabled={!selectedId || enroll.isPending}
+          >
+            {enroll.isPending ? 'Iniciando...' : 'Iniciar Follow-up'}
           </Button>
         </div>
       </DialogContent>
@@ -84,7 +102,22 @@ export function EnrollQuoteCadenceDialog({ quoteId, clientName, trigger }: Props
   );
 }
 
-function CadenceWithSteps({ cadence, selected, onSelect }: { cadence: Cadence; selected: boolean; onSelect: () => void }) {
+function CadenceWithSteps({
+  cadence,
+  selected,
+  onSelect,
+}: {
+  cadence: Cadence;
+  selected: boolean;
+  onSelect: () => void;
+}) {
   const { data: steps } = useCadenceSteps(cadence.id);
-  return <CadenceCard cadence={cadence} steps={steps ?? []} isSelected={selected} onSelect={onSelect} />;
+  return (
+    <CadenceCard
+      cadence={cadence}
+      steps={steps ?? []}
+      isSelected={selected}
+      onSelect={onSelect}
+    />
+  );
 }

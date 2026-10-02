@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { Zap, Brain } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { motion } from 'framer-motion';
+import { Zap, Brain } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 interface Recommendation {
   name: string;
@@ -18,15 +18,16 @@ export function EmpiricalRecommendations({ data }: EmpiricalRecommendationsProps
         <Zap className="size-24 text-primary" />
       </div>
       <h3 className="text-lg font-black uppercase italic tracking-tighter flex items-center gap-2 mb-8">
-        <Zap className="size-5 text-primary" /> Sugestão do <span className="text-primary">Especialista</span>
+        <Zap className="size-5 text-primary" /> Sugestão do{' '}
+        <span className="text-primary">Especialista</span>
       </h3>
       <div className="space-y-4 relative z-10">
         {data.map((item, i) => (
-          <motion.div 
-            key={i} 
-            initial={{ opacity: 0, x: 20 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ delay: i * 0.1 }} 
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.1 }}
             className="group/item flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/40 transition-all cursor-pointer"
           >
             <div className="flex items-center gap-3">
@@ -35,7 +36,9 @@ export function EmpiricalRecommendations({ data }: EmpiricalRecommendationsProps
               </div>
               <p className="text-sm font-black uppercase tracking-tighter">{item.name}</p>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-relaxed italic">{item.reason}</p>
+            <p className="text-[10px] text-muted-foreground leading-relaxed italic">
+              {item.reason}
+            </p>
           </motion.div>
         ))}
       </div>

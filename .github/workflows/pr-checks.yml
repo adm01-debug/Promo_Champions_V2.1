@@ -88,6 +88,11 @@ jobs:
       - name: Run TypeScript check
         run: npm run typecheck
 
+      # Gate de formatação: depois do Prettier em massa (PR de higiene),
+      # nenhum arquivo de src/ pode regredir de formato.
+      - name: Prettier format check
+        run: npm run format:check
+
       - name: Committed secrets scan
         run: npm run security:secrets
 

@@ -21,30 +21,42 @@ export function useWeeklyComparison() {
       const lastWeekStart = startOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
       const lastWeekEnd = endOfWeek(subWeeks(now, 1), { weekStartsOn: 1 });
 
-      const [thisSales, lastSales, thisActivities, lastActivities, thisClients, lastClients] =
-        await Promise.all([
-          supabase
-            .from('sales')
-            .select('id, amount, status')
-            .gte('created_at', thisWeekStart.toISOString()),
-          supabase
-            .from('sales')
-            .select('id, amount, status')
-            .gte('created_at', lastWeekStart.toISOString())
-            .lte('created_at', lastWeekEnd.toISOString()),
-          supabase.from('activities').select('id').gte('created_at', thisWeekStart.toISOString()),
-          supabase
-            .from('activities')
-            .select('id')
-            .gte('created_at', lastWeekStart.toISOString())
-            .lte('created_at', lastWeekEnd.toISOString()),
-          supabase.from('clients').select('id').gte('created_at', thisWeekStart.toISOString()),
-          supabase
-            .from('clients')
-            .select('id')
-            .gte('created_at', lastWeekStart.toISOString())
-            .lte('created_at', lastWeekEnd.toISOString()),
-        ]);
+      const [
+        thisSales,
+        lastSales,
+        thisActivities,
+        lastActivities,
+        thisClients,
+        lastClients,
+      ] = await Promise.all([
+        supabase
+          .from('sales')
+          .select('id, amount, status')
+          .gte('created_at', thisWeekStart.toISOString()),
+        supabase
+          .from('sales')
+          .select('id, amount, status')
+          .gte('created_at', lastWeekStart.toISOString())
+          .lte('created_at', lastWeekEnd.toISOString()),
+        supabase
+          .from('activities')
+          .select('id')
+          .gte('created_at', thisWeekStart.toISOString()),
+        supabase
+          .from('activities')
+          .select('id')
+          .gte('created_at', lastWeekStart.toISOString())
+          .lte('created_at', lastWeekEnd.toISOString()),
+        supabase
+          .from('clients')
+          .select('id')
+          .gte('created_at', thisWeekStart.toISOString()),
+        supabase
+          .from('clients')
+          .select('id')
+          .gte('created_at', lastWeekStart.toISOString())
+          .lte('created_at', lastWeekEnd.toISOString()),
+      ]);
 
       const buildMetrics = (
         sales: { id: string; amount: number | null; status: string | null }[],

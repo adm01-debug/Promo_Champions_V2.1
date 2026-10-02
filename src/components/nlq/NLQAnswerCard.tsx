@@ -1,12 +1,14 @@
-import { motion } from "framer-motion";
-import ReactMarkdown from "react-markdown";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Database } from "lucide-react";
-import { NLQDataChart } from "./NLQDataChart";
-import { formatPeriodLabel, type NLQResponse } from "./nlqHelpers";
+import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Database } from 'lucide-react';
+import { NLQDataChart } from './NLQDataChart';
+import { formatPeriodLabel, type NLQResponse } from './nlqHelpers';
 
-interface Props { response: NLQResponse }
+interface Props {
+  response: NLQResponse;
+}
 
 export function NLQAnswerCard({ response }: Props) {
   const periodLabel = formatPeriodLabel(response.period);
@@ -16,7 +18,7 @@ export function NLQAnswerCard({ response }: Props) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
     >
       <Card className="overflow-hidden">
         <CardHeader className="pb-3">
@@ -30,7 +32,9 @@ export function NLQAnswerCard({ response }: Props) {
               </Badge>
             ))}
             {periodLabel && (
-              <Badge variant="secondary" className="text-[10px]">{periodLabel}</Badge>
+              <Badge variant="secondary" className="text-[10px]">
+                {periodLabel}
+              </Badge>
             )}
           </div>
         </CardHeader>

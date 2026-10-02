@@ -7,7 +7,10 @@ export default function AdminTasksPage() {
     <ProtectedRoute requiredRole="admin">
       <Helmet>
         <title>Console de Tarefas & XP | Admin</title>
-        <meta name="description" content="Gerencie o catálogo de tarefas, atribuições e pontuação XP dos vendedores." />
+        <meta
+          name="description"
+          content="Gerencie o catálogo de tarefas, atribuições e pontuação XP dos vendedores."
+        />
       </Helmet>
       <div className="container mx-auto px-4 py-6">
         <TaskConsoleHub />

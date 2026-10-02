@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { formatBRL } from "./forecastHelpers";
+import { FC } from 'react';
+import { formatBRL } from './forecastHelpers';
 
 interface Props {
   commit: number;
@@ -16,7 +16,10 @@ export const ForecastScenarioBar: FC<Props> = ({ commit, best, upside, goal }) =
   return (
     <div className="space-y-2">
       <div className="relative h-8 w-full rounded-md bg-muted overflow-hidden border border-border">
-        <div className="absolute inset-y-0 left-0 bg-emerald-500/70" style={{ width: `${pct(commit)}%` }} />
+        <div
+          className="absolute inset-y-0 left-0 bg-emerald-500/70"
+          style={{ width: `${pct(commit)}%` }}
+        />
         <div
           className="absolute inset-y-0 bg-blue-500/60"
           style={{ left: `${pct(commit)}%`, width: `${pct(best)}%` }}
@@ -35,7 +38,8 @@ export const ForecastScenarioBar: FC<Props> = ({ commit, best, upside, goal }) =
       </div>
       <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-sm bg-emerald-500" /> Commit {formatBRL(commit)}
+          <span className="h-2 w-2 rounded-sm bg-emerald-500" /> Commit{' '}
+          {formatBRL(commit)}
         </span>
         <span className="flex items-center gap-1">
           <span className="h-2 w-2 rounded-sm bg-blue-500" /> Best {formatBRL(best)}

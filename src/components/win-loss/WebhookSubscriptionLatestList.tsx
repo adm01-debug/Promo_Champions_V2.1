@@ -1,34 +1,34 @@
-import { Link } from "react-router-dom";
-import { CheckCircle2, ExternalLink, XCircle, Copy } from "lucide-react";
-import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Link } from 'react-router-dom';
+import { CheckCircle2, ExternalLink, XCircle, Copy } from 'lucide-react';
+import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import {
   useWebhookSubscriptionLatest,
   type SubscriptionLatestRow,
-} from "@/hooks/win-loss/useWebhookSubscriptionLatest";
-import type { WebhookStatsWindow } from "@/hooks/win-loss/useWebhookDeliveryStats";
+} from '@/hooks/win-loss/useWebhookSubscriptionLatest';
+import type { WebhookStatsWindow } from '@/hooks/win-loss/useWebhookDeliveryStats';
 
 const WINDOW_LABEL: Record<WebhookStatsWindow, string> = {
-  "24h": "últimas 24h",
-  "7d": "últimos 7d",
-  "30d": "últimos 30d",
+  '24h': 'últimas 24h',
+  '7d': 'últimos 7d',
+  '30d': 'últimos 30d',
 };
 
 function statusToneClass(status: number | null): string {
-  if (status === null) return "text-muted-foreground";
-  if (status >= 500 || status === 0) return "text-destructive";
-  if (status >= 400) return "text-warning";
-  if (status >= 200 && status < 300) return "text-success";
-  return "text-muted-foreground";
+  if (status === null) return 'text-muted-foreground';
+  if (status >= 500 || status === 0) return 'text-destructive';
+  if (status >= 400) return 'text-warning';
+  if (status >= 200 && status < 300) return 'text-success';
+  return 'text-muted-foreground';
 }
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return "agora";
+  if (m < 1) return 'agora';
   if (m < 60) return `${m}min atrás`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h atrás`;
@@ -39,7 +39,7 @@ function relativeTime(iso: string): string {
 function copy(value: string, label: string) {
   void navigator.clipboard?.writeText(value).then(
     () => toast.success(`${label} copiado`),
-    () => toast.error("Falha ao copiar"),
+    () => toast.error('Falha ao copiar')
   );
 }
 
@@ -57,22 +57,33 @@ function Row({ row }: { row: SubscriptionLatestRow }) {
         ) : (
           <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" aria-hidden />
         )}
-        <span className="font-medium truncate min-w-0 max-w-[260px]" title={row.subscription_url ?? row.subscription_id}>
+        <span
+          className="font-medium truncate min-w-0 max-w-[260px]"
+          title={row.subscription_url ?? row.subscription_id}
+        >
           {row.subscription_url ?? row.subscription_id}
         </span>
         {row.last_event && (
-          <span className="font-mono text-[10px] text-muted-foreground">{row.last_event}</span>
+          <span className="font-mono text-[10px] text-muted-foreground">
+            {row.last_event}
+          </span>
         )}
         {row.last_attempt !== null && (
-          <Badge variant="outline" className="font-normal">tent. {row.last_attempt}</Badge>
+          <Badge variant="outline" className="font-normal">
+            tent. {row.last_attempt}
+          </Badge>
         )}
         {row.last_status !== null && (
-          <span className={cn("font-semibold tabular-nums", statusToneClass(row.last_status))}>
-            {row.last_status === 0 ? "rede/timeout" : `HTTP ${row.last_status}`}
+          <span
+            className={cn('font-semibold tabular-nums', statusToneClass(row.last_status))}
+          >
+            {row.last_status === 0 ? 'rede/timeout' : `HTTP ${row.last_status}`}
           </span>
         )}
         {row.last_duration_ms !== null && (
-          <span className="text-muted-foreground tabular-nums">{row.last_duration_ms}ms</span>
+          <span className="text-muted-foreground tabular-nums">
+            {row.last_duration_ms}ms
+          </span>
         )}
         <span className="ml-auto text-[10px] text-muted-foreground tabular-nums">
           {relativeTime(row.last_at)}
@@ -90,7 +101,7 @@ function Row({ row }: { row: SubscriptionLatestRow }) {
         {row.last_request_id && (
           <button
             type="button"
-            onClick={() => copy(row.last_request_id!, "requestId")}
+            onClick={() => copy(row.last_request_id!, 'requestId')}
             className="font-mono inline-flex items-center gap-1 hover:text-foreground transition-colors"
             aria-label="Copiar requestId"
           >
@@ -99,7 +110,7 @@ function Row({ row }: { row: SubscriptionLatestRow }) {
           </button>
         )}
         <span className="tabular-nums">
-          {row.failures}/{row.total} falha{row.failures === 1 ? "" : "s"}
+          {row.failures}/{row.total} falha{row.failures === 1 ? '' : 's'}
         </span>
         <Button
           asChild
@@ -116,15 +127,17 @@ function Row({ row }: { row: SubscriptionLatestRow }) {
   );
 }
 
-export function WebhookSubscriptionLatestList({ windowKey }: { windowKey: WebhookStatsWindow }) {
+export function WebhookSubscriptionLatestList({
+  windowKey,
+}: {
+  windowKey: WebhookStatsWindow;
+}) {
   const { data, isLoading } = useWebhookSubscriptionLatest(windowKey);
 
   return (
     <div>
       <div className="flex items-baseline justify-between mb-1">
-        <p className="text-xs text-muted-foreground">
-          Subscriptions · última execução
-        </p>
+        <p className="text-xs text-muted-foreground">Subscriptions · última execução</p>
         <p className="text-[10px] text-muted-foreground/70">
           {WINDOW_LABEL[windowKey]} · maiores gargalos primeiro
         </p>
@@ -141,7 +154,7 @@ export function WebhookSubscriptionLatestList({ windowKey }: { windowKey: Webhoo
         </p>
       ) : (
         <ul className="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
-          {data.map((row) => (
+          {data.map(row => (
             <Row key={row.subscription_id} row={row} />
           ))}
         </ul>

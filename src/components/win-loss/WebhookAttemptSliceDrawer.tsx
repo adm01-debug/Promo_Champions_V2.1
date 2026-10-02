@@ -4,24 +4,24 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle2, XCircle, Clock, Link2 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+} from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CheckCircle2, XCircle, Clock, Link2 } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   useWebhookAttemptSlice,
   type AttemptDeliveryRow,
-} from "@/hooks/win-loss/useWebhookAttemptSlice";
-import type { WebhookStatsWindow } from "@/hooks/win-loss/useWebhookDeliveryStats";
-import { useMemo } from "react";
+} from '@/hooks/win-loss/useWebhookAttemptSlice';
+import type { WebhookStatsWindow } from '@/hooks/win-loss/useWebhookDeliveryStats';
+import { useMemo } from 'react';
 
 const WINDOW_LABEL: Record<WebhookStatsWindow, string> = {
-  "24h": "últimas 24 horas",
-  "7d": "últimos 7 dias",
-  "30d": "últimos 30 dias",
+  '24h': 'últimas 24 horas',
+  '7d': 'últimos 7 dias',
+  '30d': 'últimos 30 dias',
 };
 
 interface Props {
@@ -35,7 +35,7 @@ function shortUrl(url: string | null, fallback: string): string {
   if (!url) return fallback;
   try {
     const u = new URL(url);
-    return `${u.host}${u.pathname === "/" ? "" : u.pathname}`;
+    return `${u.host}${u.pathname === '/' ? '' : u.pathname}`;
   } catch {
     return url;
   }
@@ -43,7 +43,7 @@ function shortUrl(url: string | null, fallback: string): string {
 
 function DeliveryRow({ row }: { row: AttemptDeliveryRow }) {
   const Icon = row.succeeded ? CheckCircle2 : XCircle;
-  const color = row.succeeded ? "text-success" : "text-destructive";
+  const color = row.succeeded ? 'text-success' : 'text-destructive';
   return (
     <li className="flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2">
       <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${color}`} aria-hidden />
@@ -53,10 +53,10 @@ function DeliveryRow({ row }: { row: AttemptDeliveryRow }) {
             {row.event}
           </Badge>
           <Badge
-            variant={row.succeeded ? "secondary" : "destructive"}
+            variant={row.succeeded ? 'secondary' : 'destructive'}
             className="text-[10px] py-0 px-1.5"
           >
-            HTTP {row.status || "—"}
+            HTTP {row.status || '—'}
           </Badge>
           <span className="text-[10px] text-muted-foreground inline-flex items-center gap-0.5">
             <Clock className="h-3 w-3" />
@@ -70,43 +70,50 @@ function DeliveryRow({ row }: { row: AttemptDeliveryRow }) {
           </span>
         </p>
         {row.error_message && (
-          <p className="text-[11px] text-destructive mt-1 break-words">{row.error_message}</p>
+          <p className="text-[11px] text-destructive mt-1 break-words">
+            {row.error_message}
+          </p>
         )}
         <p className="text-[10px] text-muted-foreground mt-1">
-          {formatDistanceToNow(new Date(row.created_at), { addSuffix: true, locale: ptBR })}
+          {formatDistanceToNow(new Date(row.created_at), {
+            addSuffix: true,
+            locale: ptBR,
+          })}
         </p>
       </div>
     </li>
   );
 }
 
-export function WebhookAttemptSliceDrawer({ attempt, windowKey, open, onOpenChange }: Props) {
+export function WebhookAttemptSliceDrawer({
+  attempt,
+  windowKey,
+  open,
+  onOpenChange,
+}: Props) {
   const { data, isLoading, isError } = useWebhookAttemptSlice(attempt, windowKey);
 
   const totalFailures = data?.rows.length ?? 0;
   const totalSubs = data?.subscriptions.length ?? 0;
 
   const description = useMemo(() => {
-    if (attempt === null) return "";
+    if (attempt === null) return '';
     return `Tentativa ${attempt} · ${WINDOW_LABEL[windowKey]}`;
   }, [attempt, windowKey]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-lg flex flex-col p-0 gap-0"
-      >
+      <SheetContent side="right" className="w-full sm:max-w-lg flex flex-col p-0 gap-0">
         <SheetHeader className="border-b px-4 py-3 space-y-1">
           <SheetTitle className="text-section-title">Falhas por tentativa</SheetTitle>
           <SheetDescription className="text-xs">{description}</SheetDescription>
           {!isLoading && !isError && totalFailures > 0 && (
             <p className="text-[11px] text-muted-foreground">
               <strong className="text-foreground">{totalFailures}</strong> falha
-              {totalFailures === 1 ? "" : "s"} em{" "}
+              {totalFailures === 1 ? '' : 's'} em{' '}
               <strong className="text-foreground">{totalSubs}</strong> assinatura
-              {totalSubs === 1 ? "" : "s"}
-              {data?.truncated && " (mostrando primeiras 500)"}
+              {totalSubs === 1 ? '' : 's'}
+              {data?.truncated && ' (mostrando primeiras 500)'}
             </p>
           )}
         </SheetHeader>
@@ -137,7 +144,7 @@ export function WebhookAttemptSliceDrawer({ attempt, windowKey, open, onOpenChan
                     Assinaturas afetadas
                   </h3>
                   <ul className="space-y-1">
-                    {data!.subscriptions.map((s) => (
+                    {data!.subscriptions.map(s => (
                       <li
                         key={s.subscription_id}
                         className="flex items-center justify-between gap-2 rounded-md border bg-muted/10 px-2.5 py-1.5 text-[11px]"
@@ -148,8 +155,11 @@ export function WebhookAttemptSliceDrawer({ attempt, windowKey, open, onOpenChan
                         >
                           {shortUrl(s.subscription_url, s.subscription_id)}
                         </span>
-                        <Badge variant="destructive" className="text-[10px] py-0 px-1.5 shrink-0">
-                          {s.failures} falha{s.failures === 1 ? "" : "s"}
+                        <Badge
+                          variant="destructive"
+                          className="text-[10px] py-0 px-1.5 shrink-0"
+                        >
+                          {s.failures} falha{s.failures === 1 ? '' : 's'}
                         </Badge>
                       </li>
                     ))}
@@ -165,7 +175,7 @@ export function WebhookAttemptSliceDrawer({ attempt, windowKey, open, onOpenChan
                   Entregas
                 </h3>
                 <ul className="space-y-2" role="list">
-                  {data!.rows.map((row) => (
+                  {data!.rows.map(row => (
                     <DeliveryRow key={row.id} row={row} />
                   ))}
                 </ul>

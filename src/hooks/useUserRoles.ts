@@ -1,10 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
-import { CONFIG_QUERY_OPTIONS } from "@/config/queryOptions";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { CONFIG_QUERY_OPTIONS } from '@/config/queryOptions';
 
-export type AppRole = "admin" | "manager" | "salesperson";
+export type AppRole = 'admin' | 'manager' | 'salesperson';
 
 export interface UserRole {
   id: string;
@@ -23,7 +23,7 @@ function withRoleTimeout<T>(request: PromiseLike<T>, label: string): Promise<T |
     Promise.resolve(request).finally(() => {
       if (timeoutId) clearTimeout(timeoutId);
     }),
-    new Promise<null>((resolve) => {
+    new Promise<null>(resolve => {
       timeoutId = setTimeout(() => {
         if (import.meta.env.DEV) {
           console.warn(`${label} timed out after ${ROLE_QUERY_TIMEOUT_MS}ms`);
@@ -40,19 +40,19 @@ export function useUserRoles() {
 
   // Get current user's role
   const { data: currentUserRole, isLoading: isLoadingCurrentRole } = useQuery({
-    queryKey: ["user-role", user?.id],
+    queryKey: ['user-role', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
+
       const roleResult = await withRoleTimeout(
         supabase
-          .from("user_roles")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("role")
+          .from('user_roles')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('role')
           .limit(1)
           .maybeSingle(),
-        "user_roles lookup"
+        'user_roles lookup'
       );
 
       const data = roleResult?.data;
@@ -62,28 +62,28 @@ export function useUserRoles() {
       if (!data && !error && user?.id) {
         const salespersonResult = await withRoleTimeout(
           supabase
-            .from("salespeople")
-            .select("role")
-            .eq("auth_user_id", user.id)
+            .from('salespeople')
+            .select('role')
+            .eq('auth_user_id', user.id)
             .maybeSingle(),
-          "salespeople role fallback"
+          'salespeople role fallback'
         );
         const spData = salespersonResult?.data;
-        
+
         if (spData) {
           return {
             id: 'temp-' + user.id,
             user_id: user.id,
             role: 'salesperson',
             created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           } as UserRole;
         }
       }
 
       if (error) {
         if (import.meta.env.DEV) {
-          console.error("Error fetching user role:", error);
+          console.error('Error fetching user role:', error);
         }
         return null;
       }
@@ -96,32 +96,32 @@ export function useUserRoles() {
 
   // Get all user roles (for admin management)
   const { data: allUserRoles, isLoading: isLoadingAllRoles } = useQuery({
-    queryKey: ["all-user-roles"],
+    queryKey: ['all-user-roles'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("user_roles")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('user_roles')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) {
         if (import.meta.env.DEV) {
-          console.error("Error fetching all user roles:", error);
+          console.error('Error fetching all user roles:', error);
         }
         return [];
       }
 
       return data as UserRole[];
     },
-    enabled: currentUserRole?.role === "admin",
+    enabled: currentUserRole?.role === 'admin',
   });
 
   // Update a user's role
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, newRole }: { userId: string; newRole: AppRole }) => {
       const { data, error } = await supabase
-        .from("user_roles")
+        .from('user_roles')
         .update({ role: newRole })
-        .eq("user_id", userId)
+        .eq('user_id', userId)
         .select()
         .single();
 
@@ -129,28 +129,28 @@ export function useUserRoles() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-user-roles"] });
-      queryClient.invalidateQueries({ queryKey: ["user-role"] });
-      toast.success("Role atualizada com sucesso");
+      queryClient.invalidateQueries({ queryKey: ['all-user-roles'] });
+      queryClient.invalidateQueries({ queryKey: ['user-role'] });
+      toast.success('Role atualizada com sucesso');
     },
-    onError: (error) => {
+    onError: error => {
       if (import.meta.env.DEV) {
-        console.error("Error updating role:", error);
+        console.error('Error updating role:', error);
       }
-      toast.error("Erro ao atualizar role. Apenas admins podem fazer isso.");
+      toast.error('Erro ao atualizar role. Apenas admins podem fazer isso.');
     },
   });
 
   // Helper functions
-  const isAdmin = currentUserRole?.role === "admin";
-  const isManager = currentUserRole?.role === "manager";
-  const isSDR = salesperson?.role === "sdr";
-  const isCloser = salesperson?.role === "closer";
-  const isHybrid = salesperson?.role === "hybrid";
+  const isAdmin = currentUserRole?.role === 'admin';
+  const isManager = currentUserRole?.role === 'manager';
+  const isSDR = salesperson?.role === 'sdr';
+  const isCloser = salesperson?.role === 'closer';
+  const isHybrid = salesperson?.role === 'hybrid';
   const isAdminOrManager = isAdmin || isManager;
 
   const hasRole = (role: AppRole) => currentUserRole?.role === role;
-  
+
   const canManageRoles = isAdmin;
   const canViewReports = isAdminOrManager;
   const canEditGoals = isAdminOrManager;

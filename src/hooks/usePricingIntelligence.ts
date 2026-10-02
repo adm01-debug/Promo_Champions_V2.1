@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchWithUserToken } from "@/lib/edgeFetch";
+import { useQuery } from '@tanstack/react-query';
+import { fetchWithUserToken } from '@/lib/edgeFetch';
 
 export interface PricingKPIs {
   total_revenue: number;
@@ -37,7 +37,7 @@ export interface ProductRecommendation {
   uplift_pct: number;
 }
 
-export type PricingHealth = "excellent" | "healthy" | "warning" | "critical";
+export type PricingHealth = 'excellent' | 'healthy' | 'warning' | 'critical';
 
 export interface PricingIntelligenceResponse {
   days: number;
@@ -56,16 +56,16 @@ export interface PricingIntelligenceResponse {
     product_name: string;
     our_price: number;
     competitor_price: number;
-    threat_level: "high" | "medium" | "low";
+    threat_level: 'high' | 'medium' | 'low';
   }[];
 }
 
 export function usePricingIntelligence(days: 7 | 30 | 90 = 30) {
   return useQuery<PricingIntelligenceResponse>({
-    queryKey: ["pricing-intelligence", days],
+    queryKey: ['pricing-intelligence', days],
     queryFn: async () => {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pricing-intelligence?days=${days}`;
-      const resp = await fetchWithUserToken(url, { method: "GET" });
+      const resp = await fetchWithUserToken(url, { method: 'GET' });
       if (!resp.ok) throw new Error(`Pricing intelligence failed: ${resp.status}`);
       return (await resp.json()) as PricingIntelligenceResponse;
     },

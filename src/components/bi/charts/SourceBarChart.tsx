@@ -16,7 +16,11 @@ interface SourceBarChartProps {
 const SourceBarChart = ({ data, formatCurrency }: SourceBarChartProps) => (
   <ResponsiveContainer width="100%" height={220}>
     <BarChart data={data} layout="vertical">
-      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+      <CartesianGrid
+        strokeDasharray="3 3"
+        stroke="hsl(var(--border))"
+        strokeOpacity={0.5}
+      />
       <XAxis
         type="number"
         stroke="hsl(var(--muted-foreground))"

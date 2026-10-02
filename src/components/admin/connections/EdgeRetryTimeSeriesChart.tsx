@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -8,9 +8,9 @@ import {
   ResponsiveContainer,
   Legend,
   CartesianGrid,
-} from "recharts";
+} from 'recharts';
 
-type Outcome = "retry" | "success_after_retry" | "exhausted" | "non_retryable";
+type Outcome = 'retry' | 'success_after_retry' | 'exhausted' | 'non_retryable';
 
 interface Row {
   outcome: Outcome;
@@ -21,21 +21,26 @@ interface Props {
   rows: Row[] | undefined;
 }
 
-const OUTCOMES: Outcome[] = ["retry", "success_after_retry", "exhausted", "non_retryable"];
+const OUTCOMES: Outcome[] = [
+  'retry',
+  'success_after_retry',
+  'exhausted',
+  'non_retryable',
+];
 
 const labels: Record<Outcome, string> = {
-  retry: "Retry",
-  success_after_retry: "Sucesso",
-  exhausted: "Esgotado",
-  non_retryable: "Não-retriável",
+  retry: 'Retry',
+  success_after_retry: 'Sucesso',
+  exhausted: 'Esgotado',
+  non_retryable: 'Não-retriável',
 };
 
 // Semantic tokens for chart series (HSL via CSS vars)
 const colors: Record<Outcome, string> = {
-  retry: "hsl(var(--muted-foreground))",
-  success_after_retry: "hsl(var(--primary))",
-  exhausted: "hsl(var(--destructive))",
-  non_retryable: "hsl(var(--border))",
+  retry: 'hsl(var(--muted-foreground))',
+  success_after_retry: 'hsl(var(--primary))',
+  exhausted: 'hsl(var(--destructive))',
+  non_retryable: 'hsl(var(--border))',
 };
 
 export function EdgeRetryTimeSeriesChart({ rows }: Props) {
@@ -48,7 +53,7 @@ export function EdgeRetryTimeSeriesChart({ rows }: Props) {
       d.setMinutes(0, 0, 0);
       d.setHours(d.getHours() - i);
       buckets.push({
-        hour: `${d.getHours().toString().padStart(2, "0")}h`,
+        hour: `${d.getHours().toString().padStart(2, '0')}h`,
         _ts: d.getTime(),
         retry: 0,
         success_after_retry: 0,
@@ -70,8 +75,8 @@ export function EdgeRetryTimeSeriesChart({ rows }: Props) {
   }, [rows]);
 
   const hasData = useMemo(
-    () => data.some((b) => OUTCOMES.some((o) => (b[o] as number) > 0)),
-    [data],
+    () => data.some(b => OUTCOMES.some(o => (b[o] as number) > 0)),
+    [data]
   );
 
   if (!hasData) {
@@ -86,24 +91,31 @@ export function EdgeRetryTimeSeriesChart({ rows }: Props) {
     <div className="h-40 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="hsl(var(--border))"
+            vertical={false}
+          />
           <XAxis
             dataKey="hour"
-            tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
             interval={2}
           />
-          <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} allowDecimals={false} />
+          <YAxis
+            tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+            allowDecimals={false}
+          />
           <Tooltip
             contentStyle={{
-              background: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
+              background: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
               borderRadius: 6,
               fontSize: 12,
             }}
-            labelStyle={{ color: "hsl(var(--foreground))" }}
+            labelStyle={{ color: 'hsl(var(--foreground))' }}
           />
           <Legend wrapperStyle={{ fontSize: 10 }} />
-          {OUTCOMES.map((o) => (
+          {OUTCOMES.map(o => (
             <Bar key={o} dataKey={o} name={labels[o]} stackId="a" fill={colors[o]} />
           ))}
         </BarChart>

@@ -1,18 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Activity } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Activity } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export function AutoTestJobStatusCard() {
   const { data } = useQuery({
-    queryKey: ["integration-autotest-jobs", "latest"],
+    queryKey: ['integration-autotest-jobs', 'latest'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("integration_autotest_jobs")
-        .select("*")
-        .order("started_at", { ascending: false })
+        .from('integration_autotest_jobs')
+        .select('*')
+        .order('started_at', { ascending: false })
         .limit(1)
         .maybeSingle();
       if (error) throw error;
@@ -42,7 +48,10 @@ export function AutoTestJobStatusCard() {
           <>
             <p>
               <span className="text-muted-foreground">Início: </span>
-              {formatDistanceToNow(new Date(data.started_at), { addSuffix: true, locale: ptBR })}
+              {formatDistanceToNow(new Date(data.started_at), {
+                addSuffix: true,
+                locale: ptBR,
+              })}
             </p>
             <p>
               <span className="text-muted-foreground">Status: </span>

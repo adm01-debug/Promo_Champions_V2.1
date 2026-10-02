@@ -1,15 +1,19 @@
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, AlertTriangle, TrendingUp, Users, ListChecks } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { ChevronDown, AlertTriangle, TrendingUp, Users, ListChecks } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   sentimentMeta,
   sourceMeta,
   type ConversationAnalysis,
-} from "./conversationHelpers";
+} from './conversationHelpers';
 
 interface Props {
   analysis: ConversationAnalysis;
@@ -39,11 +43,14 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
                 </Badge>
               </div>
               <CardTitle className="text-section-title text-sm font-medium">
-                {analysis.summary || "Sem resumo gerado."}
+                {analysis.summary || 'Sem resumo gerado.'}
               </CardTitle>
             </div>
             <span className="text-xs text-muted-foreground whitespace-nowrap">
-              {formatDistanceToNow(new Date(analysis.created_at), { locale: ptBR, addSuffix: true })}
+              {formatDistanceToNow(new Date(analysis.created_at), {
+                locale: ptBR,
+                addSuffix: true,
+              })}
             </span>
           </div>
         </CardHeader>
@@ -56,7 +63,9 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
             <ul className="space-y-1 text-sm">
               {analysis.objections.map((o, i) => (
                 <li key={i} className="flex gap-2">
-                  <Badge variant="outline" className="text-[10px] uppercase">{o.category}</Badge>
+                  <Badge variant="outline" className="text-[10px] uppercase">
+                    {o.category}
+                  </Badge>
                   <span className="text-muted-foreground">{o.text}</span>
                 </li>
               ))}
@@ -70,7 +79,8 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
             <ul className="space-y-1 text-sm">
               {analysis.next_steps.map((n, i) => (
                 <li key={i} className="text-muted-foreground">
-                  • {n.text}{n.deadline_hint ? ` — ${n.deadline_hint}` : ""}
+                  • {n.text}
+                  {n.deadline_hint ? ` — ${n.deadline_hint}` : ''}
                 </li>
               ))}
             </ul>
@@ -82,7 +92,11 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
           >
             <div className="flex flex-wrap gap-1">
               {analysis.buying_signals.map((b, i) => (
-                <Badge key={i} variant="outline" className="bg-status-success/10 text-status-success border-status-success/30">
+                <Badge
+                  key={i}
+                  variant="outline"
+                  className="bg-status-success/10 text-status-success border-status-success/30"
+                >
                   {b}
                 </Badge>
               ))}
@@ -95,7 +109,11 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
           >
             <div className="flex flex-wrap gap-1">
               {analysis.risk_signals.map((r, i) => (
-                <Badge key={i} variant="outline" className="bg-status-warning/10 text-status-warning border-status-warning/30">
+                <Badge
+                  key={i}
+                  variant="outline"
+                  className="bg-status-warning/10 text-status-warning border-status-warning/30"
+                >
                   {r}
                 </Badge>
               ))}
@@ -108,7 +126,9 @@ export const AnalysisResultCard = ({ analysis }: Props) => {
           >
             <div className="flex flex-wrap gap-1">
               {analysis.decision_makers.map((d, i) => (
-                <Badge key={i} variant="secondary">{d}</Badge>
+                <Badge key={i} variant="secondary">
+                  {d}
+                </Badge>
               ))}
             </div>
           </Section>
@@ -136,7 +156,9 @@ const Section = ({
         <span className="flex items-center gap-2 text-xs font-medium">
           {icon}
           {title}
-          <Badge variant="secondary" className="text-[10px] h-4 px-1.5">{count}</Badge>
+          <Badge variant="secondary" className="text-[10px] h-4 px-1.5">
+            {count}
+          </Badge>
         </span>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
       </CollapsibleTrigger>

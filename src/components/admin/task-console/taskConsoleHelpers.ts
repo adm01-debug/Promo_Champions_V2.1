@@ -1,5 +1,6 @@
 export type TaskDifficulty = 'easy' | 'medium' | 'hard' | 'epic';
-export type TaskAssignmentStatus = 'pending' | 'in_progress' | 'submitted' | 'approved' | 'rejected';
+export type TaskAssignmentStatus =
+  'pending' | 'in_progress' | 'submitted' | 'approved' | 'rejected';
 
 export const DIFFICULTY_XP_DEFAULTS: Record<TaskDifficulty, number> = {
   easy: 25,
@@ -52,5 +53,12 @@ export const RECURRENCE_LABELS: Record<RecurrenceRule, string> = {
 };
 
 export const SQUAD_COLOR_PRESETS: string[] = [
-  '#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444', '#64748b',
+  '#6366f1',
+  '#ec4899',
+  '#f59e0b',
+  '#10b981',
+  '#06b6d4',
+  '#8b5cf6',
+  '#ef4444',
+  '#64748b',
 ];

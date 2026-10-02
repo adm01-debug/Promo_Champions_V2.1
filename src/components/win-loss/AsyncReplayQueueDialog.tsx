@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,11 +6,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   CheckCircle2,
   XCircle,
@@ -19,12 +19,12 @@ import {
   MinusCircle,
   RotateCcw,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   useAsyncReplayQueue,
   ASYNC_REPLAY_CHUNK_SIZE,
   type ChunkStatus,
-} from "@/hooks/win-loss/useAsyncReplayQueue";
+} from '@/hooks/win-loss/useAsyncReplayQueue';
 
 interface AsyncReplayQueueDialogProps {
   open: boolean;
@@ -35,12 +35,15 @@ interface AsyncReplayQueueDialogProps {
   onFinished?: () => void;
 }
 
-const statusConfig: Record<ChunkStatus, { icon: typeof CheckCircle2; tone: string; label: string }> = {
-  pending: { icon: Clock, tone: "text-muted-foreground", label: "Aguardando" },
-  running: { icon: Loader2, tone: "text-primary animate-spin", label: "Em execução" },
-  succeeded: { icon: CheckCircle2, tone: "text-status-success", label: "Concluído" },
-  failed: { icon: XCircle, tone: "text-destructive", label: "Falhou" },
-  cancelled: { icon: MinusCircle, tone: "text-muted-foreground", label: "Cancelado" },
+const statusConfig: Record<
+  ChunkStatus,
+  { icon: typeof CheckCircle2; tone: string; label: string }
+> = {
+  pending: { icon: Clock, tone: 'text-muted-foreground', label: 'Aguardando' },
+  running: { icon: Loader2, tone: 'text-primary animate-spin', label: 'Em execução' },
+  succeeded: { icon: CheckCircle2, tone: 'text-status-success', label: 'Concluído' },
+  failed: { icon: XCircle, tone: 'text-destructive', label: 'Falhou' },
+  cancelled: { icon: MinusCircle, tone: 'text-muted-foreground', label: 'Cancelado' },
 };
 
 export function AsyncReplayQueueDialog({
@@ -53,7 +56,13 @@ export function AsyncReplayQueueDialog({
   const { state, start, cancel, reset } = useAsyncReplayQueue();
 
   useEffect(() => {
-    if (open && autoStart && !state.isRunning && state.startedAt === null && ids.length > 0) {
+    if (
+      open &&
+      autoStart &&
+      !state.isRunning &&
+      state.startedAt === null &&
+      ids.length > 0
+    ) {
       void start(ids);
     }
   }, [open, autoStart, ids, start, state.isRunning, state.startedAt]);
@@ -66,14 +75,15 @@ export function AsyncReplayQueueDialog({
     if (state.finishedAt && onFinished) onFinished();
   }, [state.finishedAt, onFinished]);
 
-  const progress = state.totalIds > 0 ? Math.round((state.processedIds / state.totalIds) * 100) : 0;
+  const progress =
+    state.totalIds > 0 ? Math.round((state.processedIds / state.totalIds) * 100) : 0;
   const elapsedMs = state.startedAt
     ? (state.finishedAt ?? Date.now()) - state.startedAt
     : 0;
   const isDone = state.finishedAt !== null;
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !state.isRunning && onOpenChange(v)}>
+    <Dialog open={open} onOpenChange={v => !state.isRunning && onOpenChange(v)}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-section-title flex items-center gap-2">
@@ -81,8 +91,8 @@ export function AsyncReplayQueueDialog({
             Fila assíncrona de reprocessamento
           </DialogTitle>
           <DialogDescription>
-            {state.totalIds} itens em {state.totalChunks} lote(s) de até {ASYNC_REPLAY_CHUNK_SIZE}.
-            Você pode acompanhar o progresso em tempo real.
+            {state.totalIds} itens em {state.totalChunks} lote(s) de até{' '}
+            {ASYNC_REPLAY_CHUNK_SIZE}. Você pode acompanhar o progresso em tempo real.
           </DialogDescription>
         </DialogHeader>
 
@@ -104,7 +114,7 @@ export function AsyncReplayQueueDialog({
             <Stat label="Falhas" value={state.failedIds} tone="text-destructive" />
             <Stat
               label="Lotes"
-              value={`${state.chunks.filter((c) => c.status === "succeeded" || c.status === "failed").length}/${state.totalChunks}`}
+              value={`${state.chunks.filter(c => c.status === 'succeeded' || c.status === 'failed').length}/${state.totalChunks}`}
               tone="text-foreground"
             />
             <Stat
@@ -117,7 +127,7 @@ export function AsyncReplayQueueDialog({
           {/* Chunk list */}
           <ScrollArea className="max-h-64 rounded-md border bg-muted/20 p-2">
             <ul className="space-y-1" role="list" aria-label="Lotes da fila">
-              {state.chunks.map((chunk) => {
+              {state.chunks.map(chunk => {
                 const cfg = statusConfig[chunk.status];
                 const Icon = cfg.icon;
                 return (
@@ -134,13 +144,16 @@ export function AsyncReplayQueueDialog({
                     </Badge>
                     <span className="text-muted-foreground shrink-0">{cfg.label}</span>
                     <div className="ml-auto flex items-center gap-1.5 shrink-0">
-                      {chunk.status === "succeeded" && (
+                      {chunk.status === 'succeeded' && (
                         <>
                           <Badge variant="secondary" className="text-[10px] py-0 px-1.5">
                             ✓ {chunk.succeeded}
                           </Badge>
                           {chunk.failed > 0 && (
-                            <Badge variant="destructive" className="text-[10px] py-0 px-1.5">
+                            <Badge
+                              variant="destructive"
+                              className="text-[10px] py-0 px-1.5"
+                            >
                               ✗ {chunk.failed}
                             </Badge>
                           )}
@@ -164,14 +177,17 @@ export function AsyncReplayQueueDialog({
           </ScrollArea>
 
           {/* Per-chunk error details */}
-          {state.chunks.some((c) => c.status === "failed" && c.error) && (
+          {state.chunks.some(c => c.status === 'failed' && c.error) && (
             <div className="rounded-md border border-destructive/40 bg-destructive/5 p-2.5 space-y-1">
               <p className="text-[11px] font-medium text-destructive">Erros por lote:</p>
               <ul className="space-y-0.5">
                 {state.chunks
-                  .filter((c) => c.status === "failed" && c.error)
-                  .map((c) => (
-                    <li key={c.index} className="text-[11px] text-destructive break-words">
+                  .filter(c => c.status === 'failed' && c.error)
+                  .map(c => (
+                    <li
+                      key={c.index}
+                      className="text-[11px] text-destructive break-words"
+                    >
                       Lote {c.index + 1}: {c.error}
                     </li>
                   ))}
@@ -184,10 +200,14 @@ export function AsyncReplayQueueDialog({
           {state.isRunning ? (
             <Button variant="destructive" onClick={cancel} disabled={state.isCancelling}>
               <X className="h-4 w-4 mr-1.5" />
-              {state.isCancelling ? "Cancelando…" : "Cancelar fila"}
+              {state.isCancelling ? 'Cancelando…' : 'Cancelar fila'}
             </Button>
           ) : (
-            <Button variant="default" onClick={() => onOpenChange(false)} disabled={!isDone && state.startedAt !== null}>
+            <Button
+              variant="default"
+              onClick={() => onOpenChange(false)}
+              disabled={!isDone && state.startedAt !== null}
+            >
               Fechar
             </Button>
           )}
@@ -197,7 +217,15 @@ export function AsyncReplayQueueDialog({
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string | number; tone: string }) {
+function Stat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string | number;
+  tone: string;
+}) {
   return (
     <div className="rounded-md border bg-background/60 px-2 py-1.5">
       <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>

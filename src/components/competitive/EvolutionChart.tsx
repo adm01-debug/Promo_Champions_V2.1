@@ -1,5 +1,14 @@
 import React, { FC, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -8,12 +17,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const COLORS = [
-  'hsl(262, 83%, 58%)',  // primary
-  'hsl(172, 66%, 45%)',  // secondary
-  'hsl(185, 90%, 48%)',  // accent
-  'hsl(30, 90%, 55%)',   // orange
-  'hsl(340, 75%, 55%)',  // pink
-  'hsl(210, 70%, 55%)',  // blue
+  'hsl(262, 83%, 58%)', // primary
+  'hsl(172, 66%, 45%)', // secondary
+  'hsl(185, 90%, 48%)', // accent
+  'hsl(30, 90%, 55%)', // orange
+  'hsl(340, 75%, 55%)', // pink
+  'hsl(210, 70%, 55%)', // blue
 ];
 
 const periodOptions = [
@@ -36,9 +45,10 @@ const EvolutionChartComponent: FC = () => {
     );
   };
 
-  const displayPeople = selectedIds.length > 0
-    ? salespeople.filter(sp => selectedIds.includes(sp.id))
-    : salespeople;
+  const displayPeople =
+    selectedIds.length > 0
+      ? salespeople.filter(sp => selectedIds.includes(sp.id))
+      : salespeople;
 
   if (isLoading) {
     return <div className="h-80 rounded-xl bg-muted/30 animate-pulse" />;
@@ -54,9 +64,9 @@ const EvolutionChartComponent: FC = () => {
           </CardTitle>
           <div className="flex items-center gap-2">
             {!isDedicatedPage && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-7 w-7 rounded-full hover:bg-primary/10 transition-colors"
                 onClick={() => navigate('/analytics/evolution')}
               >
@@ -116,24 +126,32 @@ const EvolutionChartComponent: FC = () => {
             <XAxis
               dataKey="date"
               tick={{ fontSize: 10 }}
-              tickFormatter={(v) => {
+              tickFormatter={v => {
                 const d = new Date(v);
                 return `${d.getDate()}/${d.getMonth() + 1}`;
               }}
             />
             <YAxis
               tick={{ fontSize: 10 }}
-              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+              tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
               formatter={(value: number) =>
-                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value)
+                new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                  maximumFractionDigits: 0,
+                }).format(value)
               }
-              labelFormatter={(label) => {
+              labelFormatter={label => {
                 const d = new Date(label);
                 return d.toLocaleDateString('pt-BR');
               }}
-              contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+              contentStyle={{
+                borderRadius: 12,
+                border: 'none',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+              }}
             />
             <Legend />
             {displayPeople.map((sp, i) => (
@@ -153,6 +171,5 @@ const EvolutionChartComponent: FC = () => {
     </Card>
   );
 };
-
 
 export const EvolutionChart = React.memo(EvolutionChartComponent);

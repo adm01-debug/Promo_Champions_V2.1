@@ -32,8 +32,10 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
   const mySquadId = me?.squad_id;
 
   const [chatMode, setChatMode] = useState<'global' | 'squad'>('global');
-  const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat(chatMode === 'squad' ? mySquadId : null);
-  
+  const { messages, isLoading, sendMessage, addReaction } = useCompetitiveChat(
+    chatMode === 'squad' ? mySquadId : null
+  );
+
   const [newMessage, setNewMessage] = useState('');
   const [showQuickMessages, setShowQuickMessages] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -61,7 +63,10 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
   }
 
   return (
-    <Card className="border-none shadow-lg overflow-hidden flex flex-col" style={{ height: '500px' }}>
+    <Card
+      className="border-none shadow-lg overflow-hidden flex flex-col"
+      style={{ height: '500px' }}
+    >
       <CardHeader className="pb-2 shrink-0 space-y-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title flex items-center gap-2">
@@ -74,14 +79,24 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
             {messages.length} Live
           </span>
         </div>
-        
+
         {mySquadId && (
-          <Tabs value={chatMode} onValueChange={(v) => setChatMode(v as 'global' | 'squad')} className="w-full">
+          <Tabs
+            value={chatMode}
+            onValueChange={v => setChatMode(v as 'global' | 'squad')}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2 bg-black/20 h-8 p-1 rounded-lg">
-              <TabsTrigger value="global" className="text-[10px] font-black uppercase tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsTrigger
+                value="global"
+                className="text-[10px] font-black uppercase tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
                 <Globe className="h-3 w-3" /> Global
               </TabsTrigger>
-              <TabsTrigger value="squad" className="text-[10px] font-black uppercase tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsTrigger
+                value="squad"
+                className="text-[10px] font-black uppercase tracking-widest gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
                 <Users className="h-3 w-3" /> Squad
               </TabsTrigger>
             </TabsList>
@@ -90,16 +105,21 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
       </CardHeader>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 space-y-3 scrollbar-thin">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto px-4 space-y-3 scrollbar-thin"
+      >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <MessageCircle className="h-10 w-10 text-muted-foreground/30 mb-2" />
             <p className="text-sm text-muted-foreground">Nenhuma mensagem ainda</p>
-            <p className="text-xs text-muted-foreground">Seja o primeiro a provocar! 🔥</p>
+            <p className="text-xs text-muted-foreground">
+              Seja o primeiro a provocar! 🔥
+            </p>
           </div>
         ) : (
           <AnimatePresence initial={false}>
-            {messages.map((msg) => {
+            {messages.map(msg => {
               const isMe = msg.salesperson_id === salespersonId;
               return (
                 <motion.div
@@ -110,28 +130,46 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
                 >
                   <Avatar className="h-7 w-7 shrink-0">
                     <AvatarImage src={msg.sender_avatar || undefined} />
-                    <AvatarFallback className="text-[10px]">{msg.sender_name ?? 'Anônimo'[0]}</AvatarFallback>
+                    <AvatarFallback className="text-[10px]">
+                      {msg.sender_name ?? 'Anônimo'[0]}
+                    </AvatarFallback>
                   </Avatar>
                   <div className={cn('max-w-[75%]', isMe && 'items-end')}>
-                    <p className={cn('text-[10px] text-muted-foreground mb-0.5', isMe && 'text-right')}>
+                    <p
+                      className={cn(
+                        'text-[10px] text-muted-foreground mb-0.5',
+                        isMe && 'text-right'
+                      )}
+                    >
                       {msg.sender_name ?? 'Anônimo'}
                     </p>
-                    <div className={cn(
-                      'px-3 py-2 rounded-2xl text-sm',
-                      isMe
-                        ? 'bg-primary text-primary-foreground rounded-br-md'
-                        : 'bg-muted/60 text-foreground rounded-bl-md',
-                      msg.message_type === 'taunt' && 'font-bold',
-                    )}>
+                    <div
+                      className={cn(
+                        'px-3 py-2 rounded-2xl text-sm',
+                        isMe
+                          ? 'bg-primary text-primary-foreground rounded-br-md'
+                          : 'bg-muted/60 text-foreground rounded-bl-md',
+                        msg.message_type === 'taunt' && 'font-bold'
+                      )}
+                    >
                       {msg.message}
                     </div>
                     {/* Reactions */}
                     {Object.keys(msg.reactions).length > 0 && (
-                      <div className={cn('flex gap-1 mt-1 flex-wrap', isMe && 'justify-end')}>
+                      <div
+                        className={cn('flex gap-1 mt-1 flex-wrap', isMe && 'justify-end')}
+                      >
                         {Object.entries(msg.reactions).map(([emoji, users]) => (
                           <button
                             key={emoji}
-                            onClick={() => salespersonId && addReaction.mutate({ messageId: msg.id, salespersonId, emoji })}
+                            onClick={() =>
+                              salespersonId &&
+                              addReaction.mutate({
+                                messageId: msg.id,
+                                salespersonId,
+                                emoji,
+                              })
+                            }
                             className={cn(
                               'text-xs px-1.5 py-0.5 rounded-full border transition-all',
                               (users as string[]).includes(salespersonId || '')
@@ -150,7 +188,13 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
                         {QUICK_REACTIONS.slice(0, 3).map(emoji => (
                           <button
                             key={emoji}
-                            onClick={() => addReaction.mutate({ messageId: msg.id, salespersonId, emoji })}
+                            onClick={() =>
+                              addReaction.mutate({
+                                messageId: msg.id,
+                                salespersonId,
+                                emoji,
+                              })
+                            }
                             className="text-xs hover:scale-125 transition-transform"
                           >
                             {emoji}
@@ -158,8 +202,16 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
                         ))}
                       </div>
                     )}
-                    <p className={cn('text-[9px] text-muted-foreground mt-0.5', isMe && 'text-right')}>
-                      {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true, locale: ptBR })}
+                    <p
+                      className={cn(
+                        'text-[9px] text-muted-foreground mt-0.5',
+                        isMe && 'text-right'
+                      )}
+                    >
+                      {formatDistanceToNow(new Date(msg.created_at), {
+                        addSuffix: true,
+                        locale: ptBR,
+                      })}
                     </p>
                   </div>
                 </motion.div>
@@ -198,7 +250,8 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
-            size="icon" aria-label="Reagir"
+            size="icon"
+            aria-label="Reagir"
             className="h-8 w-8 shrink-0"
             onClick={() => setShowQuickMessages(!showQuickMessages)}
           >
@@ -213,7 +266,8 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
             disabled={!salespersonId}
           />
           <Button
-            size="icon" aria-label="Enviar"
+            size="icon"
+            aria-label="Enviar"
             className="h-8 w-8 shrink-0"
             onClick={handleSend}
             disabled={!newMessage.trim() || !salespersonId || sendMessage.isPending}
@@ -225,6 +279,5 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
     </Card>
   );
 };
-
 
 export const CompetitiveChat = React.memo(CompetitiveChatComponent);

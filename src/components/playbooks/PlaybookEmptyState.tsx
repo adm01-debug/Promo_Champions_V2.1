@@ -1,7 +1,7 @@
-import { memo } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { memo } from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   BookOpen,
   PlusCircle,
@@ -9,8 +9,8 @@ import {
   Target,
   BarChart3,
   Sparkles,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface PlaybookEmptyStateProps {
   stageLabel: string;
@@ -23,26 +23,26 @@ const steps = [
   {
     id: 1,
     icon: PlusCircle,
-    title: "Crie um Playbook",
-    description: "Dê um título claro e escolha a etapa do funil que ele vai apoiar.",
+    title: 'Crie um Playbook',
+    description: 'Dê um título claro e escolha a etapa do funil que ele vai apoiar.',
   },
   {
     id: 2,
     icon: ListChecks,
-    title: "Adicione itens",
-    description: "Checklist, roteiros de ligação, perguntas SPIN e materiais de apoio.",
+    title: 'Adicione itens',
+    description: 'Checklist, roteiros de ligação, perguntas SPIN e materiais de apoio.',
   },
   {
     id: 3,
     icon: Target,
-    title: "Aplique nos deals",
-    description: "Vincule a deals dentro da etapa correspondente para guiar o vendedor.",
+    title: 'Aplique nos deals',
+    description: 'Vincule a deals dentro da etapa correspondente para guiar o vendedor.',
   },
   {
     id: 4,
     icon: BarChart3,
-    title: "Acompanhe aderência",
-    description: "Monitore quem seguiu o playbook e o impacto na conversão da etapa.",
+    title: 'Acompanhe aderência',
+    description: 'Monitore quem seguiu o playbook e o impacto na conversão da etapa.',
   },
 ];
 
@@ -61,7 +61,10 @@ export const PlaybookEmptyState = memo(function PlaybookEmptyState({
       <Card className="glass border-border/40">
         <CardContent className="flex flex-col items-center justify-center py-12 text-center gap-3">
           <div className="p-4 rounded-full bg-muted/40">
-            <BookOpen className="h-10 w-10 text-muted-foreground opacity-60" aria-hidden="true" />
+            <BookOpen
+              className="h-10 w-10 text-muted-foreground opacity-60"
+              aria-hidden="true"
+            />
           </div>
           <div>
             <p className="text-foreground font-semibold">Nenhum resultado encontrado</p>
@@ -88,7 +91,8 @@ export const PlaybookEmptyState = memo(function PlaybookEmptyState({
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-foreground">
-              Comece seu primeiro playbook de <span className="text-primary">{stageLabel}</span>
+              Comece seu primeiro playbook de{' '}
+              <span className="text-primary">{stageLabel}</span>
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
               Em 4 passos você padroniza a operação e mede aderência do time.
@@ -106,7 +110,10 @@ export const PlaybookEmptyState = memo(function PlaybookEmptyState({
           )}
         </div>
 
-        <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" aria-label="Passos para começar">
+        <ol
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
+          aria-label="Passos para começar"
+        >
           {steps.map((step, idx) => {
             const Icon = step.icon;
             return (
@@ -116,8 +123,8 @@ export const PlaybookEmptyState = memo(function PlaybookEmptyState({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + idx * 0.08, duration: 0.35 }}
                 className={cn(
-                  "relative p-4 rounded-xl bg-background/40 border border-border/40",
-                  "hover:border-primary/40 hover:bg-background/60 transition-colors"
+                  'relative p-4 rounded-xl bg-background/40 border border-border/40',
+                  'hover:border-primary/40 hover:bg-background/60 transition-colors'
                 )}
               >
                 <div className="flex items-start gap-3">

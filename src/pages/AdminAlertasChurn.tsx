@@ -12,7 +12,16 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { AlertTriangle, Bell, Play, Save, Mail, Send, History, ListChecks } from 'lucide-react';
+import {
+  AlertTriangle,
+  Bell,
+  Play,
+  Save,
+  Mail,
+  Send,
+  History,
+  ListChecks,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -61,7 +70,9 @@ const AdminAlertasChurn = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('churn_alert_settings')
-        .select('enabled, min_level, cooldown_hours, email_enabled, email_from, email_reply_to, email_recipients, email_subject_template, email_provider, auto_task_enabled, auto_task_min_level, auto_task_cooldown_hours, auto_task_priority, auto_task_due_in_days')
+        .select(
+          'enabled, min_level, cooldown_hours, email_enabled, email_from, email_reply_to, email_recipients, email_subject_template, email_provider, auto_task_enabled, auto_task_min_level, auto_task_cooldown_hours, auto_task_priority, auto_task_due_in_days'
+        )
         .maybeSingle();
       if (error) throw error;
       return (data ?? {
@@ -92,7 +103,9 @@ const AdminAlertasChurn = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('client_churn_alerts_state')
-        .select('salesperson_id, client_name, last_level, last_days_since, last_alerted_at')
+        .select(
+          'salesperson_id, client_name, last_level, last_days_since, last_alerted_at'
+        )
         .order('last_alerted_at', { ascending: false })
         .limit(20);
       if (error) throw error;
@@ -118,9 +131,12 @@ const AdminAlertasChurn = () => {
   const runNow = async () => {
     setRunning(true);
     try {
-      const { data, error } = await supabase.functions.invoke('detect-client-churn-alerts', {
-        body: { source: 'manual' },
-      });
+      const { data, error } = await supabase.functions.invoke(
+        'detect-client-churn-alerts',
+        {
+          body: { source: 'manual' },
+        }
+      );
       if (error) throw error;
       const created = (data as { created?: number })?.created ?? 0;
       toast.success(`Verificação concluída — ${created} alerta(s) enviado(s)`);
@@ -156,10 +172,10 @@ const AdminAlertasChurn = () => {
       l === 'critical'
         ? 'bg-destructive text-destructive-foreground'
         : l === 'high'
-        ? 'bg-warning text-warning-foreground'
-        : l === 'medium'
-        ? 'bg-muted text-foreground'
-        : 'bg-muted/50 text-muted-foreground';
+          ? 'bg-warning text-warning-foreground'
+          : l === 'medium'
+            ? 'bg-muted text-foreground'
+            : 'bg-muted/50 text-muted-foreground';
     return <Badge className={cls}>{LEVEL_LABEL[l]}</Badge>;
   };
 
@@ -167,7 +183,10 @@ const AdminAlertasChurn = () => {
     <PageTransition>
       <Helmet>
         <title>Alertas de Churn | Admin</title>
-        <meta name="description" content="Configurar alertas automáticos quando clientes cruzam limite de churn." />
+        <meta
+          name="description"
+          content="Configurar alertas automáticos quando clientes cruzam limite de churn."
+        />
       </Helmet>
 
       <div className="p-6 space-y-6 max-w-5xl mx-auto">
@@ -178,7 +197,8 @@ const AdminAlertasChurn = () => {
               Alertas de Churn
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Notifica automaticamente o vendedor quando um cliente ultrapassa o limite de risco.
+              Notifica automaticamente o vendedor quando um cliente ultrapassa o limite de
+              risco.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -204,11 +224,13 @@ const AdminAlertasChurn = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-label">Ativar alertas automáticos</Label>
-                    <p className="text-xs text-muted-foreground">Verificação executada de hora em hora.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Verificação executada de hora em hora.
+                    </p>
                   </div>
                   <Switch
                     checked={draft.enabled}
-                    onCheckedChange={(v) => setDraft({ ...draft, enabled: v })}
+                    onCheckedChange={v => setDraft({ ...draft, enabled: v })}
                   />
                 </div>
 
@@ -218,7 +240,9 @@ const AdminAlertasChurn = () => {
                     <select
                       className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                       value={draft.min_level}
-                      onChange={(e) => setDraft({ ...draft, min_level: e.target.value as Level })}
+                      onChange={e =>
+                        setDraft({ ...draft, min_level: e.target.value as Level })
+                      }
                     >
                       <option value="low">Baixo</option>
                       <option value="medium">Médio</option>
@@ -236,12 +260,16 @@ const AdminAlertasChurn = () => {
                       min={1}
                       max={720}
                       value={draft.cooldown_hours}
-                      onChange={(e) =>
-                        setDraft({ ...draft, cooldown_hours: Math.max(1, Number(e.target.value) || 1) })
+                      onChange={e =>
+                        setDraft({
+                          ...draft,
+                          cooldown_hours: Math.max(1, Number(e.target.value) || 1),
+                        })
                       }
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Tempo mínimo entre alertas repetidos para o mesmo cliente. Escalonamento de nível ignora o cooldown.
+                      Tempo mínimo entre alertas repetidos para o mesmo cliente.
+                      Escalonamento de nível ignora o cooldown.
                     </p>
                   </div>
                 </div>
@@ -274,12 +302,13 @@ const AdminAlertasChurn = () => {
                   <div>
                     <Label className="text-label">Ativar envio por e-mail</Label>
                     <p className="text-xs text-muted-foreground">
-                      Envia um e-mail toda vez que um alerta for disparado. Requer domínio verificado.
+                      Envia um e-mail toda vez que um alerta for disparado. Requer domínio
+                      verificado.
                     </p>
                   </div>
                   <Switch
                     checked={draft.email_enabled}
-                    onCheckedChange={(v) => setDraft({ ...draft, email_enabled: v })}
+                    onCheckedChange={v => setDraft({ ...draft, email_enabled: v })}
                   />
                 </div>
 
@@ -289,12 +318,15 @@ const AdminAlertasChurn = () => {
                     <select
                       className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                       value={draft.email_provider}
-                      onChange={(e) => setDraft({ ...draft, email_provider: e.target.value })}
+                      onChange={e =>
+                        setDraft({ ...draft, email_provider: e.target.value })
+                      }
                     >
                       <option value="lovable">Lovable Emails (domínio próprio)</option>
                     </select>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Configure o domínio verificado em Cloud → E-mails antes de habilitar.
+                      Configure o domínio verificado em Cloud → E-mails antes de
+                      habilitar.
                     </p>
                   </div>
                   <div>
@@ -303,7 +335,9 @@ const AdminAlertasChurn = () => {
                       type="email"
                       placeholder="alertas@seudominio.com"
                       value={draft.email_from ?? ''}
-                      onChange={(e) => setDraft({ ...draft, email_from: e.target.value || null })}
+                      onChange={e =>
+                        setDraft({ ...draft, email_from: e.target.value || null })
+                      }
                     />
                   </div>
                   <div>
@@ -312,17 +346,22 @@ const AdminAlertasChurn = () => {
                       type="email"
                       placeholder="opcional"
                       value={draft.email_reply_to ?? ''}
-                      onChange={(e) => setDraft({ ...draft, email_reply_to: e.target.value || null })}
+                      onChange={e =>
+                        setDraft({ ...draft, email_reply_to: e.target.value || null })
+                      }
                     />
                   </div>
                   <div>
                     <Label className="text-label">Assunto (template)</Label>
                     <Input
                       value={draft.email_subject_template}
-                      onChange={(e) => setDraft({ ...draft, email_subject_template: e.target.value })}
+                      onChange={e =>
+                        setDraft({ ...draft, email_subject_template: e.target.value })
+                      }
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Variáveis: <code>{'{{client_name}}'}</code>, <code>{'{{level}}'}</code>, <code>{'{{days}}'}</code>.
+                      Variáveis: <code>{'{{client_name}}'}</code>,{' '}
+                      <code>{'{{level}}'}</code>, <code>{'{{days}}'}</code>.
                     </p>
                   </div>
                 </div>
@@ -333,12 +372,12 @@ const AdminAlertasChurn = () => {
                     rows={3}
                     placeholder="Um e-mail por linha ou separados por vírgula"
                     value={draft.email_recipients.join('\n')}
-                    onChange={(e) =>
+                    onChange={e =>
                       setDraft({
                         ...draft,
                         email_recipients: e.target.value
                           .split(/[\n,;]+/)
-                          .map((s) => s.trim())
+                          .map(s => s.trim())
                           .filter(Boolean),
                       })
                     }
@@ -352,12 +391,20 @@ const AdminAlertasChurn = () => {
                   <Button
                     variant="outline"
                     onClick={sendTestEmail}
-                    disabled={sendingTest || !draft.email_enabled || !draft.email_from || draft.email_recipients.length === 0}
+                    disabled={
+                      sendingTest ||
+                      !draft.email_enabled ||
+                      !draft.email_from ||
+                      draft.email_recipients.length === 0
+                    }
                   >
                     <Send className="h-4 w-4 mr-2" />
                     {sendingTest ? 'Enviando...' : 'Enviar e-mail de teste'}
                   </Button>
-                  <Button onClick={() => saveMutation.mutate(draft)} disabled={saveMutation.isPending}>
+                  <Button
+                    onClick={() => saveMutation.mutate(draft)}
+                    disabled={saveMutation.isPending}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Salvar
                   </Button>
@@ -379,14 +426,17 @@ const AdminAlertasChurn = () => {
               <>
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-label">Criar tarefa quando um alerta for disparado</Label>
+                    <Label className="text-label">
+                      Criar tarefa quando um alerta for disparado
+                    </Label>
                     <p className="text-xs text-muted-foreground">
-                      Deduplica por cliente/vendedor e respeita o cooldown abaixo. Não cria tarefa se já houver uma pendente para o mesmo cliente.
+                      Deduplica por cliente/vendedor e respeita o cooldown abaixo. Não
+                      cria tarefa se já houver uma pendente para o mesmo cliente.
                     </p>
                   </div>
                   <Switch
                     checked={draft.auto_task_enabled}
-                    onCheckedChange={(v) => setDraft({ ...draft, auto_task_enabled: v })}
+                    onCheckedChange={v => setDraft({ ...draft, auto_task_enabled: v })}
                   />
                 </div>
 
@@ -396,7 +446,12 @@ const AdminAlertasChurn = () => {
                     <select
                       className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                       value={draft.auto_task_min_level}
-                      onChange={(e) => setDraft({ ...draft, auto_task_min_level: e.target.value as Exclude<Level,'low'> })}
+                      onChange={e =>
+                        setDraft({
+                          ...draft,
+                          auto_task_min_level: e.target.value as Exclude<Level, 'low'>,
+                        })
+                      }
                     >
                       <option value="medium">Médio</option>
                       <option value="high">Alto</option>
@@ -408,7 +463,12 @@ const AdminAlertasChurn = () => {
                     <select
                       className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
                       value={draft.auto_task_priority}
-                      onChange={(e) => setDraft({ ...draft, auto_task_priority: e.target.value as TaskPriority })}
+                      onChange={e =>
+                        setDraft({
+                          ...draft,
+                          auto_task_priority: e.target.value as TaskPriority,
+                        })
+                      }
                     >
                       <option value="low">Baixa</option>
                       <option value="medium">Média</option>
@@ -423,8 +483,14 @@ const AdminAlertasChurn = () => {
                       min={1}
                       max={720}
                       value={draft.auto_task_cooldown_hours}
-                      onChange={(e) =>
-                        setDraft({ ...draft, auto_task_cooldown_hours: Math.max(1, Number(e.target.value) || 1) })
+                      onChange={e =>
+                        setDraft({
+                          ...draft,
+                          auto_task_cooldown_hours: Math.max(
+                            1,
+                            Number(e.target.value) || 1
+                          ),
+                        })
                       }
                     />
                     <p className="text-xs text-muted-foreground mt-1">
@@ -438,8 +504,11 @@ const AdminAlertasChurn = () => {
                       min={0}
                       max={30}
                       value={draft.auto_task_due_in_days}
-                      onChange={(e) =>
-                        setDraft({ ...draft, auto_task_due_in_days: Math.max(0, Number(e.target.value) || 0) })
+                      onChange={e =>
+                        setDraft({
+                          ...draft,
+                          auto_task_due_in_days: Math.max(0, Number(e.target.value) || 0),
+                        })
                       }
                     />
                     <p className="text-xs text-muted-foreground mt-1">
@@ -449,7 +518,10 @@ const AdminAlertasChurn = () => {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button onClick={() => saveMutation.mutate(draft)} disabled={saveMutation.isPending}>
+                  <Button
+                    onClick={() => saveMutation.mutate(draft)}
+                    disabled={saveMutation.isPending}
+                  >
                     <Save className="h-4 w-4 mr-2" />
                     Salvar
                   </Button>
@@ -466,10 +538,12 @@ const AdminAlertasChurn = () => {
               <h2 className="text-lg font-semibold">Últimos alertas disparados</h2>
             </div>
             {!recent || recent.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nenhum alerta registrado ainda.</p>
+              <p className="text-sm text-muted-foreground">
+                Nenhum alerta registrado ainda.
+              </p>
             ) : (
               <div className="divide-y divide-border">
-                {recent.map((r) => (
+                {recent.map(r => (
                   <div
                     key={`${r.salesperson_id}-${r.client_name}`}
                     className="flex items-center justify-between py-3"

@@ -1,16 +1,31 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 interface AnimatedFireIndicatorProps {
   streakDays: number;
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" }: AnimatedFireIndicatorProps) => {
+export const AnimatedFireIndicator = ({
+  streakDays,
+  className = '',
+  size = 'md',
+}: AnimatedFireIndicatorProps) => {
   if (streakDays <= 0) return null;
 
   const isMilestone = [7, 14, 21, 30, 50, 100].includes(streakDays);
-  const _milestoneLevel = streakDays >= 100 ? 5 : streakDays >= 50 ? 4 : streakDays >= 30 ? 3 : streakDays >= 14 ? 2 : streakDays >= 7 ? 1 : 0;
+  const _milestoneLevel =
+    streakDays >= 100
+      ? 5
+      : streakDays >= 50
+        ? 4
+        : streakDays >= 30
+          ? 3
+          : streakDays >= 14
+            ? 2
+            : streakDays >= 7
+              ? 1
+              : 0;
 
   const flameCount = Math.min(Math.ceil(streakDays / 3), 5);
   const intensity = Math.min(streakDays / 10, 1);
@@ -19,7 +34,10 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
   const containerSize = sizeMap[size];
 
   return (
-    <div className={`relative inline-flex items-center justify-center ${className}`} style={{ width: containerSize, height: containerSize }}>
+    <div
+      className={`relative inline-flex items-center justify-center ${className}`}
+      style={{ width: containerSize, height: containerSize }}
+    >
       {/* Milestone ring effect */}
       {isMilestone && (
         <motion.div
@@ -45,7 +63,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
           style={{
             fontSize: containerSize * 0.45 - i * 2,
             left: `${50 + (i - flameCount / 2) * 6}%`,
-            transform: "translateX(-50%)",
+            transform: 'translateX(-50%)',
           }}
           animate={{
             y: [0, -3 - i, 0],
@@ -55,7 +73,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
           transition={{
             duration: 0.8 + i * 0.15,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
             delay: i * 0.1,
           }}
         >
@@ -73,7 +91,7 @@ export const AnimatedFireIndicator = ({ streakDays, className = "", size = "md" 
         }}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ type: "spring", bounce: 0.5 }}
+        transition={{ type: 'spring', bounce: 0.5 }}
       >
         {streakDays}
       </motion.div>

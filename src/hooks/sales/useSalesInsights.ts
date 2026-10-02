@@ -112,7 +112,9 @@ export function useSalesInsights() {
       });
 
       const totalUniqueClients = allClientMap.size;
-      const totalRepurchaseClients = Array.from(allClientMap.values()).filter(c => c >= 2).length;
+      const totalRepurchaseClients = Array.from(allClientMap.values()).filter(
+        c => c >= 2
+      ).length;
       const repurchaseRateGlobal =
         totalUniqueClients > 0 ? (totalRepurchaseClients / totalUniqueClients) * 100 : 0;
 
@@ -122,11 +124,15 @@ export function useSalesInsights() {
         prevClientMap.set(s.client_name, (prevClientMap.get(s.client_name) || 0) + 1);
       });
       const prevUnique = prevClientMap.size;
-      const prevRepurchase = Array.from(prevClientMap.values()).filter(c => c >= 2).length;
-      const repurchaseRatePrevMonth = prevUnique > 0 ? (prevRepurchase / prevUnique) * 100 : 0;
+      const prevRepurchase = Array.from(prevClientMap.values()).filter(
+        c => c >= 2
+      ).length;
+      const repurchaseRatePrevMonth =
+        prevUnique > 0 ? (prevRepurchase / prevUnique) * 100 : 0;
       const repurchaseRateChange =
         repurchaseRatePrevMonth > 0
-          ? ((repurchaseRateGlobal - repurchaseRatePrevMonth) / repurchaseRatePrevMonth) * 100
+          ? ((repurchaseRateGlobal - repurchaseRatePrevMonth) / repurchaseRatePrevMonth) *
+            100
           : 0;
 
       // Top repurchase clients

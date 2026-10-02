@@ -379,7 +379,9 @@ export default function Cadencias() {
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <Card className="glass border-border/40 lg:col-span-1">
                       <CardHeader>
-                        <CardTitle className="text-section-title text-sm">Selecionar Lead</CardTitle>
+                        <CardTitle className="text-section-title text-sm">
+                          Selecionar Lead
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="p-0">
                         <ScrollArea className="h-[500px]">

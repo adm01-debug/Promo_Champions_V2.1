@@ -25,7 +25,10 @@ export interface RaceLeaderboardEntry {
 }
 
 // Round 3 — dedupe de canais por seasonId.
-const channelRefs = new Map<string, { count: number; channel: ReturnType<typeof supabase.channel> }>();
+const channelRefs = new Map<
+  string,
+  { count: number; channel: ReturnType<typeof supabase.channel> }
+>();
 
 export function useRaceLeaderboard(seasonId?: string) {
   const queryClient = useQueryClient();
@@ -59,9 +62,13 @@ export function useRaceLeaderboard(seasonId?: string) {
         .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
           queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
         })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'race_cars' }, () => {
-          queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
-        })
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'race_cars' },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
+          }
+        )
         .subscribe();
       channelRefs.set(key, { count: 1, channel });
     }

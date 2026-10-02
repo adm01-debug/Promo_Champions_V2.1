@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { useCallback, useMemo, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   ReactFlow,
   Background,
@@ -13,17 +13,17 @@ import {
   type Connection,
   type NodeChange,
   type EdgeChange,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Plus,
   Play,
@@ -34,7 +34,7 @@ import {
   Trash2,
   Workflow as WorkflowIcon,
   Clock,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   useWorkflows,
   useSaveWorkflow,
@@ -42,26 +42,31 @@ import {
   useExecuteWorkflow,
   useWorkflowExecutions,
   type Workflow,
-} from "@/hooks/useWorkflows";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+} from '@/hooks/useWorkflows';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const NODE_PALETTE = [
-  { type: "trigger", label: "Trigger", icon: Zap, color: "hsl(var(--primary))" },
-  { type: "condition", label: "Condição", icon: GitBranch, color: "hsl(var(--status-warning))" },
-  { type: "action", label: "Ação", icon: Cog, color: "hsl(var(--status-success))" },
+  { type: 'trigger', label: 'Trigger', icon: Zap, color: 'hsl(var(--primary))' },
+  {
+    type: 'condition',
+    label: 'Condição',
+    icon: GitBranch,
+    color: 'hsl(var(--status-warning))',
+  },
+  { type: 'action', label: 'Ação', icon: Cog, color: 'hsl(var(--status-success))' },
 ] as const;
 
 const initialNodes: Node[] = [
   {
-    id: "trigger-1",
-    type: "default",
+    id: 'trigger-1',
+    type: 'default',
     position: { x: 250, y: 40 },
-    data: { label: "⚡ Trigger: Manual" },
+    data: { label: '⚡ Trigger: Manual' },
     style: {
-      background: "hsl(var(--primary) / 0.15)",
-      border: "1px solid hsl(var(--primary))",
-      color: "hsl(var(--foreground))",
+      background: 'hsl(var(--primary) / 0.15)',
+      border: '1px solid hsl(var(--primary))',
+      color: 'hsl(var(--foreground))',
       borderRadius: 12,
       padding: 12,
       fontWeight: 600,
@@ -83,24 +88,29 @@ export default function WorkflowsPage() {
   const { data: executions } = useWorkflowExecutions(editing?.id);
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
+    (changes: NodeChange[]) => setNodes(nds => applyNodeChanges(changes, nds)),
+    []
   );
   const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [],
+    (changes: EdgeChange[]) => setEdges(eds => applyEdgeChanges(changes, eds)),
+    []
   );
   const onConnect = useCallback(
     (conn: Connection) =>
-      setEdges((eds) => addEdge({ ...conn, animated: true, style: { stroke: "hsl(var(--primary))" } }, eds)),
-    [],
+      setEdges(eds =>
+        addEdge(
+          { ...conn, animated: true, style: { stroke: 'hsl(var(--primary))' } },
+          eds
+        )
+      ),
+    []
   );
 
   const openNew = () => {
     setEditing({
-      name: "Novo Workflow",
-      description: "",
-      trigger_type: "manual",
+      name: 'Novo Workflow',
+      description: '',
+      trigger_type: 'manual',
       is_active: false,
       nodes: initialNodes,
       edges: [],
@@ -117,23 +127,25 @@ export default function WorkflowsPage() {
     setOpen(true);
   };
 
-  const addNode = (type: "trigger" | "condition" | "action") => {
-    const item = NODE_PALETTE.find((n) => n.type === type)!;
+  const addNode = (type: 'trigger' | 'condition' | 'action') => {
+    const item = NODE_PALETTE.find(n => n.type === type)!;
     const newNode: Node = {
       id: `${type}-${Date.now()}`,
-      type: "default",
+      type: 'default',
       position: { x: 200 + Math.random() * 200, y: 150 + nodes.length * 80 },
-      data: { label: `${type === "trigger" ? "⚡" : type === "condition" ? "🔀" : "⚙️"} ${item.label}` },
+      data: {
+        label: `${type === 'trigger' ? '⚡' : type === 'condition' ? '🔀' : '⚙️'} ${item.label}`,
+      },
       style: {
-        background: `${item.color.replace(")", " / 0.15)")}`,
+        background: `${item.color.replace(')', ' / 0.15)')}`,
         border: `1px solid ${item.color}`,
-        color: "hsl(var(--foreground))",
+        color: 'hsl(var(--foreground))',
         borderRadius: 12,
         padding: 12,
         fontWeight: 600,
       },
     };
-    setNodes((nds) => [...nds, newNode]);
+    setNodes(nds => [...nds, newNode]);
   };
 
   const handleSave = async () => {
@@ -147,8 +159,9 @@ export default function WorkflowsPage() {
 
   const stats = useMemo(() => {
     const total = workflows?.length ?? 0;
-    const active = workflows?.filter((w) => w.is_active).length ?? 0;
-    const totalRuns = workflows?.reduce((acc, w) => acc + (w.execution_count ?? 0), 0) ?? 0;
+    const active = workflows?.filter(w => w.is_active).length ?? 0;
+    const totalRuns =
+      workflows?.reduce((acc, w) => acc + (w.execution_count ?? 0), 0) ?? 0;
     return { total, active, totalRuns };
   }, [workflows]);
 
@@ -156,7 +169,10 @@ export default function WorkflowsPage() {
     <>
       <Helmet>
         <title>Workflows | Promo Champions</title>
-        <meta name="description" content="Construa automações visuais drag-and-drop sem código." />
+        <meta
+          name="description"
+          content="Construa automações visuais drag-and-drop sem código."
+        />
       </Helmet>
 
       <div className="container mx-auto p-6 space-y-6 animate-fade-in">
@@ -215,18 +231,27 @@ export default function WorkflowsPage() {
           </Card>
         ) : (
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {workflows.map((wf) => (
-              <Card key={wf.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => openExisting(wf)}>
+            {workflows.map(wf => (
+              <Card
+                key={wf.id}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => openExisting(wf)}
+              >
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-section-title">{wf.name}</CardTitle>
-                    <Badge variant={wf.is_active ? "default" : "secondary"} className="shrink-0">
-                      {wf.is_active ? "Ativo" : "Inativo"}
+                    <Badge
+                      variant={wf.is_active ? 'default' : 'secondary'}
+                      className="shrink-0"
+                    >
+                      {wf.is_active ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 text-xs text-muted-foreground">
-                  <p className="line-clamp-2 min-h-[2.5em]">{wf.description || "Sem descrição"}</p>
+                  <p className="line-clamp-2 min-h-[2.5em]">
+                    {wf.description || 'Sem descrição'}
+                  </p>
                   <div className="flex items-center gap-3 pt-1">
                     <span className="flex items-center gap-1">
                       <Play className="h-3 w-3" /> {wf.execution_count} runs
@@ -234,7 +259,9 @@ export default function WorkflowsPage() {
                     {wf.last_executed_at && (
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {format(new Date(wf.last_executed_at), "dd/MM HH:mm", { locale: ptBR })}
+                        {format(new Date(wf.last_executed_at), 'dd/MM HH:mm', {
+                          locale: ptBR,
+                        })}
                       </span>
                     )}
                   </div>
@@ -248,7 +275,7 @@ export default function WorkflowsPage() {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>{editing?.id ? "Editar workflow" : "Novo workflow"}</SheetTitle>
+            <SheetTitle>{editing?.id ? 'Editar workflow' : 'Novo workflow'}</SheetTitle>
           </SheetHeader>
 
           {editing && (
@@ -258,8 +285,8 @@ export default function WorkflowsPage() {
                   <Label htmlFor="wf-name">Nome</Label>
                   <Input
                     id="wf-name"
-                    value={editing.name ?? ""}
-                    onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                    value={editing.name ?? ''}
+                    onChange={e => setEditing({ ...editing, name: e.target.value })}
                   />
                 </div>
                 <div>
@@ -267,15 +294,17 @@ export default function WorkflowsPage() {
                   <Textarea
                     id="wf-desc"
                     rows={2}
-                    value={editing.description ?? ""}
-                    onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+                    value={editing.description ?? ''}
+                    onChange={e =>
+                      setEditing({ ...editing, description: e.target.value })
+                    }
                   />
                 </div>
                 <div className="flex items-center gap-2">
                   <Switch
                     id="wf-active"
                     checked={editing.is_active ?? false}
-                    onCheckedChange={(v) => setEditing({ ...editing, is_active: v })}
+                    onCheckedChange={v => setEditing({ ...editing, is_active: v })}
                   />
                   <Label htmlFor="wf-active">Ativo</Label>
                 </div>
@@ -284,8 +313,13 @@ export default function WorkflowsPage() {
               <div>
                 <Label className="mb-2 block">Adicionar nó</Label>
                 <div className="flex gap-2 flex-wrap">
-                  {NODE_PALETTE.map((p) => (
-                    <Button key={p.type} variant="outline" size="sm" onClick={() => addNode(p.type)}>
+                  {NODE_PALETTE.map(p => (
+                    <Button
+                      key={p.type}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addNode(p.type)}
+                    >
                       <p.icon className="h-4 w-4 mr-1" />
                       {p.label}
                     </Button>
@@ -342,14 +376,18 @@ export default function WorkflowsPage() {
                 <div>
                   <Label className="mb-2 block">Últimas execuções</Label>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {executions.map((e) => (
+                    {executions.map(e => (
                       <Card key={e.id} className="p-3 text-xs">
                         <div className="flex items-center justify-between">
-                          <Badge variant={e.status === "success" ? "default" : "destructive"}>
+                          <Badge
+                            variant={e.status === 'success' ? 'default' : 'destructive'}
+                          >
                             {e.status}
                           </Badge>
                           <span className="text-muted-foreground">
-                            {format(new Date(e.started_at), "dd/MM HH:mm:ss", { locale: ptBR })}
+                            {format(new Date(e.started_at), 'dd/MM HH:mm:ss', {
+                              locale: ptBR,
+                            })}
                             {e.duration_ms != null && ` · ${e.duration_ms}ms`}
                           </span>
                         </div>
@@ -357,9 +395,17 @@ export default function WorkflowsPage() {
                           <ul className="mt-2 space-y-0.5">
                             {e.step_log.map((s, i) => (
                               <li key={i} className="text-muted-foreground">
-                                <span className={s.status === "ok" ? "text-status-success" : s.status === "skipped" ? "text-status-warning" : "text-destructive"}>
+                                <span
+                                  className={
+                                    s.status === 'ok'
+                                      ? 'text-status-success'
+                                      : s.status === 'skipped'
+                                        ? 'text-status-warning'
+                                        : 'text-destructive'
+                                  }
+                                >
                                   ●
-                                </span>{" "}
+                                </span>{' '}
                                 {s.label} — {s.detail}
                               </li>
                             ))}

@@ -43,7 +43,12 @@ export function TrackStartGantry() {
         fill="hsl(0 0% 100%)"
         opacity={0.12}
       >
-        <animate attributeName="opacity" values="0.05;0.28;0.05" dur="1.4s" repeatCount="indefinite" />
+        <animate
+          attributeName="opacity"
+          values="0.05;0.28;0.05"
+          dur="1.4s"
+          repeatCount="indefinite"
+        />
       </rect>
       {/* ondulação xadrez: gradiente que percorre a faixa para sensação de bandeira agitando */}
       <rect
