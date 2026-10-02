@@ -210,8 +210,8 @@ export const salesService = {
       .range(from, from + pageSize - 1);
 
     if (error) throw error;
-    // eslint-disable-next-line no-restricted-syntax
     return {
+      // eslint-disable-next-line no-restricted-syntax
       rows: ((data || []) as unknown as SaleRow[]).map(mapSaleRow),
       total: count ?? 0,
     };
