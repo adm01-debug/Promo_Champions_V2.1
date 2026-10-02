@@ -8,6 +8,8 @@ import type { Tables } from '@/integrations/supabase/types';
 
 // ===== CORE ENTITIES =====
 
+import type { SaleStatus } from '@/constants';
+
 /**
  * Representa uma oportunidade de negócio no pipeline de vendas
  */
@@ -19,16 +21,7 @@ export interface Deal {
   client_id: string;
   client_name?: string;
   stage_id: string;
-  status:
-    | 'open'
-    | 'won'
-    | 'lost'
-    | 'abandoned'
-    | 'lead'
-    | 'qualified'
-    | 'proposal'
-    | 'negotiation'
-    | 'closed';
+  status: SaleStatus;
   probability: number;
   expected_close_date?: string;
   closed_at?: string;

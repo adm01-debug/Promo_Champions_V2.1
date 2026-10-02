@@ -8,7 +8,8 @@
  *   média de progressão → clamp em [5, 95].
  */
 
-/** Probabilidade base por estágio do funil. */
+/** Probabilidade base por estágio do funil — fallback quando o caller não
+ * injeta o mapa lido de public.stage_probabilities. */
 export const STAGE_PROBABILITIES: Record<string, number> = {
   pending: 10, // Lead
   in_progress: 25, // Qualificado
@@ -40,9 +41,10 @@ export function computeDealProbability(
   deal: DealProbabilityInput,
   stageHistory: readonly StageHistoryEntry[],
   nowMs: number = Date.now(),
+  stageProbabilities: Record<string, number> = STAGE_PROBABILITIES,
 ): DealProbabilityResult {
   const factors: string[] = [];
-  let probability = STAGE_PROBABILITIES[deal.status] || 10;
+  let probability = stageProbabilities[deal.status] || 10;
 
   // Fator 1: tempo no estágio atual (deals parados têm probabilidade menor)
   const currentStageEntry = stageHistory.find((h) => !h.exited_at);

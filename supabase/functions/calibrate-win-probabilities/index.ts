@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getStageProbabilities } from '../_shared/stage-probabilities.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -51,16 +52,9 @@ interface DealCalibration {
   computed_at: string;
 }
 
-const STAGE_DEFAULT_PROB: Record<string, number> = {
-  lead: 10,
-  prospecting: 20,
-  qualified: 35,
-  proposal: 55,
-  negotiation: 75,
-  won: 100,
-  lost: 0,
-  closed: 100,
-};
+// Probabilidade por estágio — fonte única public.stage_probabilities (0-1),
+// convertida para a escala 0-100 usada nesta function.
+let stageDefaultProb: Record<string, number> = {};
 
 function findBucket(p: number) {
   return BUCKETS.find(b => p >= b.min && p < b.max) ?? BUCKETS[BUCKETS.length - 1];
@@ -69,7 +63,7 @@ function findBucket(p: number) {
 function getDeclaredProbability(sale: Sale): number {
   if (typeof sale.probability === 'number') return Number(sale.probability);
   const stage = (sale.stage ?? sale.status ?? '').toString().toLowerCase();
-  return STAGE_DEFAULT_PROB[stage] ?? 30;
+  return (stageDefaultProb[stage] ?? 0.3) * 100;
 }
 
 async function isAdminOrManagerRequest(req: Request): Promise<boolean> {
@@ -99,6 +93,7 @@ Deno.serve(withRequestId('calibrate-win-probabilities', async (req, _ctx) => {
       });
     }
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+    stageDefaultProb = await getStageProbabilities(supabase);
     const since = new Date(Date.now() - 180 * 86400_000).toISOString();
 
     const { data: closed, error: e1 } = await supabase

@@ -27,7 +27,7 @@ import { withRetry, RetryError } from "../_shared/retry.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 
 interface Payload {
@@ -100,11 +100,16 @@ async function postSlack(webhookUrl: string, p: Payload, requestId: string) {
       "slack:quote-conversion",
       async () => {
         await withRetry(async (_attempt, signal) => {
-          const res = await fetchWithTimeout(webhookUrl, {
+          const res = await fetchWithTrace(webhookUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
             signal,
+          }, {
+            requestId,
+            fnName: 'notify-quote-conversion',
+            operation: 'slack_post',
+            log: 'silent',
           });
           if (!res.ok) {
             const text = await res.text();
@@ -144,7 +149,7 @@ async function postGenericWebhook(url: string, p: Payload, requestId: string) {
       "webhook:quote-conversion",
       async () => {
         await withRetry(async (_attempt, signal) => {
-          const res = await fetchWithTimeout(url, {
+          const res = await fetchWithTrace(url, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -153,6 +158,11 @@ async function postGenericWebhook(url: string, p: Payload, requestId: string) {
             },
             body: JSON.stringify({ event: "quote_conversion", request_id: requestId, ...p }),
             signal,
+          }, {
+            requestId,
+            fnName: 'notify-quote-conversion',
+            operation: 'generic_webhook_post',
+            log: 'silent',
           });
           if (!res.ok) {
             const text = await res.text();

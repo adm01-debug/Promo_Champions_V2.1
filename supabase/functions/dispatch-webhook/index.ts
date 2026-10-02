@@ -1,5 +1,6 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -53,7 +54,7 @@ async function hmacSign(secret: string, body: string): Promise<string> {
 }
 
 Deno.serve(
-  withRequestId('dispatch-webhook', async (req, _ctx) => {
+  withRequestId('dispatch-webhook', async (req, ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
     if (req.method !== 'POST') {
@@ -74,7 +75,7 @@ Deno.serve(
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      console.error('dispatch-webhook authentication error:', error);
+      ctx.log('error', 'auth_error', { error: error instanceof Error ? error.message : String(error) });
       return new Response(
         JSON.stringify({ error: 'Não foi possível validar a autenticação' }),
         {
@@ -91,7 +92,7 @@ Deno.serve(
       { _user_id: auth.userId } as never
     );
     if (roleError) {
-      console.error('dispatch-webhook role check error:', roleError);
+      ctx.log('error', 'role_check_error', { error: roleError.message });
       return new Response(
         JSON.stringify({ error: 'Não foi possível confirmar as permissões' }),
         {
@@ -187,11 +188,16 @@ Deno.serve(
             await withEdgeCircuitBreaker(
               `webhook:${wh.id}`,
               async () => {
-                const r = await fetch(wh.url, {
+                const r = await fetchWithTrace(wh.url, {
                   method: 'POST',
                   headers,
                   body,
-                  signal: AbortSignal.timeout(10000),
+                }, {
+                  timeoutMs: 10_000,
+                  requestId: ctx.requestId,
+                  fnName: 'dispatch-webhook',
+                  operation: 'webhook_dispatch',
+                  log: 'silent',
                 });
                 status = r.status;
                 respBody = (await r.text()).slice(0, 1000);
@@ -254,7 +260,7 @@ Deno.serve(
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (e) {
-      console.error('dispatch-webhook error:', e);
+      ctx.log('error', 'dispatch_failed', { error: e instanceof Error ? e.message : String(e) });
       return new Response(
         JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
         {

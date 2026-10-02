@@ -1,7 +1,7 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
@@ -11,7 +11,7 @@ import {
 const MAX_TEXT_LENGTH = 2000;
 
 Deno.serve(
-  withRequestId('elevenlabs-tts', async (req, _ctx) => {
+  withRequestId('elevenlabs-tts', async (req, ctx) => {
     const corsHeaders = getCorsHeaders(req);
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
@@ -62,9 +62,7 @@ Deno.serve(
       const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
 
       if (!ELEVENLABS_API_KEY) {
-        console.info(
-          'ElevenLabs API key not configured - returning placeholder response'
-        );
+        ctx.log('warn', 'elevenlabs_api_key_not_configured');
         return new Response(
           JSON.stringify({
             error: 'api_key_not_configured',
@@ -81,17 +79,15 @@ Deno.serve(
       // Default voice: Roger (professional male voice in PT-BR)
       const selectedVoiceId = voiceId || 'CwhRBWXzGAHq8TQ4Fs17';
 
-      console.info(
-        `Generating TTS for text (${text.length} chars) with voice ${selectedVoiceId}`
-      );
+      ctx.log('info', 'tts_generate', { text_len: text.length, voice_id: selectedVoiceId });
 
       let response: Response;
       try {
         response = await withEdgeCircuitBreaker(
           'elevenlabs:tts',
           async () => {
-            const r = await fetchWithTimeout(
-              `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
+            const r = await fetchWithTrace(
+`https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
               {
                 method: 'POST',
                 headers: {
@@ -110,6 +106,11 @@ Deno.serve(
                     speed: 1.0,
                   },
                 }),
+              },
+              {
+                requestId: ctx.requestId,
+                fnName: 'elevenlabs-tts',
+                operation: 'elevenlabs_tts',
               }
             );
             if (r.status >= 500) throw new Error(`elevenlabs_5xx_${r.status}`);

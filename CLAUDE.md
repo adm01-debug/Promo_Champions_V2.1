@@ -38,7 +38,9 @@
 3. Versão = timestamp estritamente crescente. Conferir `SELECT max(version)` antes.
 4. Toda DDL = arquivo em `supabase/migrations/` + comentário descritivo no topo.
 5. `CREATE INDEX CONCURRENTLY` falha (gateway transacional) — usar `CREATE INDEX` simples.
-6. Padrão de hardening: functions com `SECURITY INVOKER`, grants mínimos por role.
+6. Convenções de schema (nomes, `TIMESTAMPTZ`, `NUMERIC(15,2)` para dinheiro,
+   RLS + `updated_at` obrigatórios): **docs/SCHEMA_CONVENTIONS.md**.
+7. Padrão de hardening: functions com `SECURITY INVOKER`, grants mínimos por role.
 
 ---
 

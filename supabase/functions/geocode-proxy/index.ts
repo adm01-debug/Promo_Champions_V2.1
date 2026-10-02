@@ -21,6 +21,7 @@ import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { getServiceClient } from "../_shared/auth-client.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { validateString, collectErrors } from "../_shared/validation.ts";
 
 const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 // TTLs: acertos valem 90 dias; misses 14 (evita martelar provider em
@@ -45,6 +46,16 @@ function normalizeKey(q: string): string {
 }
 
 function buildQuery(body: Record<string, unknown>): { query?: string; error?: string } {
+  // Forma/limite dos campos via validador compartilhado; as regras de
+  // negócio abaixo (granularidade, dígitos do CEP, city+uf em par) ficam.
+  const shapeErrors = collectErrors([
+    validateString(body.cep, "cep", { maxLength: 20 }),
+    validateString(body.city, "city", { maxLength: 120 }),
+    validateString(body.uf, "uf", { maxLength: 2 }),
+    validateString(body.query, "query", { maxLength: 160 }),
+  ]);
+  if (shapeErrors.length > 0) return { error: "invalid_input" };
+
   const cep = typeof body.cep === "string" ? body.cep.trim() : "";
   const city = typeof body.city === "string" ? body.city.trim() : "";
   const uf = typeof body.uf === "string" ? body.uf.trim() : "";

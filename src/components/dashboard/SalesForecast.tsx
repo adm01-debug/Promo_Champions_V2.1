@@ -14,13 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 
 import { formatBRL } from '@/lib/money';
-const STAGE_WEIGHTS: Record<string, number> = {
-  pending: 0.05,
-  qualified: 0.2,
-  proposal: 0.5,
-  negotiation: 0.7,
-  completed: 1.0,
-};
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 const getConfidenceConfig = (confidence: number) => {
   if (confidence >= 80)
@@ -60,8 +54,9 @@ export const SalesForecast = React.memo(() => {
         .select('amount')
         .in('status', [...WON_SALE_STATUSES]);
 
+      const stageProbabilities = await fetchStageProbabilities();
       const weightedTotal = (openDeals || []).reduce((sum, d) => {
-        const w = STAGE_WEIGHTS[d.status || 'pending'] || 0.1;
+        const w = stageProbabilities[d.status || 'pending'] ?? 0.1;
         return sum + (d.amount || 0) * w;
       }, 0);
 

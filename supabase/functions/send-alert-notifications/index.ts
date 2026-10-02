@@ -2,8 +2,10 @@ import { Resend } from 'npm:resend@2';
 import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { alertFromEmail } from '../_shared/alert-escalation.ts';
+import { maskEmail } from '../_shared/pii.ts';
 import {
   getServiceClient,
   getUserClient,
@@ -165,14 +167,15 @@ const generateAlerts = async (
     const monthSales = spIds.length
       ? await chunkedIn<{ salesperson_id: string; amount: number }>(
           spIds,
-          (chunk) => supabase
-            .from('sales')
-            .select('salesperson_id, amount')
-            .in('salesperson_id', chunk)
-            .eq('status', 'completed')
-            .gte('created_at', currentMonth)
-            .limit(50000),
-          { parallel: true, label: 'send-alert-notifications.month-sales' },
+          chunk =>
+            supabase
+              .from('sales')
+              .select('salesperson_id, amount')
+              .in('salesperson_id', chunk)
+              .eq('status', 'completed')
+              .gte('created_at', currentMonth)
+              .limit(50000),
+          { parallel: true, label: 'send-alert-notifications.month-sales' }
         )
       : [];
 
@@ -187,7 +190,9 @@ const generateAlerts = async (
     for (const g of goals ?? []) {
       goalsMap.set(
         (g as { salesperson_id: string; goal_amount: number | string }).salesperson_id,
-        Number((g as { salesperson_id: string; goal_amount: number | string }).goal_amount)
+        Number(
+          (g as { salesperson_id: string; goal_amount: number | string }).goal_amount
+        )
       );
     }
 
@@ -243,7 +248,9 @@ const logEmailToDatabase = async (
   }
 };
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> => {
+  const log = ctx.log;
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -257,7 +264,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     // Bypass de RLS necessário: alertas cobrem sales/metas de toda a equipe.
     const supabase = getServiceClient(
-      'alertas agregam vendas e metas de toda a equipe para envio de email',
+      'alertas agregam vendas e metas de toda a equipe para envio de email'
     );
 
     // Autoriza job interno (service_role ou X-Cron-Secret do pg_cron) ou,
@@ -291,7 +298,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
       const { data: isPrivileged, error: roleError } = await caller.client.rpc(
         'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never,
+        { _user_id: caller.userId } as never
       );
       if (roleError) {
         console.error('send-alert-notifications role check failed:', roleError);
@@ -323,7 +330,9 @@ const handler = async (req: Request): Promise<Response> => {
       // Fetch all active notification preferences
       const { data: preferences, error: prefError } = await supabase
         .from('notification_preferences')
-        .select('id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time')
+        .select(
+          'id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time'
+        )
         .eq('is_active', true)
         .limit(200);
 
@@ -332,7 +341,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       if (!preferences || preferences.length === 0) {
-        console.info('No active notification preferences found');
+        log('info', 'no_active_preferences');
         return new Response(
           JSON.stringify({
             message: 'No active notification preferences',
@@ -342,7 +351,7 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
-      console.info(`Processing ${preferences.length} notification preferences`);
+      log('info', 'processing_preferences', { count: preferences.length });
 
       for (const pref of preferences as NotificationPreference[]) {
         try {
@@ -358,13 +367,16 @@ const handler = async (req: Request): Promise<Response> => {
 
           try {
             const emailResponse = await resend.emails.send({
-              from: 'Alertas <onboarding@resend.dev>',
+              from: alertFromEmail(),
               to: [pref.email],
               subject,
               html: emailHtml,
             });
 
-            console.info(`Email sent to ${pref.email}:`, emailResponse);
+            log('info', 'alert_email_sent', {
+              to: maskEmail(pref.email),
+              resend_id: (emailResponse as { id?: string }).id ?? null,
+            });
             await logEmailToDatabase(
               supabase,
               pref.email,
@@ -375,7 +387,7 @@ const handler = async (req: Request): Promise<Response> => {
             );
             results.push({ email: pref.email, alertsSent: alerts.length, success: true });
           } catch (emailError: unknown) {
-            console.error(`Error sending to ${pref.email}:`, emailError);
+            log('error', 'alert_email_send_failed', { to: maskEmail(pref.email) });
             const emailErrorMessage =
               emailError instanceof Error ? emailError.message : String(emailError);
             await logEmailToDatabase(
@@ -395,7 +407,7 @@ const handler = async (req: Request): Promise<Response> => {
             });
           }
         } catch (error: unknown) {
-          console.error(`Error processing ${pref.email}:`, error);
+          log('error', 'preference_processing_failed', { to: maskEmail(pref.email) });
           const errorMessage = error instanceof Error ? error.message : String(error);
           results.push({
             email: pref.email,
@@ -437,7 +449,7 @@ const handler = async (req: Request): Promise<Response> => {
       const alerts = await generateAlerts(supabase, defaultPref);
 
       if (alerts.length === 0) {
-        console.info('No critical alerts to send');
+        log('info', 'no_critical_alerts');
         return new Response(
           JSON.stringify({ message: 'No critical alerts found', alertsSent: 0 }),
           { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
@@ -449,13 +461,16 @@ const handler = async (req: Request): Promise<Response> => {
 
       try {
         const emailResponse = await resend.emails.send({
-          from: 'Alertas <onboarding@resend.dev>',
+          from: alertFromEmail(),
           to: [recipientEmail],
           subject,
           html: emailHtml,
         });
 
-        console.info('Email sent successfully:', emailResponse);
+        log('info', 'alert_email_sent', {
+          to: maskEmail(recipientEmail),
+          resend_id: (emailResponse as { id?: string }).id ?? null,
+        });
         await logEmailToDatabase(
           supabase,
           recipientEmail,
@@ -474,7 +489,7 @@ const handler = async (req: Request): Promise<Response> => {
           { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
       } catch (emailError: unknown) {
-        console.error('Error sending email:', emailError);
+        log('error', 'alert_email_send_failed', { to: maskEmail(recipientEmail) });
         const emailErrorMessage =
           emailError instanceof Error ? emailError.message : String(emailError);
         await logEmailToDatabase(
@@ -497,7 +512,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
   } catch (error: unknown) {
-    console.error('Error in send-alert-notifications:', error);
+    log('error', 'send_alert_notifications_failed');
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,

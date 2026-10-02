@@ -1,7 +1,11 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { Resend } from 'npm:resend@2';
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
+import { alertFromEmail } from '../_shared/alert-escalation.ts';
+import { maskEmail } from '../_shared/pii.ts';
+
+type LogFn = RequestIdContext['log'];
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -18,9 +22,10 @@ interface UnderperformingSDR {
 
 async function getUnderperformingSDRs(
   supabase: SupabaseClient,
-  consecutiveThreshold: number = 3
+  consecutiveThreshold: number = 3,
+  log: LogFn
 ): Promise<UnderperformingSDR[]> {
-  console.info('Fetching SDRs and their activity goals...');
+  log('info', 'fetching_sdrs');
 
   // Get SDRs (role = 'sdr' or 'hybrid')
   const { data: sdrs, error: sdrsError } = await supabase
@@ -31,11 +36,11 @@ async function getUnderperformingSDRs(
     .limit(500);
 
   if (sdrsError) {
-    console.error('Error fetching SDRs:', sdrsError);
+    log('error', 'sdrs_fetch_failed');
     throw sdrsError;
   }
 
-  console.info(`Found ${sdrs?.length || 0} active SDRs`);
+  log('info', 'sdrs_fetched', { count: sdrs?.length || 0 });
 
   // Get activity goals for SDRs
   const { data: goals, error: goalsError } = await supabase
@@ -46,7 +51,7 @@ async function getUnderperformingSDRs(
     .limit(500);
 
   if (goalsError) {
-    console.error('Error fetching goals:', goalsError);
+    log('error', 'goals_fetch_failed');
     throw goalsError;
   }
 
@@ -80,11 +85,11 @@ async function getUnderperformingSDRs(
     .limit(50000);
 
   if (activitiesError) {
-    console.error('Error fetching activities:', activitiesError);
+    log('error', 'activities_fetch_failed');
     throw activitiesError;
   }
 
-  console.info(`Found ${activities?.length || 0} activities in last 7 days`);
+  log('info', 'activities_fetched', { count: activities?.length || 0 });
 
   // Group activities by SDR and date
   const activityBySDRAndDate: Record<string, Record<string, number>> = {};
@@ -141,7 +146,7 @@ async function getUnderperformingSDRs(
     }
   }
 
-  console.info(`Found ${underperforming.length} underperforming SDRs`);
+  log('info', 'underperforming_sdrs_found', { count: underperforming.length });
   return underperforming;
 }
 
@@ -226,12 +231,11 @@ interface EmailLogRow {
 }
 
 async function sendNotificationToSDR(
-  sdr: UnderperformingSDR
+  sdr: UnderperformingSDR,
+  log: LogFn
 ): Promise<EmailLogRow | null> {
   if (!sdr.email) {
-    console.info(
-      `SDR ${sdr.name} has no email configured, skipping personal notification`
-    );
+    log('info', 'sdr_no_email_skip', { sdr_id: sdr.id });
     return null;
   }
 
@@ -286,12 +290,12 @@ async function sendNotificationToSDR(
 
   try {
     await resend.emails.send({
-      from: 'CRM <onboarding@resend.dev>',
+      from: alertFromEmail(),
       to: [sdr.email],
       subject,
       html,
     });
-    console.info(`Personal notification sent to ${sdr.name} (${sdr.email})`);
+    log('info', 'personal_notification_sent', { to: maskEmail(sdr.email) });
     return {
       function_name: 'sdr-consecutive-alerts',
       recipient_email: sdr.email,
@@ -300,7 +304,7 @@ async function sendNotificationToSDR(
       metadata: { sdr_name: sdr.name, consecutive_days: sdr.consecutiveDays },
     };
   } catch (error: unknown) {
-    console.error(`Error sending email to ${sdr.email}:`, error);
+    log('error', 'personal_notification_failed', { to: maskEmail(sdr.email) });
     return {
       function_name: 'sdr-consecutive-alerts',
       recipient_email: sdr.email,
@@ -312,13 +316,14 @@ async function sendNotificationToSDR(
   }
 }
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> => {
+  const log = ctx.log;
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.info('Starting SDR consecutive alerts check...');
+    log('info', 'check_started');
 
     // Check if this is a manual trigger
     let triggeredBy = 'cron';
@@ -331,7 +336,7 @@ const handler = async (req: Request): Promise<Response> => {
       // No body or invalid JSON, default to cron
     }
 
-    console.info(`Triggered by: ${triggeredBy}`);
+    log('info', 'trigger', { triggered_by: triggeredBy });
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -347,15 +352,16 @@ const handler = async (req: Request): Promise<Response> => {
       .limit(1);
 
     const consecutiveThreshold = notifPrefs?.[0]?.consecutive_days_threshold || 3;
-    console.info(`Using consecutive threshold: ${consecutiveThreshold} days`);
+    log('info', 'threshold_loaded', { consecutive_days: consecutiveThreshold });
 
     const underperformingSDRs = await getUnderperformingSDRs(
       supabase,
-      consecutiveThreshold
+      consecutiveThreshold,
+      log
     );
 
     if (underperformingSDRs.length === 0) {
-      console.info('No underperforming SDRs found, no alerts needed');
+      log('info', 'no_underperforming_sdrs');
 
       // Still log the check for manual triggers
       if (triggeredBy === 'manual') {
@@ -382,7 +388,7 @@ const handler = async (req: Request): Promise<Response> => {
       .limit(100);
 
     if (adminError) {
-      console.error('Error fetching admin users:', adminError);
+      log('error', 'admin_users_fetch_failed');
     }
 
     const adminEmails: string[] = [];
@@ -398,7 +404,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    console.info(`Found ${adminEmails.length} admin/manager emails for summary`);
+    log('info', 'admin_emails_found', { count: adminEmails.length });
 
     // Send summary to admins/managers
     if (adminEmails.length > 0) {
@@ -407,12 +413,12 @@ const handler = async (req: Request): Promise<Response> => {
 
       try {
         await resend.emails.send({
-          from: 'CRM <onboarding@resend.dev>',
+          from: alertFromEmail(),
           to: adminEmails,
           subject: summarySubject,
           html: summaryHtml,
         });
-        console.info('Summary email sent to admins/managers');
+        log('info', 'summary_email_sent', { recipients: adminEmails.length });
 
         await supabase.from('email_logs').insert(
           adminEmails.map(email => ({
@@ -424,7 +430,7 @@ const handler = async (req: Request): Promise<Response> => {
           }))
         );
       } catch (error: unknown) {
-        console.error('Error sending summary email:', error);
+        log('error', 'summary_email_failed');
         const errorMessage = error instanceof Error ? error.message : String(error);
         await supabase.from('email_logs').insert(
           adminEmails.map(email => ({
@@ -442,7 +448,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send individual notifications to each underperforming SDR (sequential — external rate limits)
     const sdrEmailLogs: EmailLogRow[] = [];
     for (const sdr of underperformingSDRs) {
-      const logRow = await sendNotificationToSDR(sdr);
+      const logRow = await sendNotificationToSDR(sdr, log);
       if (logRow) sdrEmailLogs.push(logRow);
     }
     if (sdrEmailLogs.length > 0) {
@@ -468,7 +474,7 @@ const handler = async (req: Request): Promise<Response> => {
       { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   } catch (error: unknown) {
-    console.error('Error in SDR consecutive alerts:', error);
+    log('error', 'sdr_consecutive_alerts_failed');
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,

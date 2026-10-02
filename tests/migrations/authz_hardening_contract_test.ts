@@ -5,10 +5,12 @@ import { assertMatch } from 'jsr:@std/assert@1';
 // edge functions de custo mantêm autenticação + rate limit.
 
 const readMigration = (name: string) =>
-  Deno.readTextFile(new URL(`./${name}`, import.meta.url));
+  Deno.readTextFile(new URL(`../../supabase/migrations/${name}`, import.meta.url));
 
 const readFunction = (name: string) =>
-  Deno.readTextFile(new URL(`../functions/${name}/index.ts`, import.meta.url));
+  Deno.readTextFile(
+    new URL(`../../supabase/functions/${name}/index.ts`, import.meta.url),
+  );
 
 Deno.test(
   'user_roles: trigger de auditoria grava audit_logs + security_events',

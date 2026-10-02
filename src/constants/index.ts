@@ -52,6 +52,26 @@ export const DEAL_STATUS = {
   CANCELLED: 'cancelled',
 } as const;
 
+/**
+ * Vocabulário real de sales.status (espelha a constraint sales_status_check) +
+ * 'open', valor legado fora do CHECK que ainda é consultado
+ * (ex.: useFollowUpData). Coluna canônica: sales.status (texto);
+ * deal_status é GENERATED derivado — ver migration 20261001220100.
+ */
+export type SaleStatus =
+  | 'pending'
+  | 'lead'
+  | 'prospecting'
+  | 'qualified'
+  | 'proposal'
+  | 'negotiation'
+  | 'completed'
+  | 'won'
+  | 'closed'
+  | 'lost'
+  | 'cancelled'
+  | 'open';
+
 export const SALE_STATUS_LABELS: Record<string, string> = {
   pending: 'Pendente',
   qualified: 'Qualificada',
@@ -77,8 +97,8 @@ export const isLostSaleStatus = (status?: string | null): boolean =>
 export const isOpenSaleStatus = (status?: string | null): boolean =>
   !!status && !isWonSaleStatus(status) && !isLostSaleStatus(status);
 
-// Domínio completo da coluna sales.status (espelha o check constraint
-// sales_status_check e as chaves de SALE_STATUS_LABELS). Use os helpers
+// Subconjunto rotulado de sales.status (espelha as chaves de SALE_STATUS_LABELS).
+// O domínio completo da coluna é o tipo SaleStatus acima — use os helpers
 // isWonSaleStatus/isLostSaleStatus/isOpenSaleStatus para agrupamentos.
 export const SALE_STATUS = {
   PENDING: 'pending',
@@ -89,7 +109,6 @@ export const SALE_STATUS = {
   LOST: 'lost',
   CANCELLED: 'cancelled',
 } as const;
-export type SaleStatus = (typeof SALE_STATUS)[keyof typeof SALE_STATUS];
 
 // Domínio `outcome` das tabelas win_loss_* (espelha o check constraint do
 // banco — apenas 'won'/'lost'). Centraliza as comparações de resultado.
@@ -127,5 +146,5 @@ export const ERROR_MESSAGES = {
 
 // ===== TIPOS AUXILIARES =====
 
-export type DealStatus = (typeof DEAL_STATUS)[keyof typeof DEAL_STATUS];
+export type DealStatus = SaleStatus | (typeof DEAL_STATUS)[keyof typeof DEAL_STATUS];
 export type ActivityType = (typeof ACTIVITY_TYPE)[keyof typeof ACTIVITY_TYPE];
