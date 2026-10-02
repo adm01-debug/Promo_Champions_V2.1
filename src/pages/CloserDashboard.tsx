@@ -27,6 +27,7 @@ import {
 import { LazySection } from '@/components/atoms/LazySection';
 import { CloserHandoffs } from '@/components/closer/CloserHandoffs';
 
+import { formatBRL } from '@/lib/money';
 export default function CloserDashboard() {
   const [period, setPeriod] = useState<PeriodFilter>('month');
   const { data: metrics, isLoading } = useCloserMetrics(period);
@@ -37,9 +38,6 @@ export default function CloserDashboard() {
       : period === 'month'
         ? 'Este mês'
         : 'Este trimestre';
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   return (
     <>
@@ -90,7 +88,7 @@ export default function CloserDashboard() {
                 <motion.div variants={itemVariants} className="lg:col-span-2">
                   <CloserStatCard
                     title="Faturamento Total"
-                    value={formatCurrency(metrics?.current.closedValue ?? 0)}
+                    value={formatBRL(metrics?.current.closedValue ?? 0)}
                     change={metrics?.changes.value}
                     icon={DollarSign}
                     variant="primary"
@@ -121,7 +119,7 @@ export default function CloserDashboard() {
                 <motion.div variants={itemVariants}>
                   <CloserStatCard
                     title="Ticket Médio"
-                    value={formatCurrency(metrics?.current.avgDealSize ?? 0)}
+                    value={formatBRL(metrics?.current.avgDealSize ?? 0)}
                     icon={Target}
                     variant="warning"
                     subtitle="Por venda"

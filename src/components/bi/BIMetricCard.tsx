@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 interface ComparisonData {
   previousPeriod?: { value: number; label: string };
   lastYear?: { value: number; label: string };
@@ -36,7 +37,7 @@ const formatValue = (
 ): string => {
   switch (format) {
     case 'currency':
-      return `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+      return `${formatBRL(value)}`;
     case 'percent':
       return `${value.toFixed(1)}%`;
     default:

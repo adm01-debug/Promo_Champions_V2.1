@@ -6,6 +6,7 @@ import { Target } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 
+import { formatBRL } from '@/lib/money';
 export const GoalProgressWidget = React.memo(function GoalProgressWidget() {
   const { data: goalsData, isLoading: goalsLoading } = useGoalsDashboard();
   const { data: kpis, isLoading: kpisLoading } = useDashboardKPIs();
@@ -50,16 +51,15 @@ export const GoalProgressWidget = React.memo(function GoalProgressWidget() {
         </div>
         <div className="text-center space-y-1">
           <p className="text-lg font-black tracking-tight text-foreground/90">
-            R$ {current.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+            {formatBRL(current)}
           </p>
           <div className="flex flex-col items-center gap-0.5">
             <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wide opacity-70">
-              Objetivo: R$ {goal.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+              Objetivo: {formatBRL(goal)}
             </p>
             {remaining > 0 ? (
               <div className="mt-1 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[10px] font-bold uppercase">
-                Faltam R${' '}
-                {remaining.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                Faltam {formatBRL(remaining)}
               </div>
             ) : (
               progress >= 100 && (

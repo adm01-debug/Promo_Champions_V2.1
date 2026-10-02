@@ -13,9 +13,7 @@ import {
   type VisualSearchProduct,
 } from '@/components/search/VisualSearchButton';
 
-const formatBRL = (n: number) =>
-  n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
+import { formatBRL } from '@/lib/money';
 function ProductCard({ p }: { p: SemanticProduct | VisualSearchProduct }) {
   return (
     <Card className="hover-scale transition-shadow hover:shadow-md">
@@ -28,7 +26,9 @@ function ProductCard({ p }: { p: SemanticProduct | VisualSearchProduct }) {
         </div>
         <p className="text-xs text-muted-foreground">{p.category}</p>
         <div className="flex items-center justify-between pt-1">
-          <span className="font-semibold text-primary">{formatBRL(Number(p.price))}</span>
+          <span className="font-semibold text-primary">
+            {formatBRL(Number(p.price), { decimals: 2 })}
+          </span>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Star className="h-3 w-3 fill-rank-gold text-rank-gold" />
             {Number(p.rating).toFixed(1)}

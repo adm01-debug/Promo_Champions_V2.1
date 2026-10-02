@@ -18,6 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
+import { formatBRL } from '@/lib/money';
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
@@ -147,7 +148,7 @@ const LeadRoutingPage = () => {
                               <Badge variant="secondary">{meta.label}</Badge>
                               {r.filter_min_value && (
                                 <Badge variant="outline">
-                                  Min R$ {r.filter_min_value.toLocaleString('pt-BR')}
+                                  Min {formatBRL(r.filter_min_value)}
                                 </Badge>
                               )}
                               {r.filter_state && (

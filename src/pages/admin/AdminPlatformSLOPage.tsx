@@ -6,8 +6,7 @@
  * taxa livre de erros. Admin-only (a RPC valida via has_role()).
  */
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { usePlatformSLO, type SLORow } from '@/hooks/admin/usePlatformSLO';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,26 +23,6 @@ import {
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-
-interface SLORow {
-  day: string;
-  webhook_success_ratio: number | null;
-  webhook_success_target: number;
-  webhook_sent_ok: number;
-  webhook_failed: number;
-  v4_callback_success_ratio: number | null;
-  v4_callback_success_target: number;
-  v4_callback_ok: number;
-  v4_callback_failed: number;
-  circuit_stability_ratio: number | null;
-  circuit_stability_target: number;
-  circuits_opened: number;
-  circuit_events_total: number;
-  error_free_ratio: number | null;
-  error_free_target: number;
-  critical_error_count: number;
-  total_log_count: number;
-}
 
 interface SLODefinition {
   key: 'webhook' | 'v4' | 'circuit' | 'error';
@@ -108,16 +87,7 @@ function statusFor(
 }
 
 export default function AdminPlatformSLOPage() {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['admin', 'platform-slo'],
-    queryFn: async (): Promise<SLORow[]> => {
-      const { data, error } = await supabase.rpc('fn_admin_platform_slo' as never);
-      if (error) throw error;
-      return (data ?? []) as SLORow[];
-    },
-    refetchInterval: 60_000,
-    staleTime: 30_000,
-  });
+  const { data, isLoading, isError, error } = usePlatformSLO();
 
   const chartData = useMemo(() => {
     if (!data) return [];

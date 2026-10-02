@@ -15,6 +15,7 @@ import {
   AreaChart,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 const CustomTooltip = ({
   active,
   payload,
@@ -33,7 +34,7 @@ const CustomTooltip = ({
             <p key={index} className="text-sm" style={{ color: entry.color }}>
               {entry.name}:{' '}
               {typeof entry.value === 'number'
-                ? `R$ ${entry.value.toLocaleString('pt-BR')}`
+                ? `${formatBRL(entry.value)}`
                 : entry.value}
             </p>
           )

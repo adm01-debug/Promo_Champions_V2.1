@@ -39,6 +39,7 @@ import { DashboardSettings } from './DashboardSettings';
 import { AlertHistoryDialog } from './AlertHistoryDialog';
 import { HudAlert } from './HudAlert';
 
+import { formatBRL, formatBRLCompact } from '@/lib/money';
 const PERIOD_STORAGE_KEY = 'dashboard.speedometer.period';
 const SALESPERSON_STORAGE_KEY = 'dashboard.speedometer.salesperson';
 const ALL_SALESPEOPLE = '__all__';
@@ -294,10 +295,9 @@ export const FuturisticSpeedometerDashboard = () => {
   ];
 
   const fmtBRL = (v: number) => {
-    if (gaugeMode === 'compact')
-      return `R$ ${v.toLocaleString('pt-BR', { notation: 'compact' })}`;
+    if (gaugeMode === 'compact') return `${formatBRLCompact(v)}`;
     if (gaugeMode === 'kilo') return `R$ ${(v / 1000).toFixed(1)}k`;
-    return `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0, notation: v >= 1000000 ? 'compact' : 'standard' })}`;
+    return `${formatBRL(v)}`;
   };
 
   return (

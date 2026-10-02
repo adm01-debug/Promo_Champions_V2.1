@@ -3,6 +3,7 @@ import type {
   QuotaActionType,
 } from '@/hooks/revenue/useQuotaAttainmentPredictor';
 
+import { formatBRL } from '@/lib/money';
 export const RISK_HSL: Record<QuotaRiskLevel, string> = {
   safe: 'hsl(var(--success))',
   on_track: 'hsl(var(--primary))',
@@ -35,11 +36,7 @@ export const ACTION_LABEL: Record<QuotaActionType, string> = {
 };
 
 export function fmtBRL(v: number): string {
-  return v.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  });
+  return formatBRL(v);
 }
 
 export function fmtPct(v: number): string {

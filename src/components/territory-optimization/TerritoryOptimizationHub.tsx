@@ -39,12 +39,7 @@ import {
 } from '@/hooks/useTerritoryOptimization';
 import { cn } from '@/lib/utils';
 
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
+import { formatBRL } from '@/lib/money';
 const fmtPct = (n: number) => `${(n * 100).toFixed(0)}%`;
 
 const healthMeta: Record<
@@ -210,7 +205,7 @@ export function TerritoryOptimizationHub() {
         <KpiCard
           icon={TrendingUp}
           label="Receita potencial perdida"
-          value={fmtCurrency(k.potential_revenue_lost)}
+          value={formatBRL(k.potential_revenue_lost)}
           accent="text-destructive"
         />
       </div>
@@ -338,10 +333,10 @@ export function TerritoryOptimizationHub() {
                       {fmtPct(t.coverage_score)}
                     </TableCell>
                     <TableCell className="text-right">
-                      {fmtCurrency(t.recent_revenue)}
+                      {formatBRL(t.recent_revenue)}
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
-                      {fmtCurrency(t.potential_revenue)}
+                      {formatBRL(t.potential_revenue)}
                     </TableCell>
                     <TableCell>
                       <Badge

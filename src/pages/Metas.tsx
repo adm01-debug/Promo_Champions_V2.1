@@ -25,6 +25,7 @@ import {
   itemVariants,
 } from '@/components/transitions/PageTransition';
 
+import { formatBRL } from '@/lib/money';
 export default function Metas() {
   const { data, isLoading, dataUpdatedAt } = useGoalsDashboard();
   const { salesperson } = useAuth();
@@ -34,9 +35,6 @@ export default function Metas() {
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['goals-dashboard'] });
   };
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
   const lastUpdate = dataUpdatedAt
@@ -137,7 +135,7 @@ export default function Metas() {
                       </div>
                       <div>
                         <p className="text-2xl font-display font-black tracking-tighter gradient-text">
-                          {formatCurrency(data?.totalGoal || 0)}
+                          {formatBRL(data?.totalGoal || 0)}
                         </p>
                         <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">
                           Budget da Operação
@@ -156,7 +154,7 @@ export default function Metas() {
                       </div>
                       <div>
                         <p className="text-2xl font-display font-black tracking-tighter text-success">
-                          {formatCurrency(data?.totalSales || 0)}
+                          {formatBRL(data?.totalSales || 0)}
                         </p>
                         <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">
                           Volume Faturado

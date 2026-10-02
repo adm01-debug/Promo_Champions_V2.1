@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
+import { htmlSecurityHeaders } from '../_shared/security-headers.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -123,7 +124,13 @@ Deno.serve(
           </div>
         </body>
         </html>`,
-          { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
+          {
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'text/html; charset=utf-8',
+              ...htmlSecurityHeaders,
+            },
+          }
         );
       }
 

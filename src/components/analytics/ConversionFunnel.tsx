@@ -11,6 +11,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useFunnelData } from '@/hooks/dashboard/useFunnelData';
 
+import { formatBRL } from '@/lib/money';
 interface ConversionFunnelProps {
   stages?: string[];
   showPercentages?: boolean;
@@ -70,7 +71,7 @@ export const ConversionFunnel: FC<ConversionFunnelProps> = ({ timeframe = 30 }) 
             </Badge>
             <Badge variant="outline" className="text-xs">
               <DollarSign className="h-3 w-3 mr-1" />
-              R$ {data.totalValue.toLocaleString('pt-BR')}
+              {formatBRL(data.totalValue)}
             </Badge>
           </div>
         </div>
@@ -144,7 +145,7 @@ export const ConversionFunnel: FC<ConversionFunnelProps> = ({ timeframe = 30 }) 
           </div>
           <div className="text-center">
             <p className="text-lg font-bold font-display text-foreground">
-              R$ {data.avgDealSize.toLocaleString('pt-BR')}
+              {formatBRL(data.avgDealSize)}
             </p>
             <p className="text-xs text-muted-foreground">Ticket Médio</p>
           </div>

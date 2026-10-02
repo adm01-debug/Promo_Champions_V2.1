@@ -41,8 +41,8 @@ import {
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const brl = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
+import { formatBRL } from '@/lib/money';
+const brl = (n: number) => formatBRL(n, { decimals: 2 });
 
 const statusMeta: Record<AwardStatus, { label: string; className: string }> = {
   pending: {

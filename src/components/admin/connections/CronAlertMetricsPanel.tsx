@@ -1,38 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, ShieldCheck, TrendingDown, Layers, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { supabase } from '@/integrations/supabase/client';
+import { useCronAlertMetrics } from '@/hooks/admin/useConnectionMetrics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-
-interface CronAlertMetrics {
-  last_alert_at: string | null;
-  window_24h: {
-    alerts_total: number;
-    alerts_stalled: number;
-    alerts_failed: number;
-    jobs_affected: number;
-    raw_failures: number | null;
-    dedupe_saved: number | null;
-  };
-  window_7d: {
-    alerts_total: number;
-    alerts_stalled: number;
-    jobs_affected: number;
-  };
-  generated_at: string;
-}
-
-async function fetchMetrics(): Promise<CronAlertMetrics> {
-  const { data, error } = await supabase.rpc('fn_admin_cron_alert_metrics');
-  if (error) throw error;
-  /* eslint-disable no-restricted-syntax */
-  return data as unknown as CronAlertMetrics;
-  /* eslint-enable no-restricted-syntax */
-}
 
 interface StatProps {
   label: string;
@@ -64,12 +37,7 @@ function Stat({ label, value, hint, icon: Icon, tone = 'default' }: StatProps) {
 }
 
 export function CronAlertMetricsPanel() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['admin', 'cron-alert-metrics'],
-    queryFn: fetchMetrics,
-    refetchInterval: 60_000,
-    staleTime: 30_000,
-  });
+  const { data, isLoading, error } = useCronAlertMetrics();
 
   return (
     <Card>

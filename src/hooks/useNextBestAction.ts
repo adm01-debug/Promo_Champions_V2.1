@@ -6,6 +6,7 @@ import { logger } from '@/lib/log/logger';
 
 const log = logger.for('useNextBestAction');
 
+import { formatBRL } from '@/lib/money';
 export type NextActionPriority = 'high' | 'medium' | 'low';
 export type NextActionCategory =
   'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
@@ -111,14 +112,14 @@ async function generateLocalSuggestions(
     suggestions.push({
       title: `Follow-up urgente: ${deal.client_name}`,
       description: `Deal sem atualização há ${days} dias. Recomenda-se contato imediato.`,
-      rationale: `Pipeline data: deal estagnado há ${days}d, valor R$ ${Number(deal.amount || 0).toLocaleString('pt-BR')}.`,
+      rationale: `Pipeline data: deal estagnado há ${days}d, valor ${formatBRL(Number(deal.amount || 0))}.`,
       actionType: 'follow_up',
       priority: days > 14 ? 'high' : 'medium',
       confidence: 0.85,
       category: 'urgent',
       channel: 'phone',
       suggestedDate: todayIso,
-      expectedImpact: `Reativar oportunidade de R$ ${Number(deal.amount || 0).toLocaleString('pt-BR')}.`,
+      expectedImpact: `Reativar oportunidade de ${formatBRL(Number(deal.amount || 0))}.`,
       dealClient: deal.client_name,
       dealId: deal.id,
     });
@@ -290,7 +291,7 @@ async function generateLocalSuggestions(
 
   const insight =
     suggestions.length === 0
-      ? `${sp?.name || 'Vendedor'} está com bom desempenho! ${completedCount} vendas fechadas com R$ ${totalRevenue.toLocaleString('pt-BR')} em receita.`
+      ? `${sp?.name || 'Vendedor'} está com bom desempenho! ${completedCount} vendas fechadas com ${formatBRL(totalRevenue)} em receita.`
       : `${sp?.name || 'Vendedor'} tem ${openDeals.length} deals ativos e ${stagnantDeals.length} estagnados. Foco nas ações recomendadas pode melhorar a conversão.`;
 
   return {

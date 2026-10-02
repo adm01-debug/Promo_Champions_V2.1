@@ -28,6 +28,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { temperatureConfig, type ColdLead } from './types';
 
+import { formatBRL } from '@/lib/money';
 interface FollowUpLeadCardProps {
   lead: ColdLead;
   index: number;
@@ -154,7 +155,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
               <div className="text-sm text-muted-foreground mb-1 flex items-center gap-2">
                 {lead.product_name && <span>{lead.product_name} · </span>}
                 <span className="font-bold text-foreground">
-                  R$ {(lead.amount || 0).toLocaleString('pt-BR')}
+                  {formatBRL(lead.amount || 0)}
                 </span>
                 <Badge
                   variant="secondary"

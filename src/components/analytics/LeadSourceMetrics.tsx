@@ -19,11 +19,9 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 export function LeadSourceMetrics() {
   const { data, isLoading } = useLeadSourceAnalysis(3);
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   if (isLoading) {
     return (
@@ -152,7 +150,7 @@ export function LeadSourceMetrics() {
                     )}
                   </div>
                   <span className="text-sm font-bold font-display gradient-text group-hover:scale-105 transition-transform">
-                    {formatCurrency(source.closedValue)}
+                    {formatBRL(source.closedValue)}
                   </span>
                 </div>
 
@@ -178,7 +176,7 @@ export function LeadSourceMetrics() {
                   </div>
                   <div className="p-1.5 rounded-lg bg-muted/30 group-hover:bg-muted/50 transition-colors">
                     <p className="text-base font-bold font-display">
-                      {formatCurrency(source.avgDealSize)}
+                      {formatBRL(source.avgDealSize)}
                     </p>
                     <p className="text-[9px] text-muted-foreground">Ticket Médio</p>
                   </div>

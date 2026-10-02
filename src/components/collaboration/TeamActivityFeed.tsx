@@ -7,6 +7,7 @@ import { ptBR } from 'date-fns/locale';
 import { DollarSign, Phone, ArrowRight, UserPlus, Zap, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import { formatBRLCompact } from '@/lib/money';
 const TYPE_CONFIG: Record<
   TeamActivity['type'],
   { icon: React.ElementType; color: string; bg: string; label: string; glow: string }
@@ -98,12 +99,7 @@ const ActivityItem = React.memo(
             <span className="text-muted-foreground/80 lowercase">{item.description}</span>
             {item.amount != null && (
               <span className="ml-2 font-black text-success tabular-nums bg-success/5 px-1.5 py-0.5 rounded border border-success/20">
-                {new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                  notation: 'compact',
-                  maximumFractionDigits: 1,
-                }).format(item.amount)}
+                {formatBRLCompact(item.amount)}
               </span>
             )}
           </p>

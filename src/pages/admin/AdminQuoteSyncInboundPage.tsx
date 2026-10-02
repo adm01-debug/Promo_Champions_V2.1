@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 
+import { formatBRL } from '@/lib/money';
 type LogRow = {
   id: string;
   correlation_key: string | null;
@@ -309,13 +310,7 @@ function QuotesInboundTable() {
                     <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-3">
                       {row.client_name && <span>Cliente: {row.client_name}</span>}
                       {row.total != null && (
-                        <span>
-                          Total:{' '}
-                          {row.total.toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                          })}
-                        </span>
+                        <span>Total: {formatBRL(row.total, { decimals: 2 })}</span>
                       )}
                       {row.seller_email && <span>Vendedor: {row.seller_email}</span>}
                     </div>

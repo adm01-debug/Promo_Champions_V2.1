@@ -11,6 +11,7 @@ import { useWeeklyMatchups } from '@/hooks/gamification/useWeeklyMatchups';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 interface StreakEntry {
   id: string;
   current_streak: number;
@@ -157,7 +158,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
                         </p>
                       </div>
                       <p className="text-lg font-bold text-primary">
-                        R${sp.totalSales.toLocaleString('pt-BR')}
+                        {formatBRL(sp.totalSales)}
                       </p>
                     </motion.div>
                   ))}

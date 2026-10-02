@@ -33,11 +33,10 @@ import {
 import { BIVendedorCharts } from '@/components/bi/BIVendedorCharts';
 import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCard';
 
+import { formatBRL } from '@/lib/money';
 const BIVendedor = () => {
   const { salesperson } = useAuth();
   const { data, isLoading } = useBIVendedor();
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
   const currentMonth = format(new Date(), "MMMM 'de' yyyy", { locale: ptBR });
 
   return (
@@ -177,26 +176,26 @@ const BIVendedor = () => {
                 {[
                   {
                     title: 'Faturamento',
-                    value: formatCurrency(data?.totalRevenue || 0),
+                    value: formatBRL(data?.totalRevenue || 0),
                     icon: DollarSign,
                     change: data?.revenueChange,
                     variant: 'primary' as const,
                   },
                   {
                     title: 'Meta',
-                    value: formatCurrency(data?.currentGoal || 0),
+                    value: formatBRL(data?.currentGoal || 0),
                     icon: Target,
                     variant: 'default' as const,
                   },
                   {
                     title: 'Comissão',
-                    value: formatCurrency(data?.commission || 0),
+                    value: formatBRL(data?.commission || 0),
                     icon: TrendingUp,
                     variant: 'success' as const,
                   },
                   {
                     title: 'Pipeline',
-                    value: formatCurrency(data?.pipelineValue || 0),
+                    value: formatBRL(data?.pipelineValue || 0),
                     icon: ShoppingBag,
                     variant: 'warning' as const,
                   },
@@ -368,7 +367,7 @@ const BIVendedor = () => {
                         </span>{' '}
                         • Você precisa vender{' '}
                         <span className="font-bold text-warning">
-                          {formatCurrency(data.dailyRequired)}/dia
+                          {formatBRL(data.dailyRequired)}/dia
                         </span>
                       </p>
                     </div>

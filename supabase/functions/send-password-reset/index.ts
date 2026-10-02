@@ -4,6 +4,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { alertFromEmail } from "../_shared/alert-escalation.ts";
 import { maskEmail } from "../_shared/pii.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 interface PasswordResetRequest {
   email: string;
@@ -17,46 +19,61 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
     return new Response(null, { headers: cors });
   }
 
-  try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-
-    // Verify authorization
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      throw new Error("Missing authorization header");
-    }
-
-    // Create Supabase client with service role for admin operations
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Verify the user is an admin
-    const supabaseUser = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
+  const json = (status: number, body: Record<string, unknown>) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { "Content-Type": "application/json", ...cors },
     });
 
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    if (userError || !user) {
-      throw new Error("Unauthorized");
+  try {
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+
+    // 401 para token ausente/inválido — detalhe vai só para o log; o corpo
+    // externo permanece genérico.
+    let authCtx;
+    try {
+      authCtx = await getUserClient(req);
+    } catch (authError) {
+      if (authError instanceof UnauthorizedError) {
+        console.info(`send-password-reset: auth falhou (${authError.message})`);
+        return json(401, { error: "unauthorized" });
+      }
+      throw authError;
     }
 
-    // Check if user is admin
-    const { data: roleData } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .single();
+    // ~20 req/min por admin: cada chamada gera link de recovery e dispara
+    // e-mail, então o limite segue a identidade autenticada, não o IP.
+    const rl = enforceRateLimit(req, {
+      name: "send-password-reset",
+      limit: 20,
+      windowSeconds: 60,
+      key: authCtx.userId,
+    });
+    if (rl) return rl;
 
-    if (!roleData) {
-      throw new Error("Only admins can approve password resets");
+    // 403 para não-admin — RBAC via has_role (SECURITY DEFINER).
+    const { data: isAdmin, error: roleError } = await authCtx.client.rpc("has_role" as never, {
+      _user_id: authCtx.userId,
+      _role: "admin",
+    } as never);
+    if (roleError) throw roleError;
+    if (!isAdmin) {
+      return json(403, { error: "forbidden" });
     }
+
+    // service_role só depois de autenticar + autorizar: generateLink e a
+    // leitura/escrita em password_reset_requests exigem bypass de RLS.
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAdmin = createClient(
+      supabaseUrl,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      { auth: { persistSession: false, autoRefreshToken: false } },
+    );
 
     const { email, requestId }: PasswordResetRequest = await req.json();
 
     if (!email || !requestId) {
-      throw new Error("Email and requestId are required");
+      return json(400, { error: "invalid_request" });
     }
 
     log('info', 'password_reset_processing', { to: maskEmail(email) });
@@ -70,7 +87,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
       .single();
 
     if (requestError || !resetRequest) {
-      throw new Error("Invalid or non-approved reset request");
+      return json(400, { error: "invalid_request" });
     }
 
     // Generate password reset link using Supabase Auth Admin API
@@ -157,22 +174,11 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
       .update({ status: "completed", updated_at: new Date().toISOString() })
       .eq("id", requestId);
 
-    return new Response(
-      JSON.stringify({ success: true, message: "Password reset email sent" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...cors },
-      }
-    );
+    return json(200, { success: true, message: "Password reset email sent" });
   } catch (error: unknown) {
+    console.error('send-password-reset error:', error);
     log('error', 'send_password_reset_failed');
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(
-      JSON.stringify({ error: message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...cors },
-      }
-    );
+    // Corpo externo genérico — detalhe do erro fica apenas no log.
+    return json(500, { error: "internal_error" });
   }
 }));
