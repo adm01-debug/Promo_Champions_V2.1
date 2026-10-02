@@ -10,6 +10,7 @@ import {
   type RiskSeverity,
 } from '@/lib/winloss/riskSeverity';
 
+import { formatBRL } from '@/lib/money';
 /** Build a RiskReason-shaped record from a legacy free-form string. */
 function reasonFromLegacy(message: string, b: RiskBreakdown): RiskReason {
   const code = inferReasonCode(message);
@@ -92,13 +93,6 @@ function renderCompetitorReason(reason: string, keywords: string[]): React.React
     </>
   );
 }
-
-const fmtBRL = (n: number | null | undefined) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
 
 interface ContribRow {
   label: string;
@@ -402,7 +396,7 @@ export function RiskDebugPanel({
           )}
           {breakdown.avg_loss_amount != null && (
             <Badge variant="outline" className="text-[10px] px-1.5 py-0 tabular-nums">
-              ticket alvo {fmtBRL(breakdown.avg_loss_amount)}
+              ticket alvo {formatBRL(breakdown.avg_loss_amount)}
             </Badge>
           )}
           {!breakdown.stage_eligible &&

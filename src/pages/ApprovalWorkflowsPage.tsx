@@ -47,6 +47,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
+import { formatBRL } from '@/lib/money';
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
@@ -202,9 +203,6 @@ const ApprovalWorkflowsPage = () => {
     () => requests?.filter(r => r.status === 'pending').length ?? 0,
     [requests]
   );
-
-  const fmtCurrency = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   return (
     <>
@@ -519,12 +517,12 @@ const ApprovalWorkflowsPage = () => {
                             <span className="flex items-center gap-1">
                               <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
                               <span className="font-display font-bold">
-                                {fmtCurrency(req.requested_value)}
+                                {formatBRL(req.requested_value, { decimals: 2 })}
                               </span>
                             </span>
                             {req.original_value && (
                               <span className="text-muted-foreground line-through text-xs">
-                                {fmtCurrency(req.original_value)}
+                                {formatBRL(req.original_value, { decimals: 2 })}
                               </span>
                             )}
                             {req.discount_percentage && (

@@ -1,101 +1,123 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { Resend } from "npm:resend@2";
-import { getCorsHeaders } from "../_shared/cors.ts";
-import { withRequestId } from "../_shared/request-id.ts";
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { Resend } from 'npm:resend@2';
+import { getCorsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 
 interface PasswordResetRequest {
   email: string;
   requestId: string;
 }
 
-Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Promise<Response> => {
-  const cors = getCorsHeaders(req);
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: cors });
-  }
-
-  try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-
-    // Verify authorization
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      throw new Error("Missing authorization header");
+Deno.serve(
+  withRequestId('send-password-reset', async (req: Request, _ctx): Promise<Response> => {
+    const cors = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: cors });
     }
 
-    // Create Supabase client with service role for admin operations
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    const json = (status: number, body: Record<string, unknown>) =>
+      new Response(JSON.stringify(body), {
+        status,
+        headers: { 'Content-Type': 'application/json', ...cors },
+      });
 
-    // Verify the user is an admin
-    const supabaseUser = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
-    });
+    try {
+      const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    if (userError || !user) {
-      throw new Error("Unauthorized");
-    }
+      // 401 para token ausente/inválido — detalhe vai só para o log; o corpo
+      // externo permanece genérico.
+      let authCtx;
+      try {
+        authCtx = await getUserClient(req);
+      } catch (authError) {
+        if (authError instanceof UnauthorizedError) {
+          console.info(`send-password-reset: auth falhou (${authError.message})`);
+          return json(401, { error: 'unauthorized' });
+        }
+        throw authError;
+      }
 
-    // Check if user is admin
-    const { data: roleData } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .single();
+      // ~20 req/min por admin: cada chamada gera link de recovery e dispara
+      // e-mail, então o limite segue a identidade autenticada, não o IP.
+      const rl = enforceRateLimit(req, {
+        name: 'send-password-reset',
+        limit: 20,
+        windowSeconds: 60,
+        key: authCtx.userId,
+      });
+      if (rl) return rl;
 
-    if (!roleData) {
-      throw new Error("Only admins can approve password resets");
-    }
+      // 403 para não-admin — RBAC via has_role (SECURITY DEFINER).
+      const { data: isAdmin, error: roleError } = await authCtx.client.rpc(
+        'has_role' as never,
+        {
+          _user_id: authCtx.userId,
+          _role: 'admin',
+        } as never
+      );
+      if (roleError) throw roleError;
+      if (!isAdmin) {
+        return json(403, { error: 'forbidden' });
+      }
 
-    const { email, requestId }: PasswordResetRequest = await req.json();
+      // service_role só depois de autenticar + autorizar: generateLink e a
+      // leitura/escrita em password_reset_requests exigem bypass de RLS.
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseAdmin = createClient(
+        supabaseUrl,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        { auth: { persistSession: false, autoRefreshToken: false } }
+      );
 
-    if (!email || !requestId) {
-      throw new Error("Email and requestId are required");
-    }
+      const { email, requestId }: PasswordResetRequest = await req.json();
 
-    console.info(`Processing password reset approval for: ${email}`);
+      if (!email || !requestId) {
+        return json(400, { error: 'invalid_request' });
+      }
 
-    // Verify the request exists and is approved
-    const { data: resetRequest, error: requestError } = await supabaseAdmin
-      .from("password_reset_requests")
-      .select("id")
-      .eq("id", requestId)
-      .eq("status", "approved")
-      .single();
+      console.info(`Processing password reset approval for: ${email}`);
 
-    if (requestError || !resetRequest) {
-      throw new Error("Invalid or non-approved reset request");
-    }
+      // Verify the request exists and is approved
+      const { data: resetRequest, error: requestError } = await supabaseAdmin
+        .from('password_reset_requests')
+        .select('id')
+        .eq('id', requestId)
+        .eq('status', 'approved')
+        .single();
 
-    // Generate password reset link using Supabase Auth Admin API
-    const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
-      type: "recovery",
-      email: email,
-      options: {
-        redirectTo: `${supabaseUrl.replace('.supabase.co', '.lovable.app')}/reset-password`,
-      },
-    });
+      if (requestError || !resetRequest) {
+        return json(400, { error: 'invalid_request' });
+      }
 
-    if (resetError) {
-      console.error("Error generating reset link:", resetError);
-      throw new Error(`Failed to generate reset link: ${resetError.message}`);
-    }
+      // Generate password reset link using Supabase Auth Admin API
+      const { data: resetData, error: resetError } =
+        await supabaseAdmin.auth.admin.generateLink({
+          type: 'recovery',
+          email: email,
+          options: {
+            redirectTo: `${supabaseUrl.replace('.supabase.co', '.lovable.app')}/reset-password`,
+          },
+        });
 
-    const resetLink = resetData.properties?.action_link;
-    console.info("Reset link generated successfully");
+      if (resetError) {
+        console.error('Error generating reset link:', resetError);
+        throw new Error(`Failed to generate reset link: ${resetError.message}`);
+      }
 
-    // Send email with Resend if configured
-    if (resendApiKey) {
-      const resend = new Resend(resendApiKey);
+      const resetLink = resetData.properties?.action_link;
+      console.info('Reset link generated successfully');
 
-      const { error: emailError } = await resend.emails.send({
-        from: "Sistema <onboarding@resend.dev>",
-        to: [email],
-        subject: "Redefinição de Senha Aprovada",
-        html: `
+      // Send email with Resend if configured
+      if (resendApiKey) {
+        const resend = new Resend(resendApiKey);
+
+        const { error: emailError } = await resend.emails.send({
+          from: 'Sistema <onboarding@resend.dev>',
+          to: [email],
+          subject: 'Redefinição de Senha Aprovada',
+          html: `
           <!DOCTYPE html>
           <html>
           <head>
@@ -136,40 +158,29 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, _ctx): Prom
           </body>
           </html>
         `,
-      });
+        });
 
-      if (emailError) {
-        console.error("Error sending email:", emailError);
-        throw new Error(`Failed to send email: ${emailError.message}`);
+        if (emailError) {
+          console.error('Error sending email:', emailError);
+          throw new Error(`Failed to send email: ${emailError.message}`);
+        }
+
+        console.info('Email sent successfully');
+      } else {
+        console.info('RESEND_API_KEY not configured, skipping email send');
       }
 
-      console.info("Email sent successfully");
-    } else {
-      console.info("RESEND_API_KEY not configured, skipping email send");
+      // Update request status to completed
+      await supabaseAdmin
+        .from('password_reset_requests')
+        .update({ status: 'completed', updated_at: new Date().toISOString() })
+        .eq('id', requestId);
+
+      return json(200, { success: true, message: 'Password reset email sent' });
+    } catch (error: unknown) {
+      console.error('send-password-reset error:', error);
+      // Corpo externo genérico — detalhe do erro fica apenas no log.
+      return json(500, { error: 'internal_error' });
     }
-
-    // Update request status to completed
-    await supabaseAdmin
-      .from("password_reset_requests")
-      .update({ status: "completed", updated_at: new Date().toISOString() })
-      .eq("id", requestId);
-
-    return new Response(
-      JSON.stringify({ success: true, message: "Password reset email sent" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...cors },
-      }
-    );
-  } catch (error: unknown) {
-    console.error('send-password-reset error:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(
-      JSON.stringify({ error: message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...cors },
-      }
-    );
-  }
-}));
+  })
+);

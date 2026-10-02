@@ -26,6 +26,7 @@ import { LTVBySegment } from '../analytics/LTVBySegment';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 export function PurchaseIntelligenceHub() {
   const [clientId, setClientId] = useState<string | undefined>();
   const [hasData, _setHasData] = useState(true); // Toggle to test empty state
@@ -221,7 +222,7 @@ export function PurchaseIntelligenceHub() {
                               borderRadius: '8px',
                             }}
                             formatter={(value: number | string) => [
-                              `R$ ${Number(value).toLocaleString('pt-BR')}`,
+                              `${formatBRL(Number(value))}`,
                             ]}
                           />
                           <Bar

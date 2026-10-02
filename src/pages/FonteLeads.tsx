@@ -9,11 +9,9 @@ import { FonteLeadsLoadingSkeleton } from '@/components/skeletons/PageLoadingSke
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
+import { formatBRL } from '@/lib/money';
 export default function FonteLeads() {
   const { data, isLoading } = useLeadSourceAnalysis(3);
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const overallConversion =
     data?.totalLeads && data.totalLeads > 0
@@ -104,7 +102,7 @@ export default function FonteLeads() {
                       <DollarSign className="h-5 w-5 text-streak" />
                     </div>
                     <div>
-                      <p className="text-metric">{formatCurrency(avgTicket)}</p>
+                      <p className="text-metric">{formatBRL(avgTicket)}</p>
                       <p className="text-xs text-muted-foreground">Ticket Médio</p>
                     </div>
                   </CardContent>

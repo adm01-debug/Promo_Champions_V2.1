@@ -4,6 +4,7 @@ import { TrendingDown, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { ColdLead } from './types';
 
+import { formatBRL } from '@/lib/money';
 interface FollowUpValueAtRiskProps {
   leads: ColdLead[];
   onSelectCritical: () => void;
@@ -51,9 +52,9 @@ export function FollowUpValueAtRisk({
               Valor em Risco (leads esfriando)
             </div>
             <div className="text-2xl font-bold text-destructive">
-              R$ {weightedValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              {formatBRL(weightedValue, { decimals: 2 })}
               <span className="text-sm font-normal text-muted-foreground ml-2">
-                (Total: R$ {totalValue.toLocaleString('pt-BR')})
+                (Total: {formatBRL(totalValue)})
               </span>
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">

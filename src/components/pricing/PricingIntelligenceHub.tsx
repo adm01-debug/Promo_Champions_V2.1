@@ -36,6 +36,7 @@ import {
   type PricingHealth,
 } from '@/hooks/usePricingIntelligence';
 import { cn } from '@/lib/utils';
+import { formatBRL } from '@/lib/money';
 const DiscountOptimizer = lazy(() =>
   import('./DiscountOptimizer').then(m => ({ default: m.DiscountOptimizer }))
 );
@@ -46,12 +47,6 @@ const RevenueLeakageCard = lazy(() =>
   import('./RevenueLeakageCard').then(m => ({ default: m.RevenueLeakageCard }))
 );
 
-const fmtCurrency = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
 const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 const healthMeta: Record<
@@ -259,7 +254,7 @@ export function PricingIntelligenceHub() {
         <KpiCard
           icon={DollarSign}
           label="Ticket médio"
-          value={fmtCurrency(k.avg_ticket)}
+          value={formatBRL(k.avg_ticket)}
           numericValue={k.avg_ticket}
           isCurrency
           accent="text-info"
@@ -275,7 +270,7 @@ export function PricingIntelligenceHub() {
         <KpiCard
           icon={AlertTriangle}
           label="Receita perdida"
-          value={fmtCurrency(k.revenue_lost)}
+          value={formatBRL(k.revenue_lost)}
           numericValue={k.revenue_lost}
           isCurrency
           accent="text-destructive"
@@ -369,7 +364,7 @@ export function PricingIntelligenceHub() {
                     boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
                   }}
                   formatter={(v: number | string, name: string) =>
-                    name === 'revenue' ? fmtCurrency(Number(v)) : [`${v} deals`, 'Volume']
+                    name === 'revenue' ? formatBRL(Number(v)) : [`${v} deals`, 'Volume']
                   }
                 />
                 <Bar
@@ -462,10 +457,10 @@ export function PricingIntelligenceHub() {
                   </div>
                   <div className="text-right">
                     <div className="text-xs font-mono font-bold text-foreground">
-                      {fmtCurrency(threat.our_price)}
+                      {formatBRL(threat.our_price)}
                       <span className="text-[10px] text-muted-foreground mx-1">vs</span>
                       <span className="text-destructive">
-                        {fmtCurrency(threat.competitor_price)}
+                        {formatBRL(threat.competitor_price)}
                       </span>
                     </div>
                     <Badge
@@ -564,7 +559,7 @@ export function PricingIntelligenceHub() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono font-black text-destructive/80 pr-8 py-5 text-sm">
-                        {fmtCurrency(s.revenue_lost)}
+                        {formatBRL(s.revenue_lost)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -642,7 +637,7 @@ export function PricingIntelligenceHub() {
                         </div>
                       </TableCell>
                       <TableCell className="text-right py-5 font-mono font-black text-sm text-foreground/90">
-                        {fmtCurrency(p.recommended_price)}
+                        {formatBRL(p.recommended_price)}
                       </TableCell>
                       <TableCell className="text-right pr-8 py-5">
                         <div className="flex flex-col items-end">

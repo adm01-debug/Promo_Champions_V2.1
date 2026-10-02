@@ -1,6 +1,11 @@
 import React, { FC, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import {
+  AdminFeatureFlag,
+  useAdminFeatureFlags,
+  useCreateFeatureFlag,
+  useUpdateFeatureFlag,
+  useDeleteFeatureFlag,
+} from '@/hooks/useFeatureFlagsAdmin';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
@@ -13,80 +18,15 @@ import { Flag, Plus, Pencil, Trash2, Loader2, Shield, Percent } from 'lucide-rea
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
-interface FeatureFlag {
-  id: string;
-  key: string;
-  description: string | null;
-  is_enabled: boolean;
-  rollout_percentage: number;
-  allowed_roles: string[] | null;
-  metadata: Record<string, unknown> | null;
-  created_at: string;
-  updated_at: string;
-}
+type FeatureFlag = AdminFeatureFlag;
 
 export const FeatureFlagsAdmin: FC = () => {
-  const queryClient = useQueryClient();
   const [editFlag, setEditFlag] = useState<FeatureFlag | null>(null);
   const [showCreate, setShowCreate] = useState(false);
 
-  const { data: flags = [], isLoading } = useQuery({
-    queryKey: ['admin-feature-flags'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('feature_flags')
-        .select('*')
-        .order('key');
-      if (error) throw error;
-      return (data ?? []) as FeatureFlag[];
-    },
-  });
-
-  const toggleFlag = useMutation({
-    mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
-      const { error } = await supabase
-        .from('feature_flags')
-        .update({ is_enabled })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
-      queryClient.invalidateQueries({ queryKey: ['feature-flags'] });
-      toast.success('Flag atualizada');
-    },
-  });
-
-  const updateRollout = useMutation({
-    mutationFn: async ({
-      id,
-      rollout_percentage,
-    }: {
-      id: string;
-      rollout_percentage: number;
-    }) => {
-      const { error } = await supabase
-        .from('feature_flags')
-        .update({ rollout_percentage })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
-      toast.success('Rollout atualizado');
-    },
-  });
-
-  const deleteFlag = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('feature_flags').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
-      toast.success('Flag removida');
-    },
-  });
+  const { data: flags = [], isLoading } = useAdminFeatureFlags();
+  const updateFlag = useUpdateFeatureFlag();
+  const deleteFlag = useDeleteFeatureFlag();
 
   if (isLoading) {
     return (
@@ -160,7 +100,10 @@ export const FeatureFlagsAdmin: FC = () => {
                   <Switch
                     checked={flag.is_enabled}
                     onCheckedChange={checked =>
-                      toggleFlag.mutate({ id: flag.id, is_enabled: checked })
+                      updateFlag.mutate(
+                        { id: flag.id, patch: { is_enabled: checked } },
+                        { onSuccess: () => toast.success('Flag atualizada') }
+                      )
                     }
                   />
                   <Button
@@ -176,7 +119,11 @@ export const FeatureFlagsAdmin: FC = () => {
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-destructive"
-                    onClick={() => deleteFlag.mutate(flag.id)}
+                    onClick={() =>
+                      deleteFlag.mutate(flag.id, {
+                        onSuccess: () => toast.success('Flag removida'),
+                      })
+                    }
                     aria-label={`Excluir flag ${flag.key}`}
                   >
                     <Trash2 className="h-3 w-3" />
@@ -196,7 +143,10 @@ export const FeatureFlagsAdmin: FC = () => {
                     step={5}
                     className="flex-1"
                     onValueCommit={([val]) =>
-                      updateRollout.mutate({ id: flag.id, rollout_percentage: val })
+                      updateFlag.mutate(
+                        { id: flag.id, patch: { rollout_percentage: val } },
+                        { onSuccess: () => toast.success('Rollout atualizado') }
+                      )
                     }
                   />
                   <span className="text-xs font-mono text-foreground w-10 text-right">
@@ -234,27 +184,24 @@ const CreateFlagDialog: FC<{ open: boolean; onOpenChange: (v: boolean) => void }
   open,
   onOpenChange,
 }) => {
-  const queryClient = useQueryClient();
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
-  const [isPending, setIsPending] = useState(false);
+  const createFlag = useCreateFeatureFlag();
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!key.trim()) return;
-    setIsPending(true);
-    const { error } = await supabase
-      .from('feature_flags')
-      .insert({ key: key.trim(), description: description.trim() || null });
-    setIsPending(false);
-    if (error) {
-      toast.error('Erro ao criar flag');
-      return;
-    }
-    queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
-    toast.success('Flag criada');
-    setKey('');
-    setDescription('');
-    onOpenChange(false);
+    createFlag.mutate(
+      { key: key.trim(), description: description.trim() || null },
+      {
+        onSuccess: () => {
+          toast.success('Flag criada');
+          setKey('');
+          setDescription('');
+          onOpenChange(false);
+        },
+        onError: () => toast.error('Erro ao criar flag'),
+      }
+    );
   };
 
   return (
@@ -284,9 +231,9 @@ const CreateFlagDialog: FC<{ open: boolean; onOpenChange: (v: boolean) => void }
           <Button
             className="w-full"
             onClick={handleCreate}
-            disabled={!key.trim() || isPending}
+            disabled={!key.trim() || createFlag.isPending}
           >
-            {isPending ? (
+            {createFlag.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
             ) : (
               <Flag className="h-4 w-4 mr-2" />
@@ -304,32 +251,31 @@ const EditFlagDialog: FC<{
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }> = ({ flag, open, onOpenChange }) => {
-  const queryClient = useQueryClient();
   const [description, setDescription] = useState(flag.description || '');
   const [roles, setRoles] = useState((flag.allowed_roles || []).join(', '));
-  const [isPending, setIsPending] = useState(false);
+  const updateFlag = useUpdateFeatureFlag();
 
-  const handleSave = async () => {
-    setIsPending(true);
+  const handleSave = () => {
     const allowed_roles = roles
       .split(',')
       .map(r => r.trim())
       .filter(Boolean);
-    const { error } = await supabase
-      .from('feature_flags')
-      .update({
-        description: description.trim() || null,
-        allowed_roles: allowed_roles.length > 0 ? allowed_roles : null,
-      })
-      .eq('id', flag.id);
-    setIsPending(false);
-    if (error) {
-      toast.error('Erro ao salvar');
-      return;
-    }
-    queryClient.invalidateQueries({ queryKey: ['admin-feature-flags'] });
-    toast.success('Flag atualizada');
-    onOpenChange(false);
+    updateFlag.mutate(
+      {
+        id: flag.id,
+        patch: {
+          description: description.trim() || null,
+          allowed_roles: allowed_roles.length > 0 ? allowed_roles : null,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Flag atualizada');
+          onOpenChange(false);
+        },
+        onError: () => toast.error('Erro ao salvar'),
+      }
+    );
   };
 
   return (
@@ -351,8 +297,8 @@ const EditFlagDialog: FC<{
               placeholder="admin, manager"
             />
           </div>
-          <Button className="w-full" onClick={handleSave} disabled={isPending}>
-            {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+          <Button className="w-full" onClick={handleSave} disabled={updateFlag.isPending}>
+            {updateFlag.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
             Salvar
           </Button>
         </div>

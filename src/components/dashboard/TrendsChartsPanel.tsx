@@ -20,6 +20,7 @@ import {
 import { useTrendsData } from '@/hooks/useTrendsData';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 type MetricKey = 'revenue' | 'sales' | 'conversion';
 
 const METRIC_CONFIG: Record<
@@ -39,8 +40,7 @@ const METRIC_CONFIG: Record<
     color: 'hsl(var(--primary))',
     glow: 'rgba(14, 165, 233, 0.4)',
     accentClass: 'text-primary',
-    format: v =>
-      `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0, notation: v >= 100000 ? 'compact' : 'standard' })}`,
+    format: v => `${formatBRL(v)}`,
   },
   sales: {
     label: 'Vendas',

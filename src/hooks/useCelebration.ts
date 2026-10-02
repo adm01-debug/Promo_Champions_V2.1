@@ -2,6 +2,7 @@ import { useCallback, useRef, useEffect } from 'react';
 import { useSoundSettings } from '@/hooks/useSoundSettings';
 import { useRecordAchievement } from '@/hooks/gamification/useAchievements';
 
+import { formatBRL } from '@/lib/money';
 export function useCelebration() {
   const hasPlayedRef = useRef<Set<string>>(new Set());
   const { playSound } = useSoundSettings();
@@ -288,7 +289,7 @@ export function useCelebration() {
       triggerConfetti();
       sendPushNotification(
         '🚀 NOVA ATIVAÇÃO!',
-        `O cliente ${clientName} foi ativado com sucesso! Valor: R$ ${amount.toLocaleString('pt-BR')}`
+        `O cliente ${clientName} foi ativado com sucesso! Valor: ${formatBRL(amount)}`
       );
     },
     [playSound, triggerConfetti, sendPushNotification]

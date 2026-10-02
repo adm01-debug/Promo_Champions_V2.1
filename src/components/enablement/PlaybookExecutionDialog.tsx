@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { formatBRL } from '@/lib/money';
 export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) => {
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const { data: sales } = useSalesData();
@@ -80,11 +81,7 @@ export const PlaybookExecutionDialog = ({ playbook }: { playbook: Playbook }) =>
               <SelectContent>
                 {activeSales.map((sale: Sale) => (
                   <SelectItem key={sale.fullId} value={sale.fullId}>
-                    {sale.cliente} -{' '}
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(sale.valor)}
+                    {sale.cliente} - {formatBRL(sale.valor, { decimals: 2 })}
                   </SelectItem>
                 ))}
               </SelectContent>

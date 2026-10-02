@@ -1,3 +1,4 @@
+import { formatBRL as __formatBRL } from '@/lib/money';
 export type Severity = 'info' | 'opportunity' | 'risk';
 
 export const severityLabel: Record<Severity, string> = {
@@ -25,15 +26,7 @@ export const STAGE_LABELS_PT: Record<string, string> = {
 export const stageLabel = (s: string | null | undefined) =>
   s ? (STAGE_LABELS_PT[s.toLowerCase()] ?? s) : '—';
 
-export const fmtBRL = (n: number | null | undefined) => {
-  const v = Number(n) || 0;
-  return v.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  });
-};
-
+export const fmtBRL = (n: number | null | undefined) => __formatBRL(n);
 export const fmtPct = (n: number | null | undefined) => `${(Number(n) || 0).toFixed(1)}%`;
 export const fmtDays = (n: number | null | undefined) =>
   `${(Number(n) || 0).toFixed(1)}d`;

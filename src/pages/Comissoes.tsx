@@ -18,9 +18,7 @@ import { useMemo } from 'react';
 import { CommissionCalculator } from '@/components/financeiro/CommissionCalculator';
 import { cn } from '@/lib/utils';
 
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n || 0);
-
+import { formatBRL } from '@/lib/money';
 const statusBadge: Record<
   CommissionStatus,
   { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }
@@ -95,14 +93,14 @@ export default function Comissoes() {
                   </p>
                   <p className="text-[10px] text-muted-foreground/60 mt-1 font-mono">
                     {format(new Date(c.created_at), 'dd MMM yyyy', { locale: ptBR })}
-                    {' · '}BASE: {formatBRL(c.base_amount)}
+                    {' · '}BASE: {formatBRL(c.base_amount, { decimals: 2 })}
                     {' · '}
                     {c.percentage}%
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-black italic tracking-tighter text-primary">
-                    {formatBRL(c.commission_amount)}
+                    {formatBRL(c.commission_amount, { decimals: 2 })}
                   </p>
                   <Badge
                     variant="outline"
@@ -209,7 +207,7 @@ export default function Comissoes() {
               </CardHeader>
               <CardContent className="px-4 pb-4">
                 <p className="text-2xl font-black italic tracking-tighter font-display">
-                  {formatBRL(item.value)}
+                  {formatBRL(item.value, { decimals: 2 })}
                 </p>
               </CardContent>
             </Card>

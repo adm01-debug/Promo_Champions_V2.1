@@ -16,6 +16,7 @@ import { usePagination } from '@/hooks/usePagination';
 import { TablePagination } from '@/components/shared/TablePagination';
 import { EmptyStateProducts } from '@/components/shared/EmptyStateProducts';
 import { PageTransition } from '@/components/transitions/PageTransition';
+import { formatBRL } from '@/lib/money';
 const statusColors: Record<string, string> = {
   ativo: 'bg-status-success/20 text-status-success border-status-success/30',
   pausado: 'bg-warning/20 text-warning border-warning/30',
@@ -265,7 +266,7 @@ const Produtos = () => {
                               Estoque: {product.stock_quantity || 0}
                             </span>
                             <span className="text-xl font-bold gradient-text">
-                              R$ {Number(product.price).toLocaleString('pt-BR')}
+                              {formatBRL(Number(product.price))}
                             </span>
                           </div>
                         </div>
