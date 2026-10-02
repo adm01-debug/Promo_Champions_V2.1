@@ -267,6 +267,117 @@ Deno.test('crons de saúde WAL/webhook seguem o mesmo padrão interno', async ()
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
 });
 
+Deno.test('soft delete usa deleted_at e restringe DELETE a admin/manager', async () => {
+  const sql = await readMigration('20261001193000_soft_delete_business_tables.sql');
+  Deno.test(
+    'diretório de migrations segue nomenclatura canônica e versões únicas',
+    async () => {
+      const names: string[] = [];
+      for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+        names.push(entry.name);
+      }
+      assert(names.length > 0, 'diretório de migrations não pode estar vazio');
+
+      // Colunas defensivas + índice parcial
+      assertMatch(sql, /ADD COLUMN IF NOT EXISTS deleted_at timestamptz/i);
+      assertMatch(sql, /CREATE INDEX IF NOT EXISTS idx_(\w+|%I)_deleted_at/i);
+      assertMatch(sql, /WHERE\s+deleted_at\s+IS\s+NOT\s+NULL/i);
+      const versions = new Map<string, string>();
+      for (const name of names) {
+        assertMatch(
+          name,
+          /^\d{8,14}_.*\.sql$/,
+          `nome fora do padrão '<versão numérica>_<descrição>.sql': ${name}`
+        );
+        const version = name.split('_')[0];
+        assert(
+          !versions.has(version),
+          `versão duplicada '${version}': ${versions.get(version)} e ${name}`
+        );
+        versions.set(version, name);
+      }
+    }
+  );
+
+  // Policies FOR DELETE restritas a admin/manager
+  assertMatch(sql, /is_admin_or_manager\(auth\.uid\(\)\)/i);
+  assertMatch(sql, /FOR DELETE/i);
+  assertMatch(sql, /DROP POLICY IF EXISTS/i);
+
+  // View de vendas filtra excluídos
+  assertMatch(sql, /sales_with_markup/i);
+  assertMatch(sql, /s\.deleted_at IS NULL/i);
+  Deno.test('nenhuma migration é vazia (apenas comentários)', async () => {
+    for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+      if (!entry.name.endsWith('.sql')) continue;
+      const sql = await readMigration(entry.name);
+      const executable = sql
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .split('\n')
+        .filter(line => {
+          const trimmed = line.trim();
+          return trimmed !== '' && !trimmed.startsWith('--');
+        });
+      assert(
+        executable.length > 0,
+        `migration sem nenhum statement executável: ${entry.name}`
+      );
+    }
+  });
+
+  assertNotMatch(
+    sql,
+    /\bDELETE\s+FROM\s+public\.(clients|suppliers|deals|quotes|sales)\b/i
+  );
+  assertNotMatch(sql, /CREATE\s+(UNIQUE\s+)?INDEX\s+CONCURRENTLY/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+});
+
+Deno.test('audit canônico consolida definições e marca superseded', async () => {
+  const sql = await readMigration('20261001193100_audit_log_canonical.sql');
+
+  // Tabela canônica com campos exigidos
+  assertMatch(sql, /audit_logs/i);
+  assertMatch(
+    sql,
+    /ADD COLUMN IF NOT EXISTS (table_name|record_id|old_data|new_data|request_id)/i
+  );
+
+  // Sanitização de dados sensíveis
+  assertMatch(sql, /audit_scrub/i);
+  assertMatch(sql, /REDACTED/i);
+
+  // Triggers AFTER UPDATE OR DELETE nas tabelas de negócio
+  assertMatch(sql, /CREATE TRIGGER audit_business_changes/i);
+  assertMatch(sql, /AFTER UPDATE OR DELETE/i);
+  assertMatch(sql, /audit_log_row_change/i);
+
+  // Definições antigas marcadas como superseded
+  assertMatch(sql, /superseded/i);
+
+  // log_audit_event recriada com grants mínimos
+  assertMatch(sql, /CREATE OR REPLACE FUNCTION public\.log_audit_event/i);
+  assertMatch(sql, /REVOKE EXECUTE/i);
+  assertMatch(sql, /GRANT EXECUTE.*authenticated/i);
+
+  assertNotMatch(sql, /CREATE\s+(UNIQUE\s+)?INDEX\s+CONCURRENTLY/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+});
+
+Deno.test('optimistic locking adiciona version e trigger bump', async () => {
+  const sql = await readMigration('20261001193200_optimistic_locking.sql');
+
+  assertMatch(sql, /ADD COLUMN IF NOT EXISTS version integer/i);
+  assertMatch(sql, /DEFAULT 1/i);
+  assertMatch(sql, /bump_row_version/i);
+  assertMatch(sql, /CREATE TRIGGER bump_version/i);
+  assertMatch(sql, /BEFORE UPDATE/i);
+  assertMatch(sql, /to_regclass/i);
+
+  assertNotMatch(sql, /CREATE\s+(UNIQUE\s+)?INDEX\s+CONCURRENTLY/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+});
+
 Deno.test(
   'diretório de migrations segue nomenclatura canônica e versões únicas',
   async () => {

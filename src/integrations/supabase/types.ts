@@ -4085,6 +4085,9 @@ export type Database = {
           assigned_by: string | null
           client_id: string
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          delete_reason: string | null
           id: string
           is_active: boolean | null
           last_purchase_date: string | null
@@ -4099,6 +4102,9 @@ export type Database = {
           assigned_by?: string | null
           client_id: string
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           id?: string
           is_active?: boolean | null
           last_purchase_date?: string | null
@@ -4113,6 +4119,9 @@ export type Database = {
           assigned_by?: string | null
           client_id?: string
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           id?: string
           is_active?: boolean | null
           last_purchase_date?: string | null
@@ -13779,6 +13788,9 @@ export type Database = {
           created_by: string | null
           currency: string | null
           description: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          delete_reason: string | null
           discount_amount: number | null
           discount_percent: number | null
           exchange_rate: number | null
@@ -13806,6 +13818,7 @@ export type Database = {
           total_value: number
           updated_at: string
           valid_until: string | null
+          version: number
         }
         Insert: {
           approved_at?: string | null
@@ -13820,6 +13833,9 @@ export type Database = {
           created_by?: string | null
           currency?: string | null
           description?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           discount_amount?: number | null
           discount_percent?: number | null
           exchange_rate?: number | null
@@ -13847,6 +13863,7 @@ export type Database = {
           total_value?: number
           updated_at?: string
           valid_until?: string | null
+          version?: number
         }
         Update: {
           approved_at?: string | null
@@ -13861,6 +13878,9 @@ export type Database = {
           created_by?: string | null
           currency?: string | null
           description?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           discount_amount?: number | null
           discount_percent?: number | null
           exchange_rate?: number | null
@@ -13888,6 +13908,7 @@ export type Database = {
           total_value?: number
           updated_at?: string
           valid_until?: string | null
+          version?: number
         }
         Relationships: [
           {
@@ -15678,6 +15699,9 @@ export type Database = {
           cost_synced_at: string | null
           created_at: string
           deal_status: Database["public"]["Enums"]["deal_status"] | null
+          deleted_at: string | null
+          deleted_by: string | null
+          delete_reason: string | null
           enrichment_data: Json | null
           enrichment_status: string | null
           forecast_category:
@@ -15706,6 +15730,7 @@ export type Database = {
           total_cost: number | null
           unit_cost: number | null
           updated_at: string
+          version: number
           whatsapp_last_interaction: string | null
           whatsapp_status: string | null
         }
@@ -15726,6 +15751,9 @@ export type Database = {
           cost_synced_at?: string | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           enrichment_data?: Json | null
           enrichment_status?: string | null
           forecast_category?:
@@ -15754,6 +15782,7 @@ export type Database = {
           total_cost?: number | null
           unit_cost?: number | null
           updated_at?: string
+          version?: number
           whatsapp_last_interaction?: string | null
           whatsapp_status?: string | null
         }
@@ -15774,6 +15803,9 @@ export type Database = {
           cost_synced_at?: string | null
           created_at?: string
           deal_status?: Database["public"]["Enums"]["deal_status"] | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           enrichment_data?: Json | null
           enrichment_status?: string | null
           forecast_category?:
@@ -15802,6 +15834,7 @@ export type Database = {
           total_cost?: number | null
           unit_cost?: number | null
           updated_at?: string
+          version?: number
           whatsapp_last_interaction?: string | null
           whatsapp_status?: string | null
         }
@@ -18825,6 +18858,8 @@ export type Database = {
           completed_at: string | null
           created_at: string
           deleted_at: string | null
+          deleted_by: string | null
+          delete_reason: string | null
           description: string | null
           due_date: string
           due_time: string | null
@@ -18843,6 +18878,8 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           description?: string | null
           due_date?: string
           due_time?: string | null
@@ -18861,6 +18898,8 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           description?: string | null
           due_date?: string
           due_time?: string | null
@@ -22513,6 +22552,8 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           deleted_at: string | null
+          deleted_by: string | null
+          delete_reason: string | null
           description: string | null
           due_date: string | null
           due_time: string | null
@@ -22531,6 +22572,8 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           description?: string | null
           due_date?: string | null
           due_time?: string | null
@@ -22549,6 +22592,8 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           deleted_at?: string | null
+          deleted_by?: string | null
+          delete_reason?: string | null
           description?: string | null
           due_date?: string | null
           due_time?: string | null

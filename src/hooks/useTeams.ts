@@ -32,7 +32,10 @@ export const useTeams = () => {
   return useQuery<Team[]>({
     queryKey: ['teams'],
     queryFn: async (): Promise<Team[]> => {
-      const { data: teams, error } = await supabase.from('teams').select(`
+      const { data: teams, error } = await supabase
+        .from('teams')
+        .select(
+          `
           *,
           sdr:salespeople!teams_sdr_id_fkey(id, name, email, role, avatar_url),
           closers:team_closers(
@@ -40,7 +43,9 @@ export const useTeams = () => {
             closer_id,
             salesperson:salespeople(id, name, email, role, avatar_url)
           )
-        `);
+        `
+        )
+        .is('deleted_at', null);
 
       if (error) throw error;
 
@@ -178,11 +183,20 @@ export const useDeleteTeam = () => {
 
   return useMutation({
     mutationFn: async (teamId: string) => {
-      // Delete team closers first
+      // Remove vínculos (tabela volátil — hard delete)
       await supabase.from('team_closers').delete().eq('team_id', teamId);
 
-      // Then delete the team
-      const { error } = await supabase.from('teams').delete().eq('id', teamId);
+      // Soft delete da equipe
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('teams')
+        .update({
+          deleted_at: new Date().toISOString(),
+          deleted_by: user?.id ?? null,
+        })
+        .eq('id', teamId);
 
       if (error) throw error;
     },

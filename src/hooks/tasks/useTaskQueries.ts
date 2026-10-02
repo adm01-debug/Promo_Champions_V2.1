@@ -26,6 +26,7 @@ export const useTasks = (userId?: string) => {
       let query = supabase
         .from('tasks')
         .select(TASK_SELECT)
+        .is('deleted_at', null)
         .or(`due_date.gte.${windowStart},due_date.is.null`)
         .order('due_date', { ascending: true })
         .limit(2000);
@@ -52,6 +53,7 @@ export const useTodayTasks = (userId?: string) => {
       let query = supabase
         .from('tasks')
         .select(TASK_SELECT)
+        .is('deleted_at', null)
         .eq('due_date', today)
         .neq('status', 'completed')
         .order('due_time', { ascending: true });

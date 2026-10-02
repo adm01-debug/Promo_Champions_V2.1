@@ -33,7 +33,10 @@ export interface ClientsPage {
 
 export const clientService = {
   async getClients(): Promise<Client[]> {
-    const { data, error } = await supabase.from('clients').select('*');
+    const { data, error } = await supabase
+      .from('clients')
+      .select('*')
+      .is('deleted_at', null);
     if (error) throw error;
     return (data || []) as Client[];
   },
@@ -109,7 +112,13 @@ export const clientService = {
   },
 
   async deleteClient(id: string) {
-    const { error } = await supabase.from('clients').delete().eq('id', id);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from('clients')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+      .eq('id', id);
     if (error) throw error;
   },
 
