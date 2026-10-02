@@ -38,6 +38,18 @@ npm run build      # build de produção
   (`docs/DEPLOYMENT.md` §4) e faça deploy manual via CLI se necessário
 - Existem functions no repo não publicadas (ex.: `elevenlabs-stt` responde 404)
 
+#### Secrets obrigatórios (Supabase Dashboard → Edge Functions → Secrets)
+- `ALLOWED_ORIGINS` — allowlist de CORS de produção:
+  `https://promochampions.com.br,https://championgifts.lovable.app,https://pixels-with-personality-09.lovable.app`.
+  Sem ele o CORS cai no fallback `*` (só aceitável em dev).
+- `BITRIX24_STATE_SECRET` — chave HMAC do `state` OAuth do Bitrix24
+  (string aleatória ≥32 chars; `openssl rand -hex 32`). Sem ele,
+  authorize/callback do `bitrix24-oauth` falham.
+- `coaching_cron_secret`, `anon_key`, `functions_base_url` em
+  `public._internal_secrets` — usados pelos triggers/crons internos
+  (`broadcast_sale_completed`, `trigger_campaign_health_alert`,
+  `trigger_internal_edge_job`). Falhas ficam em `public.edge_call_failures`.
+
 ---
 
 ## Rollback
