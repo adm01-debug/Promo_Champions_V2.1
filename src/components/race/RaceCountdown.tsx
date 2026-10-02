@@ -20,7 +20,10 @@ export function RaceCountdown({ trigger, onComplete, onTick }: RaceCountdownProp
       i++;
       if (i >= seq.length) {
         clearInterval(id);
-        setTimeout(() => { setStep(null); onComplete?.(); }, 600);
+        setTimeout(() => {
+          setStep(null);
+          onComplete?.();
+        }, 600);
         return;
       }
       setStep(seq[i]);

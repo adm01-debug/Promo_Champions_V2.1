@@ -6,24 +6,19 @@ import {
   UserPlus,
   Snowflake,
   type LucideIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 export type AgentType =
-  | "qualify_lead"
-  | "build_proposal"
-  | "schedule_followup"
-  | "enrich_client"
-  | "recover_cold_lead";
+  | 'qualify_lead'
+  | 'build_proposal'
+  | 'schedule_followup'
+  | 'enrich_client'
+  | 'recover_cold_lead';
 
 export type AgentStatus =
-  | "pending"
-  | "running"
-  | "awaiting_approval"
-  | "completed"
-  | "failed"
-  | "cancelled";
+  'pending' | 'running' | 'awaiting_approval' | 'completed' | 'failed' | 'cancelled';
 
-export type AgentTargetType = "lead" | "client" | "deal" | "activity";
+export type AgentTargetType = 'lead' | 'client' | 'deal' | 'activity';
 
 export interface AgentRun {
   id: string;
@@ -50,49 +45,55 @@ export interface AgentAction {
   tool_name: string;
   tool_input: Record<string, unknown>;
   tool_output: Record<string, unknown> | null;
-  status: "success" | "error" | "pending_approval" | "skipped";
-  executed_by: "ai" | "user" | "system";
+  status: 'success' | 'error' | 'pending_approval' | 'skipped';
+  executed_by: 'ai' | 'user' | 'system';
   executed_at: string;
 }
 
-export const AGENT_META: Record<AgentType, { label: string; icon: LucideIcon; description: string }> = {
+export const AGENT_META: Record<
+  AgentType,
+  { label: string; icon: LucideIcon; description: string }
+> = {
   qualify_lead: {
-    label: "Qualificar Lead",
+    label: 'Qualificar Lead',
     icon: Target,
-    description: "Analisa contexto, sugere score e próximas ações.",
+    description: 'Analisa contexto, sugere score e próximas ações.',
   },
   build_proposal: {
-    label: "Montar Proposta",
+    label: 'Montar Proposta',
     icon: FileText,
-    description: "Reúne dados do deal e propõe estrutura de proposta.",
+    description: 'Reúne dados do deal e propõe estrutura de proposta.',
   },
   schedule_followup: {
-    label: "Agendar Follow-up",
+    label: 'Agendar Follow-up',
     icon: CalendarClock,
-    description: "Define melhor janela e cria evento na agenda.",
+    description: 'Define melhor janela e cria evento na agenda.',
   },
   enrich_client: {
-    label: "Enriquecer Cliente",
+    label: 'Enriquecer Cliente',
     icon: UserPlus,
-    description: "Busca contexto adicional e atualiza ficha.",
+    description: 'Busca contexto adicional e atualiza ficha.',
   },
   recover_cold_lead: {
-    label: "Recuperar Lead Frio",
+    label: 'Recuperar Lead Frio',
     icon: Snowflake,
-    description: "Plano de reativação com mensagem personalizada.",
+    description: 'Plano de reativação com mensagem personalizada.',
   },
 };
 
 export const STATUS_META: Record<
   AgentStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "warning" | "success" | "info" }
+  {
+    label: string;
+    variant: 'default' | 'secondary' | 'destructive' | 'warning' | 'success' | 'info';
+  }
 > = {
-  pending: { label: "Pendente", variant: "secondary" },
-  running: { label: "Executando", variant: "info" },
-  awaiting_approval: { label: "Aguarda aprovação", variant: "warning" },
-  completed: { label: "Concluído", variant: "success" },
-  failed: { label: "Falhou", variant: "destructive" },
-  cancelled: { label: "Cancelado", variant: "secondary" },
+  pending: { label: 'Pendente', variant: 'secondary' },
+  running: { label: 'Executando', variant: 'info' },
+  awaiting_approval: { label: 'Aguarda aprovação', variant: 'warning' },
+  completed: { label: 'Concluído', variant: 'success' },
+  failed: { label: 'Falhou', variant: 'destructive' },
+  cancelled: { label: 'Cancelado', variant: 'secondary' },
 };
 
 export const AGENT_ICON = Sparkles;

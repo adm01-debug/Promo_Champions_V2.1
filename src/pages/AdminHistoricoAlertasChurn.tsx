@@ -63,12 +63,19 @@ function csvEscape(v: unknown): string {
 }
 
 const AdminHistoricoAlertasChurn = () => {
-  const { days: sharedDays, setDays: setSharedDays, options: periodOptions } =
-    useChurnPeriodPreference();
+  const {
+    days: sharedDays,
+    setDays: setSharedDays,
+    options: periodOptions,
+  } = useChurnPeriodPreference();
   const [level, setLevel] = React.useState<Level>(() => {
     if (typeof window === 'undefined') return 'all';
     const v = window.localStorage.getItem('churnHistory.level');
-    return v === 'low' || v === 'medium' || v === 'high' || v === 'critical' || v === 'all'
+    return v === 'low' ||
+      v === 'medium' ||
+      v === 'high' ||
+      v === 'critical' ||
+      v === 'all'
       ? v
       : 'all';
   });
@@ -93,7 +100,7 @@ const AdminHistoricoAlertasChurn = () => {
     }
   }, [salespersonId]);
   const [from, setFrom] = React.useState<string>(
-    format(subDays(new Date(), sharedDays), 'yyyy-MM-dd'),
+    format(subDays(new Date(), sharedDays), 'yyyy-MM-dd')
   );
   const [to, setTo] = React.useState<string>(format(new Date(), 'yyyy-MM-dd'));
   const [page, setPage] = React.useState(0);
@@ -109,7 +116,7 @@ const AdminHistoricoAlertasChurn = () => {
         description: `${newFrom} → ${newTo}`,
       });
     },
-    [setSharedDays],
+    [setSharedDays]
   );
 
   React.useEffect(() => {
@@ -132,7 +139,7 @@ const AdminHistoricoAlertasChurn = () => {
 
   const salespersonMap = React.useMemo(() => {
     const m = new Map<string, string>();
-    (salespeople ?? []).forEach((s) => m.set(s.id, s.name));
+    (salespeople ?? []).forEach(s => m.set(s.id, s.name));
     return m;
   }, [salespeople]);
 
@@ -142,7 +149,7 @@ const AdminHistoricoAlertasChurn = () => {
         .from('notifications')
         .select(
           'id, user_id, title, message, priority, metadata, created_at',
-          opts?.count ? { count: opts.count } : undefined,
+          opts?.count ? { count: opts.count } : undefined
         )
         .eq('type', 'churn_alert')
         .gte('created_at', new Date(from + 'T00:00:00').toISOString())
@@ -154,7 +161,7 @@ const AdminHistoricoAlertasChurn = () => {
       else if (opts?.limit) q = q.limit(opts.limit);
       return q;
     },
-    [from, to, level, salespersonId],
+    [from, to, level, salespersonId]
   );
 
   const { data, isLoading, isFetching } = useQuery({
@@ -162,11 +169,14 @@ const AdminHistoricoAlertasChurn = () => {
     queryFn: async () => {
       const start = page * PAGE_SIZE;
       const end = start + PAGE_SIZE - 1;
-      const { data, error, count } = await buildQuery({ count: 'exact', range: [start, end] });
+      const { data, error, count } = await buildQuery({
+        count: 'exact',
+        range: [start, end],
+      });
       if (error) throw error;
       return { rows: (data ?? []) as Row[], total: count ?? 0 };
     },
-    placeholderData: (prev) => prev,
+    placeholderData: prev => prev,
   });
 
   const total = data?.total ?? 0;
@@ -191,7 +201,7 @@ const AdminHistoricoAlertasChurn = () => {
         'titulo',
         'mensagem',
       ];
-      const lines = list.map((r) => {
+      const lines = list.map(r => {
         const m = (r.metadata ?? {}) as Record<string, unknown>;
         return [
           format(new Date(r.created_at), 'yyyy-MM-dd HH:mm:ss'),
@@ -228,7 +238,10 @@ const AdminHistoricoAlertasChurn = () => {
     <PageTransition>
       <Helmet>
         <title>Histórico de Alertas de Churn | Admin</title>
-        <meta name="description" content="Histórico paginado dos alertas de churn disparados" />
+        <meta
+          name="description"
+          content="Histórico paginado dos alertas de churn disparados"
+        />
       </Helmet>
 
       <div className="p-6 space-y-6">
@@ -255,8 +268,10 @@ const AdminHistoricoAlertasChurn = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
-              <Label htmlFor="filter-level" className="text-xs">Nível</Label>
-              <Select value={level} onValueChange={(v) => setLevel(v as Level)}>
+              <Label htmlFor="filter-level" className="text-xs">
+                Nível
+              </Label>
+              <Select value={level} onValueChange={v => setLevel(v as Level)}>
                 <SelectTrigger id="filter-level" className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -270,14 +285,16 @@ const AdminHistoricoAlertasChurn = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="filter-seller" className="text-xs">Vendedor</Label>
+              <Label htmlFor="filter-seller" className="text-xs">
+                Vendedor
+              </Label>
               <Select value={salespersonId} onValueChange={setSalespersonId}>
                 <SelectTrigger id="filter-seller" className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  {(salespeople ?? []).map((s) => (
+                  {(salespeople ?? []).map(s => (
                     <SelectItem key={s.id} value={s.id}>
                       {s.name}
                     </SelectItem>
@@ -286,16 +303,18 @@ const AdminHistoricoAlertasChurn = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="filter-preset" className="text-xs">Período rápido</Label>
+              <Label htmlFor="filter-preset" className="text-xs">
+                Período rápido
+              </Label>
               <Select
                 value={String(sharedDays)}
-                onValueChange={(v) => applyPreset(Number(v))}
+                onValueChange={v => applyPreset(Number(v))}
               >
                 <SelectTrigger id="filter-preset" className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {periodOptions.map((d) => (
+                  {periodOptions.map(d => (
                     <SelectItem key={d} value={String(d)}>
                       Últimos {d} dias
                     </SelectItem>
@@ -304,29 +323,38 @@ const AdminHistoricoAlertasChurn = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="filter-from" className="text-xs">De</Label>
+              <Label htmlFor="filter-from" className="text-xs">
+                De
+              </Label>
               <Input
                 id="filter-from"
                 type="date"
                 value={from}
-                onChange={(e) => setFrom(e.target.value)}
+                onChange={e => setFrom(e.target.value)}
                 className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="filter-to" className="text-xs">Até</Label>
+              <Label htmlFor="filter-to" className="text-xs">
+                Até
+              </Label>
               <Input
                 id="filter-to"
                 type="date"
                 value={to}
-                onChange={(e) => setTo(e.target.value)}
+                onChange={e => setTo(e.target.value)}
                 className="mt-1"
               />
             </div>
           </div>
         </Card>
 
-        <ChurnHistoryChart from={from} to={to} level={level} salespersonId={salespersonId} />
+        <ChurnHistoryChart
+          from={from}
+          to={to}
+          level={level}
+          salespersonId={salespersonId}
+        />
 
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
@@ -353,18 +381,23 @@ const AdminHistoricoAlertasChurn = () => {
                   ))
                 ) : rows.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground text-sm">
+                    <td
+                      colSpan={7}
+                      className="px-4 py-10 text-center text-muted-foreground text-sm"
+                    >
                       Nenhum alerta encontrado no período/filtro selecionado.
                     </td>
                   </tr>
                 ) : (
-                  rows.map((r) => {
+                  rows.map(r => {
                     const m = (r.metadata ?? {}) as Record<string, unknown>;
                     const lvl = (m.level as Exclude<Level, 'all'>) ?? 'medium';
                     return (
                       <tr key={r.id} className="border-t hover:bg-muted/30">
                         <td className="px-4 py-2.5 whitespace-nowrap text-xs">
-                          {format(new Date(r.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
+                          {format(new Date(r.created_at), "dd 'de' MMM, HH:mm", {
+                            locale: ptBR,
+                          })}
                         </td>
                         <td className="px-4 py-2.5">
                           {salespersonMap.get(r.user_id) ?? (
@@ -411,7 +444,7 @@ const AdminHistoricoAlertasChurn = () => {
                 variant="outline"
                 size="sm"
                 disabled={page === 0 || isFetching}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                onClick={() => setPage(p => Math.max(0, p - 1))}
               >
                 <ChevronLeft className="h-4 w-4" />
                 Anterior
@@ -420,7 +453,7 @@ const AdminHistoricoAlertasChurn = () => {
                 variant="outline"
                 size="sm"
                 disabled={page + 1 >= totalPages || isFetching}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setPage(p => p + 1)}
               >
                 Próxima
                 <ChevronRight className="h-4 w-4" />

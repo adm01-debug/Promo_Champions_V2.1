@@ -12,7 +12,19 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Trash2, Pencil, Save, GripVertical, MoreHorizontal, Phone, Mail, MessageCircle, Users, CheckSquare, Zap } from 'lucide-react';
+import {
+  Trash2,
+  Pencil,
+  Save,
+  GripVertical,
+  MoreHorizontal,
+  Phone,
+  Mail,
+  MessageCircle,
+  Users,
+  CheckSquare,
+  Zap,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { CadenceStep, ActionType } from '@/hooks/cadences/useCadenceQueries';
 import { MergeTagPicker } from './MergeTagPicker';
@@ -50,7 +62,8 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({
   const handleSave = () => {
     // Validation before save
     const currentTitle = editData.title ?? step.title;
-    const currentTaskType = editData.task_type ?? (step as CadenceStep & { task_type?: string }).task_type;
+    const currentTaskType =
+      editData.task_type ?? (step as CadenceStep & { task_type?: string }).task_type;
     const currentActionType = editData.action_type ?? step.action_type;
     const currentTemplate = editData.template_content ?? step.template_content;
 
@@ -137,7 +150,11 @@ export const CadenceStepRow = React.memo(function CadenceStepRow({
             <input
               type="checkbox"
               className="h-3 w-3 rounded border-gray-300 text-primary focus:ring-primary"
-              checked={(editData.task_type ?? (step as CadenceStep & { task_type?: string }).task_type) === 'automatic'}
+              checked={
+                (editData.task_type ??
+                  (step as CadenceStep & { task_type?: string }).task_type) ===
+                'automatic'
+              }
               onChange={e =>
                 setEditData(d => ({
                   ...d,

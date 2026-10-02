@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 interface ShortcutHandlers {
   onExport: () => void;
@@ -27,9 +27,9 @@ export function useQuoteCadenceShortcuts({
     const handler = (e: KeyboardEvent) => {
       // Ignore when typing in inputs
       const tag = (e.target as HTMLElement)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         if (drawerOpen) {
           onCloseDrawer();
         } else if (hasSelection) {
@@ -38,19 +38,19 @@ export function useQuoteCadenceShortcuts({
         return;
       }
 
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "e") {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
         e.preventDefault();
         onExport();
         return;
       }
 
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
         e.preventDefault();
         onSelectAll();
       }
     };
 
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, [onExport, onSelectAll, onClearSelection, onCloseDrawer, hasSelection, drawerOpen]);
 }

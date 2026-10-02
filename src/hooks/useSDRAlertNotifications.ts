@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { useSDRAlertSoundSettings } from "@/hooks/useSDRAlertSoundSettings";
+import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { useSDRAlertSoundSettings } from '@/hooks/useSDRAlertSoundSettings';
 
 interface SDRDetail {
   id: string;
@@ -27,7 +27,7 @@ export function useSDRAlertNotifications() {
     if (!isAdmin && !isManager) return;
 
     // Request notification permission on mount
-    if ("Notification" in window && Notification.permission === "default") {
+    if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
 
@@ -38,24 +38,28 @@ export function useSDRAlertNotifications() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'sdr_alert_history'
+          table: 'sdr_alert_history',
         },
-        (payload) => {
+        payload => {
           const newAlert = payload.new as SDRAlertPayload;
-          
-          const sdrNames = Array.isArray(newAlert.sdr_details) 
-            ? newAlert.sdr_details.map(s => s.name).slice(0, 3).join(", ")
-            : "";
-          
-          const extraCount = Array.isArray(newAlert.sdr_details) && newAlert.sdr_details.length > 3 
-            ? ` +${newAlert.sdr_details.length - 3}` 
-            : "";
+
+          const sdrNames = Array.isArray(newAlert.sdr_details)
+            ? newAlert.sdr_details
+                .map(s => s.name)
+                .slice(0, 3)
+                .join(', ')
+            : '';
+
+          const extraCount =
+            Array.isArray(newAlert.sdr_details) && newAlert.sdr_details.length > 3
+              ? ` +${newAlert.sdr_details.length - 3}`
+              : '';
 
           // Show toast notification
           toast({
-            title: "⚠️ Alerta SDR",
-            description: `${newAlert.sdrs_notified} SDR(s) abaixo da meta por ${newAlert.threshold_used}+ dias${sdrNames ? `: ${sdrNames}${extraCount}` : ""}`,
-            variant: "destructive",
+            title: '⚠️ Alerta SDR',
+            description: `${newAlert.sdrs_notified} SDR(s) abaixo da meta por ${newAlert.threshold_used}+ dias${sdrNames ? `: ${sdrNames}${extraCount}` : ''}`,
+            variant: 'destructive',
             duration: 10000,
           });
 
@@ -63,11 +67,11 @@ export function useSDRAlertNotifications() {
           playSound();
 
           // Show browser push notification if permitted
-          if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("Alerta SDR - Performance Abaixo da Meta", {
-              body: `${newAlert.sdrs_notified} SDR(s) estão abaixo da meta por ${newAlert.threshold_used}+ dias consecutivos${sdrNames ? `: ${sdrNames}${extraCount}` : ""}`,
-              icon: "/favicon.ico",
-              tag: "sdr-alert", // Prevents duplicate notifications
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('Alerta SDR - Performance Abaixo da Meta', {
+              body: `${newAlert.sdrs_notified} SDR(s) estão abaixo da meta por ${newAlert.threshold_used}+ dias consecutivos${sdrNames ? `: ${sdrNames}${extraCount}` : ''}`,
+              icon: '/favicon.ico',
+              tag: 'sdr-alert', // Prevents duplicate notifications
               requireInteraction: true, // Keep notification visible until user interacts
             });
           }

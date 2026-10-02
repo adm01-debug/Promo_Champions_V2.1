@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface ABTest {
   id: string;
@@ -9,16 +9,16 @@ export interface ABTest {
   variant_a_id: string;
   variant_b_id: string;
   traffic_split: number;
-  status: "draft" | "running" | "paused" | "completed";
+  status: 'draft' | 'running' | 'paused' | 'completed';
   hypothesis: string | null;
-  winner_variant: "a" | "b" | null;
+  winner_variant: 'a' | 'b' | null;
   started_at: string | null;
   ended_at: string | null;
   created_at: string;
 }
 
 export interface ABTestResult {
-  variant: "a" | "b";
+  variant: 'a' | 'b';
   cadence_name: string;
   enrolled: number;
   completed: number;
@@ -30,12 +30,12 @@ export interface ABTestResult {
 
 export function useABTests() {
   return useQuery({
-    queryKey: ["cadence-ab-tests"],
+    queryKey: ['cadence-ab-tests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("cadence_ab_tests")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('cadence_ab_tests')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data as ABTest[];
     },
@@ -44,10 +44,12 @@ export function useABTests() {
 
 export function useABTestResults(testId?: string) {
   return useQuery({
-    queryKey: ["cadence-ab-test-results", testId],
+    queryKey: ['cadence-ab-test-results', testId],
     queryFn: async () => {
       if (!testId) return [];
-      const { data, error } = await supabase.rpc("get_ab_test_results", { _ab_test_id: testId });
+      const { data, error } = await supabase.rpc('get_ab_test_results', {
+        _ab_test_id: testId,
+      });
       if (error) throw error;
       return (data as ABTestResult[]) ?? [];
     },
@@ -68,7 +70,7 @@ export function useCreateABTest() {
       description?: string;
     }) => {
       const { data, error } = await supabase
-        .from("cadence_ab_tests")
+        .from('cadence_ab_tests')
         .insert({ ...input, traffic_split: input.traffic_split ?? 50 })
         .select()
         .single();
@@ -76,45 +78,53 @@ export function useCreateABTest() {
       return data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cadence-ab-tests"] });
-      toast.success("Teste A/B criado!");
+      qc.invalidateQueries({ queryKey: ['cadence-ab-tests'] });
+      toast.success('Teste A/B criado!');
     },
-    onError: () => toast.error("Erro ao criar teste A/B (verifique permissão admin/manager)"),
+    onError: () =>
+      toast.error('Erro ao criar teste A/B (verifique permissão admin/manager)'),
   });
 }
 
 export function useUpdateABTestStatus() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: ABTest["status"] }) => {
+    mutationFn: async ({ id, status }: { id: string; status: ABTest['status'] }) => {
       const updates: Partial<ABTest> = { status };
-      if (status === "running") updates.started_at = new Date().toISOString();
-      if (status === "completed") updates.ended_at = new Date().toISOString();
-      const { error } = await supabase.from("cadence_ab_tests").update(updates).eq("id", id);
+      if (status === 'running') updates.started_at = new Date().toISOString();
+      if (status === 'completed') updates.ended_at = new Date().toISOString();
+      const { error } = await supabase
+        .from('cadence_ab_tests')
+        .update(updates)
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cadence-ab-tests"] });
-      toast.success("Status atualizado!");
+      qc.invalidateQueries({ queryKey: ['cadence-ab-tests'] });
+      toast.success('Status atualizado!');
     },
-    onError: () => toast.error("Erro ao atualizar status"),
+    onError: () => toast.error('Erro ao atualizar status'),
   });
 }
 
 export function useDeclareWinner() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, winner }: { id: string; winner: "a" | "b" }) => {
+    mutationFn: async ({ id, winner }: { id: string; winner: 'a' | 'b' }) => {
       const { error } = await supabase
-        .from("cadence_ab_tests")
-        .update({ winner_variant: winner, status: "completed", ended_at: new Date().toISOString() })
-        .eq("id", id);
+        .from('cadence_ab_tests')
+        .update({
+          winner_variant: winner,
+          status: 'completed',
+          ended_at: new Date().toISOString(),
+        })
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cadence-ab-tests"] });
-      toast.success("Vencedor declarado! 🏆");
+      qc.invalidateQueries({ queryKey: ['cadence-ab-tests'] });
+      toast.success('Vencedor declarado! 🏆');
     },
-    onError: () => toast.error("Erro ao declarar vencedor"),
+    onError: () => toast.error('Erro ao declarar vencedor'),
   });
 }

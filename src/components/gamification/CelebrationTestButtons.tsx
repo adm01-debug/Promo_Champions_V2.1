@@ -1,21 +1,34 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Flame, Trophy, Zap, Loader2, Database } from "lucide-react";
-import { useLevelUpCelebration } from "@/hooks/gamification/useLevelUpCelebration";
-import { LevelUpOverlay, StreakMilestoneOverlay } from "./LevelUpOverlay";
-import { getLevelInfo, useAddXP } from "@/hooks/gamification/useSalespersonXP";
-import { useGamificationData } from "@/hooks/gamification/useGamificationData";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Sparkles, Flame, Trophy, Zap, Loader2, Database } from 'lucide-react';
+import { useLevelUpCelebration } from '@/hooks/gamification/useLevelUpCelebration';
+import { LevelUpOverlay, StreakMilestoneOverlay } from './LevelUpOverlay';
+import { getLevelInfo, useAddXP } from '@/hooks/gamification/useSalespersonXP';
+import { useGamificationData } from '@/hooks/gamification/useGamificationData';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { toast } from 'sonner';
 
 export function CelebrationTestButtons() {
-  const { triggerLevelUp, triggerStreakMilestone, triggerNewRecordCelebration } = useLevelUpCelebration();
+  const { triggerLevelUp, triggerStreakMilestone, triggerNewRecordCelebration } =
+    useLevelUpCelebration();
   const [showLevelUpOverlay, setShowLevelUpOverlay] = useState(false);
   const [showStreakOverlay, setShowStreakOverlay] = useState(false);
   const [testLevel, setTestLevel] = useState(5);
   const [testStreak, setTestStreak] = useState(10);
-  const [selectedSalesperson, setSelectedSalesperson] = useState<string>("");
+  const [selectedSalesperson, setSelectedSalesperson] = useState<string>('');
   const [xpAmount, setXpAmount] = useState(50);
 
   const { data: salespeople, isLoading: loadingSalespeople } = useGamificationData();
@@ -49,7 +62,7 @@ export function CelebrationTestButtons() {
 
   const handleAddRealXP = async () => {
     if (!selectedSalesperson) {
-      toast.error("Selecione um vendedor primeiro");
+      toast.error('Selecione um vendedor primeiro');
       return;
     }
 
@@ -65,7 +78,7 @@ export function CelebrationTestButtons() {
       });
       toast.success(`+${xpAmount} XP adicionado para ${salesperson.name}!`);
     } catch (_error) {
-      toast.error("Erro ao adicionar XP");
+      toast.error('Erro ao adicionar XP');
     }
   };
 
@@ -95,7 +108,7 @@ export function CelebrationTestButtons() {
                 <Zap className="h-4 w-4 text-xp" />
                 Level Up (Nv.{testLevel})
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="sm"
@@ -118,26 +131,26 @@ export function CelebrationTestButtons() {
             </div>
 
             <div className="flex gap-2 text-xs text-muted-foreground">
-              <button 
+              <button
                 onClick={() => setTestLevel(prev => Math.max(1, prev - 1))}
                 className="px-2 py-1 rounded hover:bg-muted transition-colors"
               >
                 Nv -
               </button>
-              <button 
+              <button
                 onClick={() => setTestLevel(prev => Math.min(20, prev + 1))}
                 className="px-2 py-1 rounded hover:bg-muted transition-colors"
               >
                 Nv +
               </button>
               <span className="px-2">|</span>
-              <button 
+              <button
                 onClick={() => setTestStreak(prev => Math.max(5, prev - 5))}
                 className="px-2 py-1 rounded hover:bg-muted transition-colors"
               >
                 Streak -5
               </button>
-              <button 
+              <button
                 onClick={() => setTestStreak(prev => prev + 5)}
                 className="px-2 py-1 rounded hover:bg-muted transition-colors"
               >
@@ -152,7 +165,7 @@ export function CelebrationTestButtons() {
               <Database className="h-3 w-3" />
               Teste em Tempo Real (atualiza banco)
             </p>
-            
+
             <div className="flex flex-wrap gap-2 items-center">
               <Select
                 value={selectedSalesperson}
@@ -163,8 +176,12 @@ export function CelebrationTestButtons() {
                   <SelectValue placeholder="Selecione vendedor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {salespeople?.map((sp) => (
-                    <SelectItem key={sp.salesperson_id} value={sp.salesperson_id} className="text-xs">
+                  {salespeople?.map(sp => (
+                    <SelectItem
+                      key={sp.salesperson_id}
+                      value={sp.salesperson_id}
+                      className="text-xs"
+                    >
                       {sp.name} (Nv.{sp.level})
                     </SelectItem>
                   ))}
@@ -173,7 +190,7 @@ export function CelebrationTestButtons() {
 
               <Select
                 value={xpAmount.toString()}
-                onValueChange={(v) => setXpAmount(Number(v))}
+                onValueChange={v => setXpAmount(Number(v))}
               >
                 <SelectTrigger className="w-[100px] h-8 text-xs">
                   <SelectValue />
@@ -203,7 +220,8 @@ export function CelebrationTestButtons() {
             </div>
 
             <p className="text-[10px] text-muted-foreground/70">
-              Ao adicionar XP, o overlay de celebração aparecerá automaticamente se houver level-up
+              Ao adicionar XP, o overlay de celebração aparecerá automaticamente se houver
+              level-up
             </p>
           </div>
         </CardContent>

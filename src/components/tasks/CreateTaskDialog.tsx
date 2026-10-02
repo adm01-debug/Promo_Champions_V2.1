@@ -40,7 +40,10 @@ const taskSchema = z.object({
     .trim()
     .min(1, 'Título é obrigatório')
     .max(200, 'Título deve ter no máximo 200 caracteres'),
-  description: z.string().max(1000, 'Descrição deve ter no máximo 1000 caracteres').optional(),
+  description: z
+    .string()
+    .max(1000, 'Descrição deve ter no máximo 1000 caracteres')
+    .optional(),
   salesperson_id: z.string().optional(),
   client_id: z.string().optional(),
   sale_id: z.string().optional(),
@@ -162,7 +165,11 @@ export function CreateTaskDialog({
                 <FormItem>
                   <FormLabel>Título *</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Ex: Ligar para cliente" maxLength={200} />
+                    <Input
+                      {...field}
+                      placeholder="Ex: Ligar para cliente"
+                      maxLength={200}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -338,7 +345,10 @@ export function CreateTaskDialog({
                       <SelectContent>
                         <SelectItem value="none">Nenhum</SelectItem>
                         {sales?.map(sale => (
-                          <SelectItem key={sale.fullId || sale.id} value={sale.fullId || sale.id}>
+                          <SelectItem
+                            key={sale.fullId || sale.id}
+                            value={sale.fullId || sale.id}
+                          >
                             {sale.cliente} - {sale.produto}
                           </SelectItem>
                         ))}

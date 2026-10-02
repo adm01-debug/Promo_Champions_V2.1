@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Sparkles } from "lucide-react";
-import { Button, type ButtonProps } from "@/components/ui/button";
-import { AIEmailComposerDialog } from "./AIEmailComposerDialog";
-import type { RecipientType } from "./aiEmailHelpers";
+import { useState } from 'react';
+import { Sparkles } from 'lucide-react';
+import { Button, type ButtonProps } from '@/components/ui/button';
+import { AIEmailComposerDialog } from './AIEmailComposerDialog';
+import type { RecipientType } from './aiEmailHelpers';
 
-interface Props extends Omit<ButtonProps, "onClick"> {
+interface Props extends Omit<ButtonProps, 'onClick'> {
   recipientId?: string;
   recipientType?: RecipientType;
   recipientEmail?: string;
@@ -21,9 +21,9 @@ export function AIEmailComposerButton({
   recipientName,
   recipientCompany,
   clientId,
-  label = "Escrever com IA",
-  variant = "outline",
-  size = "sm",
+  label = 'Escrever com IA',
+  variant = 'outline',
+  size = 'sm',
   className,
   ...rest
 }: Props) {

@@ -24,15 +24,12 @@ export function InsightBanner({ data }: InsightBannerProps) {
             Sumário Cognitivo da IA
           </h3>
           <p className="text-xs font-medium text-foreground/80 leading-relaxed">
-            Cliente com{' '}
-            <span className="text-indigo-400 font-bold">Alta Fidelidade</span>, prefere
-            comprar{' '}
+            Cliente com <span className="text-indigo-400 font-bold">Alta Fidelidade</span>
+            , prefere comprar{' '}
             <span className="text-indigo-400 font-bold">{data.preferredTimeOfDay}</span>{' '}
             às{' '}
-            <span className="text-indigo-400 font-bold">
-              {data.preferredDayOfWeek}s
-            </span>
-            . Sensibilidade a preço:{' '}
+            <span className="text-indigo-400 font-bold">{data.preferredDayOfWeek}s</span>.
+            Sensibilidade a preço:{' '}
             <span className="text-indigo-400 font-bold">
               {data.priceSensitivity.toUpperCase()}
             </span>

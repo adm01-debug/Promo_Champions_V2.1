@@ -1,7 +1,12 @@
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { TIER_META, formatPct, type EngagementTier } from "./engagementScoreHelpers";
+import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { TIER_META, formatPct, type EngagementTier } from './engagementScoreHelpers';
 
 interface Props {
   score: number | null | undefined;
@@ -9,7 +14,7 @@ interface Props {
   openRate?: number;
   clickRate?: number;
   replyRate?: number;
-  size?: "sm" | "default";
+  size?: 'sm' | 'default';
   className?: string;
 }
 
@@ -19,17 +24,21 @@ export function EmailScoreBadge({
   openRate,
   clickRate,
   replyRate,
-  size = "default",
+  size = 'default',
   className,
 }: Props) {
   if (score === null || score === undefined) {
     return (
-      <Badge variant="outline" size={size} className={cn("gap-1 text-muted-foreground", className)}>
+      <Badge
+        variant="outline"
+        size={size}
+        className={cn('gap-1 text-muted-foreground', className)}
+      >
         Sem dados
       </Badge>
     );
   }
-  const meta = TIER_META[tier ?? "cold"];
+  const meta = TIER_META[tier ?? 'cold'];
   const Icon = meta.icon;
 
   return (
@@ -39,7 +48,7 @@ export function EmailScoreBadge({
           <Badge
             variant={meta.badgeVariant}
             size={size}
-            className={cn("gap-1 font-medium cursor-help", className)}
+            className={cn('gap-1 font-medium cursor-help', className)}
           >
             <Icon className="h-3 w-3" aria-hidden="true" />
             <span>{meta.label}</span>
@@ -50,9 +59,12 @@ export function EmailScoreBadge({
         <TooltipContent side="top" className="text-xs space-y-1">
           <div className="font-semibold">Engajamento por e-mail</div>
           <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-            <span className="text-muted-foreground">Abertura</span><span>{formatPct(openRate)}</span>
-            <span className="text-muted-foreground">Cliques</span><span>{formatPct(clickRate)}</span>
-            <span className="text-muted-foreground">Respostas</span><span>{formatPct(replyRate)}</span>
+            <span className="text-muted-foreground">Abertura</span>
+            <span>{formatPct(openRate)}</span>
+            <span className="text-muted-foreground">Cliques</span>
+            <span>{formatPct(clickRate)}</span>
+            <span className="text-muted-foreground">Respostas</span>
+            <span>{formatPct(replyRate)}</span>
           </div>
         </TooltipContent>
       </Tooltip>

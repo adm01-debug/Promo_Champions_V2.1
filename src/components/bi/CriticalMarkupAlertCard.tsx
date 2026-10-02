@@ -58,14 +58,16 @@ export const CriticalMarkupAlertCard = memo(({ className, days = 30 }: Props) =>
             Nenhuma venda com markup crítico nos últimos {days} dias.
           </p>
         ) : (
-          sales.map((sale) => (
+          sales.map(sale => (
             <div
               key={sale.id}
               className="flex items-center justify-between gap-3 rounded-md border border-destructive/25 bg-destructive/5 px-3 py-2"
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{sale.clientName}</p>
-                <p className="truncate text-xs text-muted-foreground">{sale.productName}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {sale.productName}
+                </p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-xs text-muted-foreground tabular-nums">

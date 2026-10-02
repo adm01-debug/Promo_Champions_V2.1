@@ -1,12 +1,21 @@
-import { FC, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Brain, Sparkles, AlertTriangle, Heart, Target } from "lucide-react";
-import { useBehavioralAnalysis, type BehavioralAnalysis } from "@/hooks/useBehavioralAnalysis";
-import { Skeleton } from "@/components/ui/skeleton";
+import { FC, useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Brain, Sparkles, AlertTriangle, Heart, Target } from 'lucide-react';
+import {
+  useBehavioralAnalysis,
+  type BehavioralAnalysis,
+} from '@/hooks/useBehavioralAnalysis';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface BehavioralAnalysisDialogProps {
   text: string;
@@ -15,13 +24,13 @@ interface BehavioralAnalysisDialogProps {
   contactName?: string;
   channel?: string;
   triggerLabel?: string;
-  size?: "sm" | "default";
+  size?: 'sm' | 'default';
 }
 
 const severityColor: Record<string, string> = {
-  low: "bg-muted text-muted-foreground",
-  medium: "bg-rank-gold/15 text-rank-gold border-rank-gold/30",
-  high: "bg-destructive/15 text-destructive border-destructive/30",
+  low: 'bg-muted text-muted-foreground',
+  medium: 'bg-rank-gold/15 text-rank-gold border-rank-gold/30',
+  high: 'bg-destructive/15 text-destructive border-destructive/30',
 };
 
 export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
@@ -30,8 +39,8 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
   dealId,
   contactName,
   channel,
-  triggerLabel = "Análise IA",
-  size = "sm",
+  triggerLabel = 'Análise IA',
+  size = 'sm',
 }) => {
   const [open, setOpen] = useState(false);
   const [result, setResult] = useState<BehavioralAnalysis | null>(null);
@@ -41,14 +50,20 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
 
   const runAnalysis = async () => {
     setResult(null);
-    const r = await analyze.mutateAsync({ text, interactionId, dealId, contactName, channel });
+    const r = await analyze.mutateAsync({
+      text,
+      interactionId,
+      dealId,
+      contactName,
+      channel,
+    });
     if (r) setResult(r);
   };
 
   return (
     <Dialog
       open={open}
-      onOpenChange={(o) => {
+      onOpenChange={o => {
         setOpen(o);
         if (o && !result && !tooShort) runAnalysis();
       }}
@@ -59,7 +74,7 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
           variant="outline"
           className="gap-1.5"
           disabled={tooShort}
-          title={tooShort ? "Texto muito curto (mín. 100 caracteres)" : "Analisar com IA"}
+          title={tooShort ? 'Texto muito curto (mín. 100 caracteres)' : 'Analisar com IA'}
         >
           <Brain className="h-3.5 w-3.5" />
           {triggerLabel}
@@ -97,7 +112,9 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
             <div className="space-y-5">
               {/* Resumo */}
               <section>
-                <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-1.5">Resumo</h3>
+                <h3 className="text-xs uppercase tracking-wide text-muted-foreground mb-1.5">
+                  Resumo
+                </h3>
                 <p className="text-sm">{result.summary}</p>
               </section>
 
@@ -115,7 +132,9 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground mb-2">{result.disc.description}</p>
+                <p className="text-xs text-muted-foreground mb-2">
+                  {result.disc.description}
+                </p>
                 <div className="space-y-1.5">
                   {Object.entries(result.disc.scores).map(([k, v]) => (
                     <div key={k}>
@@ -155,7 +174,9 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
                     <div className="text-muted-foreground">Social</div>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground">{result.emotional_intelligence.notes}</p>
+                <p className="text-xs text-muted-foreground">
+                  {result.emotional_intelligence.notes}
+                </p>
               </section>
 
               {/* Vieses */}
@@ -172,7 +193,9 @@ export const BehavioralAnalysisDialog: FC<BehavioralAnalysisDialogProps> = ({
                           <Badge variant="outline" className={severityColor[b.severity]}>
                             {b.bias}
                           </Badge>
-                          <span className="text-muted-foreground capitalize">{b.severity}</span>
+                          <span className="text-muted-foreground capitalize">
+                            {b.severity}
+                          </span>
                         </div>
                         <p className="text-muted-foreground italic">"{b.evidence}"</p>
                       </div>

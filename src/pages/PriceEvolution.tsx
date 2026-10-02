@@ -37,6 +37,7 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 interface TooltipEntry {
   color?: string;
   name?: string;
@@ -58,10 +59,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
         <p key={i} className="text-muted-foreground">
           <span style={{ color: entry.color }}>{entry.name}</span>:{' '}
           <span className="font-semibold text-foreground">
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(Number(entry.value))}
+            {formatBRL(Number(entry.value), { decimals: 2 })}
           </span>
         </p>
       ))}
@@ -284,7 +282,9 @@ const PriceEvolution = () => {
             <motion.div variants={itemVariants}>
               <Card className="glass border-border/40">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-section-title text-sm">Últimas Variações</CardTitle>
+                  <CardTitle className="text-section-title text-sm">
+                    Últimas Variações
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">

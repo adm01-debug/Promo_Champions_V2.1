@@ -1,12 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-export type RiskSeverity = "low" | "medium" | "high" | "critical";
+export type RiskSeverity = 'low' | 'medium' | 'high' | 'critical';
 
-export type { RiskReasonCode, RiskReasonSource } from "@/lib/winloss/riskReasons";
+export type { RiskReasonCode, RiskReasonSource } from '@/lib/winloss/riskReasons';
 
-import type { RiskReasonCode, RiskReasonSource } from "@/lib/winloss/riskReasons";
+import type { RiskReasonCode, RiskReasonSource } from '@/lib/winloss/riskReasons';
 
 export interface RiskReason {
   code: RiskReasonCode;
@@ -64,32 +64,35 @@ export function useAtRiskFromPatterns(params: UseAtRiskParams = {}) {
   const { threshold, limit } = params;
 
   const body: Record<string, number> = {};
-  if (typeof threshold === "number") body.threshold = threshold;
-  if (typeof limit === "number") body.limit = limit;
+  if (typeof threshold === 'number') body.threshold = threshold;
+  if (typeof limit === 'number') body.limit = limit;
 
   const query = useQuery({
-    queryKey: ["winloss-at-risk-from-patterns", threshold ?? null, limit ?? null],
+    queryKey: ['winloss-at-risk-from-patterns', threshold ?? null, limit ?? null],
     queryFn: async (): Promise<AtRiskDealFromPattern[]> => {
-      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", { body });
+      const { data, error } = await supabase.functions.invoke('detect-winloss-at-risk', {
+        body,
+      });
       if (error) throw error;
-      return ((data as { deals?: AtRiskDealFromPattern[] })?.deals ?? []) as AtRiskDealFromPattern[];
+      return ((data as { deals?: AtRiskDealFromPattern[] })?.deals ??
+        []) as AtRiskDealFromPattern[];
     },
     staleTime: 5 * 60_000,
   });
 
   const refresh = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke("detect-winloss-at-risk", {
+      const { data, error } = await supabase.functions.invoke('detect-winloss-at-risk', {
         body: { ...body, force: true },
       });
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["winloss-at-risk-from-patterns"] });
-      toast.success("Análise de risco atualizada");
+      qc.invalidateQueries({ queryKey: ['winloss-at-risk-from-patterns'] });
+      toast.success('Análise de risco atualizada');
     },
-    onError: () => toast.error("Não foi possível atualizar"),
+    onError: () => toast.error('Não foi possível atualizar'),
   });
 
   return { ...query, refresh: refresh.mutate, isRefreshing: refresh.isPending };

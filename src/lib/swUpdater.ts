@@ -65,7 +65,10 @@ const killAppServiceWorkers = async (): Promise<void> => {
     const registrations = await navigator.serviceWorker.getRegistrations();
     const appRegs = registrations.filter(reg => {
       const scriptUrl =
-        reg.active?.scriptURL ?? reg.installing?.scriptURL ?? reg.waiting?.scriptURL ?? '';
+        reg.active?.scriptURL ??
+        reg.installing?.scriptURL ??
+        reg.waiting?.scriptURL ??
+        '';
       return APP_SW_PATHS.some(path => scriptUrl.endsWith(path));
     });
 
@@ -110,7 +113,11 @@ export const refreshServiceWorker = async (
     try {
       const registrations = await navigator.serviceWorker.getRegistrations();
       const appRegistrations = registrations.filter(reg => {
-        const scriptUrl = reg.active?.scriptURL ?? reg.installing?.scriptURL ?? reg.waiting?.scriptURL ?? '';
+        const scriptUrl =
+          reg.active?.scriptURL ??
+          reg.installing?.scriptURL ??
+          reg.waiting?.scriptURL ??
+          '';
         return APP_SW_PATHS.some(path => scriptUrl.endsWith(path));
       });
 
@@ -178,4 +185,3 @@ export const installSwAutoUpdate = (): void => {
     window.location.reload();
   });
 };
-

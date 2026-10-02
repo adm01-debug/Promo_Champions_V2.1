@@ -2,7 +2,7 @@
 
 ## Versões Suportadas
 
-Atualmente, as seguintes versões do SalesPro recebem atualizações de segurança:
+Atualmente, as seguintes versões do **Promo Champions** recebem atualizações de segurança:
 
 | Versão | Suportada          |
 | ------ | ------------------ |
@@ -11,7 +11,7 @@ Atualmente, as seguintes versões do SalesPro recebem atualizações de seguran�
 
 ## Reportando uma Vulnerabilidade
 
-A segurança do SalesPro é levada muito a sério. Se você descobrir uma vulnerabilidade de segurança, por favor, siga as diretrizes abaixo:
+A segurança do Promo Champions é levada muito a sério. Se você descobrir uma vulnerabilidade de segurança, por favor, siga as diretrizes abaixo:
 
 ### 🚨 Para Vulnerabilidades Críticas
 
@@ -31,7 +31,7 @@ Para nos ajudar a resolver o problema rapidamente, inclua:
 - **Localização** do código afetado (arquivo e linha)
 - **Passos para reproduzir** o problema
 - **Impacto potencial** da vulnerabilidade
-- **Versão afetada** do SalesPro
+- **Versão afetada** do Promo Champions
 - **Possível solução** (se você tiver uma)
 
 ### 🔄 Processo de Resposta
@@ -43,7 +43,7 @@ Para nos ajudar a resolver o problema rapidamente, inclua:
 5. **Release** - Lançaremos um patch de segurança
 6. **Divulgação** - Publicaremos um aviso de segurança (se necessário)
 
-### ⏱️ Tempo de Resposta Esperado
+### ⏱️ Tempo de Resposta Esperado (SLA)
 
 | Etapa                          | Tempo Estimado                          |
 | ------------------------------ | --------------------------------------- |
@@ -51,6 +51,27 @@ Para nos ajudar a resolver o problema rapidamente, inclua:
 | Confirmação da vulnerabilidade | 5-7 dias                                |
 | Desenvolvimento do patch       | 7-30 dias (dependendo da complexidade)  |
 | Release do patch               | Assim que possível após desenvolvimento |
+
+## Superfícies de exposição
+
+Componentes acessíveis publicamente que merecem atenção em reports e revisões:
+
+- **Edge functions públicas** (~170 em `supabase/functions/`): autenticação JWT
+  + RBAC por role (`has_role`, `is_admin_or_manager`), rate limiting e
+  validação em `_shared/`. Funções chamáveis com `service_role` sem verificar o
+  chamador são a principal superfície de risco.
+- **Webhooks e callbacks externos**: Twilio (`twilio-call-status`,
+  `twilio-call-twiml`), Bitrix24 OAuth (`bitrix24-oauth`), e-mail inbound
+  (`inbound-email-webhook`), multichannel status, `receive-quote-*` — validados
+  por segredo compartilhado ou assinatura (`_shared/webhook-auth.ts`).
+- **Tokens de embed público**: `report-embed-public` serve relatórios por token
+  compartilhável — revogáveis, com `no-store` e CORS por origem do token.
+- **Páginas HTML públicas**: `email-unsubscribe` (descadastro RFC 8058) e
+  `bitrix24-oauth` (callback) — headers de segurança em
+  `_shared/security-headers.ts` (ver `docs/SECURITY_HEADERS.md`).
+- **Supabase Auth (GoTrue)**: checklist de configuração server-side em
+  `docs/AUTH_CONFIG.md` (JWT expiry, refresh rotation, HIBP, rate limits,
+  CAPTCHA).
 
 ### 🏆 Reconhecimento
 
@@ -63,7 +84,7 @@ Agradecemos pesquisadores de segurança que reportam vulnerabilidades de forma r
 
 ### Para Usuários
 
-- ✅ **Sempre use HTTPS** ao acessar o SalesPro
+- ✅ **Sempre use HTTPS** ao acessar o Promo Champions
 - ✅ **Mantenha suas credenciais seguras** e não compartilhe
 - ✅ **Use senhas fortes** e únicas
 - ✅ **Habilite autenticação de dois fatores** quando disponível
@@ -114,12 +135,19 @@ Use apenas:
 
 ### Headers de Segurança
 
-Configurar headers apropriados:
+Configurar headers apropriados — recomendações de hosting em
+`docs/SECURITY_HEADERS.md`:
 
 - `Content-Security-Policy`
-- `X-Frame-Options`
+- `X-Frame-Options` / `frame-ancestors`
 - `X-Content-Type-Options`
 - `Strict-Transport-Security`
+- `Referrer-Policy` / `Permissions-Policy`
+
+### Rotação de secrets
+
+Procedimento e inventário de credenciais (Supabase, Resend, Twilio,
+ElevenLabs, Bitrix24, VAPID, CI) em **`docs/SECRETS_ROTATION.md`**.
 
 ## Dependências e Atualizações
 
@@ -162,5 +190,5 @@ Para questões de segurança urgentes:
 
 ---
 
-**Última atualização**: 02 de Setembro de 2026  
+**Última atualização**: 01 de Outubro de 2026  
 **Mantenedor**: @adm01-debug

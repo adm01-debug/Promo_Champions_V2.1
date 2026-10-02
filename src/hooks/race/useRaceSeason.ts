@@ -35,11 +35,17 @@ export function useRaceSeason() {
   useEffect(() => {
     const channel = supabase
       .channel('race-seasons-rt')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'race_seasons' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['race-season-active'] });
-      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'race_seasons' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['race-season-active'] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [queryClient]);
 
   return query;

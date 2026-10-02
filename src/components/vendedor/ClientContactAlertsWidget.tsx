@@ -1,23 +1,65 @@
 import { memo, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { AlertOctagon, AlertTriangle, Clock, Phone, MessageCircle, ListPlus, Mail, TrendingDown, Users, Info } from 'lucide-react';
+import {
+  AlertOctagon,
+  AlertTriangle,
+  Clock,
+  Phone,
+  MessageCircle,
+  ListPlus,
+  Mail,
+  TrendingDown,
+  Users,
+  Info,
+} from 'lucide-react';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useClientsNeedingContact, type ContactUrgency } from '@/hooks/useClientsNeedingContact';
+import {
+  useClientsNeedingContact,
+  type ContactUrgency,
+} from '@/hooks/useClientsNeedingContact';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   salespersonId?: string;
 }
 
-const urgencyStyles: Record<ContactUrgency, { color: string; bg: string; border: string; label: string; icon: typeof AlertOctagon }> = {
-  critical: { color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/40', label: 'Crítico', icon: AlertOctagon },
-  high: { color: 'text-warning', bg: 'bg-warning/10', border: 'border-warning/40', label: 'Alto', icon: AlertTriangle },
-  medium: { color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/30', label: 'Médio', icon: Clock },
-  low: { color: 'text-muted-foreground', bg: 'bg-muted/40', border: 'border-border', label: 'Baixo', icon: Info },
+const urgencyStyles: Record<
+  ContactUrgency,
+  { color: string; bg: string; border: string; label: string; icon: typeof AlertOctagon }
+> = {
+  critical: {
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+    border: 'border-destructive/40',
+    label: 'Crítico',
+    icon: AlertOctagon,
+  },
+  high: {
+    color: 'text-warning',
+    bg: 'bg-warning/10',
+    border: 'border-warning/40',
+    label: 'Alto',
+    icon: AlertTriangle,
+  },
+  medium: {
+    color: 'text-primary',
+    bg: 'bg-primary/10',
+    border: 'border-primary/30',
+    label: 'Médio',
+    icon: Clock,
+  },
+  low: {
+    color: 'text-muted-foreground',
+    bg: 'bg-muted/40',
+    border: 'border-border',
+    label: 'Baixo',
+    icon: Info,
+  },
 };
 
 const filters: { key: 'all' | ContactUrgency; label: string }[] = [
@@ -29,19 +71,21 @@ const filters: { key: 'all' | ContactUrgency; label: string }[] = [
 
 const sanitizePhone = (raw: string) => raw.replace(/\D/g, '');
 
-export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget({ salespersonId }: Props) {
+export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget({
+  salespersonId,
+}: Props) {
   const { data, isLoading } = useClientsNeedingContact({ salespersonId, limit: 15 });
   const [filter, setFilter] = useState<'all' | ContactUrgency>('all');
 
   const alerts = useMemo(() => {
     if (!data) return [];
     if (filter === 'all') return data;
-    return data.filter((a) => a.urgency === filter);
+    return data.filter(a => a.urgency === filter);
   }, [data, filter]);
 
   const summary = useMemo(() => {
     const base = { critical: 0, high: 0, medium: 0, low: 0, total: data?.length ?? 0 };
-    (data ?? []).forEach((a) => (base[a.urgency] += 1));
+    (data ?? []).forEach(a => (base[a.urgency] += 1));
     return base;
   }, [data]);
 
@@ -62,7 +106,9 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
             <h3 className="text-section-title flex items-center gap-2">
               Clientes para contatar hoje
               {summary.total > 0 && (
-                <Badge variant="destructive" className="text-[10px]">{summary.total}</Badge>
+                <Badge variant="destructive" className="text-[10px]">
+                  {summary.total}
+                </Badge>
               )}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -90,8 +136,12 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
         </div>
       </header>
 
-      <div className="flex flex-wrap gap-1.5 mb-4" role="tablist" aria-label="Filtrar por urgência">
-        {filters.map((f) => (
+      <div
+        className="flex flex-wrap gap-1.5 mb-4"
+        role="tablist"
+        aria-label="Filtrar por urgência"
+      >
+        {filters.map(f => (
           <button
             key={f.key}
             role="tab"
@@ -123,7 +173,7 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
         </div>
       ) : (
         <ul className="space-y-2.5 max-h-[520px] overflow-y-auto pr-1">
-          {alerts.map((alert) => {
+          {alerts.map(alert => {
             const style = urgencyStyles[alert.urgency];
             const Icon = style.icon;
             const phoneDigits = alert.phone ? sanitizePhone(alert.phone) : '';
@@ -139,7 +189,10 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                     <div className="flex items-center gap-2 mb-1">
                       <Icon className={cn('h-4 w-4 shrink-0', style.color)} />
                       <p className="font-semibold truncate">{alert.clientName}</p>
-                      <Badge variant="outline" className={cn('text-[10px] shrink-0', style.color)}>
+                      <Badge
+                        variant="outline"
+                        className={cn('text-[10px] shrink-0', style.color)}
+                      >
                         {style.label}
                       </Badge>
                     </div>
@@ -148,7 +201,12 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                         <Clock className="h-3 w-3" />
                         {alert.daysSinceLastPurchase}d sem comprar
                         <span className="text-[10px] opacity-70">
-                          ({formatDistanceToNow(parseISO(alert.lastPurchaseDate), { addSuffix: true, locale: ptBR })})
+                          (
+                          {formatDistanceToNow(parseISO(alert.lastPurchaseDate), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
+                          )
                         </span>
                       </span>
                       {alert.averageIntervalDays > 0 && (
@@ -156,7 +214,7 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                       )}
                       <span>{alert.purchaseCount}x compras</span>
                       <span className="font-medium text-foreground">
-                        R$ {alert.totalRevenue.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                        {formatBRL(alert.totalRevenue)}
                       </span>
                       {alert.churnRisk > 0 && (
                         <span className={cn('font-medium', style.color)}>
@@ -181,7 +239,10 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                           className="h-8 w-8"
                           title="Ligar"
                         >
-                          <a href={`tel:${phoneDigits}`} aria-label={`Ligar para ${alert.clientName}`}>
+                          <a
+                            href={`tel:${phoneDigits}`}
+                            aria-label={`Ligar para ${alert.clientName}`}
+                          >
                             <Phone className="h-3.5 w-3.5" />
                           </a>
                         </Button>
@@ -211,7 +272,10 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                         className="h-8 w-8"
                         title="Email"
                       >
-                        <a href={`mailto:${alert.email}`} aria-label={`Email para ${alert.clientName}`}>
+                        <a
+                          href={`mailto:${alert.email}`}
+                          aria-label={`Email para ${alert.clientName}`}
+                        >
                           <Mail className="h-3.5 w-3.5" />
                         </a>
                       </Button>

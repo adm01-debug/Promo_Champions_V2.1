@@ -1,34 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, XCircle, RefreshCw } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-
-interface CronRun {
-  jobid: number;
-  jobname: string | null;
-  status: string;
-  return_message: string | null;
-  start_time: string;
-  end_time: string | null;
-  duration_ms: number | null;
-}
-
-async function fetchCronStats(): Promise<CronRun[]> {
-  const { data, error } = await supabase.rpc("admin_get_cron_job_stats", { _limit: 50 });
-  if (error) throw error;
-  return (data ?? []) as CronRun[];
-}
+import { Clock, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { useCronJobStats } from '@/hooks/admin/useConnectionMetrics';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 function StatusBadge({ status }: { status: string }) {
-  const ok = status === "succeeded";
+  const ok = status === 'succeeded';
   return (
-    <Badge variant={ok ? "outline" : "destructive"} className="gap-1">
+    <Badge variant={ok ? 'outline' : 'destructive'} className="gap-1">
       {ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
       {status}
     </Badge>
@@ -36,11 +19,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export function CronJobsPanel() {
-  const { data, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ["admin", "cron-job-stats"],
-    queryFn: fetchCronStats,
-    staleTime: 30_000,
-  });
+  const { data, isLoading, refetch, isFetching } = useCronJobStats();
 
   return (
     <Card>
@@ -63,7 +42,7 @@ export function CronJobsPanel() {
           disabled={isFetching}
           className="gap-2"
         >
-          <RefreshCw className={cn("h-3.5 w-3.5", isFetching && "animate-spin")} />
+          <RefreshCw className={cn('h-3.5 w-3.5', isFetching && 'animate-spin')} />
           Atualizar
         </Button>
       </CardHeader>
@@ -104,7 +83,7 @@ export function CronJobsPanel() {
                       })}
                     </div>
                     <div className="text-[10px] text-muted-foreground/70 tabular-nums">
-                      {r.duration_ms != null ? `${r.duration_ms} ms` : "—"}
+                      {r.duration_ms != null ? `${r.duration_ms} ms` : '—'}
                     </div>
                   </div>
                 </li>

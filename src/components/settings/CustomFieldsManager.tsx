@@ -1,44 +1,59 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Plus, Settings2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Plus, Settings2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export function CustomFieldsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [fieldLabel, setFieldLabel] = useState("");
-  const [fieldKey, setFieldKey] = useState("");
-  const [fieldType, setFieldType] = useState("number");
-  const [selectedTeam, setSelectedTeam] = useState("");
+  const [fieldLabel, setFieldLabel] = useState('');
+  const [fieldKey, setFieldKey] = useState('');
+  const [fieldType, setFieldType] = useState('number');
+  const [selectedTeam, setSelectedTeam] = useState('');
 
   const { data: teams = [] } = useQuery({
-    queryKey: ["teams-for-fields"],
+    queryKey: ['teams-for-fields'],
     queryFn: async () => {
-      const { data, error } = await supabase.from("teams").select("id, name").order("name");
+      const { data, error } = await supabase
+        .from('teams')
+        .select('id, name')
+        .order('name');
       if (error) throw error;
       return data;
     },
   });
 
   const { data: fields = [], isLoading } = useQuery({
-    queryKey: ["custom-fields", selectedTeam],
+    queryKey: ['custom-fields', selectedTeam],
     queryFn: async () => {
       if (!selectedTeam) return [];
       const { data, error } = await supabase
-        .from("team_custom_fields")
-        .select("*")
-        .eq("team_id", selectedTeam)
-        .order("created_at");
+        .from('team_custom_fields')
+        .select('*')
+        .eq('team_id', selectedTeam)
+        .order('created_at');
       if (error) throw error;
       return data;
     },
@@ -47,32 +62,36 @@ export function CustomFieldsManager() {
 
   const createField = useMutation({
     mutationFn: async () => {
-      if (!selectedTeam || !fieldLabel || !fieldKey) throw new Error("Preencha todos os campos");
-      const { error } = await supabase.from("team_custom_fields").insert({
+      if (!selectedTeam || !fieldLabel || !fieldKey)
+        throw new Error('Preencha todos os campos');
+      const { error } = await supabase.from('team_custom_fields').insert({
         team_id: selectedTeam,
-        field_key: fieldKey.toLowerCase().replace(/\s+/g, "_"),
+        field_key: fieldKey.toLowerCase().replace(/\s+/g, '_'),
         field_label: fieldLabel,
         field_type: fieldType,
       });
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["custom-fields"] });
-      setFieldLabel("");
-      setFieldKey("");
-      toast({ title: "Campo criado com sucesso" });
+      queryClient.invalidateQueries({ queryKey: ['custom-fields'] });
+      setFieldLabel('');
+      setFieldKey('');
+      toast({ title: 'Campo criado com sucesso' });
     },
     onError: (err: Error) => {
-      toast({ title: "Erro", description: err.message, variant: "destructive" });
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' });
     },
   });
 
   const toggleField = useMutation({
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      const { error } = await supabase.from("team_custom_fields").update({ is_active: isActive }).eq("id", id);
+      const { error } = await supabase
+        .from('team_custom_fields')
+        .update({ is_active: isActive })
+        .eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["custom-fields"] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['custom-fields'] }),
   });
 
   return (
@@ -94,7 +113,9 @@ export function CustomFieldsManager() {
               </SelectTrigger>
               <SelectContent>
                 {teams.map((t: { id: string; name: string }) => (
-                  <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -105,16 +126,26 @@ export function CustomFieldsManager() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div>
                   <Label>Label</Label>
-                  <Input placeholder="Ex: Meta Mensal" value={fieldLabel} onChange={(e) => setFieldLabel(e.target.value)} />
+                  <Input
+                    placeholder="Ex: Meta Mensal"
+                    value={fieldLabel}
+                    onChange={e => setFieldLabel(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label>Chave (ID)</Label>
-                  <Input placeholder="Ex: meta_mensal" value={fieldKey} onChange={(e) => setFieldKey(e.target.value)} />
+                  <Input
+                    placeholder="Ex: meta_mensal"
+                    value={fieldKey}
+                    onChange={e => setFieldKey(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label>Tipo</Label>
                   <Select value={fieldType} onValueChange={setFieldType}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="number">Número</SelectItem>
                       <SelectItem value="text">Texto</SelectItem>
@@ -123,7 +154,11 @@ export function CustomFieldsManager() {
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={() => createField.mutate()} disabled={createField.isPending} className="w-full">
+                  <Button
+                    onClick={() => createField.mutate()}
+                    disabled={createField.isPending}
+                    className="w-full"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Adicionar
                   </Button>
@@ -135,29 +170,46 @@ export function CustomFieldsManager() {
                   {isLoading ? (
                     <p className="text-sm text-muted-foreground">Carregando...</p>
                   ) : fields.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">Nenhum campo adicional para este time</p>
+                    <p className="text-sm text-muted-foreground">
+                      Nenhum campo adicional para este time
+                    </p>
                   ) : (
-                    fields.map((field: { field_label: string; field_type: string; field_key: string; id: string; is_active: boolean }, i: number) => (
-                      <motion.div
-                        key={field.id}
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.04 }}
-                        className="flex items-center justify-between p-3 rounded-lg border bg-card"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Badge variant="outline">{field.field_type}</Badge>
-                          <div>
-                            <p className="text-sm font-medium">{field.field_label}</p>
-                            <p className="text-xs text-muted-foreground font-mono">{field.field_key}</p>
+                    fields.map(
+                      (
+                        field: {
+                          field_label: string;
+                          field_type: string;
+                          field_key: string;
+                          id: string;
+                          is_active: boolean;
+                        },
+                        i: number
+                      ) => (
+                        <motion.div
+                          key={field.id}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                          className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Badge variant="outline">{field.field_type}</Badge>
+                            <div>
+                              <p className="text-sm font-medium">{field.field_label}</p>
+                              <p className="text-xs text-muted-foreground font-mono">
+                                {field.field_key}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                        <Switch
-                          checked={field.is_active}
-                          onCheckedChange={(checked) => toggleField.mutate({ id: field.id, isActive: checked })}
-                        />
-                      </motion.div>
-                    ))
+                          <Switch
+                            checked={field.is_active}
+                            onCheckedChange={checked =>
+                              toggleField.mutate({ id: field.id, isActive: checked })
+                            }
+                          />
+                        </motion.div>
+                      )
+                    )
                   )}
                 </div>
               </ScrollArea>

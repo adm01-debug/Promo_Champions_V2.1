@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
-import { useInView } from "react-intersection-observer";
-import { motion } from "framer-motion";
-import { Skeleton } from "@/components/ui/skeleton";
+import React, { Suspense } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { motion } from 'framer-motion';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface LazySectionProps {
   children: React.ReactNode;
@@ -15,7 +15,7 @@ export const LazySection = ({
   children,
   fallback,
   threshold = 0.05,
-  rootMargin = "100px",
+  rootMargin = '100px',
   className,
 }: LazySectionProps) => {
   const { ref, inView } = useInView({
@@ -30,11 +30,9 @@ export const LazySection = ({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-          <Suspense fallback={fallback || <DefaultFallback />}>
-            {children}
-          </Suspense>
+          <Suspense fallback={fallback || <DefaultFallback />}>{children}</Suspense>
         </motion.div>
       ) : (
         fallback || <DefaultFallback />
@@ -54,4 +52,4 @@ const DefaultFallback = () => (
   </div>
 );
 
-LazySection.displayName = "LazySection";
+LazySection.displayName = 'LazySection';

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { UserCog, Lock, Wallet, ShieldCheck, Activity, LineChart } from 'lucide-react';
 import { useCountUp } from '@/hooks/useCountUp';
 
+import { formatBRL } from '@/lib/money';
 interface AdminQuickStatsProps {
   stats: {
     totalUsers: number;
@@ -23,9 +24,6 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
   const animatedRevenue = useCountUp(stats.totalRevenue);
   const animatedApprovals = useCountUp(stats.pendingApprovals);
 
-  const formatBRL = (n: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
-
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {/* 1. Revenue Card (Financial Focus) */}
@@ -40,7 +38,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
                 Receita Mensal (Estimada)
               </p>
               <p className="text-3xl font-black gradient-text">
-                {formatBRL(animatedRevenue)}
+                {formatBRL(animatedRevenue, { decimals: 2 })}
               </p>
               <div className="flex items-center gap-1.5 mt-2">
                 <LineChart className="h-3 w-3 text-success" />

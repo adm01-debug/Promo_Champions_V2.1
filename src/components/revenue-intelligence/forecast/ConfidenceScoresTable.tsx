@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import {
   Table,
   TableBody,
@@ -10,9 +10,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { useConfidenceScores } from "@/hooks/revenue-intelligence/useForecastAccuracy";
-import { biasColor, biasLabel, formatMape, sourceLabel } from "./forecastHelpers";
+} from '@/components/ui/table';
+import { useConfidenceScores } from '@/hooks/revenue-intelligence/useForecastAccuracy';
+import { biasColor, biasLabel, formatMape, sourceLabel } from './forecastHelpers';
 
 export const ConfidenceScoresTable: FC = () => {
   const { data, isLoading } = useConfidenceScores();
@@ -42,13 +42,13 @@ export const ConfidenceScoresTable: FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((s) => (
+              {data.map(s => (
                 <TableRow key={s.id}>
                   <TableCell className="font-medium">
                     {sourceLabel[s.source] ?? s.source}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {s.owner_id ? s.owner_id.slice(0, 8) : "Geral"}
+                    {s.owner_id ? s.owner_id.slice(0, 8) : 'Geral'}
                   </TableCell>
                   <TableCell className="text-right">{s.period_count}</TableCell>
                   <TableCell className="text-right">

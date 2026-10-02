@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface BriefingHistoryEntry {
   id: string;
@@ -20,16 +20,16 @@ export interface BriefingHistoryEntry {
  */
 export function useBriefingHistory(salespersonId: string | null) {
   return useQuery({
-    queryKey: ["assistant-briefing-history", salespersonId],
+    queryKey: ['assistant-briefing-history', salespersonId],
     enabled: Boolean(salespersonId),
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<BriefingHistoryEntry[]> => {
       if (!salespersonId) return [];
       const { data, error } = await supabase
-        .from("personal_assistant_briefings")
-        .select("id, briefing_date, content, model, created_at")
-        .eq("salesperson_id", salespersonId)
-        .order("briefing_date", { ascending: false })
+        .from('personal_assistant_briefings')
+        .select('id, briefing_date, content, model, created_at')
+        .eq('salesperson_id', salespersonId)
+        .order('briefing_date', { ascending: false })
         .limit(30);
       if (error) throw error;
       return (data ?? []) as BriefingHistoryEntry[];
