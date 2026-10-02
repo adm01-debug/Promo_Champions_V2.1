@@ -7,6 +7,13 @@
 3. [Incidentes](#incidentes)
 4. [Monitoramento Externo de Uptime](#monitoramento-externo-de-uptime)
 5. [Troubleshooting](#troubleshooting)
+6. Runbooks por integração: `docs/runbooks/` ([Bitrix24](runbooks/bitrix24.md),
+   [Twilio](runbooks/twilio.md), [WhatsApp/Multichannel](runbooks/whatsapp-multichannel.md),
+   [N8N](runbooks/n8n.md), [Email](runbooks/email-transacional.md),
+   [ElevenLabs](runbooks/elevenlabs.md), [Plantão](runbooks/on-call.md))
+7. [FAQ de integrações externas](FAQ_TROUBLESHOOTING.md) ·
+   [Hotfix](HOTFIX.md) · [Deploy real](DEPLOYMENT.md) ·
+   [Migrations sem downtime](ZERO_DOWNTIME_MIGRATIONS.md)
 
 ---
 
@@ -22,14 +29,18 @@
 ### Validação Pré-Deploy
 
 ```bash
-npm run health     # typecheck + lint + tests
+npm run typecheck  # tsc --noEmit
+npm run lint       # eslint
+npm run test       # vitest
 npm run build      # build de produção
 ```
 
 ### Deploy de Edge Functions
 
-- Edge Functions são deployadas automaticamente pelo Lovable
-- Para testar antes: use `curl_edge_functions` no painel
+- O deploy padrão é a integração Lovable→Supabase ao publicar; **não é
+  garantido** — confirme cada function alterada com `curl` no endpoint
+  (`docs/DEPLOYMENT.md` §4) e faça deploy manual via CLI se necessário
+- Existem functions no repo não publicadas (ex.: `elevenlabs-stt` responde 404)
 
 ---
 

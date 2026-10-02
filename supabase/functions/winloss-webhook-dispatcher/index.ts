@@ -1,61 +1,91 @@
-import { corsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
-import { DispatcherPayloadSchema } from "./schema.ts";
-import { withRequestId } from "../_shared/request-id.ts";
+import { corsHeaders } from '../_shared/cors.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import {
+  describeError,
+  dispatchOne,
+  type DeadLetterEntry,
+  type LogLevel,
+  type Subscription,
+} from './retry.ts';
+import { DispatcherPayloadSchema } from './schema.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
-
-
-function structuredLog(level: LogLevel, data: Record<string, unknown>, requestId?: string) {
+function structuredLog(
+  level: LogLevel,
+  data: Record<string, unknown>,
+  requestId?: string
+) {
   const line = JSON.stringify({
-    fn: "winloss-webhook-dispatcher",
+    fn: 'winloss-webhook-dispatcher',
     level,
     ts: new Date().toISOString(),
     requestId,
     ...data,
   });
-  if (level === "error") console.error(line);
-  else if (level === "warn") console.warn(line);
+  if (level === 'error') console.error(line);
+  else if (level === 'warn') console.warn(line);
   else console.info(line);
 }
 
 function buildDeps(
   supabase: ReturnType<typeof createClient>,
   requestId: string,
-  replayOf: string | null,
+  replayOf: string | null
 ) {
   return {
     fetchFn: fetch,
-    sleep: (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms)),
-    insertDelivery: async (row: Parameters<typeof dispatchOne>[2]["insertDelivery"] extends (r: infer R) => unknown ? R : never) => {
+    sleep: (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms)),
+    insertDelivery: async (
+      row: Parameters<typeof dispatchOne>[2]['insertDelivery'] extends (
+        r: infer R
+      ) => unknown
+        ? R
+        : never
+    ) => {
       // Augment with request_id so each delivery row can be correlated back to the
       // dispatcher invocation that produced it (used by the timeline endpoint).
-      const enriched = { ...(row as unknown as Record<string, unknown>), request_id: requestId };
-      const { error } = await supabase.from("winloss_webhook_deliveries").insert(enriched);
+      const enriched = {
+        ...(row as unknown as Record<string, unknown>),
+        request_id: requestId,
+      };
+      const { error } = await supabase
+        .from('winloss_webhook_deliveries')
+        .insert(enriched);
       if (error) throw error;
     },
     updateSubscription: async (id: string, status: number) => {
       await supabase
-        .from("winloss_webhook_subscriptions")
+        .from('winloss_webhook_subscriptions')
         .update({ last_dispatch_at: new Date().toISOString(), last_status: status })
-        .eq("id", id);
+        .eq('id', id);
     },
     onDeadLetter: async (entry: DeadLetterEntry) => {
       if (replayOf) {
         // Replay failed → update existing DLQ row instead of creating a new one.
         await supabase
-          .from("winloss_webhook_dead_letters")
+          .from('winloss_webhook_dead_letters')
           .update({
-            status: "pending",
-            replay_count: (((await supabase.from("winloss_webhook_dead_letters").select("replay_count").eq("id", replayOf).single()).data as { replay_count?: number } | null)?.replay_count ?? 0) + 1,
+            status: 'pending',
+            replay_count:
+              ((
+                (
+                  await supabase
+                    .from('winloss_webhook_dead_letters')
+                    .select('replay_count')
+                    .eq('id', replayOf)
+                    .single()
+                ).data as { replay_count?: number } | null
+              )?.replay_count ?? 0) + 1,
             last_replay_at: new Date().toISOString(),
             last_replay_status: entry.last_status,
             last_replay_error: entry.last_error,
             last_replay_request_id: requestId,
           })
-          .eq("id", replayOf);
+          .eq('id', replayOf);
       } else {
-        await supabase.from("winloss_webhook_dead_letters").insert({
+        await supabase.from('winloss_webhook_dead_letters').insert({
           subscription_id: entry.subscription_id,
           event: entry.event,
           payload: entry.payload,
@@ -67,7 +97,8 @@ function buildDeps(
         });
       }
     },
-    log: (level: LogLevel, data: Record<string, unknown>) => structuredLog(level, data, requestId),
+    log: (level: LogLevel, data: Record<string, unknown>) =>
+      structuredLog(level, data, requestId),
     requestId,
   };
 }
@@ -85,7 +116,12 @@ function buildDeps(
 function envelope(
   requestId: string,
   status: number,
-  fields: { error?: string | null; dispatched?: number; results?: unknown[]; extra?: Record<string, unknown> } = {},
+  fields: {
+    error?: string | null;
+    dispatched?: number;
+    results?: unknown[];
+    extra?: Record<string, unknown>;
+  } = {}
 ): Response {
   const body = {
     requestId,
@@ -96,39 +132,118 @@ function envelope(
   };
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
+      'X-Request-Id': requestId,
+    },
   });
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   // Honor an inbound X-Request-Id header (or payload.__request_id) so internal
   // callers — like winloss-webhook-replay — can stitch the entire flow under
   // one correlation id end-to-end. Falls back to a freshly generated UUID.
-  const inboundHeaderId = req.headers.get("x-request-id") ?? req.headers.get("X-Request-Id");
-  let requestId = inboundHeaderId && UUID_RE.test(inboundHeaderId)
-    ? inboundHeaderId
-    : crypto.randomUUID();
+  const inboundHeaderId =
+    req.headers.get('x-request-id') ?? req.headers.get('X-Request-Id');
+  let requestId =
+    inboundHeaderId && UUID_RE.test(inboundHeaderId)
+      ? inboundHeaderId
+      : crypto.randomUUID();
   const requestStart = Date.now();
 
   try {
+    // SEC: antes desta verificação, qualquer chamada com a anon key podia
+    // disparar POSTs para todas as URLs assinadas (broadcast) ou reenviar
+    // dead letters via __target_subscription_id/__replay_of como service_role.
+    // Agora só passa job interno (service_role — ex.: winloss-webhook-replay —
+    // ou X-Cron-Secret) ou usuário com papel admin/manager.
+    // Chamada sem nenhuma credencial é 401 antes de tocar env/banco.
+    if (!req.headers.get('Authorization') && !req.headers.get('X-Cron-Secret')) {
+      return envelope(requestId, 401, { error: 'unauthorized' });
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from('_internal_secrets')
+          .select('value')
+          .eq('key', 'coaching_cron_secret')
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (authError) {
+      structuredLog(
+        'error',
+        { msg: 'cron_authorization_unavailable', ...describeError(authError) },
+        requestId
+      );
+      return envelope(requestId, 503, { error: 'authorization_unavailable' });
+    }
+
+    if (!authorizedByCron) {
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          structuredLog(
+            'warn',
+            { msg: 'auth_forbidden', userId: caller.userId },
+            requestId
+          );
+          return envelope(requestId, 403, { error: 'forbidden' });
+        }
+      } catch (authError) {
+        if (authError instanceof UnauthorizedError) {
+          structuredLog('warn', { msg: 'auth_unauthorized' }, requestId);
+          return envelope(requestId, 401, { error: 'unauthorized' });
+        }
+        structuredLog(
+          'error',
+          { msg: 'authorization_failed', ...describeError(authError) },
+          requestId
+        );
+        return envelope(requestId, 503, { error: 'authorization_unavailable' });
+      }
+    }
+
     const rawPayload = await req.json().catch(() => null);
-    if (!rawPayload || typeof rawPayload !== "object" || Array.isArray(rawPayload)) {
-      structuredLog("warn", { msg: "invalid_payload", reason: "not_an_object" }, requestId);
-      return envelope(requestId, 400, { error: "invalid payload (object required)" });
+    if (!rawPayload || typeof rawPayload !== 'object' || Array.isArray(rawPayload)) {
+      structuredLog(
+        'warn',
+        { msg: 'invalid_payload', reason: 'not_an_object' },
+        requestId
+      );
+      return envelope(requestId, 400, { error: 'invalid payload (object required)' });
     }
 
     // Zod-validate the dispatcher contract BEFORE any DB lookup or fan-out.
     const parsed = DispatcherPayloadSchema.safeParse(rawPayload);
     if (!parsed.success) {
       const flat = parsed.error.flatten();
-      structuredLog("warn", { msg: "invalid_payload", reason: "schema", details: flat }, requestId);
+      structuredLog(
+        'warn',
+        { msg: 'invalid_payload', reason: 'schema', details: flat },
+        requestId
+      );
       const firstFieldErr = Object.values(flat.fieldErrors).flat()[0];
       return envelope(requestId, 400, {
-        error: firstFieldErr ?? flat.formErrors[0] ?? "invalid payload",
+        error: firstFieldErr ?? flat.formErrors[0] ?? 'invalid payload',
         extra: { details: flat },
       });
     }
@@ -141,70 +256,93 @@ export const handler = async (req: Request): Promise<Response> => {
     const targetSubId = payload.__target_subscription_id ?? null;
     const replayOf = payload.__replay_of ?? null;
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
     let targets: Subscription[];
     let activeSubsCount = 0;
     if (targetSubId) {
       const { data: sub, error } = await supabase
-        .from("winloss_webhook_subscriptions")
-        .select("id, url, events, secret, active")
-        .eq("id", targetSubId)
+        .from('winloss_webhook_subscriptions')
+        .select('id, url, events, secret, active')
+        .eq('id', targetSubId)
         .maybeSingle();
       if (error || !sub) {
-        structuredLog("error", { msg: "replay_subscription_missing", subscriptionId: targetSubId, error: error?.message }, requestId);
-        return envelope(requestId, 404, { error: "subscription not found" });
+        structuredLog(
+          'error',
+          {
+            msg: 'replay_subscription_missing',
+            subscriptionId: targetSubId,
+            error: error?.message,
+          },
+          requestId
+        );
+        return envelope(requestId, 404, { error: 'subscription not found' });
       }
       if (!sub.active) {
-        structuredLog("warn", {
-          msg: "replay_rejected_inactive_subscription",
-          subscriptionId: targetSubId,
-          event,
-          replay_of: replayOf,
-        }, requestId);
+        structuredLog(
+          'warn',
+          {
+            msg: 'replay_rejected_inactive_subscription',
+            subscriptionId: targetSubId,
+            event,
+            replay_of: replayOf,
+          },
+          requestId
+        );
         return envelope(requestId, 409, {
-          error: "subscription is inactive",
-          extra: { subscriptionId: targetSubId, reason: "inactive_subscription" },
+          error: 'subscription is inactive',
+          extra: { subscriptionId: targetSubId, reason: 'inactive_subscription' },
         });
       }
-      targets = [{ id: sub.id as string, url: sub.url as string, events: sub.events as string[], secret: (sub.secret as string | null) ?? null }];
+      targets = [
+        {
+          id: sub.id as string,
+          url: sub.url as string,
+          events: sub.events as string[],
+          secret: (sub.secret as string | null) ?? null,
+        },
+      ];
       activeSubsCount = 1;
     } else {
       const { data: subs, error: subsError } = await supabase
-        .from("winloss_webhook_subscriptions")
-        .select("id, url, events, secret")
-        .eq("active", true)
+        .from('winloss_webhook_subscriptions')
+        .select('id, url, events, secret')
+        .eq('active', true)
         .limit(500);
       if (subsError) {
-        structuredLog("error", { msg: "fetch_subscriptions_failed", event, error: subsError.message }, requestId);
+        structuredLog(
+          'error',
+          { msg: 'fetch_subscriptions_failed', event, error: subsError.message },
+          requestId
+        );
         throw subsError;
       }
       const allActive = (subs as Subscription[] | null) ?? [];
       activeSubsCount = allActive.length;
-      targets = allActive.filter((s) => s.events.includes(event));
+      targets = allActive.filter(s => s.events.includes(event));
 
       // Silent-failure detection: in broadcast mode an empty target set means no
       // subscriber will ever receive this event. Emit a structured warn log AND
       // persist a metric row so admins can alert on it without scraping logs.
       if (targets.length === 0) {
-        const reason = activeSubsCount === 0 ? "no_active_subscriptions" : "no_event_match";
-        structuredLog("warn", {
-          msg: "broadcast_no_subscribers",
-          event,
-          mode: "broadcast",
-          active_subscriptions_count: activeSubsCount,
-          matching_subscriptions_count: 0,
-          reason,
-        }, requestId);
+        const reason =
+          activeSubsCount === 0 ? 'no_active_subscriptions' : 'no_event_match';
+        structuredLog(
+          'warn',
+          {
+            msg: 'broadcast_no_subscribers',
+            event,
+            mode: 'broadcast',
+            active_subscriptions_count: activeSubsCount,
+            matching_subscriptions_count: 0,
+            reason,
+          },
+          requestId
+        );
 
         try {
           const { error: metricError } = await supabase
-            .from("winloss_webhook_dispatch_metrics")
+            .from('winloss_webhook_dispatch_metrics')
             .insert({
-              metric: "broadcast_no_subscribers",
+              metric: 'broadcast_no_subscribers',
               event,
               request_id: requestId,
               active_subscriptions_count: activeSubsCount,
@@ -212,93 +350,125 @@ export const handler = async (req: Request): Promise<Response> => {
               metadata: { reason },
             });
           if (metricError) {
-            structuredLog("error", {
-              msg: "metric_insert_failed",
-              metric: "broadcast_no_subscribers",
-              error: metricError.message,
-            }, requestId);
+            structuredLog(
+              'error',
+              {
+                msg: 'metric_insert_failed',
+                metric: 'broadcast_no_subscribers',
+                error: metricError.message,
+              },
+              requestId
+            );
           }
         } catch (metricEx) {
-          structuredLog("error", {
-            msg: "metric_insert_exception",
-            metric: "broadcast_no_subscribers",
-            ...describeError(metricEx),
-          }, requestId);
+          structuredLog(
+            'error',
+            {
+              msg: 'metric_insert_exception',
+              metric: 'broadcast_no_subscribers',
+              ...describeError(metricEx),
+            },
+            requestId
+          );
         }
       }
     }
 
-    structuredLog("info", {
-      msg: "dispatch_start",
-      event,
-      mode: replayOf ? "replay" : "broadcast",
-      replay_of: replayOf,
-      targets: targets.length,
-      active_subscriptions_count: activeSubsCount,
-      target_ids: targets.map((t) => t.id),
-    }, requestId);
+    structuredLog(
+      'info',
+      {
+        msg: 'dispatch_start',
+        event,
+        mode: replayOf ? 'replay' : 'broadcast',
+        replay_of: replayOf,
+        targets: targets.length,
+        active_subscriptions_count: activeSubsCount,
+        target_ids: targets.map(t => t.id),
+      },
+      requestId
+    );
 
     // Per-subscription "planned" log → enables filtering the full lifecycle by subscriptionId
     for (const t of targets) {
-      structuredLog("info", {
-        msg: "subscription_planned",
-        event,
-        mode: replayOf ? "replay" : "broadcast",
-        subscriptionId: t.id,
-        url: t.url,
-      }, requestId);
+      structuredLog(
+        'info',
+        {
+          msg: 'subscription_planned',
+          event,
+          mode: replayOf ? 'replay' : 'broadcast',
+          subscriptionId: t.id,
+          url: t.url,
+        },
+        requestId
+      );
     }
 
-    const deps = buildDeps(supabase as unknown as ReturnType<typeof createClient>, requestId, replayOf);
-    const results = await Promise.all(targets.map((s) => dispatchOne(s, payload, deps as unknown as Parameters<typeof dispatchOne>[2])));
+    const deps = buildDeps(
+      supabase as unknown as ReturnType<typeof createClient>,
+      requestId,
+      replayOf
+    );
+    const results = await Promise.all(
+      targets.map(s =>
+        dispatchOne(s, payload, deps as unknown as Parameters<typeof dispatchOne>[2])
+      )
+    );
 
     // Per-subscription outcome log → end-of-flow marker per subscriptionId
     for (const r of results) {
-      structuredLog(r.succeeded ? "info" : "warn", {
-        msg: "subscription_outcome",
-        event,
-        subscriptionId: r.id,
-        succeeded: r.succeeded,
-        final_status: r.status,
-        attempts: r.attempts,
-        total_latency_ms: r.total_latency_ms,
-        error: r.error,
-      }, requestId);
+      structuredLog(
+        r.succeeded ? 'info' : 'warn',
+        {
+          msg: 'subscription_outcome',
+          event,
+          subscriptionId: r.id,
+          succeeded: r.succeeded,
+          final_status: r.status,
+          attempts: r.attempts,
+          total_latency_ms: r.total_latency_ms,
+          error: r.error,
+        },
+        requestId
+      );
     }
 
     // On replay success, mark the original DLQ row as replayed.
     if (replayOf && results.length === 1 && results[0].succeeded) {
       const { data: existing } = await supabase
-        .from("winloss_webhook_dead_letters")
-        .select("replay_count")
-        .eq("id", replayOf)
+        .from('winloss_webhook_dead_letters')
+        .select('replay_count')
+        .eq('id', replayOf)
         .single();
       await supabase
-        .from("winloss_webhook_dead_letters")
+        .from('winloss_webhook_dead_letters')
         .update({
-          status: "replayed",
+          status: 'replayed',
           replay_count: (existing?.replay_count ?? 0) + 1,
           last_replay_at: new Date().toISOString(),
           last_replay_status: results[0].status,
           last_replay_error: null,
           last_replay_request_id: requestId,
         })
-        .eq("id", replayOf);
+        .eq('id', replayOf);
     }
 
-    const succeededCount = results.filter((r) => r.succeeded).length;
+    const succeededCount = results.filter(r => r.succeeded).length;
     const failedCount = results.length - succeededCount;
     const totalLatency = Date.now() - requestStart;
 
-    structuredLog(failedCount > 0 ? "warn" : "info", {
-      msg: "dispatch_complete",
-      event,
-      dispatched: results.length,
-      succeeded: succeededCount,
-      failed: failedCount,
-      total_latency_ms: totalLatency,
-      results,
-    }, requestId);
+    structuredLog(
+      failedCount > 0 ? 'warn' : 'info',
+      {
+        msg: 'dispatch_complete',
+        event,
+        dispatched: results.length,
+        succeeded: succeededCount,
+        failed: failedCount,
+        total_latency_ms: totalLatency,
+        results,
+      },
+      requestId
+    );
 
     return envelope(requestId, 200, {
       dispatched: results.length,
@@ -306,13 +476,19 @@ export const handler = async (req: Request): Promise<Response> => {
       extra: { succeeded: succeededCount, failed: failedCount },
     });
   } catch (e) {
-    structuredLog("error", {
-      msg: "dispatcher_fatal",
-      ...describeError(e),
-      latency_ms: Date.now() - requestStart,
-    }, requestId);
-    return envelope(requestId, 500, { error: e instanceof Error ? e.message : "unknown" });
+    structuredLog(
+      'error',
+      {
+        msg: 'dispatcher_fatal',
+        ...describeError(e),
+        latency_ms: Date.now() - requestStart,
+      },
+      requestId
+    );
+    return envelope(requestId, 500, {
+      error: e instanceof Error ? e.message : 'unknown',
+    });
   }
 };
 
-Deno.serve(withRequestId("winloss-webhook-dispatcher", handler));
+Deno.serve(withRequestId('winloss-webhook-dispatcher', handler));
