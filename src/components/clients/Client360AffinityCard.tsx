@@ -74,9 +74,7 @@ export function Client360AffinityCard({ data }: { data: Client360Data }) {
                       {item.title}
                     </span>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span
-                        className={cn('text-[8px] font-black uppercase', item.color)}
-                      >
+                      <span className={cn('text-[8px] font-black uppercase', item.color)}>
                         {item.conversion} Conv.
                       </span>
                       <div className="h-0.5 w-0.5 rounded-full bg-white/20" />

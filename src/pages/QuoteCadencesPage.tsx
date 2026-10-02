@@ -120,24 +120,15 @@ export default function QuoteCadencesPage() {
           name="description"
           content="Follow-up automatizado de orçamentos: acompanhe etapas, conversão e tarefas do dia em uma cadência inteligente."
         />
-        <link
-          rel="canonical"
-          href={`${APP_URL}/cadencias-orcamentos`}
-        />
+        <link rel="canonical" href={`${APP_URL}/cadencias-orcamentos`} />
         <meta property="og:type" content="website" />
-        <meta
-          property="og:url"
-          content={`${APP_URL}/cadencias-orcamentos`}
-        />
+        <meta property="og:url" content={`${APP_URL}/cadencias-orcamentos`} />
         <meta property="og:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
           property="og:description"
           content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
         />
-        <meta
-          property="og:image"
-          content={`${APP_URL}/favicon.ico`}
-        />
+        <meta property="og:image" content={`${APP_URL}/favicon.ico`} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
@@ -320,7 +311,9 @@ export default function QuoteCadencesPage() {
                 <ContactFrequencyRules />
                 <Card className="glass border-border/40">
                   <CardHeader>
-                    <CardTitle className="text-section-title text-sm">Configurações Rápidas</CardTitle>
+                    <CardTitle className="text-section-title text-sm">
+                      Configurações Rápidas
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between text-xs">

@@ -1,10 +1,5 @@
 import { useMemo, useState, lazy, Suspense } from 'react';
-import {
-  DollarSign,
-  TrendingDown,
-  AlertTriangle,
-  Target,
-} from 'lucide-react';
+import { DollarSign, TrendingDown, AlertTriangle, Target } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePricingIntelligence } from '@/hooks/usePricingIntelligence';

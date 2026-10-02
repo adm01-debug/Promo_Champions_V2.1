@@ -1,9 +1,4 @@
-import {
-  Search,
-  Filter,
-  Package,
-  History as HistoryIcon,
-} from 'lucide-react';
+import { Search, Filter, Package, History as HistoryIcon } from 'lucide-react';
 import {
   Card,
   CardContent,

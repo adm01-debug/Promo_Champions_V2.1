@@ -50,8 +50,8 @@ export function OverlayTelemetryPanel() {
   }
 
   const rows = data ?? [];
-  const cold = rows.filter((r) => r.total_views < 5);
-  const hot = rows.filter((r) => r.total_views >= 5);
+  const cold = rows.filter(r => r.total_views < 5);
+  const hot = rows.filter(r => r.total_views >= 5);
 
   return (
     <Card>
@@ -70,15 +70,23 @@ export function OverlayTelemetryPanel() {
             <Eye className="w-4 h-4 text-status-success" /> Em uso ({hot.length})
           </h3>
           {hot.length === 0 ? (
-            <p className="text-xs text-muted-foreground">Nenhum overlay com tráfego significativo ainda.</p>
+            <p className="text-xs text-muted-foreground">
+              Nenhum overlay com tráfego significativo ainda.
+            </p>
           ) : (
             <ul className="space-y-1.5">
-              {hot.map((r) => (
-                <li key={r.overlay_name} className="flex items-center justify-between text-sm border-b border-border/50 pb-1">
+              {hot.map(r => (
+                <li
+                  key={r.overlay_name}
+                  className="flex items-center justify-between text-sm border-b border-border/50 pb-1"
+                >
                   <span className="font-mono">{r.overlay_name}</span>
                   <span className="text-muted-foreground text-xs">
                     {r.total_views} views · {r.unique_users} usuários ·{' '}
-                    {formatDistanceToNow(new Date(r.last_viewed_at), { addSuffix: true, locale: ptBR })}
+                    {formatDistanceToNow(new Date(r.last_viewed_at), {
+                      addSuffix: true,
+                      locale: ptBR,
+                    })}
                   </span>
                 </li>
               ))}
@@ -87,16 +95,24 @@ export function OverlayTelemetryPanel() {
         </section>
         <section>
           <h3 className="text-sm font-semibold flex items-center gap-1.5 mb-2">
-            <EyeOff className="w-4 h-4 text-status-warning" /> Candidatos a remoção ({cold.length})
+            <EyeOff className="w-4 h-4 text-status-warning" /> Candidatos a remoção (
+            {cold.length})
           </h3>
           {cold.length === 0 ? (
-            <p className="text-xs text-muted-foreground">Nenhum overlay frio detectado.</p>
+            <p className="text-xs text-muted-foreground">
+              Nenhum overlay frio detectado.
+            </p>
           ) : (
             <ul className="space-y-1.5">
-              {cold.map((r) => (
-                <li key={r.overlay_name} className="flex items-center justify-between text-sm border-b border-border/30 pb-1 opacity-75">
+              {cold.map(r => (
+                <li
+                  key={r.overlay_name}
+                  className="flex items-center justify-between text-sm border-b border-border/30 pb-1 opacity-75"
+                >
                   <span className="font-mono">{r.overlay_name}</span>
-                  <span className="text-muted-foreground text-xs">{r.total_views} views</span>
+                  <span className="text-muted-foreground text-xs">
+                    {r.total_views} views
+                  </span>
                 </li>
               ))}
             </ul>

@@ -85,7 +85,6 @@ export const useCreateTemplate = () => {
   });
 };
 
-
 export const useDeleteTemplate = () => {
   const qc = useQueryClient();
   return useMutation({
@@ -129,7 +128,6 @@ export const useChannelInteractions = (filters?: {
     },
   });
 };
-
 
 // ─── Channel Stats ─────────────────────────────────────────────────
 export const useChannelStats = (days = 30) => {

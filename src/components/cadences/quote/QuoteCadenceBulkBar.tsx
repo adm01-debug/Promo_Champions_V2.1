@@ -1,11 +1,11 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Pause, Play, XCircle, X } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Pause, Play, XCircle, X } from 'lucide-react';
 import {
   useBulkPauseQuoteCadences,
   useBulkResumeQuoteCadences,
   useBulkCancelQuoteCadences,
-} from "@/hooks/cadences/useBulkQuoteCadenceMutations";
+} from '@/hooks/cadences/useBulkQuoteCadenceMutations';
 
 interface Props {
   selectedIds: string[];
@@ -37,7 +37,7 @@ export function QuoteCadenceBulkBar({ selectedIds, onClear }: Props) {
         >
           <div className="flex items-center gap-2 bg-background border border-border shadow-lg rounded-full px-4 py-2">
             <span className="text-sm font-medium px-2">
-              {count} selecionado{count > 1 ? "s" : ""}
+              {count} selecionado{count > 1 ? 's' : ''}
             </span>
             <div className="h-5 w-px bg-border" />
             <Button

@@ -52,7 +52,13 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const categories = useMemo(() => extractCategories(data?.orders), [data?.orders]);
 
   const filteredOrders = useMemo(
-    () => filterOrders(data?.orders, { searchTerm, statusFilter, categoryFilter, valueRange }),
+    () =>
+      filterOrders(data?.orders, {
+        searchTerm,
+        statusFilter,
+        categoryFilter,
+        valueRange,
+      }),
     [data?.orders, searchTerm, statusFilter, categoryFilter, valueRange]
   );
 
@@ -118,10 +124,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
       />
 
       {/* Deep-dive Modal Pedido */}
-      <OrderDetailsDialog
-        order={selectedOrder}
-        onClose={() => setSelectedOrder(null)}
-      />
+      <OrderDetailsDialog order={selectedOrder} onClose={() => setSelectedOrder(null)} />
     </div>
   );
 }

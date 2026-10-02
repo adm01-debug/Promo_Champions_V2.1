@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface PriceHistory {
   id: string;
@@ -35,11 +35,13 @@ export function usePriceHistory(productId?: string) {
     queryFn: async () => {
       let query = supabase
         .from('price_history')
-        .select(`
+        .select(
+          `
           *,
           products:product_id (name),
           suppliers:supplier_id (name)
-        `)
+        `
+        )
         .order('recorded_at', { ascending: false })
         .limit(100);
 
@@ -49,7 +51,10 @@ export function usePriceHistory(productId?: string) {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as (PriceHistory & { products: { name: string }; suppliers: { name: string } })[];
+      return data as (PriceHistory & {
+        products: { name: string };
+        suppliers: { name: string };
+      })[];
     },
   });
 }
@@ -62,11 +67,13 @@ export function usePriceAlerts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('price_alerts')
-        .select(`
+        .select(
+          `
           *,
           products:product_id (name),
           suppliers:supplier_id (name)
-        `)
+        `
+        )
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -111,4 +118,3 @@ export function usePriceAlerts() {
     markAllAsRead,
   };
 }
-

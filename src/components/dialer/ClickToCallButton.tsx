@@ -96,7 +96,11 @@ export const ClickToCallButton = ({
       onClick={handleClick}
       disabled={initiate.isPending || !toNumber}
     >
-      {isLive ? <PhoneOff className="h-4 w-4 mr-2" /> : <Phone className="h-4 w-4 mr-2" />}
+      {isLive ? (
+        <PhoneOff className="h-4 w-4 mr-2" />
+      ) : (
+        <Phone className="h-4 w-4 mr-2" />
+      )}
       {initiate.isPending ? 'Discando…' : 'Ligar'}
     </Button>
   );

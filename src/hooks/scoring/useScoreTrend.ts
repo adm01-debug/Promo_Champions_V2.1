@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface TrendPoint {
   recorded_at: string;
@@ -8,12 +8,12 @@ export interface TrendPoint {
 
 export function useScoreTrend(saleId: string | null | undefined, days = 30) {
   return useQuery({
-    queryKey: ["score-trend", saleId, days],
+    queryKey: ['score-trend', saleId, days],
     enabled: !!saleId,
     staleTime: 1000 * 60 * 5,
     queryFn: async (): Promise<TrendPoint[]> => {
       if (!saleId) return [];
-      const { data, error } = await supabase.rpc("get_score_trend", {
+      const { data, error } = await supabase.rpc('get_score_trend', {
         _sale_id: saleId,
         _days: days,
       });

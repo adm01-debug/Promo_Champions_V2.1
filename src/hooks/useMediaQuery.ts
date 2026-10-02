@@ -4,9 +4,12 @@ interface UseMediaQueryOptions {
   defaultValue?: boolean;
 }
 
-export function useMediaQuery(query: string, options: UseMediaQueryOptions = {}): boolean {
+export function useMediaQuery(
+  query: string,
+  options: UseMediaQueryOptions = {}
+): boolean {
   const { defaultValue = false } = options;
-  
+
   const [matches, setMatches] = useState<boolean>(() => {
     if (typeof window === 'undefined') return defaultValue;
     return window.matchMedia(query).matches;

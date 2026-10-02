@@ -64,7 +64,6 @@ export function useCommissionBonusAwards(opts?: {
   });
 }
 
-
 export function useUpdateAwardStatus() {
   const qc = useQueryClient();
   return useMutation({

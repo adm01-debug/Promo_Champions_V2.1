@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface SequenceEnrollment {
   id: string;
@@ -31,18 +31,17 @@ export interface SequenceStepExecution {
 
 export function useSequenceEnrollments(sequenceId: string | undefined) {
   return useQuery({
-    queryKey: ["sequence-enrollments", sequenceId],
+    queryKey: ['sequence-enrollments', sequenceId],
     queryFn: async () => {
       if (!sequenceId) return [];
       const { data, error } = await supabase
-        .from("sequence_enrollments")
-        .select("*")
-        .eq("sequence_id", sequenceId)
-        .order("started_at", { ascending: false });
+        .from('sequence_enrollments')
+        .select('*')
+        .eq('sequence_id', sequenceId)
+        .order('started_at', { ascending: false });
       if (error) throw error;
       return (data ?? []) as SequenceEnrollment[];
     },
     enabled: !!sequenceId,
   });
 }
-

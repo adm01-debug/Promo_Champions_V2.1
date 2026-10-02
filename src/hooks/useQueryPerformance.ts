@@ -190,7 +190,6 @@ export function useQueryPerformance<T>(
   }, [isLoading, isError, queryKey, data]);
 }
 
-
 // Console logger for metrics (call manually or on interval)
 export function logQueryMetrics() {
   if (!import.meta.env.DEV) return; // Only log in development

@@ -88,9 +88,7 @@ export function RaceCarsLayer({
                   r={28}
                   fill="hsl(var(--primary))"
                   opacity={0.18}
-                  animate={
-                    reducedMotion ? undefined : { opacity: [0.25, 0.08, 0.25] }
-                  }
+                  animate={reducedMotion ? undefined : { opacity: [0.25, 0.08, 0.25] }}
                   transition={
                     reducedMotion
                       ? undefined

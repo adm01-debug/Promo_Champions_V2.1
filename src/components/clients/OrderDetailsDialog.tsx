@@ -233,9 +233,7 @@ export function OrderDetailsDialog({ order, onClose }: OrderDetailsDialogProps) 
 
               <div className="pt-4 border-t border-white/10 space-y-2.5">
                 <div className="flex justify-between items-center text-muted-foreground">
-                  <span className="text-[10px] font-bold uppercase">
-                    Subtotal Bruto:
-                  </span>
+                  <span className="text-[10px] font-bold uppercase">Subtotal Bruto:</span>
                   <span className="text-xs font-bold">
                     {formatCurrency(Number(order?.amount))}
                   </span>

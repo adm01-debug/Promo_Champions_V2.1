@@ -38,7 +38,10 @@ export const ProductMix: FC = () => {
         });
       });
 
-      const totalRevenue = Array.from(categoryMap.values()).reduce((s, v) => s + v.revenue, 0);
+      const totalRevenue = Array.from(categoryMap.values()).reduce(
+        (s, v) => s + v.revenue,
+        0
+      );
 
       return Array.from(categoryMap.entries())
         .map(([name, { count, revenue }]) => ({
@@ -75,7 +78,9 @@ export const ProductMix: FC = () => {
       </CardHeader>
       <CardContent>
         {!data || data.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-8">Nenhuma venda concluída</p>
+          <p className="text-sm text-muted-foreground text-center py-8">
+            Nenhuma venda concluída
+          </p>
         ) : (
           <div className="h-[250px]">
             <ResponsiveContainer width="100%" height="100%">

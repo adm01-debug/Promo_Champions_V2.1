@@ -13,7 +13,9 @@ export function useRaceUnlocks() {
   return useQuery({
     queryKey: ['race-unlocks'],
     queryFn: async (): Promise<RaceUnlock[]> => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return [];
       const { data, error } = await supabase
         .from('race_unlocks')
@@ -29,16 +31,29 @@ export function useRaceUnlocks() {
 export function useUnlockRaceItem() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ unlockKey, requiredLeague }: { unlockKey: string; requiredLeague: string }) => {
+    mutationFn: async ({
+      unlockKey,
+      requiredLeague,
+    }: {
+      unlockKey: string;
+      requiredLeague: string;
+    }) => {
       const { data, error } = await supabase.rpc('unlock_race_item', {
         _unlock_key: unlockKey,
         _required_league: requiredLeague,
       });
       if (error) throw error;
-      const result = data as { success: boolean; error?: string; current_league?: string; required_league?: string };
+      const result = data as {
+        success: boolean;
+        error?: string;
+        current_league?: string;
+        required_league?: string;
+      };
       if (!result.success) {
         if (result.error === 'league_required') {
-          throw new Error(`Requer liga ${result.required_league?.toUpperCase()} (você está em ${result.current_league?.toUpperCase()})`);
+          throw new Error(
+            `Requer liga ${result.required_league?.toUpperCase()} (você está em ${result.current_league?.toUpperCase()})`
+          );
         }
         throw new Error(result.error ?? 'Falha ao desbloquear');
       }

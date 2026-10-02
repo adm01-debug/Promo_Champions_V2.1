@@ -1,6 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { METRIC_LABELS, type MetricCode, type ScoringRule } from '@/hooks/race/useRaceScoringRules';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  METRIC_LABELS,
+  type MetricCode,
+  type ScoringRule,
+} from '@/hooks/race/useRaceScoringRules';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 import { Info } from 'lucide-react';
 
@@ -29,7 +38,7 @@ function rawValueFor(entry: RaceLeaderboardEntry, code: MetricCode): number {
 }
 
 export function ScoreBreakdownCard({ entry, rules }: Props) {
-  const breakdown = rules.map((r) => {
+  const breakdown = rules.map(r => {
     const raw = rawValueFor(entry, r.metric_code as MetricCode);
     const points = raw * Number(r.points_per_unit) * Number(r.weight);
     return { ...r, raw, points };
@@ -46,15 +55,13 @@ export function ScoreBreakdownCard({ entry, rules }: Props) {
               <TooltipTrigger asChild>
                 <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
               </TooltipTrigger>
-              <TooltipContent>
-                Score = Σ (valor × pontos/unidade × peso)
-              </TooltipContent>
+              <TooltipContent>Score = Σ (valor × pontos/unidade × peso)</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        {breakdown.map((b) => {
+        {breakdown.map(b => {
           const meta = METRIC_LABELS[b.metric_code as MetricCode];
           const pct = (b.points / totalPoints) * 100;
           return (

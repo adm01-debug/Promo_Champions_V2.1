@@ -13,15 +13,24 @@ interface UserPermissions {
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   admin: ['*'],
   manager: [
-    'deals:read', 'deals:write', 'deals:delete',
-    'clients:read', 'clients:write', 'clients:delete',
-    'activities:read', 'activities:write',
-    'users:read', 'reports:read',
+    'deals:read',
+    'deals:write',
+    'deals:delete',
+    'clients:read',
+    'clients:write',
+    'clients:delete',
+    'activities:read',
+    'activities:write',
+    'users:read',
+    'reports:read',
   ],
   salesperson: [
-    'deals:read', 'deals:write',
-    'clients:read', 'clients:write',
-    'activities:read', 'activities:write',
+    'deals:read',
+    'deals:write',
+    'clients:read',
+    'clients:write',
+    'activities:read',
+    'activities:write',
   ],
 };
 
@@ -29,7 +38,9 @@ export const usePermissions = () => {
   const { data: permissions, isLoading } = useQuery<UserPermissions>({
     queryKey: ['user-permissions'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       const { data: roleData } = await supabase
@@ -85,4 +96,3 @@ export const usePermissions = () => {
     isManager: permissions?.role === 'manager',
   };
 };
-

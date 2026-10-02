@@ -3,8 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
-
-
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -64,11 +62,12 @@ export const useSalesAssistant = (
       const countRows: CountRow[] = convIds.length
         ? await chunkedIn<CountRow>(
             convIds,
-            (chunk) => supabase
-              .from('chat_messages')
-              .select('conversation_id')
-              .in('conversation_id', chunk as string[]),
-            { parallel: true, label: 'sales-assistant.msg-count' },
+            chunk =>
+              supabase
+                .from('chat_messages')
+                .select('conversation_id')
+                .in('conversation_id', chunk as string[]),
+            { parallel: true, label: 'sales-assistant.msg-count' }
           )
         : [];
       const countMap: Record<string, number> = {};
@@ -133,14 +132,14 @@ export const useSalesAssistant = (
         const { error: msgError } = await supabase
           .from('chat_messages')
           .insert({ conversation_id: conversationId, role, content });
-        
+
         if (msgError) throw msgError;
 
         const { error: convError } = await supabase
           .from('chat_conversations')
           .update({ updated_at: new Date().toISOString() })
           .eq('id', conversationId);
-          
+
         if (convError) throw convError;
       } catch (error) {
         console.error('Error saving message:', error);
@@ -178,7 +177,10 @@ export const useSalesAssistant = (
         return;
       }
 
-      const conversationHistory = messages.map(m => ({ role: m.role, content: m.content }));
+      const conversationHistory = messages.map(m => ({
+        role: m.role,
+        content: m.content,
+      }));
 
       try {
         const {
@@ -216,7 +218,12 @@ export const useSalesAssistant = (
 
         setMessages(prev => [
           ...prev,
-          { id: assistantMsgId, role: 'assistant' as const, content: '', timestamp: new Date() },
+          {
+            id: assistantMsgId,
+            role: 'assistant' as const,
+            content: '',
+            timestamp: new Date(),
+          },
         ]);
 
         if (reader) {
@@ -369,4 +376,3 @@ export const useSalesAssistant = (
     setDealContext,
   };
 };
-

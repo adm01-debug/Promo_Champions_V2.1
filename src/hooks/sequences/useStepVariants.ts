@@ -1,11 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface StepVariant {
   id: string;
   step_id: string;
-  label: "A" | "B";
+  label: 'A' | 'B';
   subject: string | null;
   body: string | null;
   traffic_weight: number;
@@ -15,7 +15,7 @@ export interface StepVariant {
 export interface VariantPerformance {
   step_id: string;
   variant_id: string;
-  label: "A" | "B";
+  label: 'A' | 'B';
   sent: number;
   replied: number;
   reply_rate: number;
@@ -23,14 +23,14 @@ export interface VariantPerformance {
 
 export function useStepVariants(stepId: string | undefined) {
   return useQuery({
-    queryKey: ["step-variants", stepId],
+    queryKey: ['step-variants', stepId],
     queryFn: async () => {
       if (!stepId) return [];
       const { data, error } = await supabase
-        .from("sequence_step_variants")
-        .select("*")
-        .eq("step_id", stepId)
-        .order("label", { ascending: true });
+        .from('sequence_step_variants')
+        .select('*')
+        .eq('step_id', stepId)
+        .order('label', { ascending: true });
       if (error) throw error;
       return (data ?? []) as StepVariant[];
     },
@@ -40,13 +40,13 @@ export function useStepVariants(stepId: string | undefined) {
 
 export function useStepVariantPerformance(stepId: string | undefined) {
   return useQuery({
-    queryKey: ["step-variant-performance", stepId],
+    queryKey: ['step-variant-performance', stepId],
     queryFn: async () => {
       if (!stepId) return [];
       const { data, error } = await supabase
-        .from("sequence_variant_performance")
-        .select("*")
-        .eq("step_id", stepId);
+        .from('sequence_variant_performance')
+        .select('*')
+        .eq('step_id', stepId);
       if (error) throw error;
       return (data ?? []) as VariantPerformance[];
     },
@@ -57,7 +57,9 @@ export function useStepVariantPerformance(stepId: string | undefined) {
 export function useUpsertStepVariant() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (input: Partial<StepVariant> & { step_id: string; label: "A" | "B" }) => {
+    mutationFn: async (
+      input: Partial<StepVariant> & { step_id: string; label: 'A' | 'B' }
+    ) => {
       const payload = {
         step_id: input.step_id,
         label: input.label,
@@ -67,45 +69,44 @@ export function useUpsertStepVariant() {
       };
       if (input.id) {
         const { data, error } = await supabase
-          .from("sequence_step_variants")
+          .from('sequence_step_variants')
           .update(payload)
-          .eq("id", input.id)
+          .eq('id', input.id)
           .select()
           .single();
         if (error) throw error;
         return data as StepVariant;
       }
       const { data, error } = await supabase
-        .from("sequence_step_variants")
-        .upsert(payload, { onConflict: "step_id,label" })
+        .from('sequence_step_variants')
+        .upsert(payload, { onConflict: 'step_id,label' })
         .select()
         .single();
       if (error) throw error;
       return data as StepVariant;
     },
-    onSuccess: (data) => {
-      qc.invalidateQueries({ queryKey: ["step-variants", data.step_id] });
+    onSuccess: data => {
+      qc.invalidateQueries({ queryKey: ['step-variants', data.step_id] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
 }
 
-
 export function useDeclareStepWinner() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ stepId, label }: { stepId: string; label: "A" | "B" }) => {
-      const { error } = await supabase.rpc("declare_step_winner", {
+    mutationFn: async ({ stepId, label }: { stepId: string; label: 'A' | 'B' }) => {
+      const { error } = await supabase.rpc('declare_step_winner', {
         _step_id: stepId,
         _variant_label: label,
       });
       if (error) throw error;
       return stepId;
     },
-    onSuccess: (stepId) => {
-      qc.invalidateQueries({ queryKey: ["step-variants", stepId] });
-      qc.invalidateQueries({ queryKey: ["sequence-steps"] });
-      toast.success("Variante vencedora promovida");
+    onSuccess: stepId => {
+      qc.invalidateQueries({ queryKey: ['step-variants', stepId] });
+      qc.invalidateQueries({ queryKey: ['sequence-steps'] });
+      toast.success('Variante vencedora promovida');
     },
     onError: (e: Error) => toast.error(e.message),
   });

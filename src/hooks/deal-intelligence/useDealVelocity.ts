@@ -68,7 +68,6 @@ export const useDealVelocityPrediction = (saleId: string | undefined) => {
   return query;
 };
 
-
 export const usePredictDealVelocity = () => {
   const qc = useQueryClient();
   return useMutation({

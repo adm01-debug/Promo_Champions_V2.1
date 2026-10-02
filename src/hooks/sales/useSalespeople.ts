@@ -73,7 +73,6 @@ export function useSalespeople() {
   });
 }
 
-
 export function useSalespeopleRanking(period: PeriodFilter = 'month') {
   const { start, end } = getDateRange(period);
 

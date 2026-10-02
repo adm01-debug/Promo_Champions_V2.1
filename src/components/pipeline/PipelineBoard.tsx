@@ -468,9 +468,7 @@ export const PipelineBoard = () => {
                         key={i}
                         className="h-6 w-6 border-2 border-background ring-2 ring-primary/20"
                       >
-                        <AvatarImage
-                          src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`}
-                        />
+                        <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`} />
                       </Avatar>
                     ))}
                   </div>
@@ -566,8 +564,7 @@ export const PipelineBoard = () => {
                   activeCadence={activeCadences?.[activeDeal.id]}
                   icpData={
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
-                      | { is_icp_match: boolean; grupo_nicho?: string }
-                      | undefined
+                      { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
                 />
               </div>

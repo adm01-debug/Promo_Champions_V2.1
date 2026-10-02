@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 export interface CircuitBreakerEvent {
   id: string;
@@ -16,23 +16,23 @@ export interface CircuitBreakerEvent {
 // Fetch circuit breaker events history
 export function useCircuitBreakerHistory(circuitName?: string, limit = 50) {
   return useQuery({
-    queryKey: ["circuit-breaker-history", circuitName, limit],
+    queryKey: ['circuit-breaker-history', circuitName, limit],
     queryFn: async () => {
       let query = supabase
-        .from("circuit_breaker_events")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('circuit_breaker_events')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(limit);
 
       if (circuitName) {
-        query = query.eq("circuit_name", circuitName);
+        query = query.eq('circuit_name', circuitName);
       }
 
       const { data, error } = await query;
 
       if (error) {
         if (import.meta.env.DEV) {
-          console.error("Error fetching circuit breaker history:", error);
+          console.error('Error fetching circuit breaker history:', error);
         }
         throw error;
       }
@@ -46,19 +46,19 @@ export function useCircuitBreakerHistory(circuitName?: string, limit = 50) {
 // Get event statistics
 export function useCircuitBreakerStats() {
   return useQuery({
-    queryKey: ["circuit-breaker-stats"],
+    queryKey: ['circuit-breaker-stats'],
     queryFn: async () => {
       const oneDayAgo = new Date();
       oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
       const { data, error } = await supabase
-        .from("circuit_breaker_events")
-        .select("circuit_name, event_type")
-        .gte("created_at", oneDayAgo.toISOString());
+        .from('circuit_breaker_events')
+        .select('circuit_name, event_type')
+        .gte('created_at', oneDayAgo.toISOString());
 
       if (error) {
         if (import.meta.env.DEV) {
-          console.error("Error fetching circuit breaker stats:", error);
+          console.error('Error fetching circuit breaker stats:', error);
         }
         throw error;
       }
@@ -66,21 +66,24 @@ export function useCircuitBreakerStats() {
       // Calculate stats
       const stats = {
         total: data?.length || 0,
-        opened: data?.filter((e) => e.event_type === "opened").length || 0,
-        closed: data?.filter((e) => e.event_type === "closed").length || 0,
-        failures: data?.filter((e) => e.event_type === "failure").length || 0,
-        byCircuit: {} as Record<string, { total: number; opened: number; failures: number }>,
+        opened: data?.filter(e => e.event_type === 'opened').length || 0,
+        closed: data?.filter(e => e.event_type === 'closed').length || 0,
+        failures: data?.filter(e => e.event_type === 'failure').length || 0,
+        byCircuit: {} as Record<
+          string,
+          { total: number; opened: number; failures: number }
+        >,
       };
 
-      data?.forEach((event) => {
+      data?.forEach(event => {
         if (!stats.byCircuit[event.circuit_name]) {
           stats.byCircuit[event.circuit_name] = { total: 0, opened: 0, failures: 0 };
         }
         stats.byCircuit[event.circuit_name].total++;
-        if (event.event_type === "opened") {
+        if (event.event_type === 'opened') {
           stats.byCircuit[event.circuit_name].opened++;
         }
-        if (event.event_type === "failure") {
+        if (event.event_type === 'failure') {
           stats.byCircuit[event.circuit_name].failures++;
         }
       });

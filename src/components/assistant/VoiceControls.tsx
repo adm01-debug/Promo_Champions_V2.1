@@ -6,12 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  Mic,
-  MicOff,
-  Volume2,
-  Loader2,
-} from 'lucide-react';
+import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VoiceControlsProps {
@@ -19,17 +14,17 @@ interface VoiceControlsProps {
   isListening: boolean;
   onToggleListening: () => void;
   isProcessingSTT: boolean;
-  
+
   // TTS state for manual playback
   isSpeaking?: boolean;
   isLoadingTTS?: boolean;
   onManualSpeak?: () => void;
   showSpeakButton?: boolean;
-  
+
   // Status
   isApiConfigured?: boolean;
   responseMode?: 'text' | 'audio' | 'both';
-  
+
   className?: string;
 }
 
@@ -60,7 +55,7 @@ export function VoiceControls({
                 isProcessingSTT && 'opacity-50'
               )}
               onClick={onToggleListening}
-              aria-label={isListening ? "Parar gravação" : "Iniciar gravação de voz"}
+              aria-label={isListening ? 'Parar gravação' : 'Iniciar gravação de voz'}
               disabled={isProcessingSTT}
             >
               {isProcessingSTT ? (
@@ -91,7 +86,7 @@ export function VoiceControls({
                   isSpeaking && 'text-primary bg-primary/10 animate-pulse'
                 )}
                 onClick={onManualSpeak}
-                aria-label={isSpeaking ? "Parar reprodução" : "Reproduzir resposta"}
+                aria-label={isSpeaking ? 'Parar reprodução' : 'Reproduzir resposta'}
                 disabled={isLoadingTTS}
               >
                 {isLoadingTTS ? (

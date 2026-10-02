@@ -18,9 +18,5 @@ export function StatusBadge({
   label: string;
   className?: string;
 }) {
-  return (
-    <Badge className={cn(statusVariants[status], className)}>
-      {label}
-    </Badge>
-  );
+  return <Badge className={cn(statusVariants[status], className)}>{label}</Badge>;
 }

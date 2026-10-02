@@ -54,7 +54,6 @@ export const useDialerQueues = () => {
   });
 };
 
-
 export const useQueueStats = (queueId: string | null) => {
   return useQuery({
     queryKey: ['dialer-queue-stats', queueId],

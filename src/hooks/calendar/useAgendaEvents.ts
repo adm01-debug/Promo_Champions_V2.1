@@ -73,7 +73,6 @@ export const useCreateAgendaEvent = () => {
   });
 };
 
-
 export const useCompleteAgendaEvent = () => {
   const qc = useQueryClient();
   return useMutation({

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface MyRival {
   rival_car_id: string;
@@ -29,7 +29,7 @@ export function useMyRival(args: {
     queryFn: async (): Promise<MyRival | null> => {
       if (!seasonId || !myCarId || entries.length < 2) return null;
 
-      const myIdx = entries.findIndex((e) => e.car_id === myCarId);
+      const myIdx = entries.findIndex(e => e.car_id === myCarId);
       if (myIdx === -1) return null;
       const me = entries[myIdx];
 
@@ -50,7 +50,7 @@ export function useMyRival(args: {
       }
 
       if (!rivalId) return null;
-      const rival = entries.find((e) => e.car_id === rivalId);
+      const rival = entries.find(e => e.car_id === rivalId);
       if (!rival) return null;
 
       const myProgress = Number(me.progress);
@@ -70,4 +70,3 @@ export function useMyRival(args: {
     staleTime: 15_000,
   });
 }
-

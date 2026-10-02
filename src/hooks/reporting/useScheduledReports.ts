@@ -67,7 +67,6 @@ export function useCreateScheduledReport() {
   });
 }
 
-
 export function useDeleteScheduledReport() {
   const qc = useQueryClient();
   return useMutation({

@@ -23,7 +23,8 @@ const readAttemptState = (): RecoveryAttemptState => {
     if (!rawValue) return { count: 0, startedAt: Date.now() };
 
     const parsed = JSON.parse(rawValue) as Partial<RecoveryAttemptState>;
-    const startedAt = typeof parsed.startedAt === 'number' ? parsed.startedAt : Date.now();
+    const startedAt =
+      typeof parsed.startedAt === 'number' ? parsed.startedAt : Date.now();
     const isExpired = Date.now() - startedAt > RECOVERY_WINDOW_MS;
 
     if (isExpired) return { count: 0, startedAt: Date.now() };

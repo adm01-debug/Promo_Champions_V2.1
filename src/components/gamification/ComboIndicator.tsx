@@ -1,16 +1,19 @@
-import { motion } from "framer-motion";
-import { TrendingUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useTodayCombo } from "@/hooks/useCombo";
-import { comboService } from "@/services/comboService";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion';
+import { TrendingUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useTodayCombo } from '@/hooks/useCombo';
+import { comboService } from '@/services/comboService';
+import { cn } from '@/lib/utils';
 
 interface ComboIndicatorProps {
   salespersonId: string;
-  variant?: "compact" | "full";
+  variant?: 'compact' | 'full';
 }
 
-export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndicatorProps) {
+export function ComboIndicator({
+  salespersonId,
+  variant = 'compact',
+}: ComboIndicatorProps) {
   const { data: combo, isLoading } = useTodayCombo(salespersonId);
 
   if (isLoading || !combo) return null;
@@ -20,29 +23,31 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
   const nextTier = comboService.getNextTier(combo.actions_count);
 
   const progressToNext = nextTier
-    ? ((combo.actions_count - currentTier.minActions) / (nextTier.minActions - currentTier.minActions)) * 100
+    ? ((combo.actions_count - currentTier.minActions) /
+        (nextTier.minActions - currentTier.minActions)) *
+      100
     : 100;
 
   const isOnFire = combo.current_multiplier >= 2.0;
 
   const glowStyles: Record<number, string> = {
-    0: "",
-    1: "shadow-[0_0_10px_rgba(59,130,246,0.4)]",
-    2: "shadow-[0_0_15px_rgba(249,115,22,0.5)]",
-    3: "shadow-[0_0_20px_rgba(239,68,68,0.5)]",
-    4: "shadow-[0_0_25px_rgba(245,158,11,0.6)]",
+    0: '',
+    1: 'shadow-[0_0_10px_rgba(59,130,246,0.4)]',
+    2: 'shadow-[0_0_15px_rgba(249,115,22,0.5)]',
+    3: 'shadow-[0_0_20px_rgba(239,68,68,0.5)]',
+    4: 'shadow-[0_0_25px_rgba(245,158,11,0.6)]',
   };
 
-  if (variant === "compact") {
+  if (variant === 'compact') {
     return (
       <>
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           className={cn(
-            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold",
-            glowStyles[currentTierIndex] || "",
-            currentTierIndex >= 2 ? "border-streak/30" : "border-border/50"
+            'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold',
+            glowStyles[currentTierIndex] || '',
+            currentTierIndex >= 2 ? 'border-streak/30' : 'border-border/50'
           )}
           style={{ borderColor: `${currentTier.color}40` }}
         >
@@ -52,9 +57,7 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
           >
             {currentTier.emoji}
           </motion.span>
-          <span style={{ color: currentTier.color }}>
-            {currentTier.multiplier}x
-          </span>
+          <span style={{ color: currentTier.color }}>{currentTier.multiplier}x</span>
           <span className="text-muted-foreground">{currentTier.label}</span>
         </motion.div>
       </>
@@ -67,8 +70,8 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          "glass rounded-xl p-4 border overflow-hidden relative",
-          glowStyles[currentTierIndex] || ""
+          'glass rounded-xl p-4 border overflow-hidden relative',
+          glowStyles[currentTierIndex] || ''
         )}
         style={{ borderColor: `${currentTier.color}30` }}
       >
@@ -76,7 +79,9 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
         {isOnFire && (
           <motion.div
             className="absolute inset-0 opacity-10"
-            style={{ background: `linear-gradient(135deg, ${currentTier.color}20, transparent)` }}
+            style={{
+              background: `linear-gradient(135deg, ${currentTier.color}20, transparent)`,
+            }}
             animate={{ opacity: [0.05, 0.15, 0.05] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
@@ -104,7 +109,10 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
             </div>
             <Badge
               className="text-lg font-black border-0"
-              style={{ backgroundColor: `${currentTier.color}20`, color: currentTier.color }}
+              style={{
+                backgroundColor: `${currentTier.color}20`,
+                color: currentTier.color,
+              }}
             >
               {currentTier.multiplier}x
             </Badge>
@@ -114,7 +122,9 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
           {nextTier && (
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] text-muted-foreground">
-                <span>Próximo: {nextTier.emoji} {nextTier.label}</span>
+                <span>
+                  Próximo: {nextTier.emoji} {nextTier.label}
+                </span>
                 <span>{nextTier.minActions - combo.actions_count} ações restantes</span>
               </div>
               <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
@@ -131,7 +141,10 @@ export function ComboIndicator({ salespersonId, variant = "compact" }: ComboIndi
 
           {/* Max tier reached */}
           {!nextTier && (
-            <div className="flex items-center gap-1 text-xs font-medium" style={{ color: currentTier.color }}>
+            <div
+              className="flex items-center gap-1 text-xs font-medium"
+              style={{ color: currentTier.color }}
+            >
               <TrendingUp className="h-3 w-3" />
               Nível máximo alcançado!
             </div>

@@ -76,7 +76,6 @@ export function useApprovalRequests(statusFilter?: string) {
   });
 }
 
-
 export function useCreateApprovalRequest() {
   const queryClient = useQueryClient();
   const { user } = useAuth();

@@ -45,7 +45,9 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
   };
 
   if (!champion) return null;
-  const monthLabel = format(new Date(champion.finalized_at), "MMMM yyyy", { locale: ptBR });
+  const monthLabel = format(new Date(champion.finalized_at), 'MMMM yyyy', {
+    locale: ptBR,
+  });
 
   return (
     <AnimatePresence>
@@ -60,11 +62,25 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
           {Array.from({ length: 60 }).map((_, i) => (
             <motion.div
               key={i}
-              initial={{ y: -50, x: Math.random() * window.innerWidth, opacity: 1, rotate: 0 }}
+              initial={{
+                y: -50,
+                x: Math.random() * window.innerWidth,
+                opacity: 1,
+                rotate: 0,
+              }}
               animate={{ y: window.innerHeight + 50, rotate: 720 }}
-              transition={{ duration: 3 + Math.random() * 2, delay: Math.random() * 1.5, repeat: Infinity, repeatDelay: 0.5 }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                delay: Math.random() * 1.5,
+                repeat: Infinity,
+                repeatDelay: 0.5,
+              }}
               className="absolute w-2 h-3 rounded-sm"
-              style={{ background: ['#fbbf24', '#f59e0b', '#fcd34d', '#d97706', '#fde68a'][i % 5] }}
+              style={{
+                background: ['#fbbf24', '#f59e0b', '#fcd34d', '#d97706', '#fde68a'][
+                  i % 5
+                ],
+              }}
             />
           ))}
 
@@ -93,7 +109,9 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
               className="flex items-center justify-center gap-2 text-amber-950"
             >
               <Sparkles className="w-5 h-5" />
-              <span className="text-xs font-bold tracking-widest uppercase">Cerimônia oficial · Race Arena {ROLE_LABEL[roleType]}</span>
+              <span className="text-xs font-bold tracking-widest uppercase">
+                Cerimônia oficial · Race Arena {ROLE_LABEL[roleType]}
+              </span>
               <Sparkles className="w-5 h-5" />
             </motion.div>
 
@@ -126,13 +144,18 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
               className="mt-5 flex flex-col items-center gap-2"
             >
               <Avatar className="w-20 h-20 ring-4 ring-amber-100 shadow-lg">
-                <AvatarImage src={champion.avatar_url ?? undefined} alt={champion.winner_name} />
+                <AvatarImage
+                  src={champion.avatar_url ?? undefined}
+                  alt={champion.winner_name}
+                />
                 <AvatarFallback className="bg-amber-700 text-amber-50 font-bold text-xl">
                   {champion.winner_name.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <p className="text-2xl font-black text-amber-950">{champion.winner_name}</p>
-              <p className="text-xs text-amber-900/80 font-medium">{champion.season_name}</p>
+              <p className="text-xs text-amber-900/80 font-medium">
+                {champion.season_name}
+              </p>
             </motion.div>
 
             {/* Stats */}
@@ -143,20 +166,32 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
               className="grid grid-cols-3 gap-2 mt-5 text-amber-950"
             >
               <div className="bg-amber-100/70 rounded-lg p-3">
-                <div className="text-2xl font-black tabular-nums">{champion.deals_count}</div>
-                <div className="text-[10px] font-semibold uppercase tracking-wide">Vendas</div>
+                <div className="text-2xl font-black tabular-nums">
+                  {champion.deals_count}
+                </div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide">
+                  Vendas
+                </div>
               </div>
               <div className="bg-amber-100/70 rounded-lg p-3">
                 <div className="text-2xl font-black tabular-nums">
-                  {Number(champion.total_sales).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                  {Number(champion.total_sales).toLocaleString('pt-BR', {
+                    maximumFractionDigits: 0,
+                  })}
                 </div>
-                <div className="text-[10px] font-semibold uppercase tracking-wide">Faturado</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide">
+                  Faturado
+                </div>
               </div>
               <div className="bg-amber-100/70 rounded-lg p-3">
                 <div className="text-2xl font-black tabular-nums">
-                  {Number(champion.score).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+                  {Number(champion.score).toLocaleString('pt-BR', {
+                    maximumFractionDigits: 0,
+                  })}
                 </div>
-                <div className="text-[10px] font-semibold uppercase tracking-wide">Pontos</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wide">
+                  Pontos
+                </div>
               </div>
             </motion.div>
 
@@ -168,12 +203,18 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
                 transition={{ delay: 0.9 }}
                 className="mt-4 text-left text-amber-950 bg-amber-100/40 rounded-lg p-3"
               >
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-1">Pódio Final</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-1">
+                  Pódio Final
+                </p>
                 <ol className="space-y-0.5 text-sm">
                   {champion.top5.slice(0, 5).map((p, i) => (
                     <li key={i} className="flex justify-between gap-2">
-                      <span className="font-semibold">{i + 1}º {p.salesperson_name}</span>
-                      <span className="tabular-nums opacity-80">{Number(p.progress).toFixed(0)}%</span>
+                      <span className="font-semibold">
+                        {i + 1}º {p.salesperson_name}
+                      </span>
+                      <span className="tabular-nums opacity-80">
+                        {Number(p.progress).toFixed(0)}%
+                      </span>
                     </li>
                   ))}
                 </ol>
@@ -181,10 +222,17 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
             )}
 
             <div className="flex gap-2 mt-6">
-              <Button onClick={handleShare} variant="outline" className="flex-1 border-amber-900/30 text-amber-950 hover:bg-amber-100">
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="flex-1 border-amber-900/30 text-amber-950 hover:bg-amber-100"
+              >
                 <Share2 className="w-4 h-4 mr-2" /> Compartilhar
               </Button>
-              <Button onClick={dismiss} className="flex-1 bg-amber-900 text-amber-50 hover:bg-amber-800">
+              <Button
+                onClick={dismiss}
+                className="flex-1 bg-amber-900 text-amber-50 hover:bg-amber-800"
+              >
                 Fechar cerimônia
               </Button>
             </div>

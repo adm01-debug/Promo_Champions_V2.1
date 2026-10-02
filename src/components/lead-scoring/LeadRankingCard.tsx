@@ -243,10 +243,7 @@ export function LeadRankingCard({
                                 : 'text-rose-500'
                             )}
                           >
-                            {Math.abs(
-                              lead.trend[lead.trend.length - 1] - lead.trend[0]
-                            )}
-                            %
+                            {Math.abs(lead.trend[lead.trend.length - 1] - lead.trend[0])}%
                           </span>
                         </div>
                       )}
@@ -333,12 +330,8 @@ export function LeadRankingCard({
                                     label="Deal Momentum"
                                     value={
                                       /* eslint-disable no-restricted-syntax */
-                                      (
-                                        lead.factors as unknown as Record<
-                                          string,
-                                          number
-                                        >
-                                      ).dealValue
+                                      (lead.factors as unknown as Record<string, number>)
+                                        .dealValue
                                       /* eslint-enable no-restricted-syntax */
                                     }
                                     maxValue={25}

@@ -86,7 +86,6 @@ export function useCallInsight(recordingId?: string) {
   });
 }
 
-
 export function useCreateRecordingWithAnalysis() {
   const qc = useQueryClient();
   return useMutation({

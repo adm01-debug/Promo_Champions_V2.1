@@ -58,10 +58,10 @@ export const SkeletonTransition: FC<SkeletonTransitionProps> = ({
           initial="initial"
           animate="animate"
           exit="exit"
-          transition={{ 
-            duration: durationSec, 
+          transition={{
+            duration: durationSec,
             ease: [0.4, 0, 0.2, 1],
-            y: { duration: durationSec * 0.8 }
+            y: { duration: durationSec * 0.8 },
           }}
         >
           {children}

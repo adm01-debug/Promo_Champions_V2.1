@@ -53,7 +53,7 @@ export function computeRunRateProjection(params: {
   // Dias corridos: dia 1 do mês => daysElapsed = 1 (não 0), para paceDaily fazer sentido.
   const daysElapsed = Math.max(
     1,
-    Math.floor((now.getTime() - monthStart.getTime()) / msPerDay) + 1,
+    Math.floor((now.getTime() - monthStart.getTime()) / msPerDay) + 1
   );
   const daysInMonth =
     Math.floor((monthEnd.getTime() - monthStart.getTime()) / msPerDay) + 1;
@@ -110,7 +110,7 @@ interface UseRunRateProjectionOptions {
  */
 export function useRunRateProjection(
   salespersonId: string | null | undefined,
-  options: UseRunRateProjectionOptions = {},
+  options: UseRunRateProjectionOptions = {}
 ) {
   const now = options.now ?? new Date();
   const monthKey = format(now, 'yyyy-MM');
@@ -130,7 +130,7 @@ export function useRunRateProjection(
           .from('sales')
           .select('amount, status')
           .or(
-            `salesperson_id.eq.${salespersonId},sdr_id.eq.${salespersonId},closer_id.eq.${salespersonId}`,
+            `salesperson_id.eq.${salespersonId},sdr_id.eq.${salespersonId},closer_id.eq.${salespersonId}`
           )
           .in('status', [...WON_SALE_STATUSES])
           .gte('created_at', monthStart.toISOString())
@@ -148,7 +148,7 @@ export function useRunRateProjection(
 
       const mtdRevenue = (salesRes.data ?? []).reduce(
         (sum, s) => sum + Number(s.amount ?? 0),
-        0,
+        0
       );
       const goal = Number(goalRes.data?.goal_amount ?? 0);
 
@@ -156,4 +156,3 @@ export function useRunRateProjection(
     },
   });
 }
-

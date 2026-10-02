@@ -1,8 +1,8 @@
-const DOW_PT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+const DOW_PT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 export function formatWindow(dow: number, hour: number): string {
-  const d = DOW_PT[dow] ?? "?";
-  const h = String(hour).padStart(2, "0");
+  const d = DOW_PT[dow] ?? '?';
+  const h = String(hour).padStart(2, '0');
   return `${d} ${h}:00`;
 }
 

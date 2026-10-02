@@ -45,42 +45,48 @@ export function useSoundSettings() {
     localStorage.setItem(VOLUME_STORAGE_KEY, volume.toString());
   }, [volume]);
 
-  const playSound = useCallback((soundType: SoundType = selectedSound) => {
-    if (soundType === 'none' || volume === 0) return;
+  const playSound = useCallback(
+    (soundType: SoundType = selectedSound) => {
+      if (soundType === 'none' || volume === 0) return;
 
-    switch (soundType) {
-      case 'fanfare':
-        playOscillator(523.25, 0, 0.15, 0.3 * volume);
-        playOscillator(659.25, 0.1, 0.15, 0.3 * volume);
-        playOscillator(783.99, 0.2, 0.15, 0.3 * volume);
-        playOscillator(1046.50, 0.3, 0.3, 0.3 * volume);
-        break;
-      
-      case 'chime':
-        playOscillator(880, 0, 0.4, 0.2 * volume);
-        playOscillator(1108.73, 0.15, 0.35, 0.2 * volume);
-        playOscillator(1318.51, 0.3, 0.4, 0.15 * volume);
-        break;
-      
-      case 'bell':
-        playOscillator(659.25, 0, 0.5, 0.25 * volume);
-        playOscillator(830.61, 0, 0.5, 0.15 * volume);
-        playOscillator(987.77, 0.1, 0.4, 0.2 * volume);
-        playOscillator(1318.51, 0.2, 0.5, 0.15 * volume);
-        break;
-      
-      case 'success':
-        playOscillator(440, 0, 0.1, 0.25 * volume);
-        playOscillator(554.37, 0.08, 0.1, 0.25 * volume);
-        playOscillator(659.25, 0.16, 0.1, 0.25 * volume);
-        playOscillator(880, 0.24, 0.25, 0.3 * volume);
-        break;
-    }
-  }, [playOscillator, selectedSound, volume]);
+      switch (soundType) {
+        case 'fanfare':
+          playOscillator(523.25, 0, 0.15, 0.3 * volume);
+          playOscillator(659.25, 0.1, 0.15, 0.3 * volume);
+          playOscillator(783.99, 0.2, 0.15, 0.3 * volume);
+          playOscillator(1046.5, 0.3, 0.3, 0.3 * volume);
+          break;
 
-  const previewSound = useCallback((soundType: SoundType) => {
-    playSound(soundType);
-  }, [playSound]);
+        case 'chime':
+          playOscillator(880, 0, 0.4, 0.2 * volume);
+          playOscillator(1108.73, 0.15, 0.35, 0.2 * volume);
+          playOscillator(1318.51, 0.3, 0.4, 0.15 * volume);
+          break;
+
+        case 'bell':
+          playOscillator(659.25, 0, 0.5, 0.25 * volume);
+          playOscillator(830.61, 0, 0.5, 0.15 * volume);
+          playOscillator(987.77, 0.1, 0.4, 0.2 * volume);
+          playOscillator(1318.51, 0.2, 0.5, 0.15 * volume);
+          break;
+
+        case 'success':
+          playOscillator(440, 0, 0.1, 0.25 * volume);
+          playOscillator(554.37, 0.08, 0.1, 0.25 * volume);
+          playOscillator(659.25, 0.16, 0.1, 0.25 * volume);
+          playOscillator(880, 0.24, 0.25, 0.3 * volume);
+          break;
+      }
+    },
+    [playOscillator, selectedSound, volume]
+  );
+
+  const previewSound = useCallback(
+    (soundType: SoundType) => {
+      playSound(soundType);
+    },
+    [playSound]
+  );
 
   return {
     selectedSound,

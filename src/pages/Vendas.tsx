@@ -49,7 +49,12 @@ const markupTierOptions: { label: string; value: MarkupTier }[] = [
   { label: MARKUP_TIER_LABELS.unknown, value: 'unknown' },
 ];
 
-const VALID_TIERS: ReadonlyArray<string> = ['excellent', 'healthy', 'critical', 'unknown'];
+const VALID_TIERS: ReadonlyArray<string> = [
+  'excellent',
+  'healthy',
+  'critical',
+  'unknown',
+];
 
 const Vendas = () => {
   const [searchParams] = useSearchParams();
@@ -58,11 +63,10 @@ const Vendas = () => {
   const [sortBy, setSortBy] = useState('date_desc');
   const [statusFilter, setStatusFilter] = useState('');
   const [markupFilter, setMarkupFilter] = useState(
-    VALID_TIERS.includes(initialMarkup) ? initialMarkup : '',
+    VALID_TIERS.includes(initialMarkup) ? initialMarkup : ''
   );
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
   const { data: sales, isLoading } = useSalesData('');
-
 
   // Fuse.js for fuzzy search
   const fuse = useMemo(() => {
@@ -130,9 +134,8 @@ const Vendas = () => {
 
   const markupSummary = useMemo(
     () => summarizeMarkup(filteredAndSortedSales.map(s => s.markup_pct)),
-    [filteredAndSortedSales],
+    [filteredAndSortedSales]
   );
-
 
   const {
     paginatedItems,
@@ -171,9 +174,7 @@ const Vendas = () => {
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   </div>
                   <div>
-                    <h1 className="text-page-title uppercase italic">
-                      Vendas
-                    </h1>
+                    <h1 className="text-page-title uppercase italic">Vendas</h1>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">
                         Database v2.4
@@ -270,7 +271,6 @@ const Vendas = () => {
                   </div>
                 </div>
               </div>
-
 
               {/* HUD Table */}
               {filteredAndSortedSales.length > 0 ? (

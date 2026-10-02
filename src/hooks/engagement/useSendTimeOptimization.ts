@@ -29,7 +29,6 @@ export interface ScheduledSend {
   created_at: string;
 }
 
-
 export function useOptimizeSendTime() {
   const qc = useQueryClient();
   return useMutation({
@@ -58,7 +57,6 @@ export function useOptimizeSendTime() {
       }),
   });
 }
-
 
 export function useGlobalSendTimeStats() {
   return useQuery({

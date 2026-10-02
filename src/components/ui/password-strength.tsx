@@ -1,6 +1,14 @@
-import { useMemo, useState, useEffect } from "react";
-import { Check, X, Shield, ShieldAlert, ShieldCheck, AlertTriangle, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useMemo, useState, useEffect } from 'react';
+import {
+  Check,
+  X,
+  Shield,
+  ShieldAlert,
+  ShieldCheck,
+  AlertTriangle,
+  Loader2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { PWNED_PASSWORDS_RANGE_URL } from '@/config/external';
 
 interface PasswordStrengthProps {
@@ -18,16 +26,21 @@ async function sha1(message: string): Promise<string> {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-1', msgBuffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+  return hashArray
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
 }
 
-async function checkLeakedPassword(password: string): Promise<{ leaked: boolean; count: number }> {
+async function checkLeakedPassword(
+  password: string
+): Promise<{ leaked: boolean; count: number }> {
   try {
     const hash = await sha1(password);
     const prefix = hash.substring(0, 5);
     const suffix = hash.substring(5);
     const response = await fetch(`${PWNED_PASSWORDS_RANGE_URL}/${prefix}`, {
-      headers: { 'Add-Padding': 'true' }
+      headers: { 'Add-Padding': 'true' },
     });
     if (!response.ok) return { leaked: false, count: 0 };
     const text = await response.text();
@@ -44,9 +57,19 @@ async function checkLeakedPassword(password: string): Promise<{ leaked: boolean;
   }
 }
 
-export function PasswordStrength({ password, className, onStrengthChange }: PasswordStrengthProps) {
-  const [leakCheck, setLeakCheck] = useState<{ checking: boolean; leaked: boolean; count: number }>({
-    checking: false, leaked: false, count: 0
+export function PasswordStrength({
+  password,
+  className,
+  onStrengthChange,
+}: PasswordStrengthProps) {
+  const [leakCheck, setLeakCheck] = useState<{
+    checking: boolean;
+    leaked: boolean;
+    count: number;
+  }>({
+    checking: false,
+    leaked: false,
+    count: 0,
   });
 
   useEffect(() => {
@@ -69,34 +92,44 @@ export function PasswordStrength({ password, className, onStrengthChange }: Pass
     };
   }, [password]);
 
-  const requirements = useMemo((): PasswordRequirement[] => [
-    { label: "Mínimo 8 caracteres", met: password.length >= 8 },
-    { label: "Letra maiúscula (A-Z)", met: /[A-Z]/.test(password) },
-    { label: "Letra minúscula (a-z)", met: /[a-z]/.test(password) },
-    { label: "Número (0-9)", met: /[0-9]/.test(password) },
-    { label: "Caractere especial (!@#$%)", met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(password) },
-  ], [password]);
+  const requirements = useMemo(
+    (): PasswordRequirement[] => [
+      { label: 'Mínimo 8 caracteres', met: password.length >= 8 },
+      { label: 'Letra maiúscula (A-Z)', met: /[A-Z]/.test(password) },
+      { label: 'Letra minúscula (a-z)', met: /[a-z]/.test(password) },
+      { label: 'Número (0-9)', met: /[0-9]/.test(password) },
+      {
+        label: 'Caractere especial (!@#$%)',
+        met: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?`~]/.test(password),
+      },
+    ],
+    [password]
+  );
 
   const strength = useMemo(() => {
-    if (!password) return { score: 0, label: "", color: "" };
+    if (!password) return { score: 0, label: '', color: '' };
     const metCount = requirements.filter(r => r.met).length;
-    if (leakCheck.leaked) return { score: 10, label: "Comprometida!", color: "bg-destructive" };
-    if (metCount <= 1) return { score: 20, label: "Muito fraca", color: "bg-destructive" };
-    if (metCount === 2) return { score: 40, label: "Fraca", color: "bg-streak" };
-    if (metCount === 3) return { score: 60, label: "Média", color: "bg-warning" };
-    if (metCount === 4) return { score: 80, label: "Forte", color: "bg-success" };
-    return { score: 100, label: "Muito forte", color: "bg-success" };
+    if (leakCheck.leaked)
+      return { score: 10, label: 'Comprometida!', color: 'bg-destructive' };
+    if (metCount <= 1)
+      return { score: 20, label: 'Muito fraca', color: 'bg-destructive' };
+    if (metCount === 2) return { score: 40, label: 'Fraca', color: 'bg-streak' };
+    if (metCount === 3) return { score: 60, label: 'Média', color: 'bg-warning' };
+    if (metCount === 4) return { score: 80, label: 'Forte', color: 'bg-success' };
+    return { score: 100, label: 'Muito forte', color: 'bg-success' };
   }, [password, requirements, leakCheck.leaked]);
 
   useEffect(() => {
     if (onStrengthChange) {
-      const isStrong = requirements.every(r => r.met) && !leakCheck.leaked && !leakCheck.checking;
+      const isStrong =
+        requirements.every(r => r.met) && !leakCheck.leaked && !leakCheck.checking;
       onStrengthChange(isStrong);
     }
   }, [requirements, leakCheck, onStrengthChange]);
 
   const getIcon = () => {
-    if (leakCheck.leaked) return <AlertTriangle className="h-5 w-5 text-destructive animate-pulse" />;
+    if (leakCheck.leaked)
+      return <AlertTriangle className="h-5 w-5 text-destructive animate-pulse" />;
     if (strength.score <= 40) return <ShieldAlert className="h-5 w-5 text-destructive" />;
     if (strength.score <= 60) return <Shield className="h-5 w-5 text-warning" />;
     return <ShieldCheck className="h-5 w-5 text-success" />;
@@ -105,7 +138,7 @@ export function PasswordStrength({ password, className, onStrengthChange }: Pass
   if (!password) return null;
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn('space-y-3', className)}>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -113,20 +146,33 @@ export function PasswordStrength({ password, className, onStrengthChange }: Pass
             <span className="text-sm font-medium">Força da Senha</span>
           </div>
           <div className="flex items-center gap-2">
-            {leakCheck.checking && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-            <span className={cn(
-              "text-sm font-semibold",
-              leakCheck.leaked && "text-destructive",
-              !leakCheck.leaked && strength.score <= 40 && "text-destructive",
-              !leakCheck.leaked && strength.score > 40 && strength.score <= 60 && "text-warning",
-              !leakCheck.leaked && strength.score > 60 && "text-success"
-            )}>
+            {leakCheck.checking && (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            )}
+            <span
+              className={cn(
+                'text-sm font-semibold',
+                leakCheck.leaked && 'text-destructive',
+                !leakCheck.leaked && strength.score <= 40 && 'text-destructive',
+                !leakCheck.leaked &&
+                  strength.score > 40 &&
+                  strength.score <= 60 &&
+                  'text-warning',
+                !leakCheck.leaked && strength.score > 60 && 'text-success'
+              )}
+            >
               {strength.label}
             </span>
           </div>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
-          <div className={cn("h-full transition-all duration-500 ease-out rounded-full", strength.color)} style={{ width: `${strength.score}%` }} />
+          <div
+            className={cn(
+              'h-full transition-all duration-500 ease-out rounded-full',
+              strength.color
+            )}
+            style={{ width: `${strength.score}%` }}
+          />
         </div>
       </div>
 
@@ -136,8 +182,8 @@ export function PasswordStrength({ password, className, onStrengthChange }: Pass
           <div className="space-y-1">
             <p className="text-sm font-semibold text-destructive">Senha comprometida!</p>
             <p className="text-xs text-destructive/80">
-              Esta senha aparece em {leakCheck.count.toLocaleString('pt-BR')} vazamentos de dados. 
-              Escolha uma senha diferente para sua segurança.
+              Esta senha aparece em {leakCheck.count.toLocaleString('pt-BR')} vazamentos
+              de dados. Escolha uma senha diferente para sua segurança.
             </p>
           </div>
         </div>
@@ -145,28 +191,52 @@ export function PasswordStrength({ password, className, onStrengthChange }: Pass
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {requirements.map((req, index) => (
-          <div key={index} className={cn(
-            "flex items-center gap-2 text-xs p-2 rounded-lg transition-all duration-300",
-            req.met ? "bg-success/10 text-success" : "bg-muted/50 text-muted-foreground"
-          )}>
-            {req.met ? <Check className="h-3.5 w-3.5 shrink-0" /> : <X className="h-3.5 w-3.5 shrink-0" />}
+          <div
+            key={index}
+            className={cn(
+              'flex items-center gap-2 text-xs p-2 rounded-lg transition-all duration-300',
+              req.met ? 'bg-success/10 text-success' : 'bg-muted/50 text-muted-foreground'
+            )}
+          >
+            {req.met ? (
+              <Check className="h-3.5 w-3.5 shrink-0" />
+            ) : (
+              <X className="h-3.5 w-3.5 shrink-0" />
+            )}
             <span>{req.label}</span>
           </div>
         ))}
-        <div className={cn(
-          "flex items-center gap-2 text-xs p-2 rounded-lg transition-all duration-300 sm:col-span-2",
-          leakCheck.checking && "bg-muted/50 text-muted-foreground",
-          !leakCheck.checking && !leakCheck.leaked && password.length >= 8 && "bg-success/10 text-success",
-          leakCheck.leaked && "bg-destructive/10 text-destructive"
-        )}>
+        <div
+          className={cn(
+            'flex items-center gap-2 text-xs p-2 rounded-lg transition-all duration-300 sm:col-span-2',
+            leakCheck.checking && 'bg-muted/50 text-muted-foreground',
+            !leakCheck.checking &&
+              !leakCheck.leaked &&
+              password.length >= 8 &&
+              'bg-success/10 text-success',
+            leakCheck.leaked && 'bg-destructive/10 text-destructive'
+          )}
+        >
           {leakCheck.checking ? (
-            <><Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /><span>Verificando vazamentos...</span></>
+            <>
+              <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+              <span>Verificando vazamentos...</span>
+            </>
           ) : leakCheck.leaked ? (
-            <><AlertTriangle className="h-3.5 w-3.5 shrink-0" /><span>Senha encontrada em vazamentos</span></>
+            <>
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              <span>Senha encontrada em vazamentos</span>
+            </>
           ) : password.length >= 8 ? (
-            <><ShieldCheck className="h-3.5 w-3.5 shrink-0" /><span>Sem vazamentos conhecidos</span></>
+            <>
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
+              <span>Sem vazamentos conhecidos</span>
+            </>
           ) : (
-            <><Shield className="h-3.5 w-3.5 shrink-0" /><span>Verificação após 8 caracteres</span></>
+            <>
+              <Shield className="h-3.5 w-3.5 shrink-0" />
+              <span>Verificação após 8 caracteres</span>
+            </>
           )}
         </div>
       </div>

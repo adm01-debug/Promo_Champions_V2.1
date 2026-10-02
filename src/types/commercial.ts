@@ -47,12 +47,36 @@ export interface ScoringRulePayload {
 }
 
 export type ApprovalPayload =
-  | { type: 'goal_change'; new_values: CommercialGoalPayload; old_values?: Partial<CommercialGoalPayload> }
-  | { type: 'commission_change'; new_values: CommissionRulePayload; old_values?: Partial<CommissionRulePayload> }
-  | { type: 'scoring_rule_change'; new_values: ScoringRulePayload; old_values?: Partial<ScoringRulePayload> }
-  | { type: 'territory_change'; new_values: Record<string, unknown>; old_values?: Record<string, unknown> }
-  | { type: 'discount_override'; new_values: Record<string, unknown>; old_values?: Record<string, unknown> }
-  | { type: 'other'; new_values: Record<string, unknown>; old_values?: Record<string, unknown> };
+  | {
+      type: 'goal_change';
+      new_values: CommercialGoalPayload;
+      old_values?: Partial<CommercialGoalPayload>;
+    }
+  | {
+      type: 'commission_change';
+      new_values: CommissionRulePayload;
+      old_values?: Partial<CommissionRulePayload>;
+    }
+  | {
+      type: 'scoring_rule_change';
+      new_values: ScoringRulePayload;
+      old_values?: Partial<ScoringRulePayload>;
+    }
+  | {
+      type: 'territory_change';
+      new_values: Record<string, unknown>;
+      old_values?: Record<string, unknown>;
+    }
+  | {
+      type: 'discount_override';
+      new_values: Record<string, unknown>;
+      old_values?: Record<string, unknown>;
+    }
+  | {
+      type: 'other';
+      new_values: Record<string, unknown>;
+      old_values?: Record<string, unknown>;
+    };
 
 export interface ApprovalRequest {
   id: string;
@@ -106,10 +130,14 @@ export type CommercialAuditMetadata =
 export function isApprovalRequest(value: unknown): value is ApprovalRequest {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
-  return typeof v.id === 'string' && typeof v.type === 'string' && typeof v.status === 'string';
+  return (
+    typeof v.id === 'string' && typeof v.type === 'string' && typeof v.status === 'string'
+  );
 }
 
-export function isCommercialAuditMetadata(value: unknown): value is CommercialAuditMetadata {
+export function isCommercialAuditMetadata(
+  value: unknown
+): value is CommercialAuditMetadata {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
   return typeof v.action === 'string';

@@ -1,11 +1,15 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trophy, Zap, Shield } from "lucide-react";
-import { useLeagues, LEAGUE_CONFIG, type LeagueTier } from "@/hooks/gamification/useLeagues";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Trophy, Zap, Shield } from 'lucide-react';
+import {
+  useLeagues,
+  LEAGUE_CONFIG,
+  type LeagueTier,
+} from '@/hooks/gamification/useLeagues';
+import { cn } from '@/lib/utils';
 
 function LeagueCardImpl() {
   const { data: members, isLoading } = useLeagues();
@@ -15,7 +19,7 @@ function LeagueCardImpl() {
       <div className="glass rounded-xl p-5 animate-pulse">
         <div className="h-6 bg-muted/50 rounded w-40 mb-4" />
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div key={i} className="h-12 bg-muted/30 rounded-lg" />
           ))}
         </div>
@@ -31,9 +35,9 @@ function LeagueCardImpl() {
     .map(([tier, config]) => ({
       tier: tier as LeagueTier,
       config,
-      members: members.filter((m) => m.league === tier),
+      members: members.filter(m => m.league === tier),
     }))
-    .filter((g) => g.members.length > 0);
+    .filter(g => g.members.length > 0);
 
   return (
     <div className="glass rounded-xl border border-border/30 overflow-hidden">
@@ -56,13 +60,13 @@ function LeagueCardImpl() {
       <div className="p-4 border-b border-border/30">
         <div className="flex items-center justify-center gap-2 flex-wrap">
           {Object.entries(LEAGUE_CONFIG).map(([tier, config]) => {
-            const count = members.filter((m) => m.league === tier).length;
+            const count = members.filter(m => m.league === tier).length;
             return (
               <motion.div
                 key={tier}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border",
-                  count > 0 ? "border-border/50" : "border-border/20 opacity-50"
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border',
+                  count > 0 ? 'border-border/50' : 'border-border/20 opacity-50'
                 )}
                 whileHover={{ scale: 1.05 }}
               >
@@ -94,8 +98,7 @@ function LeagueCardImpl() {
                 <div className="flex-1 h-px bg-border/30" />
                 {config.xpBonus > 0 && (
                   <span className="text-[10px] text-success flex items-center gap-0.5">
-                    <Zap className="h-2.5 w-2.5" />
-                    +{config.xpBonus}% XP
+                    <Zap className="h-2.5 w-2.5" />+{config.xpBonus}% XP
                   </span>
                 )}
               </div>
@@ -109,10 +112,14 @@ function LeagueCardImpl() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
                     className={cn(
-                      "flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors",
-                      idx === 0 && tier === "legendary" ? "bg-streak/5 border border-streak/20" :
-                      idx === 0 && tier === "diamond" ? "bg-accent/5 border border-accent/20" :
-                      idx === 0 && tier === "gold" ? "bg-warning/5 border border-warning/20" : ""
+                      'flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors',
+                      idx === 0 && tier === 'legendary'
+                        ? 'bg-streak/5 border border-streak/20'
+                        : idx === 0 && tier === 'diamond'
+                          ? 'bg-accent/5 border border-accent/20'
+                          : idx === 0 && tier === 'gold'
+                            ? 'bg-warning/5 border border-warning/20'
+                            : ''
                     )}
                   >
                     {/* Rank */}
@@ -124,19 +131,27 @@ function LeagueCardImpl() {
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={member.avatar_url || undefined} />
                       <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
-                        {member.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                        {member.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')
+                          .slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
 
                     {/* Name */}
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium truncate block">{member.name}</span>
+                      <span className="text-sm font-medium truncate block">
+                        {member.name}
+                      </span>
                     </div>
 
                     {/* Points */}
                     <div className="flex items-center gap-1">
                       <Trophy className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs font-bold">{member.points.toLocaleString("pt-BR")}</span>
+                      <span className="text-xs font-bold">
+                        {member.points.toLocaleString('pt-BR')}
+                      </span>
                     </div>
                   </motion.div>
                 ))}

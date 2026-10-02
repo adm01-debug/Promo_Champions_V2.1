@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface ICPData {
   id: string;
@@ -22,11 +22,9 @@ interface ICPDataWithClient extends ICPData {
 
 export function useICPData() {
   return useQuery({
-    queryKey: ["icp-data"],
+    queryKey: ['icp-data'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("icp_data")
-        .select("*");
+      const { data, error } = await supabase.from('icp_data').select('*');
 
       if (error) throw error;
       return data as ICPData[];
@@ -35,12 +33,11 @@ export function useICPData() {
   });
 }
 
-
 export function useICPDataMap() {
   const { data: icpData, isLoading } = useICPData();
 
   const icpMap = new Map<string, ICPData>();
-  icpData?.forEach((icp) => {
+  icpData?.forEach(icp => {
     icpMap.set(icp.client_id, icp);
   });
 
@@ -50,11 +47,9 @@ export function useICPDataMap() {
 // Get ICP status by client name (for pipeline deals)
 export function useICPByClientName() {
   return useQuery({
-    queryKey: ["icp-by-client-name"],
+    queryKey: ['icp-by-client-name'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("icp_data")
-        .select(`
+      const { data, error } = await supabase.from('icp_data').select(`
           *,
           clients(name)
         `);
@@ -88,22 +83,19 @@ export function useUpdateICPData() {
       is_icp_match?: boolean;
     }) => {
       const { id, ...data } = updates;
-      const { error } = await supabase
-        .from("icp_data")
-        .update(data)
-        .eq("id", id);
+      const { error } = await supabase.from('icp_data').update(data).eq('id', id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["icp-data"] });
-      queryClient.invalidateQueries({ queryKey: ["icp-by-client-name"] });
-      toast.success("Dados ICP atualizados com sucesso");
+      queryClient.invalidateQueries({ queryKey: ['icp-data'] });
+      queryClient.invalidateQueries({ queryKey: ['icp-by-client-name'] });
+      toast.success('Dados ICP atualizados com sucesso');
     },
-    onError: (error) => {
-      toast.error("Erro ao atualizar dados ICP");
+    onError: error => {
+      toast.error('Erro ao atualizar dados ICP');
       if (import.meta.env.DEV) {
-        console.error("Error updating ICP data:", error);
+        console.error('Error updating ICP data:', error);
       }
     },
   });

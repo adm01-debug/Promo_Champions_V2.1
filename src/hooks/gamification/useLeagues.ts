@@ -142,7 +142,6 @@ export function useLeagues() {
   });
 }
 
-
 export function useJoinLeague() {
   const queryClient = useQueryClient();
 

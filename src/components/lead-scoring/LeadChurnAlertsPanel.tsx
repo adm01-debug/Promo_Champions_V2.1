@@ -121,9 +121,7 @@ export function LeadChurnAlertsPanel({
                         : 'bg-status-warning'
                     )}
                   >
-                    {lead.churnRisk?.risk_level === 'critical'
-                      ? 'CRÍTICO'
-                      : 'ALTO RISCO'}
+                    {lead.churnRisk?.risk_level === 'critical' ? 'CRÍTICO' : 'ALTO RISCO'}
                   </Badge>
                 </div>
 

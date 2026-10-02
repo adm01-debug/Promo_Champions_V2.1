@@ -1,4 +1,4 @@
-export type MetricsHealth = "poor" | "fair" | "good" | "excellent";
+export type MetricsHealth = 'poor' | 'fair' | 'good' | 'excellent';
 
 export interface ConversationMetrics {
   id: string;
@@ -18,34 +18,36 @@ export interface ConversationMetrics {
 }
 
 export function classifyHealth(score: number): MetricsHealth {
-  if (score >= 80) return "excellent";
-  if (score >= 60) return "good";
-  if (score >= 40) return "fair";
-  return "poor";
+  if (score >= 80) return 'excellent';
+  if (score >= 60) return 'good';
+  if (score >= 40) return 'fair';
+  return 'poor';
 }
 
-export function healthBadgeVariant(h: MetricsHealth): "destructive" | "warning" | "info" | "high" {
-  if (h === "excellent") return "high";
-  if (h === "good") return "info";
-  if (h === "fair") return "warning";
-  return "destructive";
+export function healthBadgeVariant(
+  h: MetricsHealth
+): 'destructive' | 'warning' | 'info' | 'high' {
+  if (h === 'excellent') return 'high';
+  if (h === 'good') return 'info';
+  if (h === 'fair') return 'warning';
+  return 'destructive';
 }
 
 export function healthLabel(h: MetricsHealth): string {
-  return { poor: "Crítico", fair: "Regular", good: "Bom", excellent: "Excelente" }[h];
+  return { poor: 'Crítico', fair: 'Regular', good: 'Bom', excellent: 'Excelente' }[h];
 }
 
 export function healthHsl(h: MetricsHealth): string {
   return {
-    poor: "hsl(var(--destructive))",
-    fair: "hsl(var(--warning))",
-    good: "hsl(var(--info))",
-    excellent: "hsl(var(--success, var(--primary)))",
+    poor: 'hsl(var(--destructive))',
+    fair: 'hsl(var(--warning))',
+    good: 'hsl(var(--info))',
+    excellent: 'hsl(var(--success, var(--primary)))',
   }[h];
 }
 
 export function formatWPM(wpm: number): string {
-  return wpm > 0 ? `${wpm} ppm` : "—";
+  return wpm > 0 ? `${wpm} ppm` : '—';
 }
 
 export function formatPct(v: number): string {

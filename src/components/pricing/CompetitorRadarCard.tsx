@@ -82,10 +82,8 @@ export function CompetitorRadarCard({ threats }: CompetitorRadarCardProps) {
                   </div>
                   <div className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">
                     Delta: -
-                    {Math.round(
-                      (1 - threat.competitor_price / threat.our_price) * 100
-                    )}
-                    % vs Concorrência
+                    {Math.round((1 - threat.competitor_price / threat.our_price) * 100)}%
+                    vs Concorrência
                   </div>
                 </div>
               </div>

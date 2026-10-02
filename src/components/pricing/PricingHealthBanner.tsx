@@ -62,9 +62,7 @@ export function PricingHealthBanner({ health, dealsCount }: PricingHealthBannerP
           </div>
           <div className="text-xl font-bold">
             {dealsCount}{' '}
-            <span className="text-xs opacity-60 font-medium tracking-normal">
-              deals
-            </span>
+            <span className="text-xs opacity-60 font-medium tracking-normal">deals</span>
           </div>
         </div>
         <Button className="bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full px-8 shadow-xl">

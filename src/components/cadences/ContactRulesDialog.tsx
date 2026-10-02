@@ -1,38 +1,47 @@
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Clock, ShieldCheck, UserCheck } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Clock, ShieldCheck, UserCheck } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export function ContactRulesDialog() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rules, setRules] = useState({
-    quiet_hours: { start: "20:00", end: "08:00" },
+    quiet_hours: { start: '20:00', end: '08:00' },
     max_calls_per_day: 3,
     prioritize_human: true,
   });
 
   const fetchRules = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data: sp } = await supabase
-      .from("salespeople")
-      .select("id")
-      .eq("auth_user_id", user.id)
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', user.id)
       .maybeSingle();
 
     if (!sp) return;
 
     const { data: pref } = await supabase
-      .from("salesperson_preferences")
-      .select("contact_rules")
-      .eq("salesperson_id", sp.id)
+      .from('salesperson_preferences')
+      .select('contact_rules')
+      .eq('salesperson_id', sp.id)
       .maybeSingle();
 
     if (pref?.contact_rules) {
@@ -49,24 +58,26 @@ export function ContactRulesDialog() {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Usuário não autenticado");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
 
       const { data: sp } = await supabase
-        .from("salespeople")
-        .select("id")
-        .eq("auth_user_id", user.id)
+        .from('salespeople')
+        .select('id')
+        .eq('auth_user_id', user.id)
         .maybeSingle();
 
-      if (!sp) throw new Error("Vendedor não encontrado");
+      if (!sp) throw new Error('Vendedor não encontrado');
 
       const { error } = await supabase
-        .from("salesperson_preferences")
+        .from('salesperson_preferences')
         .update({ contact_rules: rules })
-        .eq("salesperson_id", sp.id);
+        .eq('salesperson_id', sp.id);
 
       if (error) throw error;
-      toast.success("Regras de contato salvas!");
+      toast.success('Regras de contato salvas!');
       setOpen(false);
     } catch (e) {
       toast.error(`Erro: ${e instanceof Error ? e.message : String(e)}`);
@@ -99,21 +110,33 @@ export function ContactRulesDialog() {
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   Horário de Silêncio
                 </Label>
-                <p className="text-[10px] text-muted-foreground">Não enviar mensagens ou ligar nestes horários</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Não enviar mensagens ou ligar nestes horários
+                </p>
               </div>
               <div className="flex items-center gap-2">
-                <Input 
-                  type="time" 
-                  className="w-24 h-8 text-xs" 
-                  value={rules.quiet_hours.start} 
-                  onChange={(e) => setRules({...rules, quiet_hours: {...rules.quiet_hours, start: e.target.value}})}
+                <Input
+                  type="time"
+                  className="w-24 h-8 text-xs"
+                  value={rules.quiet_hours.start}
+                  onChange={e =>
+                    setRules({
+                      ...rules,
+                      quiet_hours: { ...rules.quiet_hours, start: e.target.value },
+                    })
+                  }
                 />
                 <span className="text-xs text-muted-foreground">às</span>
-                <Input 
-                  type="time" 
-                  className="w-24 h-8 text-xs" 
+                <Input
+                  type="time"
+                  className="w-24 h-8 text-xs"
                   value={rules.quiet_hours.end}
-                  onChange={(e) => setRules({...rules, quiet_hours: {...rules.quiet_hours, end: e.target.value}})}
+                  onChange={e =>
+                    setRules({
+                      ...rules,
+                      quiet_hours: { ...rules.quiet_hours, end: e.target.value },
+                    })
+                  }
                 />
               </div>
             </div>
@@ -121,13 +144,17 @@ export function ContactRulesDialog() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Máximo de ligações/dia</Label>
-                <p className="text-[10px] text-muted-foreground">Limite diário por lead para não ser invasivo</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Limite diário por lead para não ser invasivo
+                </p>
               </div>
-              <Input 
-                type="number" 
-                className="w-16 h-8 text-xs text-center" 
+              <Input
+                type="number"
+                className="w-16 h-8 text-xs text-center"
                 value={rules.max_calls_per_day}
-                onChange={(e) => setRules({...rules, max_calls_per_day: parseInt(e.target.value) || 1})}
+                onChange={e =>
+                  setRules({ ...rules, max_calls_per_day: parseInt(e.target.value) || 1 })
+                }
               />
             </div>
 
@@ -137,20 +164,26 @@ export function ContactRulesDialog() {
                   <UserCheck className="h-4 w-4 text-primary" />
                   Priorizar Mensagem Humana
                 </Label>
-                <p className="text-[10px] text-muted-foreground">IA prioriza templates humanos quando houver alto interesse</p>
+                <p className="text-[10px] text-muted-foreground">
+                  IA prioriza templates humanos quando houver alto interesse
+                </p>
               </div>
-              <Switch 
+              <Switch
                 checked={rules.prioritize_human}
-                onCheckedChange={(checked) => setRules({...rules, prioritize_human: checked})}
+                onCheckedChange={checked =>
+                  setRules({ ...rules, prioritize_human: checked })
+                }
               />
             </div>
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
           <Button variant="glow" size="sm" onClick={handleSave} disabled={loading}>
-            {loading ? "Salvando..." : "Salvar Regras"}
+            {loading ? 'Salvando...' : 'Salvar Regras'}
           </Button>
         </DialogFooter>
       </DialogContent>

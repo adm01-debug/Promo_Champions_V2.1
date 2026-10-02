@@ -1,13 +1,17 @@
-import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 
 interface AnimatedLevelIndicatorProps {
   level: number;
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: AnimatedLevelIndicatorProps) => {
+export const AnimatedLevelIndicator = ({
+  level,
+  className = '',
+  size = 'md',
+}: AnimatedLevelIndicatorProps) => {
   if (level <= 0) return null;
 
   const particleCount = Math.min(Math.ceil(level / 5), 8);
@@ -18,16 +22,19 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
   const containerSize = sizeMap[size];
 
   return (
-    <div className={`relative inline-flex items-center justify-center ${className}`} style={{ width: containerSize, height: containerSize }}>
+    <div
+      className={`relative inline-flex items-center justify-center ${className}`}
+      style={{ width: containerSize, height: containerSize }}
+    >
       {/* Radial glow */}
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{
           background: isMasterLevel
-            ? "radial-gradient(circle, rgba(250,204,21,0.3), transparent 70%)"
+            ? 'radial-gradient(circle, rgba(250,204,21,0.3), transparent 70%)'
             : isHighLevel
-            ? "radial-gradient(circle, rgba(59,130,246,0.3), transparent 70%)"
-            : "radial-gradient(circle, hsl(var(--primary) / 0.2), transparent 70%)",
+              ? 'radial-gradient(circle, rgba(59,130,246,0.3), transparent 70%)'
+              : 'radial-gradient(circle, hsl(var(--primary) / 0.2), transparent 70%)',
         }}
         animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 2, repeat: Infinity }}
@@ -37,9 +44,9 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
       <motion.div
         className="absolute inset-1 rounded-full border border-primary/30"
         animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
         style={{
-          borderStyle: "dashed",
+          borderStyle: 'dashed',
         }}
       />
 
@@ -57,7 +64,7 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
             transition={{
               duration: 4 + i,
               repeat: Infinity,
-              ease: "linear",
+              ease: 'linear',
             }}
             style={{
               transformOrigin: `${containerSize / 2 - containerSize * 0.02}px ${containerSize / 2 - containerSize * 0.02}px`,
@@ -75,10 +82,10 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
           width: containerSize * 0.65,
           height: containerSize * 0.65,
           background: isMasterLevel
-            ? "linear-gradient(135deg, hsl(45 100% 50%), hsl(35 100% 45%))"
+            ? 'linear-gradient(135deg, hsl(45 100% 50%), hsl(35 100% 45%))'
             : isHighLevel
-            ? "linear-gradient(135deg, hsl(217 91% 60%), hsl(224 76% 48%))"
-            : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))",
+              ? 'linear-gradient(135deg, hsl(217 91% 60%), hsl(224 76% 48%))'
+              : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))',
         }}
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 3, repeat: Infinity }}
@@ -91,7 +98,10 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
         />
 
         {/* Level number */}
-        <span className="relative z-10 font-black text-primary-foreground" style={{ fontSize: containerSize * 0.22 }}>
+        <span
+          className="relative z-10 font-black text-primary-foreground"
+          style={{ fontSize: containerSize * 0.22 }}
+        >
           {level}
         </span>
 
@@ -100,7 +110,7 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
           <motion.div
             className="absolute -top-1 -right-1"
             animate={{ rotate: [0, 360] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
           >
             <Sparkles className="h-3 w-3 text-coins" />
           </motion.div>
@@ -125,7 +135,7 @@ export const AnimatedLevelIndicator = ({ level, className = "", size = "md" }: A
         style={{ fontSize: containerSize * 0.14 }}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ delay: 0.3, type: "spring" }}
+        transition={{ delay: 0.3, type: 'spring' }}
       >
         LVL
       </motion.div>

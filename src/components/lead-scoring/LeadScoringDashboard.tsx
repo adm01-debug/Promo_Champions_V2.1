@@ -79,9 +79,8 @@ export function LeadScoringDashboard() {
       .sort((a, b) => (b.churnRisk?.risk_score || 0) - (a.churnRisk?.risk_score || 0));
   }, [allLeads, attendedAlerts, churnFilter]);
 
-  const [connectionStatus, setConnectionStatus] = useState<LeadConnectionStatus>(
-    'connecting'
-  );
+  const [connectionStatus, setConnectionStatus] =
+    useState<LeadConnectionStatus>('connecting');
   const [isLoadingLeads, setIsLoadingLeads] = useState(false);
 
   const hotCount = allLeads.filter(l => l.category === 'Hot').length;

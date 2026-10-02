@@ -43,8 +43,8 @@ export function ProductRecommenderCard({
       <CardContent className="p-0">
         {recommendations.length === 0 ? (
           <div className="p-12 text-center text-sm text-muted-foreground italic flex flex-col items-center gap-4">
-            <Target className="h-12 w-12 text-primary opacity-20" />A IA está
-            recalibrando modelos de elasticidade.
+            <Target className="h-12 w-12 text-primary opacity-20" />A IA está recalibrando
+            modelos de elasticidade.
           </div>
         ) : (
           <Table>

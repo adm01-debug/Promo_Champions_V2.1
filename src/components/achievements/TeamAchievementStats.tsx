@@ -1,10 +1,19 @@
-import { Trophy, Flame, Target, Users, Calendar, Crown, Zap, TrendingUp } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useTeamAchievementStats } from "@/hooks/useTeamAchievementStats";
-import { AchievementTrendChart } from "./AchievementTrendChart";
-import { AchievementComparisonChart } from "./AchievementComparisonChart";
+import {
+  Trophy,
+  Flame,
+  Target,
+  Users,
+  Calendar,
+  Crown,
+  Zap,
+  TrendingUp,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useTeamAchievementStats } from '@/hooks/useTeamAchievementStats';
+import { AchievementTrendChart } from './AchievementTrendChart';
+import { AchievementComparisonChart } from './AchievementComparisonChart';
 
 export function TeamAchievementStats() {
   const { data: stats, isLoading } = useTeamAchievementStats();
@@ -20,7 +29,7 @@ export function TeamAchievementStats() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4].map(i => (
               <Skeleton key={i} className="h-24 rounded-lg" />
             ))}
           </div>
@@ -33,73 +42,76 @@ export function TeamAchievementStats() {
 
   const statCards = [
     {
-      label: "Metas Batidas",
+      label: 'Metas Batidas',
       value: stats.totalGoalsAchieved,
-      sublabel: "Total histórico",
+      sublabel: 'Total histórico',
       icon: <Trophy className="h-5 w-5" />,
-      color: "text-rank-gold",
-      bgColor: "bg-rank-gold/10",
-      borderColor: "border-rank-gold/30",
+      color: 'text-rank-gold',
+      bgColor: 'bg-rank-gold/10',
+      borderColor: 'border-rank-gold/30',
     },
     {
-      label: "Esta Semana",
+      label: 'Esta Semana',
       value: stats.goalsThisWeek,
-      sublabel: "Metas batidas",
+      sublabel: 'Metas batidas',
       icon: <Calendar className="h-5 w-5" />,
-      color: "text-status-info",
-      bgColor: "bg-status-info/10",
-      borderColor: "border-status-info/30",
+      color: 'text-status-info',
+      bgColor: 'bg-status-info/10',
+      borderColor: 'border-status-info/30',
     },
     {
-      label: "Este Mês",
+      label: 'Este Mês',
       value: stats.goalsThisMonth,
-      sublabel: "Metas batidas",
+      sublabel: 'Metas batidas',
       icon: <Target className="h-5 w-5" />,
-      color: "text-status-success",
-      bgColor: "bg-status-success/10",
-      borderColor: "border-status-success/30",
+      color: 'text-status-success',
+      bgColor: 'bg-status-success/10',
+      borderColor: 'border-status-success/30',
     },
     {
-      label: "Marcos de Sequência",
+      label: 'Marcos de Sequência',
       value: stats.totalStreakMilestones,
-      sublabel: "Conquistas especiais",
+      sublabel: 'Conquistas especiais',
       icon: <Flame className="h-5 w-5" />,
-      color: "text-streak",
-      bgColor: "bg-streak/10",
-      borderColor: "border-streak/30",
+      color: 'text-streak',
+      bgColor: 'bg-streak/10',
+      borderColor: 'border-streak/30',
     },
     {
-      label: "Sequências Ativas",
+      label: 'Sequências Ativas',
       value: stats.currentActiveStreaks,
-      sublabel: "Vendedores em sequência",
+      sublabel: 'Vendedores em sequência',
       icon: <Zap className="h-5 w-5" />,
-      color: "text-accent",
-      bgColor: "bg-accent/10",
-      borderColor: "border-accent/30",
+      color: 'text-accent',
+      bgColor: 'bg-accent/10',
+      borderColor: 'border-accent/30',
     },
     {
-      label: "Média por Vendedor",
+      label: 'Média por Vendedor',
       value: stats.avgGoalsPerSalesperson,
-      sublabel: "Metas batidas",
+      sublabel: 'Metas batidas',
       icon: <Users className="h-5 w-5" />,
-      color: "text-secondary",
-      bgColor: "bg-secondary/10",
-      borderColor: "border-secondary/30",
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10',
+      borderColor: 'border-secondary/30',
     },
     {
-      label: "Vendedores Ativos",
+      label: 'Vendedores Ativos',
       value: stats.uniqueSalespeopleWithGoals,
-      sublabel: "Com metas batidas",
+      sublabel: 'Com metas batidas',
       icon: <Users className="h-5 w-5" />,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
-      borderColor: "border-primary/30",
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
+      borderColor: 'border-primary/30',
     },
   ];
 
   return (
     <div className="space-y-6">
-      <Card variant="glass" className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30">
+      <Card
+        variant="glass"
+        className="bg-background/20 backdrop-blur-xl border-white/10 shadow-2xl transition-all duration-500 hover:bg-background/30"
+      >
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
@@ -114,7 +126,7 @@ export function TeamAchievementStats() {
               <div className="flex items-center gap-6 relative z-10">
                 <div className="relative">
                   <Avatar className="h-20 w-20 border-2 border-rank-gold shadow-2xl shadow-rank-gold/30 transition-transform duration-500 group-hover:scale-110">
-                    <AvatarImage src={stats.teamBestStreakHolder.avatar_url || ""} />
+                    <AvatarImage src={stats.teamBestStreakHolder.avatar_url || ''} />
                     <AvatarFallback className="bg-rank-gold/30 text-rank-gold text-2xl font-black">
                       {stats.teamBestStreakHolder.name.charAt(0)}
                     </AvatarFallback>
@@ -131,7 +143,10 @@ export function TeamAchievementStats() {
                     {stats.teamBestStreakHolder.name}
                   </p>
                   <p className="text-sm text-muted-foreground font-medium mt-1">
-                    Domínio absoluto por <span className="font-black text-rank-gold italic">{stats.teamBestStreak} dias seguidos</span>
+                    Domínio absoluto por{' '}
+                    <span className="font-black text-rank-gold italic">
+                      {stats.teamBestStreak} dias seguidos
+                    </span>
                   </p>
                 </div>
                 <div className="text-right">
@@ -141,7 +156,9 @@ export function TeamAchievementStats() {
                       {stats.teamBestStreak}
                     </span>
                   </div>
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">STREAK ATUAL</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">
+                    STREAK ATUAL
+                  </p>
                 </div>
               </div>
             </div>
@@ -154,11 +171,17 @@ export function TeamAchievementStats() {
                 key={index}
                 className={`p-5 rounded-2xl ${stat.bgColor} border ${stat.borderColor} transition-all duration-500 hover:scale-[1.05] hover:shadow-lg glass-morphism group cursor-help`}
               >
-                <div className={`flex items-center gap-2 mb-3 ${stat.color} transition-transform group-hover:translate-x-1`}>
+                <div
+                  className={`flex items-center gap-2 mb-3 ${stat.color} transition-transform group-hover:translate-x-1`}
+                >
                   {stat.icon}
-                  <span className="text-[10px] font-black uppercase tracking-widest truncate">{stat.label}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest truncate">
+                    {stat.label}
+                  </span>
                 </div>
-                <p className={`text-3xl font-display font-black tracking-tighter ${stat.color}`}>
+                <p
+                  className={`text-3xl font-display font-black tracking-tighter ${stat.color}`}
+                >
                   {stat.value}
                 </p>
                 <p className="text-[9px] text-muted-foreground/70 font-black uppercase tracking-tighter mt-1 italic">

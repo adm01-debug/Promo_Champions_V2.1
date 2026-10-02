@@ -34,7 +34,15 @@ import {
 } from '@/hooks/activities/useActivities';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useClients } from '@/hooks/crm/useClients';
-import { Phone, Mail, Users, MessageCircle, MoreHorizontal, Plus, FileText } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  Users,
+  MessageCircle,
+  MoreHorizontal,
+  Plus,
+  FileText,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { toast } from 'sonner';
 
