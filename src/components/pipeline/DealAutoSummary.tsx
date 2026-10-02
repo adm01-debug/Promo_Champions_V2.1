@@ -6,6 +6,7 @@ import { Sparkles, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
 import { differenceInDays } from 'date-fns';
 import { isOpenSaleStatus } from '@/constants';
 
+import { formatBRL } from '@/lib/money';
 interface DealAutoSummaryProps {
   deal: {
     id: string;
@@ -109,9 +110,7 @@ function DealAutoSummaryComponent({
       <p className="text-xs text-muted-foreground">
         Deal de{' '}
         <span className="font-semibold text-foreground">
-          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-            deal.amount
-          )}
+          {formatBRL(deal.amount, { decimals: 2 })}
         </span>{' '}
         aberto há {summary.daysSinceCreation} dias com {activitiesCount} interações
         registradas.

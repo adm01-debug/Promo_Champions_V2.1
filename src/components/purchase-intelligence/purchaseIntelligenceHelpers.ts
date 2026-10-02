@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL as __formatBRL } from '@/lib/money';
 export const MONTH_LABELS_PT = [
   'Jan',
   'Fev',
@@ -47,12 +48,7 @@ export function riskLabel(score: number): string {
 }
 
 export function formatBRL(value: number | null | undefined): string {
-  if (value == null || isNaN(value)) return 'R$ 0';
-  return value.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  });
+  return __formatBRL(value);
 }
 
 export function formatDatePt(d: string | Date | null | undefined): string {

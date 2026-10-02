@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useRevOpsHub } from '@/hooks/useRevOpsHub';
 
+import { formatBRL } from '@/lib/money';
 const STAGE_LABELS: Record<string, string> = {
   lead: 'Lead',
   prospecting: 'Prospecção',
@@ -62,13 +63,6 @@ const HEALTH_CONFIG = {
     label: 'Crítico',
   },
 };
-
-const fmtCurrency = (v: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(v);
 
 export function RevOpsHub() {
   const [horizon, setHorizon] = useState(90);
@@ -150,19 +144,19 @@ export function RevOpsHub() {
         <KPICard
           icon={DollarSign}
           label="Pipeline Total"
-          value={fmtCurrency(data.kpis.total_pipeline)}
+          value={formatBRL(data.kpis.total_pipeline)}
           color="text-primary"
         />
         <KPICard
           icon={Target}
           label="Forecast Ponderado"
-          value={fmtCurrency(data.kpis.weighted_forecast)}
+          value={formatBRL(data.kpis.weighted_forecast)}
           color="text-info"
         />
         <KPICard
           icon={Award}
           label="Receita Fechada"
-          value={fmtCurrency(data.kpis.closed_revenue)}
+          value={formatBRL(data.kpis.closed_revenue)}
           color="text-success"
         />
         <KPICard
@@ -185,7 +179,7 @@ export function RevOpsHub() {
             <KPICard
               icon={Zap}
               label="Sales Velocity"
-              value={fmtCurrency(data.kpis.velocity) + '/dia'}
+              value={formatBRL(data.kpis.velocity) + '/dia'}
               color="text-primary"
             />
             <KPICard
@@ -247,7 +241,7 @@ export function RevOpsHub() {
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium">{STAGE_LABELS[stage] ?? stage}</span>
                       <span className="text-muted-foreground">
-                        {info.count} deals · {fmtCurrency(info.value)}
+                        {info.count} deals · {formatBRL(info.value)}
                       </span>
                     </div>
                     <Progress value={pct} className="h-2" />
@@ -263,19 +257,19 @@ export function RevOpsHub() {
             <KPICard
               icon={DollarSign}
               label="Ticket Médio"
-              value={fmtCurrency(data.kpis.avg_deal_size)}
+              value={formatBRL(data.kpis.avg_deal_size)}
               color="text-primary"
             />
             <KPICard
               icon={CheckCircle2}
               label="Comissões Pagas"
-              value={fmtCurrency(data.kpis.earned_commissions)}
+              value={formatBRL(data.kpis.earned_commissions)}
               color="text-success"
             />
             <KPICard
               icon={Clock}
               label="Comissões Pendentes"
-              value={fmtCurrency(data.kpis.pending_commissions)}
+              value={formatBRL(data.kpis.pending_commissions)}
               color="text-warning"
             />
           </div>

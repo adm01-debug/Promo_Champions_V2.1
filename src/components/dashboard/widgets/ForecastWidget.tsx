@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 export const ForecastWidget = React.memo(function ForecastWidget() {
   const { data, isLoading } = useGoalsDashboard();
 
@@ -54,9 +55,7 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
       <CardContent className="space-y-2">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-xl font-bold">
-              R$ {projection.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
-            </p>
+            <p className="text-xl font-bold">{formatBRL(projection)}</p>
             <p
               className={cn(
                 'text-[11px] font-medium',
@@ -80,7 +79,7 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
               <XAxis dataKey="day" hide />
               <Tooltip
                 formatter={(v: number, name: string) => [
-                  `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                  `${formatBRL(v)}`,
                   name === 'actual' ? 'Real' : 'Projeção',
                 ]}
                 contentStyle={{

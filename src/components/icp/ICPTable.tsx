@@ -24,21 +24,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ICPRadarChart } from './ICPRadarChart';
 import type { ICPData } from '@/hooks/useICPData';
 
+import { formatBRLCompact } from '@/lib/money';
 interface ICPTableProps {
   data: ICPData[];
   clientMap: Map<string, string>;
   onEdit: (item: ICPData) => void;
 }
-
-const formatCurrency = (value: number | null) => {
-  if (!value) return '-';
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  }).format(value);
-};
 
 export const ICPTable = React.memo(function ICPTable({
   data,
@@ -103,7 +94,7 @@ export const ICPTable = React.memo(function ICPTable({
                 {item.capital_social ? (
                   <span className="flex items-center gap-1">
                     <Banknote className="h-3 w-3 text-muted-foreground" />
-                    {formatCurrency(item.capital_social)}
+                    {formatBRLCompact(item.capital_social)}
                   </span>
                 ) : (
                   <span className="text-muted-foreground">-</span>

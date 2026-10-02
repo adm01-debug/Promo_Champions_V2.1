@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { User, Building, ShoppingBag, TrendingUp, Clock, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 interface ClientInfo {
   name: string;
   company?: string;
@@ -23,9 +24,6 @@ interface BIClientListProps {
   maxItems?: number;
   className?: string;
 }
-
-const formatCurrency = (value: number) =>
-  `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
 export const BIClientList: FC<BIClientListProps> = ({
   title,
@@ -112,8 +110,8 @@ export const BIClientList: FC<BIClientListProps> = ({
                 <div className="text-right shrink-0">
                   <p className="font-bold text-sm">
                     {type === 'top-ticket' && client.avgTicket
-                      ? formatCurrency(client.avgTicket)
-                      : formatCurrency(client.totalValue)}
+                      ? formatBRL(client.avgTicket)
+                      : formatBRL(client.totalValue)}
                   </p>
                   {client.dealsCount !== undefined && (
                     <div className="flex items-center gap-1 text-xs text-muted-foreground justify-end">
@@ -196,9 +194,7 @@ export const BIPurchaseHistory: FC<{
                           {purchase.category}
                         </Badge>
                       </div>
-                      <span className="font-medium">
-                        {formatCurrency(purchase.value)}
-                      </span>
+                      <span className="font-medium">{formatBRL(purchase.value)}</span>
                     </div>
                   ))}
                 </div>

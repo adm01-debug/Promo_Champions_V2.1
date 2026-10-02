@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { clientService } from '@/services/clientService';
 import { getLocalISODate } from '@/utils/dateHelpers';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
@@ -113,7 +113,7 @@ const ImportExport = () => {
         })
         .filter(r => r.name);
 
-      const { error } = await supabase.from('clients').insert(
+      await clientService.importClients(
         records.map(r => ({
           name: r.name || 'Sem nome',
           email: r.email || null,
@@ -121,7 +121,6 @@ const ImportExport = () => {
           company: r.company || null,
         }))
       );
-      if (error) throw error;
       return records.length;
     },
     onSuccess: count => {
@@ -134,10 +133,7 @@ const ImportExport = () => {
   });
 
   const handleExport = useCallback(async () => {
-    const { data } = await supabase
-      .from('clients')
-      .select('name, email, phone, company, total_value')
-      .limit(1000);
+    const data = await clientService.getClientsForExport();
     if (!data?.length) {
       toast.error('Nenhum dado para exportar');
       return;

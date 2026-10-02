@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+import { formatBRL } from '@/lib/money';
 type TVScreen = 'leaderboard' | 'latest-sales' | 'goals' | 'streaks';
 
 const ROTATION_INTERVAL = 15000; // 15 seconds
@@ -342,7 +343,7 @@ function EnhancedTVModeComponent() {
                     </div>
                     <div className="text-right relative z-10">
                       <div className="text-4xl font-black italic tracking-tighter text-emerald-400 leading-none">
-                        R$ {(sale.amount || 0).toLocaleString('pt-BR')}
+                        {formatBRL(sale.amount || 0)}
                       </div>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-2 italic">
                         Transação Verificada
