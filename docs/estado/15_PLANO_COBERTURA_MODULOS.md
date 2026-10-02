@@ -52,6 +52,17 @@ Novos módulos entram na lista editando `LADDER_MODULES` em
 4. Nunca baixar um piso. Se uma remoção legítima de código reduz a cobertura,
    regenere o baseline na mesma PR com justificativa no corpo.
 
+## Histórico de redefinições de piso
+
+| Data       | Módulo               | De    | Para  | Motivo                                                                                                                                                                                                                            |
+| ---------- | -------------------- | ----- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-02 | `src/services/`      | 18,7% | 16,5% | PR #209 adicionou `callFeedbackService.ts`, `knownDeviceService.ts` e novas funções em `clientService.ts` sem testes (+91 linhas no denominador). O `job test` foi _skipped_ na main, então a queda caiu na primeira PR seguinte. |
+| 2026-10-02 | `src/hooks/reports/` | 67,1% | 65,4% | PR #209 adicionou `useMonthlySalesBenchmark.ts` sem teste (+19 linhas no denominador), mesma origem.                                                                                                                              |
+| 2026-10-02 | `src/lib/schemas/`   | 90%   | —     | `src/lib/schemas/commercial.ts` foi removido pela PR #209 (módulo órfão); prefixo saiu do baseline por não ter mais arquivos.                                                                                                     |
+
+Dívida resultante: subir `src/services/` de volta a ≥18,7% cobrindo os três
+serviços novos, e `src/hooks/reports/` cobrindo `useMonthlySalesBenchmark`.
+
 ## Verificação local
 
 ```sh
