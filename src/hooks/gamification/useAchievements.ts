@@ -4,6 +4,7 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import type { Json } from '@/integrations/supabase/types';
 import { getLocalISODate } from '@/utils/dateHelpers';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 // Extended achievement type matching database schema
 export interface AchievementRecord {
@@ -94,21 +95,34 @@ export const useStreakRanking = () => {
 
       if (spError) throw spError;
 
-      // Uma única query paginada agregada por vendedor (evita N+1): as
-      // conquistas de daily_goal de todos os ativos vêm de uma vez e são
-      // contadas por id. Paginação necessária: o teto de 1000 linhas do
+      // Agregação única por vendedor (evita N+1): as conquistas de daily_goal
+      // de todos os ativos vêm em lotes de ids (chunkedIn evita 414 na URL) e
+      // cada lote é paginado (fetchAllRows), pois o teto de 1000 linhas do
       // PostgREST truncaria o agregado e corromperia o ranking.
       const salespersonIds = (salespeople || []).map(sp => sp.id);
-      const achievements = await fetchAllRows(
-        (from, to) =>
-          supabase
-            .from('achievements')
-            .select('salesperson_id, achievement_date, achievement_type')
-            .in('salesperson_id', salespersonIds)
-            .eq('achievement_type', 'daily_goal')
-            .order('achievement_date', { ascending: false })
-            .range(from, to),
-        { label: 'useStreakRanking:achievements' }
+      const achievements = await chunkedIn<{
+        salesperson_id: string;
+        achievement_date: string;
+        achievement_type: string;
+      }>(
+        salespersonIds,
+        chunk =>
+          fetchAllRows<{
+            salesperson_id: string;
+            achievement_date: string;
+            achievement_type: string;
+          }>(
+            (from, to) =>
+              supabase
+                .from('achievements')
+                .select('salesperson_id, achievement_date, achievement_type')
+                .in('salesperson_id', chunk as string[])
+                .eq('achievement_type', 'daily_goal')
+                .order('achievement_date', { ascending: false })
+                .range(from, to),
+            { label: 'useStreakRanking:achievements' }
+          ).then(data => ({ data, error: null })),
+        { parallel: true, label: 'useStreakRanking:achievements' }
       );
 
       const countBySalesperson = new Map<string, number>();
