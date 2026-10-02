@@ -30,13 +30,7 @@ import { cn } from '@/lib/utils';
 import { ForecastTopDeals } from './ForecastTopDeals';
 import { supabase } from '@/integrations/supabase/client';
 
-const formatCurrency = (val: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(val);
-
+import { formatBRL } from '@/lib/money';
 const STAGE_COLORS = [
   'hsl(var(--muted-foreground))',
   'hsl(var(--primary))',
@@ -125,10 +119,10 @@ export function WeightedForecastDashboard() {
               Forecast Ponderado
             </div>
             <p className="text-xl font-bold text-primary">
-              {formatCurrency(data.weightedForecast)}
+              {formatBRL(data.weightedForecast)}
             </p>
             <p className="text-[10px] text-muted-foreground mt-1">
-              de {formatCurrency(data.totalPipeline)} no pipeline
+              de {formatBRL(data.totalPipeline)} no pipeline
             </p>
           </CardContent>
         </Card>
@@ -138,7 +132,7 @@ export function WeightedForecastDashboard() {
               <Target className="h-3.5 w-3.5" />
               Meta do Mês
             </div>
-            <p className="text-xl font-bold">{formatCurrency(data.monthlyGoal)}</p>
+            <p className="text-xl font-bold">{formatBRL(data.monthlyGoal)}</p>
             <Progress value={goalProgress} className="h-1.5 mt-2" />
             <p className="text-[10px] text-muted-foreground mt-1">
               {goalProgress}% atingido
@@ -152,7 +146,7 @@ export function WeightedForecastDashboard() {
               Melhor Cenário
             </div>
             <p className="text-xl font-bold text-status-success">
-              {formatCurrency(data.bestCase)}
+              {formatBRL(data.bestCase)}
             </p>
             <p className="text-[10px] text-muted-foreground mt-1">otimista (+30%)</p>
           </CardContent>
@@ -164,7 +158,7 @@ export function WeightedForecastDashboard() {
               Pior Cenário
             </div>
             <p className="text-xl font-bold text-status-error">
-              {formatCurrency(data.worstCase)}
+              {formatBRL(data.worstCase)}
             </p>
             <p className="text-[10px] text-muted-foreground mt-1">conservador (-40%)</p>
           </CardContent>
@@ -211,7 +205,7 @@ export function WeightedForecastDashboard() {
                 />
                 <YAxis type="category" dataKey="name" width={90} className="text-xs" />
                 <Tooltip
-                  formatter={(value: number | string) => formatCurrency(Number(value))}
+                  formatter={(value: number | string) => formatBRL(Number(value))}
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
@@ -263,7 +257,7 @@ export function WeightedForecastDashboard() {
                       </div>
                       <div className="text-right">
                         <span className="font-semibold">
-                          {formatCurrency(stage.weighted_value)}
+                          {formatBRL(stage.weighted_value)}
                         </span>
                         <span className="text-muted-foreground text-xs ml-1">
                           ({Math.round(stage.probability * 100)}%)
@@ -277,7 +271,7 @@ export function WeightedForecastDashboard() {
                       />
                     </div>
                     <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>Total: {formatCurrency(stage.total_value)}</span>
+                      <span>Total: {formatBRL(stage.total_value)}</span>
                       <span>{pct}% do pipeline</span>
                     </div>
                   </div>
@@ -286,7 +280,7 @@ export function WeightedForecastDashboard() {
             </div>
             <div className="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-border/50">
               <div className="text-center p-2 rounded-lg bg-muted/30">
-                <p className="text-lg font-bold">{formatCurrency(data.avgDealSize)}</p>
+                <p className="text-lg font-bold">{formatBRL(data.avgDealSize)}</p>
                 <p className="text-[10px] text-muted-foreground">Ticket Médio</p>
               </div>
               <div className="text-center p-2 rounded-lg bg-muted/30">

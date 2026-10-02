@@ -1,3 +1,4 @@
+import { formatBRL } from '@/lib/money';
 /**
  * Merge tags engine for cadence templates and message templates.
  * Replaces {{variable}} placeholders with actual data from sale/client/salesperson context.
@@ -85,9 +86,6 @@ export const AVAILABLE_MERGE_TAGS: MergeTagDefinition[] = [
   },
 ];
 
-const formatBRL = (value: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
 const formatDateBR = (date: Date) =>
   new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short' }).format(date);
 
@@ -107,7 +105,9 @@ function resolveTag(key: string, ctx: MergeTagContext): string {
     case 'vendedor.email':
       return ctx.salesperson?.email ?? '[email-vendedor]';
     case 'negocio.valor':
-      return ctx.sale?.amount != null ? formatBRL(Number(ctx.sale.amount)) : '[valor]';
+      return ctx.sale?.amount != null
+        ? formatBRL(Number(ctx.sale.amount), { decimals: 2 })
+        : '[valor]';
     case 'negocio.estagio':
       return ctx.sale?.stage ?? '[estágio]';
     case 'negocio.categoria':

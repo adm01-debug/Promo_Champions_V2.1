@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, Activity, RefreshCw, TrendingUp } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -13,40 +12,17 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { supabase } from '@/integrations/supabase/client';
+import { useRollbackRateSeries } from '@/hooks/admin/useConnectionMetrics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface RollbackPoint {
-  captured_at: string;
-  xact_commit: number;
-  xact_rollback: number;
-  deadlocks: number;
-  rollbacks_per_min: number;
-  commits_per_min: number;
-  rollback_ratio_pct: number;
-}
-
 /** Limite acima do qual o sistema deve alertar (rollbacks/min). */
 const ROLLBACK_ALERT_THRESHOLD = 50;
 
-async function fetchSeries(hours: number): Promise<RollbackPoint[]> {
-  const { data, error } = await supabase.rpc('admin_get_rollback_rate_series', {
-    _hours: hours,
-  });
-  if (error) throw error;
-  return (data ?? []) as RollbackPoint[];
-}
-
 export function DbRollbackRatePanel() {
-  const { data, isLoading, isFetching, refetch, error } = useQuery({
-    queryKey: ['admin', 'db-rollback-rate', 24],
-    queryFn: () => fetchSeries(24),
-    staleTime: 60_000,
-    refetchInterval: 5 * 60_000,
-  });
+  const { data, isLoading, isFetching, refetch, error } = useRollbackRateSeries(24);
 
   const stats = useMemo(() => {
     if (!data || data.length === 0) {
@@ -58,7 +34,6 @@ export function DbRollbackRatePanel() {
       return { current: 0, peak: 0, avg: 0, ratio: 0, points: data.length, deadlocks: 0 };
     }
     const rates = meaningful.map(p => Number(p.rollbacks_per_min) || 0);
-    const _ratios = meaningful.map(p => Number(p.rollback_ratio_pct) || 0);
     const last = meaningful[meaningful.length - 1];
     const peak = rates.reduce((m, r) => (r > m ? r : m), 0);
     const avg = rates.reduce((s, r) => s + r, 0) / rates.length;

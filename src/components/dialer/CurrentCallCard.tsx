@@ -11,6 +11,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ClickToCallButton } from './ClickToCallButton';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   itemId: string;
   saleId: string;
@@ -88,9 +89,7 @@ export const CurrentCallCard = ({ itemId, saleId, score, onSkip }: Props) => {
           <div className="flex gap-2 mt-2">
             <Badge variant="secondary">Score: {score.toFixed(0)}</Badge>
             {sale?.status && <Badge variant="outline">{sale.status}</Badge>}
-            {sale?.amount && (
-              <Badge variant="outline">R$ {sale.amount.toLocaleString('pt-BR')}</Badge>
-            )}
+            {sale?.amount && <Badge variant="outline">{formatBRL(sale.amount)}</Badge>}
           </div>
         </div>
 

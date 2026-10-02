@@ -5,6 +5,7 @@ import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { Brain, TrendingUp, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import { formatBRL } from '@/lib/money';
 export const AIPerformanceInsights = React.memo(function AIPerformanceInsights() {
   const { data: sales } = useSalesData();
   const { data: salespeople } = useSalespeople();
@@ -18,7 +19,7 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
       {
         id: 'growth',
         title: 'Oportunidade de Crescimento',
-        description: `O faturamento total de R$ ${totalRevenue.toLocaleString('pt-BR')} está 15% acima da projeção. Recomenda-se escalar campanhas de MQL.`,
+        description: `O faturamento total de ${formatBRL(totalRevenue)} está 15% acima da projeção. Recomenda-se escalar campanhas de MQL.`,
         type: 'growth',
         icon: TrendingUp,
         color: 'text-blue-500',

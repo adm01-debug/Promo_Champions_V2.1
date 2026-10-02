@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 const REACTIONS = ['🔥', '👏', '🚀', '💪', '🏆'];
 
 interface VictoryFeedItemProps {
@@ -110,7 +111,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(
                   {(item.value ?? 0) > 0 && (
                     <div className="px-3 py-1 rounded-xl bg-primary/10 border border-primary/20">
                       <p className="text-sm font-black text-primary italic">
-                        R$ {Number(item.value).toLocaleString('pt-BR')}
+                        {formatBRL(Number(item.value))}
                       </p>
                     </div>
                   )}

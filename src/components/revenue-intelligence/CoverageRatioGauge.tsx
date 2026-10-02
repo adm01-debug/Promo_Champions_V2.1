@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Shield, AlertTriangle, CheckCircle2, XCircle } from 'lucide-react';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   ratio: number;
   target: number;
@@ -51,12 +52,7 @@ export const CoverageRatioGauge: FC<Props> = ({
   const cfg = config[healthLabel];
   const Icon = cfg.icon;
   const pct = Math.min((ratio / 4) * 100, 100);
-  const fmt = (n: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    }).format(n);
+  const fmt = (n: number) => formatBRL(n);
 
   return (
     <Card className={`glass border ${cfg.border}`}>

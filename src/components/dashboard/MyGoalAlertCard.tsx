@@ -13,12 +13,7 @@ import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
-const fmtBRL = (v: number) =>
-  `R$ ${v.toLocaleString('pt-BR', {
-    maximumFractionDigits: 0,
-    notation: v >= 100000 ? 'compact' : 'standard',
-  })}`;
-
+import { formatBRL } from '@/lib/money';
 type AlertLevel = 'critical' | 'warning' | 'ontrack' | 'exceeded' | 'no-goal';
 
 interface AlertConfig {
@@ -84,7 +79,7 @@ const buildAlert = (
     return {
       level: 'warning',
       label: 'Atenção',
-      message: `Acelere! Faltam ${fmtBRL(goal - projection)} em ${daysRemaining}d. Precisa de ${fmtBRL(requiredDaily)}/dia.`,
+      message: `Acelere! Faltam ${formatBRL(goal - projection)} em ${daysRemaining}d. Precisa de ${formatBRL(requiredDaily)}/dia.`,
       color: 'text-warning',
       bgGradient: 'from-warning/20 via-warning/10 to-warning/5',
       border: 'border-warning/40',
@@ -96,7 +91,7 @@ const buildAlert = (
   return {
     level: 'critical',
     label: 'Crítico',
-    message: `🔥 Risco alto! Projeção em ${projPct.toFixed(0)}% da meta. Precisa de ${fmtBRL(requiredDaily)}/dia para reverter.`,
+    message: `🔥 Risco alto! Projeção em ${projPct.toFixed(0)}% da meta. Precisa de ${formatBRL(requiredDaily)}/dia para reverter.`,
     color: 'text-destructive',
     bgGradient: 'from-destructive/20 via-destructive/10 to-destructive/5',
     border: 'border-destructive/40',
@@ -251,17 +246,17 @@ export const MyGoalAlertCard = () => {
             <div className="grid grid-cols-3 gap-2 mb-3">
               <Metric
                 label="Atual"
-                value={fmtBRL(myGoal.currentSales)}
+                value={formatBRL(myGoal.currentSales)}
                 accent={alert.color}
               />
               <Metric
                 label="Meta"
-                value={fmtBRL(myGoal.goalAmount)}
+                value={formatBRL(myGoal.goalAmount)}
                 accent="text-foreground"
               />
               <Metric
                 label="Projeção"
-                value={fmtBRL(myGoal.projection)}
+                value={formatBRL(myGoal.projection)}
                 accent={alert.color}
                 icon={TrendingUp}
               />
@@ -301,7 +296,7 @@ export const MyGoalAlertCard = () => {
                   <Zap className="h-2.5 w-2.5" />
                   Necessário/dia:{' '}
                   <span className={cn('font-bold', alert.color)}>
-                    {fmtBRL(myGoal.requiredDailyAverage)}
+                    {formatBRL(myGoal.requiredDailyAverage)}
                   </span>
                 </span>
               </div>

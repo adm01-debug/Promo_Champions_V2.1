@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { AppSidebar } from './AppSidebar';
 
 export const RoleAwareSidebar = memo(function RoleAwareSidebar() {

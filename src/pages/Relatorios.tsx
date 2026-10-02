@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import { ReportCharts } from '@/components/reports/ReportCharts';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
+import { formatBRL } from '@/lib/money';
 type DateRange = { from: Date | undefined; to: Date | undefined };
 
 const reportsData = [
@@ -60,7 +61,7 @@ const Relatorios = () => {
   const metricsData = [
     {
       title: 'Receita Total',
-      value: `R$ ${metrics.totalRevenue.toLocaleString('pt-BR')}`,
+      value: `${formatBRL(metrics.totalRevenue)}`,
       change: metrics.revenueChange,
       icon: DollarSign,
       positive: metrics.revenueChange > 0,
@@ -81,7 +82,7 @@ const Relatorios = () => {
     },
     {
       title: 'Ticket Médio',
-      value: `R$ ${metrics.avgTicket.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+      value: `${formatBRL(metrics.avgTicket)}`,
       change: metrics.ticketChange,
       icon: TrendingUp,
       positive: metrics.ticketChange > 0,

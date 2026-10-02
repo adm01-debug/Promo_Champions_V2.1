@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { formatBRL } from '@/lib/money';
 export const RevenueKpiWidget = React.memo(function RevenueKpiWidget() {
   const { data: kpis, isLoading } = useDashboardKPIs();
 
@@ -24,7 +25,7 @@ export const RevenueKpiWidget = React.memo(function RevenueKpiWidget() {
       </CardHeader>
       <CardContent className="px-4 pb-3">
         <p className="text-xl font-extrabold text-foreground tracking-tight">
-          R$ {revenue.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+          {formatBRL(revenue)}
         </p>
         <div
           className={cn(

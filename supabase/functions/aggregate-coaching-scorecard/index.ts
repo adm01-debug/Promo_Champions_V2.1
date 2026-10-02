@@ -1,6 +1,6 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface Body { recording_id: string }
 
@@ -56,6 +56,9 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
     const { recording_id }: Body = await req.json();
     if (!recording_id) {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
@@ -63,10 +66,7 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    const supabase = getServiceClient("recomputa scorecards e agregados de coaching de qualquer vendedor");
 
     const [recRes, metricsRes, qRes, objRes, sentRes, momRes] = await Promise.all([
       supabase.from("call_recordings").select("id, salesperson_id, sentiment").eq("id", recording_id).maybeSingle(),
@@ -82,6 +82,27 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
       return new Response(JSON.stringify({ error: "recording not found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Só o dono da gravação (ou admin/manager) pode disparar a recomputação do scorecard.
+    if (rec.salesperson_id) {
+      const { data: owner } = await supabase
+        .from("salespeople")
+        .select("auth_user_id")
+        .eq("id", rec.salesperson_id)
+        .maybeSingle();
+      if (owner?.auth_user_id !== caller.userId) {
+        const { data: isManager, error: roleErr } = await caller.client.rpc(
+          "is_admin_or_manager" as never,
+          { _user_id: caller.userId } as never,
+        );
+        if (roleErr) throw roleErr;
+        if (!isManager) {
+          return new Response(JSON.stringify({ error: "forbidden" }), {
+            status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
     }
 
     const talk_score = metricsRes.data
@@ -193,6 +214,11 @@ Deno.serve(withRequestId('aggregate-coaching-scorecard', async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('aggregate-coaching-scorecard error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },

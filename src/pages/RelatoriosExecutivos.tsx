@@ -42,6 +42,7 @@ import { QBRStoryGenerator } from '@/components/reports/QBRStoryGenerator';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { isWonSaleStatus, isLostSaleStatus, isOpenSaleStatus } from '@/constants';
 
+import { formatBRL } from '@/lib/money';
 const CHART_COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--accent))',
@@ -349,7 +350,7 @@ const RelatoriosExecutivos = () => {
                       />
                       <Tooltip
                         formatter={(v: number | string) => [
-                          `R$ ${Number(v).toLocaleString('pt-BR')}`,
+                          `${formatBRL(Number(v))}`,
                           'Receita',
                         ]}
                       />

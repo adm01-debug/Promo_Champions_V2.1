@@ -1,7 +1,11 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
 
 interface Playbook {
   id: string;
@@ -62,9 +66,35 @@ Deno.serve(
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
     try {
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      // Cria expansion_opportunities para contas de toda a equipe — exige
+      // JWT de usuário com papel admin/manager.
+      let caller;
+      try {
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        throw error;
+      }
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleError) throw roleError;
+      if (!isPrivileged) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Bypass de RLS necessário: avalia playbooks x contas de toda a base.
+      const supabase = getServiceClient(
+        'deteccao de expansao avalia todas as contas e playbooks',
       );
 
       const { data: pbs } = await supabase

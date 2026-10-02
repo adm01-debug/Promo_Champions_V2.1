@@ -45,9 +45,11 @@ function assertEnvelope(body: Record<string, unknown> | null, expectError: boole
   }
 }
 
-Deno.test("400 validation error: canonical envelope + matching requestId", async () => {
+// Sem credenciais (Authorization/X-Cron-Secret) o handler responde 401 antes
+// de tocar env ou banco — a validação de payload só roda após a autenticação.
+Deno.test("401 unauthenticated: canonical envelope + matching requestId", async () => {
   const { status, headerId, body } = await callHandler(JSON.stringify({}));
-  assertEquals(status, 400, "missing event must return 400");
+  assertEquals(status, 401, "missing credentials must return 401");
   assert(headerId, "X-Request-Id header must be present");
   assertMatch(headerId!, UUID_RE, "header requestId must be a UUID");
   assertEnvelope(body, true);
@@ -56,14 +58,14 @@ Deno.test("400 validation error: canonical envelope + matching requestId", async
   assertEquals((body!.results as unknown[]).length, 0, "errors must report results=[]");
 });
 
-Deno.test("400 malformed body: canonical envelope + matching requestId", async () => {
-  // Malformed JSON is rejected by the Zod input validator (object required) → 400.
+Deno.test("401 unauthenticated malformed body: canonical envelope + matching requestId", async () => {
+  // Sem credenciais, nem o corpo malformado chega ao validador Zod → 401.
   const { status, headerId, body } = await callHandler("not-json{");
-  assertEquals(status, 400, "malformed body must return 400 from the input validator");
+  assertEquals(status, 401, "unauthenticated malformed body must return 401");
   assert(headerId, "X-Request-Id header must be present on errors");
   assertMatch(headerId!, UUID_RE, "header requestId must be a UUID");
   assertEnvelope(body, true);
-  assertEquals(body!.requestId, headerId, "body.requestId must match X-Request-Id header on 400");
+  assertEquals(body!.requestId, headerId, "body.requestId must match X-Request-Id header on 401");
   assertEquals(body!.dispatched, 0);
   assertEquals((body!.results as unknown[]).length, 0);
 });

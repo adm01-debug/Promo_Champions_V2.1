@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 export interface WinLossDetail {
   id: string;
@@ -47,8 +48,8 @@ export const useWinLossAnalysis = () => {
       if (error) throw error;
 
       const typedOutcomes = (outcomes || []) as WinLossDetail[];
-      const wins = typedOutcomes.filter(o => o.outcome === 'won');
-      const losses = typedOutcomes.filter(o => o.outcome === 'lost');
+      const wins = typedOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON);
+      const losses = typedOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.LOST);
       const total = wins.length + losses.length;
 
       // Count reasons
@@ -69,7 +70,7 @@ export const useWinLossAnalysis = () => {
       typedOutcomes.forEach(o => {
         const name = o.salespeople?.name || 'Desconhecido';
         const existing = salespersonMap.get(name) || { wins: 0, losses: 0 };
-        if (o.outcome === 'won') existing.wins++;
+        if (o.outcome === WIN_LOSS_OUTCOME.WON) existing.wins++;
         else existing.losses++;
         salespersonMap.set(name, existing);
       });
@@ -90,7 +91,7 @@ export const useWinLossAnalysis = () => {
       typedOutcomes.forEach(o => {
         const name = o.sales?.product_name || 'Sem Produto';
         const existing = productMap.get(name) || { wins: 0, losses: 0 };
-        if (o.outcome === 'won') existing.wins++;
+        if (o.outcome === WIN_LOSS_OUTCOME.WON) existing.wins++;
         else existing.losses++;
         productMap.set(name, existing);
       });
@@ -112,7 +113,7 @@ export const useWinLossAnalysis = () => {
         const date = new Date(o.created_at);
         const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         const existing = monthlyMap.get(key) || { wins: 0, losses: 0 };
-        if (o.outcome === 'won') existing.wins++;
+        if (o.outcome === WIN_LOSS_OUTCOME.WON) existing.wins++;
         else existing.losses++;
         monthlyMap.set(key, existing);
       });

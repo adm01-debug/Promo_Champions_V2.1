@@ -1,3 +1,11 @@
+// Convenção de tipagem (ver docs/TYPE_DEBT.md):
+// - A fonte de verdade para linhas de tabelas/views do Supabase é o arquivo
+//   gerado `@/integrations/supabase/types` (use `Tables<'nome'>`).
+// - Este arquivo mantém apenas aliases compatíveis com o schema gerado e
+//   view-models/legados que NÃO descrevem linhas de tabela. Não declare aqui
+//   interfaces que dupliquem ou inventem colunas de tabelas reais.
+import type { Tables } from '@/integrations/supabase/types';
+
 // ===== CORE ENTITIES =====
 
 /**
@@ -34,29 +42,7 @@ export interface Deal {
 /**
  * Representa um cliente/empresa no sistema
  */
-export interface Client {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  company?: string;
-  website?: string;
-  region?: string;
-  segment?: 'enterprise' | 'mid-market' | 'smb' | 'startup';
-  industry?: string;
-  employee_count?: number;
-  annual_revenue?: number;
-  total_value?: number;
-  lat?: number;
-  lng?: number;
-  lead_source?: string;
-  is_activated?: boolean;
-  activated_at?: string;
-  created_at: string;
-  updated_at: string;
-  last_contact_date?: string;
-  deals?: Deal[];
-}
+export type Client = Tables<'clients'>;
 
 /**
  * Representa uma atividade/interação com cliente ou lead
@@ -225,7 +211,6 @@ export interface FilterOptions {
   teamId?: string;
   stageId?: string;
   status?: Deal['status'];
-  segment?: Client['segment'];
   search?: string;
 }
 
@@ -272,55 +257,10 @@ export type UserRole = User['role'];
 
 // ===== COMMERCIAL & APPROVALS =====
 
-export interface CommercialGoal {
-  id: string;
-  salesperson_id: string;
-  month: string;
-  goal_amount: number;
-  created_at?: string;
-}
+export type CommercialGoal = Tables<'sales_goals'>;
 
-export interface ScoringRule {
-  id: string;
-  label: string;
-  weight: number;
-  points_per_unit: number;
-  month: string | null;
-  created_at?: string;
-}
+export type ScoringRule = Tables<'race_scoring_rules'>;
 
-export interface CommissionConfig {
-  id: string;
-  salesperson_id: string;
-  month: string;
-  rate: number;
-  created_at?: string;
-}
+export type ApprovalRequest = Tables<'commercial_approval_requests'>;
 
-export interface ApprovalRequest {
-  id: string;
-  requester_id: string;
-  approver_id?: string;
-  type: 'goal' | 'scoring_rule' | 'commission';
-  entity_id: string;
-  competence_month: string;
-  new_values: Record<string, string | number | boolean | null | undefined>;
-  old_values?: Record<string, string | number | boolean | null | undefined>;
-  justification?: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-}
-
-export interface AuditLog {
-  id: string;
-  actor_id: string;
-  action: string;
-  entity_type: string;
-  entity_id: string;
-  changes: {
-    from: Record<string, string | number | boolean | null | undefined>;
-    to: Record<string, string | number | boolean | null | undefined>;
-  };
-  metadata?: Record<string, string | number | boolean | null | undefined>;
-  created_at: string;
-}
+export type AuditLog = Tables<'audit_logs'>;

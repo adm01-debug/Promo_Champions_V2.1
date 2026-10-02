@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { Merge, AlertTriangle } from 'lucide-react';
 
+import { formatBRL } from '@/lib/money';
 interface Client {
   id: string;
   name: string;
@@ -113,10 +114,7 @@ export const MergeConflictsResolver = ({
                     </div>
                   </div>
                   <Badge variant="outline" className="text-[10px] bg-black/20">
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(client.total_value)}
+                    {formatBRL(client.total_value, { decimals: 2 })}
                   </Badge>
                 </div>
               ))}

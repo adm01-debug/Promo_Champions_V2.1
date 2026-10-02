@@ -3,6 +3,17 @@ import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import type jsPDF from 'jspdf';
 
+import { formatBRL } from '@/lib/money';
+
+/** jspdf-autotable preenche `lastAutoTable` no doc após cada chamada. */
+interface JsPdfWithAutoTable extends jsPDF {
+  lastAutoTable?: { finalY: number };
+}
+
+function lastTableFinalY(doc: jsPDF): number | undefined {
+  return (doc as JsPdfWithAutoTable).lastAutoTable?.finalY;
+}
+
 interface ReportData {
   period: string;
   revenue: { current: number; previous: number; change: number };
@@ -57,7 +68,7 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
   const kpis = [
     {
       label: 'Faturamento',
-      value: `R$ ${data.revenue.current.toLocaleString('pt-BR')}`,
+      value: `${formatBRL(data.revenue.current)}`,
       change: data.revenue.change,
     },
     { label: 'Vendas', value: String(data.sales.current), change: data.sales.change },
@@ -68,7 +79,7 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
     },
     {
       label: 'Ticket Médio',
-      value: `R$ ${data.avgTicket.current.toLocaleString('pt-BR')}`,
+      value: `${formatBRL(data.avgTicket.current)}`,
       change: data.avgTicket.change,
     },
   ];
@@ -114,7 +125,7 @@ function addTopDeals(
       String(i + 1),
       d.client,
       d.product,
-      `R$ ${d.amount.toLocaleString('pt-BR')}`,
+      `${formatBRL(d.amount)}`,
       d.status,
     ]),
     theme: 'grid',
@@ -132,11 +143,8 @@ function addTopDeals(
     styles: { cellPadding: 2 },
   });
 
-  // eslint-disable-next-line no-restricted-syntax
-  return (doc as unknown as Record<string, unknown>).lastAutoTable
-    ? // eslint-disable-next-line no-restricted-syntax
-      (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 8
-    : startY + 60;
+  const finalY = lastTableFinalY(doc);
+  return finalY !== undefined ? finalY + 8 : startY + 60;
 }
 
 function addTeamRanking(
@@ -156,8 +164,8 @@ function addTeamRanking(
     body: team.map((t, i) => [
       `${i + 1}º`,
       t.name,
-      `R$ ${t.sales.toLocaleString('pt-BR')}`,
-      `R$ ${t.goal.toLocaleString('pt-BR')}`,
+      `${formatBRL(t.sales)}`,
+      `${formatBRL(t.goal)}`,
       `${t.progress.toFixed(0)}%`,
     ]),
     theme: 'grid',
@@ -175,11 +183,7 @@ function addTeamRanking(
     styles: { cellPadding: 2 },
   });
 
-  return (
-    // eslint-disable-next-line no-restricted-syntax
-    (doc as unknown as Record<string, { finalY: number }>).lastAutoTable?.finalY + 8 ||
-    startY + 60
-  );
+  return (lastTableFinalY(doc) ?? 0) + 8 || startY + 60;
 }
 
 export async function generateSalesReport(data: ReportData) {

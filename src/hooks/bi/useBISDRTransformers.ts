@@ -6,7 +6,7 @@ import {
   endOfMonth,
   startOfMonth,
 } from 'date-fns';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, SALE_STATUS, isLostSaleStatus } from '@/constants';
 import type { BISDRData } from '@/hooks/bi/useBISDR';
 
 interface SaleRecord {
@@ -83,7 +83,7 @@ export function transformBISDRData(params: TransformParams): BISDRData {
     totalLeadsGenerated > 0 ? (qualifiedLeads / totalLeadsGenerated) * 100 : 0;
 
   const qualifiedSales = currentSales.filter(
-    s => s.status !== 'pending' && s.status !== 'lost'
+    s => s.status !== SALE_STATUS.PENDING && !isLostSaleStatus(s.status)
   );
   const avgQualificationTime =
     qualifiedSales.length > 0
@@ -147,14 +147,14 @@ export function transformBISDRData(params: TransformParams): BISDRData {
   const previousPeriod = {
     totalLeads: previousSales.length,
     qualifiedLeads: previousSales.filter(
-      s => s.status !== 'pending' && s.status !== 'lost'
+      s => s.status !== SALE_STATUS.PENDING && !isLostSaleStatus(s.status)
     ).length,
     totalActivities: previousActivities.length,
   };
   const sameLastYear = {
     totalLeads: lastYearSales.length,
     qualifiedLeads: lastYearSales.filter(
-      s => s.status !== 'pending' && s.status !== 'lost'
+      s => s.status !== SALE_STATUS.PENDING && !isLostSaleStatus(s.status)
     ).length,
     totalActivities: lastYearActivities.length,
   };
@@ -214,7 +214,7 @@ export function transformBISDRData(params: TransformParams): BISDRData {
     const day = format(parseISO(sale.created_at), 'dd/MM');
     if (!leadsByDayMap[day]) leadsByDayMap[day] = { generated: 0, qualified: 0 };
     leadsByDayMap[day].generated++;
-    if (sale.status !== 'pending' && sale.status !== 'lost')
+    if (sale.status !== SALE_STATUS.PENDING && !isLostSaleStatus(sale.status))
       leadsByDayMap[day].qualified++;
   });
   const leadsByDay = Object.entries(leadsByDayMap).map(([day, data]) => ({
@@ -261,7 +261,7 @@ export function transformBISDRData(params: TransformParams): BISDRData {
     const source = sale.source || 'other';
     if (!leadsBySourceMap[source]) leadsBySourceMap[source] = { count: 0, qualified: 0 };
     leadsBySourceMap[source].count++;
-    if (sale.status !== 'pending' && sale.status !== 'lost')
+    if (sale.status !== SALE_STATUS.PENDING && !isLostSaleStatus(sale.status))
       leadsBySourceMap[source].qualified++;
   });
   const leadsBySource = Object.entries(leadsBySourceMap).map(([source, data]) => ({

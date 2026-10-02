@@ -9,6 +9,7 @@ import {
 import { ICPData } from '@/hooks/useICPData';
 import { cn } from '@/lib/utils';
 
+import { formatBRLCompact } from '@/lib/money';
 interface ICPBadgeProps {
   icpData: ICPData | null | undefined;
   size?: 'sm' | 'md' | 'lg';
@@ -138,11 +139,7 @@ export function ICPBadge({
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Capital:</span>
                   <span className="font-medium">
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                      notation: 'compact',
-                    }).format(icpData.capital_social)}
+                    {formatBRLCompact(icpData.capital_social)}
                   </span>
                 </div>
               )}

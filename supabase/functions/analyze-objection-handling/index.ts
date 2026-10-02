@@ -1,6 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
 
@@ -63,29 +63,19 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
-    }
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: claimsErr } = await supabase.auth.getClaims(token);
-    if (claimsErr || !claims?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
-    }
+    const caller = await getUserClient(req);
 
     const { recording_id } = await req.json();
     if (!recording_id) {
       return new Response(JSON.stringify({ error: "recording_id required" }), { status: 400, headers: corsHeaders });
     }
 
-    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    // Escritas em call_objections/call_objection_analysis/objection_library
+    // exigem bypass de RLS; a leitura do recording usa o client do usuário
+    // para garantir que o chamador só analise gravações que ele pode ver.
+    const admin = getServiceClient("escrita em call_objections/analysis/objection_library (RLS)");
 
-    const { data: rec, error: recErr } = await admin
+    const { data: rec, error: recErr } = await caller.client
       .from("call_recordings")
       .select("id, diarization, duration_seconds")
       .eq("id", recording_id)
@@ -253,6 +243,12 @@ Deno.serve(withRequestId("analyze-objection-handling", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('analyze-objection-handling error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,

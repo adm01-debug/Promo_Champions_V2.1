@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Brain, Sparkles, TrendingUp, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
