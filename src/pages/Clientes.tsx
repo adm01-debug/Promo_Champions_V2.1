@@ -45,6 +45,7 @@ import { useClientPredictions } from '@/hooks/crm/useClientPredictions';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { formatBRLCompact } from '@/lib/money';
 const sortOptions: SortOption[] = [
   { label: 'Nome (A-Z)', value: 'name_asc', direction: 'asc' },
   { label: 'Nome (Z-A)', value: 'name_desc', direction: 'desc' },
@@ -58,7 +59,7 @@ const TotalValueDisplay = ({ value }: { value: number }) => {
   const animated = useCountUp(value, { duration: 1200 });
   return (
     <span className="font-display font-black text-xl text-primary tracking-tighter">
-      R$ {animated.toLocaleString('pt-BR', { notation: 'compact' })}
+      {formatBRLCompact(animated)}
     </span>
   );
 };

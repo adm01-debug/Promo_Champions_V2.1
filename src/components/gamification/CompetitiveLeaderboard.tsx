@@ -10,6 +10,7 @@ import { useAllSalespeopleXP } from '@/hooks/gamification/useSalespersonXP';
 import { Crown, Swords, Trophy, TrendingUp, Flame } from 'lucide-react';
 import { SalespersonLevelBadge } from './SalespersonLevelBadge';
 
+import { formatBRL } from '@/lib/money';
 const RANK_ICONS: Record<number, React.ElementType> = {
   1: Crown,
   2: Swords,
@@ -36,15 +37,6 @@ function CompetitiveLeaderboardImpl({
   const getXPInfo = (salespersonId: string) => {
     const xp = xpData?.find(x => x.salesperson_id === salespersonId);
     return { level: xp?.current_level || 1, totalXP: xp?.total_xp || 0 };
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
   };
 
   if (isLoading) {
@@ -202,12 +194,12 @@ function CompetitiveLeaderboardImpl({
                       <p
                         className={`font-display font-bold ${isTopThree ? 'text-lg' : 'text-sm'} ${person.rank === 1 ? 'gradient-text' : ''}`}
                       >
-                        {formatCurrency(person.totalSales)}
+                        {formatBRL(person.totalSales)}
                       </p>
                       {person.rank > 1 && (
                         <p className="text-[10px] text-muted-foreground flex items-center justify-end gap-0.5">
                           <TrendingUp className="h-2.5 w-2.5" />-
-                          {formatCurrency(person.gapToFirst)} do líder
+                          {formatBRL(person.gapToFirst)} do líder
                         </p>
                       )}
                     </div>

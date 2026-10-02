@@ -12,6 +12,7 @@ import {
   Cell,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--secondary))',
@@ -54,7 +55,7 @@ export const VendedorCharts = memo(function VendedorCharts({
                   borderRadius: '8px',
                 }}
                 formatter={(value: number | string) => [
-                  `R$ ${Number(value).toLocaleString('pt-BR')}`,
+                  `${formatBRL(Number(value))}`,
                   'Vendas',
                 ]}
               />
@@ -102,9 +103,7 @@ export const VendedorCharts = memo(function VendedorCharts({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                 }}
-                formatter={(value: number | string) => [
-                  `R$ ${Number(value).toLocaleString('pt-BR')}`,
-                ]}
+                formatter={(value: number | string) => [`${formatBRL(Number(value))}`]}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -123,7 +122,7 @@ export const VendedorCharts = memo(function VendedorCharts({
                 />
                 <span className="capitalize">{cat.name}</span>
               </div>
-              <span className="font-medium">R$ {cat.value.toLocaleString('pt-BR')}</span>
+              <span className="font-medium">{formatBRL(cat.value)}</span>
             </div>
           ))}
         </div>

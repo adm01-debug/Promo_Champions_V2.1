@@ -24,13 +24,7 @@ import { RankingTab } from '@/components/ranking/RankingTab';
 import { HistoryTab } from '@/components/ranking/HistoryTab';
 import { AchievementsTab } from '@/components/ranking/AchievementsTab';
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-  }).format(value);
-
+import { formatBRL } from '@/lib/money';
 const RankingCompetitivo = () => {
   const { data: ranking, isLoading } = useCompetitiveRanking();
   const { data: xpData } = useAllSalespeopleXP();
@@ -135,7 +129,7 @@ const RankingCompetitivo = () => {
                 },
                 {
                   label: 'Total Equipe',
-                  value: formatCurrency(totalTeamSales),
+                  value: formatBRL(totalTeamSales),
                   sub: `${totalDeals} vendas`,
                   icon: TrendingUp,
                   iconColor: 'text-primary',
@@ -151,7 +145,7 @@ const RankingCompetitivo = () => {
                 },
                 {
                   label: 'Ticket Médio',
-                  value: formatCurrency(totalDeals > 0 ? totalTeamSales / totalDeals : 0),
+                  value: formatBRL(totalDeals > 0 ? totalTeamSales / totalDeals : 0),
                   sub: 'por venda',
                   icon: Target,
                   iconColor: 'text-status-success',
@@ -193,7 +187,7 @@ const RankingCompetitivo = () => {
                 <RankingTab
                   ranking={(ranking || []) as never[]}
                   leader={leader as never}
-                  formatCurrency={formatCurrency}
+                  formatCurrency={formatBRL}
                 />
               </TabsContent>
 
@@ -348,7 +342,7 @@ const RankingCompetitivo = () => {
               <TabsContent value="history">
                 <HistoryTab
                   monthlyHistory={monthlyHistory || []}
-                  formatCurrency={formatCurrency}
+                  formatCurrency={formatBRL}
                 />
               </TabsContent>
 

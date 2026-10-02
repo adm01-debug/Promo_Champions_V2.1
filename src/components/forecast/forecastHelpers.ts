@@ -1,13 +1,8 @@
+import { formatBRL as __formatBRL } from '@/lib/money';
 export type ForecastHorizon = 30 | 60 | 90;
 export type ScenarioKey = 'pessimistic' | 'realistic' | 'optimistic';
 
-export const formatBRL = (n: number): string =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
-
+export const formatBRL = (n: number): string => __formatBRL(n);
 export const formatCompactBRL = (n: number): string => {
   const abs = Math.abs(n);
   if (abs >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(1)}M`;

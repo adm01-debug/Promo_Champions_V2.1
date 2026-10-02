@@ -10,13 +10,7 @@ import {
   useMarkRankingNotificationRead,
 } from '@/hooks/useRankingNotifications';
 
-const fmtBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n);
-
+import { formatBRL } from '@/lib/money';
 const rankIcon = (rank: number) => {
   if (rank === 1) return <Crown className="h-5 w-5" />;
   if (rank <= 3) return <Trophy className="h-5 w-5" />;
@@ -79,7 +73,7 @@ export const RankingPositionBanner: FC<{ className?: string }> = ({ className })
                   #{notif.rank} no ranking
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  • {fmtBRL(notif.total_sales)} este mês
+                  • {formatBRL(notif.total_sales)} este mês
                 </span>
               </div>
               <p className="text-sm text-foreground/90 mt-0.5 line-clamp-2">
@@ -90,13 +84,13 @@ export const RankingPositionBanner: FC<{ className?: string }> = ({ className })
                   <span>
                     ↑ Próximo:{' '}
                     <strong className="text-foreground">
-                      {fmtBRL(notif.gap_to_next)}
+                      {formatBRL(notif.gap_to_next)}
                     </strong>
                   </span>
                   <span>
                     👑 Líder:{' '}
                     <strong className="text-foreground">
-                      {fmtBRL(notif.gap_to_first)}
+                      {formatBRL(notif.gap_to_first)}
                     </strong>
                   </span>
                 </div>
