@@ -3,17 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import {
-  Users,
-  Shield,
-  Lock,
-  Plus,
-  Edit,
-  Trash2,
-  X,
-  Eye,
-  AlertTriangle,
-} from 'lucide-react';
+import { Users, Shield, Lock, Plus, Edit, Trash2, X, AlertTriangle } from 'lucide-react';
 
 interface Permission {
   id: string;
@@ -182,12 +172,6 @@ export const AccessControl: FC<AccessControlProps> = ({
   onRemoveUser,
   onChangeLevel,
 }) => {
-  const levelLabels = {
-    view: { label: 'Visualizar', icon: Eye },
-    edit: { label: 'Editar', icon: Edit },
-    admin: { label: 'Administrador', icon: Shield },
-  };
-
   return (
     <Card className="p-4">
       <div className="flex items-center justify-between mb-4">
@@ -205,8 +189,6 @@ export const AccessControl: FC<AccessControlProps> = ({
 
       <div className="space-y-2">
         {currentAccess.map(access => {
-          const _level = levelLabels[access.level];
-
           return (
             <div
               key={access.userId}

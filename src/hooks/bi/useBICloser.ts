@@ -1,5 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { isWonSaleStatus, WON_SALE_STATUSES } from '@/constants';
+import {
+  isWonSaleStatus,
+  WON_SALE_STATUSES,
+  WIN_LOSS_OUTCOME,
+  isLostSaleStatus,
+} from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -303,12 +308,12 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
 
       // Win/Loss
       const wonDeals = currentSales.filter(s => isWonSaleStatus(s.status)).length;
-      const lostDeals = currentSales.filter(s => s.status === 'lost').length;
+      const lostDeals = currentSales.filter(s => isLostSaleStatus(s.status)).length;
       const winRate =
         wonDeals + lostDeals > 0 ? (wonDeals / (wonDeals + lostDeals)) * 100 : 0;
       const lostReasonCounts: Record<string, number> = {};
       dealOutcomes
-        .filter(d => d.outcome === 'lost')
+        .filter(d => d.outcome === WIN_LOSS_OUTCOME.LOST)
         .forEach(d => {
           lostReasonCounts[d.reason] = (lostReasonCounts[d.reason] || 0) + 1;
         });

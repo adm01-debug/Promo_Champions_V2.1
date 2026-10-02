@@ -93,6 +93,11 @@ jobs:
       - name: Prettier format check
         run: npm run format:check
 
+      # Flags estritas ainda não zeradas (noUncheckedIndexedAccess, noUnused*):
+      # roda tsc com tsconfig.strict.json e reprova só erros NOVOS vs a baseline
+      # em scripts/typecheck-baseline.json (ver docs/TYPE_DEBT.md).
+      - name: Strict typecheck ratchet (baseline)
+        run: npm run typecheck:baseline
       - name: Committed secrets scan
         run: npm run security:secrets
 
