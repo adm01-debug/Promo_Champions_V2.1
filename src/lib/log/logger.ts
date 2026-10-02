@@ -14,6 +14,7 @@
 
 /* eslint-disable no-console -- ponto único de saída do envelope de log */
 import { captureError } from '../errorTracking';
+import { maskFreeText } from './pii';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -32,18 +33,30 @@ export interface ScopedLogger {
   error: (msg: string, extra?: Record<string, unknown>) => void;
 }
 
+function redact(
+  extra: Record<string, unknown> | undefined
+): Record<string, unknown> | undefined {
+  if (!extra) return extra;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(extra)) {
+    out[k] = typeof v === 'string' ? maskFreeText(v) : v;
+  }
+  return out;
+}
+
 function emit(
   scope: string,
   level: LogLevel,
   msg: string,
   extra?: Record<string, unknown>
 ): void {
+  const maskedExtra = redact(extra);
   const entry: LogEntry = {
     ts: new Date().toISOString(),
     level,
     fn: scope,
-    msg,
-    ...extra,
+    msg: maskFreeText(msg),
+    ...maskedExtra,
   };
   const line = JSON.stringify(entry);
   if (level === 'error') console.error(line);
@@ -52,7 +65,7 @@ function emit(
   else console.debug(line);
 
   if (level === 'error') {
-    captureError(msg, { component: scope, metadata: extra });
+    captureError(entry.msg, { component: scope, metadata: maskedExtra });
   }
 }
 
