@@ -15,7 +15,7 @@
     "npm:@dnd-kit/core@^6.3.1": "6.3.1_react@18.3.1_react-dom@18.3.1",
     "npm:@dnd-kit/sortable@10": "10.0.0_@dnd-kit+core@6.3.1_react@18.3.1_react-dom@18.3.1",
     "npm:@dnd-kit/utilities@^3.2.2": "3.2.2_react@18.3.1",
-    "npm:@hookform/resolvers@^3.3.2": "3.10.0_react-hook-form@7.87.0_react@18.3.1",
+    "npm:@hookform/resolvers@^5.9.1": "5.9.1_react-hook-form@7.87.0_zod@4.6.5_react@18.3.1",
     "npm:@lovable.dev/cloud-auth-js@^1.2.1": "1.2.1",
     "npm:@playwright/test@^1.63.0": "1.63.0",
     "npm:@radix-ui/react-accordion@^1.2.20": "1.2.20_@types+react@18.3.31_@types+react-dom@18.3.7_react@18.3.1_react-dom@18.3.1",
@@ -1392,10 +1392,15 @@
     "@floating-ui/utils@0.2.12": {
       "integrity": "sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww=="
     },
-    "@hookform/resolvers@3.10.0_react-hook-form@7.87.0_react@18.3.1": {
-      "integrity": "sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==",
+    "@hookform/resolvers@5.9.1_react-hook-form@7.87.0_zod@4.6.5_react@18.3.1": {
+      "integrity": "sha512-7b7vsbraJxKgjVSA1Nur9tLwj539WGJUBLA7QNvXnFoT2pM5Z7G+6rlukk4B2/QrTZy6huRtH6wKeESPKuIr6w==",
       "dependencies": [
-        "react-hook-form"
+        "@standard-schema/utils",
+        "react-hook-form",
+        "zod@4.6.5"
+      ],
+      "optionalPeers": [
+        "zod@4.6.5"
       ]
     },
     "@humanfs/core@0.19.2": {
@@ -2852,6 +2857,9 @@
     "@simple-libs/stream-utils@2.0.0": {
       "integrity": "sha512-fCTuZK4QBa+39Oz9l4OGfJfz+GpwCp3AqO7Zch3to99xHPgstVsRFpeQ8LNd2o1Gv8raL2mCFwiaHh7bFSp5DQ=="
     },
+    "@standard-schema/utils@0.3.0": {
+      "integrity": "sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g=="
+    },
     "@supabase/auth-js@2.112.4": {
       "integrity": "sha512-z8DesgwLzKM5PiT0yNmJU8VJyh1zAhYi+20Z7drdJQLXg/wWW4yGt/un+He5ERYUo94Vz66t5aeyr1DIDemI5A==",
       "dependencies": [
@@ -3684,7 +3692,7 @@
       "integrity": "sha512-MaU0U/za7N3r6brxD4YB/l4NSrFzLPlANv6wEuQVaIPlD3L4W9rFcQPbL/EilY9BHhHvhfcz3gInDLrEtWT4EA==",
       "dependencies": [
         "browserslist",
-        "caniuse-lite",
+        "caniuse-lite@1.0.30001810",
         "fraction.js",
         "picocolors",
         "postcss",
@@ -3797,7 +3805,7 @@
       "integrity": "sha512-1R4kiYKXGViqEN0CnoDrXc1StD9niAwu+j2dukWzrD4bJgsD4lDmEp0CRbc6E/vYJIfTHwPmwyaKtVSudICdPA==",
       "dependencies": [
         "baseline-browser-mapping",
-        "caniuse-lite",
+        "caniuse-lite@1.0.30001814",
         "electron-to-chromium",
         "node-releases",
         "update-browserslist-db"
@@ -3860,6 +3868,9 @@
     },
     "camelcase@5.3.1": {
       "integrity": "sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg=="
+    },
+    "caniuse-lite@1.0.30001810": {
+      "integrity": "sha512-TITQPUkaz+aVk5GL6NhOdwk1aEaNTSDPsGFWrTuhKGtjTF70jL/Oht2W4c6rXUe5fu7Ie19VIahAXHIIiWWNeg=="
     },
     "caniuse-lite@1.0.30001814": {
       "integrity": "sha512-/Uaf1lAzr59XcMpW0o96WoEfr+VXK2OX4U9AgFoiSHsVJ4HppnIFUjtYzsyDH2+tgANaQb2/oxYGwCPapN1FpA=="
@@ -8789,7 +8800,7 @@
         "npm:@dnd-kit/core@^6.3.1",
         "npm:@dnd-kit/sortable@10",
         "npm:@dnd-kit/utilities@^3.2.2",
-        "npm:@hookform/resolvers@^3.3.2",
+        "npm:@hookform/resolvers@^5.9.1",
         "npm:@lovable.dev/cloud-auth-js@^1.2.1",
         "npm:@playwright/test@^1.63.0",
         "npm:@radix-ui/react-accordion@^1.2.20",

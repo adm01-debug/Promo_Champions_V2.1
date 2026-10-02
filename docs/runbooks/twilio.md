@@ -11,12 +11,12 @@
 
 ## Configuração
 
-| Item | Onde |
-|------|------|
-| `TWILIO_AUTH_TOKEN` (verificação de assinatura global) | Secret das edge functions |
-| `TWILIO_TWIML_URL`, `TWILIO_CALL_STATUS_URL` | Secrets — URLs públicas que a Twilio deve chamar |
-| `TWILIO_ALLOWED_DIAL_PREFIXES` | Secret — prefixos autorizados a discar |
-| Credenciais por tenant (Account SID/token) | Tabela de credenciais de provider (ver `/admin/conexoes`) |
+| Item                                                   | Onde                                                      |
+| ------------------------------------------------------ | --------------------------------------------------------- |
+| `TWILIO_AUTH_TOKEN` (verificação de assinatura global) | Secret das edge functions                                 |
+| `TWILIO_TWIML_URL`, `TWILIO_CALL_STATUS_URL`           | Secrets — URLs públicas que a Twilio deve chamar          |
+| `TWILIO_ALLOWED_DIAL_PREFIXES`                         | Secret — prefixos autorizados a discar                    |
+| Credenciais por tenant (Account SID/token)             | Tabela de credenciais de provider (ver `/admin/conexoes`) |
 
 ## Sinais de falha
 

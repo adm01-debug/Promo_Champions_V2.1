@@ -21,6 +21,7 @@ const SENSITIVE_TABLES = [
   'salespeople',
   'user_mfa_settings',
   'user_sms_settings',
+  'user_2fa_log',
   'user_sessions',
   'webhook_inbound_dedupe',
   'quote_sync_inbound_log',
@@ -56,9 +57,7 @@ test.describe('SEC-02 — RLS edge cases (anon)', () => {
 
     test(`anon não lê ${table} com filtro user_id fabricado`, async () => {
       const fakeUuid = '00000000-0000-0000-0000-000000000001';
-      const { status, body } = await getRest(
-        `${table}?user_id=eq.${fakeUuid}&select=*`,
-      );
+      const { status, body } = await getRest(`${table}?user_id=eq.${fakeUuid}&select=*`);
       if (status === 200) {
         const rows = JSON.parse(body);
         expect(rows.length).toBe(0);
@@ -82,7 +81,7 @@ test.describe('SEC-02 — RLS edge cases (anon)', () => {
 
   test('filtro IN com uuids fabricados não vaza linhas', async () => {
     const { status, body } = await getRest(
-      `salespeople?id=in.(00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002)&select=id,email`,
+      `salespeople?id=in.(00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002)&select=id,email`
     );
     if (status === 200) {
       const rows = JSON.parse(body);

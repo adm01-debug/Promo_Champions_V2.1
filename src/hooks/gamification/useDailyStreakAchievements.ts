@@ -124,61 +124,73 @@ export function useCheckAndAwardStreakMilestone() {
         return { newMilestones: [], currentStreak };
       }
 
-      // Award new milestones
-      for (const milestone of newMilestones) {
-        // Insert streak achievement
-        const { error: insertError } = await supabase
-          .from('daily_streak_achievements')
-          .insert({
+      // Award new milestones em lote (evita N+1 de writes e releituras de XP).
+      // O RETURNING só traz linhas realmente inseridas: em execuções
+      // concorrentes, quem perdeu o conflito não recebe linha — e portanto
+      // não credita XP de novo.
+      const { data: inserted, error: insertError } = await supabase
+        .from('daily_streak_achievements')
+        .upsert(
+          newMilestones.map(milestone => ({
             salesperson_id: salespersonId,
             streak_type: milestone.type,
             streak_count: currentStreak,
             xp_awarded: milestone.xp,
-          });
+          })),
+          { onConflict: 'salesperson_id,streak_type', ignoreDuplicates: true }
+        )
+        .select('streak_type');
 
-        if (insertError && !insertError.message.includes('duplicate')) {
-          throw insertError;
+      if (insertError) throw insertError;
+
+      const insertedTypes = new Set((inserted ?? []).map(r => r.streak_type));
+      const awardedMilestones = newMilestones.filter(m => insertedTypes.has(m.type));
+
+      if (awardedMilestones.length === 0) {
+        return { newMilestones: [], currentStreak };
+      }
+
+      // Award XP
+      const { data: xpData } = await supabase
+        .from('salesperson_xp')
+        .select('total_xp, current_level, xp_to_next_level')
+        .eq('salesperson_id', salespersonId)
+        .single();
+
+      if (xpData) {
+        const totalXpAwarded = awardedMilestones.reduce((sum, m) => sum + m.xp, 0);
+        const newTotalXP = xpData.total_xp + totalXpAwarded;
+        let newLevel = xpData.current_level;
+        let newXPToNext = xpData.xp_to_next_level;
+
+        // Check for level up
+        while (newTotalXP >= newXPToNext) {
+          newLevel++;
+          newXPToNext = newLevel * 100;
         }
 
-        // Award XP
-        const { data: xpData } = await supabase
+        await supabase
           .from('salesperson_xp')
-          .select('total_xp, current_level, xp_to_next_level')
-          .eq('salesperson_id', salespersonId)
-          .single();
+          .update({
+            total_xp: newTotalXP,
+            current_level: newLevel,
+            xp_to_next_level: newXPToNext,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('salesperson_id', salespersonId);
 
-        if (xpData) {
-          const newTotalXP = xpData.total_xp + milestone.xp;
-          let newLevel = xpData.current_level;
-          let newXPToNext = xpData.xp_to_next_level;
-
-          // Check for level up
-          while (newTotalXP >= newXPToNext) {
-            newLevel++;
-            newXPToNext = newLevel * 100;
-          }
-
-          await supabase
-            .from('salesperson_xp')
-            .update({
-              total_xp: newTotalXP,
-              current_level: newLevel,
-              xp_to_next_level: newXPToNext,
-              updated_at: new Date().toISOString(),
-            })
-            .eq('salesperson_id', salespersonId);
-
-          // Log XP history
-          await supabase.from('xp_history').insert({
+        // Log XP history
+        await supabase.from('xp_history').insert(
+          awardedMilestones.map(milestone => ({
             salesperson_id: salespersonId,
             xp_amount: milestone.xp,
             source_type: 'streak_achievement',
             description: `Conquista: ${milestone.title} (${milestone.days} dias)`,
-          });
-        }
+          }))
+        );
       }
 
-      return { newMilestones, currentStreak };
+      return { newMilestones: awardedMilestones, currentStreak };
     },
     onSuccess: ({ newMilestones }) => {
       if (newMilestones.length > 0) {

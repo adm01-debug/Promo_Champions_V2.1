@@ -31,12 +31,12 @@ client diretamente.
 
 ### O que vai onde
 
-| Camada | Responsabilidade | Exemplo real |
-| ------ | ---------------- | ------------ |
-| `src/hooks/<dominio>/` | Query/mutation TanStack Query consumida por React: queryKey, staleTime, invalidações, `enabled`, estado de loading | `hooks/crm/useClientKanban.ts`, `hooks/admin/useConnectionMetrics.ts`, `hooks/reports/useMonthlySalesBenchmark.ts` |
-| `src/services/` | Operações não-React ou multi-etapa: importação em lote, merge, export, side-effects sem queryKey | `services/clientService.ts` (`importClients`, `mergeClients`), `services/callFeedbackService.ts`, `services/knownDeviceService.ts` |
-| `src/lib/` | Utilitários puros e o próprio client wrapper: sem estado, sem efeito colateral, testável isolado | `lib/money.ts` (`formatBRL`), `lib/usageAnalytics.ts`, `lib/markupHelpers.ts` |
-| `src/integrations/supabase/` | Client singleton + tipos gerados — único lugar que instancia `createClient` | `integrations/supabase/client.ts` |
+| Camada                       | Responsabilidade                                                                                                   | Exemplo real                                                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `src/hooks/<dominio>/`       | Query/mutation TanStack Query consumida por React: queryKey, staleTime, invalidações, `enabled`, estado de loading | `hooks/crm/useClientKanban.ts`, `hooks/admin/useConnectionMetrics.ts`, `hooks/reports/useMonthlySalesBenchmark.ts`                 |
+| `src/services/`              | Operações não-React ou multi-etapa: importação em lote, merge, export, side-effects sem queryKey                   | `services/clientService.ts` (`importClients`, `mergeClients`), `services/callFeedbackService.ts`, `services/knownDeviceService.ts` |
+| `src/lib/`                   | Utilitários puros e o próprio client wrapper: sem estado, sem efeito colateral, testável isolado                   | `lib/money.ts` (`formatBRL`), `lib/usageAnalytics.ts`, `lib/markupHelpers.ts`                                                      |
+| `src/integrations/supabase/` | Client singleton + tipos gerados — único lugar que instancia `createClient`                                        | `integrations/supabase/client.ts`                                                                                                  |
 
 Regra prática para escolher entre hook e service: se o resultado alimenta a
 UI e precisa de cache/refetch, é **hook** (TanStack Query). Se é uma ação
