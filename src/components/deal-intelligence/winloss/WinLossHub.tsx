@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
-import { WinLossSummaryCard } from "./WinLossSummaryCard";
-import { WinFactorsChart } from "./WinFactorsChart";
-import { LossFactorsChart } from "./LossFactorsChart";
-import { LostStageBreakdown } from "./LostStageBreakdown";
-import { CompetitorAnalysisTable } from "./CompetitorAnalysisTable";
-import { WinLossInsightsPanel } from "./WinLossInsightsPanel";
+import { motion } from 'framer-motion';
+import { WinLossSummaryCard } from './WinLossSummaryCard';
+import { WinFactorsChart } from './WinFactorsChart';
+import { LossFactorsChart } from './LossFactorsChart';
+import { LostStageBreakdown } from './LostStageBreakdown';
+import { CompetitorAnalysisTable } from './CompetitorAnalysisTable';
+import { WinLossInsightsPanel } from './WinLossInsightsPanel';
 
 export function WinLossHub() {
   return (
@@ -17,7 +17,8 @@ export function WinLossHub() {
       <div>
         <h2 className="text-section-title">Win/Loss Intelligence</h2>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Análise de padrões de vitória e derrota com IA — descubra o que está funcionando e onde você perde deals.
+          Análise de padrões de vitória e derrota com IA — descubra o que está funcionando
+          e onde você perde deals.
         </p>
       </div>
 

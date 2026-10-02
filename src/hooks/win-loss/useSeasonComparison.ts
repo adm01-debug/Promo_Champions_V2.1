@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
+import { useMemo } from 'react';
+import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 export interface SeasonStats {
   label: string;
@@ -29,11 +29,18 @@ const inRange = (iso: string | null, start: Date, end: Date) => {
 
 const computeStats = (rows: WLAnalysisRow[], label: string): SeasonStats => {
   const total = rows.length;
-  const wins = rows.filter(r => r.outcome === "won").length;
+  const wins = rows.filter(r => r.outcome === 'won').length;
   const totalAmount = rows.reduce((acc, r) => acc + (Number(r.amount) || 0), 0);
   const cycles = rows.map(r => Number(r.cycle_days) || 0).filter(v => v > 0);
   const avgCycle = cycles.length ? cycles.reduce((a, b) => a + b, 0) / cycles.length : 0;
-  return { label, total, wins, winRate: total ? (wins / total) * 100 : 0, totalAmount, avgCycle };
+  return {
+    label,
+    total,
+    wins,
+    winRate: total ? (wins / total) * 100 : 0,
+    totalAmount,
+    avgCycle,
+  };
 };
 
 export const useSeasonComparison = (rows: WLAnalysisRow[]): SeasonComparison => {
@@ -49,7 +56,10 @@ export const useSeasonComparison = (rows: WLAnalysisRow[]): SeasonComparison => 
     const prev = rows.filter(r => inRange(r.analyzed_at, startPrev, endPrev));
 
     const current = computeStats(cur, `${startCurrent.getFullYear()}·Q${currentQ + 1}`);
-    const previous = computeStats(prev, `${startPrev.getFullYear()}·Q${(currentQ + 4) % 4 || 4}`);
+    const previous = computeStats(
+      prev,
+      `${startPrev.getFullYear()}·Q${(currentQ + 4) % 4 || 4}`
+    );
 
     return {
       current,

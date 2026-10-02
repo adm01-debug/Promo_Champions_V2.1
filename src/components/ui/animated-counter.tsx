@@ -1,6 +1,6 @@
-import * as React from "react";
-import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface AnimatedCounterProps {
   value: number;
@@ -17,11 +17,11 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   value,
   duration = 1.5,
   className,
-  prefix = "",
-  suffix = "",
+  prefix = '',
+  suffix = '',
   decimals = 0,
   formatOptions,
-  locale = "pt-BR",
+  locale = 'pt-BR',
 }) => {
   const motionValue = useMotionValue(0);
   const springValue = useSpring(motionValue, {
@@ -30,7 +30,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     duration: duration * 1000,
   });
 
-  const displayValue = useTransform(springValue, (latest) => {
+  const displayValue = useTransform(springValue, latest => {
     if (formatOptions) {
       return latest.toLocaleString(locale, formatOptions);
     }
@@ -46,7 +46,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
 
   return (
     <motion.span
-      className={cn("tabular-nums", className)}
+      className={cn('tabular-nums', className)}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -68,7 +68,7 @@ interface AnimatedCurrencyProps {
 
 export const AnimatedCurrency: React.FC<AnimatedCurrencyProps> = ({
   value,
-  currency = "BRL",
+  currency = 'BRL',
   className,
   duration = 1.5,
 }) => {
@@ -78,7 +78,7 @@ export const AnimatedCurrency: React.FC<AnimatedCurrencyProps> = ({
       duration={duration}
       className={className}
       formatOptions={{
-        style: "currency",
+        style: 'currency',
         currency,
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
@@ -101,8 +101,8 @@ export const AnimatedPercentage: React.FC<AnimatedPercentageProps> = ({
   duration = 1.5,
   showSign = false,
 }) => {
-  const sign = showSign && value > 0 ? "+" : "";
-  
+  const sign = showSign && value > 0 ? '+' : '';
+
   return (
     <AnimatedCounter
       value={value}

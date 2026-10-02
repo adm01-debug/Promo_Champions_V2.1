@@ -79,8 +79,10 @@ export function computePipelineHealth(pipelineDeals: SaleRecord[], now: Date) {
   ).length;
   const avgDaysInPipeline =
     pipelineDeals.length > 0
-      ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) /
-        pipelineDeals.length
+      ? pipelineDeals.reduce(
+          (sum, d) => sum + differenceInDays(now, parseISO(d.created_at)),
+          0
+        ) / pipelineDeals.length
       : 0;
 
   const stages = ['pending', 'qualified', 'proposal', 'negotiation'];
@@ -200,7 +202,8 @@ export function computeRanking(
   const salesBySp: Record<string, number> = {};
   rankingData.forEach(sale => {
     if (sale.salesperson_id) {
-      salesBySp[sale.salesperson_id] = (salesBySp[sale.salesperson_id] || 0) + Number(sale.amount);
+      salesBySp[sale.salesperson_id] =
+        (salesBySp[sale.salesperson_id] || 0) + Number(sale.amount);
     }
   });
   const rankings = Object.entries(salesBySp)
@@ -252,8 +255,10 @@ export function computePipelineByStage(pipelineDeals: SaleRecord[], now: Date) {
   }));
   const avgDaysInPipeline =
     pipelineDeals.length > 0
-      ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) /
-        pipelineDeals.length
+      ? pipelineDeals.reduce(
+          (sum, d) => sum + differenceInDays(now, parseISO(d.created_at)),
+          0
+        ) / pipelineDeals.length
       : 0;
   return { pipelineValue, dealsByStage, avgDaysInPipeline };
 }
@@ -267,7 +272,9 @@ export function buildSalesByDay(sales: SaleRecord[]) {
   return Object.entries(map).map(([day, value]) => ({ day, value }));
 }
 
-export function buildSalesByCategory(sales: Array<{ category?: string | null; amount: number }>) {
+export function buildSalesByCategory(
+  sales: Array<{ category?: string | null; amount: number }>
+) {
   const map: Record<string, number> = {};
   sales.forEach(sale => {
     const cat = sale.category || 'other';

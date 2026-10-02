@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function KpiBannerSkeleton() {
   return (
@@ -29,7 +29,9 @@ export function KpiBannerSkeleton() {
 export function ChartSkeleton({ height = 260 }: { height?: number }) {
   return (
     <Card className="border-border/50">
-      <CardHeader className="pb-2"><Skeleton className="h-5 w-48" /></CardHeader>
+      <CardHeader className="pb-2">
+        <Skeleton className="h-5 w-48" />
+      </CardHeader>
       <CardContent>
         <Skeleton className="w-full" style={{ height }} />
       </CardContent>
@@ -40,7 +42,9 @@ export function ChartSkeleton({ height = 260 }: { height?: number }) {
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <Card className="border-border/50">
-      <CardHeader className="pb-2"><Skeleton className="h-5 w-44" /></CardHeader>
+      <CardHeader className="pb-2">
+        <Skeleton className="h-5 w-44" />
+      </CardHeader>
       <CardContent className="space-y-2">
         {Array.from({ length: rows }).map((_, i) => (
           <Skeleton key={i} className="h-9 w-full" />
@@ -53,7 +57,9 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
 export function CompetitorGridSkeleton() {
   return (
     <Card className="border-border/50">
-      <CardHeader className="pb-2"><Skeleton className="h-5 w-44" /></CardHeader>
+      <CardHeader className="pb-2">
+        <Skeleton className="h-5 w-44" />
+      </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-28 rounded-lg" />

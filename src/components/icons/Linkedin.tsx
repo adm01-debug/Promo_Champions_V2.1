@@ -16,7 +16,7 @@ export interface LinkedinIconProps extends SVGProps<SVGSVGElement> {
  */
 export const Linkedin = forwardRef<SVGSVGElement, LinkedinIconProps>(function Linkedin(
   { size = 24, strokeWidth = 2, color = 'currentColor', ...props },
-  ref,
+  ref
 ) {
   return (
     <svg

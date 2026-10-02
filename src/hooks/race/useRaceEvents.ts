@@ -13,7 +13,10 @@ export interface RaceEvent {
 
 // Round 3 — dedupe de canais por seasonId para evitar leaks quando múltiplos
 // componentes (HUD + sidebar + TV) montam o mesmo hook simultaneamente.
-const channelRefs = new Map<string, { count: number; channel: ReturnType<typeof supabase.channel> }>();
+const channelRefs = new Map<
+  string,
+  { count: number; channel: ReturnType<typeof supabase.channel> }
+>();
 
 export function useRaceEvents(seasonId?: string) {
   const queryClient = useQueryClient();
@@ -44,8 +47,14 @@ export function useRaceEvents(seasonId?: string) {
     } else {
       const channel = supabase
         .channel(key)
-        .on('postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'race_events', filter: `season_id=eq.${seasonId}` },
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'race_events',
+            filter: `season_id=eq.${seasonId}`,
+          },
           () => queryClient.invalidateQueries({ queryKey: ['race-events', seasonId] })
         )
         .subscribe();

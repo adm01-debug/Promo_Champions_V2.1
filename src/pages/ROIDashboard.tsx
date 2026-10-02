@@ -100,9 +100,7 @@ const ROIDashboard = () => {
       <div className="p-4 lg:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-page-title lg: gradient-text">
-              ROI por Vendedor
-            </h1>
+            <h1 className="text-page-title lg: gradient-text">ROI por Vendedor</h1>
             <p className="text-muted-foreground text-sm mt-1">
               Análise de retorno sobre investimento, CAC, LTV e payback
             </p>
@@ -366,7 +364,9 @@ const ROIDashboard = () => {
             </Card>
             <Card className="border-none shadow-lg hover-lift-sm">
               <CardHeader>
-                <CardTitle className="text-section-title">Receita por Atividade</CardTitle>
+                <CardTitle className="text-section-title">
+                  Receita por Atividade
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {[...roiData]

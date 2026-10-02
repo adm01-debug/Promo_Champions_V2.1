@@ -5,10 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 
 export type AchievementType =
-  | 'overtake_top3'
-  | 'race_win'
-  | 'personal_record'
-  | 'streak_milestone';
+  'overtake_top3' | 'race_win' | 'personal_record' | 'streak_milestone';
 
 interface Props {
   type: AchievementType;

@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import { useStepVariants } from "@/hooks/sequences/useStepVariants";
-import { FlaskConical } from "lucide-react";
+import { Badge } from '@/components/ui/badge';
+import { useStepVariants } from '@/hooks/sequences/useStepVariants';
+import { FlaskConical } from 'lucide-react';
 
 export function StepVariantBadge({ stepId }: { stepId: string }) {
   const { data } = useStepVariants(stepId);

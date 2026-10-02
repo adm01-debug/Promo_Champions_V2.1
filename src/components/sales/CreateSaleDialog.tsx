@@ -161,7 +161,9 @@ export const CreateSaleDialog = () => {
       </DialogTrigger>
       <DialogContent className="glass border-border/50 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-section-title gradient-text">Nova Venda</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">
+            Nova Venda
+          </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             Registre uma nova transação comercial no ecossistema.
           </DialogDescription>

@@ -1,6 +1,6 @@
-import { FC, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { FC, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   ResponsiveContainer,
   LineChart,
@@ -10,17 +10,17 @@ import {
   Tooltip,
   CartesianGrid,
   Legend,
-} from "recharts";
-import { useForecastAccuracy } from "@/hooks/revenue-intelligence/useForecastAccuracy";
-import { formatBRL } from "./forecastHelpers";
-import type { RechartsTooltipProps } from "@/types/recharts";
+} from 'recharts';
+import { useForecastAccuracy } from '@/hooks/revenue-intelligence/useForecastAccuracy';
+import { formatBRL } from './forecastHelpers';
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 const CustomTooltip: FC<RechartsTooltipProps> = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg border bg-background p-2 text-xs shadow-md">
       <p className="font-medium mb-1">{label}</p>
-      {payload.map((p) => (
+      {payload.map(p => (
         <p key={p.dataKey} style={{ color: p.color }}>
           {p.name}: {formatBRL(p.value)}
         </p>
@@ -47,9 +47,7 @@ export const ForecastVsActualChart: FC = () => {
       e.actual += Number(row.actual_amount ?? 0);
       byPeriod.set(key, e);
     }
-    return Array.from(byPeriod.values()).sort((a, b) =>
-      a.period.localeCompare(b.period),
-    );
+    return Array.from(byPeriod.values()).sort((a, b) => a.period.localeCompare(b.period));
   }, [data]);
 
   if (isLoading) return <Skeleton className="h-72" />;

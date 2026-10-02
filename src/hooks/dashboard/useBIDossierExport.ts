@@ -91,11 +91,13 @@ export const useBIDossierExport = (
       doc.text('Timeline de Pedidos (Últimos 5)', 20, 90);
 
       if (biData.customer360.lastOrders.length > 0) {
-        const orders = biData.customer360.lastOrders.map((o: { date: string; value: number; status?: string }) => [
-          format(new Date(o.date), 'dd/MM/yyyy'),
-          `R$ ${o.value.toLocaleString()}`,
-          o.status === 'delivered' ? 'Entregue' : o.status ?? '—',
-        ]);
+        const orders = biData.customer360.lastOrders.map(
+          (o: { date: string; value: number; status?: string }) => [
+            format(new Date(o.date), 'dd/MM/yyyy'),
+            `R$ ${o.value.toLocaleString()}`,
+            o.status === 'delivered' ? 'Entregue' : (o.status ?? '—'),
+          ]
+        );
 
         adoc.autoTable({
           startY: 100,
@@ -174,7 +176,11 @@ export const useBIDossierExport = (
         20,
         adoc.lastAutoTable.finalY + 15
       );
-      const trends = biData.sectorTrends.map(t => [t.name, t.growth, (t.sales ?? 0).toString()]);
+      const trends = biData.sectorTrends.map(t => [
+        t.name,
+        t.growth,
+        (t.sales ?? 0).toString(),
+      ]);
       adoc.autoTable({
         startY: adoc.lastAutoTable.finalY + 25,
         head: [['Produto em Alta', 'Crescimento', 'Volume de Vendas']],

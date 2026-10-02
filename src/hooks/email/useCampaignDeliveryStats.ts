@@ -17,10 +17,12 @@ export function useCampaignDeliveryStats(days = 30) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc(
         'get_campaign_delivery_stats' as never,
-        { _days: days } as never,
+        { _days: days } as never
       );
       if (error) throw new Error(error.message);
-      return ((data ?? []) as Partial<CampaignDeliveryStatRow>[]).map(normalizeDeliveryRow);
+      return ((data ?? []) as Partial<CampaignDeliveryStatRow>[]).map(
+        normalizeDeliveryRow
+      );
     },
   });
 }

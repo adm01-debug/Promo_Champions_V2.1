@@ -64,7 +64,9 @@ const statusBadge: Record<CommissionStatus, { label: string; className: string }
 export default function AdminComissoes() {
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCommission, setSelectedCommission] = useState<SelectedCommission | null>(null);
+  const [selectedCommission, setSelectedCommission] = useState<SelectedCommission | null>(
+    null
+  );
   const [notes, setNotes] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

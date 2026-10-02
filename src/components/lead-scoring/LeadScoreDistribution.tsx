@@ -1,4 +1,13 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  CartesianGrid,
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLeadScoringMetrics } from '@/hooks/scoring/useLeadScoringMetrics';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,37 +28,48 @@ export function LeadScoreDistribution() {
             <BarChart3 className="h-4 w-4 text-primary" />
             Distribuição de Elite
           </CardTitle>
-          <p className="text-[10px] text-muted-foreground font-medium">Frequência de pontuação em toda a base</p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            Frequência de pontuação em toda a base
+          </p>
         </div>
         <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20">
           <TrendingUp className="h-3 w-3 text-emerald-500" />
-          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-tighter">Saudável</span>
+          <span className="text-[10px] font-black text-emerald-500 uppercase tracking-tighter">
+            Saudável
+          </span>
         </div>
       </CardHeader>
       <CardContent>
         <div className="h-[240px] w-full mt-4">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
                   <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-              <XAxis 
-                dataKey="range" 
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="rgba(255,255,255,0.05)"
+              />
+              <XAxis
+                dataKey="range"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#888888', fontSize: 10, fontWeight: 700 }}
                 dy={10}
               />
-              <YAxis 
+              <YAxis
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#888888', fontSize: 10, fontWeight: 700 }}
               />
-              <Tooltip 
+              <Tooltip
                 cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
@@ -65,7 +85,9 @@ export function LeadScoreDistribution() {
                           <span className="text-2xl font-display font-black tracking-tighter">
                             {payload[0].value}
                           </span>
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase">Leads Detectados</span>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                            Leads Detectados
+                          </span>
                         </div>
                       </div>
                     );
@@ -76,10 +98,10 @@ export function LeadScoreDistribution() {
               <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={40}>
                 {chartData.map((entry, index) => {
                   const range = entry.range;
-                  let color = "url(#barGradient)";
+                  let color = 'url(#barGradient)';
                   if (range === '81-100') color = 'hsl(var(--status-error))';
                   if (range === '61-80') color = 'hsl(var(--status-warning))';
-                  
+
                   return <Cell key={`cell-${index}`} fill={color} fillOpacity={0.9} />;
                 })}
               </Bar>
@@ -90,20 +112,28 @@ export function LeadScoreDistribution() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full bg-status-error" />
-              <span className="text-[9px] font-black text-muted-foreground uppercase">Hot</span>
+              <span className="text-[9px] font-black text-muted-foreground uppercase">
+                Hot
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full bg-status-warning" />
-              <span className="text-[9px] font-black text-muted-foreground uppercase">Warm</span>
+              <span className="text-[9px] font-black text-muted-foreground uppercase">
+                Warm
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full bg-primary" />
-              <span className="text-[9px] font-black text-muted-foreground uppercase">Cold</span>
+              <span className="text-[9px] font-black text-muted-foreground uppercase">
+                Cold
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-1 text-muted-foreground/60">
             <Info className="h-3 w-3" />
-            <span className="text-[9px] font-bold italic uppercase tracking-tighter">Engine v4.2 Predictive</span>
+            <span className="text-[9px] font-bold italic uppercase tracking-tighter">
+              Engine v4.2 Predictive
+            </span>
           </div>
         </div>
       </CardContent>

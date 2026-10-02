@@ -1,15 +1,15 @@
-import { memo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target } from "lucide-react";
-import { useICPCorrelation } from "@/hooks/win-loss/useICPCorrelation";
-import type { WLAnalysisRow } from "@/hooks/win-loss/useWinLossData";
+import { memo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Target } from 'lucide-react';
+import { useICPCorrelation } from '@/hooks/win-loss/useICPCorrelation';
+import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 interface Props {
   rows: WLAnalysisRow[];
 }
 
 const cellShade = (rate: number, total: number) => {
-  if (total < 2) return "hsl(var(--muted) / 0.4)";
+  if (total < 2) return 'hsl(var(--muted) / 0.4)';
   const opacity = Math.min(0.85, 0.15 + rate / 120);
   return `hsl(var(--primary) / ${opacity.toFixed(2)})`;
 };
@@ -29,19 +29,34 @@ export const ICPCorrelationMatrix = memo(function ICPCorrelationMatrix({ rows }:
           Correlação ICP × Win Rate
           {bestCell && (
             <span className="text-xs text-muted-foreground font-normal ml-auto">
-              Sweet-spot: <span className="text-foreground font-medium">{bestCell.segment} · {bestCell.bucket}</span> ({bestCell.winRate.toFixed(0)}%)
+              Sweet-spot:{' '}
+              <span className="text-foreground font-medium">
+                {bestCell.segment} · {bestCell.bucket}
+              </span>{' '}
+              ({bestCell.winRate.toFixed(0)}%)
             </span>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs" role="grid" aria-label="Matriz de correlação ICP por win rate">
+          <table
+            className="w-full text-xs"
+            role="grid"
+            aria-label="Matriz de correlação ICP por win rate"
+          >
             <thead>
               <tr>
-                <th className="text-left p-1.5 text-muted-foreground font-normal">Segmento</th>
+                <th className="text-left p-1.5 text-muted-foreground font-normal">
+                  Segmento
+                </th>
                 {buckets.map(b => (
-                  <th key={b} className="p-1.5 text-muted-foreground font-normal text-center">{b}</th>
+                  <th
+                    key={b}
+                    className="p-1.5 text-muted-foreground font-normal text-center"
+                  >
+                    {b}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -61,8 +76,12 @@ export const ICPCorrelationMatrix = memo(function ICPCorrelationMatrix({ rows }:
                         style={{ background: cellShade(rate, total) }}
                         title={`${seg} · ${b}: ${total} deals, ${rate.toFixed(0)}% win rate`}
                       >
-                        <span className="font-semibold tabular-nums">{total ? `${rate.toFixed(0)}%` : "—"}</span>
-                        <div className="text-[10px] text-muted-foreground tabular-nums">{total || ""}</div>
+                        <span className="font-semibold tabular-nums">
+                          {total ? `${rate.toFixed(0)}%` : '—'}
+                        </span>
+                        <div className="text-[10px] text-muted-foreground tabular-nums">
+                          {total || ''}
+                        </div>
                       </td>
                     );
                   })}

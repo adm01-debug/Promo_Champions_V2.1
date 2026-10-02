@@ -1,8 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Fingerprint, Plus, Trash2, Loader2, AlertTriangle, Smartphone, Key, CheckCircle } from 'lucide-react';
+import {
+  Fingerprint,
+  Plus,
+  Trash2,
+  Loader2,
+  AlertTriangle,
+  Smartphone,
+  Key,
+  CheckCircle,
+} from 'lucide-react';
 import { useWebAuthn } from '@/hooks/useWebAuthn';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -61,7 +76,8 @@ export const PasskeySettings: React.FC = () => {
             Passkeys Não Suportadas
           </CardTitle>
           <CardDescription>
-            Seu navegador não suporta WebAuthn/Passkeys. Atualize para um navegador moderno ou use outro método de autenticação.
+            Seu navegador não suporta WebAuthn/Passkeys. Atualize para um navegador
+            moderno ou use outro método de autenticação.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -77,7 +93,8 @@ export const PasskeySettings: React.FC = () => {
             Passkeys Temporariamente Indisponíveis
           </CardTitle>
           <CardDescription>
-            O login biométrico foi pausado enquanto reforçamos a verificação de segurança. Use seu método de login habitual até a conclusão da manutenção.
+            O login biométrico foi pausado enquanto reforçamos a verificação de segurança.
+            Use seu método de login habitual até a conclusão da manutenção.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -97,7 +114,8 @@ export const PasskeySettings: React.FC = () => {
           </Badge>
         </div>
         <CardDescription>
-          Use seu rosto, impressão digital ou chave de segurança para fazer login de forma segura e sem senha
+          Use seu rosto, impressão digital ou chave de segurança para fazer login de forma
+          segura e sem senha
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -116,11 +134,7 @@ export const PasskeySettings: React.FC = () => {
         </div>
 
         {/* Register Button */}
-        <Button 
-          onClick={handleRegister} 
-          disabled={isLoading}
-          className="w-full"
-        >
+        <Button onClick={handleRegister} disabled={isLoading} className="w-full">
           {isLoading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
           ) : (
@@ -134,7 +148,7 @@ export const PasskeySettings: React.FC = () => {
           <div className="space-y-3">
             <h4 className="font-medium text-sm">Passkeys Registradas</h4>
             <div className="space-y-2">
-              {credentials.map((cred) => (
+              {credentials.map(cred => (
                 <div
                   key={cred.id}
                   className="flex items-center justify-between p-3 rounded-lg border bg-card"
@@ -146,15 +160,20 @@ export const PasskeySettings: React.FC = () => {
                     <div>
                       <p className="font-medium text-sm">{cred.friendly_name}</p>
                       <p className="text-xs text-muted-foreground">
-                        Criada {formatDistanceToNow(new Date(cred.created_at), { 
+                        Criada{' '}
+                        {formatDistanceToNow(new Date(cred.created_at), {
                           addSuffix: true,
-                          locale: ptBR 
+                          locale: ptBR,
                         })}
                         {cred.last_used_at && (
-                          <> • Usada {formatDistanceToNow(new Date(cred.last_used_at), {
-                            addSuffix: true,
-                            locale: ptBR
-                          })}</>
+                          <>
+                            {' '}
+                            • Usada{' '}
+                            {formatDistanceToNow(new Date(cred.last_used_at), {
+                              addSuffix: true,
+                              locale: ptBR,
+                            })}
+                          </>
                         )}
                       </p>
                     </div>
@@ -185,7 +204,8 @@ export const PasskeySettings: React.FC = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Remover Passkey?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Esta ação não pode ser desfeita. Você não poderá mais usar esta passkey para fazer login.
+                            Esta ação não pode ser desfeita. Você não poderá mais usar
+                            esta passkey para fazer login.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

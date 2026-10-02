@@ -16,9 +16,18 @@ interface Props {
   rebuilding?: boolean;
 }
 
-export const DialerQueueCard = ({ queue, isActive, onSelect, onRebuild, onStart, rebuilding }: Props) => {
+export const DialerQueueCard = ({
+  queue,
+  isActive,
+  onSelect,
+  onRebuild,
+  onStart,
+  rebuilding,
+}: Props) => {
   const { data: stats } = useQueueStats(queue.id);
-  const strategy = STRATEGY_OPTIONS.find((s) => s.value === queue.priority_strategy)?.label ?? queue.priority_strategy;
+  const strategy =
+    STRATEGY_OPTIONS.find(s => s.value === queue.priority_strategy)?.label ??
+    queue.priority_strategy;
 
   return (
     <Card className={isActive ? 'border-primary ring-1 ring-primary/30' : ''}>
@@ -35,9 +44,20 @@ export const DialerQueueCard = ({ queue, isActive, onSelect, onRebuild, onStart,
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-xs text-center">
-          <div><div className="font-bold text-success">{stats?.done_count ?? 0}</div><div className="text-muted-foreground">Feitas</div></div>
-          <div><div className="font-bold text-warning">{stats?.snoozed_count ?? 0}</div><div className="text-muted-foreground">Adiadas</div></div>
-          <div><div className="font-bold text-muted-foreground">{stats?.skipped_count ?? 0}</div><div className="text-muted-foreground">Puladas</div></div>
+          <div>
+            <div className="font-bold text-success">{stats?.done_count ?? 0}</div>
+            <div className="text-muted-foreground">Feitas</div>
+          </div>
+          <div>
+            <div className="font-bold text-warning">{stats?.snoozed_count ?? 0}</div>
+            <div className="text-muted-foreground">Adiadas</div>
+          </div>
+          <div>
+            <div className="font-bold text-muted-foreground">
+              {stats?.skipped_count ?? 0}
+            </div>
+            <div className="text-muted-foreground">Puladas</div>
+          </div>
         </div>
 
         <p className="text-xs text-muted-foreground">
@@ -47,11 +67,22 @@ export const DialerQueueCard = ({ queue, isActive, onSelect, onRebuild, onStart,
         </p>
 
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="flex-1" onClick={onRebuild} disabled={rebuilding}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1"
+            onClick={onRebuild}
+            disabled={rebuilding}
+          >
             <RefreshCw className={`h-3 w-3 mr-1 ${rebuilding ? 'animate-spin' : ''}`} />
             Reconstruir
           </Button>
-          <Button size="sm" className="flex-1" onClick={onStart} disabled={(stats?.pending_count ?? 0) === 0}>
+          <Button
+            size="sm"
+            className="flex-1"
+            onClick={onStart}
+            disabled={(stats?.pending_count ?? 0) === 0}
+          >
             <Play className="h-3 w-3 mr-1" />
             Iniciar
           </Button>

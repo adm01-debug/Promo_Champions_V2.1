@@ -81,7 +81,10 @@ export function useLeadSourceAnalysis(months: number = 3) {
       const configMap = new Map((configs || []).map(c => [c.source_name, c]));
 
       // Group by source
-      const sourceMap = new Map<LeadSource, Array<{ status: string; amount: number | string }>>();
+      const sourceMap = new Map<
+        LeadSource,
+        Array<{ status: string; amount: number | string }>
+      >();
 
       (sales || []).forEach(sale => {
         const source = (sale.source || 'other') as LeadSource;
@@ -103,13 +106,18 @@ export function useLeadSourceAnalysis(months: number = 3) {
       for (const [source, sourceSales] of sourceMap.entries()) {
         const sourceTotal = sourceSales.length;
         const qualified = sourceSales.filter(s =>
-          ['qualified', 'proposal', 'negotiation', ...WON_SALE_STATUSES].includes(s.status)
+          ['qualified', 'proposal', 'negotiation', ...WON_SALE_STATUSES].includes(
+            s.status
+          )
         ).length;
         const closed = sourceSales.filter(s => isWonSaleStatus(s.status)).length;
         const closedValue = sourceSales
           .filter(s => isWonSaleStatus(s.status))
           .reduce((sum, s) => sum + Number(s.amount), 0);
-        const totalSourceValue = sourceSales.reduce((sum, s) => sum + Number(s.amount), 0);
+        const totalSourceValue = sourceSales.reduce(
+          (sum, s) => sum + Number(s.amount),
+          0
+        );
 
         const config = configMap.get(source);
         const monthlyBudget = config?.monthly_budget ? Number(config.monthly_budget) : 0;
@@ -137,7 +145,9 @@ export function useLeadSourceAnalysis(months: number = 3) {
       // Find best performers
       const bestConversion = sources.reduce(
         (best, curr) =>
-          curr.conversionRate > (best?.conversionRate || 0) && curr.totalLeads >= 3 ? curr : best,
+          curr.conversionRate > (best?.conversionRate || 0) && curr.totalLeads >= 3
+            ? curr
+            : best,
         null as SourceMetrics | null
       );
 

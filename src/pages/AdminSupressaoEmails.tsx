@@ -3,10 +3,24 @@ import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
-import { BellOff, ChevronLeft, ChevronRight, Download, Plus, RefreshCw, Trash2 } from 'lucide-react';
+import {
+  BellOff,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Plus,
+  RefreshCw,
+  Trash2,
+} from 'lucide-react';
 
 import { PageTransition } from '@/components/transitions/PageTransition';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,10 +60,12 @@ const SOURCE_OPTIONS: Array<{ value: string; label: string }> = [
 ];
 
 function sourceLabel(source: string): string {
-  return SOURCE_OPTIONS.find((o) => o.value === source)?.label ?? source;
+  return SOURCE_OPTIONS.find(o => o.value === source)?.label ?? source;
 }
 
-function sourceVariant(source: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function sourceVariant(
+  source: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
   if (source === 'hard_bounce' || source === 'complaint') return 'destructive';
   if (source === 'manual_admin') return 'secondary';
   return 'outline';
@@ -72,7 +88,7 @@ function AdminSupressaoEmails() {
 
   const filters = useMemo(
     () => ({ search, source, page, pageSize: PAGE_SIZE }),
-    [search, source, page],
+    [search, source, page]
   );
 
   const { data, isLoading, isFetching, refetch } = useEmailOptOuts(filters);
@@ -111,7 +127,7 @@ function AdminSupressaoEmails() {
         .select('email, source, reason, created_at')
         .order('created_at', { ascending: false })
         .limit(10000);
-      const term = search.trim().replace(/[%,_]/g, (m) => `\\${m}`);
+      const term = search.trim().replace(/[%,_]/g, m => `\\${m}`);
       if (term) query = query.ilike('email', `%${term}%`);
       if (source !== 'all') query = query.eq('source', source);
 
@@ -119,13 +135,13 @@ function AdminSupressaoEmails() {
       if (error) throw new Error(error.message);
 
       const header = ['email', 'origem', 'motivo', 'data'].join(',');
-      const lines = (all ?? []).map((r) =>
+      const lines = (all ?? []).map(r =>
         [
           csvCell(r.email),
           csvCell(sourceLabel(r.source)),
           csvCell(r.reason ?? ''),
           csvCell(format(new Date(r.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })),
-        ].join(','),
+        ].join(',')
       );
       const blob = new Blob([`\uFEFF${[header, ...lines].join('\n')}`], {
         type: 'text/csv;charset=utf-8;',
@@ -163,16 +179,26 @@ function AdminSupressaoEmails() {
               Supressão de e-mails
             </h1>
             <p className="text-sm text-muted-foreground">
-              Endereços bloqueados para qualquer envio: descadastros, hard bounces e reclamações de
-              spam.
+              Endereços bloqueados para qualquer envio: descadastros, hard bounces e
+              reclamações de spam.
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => void refetch()} disabled={isFetching}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void refetch()}
+              disabled={isFetching}
+            >
               <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
               Atualizar
             </Button>
-            <Button variant="outline" size="sm" onClick={() => void handleExport()} disabled={exporting}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void handleExport()}
+              disabled={exporting}
+            >
               <Download className="h-4 w-4 mr-2" />
               Exportar CSV
             </Button>
@@ -191,14 +217,12 @@ function AdminSupressaoEmails() {
 
         <RecoveryRateCard />
 
-
-
-
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Adicionar manualmente</CardTitle>
             <CardDescription>
-              Use para atender pedidos recebidos por outros canais (telefone, WhatsApp, e-mail direto).
+              Use para atender pedidos recebidos por outros canais (telefone, WhatsApp,
+              e-mail direto).
             </CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-[2fr_2fr_auto] gap-3 items-end">
@@ -209,7 +233,7 @@ function AdminSupressaoEmails() {
                 type="email"
                 placeholder="cliente@empresa.com"
                 value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
+                onChange={e => setNewEmail(e.target.value)}
               />
             </div>
             <div className="space-y-1">
@@ -218,10 +242,13 @@ function AdminSupressaoEmails() {
                 id="optout-reason"
                 placeholder="Solicitou por telefone"
                 value={newReason}
-                onChange={(e) => setNewReason(e.target.value)}
+                onChange={e => setNewReason(e.target.value)}
               />
             </div>
-            <Button onClick={() => void handleAdd()} disabled={addMutation.isPending || !newEmail}>
+            <Button
+              onClick={() => void handleAdd()}
+              disabled={addMutation.isPending || !newEmail}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Adicionar
             </Button>
@@ -231,14 +258,12 @@ function AdminSupressaoEmails() {
         <Card>
           <CardHeader className="gap-3">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <CardTitle className="text-base">
-                {total} endereço(s) na lista
-              </CardTitle>
+              <CardTitle className="text-base">{total} endereço(s) na lista</CardTitle>
               <div className="flex flex-col sm:flex-row gap-2">
                 <Input
                   placeholder="Buscar por e-mail…"
                   value={search}
-                  onChange={(e) => {
+                  onChange={e => {
                     setSearch(e.target.value);
                     setPage(0);
                   }}
@@ -247,7 +272,7 @@ function AdminSupressaoEmails() {
                 />
                 <Select
                   value={source}
-                  onValueChange={(v) => {
+                  onValueChange={v => {
                     setSource(v);
                     setPage(0);
                   }}
@@ -256,7 +281,7 @@ function AdminSupressaoEmails() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {SOURCE_OPTIONS.map((o) => (
+                    {SOURCE_OPTIONS.map(o => (
                       <SelectItem key={o.value} value={o.value}>
                         {o.label}
                       </SelectItem>
@@ -278,7 +303,7 @@ function AdminSupressaoEmails() {
                 Nenhum endereço suprimido com os filtros atuais.
               </p>
             ) : (
-              rows.map((row) => (
+              rows.map(row => (
                 <div
                   key={row.id}
                   className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-lg border border-border bg-card/60 p-3"
@@ -286,11 +311,17 @@ function AdminSupressaoEmails() {
                   <div className="min-w-0 space-y-1">
                     <p className="truncate font-medium">{row.email}</p>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <Badge variant={sourceVariant(row.source)}>{sourceLabel(row.source)}</Badge>
+                      <Badge variant={sourceVariant(row.source)}>
+                        {sourceLabel(row.source)}
+                      </Badge>
                       <span>
-                        {format(new Date(row.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                        {format(new Date(row.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                          locale: ptBR,
+                        })}
                       </span>
-                      {row.reason ? <span className="truncate">· {row.reason}</span> : null}
+                      {row.reason ? (
+                        <span className="truncate">· {row.reason}</span>
+                      ) : null}
                     </div>
                   </div>
                   <Button
@@ -316,7 +347,7 @@ function AdminSupressaoEmails() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage((p) => Math.max(0, p - 1))}
+                    onClick={() => setPage(p => Math.max(0, p - 1))}
                     disabled={page === 0}
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -325,7 +356,7 @@ function AdminSupressaoEmails() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                    onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                     disabled={page >= totalPages - 1}
                   >
                     Próxima

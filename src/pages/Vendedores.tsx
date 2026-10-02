@@ -142,9 +142,7 @@ const Vendedores = () => {
                         <Users className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <h2 className="text-section-title">
-                          Ranking Completo
-                        </h2>
+                        <h2 className="text-section-title">Ranking Completo</h2>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           Quem será o próximo a subir? 🔥
                         </p>

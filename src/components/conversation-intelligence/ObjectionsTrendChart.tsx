@@ -1,6 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import type { RechartsTooltipProps } from "@/types/recharts";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 interface Props {
   data: { label: string; count: number }[];
@@ -31,8 +39,17 @@ export const ObjectionsTrendChart = ({ data }: Props) => {
         ) : (
           <ResponsiveContainer width="100%" height={Math.max(180, data.length * 38)}>
             <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-              <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} allowDecimals={false} />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="hsl(var(--border))"
+                horizontal={false}
+              />
+              <XAxis
+                type="number"
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={11}
+                allowDecimals={false}
+              />
               <YAxis
                 dataKey="label"
                 type="category"
