@@ -1,10 +1,16 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
-import { chunkedIn } from "../_shared/chunked-in.ts";
-import { alertFromEmail, escalateCriticalAlert, runbookUrl } from "../_shared/alert-escalation.ts";
-import { exportOperationalMetrics } from "../_shared/metrics-exporter.ts";
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
+import { chunkedIn } from '../_shared/chunked-in.ts';
+import {
+  alertFromEmail,
+  escalateCriticalAlert,
+  runbookUrl,
+} from '../_shared/alert-escalation.ts';
+import { exportOperationalMetrics } from '../_shared/metrics-exporter.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 type LogLevel = 'info' | 'warn' | 'error';
 type AlertKind = 'consecutive_failures' | 'high_retry_rate' | 'attempts_exhausted';
@@ -246,20 +252,27 @@ async function sendAlertEmail(
   `;
 
   try {
-    const r = await fetchWithTrace('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: alertFromEmail(),
-        to: [adminEmail],
-        subject: `Webhook degradado: ${triggers.map(t => t.kind).join(', ')}`,
-        html,
-      }),
-    }, {
-      requestId,
-      fnName: 'winloss-webhook-health-monitor',
-      operation: 'resend_email',
-    });
+    const r = await fetchWithTrace(
+      'https://api.resend.com/emails',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: alertFromEmail(),
+          to: [adminEmail],
+          subject: `Webhook degradado: ${triggers.map(t => t.kind).join(', ')}`,
+          html,
+        }),
+      },
+      {
+        requestId,
+        fnName: 'winloss-webhook-health-monitor',
+        operation: 'resend_email',
+      }
+    );
     if (!r.ok) {
       const text = await r.text().catch(() => '');
       structuredLog(
@@ -285,355 +298,513 @@ async function sendAlertEmail(
   }
 }
 
-Deno.serve(withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+Deno.serve(
+  withRequestId('winloss-webhook-health-monitor', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  const requestId = crypto.randomUUID();
-  const requestStart = Date.now();
+    const requestId = crypto.randomUUID();
+    const requestStart = Date.now();
 
-  try {
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
-
-    const settings = await loadSettings(supabase, requestId);
-
-    structuredLog(
-      'info',
-      {
-        msg: 'monitor_start',
-        consecutive_threshold: settings.consecutive_failures,
-        retry_rate_threshold: settings.retry_rate_threshold,
-        window_minutes: settings.window_minutes,
-        min_deliveries: settings.min_deliveries,
-        suppress_minutes: settings.suppress_minutes,
-        max_attempts: settings.max_attempts,
-      },
-      requestId
-    );
-
-    const { data: subs, error: subsError } = await supabase
-      .from('winloss_webhook_subscriptions')
-      .select('id, url')
-      .eq('active', true)
-      .limit(200);
-
-    if (subsError) {
-      structuredLog(
-        'error',
-        { msg: 'fetch_subscriptions_failed', error: subsError.message },
-        requestId
+    try {
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
       );
-      throw subsError;
-    }
 
-    const subscriptions = (subs as SubscriptionRow[] | null) ?? [];
-    const sinceIso = new Date(
-      Date.now() - settings.window_minutes * 60_000
-    ).toISOString();
-    const suppressIso = new Date(
-      Date.now() - settings.suppress_minutes * 60_000
-    ).toISOString();
+      // SEC: antes desta verificação, qualquer chamada com a anon key executava
+      // o monitor completo como service_role (leitura de assinaturas/entregas,
+      // escrita de alertas e disparo de e-mails). Agora só passa o pg_cron
+      // (service_role ou X-Cron-Secret via trigger_internal_edge_job) ou um
+      // usuário com papel admin/manager.
+      let authorizedByCron = false;
+      try {
+        authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+          const { data, error } = await supabase
+            .from('_internal_secrets')
+            .select('value')
+            .eq('key', 'coaching_cron_secret')
+            .maybeSingle();
+          if (error) throw error;
+          return (data as { value?: string | null } | null)?.value;
+        });
+      } catch (authError) {
+        structuredLog(
+          'error',
+          { msg: 'cron_authorization_unavailable', ...describeError(authError) },
+          requestId
+        );
+        return new Response(
+          JSON.stringify({ error: 'authorization_unavailable', requestId }),
+          {
+            status: 503,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'X-Request-Id': requestId,
+            },
+          }
+        );
+      }
 
-    const evaluations: EvaluationResult[] = [];
-    let firedCount = 0;
-    let suppressedCount = 0;
+      if (!authorizedByCron) {
+        try {
+          const caller = await getUserClient(req);
+          const { data: allowed, error: roleError } = await caller.client.rpc(
+            'is_admin_or_manager' as never,
+            { _user_id: caller.userId } as never
+          );
+          if (roleError) throw roleError;
+          if (!allowed) {
+            structuredLog(
+              'warn',
+              { msg: 'auth_forbidden', userId: caller.userId },
+              requestId
+            );
+            return new Response(JSON.stringify({ error: 'forbidden', requestId }), {
+              status: 403,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+                'X-Request-Id': requestId,
+              },
+            });
+          }
+        } catch (authError) {
+          if (authError instanceof UnauthorizedError) {
+            structuredLog('warn', { msg: 'auth_unauthorized' }, requestId);
+            return new Response(JSON.stringify({ error: 'unauthorized', requestId }), {
+              status: 401,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+                'X-Request-Id': requestId,
+              },
+            });
+          }
+          structuredLog(
+            'error',
+            { msg: 'authorization_failed', ...describeError(authError) },
+            requestId
+          );
+          return new Response(
+            JSON.stringify({ error: 'authorization_unavailable', requestId }),
+            {
+              status: 503,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+                'X-Request-Id': requestId,
+              },
+            }
+          );
+        }
+      }
 
-    if (subscriptions.length === 0) {
-      return new Response(
-        JSON.stringify({ requestId, checked: 0, fired: 0, suppressed: 0, evaluations: [] }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Request-Id': requestId } }
-      );
-    }
-
-    const subIds = subscriptions.map(s => s.id);
-
-    // Pre-fetch ALL deliveries and recent alerts for every subscription in parallel —
-    // eliminates 2 per-subscription DB round-trips inside the loop.
-    const [deliveriesData, recentAlertsData] = await Promise.all([
-      chunkedIn<{ subscription_id: string; attempt: number; succeeded: boolean; status: string; error_message: string | null; created_at: string; request_id: string | null; event: string }>(
-        subIds,
-        (chunk) => supabase
-          .from('winloss_webhook_deliveries')
-          .select('subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event')
-          .in('subscription_id', chunk)
-          .gte('created_at', sinceIso)
-          .order('created_at', { ascending: false })
-          .limit(5000),
-        { parallel: true, label: 'winloss-health.deliveries' },
-      ),
-      chunkedIn<{ subscription_id: string; kind: string; details: unknown; fired_at: string }>(
-        subIds,
-        (chunk) => supabase
-          .from('winloss_webhook_alerts')
-          .select('subscription_id, kind, details, fired_at')
-          .in('subscription_id', chunk)
-          .gte('fired_at', suppressIso)
-          .limit(1000),
-        { parallel: true, label: 'winloss-health.recent-alerts' },
-      ),
-    ]);
-
-    // Group deliveries by subscription_id — already DESC ordered globally so
-    // each per-sub slice is also DESC, which evaluate() requires.
-    type DeliveryRowWithSubId = DeliveryRow & { subscription_id: string };
-    const deliveriesBySubId = new Map<string, DeliveryRow[]>();
-    for (const row of deliveriesData as DeliveryRowWithSubId[]) {
-      const arr = deliveriesBySubId.get(row.subscription_id) ?? [];
-      arr.push(row);
-      deliveriesBySubId.set(row.subscription_id, arr);
-    }
-
-    // Group recent alerts by subscription_id
-    type RecentAlertRow = { subscription_id: string; kind: string; details: Record<string, unknown> | null };
-    const recentAlertsBySubId = new Map<string, Array<{ kind: string; details: Record<string, unknown> | null }>>();
-    for (const row of recentAlertsData as RecentAlertRow[]) {
-      const arr = recentAlertsBySubId.get(row.subscription_id) ?? [];
-      arr.push({ kind: row.kind, details: row.details });
-      recentAlertsBySubId.set(row.subscription_id, arr);
-    }
-
-    // Collect all alert insert rows to batch after the evaluation loop
-    const alertInsertRows: Array<Record<string, unknown>> = [];
-    // Track which subscriptions need email alerts (fired triggers only)
-    const emailQueue: Array<{ sub: SubscriptionRow; firedTriggers: Array<{ kind: AlertKind; details: Record<string, unknown> }> }> = [];
-
-    for (const sub of subscriptions) {
-      const deliveries = deliveriesBySubId.get(sub.id) ?? [];
-      const result = evaluate(deliveries, settings);
-
-      const evalEntry: EvaluationResult = {
-        subscriptionId: sub.id,
-        url: sub.url,
-        total: result.total,
-        failed: result.failed,
-        retries: result.retries,
-        retryRate: result.retryRate,
-        consecutiveFailures: result.consecutiveFailures,
-        fired: [],
-        suppressed: [],
-      };
+      const settings = await loadSettings(supabase, requestId);
 
       structuredLog(
         'info',
         {
-          msg: 'subscription_evaluated',
-          subscriptionId: sub.id,
-          total: result.total,
-          failed: result.failed,
-          retries: result.retries,
-          retry_rate: Number(result.retryRate.toFixed(3)),
-          consecutive_failures: result.consecutiveFailures,
-          triggers: result.triggers.map(t => t.kind),
+          msg: 'monitor_start',
+          consecutive_threshold: settings.consecutive_failures,
+          retry_rate_threshold: settings.retry_rate_threshold,
+          window_minutes: settings.window_minutes,
+          min_deliveries: settings.min_deliveries,
+          suppress_minutes: settings.suppress_minutes,
+          max_attempts: settings.max_attempts,
         },
         requestId
       );
 
-      if (result.triggers.length === 0) {
-        evaluations.push(evalEntry);
-        continue;
+      const { data: subs, error: subsError } = await supabase
+        .from('winloss_webhook_subscriptions')
+        .select('id, url')
+        .eq('active', true)
+        .limit(200);
+
+      if (subsError) {
+        structuredLog(
+          'error',
+          { msg: 'fetch_subscriptions_failed', error: subsError.message },
+          requestId
+        );
+        throw subsError;
       }
 
-      // Anti-spam: use pre-fetched recent alerts (no DB call here)
-      const recentRows = recentAlertsBySubId.get(sub.id) ?? [];
-      const recentKinds = new Set(recentRows.map(r => r.kind));
-      const recentExhaustedRequestIds = new Set(
-        recentRows
-          .filter(r => r.kind === 'attempts_exhausted')
-          .map(r =>
-            r.details && typeof r.details === 'object'
-              ? (r.details as Record<string, unknown>).request_id
-              : null
-          )
-          .filter((v): v is string => typeof v === 'string')
-      );
+      const subscriptions = (subs as SubscriptionRow[] | null) ?? [];
+      const sinceIso = new Date(
+        Date.now() - settings.window_minutes * 60_000
+      ).toISOString();
+      const suppressIso = new Date(
+        Date.now() - settings.suppress_minutes * 60_000
+      ).toISOString();
 
-      for (const trigger of result.triggers) {
-        const triggerRequestId =
-          trigger.kind === 'attempts_exhausted'
-            ? (trigger.details.request_id as string | undefined)
-            : undefined;
+      const evaluations: EvaluationResult[] = [];
+      let firedCount = 0;
+      let suppressedCount = 0;
 
-        const isSuppressed =
-          trigger.kind === 'attempts_exhausted'
-            ? !!triggerRequestId && recentExhaustedRequestIds.has(triggerRequestId)
-            : recentKinds.has(trigger.kind);
-
-        if (isSuppressed) {
-          structuredLog(
-            'info',
-            {
-              msg: 'alert_suppressed',
-              subscriptionId: sub.id,
-              kind: trigger.kind,
-              triggerRequestId,
-              suppress_minutes: settings.suppress_minutes,
+      if (subscriptions.length === 0) {
+        return new Response(
+          JSON.stringify({
+            requestId,
+            checked: 0,
+            fired: 0,
+            suppressed: 0,
+            evaluations: [],
+          }),
+          {
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'X-Request-Id': requestId,
             },
-            requestId
-          );
+          }
+        );
+      }
 
-          const suppressedRequestId =
-            trigger.kind === 'attempts_exhausted' && triggerRequestId
-              ? triggerRequestId
-              : requestId;
-          const reason =
-            trigger.kind === 'attempts_exhausted'
-              ? 'duplicate_request_within_suppress_window'
-              : 'duplicate_kind_within_suppress_window';
+      const subIds = subscriptions.map(s => s.id);
 
-          alertInsertRows.push({
-            subscription_id: sub.id,
-            kind: trigger.kind,
-            request_id: suppressedRequestId,
-            suppressed: true,
-            suppress_reason: reason,
-            details: {
-              ...trigger.details,
-              subscription_id: sub.id,
-              request_id: suppressedRequestId,
-              monitor_request_id: requestId,
-              suppressed: true,
-              suppress_reason: reason,
-              suppress_minutes: settings.suppress_minutes,
-            },
-          });
+      // Pre-fetch ALL deliveries and recent alerts for every subscription in parallel —
+      // eliminates 2 per-subscription DB round-trips inside the loop.
+      const [deliveriesData, recentAlertsData] = await Promise.all([
+        chunkedIn<{
+          subscription_id: string;
+          attempt: number;
+          succeeded: boolean;
+          status: string;
+          error_message: string | null;
+          created_at: string;
+          request_id: string | null;
+          event: string;
+        }>(
+          subIds,
+          chunk =>
+            supabase
+              .from('winloss_webhook_deliveries')
+              .select(
+                'subscription_id, attempt, succeeded, status, error_message, created_at, request_id, event'
+              )
+              .in('subscription_id', chunk)
+              .gte('created_at', sinceIso)
+              .order('created_at', { ascending: false })
+              .limit(5000),
+          { parallel: true, label: 'winloss-health.deliveries' }
+        ),
+        chunkedIn<{
+          subscription_id: string;
+          kind: string;
+          details: unknown;
+          fired_at: string;
+        }>(
+          subIds,
+          chunk =>
+            supabase
+              .from('winloss_webhook_alerts')
+              .select('subscription_id, kind, details, fired_at')
+              .in('subscription_id', chunk)
+              .gte('fired_at', suppressIso)
+              .limit(1000),
+          { parallel: true, label: 'winloss-health.recent-alerts' }
+        ),
+      ]);
 
-          evalEntry.suppressed.push(trigger.kind);
-          suppressedCount += 1;
-          continue;
-        }
+      // Group deliveries by subscription_id — already DESC ordered globally so
+      // each per-sub slice is also DESC, which evaluate() requires.
+      type DeliveryRowWithSubId = DeliveryRow & { subscription_id: string };
+      const deliveriesBySubId = new Map<string, DeliveryRow[]>();
+      for (const row of deliveriesData as DeliveryRowWithSubId[]) {
+        const arr = deliveriesBySubId.get(row.subscription_id) ?? [];
+        arr.push(row);
+        deliveriesBySubId.set(row.subscription_id, arr);
+      }
 
-        const persistRequestId =
-          trigger.kind === 'attempts_exhausted' && triggerRequestId
-            ? triggerRequestId
-            : requestId;
+      // Group recent alerts by subscription_id
+      type RecentAlertRow = {
+        subscription_id: string;
+        kind: string;
+        details: Record<string, unknown> | null;
+      };
+      const recentAlertsBySubId = new Map<
+        string,
+        Array<{ kind: string; details: Record<string, unknown> | null }>
+      >();
+      for (const row of recentAlertsData as RecentAlertRow[]) {
+        const arr = recentAlertsBySubId.get(row.subscription_id) ?? [];
+        arr.push({ kind: row.kind, details: row.details });
+        recentAlertsBySubId.set(row.subscription_id, arr);
+      }
 
-        alertInsertRows.push({
-          subscription_id: sub.id,
-          kind: trigger.kind,
-          request_id: persistRequestId,
-          details: {
-            ...trigger.details,
-            subscription_id: sub.id,
-            request_id: persistRequestId,
-            monitor_request_id: requestId,
-          },
-        });
+      // Collect all alert insert rows to batch after the evaluation loop
+      const alertInsertRows: Array<Record<string, unknown>> = [];
+      // Track which subscriptions need email alerts (fired triggers only)
+      const emailQueue: Array<{
+        sub: SubscriptionRow;
+        firedTriggers: Array<{ kind: AlertKind; details: Record<string, unknown> }>;
+      }> = [];
+
+      for (const sub of subscriptions) {
+        const deliveries = deliveriesBySubId.get(sub.id) ?? [];
+        const result = evaluate(deliveries, settings);
+
+        const evalEntry: EvaluationResult = {
+          subscriptionId: sub.id,
+          url: sub.url,
+          total: result.total,
+          failed: result.failed,
+          retries: result.retries,
+          retryRate: result.retryRate,
+          consecutiveFailures: result.consecutiveFailures,
+          fired: [],
+          suppressed: [],
+        };
 
         structuredLog(
-          'warn',
+          'info',
           {
-            msg: 'alert_fired',
+            msg: 'subscription_evaluated',
             subscriptionId: sub.id,
-            kind: trigger.kind,
-            alert_request_id: persistRequestId,
-            details: trigger.details,
+            total: result.total,
+            failed: result.failed,
+            retries: result.retries,
+            retry_rate: Number(result.retryRate.toFixed(3)),
+            consecutive_failures: result.consecutiveFailures,
+            triggers: result.triggers.map(t => t.kind),
           },
           requestId
         );
 
-        evalEntry.fired.push(trigger.kind);
-        firedCount += 1;
+        if (result.triggers.length === 0) {
+          evaluations.push(evalEntry);
+          continue;
+        }
+
+        // Anti-spam: use pre-fetched recent alerts (no DB call here)
+        const recentRows = recentAlertsBySubId.get(sub.id) ?? [];
+        const recentKinds = new Set(recentRows.map(r => r.kind));
+        const recentExhaustedRequestIds = new Set(
+          recentRows
+            .filter(r => r.kind === 'attempts_exhausted')
+            .map(r =>
+              r.details && typeof r.details === 'object'
+                ? (r.details as Record<string, unknown>).request_id
+                : null
+            )
+            .filter((v): v is string => typeof v === 'string')
+        );
+
+        for (const trigger of result.triggers) {
+          const triggerRequestId =
+            trigger.kind === 'attempts_exhausted'
+              ? (trigger.details.request_id as string | undefined)
+              : undefined;
+
+          const isSuppressed =
+            trigger.kind === 'attempts_exhausted'
+              ? !!triggerRequestId && recentExhaustedRequestIds.has(triggerRequestId)
+              : recentKinds.has(trigger.kind);
+
+          if (isSuppressed) {
+            structuredLog(
+              'info',
+              {
+                msg: 'alert_suppressed',
+                subscriptionId: sub.id,
+                kind: trigger.kind,
+                triggerRequestId,
+                suppress_minutes: settings.suppress_minutes,
+              },
+              requestId
+            );
+
+            const suppressedRequestId =
+              trigger.kind === 'attempts_exhausted' && triggerRequestId
+                ? triggerRequestId
+                : requestId;
+            const reason =
+              trigger.kind === 'attempts_exhausted'
+                ? 'duplicate_request_within_suppress_window'
+                : 'duplicate_kind_within_suppress_window';
+
+            alertInsertRows.push({
+              subscription_id: sub.id,
+              kind: trigger.kind,
+              request_id: suppressedRequestId,
+              suppressed: true,
+              suppress_reason: reason,
+              details: {
+                ...trigger.details,
+                subscription_id: sub.id,
+                request_id: suppressedRequestId,
+                monitor_request_id: requestId,
+                suppressed: true,
+                suppress_reason: reason,
+                suppress_minutes: settings.suppress_minutes,
+              },
+            });
+
+            evalEntry.suppressed.push(trigger.kind);
+            suppressedCount += 1;
+            continue;
+          }
+
+          const persistRequestId =
+            trigger.kind === 'attempts_exhausted' && triggerRequestId
+              ? triggerRequestId
+              : requestId;
+
+          alertInsertRows.push({
+            subscription_id: sub.id,
+            kind: trigger.kind,
+            request_id: persistRequestId,
+            details: {
+              ...trigger.details,
+              subscription_id: sub.id,
+              request_id: persistRequestId,
+              monitor_request_id: requestId,
+            },
+          });
+
+          structuredLog(
+            'warn',
+            {
+              msg: 'alert_fired',
+              subscriptionId: sub.id,
+              kind: trigger.kind,
+              alert_request_id: persistRequestId,
+              details: trigger.details,
+            },
+            requestId
+          );
+
+          evalEntry.fired.push(trigger.kind);
+          firedCount += 1;
+        }
+
+        if (evalEntry.fired.length > 0) {
+          emailQueue.push({
+            sub,
+            firedTriggers: result.triggers.filter(t => evalEntry.fired.includes(t.kind)),
+          });
+        }
+
+        evaluations.push(evalEntry);
       }
 
-      if (evalEntry.fired.length > 0) {
-        emailQueue.push({
-          sub,
-          firedTriggers: result.triggers.filter(t => evalEntry.fired.includes(t.kind)),
+      // Phase 2: batch insert all alert rows, then send emails sequentially
+      if (alertInsertRows.length > 0) {
+        const { error: batchInsertErr } = await supabase
+          .from('winloss_webhook_alerts')
+          .insert(alertInsertRows);
+        if (batchInsertErr) {
+          structuredLog(
+            'warn',
+            { msg: 'alert_batch_insert_failed', error: batchInsertErr.message },
+            requestId
+          );
+        }
+      }
+
+      for (const { sub, firedTriggers } of emailQueue) {
+        await sendAlertEmail(sub.url, sub.id, firedTriggers, requestId);
+
+        // ALERT-ESCAL: webhooks degradados são críticos — escala para canal
+        // externo dedicado (Slack de escalação / Resend) quando configurado.
+        const escal = await escalateCriticalAlert({
+          title: `Webhook degradado: ${sub.url}`,
+          lines: firedTriggers.map(t => `${t.kind}: ${JSON.stringify(t.details)}`),
+          runbook: 'winloss-webhooks',
+          requestId,
+          source: 'winloss-webhook-health-monitor',
         });
+        if (escal.slack === 'failed' || escal.email === 'failed') {
+          structuredLog(
+            'warn',
+            { msg: 'alert_escalation_partial', subscriptionId: sub.id, ...escal },
+            requestId
+          );
+        }
       }
 
-      evaluations.push(evalEntry);
-    }
-
-    // Phase 2: batch insert all alert rows, then send emails sequentially
-    if (alertInsertRows.length > 0) {
-      const { error: batchInsertErr } = await supabase
-        .from('winloss_webhook_alerts')
-        .insert(alertInsertRows);
-      if (batchInsertErr) {
-        structuredLog('warn', { msg: 'alert_batch_insert_failed', error: batchInsertErr.message }, requestId);
+      const metricsResult = await exportOperationalMetrics(
+        [
+          {
+            name: 'webhook_health_subscriptions_checked',
+            value: subscriptions.length,
+            tags: { source: 'winloss-webhook-health-monitor' },
+          },
+          {
+            name: 'webhook_alerts_fired',
+            value: firedCount,
+            tags: { source: 'winloss-webhook-health-monitor' },
+          },
+          {
+            name: 'webhook_alerts_suppressed',
+            value: suppressedCount,
+            tags: { source: 'winloss-webhook-health-monitor' },
+          },
+        ],
+        requestId
+      );
+      if (!metricsResult.exported && metricsResult.reason !== 'not_configured') {
+        structuredLog(
+          'warn',
+          { msg: 'metrics_export_failed', reason: metricsResult.reason },
+          requestId
+        );
       }
-    }
 
-    for (const { sub, firedTriggers } of emailQueue) {
-      await sendAlertEmail(sub.url, sub.id, firedTriggers, requestId);
+      const totalLatency = Date.now() - requestStart;
 
-      // ALERT-ESCAL: webhooks degradados são críticos — escala para canal
-      // externo dedicado (Slack de escalação / Resend) quando configurado.
-      const escal = await escalateCriticalAlert({
-        title: `Webhook degradado: ${sub.url}`,
-        lines: firedTriggers.map(t => `${t.kind}: ${JSON.stringify(t.details)}`),
-        runbook: 'winloss-webhooks',
-        requestId,
-        source: 'winloss-webhook-health-monitor',
-      });
-      if (escal.slack === 'failed' || escal.email === 'failed') {
-        structuredLog('warn', { msg: 'alert_escalation_partial', subscriptionId: sub.id, ...escal }, requestId);
-      }
-    }
-
-    const metricsResult = await exportOperationalMetrics([
-      { name: 'webhook_health_subscriptions_checked', value: subscriptions.length, tags: { source: 'winloss-webhook-health-monitor' } },
-      { name: 'webhook_alerts_fired', value: firedCount, tags: { source: 'winloss-webhook-health-monitor' } },
-      { name: 'webhook_alerts_suppressed', value: suppressedCount, tags: { source: 'winloss-webhook-health-monitor' } },
-    ], requestId);
-    if (!metricsResult.exported && metricsResult.reason !== 'not_configured') {
-      structuredLog('warn', { msg: 'metrics_export_failed', reason: metricsResult.reason }, requestId);
-    }
-
-    const totalLatency = Date.now() - requestStart;
-
-    structuredLog(
-      firedCount > 0 ? 'warn' : 'info',
-      {
-        msg: 'monitor_complete',
-        checked: subscriptions.length,
-        fired: firedCount,
-        suppressed: suppressedCount,
-        latency_ms: totalLatency,
-      },
-      requestId
-    );
-
-    return new Response(
-      JSON.stringify({
-        requestId,
-        checked: subscriptions.length,
-        fired: firedCount,
-        suppressed: suppressedCount,
-        evaluations,
-      }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'X-Request-Id': requestId,
+      structuredLog(
+        firedCount > 0 ? 'warn' : 'info',
+        {
+          msg: 'monitor_complete',
+          checked: subscriptions.length,
+          fired: firedCount,
+          suppressed: suppressedCount,
+          latency_ms: totalLatency,
         },
-      }
-    );
-  } catch (e) {
-    structuredLog(
-      'error',
-      {
-        msg: 'monitor_fatal',
-        ...describeError(e),
-        latency_ms: Date.now() - requestStart,
-      },
-      requestId
-    );
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : 'unknown', requestId }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'X-Request-Id': requestId,
+        requestId
+      );
+
+      return new Response(
+        JSON.stringify({
+          requestId,
+          checked: subscriptions.length,
+          fired: firedCount,
+          suppressed: suppressedCount,
+          evaluations,
+        }),
+        {
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'X-Request-Id': requestId,
+          },
+        }
+      );
+    } catch (e) {
+      structuredLog(
+        'error',
+        {
+          msg: 'monitor_fatal',
+          ...describeError(e),
+          latency_ms: Date.now() - requestStart,
         },
-      }
-    );
-  }
-}));
+        requestId
+      );
+      return new Response(
+        JSON.stringify({ error: e instanceof Error ? e.message : 'unknown', requestId }),
+        {
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'X-Request-Id': requestId,
+          },
+        }
+      );
+    }
+  })
+);

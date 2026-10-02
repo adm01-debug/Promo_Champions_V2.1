@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface VisualSearchRequest {
   image: string; // data URL or base64
@@ -15,6 +16,23 @@ Deno.serve(withRequestId("visual-search", async (req, _ctx) => {
   }
 
   try {
+    // Autorização: exige usuário autenticado (JWT válido).
+    try {
+      await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("visual-search authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { image, limit = 20 } = (await req.json()) as VisualSearchRequest;
 
     if (!image || typeof image !== "string") {

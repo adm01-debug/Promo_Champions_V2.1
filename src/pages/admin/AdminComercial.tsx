@@ -45,14 +45,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  ApprovalRequest,
-  AuditLog,
-  CommercialGoal,
-  CommissionConfig,
-  ScoringRule,
-} from '@/types';
+import { ApprovalRequest, AuditLog, CommercialGoal, ScoringRule } from '@/types';
 import type { Json } from '@/integrations/supabase/types';
+import { parseRows, toJson } from '@/lib/supabase/parseRows';
 
 import { formatBRL } from '@/lib/money';
 export default function AdminComercial() {
@@ -91,9 +86,7 @@ export default function AdminComercial() {
         .select('*')
         .eq('month', currentMonthDate);
       if (error) throw error;
-      /* eslint-disable no-restricted-syntax */
-      return (data || []) as unknown as CommissionConfig[];
-      /* eslint-enable no-restricted-syntax */
+      return data ?? [];
     },
   });
 
@@ -153,9 +146,7 @@ export default function AdminComercial() {
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
-      /* eslint-disable no-restricted-syntax */
-      return (data || []) as unknown as AuditLog[];
-      /* eslint-enable no-restricted-syntax */
+      return parseRows<AuditLog>(data);
     },
   });
 
@@ -266,11 +257,10 @@ export default function AdminComercial() {
               from: request.old_values as Record<string, Json>,
               to: request.new_values as Record<string, Json>,
             },
-            // eslint-disable-next-line no-restricted-syntax
-            metadata: {
+            metadata: toJson({
               approval_request_id: requestId,
               justification,
-            } as unknown as Json,
+            }),
           },
         ]);
       }

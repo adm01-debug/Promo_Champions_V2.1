@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRow, parseRows } from '@/lib/supabase/parseRows';
 import { toast } from '@/hooks/use-toast';
 
 export interface SendTimeProfile {
@@ -41,8 +42,7 @@ export function useSendTimeProfile(saleId: string | undefined) {
         .eq('sale_id', saleId!)
         .maybeSingle();
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as SendTimeProfile | null) ?? null;
+      return parseRow<SendTimeProfile>(data);
     },
   });
 }
@@ -117,8 +117,7 @@ export function useScheduledSends(status: ScheduledSend['status'] | 'all' = 'pen
       if (status !== 'all') q = q.eq('status', status);
       const { data, error } = await q;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as ScheduledSend[];
+      return parseRows<ScheduledSend>(data);
     },
   });
 
@@ -187,8 +186,7 @@ export function useTopSendTimeProfiles(limit = 10) {
         .order('confidence', { ascending: false })
         .limit(limit);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as SendTimeProfile[];
+      return parseRows<SendTimeProfile>(data);
     },
   });
 }

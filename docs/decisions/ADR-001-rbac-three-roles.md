@@ -4,7 +4,7 @@
 Aceito — Janeiro 2025
 
 ## Contexto
-O SalesPro é uma plataforma de gestão de vendas com hierarquia organizacional clara: administradores, gestores e vendedores. Precisávamos de um sistema de controle de acesso que refletisse essa hierarquia sem adicionar complexidade desnecessária.
+O Promo Champions é uma plataforma de gestão de vendas com hierarquia organizacional clara: administradores, gestores e vendedores. Precisávamos de um sistema de controle de acesso que refletisse essa hierarquia sem adicionar complexidade desnecessária.
 
 ## Decisão
 Implementamos RBAC com 3 roles fixas: `admin`, `manager` e `salesperson`.

@@ -1,7 +1,7 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -19,9 +19,30 @@ Deno.serve(withRequestId('salesperson-coaching', async (req, _ctx) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    const supabase = getServiceClient("lê outcomes do vendedor alvo e média da equipe para coaching por IA");
+
+    // Só o próprio vendedor (ou admin/manager) pode pedir coaching sobre sua carteira.
+    const { data: callerSp } = await supabase
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', caller.userId)
+      .maybeSingle();
+    if (callerSp?.id !== salespersonId) {
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     // Fetch salesperson info
     const { data: salesperson } = await supabase
@@ -277,6 +298,12 @@ Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações r
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     console.error('Coaching error:', error);
     const errorMessage =
       error instanceof Error ? error.message : 'Failed to generate coaching';

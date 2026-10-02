@@ -28,11 +28,11 @@ function levenshtein(a: string, b: string): number {
   );
   for (let i = 1; i <= m; i++)
     for (let j = 1; j <= n; j++)
-      dp[i][j] =
+      dp[i]![j] =
         a[i - 1] === b[j - 1]
-          ? dp[i - 1][j - 1]
-          : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-  return dp[m][n];
+          ? dp[i - 1]![j - 1]!
+          : 1 + Math.min(dp[i - 1]![j]!, dp[i]![j - 1]!, dp[i - 1]![j - 1]!);
+  return dp[m]![n]!;
 }
 
 function nameSimilarity(a: string, b: string): number {
@@ -105,11 +105,14 @@ export function useDeduplicationScan() {
       const remainingClients = clients.filter(c => !seen.has(c.id));
       for (let i = 0; i < remainingClients.length; i++) {
         for (let j = i + 1; j < remainingClients.length; j++) {
-          const sim = nameSimilarity(remainingClients[i].name, remainingClients[j].name);
+          const sim = nameSimilarity(
+            remainingClients[i]!.name,
+            remainingClients[j]!.name
+          );
           if (sim >= 0.88) {
             groups.push({
-              key: `fuzzy-${remainingClients[i].id}-${remainingClients[j].id}`,
-              clients: [remainingClients[i], remainingClients[j]],
+              key: `fuzzy-${remainingClients[i]!.id}-${remainingClients[j]!.id}`,
+              clients: [remainingClients[i]!, remainingClients[j]!],
               similarity: Math.round(sim * 100) / 100,
               match_type: 'name',
             });

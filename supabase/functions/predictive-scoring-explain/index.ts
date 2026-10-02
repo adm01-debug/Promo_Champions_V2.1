@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface Driver {
   factor: string;
@@ -244,10 +245,40 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    const supabase = getServiceClient("recomputa explicações de score de deals e grava lead_score_explanations");
+
+    // Só o dono dos deals (ou admin/manager) pode disparar a explicação em lote.
+    const { data: callerSp } = await supabase
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', caller.userId)
+      .maybeSingle();
+    const { data: saleRows } = await supabase
+      .from('sales')
+      .select('id, salesperson_id')
+      .in('id', ids);
+    const hasForeign = (saleRows ?? []).some(
+      (s) => s.salesperson_id && s.salesperson_id !== callerSp?.id,
     );
+    if (hasForeign) {
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(
+          JSON.stringify({ error: 'forbidden' }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
 
     const results: Array<{
       sale_id: string;
@@ -263,6 +294,15 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: 'unauthorized' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
     console.error('predictive-scoring-explain error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
