@@ -1,4 +1,7 @@
 import type { Metric } from 'web-vitals';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('webVitals');
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
@@ -107,16 +110,11 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
     }
 
     if (import.meta.env.DEV) {
-      const label =
-        metric.rating === 'good'
-          ? '✅'
-          : metric.rating === 'needs-improvement'
-            ? '⚠️'
-            : '❌';
-
-      console.info(
-        `${label} [${metric.name}] ${Math.round(metric.value)} (${metric.rating})`
-      );
+      log.info('web_vital', {
+        metric: metric.name,
+        value: Math.round(metric.value),
+        rating: metric.rating,
+      });
       return;
     }
 

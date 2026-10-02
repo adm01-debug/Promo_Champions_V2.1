@@ -44,14 +44,6 @@ export const PIPELINE = {
   ] as const,
   SLA_HOURS_DEFAULT: 48,
   STAGNANT_DAYS: 14,
-  WIN_PROBABILITY: {
-    lead: 10,
-    qualified: 25,
-    proposal: 50,
-    negotiation: 75,
-    closed_won: 100,
-    closed_lost: 0,
-  },
 } as const;
 
 // ── Sessão & Segurança ──

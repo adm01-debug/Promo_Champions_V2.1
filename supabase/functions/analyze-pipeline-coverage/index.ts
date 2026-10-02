@@ -2,18 +2,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-
-
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.25,
-  proposal: 0.5,
-  negotiation: 0.75,
-  closed_won: 1.0,
-  closed_lost: 0,
-};
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "strong" {
   if (ratio < 1.5) return "critical";
@@ -26,6 +16,10 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "analyze-pipeline-coverage", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
     const supabase = createClient(
@@ -33,6 +27,9 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
+
+    // Probabilidade base por estágio — fonte única stage_probabilities
+    const stageProbabilities = await getStageProbabilities(supabase);
 
     const body = await req.json().catch(() => ({}));
     const periodDays: number = Number(body.period_days ?? 90);
@@ -77,7 +74,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     (deals ?? []).forEach((d: { salesperson_id: string | null; stage: string; value: number }) => {
       const stage = (d.stage || "lead").toLowerCase();
       const key = `${d.salesperson_id ?? "global"}::${stage}`;
-      const prob = STAGE_PROBABILITY[stage] ?? 0.1;
+      const prob = stageProbabilities[stage] ?? 0.1;
       const b = buckets.get(key) ?? { owner: d.salesperson_id, stage, pipeline: 0, weighted: 0, count: 0 };
       b.pipeline += Number(d.value || 0);
       b.weighted += Number(d.value || 0) * prob;

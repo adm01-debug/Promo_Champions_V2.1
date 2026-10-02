@@ -2,6 +2,7 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 
 
@@ -97,6 +98,10 @@ const SUMMARY_TOOL = {
 
 Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "summarize-call-recording", limit: 10, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const authHeader = req.headers.get("Authorization") ?? "";

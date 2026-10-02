@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('usePushNotifications');
 
 interface PushSubscriptionState {
   isSupported: boolean;
@@ -37,13 +40,13 @@ export function usePushNotifications() {
         const registration = await navigator.serviceWorker.register('/sw.js', {
           scope: '/push/',
         });
-        if (import.meta.env.DEV) {
-          console.info('Service Worker registered:', registration);
-        }
+        log.info('service_worker_registered', { scope: registration.scope });
         return registration;
       } catch (error) {
         if (import.meta.env.DEV) {
-          console.error('Service Worker registration failed:', error);
+          log.error('service_worker_registration_failed', {
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
         return null;
       }

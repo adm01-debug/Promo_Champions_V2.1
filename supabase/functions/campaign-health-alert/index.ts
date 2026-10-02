@@ -63,7 +63,8 @@ async function isCronSecretRequest(
   return isExpectedSharedSecret(provided, expected);
 }
 
-Deno.serve(withRequestId('campaign-health-alert', async req => {
+Deno.serve(withRequestId('campaign-health-alert', async (req, ctx) => {
+  const log = ctx.log;
   const responseCorsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS')
     return new Response('ok', { headers: responseCorsHeaders });
@@ -79,9 +80,7 @@ Deno.serve(withRequestId('campaign-health-alert', async req => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!supabaseUrl || !serviceRoleKey) {
-    console.error(
-      'campaign-health-alert misconfigured: missing Supabase service credentials'
-    );
+    log('error', 'service_credentials_missing');
     return json({ error: 'service_not_configured' }, 503);
   }
   const supabase = createClient(supabaseUrl, serviceRoleKey);
@@ -96,7 +95,7 @@ Deno.serve(withRequestId('campaign-health-alert', async req => {
       }
     } catch (error) {
       if (error instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
-      console.error('campaign-health-alert authorization failed:', error);
+      log('error', 'authorization_failed');
       return json({ error: 'authorization_unavailable' }, 503);
     }
   }
@@ -258,34 +257,26 @@ Deno.serve(withRequestId('campaign-health-alert', async req => {
     const { valid: validNotifications, invalid: invalidNotifications } =
       partitionNotificationBatch(notifications);
     if (invalidNotifications.length > 0) {
-      console.error(
-        JSON.stringify({
-          scope: 'campaign-health-alert',
-          invalid_notifications: invalidNotifications.map(({ index, reason }) => ({
-            index,
-            reason,
-          })),
-        })
-      );
+      log('error', 'invalid_notifications', {
+        invalid_notifications: invalidNotifications.map(({ index, reason }) => ({
+          index,
+          reason,
+        })),
+      });
     }
     if (validNotifications.length > 0) {
       const { error: notifyError } = await supabase
         .from('notifications')
         .insert(validNotifications);
       if (notifyError) {
-        console.error(
-          JSON.stringify({
-            scope: 'campaign-health-alert',
-            notifyError: notifyError.message,
-          })
-        );
+        log('error', 'notifications_insert_failed', { error: notifyError.message });
       }
     }
 
     return json({ evaluated: jobs.length, created: insertedAlerts?.length ?? 0 });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
-    console.error(JSON.stringify({ scope: 'campaign-health-alert', error: message }));
+    log('error', 'campaign_health_alert_failed', { error: message });
     return json({ error: message }, 500);
   }
 }));

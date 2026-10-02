@@ -1,9 +1,13 @@
 import { Resend } from 'npm:resend@2';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { alertFromEmail, escalateCriticalAlert } from '../_shared/alert-escalation.ts';
+import { maskEmail } from '../_shared/pii.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+
+type LogFn = RequestIdContext['log'];
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -103,7 +107,10 @@ const buildSpikeAlertHtml = (
   `;
 };
 
-async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings> {
+async function getAlertSettings(
+  supabase: SupabaseClient,
+  log: LogFn
+): Promise<AlertSettings> {
   try {
     const { data, error } = await supabase
       .from('security_alert_settings')
@@ -112,7 +119,7 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
       .single();
 
     if (error || !data) {
-      console.info('Using default settings (DB fetch failed):', error?.message);
+      log('warn', 'settings_fetch_failed_defaults_used', { error: error?.message });
       return {
         spike_threshold: DEFAULT_SPIKE_THRESHOLD,
         time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
@@ -120,14 +127,16 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
       };
     }
 
-    console.info('Loaded settings from DB:', data);
+    log('info', 'settings_loaded', { settings: data });
     return {
       spike_threshold: data.spike_threshold,
       time_window_hours: data.time_window_hours,
       cooldown_hours: data.cooldown_hours,
     };
   } catch (e) {
-    console.error('Error fetching settings:', e);
+    log('error', 'settings_fetch_error_defaults_used', {
+      error: e instanceof Error ? e.message : String(e),
+    });
     return {
       spike_threshold: DEFAULT_SPIKE_THRESHOLD,
       time_window_hours: DEFAULT_TIME_WINDOW_HOURS,
@@ -136,252 +145,287 @@ async function getAlertSettings(supabase: SupabaseClient): Promise<AlertSettings
   }
 }
 
-const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise<Response> => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    // Logs de segurança de todos os usuários + disparo de e-mail aos admins:
-    // operação restrita a administradores.
-    const caller = await getUserClient(req);
-    const { data: isAdmin, error: roleError } = await caller.client.rpc(
-      'has_role' as never,
-      { _user_id: caller.userId, _role: 'admin' } as never,
-    );
-    if (roleError) throw roleError;
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: 'forbidden' }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-      });
+const handler = withRequestId(
+  'access-denied-alerts',
+  async (req, ctx): Promise<Response> => {
+    const log = ctx.log;
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    console.info('Starting access denied spike check...');
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Get alert settings from database
-    const settings = await getAlertSettings(supabase);
-    console.info('Using settings:', settings);
-
-    // Calculate time window
-    const timeWindowStart = new Date();
-    timeWindowStart.setHours(timeWindowStart.getHours() - settings.time_window_hours);
-
-    // Fetch access denied logs from the time window
-    const { data: logs, error: logsError } = await supabase
-      .from('access_denied_logs')
-      .select('id, user_id, user_email, attempted_path, user_role, required_role, created_at')
-      .gte('created_at', timeWindowStart.toISOString())
-      .order('created_at', { ascending: false })
-      .limit(10000);
-
-    if (logsError) {
-      throw new Error(`Failed to fetch access denied logs: ${logsError.message}`);
-    }
-
-    if (!logs || logs.length === 0) {
-      console.info('No access denied attempts in the time window');
-      return new Response(
-        JSON.stringify({
-          message: 'No access denied attempts found',
-          spikesDetected: [],
-        }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    try {
+      // Logs de segurança de todos os usuários + disparo de e-mail aos admins:
+      // operação restrita a administradores.
+      const caller = await getUserClient(req);
+      const { data: isAdmin, error: roleError } = await caller.client.rpc(
+        'has_role' as never,
+        { _user_id: caller.userId, _role: 'admin' } as never
       );
-    }
-
-    console.info(
-      `Found ${logs.length} access denied attempts in the last ${settings.time_window_hours} hour(s)`
-    );
-
-    // Group attempts by user
-    const attemptsByUser: Record<string, AccessDeniedLog[]> = {};
-    logs.forEach((log: AccessDeniedLog) => {
-      if (!attemptsByUser[log.user_id]) {
-        attemptsByUser[log.user_id] = [];
-      }
-      attemptsByUser[log.user_id].push(log);
-    });
-
-    // Detect spikes (users with attempts >= threshold)
-    const spikes: SpikeInfo[] = [];
-    for (const [userId, userLogs] of Object.entries(attemptsByUser)) {
-      if (userLogs.length >= settings.spike_threshold) {
-        const paths = [...new Set(userLogs.map(l => l.attempted_path))];
-        spikes.push({
-          userId,
-          userEmail: userLogs[0].user_email || 'N/A',
-          attemptCount: userLogs.length,
-          paths,
-          latestAttempt: userLogs[0].created_at,
+      if (roleError) throw roleError;
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
       }
-    }
 
-    if (spikes.length === 0) {
-      console.info('No spikes detected (no user exceeded threshold)');
+      log('info', 'check_started');
+
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+      // Get alert settings from database
+      const settings = await getAlertSettings(supabase, log);
+
+      // Calculate time window
+      const timeWindowStart = new Date();
+      timeWindowStart.setHours(timeWindowStart.getHours() - settings.time_window_hours);
+
+      // Fetch access denied logs from the time window
+      const { data: logs, error: logsError } = await supabase
+        .from('access_denied_logs')
+        .select(
+          'id, user_id, user_email, attempted_path, user_role, required_role, created_at'
+        )
+        .gte('created_at', timeWindowStart.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(10000);
+
+      if (logsError) {
+        throw new Error(`Failed to fetch access denied logs: ${logsError.message}`);
+      }
+
+      if (!logs || logs.length === 0) {
+        log('info', 'no_attempts_in_window');
+        return new Response(
+          JSON.stringify({
+            message: 'No access denied attempts found',
+            spikesDetected: [],
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      log('info', 'attempts_found', {
+        count: logs.length,
+        window_hours: settings.time_window_hours,
+      });
+
+      // Group attempts by user
+      const attemptsByUser: Record<string, AccessDeniedLog[]> = {};
+      logs.forEach((log: AccessDeniedLog) => {
+        if (!attemptsByUser[log.user_id]) {
+          attemptsByUser[log.user_id] = [];
+        }
+        attemptsByUser[log.user_id].push(log);
+      });
+
+      // Detect spikes (users with attempts >= threshold)
+      const spikes: SpikeInfo[] = [];
+      for (const [userId, userLogs] of Object.entries(attemptsByUser)) {
+        if (userLogs.length >= settings.spike_threshold) {
+          const paths = [...new Set(userLogs.map(l => l.attempted_path))];
+          spikes.push({
+            userId,
+            userEmail: userLogs[0].user_email || 'N/A',
+            attemptCount: userLogs.length,
+            paths,
+            latestAttempt: userLogs[0].created_at,
+          });
+        }
+      }
+
+      if (spikes.length === 0) {
+        log('info', 'no_spikes_detected');
+        return new Response(
+          JSON.stringify({
+            message: 'No spikes detected',
+            totalAttempts: logs.length,
+            spikesDetected: [],
+            settings,
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      log('info', 'spikes_detected', {
+        count: spikes.length,
+        users: spikes.map(s => ({
+          user_id: s.userId,
+          email: maskEmail(s.userEmail),
+          attempts: s.attemptCount,
+        })),
+      });
+
+      // Get admin emails to notify
+      const { data: adminRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin')
+        .limit(100);
+
+      if (rolesError) {
+        throw new Error(`Failed to fetch admin roles: ${rolesError.message}`);
+      }
+
+      if (!adminRoles || adminRoles.length === 0) {
+        log('info', 'no_admins_to_notify');
+        return new Response(
+          JSON.stringify({
+            message: 'Spikes detected but no admins to notify',
+            spikesDetected: spikes.length,
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      // Get admin emails from salespeople table (linked by auth_user_id)
+      const adminUserIds = adminRoles.map(r => r.user_id);
+      const adminSalespeople = await chunkedIn<{ email: string | null }>(
+        adminUserIds,
+        chunk =>
+          supabase
+            .from('salespeople')
+            .select('email')
+            .in('auth_user_id', chunk)
+            .not('email', 'is', null),
+        { parallel: true, label: 'access-denied-alerts.admin_emails' }
+      );
+
+      const adminEmails = adminSalespeople.map(s => s.email).filter(Boolean) as string[];
+
+      // Also check notification_preferences for admin emails
+      const { data: notifPrefs } = await supabase
+        .from('notification_preferences')
+        .select('email')
+        .eq('is_active', true)
+        .limit(100);
+
+      const notifEmails = notifPrefs?.map(p => p.email).filter(Boolean) || [];
+
+      // Combine and dedupe emails
+      const allEmails = [...new Set([...adminEmails, ...notifEmails])];
+
+      if (allEmails.length === 0) {
+        log('info', 'no_admin_emails');
+        return new Response(
+          JSON.stringify({
+            message: 'Spikes detected but no admin emails configured',
+            spikesDetected: spikes.length,
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      log('info', 'sending_spike_alert', { recipients: allEmails.length });
+
+      // Send alert email
+      const subject = `🛡️ ALERTA: ${spikes.length} usuário(s) com pico de acessos negados`;
+      const emailHtml = buildSpikeAlertHtml(spikes, logs.length, settings);
+
+      let emailStatus = 'sent';
+      let errorMessage: string | null = null;
+
+      try {
+        await resend.emails.send({
+          from: alertFromEmail(),
+          to: allEmails,
+          subject,
+          html: emailHtml,
+        });
+        log('info', 'spike_alert_email_sent', { recipients: allEmails.length });
+      } catch (emailError: unknown) {
+        emailStatus = 'failed';
+        errorMessage =
+          emailError instanceof Error ? emailError.message : 'Unknown email error';
+        log('error', 'spike_alert_email_failed', { recipients: allEmails.length });
+      }
+
+      // Escalação externa: pico de acessos negados é crítico de segurança.
+      await escalateCriticalAlert({
+        title: `Pico de acessos negados — ${spikes.length} usuário(s)`,
+        lines: [
+          `${logs.length} tentativas nas últimas ${settings.time_window_hours}h`,
+          ...spikes
+            .slice(0, 10)
+            .map(
+              s => `• ${maskEmail(s.userEmail) || s.userId}: ${s.attemptCount} tentativas`
+            ),
+        ],
+        runbook: 'access-denied',
+        requestId: ctx.requestId,
+        source: 'access-denied-alerts',
+      });
+
+      // Batch-insert email_logs for all recipients in one query
+      const emailLogRows = allEmails.map(email => ({
+        function_name: 'access-denied-alerts',
+        recipient_email: email,
+        subject,
+        status: emailStatus,
+        error_message: errorMessage,
+        metadata: {
+          spikes_count: spikes.length,
+          total_attempts: logs.length,
+          settings,
+          spikes: spikes.map(s => ({
+            user_email: s.userEmail,
+            attempt_count: s.attemptCount,
+          })),
+        },
+      }));
+      if (emailLogRows.length > 0) {
+        await supabase.from('email_logs').insert(emailLogRows);
+      }
+
+      // Log alert to history
+      const { error: historyError } = await supabase
+        .from('security_alert_history')
+        .insert({
+          alert_type: 'access_denied_spike',
+          recipients: allEmails,
+          access_count: logs.length,
+          time_window_hours: settings.time_window_hours,
+          threshold_used: settings.spike_threshold,
+        });
+
+      if (historyError) {
+        log('error', 'alert_history_insert_failed');
+      } else {
+        log('info', 'alert_history_logged');
+      }
+
       return new Response(
         JSON.stringify({
-          message: 'No spikes detected',
+          message:
+            emailStatus === 'sent'
+              ? 'Spike alert sent successfully'
+              : 'Spike alert failed',
           totalAttempts: logs.length,
-          spikesDetected: [],
+          spikesDetected: spikes,
+          emailsSentTo: allEmails,
+          emailStatus,
           settings,
         }),
         { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
-    }
-
-    console.info(`Detected ${spikes.length} spike(s):`, spikes);
-
-    // Get admin emails to notify
-    const { data: adminRoles, error: rolesError } = await supabase
-      .from('user_roles')
-      .select('user_id')
-      .eq('role', 'admin')
-      .limit(100);
-
-    if (rolesError) {
-      throw new Error(`Failed to fetch admin roles: ${rolesError.message}`);
-    }
-
-    if (!adminRoles || adminRoles.length === 0) {
-      console.info('No admin users found to notify');
+    } catch (error: unknown) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        });
+      }
+      log('error', 'access_denied_alerts_failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return new Response(
-        JSON.stringify({
-          message: 'Spikes detected but no admins to notify',
-          spikesDetected: spikes.length,
-        }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
+        { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
-
-    // Get admin emails from salespeople table (linked by auth_user_id)
-    const adminUserIds = adminRoles.map(r => r.user_id);
-    const adminSalespeople = await chunkedIn<{ email: string | null }>(
-      adminUserIds,
-      (chunk) =>
-        supabase
-          .from('salespeople')
-          .select('email')
-          .in('auth_user_id', chunk)
-          .not('email', 'is', null),
-      { parallel: true, label: 'access-denied-alerts.admin_emails' }
-    );
-
-    const adminEmails = adminSalespeople.map(s => s.email).filter(Boolean) as string[];
-
-    // Also check notification_preferences for admin emails
-    const { data: notifPrefs } = await supabase
-      .from('notification_preferences')
-      .select('email')
-      .eq('is_active', true)
-      .limit(100);
-
-    const notifEmails = notifPrefs?.map(p => p.email).filter(Boolean) || [];
-
-    // Combine and dedupe emails
-    const allEmails = [...new Set([...adminEmails, ...notifEmails])];
-
-    if (allEmails.length === 0) {
-      console.info('No email addresses found for admins');
-      return new Response(
-        JSON.stringify({
-          message: 'Spikes detected but no admin emails configured',
-          spikesDetected: spikes.length,
-        }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-      );
-    }
-
-    console.info(`Sending spike alert to ${allEmails.length} admin(s):`, allEmails);
-
-    // Send alert email
-    const subject = `🛡️ ALERTA: ${spikes.length} usuário(s) com pico de acessos negados`;
-    const emailHtml = buildSpikeAlertHtml(spikes, logs.length, settings);
-
-    let emailStatus = 'sent';
-    let errorMessage: string | null = null;
-
-    try {
-      const emailResponse = await resend.emails.send({
-        from: 'Segurança <onboarding@resend.dev>',
-        to: allEmails,
-        subject,
-        html: emailHtml,
-      });
-      console.info('Spike alert email sent:', emailResponse);
-    } catch (emailError: unknown) {
-      emailStatus = 'failed';
-      errorMessage =
-        emailError instanceof Error ? emailError.message : 'Unknown email error';
-      console.error('Error sending email:', emailError);
-    }
-
-    // Batch-insert email_logs for all recipients in one query
-    const emailLogRows = allEmails.map(email => ({
-      function_name: 'access-denied-alerts',
-      recipient_email: email,
-      subject,
-      status: emailStatus,
-      error_message: errorMessage,
-      metadata: {
-        spikes_count: spikes.length,
-        total_attempts: logs.length,
-        settings,
-        spikes: spikes.map(s => ({
-          user_email: s.userEmail,
-          attempt_count: s.attemptCount,
-        })),
-      },
-    }));
-    if (emailLogRows.length > 0) {
-      await supabase.from('email_logs').insert(emailLogRows);
-    }
-
-    // Log alert to history
-    const { error: historyError } = await supabase.from('security_alert_history').insert({
-      alert_type: 'access_denied_spike',
-      recipients: allEmails,
-      access_count: logs.length,
-      time_window_hours: settings.time_window_hours,
-      threshold_used: settings.spike_threshold,
-    });
-
-    if (historyError) {
-      console.error('Failed to log alert history:', historyError);
-    } else {
-      console.info('Alert logged to history');
-    }
-
-    return new Response(
-      JSON.stringify({
-        message:
-          emailStatus === 'sent' ? 'Spike alert sent successfully' : 'Spike alert failed',
-        totalAttempts: logs.length,
-        spikesDetected: spikes,
-        emailsSentTo: allEmails,
-        emailStatus,
-        settings,
-      }),
-      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-    );
-  } catch (error: unknown) {
-    if (error instanceof UnauthorizedError) {
-      return new Response(JSON.stringify({ error: 'unauthorized' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-      });
-    }
-    console.error('Error in access-denied-alerts:', error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
-      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-    );
   }
-});
+);
 
 Deno.serve(handler);

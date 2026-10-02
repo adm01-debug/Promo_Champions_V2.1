@@ -1,6 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
+import { alertFromEmail } from "../_shared/alert-escalation.ts";
 
 interface Payload {
   pattern_id?: string;
@@ -8,7 +9,7 @@ interface Payload {
   confidence?: number;
 }
 
-Deno.serve(withRequestId("notify-critical-pattern", async (req, _ctx) => {
+Deno.serve(withRequestId("notify-critical-pattern", async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -31,15 +32,19 @@ Deno.serve(withRequestId("notify-critical-pattern", async (req, _ctx) => {
       <p>Investigue no módulo Win/Loss Intelligence.</p>
     `;
 
-    const r = await fetchWithTimeout("https://api.resend.com/emails", {
+    const r = await fetchWithTrace("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Win/Loss Intelligence <onboarding@resend.dev>",
+        from: alertFromEmail(),
         to: [adminEmail],
         subject: `Padrão crítico: ${body.name ?? "novo padrão"}`,
         html,
       }),
+    }, {
+      requestId: ctx.requestId,
+      fnName: "notify-critical-pattern",
+      operation: "resend_email",
     });
 
     return new Response(JSON.stringify({ ok: r.ok }), {
@@ -47,7 +52,7 @@ Deno.serve(withRequestId("notify-critical-pattern", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    console.error('notify-critical-pattern error:', e);
+    ctx.log('error', 'notify_critical_pattern_failed', { error: (e as Error).message });
     return new Response(JSON.stringify({ ok: false, error: (e as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

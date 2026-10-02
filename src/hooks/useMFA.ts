@@ -7,6 +7,8 @@ interface MFAStatus {
   totp_enabled: boolean;
   sms_enabled: boolean;
   preferred_method: string;
+  migrated_to_native_mfa: boolean;
+  needs_reenrollment: boolean;
 }
 
 export const useMFA = () => {
@@ -14,9 +16,12 @@ export const useMFA = () => {
   const [status, setStatus] = useState<MFAStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
-  // Códigos de recuperação retornados pelas RPCs (verify_and_enable_totp /
-  // regenerate_backup_codes) — só existem em memória, nesta sessão, para o
-  // usuário copiar. Antes eram descartados: quem ativava MFA nunca os via.
+  // Fator TOTP do MFA nativo (auth.mfa) em processo de enroll, aguardando
+  // challengeAndVerify.
+  const [totpFactorId, setTotpFactorId] = useState<string | null>(null);
+  const [hasNativeTotp, setHasNativeTotp] = useState(false);
+  // Códigos de recuperação retornados pela RPC regenerate_backup_codes — só
+  // existem em memória, nesta sessão, para o usuário copiar.
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
 
   // Fetch MFA status via secure RPC (no secrets exposed)
@@ -28,11 +33,17 @@ export const useMFA = () => {
     }
 
     try {
-      const { data, error } = await supabase.rpc('get_mfa_status');
-      if (error) throw error;
+      const [statusRes, factorsRes] = await Promise.all([
+        supabase.rpc('get_mfa_status'),
+        supabase.auth.mfa.listFactors(),
+      ]);
+      if (statusRes.error) throw statusRes.error;
 
-      const row = Array.isArray(data) ? data[0] : data;
+      const row = Array.isArray(statusRes.data) ? statusRes.data[0] : statusRes.data;
       setStatus(row as MFAStatus | null);
+      setHasNativeTotp(
+        factorsRes.data?.totp?.some(f => f.status === 'verified') ?? false
+      );
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching MFA status:', error);
@@ -46,21 +57,32 @@ export const useMFA = () => {
     fetchStatus();
   }, [fetchStatus]);
 
-  // Initialize TOTP via server-side RPC (secret never leaves server)
+  // Enroll TOTP no MFA nativo do Supabase (auth.mfa). O segredo é gerado pelo
+  // GoTrue e nunca é gravado em plaintext em tabela pública. Retorna a URI
+  // otpauth:// para o QR ser gerado localmente pelo componente.
   const initializeTOTP = useCallback(async (): Promise<{ qrUrl: string } | null> => {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase.rpc('initialize_totp', {
-        p_email: user.email || 'user',
+      // Limpa enrolls abandonados para não acumular fatores não verificados.
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      for (const factor of factors?.totp ?? []) {
+        if (factor.status !== 'verified') {
+          await supabase.auth.mfa.unenroll({ factorId: factor.id });
+        }
+      }
+
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: 'totp',
+        friendlyName: 'App autenticador',
       });
 
       if (error) throw error;
+      if (data.type !== 'totp') throw new Error('Tipo de fator inesperado');
 
-      const row = Array.isArray(data) ? data[0] : data;
-      const qrUrl = row?.qr_url || '';
-      setQrCodeUrl(qrUrl);
-      return { qrUrl };
+      setTotpFactorId(data.id);
+      setQrCodeUrl(data.totp.uri);
+      return { qrUrl: data.totp.uri };
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error initializing TOTP:', error);
@@ -70,54 +92,65 @@ export const useMFA = () => {
     }
   }, [user]);
 
-  // Verify and enable TOTP via server-side RPC
+  // Verifica o código e conclui o enroll nativo (challengeAndVerify).
   const verifyAndEnableTOTP = useCallback(
     async (token: string): Promise<boolean> => {
       if (!user) return false;
 
+      if (!totpFactorId) {
+        toast.error('Inicie a configuração novamente');
+        return false;
+      }
+
       try {
-        const { data, error } = await supabase.rpc('verify_and_enable_totp', {
-          p_token: token,
+        const { error } = await supabase.auth.mfa.challengeAndVerify({
+          factorId: totpFactorId,
+          code: token.replace(/\s/g, ''),
         });
 
         if (error) throw error;
 
-        const result = data as {
-          success: boolean;
-          backup_codes?: string[];
-          error?: string;
-        };
+        setTotpFactorId(null);
+        setQrCodeUrl(null);
+        // Marca a migração do fluxo legado para apagar o banner de re-enroll.
+        await supabase
+          .from('user_mfa_settings')
+          .upsert(
+            { user_id: user.id, migrated_to_native_mfa: true },
+            { onConflict: 'user_id' }
+          );
 
-        if (result.success) {
-          setBackupCodes(result.backup_codes ?? null);
-          await fetchStatus();
-          toast.success('TOTP ativado com sucesso!');
-          return true;
-        } else {
-          toast.error(result.error || 'Código inválido');
-          return false;
-        }
+        await fetchStatus();
+        toast.success('TOTP ativado com sucesso!');
+        return true;
       } catch (error) {
         if (import.meta.env.DEV) {
           console.error('Error verifying TOTP:', error);
         }
-        toast.error('Erro ao verificar TOTP');
+        toast.error('Código inválido');
         return false;
       }
     },
-    [user, fetchStatus]
+    [user, totpFactorId, fetchStatus]
   );
 
-  // Disable TOTP via server-side RPC
+  // Desativa TOTP: remove os fatores nativos verificados e limpa o registro
+  // legado (totp_enabled/secret) via RPC.
   const disableTOTP = useCallback(async (): Promise<boolean> => {
     if (!user) return false;
 
     try {
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      for (const factor of factors?.totp ?? []) {
+        const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+        if (error) throw error;
+      }
+
       const { data, error } = await supabase.rpc('disable_totp');
       if (error) throw error;
       await fetchStatus();
       toast.success('TOTP desativado');
-      return !!data;
+      return !!data || hasNativeTotp;
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error disabling TOTP:', error);
@@ -125,7 +158,7 @@ export const useMFA = () => {
       toast.error('Erro ao desativar TOTP');
       return false;
     }
-  }, [user, fetchStatus]);
+  }, [user, fetchStatus, hasNativeTotp]);
 
   // Setup SMS via server-side RPC (code generated server-side)
   const setupSMS = useCallback(
@@ -278,10 +311,14 @@ export const useMFA = () => {
     [user, fetchStatus]
   );
 
+  // Usuário com TOTP só no fluxo legado precisa re-enrolar no nativo — o
+  // login só valida fatores GoTrue (AAL2), então o legado não protege mais.
+  const needsReenrollment = (status?.needs_reenrollment ?? false) && !hasNativeTotp;
+
   return {
     settings: status
       ? {
-          totp_enabled: status.totp_enabled,
+          totp_enabled: hasNativeTotp,
           sms_enabled: status.sms_enabled,
           preferred_method: status.preferred_method,
           totp_secret: null as string | null,
@@ -292,7 +329,8 @@ export const useMFA = () => {
     isLoading,
     totpSecret: null as string | null,
     qrCodeUrl,
-    isMFAEnabled: status?.totp_enabled || status?.sms_enabled || false,
+    isMFAEnabled: hasNativeTotp || status?.sms_enabled || false,
+    needsReenrollment,
     initializeTOTP,
     verifyAndEnableTOTP,
     disableTOTP,

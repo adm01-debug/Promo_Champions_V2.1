@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 
 // Constant-time string compare to avoid timing side-channels.
@@ -15,9 +15,10 @@ function safeEqual(a: string, b: string): boolean {
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
   payload: string,
+  requestId: string,
 ): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
-    const response = await fetchWithTimeout(subscription.endpoint, {
+    const response = await fetchWithTrace(subscription.endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,6 +26,11 @@ async function sendWebPushNotification(
         'Urgency': 'high'
       },
       body: payload
+    }, {
+      requestId,
+      fnName: 'send-push-notification',
+      operation: 'web_push',
+      log: 'silent',
     });
 
     if (response.ok) {
@@ -38,7 +44,7 @@ async function sendWebPushNotification(
   }
 }
 
-Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
+Deno.serve(withRequestId('send-push-notification', async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -153,6 +159,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
         const result = await sendWebPushNotification(
           { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
           payload,
+          ctx.requestId,
         );
 
         if (!result.success && (result.status === 404 || result.status === 410)) {
@@ -170,7 +177,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, _ctx) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
-    console.error('send-push-notification error:', error);
+    ctx.log('error', 'send_push_notification_failed');
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

@@ -51,7 +51,7 @@ function renderHtml(ctx: {
     </div></body></html>`;
 }
 
-Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
+Deno.serve(withRequestId('send-churn-alert-email', async (req, ctx) => {
   const responseCorsHeaders = getCorsHeaders(req);
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
@@ -69,14 +69,16 @@ Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
     }
   } catch (error) {
     if (error instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
-    console.error('send-churn-alert-email authorization failed:', error);
+    ctx.log('error', 'authorization_failed', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return json({ error: 'authorization_unavailable' }, 503);
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!supabaseUrl || !serviceRoleKey) {
-    console.error('send-churn-alert-email missing Supabase service credentials');
+    ctx.log('error', 'service_credentials_missing');
     return json({ error: 'service_not_configured' }, 503);
   }
 
@@ -98,18 +100,18 @@ Deno.serve(withRequestId('send-churn-alert-email', async (req) => {
       throw new Error('Nenhum destinatário configurado.');
     }
 
-    const ctx = {
+    const emailCtx = {
       clientName: body.clientName ?? 'Cliente de Teste',
       level: body.level ?? 'critical',
       daysSince: body.daysSince ?? 42,
       salespersonName: body.salespersonName ?? 'Vendedor',
     };
     const subject = renderSubject(s.email_subject_template, {
-      client_name: ctx.clientName,
-      level: ctx.level,
-      days: String(ctx.daysSince),
+      client_name: emailCtx.clientName,
+      level: emailCtx.level,
+      days: String(emailCtx.daysSince),
     });
-    const html = renderHtml(ctx);
+    const html = renderHtml(emailCtx);
 
     // Tenta usar infra de e-mail do Lovable (enqueue_email). Se ausente, orienta setup.
     const { error: qErr } = await supabase.rpc('enqueue_email', {

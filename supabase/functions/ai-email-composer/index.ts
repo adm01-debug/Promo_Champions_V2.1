@@ -4,6 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
 
 const MAX_CUSTOM_INSTRUCTIONS = 500;
 
@@ -103,6 +104,10 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "ai-email-composer", limit: 20, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     // All modes require a valid JWT — prevents anonymous AI credit abuse
