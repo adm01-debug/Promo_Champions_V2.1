@@ -30,6 +30,7 @@ export function useClientKanban() {
         .select(
           'id, client_id, status, clients(id, name, company, email, phone, total_value)'
         )
+        .is('deleted_at', null)
         .order('updated_at', { ascending: false });
       if (error) throw error;
       return (data as PortfolioEntry[]) || [];

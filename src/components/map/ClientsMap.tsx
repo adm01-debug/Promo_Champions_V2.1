@@ -200,6 +200,7 @@ export const ClientsMap = () => {
       const { data, error } = await supabase
         .from('clients')
         .select('id, name, company, email, phone, total_value, lat, lng')
+        .is('deleted_at', null)
         .order('total_value', { ascending: false });
       if (error) throw error;
       return data;

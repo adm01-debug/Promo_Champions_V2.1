@@ -83,6 +83,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
       .from("sales")
       .select("id, product_name, client_name, total_amount, stage, status, expected_close_date, salesperson_id, probability")
       .in("status", ["open", "in_progress", "qualified", "proposal", "negotiation"])
+      .is("deleted_at", null)
       .gte("expected_close_date", period_start)
       .lte("expected_close_date", period_end_str);
     if (owner_id) dealsQ = dealsQ.eq("salesperson_id", owner_id);

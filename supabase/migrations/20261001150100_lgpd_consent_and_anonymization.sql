@@ -558,7 +558,8 @@ BEGIN
   BEGIN
     UPDATE public.audit_logs
        SET ip_address = NULL, user_agent = NULL
-     WHERE p_subject_id IS NOT NULL AND changed_by = p_subject_id;
+     WHERE p_subject_id IS NOT NULL
+       AND (changed_by = p_subject_id OR actor_id = p_subject_id);
     GET DIAGNOSTICS v_n = ROW_COUNT;
     v_counts := v_counts || jsonb_build_object('audit_logs', v_n);
   EXCEPTION WHEN undefined_table OR undefined_column THEN

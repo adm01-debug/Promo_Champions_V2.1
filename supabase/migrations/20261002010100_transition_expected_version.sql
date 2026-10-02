@@ -54,3 +54,6 @@ $$;
 
 COMMENT ON FUNCTION public.transition_sale_status(uuid, text, uuid, integer) IS
   'Transição de status via máquina de estados; p_expected_version aplica optimistic locking (conflito → optimistic_lock_conflict).';
+
+REVOKE ALL ON FUNCTION public.transition_sale_status(uuid, text, uuid, integer) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.transition_sale_status(uuid, text, uuid, integer) TO authenticated, service_role;

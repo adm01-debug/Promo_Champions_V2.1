@@ -47,7 +47,10 @@ export const clientService = {
     page = 1,
     pageSize = 12,
   }: ClientsPageQuery = {}): Promise<ClientsPage> {
-    let query = supabase.from('clients').select(CLIENT_LIST_COLUMNS, { count: 'exact' });
+    let query = supabase
+      .from('clients')
+      .select(CLIENT_LIST_COLUMNS, { count: 'exact' })
+      .is('deleted_at', null);
 
     const term = search.trim().replace(/[,()*]/g, ' ');
     if (term) {

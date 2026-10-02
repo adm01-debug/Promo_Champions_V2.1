@@ -34,13 +34,12 @@ import { ChurnTaskCompletionCard } from '@/components/bi/ChurnTaskCompletionCard
 import { ChurnOverdueRankingCard } from '@/components/bi/ChurnOverdueRankingCard';
 import { MarkupOverviewCard } from '@/components/bi/MarkupOverviewCard';
 import { CriticalMarkupAlertCard } from '@/components/bi/CriticalMarkupAlertCard';
-import { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
+import AbcPieChart, { ABC_COLORS } from '@/components/bi/charts/AbcPieChart';
 import { CriticalMomentsFeed } from '@/components/conversational/CriticalMomentsFeed';
 import { useNavigate } from 'react-router-dom';
 
 import { formatBRL } from '@/lib/money';
 const RevenueAreaChart = lazy(() => import('@/components/bi/charts/RevenueAreaChart'));
-const AbcPieChart = lazy(() => import('@/components/bi/charts/AbcPieChart'));
 const SourceBarChart = lazy(() => import('@/components/bi/charts/SourceBarChart'));
 const CohortRetentionHeatmap = lazy(() =>
   import('@/components/analytics/CohortRetentionHeatmap').then(m => ({
