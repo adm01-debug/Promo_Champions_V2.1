@@ -30,6 +30,7 @@ local". Aplique os passos abaixo **antes** do próximo `db push`.
 | `20260104143930_webhooks_system.sql` | `20260104143931_webhooks_system.sql` | versão duplicada com `_audit_trail` |
 | `20260104170152_stored_procedures.sql` | `20260104170153_stored_procedures.sql` | versão duplicada com `_additional_indexes` |
 | `20260104181000_stored_procedures_additional.sql` | `20260104181001_stored_procedures_additional.sql` | versão duplicada com `_materialized_views_enhanced` |
+| `20261001203000_mfa_native_migration_flag.sql` | `20261001203500_mfa_native_migration_flag.sql` | versão duplicada com `_audit_trigger_user_roles` |
 
 ## 2. Remoções (arquivos só com comentários — nada executável)
 
@@ -41,6 +42,7 @@ local". Aplique os passos abaixo **antes** do próximo `db push`.
 
 - `supabase/migrations/canonical_hardening_contract_test.ts` → `tests/migrations/canonical_hardening_contract_test.ts`
 - `supabase/migrations/race_leaderboard_status_contract_test.ts` → `tests/migrations/race_leaderboard_status_contract_test.ts`
+- `supabase/migrations/authz_hardening_contract_test.ts` → `tests/migrations/authz_hardening_contract_test.ts`
 
 Rodam com `deno task test:migrations` (ou `deno test --allow-read tests/migrations/`).
 
@@ -53,7 +55,8 @@ SELECT version, name
    '20250102', '20251228', '20260530',
    '20260105ab', '20260105fe', '20260105we',
    '202601050000ad', '202601050000ma', '202601050000so',
-   '20260104143930', '20260104170152', '20260104181000'
+   '20260104143930', '20260104170152', '20260104181000',
+   '20261001203000', '20261001203500'
  )
  ORDER BY version;
 ```
@@ -128,6 +131,8 @@ uma linha por versão, referente ao arquivo que de fato rodou.
   `stored_procedures` virou `20260104170153`.
 - `20260104181000`: mantida por `20260104181000_materialized_views_enhanced.sql`;
   `stored_procedures_additional` virou `20260104181001`.
+- `20261001203000`: mantida por `20261001203000_audit_trigger_user_roles.sql`;
+  `mfa_native_migration_flag` virou `20261001203500`.
 
 **Se a linha antiga existe e corresponde ao arquivo que ficou com a versão**
 (o esperado): o arquivo renomeado será aplicado como migration nova no próximo
