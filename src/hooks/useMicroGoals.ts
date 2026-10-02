@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { toBusinessMonthStart } from '@/lib/date';
 
+import { formatBRL } from '@/lib/money';
 export interface MicroGoal {
   id: string;
   type: 'overtake' | 'record' | 'milestone' | 'challenge' | 'streak';
@@ -77,9 +78,9 @@ export function useMicroGoals(salespersonId?: string) {
             id: 'overtake',
             type: 'overtake',
             icon: '⚔️',
-            message: `Faltam R$ ${gap.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} para ultrapassar ${nextPerson.name}!`,
+            message: `Faltam ${formatBRL(gap)} para ultrapassar ${nextPerson.name}!`,
             progress: Math.round((mySales / nextPerson.total) * 100),
-            remaining: `R$ ${gap.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            remaining: `${formatBRL(gap)}`,
             priority: 1,
           });
         }
@@ -104,9 +105,9 @@ export function useMicroGoals(salespersonId?: string) {
                 id: `milestone-${nextMilestone}`,
                 type: 'milestone',
                 icon: nextMilestone === 100 ? '🏆' : '🎯',
-                message: `Faltam R$ ${toMilestone.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} para ${nextMilestone}% da meta!`,
+                message: `Faltam ${formatBRL(toMilestone)} para ${nextMilestone}% da meta!`,
                 progress,
-                remaining: `R$ ${toMilestone.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                remaining: `${formatBRL(toMilestone)}`,
                 priority: 2,
               });
             }
@@ -116,7 +117,7 @@ export function useMicroGoals(salespersonId?: string) {
             id: 'goal-exceeded',
             type: 'milestone',
             icon: '🚀',
-            message: `Meta batida! R$ ${Math.abs(remaining).toLocaleString('pt-BR', { maximumFractionDigits: 0 })} acima do objetivo!`,
+            message: `Meta batida! ${formatBRL(Math.abs(remaining))} acima do objetivo!`,
             progress: 100,
             remaining: 'Superada!',
             priority: 5,

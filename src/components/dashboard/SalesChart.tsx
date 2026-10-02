@@ -13,6 +13,7 @@ import { TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
 
+import { formatBRL } from '@/lib/money';
 type Period = '7d' | '30d' | '90d';
 
 const periodLabels: Record<Period, string> = {
@@ -39,7 +40,7 @@ const CustomTooltip = ({
       <div className="flex items-center gap-2">
         <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
         <p className="text-base font-mono font-black text-primary tracking-tighter tabular-nums">
-          R$ {payload[0].value.toLocaleString('pt-BR')}
+          {formatBRL(payload[0].value)}
         </p>
       </div>
     </div>

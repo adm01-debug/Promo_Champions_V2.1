@@ -4,6 +4,7 @@ import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import { captureException } from '@/lib/errorTracking';
 
+import { formatBRL } from '@/lib/money';
 interface KPIData {
   totalRevenue: number;
   totalSales: number;
@@ -151,8 +152,8 @@ export const useDetailedKPIs = () => {
         return [
           {
             title: 'Ticket Médio',
-            value: `R$ ${current_avg_ticket.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
-            previousValue: `R$ ${prev_avg_ticket.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            value: `${formatBRL(current_avg_ticket)}`,
+            previousValue: `${formatBRL(prev_avg_ticket)}`,
             change: calculateChange(current_avg_ticket, prev_avg_ticket),
             icon: 'Receipt',
           },
@@ -179,15 +180,15 @@ export const useDetailedKPIs = () => {
           },
           {
             title: 'Ticket Recorrente',
-            value: `R$ ${(current_avg_ticket * 0.7).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
-            previousValue: `R$ ${(prev_avg_ticket * 0.7).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            value: `${formatBRL(current_avg_ticket * 0.7)}`,
+            previousValue: `${formatBRL(prev_avg_ticket * 0.7)}`,
             change: calculateChange(current_avg_ticket * 0.7, prev_avg_ticket * 0.7),
             icon: 'CreditCard',
           },
           {
             title: 'LTV Médio',
-            value: `R$ ${(current_avg_ticket * 3).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
-            previousValue: `R$ ${(prev_avg_ticket * 3).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            value: `${formatBRL(current_avg_ticket * 3)}`,
+            previousValue: `${formatBRL(prev_avg_ticket * 3)}`,
             change: calculateChange(current_avg_ticket * 3, prev_avg_ticket * 3),
             icon: 'Wallet',
           },

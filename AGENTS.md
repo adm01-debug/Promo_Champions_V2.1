@@ -48,8 +48,12 @@ git worktree prune
 
 ## PR Flow
 
-branch → commit (--no-verify) → push → PR via GitHub → CI → merge squash → delete branch.
+branch → commit → push → PR via GitHub → CI → merge squash → delete branch.
 Workers/editores NUNCA mexem em git/branches — só o orquestrador.
+
+**Nunca usar `git commit --no-verify`.** Os hooks de pre-commit existem para
+pegar erros antes do push; quem garante a qualidade é o CI (pr-checks.yml),
+não o atalho. Se um hook falhar, corrija o problema em vez de pular o hook.
 
 ## Regras de trabalho
 

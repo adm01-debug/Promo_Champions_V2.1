@@ -1,13 +1,8 @@
 import { getLocalISODate } from '@/utils/dateHelpers';
 import { toBusinessDate } from '@/lib/date';
 
-export const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
-
+import { formatBRL as __formatBRL } from '@/lib/money';
+export const formatBRL = (n: number) => __formatBRL(n);
 export const categoryLabel: Record<string, string> = {
   commit: 'Commit',
   best: 'Best Case',

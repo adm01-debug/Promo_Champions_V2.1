@@ -8,6 +8,7 @@ import { useAutoAwardBonuses } from '@/hooks/useAutoAwardBonuses';
 import type { BonusType } from '@/hooks/useCommissionBonuses';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 const typeLabels: Record<BonusType, string> = {
   first_sale: 'Primeira Venda',
   milestone: 'Marco',
@@ -25,11 +26,7 @@ const typeStyles: Record<BonusType, string> = {
 };
 
 const formatValue = (kind: 'fixed' | 'percentage', amount: number) =>
-  kind === 'fixed'
-    ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-        amount
-      )
-    : `${Number(amount).toFixed(2)}%`;
+  kind === 'fixed' ? formatBRL(amount, { decimals: 2 }) : `${Number(amount).toFixed(2)}%`;
 
 interface Props {
   salespersonId: string | undefined;

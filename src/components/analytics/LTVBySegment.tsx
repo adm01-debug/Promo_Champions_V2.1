@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { DollarSign, TrendingUp, Users } from 'lucide-react';
 
+import { formatBRL } from '@/lib/money';
 interface SegmentLTV {
   segment: string;
   avgLTV: number;
@@ -175,11 +176,9 @@ export const LTVBySegment: FC<{
                     {((currentClientLTV / avgSegmentLTV - 1) * 100).toFixed(1)}%
                   </Badge>
                 </div>
-                <div className="text-xl font-black">
-                  R$ {currentClientLTV.toLocaleString('pt-BR')}
-                </div>
+                <div className="text-xl font-black">{formatBRL(currentClientLTV)}</div>
                 <div className="text-[9px] text-muted-foreground">
-                  Média do Segmento: R$ {avgSegmentLTV.toLocaleString('pt-BR')}
+                  Média do Segmento: {formatBRL(avgSegmentLTV)}
                 </div>
               </div>
 
@@ -196,7 +195,7 @@ export const LTVBySegment: FC<{
                   </Badge>
                 </div>
                 <div className="text-xl font-black">
-                  R$ {currentClientAvgTicket.toLocaleString('pt-BR')}
+                  {formatBRL(currentClientAvgTicket)}
                 </div>
                 <div className="text-[9px] text-muted-foreground">
                   Potencial: +R$ 450,00
@@ -229,7 +228,7 @@ export const LTVBySegment: FC<{
                   />
                   <Tooltip
                     formatter={(value: number | string) => [
-                      `R$ ${Number(value).toLocaleString('pt-BR')}`,
+                      `${formatBRL(Number(value))}`,
                       'LTV Médio',
                     ]}
                     contentStyle={{
@@ -266,9 +265,7 @@ export const LTVBySegment: FC<{
                     </Badge>
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold">
-                      R$ {seg.avgLTV.toLocaleString('pt-BR')}
-                    </span>
+                    <span className="text-lg font-bold">{formatBRL(seg.avgLTV)}</span>
                     <span className="text-[10px] text-muted-foreground">LTV médio</span>
                   </div>
                   <div className="flex items-center gap-3 text-[10px] text-muted-foreground">

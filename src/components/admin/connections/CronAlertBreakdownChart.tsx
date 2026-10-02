@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import {
   Bar,
   BarChart,
@@ -8,31 +7,13 @@ import {
   YAxis,
   Legend,
 } from 'recharts';
-import { supabase } from '@/integrations/supabase/client';
+import { useCronAlertBreakdown } from '@/hooks/admin/useConnectionMetrics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart3 } from 'lucide-react';
 
-interface Row {
-  jobname: string;
-  alerts: number;
-  stalled: number;
-  failed: number;
-}
-
-async function fetchBreakdown(): Promise<Row[]> {
-  const { data, error } = await supabase.rpc('fn_admin_cron_alert_breakdown' as never);
-  if (error) throw error;
-  return (data ?? []) as Row[];
-}
-
 export function CronAlertBreakdownChart() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['admin', 'cron-alert-breakdown'],
-    queryFn: fetchBreakdown,
-    refetchInterval: 60_000,
-    staleTime: 30_000,
-  });
+  const { data, isLoading, error } = useCronAlertBreakdown();
 
   return (
     <Card>

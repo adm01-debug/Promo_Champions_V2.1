@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/tooltip';
 import { AtRiskDeal } from '@/hooks/deal-intelligence/useAtRiskDeals';
 
+import { formatBRL } from '@/lib/money';
 const RISK_COLORS = {
   critical: 'bg-status-error/20 text-status-error border-status-error/30',
   high: 'bg-status-warning/20 text-status-warning border-status-warning/30',
@@ -18,9 +19,6 @@ const RISK_COLORS = {
 };
 
 const RISK_LABELS = { critical: 'Crítico', high: 'Alto', medium: 'Médio', low: 'Baixo' };
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
 interface DealRowProps {
   deal: AtRiskDeal;
@@ -112,7 +110,7 @@ export const DealRow = React.memo(function DealRow({
             </Tooltip>
           </TooltipProvider>
           <span className="font-display font-bold text-sm min-w-[100px] text-right gradient-text">
-            {formatCurrency(deal.amount)}
+            {formatBRL(deal.amount, { decimals: 2 })}
           </span>
           <div
             className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
@@ -202,4 +200,5 @@ export const DealRow = React.memo(function DealRow({
   );
 });
 
-export { RISK_COLORS, RISK_LABELS, formatCurrency };
+export const formatCurrency = (value: number) => formatBRL(value, { decimals: 2 });
+export { RISK_COLORS, RISK_LABELS };

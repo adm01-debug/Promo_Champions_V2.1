@@ -31,6 +31,7 @@ import {
   ACTIVITY_TYPE_LABELS,
 } from './dealRiskCalculator';
 
+import { formatBRL } from '@/lib/money';
 interface DealPreviewCardProps {
   dealId: string;
   clientName: string;
@@ -160,11 +161,7 @@ const DealPreviewCardInner = function DealPreviewCard({
           {
             icon: DollarSign,
             label: 'Valor',
-            value: new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-              minimumFractionDigits: 0,
-            }).format(amount),
+            value: formatBRL(amount),
             color: 'emerald-500',
           },
           {

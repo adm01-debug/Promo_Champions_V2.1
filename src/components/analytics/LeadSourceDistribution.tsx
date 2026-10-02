@@ -10,6 +10,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import { PieChartIcon, TrendingUp, CheckCircle, DollarSign } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import { formatBRL } from '@/lib/money';
 export function LeadSourceDistribution() {
   const { data, isLoading } = useLeadSourceAnalysis(3);
 
@@ -39,9 +40,6 @@ export function LeadSourceDistribution() {
         value: s.totalLeads,
         source: s.source,
       })) || [];
-
-  const formatCurrency = (value: number | string) =>
-    `R$ ${Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const conversionRate =
     data?.totalLeads && data.totalLeads > 0
@@ -156,7 +154,7 @@ export function LeadSourceDistribution() {
               </div>
             </div>
             <p className="text-xl font-bold font-display text-rank-gold group-hover:scale-105 transition-transform">
-              {formatCurrency(data?.totalValue || 0)}
+              {formatBRL(data?.totalValue || 0)}
             </p>
             <p className="text-[10px] text-muted-foreground font-medium">Valor Total</p>
           </div>

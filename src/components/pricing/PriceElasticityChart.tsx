@@ -20,6 +20,8 @@ import {
   ReferenceLine,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
+
 interface ElasticityPoint {
   price: number;
   win_rate: number;
@@ -80,11 +82,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
                 </span>
                 <Badge className="gap-2 bg-success text-white border-none shadow-[0_0_20px_rgba(34,197,94,0.4)] font-black text-xs px-4 py-1.5 rounded-full">
                   <ShieldCheck className="h-3.5 w-3.5 fill-current" />
-                  PREÇO ÓTIMO:{' '}
-                  {optimalPrice.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  })}
+                  PREÇO ÓTIMO: {formatBRL(optimalPrice, { decimals: 2 })}
                 </Badge>
               </div>
             </div>
@@ -130,7 +128,7 @@ export const PriceElasticityChart = memo(function PriceElasticityChart({
                     return (
                       <div className="bg-popover border border-border p-3 rounded-lg shadow-xl text-xs max-w-[200px]">
                         <div className="font-bold mb-1 flex items-center justify-between">
-                          <span>R$ {data.price.toLocaleString('pt-BR')}</span>
+                          <span>{formatBRL(data.price)}</span>
                           {isNearOptimal && (
                             <Badge className="bg-success/20 text-success border-none h-4 px-1 text-[10px]">
                               Ideal
