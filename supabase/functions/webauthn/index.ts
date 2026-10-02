@@ -27,6 +27,13 @@ import type {
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
+  collectErrors,
+  validateEnum,
+  validateString,
+  validateUUID,
+  validationErrorResponse,
+} from '../_shared/validation.ts';
+import {
   base64urlToBytes,
   bytesToBase64url,
   expectedOrigins,
@@ -35,15 +42,17 @@ import {
 const RP_NAME = 'PROMO CHAMPIONS';
 const RP_ID_HEADER = 'x-rp-id';
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
+const ACTIONS = [
+  'register-options',
+  'register-verify',
+  'login-options',
+  'login-verify',
+  'list-credentials',
+  'delete-credential',
+] as const;
 
 interface WebAuthnAction {
-  action:
-    | 'register-options'
-    | 'register-verify'
-    | 'login-options'
-    | 'login-verify'
-    | 'list-credentials'
-    | 'delete-credential';
+  action: (typeof ACTIONS)[number];
   userId?: string;
   userEmail?: string;
   credential?: RegistrationResponseJSON | AuthenticationResponseJSON;
@@ -120,6 +129,18 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const body: WebAuthnAction = await req.json();
+
+    const validationErrors = collectErrors([
+      validateEnum(body.action, 'action', [...ACTIONS], true),
+      validateUUID(body.userId, 'userId'),
+      validateUUID(body.credentialId, 'credentialId'),
+      validateString(body.userEmail, 'userEmail', { maxLength: 254 }),
+      validateString(body.rpId, 'rpId', { maxLength: 253 }),
+    ]);
+    if (validationErrors.length > 0) {
+      return validationErrorResponse(validationErrors, corsHeaders);
+    }
+
     const rpId = body.rpId || req.headers.get(RP_ID_HEADER) || new URL(req.url).hostname;
     const origins = expectedOrigins(req.headers.get('Origin'), rpId);
 
