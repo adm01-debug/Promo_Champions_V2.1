@@ -180,7 +180,7 @@ export function computeDealRisk(
       const dBest = Math.abs(dealAmount - (best.avg_amount ?? 0));
       const dCur = Math.abs(dealAmount - (p.avg_amount ?? 0));
       return dCur < dBest ? p : best;
-    }, lossPatterns[0]);
+    }, lossPatterns[0] ?? null);
   }
 
   // Pick highest-confidence stuck pattern.
