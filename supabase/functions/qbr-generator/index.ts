@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -24,8 +25,8 @@ Deno.serve(withRequestId("qbr-generator", async (req, _ctx) => {
     );
 
     const body = await req.json().catch(() => ({}));
-    const periodStart = body.period_start ?? new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-    const periodEnd = body.period_end ?? new Date().toISOString().slice(0, 10);
+    const periodStart = body.period_start ?? toBusinessDate(Date.now() - 90 * 86400000);
+    const periodEnd = body.period_end ?? toBusinessDate();
     const periodLabel = body.period_label ?? `Q ${periodStart} → ${periodEnd}`;
     const salespersonId = body.salesperson_id ?? null;
 

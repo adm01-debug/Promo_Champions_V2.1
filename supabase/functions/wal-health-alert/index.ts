@@ -27,6 +27,7 @@ import { withRetry } from "../_shared/retry.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
+import { escalateCriticalAlert, runbookUrl } from "../_shared/alert-escalation.ts";
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
 
@@ -200,8 +201,10 @@ Deno.serve(
         );
       }
 
-      const text = `*[WAL Health Alert]* ${alerts.length} evento(s)\n` +
-        alerts.join("\n");
+      const text =
+        `*[WAL Health Alert]* ${alerts.length} evento(s)\n` +
+        alerts.join("\n") +
+        `\n\nRunbook: ${runbookUrl("wal-health")}`;
 
       await postSlack(
         slack,
@@ -222,6 +225,19 @@ Deno.serve(
         ],
         ctx.requestId,
       );
+
+      // ALERT-ESCAL: alertas de WAL são sempre críticos — escala para canal
+      // externo dedicado (Slack de escalação / Resend) quando configurado.
+      const escal = await escalateCriticalAlert({
+        title: `WAL Health Alert — ${alerts.length} evento(s)`,
+        lines: alerts,
+        runbook: "wal-health",
+        requestId: ctx.requestId,
+        source: "wal-health-alert",
+      });
+      if (escal.slack === "failed" || escal.email === "failed") {
+        ctx.log("warn", "alert_escalation_partial", { ...escal });
+      }
 
       return new Response(
         JSON.stringify({ ok: true, alerts, snapshot: data }),

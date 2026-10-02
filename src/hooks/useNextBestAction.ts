@@ -2,6 +2,9 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isOpenSaleStatus, isWonSaleStatus } from '@/constants';
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('useNextBestAction');
 
 import { formatBRL } from '@/lib/money';
 export type NextActionPriority = 'high' | 'medium' | 'low';
@@ -186,9 +189,10 @@ async function generateLocalSuggestions(
       channel: 'phone',
       expectedImpact: 'Negociar condições finais enquanto o lead está quente.',
     });
-    console.info(
-      `[Intent Log] Triggered: Multi-Price Clicks - Count: ${priceClicks.length}`
-    );
+    log.info('intent_triggered', {
+      trigger: 'multi_price_clicks',
+      count: priceClicks.length,
+    });
   } else if (proposalViews.length > 0) {
     suggestions.unshift({
       title: 'Ligar Agora: Proposta Aberta',
@@ -201,7 +205,7 @@ async function generateLocalSuggestions(
       channel: 'phone',
       expectedImpact: 'Aumentar taxa de conversão em 3.5x.',
     });
-    console.info(`[Intent Log] Triggered: Proposal View detected.`);
+    log.info('intent_triggered', { trigger: 'proposal_view' });
   }
 
   // Priorização baseada em histórico recente

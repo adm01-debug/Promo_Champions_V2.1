@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 import {
   getServiceClient,
   getUserClient,
@@ -167,7 +168,7 @@ async function launchJourney(supabase: ReturnType<typeof createClient>, accountI
     description: s.description,
     order_index: idx,
     status: "pending",
-    due_date: new Date(today.getTime() + s.days_offset * 86400000).toISOString().split("T")[0],
+    due_date: toBusinessDate(today.getTime() + s.days_offset * 86400000),
   }));
 
   const { error: sErr } = await supabase.from("onboarding_steps").insert(stepRows);

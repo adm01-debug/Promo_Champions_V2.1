@@ -9,6 +9,7 @@ import {
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface BriefingPayload {
   headline: string;
@@ -75,7 +76,7 @@ Deno.serve(
 
       const body = await req.json().catch(() => ({}));
       const generated_by: 'auto' | 'manual' = body?.auto ? 'auto' : 'manual';
-      const today = new Date().toISOString().slice(0, 10);
+      const today = toBusinessDate();
 
       // Idempotência por dia
       const { data: existing } = await supabase

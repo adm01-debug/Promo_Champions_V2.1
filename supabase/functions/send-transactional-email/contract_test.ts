@@ -82,7 +82,7 @@ Deno.test("send-transactional-email falha fechado e preserva supressões de outr
     "o contrato deve usar o provedor documentado",
   );
   assert(
-    source.includes("fetchWithTimeout("),
+    source.includes("fetchWithTimeout(") || source.includes("fetchWithTrace("),
     "a chamada ao provedor deve ter timeout",
   );
   assert(

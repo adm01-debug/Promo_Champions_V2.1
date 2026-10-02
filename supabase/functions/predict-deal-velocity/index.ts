@@ -15,6 +15,7 @@ import {
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface PredictBody {
   sale_id?: string;
@@ -249,9 +250,7 @@ async function predictForSale(saleId: string) {
   if (aiResult.brakes) brakes.push(...aiResult.brakes);
 
   confidence = Math.max(0, Math.min(100, confidence));
-  const closeDate = new Date(Date.now() + predictedDays * 86400000)
-    .toISOString()
-    .slice(0, 10);
+  const closeDate = toBusinessDate(Date.now() + predictedDays * 86400000);
 
   const { data: ownerRow } = await admin
     .from('salespeople')
@@ -496,9 +495,7 @@ async function batchPredict(limit: number): Promise<Response> {
     if (aiResult.brakes) brakes.push(...aiResult.brakes);
 
     confidence = Math.max(0, Math.min(100, confidence));
-    const closeDate = new Date(Date.now() + predictedDays * 86400000)
-      .toISOString()
-      .slice(0, 10);
+    const closeDate = toBusinessDate(Date.now() + predictedDays * 86400000);
     const spRow = sale.salesperson_id ? salespersonMap.get(sale.salesperson_id) : null;
 
     const payload = {

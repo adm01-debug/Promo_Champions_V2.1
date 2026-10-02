@@ -41,6 +41,9 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('TodaysCadenceTasks');
 
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
@@ -118,7 +121,7 @@ export function TodaysCadenceTasks() {
             .eq('id', prospectCadenceId);
         } else if (rule.next_action === 'retry') {
           // Lógica de retry seria disparada por um cron ou worker baseado no retry_delay_hours
-          console.info(`Retry agendado em ${rule.retry_delay_hours}h`);
+          log.info('retry_scheduled', { retryDelayHours: rule.retry_delay_hours });
         }
 
         // 3. Registrar Log de Auditoria
@@ -140,7 +143,9 @@ export function TodaysCadenceTasks() {
         });
       }
     } catch (err) {
-      console.error('Erro ao aplicar regras de desfecho:', err);
+      log.error('outcome_rules_failed', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
@@ -188,7 +193,9 @@ export function TodaysCadenceTasks() {
             ]);
           }
         } catch (err) {
-          console.error('Erro ao salvar resultado da ligação:', err);
+          log.error('call_result_save_failed', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
 

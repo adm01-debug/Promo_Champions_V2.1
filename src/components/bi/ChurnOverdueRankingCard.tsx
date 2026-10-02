@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useChurnOverdueBySeller } from '@/hooks/bi/useChurnOverdueBySeller';
 import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 import { cn } from '@/lib/utils';
+import { toBusinessDate } from '@/lib/date';
 
 interface Props {
   className?: string;
@@ -67,7 +68,7 @@ export const ChurnOverdueRankingCard = memo(({ className, limit = 5 }: Props) =>
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ranking-churn-vendedores-${periodDays}d-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `ranking-churn-vendedores-${periodDays}d-${toBusinessDate()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
