@@ -93,7 +93,7 @@ export const PipelineBoard = () => {
         ...s,
         probability:
           stageProbabilities?.[s.id] !== undefined
-            ? Math.round(stageProbabilities[s.id] * 100)
+            ? Math.round(stageProbabilities[s.id]! * 100)
             : s.probability,
       }));
     }
