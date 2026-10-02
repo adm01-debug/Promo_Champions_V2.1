@@ -55,3 +55,7 @@ verify_jwt = false
 verify_jwt = false
 
 # migrate-helper removido: edge function aposentada no V2 (não deployada no destino; verify_jwt=false é risco de segurança)
+# Health check público para monitor externo de uptime (docs/RUNBOOK.md §4).
+# Não lê banco nem dados do usuário — resposta é apenas {status, version, timestamp}.
+[functions.health]
+verify_jwt = false
