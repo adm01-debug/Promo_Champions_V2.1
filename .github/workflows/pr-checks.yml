@@ -193,7 +193,10 @@ jobs:
     # completa: URL, publishable key e conta E2E. Configuração parcial falha
     # imediatamente para não produzir timeouts ou falso sinal de cobertura.
     # Sem nenhum segredo, a suíte é marcada explicitamente como skipped.
+    # environment: pr-preview — secrets ficam restritos a este job; fork PRs
+    # não acessam o ambiente (GitHub bloqueia deployments de fork por padrão).
     if: (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
 
