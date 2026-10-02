@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mic, Sparkles, MessageSquare, Target, AlertCircle, TrendingUp, Lightbulb, Trash2, FileText } from "lucide-react";
 import { useCallRecordings, useCallInsight, useCreateRecordingWithAnalysis, useDeleteRecording } from "@/hooks/conversational/useCallRecordings";
+import { VirtualizedList } from "@/components/ui/virtualized-list";
 import { CallRecordingUploader } from "@/components/conversational/CallRecordingUploader";
 import { CallRecordingPlayer } from "@/components/conversational/CallRecordingPlayer";
 import { TranscribeButton } from "@/components/conversational/TranscribeButton";
@@ -40,7 +41,7 @@ const SENTIMENT_LABELS: Record<string, string> = {
 };
 
 export default function ConversationalIntelligence() {
-  const { data: recordings, isLoading } = useCallRecordings();
+  const { data: recordings, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useCallRecordings();
   const create = useCreateRecordingWithAnalysis();
   const del = useDeleteRecording();
   const [selected, setSelected] = useState<string | null>(null);
@@ -126,35 +127,50 @@ export default function ConversationalIntelligence() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[500px] pr-3">
-                {isLoading && <Skeleton className="h-20 w-full" />}
-                {!isLoading && (!recordings || recordings.length === 0) && (
-                  <p className="text-xs text-muted-foreground text-center py-8">Nenhuma call analisada ainda.</p>
-                )}
-                <div className="space-y-2">
-                  {recordings?.map((r) => (
-                    <button
-                      key={r.id}
-                      onClick={() => setSelected(r.id)}
-                      className={`w-full text-left p-3 rounded-lg border transition-all ${
-                        selected === r.id ? "border-primary bg-primary/5" : "border-border/40 hover:border-primary/30"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{r.title}</p>
-                          <p className="text-[10px] text-muted-foreground">
-                            {formatDistanceToNow(new Date(r.recorded_at), { addSuffix: true, locale: ptBR })}
-                          </p>
+              {isLoading && <Skeleton className="h-20 w-full" />}
+              {!isLoading && (!recordings || recordings.length === 0) && (
+                <p className="text-xs text-muted-foreground text-center py-8">Nenhuma call analisada ainda.</p>
+              )}
+              {recordings && recordings.length > 0 && (
+                <>
+                  <VirtualizedList
+                    items={recordings}
+                    height={460}
+                    itemHeight={64}
+                    renderItem={(r) => (
+                      <button
+                        onClick={() => setSelected(r.id)}
+                        className={`w-full text-left p-3 rounded-lg border transition-all ${
+                          selected === r.id ? "border-primary bg-primary/5" : "border-border/40 hover:border-primary/30"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{r.title}</p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {formatDistanceToNow(new Date(r.recorded_at), { addSuffix: true, locale: ptBR })}
+                            </p>
+                          </div>
+                          <Badge variant={r.status === "ready" ? "secondary" : "outline"} className="text-[9px] shrink-0">
+                            {r.status}
+                          </Badge>
                         </div>
-                        <Badge variant={r.status === "ready" ? "secondary" : "outline"} className="text-[9px] shrink-0">
-                          {r.status}
-                        </Badge>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </ScrollArea>
+                      </button>
+                    )}
+                  />
+                  {hasNextPage && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full mt-2 text-xs"
+                      onClick={() => fetchNextPage()}
+                      disabled={isFetchingNextPage}
+                    >
+                      {isFetchingNextPage ? "Carregando…" : "Carregar mais"}
+                    </Button>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
 
