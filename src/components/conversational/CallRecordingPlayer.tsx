@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { getCallRecordingSignedUrl } from "@/hooks/conversational/useUploadCallRecording";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { getCallRecordingSignedUrl } from '@/hooks/conversational/useUploadCallRecording';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AlertCircle } from 'lucide-react';
 
 interface Props {
   audioPath: string | null;
@@ -27,14 +27,14 @@ export function CallRecordingPlayer({ audioPath }: Props) {
       return;
     }
 
-    if (audioPath.startsWith("http://") || audioPath.startsWith("https://")) {
+    if (audioPath.startsWith('http://') || audioPath.startsWith('https://')) {
       setUrl(audioPath);
       setLoading(false);
       return;
     }
 
     getCallRecordingSignedUrl(audioPath)
-      .then((signed) => {
+      .then(signed => {
         if (cancelled) return;
         if (!signed) {
           setError(true);
@@ -72,12 +72,7 @@ export function CallRecordingPlayer({ audioPath }: Props) {
   }
 
   return (
-    <audio
-      controls
-      src={url}
-      className="w-full h-10 rounded-md"
-      preload="metadata"
-    >
+    <audio controls src={url} className="w-full h-10 rounded-md" preload="metadata">
       Seu navegador não suporta áudio HTML5.
     </audio>
   );

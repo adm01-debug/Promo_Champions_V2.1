@@ -88,7 +88,9 @@ export function useSalespersonActivityReport(months: number = 1) {
         const scheduled = spActivities.filter(a => a.outcome === 'scheduled').length;
         const qualified = spActivities.filter(a => a.outcome === 'qualified').length;
         const no_answer = spActivities.filter(a => a.outcome === 'no_answer').length;
-        const not_interested = spActivities.filter(a => a.outcome === 'not_interested').length;
+        const not_interested = spActivities.filter(
+          a => a.outcome === 'not_interested'
+        ).length;
 
         const total = spActivities.length;
         const attempted = total;
@@ -117,7 +119,10 @@ export function useSalespersonActivityReport(months: number = 1) {
       });
 
       // Calculate team summary
-      const totalActivities = salespersonData.reduce((sum, sp) => sum + sp.total_activities, 0);
+      const totalActivities = salespersonData.reduce(
+        (sum, sp) => sum + sp.total_activities,
+        0
+      );
       const totalCalls = salespersonData.reduce((sum, sp) => sum + sp.calls, 0);
       const totalEmails = salespersonData.reduce((sum, sp) => sum + sp.emails, 0);
       const totalMeetings = salespersonData.reduce((sum, sp) => sum + sp.meetings, 0);
@@ -149,7 +154,9 @@ export function useSalespersonActivityReport(months: number = 1) {
       };
 
       return {
-        salespeople: salespersonData.sort((a, b) => b.total_activities - a.total_activities),
+        salespeople: salespersonData.sort(
+          (a, b) => b.total_activities - a.total_activities
+        ),
         teamSummary,
       };
     },
@@ -183,7 +190,13 @@ export function useActivityTrend(salespersonId?: string, days: number = 30) {
 
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = getLocalISODate(d);
-        dailyData[dateStr] = { date: dateStr, calls: 0, emails: 0, meetings: 0, total: 0 };
+        dailyData[dateStr] = {
+          date: dateStr,
+          calls: 0,
+          emails: 0,
+          meetings: 0,
+          total: 0,
+        };
       }
 
       (activities || []).forEach(activity => {

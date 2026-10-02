@@ -39,13 +39,13 @@ function buildChain(response: { data: unknown; error: unknown }): Chain {
   limitMock.mockReturnValue(
     Object.assign(chain, {
       then: (resolve: (v: unknown) => unknown) => Promise.resolve(response).then(resolve),
-    }),
+    })
   );
   // or é o terminal awaitable quando há searchTerm
   orMock.mockReturnValue(
     Object.assign(chain, {
       then: (resolve: (v: unknown) => unknown) => Promise.resolve(response).then(resolve),
-    }),
+    })
   );
   return chain;
 }

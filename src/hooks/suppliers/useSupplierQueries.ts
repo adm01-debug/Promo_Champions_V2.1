@@ -6,10 +6,7 @@ export function useSupplierList() {
   return useQuery({
     queryKey: ['suppliers'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('*')
-        .order('name');
+      const { data, error } = await supabase.from('suppliers').select('*').order('name');
 
       if (error) throw error;
       return data as Supplier[];
@@ -23,7 +20,9 @@ export function useSupplierProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('supplier_products')
-        .select(`*, suppliers (id, name, reliability_score, lead_time_days), products (id, name, price)`)
+        .select(
+          `*, suppliers (id, name, reliability_score, lead_time_days), products (id, name, price)`
+        )
         .order('unit_price', { ascending: true });
 
       if (error) throw error;

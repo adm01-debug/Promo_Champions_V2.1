@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -62,6 +63,16 @@ export default defineConfig({
         sourcemap: false,
         emitFile: false,
       }),
+    // Upload de source maps pro Sentry — só ativa com SENTRY_AUTH_TOKEN
+    // (o build já gera .map ocultos via sourcemap:'hidden'); sem token, no-op.
+    process.env.SENTRY_AUTH_TOKEN &&
+      sentryVitePlugin({
+        org: process.env.SENTRY_ORG,
+        project: process.env.SENTRY_PROJECT,
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        telemetry: false,
+        sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+      }),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -114,7 +125,7 @@ export default defineConfig({
       // precisam deles. Removê-los do preload evita ~193 KB gzip antecipados; os
       // chunks continuam sendo baixados sob demanda quando o lazy() é resolvido.
       resolveDependencies: (_filename, deps) =>
-        deps.filter((dep) => !/vendor-(pdf|markdown)-/.test(dep)),
+        deps.filter(dep => !/vendor-(pdf|markdown)-/.test(dep)),
     },
     rollupOptions: {
       output: {
@@ -223,6 +234,9 @@ export default defineConfig({
             return 'vendor-ui-utils';
           if (id.includes('@lovable.dev/cloud-auth-js') || id.includes('web-vitals'))
             return 'vendor-platform';
+          // Sentry é carregado só por import() dinâmico quando VITE_SENTRY_DSN
+          // existe — chunk próprio mantém o SDK fora do caminho crítico.
+          if (id.includes('@sentry/')) return 'vendor-sentry';
           return 'vendor';
         },
       },

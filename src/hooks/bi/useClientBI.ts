@@ -49,7 +49,7 @@ export const useClientBI = (clientId?: string, ramoAtividade?: string) => {
         },
         affinity: {
           topCategories: [],
-          suggestedProducts: clientProducts.map((p) => ({
+          suggestedProducts: clientProducts.map(p => ({
             name: p.product_name,
             confidence: 90,
           })),

@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface PredictiveSnapshot {
   forecast: {
@@ -26,7 +26,12 @@ export interface PredictiveSnapshot {
     high: number;
     medium: number;
     low: number;
-    top_opportunities: Array<{ id: string; client: string; amount: number; probability: number }>;
+    top_opportunities: Array<{
+      id: string;
+      client: string;
+      amount: number;
+      probability: number;
+    }>;
   };
   trends: {
     velocity_change_pct: number;
@@ -50,9 +55,9 @@ interface Options {
 export function usePredictiveIntelligence(options: Options = {}) {
   const { horizonDays = 90, includeAI = true } = options;
   return useQuery({
-    queryKey: ["predictive-intelligence", horizonDays, includeAI],
+    queryKey: ['predictive-intelligence', horizonDays, includeAI],
     queryFn: async (): Promise<PredictiveSnapshot> => {
-      const { data, error } = await supabase.functions.invoke("predictive-intelligence", {
+      const { data, error } = await supabase.functions.invoke('predictive-intelligence', {
         body: { horizon_days: horizonDays, include_ai: includeAI },
       });
       if (error) throw error;

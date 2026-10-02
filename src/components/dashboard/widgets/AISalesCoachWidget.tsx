@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BrainCircuit, Lightbulb, TrendingUp, Sparkles, AlertCircle } from "lucide-react";
-import { useNextBestActionQuery } from "@/hooks/useNextBestAction";
-import { useAuth } from "@/contexts/AuthContext";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BrainCircuit, Lightbulb, TrendingUp, Sparkles, AlertCircle } from 'lucide-react';
+import { useNextBestActionQuery } from '@/hooks/useNextBestAction';
+import { useAuth } from '@/contexts/AuthContext';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export function AISalesCoachWidget() {
   const { salesperson } = useAuth();
@@ -24,7 +24,7 @@ export function AISalesCoachWidget() {
           <Sparkles className="h-3.5 w-3.5 text-primary/50" />
         </div>
       </CardHeader>
-      
+
       <CardContent className="p-4 pt-0 relative z-10">
         <div className="space-y-2">
           {isLoading ? (
@@ -34,16 +34,17 @@ export function AISalesCoachWidget() {
             </div>
           ) : nbaData?.suggestions && nbaData.suggestions.length > 0 ? (
             nbaData.suggestions.slice(0, 2).map((suggestion, i) => {
-              const isUrgent = suggestion.priority === 'high' || suggestion.actionType === 'call_now';
-              
+              const isUrgent =
+                suggestion.priority === 'high' || suggestion.actionType === 'call_now';
+
               return (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={cn(
-                    "flex gap-3 p-3 rounded-xl border transition-all hover:scale-[1.02] duration-300",
-                    isUrgent 
-                      ? "bg-status-error/5 border-status-error/20 hover:border-status-error/40" 
-                      : "bg-background/40 border-border/10 hover:border-primary/20"
+                    'flex gap-3 p-3 rounded-xl border transition-all hover:scale-[1.02] duration-300',
+                    isUrgent
+                      ? 'bg-status-error/5 border-status-error/20 hover:border-status-error/40'
+                      : 'bg-background/40 border-border/10 hover:border-primary/20'
                   )}
                 >
                   <div className="mt-0.5">
@@ -55,10 +56,12 @@ export function AISalesCoachWidget() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <p className={cn(
-                        "text-[10px] font-black uppercase tracking-widest truncate",
-                        isUrgent ? "text-status-error" : "text-primary/80"
-                      )}>
+                      <p
+                        className={cn(
+                          'text-[10px] font-black uppercase tracking-widest truncate',
+                          isUrgent ? 'text-status-error' : 'text-primary/80'
+                        )}
+                      >
                         {suggestion.title}
                       </p>
                       {isUrgent && (
@@ -75,7 +78,9 @@ export function AISalesCoachWidget() {
           ) : (
             <div className="flex flex-col items-center justify-center py-6 text-center">
               <TrendingUp className="h-8 w-8 text-muted/30 mb-2" />
-              <p className="text-xs text-muted-foreground font-medium">Pipeline saudável. Nenhuma ação crítica detectada agora.</p>
+              <p className="text-xs text-muted-foreground font-medium">
+                Pipeline saudável. Nenhuma ação crítica detectada agora.
+              </p>
             </div>
           )}
         </div>

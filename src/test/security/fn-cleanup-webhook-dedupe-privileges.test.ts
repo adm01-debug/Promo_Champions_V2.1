@@ -10,8 +10,7 @@ import { describe, it, expect } from 'vitest';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as
-  | string
-  | undefined;
+  string | undefined;
 const ISOLATED_UNIT_ENV = import.meta.env.VITE_SUPABASE_TEST_MODE === 'true';
 
 interface PrivilegeRow {
@@ -45,14 +44,12 @@ async function rpc<T>(fn: string, body: Record<string, unknown> = {}) {
 
 describe.skipIf(!canRun)('fn_cleanup_webhook_dedupe — privileges', () => {
   it('has_function_privilege confirma bloqueio de anon/authenticated/public e permite service_role', async () => {
-    const { ok, data } = await rpc<PrivilegeRow[]>(
-      'fn_test_cleanup_dedupe_privileges',
-    );
+    const { ok, data } = await rpc<PrivilegeRow[]>('fn_test_cleanup_dedupe_privileges');
     expect(ok).toBe(true);
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBe(4);
 
-    const byRole = Object.fromEntries(data.map((r) => [r.role_name, r]));
+    const byRole = Object.fromEntries(data.map(r => [r.role_name, r]));
     expect(byRole.anon?.can_execute).toBe(false);
     expect(byRole.authenticated?.can_execute).toBe(false);
     expect(byRole.public?.can_execute).toBe(false);
@@ -65,7 +62,7 @@ describe.skipIf(!canRun)('fn_cleanup_webhook_dedupe — privileges', () => {
 
   it('anon executando fn_cleanup_webhook_dedupe recebe permission denied', async () => {
     const { ok, status, data } = await rpc<{ code?: string; message?: string }>(
-      'fn_cleanup_webhook_dedupe',
+      'fn_cleanup_webhook_dedupe'
     );
     expect(ok).toBe(false);
     // PostgREST devolve 401/403/404 dependendo da versão; a mensagem

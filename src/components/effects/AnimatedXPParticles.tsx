@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Zap } from "lucide-react";
+import { useEffect, useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Zap } from 'lucide-react';
 
 interface XPParticle {
   id: number;
@@ -17,7 +17,11 @@ interface AnimatedXPParticlesProps {
   onComplete?: () => void;
 }
 
-export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: AnimatedXPParticlesProps) => {
+export const AnimatedXPParticles = ({
+  isActive,
+  xpGained = 0,
+  onComplete,
+}: AnimatedXPParticlesProps) => {
   const [particles, setParticles] = useState<XPParticle[]>([]);
 
   const createParticles = useCallback(() => {
@@ -29,7 +33,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
         id: i,
         x: 20 + Math.random() * 60,
         y: 80 + Math.random() * 20,
-        value: i < 3 ? `+${Math.ceil(xpGained / 3)}` : "",
+        value: i < 3 ? `+${Math.ceil(xpGained / 3)}` : '',
         size: 12 + Math.random() * 8,
         delay: i * 0.1,
       });
@@ -70,7 +74,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
 
       {/* Rising particles */}
       <AnimatePresence>
-        {particles.map((particle) => (
+        {particles.map(particle => (
           <motion.div
             key={particle.id}
             initial={{
@@ -87,7 +91,7 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
             transition={{
               duration: 1.5,
               delay: particle.delay,
-              ease: "easeOut",
+              ease: 'easeOut',
             }}
             className="absolute flex items-center gap-1"
           >
@@ -96,7 +100,10 @@ export const AnimatedXPParticles = ({ isActive, xpGained = 0, onComplete }: Anim
                 {particle.value}
               </span>
             ) : (
-              <Zap className="text-info" style={{ width: particle.size, height: particle.size }} />
+              <Zap
+                className="text-info"
+                style={{ width: particle.size, height: particle.size }}
+              />
             )}
           </motion.div>
         ))}

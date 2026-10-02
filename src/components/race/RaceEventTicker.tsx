@@ -29,9 +29,7 @@ export function RaceEventTicker({ events, max = 3 }: RaceEventTickerProps) {
     return () => window.clearInterval(id);
   }, []);
 
-  const visible = events
-    .filter((e) => now - e.at < 12_000)
-    .slice(0, max);
+  const visible = events.filter(e => now - e.at < 12_000).slice(0, max);
 
   if (visible.length === 0) return null;
 
@@ -40,7 +38,7 @@ export function RaceEventTicker({ events, max = 3 }: RaceEventTickerProps) {
       className="absolute top-12 left-1/2 -translate-x-1/2 z-20 flex flex-col gap-1 items-center"
       aria-live="polite"
     >
-      {visible.map((e) => (
+      {visible.map(e => (
         <div
           key={e.id}
           className="rounded-full border border-border/50 backdrop-blur-md px-3 py-0.5 shadow-md flex items-center gap-1.5"

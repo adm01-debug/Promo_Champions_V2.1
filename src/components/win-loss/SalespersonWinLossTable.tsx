@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Crown, Users, GitCompare } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { fmtBRL, fmtDays, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
-import type { SalespersonStat } from "@/hooks/win-loss/useWinLossAggregations";
-import { WinLossCompareModal } from "./WinLossCompareModal";
-import { useWinLossSalespersonScore } from "@/hooks/win-loss/useWinLossSalespersonScore";
-import { SalespersonScoreBadge } from "./SalespersonScoreBadge";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Crown, Users, GitCompare } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  fmtBRL,
+  fmtDays,
+  fmtPct,
+} from '@/components/deal-intelligence/winloss/winLossHelpers';
+import type { SalespersonStat } from '@/hooks/win-loss/useWinLossAggregations';
+import { WinLossCompareModal } from './WinLossCompareModal';
+import { useWinLossSalespersonScore } from '@/hooks/win-loss/useWinLossSalespersonScore';
+import { SalespersonScoreBadge } from './SalespersonScoreBadge';
 
 interface Props {
   stats: SalespersonStat[];
@@ -58,10 +62,16 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
             ))}
           </div>
         ) : !stats.length ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Sem deals analisados no período.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Sem deals analisados no período.
+          </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs" role="table" aria-label="Tabela de win/loss por vendedor">
+            <table
+              className="w-full text-xs"
+              role="table"
+              aria-label="Tabela de win/loss por vendedor"
+            >
               <thead>
                 <tr className="text-left text-muted-foreground border-b border-border/50">
                   <th className="p-2 font-normal w-8" aria-label="Selecionar"></th>
@@ -77,14 +87,14 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
                 </tr>
               </thead>
               <tbody>
-                {stats.map((s) => {
+                {stats.map(s => {
                   const isTop = s.salespersonId === top?.salespersonId;
                   const isChecked = selected.includes(s.salespersonId);
                   const disabled = !isChecked && selected.length >= 3;
                   return (
                     <tr
                       key={s.salespersonId}
-                      className={`border-b border-border/30 ${isTop ? "bg-primary/5" : ""} ${onRowClick ? "hover:bg-muted/40 transition-colors" : ""}`}
+                      className={`border-b border-border/30 ${isTop ? 'bg-primary/5' : ''} ${onRowClick ? 'hover:bg-muted/40 transition-colors' : ''}`}
                     >
                       <td className="p-2">
                         <Checkbox
@@ -95,11 +105,16 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
                         />
                       </td>
                       <td
-                        className={`p-2 font-medium ${onRowClick ? "cursor-pointer" : ""}`}
+                        className={`p-2 font-medium ${onRowClick ? 'cursor-pointer' : ''}`}
                         onClick={() => onRowClick?.(s.salespersonId, s.name)}
                       >
                         <div className="flex items-center gap-1.5">
-                          {isTop && <Crown className="h-3.5 w-3.5 text-amber-500" aria-label="Top performer" />}
+                          {isTop && (
+                            <Crown
+                              className="h-3.5 w-3.5 text-amber-500"
+                              aria-label="Top performer"
+                            />
+                          )}
                           {s.name}
                         </div>
                       </td>
@@ -109,17 +124,31 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
                       <td className="p-2 text-right tabular-nums">
                         <Badge
                           variant="outline"
-                          className={s.winRate >= (top?.winRate ?? 0) - 5 ? "border-emerald-500/40 text-emerald-700" : ""}
+                          className={
+                            s.winRate >= (top?.winRate ?? 0) - 5
+                              ? 'border-emerald-500/40 text-emerald-700'
+                              : ''
+                          }
                         >
                           {fmtPct(s.winRate)}
                         </Badge>
                       </td>
                       <td className="p-2 text-right tabular-nums">{s.total}</td>
-                      <td className="p-2 text-right tabular-nums">{fmtDays(s.avgCycle)}</td>
-                      <td className="p-2 text-right tabular-nums">{fmtBRL(s.avgAmountWon)}</td>
-                      <td className="p-2 truncate max-w-[140px]" title={s.topWinReason}>{s.topWinReason}</td>
-                      <td className="p-2 truncate max-w-[140px]" title={s.topLossReason}>{s.topLossReason}</td>
-                      <td className="p-2 truncate max-w-[120px]" title={s.topCompetitor}>{s.topCompetitor}</td>
+                      <td className="p-2 text-right tabular-nums">
+                        {fmtDays(s.avgCycle)}
+                      </td>
+                      <td className="p-2 text-right tabular-nums">
+                        {fmtBRL(s.avgAmountWon)}
+                      </td>
+                      <td className="p-2 truncate max-w-[140px]" title={s.topWinReason}>
+                        {s.topWinReason}
+                      </td>
+                      <td className="p-2 truncate max-w-[140px]" title={s.topLossReason}>
+                        {s.topLossReason}
+                      </td>
+                      <td className="p-2 truncate max-w-[120px]" title={s.topCompetitor}>
+                        {s.topCompetitor}
+                      </td>
                     </tr>
                   );
                 })}
@@ -129,7 +158,11 @@ export function SalespersonWinLossTable({ stats, isLoading, onRowClick }: Props)
         )}
       </CardContent>
 
-      <WinLossCompareModal open={compareOpen} onOpenChange={setCompareOpen} stats={compareStats} />
+      <WinLossCompareModal
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        stats={compareStats}
+      />
     </Card>
   );
 }

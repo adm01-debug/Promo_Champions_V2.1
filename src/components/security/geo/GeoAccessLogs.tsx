@@ -1,9 +1,15 @@
-import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Activity } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Activity } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 interface GeoAccessLog {
   id: string;
@@ -18,7 +24,10 @@ interface GeoAccessLog {
 }
 
 function getFlagEmoji(countryCode: string): string {
-  const codePoints = countryCode.toUpperCase().split("").map((char) => 127397 + char.charCodeAt(0));
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
   return String.fromCodePoint(...codePoints);
 }
 
@@ -27,7 +36,10 @@ interface GeoAccessLogsProps {
   isLoading: boolean;
 }
 
-export const GeoAccessLogs = React.memo(function GeoAccessLogs({ accessLogs, isLoading }: GeoAccessLogsProps) {
+export const GeoAccessLogs = React.memo(function GeoAccessLogs({
+  accessLogs,
+  isLoading,
+}: GeoAccessLogsProps) {
   return (
     <Card>
       <CardHeader>
@@ -52,19 +64,27 @@ export const GeoAccessLogs = React.memo(function GeoAccessLogs({ accessLogs, isL
         ) : (
           <ScrollArea className="h-[300px]">
             <div className="space-y-2">
-              {accessLogs?.map((log) => (
+              {accessLogs?.map(log => (
                 <div
                   key={log.id}
                   className={`flex items-center justify-between p-3 rounded-lg border ${
-                    log.blocked ? "bg-destructive/5 border-destructive/20" : "bg-success/5 border-success/20"
+                    log.blocked
+                      ? 'bg-destructive/5 border-destructive/20'
+                      : 'bg-success/5 border-success/20'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-lg">{log.country_code ? getFlagEmoji(log.country_code) : "🌐"}</span>
+                    <span className="text-lg">
+                      {log.country_code ? getFlagEmoji(log.country_code) : '🌐'}
+                    </span>
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm">{log.ip_address}</span>
-                        {log.country_name && <Badge variant="outline" className="text-xs">{log.country_name}</Badge>}
+                        {log.country_name && (
+                          <Badge variant="outline" className="text-xs">
+                            {log.country_name}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         {log.city && <span>{log.city}</span>}
@@ -74,8 +94,12 @@ export const GeoAccessLogs = React.memo(function GeoAccessLogs({ accessLogs, isL
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant={log.blocked ? "destructive" : "default"}>{log.blocked ? "Bloqueado" : "Permitido"}</Badge>
-                    <span className="text-xs text-muted-foreground">{new Date(log.created_at).toLocaleString("pt-BR")}</span>
+                    <Badge variant={log.blocked ? 'destructive' : 'default'}>
+                      {log.blocked ? 'Bloqueado' : 'Permitido'}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(log.created_at).toLocaleString('pt-BR')}
+                    </span>
                   </div>
                 </div>
               ))}

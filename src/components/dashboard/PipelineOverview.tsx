@@ -6,9 +6,9 @@ interface PipelineOverviewProps {
   showValue?: boolean;
 }
 
-const PipelineOverviewBase: FC<PipelineOverviewProps> = ({ 
+const PipelineOverviewBase: FC<PipelineOverviewProps> = ({
   pipelineId,
-  showValue = true
+  showValue = true,
 }) => {
   return (
     <Card className="p-6">

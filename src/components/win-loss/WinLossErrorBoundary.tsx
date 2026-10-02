@@ -1,7 +1,7 @@
-import { Component, ReactNode } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCcw } from "lucide-react";
+import { Component, ReactNode } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, RefreshCcw } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -37,14 +37,19 @@ export class WinLossErrorBoundary extends Component<Props, State> {
       <Card className="border-destructive/40 bg-destructive/5">
         <CardContent
           className="flex flex-col items-center justify-center text-center gap-2 py-8"
-          style={this.props.fallbackHeight ? { minHeight: this.props.fallbackHeight } : undefined}
+          style={
+            this.props.fallbackHeight
+              ? { minHeight: this.props.fallbackHeight }
+              : undefined
+          }
         >
           <AlertTriangle className="h-5 w-5 text-destructive" aria-hidden="true" />
           <p className="text-sm font-medium">
-            Erro em {this.props.section ?? "esta seção"}
+            Erro em {this.props.section ?? 'esta seção'}
           </p>
           <p className="text-xs text-muted-foreground max-w-md">
-            {this.state.message ?? "Algo inesperado aconteceu. Recarregue para tentar novamente."}
+            {this.state.message ??
+              'Algo inesperado aconteceu. Recarregue para tentar novamente.'}
           </p>
           <Button size="sm" variant="outline" onClick={this.reset} className="mt-1">
             <RefreshCcw className="h-3 w-3 mr-1" /> Tentar novamente

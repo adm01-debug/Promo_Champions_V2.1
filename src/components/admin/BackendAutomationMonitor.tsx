@@ -29,7 +29,8 @@ const AUTOMATION_JOBS: AutomationJob[] = [
   {
     id: 'activity-goals',
     name: 'Alertas de Metas de Atividade',
-    description: 'Verifica o progresso das metas de atividades e envia alertas para vendedores abaixo do esperado.',
+    description:
+      'Verifica o progresso das metas de atividades e envia alertas para vendedores abaixo do esperado.',
     edgeFunctionName: 'activity-goal-alerts',
     icon: <Activity className="h-4 w-4" />,
     category: 'alerts',
@@ -37,7 +38,8 @@ const AUTOMATION_JOBS: AutomationJob[] = [
   {
     id: 'lead-sla',
     name: 'Verificação de SLA de Leads',
-    description: 'Detecta leads que ultrapassaram o tempo máximo sem contato e notifica os responsáveis.',
+    description:
+      'Detecta leads que ultrapassaram o tempo máximo sem contato e notifica os responsáveis.',
     edgeFunctionName: 'check-lead-sla',
     icon: <Clock className="h-4 w-4" />,
     category: 'monitoring',
@@ -61,7 +63,9 @@ const AUTOMATION_JOBS: AutomationJob[] = [
 ];
 
 export function BackendAutomationMonitor() {
-  const [results, setResults] = useState<Record<string, { status: 'success' | 'error'; message: string }>>({});
+  const [results, setResults] = useState<
+    Record<string, { status: 'success' | 'error'; message: string }>
+  >({});
 
   const runJob = useMutation({
     mutationFn: async (functionName: string) => {
@@ -75,7 +79,10 @@ export function BackendAutomationMonitor() {
     onSuccess: (data, functionName) => {
       setResults(prev => ({
         ...prev,
-        [functionName]: { status: 'success', message: JSON.stringify(data).slice(0, 200) },
+        [functionName]: {
+          status: 'success',
+          message: JSON.stringify(data).slice(0, 200),
+        },
       }));
       toast.success('Automação executada com sucesso!');
     },
@@ -108,7 +115,8 @@ export function BackendAutomationMonitor() {
           Automações de Backend
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Execute e monitore as automações do sistema. Estas funções normalmente rodam em background via cron jobs.
+          Execute e monitore as automações do sistema. Estas funções normalmente rodam em
+          background via cron jobs.
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -121,14 +129,15 @@ export function BackendAutomationMonitor() {
               key={job.id}
               className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/30 transition-colors"
             >
-              <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                {job.icon}
-              </div>
+              <div className="p-2 rounded-lg bg-primary/10 text-primary">{job.icon}</div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-medium text-sm">{job.name}</span>
-                  <Badge variant="outline" className={`text-xs ${categoryColors[job.category]}`}>
+                  <Badge
+                    variant="outline"
+                    className={`text-xs ${categoryColors[job.category]}`}
+                  >
                     {categoryLabels[job.category]}
                   </Badge>
                 </div>

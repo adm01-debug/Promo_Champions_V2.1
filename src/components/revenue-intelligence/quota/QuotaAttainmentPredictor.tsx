@@ -1,20 +1,20 @@
-import { FC, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw } from "lucide-react";
+import { FC, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RefreshCw } from 'lucide-react';
 import {
   useQuotaAttainmentPredictions,
   useRunQuotaPrediction,
-} from "@/hooks/revenue/useQuotaAttainment";
-import { QuotaAttainmentSummaryCards } from "./QuotaAttainmentSummaryCards";
-import { QuotaScenarioChart } from "./QuotaScenarioChart";
-import { QuotaRiskTable } from "./QuotaRiskTable";
-import { QuotaAttainmentAlertsPanel } from "./QuotaAttainmentAlertsPanel";
+} from '@/hooks/revenue/useQuotaAttainment';
+import { QuotaAttainmentSummaryCards } from './QuotaAttainmentSummaryCards';
+import { QuotaScenarioChart } from './QuotaScenarioChart';
+import { QuotaRiskTable } from './QuotaRiskTable';
+import { QuotaAttainmentAlertsPanel } from './QuotaAttainmentAlertsPanel';
 
 export const QuotaAttainmentPredictor: FC = () => {
-  const [period, setPeriod] = useState<"month" | "quarter">("month");
+  const [period, setPeriod] = useState<'month' | 'quarter'>('month');
   const { data: predictions = [], isLoading } = useQuotaAttainmentPredictions();
   const runMut = useRunQuotaPrediction();
 
@@ -29,7 +29,7 @@ export const QuotaAttainmentPredictor: FC = () => {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Tabs value={period} onValueChange={(v) => setPeriod(v as "month" | "quarter")}>
+            <Tabs value={period} onValueChange={v => setPeriod(v as 'month' | 'quarter')}>
               <TabsList>
                 <TabsTrigger value="month">Mês</TabsTrigger>
                 <TabsTrigger value="quarter">Trimestre</TabsTrigger>
@@ -40,7 +40,9 @@ export const QuotaAttainmentPredictor: FC = () => {
               onClick={() => runMut.mutate({ period })}
               disabled={runMut.isPending}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${runMut.isPending ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${runMut.isPending ? 'animate-spin' : ''}`}
+              />
               Recalcular predições
             </Button>
           </div>
@@ -49,18 +51,28 @@ export const QuotaAttainmentPredictor: FC = () => {
 
       {isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-24" />)}
+          {[0, 1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-24" />
+          ))}
         </div>
       ) : (
         <QuotaAttainmentSummaryCards predictions={predictions} />
       )}
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-        {isLoading ? <Skeleton className="h-[400px]" /> : <QuotaScenarioChart predictions={predictions} />}
+        {isLoading ? (
+          <Skeleton className="h-[400px]" />
+        ) : (
+          <QuotaScenarioChart predictions={predictions} />
+        )}
         <QuotaAttainmentAlertsPanel />
       </div>
 
-      {isLoading ? <Skeleton className="h-64" /> : <QuotaRiskTable predictions={predictions} />}
+      {isLoading ? (
+        <Skeleton className="h-64" />
+      ) : (
+        <QuotaRiskTable predictions={predictions} />
+      )}
     </div>
   );
 };

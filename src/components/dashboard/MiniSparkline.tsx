@@ -1,6 +1,6 @@
-import React from "react";
-import { cn } from "@/lib/utils";
-import { useMemo, useId } from "react";
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { useMemo, useId } from 'react';
 
 interface MiniSparklineProps {
   data: number[];
@@ -21,9 +21,9 @@ export const MiniSparkline = React.memo(function MiniSparkline({
   height = 20,
   strokeWidth = 2.5,
 }: MiniSparklineProps) {
-  const uniqueId = useId().replace(/:/g, "");
+  const uniqueId = useId().replace(/:/g, '');
   const pathData = useMemo(() => {
-    if (data.length < 2) return { line: "", area: "" };
+    if (data.length < 2) return { line: '', area: '' };
 
     const min = Math.min(...data);
     const max = Math.max(...data);
@@ -35,7 +35,9 @@ export const MiniSparkline = React.memo(function MiniSparkline({
       y: padding + (1 - (v - min) / range) * (height - padding * 2),
     }));
 
-    const line = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+    const line = points
+      .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+      .join(' ');
     const area = `${line} L ${points[points.length - 1].x.toFixed(1)} ${height} L ${points[0].x.toFixed(1)} ${height} Z`;
 
     return { line, area };
@@ -50,11 +52,17 @@ export const MiniSparkline = React.memo(function MiniSparkline({
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className={cn("shrink-0 opacity-70", className)}
+      className={cn('shrink-0 opacity-70', className)}
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id={`spark-fill-${uniqueId}-${isPositive ? "up" : "down"}`} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient
+          id={`spark-fill-${uniqueId}-${isPositive ? 'up' : 'down'}`}
+          x1="0"
+          y1="0"
+          x2="0"
+          y2="1"
+        >
           <stop offset="0%" stopColor="currentColor" stopOpacity="0.4" />
           <stop offset="60%" stopColor="currentColor" stopOpacity="0.1" />
           <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
@@ -62,7 +70,7 @@ export const MiniSparkline = React.memo(function MiniSparkline({
       </defs>
       <path
         d={pathData.area}
-        fill={`url(#spark-fill-${uniqueId}-${isPositive ? "up" : "down"})`}
+        fill={`url(#spark-fill-${uniqueId}-${isPositive ? 'up' : 'down'})`}
       />
       <path
         d={pathData.line}

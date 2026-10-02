@@ -10,7 +10,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useDealChatHistory, QUESTION_TYPES, QuestionType } from '@/hooks/useDealChatHistory';
+import {
+  useDealChatHistory,
+  QUESTION_TYPES,
+  QuestionType,
+} from '@/hooks/useDealChatHistory';
 import { Badge } from '@/components/ui/badge';
 
 interface DealChatHistoryProps {
@@ -28,7 +32,8 @@ const TYPE_COLORS: Record<QuestionType, string> = {
 };
 
 export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryProps) {
-  const { history, allHistory, isLoading, deleteEntry, filterType, setFilterType } = useDealChatHistory(dealId);
+  const { history, allHistory, isLoading, deleteEntry, filterType, setFilterType } =
+    useDealChatHistory(dealId);
 
   if (isLoading) {
     return (
@@ -60,40 +65,47 @@ export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryPro
           <Filter className="h-3 w-3 text-muted-foreground" />
           <select
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as QuestionType | 'all')}
+            onChange={e => setFilterType(e.target.value as QuestionType | 'all')}
             className="text-[10px] bg-transparent border-none text-muted-foreground focus:outline-none cursor-pointer"
           >
             <option value="all">Todos</option>
             {QUESTION_TYPES.map(type => (
-              <option key={type.value} value={type.value}>{type.label}</option>
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
             ))}
           </select>
         </div>
       </div>
       <ScrollArea className="max-h-[120px]">
         <div className="space-y-1.5">
-          {history.map((entry) => (
+          {history.map(entry => (
             <div
               key={entry.id}
               className={cn(
-                "group relative p-2 rounded-md border border-border/40 bg-muted/30",
-                "hover:bg-muted/50 transition-colors cursor-pointer"
+                'group relative p-2 rounded-md border border-border/40 bg-muted/30',
+                'hover:bg-muted/50 transition-colors cursor-pointer'
               )}
               onClick={() => onSelectQuestion(entry.question)}
             >
               <div className="flex items-start gap-2 pr-6">
-                <Badge 
-                  variant="secondary" 
-                  className={cn("text-[8px] px-1 py-0 shrink-0", TYPE_COLORS[entry.question_type as QuestionType] || TYPE_COLORS.general)}
+                <Badge
+                  variant="secondary"
+                  className={cn(
+                    'text-[8px] px-1 py-0 shrink-0',
+                    TYPE_COLORS[entry.question_type as QuestionType] ||
+                      TYPE_COLORS.general
+                  )}
                 >
-                  {QUESTION_TYPES.find(t => t.value === entry.question_type)?.label || 'Geral'}
+                  {QUESTION_TYPES.find(t => t.value === entry.question_type)?.label ||
+                    'Geral'}
                 </Badge>
                 <p className="text-xs line-clamp-2 flex-1">{entry.question}</p>
               </div>
               <span className="text-[10px] text-muted-foreground mt-1 block pl-0">
-                {formatDistanceToNow(new Date(entry.created_at), { 
-                  addSuffix: true, 
-                  locale: ptBR 
+                {formatDistanceToNow(new Date(entry.created_at), {
+                  addSuffix: true,
+                  locale: ptBR,
                 })}
               </span>
               <TooltipProvider>
@@ -103,12 +115,12 @@ export function DealChatHistory({ dealId, onSelectQuestion }: DealChatHistoryPro
                       variant="ghost"
                       size="icon"
                       className={cn(
-                        "absolute right-1 top-1 h-5 w-5",
-                        "opacity-0 group-hover:opacity-100 transition-opacity",
-                        "hover:bg-destructive/10 hover:text-destructive"
+                        'absolute right-1 top-1 h-5 w-5',
+                        'opacity-0 group-hover:opacity-100 transition-opacity',
+                        'hover:bg-destructive/10 hover:text-destructive'
                       )}
                       aria-label="Excluir conversa"
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         deleteEntry.mutate(entry.id);
                       }}

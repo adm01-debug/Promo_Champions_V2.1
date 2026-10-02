@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface CoachingTarget {
   salesperson_id: string;
@@ -11,7 +11,7 @@ export interface CoachingTarget {
   avg_deal_size: number;
   activities_30d: number;
   health_score: number;
-  priority: "critical" | "warning" | "healthy";
+  priority: 'critical' | 'warning' | 'healthy';
   top_issue: string;
   recommended_action: string;
 }
@@ -31,9 +31,11 @@ interface CoachingIntelligenceResponse {
 
 export const useCoachingIntelligence = () => {
   return useQuery<CoachingIntelligenceResponse>({
-    queryKey: ["coaching-intelligence"],
+    queryKey: ['coaching-intelligence'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("coaching-intelligence", { body: {} });
+      const { data, error } = await supabase.functions.invoke('coaching-intelligence', {
+        body: {},
+      });
       if (error) throw error;
       return data as CoachingIntelligenceResponse;
     },

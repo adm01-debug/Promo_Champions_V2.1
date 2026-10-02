@@ -55,7 +55,8 @@ export const useTrendsData = (weeks: number = 8) => {
           return t >= start.getTime() && t <= end.getTime();
         });
         const conversion = wkMetrics.length
-          ? wkMetrics.reduce((s, m) => s + Number(m.conversion_rate), 0) / wkMetrics.length
+          ? wkMetrics.reduce((s, m) => s + Number(m.conversion_rate), 0) /
+            wkMetrics.length
           : 0;
 
         return {

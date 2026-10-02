@@ -1,17 +1,17 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Sparkles, RefreshCw, Target, TrendingUp, TrendingDown } from "lucide-react";
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles, RefreshCw, Target, TrendingUp, TrendingDown } from 'lucide-react';
 import {
   useRevenueForecast,
   useGenerateForecast,
   ForecastPeriodType,
-} from "@/hooks/revenue-intelligence/useRevenueForecast";
-import { PeriodSelector } from "./PeriodSelector";
-import { ForecastScenarioBar } from "./ForecastScenarioBar";
-import { formatBRL } from "./forecastHelpers";
+} from '@/hooks/revenue-intelligence/useRevenueForecast';
+import { PeriodSelector } from './PeriodSelector';
+import { ForecastScenarioBar } from './ForecastScenarioBar';
+import { formatBRL } from './forecastHelpers';
 
 interface Props {
   periodType: ForecastPeriodType;
@@ -32,7 +32,11 @@ export const RevenueForecastCard: FC<Props> = ({
   const gen = useGenerateForecast();
 
   const handleRefresh = () =>
-    gen.mutate({ period_type: periodType, period_start: periodStart, owner_id: ownerId ?? null });
+    gen.mutate({
+      period_type: periodType,
+      period_start: periodStart,
+      owner_id: ownerId ?? null,
+    });
 
   const gap = data?.gap_to_goal ?? 0;
   const isAboveGoal = gap <= 0;
@@ -53,7 +57,9 @@ export const RevenueForecastCard: FC<Props> = ({
               onChangeStart={onChangeStart}
             />
             <Button onClick={handleRefresh} disabled={gen.isPending} size="sm">
-              <RefreshCw className={`h-4 w-4 mr-2 ${gen.isPending ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${gen.isPending ? 'animate-spin' : ''}`}
+              />
               Recalcular
             </Button>
           </div>
@@ -68,7 +74,8 @@ export const RevenueForecastCard: FC<Props> = ({
         ) : !data ? (
           <div className="text-center py-10 space-y-3">
             <p className="text-sm text-muted-foreground">
-              Nenhum forecast gerado para este período. Clique em "Recalcular" para gerar com IA.
+              Nenhum forecast gerado para este período. Clique em "Recalcular" para gerar
+              com IA.
             </p>
             <Button onClick={handleRefresh} disabled={gen.isPending}>
               <Sparkles className="h-4 w-4 mr-2" />
@@ -79,18 +86,30 @@ export const RevenueForecastCard: FC<Props> = ({
           <>
             <div className="grid gap-3 md:grid-cols-3">
               <div className="p-4 rounded-lg border border-emerald-500/30 bg-emerald-500/5">
-                <div className="text-xs uppercase tracking-wide text-emerald-600 font-medium">Commit</div>
-                <div className="text-2xl font-display font-bold mt-1">{formatBRL(data.commit_amount)}</div>
+                <div className="text-xs uppercase tracking-wide text-emerald-600 font-medium">
+                  Commit
+                </div>
+                <div className="text-2xl font-display font-bold mt-1">
+                  {formatBRL(data.commit_amount)}
+                </div>
                 <div className="text-xs text-muted-foreground mt-1">Alta confiança</div>
               </div>
               <div className="p-4 rounded-lg border border-blue-500/30 bg-blue-500/5">
-                <div className="text-xs uppercase tracking-wide text-blue-600 font-medium">Best Case</div>
-                <div className="text-2xl font-display font-bold mt-1">{formatBRL(data.best_case_amount)}</div>
+                <div className="text-xs uppercase tracking-wide text-blue-600 font-medium">
+                  Best Case
+                </div>
+                <div className="text-2xl font-display font-bold mt-1">
+                  {formatBRL(data.best_case_amount)}
+                </div>
                 <div className="text-xs text-muted-foreground mt-1">Provável</div>
               </div>
               <div className="p-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
-                <div className="text-xs uppercase tracking-wide text-amber-600 font-medium">Upside</div>
-                <div className="text-2xl font-display font-bold mt-1">{formatBRL(data.upside_amount)}</div>
+                <div className="text-xs uppercase tracking-wide text-amber-600 font-medium">
+                  Upside
+                </div>
+                <div className="text-2xl font-display font-bold mt-1">
+                  {formatBRL(data.upside_amount)}
+                </div>
                 <div className="text-xs text-muted-foreground mt-1">Cenário otimista</div>
               </div>
             </div>
@@ -106,9 +125,16 @@ export const RevenueForecastCard: FC<Props> = ({
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">Meta: {formatBRL(data.goal_amount)}</span>
-                <Badge variant={isAboveGoal ? "default" : "destructive"} className="gap-1">
-                  {isAboveGoal ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                  {isAboveGoal ? "+" : ""}
+                <Badge
+                  variant={isAboveGoal ? 'default' : 'destructive'}
+                  className="gap-1"
+                >
+                  {isAboveGoal ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3" />
+                  )}
+                  {isAboveGoal ? '+' : ''}
                   {formatBRL(Math.abs(gap))}
                 </Badge>
               </div>
@@ -141,16 +167,19 @@ export const RevenueForecastCard: FC<Props> = ({
                 </p>
                 <div className="grid gap-2 md:grid-cols-3">
                   {data.factors.slice(0, 3).map((f, i) => (
-                    <div key={i} className="p-2 rounded-md bg-muted/50 border border-border/40 text-xs">
+                    <div
+                      key={i}
+                      className="p-2 rounded-md bg-muted/50 border border-border/40 text-xs"
+                    >
                       <div className="font-medium flex items-center gap-1">
                         <Badge
                           variant="outline"
                           className={
-                            f.impact === "positive"
-                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
-                              : f.impact === "negative"
-                              ? "bg-destructive/10 text-destructive border-destructive/30"
-                              : ""
+                            f.impact === 'positive'
+                              ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
+                              : f.impact === 'negative'
+                                ? 'bg-destructive/10 text-destructive border-destructive/30'
+                                : ''
                           }
                         >
                           {f.impact}

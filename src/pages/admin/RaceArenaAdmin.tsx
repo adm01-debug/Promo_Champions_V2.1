@@ -17,30 +17,40 @@ export default function RaceArenaAdmin() {
     <>
       <Helmet>
         <title>Admin Race Arena — Console de gestão</title>
-        <meta name="description" content="Console administrativo da Race Arena: gerencie temporadas, regras, garagem, badges e audite eventos." />
+        <meta
+          name="description"
+          content="Console administrativo da Race Arena: gerencie temporadas, regras, garagem, badges e audite eventos."
+        />
       </Helmet>
 
       <div className="container mx-auto p-4 space-y-4">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Button asChild size="icon" variant="ghost">
-              <Link to="/race-arena" aria-label="Voltar"><ArrowLeft className="w-5 h-5" /></Link>
+              <Link to="/race-arena" aria-label="Voltar">
+                <ArrowLeft className="w-5 h-5" />
+              </Link>
             </Button>
             <div>
               <h1 className="text-page-title flex items-center gap-2">
                 <Settings className="w-7 h-7 text-primary" /> Admin Race Arena
               </h1>
               <p className="text-sm text-muted-foreground">
-                Curadoria total da gamificação de corrida — temporadas, regras e auditoria.
+                Curadoria total da gamificação de corrida — temporadas, regras e
+                auditoria.
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link to="/race-arena/closer"><Flag className="w-4 h-4 mr-1.5" /> Pista Closers</Link>
+              <Link to="/race-arena/closer">
+                <Flag className="w-4 h-4 mr-1.5" /> Pista Closers
+              </Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link to="/race-arena/sdr"><Flag className="w-4 h-4 mr-1.5" /> Pista SDRs</Link>
+              <Link to="/race-arena/sdr">
+                <Flag className="w-4 h-4 mr-1.5" /> Pista SDRs
+              </Link>
             </Button>
           </div>
         </header>
@@ -54,12 +64,24 @@ export default function RaceArenaAdmin() {
             <TabsTrigger value="telemetry">📊 Telemetria UI</TabsTrigger>
             <TabsTrigger value="audit">📜 Auditoria</TabsTrigger>
           </TabsList>
-          <TabsContent value="seasons" className="mt-4"><SeasonsManagerTable /></TabsContent>
-          <TabsContent value="rules" className="mt-4"><SeasonRulesPanel /></TabsContent>
-          <TabsContent value="garage" className="mt-4"><GarageAdminTable /></TabsContent>
-          <TabsContent value="badges" className="mt-4"><RaceBadgeShowcase /></TabsContent>
-          <TabsContent value="telemetry" className="mt-4"><OverlayTelemetryPanel /></TabsContent>
-          <TabsContent value="audit" className="mt-4"><RaceAuditFeed /></TabsContent>
+          <TabsContent value="seasons" className="mt-4">
+            <SeasonsManagerTable />
+          </TabsContent>
+          <TabsContent value="rules" className="mt-4">
+            <SeasonRulesPanel />
+          </TabsContent>
+          <TabsContent value="garage" className="mt-4">
+            <GarageAdminTable />
+          </TabsContent>
+          <TabsContent value="badges" className="mt-4">
+            <RaceBadgeShowcase />
+          </TabsContent>
+          <TabsContent value="telemetry" className="mt-4">
+            <OverlayTelemetryPanel />
+          </TabsContent>
+          <TabsContent value="audit" className="mt-4">
+            <RaceAuditFeed />
+          </TabsContent>
         </Tabs>
       </div>
     </>

@@ -1,24 +1,41 @@
-import { useMemo, useState } from "react";
-import { Sparkles, Send, Loader2, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
+import { useMemo, useState } from 'react';
+import { Sparkles, Send, Loader2, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import {
   useCreateBulkJob,
   useBulkJob,
   useSendBulkJob,
   useUpdateDraft,
-} from "@/hooks/engagement/useBulkComposer";
-import { useScheduleOptimalSend } from "@/hooks/sequences/useSendTimeOptimization";
-import { TONE_OPTIONS, LANGUAGE_OPTIONS, STATUS_LABEL, STATUS_TONE } from "./bulkComposerHelpers";
-import { BulkDraftRow } from "./BulkDraftRow";
-import { toast } from "@/hooks/use-toast";
+} from '@/hooks/engagement/useBulkComposer';
+import { useScheduleOptimalSend } from '@/hooks/sequences/useSendTimeOptimization';
+import {
+  TONE_OPTIONS,
+  LANGUAGE_OPTIONS,
+  STATUS_LABEL,
+  STATUS_TONE,
+} from './bulkComposerHelpers';
+import { BulkDraftRow } from './BulkDraftRow';
+import { toast } from '@/hooks/use-toast';
 
 interface SelectedLead {
   id: string;
@@ -31,13 +48,19 @@ interface Props {
   onJobCreated?: (jobId: string) => void;
 }
 
-export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobCreated }: Props) {
-  const [step, setStep] = useState<1 | 2 | 3>(jobIdProp ? 3 : initialLeads.length ? 2 : 1);
+export function BulkComposerWizard({
+  initialLeads = [],
+  jobId: jobIdProp,
+  onJobCreated,
+}: Props) {
+  const [step, setStep] = useState<1 | 2 | 3>(
+    jobIdProp ? 3 : initialLeads.length ? 2 : 1
+  );
   const [leads, setLeads] = useState<SelectedLead[]>(initialLeads);
-  const [manualIds, setManualIds] = useState("");
-  const [prompt, setPrompt] = useState("");
-  const [tone, setTone] = useState("consultivo");
-  const [language, setLanguage] = useState("pt-BR");
+  const [manualIds, setManualIds] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [tone, setTone] = useState('consultivo');
+  const [language, setLanguage] = useState('pt-BR');
   const [jobId, setJobId] = useState<string | undefined>(jobIdProp);
 
   const [optimizeTiming, setOptimizeTiming] = useState(true);
@@ -53,14 +76,16 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
       sendJob.mutate(jobId);
       return;
     }
-    const approved = drafts.filter((d) => d.approved && !d.sent_at && d.recipient_email && d.sale_id);
+    const approved = drafts.filter(
+      d => d.approved && !d.sent_at && d.recipient_email && d.sale_id
+    );
     if (approved.length === 0) return;
     let scheduled = 0;
     for (const d of approved) {
       try {
         await scheduleOptimal.mutateAsync({
           sale_id: d.sale_id!,
-          channel: "email",
+          channel: 'email',
           payload: { subject: d.subject, body: d.body, to: d.recipient_email },
         });
         scheduled++;
@@ -69,51 +94,51 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
       }
     }
     toast({
-      title: "Agendamento concluído",
+      title: 'Agendamento concluído',
       description: `${scheduled} e-mails agendados nos horários ótimos.`,
     });
   };
 
   const counts = useMemo(() => {
     const total = drafts.length;
-    const approved = drafts.filter((d) => d.approved && !d.sent_at).length;
-    const sent = drafts.filter((d) => d.sent_at).length;
-    const errored = drafts.filter((d) => d.error).length;
+    const approved = drafts.filter(d => d.approved && !d.sent_at).length;
+    const sent = drafts.filter(d => d.sent_at).length;
+    const errored = drafts.filter(d => d.error).length;
     return { total, approved, sent, errored };
   }, [drafts]);
 
   const handleAddManual = () => {
     const ids = manualIds
       .split(/[\s,]+/)
-      .map((s) => s.trim())
+      .map(s => s.trim())
       .filter(Boolean);
     if (ids.length === 0) return;
-    setLeads((prev) => {
-      const set = new Set(prev.map((l) => l.id));
-      ids.forEach((id) => set.add(id));
-      return Array.from(set).map((id) => ({ id }));
+    setLeads(prev => {
+      const set = new Set(prev.map(l => l.id));
+      ids.forEach(id => set.add(id));
+      return Array.from(set).map(id => ({ id }));
     });
-    setManualIds("");
+    setManualIds('');
   };
 
   const handleGenerate = () => {
     if (!prompt.trim() || leads.length === 0) return;
     createJob.mutate(
-      { prompt, tone, language, sale_ids: leads.map((l) => l.id) },
+      { prompt, tone, language, sale_ids: leads.map(l => l.id) },
       {
-        onSuccess: (data) => {
+        onSuccess: data => {
           setJobId(data.job_id);
           setStep(3);
           onJobCreated?.(data.job_id);
         },
-      },
+      }
     );
   };
 
   const approveAll = (value: boolean) => {
     drafts
-      .filter((d) => !d.sent_at && d.recipient_email)
-      .forEach((d) => update.mutate({ id: d.id, patch: { approved: value } }));
+      .filter(d => !d.sent_at && d.recipient_email)
+      .forEach(d => update.mutate({ id: d.id, patch: { approved: value } }));
   };
 
   return (
@@ -134,27 +159,33 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
           <CardContent className="space-y-4">
             <div className="text-sm text-muted-foreground">
               {leads.length === 0
-                ? "Cole IDs de oportunidades (sale_id) separados por vírgula ou espaço, ou abra este wizard a partir da página de Leads com itens selecionados."
+                ? 'Cole IDs de oportunidades (sale_id) separados por vírgula ou espaço, ou abra este wizard a partir da página de Leads com itens selecionados.'
                 : `${leads.length} leads selecionados.`}
             </div>
             <div className="flex gap-2">
               <Input
                 placeholder="cole sale_ids aqui…"
                 value={manualIds}
-                onChange={(e) => setManualIds(e.target.value)}
+                onChange={e => setManualIds(e.target.value)}
               />
-              <Button variant="outline" onClick={handleAddManual} disabled={!manualIds.trim()}>
+              <Button
+                variant="outline"
+                onClick={handleAddManual}
+                disabled={!manualIds.trim()}
+              >
                 Adicionar
               </Button>
             </div>
             {leads.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {leads.slice(0, 24).map((l) => (
+                {leads.slice(0, 24).map(l => (
                   <Badge key={l.id} variant="outline" className="font-mono text-xs">
                     {l.label ?? l.id.slice(0, 8)}
                   </Badge>
                 ))}
-                {leads.length > 24 && <Badge variant="secondary">+{leads.length - 24}</Badge>}
+                {leads.length > 24 && (
+                  <Badge variant="secondary">+{leads.length - 24}</Badge>
+                )}
               </div>
             )}
             <div className="flex justify-end">
@@ -176,18 +207,30 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
               <div>
                 <Label>Tom</Label>
                 <Select value={tone} onValueChange={setTone}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
-                    {TONE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    {TONE_OPTIONS.map(o => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
                 <Label>Idioma</Label>
                 <Select value={language} onValueChange={setLanguage}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
-                    {LANGUAGE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    {LANGUAGE_OPTIONS.map(o => (
+                      <SelectItem key={o.value} value={o.value}>
+                        {o.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -198,14 +241,17 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
                 rows={6}
                 placeholder="Ex: Apresente nosso novo programa de brindes corporativos para o 4º trimestre, mencionando ROI…"
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                onChange={e => setPrompt(e.target.value)}
               />
               <p className="text-xs text-muted-foreground mt-1">
-                {leads.length} e-mails serão gerados, um para cada lead, com gancho personalizado.
+                {leads.length} e-mails serão gerados, um para cada lead, com gancho
+                personalizado.
               </p>
             </div>
             <div className="flex justify-between">
-              <Button variant="ghost" onClick={() => setStep(1)}>Voltar</Button>
+              <Button variant="ghost" onClick={() => setStep(1)}>
+                Voltar
+              </Button>
               <Button
                 onClick={handleGenerate}
                 disabled={!prompt.trim() || createJob.isPending}
@@ -226,7 +272,9 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
               <CardTitle>3. Revisar e enviar</CardTitle>
               {job && (
                 <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                  <Badge variant={STATUS_TONE[job.status] ?? "outline"}>{STATUS_LABEL[job.status] ?? job.status}</Badge>
+                  <Badge variant={STATUS_TONE[job.status] ?? 'outline'}>
+                    {STATUS_LABEL[job.status] ?? job.status}
+                  </Badge>
                   <span>·</span>
                   <span>{counts.total} rascunhos</span>
                   <span>·</span>
@@ -243,7 +291,12 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => approveAll(true)} disabled={drafts.length === 0}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => approveAll(true)}
+                disabled={drafts.length === 0}
+              >
                 <CheckCircle2 className="h-4 w-4" /> Aprovar todos
               </Button>
               <div className="flex items-center gap-2 px-2 border rounded-md bg-card">
@@ -259,12 +312,19 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
               <Button
                 size="sm"
                 onClick={handleSend}
-                disabled={!jobId || counts.approved === 0 || sendJob.isPending || scheduleOptimal.isPending}
+                disabled={
+                  !jobId ||
+                  counts.approved === 0 ||
+                  sendJob.isPending ||
+                  scheduleOptimal.isPending
+                }
                 loading={sendJob.isPending || scheduleOptimal.isPending}
-                loadingText={optimizeTiming ? "Agendando…" : "Enviando…"}
+                loadingText={optimizeTiming ? 'Agendando…' : 'Enviando…'}
               >
                 <Send className="h-4 w-4" />
-                {optimizeTiming ? `Agendar (${counts.approved})` : `Enviar aprovados (${counts.approved})`}
+                {optimizeTiming
+                  ? `Agendar (${counts.approved})`
+                  : `Enviar aprovados (${counts.approved})`}
               </Button>
             </div>
           </CardHeader>
@@ -274,7 +334,9 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
                 <Loader2 className="h-4 w-4 animate-spin" /> Carregando rascunhos…
               </div>
             ) : drafts.length === 0 ? (
-              <div className="text-sm text-muted-foreground py-8 text-center">Nenhum rascunho gerado.</div>
+              <div className="text-sm text-muted-foreground py-8 text-center">
+                Nenhum rascunho gerado.
+              </div>
             ) : (
               <Table>
                 <TableHeader>
@@ -288,7 +350,9 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {drafts.map((d) => <BulkDraftRow key={d.id} draft={d} />)}
+                  {drafts.map(d => (
+                    <BulkDraftRow key={d.id} draft={d} />
+                  ))}
                 </TableBody>
               </Table>
             )}
@@ -299,15 +363,27 @@ export function BulkComposerWizard({ initialLeads = [], jobId: jobIdProp, onJobC
   );
 }
 
-function StepDot({ active, done, label }: { active: boolean; done: boolean; label: string }) {
+function StepDot({
+  active,
+  done,
+  label,
+}: {
+  active: boolean;
+  done: boolean;
+  label: string;
+}) {
   return (
-    <div className={`flex items-center gap-2 ${active ? "text-foreground" : ""}`}>
+    <div className={`flex items-center gap-2 ${active ? 'text-foreground' : ''}`}>
       <div
         className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-medium border ${
-          done ? "bg-primary text-primary-foreground border-primary" : active ? "border-primary text-primary" : "border-muted-foreground/30"
+          done
+            ? 'bg-primary text-primary-foreground border-primary'
+            : active
+              ? 'border-primary text-primary'
+              : 'border-muted-foreground/30'
         }`}
       >
-        {done ? <CheckCircle2 className="h-3 w-3" /> : ""}
+        {done ? <CheckCircle2 className="h-3 w-3" /> : ''}
       </div>
       <span className="text-sm">{label}</span>
     </div>

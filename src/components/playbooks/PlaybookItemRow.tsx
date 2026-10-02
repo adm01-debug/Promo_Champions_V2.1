@@ -1,19 +1,12 @@
-import { useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  GripVertical, 
-  Trash2, 
-  Pencil, 
-  Check, 
-  X,
-  Circle 
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { PlaybookItem } from "@/hooks/usePlaybooks";
+import { useState } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { GripVertical, Trash2, Pencil, Check, X, Circle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { PlaybookItem } from '@/hooks/usePlaybooks';
 
 interface PlaybookItemRowProps {
   item: PlaybookItem;
@@ -25,14 +18,8 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(item.content);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: item.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: item.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -57,9 +44,9 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-border/20 group",
-        "hover:border-primary/30 hover:bg-muted/50 transition-all duration-200",
-        isDragging && "opacity-50 shadow-lg scale-[1.02] z-50"
+        'flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-border/20 group',
+        'hover:border-primary/30 hover:bg-muted/50 transition-all duration-200',
+        isDragging && 'opacity-50 shadow-lg scale-[1.02] z-50'
       )}
     >
       <button
@@ -77,18 +64,30 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
         <div className="flex-1 flex items-center gap-2">
           <Input
             value={editContent}
-            onChange={(e) => setEditContent(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSave();
-              if (e.key === "Escape") handleCancel();
+            onChange={e => setEditContent(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleSave();
+              if (e.key === 'Escape') handleCancel();
             }}
             className="flex-1 h-8 text-sm"
             autoFocus
           />
-          <Button variant="ghost" size="icon" aria-label="Salvar" className="h-6 w-6" onClick={handleSave}>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Salvar"
+            className="h-6 w-6"
+            onClick={handleSave}
+          >
             <Check className="h-3 w-3 text-status-success" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Cancelar" className="h-6 w-6" onClick={handleCancel}>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Cancelar"
+            className="h-6 w-6"
+            onClick={handleCancel}
+          >
             <X className="h-3 w-3 text-muted-foreground" />
           </Button>
         </div>
@@ -103,7 +102,10 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
       )}
 
       {item.is_required && !isEditing && (
-        <Badge variant="secondary" className="text-[10px] bg-status-warning/20 text-status-warning border border-status-warning/30 shadow-sm">
+        <Badge
+          variant="secondary"
+          className="text-[10px] bg-status-warning/20 text-status-warning border border-status-warning/30 shadow-sm"
+        >
           Obrigatório
         </Badge>
       )}
@@ -112,7 +114,8 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
         <>
           <Button
             variant="ghost"
-            size="icon" aria-label="Editar"
+            size="icon"
+            aria-label="Editar"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-primary/10"
             onClick={() => setIsEditing(true)}
           >
@@ -120,7 +123,8 @@ export const PlaybookItemRow = ({ item, onDelete, onUpdate }: PlaybookItemRowPro
           </Button>
           <Button
             variant="ghost"
-            size="icon" aria-label="Excluir"
+            size="icon"
+            aria-label="Excluir"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-destructive/10 hover:scale-110"
             onClick={() => onDelete(item.id)}
           >

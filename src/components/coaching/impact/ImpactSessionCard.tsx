@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { formatDelta, deltaToneClass } from "./impactHelpers";
-import type { ImpactRow } from "@/hooks/coaching/useCoachingImpact";
+import { motion } from 'framer-motion';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { formatDelta, deltaToneClass } from './impactHelpers';
+import type { ImpactRow } from '@/hooks/coaching/useCoachingImpact';
 
 interface Props {
   row: ImpactRow;
@@ -16,15 +16,22 @@ function DeltaPill({ value, label }: { value: number; label: string }) {
     <div className="flex items-center gap-1.5">
       <Icon className={`h-3.5 w-3.5 ${deltaToneClass(value)}`} />
       <div className="flex flex-col leading-tight">
-        <span className={`text-sm font-semibold ${deltaToneClass(value)}`}>{formatDelta(value)}</span>
-        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
+        <span className={`text-sm font-semibold ${deltaToneClass(value)}`}>
+          {formatDelta(value)}
+        </span>
+        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          {label}
+        </span>
       </div>
     </div>
   );
 }
 
 export function ImpactSessionCard({ row, index = 0 }: Props) {
-  const date = new Date(row.completed_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+  const date = new Date(row.completed_at).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+  });
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -38,7 +45,9 @@ export function ImpactSessionCard({ row, index = 0 }: Props) {
             <p className="text-sm font-medium">Sessão concluída</p>
           </div>
           {row.outcome_rating ? (
-            <Badge variant="secondary" className="text-xs">★ {row.outcome_rating}</Badge>
+            <Badge variant="secondary" className="text-xs">
+              ★ {row.outcome_rating}
+            </Badge>
           ) : null}
         </div>
 
@@ -50,8 +59,10 @@ export function ImpactSessionCard({ row, index = 0 }: Props) {
 
         {row.focus_skills?.length ? (
           <div className="flex flex-wrap gap-1 mt-3">
-            {row.focus_skills.slice(0, 3).map((s) => (
-              <Badge key={s} variant="outline" className="text-[10px]">{s}</Badge>
+            {row.focus_skills.slice(0, 3).map(s => (
+              <Badge key={s} variant="outline" className="text-[10px]">
+                {s}
+              </Badge>
             ))}
           </div>
         ) : null}

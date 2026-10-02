@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
-import { calculateLevelFromXP, getLevelInfo } from '@/hooks/gamification/useSalespersonXP';
+import {
+  calculateLevelFromXP,
+  getLevelInfo,
+} from '@/hooks/gamification/useSalespersonXP';
 import { useLevelUpCelebration } from '@/hooks/gamification/useLevelUpCelebration';
 import { LevelUpOverlay, StreakMilestoneOverlay } from './LevelUpOverlay';
 import { VictoryOverlay } from './VictoryOverlay';
@@ -34,18 +37,21 @@ interface VictoryData {
 }
 
 // Streak milestone info mapping
-const _STREAK_MILESTONE_INFO: Record<string, { title: string; icon: string; xp: number }> = {
-  'streak_3': { title: 'Iniciante Dedicado', icon: '🔥', xp: 50 },
-  'streak_7': { title: 'Semana Perfeita', icon: '⚡', xp: 150 },
-  'streak_14': { title: 'Duas Semanas de Fogo', icon: '🌟', xp: 400 },
-  'streak_30': { title: 'Mestre da Consistência', icon: '👑', xp: 1000 },
+const _STREAK_MILESTONE_INFO: Record<
+  string,
+  { title: string; icon: string; xp: number }
+> = {
+  streak_3: { title: 'Iniciante Dedicado', icon: '🔥', xp: 50 },
+  streak_7: { title: 'Semana Perfeita', icon: '⚡', xp: 150 },
+  streak_14: { title: 'Duas Semanas de Fogo', icon: '🌟', xp: 400 },
+  streak_30: { title: 'Mestre da Consistência', icon: '👑', xp: 1000 },
 };
 
 export function CelebrationOverlayProvider() {
   const { salesperson } = useAuth();
   const { triggerLevelUp, triggerStreakMilestone } = useLevelUpCelebration();
   const salespersonNamesRef = useRef<Map<string, string>>(new Map());
-  
+
   // Overlay state
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [levelUpData, setLevelUpData] = useState<LevelUpData | null>(null);
@@ -55,16 +61,18 @@ export function CelebrationOverlayProvider() {
   const [victoryData, setVictoryData] = useState<VictoryData | null>(null);
 
   // Queue for celebrations
-  const celebrationQueueRef = useRef<Array<
-    | { type: 'levelUp'; data: LevelUpData }
-    | { type: 'streak'; data: StreakData }
-    | { type: 'victory'; data: VictoryData }
-  >>([]);
+  const celebrationQueueRef = useRef<
+    Array<
+      | { type: 'levelUp'; data: LevelUpData }
+      | { type: 'streak'; data: StreakData }
+      | { type: 'victory'; data: VictoryData }
+    >
+  >([]);
   const isShowingRef = useRef(false);
 
   const processQueue = useCallback(() => {
     if (isShowingRef.current || celebrationQueueRef.current.length === 0) return;
-    
+
     const next = celebrationQueueRef.current.shift();
     if (!next) return;
 
@@ -110,7 +118,10 @@ export function CelebrationOverlayProvider() {
 
   useEffect(() => {
     const loadSalespersonNames = async () => {
-      const { data } = await supabase.from('salespeople').select('id, name').eq('is_active', true);
+      const { data } = await supabase
+        .from('salespeople')
+        .select('id, name')
+        .eq('is_active', true);
       if (data) data.forEach(sp => salespersonNamesRef.current.set(sp.id, sp.name));
     };
     loadSalespersonNames();
@@ -122,8 +133,13 @@ export function CelebrationOverlayProvider() {
         .channel('victory-celebrations')
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'victory_feed', filter: `salesperson_id=eq.${salesperson.id}` },
-          (payload) => {
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'victory_feed',
+            filter: `salesperson_id=eq.${salesperson.id}`,
+          },
+          payload => {
             const newItem = payload.new;
             celebrationQueueRef.current.push({
               type: 'victory',
@@ -133,8 +149,8 @@ export function CelebrationOverlayProvider() {
                 title: newItem.title,
                 description: newItem.description,
                 eventType: newItem.event_type,
-                value: newItem.value
-              }
+                value: newItem.value,
+              },
             });
             processQueue();
           }
@@ -145,27 +161,39 @@ export function CelebrationOverlayProvider() {
     // Subscribe to XP changes
     const xpChannel = supabase
       .channel('xp-celebrations-overlay')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'salesperson_xp' }, (payload) => {
-        const newRecord = payload.new as { total_xp?: number; salesperson_id?: string } | null;
-        const oldRecord = payload.old as { total_xp?: number; salesperson_id?: string } | null;
-        if (!newRecord || !oldRecord) return;
-        const oldLevel = calculateLevelFromXP(oldRecord.total_xp ?? 0);
-        const newLevel = calculateLevelFromXP(newRecord.total_xp ?? 0);
-        if (newLevel.level > oldLevel.level) {
-          const levelInfo = getLevelInfo(newLevel.level);
-          celebrationQueueRef.current.push({
-            type: 'levelUp',
-            data: {
-              salespersonId: newRecord.salesperson_id ?? '',
-              salespersonName: salespersonNamesRef.current.get(newRecord.salesperson_id ?? '') || 'Vendedor',
-              level: newLevel.level,
-              levelTitle: levelInfo.title,
-              levelEmoji: levelInfo.emoji,
-            }
-          });
-          processQueue();
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'salesperson_xp' },
+        payload => {
+          const newRecord = payload.new as {
+            total_xp?: number;
+            salesperson_id?: string;
+          } | null;
+          const oldRecord = payload.old as {
+            total_xp?: number;
+            salesperson_id?: string;
+          } | null;
+          if (!newRecord || !oldRecord) return;
+          const oldLevel = calculateLevelFromXP(oldRecord.total_xp ?? 0);
+          const newLevel = calculateLevelFromXP(newRecord.total_xp ?? 0);
+          if (newLevel.level > oldLevel.level) {
+            const levelInfo = getLevelInfo(newLevel.level);
+            celebrationQueueRef.current.push({
+              type: 'levelUp',
+              data: {
+                salespersonId: newRecord.salesperson_id ?? '',
+                salespersonName:
+                  salespersonNamesRef.current.get(newRecord.salesperson_id ?? '') ||
+                  'Vendedor',
+                level: newLevel.level,
+                levelTitle: levelInfo.title,
+                levelEmoji: levelInfo.emoji,
+              },
+            });
+            processQueue();
+          }
         }
-      })
+      )
       .subscribe();
 
     return () => {
