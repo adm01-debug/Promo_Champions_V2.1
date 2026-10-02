@@ -1,8 +1,8 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -14,6 +14,10 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: 'elevenlabs-voice', limit: 10, windowSeconds: 60 });
+    if (rl) return rl;
 
     try {
       // Requer JWT válido — endpoint consome créditos pagos da ElevenLabs

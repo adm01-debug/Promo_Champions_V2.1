@@ -11,6 +11,7 @@ import {
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
@@ -18,6 +19,10 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'sales-assistant-chat', limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     try {

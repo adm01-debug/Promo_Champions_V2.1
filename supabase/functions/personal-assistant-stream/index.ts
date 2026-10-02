@@ -21,6 +21,7 @@ import {
   collectErrors,
   validationErrorResponse,
 } from "../_shared/validation.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 type Mode = "briefing" | "chat" | "proactive_nudge";
@@ -231,6 +232,10 @@ Deno.serve(
   withRequestId("personal-assistant-stream", async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "personal-assistant-stream", limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
     try {
       const auth = await getUserClient(req).catch((e) => {

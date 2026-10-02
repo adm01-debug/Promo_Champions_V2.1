@@ -5,21 +5,9 @@ import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/a
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
-
-
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.25,
-  proposal: 0.5,
-  negotiation: 0.75,
-  closed_won: 1,
-  closed_lost: 0,
-  won: 1,
-  lost: 0,
-};
 
 interface OpenDeal {
   amount: number;
@@ -117,6 +105,10 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "predict-quota-attainment", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
     // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
     const caller = await getUserClient(req);
@@ -134,6 +126,9 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     }
 
     const supabase = getServiceClient("grava predições, alertas e forecasts de quota de toda a equipe");
+
+    // Probabilidade base por estágio — fonte única stage_probabilities
+    const stageProbabilities = await getStageProbabilities(supabase);
 
     const body = await req.json().catch(() => ({}));
 
@@ -239,7 +234,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
       const openDeals: OpenDeal[] = (openBySp.get(sp.id) ?? []).map((d) => {
         const stage = String(d.stage ?? "lead").toLowerCase();
-        const probability = latestScore.get(d.id) ?? STAGE_PROBABILITY[stage] ?? 0.1;
+        const probability = latestScore.get(d.id) ?? stageProbabilities[stage] ?? 0.1;
         return { amount: Number(d.amount ?? 0), probability };
       });
 

@@ -1,8 +1,8 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -17,6 +17,10 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'elevenlabs-tts', limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
     try {
       // Require a valid Supabase JWT — prevents anonymous billing abuse
