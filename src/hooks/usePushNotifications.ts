@@ -28,11 +28,13 @@ export function usePushNotifications() {
            'Notification' in window;
   }, []);
 
-  // Register service worker
+  // Register service worker — SW de push dedicado em scope próprio ('/push/').
+  // NÃO usar '/' aqui: colidiria com o pwa-sw.js (workbox) e faria o SW legado
+  // assumir o controle da página inteira.
   const registerServiceWorker = useCallback(async (): Promise<ServiceWorkerRegistration | null> => {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/'
+        scope: '/push/'
       });
       if (import.meta.env.DEV) {
         console.info('Service Worker registered:', registration);
@@ -235,7 +237,15 @@ export function usePushNotifications() {
       // Check for existing service worker
       if ('serviceWorker' in navigator) {
         try {
-          registration = (await navigator.serviceWorker.getRegistration('/')) ?? null;
+          // Remover registro legado: versões antigas registravam /sw.js em '/',
+          // substituindo o workbox e interceptando todos os fetches.
+          const legacy = await navigator.serviceWorker.getRegistration('/');
+          if (legacy?.active?.scriptURL.endsWith('/sw.js')) {
+            await legacy.unregister();
+          }
+
+          registration =
+            (await navigator.serviceWorker.getRegistration('/push/')) ?? null;
 
           if (registration && permission === 'granted') {
             const subscription = await registration.pushManager.getSubscription();
