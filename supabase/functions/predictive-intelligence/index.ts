@@ -8,6 +8,8 @@ import {
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
 import { getStageProbabilities } from '../_shared/stage-probabilities.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface PredictiveSnapshot {
   forecast: {
@@ -252,7 +254,7 @@ Deno.serve(
         if (aiKey) {
           try {
             const aiResp = await fetchWithTimeout(
-              'https://ai.gateway.lovable.dev/v1/chat/completions',
+              LOVABLE_AI_CHAT_COMPLETIONS_URL,
               {
                 method: 'POST',
                 headers: {

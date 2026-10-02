@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
 import { useLocation } from 'react-router-dom';
 import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
+import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
 
 // Lazy load non-critical components
@@ -75,6 +76,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
   const location = useLocation();
+  const aiCopilotEnabled = useFeatureGate('ai_copilot');
 
   const smartSkeleton = useMemo(() => <SmartSkeleton />, []);
 
@@ -192,9 +194,11 @@ export function MainLayout({ children }: MainLayoutProps) {
 
         <FocusModeBreakReminder />
 
-        <Suspense fallback={null}>
-          <PersonalAssistantDrawer />
-        </Suspense>
+        {aiCopilotEnabled && (
+          <Suspense fallback={null}>
+            <PersonalAssistantDrawer />
+          </Suspense>
+        )}
 
         <ScrollToTop />
 

@@ -64,20 +64,6 @@ export const useCoachingOpportunities = (filters?: {
     staleTime: 60_000,
   });
 
-export const useCoachingBenchmarks = () =>
-  useQuery({
-    queryKey: ['coaching-benchmarks'],
-    queryFn: async (): Promise<CoachingBenchmark[]> => {
-      const { data, error } = await supabase
-        .from('coaching_skill_benchmarks')
-        .select('*')
-        .order('metric_key');
-      if (error) throw error;
-      return (data ?? []) as CoachingBenchmark[];
-    },
-    staleTime: 60_000,
-  });
-
 export const useCoachingSummary = () =>
   useQuery({
     queryKey: ['coaching-opportunities-summary'],

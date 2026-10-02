@@ -11,7 +11,6 @@ import {
   endOfQuarter,
 } from 'date-fns';
 import { PeriodFilter } from '@/components/vendedores/PeriodFilter';
-import { toBusinessMonthStart } from '@/lib/date';
 
 export type { PeriodFilter };
 export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
@@ -28,13 +27,6 @@ export interface Salesperson {
   squad_id?: string | null;
   notify_sales_in_app?: boolean;
   notify_sales_email?: boolean;
-}
-
-interface SalesGoal {
-  id: string;
-  salesperson_id: string;
-  month: string;
-  goal_amount: number;
 }
 
 export interface SalespersonWithStats extends Salesperson {
@@ -81,24 +73,6 @@ export function useSalespeople() {
   });
 }
 
-export function useSalesGoals(month?: Date) {
-  const targetMonth = month || new Date();
-  const monthStr = toBusinessMonthStart(targetMonth);
-
-  return useQuery({
-    queryKey: ['sales_goals', monthStr],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('sales_goals')
-        .select('*')
-        .eq('month', monthStr);
-
-      if (error) throw error;
-      return data as SalesGoal[];
-    },
-  });
-}
-
 export function useSalespeopleRanking(period: PeriodFilter = 'month') {
   const { start, end } = getDateRange(period);
 
@@ -114,7 +88,7 @@ export function useSalespeopleRanking(period: PeriodFilter = 'month') {
       if (spError) throw spError;
 
       // Fetch current month goals (goals are always monthly)
-      const currentMonth = toBusinessMonthStart();
+      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
       const { data: goals, error: goalsError } = await supabase
         .from('sales_goals')
         .select('*')

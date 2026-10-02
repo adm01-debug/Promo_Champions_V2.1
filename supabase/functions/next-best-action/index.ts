@@ -8,10 +8,12 @@ import {
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
 
@@ -402,7 +404,7 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
       ];
 
       const aiResponse = await fetchWithTimeout(
-        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
         {
           method: 'POST',
           headers: {

@@ -76,22 +76,6 @@ export function useApprovalRequests(statusFilter?: string) {
   });
 }
 
-export function useApprovalDecisions(requestId: string) {
-  return useQuery({
-    queryKey: ['approval-decisions', requestId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('approval_decisions')
-        .select('*')
-        .eq('request_id', requestId)
-        .order('decided_at', { ascending: true });
-      if (error) throw error;
-      return data as ApprovalDecision[];
-    },
-    enabled: !!requestId,
-  });
-}
-
 export function useCreateApprovalRequest() {
   const queryClient = useQueryClient();
   const { user } = useAuth();

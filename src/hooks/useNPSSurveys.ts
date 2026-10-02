@@ -18,13 +18,17 @@ export interface NPSSurvey {
   created_at: string;
 }
 
+/** Colunas usadas pelo dashboard e pelas ações de responder/enviar. */
+const NPS_SURVEY_COLUMNS =
+  'id, sale_id, client_name, salesperson_id, survey_type, score, comment, status, sent_at, responded_at, created_at';
+
 export const useNPSSurveys = () => {
   return useQuery<NPSSurvey[]>({
     queryKey: ['nps-surveys'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('nps_surveys')
-        .select('*')
+        .select(NPS_SURVEY_COLUMNS)
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;

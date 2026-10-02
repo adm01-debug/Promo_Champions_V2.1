@@ -19,15 +19,20 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ClientesLoadingSkeleton } from '@/components/skeletons/PageLoadingSkeleton';
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Fuse from 'fuse.js';
-import { useClients, useDeleteClient, Client } from '@/hooks/crm/useClients';
+import {
+  useClientsPage,
+  useClientByName,
+  useDeleteClient,
+  Client,
+} from '@/hooks/crm/useClients';
+import type { ClientSortKey } from '@/services/clientService';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { CreateClientDialog } from '@/components/clients/CreateClientDialog';
 import { EditClientDialog } from '@/components/clients/EditClientDialog';
 import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
 import { FilterPopover, SortOption } from '@/components/shared/FilterPopover';
-import { usePagination } from '@/hooks/usePagination';
 import { TablePagination } from '@/components/shared/TablePagination';
 import { ICPBadge } from '@/components/shared/ICPBadge';
 import { useICPDataMap } from '@/hooks/useICPData';
@@ -61,82 +66,49 @@ const TotalValueDisplay = ({ value }: { value: number }) => {
 
 const Clientes = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('name_asc');
+  const [sortBy, setSortBy] = useState<ClientSortKey>('name_asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   const [timelineClient, setTimelineClient] = useState<Client | null>(null);
   const [view360Client, setView360Client] = useState<Client | null>(null);
-  const { data: clients = [], isLoading } = useClients();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Auto-abre Client 360 quando URL contém ?client360=<nome>
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
+  const { data: clientsPage, isLoading } = useClientsPage({
+    search: debouncedSearchTerm,
+    sortBy,
+    page: currentPage,
+    pageSize: itemsPerPage,
+  });
+  const clients = clientsPage?.rows ?? [];
+  const totalItems = clientsPage?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+
+  // Volta para a página 1 quando busca/ordenação muda o conjunto filtrado
   useEffect(() => {
-    const target = searchParams.get('client360');
-    if (!target || !clients.length) return;
-    const found = clients.find(
-      c => c.name.trim().toLowerCase() === target.trim().toLowerCase()
-    );
-    if (found) {
-      setView360Client(found);
-      const next = new URLSearchParams(searchParams);
-      next.delete('client360');
-      setSearchParams(next, { replace: true });
-    }
-  }, [searchParams, clients, setSearchParams]);
+    setCurrentPage(1);
+  }, [debouncedSearchTerm, sortBy, itemsPerPage]);
+
+  // Auto-abre Client 360 quando URL contém ?client360=<nome>
+  const client360Target = searchParams.get('client360');
+  const { data: deepLinkedClient } = useClientByName(
+    view360Client ? null : client360Target
+  );
+  useEffect(() => {
+    if (!client360Target || !deepLinkedClient) return;
+    setView360Client(deepLinkedClient);
+    const next = new URLSearchParams(searchParams);
+    next.delete('client360');
+    setSearchParams(next, { replace: true });
+  }, [client360Target, deepLinkedClient, searchParams, setSearchParams]);
 
   const { data: predictions = {} } = useClientPredictions();
   const { icpMap } = useICPDataMap();
   const deleteClient = useDeleteClient();
-
-  const fuse = useMemo(() => {
-    if (!clients || clients.length === 0) return null;
-    return new Fuse(clients, {
-      keys: ['name', 'company', 'email', 'phone'],
-      threshold: 0.4,
-      ignoreLocation: true,
-      minMatchCharLength: 1,
-    });
-  }, [clients]);
-
-  const sortedClients = useMemo(() => {
-    if (!clients || clients.length === 0) return [];
-    const filtered =
-      searchTerm.trim() && fuse
-        ? fuse.search(searchTerm).map(result => result.item)
-        : [...clients];
-
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'name_asc':
-          return a.name.localeCompare(b.name);
-        case 'name_desc':
-          return b.name.localeCompare(a.name);
-        case 'value_desc':
-          return Number(b.total_value || 0) - Number(a.total_value || 0);
-        case 'value_asc':
-          return Number(a.total_value || 0) - Number(b.total_value || 0);
-        case 'date_desc':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        case 'date_asc':
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        default:
-          return 0;
-      }
-    });
-  }, [clients, fuse, searchTerm, sortBy]);
-
-  const {
-    paginatedItems,
-    currentPage,
-    totalPages,
-    goToPage,
-    startIndex,
-    endIndex,
-    totalItems,
-    itemsPerPage,
-    setItemsPerPage,
-    itemsPerPageOptions,
-  } = usePagination(sortedClients, { initialItemsPerPage: 12 });
 
   const handleDelete = () => {
     if (!deletingClient) return;
@@ -215,16 +187,16 @@ const Clientes = () => {
                   <FilterPopover
                     sortOptions={sortOptions}
                     currentSort={sortBy}
-                    onSortChange={setSortBy}
+                    onSortChange={v => setSortBy(v as ClientSortKey)}
                   />
                 </div>
               </div>
 
-              {sortedClients.length > 0 ? (
+              {clients.length > 0 ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     <AnimatePresence mode="popLayout">
-                      {paginatedItems.map((client, index) => {
+                      {clients.map((client, index) => {
                         const prediction = predictions[client.id];
                         return (
                           <motion.div
@@ -416,13 +388,13 @@ const Clientes = () => {
                   <TablePagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={goToPage}
+                    onPageChange={setCurrentPage}
                     startIndex={startIndex}
                     endIndex={endIndex}
                     totalItems={totalItems}
                     itemsPerPage={itemsPerPage}
                     onItemsPerPageChange={setItemsPerPage}
-                    itemsPerPageOptions={itemsPerPageOptions}
+                    itemsPerPageOptions={[12, 24, 48]}
                   />
                 </div>
               ) : (

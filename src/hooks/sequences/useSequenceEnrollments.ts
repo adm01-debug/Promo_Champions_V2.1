@@ -45,20 +45,3 @@ export function useSequenceEnrollments(sequenceId: string | undefined) {
     enabled: !!sequenceId,
   });
 }
-
-export function useEnrollmentExecutions(enrollmentId: string | undefined) {
-  return useQuery({
-    queryKey: ['sequence-executions', enrollmentId],
-    queryFn: async () => {
-      if (!enrollmentId) return [];
-      const { data, error } = await supabase
-        .from('sequence_step_executions')
-        .select('*')
-        .eq('enrollment_id', enrollmentId)
-        .order('executed_at', { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as SequenceStepExecution[];
-    },
-    enabled: !!enrollmentId,
-  });
-}

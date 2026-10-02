@@ -3,10 +3,12 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 Deno.serve(
   withRequestId('salesperson-coaching', async (req, _ctx) => {
@@ -203,7 +205,7 @@ ${context.topWinReasons.map(r => `- ${r.reason}: ${r.count}x (${r.percentage}%)`
 Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações recomendadas.`;
 
       const aiResponse = await fetchWithTimeout(
-        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
         {
           method: 'POST',
           headers: {

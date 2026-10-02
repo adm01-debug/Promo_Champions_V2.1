@@ -4,6 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL, LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
 
 interface VisualSearchRequest {
   image: string; // data URL or base64
@@ -65,7 +66,7 @@ Deno.serve(
 
       // 1. Analyze image via Gemini multimodal
       const aiRes = await fetchWithTimeout(
-        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
         {
           method: 'POST',
           headers: {
@@ -214,7 +215,7 @@ Deno.serve(
 
       // Generate query embedding for true semantic search
       const embRes = await fetchWithTimeout(
-        'https://ai.gateway.lovable.dev/v1/embeddings',
+        LOVABLE_AI_EMBEDDINGS_URL,
         {
           method: 'POST',
           headers: {

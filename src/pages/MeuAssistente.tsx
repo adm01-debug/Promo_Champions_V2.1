@@ -41,8 +41,7 @@ const HubInner: FC = () => {
 
   useEffect(() => {
     if (salespersonId) void refreshBriefing();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [salespersonId]);
+  }, [salespersonId, refreshBriefing]);
 
   useEffect(() => {
     chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' });

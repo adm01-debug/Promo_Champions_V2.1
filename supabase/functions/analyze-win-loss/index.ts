@@ -4,6 +4,8 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface SaleRow {
   id: string;
@@ -34,7 +36,7 @@ async function classifyWithAI(
   }
   try {
     const resp = await fetchWithTimeout(
-      'https://ai.gateway.lovable.dev/v1/chat/completions',
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
       {
         method: 'POST',
         headers: {
@@ -155,7 +157,7 @@ Deno.serve(
         }
         try {
           const r = await fetchWithTimeout(
-            'https://ai.gateway.lovable.dev/v1/chat/completions',
+            LOVABLE_AI_CHAT_COMPLETIONS_URL,
             {
               method: 'POST',
               headers: {

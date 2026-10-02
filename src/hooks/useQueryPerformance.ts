@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logger } from '@/lib/log/logger';
 
@@ -193,39 +192,6 @@ export function useQueryPerformance<T>(
       startTime.current = null;
     }
   }, [isLoading, isError, queryKey, data]);
-}
-
-// Hook to get live metrics
-export function useQueryMetricsLive() {
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    // Subscribe to query cache changes
-    const unsubscribe = queryClient.getQueryCache().subscribe(event => {
-      if (event?.type === 'updated' && event.query.state.fetchStatus === 'idle') {
-        const queryKey = JSON.stringify(event.query.queryKey);
-        const state = event.query.state;
-
-        if (state.dataUpdatedAt && state.fetchMeta) {
-          // Query completed
-          const meta = state.fetchMeta as { startTime?: number };
-          if (meta.startTime) {
-            const duration = state.dataUpdatedAt - meta.startTime;
-            addMetric({
-              queryKey,
-              duration,
-              timestamp: Date.now(),
-              status: state.status === 'error' ? 'error' : 'success',
-            });
-          }
-        }
-      }
-    });
-
-    return () => unsubscribe();
-  }, [queryClient]);
-
-  return getQueryMetrics;
 }
 
 // Console logger for metrics (call manually or on interval)

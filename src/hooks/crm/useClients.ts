@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useIndexEntity } from '@/hooks/semantic/useIndexEntity';
 import { clientService } from '@/services/clientService';
+import type { ClientsPage, ClientsPageQuery } from '@/services/clientService';
 import type { TableInsert, TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export type { Client } from '@/types';
@@ -18,6 +19,27 @@ export const useClients = (filters?: UseClientsOptions) => {
     queryFn: () => clientService.getClients(),
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
+  });
+};
+
+/** Lista paginada server-side da página /clientes (range + count). */
+export const useClientsPage = (query: ClientsPageQuery) => {
+  return useQuery<ClientsPage>({
+    queryKey: ['clients', 'page', query],
+    queryFn: () => clientService.getClientsPage(query),
+    staleTime: CACHE_TIMES.STALE_TIME,
+    gcTime: CACHE_TIMES.GC_TIME,
+    placeholderData: prev => prev,
+  });
+};
+
+/** Lookup pontual pelo nome — usado pelo deep-link ?client360=. */
+export const useClientByName = (name: string | null) => {
+  return useQuery<Client | null>({
+    queryKey: ['clients', 'by-name', name],
+    queryFn: () => clientService.findClientByName(name ?? ''),
+    enabled: !!name,
+    staleTime: CACHE_TIMES.STALE_TIME,
   });
 };
 

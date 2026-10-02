@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { WA_ME_URL } from '@/config/external';
 import {
   useTodaysCadenceTasks,
   useCompleteCadenceTask,
@@ -443,7 +444,7 @@ export function TodaysCadenceTasks() {
                                   className="h-7 text-[10px] gap-1.5 flex-1 bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
                                   onClick={() =>
                                     window.open(
-                                      `https://wa.me/${String(sale?.client_phone ?? '').replace(/\D/g, '')}`,
+                                      `${WA_ME_URL}/${String(sale?.client_phone ?? '').replace(/\D/g, '')}`,
                                       '_blank'
                                     )
                                   }

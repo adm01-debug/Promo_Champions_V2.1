@@ -269,11 +269,35 @@ Deno.test('crons de saúde WAL/webhook seguem o mesmo padrão interno', async ()
 
 Deno.test('soft delete usa deleted_at e restringe DELETE a admin/manager', async () => {
   const sql = await readMigration('20261001193000_soft_delete_business_tables.sql');
+  Deno.test(
+    'diretório de migrations segue nomenclatura canônica e versões únicas',
+    async () => {
+      const names: string[] = [];
+      for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+        names.push(entry.name);
+      }
+      assert(names.length > 0, 'diretório de migrations não pode estar vazio');
 
-  // Colunas defensivas + índice parcial
-  assertMatch(sql, /ADD COLUMN IF NOT EXISTS deleted_at timestamptz/i);
-  assertMatch(sql, /CREATE INDEX IF NOT EXISTS idx_(\w+|%I)_deleted_at/i);
-  assertMatch(sql, /WHERE\s+deleted_at\s+IS\s+NOT\s+NULL/i);
+      // Colunas defensivas + índice parcial
+      assertMatch(sql, /ADD COLUMN IF NOT EXISTS deleted_at timestamptz/i);
+      assertMatch(sql, /CREATE INDEX IF NOT EXISTS idx_(\w+|%I)_deleted_at/i);
+      assertMatch(sql, /WHERE\s+deleted_at\s+IS\s+NOT\s+NULL/i);
+      const versions = new Map<string, string>();
+      for (const name of names) {
+        assertMatch(
+          name,
+          /^\d{8,14}_.*\.sql$/,
+          `nome fora do padrão '<versão numérica>_<descrição>.sql': ${name}`
+        );
+        const version = name.split('_')[0];
+        assert(
+          !versions.has(version),
+          `versão duplicada '${version}': ${versions.get(version)} e ${name}`
+        );
+        versions.set(version, name);
+      }
+    }
+  );
 
   // Policies FOR DELETE restritas a admin/manager
   assertMatch(sql, /is_admin_or_manager\(auth\.uid\(\)\)/i);
@@ -283,6 +307,23 @@ Deno.test('soft delete usa deleted_at e restringe DELETE a admin/manager', async
   // View de vendas filtra excluídos
   assertMatch(sql, /sales_with_markup/i);
   assertMatch(sql, /s\.deleted_at IS NULL/i);
+  Deno.test('nenhuma migration é vazia (apenas comentários)', async () => {
+    for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+      if (!entry.name.endsWith('.sql')) continue;
+      const sql = await readMigration(entry.name);
+      const executable = sql
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .split('\n')
+        .filter(line => {
+          const trimmed = line.trim();
+          return trimmed !== '' && !trimmed.startsWith('--');
+        });
+      assert(
+        executable.length > 0,
+        `migration sem nenhum statement executável: ${entry.name}`
+      );
+    }
+  });
 
   assertNotMatch(
     sql,

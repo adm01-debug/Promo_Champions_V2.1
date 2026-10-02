@@ -88,10 +88,10 @@ export function useWebhookResultTimers(retentionMs: number) {
   }, [retentionMs]);
 
   useEffect(() => {
+    const timers = timersRef.current;
     return () => {
-      timersRef.current.forEach(clearTimeout);
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
-      timersRef.current.clear();
+      timers.forEach(clearTimeout);
+      timers.clear();
     };
   }, []);
 

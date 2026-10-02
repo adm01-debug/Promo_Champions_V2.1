@@ -9,10 +9,12 @@ import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface PredictBody {
@@ -78,7 +80,7 @@ async function aiRefine(
   if (!LOVABLE_API_KEY) return {};
   try {
     const aiResp = await fetchWithTimeout(
-      'https://ai.gateway.lovable.dev/v1/chat/completions',
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
       {
         method: 'POST',
         headers: {

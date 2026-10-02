@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from '@/hooks/use-toast';
 
 export type DialerQueue = {
@@ -49,24 +48,8 @@ export const useDialerQueues = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return parseRows<DialerQueue>(data);
-    },
-  });
-};
-
-export const useQueueItems = (queueId: string | null) => {
-  return useQuery<DialerQueueItem[]>({
-    queryKey: ['dialer-queue-items', queueId],
-    enabled: !!queueId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('dialer_queue_items')
-        .select('*')
-        .eq('queue_id', queueId!)
-        .order('queue_position', { ascending: true })
-        .limit(100);
-      if (error) throw error;
-      return parseRows<DialerQueueItem>(data);
+      // eslint-disable-next-line no-restricted-syntax
+      return (data ?? []) as unknown as DialerQueue[];
     },
   });
 };
@@ -253,7 +236,8 @@ export const useCallLogsForSale = (saleId: string | null) => {
         .order('created_at', { ascending: false })
         .limit(5);
       if (error) throw error;
-      return parseRows<CallLog>(data);
+      // eslint-disable-next-line no-restricted-syntax
+      return (data ?? []) as unknown as CallLog[];
     },
   });
 };

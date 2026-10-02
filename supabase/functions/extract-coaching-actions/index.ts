@@ -8,6 +8,7 @@ import {
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
+
 interface DiarSegment {
   speaker?: string;
   start?: number;

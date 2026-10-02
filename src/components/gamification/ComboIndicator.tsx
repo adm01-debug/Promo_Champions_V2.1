@@ -1,10 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useTodayCombo, setTierUpCallback } from '@/hooks/useCombo';
+import { useTodayCombo } from '@/hooks/useCombo';
 import { comboService } from '@/services/comboService';
-import { ComboExplosion } from '@/components/effects/ComboExplosion';
 import { cn } from '@/lib/utils';
 
 interface ComboIndicatorProps {
@@ -17,22 +15,6 @@ export function ComboIndicator({
   variant = 'compact',
 }: ComboIndicatorProps) {
   const { data: combo, isLoading } = useTodayCombo(salespersonId);
-  const [explosionTrigger, setExplosionTrigger] = useState(false);
-  const [explosionTier, setExplosionTier] = useState(0);
-
-  const handleTierUp = useCallback((tier: number) => {
-    setExplosionTier(tier);
-    setExplosionTrigger(true);
-  }, []);
-
-  useEffect(() => {
-    setTierUpCallback(handleTierUp);
-    return () => setTierUpCallback(null);
-  }, [handleTierUp]);
-
-  const handleExplosionComplete = () => {
-    setExplosionTrigger(false);
-  };
 
   if (isLoading || !combo) return null;
 
@@ -59,11 +41,6 @@ export function ComboIndicator({
   if (variant === 'compact') {
     return (
       <>
-        <ComboExplosion
-          trigger={explosionTrigger}
-          tier={explosionTier}
-          onComplete={handleExplosionComplete}
-        />
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -89,11 +66,6 @@ export function ComboIndicator({
 
   return (
     <>
-      <ComboExplosion
-        trigger={explosionTrigger}
-        tier={explosionTier}
-        onComplete={handleExplosionComplete}
-      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

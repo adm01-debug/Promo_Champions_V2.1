@@ -73,21 +73,6 @@ export const useCreateAgendaEvent = () => {
   });
 };
 
-export const useUpdateAgendaEvent = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<AgendaEvent>) => {
-      const { error } = await supabase.from('agenda_events').update(updates).eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['agenda_events'] });
-      toast.success('Evento atualizado');
-    },
-    onError: () => toast.error('Erro ao atualizar evento'),
-  });
-};
-
 export const useCompleteAgendaEvent = () => {
   const qc = useQueryClient();
   return useMutation({

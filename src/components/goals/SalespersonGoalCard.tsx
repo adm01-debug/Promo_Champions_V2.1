@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Target } from 'lucide-react';
 import { SalespersonLevelBadge } from '@/components/gamification/SalespersonLevelBadge';
+import { CARBON_FIBRE_TEXTURE_URL } from '@/config/external';
 
 import { formatBRL } from '@/lib/money';
 interface SalespersonGoalCardProps {
@@ -195,7 +196,10 @@ function SalespersonGoalCardImpl({
             style={{ width: `${progressCapped}%` }}
           />
           {hasExceededGoal && (
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{ backgroundImage: `url(${CARBON_FIBRE_TEXTURE_URL})` }}
+            />
           )}
         </div>
       </div>

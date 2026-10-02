@@ -22,6 +22,7 @@ import {
   useClientsNeedingContact,
   type ContactUrgency,
 } from '@/hooks/useClientsNeedingContact';
+import { WA_ME_URL } from '@/config/external';
 
 import { formatBRL } from '@/lib/money';
 interface Props {
@@ -254,7 +255,7 @@ export const ClientContactAlertsWidget = memo(function ClientContactAlertsWidget
                           title="WhatsApp"
                         >
                           <a
-                            href={`https://wa.me/${phoneDigits}?text=${encodeURIComponent(`Olá ${alert.clientName}, tudo bem? Faz um tempo que não conversamos.`)}`}
+                            href={`${WA_ME_URL}/${phoneDigits}?text=${encodeURIComponent(`Olá ${alert.clientName}, tudo bem? Faz um tempo que não conversamos.`)}`}
                             target="_blank"
                             rel="noreferrer"
                             aria-label={`WhatsApp para ${alert.clientName}`}

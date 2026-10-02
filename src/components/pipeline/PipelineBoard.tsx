@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
+import { DICEBEAR_AVATARS_URL } from '@/config/external';
 
 import {
   DndContext,
@@ -487,9 +488,8 @@ export const PipelineBoard = () => {
                         key={i}
                         className="h-6 w-6 border-2 border-background ring-2 ring-primary/20"
                       >
-                        <AvatarImage
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`}
-                        />
+                        <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`} />
+                        src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`}
                       </Avatar>
                     ))}
                   </div>

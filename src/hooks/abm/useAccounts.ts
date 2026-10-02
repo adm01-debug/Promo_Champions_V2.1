@@ -146,23 +146,6 @@ export const useAccountContacts = (accountId: string | null) => {
   });
 };
 
-export const useAccountActivities = (accountId: string | null) => {
-  return useQuery({
-    queryKey: ['account-activities', accountId],
-    enabled: !!accountId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('account_activities')
-        .select('*')
-        .eq('account_id', accountId!)
-        .order('occurred_at', { ascending: false })
-        .limit(50);
-      if (error) throw error;
-      return data;
-    },
-  });
-};
-
 export const useCreateAccount = () => {
   const qc = useQueryClient();
   return useMutation({

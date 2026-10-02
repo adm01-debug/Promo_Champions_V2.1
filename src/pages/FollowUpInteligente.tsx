@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { WA_ME_URL } from '@/config/external';
 import {
   Select,
   SelectContent,
@@ -290,7 +291,7 @@ const FollowUpInteligente = memo(() => {
         status: 'attempted',
       });
 
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`${WA_ME_URL}/?text=${encodeURIComponent(message)}`, '_blank');
       setIsPreviewOpen(false);
     },
     [followUpSettings, logAction, missingVariables]

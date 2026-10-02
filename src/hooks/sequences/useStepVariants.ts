@@ -92,24 +92,6 @@ export function useUpsertStepVariant() {
   });
 }
 
-export function useDeleteStepVariants() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (stepId: string) => {
-      const { error } = await supabase
-        .from('sequence_step_variants')
-        .delete()
-        .eq('step_id', stepId);
-      if (error) throw error;
-      return stepId;
-    },
-    onSuccess: stepId => {
-      qc.invalidateQueries({ queryKey: ['step-variants', stepId] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-}
-
 export function useDeclareStepWinner() {
   const qc = useQueryClient();
   return useMutation({

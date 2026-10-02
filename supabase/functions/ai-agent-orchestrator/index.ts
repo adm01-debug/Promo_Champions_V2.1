@@ -4,6 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -115,7 +116,7 @@ Regras:
 - Sempre termine chamando "finish" com um resumo executivo em PT-BR.`;
 
 async function callAI(messages: unknown[], tools: unknown[]) {
-  const r = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const r = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${LOVABLE_API_KEY}`,

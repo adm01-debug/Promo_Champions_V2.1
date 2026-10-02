@@ -17,6 +17,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { QuoteCadenceDetailDrawer } from '@/components/cadences/quote/QuoteCadenceDetailDrawer';
 import { QuoteCadenceEmptyState } from '@/components/cadences/quote/QuoteCadenceEmptyState';
 import type { QuoteCadenceRow } from '@/hooks/cadences/useQuoteCadences';
+import { APP_URL } from '@/config/external';
 import {
   QuoteCadenceFilters,
   emptyQuoteCadenceFilters,
@@ -119,24 +120,18 @@ export default function QuoteCadencesPage() {
           name="description"
           content="Follow-up automatizado de orçamentos: acompanhe etapas, conversão e tarefas do dia em uma cadência inteligente."
         />
-        <link
-          rel="canonical"
-          href="https://championgifts.lovable.app/cadencias-orcamentos"
-        />
+        <link rel="canonical" href={`${APP_URL}/cadencias-orcamentos`} />
+        href={`${APP_URL}/cadencias-orcamentos`}
         <meta property="og:type" content="website" />
-        <meta
-          property="og:url"
-          content="https://championgifts.lovable.app/cadencias-orcamentos"
-        />
+        <meta property="og:url" content={`${APP_URL}/cadencias-orcamentos`} />
+        content={`${APP_URL}/cadencias-orcamentos`}
         <meta property="og:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
           property="og:description"
           content="Follow-up automatizado de orçamentos com métricas de conversão e tarefas diárias."
         />
-        <meta
-          property="og:image"
-          content="https://championgifts.lovable.app/favicon.ico"
-        />
+        <meta property="og:image" content={`${APP_URL}/favicon.ico`} />
+        content={`${APP_URL}/favicon.ico`}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Cadência de Orçamentos | Promo Champions" />
         <meta
