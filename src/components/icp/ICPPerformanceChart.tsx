@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Percent, DollarSign } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 import { formatBRL } from '@/lib/money';
 export function ICPPerformanceChart() {
@@ -51,7 +52,7 @@ export function ICPPerformanceChart() {
 
         const category = isIcp ? performance.icp : performance.nonIcp;
         category.total++;
-        if (o.outcome === 'won') {
+        if (o.outcome === WIN_LOSS_OUTCOME.WON) {
           category.wins++;
           category.amount += amount;
         }

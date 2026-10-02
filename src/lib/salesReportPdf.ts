@@ -4,6 +4,16 @@ import { toast } from 'sonner';
 import type jsPDF from 'jspdf';
 
 import { formatBRL } from '@/lib/money';
+
+/** jspdf-autotable preenche `lastAutoTable` no doc após cada chamada. */
+interface JsPdfWithAutoTable extends jsPDF {
+  lastAutoTable?: { finalY: number };
+}
+
+function lastTableFinalY(doc: jsPDF): number | undefined {
+  return (doc as JsPdfWithAutoTable).lastAutoTable?.finalY;
+}
+
 interface ReportData {
   period: string;
   revenue: { current: number; previous: number; change: number };
@@ -133,11 +143,8 @@ function addTopDeals(
     styles: { cellPadding: 2 },
   });
 
-  // eslint-disable-next-line no-restricted-syntax
-  return (doc as unknown as Record<string, unknown>).lastAutoTable
-    ? // eslint-disable-next-line no-restricted-syntax
-      (doc as unknown as Record<string, { finalY: number }>).lastAutoTable.finalY + 8
-    : startY + 60;
+  const finalY = lastTableFinalY(doc);
+  return finalY !== undefined ? finalY + 8 : startY + 60;
 }
 
 function addTeamRanking(
@@ -176,11 +183,7 @@ function addTeamRanking(
     styles: { cellPadding: 2 },
   });
 
-  return (
-    // eslint-disable-next-line no-restricted-syntax
-    (doc as unknown as Record<string, { finalY: number }>).lastAutoTable?.finalY + 8 ||
-    startY + 60
-  );
+  return (lastTableFinalY(doc) ?? 0) + 8 || startY + 60;
 }
 
 export async function generateSalesReport(data: ReportData) {

@@ -1,9 +1,13 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
 import { toBusinessDate, toBusinessMonth } from "../_shared/business-date.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 
 Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
@@ -11,7 +15,36 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    // Agenda QBRs e cria eventos/notificações de todos os vendedores —
+    // exige JWT de usuário com papel admin/manager.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw error;
+    }
+    const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isPrivileged) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Bypass de RLS necessário: agenda QBRs e notifica todos os owners.
+    const supabase = getServiceClient(
+      "agendamento de QBRs cobre schedules e owners de toda a equipe",
+    );
     const body = await req.json().catch(() => ({}));
     const action = body.action ?? "schedule_and_create_events";
 

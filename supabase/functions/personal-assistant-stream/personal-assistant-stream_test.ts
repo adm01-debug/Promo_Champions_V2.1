@@ -36,7 +36,15 @@ Deno.test("source: usa getUserClient (RLS) e não referencia SUPABASE_SERVICE_RO
 Deno.test("source: importa corsHeaders do _shared/cors (sem duplicação)", async () => {
   const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
   assertStringIncludes(source, `from "../_shared/cors.ts"`);
-  // Não deve declarar corsHeaders local (regra do lint compartilhado).
-  const localDecl = /const\s+corsHeaders\s*=/.test(source);
+  // Não deve declarar um objeto corsHeaders próprio (regra do lint compartilhado).
+  // `const corsHeaders = getCorsHeaders(req)` é o shadow permitido do módulo
+  // canônico — só declarações que não derivam de getCorsHeaders são ofensores.
+  const localDecl = source
+    .split("\n")
+    .some(
+      (line) =>
+        /^\s*(?:const|let|var)\s+corsHeaders\b/.test(line) &&
+        !line.includes("getCorsHeaders("),
+    );
   if (localDecl) throw new Error("must not redeclare corsHeaders locally");
 });

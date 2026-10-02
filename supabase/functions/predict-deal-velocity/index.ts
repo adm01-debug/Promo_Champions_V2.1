@@ -1,10 +1,10 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { validateUUID, collectErrors, validationErrorResponse } from '../_shared/validation.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface PredictBody {
   sale_id?: string;
@@ -13,10 +13,9 @@ interface PredictBody {
 }
 
 const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+// service_role necessário: lê/grava previsões de velocidade de deals de toda a carteira
+const admin = getServiceClient("lê e grava previsões de velocidade de deals de toda a carteira");
 
 function tierFromConfidence(score: number): 'low' | 'medium' | 'high' {
   if (score >= 75) return 'high';
@@ -378,8 +377,27 @@ async function batchPredict(limit: number): Promise<Response> {
 Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
     const body: PredictBody = await req.json().catch(() => ({}));
+
+    const isAdminOrManager = async (): Promise<boolean> => {
+      const { data, error } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (error) throw error;
+      return Boolean(data);
+    };
+
     if (body.batch) {
+      // Recomputa previsões de toda a carteira: restrito a admin/manager.
+      if (!await isAdminOrManager()) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const limit = Math.min(body.limit ?? 25, 50);
       return await batchPredict(limit);
     }
@@ -388,11 +406,35 @@ Deno.serve(withRequestId('predict-deal-velocity', async (req, _ctx) => {
     ]);
     if (errs.length) return validationErrorResponse(errs, corsHeaders);
 
+    // No modo single, só o dono do deal (ou admin/manager) pode disparar a previsão.
+    const { data: saleRow } = await admin
+      .from('sales')
+      .select('salesperson_id')
+      .eq('id', body.sale_id!)
+      .maybeSingle();
+    if (saleRow?.salesperson_id) {
+      const { data: callerSp } = await admin
+        .from('salespeople')
+        .select('id')
+        .eq('auth_user_id', caller.userId)
+        .maybeSingle();
+      if (callerSp?.id !== saleRow.salesperson_id && !await isAdminOrManager()) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     const result = await predictForSale(body.sale_id!);
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     console.error('predict-deal-velocity error', e);
     return new Response(JSON.stringify({ error: String(e) }), {
       status: 500,

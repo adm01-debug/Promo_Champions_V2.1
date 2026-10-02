@@ -34,8 +34,7 @@ export const usePipelines = () => {
         .eq('is_active', true)
         .order('display_order');
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as PipelineConfig[];
+      return data ?? [];
     },
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,
@@ -53,8 +52,7 @@ export const usePipelineStages = (pipelineId: string | null) => {
         .eq('pipeline_id', pipelineId)
         .order('stage_order');
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as PipelineStageConfig[];
+      return data ?? [];
     },
     enabled: !!pipelineId,
     staleTime: CACHE_TIMES.STALE_TIME,
@@ -109,14 +107,12 @@ export const usePipelineDealsByPipeline = (
       (data || []).forEach(sale => {
         const status = sale.status as string;
         if (grouped[status]) {
-          // eslint-disable-next-line no-restricted-syntax
-          grouped[status].push(sale as unknown as PipelineDeal);
+          grouped[status].push(sale);
         } else {
           // Default to first stage
           const firstStage = stages[0]?.name;
           if (firstStage && grouped[firstStage]) {
-            // eslint-disable-next-line no-restricted-syntax
-            grouped[firstStage].push(sale as unknown as PipelineDeal);
+            grouped[firstStage].push(sale);
           }
         }
       });

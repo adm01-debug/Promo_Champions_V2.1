@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
 
 export type V4DeadLetterStatus = 'pending' | 'exhausted' | 'resolved';
@@ -273,36 +274,14 @@ export function useV4Alerts() {
     refetchInterval: 60_000,
     queryFn: async (): Promise<V4Alert[]> => {
       const since = new Date(Date.now() - 24 * 60 * 60_000).toISOString();
-      /* eslint-disable no-restricted-syntax */
-      const { data, error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            select: (c: string) => {
-              gte: (
-                c: string,
-                v: string
-              ) => {
-                order: (
-                  c: string,
-                  o: { ascending: boolean }
-                ) => {
-                  limit: (
-                    n: number
-                  ) => Promise<{ data: V4Alert[] | null; error: Error | null }>;
-                };
-              };
-            };
-          };
-        }
-      )
+      const { data, error } = await supabase
         .from('v4_callback_alerts')
         .select('id, kind, details, fired_at, acknowledged_at')
         .gte('fired_at', since)
         .order('fired_at', { ascending: false })
         .limit(100);
-      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
-      return data ?? [];
+      return parseRows<V4Alert>(data);
     },
   });
 }
@@ -312,31 +291,13 @@ export function useV4AlertSettings() {
   const query = useQuery({
     queryKey: ['v4-callback-alert-settings'],
     queryFn: async (): Promise<V4AlertSettings | null> => {
-      /* eslint-disable no-restricted-syntax */
-      const { data, error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            select: (c: string) => {
-              eq: (
-                c: string,
-                v: boolean
-              ) => {
-                maybeSingle: () => Promise<{
-                  data: V4AlertSettings | null;
-                  error: Error | null;
-                }>;
-              };
-            };
-          };
-        }
-      )
+      const { data, error } = await supabase
         .from('v4_callback_alert_settings')
         .select(
           'id, is_active, failure_rate_threshold, exhausted_threshold_24h, pending_threshold, window_minutes, min_events, suppress_minutes'
         )
         .eq('singleton', true)
         .maybeSingle();
-      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
       return data;
     },
@@ -346,20 +307,10 @@ export function useV4AlertSettings() {
     mutationFn: async (input: V4AlertSettingsInput) => {
       const id = query.data?.id;
       if (!id) throw new Error('Configurações não encontradas.');
-      /* eslint-disable no-restricted-syntax */
-      const { error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            update: (v: V4AlertSettingsInput) => {
-              eq: (c: string, v: string) => Promise<{ error: Error | null }>;
-            };
-          };
-        }
-      )
+      const { error } = await supabase
         .from('v4_callback_alert_settings')
         .update(input)
         .eq('id', id);
-      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => {
@@ -371,20 +322,10 @@ export function useV4AlertSettings() {
 
   const ackMutation = useMutation({
     mutationFn: async (id: string) => {
-      /* eslint-disable no-restricted-syntax */
-      const { error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            update: (v: { acknowledged_at: string }) => {
-              eq: (c: string, v: string) => Promise<{ error: Error | null }>;
-            };
-          };
-        }
-      )
+      const { error } = await supabase
         .from('v4_callback_alerts')
         .update({ acknowledged_at: new Date().toISOString() })
         .eq('id', id);
-      /* eslint-enable no-restricted-syntax */
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['v4-callback-alerts'] }),

@@ -1,7 +1,11 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 interface TriggerRequest {
   account_id: string;
@@ -16,9 +20,24 @@ Deno.serve(withRequestId("csat-ces-trigger", async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  // Qualquer usuário autenticado pode registrar um disparo de pesquisa —
+  // anon key deve receber 401.
+  try {
+    await getUserClient(req);
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return errorEnvelope("UNAUTHORIZED", "unauthorized", {
+        requestId: ctx.requestId,
+        status: 401,
+      });
+    }
+    throw error;
+  }
+
+  // Bypass de RLS necessário: grava csat_ces_surveys, que o usuário não
+  // escreve diretamente.
+  const supabase = getServiceClient(
+    "grava csat_ces_surveys apos autenticar o chamador",
   );
   const body = (await req.json().catch(() => ({}))) as TriggerRequest;
 

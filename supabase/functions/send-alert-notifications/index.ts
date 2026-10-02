@@ -1,10 +1,16 @@
 import { Resend } from 'npm:resend@2';
-import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { toBusinessMonthStart } from "../_shared/business-date.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -243,10 +249,57 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const jsonErr = (payload: unknown, status: number) =>
+    new Response(JSON.stringify(payload), {
+      status,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Bypass de RLS necessário: alertas cobrem sales/metas de toda a equipe.
+    const supabase = getServiceClient(
+      'alertas agregam vendas e metas de toda a equipe para envio de email',
+    );
+
+    // Autoriza job interno (service_role ou X-Cron-Secret do pg_cron) ou,
+    // no disparo manual pelo app, usuário com papel admin/manager.
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from('_internal_secrets')
+          .select('value')
+          .eq('key', 'coaching_cron_secret')
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (error) {
+      console.error('send-alert-notifications cron authorization unavailable:', error);
+      return jsonErr({ error: 'authorization_unavailable' }, 503);
+    }
+
+    if (!authorizedByCron) {
+      let caller;
+      try {
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return jsonErr({ error: 'unauthorized' }, 401);
+        }
+        console.error('send-alert-notifications auth client failed:', error);
+        return jsonErr({ error: 'authorization_unavailable' }, 503);
+      }
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleError) {
+        console.error('send-alert-notifications role check failed:', roleError);
+        return jsonErr({ error: 'authorization_unavailable' }, 503);
+      }
+      if (!isPrivileged) return jsonErr({ error: 'forbidden' }, 403);
+    }
 
     let recipientEmail: string | null = null;
     let isCronJob = false;
