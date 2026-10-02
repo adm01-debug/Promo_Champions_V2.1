@@ -77,6 +77,28 @@ export const isLostSaleStatus = (status?: string | null): boolean =>
 export const isOpenSaleStatus = (status?: string | null): boolean =>
   !!status && !isWonSaleStatus(status) && !isLostSaleStatus(status);
 
+// Domínio completo da coluna sales.status (espelha o check constraint
+// sales_status_check e as chaves de SALE_STATUS_LABELS). Use os helpers
+// isWonSaleStatus/isLostSaleStatus/isOpenSaleStatus para agrupamentos.
+export const SALE_STATUS = {
+  PENDING: 'pending',
+  QUALIFIED: 'qualified',
+  PROPOSAL: 'proposal',
+  NEGOTIATION: 'negotiation',
+  COMPLETED: 'completed',
+  LOST: 'lost',
+  CANCELLED: 'cancelled',
+} as const;
+export type SaleStatus = (typeof SALE_STATUS)[keyof typeof SALE_STATUS];
+
+// Domínio `outcome` das tabelas win_loss_* (espelha o check constraint do
+// banco — apenas 'won'/'lost'). Centraliza as comparações de resultado.
+export const WIN_LOSS_OUTCOME = {
+  WON: 'won',
+  LOST: 'lost',
+} as const;
+export type WinLossOutcome = (typeof WIN_LOSS_OUTCOME)[keyof typeof WIN_LOSS_OUTCOME];
+
 export const ACTIVITY_TYPE = {
   CALL: 'call',
   EMAIL: 'email',

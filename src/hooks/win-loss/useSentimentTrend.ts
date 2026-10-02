@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
+import { isWonSaleStatus } from '@/constants';
 
 export interface SentimentTrendPoint {
   quarter: string;
@@ -83,7 +84,7 @@ export function useSentimentTrend() {
         b.count += 1;
         if (r.sale_id) {
           b.deals += 1;
-          if (saleStatus.get(r.sale_id) === 'won') b.wins += 1;
+          if (isWonSaleStatus(saleStatus.get(r.sale_id))) b.wins += 1;
         }
         buckets.set(q, b);
       });

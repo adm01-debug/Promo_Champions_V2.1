@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { chunkedIn, type PostgrestLike } from '@/lib/supabase/chunkedIn';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { toast } from 'sonner';
 
 export interface InsightComment {
@@ -33,29 +33,11 @@ export function useInsightComments(insightId: string | null) {
     queryFn: async (): Promise<InsightComment[]> => {
       if (!insightId) return [];
 
-      /* eslint-disable no-restricted-syntax */
-      const { data, error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            select: (s: string) => {
-              eq: (
-                col: string,
-                v: string
-              ) => {
-                order: (
-                  col: string,
-                  opts: { ascending: boolean }
-                ) => Promise<{ data: RawComment[] | null; error: Error | null }>;
-              };
-            };
-          };
-        }
-      )
+      const { data, error } = await supabase
         .from(TABLE)
         .select('id, insight_id, author_id, body, created_at')
         .eq('insight_id', insightId)
         .order('created_at', { ascending: true });
-      /* eslint-enable no-restricted-syntax */
 
       if (error) throw error;
       const rows: RawComment[] = data ?? [];
@@ -69,14 +51,10 @@ export function useInsightComments(insightId: string | null) {
       }>(
         authorIds,
         chunk =>
-          supabase // eslint-disable-line no-restricted-syntax
+          supabase
             .from('salespeople_public')
             .select('id, name, avatar_url')
-            .in('id', chunk as string[]) as unknown as PostgrestLike<{
-            id: string | null;
-            name: string | null;
-            avatar_url: string | null;
-          }>,
+            .in('id', chunk.map(String)),
         { parallel: true, label: 'insight-comments.authors' }
       );
       const map = new Map(people.map(p => [p.id, p]));
@@ -124,17 +102,9 @@ export function useInsightComments(insightId: string | null) {
       const uid = userRes.user?.id;
       if (!uid) throw new Error('Não autenticado');
 
-      /* eslint-disable no-restricted-syntax */
-      const { error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            insert: (row: Record<string, unknown>) => Promise<{ error: Error | null }>;
-          };
-        }
-      )
+      const { error } = await supabase
         .from(TABLE)
         .insert({ insight_id: insightId, author_id: uid, body: trimmed });
-      /* eslint-enable no-restricted-syntax */
 
       if (error) throw error;
     },
@@ -148,20 +118,7 @@ export function useInsightComments(insightId: string | null) {
 
   const deleteMutation = useMutation({
     mutationFn: async (commentId: string) => {
-      /* eslint-disable no-restricted-syntax */
-      const { error } = await (
-        supabase as unknown as {
-          from: (t: string) => {
-            delete: () => {
-              eq: (col: string, v: string) => Promise<{ error: Error | null }>;
-            };
-          };
-        }
-      )
-        .from(TABLE)
-        .delete()
-        .eq('id', commentId);
-      /* eslint-enable no-restricted-syntax */
+      const { error } = await supabase.from(TABLE).delete().eq('id', commentId);
       if (error) throw error;
     },
     onSuccess: () => {

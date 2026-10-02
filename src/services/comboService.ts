@@ -10,7 +10,7 @@ export const COMBO_TIERS = [
 
 export const comboService = {
   getComboTier(actionsCount: number) {
-    let tier = COMBO_TIERS[0];
+    let tier = COMBO_TIERS[0]!;
     for (const t of COMBO_TIERS) {
       if (actionsCount >= t.minActions) tier = t;
     }
@@ -20,14 +20,14 @@ export const comboService = {
   getComboTierIndex(actionsCount: number) {
     let index = 0;
     for (let i = 0; i < COMBO_TIERS.length; i++) {
-      if (actionsCount >= COMBO_TIERS[i].minActions) index = i;
+      if (actionsCount >= COMBO_TIERS[i]!.minActions) index = i;
     }
     return index;
   },
 
   getNextTier(actionsCount: number) {
     const currentIndex = this.getComboTierIndex(actionsCount);
-    return currentIndex < COMBO_TIERS.length - 1 ? COMBO_TIERS[currentIndex + 1] : null;
+    return currentIndex < COMBO_TIERS.length - 1 ? COMBO_TIERS[currentIndex + 1]! : null;
   },
 
   async getTodayCombo(salespersonId: string) {

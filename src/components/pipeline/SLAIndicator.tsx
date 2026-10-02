@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { differenceInDays, differenceInHours } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 
 interface SLAIndicatorProps {
   stageEnteredAt: string;
@@ -25,7 +25,6 @@ function SLAIndicatorComponent({ stageEnteredAt, stage, className }: SLAIndicato
   if (!limit) return null;
 
   const daysInStage = differenceInDays(new Date(), new Date(stageEnteredAt));
-  const _hoursInStage = differenceInHours(new Date(), new Date(stageEnteredAt));
   const pct = (daysInStage / limit) * 100;
 
   const isOverdue = daysInStage >= limit;

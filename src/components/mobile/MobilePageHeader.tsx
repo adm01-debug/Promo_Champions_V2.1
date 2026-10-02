@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, memo, useCallback } from 'react';
+import { FC, ReactNode, memo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';

@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -129,8 +130,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .limit(100);
 
         if (actError) throw actError;
-        // eslint-disable-next-line no-restricted-syntax
-        activities = (actData || []) as unknown as ActivityRow[];
+        activities = parseRows<ActivityRow>(actData);
       } else {
         const { data: actData, error: actError } = await supabase
           .from('activities')
@@ -139,8 +139,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
           .order('created_at', { ascending: false })
           .limit(100);
 
-        // eslint-disable-next-line no-restricted-syntax
-        if (!actError) activities = (actData || []) as unknown as ActivityRow[];
+        if (!actError) activities = parseRows<ActivityRow>(actData);
       }
 
       const timelineEvents: TimelineEvent[] = [];
@@ -152,8 +151,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
         created_at: string;
         metadata?: { outcome?: string };
       };
-      // eslint-disable-next-line no-restricted-syntax
-      ((interactions as unknown as InteractionRow[]) || []).forEach(int => {
+      parseRows<InteractionRow>(interactions).forEach(int => {
         timelineEvents.push({
           id: int.id,
           type: int.type,
