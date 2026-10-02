@@ -7,6 +7,7 @@ import {
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import { collectErrors, validateUUID, validationErrorResponse } from '../_shared/validation.ts';
 
 interface Payload {
   to_number: string;
@@ -108,6 +109,12 @@ Deno.serve(
         });
       }
 
+      const idErrors = collectErrors([
+        validateUUID(body.sale_id, 'sale_id'),
+        validateUUID(body.queue_item_id, 'queue_item_id'),
+      ]);
+      if (idErrors.length) return validationErrorResponse(idErrors, corsHeaders);
+
       const toNumber = normalizeToE164(body.to_number);
       if (!toNumber) {
         return new Response(
@@ -157,7 +164,23 @@ Deno.serve(
         });
       }
 
-      const fromNumber = body.from_number || cred.from_number;
+      // from_number do caller precisa normalizar para E.164 como o destino —
+      // um valor cru ia direto para o parâmetro From da Twilio.
+      let fromNumber: string | null = cred.from_number;
+      if (body.from_number) {
+        fromNumber = typeof body.from_number === 'string'
+          ? normalizeToE164(body.from_number)
+          : null;
+        if (!fromNumber) {
+          return new Response(
+            JSON.stringify({
+              error: 'invalid_from_number',
+              message: 'from_number inválido — informe formato E.164 (+55...) ou nacional BR',
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
       if (!fromNumber) {
         return new Response(JSON.stringify({ error: 'from_number ausente' }), {
           status: 400,

@@ -74,7 +74,6 @@ export async function generateCurrentMonthReport() {
     (goals.data || []).map(g => [g.salesperson_id, Number(g.goal_amount)])
   );
 
-  const _spSalesAgg: Record<string, number> = {};
   (curSales.data || []).forEach(() => {
     // Would need salesperson_id in the query - simplified
   });

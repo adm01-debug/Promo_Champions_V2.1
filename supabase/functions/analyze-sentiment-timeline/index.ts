@@ -1,6 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
 
@@ -51,6 +51,8 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const caller = await getUserClient(req);
+
     const { recording_id } = await req.json();
     if (!recording_id) {
       return new Response(JSON.stringify({ error: "recording_id required" }), {
@@ -59,12 +61,12 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    // Escrita em call_sentiment_timeline exige bypass de RLS; a leitura do
+    // recording usa o client do usuário para garantir que o chamador só
+    // analise gravações que ele pode ver.
+    const supabase = getServiceClient("escrita em call_sentiment_timeline (RLS)");
 
-    const { data: rec, error: recErr } = await supabase
+    const { data: rec, error: recErr } = await caller.client
       .from("call_recordings")
       .select("id, diarization, transcript")
       .eq("id", recording_id)
@@ -240,6 +242,12 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("analyze-sentiment-timeline error", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),

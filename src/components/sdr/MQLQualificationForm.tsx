@@ -91,8 +91,6 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
 
       // Create Notification for Closer
       if (status === 'qualified' && closerId) {
-        const _selectedCloser = closers.find(c => c.id === closerId);
-
         // Find auth_user_id for closer to send notification
         const { data: closerData } = await supabase
           .from('salespeople')

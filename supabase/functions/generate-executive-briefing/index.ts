@@ -1,7 +1,7 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface BriefingPayload {
   headline: string;
@@ -27,13 +27,28 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    // Briefing executivo é material de gestão: restrito a admin/manager.
+    const { data: isManager, error: roleErr } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleErr) throw roleErr;
+    if (!isManager) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY não configurada");
 
-    const authHeader = req.headers.get("Authorization") ?? "";
-    const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+    const authHeader = caller.authHeader;
+    const supabase = getServiceClient("escreve executive_briefings e lê histórico cross-user");
 
     const body = await req.json().catch(() => ({}));
     const generated_by: "auto" | "manual" = body?.auto ? "auto" : "manual";
@@ -159,6 +174,12 @@ Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
 
     return new Response(JSON.stringify(upserted), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("generate-executive-briefing error", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
       status: 500,

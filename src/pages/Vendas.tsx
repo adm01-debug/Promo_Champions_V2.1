@@ -19,6 +19,7 @@ import {
   MARKUP_TIER_LABELS,
   type MarkupTier,
 } from '@/lib/markupHelpers';
+import { isLostSaleStatus } from '@/constants';
 
 const sortOptions: SortOption[] = [
   { label: 'Mais recente', value: 'date_desc', direction: 'desc' },
