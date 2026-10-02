@@ -241,6 +241,9 @@ Deno.serve(withRequestId("webvitals-regression-alert", async (req, ctx) => {
     } catch {
       return json({ error: "invalid_json" }, 400);
     }
+    if (typeof body !== "object" || body === null || Array.isArray(body)) {
+      return json({ error: "invalid_body" }, 400);
+    }
     const errors = collectErrors([
       validateEnum(body.mode, "mode", ["run", "dry_run"], false),
     ]);
@@ -308,7 +311,7 @@ Deno.serve(withRequestId("webvitals-regression-alert", async (req, ctx) => {
     );
 
     if (regressions.length === 0) {
-      return json({ ok: true, regressions: 0 });
+      return json({ ok: true, dry_run: dryRun, regressions: 0 });
     }
 
     const lines = regressions.map(r =>
