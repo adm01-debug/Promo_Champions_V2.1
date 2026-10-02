@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion, useReducedMotion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 /**
  * Wraps children with a celebratory bounce + glow when `trigger` changes to true.
@@ -21,9 +21,9 @@ export function CelebrationPulse({
 
   return (
     <motion.div
-      className={cn("relative", className)}
+      className={cn('relative', className)}
       animate={trigger ? { scale: [1, 1.08, 0.97, 1.03, 1] } : { scale: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
     >
       {/* Glow ring behind */}
       {trigger && (
@@ -58,7 +58,7 @@ export function HoverLiftCard({
   return (
     <motion.div
       className={className}
-      whileHover={{ y: -2, transition: { type: "spring", stiffness: 400, damping: 25 } }}
+      whileHover={{ y: -2, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
       whileTap={{ scale: 0.98 }}
     >
       {children}
@@ -80,7 +80,11 @@ export const staggerContainer = {
 
 export const staggerItem = {
   hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
 };
 
 /**
@@ -91,8 +95,8 @@ export function CountUpText({
   value,
   duration: _duration = 1.2,
   className,
-  prefix = "",
-  suffix = "",
+  prefix = '',
+  suffix = '',
   decimals = 0,
 }: {
   value: number;
@@ -104,17 +108,17 @@ export function CountUpText({
 }) {
   return (
     <motion.span
-      className={cn("tabular-nums", className)}
+      className={cn('tabular-nums', className)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
       <motion.span>{prefix}</motion.span>
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        {value.toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
+      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        {value.toLocaleString('pt-BR', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        })}
       </motion.span>
       <motion.span>{suffix}</motion.span>
     </motion.span>

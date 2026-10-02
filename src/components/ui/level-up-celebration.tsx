@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Crown, Star, Zap, Gift, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FC } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Crown, Star, Zap, Gift, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface LevelUpCelebrationProps {
   isOpen: boolean;
@@ -37,12 +37,16 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
             initial={{ scale: 0.5, opacity: 0, y: 50 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0, y: 30 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            onClick={(e) => e.stopPropagation()}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            onClick={e => e.stopPropagation()}
             className="relative w-[90vw] max-w-sm rounded-2xl border border-rank-gold/30 bg-gradient-to-b from-background via-background to-rank-gold/5 p-8 shadow-2xl text-center overflow-hidden"
           >
             {/* Close */}
-            <button onClick={onClose} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground" aria-label="Fechar celebração">
+            <button
+              onClick={onClose}
+              className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
+              aria-label="Fechar celebração"
+            >
               <X className="h-5 w-5" />
             </button>
 
@@ -53,7 +57,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
               className="relative mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center shadow-lg"
             >
               <Crown className="h-10 w-10 text-foreground" />
@@ -75,7 +79,8 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
               transition={{ delay: 0.4 }}
               className="text-muted-foreground text-sm mb-6"
             >
-              Nível {previousLevel} → <span className="text-rank-gold font-bold">Nível {newLevel}</span>
+              Nível {previousLevel} →{' '}
+              <span className="text-rank-gold font-bold">Nível {newLevel}</span>
             </motion.p>
 
             {/* Rewards */}
@@ -112,7 +117,10 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
               </motion.div>
             )}
 
-            <Button onClick={onClose} className="w-full bg-gradient-to-r from-rank-gold to-coins text-foreground font-bold hover:from-rank-gold hover:to-coins/90">
+            <Button
+              onClick={onClose}
+              className="w-full bg-gradient-to-r from-rank-gold to-coins text-foreground font-bold hover:from-rank-gold hover:to-coins/90"
+            >
               Continuar
             </Button>
           </motion.div>

@@ -1,10 +1,15 @@
-import { motion } from "framer-motion";
-import { Trophy, RefreshCw, Download, Keyboard, Printer, Clipboard } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { WinLossSavedViews } from "./WinLossSavedViews";
-import type { WinLossFilterState } from "./winLossFiltersHelpers";
-import type { SavedView } from "@/hooks/win-loss/useWinLossSavedViews";
+import { motion } from 'framer-motion';
+import { Trophy, RefreshCw, Download, Keyboard, Printer, Clipboard } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { WinLossSavedViews } from './WinLossSavedViews';
+import type { WinLossFilterState } from './winLossFiltersHelpers';
+import type { SavedView } from '@/hooks/win-loss/useWinLossSavedViews';
 
 interface Props {
   onRun: () => void;
@@ -16,7 +21,15 @@ interface Props {
   onLoadView: (v: SavedView) => void;
 }
 
-export function WinLossPageHeader({ onRun, onExport, onPrint, onCopyDigest, isRunning, filters, onLoadView }: Props) {
+export function WinLossPageHeader({
+  onRun,
+  onExport,
+  onPrint,
+  onCopyDigest,
+  isRunning,
+  filters,
+  onLoadView,
+}: Props) {
   return (
     <motion.div
       className="flex flex-col sm:flex-row sm:items-center gap-3 no-print"
@@ -40,23 +53,37 @@ export function WinLossPageHeader({ onRun, onExport, onPrint, onCopyDigest, isRu
           {onCopyDigest && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="sm" variant="outline" onClick={onCopyDigest} aria-label="Copiar resumo executivo">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={onCopyDigest}
+                  aria-label="Copiar resumo executivo"
+                >
                   <Clipboard className="h-3.5 w-3.5 mr-1.5" />
                   Digest
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-[11px]">Copia resumo Markdown</TooltipContent>
+              <TooltipContent side="bottom" className="text-[11px]">
+                Copia resumo Markdown
+              </TooltipContent>
             </Tooltip>
           )}
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button size="sm" variant="outline" onClick={onPrint} aria-label="Imprimir relatório">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onPrint}
+                aria-label="Imprimir relatório"
+              >
                 <Printer className="h-3.5 w-3.5 mr-1.5" />
                 Imprimir
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom" className="text-[11px]">Relatório executivo (A4)</TooltipContent>
+            <TooltipContent side="bottom" className="text-[11px]">
+              Relatório executivo (A4)
+            </TooltipContent>
           </Tooltip>
 
           <Tooltip>
@@ -74,8 +101,10 @@ export function WinLossPageHeader({ onRun, onExport, onPrint, onCopyDigest, isRu
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="sm" onClick={onRun} disabled={isRunning}>
-                <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${isRunning ? "animate-spin" : ""}`} />
-                {isRunning ? "Analisando…" : "Rodar análise"}
+                <RefreshCw
+                  className={`h-3.5 w-3.5 mr-1.5 ${isRunning ? 'animate-spin' : ''}`}
+                />
+                {isRunning ? 'Analisando…' : 'Rodar análise'}
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-[11px]">

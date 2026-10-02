@@ -1,11 +1,22 @@
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Download } from 'lucide-react';
 import { exportToCSV } from '@/lib/csvExporter';
 import { exportToExcel } from '@/lib/excelExporter';
 import { exportToPDF } from '@/lib/pdfExporter';
 
-export function ExportButton({ data, filename }: { data: Record<string, unknown>[]; filename: string }) {
+export function ExportButton({
+  data,
+  filename,
+}: {
+  data: Record<string, unknown>[];
+  filename: string;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -15,9 +26,15 @@ export function ExportButton({ data, filename }: { data: Record<string, unknown>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => exportToCSV(data, filename)}>CSV</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => exportToExcel(data, filename)}>Excel</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => exportToPDF(data, filename, filename)}>PDF</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportToCSV(data, filename)}>
+          CSV
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportToExcel(data, filename)}>
+          Excel
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportToPDF(data, filename, filename)}>
+          PDF
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

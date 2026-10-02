@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
-import { Clock, Flame, Percent, Zap } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Clock, Flame, Percent, Zap } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface TimeLeft {
   days: number;
@@ -39,30 +39,30 @@ function CountdownTimer({ endDate }: { endDate: string }) {
     return () => clearInterval(timer);
   }, [endDate]);
 
-  const isUrgent = useMemo(() =>
-    timeLeft.days === 0 && timeLeft.hours < 6,
+  const isUrgent = useMemo(
+    () => timeLeft.days === 0 && timeLeft.hours < 6,
     [timeLeft.days, timeLeft.hours]
   );
 
-  const isCritical = useMemo(() =>
-    timeLeft.days === 0 && timeLeft.hours < 1,
+  const isCritical = useMemo(
+    () => timeLeft.days === 0 && timeLeft.hours < 1,
     [timeLeft.days, timeLeft.hours]
   );
 
   return (
-    <div className={cn(
-      "flex items-center gap-1 font-mono text-xs font-bold",
-      isUrgent ? "text-destructive" : "text-primary",
-      isCritical && "animate-pulse"
-    )}>
-      <Clock className={cn("h-3 w-3", isCritical && "animate-bounce")} />
-      {timeLeft.days > 0 && (
-        <span>{timeLeft.days}d</span>
+    <div
+      className={cn(
+        'flex items-center gap-1 font-mono text-xs font-bold',
+        isUrgent ? 'text-destructive' : 'text-primary',
+        isCritical && 'animate-pulse'
       )}
+    >
+      <Clock className={cn('h-3 w-3', isCritical && 'animate-bounce')} />
+      {timeLeft.days > 0 && <span>{timeLeft.days}d</span>}
       <span>
-        {String(timeLeft.hours).padStart(2, "0")}:
-        {String(timeLeft.minutes).padStart(2, "0")}:
-        {String(timeLeft.seconds).padStart(2, "0")}
+        {String(timeLeft.hours).padStart(2, '0')}:
+        {String(timeLeft.minutes).padStart(2, '0')}:
+        {String(timeLeft.seconds).padStart(2, '0')}
       </span>
     </div>
   );
@@ -85,10 +85,22 @@ interface FlashSalesBannerProps {
 }
 
 const DEFAULT_PROMOS: FlashPromotion[] = [
-  { id: "1", title: "Power-Up Velocidade", description: "2x XP por 24h", discount_percent: 50, ends_at: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), original_price: 500, sale_price: 250 },
+  {
+    id: '1',
+    title: 'Power-Up Velocidade',
+    description: '2x XP por 24h',
+    discount_percent: 50,
+    ends_at: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
+    original_price: 500,
+    sale_price: 250,
+  },
 ];
 
-export function FlashSalesBanner({ promotions: externalPromos, onBuy, className }: FlashSalesBannerProps) {
+export function FlashSalesBanner({
+  promotions: externalPromos,
+  onBuy,
+  className,
+}: FlashSalesBannerProps) {
   const promotions = externalPromos || DEFAULT_PROMOS;
   if (promotions.length === 0) return null;
 
@@ -119,7 +131,7 @@ export function FlashSalesBanner({ promotions: externalPromos, onBuy, className 
 
           {/* Promotion Cards */}
           <div className="space-y-2">
-            {promotions.map((promo) => (
+            {promotions.map(promo => (
               <div
                 key={promo.id}
                 className="flex items-center gap-3 p-3 rounded-lg bg-background/80 border"

@@ -1,35 +1,64 @@
-import { useMemo, useState, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { AlertTriangle, RefreshCw, Info, Layers, ChevronDown, Bug, X, GitCompare } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useAtRiskFromPatterns } from "@/hooks/win-loss/useAtRiskFromPatterns";
-import { useAtRiskSettings } from "@/hooks/win-loss/useAtRiskSettings";
-import { DOMINANT_PATTERNS_LIST } from "@/lib/winloss";
-import { inferReasonCode } from "@/lib/winloss/riskReasons";
-import { severityFromScore, type RiskSeverity } from "@/lib/winloss/severityFromScore";
-import { RiskDebugPanel } from "./RiskDebugPanel";
-import { AtRiskSettingsPopover } from "./AtRiskSettingsPopover";
-import { RiskCompareModal } from "./RiskCompareModal";
+import { useMemo, useState, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  AlertTriangle,
+  RefreshCw,
+  Info,
+  Layers,
+  ChevronDown,
+  Bug,
+  X,
+  GitCompare,
+} from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { useAtRiskFromPatterns } from '@/hooks/win-loss/useAtRiskFromPatterns';
+import { useAtRiskSettings } from '@/hooks/win-loss/useAtRiskSettings';
+import { DOMINANT_PATTERNS_LIST } from '@/lib/winloss';
+import { inferReasonCode } from '@/lib/winloss/riskReasons';
+import { severityFromScore, type RiskSeverity } from '@/lib/winloss/severityFromScore';
+import { RiskDebugPanel } from './RiskDebugPanel';
+import { AtRiskSettingsPopover } from './AtRiskSettingsPopover';
+import { RiskCompareModal } from './RiskCompareModal';
 
 const fmtBRL = (n: number) =>
-  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(n || 0);
+  new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  }).format(n || 0);
 
 const tone = (score: number) =>
-  score >= 75 ? "border-destructive/40 bg-destructive/10 text-destructive" :
-  score >= 50 ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400" :
-  "border-muted bg-muted text-muted-foreground";
+  score >= 75
+    ? 'border-destructive/40 bg-destructive/10 text-destructive'
+    : score >= 50
+      ? 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+      : 'border-muted bg-muted text-muted-foreground';
 
 const scoreLabel = (score: number) =>
-  score >= 75 ? "Crítico" : score >= 50 ? "Alto risco" : "Atenção";
+  score >= 75 ? 'Crítico' : score >= 50 ? 'Alto risco' : 'Atenção';
 
 export function AtRiskDealsFromPatterns() {
   const { settings, update, reset, clearFilters, syncStatus } = useAtRiskSettings();
-  const { data = [], isLoading, refresh, isRefreshing } = useAtRiskFromPatterns({
+  const {
+    data = [],
+    isLoading,
+    refresh,
+    isRefreshing,
+  } = useAtRiskFromPatterns({
     threshold: settings.threshold,
     limit: settings.limit,
   });
@@ -38,8 +67,8 @@ export function AtRiskDealsFromPatterns() {
   const [compareOpen, setCompareOpen] = useState(false);
 
   const toggleCompare = useCallback((id: string) => {
-    setCompareIds((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
+    setCompareIds(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
       if (prev.length >= 2) return prev; // cap at 2
       return [...prev, id];
     });
@@ -55,7 +84,12 @@ export function AtRiskDealsFromPatterns() {
   }, [data]);
 
   const severityCounts = useMemo(() => {
-    const counts: Record<RiskSeverity, number> = { low: 0, medium: 0, high: 0, critical: 0 };
+    const counts: Record<RiskSeverity, number> = {
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
+    };
     for (const d of data) {
       const sev = d.breakdown?.severity ?? severityFromScore(d.risk_score);
       counts[sev] += 1;
@@ -68,19 +102,21 @@ export function AtRiskDealsFromPatterns() {
     const stages = settings.stageFilter;
     const codes = settings.reasonCodes;
     const sevs = settings.severityFilter;
-    if (stages.length === 0 && !kw && codes.length === 0 && sevs.length === 0) return data;
-    return data.filter((d) => {
-      if (stages.length > 0 && !stages.includes(d.stage ?? "")) return false;
+    if (stages.length === 0 && !kw && codes.length === 0 && sevs.length === 0)
+      return data;
+    return data.filter(d => {
+      if (stages.length > 0 && !stages.includes(d.stage ?? '')) return false;
       if (kw) {
-        const hay = `${d.client_name ?? ""} ${d.matched_pattern ?? ""} ${d.suggested_action ?? ""}`.toLowerCase();
+        const hay =
+          `${d.client_name ?? ''} ${d.matched_pattern ?? ''} ${d.suggested_action ?? ''}`.toLowerCase();
         if (!hay.includes(kw)) return false;
       }
       if (codes.length > 0) {
-        const dealCodes = (d.breakdown?.reasons_v2 ?? []).map((r) => r.code);
+        const dealCodes = (d.breakdown?.reasons_v2 ?? []).map(r => r.code);
         const effective = dealCodes.length
           ? dealCodes
-          : (d.breakdown?.reasons ?? d.reasons ?? []).map((m) => inferReasonCode(m));
-        if (!codes.some((c) => effective.includes(c))) return false;
+          : (d.breakdown?.reasons ?? d.reasons ?? []).map(m => inferReasonCode(m));
+        if (!codes.some(c => effective.includes(c))) return false;
       }
       if (sevs.length > 0) {
         const sev = d.breakdown?.severity ?? severityFromScore(d.risk_score);
@@ -88,10 +124,16 @@ export function AtRiskDealsFromPatterns() {
       }
       return true;
     });
-  }, [data, settings.keywordFilter, settings.stageFilter, settings.reasonCodes, settings.severityFilter]);
+  }, [
+    data,
+    settings.keywordFilter,
+    settings.stageFilter,
+    settings.reasonCodes,
+    settings.severityFilter,
+  ]);
 
   const sorted = useMemo(() => {
-    if (settings.sortBy === "score") return filtered;
+    if (settings.sortBy === 'score') return filtered;
     return [...filtered].sort((a, b) => {
       const da = a.breakdown?.days_stagnant ?? Number.POSITIVE_INFINITY;
       const db = b.breakdown?.days_stagnant ?? Number.POSITIVE_INFINITY;
@@ -112,7 +154,7 @@ export function AtRiskDealsFromPatterns() {
   const matchedFamilyLabels = useMemo(() => {
     const set = new Set<string>();
     for (const d of filtered) {
-      const haystack = (d.matched_pattern ?? "").toLowerCase();
+      const haystack = (d.matched_pattern ?? '').toLowerCase();
       for (const entry of DOMINANT_PATTERNS_LIST) {
         if (haystack.includes(entry.label.toLowerCase())) set.add(entry.label);
       }
@@ -165,26 +207,35 @@ export function AtRiskDealsFromPatterns() {
                 disabled={isRefreshing}
                 aria-label="Atualizar análise de risco"
               >
-                <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+                <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} />
               </Button>
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-2">{[0, 1, 2].map(i => <Skeleton key={i} className="h-14 w-full" />)}</div>
+            <div className="space-y-2">
+              {[0, 1, 2].map(i => (
+                <Skeleton key={i} className="h-14 w-full" />
+              ))}
+            </div>
           ) : !data.length ? (
             <p className="text-xs text-muted-foreground py-4 text-center">
               {settings.threshold > 40
                 ? `Nenhum deal cruza padrões com score ≥ ${settings.threshold}.`
-                : "Nenhum deal aberto cruza padrões críticos no momento."}
+                : 'Nenhum deal aberto cruza padrões críticos no momento.'}
             </p>
           ) : !filtered.length ? (
             <div className="py-4 text-center space-y-2">
               <p className="text-xs text-muted-foreground">
                 Nenhum deal corresponde aos filtros atuais.
               </p>
-              <Button variant="outline" size="sm" className="h-7 text-xs" onClick={clearFilters}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={clearFilters}
+              >
                 Limpar filtros
               </Button>
             </div>
@@ -199,8 +250,8 @@ export function AtRiskDealsFromPatterns() {
                   <GitCompare className="h-3 w-3 text-primary shrink-0" aria-hidden />
                   <span className="text-[11px] text-muted-foreground">
                     {compareIds.length === 1
-                      ? "Selecione mais 1 deal para comparar"
-                      : "2 deals selecionados"}
+                      ? 'Selecione mais 1 deal para comparar'
+                      : '2 deals selecionados'}
                   </span>
                   <div className="ml-auto flex items-center gap-1">
                     <Button
@@ -226,93 +277,142 @@ export function AtRiskDealsFromPatterns() {
                 </div>
               )}
               <ul className="space-y-2" aria-label="Deals em risco identificados">
-              {visible.map(d => (
-                <li key={d.sale_id} className={`rounded-md border px-3 py-2 ${tone(d.risk_score)}`}>
-                  <div className="flex items-center justify-between gap-2">
-                    {debug && (
+                {visible.map(d => (
+                  <li
+                    key={d.sale_id}
+                    className={`rounded-md border px-3 py-2 ${tone(d.risk_score)}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      {debug && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span>
+                              <Checkbox
+                                checked={compareIds.includes(d.sale_id)}
+                                disabled={
+                                  !compareIds.includes(d.sale_id) &&
+                                  compareIds.length >= 2
+                                }
+                                onCheckedChange={() => toggleCompare(d.sale_id)}
+                                aria-label={`Selecionar ${d.client_name ?? 'deal'} para comparar`}
+                                className="shrink-0"
+                              />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="text-xs">
+                            {compareIds.includes(d.sale_id)
+                              ? 'Remover da comparação'
+                              : compareIds.length >= 2
+                                ? 'Máximo 2 deals para comparar'
+                                : 'Selecionar para comparar'}
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium truncate">
+                          {d.client_name ?? 'Cliente'}
+                        </p>
+                        <p
+                          className="text-[11px] opacity-80 truncate"
+                          title={d.matched_pattern}
+                        >
+                          {d.matched_pattern}
+                        </p>
+                      </div>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span>
-                            <Checkbox
-                              checked={compareIds.includes(d.sale_id)}
-                              disabled={!compareIds.includes(d.sale_id) && compareIds.length >= 2}
-                              onCheckedChange={() => toggleCompare(d.sale_id)}
-                              aria-label={`Selecionar ${d.client_name ?? "deal"} para comparar`}
-                              className="shrink-0"
-                            />
-                          </span>
+                          <Badge
+                            variant="outline"
+                            className="tabular-nums shrink-0 cursor-help gap-1"
+                            aria-label={`Risco ${d.risk_score} de 100 — ${scoreLabel(d.risk_score)}`}
+                          >
+                            {d.risk_score}
+                            <Info className="h-3 w-3 opacity-60" aria-hidden />
+                          </Badge>
                         </TooltipTrigger>
-                        <TooltipContent side="right" className="text-xs">
-                          {compareIds.includes(d.sale_id)
-                            ? "Remover da comparação"
-                            : compareIds.length >= 2
-                              ? "Máximo 2 deals para comparar"
-                              : "Selecionar para comparar"}
+                        <TooltipContent side="left" className="max-w-xs text-xs">
+                          <p className="font-medium mb-1">
+                            {scoreLabel(d.risk_score)} · {d.risk_score}/100
+                          </p>
+                          {d.breakdown && (
+                            <ul className="space-y-0.5 mb-2 opacity-90">
+                              <li>
+                                Estagnação:{' '}
+                                <span className="tabular-nums">
+                                  {d.breakdown.stagnation}
+                                </span>
+                                /50
+                              </li>
+                              <li>
+                                Alinhamento de ticket:{' '}
+                                <span className="tabular-nums">
+                                  {d.breakdown.amount_alignment}
+                                </span>
+                                /25
+                              </li>
+                              <li>
+                                Estágio travado:{' '}
+                                <span className="tabular-nums">
+                                  {d.breakdown.stage_match}
+                                </span>
+                                /25
+                              </li>
+                              <li>
+                                Confiança do padrão:{' '}
+                                <span className="tabular-nums">
+                                  {Math.round(d.breakdown.matched_confidence * 100)}%
+                                </span>
+                              </li>
+                            </ul>
+                          )}
+                          {d.reasons && d.reasons.length > 0 && (
+                            <ul className="space-y-0.5 list-disc pl-4 opacity-90">
+                              {d.reasons.map((r, i) => (
+                                <li key={i}>{r}</li>
+                              ))}
+                            </ul>
+                          )}
                         </TooltipContent>
                       </Tooltip>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium truncate">{d.client_name ?? "Cliente"}</p>
-                      <p className="text-[11px] opacity-80 truncate" title={d.matched_pattern}>
-                        {d.matched_pattern}
-                      </p>
                     </div>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Badge
-                          variant="outline"
-                          className="tabular-nums shrink-0 cursor-help gap-1"
-                          aria-label={`Risco ${d.risk_score} de 100 — ${scoreLabel(d.risk_score)}`}
-                        >
-                          {d.risk_score}
-                          <Info className="h-3 w-3 opacity-60" aria-hidden />
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent side="left" className="max-w-xs text-xs">
-                        <p className="font-medium mb-1">{scoreLabel(d.risk_score)} · {d.risk_score}/100</p>
-                        {d.breakdown && (
-                          <ul className="space-y-0.5 mb-2 opacity-90">
-                            <li>Estagnação: <span className="tabular-nums">{d.breakdown.stagnation}</span>/50</li>
-                            <li>Alinhamento de ticket: <span className="tabular-nums">{d.breakdown.amount_alignment}</span>/25</li>
-                            <li>Estágio travado: <span className="tabular-nums">{d.breakdown.stage_match}</span>/25</li>
-                            <li>Confiança do padrão: <span className="tabular-nums">{Math.round(d.breakdown.matched_confidence * 100)}%</span></li>
-                          </ul>
-                        )}
-                        {d.reasons && d.reasons.length > 0 && (
-                          <ul className="space-y-0.5 list-disc pl-4 opacity-90">
-                            {d.reasons.map((r, i) => <li key={i}>{r}</li>)}
-                          </ul>
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <p className="text-[11px] opacity-75 truncate pr-2" title={d.suggested_action}>
-                      {d.suggested_action}
-                    </p>
-                    <span className="text-[11px] tabular-nums font-medium shrink-0">{fmtBRL(d.amount)}</span>
-                  </div>
-                  {debug && d.breakdown && (
-                    <RiskDebugPanel
-                      breakdown={d.breakdown}
-                      riskScore={d.risk_score}
-                      suggestedAction={d.suggested_action}
-                    />
-                  )}
-                </li>
-              ))}
-            </ul>
+                    <div className="flex items-center justify-between mt-1.5">
+                      <p
+                        className="text-[11px] opacity-75 truncate pr-2"
+                        title={d.suggested_action}
+                      >
+                        {d.suggested_action}
+                      </p>
+                      <span className="text-[11px] tabular-nums font-medium shrink-0">
+                        {fmtBRL(d.amount)}
+                      </span>
+                    </div>
+                    {debug && d.breakdown && (
+                      <RiskDebugPanel
+                        breakdown={d.breakdown}
+                        riskScore={d.risk_score}
+                        suggestedAction={d.suggested_action}
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
             </>
           )}
           {(filtered.length > visible.length || (filtersActive && data.length > 0)) && (
             <p className="mt-2 text-[10px] text-muted-foreground text-center">
               Exibindo {visible.length} de {filtered.length}
-              {filtersActive && data.length !== filtered.length ? ` (de ${data.length} analisados)` : ""}
-              {filtered.length > visible.length ? " — ajuste em ⚙" : ""}
+              {filtersActive && data.length !== filtered.length
+                ? ` (de ${data.length} analisados)`
+                : ''}
+              {filtered.length > visible.length ? ' — ajuste em ⚙' : ''}
             </p>
           )}
 
-          <Collapsible open={showCatalog} onOpenChange={setShowCatalog} className="mt-3 pt-3 border-t border-border/50">
+          <Collapsible
+            open={showCatalog}
+            onOpenChange={setShowCatalog}
+            className="mt-3 pt-3 border-t border-border/50"
+          >
             <CollapsibleTrigger asChild>
               <Button
                 variant="ghost"
@@ -324,7 +424,10 @@ export function AtRiskDealsFromPatterns() {
                   <Layers className="h-3 w-3" aria-hidden />
                   Padrões dominantes considerados ({DOMINANT_PATTERNS_LIST.length})
                 </span>
-                <ChevronDown className={`h-3 w-3 transition-transform ${showCatalog ? "rotate-180" : ""}`} aria-hidden />
+                <ChevronDown
+                  className={`h-3 w-3 transition-transform ${showCatalog ? 'rotate-180' : ''}`}
+                  aria-hidden
+                />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-2">
@@ -337,14 +440,17 @@ export function AtRiskDealsFromPatterns() {
                       key={entry.family}
                       className={`rounded border px-2.5 py-1.5 text-[11px] ${
                         matched
-                          ? "border-primary/40 bg-primary/5"
-                          : "border-border/50 bg-muted/30"
+                          ? 'border-primary/40 bg-primary/5'
+                          : 'border-border/50 bg-muted/30'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium truncate">{entry.theme}</span>
                         {matched && (
-                          <Badge variant="outline" className="h-4 px-1 text-[9px] border-primary/40 text-primary shrink-0">
+                          <Badge
+                            variant="outline"
+                            className="h-4 px-1 text-[9px] border-primary/40 text-primary shrink-0"
+                          >
                             ativo
                           </Badge>
                         )}
@@ -354,7 +460,9 @@ export function AtRiskDealsFromPatterns() {
                       </p>
                       {p && (
                         <p className="mt-0.5 opacity-60 tabular-nums text-[10px]">
-                          ticket-alvo {fmtBRL(p.avg_amount ?? 0)} · ciclo {(p.avg_cycle_days ?? 0)}d · conf {Math.round((p.confidence ?? 0) * 100)}%
+                          ticket-alvo {fmtBRL(p.avg_amount ?? 0)} · ciclo{' '}
+                          {p.avg_cycle_days ?? 0}d · conf{' '}
+                          {Math.round((p.confidence ?? 0) * 100)}%
                         </p>
                       )}
                     </li>
@@ -362,7 +470,8 @@ export function AtRiskDealsFromPatterns() {
                 })}
               </ul>
               <p className="mt-2 text-[10px] text-muted-foreground">
-                Famílias destacadas correspondem ao padrão dominante de pelo menos um deal acima.
+                Famílias destacadas correspondem ao padrão dominante de pelo menos um deal
+                acima.
               </p>
             </CollapsibleContent>
           </Collapsible>
@@ -371,8 +480,8 @@ export function AtRiskDealsFromPatterns() {
       <RiskCompareModal
         open={compareOpen}
         onOpenChange={setCompareOpen}
-        dealA={data.find((x) => x.sale_id === compareIds[0]) ?? null}
-        dealB={data.find((x) => x.sale_id === compareIds[1]) ?? null}
+        dealA={data.find(x => x.sale_id === compareIds[0]) ?? null}
+        dealB={data.find(x => x.sale_id === compareIds[1]) ?? null}
       />
     </TooltipProvider>
   );

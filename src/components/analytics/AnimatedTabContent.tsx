@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import { TabsContent } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
+import React, { ReactNode } from 'react';
+import { TabsContent } from '@/components/ui/tabs';
+import { motion } from 'framer-motion';
 
 interface AnimatedTabContentProps {
   value: string;
@@ -14,12 +14,13 @@ const tabAnimation = {
   transition: { duration: 0.3 },
 };
 
-export const AnimatedTabContent = React.memo(function AnimatedTabContent({ value, children }: AnimatedTabContentProps) {
+export const AnimatedTabContent = React.memo(function AnimatedTabContent({
+  value,
+  children,
+}: AnimatedTabContentProps) {
   return (
     <TabsContent value={value} className="space-y-4">
-      <motion.div {...tabAnimation}>
-        {children}
-      </motion.div>
+      <motion.div {...tabAnimation}>{children}</motion.div>
     </TabsContent>
   );
 });

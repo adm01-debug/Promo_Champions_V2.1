@@ -1,27 +1,30 @@
-import React, { memo } from "react";
-import { useUserRoles, AppRole } from "@/hooks/useUserRoles";
-import { Badge } from "@/components/ui/badge";
-import { Crown, ShieldCheck, User, Loader2 } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import React, { memo } from 'react';
+import { useUserRoles, AppRole } from '@/hooks/useUserRoles';
+import { Badge } from '@/components/ui/badge';
+import { Crown, ShieldCheck, User, Loader2 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-const roleConfig: Record<AppRole, { label: string; icon: React.ElementType; color: string; description: string }> = {
-  admin: { 
-    label: "Admin", 
-    icon: Crown, 
-    color: "bg-warning/20 text-warning border-warning/30",
-    description: "Acesso total ao sistema"
+const roleConfig: Record<
+  AppRole,
+  { label: string; icon: React.ElementType; color: string; description: string }
+> = {
+  admin: {
+    label: 'Admin',
+    icon: Crown,
+    color: 'bg-warning/20 text-warning border-warning/30',
+    description: 'Acesso total ao sistema',
   },
-  manager: { 
-    label: "Gerente", 
-    icon: ShieldCheck, 
-    color: "bg-info/20 text-info border-info/30",
-    description: "Gerenciamento de equipe e relatórios"
+  manager: {
+    label: 'Gerente',
+    icon: ShieldCheck,
+    color: 'bg-info/20 text-info border-info/30',
+    description: 'Gerenciamento de equipe e relatórios',
   },
-  salesperson: { 
-    label: "Vendedor", 
-    icon: User, 
-    color: "bg-muted text-muted-foreground border-border",
-    description: "Acesso às próprias vendas e atividades"
+  salesperson: {
+    label: 'Vendedor',
+    icon: User,
+    color: 'bg-muted text-muted-foreground border-border',
+    description: 'Acesso às próprias vendas e atividades',
   },
 };
 
@@ -54,4 +57,4 @@ export const UserRoleBadge = memo(function UserRoleBadge() {
   );
 });
 
-UserRoleBadge.displayName = "UserRoleBadge";
+UserRoleBadge.displayName = 'UserRoleBadge';

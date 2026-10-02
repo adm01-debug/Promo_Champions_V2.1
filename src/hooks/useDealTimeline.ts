@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-export type TimelineEventType = "activity" | "stage_change" | "task_completed" | "outcome" | "chat";
+export type TimelineEventType =
+  'activity' | 'stage_change' | 'task_completed' | 'outcome' | 'chat';
 
 export interface DealTimelineEvent {
   id: string;
@@ -32,39 +33,43 @@ export interface DealTimelineEvent {
 
 export function useDealTimeline(saleId: string | null) {
   return useQuery({
-    queryKey: ["deal-timeline", saleId],
+    queryKey: ['deal-timeline', saleId],
     queryFn: async (): Promise<DealTimelineEvent[]> => {
       if (!saleId) return [];
 
-      const [activitiesRes, stageRes, tasksRes, outcomesRes, chatRes] = await Promise.all([
-        supabase
-          .from("activities")
-          .select("id, activity_type, outcome, contact_name, notes, duration_minutes, created_at")
-          .eq("sale_id", saleId)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("deal_stage_history")
-          .select("id, stage, entered_at, exited_at")
-          .eq("sale_id", saleId)
-          .order("entered_at", { ascending: false }),
-        supabase
-          .from("tasks")
-          .select("id, title, task_type, description, completed_at")
-          .eq("sale_id", saleId)
-          .eq("status", "completed")
-          .not("completed_at", "is", null)
-          .order("completed_at", { ascending: false }),
-        supabase
-          .from("deal_outcomes")
-          .select("id, outcome, reason, notes, created_at")
-          .eq("sale_id", saleId)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("deal_chat_history")
-          .select("id, question, response, question_type, created_at")
-          .eq("deal_id", saleId)
-          .order("created_at", { ascending: false }),
-      ]);
+      const [activitiesRes, stageRes, tasksRes, outcomesRes, chatRes] = await Promise.all(
+        [
+          supabase
+            .from('activities')
+            .select(
+              'id, activity_type, outcome, contact_name, notes, duration_minutes, created_at'
+            )
+            .eq('sale_id', saleId)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('deal_stage_history')
+            .select('id, stage, entered_at, exited_at')
+            .eq('sale_id', saleId)
+            .order('entered_at', { ascending: false }),
+          supabase
+            .from('tasks')
+            .select('id, title, task_type, description, completed_at')
+            .eq('sale_id', saleId)
+            .eq('status', 'completed')
+            .not('completed_at', 'is', null)
+            .order('completed_at', { ascending: false }),
+          supabase
+            .from('deal_outcomes')
+            .select('id, outcome, reason, notes, created_at')
+            .eq('sale_id', saleId)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('deal_chat_history')
+            .select('id, question, response, question_type, created_at')
+            .eq('deal_id', saleId)
+            .order('created_at', { ascending: false }),
+        ]
+      );
 
       if (activitiesRes.error) throw activitiesRes.error;
       if (stageRes.error) throw stageRes.error;
@@ -78,7 +83,7 @@ export function useDealTimeline(saleId: string | null) {
       for (const act of activitiesRes.data || []) {
         events.push({
           id: act.id,
-          type: "activity",
+          type: 'activity',
           timestamp: act.created_at,
           activity_type: act.activity_type,
           outcome: act.outcome,
@@ -101,7 +106,7 @@ export function useDealTimeline(saleId: string | null) {
         }
         events.push({
           id: current.id,
-          type: "stage_change",
+          type: 'stage_change',
           timestamp: current.entered_at,
           from_stage: next?.stage,
           to_stage: current.stage,
@@ -113,7 +118,7 @@ export function useDealTimeline(saleId: string | null) {
       for (const task of tasksRes.data || []) {
         events.push({
           id: task.id,
-          type: "task_completed",
+          type: 'task_completed',
           timestamp: task.completed_at!,
           task_title: task.title,
           task_type: task.task_type,
@@ -125,7 +130,7 @@ export function useDealTimeline(saleId: string | null) {
       for (const out of outcomesRes.data || []) {
         events.push({
           id: out.id,
-          type: "outcome",
+          type: 'outcome',
           timestamp: out.created_at,
           deal_outcome: out.outcome,
           deal_reason: out.reason,
@@ -137,7 +142,7 @@ export function useDealTimeline(saleId: string | null) {
       for (const chat of chatRes.data || []) {
         events.push({
           id: chat.id,
-          type: "chat",
+          type: 'chat',
           timestamp: chat.created_at,
           chat_question: chat.question,
           chat_response: chat.response || undefined,
@@ -145,7 +150,9 @@ export function useDealTimeline(saleId: string | null) {
         });
       }
 
-      events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      events.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
       return events;
     },
     enabled: !!saleId,

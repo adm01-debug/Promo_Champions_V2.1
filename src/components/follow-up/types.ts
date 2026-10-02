@@ -27,17 +27,44 @@ export interface ColdLead {
   interaction_velocity?: 'increasing' | 'stable' | 'decreasing';
 }
 
-export const temperatureConfig: Record<LeadTemperature, {
-  label: string;
-  icon: typeof Flame;
-  colorClass: string;
-  bgClass: string;
-  emoji: string;
-}> = {
-  hot: { label: 'Quente', icon: Flame, colorClass: 'text-destructive', bgClass: 'bg-destructive/10', emoji: '🔥' },
-  warm: { label: 'Morno', icon: ThermometerSun, colorClass: 'text-status-warning', bgClass: 'bg-status-warning/10', emoji: '🌡️' },
-  cold: { label: 'Frio', icon: Snowflake, colorClass: 'text-status-info', bgClass: 'bg-status-info/10', emoji: '❄️' },
-  frozen: { label: 'Congelado', icon: Snowflake, colorClass: 'text-primary', bgClass: 'bg-primary/10', emoji: '🧊' },
+export const temperatureConfig: Record<
+  LeadTemperature,
+  {
+    label: string;
+    icon: typeof Flame;
+    colorClass: string;
+    bgClass: string;
+    emoji: string;
+  }
+> = {
+  hot: {
+    label: 'Quente',
+    icon: Flame,
+    colorClass: 'text-destructive',
+    bgClass: 'bg-destructive/10',
+    emoji: '🔥',
+  },
+  warm: {
+    label: 'Morno',
+    icon: ThermometerSun,
+    colorClass: 'text-status-warning',
+    bgClass: 'bg-status-warning/10',
+    emoji: '🌡️',
+  },
+  cold: {
+    label: 'Frio',
+    icon: Snowflake,
+    colorClass: 'text-status-info',
+    bgClass: 'bg-status-info/10',
+    emoji: '❄️',
+  },
+  frozen: {
+    label: 'Congelado',
+    icon: Snowflake,
+    colorClass: 'text-primary',
+    bgClass: 'bg-primary/10',
+    emoji: '🧊',
+  },
 };
 
 export function getTemperature(daysInactive: number): LeadTemperature {
@@ -47,11 +74,17 @@ export function getTemperature(daysInactive: number): LeadTemperature {
   return 'frozen';
 }
 
-export function getSuggestedAction(temp: LeadTemperature): { action: string; channel: string } {
+export function getSuggestedAction(temp: LeadTemperature): {
+  action: string;
+  channel: string;
+} {
   const actions: Record<LeadTemperature, { action: string; channel: string }> = {
     hot: { action: 'Enviar proposta ou agendar reunião de fechamento', channel: 'call' },
     warm: { action: 'Check-in personalizado com valor agregado', channel: 'email' },
-    cold: { action: 'Re-engajar com novo insight ou case de sucesso', channel: 'whatsapp' },
+    cold: {
+      action: 'Re-engajar com novo insight ou case de sucesso',
+      channel: 'whatsapp',
+    },
     frozen: { action: 'Campanha de reativação com oferta especial', channel: 'email' },
   };
   return actions[temp];

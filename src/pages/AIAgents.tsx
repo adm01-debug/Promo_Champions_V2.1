@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Sparkles, Plus } from "lucide-react";
-import { useAgentRuns } from "@/hooks/agents/useAgentRuns";
-import { useAgentRunDetails } from "@/hooks/agents/useAgentRunDetails";
-import { AgentLauncherDialog } from "@/components/agents/AgentLauncherDialog";
-import { AgentRunCard } from "@/components/agents/AgentRunCard";
-import { AgentStepTimeline } from "@/components/agents/AgentStepTimeline";
-import { AgentApprovalBar } from "@/components/agents/AgentApprovalBar";
-import { AGENT_META, STATUS_META, type AgentRun } from "@/components/agents/agentHelpers";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sparkles, Plus } from 'lucide-react';
+import { useAgentRuns } from '@/hooks/agents/useAgentRuns';
+import { useAgentRunDetails } from '@/hooks/agents/useAgentRunDetails';
+import { AgentLauncherDialog } from '@/components/agents/AgentLauncherDialog';
+import { AgentRunCard } from '@/components/agents/AgentRunCard';
+import { AgentStepTimeline } from '@/components/agents/AgentStepTimeline';
+import { AgentApprovalBar } from '@/components/agents/AgentApprovalBar';
+import { AGENT_META, STATUS_META, type AgentRun } from '@/components/agents/agentHelpers';
+import { Badge } from '@/components/ui/badge';
 
 export default function AIAgents() {
   const [launcherOpen, setLauncherOpen] = useState(false);
@@ -23,7 +23,10 @@ export default function AIAgents() {
     <div className="container mx-auto py-6 space-y-6">
       <Helmet>
         <title>Agentes IA | Promo Champions</title>
-        <meta name="description" content="Agentes autônomos que executam tarefas multi-step no CRM." />
+        <meta
+          name="description"
+          content="Agentes autônomos que executam tarefas multi-step no CRM."
+        />
       </Helmet>
 
       <header className="flex items-center justify-between">
@@ -56,7 +59,7 @@ export default function AIAgents() {
               </Button>
             </div>
           )}
-          {runs.map((r) => (
+          {runs.map(r => (
             <AgentRunCard key={r.id} run={r} onOpen={setSelected} />
           ))}
         </CardContent>
@@ -64,7 +67,7 @@ export default function AIAgents() {
 
       <AgentLauncherDialog open={launcherOpen} onOpenChange={setLauncherOpen} />
 
-      <Sheet open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
+      <Sheet open={!!selected} onOpenChange={v => !v && setSelected(null)}>
         <SheetContent className="sm:max-w-xl overflow-y-auto">
           <SheetHeader>
             <SheetTitle className="text-section-title flex items-center gap-2">
@@ -91,14 +94,16 @@ export default function AIAgents() {
                 </div>
               )}
 
-              {details.run.status === "awaiting_approval" && (
+              {details.run.status === 'awaiting_approval' && (
                 <AgentApprovalBar runId={details.run.id} />
               )}
 
               {details.run.result && (
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-section-title text-sm">Resultado</CardTitle>
+                    <CardTitle className="text-section-title text-sm">
+                      Resultado
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <pre className="text-xs whitespace-pre-wrap">

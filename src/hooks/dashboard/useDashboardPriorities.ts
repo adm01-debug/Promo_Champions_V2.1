@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useMemo } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
-export type DashboardRole = "sdr" | "closer" | "gestao" | "hybrid";
+export type DashboardRole = 'sdr' | 'closer' | 'gestao' | 'hybrid';
 
 interface DashboardPriorities {
   role: DashboardRole;
@@ -21,44 +21,44 @@ export function useDashboardPriorities(): DashboardPriorities {
   const { salesperson } = useAuth();
 
   return useMemo(() => {
-    const role = (salesperson?.role as DashboardRole) || "hybrid";
+    const role = (salesperson?.role as DashboardRole) || 'hybrid';
 
     switch (role) {
-      case "sdr":
+      case 'sdr':
         return {
           role,
           showGamificationOpen: true,
           showAnalyticsOpen: false,
           showPerformanceOpen: false,
           showEngagementOpen: false,
-          roleHint: "PROSPECTION MODE: SDR FOCUS ACTIVATED 🎯",
+          roleHint: 'PROSPECTION MODE: SDR FOCUS ACTIVATED 🎯',
         };
-      case "closer":
+      case 'closer':
         return {
           role,
           showGamificationOpen: true,
           showAnalyticsOpen: true,
           showPerformanceOpen: false,
           showEngagementOpen: false,
-          roleHint: "CLOSER MODE: REVENUE STRIKE ACTIVATED 💰",
+          roleHint: 'CLOSER MODE: REVENUE STRIKE ACTIVATED 💰',
         };
-      case "gestao":
+      case 'gestao':
         return {
           role,
           showGamificationOpen: false,
           showAnalyticsOpen: true,
           showPerformanceOpen: true,
           showEngagementOpen: false,
-          roleHint: "COMMAND MODE: STRATEGIC OVERVIEW 🛡️",
+          roleHint: 'COMMAND MODE: STRATEGIC OVERVIEW 🛡️',
         };
       default:
         return {
-          role: "hybrid",
+          role: 'hybrid',
           showGamificationOpen: true,
           showAnalyticsOpen: true,
           showPerformanceOpen: false,
           showEngagementOpen: false,
-          roleHint: "HYBRID MODE: ADAPTIVE PROTOCOL ACTIVE ⚡",
+          roleHint: 'HYBRID MODE: ADAPTIVE PROTOCOL ACTIVE ⚡',
         };
     }
   }, [salesperson?.role]);

@@ -22,7 +22,12 @@ interface DayBucket {
 }
 
 /** Replay temporal scrubber: visualiza eventos da season agregados por dia. */
-export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilotNameById }) => {
+export const SeasonReplayModal: FC<Props> = ({
+  open,
+  onOpenChange,
+  events,
+  pilotNameById,
+}) => {
   const days = useMemo<DayBucket[]>(() => {
     if (!events.length) return [];
     const buckets = new Map<string, RaceEvent[]>();
@@ -35,7 +40,8 @@ export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilot
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([date, evs]) => {
         const counts = new Map<string, number>();
-        for (const e of evs) counts.set(e.salesperson_id, (counts.get(e.salesperson_id) ?? 0) + 1);
+        for (const e of evs)
+          counts.set(e.salesperson_id, (counts.get(e.salesperson_id) ?? 0) + 1);
         const topMovers = [...counts.entries()]
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3)
@@ -80,12 +86,19 @@ export const SeasonReplayModal: FC<Props> = ({ open, onOpenChange, events, pilot
                 </p>
                 <div className="space-y-1">
                   {current.topMovers.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">Sem movimentações destacadas.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Sem movimentações destacadas.
+                    </p>
                   ) : (
                     current.topMovers.map(m => (
-                      <div key={m.id} className="flex items-center justify-between text-sm">
+                      <div
+                        key={m.id}
+                        className="flex items-center justify-between text-sm"
+                      >
                         <span className="truncate">{m.name}</span>
-                        <span className="text-muted-foreground tabular-nums">{m.count}x</span>
+                        <span className="text-muted-foreground tabular-nums">
+                          {m.count}x
+                        </span>
                       </div>
                     ))
                   )}

@@ -62,12 +62,17 @@ export function useGamifiedProfile(salespersonId?: string) {
             .select('league, points')
             .eq('salesperson_id', salespersonId)
             .maybeSingle(),
-          supabase.from('salesperson_badges').select('id').eq('salesperson_id', salespersonId),
+          supabase
+            .from('salesperson_badges')
+            .select('id')
+            .eq('salesperson_id', salespersonId),
           supabase.from('kudos').select('id').eq('to_salesperson_id', salespersonId),
           supabase
             .from('weekly_matchups')
             .select('winner_id')
-            .or(`salesperson_a_id.eq.${salespersonId},salesperson_b_id.eq.${salespersonId}`)
+            .or(
+              `salesperson_a_id.eq.${salespersonId},salesperson_b_id.eq.${salespersonId}`
+            )
             .eq('status', 'completed'),
         ]);
 
@@ -96,7 +101,9 @@ export function useGamifiedProfile(salespersonId?: string) {
 
       const matchups = matchupRes.data || [];
       const h2hWins = matchups.filter(m => m.winner_id === salespersonId).length;
-      const h2hLosses = matchups.filter(m => m.winner_id && m.winner_id !== salespersonId).length;
+      const h2hLosses = matchups.filter(
+        m => m.winner_id && m.winner_id !== salespersonId
+      ).length;
 
       // Estimate XP from badges + streak
       const badgeCount = badgeRes.data?.length || 0;

@@ -157,22 +157,26 @@ export const IntelligenceZones = () => {
             </p>
             {data?.customer360.lastOrders && data.customer360.lastOrders.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                {data.customer360.lastOrders.map((order: { id: string; date: string; value: number }) => (
-                  <div
-                    key={order.id}
-                    className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all"
-                  >
-                    <p className="text-[9px] text-muted-foreground font-mono">
-                      {new Date(order.date).toLocaleDateString('pt-BR')}
-                    </p>
-                    <p className="text-sm font-black text-primary mt-1">
-                      {formatCurrency(order.value)}
-                    </p>
-                  </div>
-                ))}
+                {data.customer360.lastOrders.map(
+                  (order: { id: string; date: string; value: number }) => (
+                    <div
+                      key={order.id}
+                      className="p-3 bg-black/40 rounded-xl border border-white/5 flex flex-col justify-between group/order hover:border-primary/30 transition-all"
+                    >
+                      <p className="text-[9px] text-muted-foreground font-mono">
+                        {new Date(order.date).toLocaleDateString('pt-BR')}
+                      </p>
+                      <p className="text-sm font-black text-primary mt-1">
+                        {formatCurrency(order.value)}
+                      </p>
+                    </div>
+                  )
+                )}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground italic">Sem pedidos registrados.</p>
+              <p className="text-xs text-muted-foreground italic">
+                Sem pedidos registrados.
+              </p>
             )}
           </div>
         </Card>
@@ -187,27 +191,29 @@ export const IntelligenceZones = () => {
             <span className="text-primary">Especialista</span>
           </h3>
           <div className="space-y-4 relative z-10">
-            {data?.expertCurated.map((item: { name: string; reason: string }, i: number) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="group/item flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/40 transition-all cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="size-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform">
-                    <Brain className="size-5" />
+            {data?.expertCurated.map(
+              (item: { name: string; reason: string }, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group/item flex flex-col gap-2 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/40 transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary group-hover/item:scale-110 transition-transform">
+                      <Brain className="size-5" />
+                    </div>
+                    <p className="text-sm font-black uppercase tracking-tighter">
+                      {item.name}
+                    </p>
                   </div>
-                  <p className="text-sm font-black uppercase tracking-tighter">
-                    {item.name}
+                  <p className="text-[10px] text-muted-foreground leading-relaxed italic">
+                    {item.reason}
                   </p>
-                </div>
-                <p className="text-[10px] text-muted-foreground leading-relaxed italic">
-                  {item.reason}
-                </p>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            )}
           </div>
         </Card>
       </div>

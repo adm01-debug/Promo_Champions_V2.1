@@ -1,6 +1,15 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Flame, Shield, Award, Swords, Star, TrendingUp, Heart } from 'lucide-react';
+import {
+  Trophy,
+  Flame,
+  Shield,
+  Award,
+  Swords,
+  Star,
+  TrendingUp,
+  Heart,
+} from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +42,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
       <Card className="border-dashed">
         <CardContent className="p-8 text-center">
           <Award className="h-10 w-10 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground">Faça login para ver seu perfil gamificado</p>
+          <p className="text-sm text-muted-foreground">
+            Faça login para ver seu perfil gamificado
+          </p>
         </CardContent>
       </Card>
     );
@@ -45,14 +56,54 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
   const leagueStyle = LEAGUE_STYLES[profile.league || 'bronze'] || LEAGUE_STYLES.bronze;
 
   const stats = [
-    { label: 'Ranking', value: `#${profile.rank}`, icon: <Trophy className="h-4 w-4" />, color: 'text-coins' },
-    { label: 'Vendas/Mês', value: `R$${(profile.totalSales / 1000).toFixed(0)}k`, icon: <TrendingUp className="h-4 w-4" />, color: 'text-success' },
-    { label: 'Deals', value: profile.dealsCount, icon: <Star className="h-4 w-4" />, color: 'text-info' },
-    { label: 'Streak', value: `${profile.currentStreak}🔥`, icon: <Flame className="h-4 w-4" />, color: 'text-streak' },
-    { label: 'Badges', value: profile.badgeCount, icon: <Award className="h-4 w-4" />, color: 'text-primary' },
-    { label: 'H2H', value: `${profile.h2hWins}W/${profile.h2hLosses}L`, icon: <Swords className="h-4 w-4" />, color: 'text-destructive' },
-    { label: 'Kudos', value: profile.kudosReceived, icon: <Heart className="h-4 w-4" />, color: 'text-live-pulse' },
-    { label: 'Liga Pts', value: profile.leaguePoints, icon: <Shield className="h-4 w-4" />, color: 'text-accent' },
+    {
+      label: 'Ranking',
+      value: `#${profile.rank}`,
+      icon: <Trophy className="h-4 w-4" />,
+      color: 'text-coins',
+    },
+    {
+      label: 'Vendas/Mês',
+      value: `R$${(profile.totalSales / 1000).toFixed(0)}k`,
+      icon: <TrendingUp className="h-4 w-4" />,
+      color: 'text-success',
+    },
+    {
+      label: 'Deals',
+      value: profile.dealsCount,
+      icon: <Star className="h-4 w-4" />,
+      color: 'text-info',
+    },
+    {
+      label: 'Streak',
+      value: `${profile.currentStreak}🔥`,
+      icon: <Flame className="h-4 w-4" />,
+      color: 'text-streak',
+    },
+    {
+      label: 'Badges',
+      value: profile.badgeCount,
+      icon: <Award className="h-4 w-4" />,
+      color: 'text-primary',
+    },
+    {
+      label: 'H2H',
+      value: `${profile.h2hWins}W/${profile.h2hLosses}L`,
+      icon: <Swords className="h-4 w-4" />,
+      color: 'text-destructive',
+    },
+    {
+      label: 'Kudos',
+      value: profile.kudosReceived,
+      icon: <Heart className="h-4 w-4" />,
+      color: 'text-live-pulse',
+    },
+    {
+      label: 'Liga Pts',
+      value: profile.leaguePoints,
+      icon: <Shield className="h-4 w-4" />,
+      color: 'text-accent',
+    },
   ];
 
   return (
@@ -64,7 +115,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16 ring-3 ring-primary-foreground/30">
                 <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="text-xl font-bold">{profile.name[0]}</AvatarFallback>
+                <AvatarFallback className="text-xl font-bold">
+                  {profile.name[0]}
+                </AvatarFallback>
               </Avatar>
               <div className="text-primary-foreground">
                 <h2 className="text-xl font-black">{profile.name}</h2>
@@ -73,7 +126,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
                     Nv.{level}
                   </Badge>
                   <Badge className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 text-xs">
-                    {leagueStyle.icon} {(profile.league || 'bronze').charAt(0).toUpperCase() + (profile.league || 'bronze').slice(1)}
+                    {leagueStyle.icon}{' '}
+                    {(profile.league || 'bronze').charAt(0).toUpperCase() +
+                      (profile.league || 'bronze').slice(1)}
                   </Badge>
                   <Badge className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 text-xs">
                     #{profile.rank}
@@ -85,7 +140,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
             <div className="mt-4 space-y-1">
               <div className="flex items-center justify-between text-xs text-primary-foreground/80">
                 <span>XP: {profile.totalXp.toLocaleString('pt-BR')}</span>
-                <span>Nível {level} → {level + 1}</span>
+                <span>
+                  Nível {level} → {level + 1}
+                </span>
               </div>
               <div className="h-2 bg-primary-foreground/20 rounded-full overflow-hidden">
                 <motion.div
@@ -95,7 +152,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
                   className="h-full bg-primary-foreground/80 rounded-full"
                 />
               </div>
-              <p className="text-[10px] text-primary-foreground/60 text-right">{xpInLevel}/{XP_PER_LEVEL} XP</p>
+              <p className="text-[10px] text-primary-foreground/60 text-right">
+                {xpInLevel}/{XP_PER_LEVEL} XP
+              </p>
             </div>
           </div>
         </Card>
@@ -131,7 +190,9 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
           <div className="grid grid-cols-2 gap-3">
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-[10px] text-muted-foreground">Maior Streak</p>
-              <p className="text-lg font-black text-foreground">{profile.longestStreak} dias 🔥</p>
+              <p className="text-lg font-black text-foreground">
+                {profile.longestStreak} dias 🔥
+              </p>
             </div>
             <div className="p-3 rounded-lg bg-muted/30">
               <p className="text-[10px] text-muted-foreground">Taxa H2H</p>
@@ -147,6 +208,5 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
     </div>
   );
 };
-
 
 export const GamifiedProfile = React.memo(GamifiedProfileComponent);

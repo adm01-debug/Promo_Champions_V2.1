@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatBRL } from "./orderHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatBRL } from './orderHelpers';
 
 interface Props {
   subtotal: number;

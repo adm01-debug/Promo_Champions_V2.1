@@ -3,11 +3,11 @@
  * determinísticos sem depender de fetch/streaming.
  */
 
-export type AssistantMode = "briefing" | "chat" | "proactive_nudge";
+export type AssistantMode = 'briefing' | 'chat' | 'proactive_nudge';
 
 export interface AssistantChatMessage {
   id: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   timestamp: number;
 }
@@ -18,16 +18,16 @@ export interface AssistantChatMessage {
  */
 export function parseSSELine(line: string): string {
   const trimmed = line.trim();
-  if (!trimmed.startsWith("data:")) return "";
+  if (!trimmed.startsWith('data:')) return '';
   const payload = trimmed.slice(5).trim();
-  if (!payload || payload === "[DONE]") return "";
+  if (!payload || payload === '[DONE]') return '';
   try {
     const parsed = JSON.parse(payload) as {
       choices?: Array<{ delta?: { content?: string } }>;
     };
-    return parsed.choices?.[0]?.delta?.content ?? "";
+    return parsed.choices?.[0]?.delta?.content ?? '';
   } catch {
-    return "";
+    return '';
   }
 }
 
@@ -35,11 +35,14 @@ export function parseSSELine(line: string): string {
  * Percorre um chunk textual de SSE, quebra em linhas e concatena os deltas.
  * Retorna o texto e um buffer residual (linha incompleta que ainda não terminou em \n).
  */
-export function drainSSEChunk(chunk: string, buffer: string): { text: string; buffer: string } {
+export function drainSSEChunk(
+  chunk: string,
+  buffer: string
+): { text: string; buffer: string } {
   const combined = buffer + chunk;
-  const parts = combined.split("\n");
-  const residual = parts.pop() ?? "";
-  let text = "";
+  const parts = combined.split('\n');
+  const residual = parts.pop() ?? '';
+  let text = '';
   for (const line of parts) {
     text += parseSSELine(line);
   }
@@ -51,14 +54,17 @@ export function makeMessageId(): string {
 }
 
 export function getAssistantErrorMessage(status: number, responseBody: string): string {
-  if (status === 401) return "Sua sessão expirou. Entre novamente para usar o assistente.";
-  if (status === 402) return "O limite de uso da IA foi atingido. Tente novamente mais tarde.";
-  if (status === 429) return "O assistente recebeu muitas solicitações. Aguarde um instante e tente novamente.";
+  if (status === 401)
+    return 'Sua sessão expirou. Entre novamente para usar o assistente.';
+  if (status === 402)
+    return 'O limite de uso da IA foi atingido. Tente novamente mais tarde.';
+  if (status === 429)
+    return 'O assistente recebeu muitas solicitações. Aguarde um instante e tente novamente.';
 
   const normalized = responseBody.toLowerCase();
-  if (status === 403 && normalized.includes("lovable ai is disabled")) {
-    return "A IA está desabilitada neste workspace. Solicite a ativação a um administrador.";
+  if (status === 403 && normalized.includes('lovable ai is disabled')) {
+    return 'A IA está desabilitada neste workspace. Solicite a ativação a um administrador.';
   }
 
-  return "O assistente está temporariamente indisponível. Tente novamente em instantes.";
+  return 'O assistente está temporariamente indisponível. Tente novamente em instantes.';
 }

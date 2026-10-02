@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface CompetitorRegistry {
   id: string;
@@ -15,12 +15,12 @@ export interface CompetitorRegistry {
 
 export function useCompetitorsRegistry() {
   return useQuery({
-    queryKey: ["competitors-registry"],
+    queryKey: ['competitors-registry'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("competitors_registry")
-        .select("*")
-        .order("name", { ascending: true });
+        .from('competitors_registry')
+        .select('*')
+        .order('name', { ascending: true });
       if (error) throw error;
       return (data as CompetitorRegistry[]) ?? [];
     },
@@ -40,7 +40,7 @@ export function useUpsertCompetitor() {
         is_active: input.is_active ?? true,
       };
       const { data, error } = await supabase
-        .from("competitors_registry")
+        .from('competitors_registry')
         .upsert(payload)
         .select()
         .single();
@@ -48,10 +48,10 @@ export function useUpsertCompetitor() {
       return data as CompetitorRegistry;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["competitors-registry"] });
-      toast.success("Competidor salvo");
+      qc.invalidateQueries({ queryKey: ['competitors-registry'] });
+      toast.success('Competidor salvo');
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao salvar"),
+    onError: e => toast.error(e instanceof Error ? e.message : 'Erro ao salvar'),
   });
 }
 
@@ -59,13 +59,13 @@ export function useDeleteCompetitor() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("competitors_registry").delete().eq("id", id);
+      const { error } = await supabase.from('competitors_registry').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["competitors-registry"] });
-      toast.success("Competidor removido");
+      qc.invalidateQueries({ queryKey: ['competitors-registry'] });
+      toast.success('Competidor removido');
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao remover"),
+    onError: e => toast.error(e instanceof Error ? e.message : 'Erro ao remover'),
   });
 }

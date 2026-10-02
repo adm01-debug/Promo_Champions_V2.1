@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Grid3x3 } from "lucide-react";
-import { useMemo } from "react";
-import type { ReasonMatrixCell } from "@/hooks/win-loss/useWinLossAggregations";
-import { stageLabel } from "@/components/deal-intelligence/winloss/winLossHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Grid3x3 } from 'lucide-react';
+import { useMemo } from 'react';
+import type { ReasonMatrixCell } from '@/hooks/win-loss/useWinLossAggregations';
+import { stageLabel } from '@/components/deal-intelligence/winloss/winLossHelpers';
 
 interface Props {
   cells: ReasonMatrixCell[];
@@ -29,22 +29,33 @@ export function WinLossReasonMatrix({ cells, onCellClick }: Props) {
       </CardHeader>
       <CardContent>
         {!cells.length ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Sem perdas no período.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Sem perdas no período.
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs border-collapse">
               <thead>
                 <tr>
-                  <th className="text-left p-2 text-muted-foreground font-normal">Motivo</th>
+                  <th className="text-left p-2 text-muted-foreground font-normal">
+                    Motivo
+                  </th>
                   {stages.map(s => (
-                    <th key={s} className="p-2 text-muted-foreground font-normal text-center">{stageLabel(s)}</th>
+                    <th
+                      key={s}
+                      className="p-2 text-muted-foreground font-normal text-center"
+                    >
+                      {stageLabel(s)}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {reasons.map(r => (
                   <tr key={r}>
-                    <td className="p-2 font-medium truncate max-w-[160px]" title={r}>{r}</td>
+                    <td className="p-2 font-medium truncate max-w-[160px]" title={r}>
+                      {r}
+                    </td>
                     {stages.map(s => {
                       const v = lookup.get(`${r}||${s}`) ?? 0;
                       const intensity = v / max;
@@ -56,13 +67,20 @@ export function WinLossReasonMatrix({ cells, onCellClick }: Props) {
                             onClick={() => onCellClick?.(r, s)}
                             className="w-full rounded-md py-1.5 text-[11px] font-medium tabular-nums transition-transform hover:scale-105 disabled:cursor-default disabled:hover:scale-100"
                             style={{
-                              background: v ? `hsl(var(--destructive) / ${0.1 + intensity * 0.6})` : "transparent",
-                              color: intensity > 0.5 ? "hsl(var(--destructive-foreground))" : undefined,
-                              cursor: v && onCellClick ? "pointer" : "default",
+                              background: v
+                                ? `hsl(var(--destructive) / ${0.1 + intensity * 0.6})`
+                                : 'transparent',
+                              color:
+                                intensity > 0.5
+                                  ? 'hsl(var(--destructive-foreground))'
+                                  : undefined,
+                              cursor: v && onCellClick ? 'pointer' : 'default',
                             }}
-                            aria-label={v ? `Ver ${v} deals: ${r} em ${stageLabel(s)}` : undefined}
+                            aria-label={
+                              v ? `Ver ${v} deals: ${r} em ${stageLabel(s)}` : undefined
+                            }
                           >
-                            {v || "—"}
+                            {v || '—'}
                           </button>
                         </td>
                       );

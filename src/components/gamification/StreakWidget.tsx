@@ -1,21 +1,27 @@
-import React, { useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Flame, Trophy, Target } from "lucide-react";
-import { useCurrentStreak, useStreakAchievements, getNextMilestone } from "@/hooks/gamification/useDailyStreakAchievements";
-import { Skeleton } from "@/components/ui/skeleton";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { format, subDays } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import React, { useMemo } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Flame, Trophy, Target } from 'lucide-react';
+import {
+  useCurrentStreak,
+  useStreakAchievements,
+  getNextMilestone,
+} from '@/hooks/gamification/useDailyStreakAchievements';
+import { Skeleton } from '@/components/ui/skeleton';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { format, subDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface StreakWidgetProps {
   salespersonId?: string;
 }
 
 function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
-  const { data: currentStreak, isLoading: streakLoading } = useCurrentStreak(salespersonId);
-  const { data: achievements, isLoading: achievementsLoading } = useStreakAchievements(salespersonId);
+  const { data: currentStreak, isLoading: streakLoading } =
+    useCurrentStreak(salespersonId);
+  const { data: achievements, isLoading: achievementsLoading } =
+    useStreakAchievements(salespersonId);
 
   const streak = currentStreak ?? 0;
 
@@ -24,8 +30,8 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
     const today = new Date();
     return Array.from({ length: 7 }, (_, i) => {
       const date = subDays(today, 6 - i);
-      const dayLabel = format(date, "EEE", { locale: ptBR }).charAt(0).toUpperCase();
-      const isActive = streak > 0 && (6 - i) < streak;
+      const dayLabel = format(date, 'EEE', { locale: ptBR }).charAt(0).toUpperCase();
+      const isActive = streak > 0 && 6 - i < streak;
       const isToday = i === 6;
       return { dayLabel, isActive, isToday };
     });
@@ -43,8 +49,8 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
 
   const achievedTypes = achievements?.map(a => a.streak_type) || [];
   const nextMilestone = getNextMilestone(streak, achievedTypes);
-  
-  const progressToNext = nextMilestone 
+
+  const progressToNext = nextMilestone
     ? Math.min((streak / nextMilestone.days) * 100, 100)
     : 100;
 
@@ -54,26 +60,28 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
     <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20 overflow-hidden relative h-full">
       {/* Animated fire glow effect */}
       <div className="absolute inset-0 bg-gradient-to-t from-streak/5 to-transparent pointer-events-none" />
-      
+
       <CardContent className="p-4 relative flex flex-col h-full">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <motion.div
-              animate={{ 
+              animate={{
                 scale: streak > 0 ? [1, 1.1, 1] : 1,
-                rotate: streak > 0 ? [0, -5, 5, 0] : 0
+                rotate: streak > 0 ? [0, -5, 5, 0] : 0,
               }}
-              transition={{ 
-                duration: 1.5, 
+              transition={{
+                duration: 1.5,
                 repeat: Infinity,
-                repeatType: "reverse"
+                repeatType: 'reverse',
               }}
             >
-              <Flame className={`h-5 w-5 ${streak > 0 ? 'text-streak' : 'text-muted-foreground'}`} />
+              <Flame
+                className={`h-5 w-5 ${streak > 0 ? 'text-streak' : 'text-muted-foreground'}`}
+              />
             </motion.div>
             <span className="text-sm font-medium text-foreground">Streak Diário</span>
           </div>
-          
+
           {achievements && achievements.length > 0 && (
             <div className="flex items-center gap-1 text-xs text-rank-gold">
               <Trophy className="h-3.5 w-3.5" />
@@ -84,12 +92,12 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
 
         <div className="flex items-end justify-between mb-2">
           <div className="flex items-baseline gap-1">
-            <motion.span 
+            <motion.span
               className="text-3xl font-bold text-streak"
               key={streak}
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              transition={{ type: 'spring', stiffness: 300 }}
             >
               {streak}
             </motion.span>
@@ -108,15 +116,11 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
 
         {nextMilestone && (
           <div className="space-y-1">
-            <Progress 
-              value={progressToNext} 
-              className="h-2 bg-streak/10"
-            />
+            <Progress value={progressToNext} className="h-2 bg-streak/10" />
             <p className="text-xs text-muted-foreground text-center">
-              {daysToNext > 0 
+              {daysToNext > 0
                 ? `Faltam ${daysToNext} ${daysToNext === 1 ? 'dia' : 'dias'} para ${nextMilestone.title}`
-                : `${nextMilestone.title} desbloqueado!`
-              }
+                : `${nextMilestone.title} desbloqueado!`}
             </p>
           </div>
         )}
@@ -127,9 +131,9 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
             <div key={i} className="flex flex-col items-center gap-1">
               <div
                 className={cn(
-                  "h-5 w-5 rounded-md transition-colors",
-                  day.isActive ? "bg-streak/60" : "bg-muted/30",
-                  day.isToday && "ring-1 ring-streak/50"
+                  'h-5 w-5 rounded-md transition-colors',
+                  day.isActive ? 'bg-streak/60' : 'bg-muted/30',
+                  day.isToday && 'ring-1 ring-streak/50'
                 )}
               />
               <span className="text-[9px] text-muted-foreground/70">{day.dayLabel}</span>
@@ -153,7 +157,12 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
                     className="w-2 rounded-full bg-gradient-to-t from-streak/25 to-streak/10"
                     style={{ height: `${8 + i * 3}px` }}
                     animate={{ opacity: [0.3, 0.8, 0.3], scaleY: [0.7, 1, 0.7] }}
-                    transition={{ duration: 1.8, delay: i * 0.12, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{
+                      duration: 1.8,
+                      delay: i * 0.12,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
                   />
                 ))}
               </div>

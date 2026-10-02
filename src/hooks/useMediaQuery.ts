@@ -4,9 +4,12 @@ interface UseMediaQueryOptions {
   defaultValue?: boolean;
 }
 
-export function useMediaQuery(query: string, options: UseMediaQueryOptions = {}): boolean {
+export function useMediaQuery(
+  query: string,
+  options: UseMediaQueryOptions = {}
+): boolean {
   const { defaultValue = false } = options;
-  
+
   const [matches, setMatches] = useState<boolean>(() => {
     if (typeof window === 'undefined') return defaultValue;
     return window.matchMedia(query).matches;
@@ -44,11 +47,11 @@ export function useIsDesktop(): boolean {
 
 export function useIsTouchDevice(): boolean {
   const [isTouch, setIsTouch] = useState(false);
-  
+
   useEffect(() => {
     setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
   }, []);
-  
+
   return isTouch;
 }
 

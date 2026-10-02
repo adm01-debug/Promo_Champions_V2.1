@@ -1,8 +1,12 @@
-import { useState } from "react";
-import { ChevronDown, ChevronRight, MessageSquare, User } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { ChevronDown, ChevronRight, MessageSquare, User } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button';
 import {
   type CallObjection,
   fmtTime,
@@ -10,7 +14,7 @@ import {
   qualityLabel,
   statusBadgeVariant,
   statusLabel,
-} from "./objectionHelpers";
+} from './objectionHelpers';
 
 interface Props {
   objections: CallObjection[];
@@ -32,13 +36,17 @@ export function ObjectionsList({ objections }: Props) {
       <CollapsibleTrigger asChild>
         <Button variant="ghost" size="sm" className="w-full justify-between">
           <span className="text-sm font-medium">
-            {open ? "Ocultar" : "Ver"} objeções detalhadas ({objections.length})
+            {open ? 'Ocultar' : 'Ver'} objeções detalhadas ({objections.length})
           </span>
-          {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          {open ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="mt-2 space-y-3">
-        {objections.map((o) => (
+        {objections.map(o => (
           <div key={o.id} className="rounded-lg border bg-card/40 p-3 space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="outline" className="text-[10px]">
@@ -47,7 +55,10 @@ export function ObjectionsList({ objections }: Props) {
               <Badge variant="secondary" className="text-[10px]">
                 {objectionTypeLabel(o.objection_type)}
               </Badge>
-              <Badge variant={statusBadgeVariant(o.resolution_status)} className="text-[10px]">
+              <Badge
+                variant={statusBadgeVariant(o.resolution_status)}
+                className="text-[10px]"
+              >
                 {statusLabel(o.resolution_status)}
               </Badge>
               <span className="ml-auto text-[10px] text-muted-foreground">
@@ -66,7 +77,9 @@ export function ObjectionsList({ objections }: Props) {
                 <p className="text-muted-foreground">{o.seller_response_text}</p>
               </div>
             ) : (
-              <p className="text-xs italic text-destructive/80">Sem resposta do vendedor</p>
+              <p className="text-xs italic text-destructive/80">
+                Sem resposta do vendedor
+              </p>
             )}
           </div>
         ))}

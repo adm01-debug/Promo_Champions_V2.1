@@ -1,20 +1,31 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Users, Crown, Shield, MessageCircle, User, AlertTriangle } from "lucide-react";
-import { useAccountContacts } from "@/hooks/engagement/useAccountEngagement";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Users, Crown, Shield, MessageCircle, User, AlertTriangle } from 'lucide-react';
+import { useAccountContacts } from '@/hooks/engagement/useAccountEngagement';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const ROLE_META: Record<string, { label: string; icon: typeof Users; variant: "won" | "qualified" | "info" | "low" | "destructive" }> = {
-  champion: { label: "Champion", icon: Crown, variant: "won" },
-  decision_maker: { label: "Decisor", icon: Shield, variant: "qualified" },
-  influencer: { label: "Influenciador", icon: MessageCircle, variant: "info" },
-  user: { label: "Usuário", icon: User, variant: "low" },
-  technical: { label: "Técnico", icon: Users, variant: "info" },
-  blocker: { label: "Bloqueador", icon: AlertTriangle, variant: "destructive" },
+const ROLE_META: Record<
+  string,
+  {
+    label: string;
+    icon: typeof Users;
+    variant: 'won' | 'qualified' | 'info' | 'low' | 'destructive';
+  }
+> = {
+  champion: { label: 'Champion', icon: Crown, variant: 'won' },
+  decision_maker: { label: 'Decisor', icon: Shield, variant: 'qualified' },
+  influencer: { label: 'Influenciador', icon: MessageCircle, variant: 'info' },
+  user: { label: 'Usuário', icon: User, variant: 'low' },
+  technical: { label: 'Técnico', icon: Users, variant: 'info' },
+  blocker: { label: 'Bloqueador', icon: AlertTriangle, variant: 'destructive' },
 };
 
 const SENIORITY_LABEL: Record<string, string> = {
-  c_level: "C-Level", vp: "VP", director: "Diretor", manager: "Gerente", ic: "Colaborador",
+  c_level: 'C-Level',
+  vp: 'VP',
+  director: 'Diretor',
+  manager: 'Gerente',
+  ic: 'Colaborador',
 };
 
 interface Props {
@@ -30,13 +41,17 @@ export function BuyingCommitteeCard({ accountId }: Props) {
         <CardTitle className="text-section-title flex items-center gap-2">
           <Users className="h-4 w-4 text-primary" />
           Buying Committee
-          <Badge variant="outline" size="sm" className="ml-auto">{contacts.length}</Badge>
+          <Badge variant="outline" size="sm" className="ml-auto">
+            {contacts.length}
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="space-y-2">
-            {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full" />
+            ))}
           </div>
         ) : contacts.length === 0 ? (
           <div className="text-sm text-muted-foreground py-6 text-center">
@@ -44,7 +59,7 @@ export function BuyingCommitteeCard({ accountId }: Props) {
           </div>
         ) : (
           <div className="space-y-2">
-            {contacts.map((c) => {
+            {contacts.map(c => {
               const role = ROLE_META[c.buying_role as string] ?? ROLE_META.user;
               const Icon = role.icon;
               return (
@@ -56,11 +71,14 @@ export function BuyingCommitteeCard({ accountId }: Props) {
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm truncate">{c.name}</span>
                       {c.is_primary && (
-                        <Badge variant="info" size="sm">Principal</Badge>
+                        <Badge variant="info" size="sm">
+                          Principal
+                        </Badge>
                       )}
                     </div>
                     <div className="text-xs text-muted-foreground truncate">
-                      {c.job_title ?? "—"} · {SENIORITY_LABEL[c.seniority as string] ?? "—"}
+                      {c.job_title ?? '—'} ·{' '}
+                      {SENIORITY_LABEL[c.seniority as string] ?? '—'}
                     </div>
                   </div>
                   <Badge variant={role.variant} size="sm" className="gap-1">

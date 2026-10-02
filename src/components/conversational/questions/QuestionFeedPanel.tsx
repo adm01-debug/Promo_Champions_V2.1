@@ -1,12 +1,18 @@
-import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { StatusBadge } from "@/components/shared/StatusBadge";
-import { Trophy, TrendingDown, HelpCircle } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useQuestionAnalysisFeed } from "@/hooks/conversational/useQuestionAnalysis";
-import { healthBadgeVariant, healthLabel } from "./questionHelpers";
+import { useMemo } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { StatusBadge } from '@/components/shared/StatusBadge';
+import { Trophy, TrendingDown, HelpCircle } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { useQuestionAnalysisFeed } from '@/hooks/conversational/useQuestionAnalysis';
+import { healthBadgeVariant, healthLabel } from './questionHelpers';
 
 interface Props {
   onSelect?: (recordingId: string) => void;
@@ -16,7 +22,7 @@ export const QuestionFeedPanel = ({ onSelect }: Props) => {
   const { data, isLoading } = useQuestionAnalysisFeed(50);
 
   const { top, bottom } = useMemo(() => {
-    const items = (data ?? []).filter((d) => d.total_questions > 0);
+    const items = (data ?? []).filter(d => d.total_questions > 0);
     const sorted = [...items].sort((a, b) => b.quality_score - a.quality_score);
     return { top: sorted.slice(0, 5), bottom: sorted.slice(-5).reverse() };
   }, [data]);
@@ -28,7 +34,9 @@ export const QuestionFeedPanel = ({ onSelect }: Props) => {
           <HelpCircle className="h-5 w-5 text-primary" />
           Qualidade de perguntas — feed
         </CardTitle>
-        <CardDescription>Top performers e oportunidades de coaching nas últimas calls analisadas</CardDescription>
+        <CardDescription>
+          Top performers e oportunidades de coaching nas últimas calls analisadas
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -36,9 +44,10 @@ export const QuestionFeedPanel = ({ onSelect }: Props) => {
             <Skeleton className="h-48" />
             <Skeleton className="h-48" />
           </div>
-        ) : (top.length === 0 && bottom.length === 0) ? (
+        ) : top.length === 0 && bottom.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-6">
-            Nenhuma análise de perguntas disponível ainda. Transcreva calls para alimentar este feed.
+            Nenhuma análise de perguntas disponível ainda. Transcreva calls para alimentar
+            este feed.
           </p>
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
@@ -64,7 +73,11 @@ export const QuestionFeedPanel = ({ onSelect }: Props) => {
 interface ColProps {
   icon: React.ReactNode;
   title: string;
-  items: ReturnType<typeof useQuestionAnalysisFeed>["data"] extends infer T ? (T extends Array<infer U> ? U[] : never) : never;
+  items: ReturnType<typeof useQuestionAnalysisFeed>['data'] extends infer T
+    ? T extends Array<infer U>
+      ? U[]
+      : never
+    : never;
   onSelect?: (id: string) => void;
 }
 
@@ -78,10 +91,15 @@ const Column = ({ icon, title, items, onSelect }: ColProps) => (
       <p className="text-xs text-muted-foreground">Sem dados.</p>
     ) : (
       <div className="space-y-1.5">
-        {items.map((it) => {
+        {items.map(it => {
           const rec = it.call_recordings;
           const variant = healthBadgeVariant(it.health);
-          const status = variant === "high" ? "success" : variant === "destructive" ? "error" : variant;
+          const status =
+            variant === 'high'
+              ? 'success'
+              : variant === 'destructive'
+                ? 'error'
+                : variant;
           return (
             <button
               key={it.id}
@@ -90,7 +108,9 @@ const Column = ({ icon, title, items, onSelect }: ColProps) => (
               className="w-full text-left border rounded-md p-2 hover:bg-muted/40 transition-colors"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium truncate">{rec?.title ?? "Call"}</span>
+                <span className="text-sm font-medium truncate">
+                  {rec?.title ?? 'Call'}
+                </span>
                 <StatusBadge
                   status={status}
                   label={`${Math.round(it.quality_score)} · ${healthLabel(it.health)}`}
@@ -98,9 +118,14 @@ const Column = ({ icon, title, items, onSelect }: ColProps) => (
               </div>
               <div className="flex items-center justify-between text-[11px] text-muted-foreground mt-0.5">
                 <span>
-                  {it.total_questions} perg · {it.discovery_questions} disc · {it.impact_questions} imp
+                  {it.total_questions} perg · {it.discovery_questions} disc ·{' '}
+                  {it.impact_questions} imp
                 </span>
-                {rec && <span>{format(new Date(rec.recorded_at), "dd MMM", { locale: ptBR })}</span>}
+                {rec && (
+                  <span>
+                    {format(new Date(rec.recorded_at), 'dd MMM', { locale: ptBR })}
+                  </span>
+                )}
               </div>
             </button>
           );
