@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface ScoringFactors {
   dealValue: number;
@@ -18,6 +19,23 @@ Deno.serve(withRequestId("lead-scoring", async (req, _ctx) => {
   }
 
   try {
+    // Autorização: exige usuário autenticado (JWT válido).
+    try {
+      await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("lead-scoring authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const rawBody = await req.json();
     
     // Contract validation

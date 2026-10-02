@@ -1,6 +1,6 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface Turn {
   speaker: "seller" | "client" | "unknown";
@@ -21,26 +21,7 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: claimsErr } = await supabase.auth.getClaims(token);
-    if (claimsErr || !claims?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const caller = await getUserClient(req);
 
     const body = await req.json().catch(() => ({}));
     const recording_id = String(body?.recording_id ?? "");
@@ -51,12 +32,12 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
       });
     }
 
-    const service = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    // Escrita em call_conversation_metrics exige bypass de RLS (tabela restrita
+    // a admin/manager); a leitura do recording usa o client do usuário para
+    // garantir que o chamador só analise gravações que ele pode ver.
+    const service = getServiceClient("escrita em call_conversation_metrics (RLS admin/manager)");
 
-    const { data: rec, error: recErr } = await service
+    const { data: rec, error: recErr } = await caller.client
       .from("call_recordings")
       .select("id, diarization, duration_seconds")
       .eq("id", recording_id)
@@ -154,6 +135,12 @@ Deno.serve(withRequestId("analyze-conversation-metrics", async (req, _ctx) => {
       engagement_score: engagement,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('analyze-conversation-metrics error:', e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }), {
       status: 500,

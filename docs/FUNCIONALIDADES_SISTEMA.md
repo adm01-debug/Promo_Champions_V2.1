@@ -1,7 +1,7 @@
 # 📋 Levantamento Completo de Funcionalidades — Sales Arena
 
 > Documento gerado a partir de toda a conversa e memórias do projeto.  
-> Última atualização: 2026-03-15
+> Atualizado em: 2026-03-15
 
 ---
 

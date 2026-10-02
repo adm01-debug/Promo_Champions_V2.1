@@ -3,6 +3,7 @@ import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.4
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -141,6 +142,21 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
   }
 
   try {
+    // Logs de segurança de todos os usuários + disparo de e-mail aos admins:
+    // operação restrita a administradores.
+    const caller = await getUserClient(req);
+    const { data: isAdmin, error: roleError } = await caller.client.rpc(
+      'has_role' as never,
+      { _user_id: caller.userId, _role: 'admin' } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'forbidden' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
     console.info('Starting access denied spike check...');
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -354,6 +370,12 @@ const handler = withRequestId('access-denied-alerts', async (req, _ctx): Promise
       { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   } catch (error: unknown) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
     console.error('Error in access-denied-alerts:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),

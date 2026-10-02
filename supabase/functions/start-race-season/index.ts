@@ -1,6 +1,11 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from "../_shared/request-id.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  requireAdmin,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 
 
@@ -39,30 +44,30 @@ Deno.serve(withRequestId("start-race-season", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-    const userClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claims, error: authError } = await userClient.auth.getClaims(token);
-    if (authError || !claims?.claims?.sub) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      throw error;
     }
 
-    const admin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-    );
-
-    const { data: isAdmin } = await admin.rpc('has_role', { _user_id: claims.claims.sub, _role: 'admin' });
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: 'Forbidden — admin only' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    try {
+      await requireAdmin(caller);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'Forbidden — admin only' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      throw error;
     }
+
+    // Bypass de RLS necessário: cria season, carros e power-ups de todos
+    // os vendedores.
+    const admin = getServiceClient(
+      "criacao de race season escreve carros e power-ups de toda a equipe",
+    );
 
     const body = await req.json();
     const {

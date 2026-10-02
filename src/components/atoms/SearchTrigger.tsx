@@ -1,4 +1,4 @@
-import React, { forwardRef, memo } from 'react';
+import { forwardRef, memo } from 'react';
 import { Search } from 'lucide-react';
 
 export const SearchTrigger = memo(
