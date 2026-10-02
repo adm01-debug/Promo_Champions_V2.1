@@ -319,7 +319,9 @@ export default function QuoteCadencesPage() {
                 <ContactFrequencyRules />
                 <Card className="glass border-border/40">
                   <CardHeader>
-                    <CardTitle className="text-section-title text-sm">Configurações Rápidas</CardTitle>
+                    <CardTitle className="text-section-title text-sm">
+                      Configurações Rápidas
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between text-xs">

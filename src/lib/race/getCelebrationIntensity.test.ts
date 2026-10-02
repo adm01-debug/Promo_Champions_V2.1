@@ -4,7 +4,13 @@ import { getCelebrationIntensity } from './getCelebrationIntensity';
 describe('getCelebrationIntensity', () => {
   it('sem salto de posição não celebra (score 0, sem som/duração)', () => {
     const r = getCelebrationIntensity({ fromRank: 5, toRank: 5 });
-    expect(r).toEqual({ score: 0, shake: false, fireworks: 0, sound: 'none', duration: 0 });
+    expect(r).toEqual({
+      score: 0,
+      shake: false,
+      fireworks: 0,
+      sound: 'none',
+      duration: 0,
+    });
     expect(getCelebrationIntensity({ fromRank: 2, toRank: 7 }).score).toBe(0);
   });
 

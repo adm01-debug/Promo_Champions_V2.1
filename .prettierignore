@@ -6,3 +6,6 @@ playwright-report
 package-lock.json
 bun.lock
 bun.lockb
+.prettierignore
+# gerado por "supabase gen types" — o check de drift compara com a saída crua do gerador
+src/integrations/supabase/types.ts

@@ -37,7 +37,9 @@ export function useRaceViewTelemetry(route: string, ready: boolean) {
           device_type: window.innerWidth < 768 ? 'mobile' : 'desktop',
           duration_seconds: Math.round(ms / 1000),
           interactions: 0,
-          entered_at: new Date(startedAtRef.current + performance.timeOrigin).toISOString(),
+          entered_at: new Date(
+            startedAtRef.current + performance.timeOrigin
+          ).toISOString(),
           exited_at: new Date().toISOString(),
         });
       } catch {

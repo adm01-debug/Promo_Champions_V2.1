@@ -4,10 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type QuotaRiskLevel = 'safe' | 'on_track' | 'at_risk' | 'critical';
 export type QuotaActionType =
-  | 'close_deal'
-  | 'generate_pipeline'
-  | 'increase_ticket'
-  | 'accelerate_stage';
+  'close_deal' | 'generate_pipeline' | 'increase_ticket' | 'accelerate_stage';
 
 export interface QuotaForecast {
   id: string;

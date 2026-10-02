@@ -30,7 +30,11 @@ const WinLossMonthlyTrendBase: FC<{ data: Row[] }> = ({ data }) => (
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" vertical={false} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              className="stroke-border/30"
+              vertical={false}
+            />
             <XAxis
               dataKey="month"
               tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
@@ -49,9 +53,22 @@ const WinLossMonthlyTrendBase: FC<{ data: Row[] }> = ({ data }) => (
                 borderRadius: '8px',
               }}
             />
-            <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-            <Bar dataKey="wins" name="Vitórias" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="losses" name="Perdas" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+            <Legend
+              iconType="circle"
+              wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+            />
+            <Bar
+              dataKey="wins"
+              name="Vitórias"
+              fill="hsl(var(--success))"
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="losses"
+              name="Perdas"
+              fill="hsl(var(--destructive))"
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

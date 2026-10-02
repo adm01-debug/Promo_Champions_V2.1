@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 import {
   Radar,
   RadarChart,
@@ -6,11 +6,11 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
-} from "recharts";
-import { useICPConfig } from "@/hooks/useICPConfig";
-import { ICPData } from "@/hooks/useICPData";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target } from "lucide-react";
+} from 'recharts';
+import { useICPConfig } from '@/hooks/useICPConfig';
+import { ICPData } from '@/hooks/useICPData';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Target } from 'lucide-react';
 
 interface ICPRadarChartProps {
   clientIcp: ICPData | null;
@@ -24,27 +24,40 @@ export function ICPRadarChart({ clientIcp }: ICPRadarChartProps) {
 
     return [
       {
-        subject: "Ramo de Atividade",
-        value: clientIcp.ramo_atividade && config.target_industries.includes(clientIcp.ramo_atividade) ? 100 : 0,
+        subject: 'Ramo de Atividade',
+        value:
+          clientIcp.ramo_atividade &&
+          config.target_industries.includes(clientIcp.ramo_atividade)
+            ? 100
+            : 0,
         fullMark: 100,
       },
       {
-        subject: "Capital Social",
-        value: clientIcp.capital_social && config.min_capital > 0 ? Math.min(100, (clientIcp.capital_social / config.min_capital) * 100) : 0,
+        subject: 'Capital Social',
+        value:
+          clientIcp.capital_social && config.min_capital > 0
+            ? Math.min(100, (clientIcp.capital_social / config.min_capital) * 100)
+            : 0,
         fullMark: 100,
       },
       {
-        subject: "Colaboradores",
-        value: clientIcp.num_colaboradores && config.min_employees > 0 ? Math.min(100, (clientIcp.num_colaboradores / config.min_employees) * 100) : 0,
+        subject: 'Colaboradores',
+        value:
+          clientIcp.num_colaboradores && config.min_employees > 0
+            ? Math.min(100, (clientIcp.num_colaboradores / config.min_employees) * 100)
+            : 0,
         fullMark: 100,
       },
       {
-        subject: "Nicho/Grupo",
-        value: clientIcp.grupo_nicho && config.preferred_niches.includes(clientIcp.grupo_nicho) ? 100 : 0,
+        subject: 'Nicho/Grupo',
+        value:
+          clientIcp.grupo_nicho && config.preferred_niches.includes(clientIcp.grupo_nicho)
+            ? 100
+            : 0,
         fullMark: 100,
       },
       {
-        subject: "Perfil Geral",
+        subject: 'Perfil Geral',
         value: clientIcp.icp_score || 0,
         fullMark: 100,
       },
@@ -65,7 +78,10 @@ export function ICPRadarChart({ clientIcp }: ICPRadarChartProps) {
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
             <PolarGrid stroke="#e2e8f0" strokeOpacity={0.1} />
-            <PolarAngleAxis dataKey="subject" tick={{ fill: "currentColor", fontSize: 10, opacity: 0.6 }} />
+            <PolarAngleAxis
+              dataKey="subject"
+              tick={{ fill: 'currentColor', fontSize: 10, opacity: 0.6 }}
+            />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
             <Radar
               name="Fit Score"
@@ -78,7 +94,9 @@ export function ICPRadarChart({ clientIcp }: ICPRadarChartProps) {
         </ResponsiveContainer>
         <div className="px-4 pb-4 text-center">
           <span className="text-2xl font-bold gradient-text">{clientIcp.icp_score}%</span>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Score de Compatibilidade</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+            Score de Compatibilidade
+          </p>
         </div>
       </CardContent>
     </Card>

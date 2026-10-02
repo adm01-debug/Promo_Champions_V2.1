@@ -1,21 +1,21 @@
-import { FC } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Calculator, Target, TrendingUp, Activity } from "lucide-react";
+import { FC } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Camera, Calculator, Target, TrendingUp, Activity } from 'lucide-react';
 import {
   useForecastSummary,
   useSnapshotForecast,
   useComputeAccuracy,
-} from "@/hooks/revenue-intelligence/useForecastAccuracy";
+} from '@/hooks/revenue-intelligence/useForecastAccuracy';
 import {
   biasLabel,
   biasColor,
   formatMape,
   mapeHealth,
   sourceLabel,
-} from "./forecastHelpers";
+} from './forecastHelpers';
 
 export const ForecastAccuracySummary: FC = () => {
   const { isLoading, summary } = useForecastSummary();
@@ -48,11 +48,7 @@ export const ForecastAccuracySummary: FC = () => {
             <Camera className="h-4 w-4 mr-2" />
             Snapshot
           </Button>
-          <Button
-            size="sm"
-            onClick={() => compute.mutate()}
-            disabled={compute.isPending}
-          >
+          <Button size="sm" onClick={() => compute.mutate()} disabled={compute.isPending}>
             <Calculator className="h-4 w-4 mr-2" />
             Calcular
           </Button>

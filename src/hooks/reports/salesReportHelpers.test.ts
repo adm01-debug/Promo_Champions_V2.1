@@ -52,7 +52,6 @@ describe('salesReportHelpers.buildKpis', () => {
       avgMarkup: 0,
       markupSample: 0,
     });
-
   });
 
   it('trata amount nulo como zero', () => {
@@ -76,19 +75,28 @@ describe('salesReportHelpers.buildKpis markup', () => {
   });
 
   it('retorna zero quando nenhuma venda tem custo', () => {
-    const kpis = buildKpis([sale({ status: 'completed', amount: 100, markup_pct: null })]);
+    const kpis = buildKpis([
+      sale({ status: 'completed', amount: 100, markup_pct: null }),
+    ]);
     expect(kpis.markupSample).toBe(0);
     expect(kpis.avgMarkup).toBe(0);
   });
 });
 
 describe('salesReportHelpers.buildKpiDeltas', () => {
-  const base = { revenue: 0, salesCount: 0, avgTicket: 0, conversionRate: 0, avgMarkup: 0, markupSample: 0 };
+  const base = {
+    revenue: 0,
+    salesCount: 0,
+    avgTicket: 0,
+    conversionRate: 0,
+    avgMarkup: 0,
+    markupSample: 0,
+  };
 
   it('calcula variação percentual quando existe base', () => {
     const d = buildKpiDeltas(
       { ...base, revenue: 1500, salesCount: 15, avgTicket: 100, conversionRate: 50 },
-      { ...base, revenue: 1000, salesCount: 10, avgTicket: 100, conversionRate: 40 },
+      { ...base, revenue: 1000, salesCount: 10, avgTicket: 100, conversionRate: 40 }
     );
     expect(d.revenueDelta).toBe(50);
     expect(d.salesCountDelta).toBe(50);
@@ -122,7 +130,7 @@ describe('salesReportHelpers.buildRevenueSeries', () => {
       [sale({ amount: null, status: 'completed', created_at: '2026-01-05T09:00:00Z' })],
       'weekly',
       start,
-      end,
+      end
     );
     expect(series[0].value).toBe(0);
   });
@@ -136,7 +144,7 @@ describe('salesReportHelpers.buildRevenueSeries', () => {
       ],
       'weekly',
       start,
-      end,
+      end
     );
     expect(series).toHaveLength(7);
     // primeiro dia soma 350 (2 ganhas)
@@ -150,7 +158,7 @@ describe('salesReportHelpers.buildRevenueSeries', () => {
       [sale({ amount: 999, status: 'completed', created_at: '2026-01-05T09:00:00Z' })],
       'monthly',
       new Date('2026-01-01T00:00:00Z'),
-      new Date('2026-01-31T00:00:00Z'),
+      new Date('2026-01-31T00:00:00Z')
     );
     expect(series.length).toBeGreaterThanOrEqual(4);
     expect(series[0].name).toMatch(/Sem 1/);
@@ -163,7 +171,7 @@ describe('salesReportHelpers.buildRevenueSeries', () => {
       [sale({ amount: null, status: 'completed', created_at: '2026-01-05T09:00:00Z' })],
       'monthly',
       new Date('2026-01-01T00:00:00Z'),
-      new Date('2026-01-31T00:00:00Z'),
+      new Date('2026-01-31T00:00:00Z')
     );
     const total = series.reduce((a, p) => a + p.value, 0);
     expect(total).toBe(0);
@@ -179,7 +187,7 @@ describe('salesReportHelpers.buildTopProducts', () => {
         sale({ product_name: 'A', amount: 300 }),
         sale({ product_name: 'C', amount: 50 }),
       ],
-      2,
+      2
     );
     expect(result).toEqual([
       { name: 'B', value: 500 },
@@ -196,9 +204,7 @@ describe('salesReportHelpers.buildTopProducts', () => {
   });
 
   it('trata amount nulo como zero em venda ganha (linha 149)', () => {
-    const result = buildTopProducts([
-      sale({ product_name: 'A', amount: null }),
-    ]);
+    const result = buildTopProducts([sale({ product_name: 'A', amount: null })]);
     expect(result).toEqual([{ name: 'A', value: 0 }]);
   });
 });
@@ -211,9 +217,13 @@ describe('salesReportHelpers.buildStatusBreakdown', () => {
       sale({ status: 'pending' }),
       sale({ status: null }),
     ]);
-    const completed = r.find((x) => x.key === 'completed');
-    expect(completed).toEqual({ key: 'completed', name: STATUS_LABEL.completed, value: 2 });
-    const outros = r.find((x) => x.key === 'outros');
+    const completed = r.find(x => x.key === 'completed');
+    expect(completed).toEqual({
+      key: 'completed',
+      name: STATUS_LABEL.completed,
+      value: 2,
+    });
+    const outros = r.find(x => x.key === 'outros');
     expect(outros?.value).toBe(1);
   });
 
@@ -237,7 +247,7 @@ describe('salesReportHelpers.buildTeamRanking', () => {
         sale({ salesperson_id: 'sp-2', amount: 900 }),
         sale({ salesperson_id: 'sp-1', amount: 999, status: 'lost' }),
       ],
-      people,
+      people
     );
     expect(r).toEqual([
       { name: 'Bruno', value: 1200 },
@@ -271,7 +281,7 @@ describe('salesReportHelpers.buildTopDeals', () => {
         sale({ amount: 500, client_name: 'C3' }),
       ],
       people,
-      2,
+      2
     );
     expect(r).toHaveLength(2);
     expect(r[0].client).toBe('C2');
@@ -281,8 +291,16 @@ describe('salesReportHelpers.buildTopDeals', () => {
 
   it('usa placeholder para campos faltantes', () => {
     const r = buildTopDeals(
-      [sale({ client_name: null, product_name: null, salesperson_id: null, amount: null, status: null })],
-      [],
+      [
+        sale({
+          client_name: null,
+          product_name: null,
+          salesperson_id: null,
+          amount: null,
+          status: null,
+        }),
+      ],
+      []
     );
     expect(r[0]).toEqual({
       client: '—',
@@ -292,7 +310,6 @@ describe('salesReportHelpers.buildTopDeals', () => {
       status: '—',
       markupPct: null,
     });
-
   });
 
   it('ordena corretamente com amounts nulos em múltiplos registros (linha 197)', () => {
@@ -302,7 +319,7 @@ describe('salesReportHelpers.buildTopDeals', () => {
         sale({ client_name: 'C1', amount: null }),
         sale({ client_name: 'C2', amount: null }),
       ],
-      people,
+      people
     );
     expect(r).toHaveLength(2);
     expect(r[0].amount).toBe(0);
@@ -323,7 +340,12 @@ describe('salesReportHelpers.formatBRL', () => {
 });
 
 describe('buildMarkupSeries', () => {
-  const mk = (id: string, created_at: string, markup_pct: number | null, status = 'completed'): SaleRow => ({
+  const mk = (
+    id: string,
+    created_at: string,
+    markup_pct: number | null,
+    status = 'completed'
+  ): SaleRow => ({
     id,
     amount: 100,
     status,
@@ -345,7 +367,7 @@ describe('buildMarkupSeries', () => {
       ],
       'weekly',
       start,
-      end,
+      end
     );
     expect(series).toHaveLength(7);
     expect(series[0].value).toBe(40);
@@ -366,7 +388,7 @@ describe('buildMarkupSeries', () => {
       ],
       'weekly',
       start,
-      end,
+      end
     );
     expect(series[0].value).toBe(25);
     expect(series[0].sample).toBe(1);
@@ -375,9 +397,14 @@ describe('buildMarkupSeries', () => {
   it('agrega por semana no período mensal', () => {
     const start = new Date('2026-07-01T00:00:00');
     const end = new Date('2026-07-31T23:59:59');
-    const series = buildMarkupSeries([mk('1', '2026-07-02T10:00:00', 45)], 'monthly', start, end);
+    const series = buildMarkupSeries(
+      [mk('1', '2026-07-02T10:00:00', 45)],
+      'monthly',
+      start,
+      end
+    );
     expect(series.length).toBeGreaterThan(3);
-    expect(series.some((p) => p.value === 45)).toBe(true);
+    expect(series.some(p => p.value === 45)).toBe(true);
   });
 });
 
@@ -391,7 +418,7 @@ describe('buildMarkupRanking', () => {
     salesperson_id: string | null,
     markup_pct: number | null,
     status = 'completed',
-    amount = 1000,
+    amount = 1000
   ): SaleRow =>
     buildSale({
       id,
@@ -406,14 +433,10 @@ describe('buildMarkupRanking', () => {
 
   it('ordena por markup médio decrescente e calcula amostra/receita', () => {
     const rows = buildMarkupRanking(
-      [
-        sale('1', 'p1', 20),
-        sale('2', 'p1', 40),
-        sale('3', 'p2', 50, 'completed', 2000),
-      ],
-      people,
+      [sale('1', 'p1', 20), sale('2', 'p1', 40), sale('3', 'p2', 50, 'completed', 2000)],
+      people
     );
-    expect(rows.map((r) => r.name)).toEqual(['Bruno', 'Ana']);
+    expect(rows.map(r => r.name)).toEqual(['Bruno', 'Ana']);
     expect(rows[1].avgMarkup).toBe(30);
     expect(rows[1].sample).toBe(2);
     expect(rows[0].revenue).toBe(2000);
@@ -421,18 +444,18 @@ describe('buildMarkupRanking', () => {
 
   it('ignora vendas não ganhas, sem custo ou sem vendedor', () => {
     const rows = buildMarkupRanking(
-      [
-        sale('1', 'p1', 30, 'cancelled'),
-        sale('2', 'p1', null),
-        sale('3', null, 60),
-      ],
-      people,
+      [sale('1', 'p1', 30, 'cancelled'), sale('2', 'p1', null), sale('3', null, 60)],
+      people
     );
     expect(rows).toHaveLength(0);
   });
 
   it('resolve vendedor desconhecido e respeita topN', () => {
-    const rows = buildMarkupRanking([sale('1', 'px', 15), sale('2', 'p1', 10)], people, 1);
+    const rows = buildMarkupRanking(
+      [sale('1', 'px', 15), sale('2', 'p1', 10)],
+      people,
+      1
+    );
     expect(rows).toHaveLength(1);
     expect(rows[0].name).toBe('Desconhecido');
   });

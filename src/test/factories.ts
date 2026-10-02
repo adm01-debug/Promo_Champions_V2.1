@@ -164,7 +164,7 @@ export function buildQuote(over: Over<TableRow<'quotes'>> = {}): TableRow<'quote
 }
 
 export function buildSalesperson(
-  over: Over<TableRow<'salespeople'>> = {},
+  over: Over<TableRow<'salespeople'>> = {}
 ): TableRow<'salespeople'> {
   return {
     auth_user_id: null,
@@ -186,7 +186,7 @@ export function buildSalesperson(
 }
 
 export function buildCommission(
-  over: Over<TableRow<'commissions'>> = {},
+  over: Over<TableRow<'commissions'>> = {}
 ): TableRow<'commissions'> {
   return {
     approved_at: null,

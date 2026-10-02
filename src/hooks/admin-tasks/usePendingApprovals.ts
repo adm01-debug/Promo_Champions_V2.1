@@ -6,7 +6,11 @@ export const usePendingApprovals = () => {
   const qc = useQueryClient();
 
   const approve = useMutation({
-    mutationFn: async (input: { assignmentId: string; xpAmount: number; reason?: string }) => {
+    mutationFn: async (input: {
+      assignmentId: string;
+      xpAmount: number;
+      reason?: string;
+    }) => {
       const { data, error } = await supabase.rpc('grant_task_xp', {
         _assignment_id: input.assignmentId,
         _xp_amount: input.xpAmount,

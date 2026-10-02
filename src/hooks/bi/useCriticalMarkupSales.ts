@@ -43,7 +43,7 @@ export function useCriticalMarkupSales(days: number, limit = 10) {
 
       if (error) throw error;
 
-      return ((data ?? []) as Row[]).map((r) => ({
+      return ((data ?? []) as Row[]).map(r => ({
         id: r.id,
         clientName: r.client_name ?? 'Cliente não informado',
         productName: r.product_name ?? 'Produto não informado',

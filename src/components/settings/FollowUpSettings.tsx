@@ -1,31 +1,54 @@
-import { useState, useMemo, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
-import { Loader2, Save, MessageCircle, Clock, Zap, History, RotateCcw, AlertCircle, Eye } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/contexts/AuthContext";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { useFollowUpSettings } from "@/hooks/follow-up/useFollowUpData";
+import { useState, useMemo, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
+import {
+  Loader2,
+  Save,
+  MessageCircle,
+  Clock,
+  Zap,
+  History,
+  RotateCcw,
+  AlertCircle,
+  Eye,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { useFollowUpSettings } from '@/hooks/follow-up/useFollowUpData';
 
-const REQUIRED_VARIABLES = ["{{client_name}}", "{{product_name}}", "{{status}}"];
+const REQUIRED_VARIABLES = ['{{client_name}}', '{{product_name}}', '{{status}}'];
 
 export function FollowUpSettings() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { isAdmin } = useUserRoles();
-  const [whatsappTemplate, setWhatsappTemplate] = useState("");
-  const [cadenceDays, setCadenceDays] = useState("");
+  const [whatsappTemplate, setWhatsappTemplate] = useState('');
+  const [cadenceDays, setCadenceDays] = useState('');
   const [autoReactivate, setAutoReactivate] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
@@ -33,21 +56,21 @@ export function FollowUpSettings() {
 
   useEffect(() => {
     if (settings) {
-      setWhatsappTemplate(settings.whatsapp_template || "");
-      setCadenceDays(settings.cadence_days?.join(", ") || "");
+      setWhatsappTemplate(settings.whatsapp_template || '');
+      setCadenceDays(settings.cadence_days?.join(', ') || '');
       setAutoReactivate(settings.auto_reactivate_class_a || false);
     }
   }, [settings]);
 
   const { data: versions = [] } = useQuery({
-    queryKey: ["template-versions", settings?.id],
+    queryKey: ['template-versions', settings?.id],
     queryFn: async () => {
       if (!settings?.id) return [];
       const { data, error } = await supabase
-        .from("whatsapp_template_versions")
-        .select("*")
-        .eq("template_id", settings.id)
-        .order("created_at", { ascending: false });
+        .from('whatsapp_template_versions')
+        .select('*')
+        .eq('template_id', settings.id)
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -60,48 +83,55 @@ export function FollowUpSettings() {
 
   const updateSettings = useMutation({
     mutationFn: async (newTemplate?: string) => {
-      if (!isAdmin) throw new Error("Apenas administradores podem alterar as configurações.");
-      
+      if (!isAdmin)
+        throw new Error('Apenas administradores podem alterar as configurações.');
+
       const targetTemplate = newTemplate !== undefined ? newTemplate : whatsappTemplate;
-      const days = cadenceDays.split(",").map(d => parseInt(d.trim())).filter(d => !isNaN(d));
-      
+      const days = cadenceDays
+        .split(',')
+        .map(d => parseInt(d.trim()))
+        .filter(d => !isNaN(d));
+
       // 1. Create a version record if template changed
       if (settings?.whatsapp_template && settings.whatsapp_template !== targetTemplate) {
-        await supabase.from("whatsapp_template_versions").insert({
+        await supabase.from('whatsapp_template_versions').insert({
           template_id: settings.id,
           body: settings.whatsapp_template,
           version_number: (versions[0]?.version_number || 0) + 1,
-          created_by: user?.id
+          created_by: user?.id,
         });
       }
 
       // 2. Update settings
       const { error } = await supabase
-        .from("follow_up_settings")
+        .from('follow_up_settings')
         .update({
           whatsapp_template: targetTemplate,
           cadence_days: days,
           auto_reactivate_class_a: autoReactivate,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", settings?.id || "");
+        .eq('id', settings?.id || '');
 
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Configurações atualizadas com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["follow-up-settings"] });
-      queryClient.invalidateQueries({ queryKey: ["template-versions"] });
+      toast.success('Configurações atualizadas com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['follow-up-settings'] });
+      queryClient.invalidateQueries({ queryKey: ['template-versions'] });
       setIsPreviewOpen(false);
     },
     onError: (error: unknown) => {
-      toast.error("Erro ao atualizar configurações: " + (error instanceof Error ? error.message : String(error)));
+      toast.error(
+        'Erro ao atualizar configurações: ' +
+          (error instanceof Error ? error.message : String(error))
+      );
     },
   });
 
   const handleRevert = (versionBody: string) => {
     setWhatsappTemplate(versionBody);
-    toast.info("Template restaurado do histórico. Salve para aplicar.");
+    toast.info('Template restaurado do histórico. Salve para aplicar.');
   };
 
   if (isLoading) {
@@ -113,9 +143,9 @@ export function FollowUpSettings() {
   }
 
   const previewMessage = whatsappTemplate
-    .replace("{{client_name}}", "João Silva")
-    .replace("{{product_name}}", "Plano Premium")
-    .replace("{{status}}", "Negociação");
+    .replace('{{client_name}}', 'João Silva')
+    .replace('{{product_name}}', 'Plano Premium')
+    .replace('{{status}}', 'Negociação');
 
   return (
     <div className="space-y-6">
@@ -123,7 +153,8 @@ export function FollowUpSettings() {
         <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg flex items-start gap-3 text-amber-800">
           <AlertCircle className="h-5 w-5 shrink-0" />
           <p className="text-sm">
-            Você está em modo de visualização. Apenas usuários com perfil <strong>Administrador</strong> podem alterar estas configurações.
+            Você está em modo de visualização. Apenas usuários com perfil{' '}
+            <strong>Administrador</strong> podem alterar estas configurações.
           </p>
         </div>
       )}
@@ -145,7 +176,10 @@ export function FollowUpSettings() {
                 <div className="flex justify-between items-center">
                   <Label htmlFor="template">Mensagem</Label>
                   {missingVariables.length > 0 && (
-                    <Badge variant="destructive" className="text-[10px] uppercase font-black px-1 h-5">
+                    <Badge
+                      variant="destructive"
+                      className="text-[10px] uppercase font-black px-1 h-5"
+                    >
                       Faltam Variáveis
                     </Badge>
                   )}
@@ -153,30 +187,33 @@ export function FollowUpSettings() {
                 <Textarea
                   id="template"
                   value={whatsappTemplate}
-                  onChange={(e) => setWhatsappTemplate(e.target.value)}
+                  onChange={e => setWhatsappTemplate(e.target.value)}
                   placeholder="Ex: Olá {{client_name}}..."
                   className={`min-h-[120px] ${missingVariables.length > 0 ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   disabled={!isAdmin}
                 />
-                
+
                 {missingVariables.length > 0 && (
                   <p className="text-[10px] text-destructive flex items-center gap-1 font-medium">
                     <AlertCircle className="h-3 w-3" />
-                    Variáveis obrigatórias ausentes: {missingVariables.join(", ")}
+                    Variáveis obrigatórias ausentes: {missingVariables.join(', ')}
                   </p>
                 )}
 
                 <p className="text-[10px] text-muted-foreground">
-                  Variáveis disponíveis: {REQUIRED_VARIABLES.map(v => (
-                    <code key={v} className="bg-muted px-1 rounded mx-0.5">{v}</code>
+                  Variáveis disponíveis:{' '}
+                  {REQUIRED_VARIABLES.map(v => (
+                    <code key={v} className="bg-muted px-1 rounded mx-0.5">
+                      {v}
+                    </code>
                   ))}
                 </p>
               </div>
 
               <div className="flex justify-between items-center">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="gap-2"
                   onClick={() => setIsPreviewOpen(true)}
                 >
@@ -203,14 +240,19 @@ export function FollowUpSettings() {
                 <Input
                   id="cadence"
                   value={cadenceDays}
-                  onChange={(e) => setCadenceDays(e.target.value)}
+                  onChange={e => setCadenceDays(e.target.value)}
                   placeholder="Ex: 3, 5, 15"
                   disabled={!isAdmin}
                 />
                 <div className="flex gap-2 mt-2">
-                  {cadenceDays.split(",").map((d, i) => d.trim() && (
-                    <Badge key={i} variant="secondary">D+{d.trim()}</Badge>
-                  ))}
+                  {cadenceDays.split(',').map(
+                    (d, i) =>
+                      d.trim() && (
+                        <Badge key={i} variant="secondary">
+                          D+{d.trim()}
+                        </Badge>
+                      )
+                  )}
                 </div>
               </div>
 
@@ -248,21 +290,30 @@ export function FollowUpSettings() {
             <ScrollArea className="h-[500px] pr-4">
               <div className="space-y-4">
                 {versions.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-8">Nenhuma versão anterior registrada.</p>
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    Nenhuma versão anterior registrada.
+                  </p>
                 )}
-                {versions.map((v) => (
-                  <div key={v.id} className="p-3 border rounded-lg hover:border-primary/30 transition-colors group">
+                {versions.map(v => (
+                  <div
+                    key={v.id}
+                    className="p-3 border rounded-lg hover:border-primary/30 transition-colors group"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                    <Badge variant="outline" className="text-[10px] mb-1">Versão {v.version_number}</Badge>
-                    <p className="text-[10px] text-muted-foreground">
-                      {format(new Date(v.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                    </p>
-                  </div>
+                        <Badge variant="outline" className="text-[10px] mb-1">
+                          Versão {v.version_number}
+                        </Badge>
+                        <p className="text-[10px] text-muted-foreground">
+                          {format(new Date(v.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                            locale: ptBR,
+                          })}
+                        </p>
+                      </div>
                       {isAdmin && (
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
+                        <Button
+                          size="icon"
+                          variant="ghost"
                           className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => handleRevert(v.body)}
                           title="Restaurar esta versão"
@@ -271,7 +322,9 @@ export function FollowUpSettings() {
                         </Button>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-3 italic">"{v.body}"</p>
+                    <p className="text-xs text-muted-foreground line-clamp-3 italic">
+                      "{v.body}"
+                    </p>
                   </div>
                 ))}
               </div>
@@ -282,12 +335,16 @@ export function FollowUpSettings() {
 
       {isAdmin && (
         <div className="flex justify-end">
-          <Button 
-            onClick={() => updateSettings.mutate(undefined)} 
+          <Button
+            onClick={() => updateSettings.mutate(undefined)}
             disabled={updateSettings.isPending || missingVariables.length > 0}
             className="gap-2"
           >
-            {updateSettings.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {updateSettings.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
             Salvar Configurações
           </Button>
         </div>
@@ -307,7 +364,9 @@ export function FollowUpSettings() {
           </DialogHeader>
           <div className="py-6 px-4 bg-muted/30 rounded-lg border border-dashed border-primary/20 relative">
             <div className="absolute top-2 right-2">
-              <Badge variant="outline" className="text-[10px] font-bold">WHATSAPP MOCKUP</Badge>
+              <Badge variant="outline" className="text-[10px] font-bold">
+                WHATSAPP MOCKUP
+              </Badge>
             </div>
             <div className="space-y-4">
               <div className="flex justify-start">
@@ -315,16 +374,23 @@ export function FollowUpSettings() {
                   <p className="text-sm leading-relaxed whitespace-pre-wrap">
                     {previewMessage}
                   </p>
-                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">10:45</span>
+                  <span className="text-[10px] text-muted-foreground mt-1 block text-right">
+                    10:45
+                  </span>
                 </div>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>Fechar</Button>
+            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>
+              Fechar
+            </Button>
             {isAdmin && (
-              <Button onClick={() => updateSettings.mutate(undefined)} disabled={updateSettings.isPending || missingVariables.length > 0}>
-                {updateSettings.isPending ? "Salvando..." : "Confirmar e Salvar"}
+              <Button
+                onClick={() => updateSettings.mutate(undefined)}
+                disabled={updateSettings.isPending || missingVariables.length > 0}
+              >
+                {updateSettings.isPending ? 'Salvando...' : 'Confirmar e Salvar'}
               </Button>
             )}
           </DialogFooter>

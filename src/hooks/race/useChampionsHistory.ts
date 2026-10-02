@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { RoleType } from "@/hooks/race/useRaceSeasonByRole";
+import type { RoleType } from '@/hooks/race/useRaceSeasonByRole';
 
 export interface ChampionHistoryEntry {
   seasonId: string;
@@ -34,20 +34,22 @@ export function useChampionsHistory(roleType?: RoleType, limit = 12) {
       if (error) throw error;
       if (!seasons?.length) return [];
 
-      const seasonIds = seasons.map((s) => s.id);
-      const winnerIds = seasons.map((s) => s.winner_id!).filter(Boolean);
+      const seasonIds = seasons.map(s => s.id);
+      const winnerIds = seasons.map(s => s.winner_id!).filter(Boolean);
 
       const { data: lb } = await supabase
         .from('race_leaderboard_view')
-        .select('season_id, salesperson_id, salesperson_name, avatar_url, total_sales, car_number, primary_color, secondary_color')
+        .select(
+          'season_id, salesperson_id, salesperson_name, avatar_url, total_sales, car_number, primary_color, secondary_color'
+        )
         .in('season_id', seasonIds)
         // chunked-in-safe: winnerIds do histórico (bounded por temporadas)
         .in('salesperson_id', winnerIds);
 
       const lbMap = new Map<string, NonNullable<typeof lb>[number]>();
-      (lb ?? []).forEach((r) => lbMap.set(`${r.season_id}:${r.salesperson_id}`, r));
+      (lb ?? []).forEach(r => lbMap.set(`${r.season_id}:${r.salesperson_id}`, r));
 
-      return seasons.map((s) => {
+      return seasons.map(s => {
         const row = lbMap.get(`${s.id}:${s.winner_id}`);
         return {
           seasonId: s.id,

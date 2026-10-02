@@ -17,7 +17,9 @@ const HEATMAP_DAYS = 35;
 
 export const ActivityHeatmap: React.FC = () => {
   const since = useMemo(() => {
-    return subDays(new Date(), HEATMAP_DAYS - 1).toISOString().slice(0, 10);
+    return subDays(new Date(), HEATMAP_DAYS - 1)
+      .toISOString()
+      .slice(0, 10);
   }, []);
 
   const { data: activities } = useActivities({ since, limit: 5000 });

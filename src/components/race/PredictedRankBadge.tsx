@@ -37,7 +37,7 @@ export function PredictedRankBadge({ prediction, className }: Props) {
             'inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold tabular-nums',
             style.bg,
             style.color,
-            className,
+            className
           )}
           aria-label={`Projeção P${projectedRank}, tendência ${trend}`}
         >

@@ -16,7 +16,10 @@ export interface TaskCatalogItem {
   updated_at: string;
 }
 
-export type TaskCatalogInput = Omit<TaskCatalogItem, 'id' | 'created_at' | 'updated_at' | 'created_by'>;
+export type TaskCatalogInput = Omit<
+  TaskCatalogItem,
+  'id' | 'created_at' | 'updated_at' | 'created_by'
+>;
 
 export const useTaskCatalog = () => {
   const qc = useQueryClient();

@@ -1,8 +1,8 @@
-import { useCallback } from "react";
-import { toast } from "sonner";
-import type { WLKpis } from "@/hooks/win-loss/useWinLossAggregations";
-import type { CompetitorStat } from "@/hooks/win-loss/useWinLossAggregations";
-import type { KpiDelta } from "@/hooks/win-loss/usePreviousPeriodKpis";
+import { useCallback } from 'react';
+import { toast } from 'sonner';
+import type { WLKpis } from '@/hooks/win-loss/useWinLossAggregations';
+import type { CompetitorStat } from '@/hooks/win-loss/useWinLossAggregations';
+import type { KpiDelta } from '@/hooks/win-loss/usePreviousPeriodKpis';
 
 interface InsightLite {
   title: string;
@@ -12,8 +12,8 @@ interface InsightLite {
 
 const fmtPct = (n: number): string => `${n.toFixed(1)}%`;
 const fmtDelta = (d: number | undefined): string => {
-  if (d == null) return "";
-  const sign = d > 0 ? "▲" : d < 0 ? "▼" : "·";
+  if (d == null) return '';
+  const sign = d > 0 ? '▲' : d < 0 ? '▼' : '·';
   return ` (${sign} ${Math.abs(d).toFixed(1)}%)`;
 };
 
@@ -21,7 +21,7 @@ export const useWinLossDigest = (
   kpis: WLKpis,
   delta: KpiDelta | undefined,
   insights: InsightLite[],
-  competitors: CompetitorStat[],
+  competitors: CompetitorStat[]
 ) => {
   return useCallback(async () => {
     const top3Insights = insights.slice(0, 3);
@@ -29,7 +29,7 @@ export const useWinLossDigest = (
 
     const md = [
       `# 📊 Win/Loss — Resumo Executivo`,
-      `> Gerado em ${new Date().toLocaleString("pt-BR")}`,
+      `> Gerado em ${new Date().toLocaleString('pt-BR')}`,
       ``,
       `## KPIs principais`,
       `- **Win Rate:** ${fmtPct(kpis.winRate)}${fmtDelta(delta?.winRate)}`,
@@ -41,13 +41,19 @@ export const useWinLossDigest = (
       ``,
       `## 🎯 Top 3 Insights`,
       ...(top3Insights.length
-        ? top3Insights.map((i, idx) => `${idx + 1}. **${i.title}** — ${i.description ?? "—"} _(severidade: ${i.severity ?? "info"})_`)
-        : ["_Nenhum insight disponível._"]),
+        ? top3Insights.map(
+            (i, idx) =>
+              `${idx + 1}. **${i.title}** — ${i.description ?? '—'} _(severidade: ${i.severity ?? 'info'})_`
+          )
+        : ['_Nenhum insight disponível._']),
       ``,
       `## 🥊 Top 3 Concorrentes`,
       ...(top3Comp.length
-        ? top3Comp.map((c, idx) => `${idx + 1}. **${c.name}** — ${c.encounters} encontros · ${fmtPct(c.winRateVs)} de win rate vs.`)
-        : ["_Nenhum concorrente registrado._"]),
+        ? top3Comp.map(
+            (c, idx) =>
+              `${idx + 1}. **${c.name}** — ${c.encounters} encontros · ${fmtPct(c.winRateVs)} de win rate vs.`
+          )
+        : ['_Nenhum concorrente registrado._']),
       ``,
       `## 💡 Recomendação`,
       delta?.winRate != null && delta.winRate < -5
@@ -57,13 +63,15 @@ export const useWinLossDigest = (
           : `Indicadores estáveis — manter cadência atual.`,
       ``,
       `_— Promo Champions Win/Loss Intelligence_`,
-    ].join("\n");
+    ].join('\n');
 
     try {
       await navigator.clipboard.writeText(md);
-      toast.success("Resumo executivo copiado!", { description: "Cole em e-mail, Slack ou doc." });
+      toast.success('Resumo executivo copiado!', {
+        description: 'Cole em e-mail, Slack ou doc.',
+      });
     } catch {
-      toast.error("Não foi possível copiar — verifique permissões do navegador.");
+      toast.error('Não foi possível copiar — verifique permissões do navegador.');
     }
   }, [kpis, delta, insights, competitors]);
 };

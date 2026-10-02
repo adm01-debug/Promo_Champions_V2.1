@@ -1,16 +1,19 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Filter, X, RotateCcw } from "lucide-react";
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Filter, X, RotateCcw } from 'lucide-react';
 import {
   PERIOD_OPTIONS,
   type WLPeriod,
   type WinLossFilterState,
-} from "./winLossFiltersHelpers";
-import { useActiveSalespeople, useWinLossSegments } from "@/hooks/win-loss/useWinLossData";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+} from './winLossFiltersHelpers';
+import {
+  useActiveSalespeople,
+  useWinLossSegments,
+} from '@/hooks/win-loss/useWinLossData';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 
 interface Props {
   filters: WinLossFilterState;
@@ -20,7 +23,13 @@ interface Props {
   viewPrefsAreDefault?: boolean;
 }
 
-export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, viewPrefsAreDefault }: Props) {
+export function WinLossFilters({
+  filters,
+  onChange,
+  onReset,
+  onResetViewPrefs,
+  viewPrefsAreDefault,
+}: Props) {
   const { data: salespeople = [] } = useActiveSalespeople();
   const { data: segments = [] } = useWinLossSegments();
   const activeCount =
@@ -39,7 +48,9 @@ export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, v
           <Filter className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium">Filtros</span>
           {activeCount > 0 && (
-            <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">{activeCount}</Badge>
+            <Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
+              {activeCount}
+            </Badge>
           )}
         </div>
 
@@ -49,7 +60,7 @@ export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, v
             <Button
               key={o.value}
               size="sm"
-              variant={filters.period === o.value ? "default" : "ghost"}
+              variant={filters.period === o.value ? 'default' : 'ghost'}
               className="h-7 px-2 text-xs"
               onClick={() => onChange({ period: o.value as WLPeriod })}
             >
@@ -64,21 +75,30 @@ export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, v
             <Button size="sm" variant="outline" className="h-8">
               Vendedores
               {filters.salespersonIds.length > 0 && (
-                <Badge variant="secondary" className="ml-1.5 h-4 px-1 text-[10px]">{filters.salespersonIds.length}</Badge>
+                <Badge variant="secondary" className="ml-1.5 h-4 px-1 text-[10px]">
+                  {filters.salespersonIds.length}
+                </Badge>
               )}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64 p-2 space-y-1 max-h-72 overflow-y-auto">
             {salespeople.map(s => (
-              <label key={s.id} className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/50 rounded px-2">
+              <label
+                key={s.id}
+                className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/50 rounded px-2"
+              >
                 <Checkbox
                   checked={filters.salespersonIds.includes(s.id)}
-                  onCheckedChange={() => onChange({ salespersonIds: toggle(filters.salespersonIds, s.id) })}
+                  onCheckedChange={() =>
+                    onChange({ salespersonIds: toggle(filters.salespersonIds, s.id) })
+                  }
                 />
                 {s.name}
               </label>
             ))}
-            {!salespeople.length && <p className="text-xs text-muted-foreground p-2">Sem vendedores</p>}
+            {!salespeople.length && (
+              <p className="text-xs text-muted-foreground p-2">Sem vendedores</p>
+            )}
           </PopoverContent>
         </Popover>
 
@@ -88,21 +108,30 @@ export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, v
             <Button size="sm" variant="outline" className="h-8">
               Segmento
               {filters.segments.length > 0 && (
-                <Badge variant="secondary" className="ml-1.5 h-4 px-1 text-[10px]">{filters.segments.length}</Badge>
+                <Badge variant="secondary" className="ml-1.5 h-4 px-1 text-[10px]">
+                  {filters.segments.length}
+                </Badge>
               )}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-2 space-y-1">
             {segments.map(s => (
-              <label key={s} className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/50 rounded px-2">
+              <label
+                key={s}
+                className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/50 rounded px-2"
+              >
                 <Checkbox
                   checked={filters.segments.includes(s)}
-                  onCheckedChange={() => onChange({ segments: toggle(filters.segments, s) })}
+                  onCheckedChange={() =>
+                    onChange({ segments: toggle(filters.segments, s) })
+                  }
                 />
                 {s}
               </label>
             ))}
-            {!segments.length && <p className="text-xs text-muted-foreground p-2">Sem segmentos</p>}
+            {!segments.length && (
+              <p className="text-xs text-muted-foreground p-2">Sem segmentos</p>
+            )}
           </PopoverContent>
         </Popover>
 
@@ -112,16 +141,20 @@ export function WinLossFilters({ filters, onChange, onReset, onResetViewPrefs, v
             type="number"
             placeholder="Min R$"
             className="h-8 w-24 text-xs"
-            value={filters.minAmount ?? ""}
-            onChange={e => onChange({ minAmount: e.target.value ? Number(e.target.value) : null })}
+            value={filters.minAmount ?? ''}
+            onChange={e =>
+              onChange({ minAmount: e.target.value ? Number(e.target.value) : null })
+            }
           />
           <span className="text-muted-foreground text-xs">—</span>
           <Input
             type="number"
             placeholder="Max R$"
             className="h-8 w-24 text-xs"
-            value={filters.maxAmount ?? ""}
-            onChange={e => onChange({ maxAmount: e.target.value ? Number(e.target.value) : null })}
+            value={filters.maxAmount ?? ''}
+            onChange={e =>
+              onChange({ maxAmount: e.target.value ? Number(e.target.value) : null })
+            }
           />
         </div>
 

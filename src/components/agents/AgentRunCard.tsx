@@ -1,10 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { AGENT_META, STATUS_META, type AgentRun } from "./agentHelpers";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { ChevronRight } from "lucide-react";
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { AGENT_META, STATUS_META, type AgentRun } from './agentHelpers';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { ChevronRight } from 'lucide-react';
 
 interface Props {
   run: AgentRun;
@@ -34,8 +34,11 @@ export function AgentRunCard({ run, onOpen }: Props) {
             {run.goal || meta.description}
           </p>
           <p className="text-[11px] text-muted-foreground mt-1">
-            {stepsDone} passo{stepsDone === 1 ? "" : "s"} •{" "}
-            {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale: ptBR })}
+            {stepsDone} passo{stepsDone === 1 ? '' : 's'} •{' '}
+            {formatDistanceToNow(new Date(run.created_at), {
+              addSuffix: true,
+              locale: ptBR,
+            })}
           </p>
         </div>
         {onOpen && (

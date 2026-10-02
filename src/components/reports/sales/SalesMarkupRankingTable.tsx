@@ -1,19 +1,23 @@
-import { FC, memo, useMemo } from "react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { classifyMarkup, formatMarkupPct } from "@/lib/markupHelpers";
-import { useMarkupMinSamplePreference } from "@/hooks/reports/useMarkupMinSamplePreference";
-import type { MarkupRankingRow } from "@/hooks/reports/salesReportHelpers";
+import { FC, memo, useMemo } from 'react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Trophy } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { classifyMarkup, formatMarkupPct } from '@/lib/markupHelpers';
+import { useMarkupMinSamplePreference } from '@/hooks/reports/useMarkupMinSamplePreference';
+import type { MarkupRankingRow } from '@/hooks/reports/salesReportHelpers';
 
 interface Props {
   data: MarkupRankingRow[];
 }
 
 const currency = (v: number): string =>
-  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+  v.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  });
 
 /**
  * Ranking de rentabilidade (markup médio) por vendedor.
@@ -23,11 +27,7 @@ const currency = (v: number): string =>
 export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
   const { minSample, setMinSample, options } = useMarkupMinSamplePreference();
 
-  const rows = useMemo(
-    () => data.filter(r => r.sample >= minSample),
-    [data, minSample]
-  );
-
+  const rows = useMemo(() => data.filter(r => r.sample >= minSample), [data, minSample]);
 
   const hiddenCount = data.length - rows.length;
 
@@ -59,8 +59,9 @@ export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
               aria-pressed={minSample === opt}
               onClick={() => setMinSample(opt)}
               className={cn(
-                "h-8 px-3",
-                minSample === opt && "bg-primary text-primary-foreground hover:bg-primary/90"
+                'h-8 px-3',
+                minSample === opt &&
+                  'bg-primary text-primary-foreground hover:bg-primary/90'
               )}
             >
               {opt}
@@ -72,7 +73,7 @@ export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
       {rows.length === 0 ? (
         <p className="text-caption py-8 text-center">
           {data.length === 0
-            ? "Nenhuma venda com custo conhecido no período selecionado."
+            ? 'Nenhuma venda com custo conhecido no período selecionado.'
             : `Nenhum vendedor com pelo menos ${minSample} venda(s) com custo conhecido.`}
         </p>
       ) : (
@@ -92,15 +93,22 @@ export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
                 {rows.map((row, i) => {
                   const cls = classifyMarkup(row.avgMarkup);
                   return (
-                    <tr key={row.salespersonId} className="border-b border-border/30 last:border-0">
+                    <tr
+                      key={row.salespersonId}
+                      className="border-b border-border/30 last:border-0"
+                    >
                       <td className="py-2 pr-3 text-muted-foreground">{i + 1}</td>
-                      <td className="py-2 pr-3 font-medium text-foreground">{row.name}</td>
+                      <td className="py-2 pr-3 font-medium text-foreground">
+                        {row.name}
+                      </td>
                       <td className="py-2 pr-3 text-right">
                         <Badge variant="outline" className={cls.className}>
                           {formatMarkupPct(row.avgMarkup)}
                         </Badge>
                       </td>
-                      <td className="py-2 pr-3 text-right text-muted-foreground">{row.sample}</td>
+                      <td className="py-2 pr-3 text-right text-muted-foreground">
+                        {row.sample}
+                      </td>
                       <td className="py-2 text-right text-muted-foreground">
                         {currency(row.revenue)}
                       </td>
@@ -121,4 +129,4 @@ export const SalesMarkupRankingTable: FC<Props> = memo(({ data }) => {
   );
 });
 
-SalesMarkupRankingTable.displayName = "SalesMarkupRankingTable";
+SalesMarkupRankingTable.displayName = 'SalesMarkupRankingTable';

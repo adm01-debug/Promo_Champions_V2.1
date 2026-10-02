@@ -40,13 +40,16 @@ export class RacePanelErrorBoundary extends Component<Props, State> {
     return (
       <Card role="alert" className="border-destructive/30 bg-destructive/5">
         <CardContent className="p-4 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" aria-hidden />
+          <AlertTriangle
+            className="w-5 h-5 text-destructive shrink-0 mt-0.5"
+            aria-hidden
+          />
           <div className="flex-1 min-w-0 space-y-2">
             <div>
               <p className="text-sm font-semibold">Este painel está indisponível</p>
               <p className="text-xs text-muted-foreground">
-                Houve um erro ao carregar “{this.props.panelName}”. Os outros painéis continuam
-                funcionando.
+                Houve um erro ao carregar “{this.props.panelName}”. Os outros painéis
+                continuam funcionando.
               </p>
             </div>
             <Button onClick={this.reset} size="sm" variant="outline">

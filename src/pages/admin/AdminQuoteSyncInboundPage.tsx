@@ -1,16 +1,16 @@
-import { Helmet } from "react-helmet-async";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Inbox, CheckCircle2, XCircle, Copy, RefreshCw } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Button } from "@/components/ui/button";
+import { Helmet } from 'react-helmet-async';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Inbox, CheckCircle2, XCircle, Copy, RefreshCw } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Button } from '@/components/ui/button';
 
 type LogRow = {
   id: string;
@@ -25,39 +25,44 @@ type LogRow = {
   received_at: string;
 };
 
-const SUCCESS_STATUSES = new Set(["created", "updated"]);
-const DUPE_STATUSES = new Set(["duplicate_ignored"]);
+const SUCCESS_STATUSES = new Set(['created', 'updated']);
+const DUPE_STATUSES = new Set(['duplicate_ignored']);
 
 function statusMeta(status: string, http: number) {
   if (SUCCESS_STATUSES.has(status)) {
     return {
       icon: <CheckCircle2 className="h-4 w-4 text-success" />,
-      cls: "bg-success/10 text-success border-success/20",
+      cls: 'bg-success/10 text-success border-success/20',
       label: status,
     };
   }
   if (DUPE_STATUSES.has(status)) {
     return {
       icon: <Copy className="h-4 w-4 text-muted-foreground" />,
-      cls: "bg-muted text-muted-foreground",
-      label: "duplicate ignored",
+      cls: 'bg-muted text-muted-foreground',
+      label: 'duplicate ignored',
     };
   }
   return {
     icon: <XCircle className="h-4 w-4 text-destructive" />,
-    cls: "bg-destructive/10 text-destructive border-destructive/20",
+    cls: 'bg-destructive/10 text-destructive border-destructive/20',
     label: `${status} · ${http}`,
   };
 }
 
 function AdminQuoteSyncInboundContent() {
-  const { data = [], isLoading, refetch, isFetching } = useQuery({
-    queryKey: ["quote-sync-inbound-log"],
+  const {
+    data = [],
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ['quote-sync-inbound-log'],
     queryFn: async (): Promise<LogRow[]> => {
       const { data, error } = await supabase
-        .from("quote_sync_inbound_log" as never)
-        .select("*")
-        .order("received_at", { ascending: false })
+        .from('quote_sync_inbound_log' as never)
+        .select('*')
+        .order('received_at', { ascending: false })
         .limit(100);
       if (error) throw error;
       return (data ?? []) as LogRow[];
@@ -72,7 +77,7 @@ function AdminQuoteSyncInboundContent() {
       else acc.err += 1;
       return acc;
     },
-    { ok: 0, dupe: 0, err: 0 },
+    { ok: 0, dupe: 0, err: 0 }
   );
 
   return (
@@ -103,7 +108,7 @@ function AdminQuoteSyncInboundContent() {
             onClick={() => refetch()}
             disabled={isFetching}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
             Atualizar
           </Button>
         </div>
@@ -119,7 +124,9 @@ function AdminQuoteSyncInboundContent() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">Duplicatas ignoradas</CardTitle>
+              <CardTitle className="text-sm text-muted-foreground">
+                Duplicatas ignoradas
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-semibold">{counts.dupe}</div>
@@ -148,7 +155,9 @@ function AdminQuoteSyncInboundContent() {
               </CardHeader>
               <CardContent>
                 {isLoading ? (
-                  <div className="text-sm text-muted-foreground py-4 text-center">Carregando…</div>
+                  <div className="text-sm text-muted-foreground py-4 text-center">
+                    Carregando…
+                  </div>
                 ) : data.length === 0 ? (
                   <div className="text-sm text-muted-foreground py-8 text-center">
                     Nenhum evento recebido ainda.
@@ -156,7 +165,7 @@ function AdminQuoteSyncInboundContent() {
                 ) : (
                   <ScrollArea className="h-[600px]">
                     <div className="space-y-2 pr-2">
-                      {data.map((row) => {
+                      {data.map(row => {
                         const meta = statusMeta(row.status, row.http_status);
                         return (
                           <div
@@ -166,7 +175,10 @@ function AdminQuoteSyncInboundContent() {
                             <div className="mt-0.5">{meta.icon}</div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <Badge variant="outline" className={`text-xs ${meta.cls}`}>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${meta.cls}`}
+                                >
                                   {meta.label}
                                 </Badge>
                                 {row.event && (
@@ -180,9 +192,13 @@ function AdminQuoteSyncInboundContent() {
                                   </span>
                                 )}
                                 <span className="text-xs text-muted-foreground ml-auto">
-                                  {format(new Date(row.received_at), "dd/MM/yyyy HH:mm:ss", {
-                                    locale: ptBR,
-                                  })}
+                                  {format(
+                                    new Date(row.received_at),
+                                    'dd/MM/yyyy HH:mm:ss',
+                                    {
+                                      locale: ptBR,
+                                    }
+                                  )}
                                 </span>
                               </div>
                               {row.correlation_key && (
@@ -230,12 +246,14 @@ type MirrorRow = {
 
 function QuotesInboundTable() {
   const { data = [], isLoading } = useQuery({
-    queryKey: ["quotes-inbound-mirror"],
+    queryKey: ['quotes-inbound-mirror'],
     queryFn: async (): Promise<MirrorRow[]> => {
       const { data, error } = await supabase
-        .from("quotes_inbound" as never)
-        .select("id, quote_id, quote_number, status, client_name, total, seller_email, source, last_event, received_at")
-        .order("received_at", { ascending: false })
+        .from('quotes_inbound' as never)
+        .select(
+          'id, quote_id, quote_number, status, client_name, total, seller_email, source, last_event, received_at'
+        )
+        .order('received_at', { ascending: false })
         .limit(100);
       if (error) throw error;
       return (data ?? []) as MirrorRow[];
@@ -246,11 +264,15 @@ function QuotesInboundTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-section-title">Últimos 100 orçamentos espelhados</CardTitle>
+        <CardTitle className="text-section-title">
+          Últimos 100 orçamentos espelhados
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="text-sm text-muted-foreground py-4 text-center">Carregando…</div>
+          <div className="text-sm text-muted-foreground py-4 text-center">
+            Carregando…
+          </div>
         ) : data.length === 0 ? (
           <div className="text-sm text-muted-foreground py-8 text-center">
             Nenhum orçamento recebido do PromoGifts ainda.
@@ -258,8 +280,11 @@ function QuotesInboundTable() {
         ) : (
           <ScrollArea className="h-[600px]">
             <div className="space-y-2 pr-2">
-              {data.map((row) => (
-                <div key={row.id} className="flex items-start gap-3 p-3 rounded-lg border bg-card">
+              {data.map(row => (
+                <div
+                  key={row.id}
+                  className="flex items-start gap-3 p-3 rounded-lg border bg-card"
+                >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium">
@@ -276,14 +301,20 @@ function QuotesInboundTable() {
                         </span>
                       )}
                       <span className="text-xs text-muted-foreground ml-auto">
-                        {format(new Date(row.received_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        {format(new Date(row.received_at), 'dd/MM/yyyy HH:mm', {
+                          locale: ptBR,
+                        })}
                       </span>
                     </div>
                     <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-3">
                       {row.client_name && <span>Cliente: {row.client_name}</span>}
                       {row.total != null && (
                         <span>
-                          Total: {row.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                          Total:{' '}
+                          {row.total.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
                         </span>
                       )}
                       {row.seller_email && <span>Vendedor: {row.seller_email}</span>}

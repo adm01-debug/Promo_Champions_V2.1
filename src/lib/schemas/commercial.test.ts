@@ -67,18 +67,24 @@ describe('ApprovalRequestSchema', () => {
   });
 
   it('rejeita tipo desconhecido e entity_id não-UUID', () => {
-    expect(ApprovalRequestSchema.safeParse({ ...valid, type: 'bonus' }).success).toBe(false);
-    expect(ApprovalRequestSchema.safeParse({ ...valid, entity_id: 'abc' }).success).toBe(false);
+    expect(ApprovalRequestSchema.safeParse({ ...valid, type: 'bonus' }).success).toBe(
+      false
+    );
+    expect(ApprovalRequestSchema.safeParse({ ...valid, entity_id: 'abc' }).success).toBe(
+      false
+    );
   });
 
   it('new_values é obrigatório; old_values e justification são opcionais', () => {
-    expect(ApprovalRequestSchema.safeParse({ type: 'goal', entity_id: uuid }).success).toBe(false);
+    expect(
+      ApprovalRequestSchema.safeParse({ type: 'goal', entity_id: uuid }).success
+    ).toBe(false);
     expect(
       ApprovalRequestSchema.safeParse({
         ...valid,
         old_values: { rate: 3 },
         justification: 'reajuste trimestral',
-      }).success,
+      }).success
     ).toBe(true);
   });
 });

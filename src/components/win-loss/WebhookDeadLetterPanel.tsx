@@ -469,7 +469,9 @@ export function WebhookDeadLetterPanel({
       <Drawer open={!!previewOf} onOpenChange={v => !v && setPreviewOf(null)}>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="border-b">
-            <DrawerTitle className="text-section-title">Payload do dead-letter</DrawerTitle>
+            <DrawerTitle className="text-section-title">
+              Payload do dead-letter
+            </DrawerTitle>
             <DrawerDescription className="text-xs">
               {previewOf?.event} ·{' '}
               {previewOf?.subscription_url ?? previewOf?.subscription_id}

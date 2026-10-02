@@ -1,8 +1,8 @@
-import { FC } from "react";
-import { CalibrationSummaryCard } from "./CalibrationSummaryCard";
-import { CalibratorBucketCurve } from "./CalibratorBucketCurve";
-import { CalibrationFlagDistribution } from "./CalibrationFlagDistribution";
-import { OverconfidentDealsTable } from "./OverconfidentDealsTable";
+import { FC } from 'react';
+import { CalibrationSummaryCard } from './CalibrationSummaryCard';
+import { CalibratorBucketCurve } from './CalibratorBucketCurve';
+import { CalibrationFlagDistribution } from './CalibrationFlagDistribution';
+import { OverconfidentDealsTable } from './OverconfidentDealsTable';
 
 export const WinProbabilityCalibratorPanel: FC = () => {
   return (
