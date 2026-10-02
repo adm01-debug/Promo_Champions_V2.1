@@ -60,7 +60,7 @@ export function toBusinessMonthStart(d: Date | string | number = new Date()): st
 
 /** Último dia do mês de negócio ("YYYY-MM-DD"). */
 export function toBusinessMonthEnd(d: Date | string | number = new Date()): string {
-  const [y, m] = toBusinessMonth(d).split("-").map(Number);
+  const [y, m] = toBusinessMonth(d).split("-").map(Number) as [number, number];
   // Dia 0 do mês seguinte = último dia do mês corrente.
   const last = new Date(Date.UTC(y, m, 0));
   return DATE_FMT.format(last);

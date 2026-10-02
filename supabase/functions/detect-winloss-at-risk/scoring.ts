@@ -174,7 +174,7 @@ export function computeDealRisk(
   // Pick the loss pattern whose avg_amount is closest to deal amount (best signal).
   let bestLoss: LossPattern | null = null;
   if (lossPatterns.length) {
-    bestLoss = lossPatterns.reduce((best, p) => {
+    bestLoss = lossPatterns.reduce<LossPattern | null>((best, p) => {
       if (!p.avg_amount) return best;
       if (!best || !best.avg_amount) return p;
       const dBest = Math.abs(dealAmount - (best.avg_amount ?? 0));

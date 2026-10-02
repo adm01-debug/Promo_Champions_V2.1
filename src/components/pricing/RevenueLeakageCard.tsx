@@ -105,7 +105,7 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
   ];
 
   // Segmento dominante → insight textual derivado dos dados reais.
-  const dominant = items.reduce((a, b) => (b.value > a.value ? b : a), items[0]);
+  const dominant = items.reduce((a, b) => (b.value > a.value ? b : a));
 
   const handleApplyRecovery = () => {
     toast.success('Plano de Recuperação', {
