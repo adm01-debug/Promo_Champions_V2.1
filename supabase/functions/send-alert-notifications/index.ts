@@ -1,9 +1,15 @@
 import { Resend } from 'npm:resend@2';
-import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
+import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { differenceInDays } from 'npm:date-fns@3';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -159,14 +165,15 @@ const generateAlerts = async (
     const monthSales = spIds.length
       ? await chunkedIn<{ salesperson_id: string; amount: number }>(
           spIds,
-          (chunk) => supabase
-            .from('sales')
-            .select('salesperson_id, amount')
-            .in('salesperson_id', chunk)
-            .eq('status', 'completed')
-            .gte('created_at', currentMonth)
-            .limit(50000),
-          { parallel: true, label: 'send-alert-notifications.month-sales' },
+          chunk =>
+            supabase
+              .from('sales')
+              .select('salesperson_id, amount')
+              .in('salesperson_id', chunk)
+              .eq('status', 'completed')
+              .gte('created_at', currentMonth)
+              .limit(50000),
+          { parallel: true, label: 'send-alert-notifications.month-sales' }
         )
       : [];
 
@@ -181,7 +188,9 @@ const generateAlerts = async (
     for (const g of goals ?? []) {
       goalsMap.set(
         (g as { salesperson_id: string; goal_amount: number | string }).salesperson_id,
-        Number((g as { salesperson_id: string; goal_amount: number | string }).goal_amount)
+        Number(
+          (g as { salesperson_id: string; goal_amount: number | string }).goal_amount
+        )
       );
     }
 
@@ -242,10 +251,57 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const jsonErr = (payload: unknown, status: number) =>
+    new Response(JSON.stringify(payload), {
+      status,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Bypass de RLS necessário: alertas cobrem sales/metas de toda a equipe.
+    const supabase = getServiceClient(
+      'alertas agregam vendas e metas de toda a equipe para envio de email'
+    );
+
+    // Autoriza job interno (service_role ou X-Cron-Secret do pg_cron) ou,
+    // no disparo manual pelo app, usuário com papel admin/manager.
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from('_internal_secrets')
+          .select('value')
+          .eq('key', 'coaching_cron_secret')
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (error) {
+      console.error('send-alert-notifications cron authorization unavailable:', error);
+      return jsonErr({ error: 'authorization_unavailable' }, 503);
+    }
+
+    if (!authorizedByCron) {
+      let caller;
+      try {
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return jsonErr({ error: 'unauthorized' }, 401);
+        }
+        console.error('send-alert-notifications auth client failed:', error);
+        return jsonErr({ error: 'authorization_unavailable' }, 503);
+      }
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleError) {
+        console.error('send-alert-notifications role check failed:', roleError);
+        return jsonErr({ error: 'authorization_unavailable' }, 503);
+      }
+      if (!isPrivileged) return jsonErr({ error: 'forbidden' }, 403);
+    }
 
     let recipientEmail: string | null = null;
     let isCronJob = false;
@@ -270,7 +326,9 @@ const handler = async (req: Request): Promise<Response> => {
       // Fetch all active notification preferences
       const { data: preferences, error: prefError } = await supabase
         .from('notification_preferences')
-        .select('id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time')
+        .select(
+          'id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time'
+        )
         .eq('is_active', true)
         .limit(200);
 

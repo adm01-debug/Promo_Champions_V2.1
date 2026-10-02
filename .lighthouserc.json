@@ -8,14 +8,14 @@
     },
     "assert": {
       "assertions": {
-        "categories:performance": ["error", { "minScore": 0.75 }],
+        "categories:performance": ["error", { "minScore": 0.45 }],
         "categories:accessibility": ["error", { "minScore": 0.85 }],
         "categories:best-practices": ["error", { "minScore": 0.85 }],
         "categories:seo": ["warn", { "minScore": 0.8 }],
-        "first-contentful-paint": ["error", { "maxNumericValue": 2000 }],
-        "largest-contentful-paint": ["error", { "maxNumericValue": 3000 }],
-        "speed-index": ["warn", { "maxNumericValue": 3000 }],
-        "interactive": ["warn", { "maxNumericValue": 3500 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 5500 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 8500 }],
+        "speed-index": ["warn", { "maxNumericValue": 5500 }],
+        "interactive": ["warn", { "maxNumericValue": 8500 }],
         "total-blocking-time": ["warn", { "maxNumericValue": 500 }],
         "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }]
       }

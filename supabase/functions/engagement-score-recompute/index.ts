@@ -1,43 +1,74 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders } from "../_shared/cors.ts";
-import { withRequestId } from "../_shared/request-id.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
 
-Deno.serve(withRequestId("engagement-score-recompute", async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+Deno.serve(
+  withRequestId('engagement-score-recompute', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
-    const admin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
-    let ownerId: string | null = null;
-    if (req.method === "POST") {
+    try {
+      // bulk_recompute_engagement recalcula scores de todos os owners — exige
+      // JWT de usuário com papel admin/manager.
+      let caller;
       try {
-        const body = await req.json();
-        ownerId = (body?.ownerId as string | undefined) ?? null;
-      } catch {
-        ownerId = null;
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        throw error;
       }
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleError) throw roleError;
+      if (!isPrivileged) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Bypass de RLS necessário: recomputa engagement de toda a equipe.
+      const admin = getServiceClient(
+        'bulk_recompute_engagement opera sobre todos os owners'
+      );
+
+      let ownerId: string | null = null;
+      if (req.method === 'POST') {
+        try {
+          const body = await req.json();
+          ownerId = (body?.ownerId as string | undefined) ?? null;
+        } catch {
+          ownerId = null;
+        }
+      }
+
+      const { data, error } = await admin.rpc('bulk_recompute_engagement', {
+        _owner_id: ownerId,
+      });
+
+      if (error) throw error;
+
+      return new Response(JSON.stringify({ ok: true, updated: data ?? 0, ownerId }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (e) {
+      console.error('engagement-score-recompute error:', e);
+      const msg = e instanceof Error ? e.message : String(e);
+      return new Response(JSON.stringify({ ok: false, error: msg }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
-
-    const { data, error } = await admin.rpc("bulk_recompute_engagement", {
-      _owner_id: ownerId,
-    });
-
-    if (error) throw error;
-
-    return new Response(
-      JSON.stringify({ ok: true, updated: data ?? 0, ownerId }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  } catch (e) {
-    console.error('engagement-score-recompute error:', e);
-    const msg = e instanceof Error ? e.message : String(e);
-    return new Response(JSON.stringify({ ok: false, error: msg }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-}));
+  })
+);

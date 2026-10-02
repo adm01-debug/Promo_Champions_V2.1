@@ -1,7 +1,11 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { withRequestId } from '../_shared/request-id.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
+import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 
 interface Turn {
   speaker: 'seller' | 'client' | 'unknown';
@@ -109,51 +113,54 @@ function computeStats(turns: Turn[]) {
 }
 
 async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] | null> {
-  const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Você recebe a transcrição de uma chamada de vendas em PT-BR. Identifique os turnos de fala e quem falou (vendedor ou cliente). Use a ferramenta diarize.',
-        },
-        { role: 'user', content: transcript.slice(0, 12000) },
-      ],
-      tools: [
-        {
-          type: 'function',
-          function: {
-            name: 'diarize',
-            description: 'Retorna os turnos identificados',
-            parameters: {
-              type: 'object',
-              properties: {
-                turns: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      speaker: { type: 'string', enum: ['seller', 'client'] },
-                      text: { type: 'string' },
+  const resp = await fetchWithTimeout(
+    'https://ai.gateway.lovable.dev/v1/chat/completions',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Você recebe a transcrição de uma chamada de vendas em PT-BR. Identifique os turnos de fala e quem falou (vendedor ou cliente). Use a ferramenta diarize.',
+          },
+          { role: 'user', content: transcript.slice(0, 12000) },
+        ],
+        tools: [
+          {
+            type: 'function',
+            function: {
+              name: 'diarize',
+              description: 'Retorna os turnos identificados',
+              parameters: {
+                type: 'object',
+                properties: {
+                  turns: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        speaker: { type: 'string', enum: ['seller', 'client'] },
+                        text: { type: 'string' },
+                      },
+                      required: ['speaker', 'text'],
                     },
-                    required: ['speaker', 'text'],
                   },
                 },
+                required: ['turns'],
               },
-              required: ['turns'],
             },
           },
-        },
-      ],
-      tool_choice: { type: 'function', function: { name: 'diarize' } },
-    }),
-  });
+        ],
+        tool_choice: { type: 'function', function: { name: 'diarize' } },
+      }),
+    }
+  );
   if (!resp.ok) return null;
   const data = await resp.json();
   const argsStr = data?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
@@ -166,84 +173,81 @@ async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] 
   }
 }
 
-Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+Deno.serve(
+  withRequestId('diarize-call-recording', async (req, _ctx) => {
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) return json({ error: 'Unauthorized' }, 401);
+    try {
+      const caller = await getUserClient(req);
 
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claims, error: authErr } = await userClient.auth.getClaims(token);
-    if (authErr || !claims?.claims?.sub) return json({ error: 'Unauthorized' }, 401);
+      const body = await req.json().catch(() => ({}));
+      const recording_id = body?.recording_id as string | undefined;
+      if (!recording_id) return json({ error: 'recording_id is required' }, 400);
 
-    const body = await req.json().catch(() => ({}));
-    const recording_id = body?.recording_id as string | undefined;
-    if (!recording_id) return json({ error: 'recording_id is required' }, 400);
+      // A RPC update_call_recording_diarization exige bypass de RLS; a leitura do
+      // recording usa o client do usuário para garantir que o chamador só diarize
+      // gravações que ele pode ver.
+      const admin = getServiceClient(
+        'rpc update_call_recording_diarization (bypass RLS)'
+      );
+      const { data: rec, error: recErr } = await caller.client
+        .from('call_recordings')
+        .select('id, transcript, duration_seconds, status')
+        .eq('id', recording_id)
+        .maybeSingle();
+      if (recErr || !rec) return json({ error: 'Recording not found' }, 404);
+      if (!rec.transcript) return json({ error: 'Recording has no transcript' }, 400);
 
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-    const { data: rec, error: recErr } = await admin
-      .from('call_recordings')
-      .select('id, transcript, duration_seconds, status')
-      .eq('id', recording_id)
-      .maybeSingle();
-    if (recErr || !rec) return json({ error: 'Recording not found' }, 404);
-    if (!rec.transcript) return json({ error: 'Recording has no transcript' }, 400);
+      const totalDur = Number(rec.duration_seconds) || 0;
+      const { turns: parsedTurns, hasLabels } = parseTranscript(rec.transcript, totalDur);
+      let turns = parsedTurns;
 
-    const totalDur = Number(rec.duration_seconds) || 0;
-    const { turns: parsedTurns, hasLabels } = parseTranscript(rec.transcript, totalDur);
-    let turns = parsedTurns;
-
-    if (!hasLabels && LOVABLE_API_KEY) {
-      const aiTurns = await aiReclassify(rec.transcript, LOVABLE_API_KEY);
-      if (aiTurns && aiTurns.length > 0) {
-        const totalWords =
-          aiTurns.reduce((a, t) => a + t.text.split(/\s+/).filter(Boolean).length, 0) ||
-          1;
-        let cursor = 0;
-        turns = aiTurns.map(t => {
-          const wc = t.text.split(/\s+/).filter(Boolean).length;
-          const dur = (wc / totalWords) * Math.max(totalDur, 1);
-          const start = cursor;
-          cursor += dur;
-          return {
-            speaker: t.speaker as 'seller' | 'client',
-            text: t.text,
-            word_count: wc,
-            start_estimate: Math.round(start),
-            duration_estimate: Math.round(dur),
-          };
-        });
+      if (!hasLabels && LOVABLE_API_KEY) {
+        const aiTurns = await aiReclassify(rec.transcript, LOVABLE_API_KEY);
+        if (aiTurns && aiTurns.length > 0) {
+          const totalWords =
+            aiTurns.reduce((a, t) => a + t.text.split(/\s+/).filter(Boolean).length, 0) ||
+            1;
+          let cursor = 0;
+          turns = aiTurns.map(t => {
+            const wc = t.text.split(/\s+/).filter(Boolean).length;
+            const dur = (wc / totalWords) * Math.max(totalDur, 1);
+            const start = cursor;
+            cursor += dur;
+            return {
+              speaker: t.speaker as 'seller' | 'client',
+              text: t.text,
+              word_count: wc,
+              start_estimate: Math.round(start),
+              duration_estimate: Math.round(dur),
+            };
+          });
+        }
       }
+
+      const stats = computeStats(turns);
+
+      const { error: rpcErr } = await admin.rpc('update_call_recording_diarization', {
+        _id: recording_id,
+        _diarization: turns as unknown as Record<string, unknown>,
+        _talk_ratio_seller: stats.talk_ratio_seller,
+        _talk_ratio_client: stats.talk_ratio_client,
+        _longest_monologue_sec: stats.longest_monologue_sec,
+        _interruptions_count: stats.interruptions_count,
+        _turns_count: stats.turns_count,
+      });
+      if (rpcErr) return json({ error: rpcErr.message }, 500);
+
+      return json({ recording_id, ...stats, turns_count: turns.length });
+    } catch (e) {
+      if (e instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
+      console.error('diarize-call-recording fatal:', e);
+      return json({ error: e instanceof Error ? e.message : 'Unknown error' }, 500);
     }
-
-    const stats = computeStats(turns);
-
-    const { error: rpcErr } = await admin.rpc('update_call_recording_diarization', {
-      _id: recording_id,
-      _diarization: turns as unknown as Record<string, unknown>,
-      _talk_ratio_seller: stats.talk_ratio_seller,
-      _talk_ratio_client: stats.talk_ratio_client,
-      _longest_monologue_sec: stats.longest_monologue_sec,
-      _interruptions_count: stats.interruptions_count,
-      _turns_count: stats.turns_count,
-    });
-    if (rpcErr) return json({ error: rpcErr.message }, 500);
-
-    return json({ recording_id, ...stats, turns_count: turns.length });
-  } catch (e) {
-    console.error('diarize-call-recording fatal:', e);
-    return json({ error: e instanceof Error ? e.message : 'Unknown error' }, 500);
-  }
-}));
+  })
+);
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
