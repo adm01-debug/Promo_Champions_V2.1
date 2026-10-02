@@ -2,6 +2,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 type Provider = "zendesk" | "intercom" | "freshdesk";
 
@@ -74,6 +76,47 @@ Deno.serve(withRequestId("helpdesk-sync", async (req, _ctx) => {
 
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+
+    // SEC: antes desta verificação, qualquer chamada com a anon key disparava
+    // um sync externo (Zendesk/Intercom/Freshdesk) e escrevia em
+    // support_tickets como service_role. Agora só passa job interno
+    // (service_role ou X-Cron-Secret) ou usuário com papel admin/manager.
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (authError) {
+      console.error("helpdesk-sync cron authorization unavailable:", authError);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (!authorizedByCron) {
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          "is_admin_or_manager" as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          return new Response(JSON.stringify({ error: "forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+      } catch (authError) {
+        if (authError instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        console.error("helpdesk-sync authorization failed:", authError);
+        return new Response(JSON.stringify({ error: "authorization_unavailable" }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
+
     const body = (await req.json().catch(() => ({}))) as SyncRequest;
     const { provider, account_id } = body;
     if (!provider) return new Response(JSON.stringify({ error: "provider required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });

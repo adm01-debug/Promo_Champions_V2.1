@@ -107,5 +107,5 @@
 5. Post-incident review
 
 ### Contact
-For security issues: security@salespro.com
+For security issues: adm01@promobrindes.com.br
 For emergency: +1 (555) 123-4567

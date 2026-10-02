@@ -3,7 +3,7 @@
 > Guia exaustivo para implementação do sistema de monitoramento de performance de banco de dados em projetos Lovable/Supabase.
 
 **Versão:** 1.0  
-**Última atualização:** 23/03/2026  
+**Atualizado em:** 2026-03-23  
 **Cobertura de testes:** 229 testes automatizados (100% passando)
 
 ---
