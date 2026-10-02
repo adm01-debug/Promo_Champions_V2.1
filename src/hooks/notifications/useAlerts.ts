@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { differenceInDays, parseISO } from 'date-fns';
 import { toBusinessMonthStart } from '@/lib/date';
 
@@ -104,18 +105,45 @@ export const useAlerts = () => {
       const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
       const expectedProgress = (dayOfMonth / daysInMonth) * 100;
 
-      for (const person of salespeople || []) {
+      // Vendas do mês de todos os vendedores com meta em uma única query
+      // (evita N+1); a soma por vendedor é feita no cliente.
+      const peopleWithGoals = (salespeople || []).filter(person =>
+        goals?.some(g => g.salesperson_id === person.id)
+      );
+
+      const totalBySalesperson = new Map<string, number>();
+      if (peopleWithGoals.length > 0) {
+        // Paginado: volume mensal do time pode exceder o teto de 1000
+        // linhas do PostgREST e subcontar vendedores.
+        const sales = await fetchAllRows(
+          (from, to) =>
+            supabase
+              .from('sales')
+              .select('salesperson_id, amount')
+              .in(
+                'salesperson_id',
+                peopleWithGoals.map(p => p.id)
+              )
+              .in('status', [...WON_SALE_STATUSES])
+              .gte('created_at', currentMonth)
+              .range(from, to),
+          { label: 'useAlerts:monthSales' }
+        );
+
+        for (const sale of sales) {
+          if (sale.salesperson_id == null) continue;
+          totalBySalesperson.set(
+            sale.salesperson_id,
+            (totalBySalesperson.get(sale.salesperson_id) ?? 0) + Number(sale.amount ?? 0)
+          );
+        }
+      }
+
+      for (const person of peopleWithGoals) {
         const goal = goals?.find(g => g.salesperson_id === person.id);
         if (!goal) continue;
 
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('amount')
-          .eq('salesperson_id', person.id)
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', currentMonth);
-
-        const totalSales = sales?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
+        const totalSales = totalBySalesperson.get(person.id) ?? 0;
         const actualProgress = (totalSales / Number(goal.goal_amount)) * 100;
 
         if (actualProgress < expectedProgress - 20) {

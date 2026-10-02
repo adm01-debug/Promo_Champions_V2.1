@@ -52,8 +52,8 @@ const saleSchema = z.object({
     }, 'Valor deve ser maior que zero'),
   sdr_id: z.string().optional(),
   closer_id: z.string().optional(),
-  is_first_sale: z.boolean().default(true),
-  source: z.string().default('other'),
+  is_first_sale: z.boolean(),
+  source: z.string(),
 });
 
 type SaleFormData = z.infer<typeof saleSchema>;

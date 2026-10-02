@@ -254,13 +254,23 @@ export const useCalculateLeadScores = () => {
       const CHUNK_SIZE = 500;
       const merged: Record<string, unknown> = {};
 
+      const chunks: string[][] = [];
       for (let i = 0; i < saleIds.length; i += CHUNK_SIZE) {
-        const chunk = saleIds.slice(i, i + CHUNK_SIZE);
-        const { data, error } = await supabase.functions.invoke<{
-          scores: Record<string, unknown>;
-        }>('lead-scoring', {
-          body: { dealIds: chunk },
-        });
+        chunks.push(saleIds.slice(i, i + CHUNK_SIZE));
+      }
+
+      // Chunks independentes — dispara em paralelo (evita roundtrips
+      // sequenciais).
+      const responses = await Promise.all(
+        chunks.map(chunk =>
+          supabase.functions.invoke<{
+            scores: Record<string, unknown>;
+          }>('lead-scoring', {
+            body: { dealIds: chunk },
+          })
+        )
+      );
+      for (const { data, error } of responses) {
         if (error) throw error;
         Object.assign(merged, data?.scores || {});
       }

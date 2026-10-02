@@ -2,6 +2,7 @@ import { Resend } from 'npm:resend@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -14,20 +15,34 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   }
 
   // ── Authentication ────────────────────────────────────────────────────
-  // Require a valid user JWT. Content (salesperson_name, client_name, amount)
-  // is read from the DB — NOT the request body — to prevent content injection.
-  let callerUserId: string;
+  // Exige JWT de usuário válido OU chamada interna autenticada (service_role
+  // / X-Cron-Secret — usada pelo trigger de broadcast de venda no Postgres).
+  // Conteúdo (salesperson_name, client_name, amount) é lido do banco — NUNCA
+  // do corpo da requisição — para prevenir injeção de conteúdo.
+  let callerUserId: string | null = null;
+  let isInternalCall = false;
   try {
     const ctx2 = await getUserClient(req);
     callerUserId = ctx2.userId;
   } catch (e) {
-    if (e instanceof UnauthorizedError) {
+    if (!(e instanceof UnauthorizedError)) throw e;
+    isInternalCall = await isAuthorizedCronRequest(req, async () => {
+      const admin = getServiceClient(
+        'broadcast-sale-notification: consulta X-Cron-Secret em _internal_secrets para autenticar jobs internos'
+      );
+      const { data } = await admin
+        .from('_internal_secrets')
+        .select('value')
+        .eq('key', 'coaching_cron_secret')
+        .maybeSingle();
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!isInternalCall) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: ' + e.message }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    throw e;
   }
 
   try {
@@ -54,8 +69,9 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
       });
     }
 
-    // Authorization: only the salesperson on the sale or an admin may trigger.
-    if (sale.salesperson_id !== callerUserId) {
+    // Authorization: chamada interna (trigger) é confiável; com JWT de
+    // usuário, só o vendedor da venda ou admin/manager pode disparar.
+    if (!isInternalCall && sale.salesperson_id !== callerUserId) {
       const { data: roleRow } = await supabase
         .from('user_roles')
         .select('role')

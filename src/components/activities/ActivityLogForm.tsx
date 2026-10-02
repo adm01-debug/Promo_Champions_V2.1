@@ -101,14 +101,11 @@ const activitySchema = z.object({
   duration_minutes: z
     .string()
     .optional()
-    .transform(val => (val ? parseInt(val) : undefined))
-    .pipe(
-      z
-        .number()
-        .min(1, 'Duração mínima é 1 minuto')
-        .max(480, 'Duração máxima é 8 horas')
-        .optional()
-    ),
+    .refine(val => {
+      if (!val) return true;
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 1 && num <= 480;
+    }, 'Duração deve ser entre 1 e 480 minutos'),
   notes: z
     .string()
     .max(1000, 'Observações devem ter no máximo 1000 caracteres')
@@ -256,7 +253,9 @@ export function ActivityLogForm({
         activity_type: data.activity_type,
         outcome: data.outcome,
         notes: finalNotes || undefined,
-        duration_minutes: data.duration_minutes,
+        duration_minutes: data.duration_minutes
+          ? parseInt(data.duration_minutes)
+          : undefined,
         contact_name: data.contact_name || undefined,
       },
       {

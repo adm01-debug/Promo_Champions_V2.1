@@ -5,6 +5,7 @@ Plataforma gamificada de CRM, BI e inteligência de vendas para equipes comercia
 ## 🚀 Quick Start
 
 ### Pré-requisitos
+
 - **Node.js** 22+ (lockfile único: `package-lock.json`)
 - Acesso ao projeto **Supabase Cloud** `usyxfpqlsspldubptrdl`
 
@@ -49,14 +50,14 @@ npm run test:coverage
 
 ## 📦 Stack
 
-| Categoria | Tecnologia |
-|-----------|-----------|
-| Frontend | React 18 + TypeScript + Vite |
-| UI | Tailwind CSS + shadcn/ui + Radix UI |
-| State | TanStack Query + React Context |
-| Backend | Supabase (PostgreSQL + Auth) |
-| Testing | Vitest + Playwright |
-| CI/Lint | ESLint + Prettier + Husky + Lighthouse CI |
+| Categoria | Tecnologia                                |
+| --------- | ----------------------------------------- |
+| Frontend  | React 18 + TypeScript + Vite              |
+| UI        | Tailwind CSS + shadcn/ui + Radix UI       |
+| State     | TanStack Query + React Context            |
+| Backend   | Supabase (PostgreSQL + Auth)              |
+| Testing   | Vitest + Playwright                       |
+| CI/Lint   | ESLint + Prettier + Husky + Lighthouse CI |
 
 ## 📁 Estrutura
 
@@ -105,15 +106,13 @@ Detalhes em [`docs/SECURITY_HARDENING.md`](./docs/SECURITY_HARDENING.md) e nas A
 
 ### Dashboards admin de observabilidade
 
-| Rota | Descrição |
-|------|-----------|
-| `/admin/platform-slo` | SLOs consolidados (webhook, V4, circuit stability, error-free) 30d |
-| `/admin/web-vitals` | Web Vitals P75 por rota/device com budget check |
-| `/admin/quote-conversions` | Auditoria de conversões orçamento→venda |
-| `/admin/v4-callbacks` | Callbacks V4 e replays |
-| `/admin/webhooks-timeline` | Timeline de entregas de webhook |
-
-
+| Rota                       | Descrição                                                          |
+| -------------------------- | ------------------------------------------------------------------ |
+| `/admin/platform-slo`      | SLOs consolidados (webhook, V4, circuit stability, error-free) 30d |
+| `/admin/web-vitals`        | Web Vitals P75 por rota/device com budget check                    |
+| `/admin/quote-conversions` | Auditoria de conversões orçamento→venda                            |
+| `/admin/v4-callbacks`      | Callbacks V4 e replays                                             |
+| `/admin/webhooks-timeline` | Timeline de entregas de webhook                                    |
 
 ## 🤝 Contribuindo
 

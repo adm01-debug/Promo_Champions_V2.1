@@ -20,7 +20,7 @@ test.describe('Dashboard SDR', () => {
     await restoreSession(page);
     await loadPage(page, '/sdr');
     await expect(
-      page.getByRole('heading', { name: /Dashboard SDR/i, level: 1 }),
+      page.getByRole('heading', { name: /Dashboard SDR/i, level: 1 })
     ).toBeVisible({ timeout: 20_000 });
   });
 
@@ -38,7 +38,7 @@ test.describe('Dashboard Closer', () => {
     await restoreSession(page);
     await loadPage(page, '/closer');
     await expect(
-      page.getByRole('heading', { name: /Dashboard Closer/i, level: 1 }),
+      page.getByRole('heading', { name: /Dashboard Closer/i, level: 1 })
     ).toBeVisible({ timeout: 20_000 });
   });
 
@@ -57,9 +57,9 @@ test.describe('Produtos — catálogo', () => {
     test.skip(!HAS_AUTH, skipReason());
     await restoreSession(page);
     await loadPage(page, '/produtos');
-    await expect(
-      page.getByRole('heading', { name: /Produtos/i, level: 1 }),
-    ).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole('heading', { name: /Produtos/i, level: 1 })).toBeVisible({
+      timeout: 20_000,
+    });
   });
 
   test('title da página correto', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('Comparador de Preços — cotações', () => {
     await restoreSession(page);
     await loadPage(page, '/comparador-precos');
     await expect(
-      page.getByRole('heading', { name: /Comparador de Preços/i, level: 1 }),
+      page.getByRole('heading', { name: /Comparador de Preços/i, level: 1 })
     ).toBeVisible({ timeout: 20_000 });
   });
 
@@ -133,7 +133,7 @@ test.describe('Analytics — visão geral', () => {
     await restoreSession(page);
     await loadPage(page, '/analytics');
     await expect(
-      page.getByRole('heading', { name: /Analytics de Vendas/i, level: 1 }),
+      page.getByRole('heading', { name: /Analytics de Vendas/i, level: 1 })
     ).toBeVisible({ timeout: 20_000 });
   });
 });

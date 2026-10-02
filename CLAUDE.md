@@ -13,7 +13,7 @@
 | URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                                             |
 | Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl                            |
 | MCP para SQL     | gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "…LOVABLE CLOUD…") |
-| Migrations       | **611** (timestamp YYYYMMDDHHmmss)                                                    |
+| Migrations       | **611** (timestamp YYYYMMDDHHmmss)                                                     |
 
 > Corrigido em 2026-09-02 (ref antigo `rapjswienfhkobhlamxb`) e **reprovado em
 > 2026-09-13**: a "prova" anterior citava `_internal_secrets.functions_base_url`,

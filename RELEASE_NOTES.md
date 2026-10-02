@@ -28,7 +28,7 @@ Consolida cinco frentes de excelência: segurança, bundle, cobertura, novos mó
 
 - Coverage enforced (`vitest.config.ts` + `coverage-baseline.json`): piso absoluto **lines/branches/statements 2,5 % / functions 2,0 %** — é um ratchet (só sobe), atualizado por `npm run coverage:baseline:update`.
 - Cobertura real medida em 2026-09-28 (vitest v5, `all: false`): **lines 3,59 % / branches 3,07 % / functions 2,65 % / statements 3,53 %**.
-- ⚠️ *Correção (2026-10-01): a versão anterior destas notas citava "85 % enforced / 99,43 % lines / 220 testes" — números fabricados. Os valores acima são os medidos no código.*
+- ⚠️ _Correção (2026-10-01): a versão anterior destas notas citava "85 % enforced / 99,43 % lines / 220 testes" — números fabricados. Os valores acima são os medidos no código._
 - Módulos com testes dedicados nesta release: `hooks/reports/salesReportHelpers`, `components/reporting/funnelReportHelpers`, `services/salesService`, `lib/revenueForecast/csvExport`, `lib/auth/passwordErrorMessages`.
 
 ## 🚀 Novos módulos funcionais

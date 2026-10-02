@@ -15,11 +15,11 @@ sua própria verificação de assinatura.
 
 ## Configuração
 
-| Item | Onde |
-|------|------|
-| `base_url` + `api_key` da instância n8n | `/admin/conexoes` → `integration_connections` (`kind='n8n'`) |
-| `N8N_API_KEY` (fallback) | Secret das edge functions |
-| Webhooks N8N → produto | URLs das functions `verify_jwt=false` + segredo correspondente |
+| Item                                    | Onde                                                           |
+| --------------------------------------- | -------------------------------------------------------------- |
+| `base_url` + `api_key` da instância n8n | `/admin/conexoes` → `integration_connections` (`kind='n8n'`)   |
+| `N8N_API_KEY` (fallback)                | Secret das edge functions                                      |
+| Webhooks N8N → produto                  | URLs das functions `verify_jwt=false` + segredo correspondente |
 
 ## Sinais de falha
 

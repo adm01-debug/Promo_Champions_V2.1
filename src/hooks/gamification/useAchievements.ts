@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import type { Json } from '@/integrations/supabase/types';
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 // Extended achievement type matching database schema
 export interface AchievementRecord {
@@ -93,26 +95,52 @@ export const useStreakRanking = () => {
 
       if (spError) throw spError;
 
-      const rankings: StreakRanking[] = [];
+      // Agregação única por vendedor (evita N+1): as conquistas de daily_goal
+      // de todos os ativos vêm em lotes de ids (chunkedIn evita 414 na URL) e
+      // cada lote é paginado (fetchAllRows), pois o teto de 1000 linhas do
+      // PostgREST truncaria o agregado e corromperia o ranking.
+      const salespersonIds = (salespeople || []).map(sp => sp.id);
+      const achievements = await chunkedIn<{
+        salesperson_id: string;
+        achievement_date: string;
+        achievement_type: string;
+      }>(
+        salespersonIds,
+        chunk =>
+          fetchAllRows<{
+            salesperson_id: string;
+            achievement_date: string;
+            achievement_type: string;
+          }>(
+            (from, to) =>
+              supabase
+                .from('achievements')
+                .select('salesperson_id, achievement_date, achievement_type')
+                .in('salesperson_id', chunk as string[])
+                .eq('achievement_type', 'daily_goal')
+                .order('achievement_date', { ascending: false })
+                .range(from, to),
+            { label: 'useStreakRanking:achievements' }
+          ).then(data => ({ data, error: null })),
+        { parallel: true, label: 'useStreakRanking:achievements' }
+      );
 
-      for (const sp of salespeople || []) {
-        const { data: achievements } = await supabase
-          .from('achievements')
-          .select('achievement_date, achievement_type')
-          .eq('salesperson_id', sp.id)
-          .eq('achievement_type', 'daily_goal')
-          .order('achievement_date', { ascending: false });
+      const countBySalesperson = new Map<string, number>();
+      for (const achievement of achievements) {
+        countBySalesperson.set(
+          achievement.salesperson_id,
+          (countBySalesperson.get(achievement.salesperson_id) ?? 0) + 1
+        );
+      }
+
+      const rankings: StreakRanking[] = (salespeople || []).map(sp => {
+        const count = countBySalesperson.get(sp.id) ?? 0;
 
         // Calculate current and best streak
-        let currentStreak = 0;
-        let bestStreak = 0;
+        const currentStreak = count > 0 ? 1 : 0;
+        const bestStreak = count;
 
-        if (achievements && achievements.length > 0) {
-          currentStreak = achievements.length > 0 ? 1 : 0;
-          bestStreak = achievements.length;
-        }
-
-        rankings.push({
+        return {
           salesperson_id: sp.id,
           salesperson_name: sp.name,
           avatar_url: sp.avatar_url,
@@ -122,11 +150,11 @@ export const useStreakRanking = () => {
           // Add aliases for component compatibility
           name: sp.name,
           role: sp.role,
-          currentStreak: currentStreak,
-          bestStreak: bestStreak,
-          totalGoalsAchieved: achievements?.length || 0,
-        });
-      }
+          currentStreak,
+          bestStreak,
+          totalGoalsAchieved: count,
+        };
+      });
 
       // Sort by current streak and assign ranks
       rankings.sort((a, b) => b.current_streak - a.current_streak);
