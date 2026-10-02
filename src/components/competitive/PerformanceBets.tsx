@@ -3,19 +3,41 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
-import { Flame, TrendingUp, Target, Plus, Coins, Trophy, AlertTriangle, CheckCircle2, XCircle, Timer } from 'lucide-react';
+import {
+  Flame,
+  TrendingUp,
+  Target,
+  Plus,
+  Coins,
+  Trophy,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  Timer,
+} from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { differenceInHours } from 'date-fns';
-
 
 interface PerformanceBet {
   id: string;
@@ -33,16 +55,25 @@ function PerformanceBetsComponent() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [betForm, setBetForm] = useState({
-    bet_type: 'deals', target_value: 5, xp_wagered: 200, description: '',
+    bet_type: 'deals',
+    target_value: 5,
+    xp_wagered: 200,
+    description: '',
     duration_days: 7,
   });
 
   const { data: currentSp } = useQuery({
     queryKey: ['bets-current-sp'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
-      const { data } = await supabase.from('salespeople').select('id, name').eq('auth_user_id', user.id).maybeSingle();
+      const { data } = await supabase
+        .from('salespeople')
+        .select('id, name')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -70,7 +101,9 @@ function PerformanceBetsComponent() {
         target_value: betForm.target_value,
         xp_wagered: betForm.xp_wagered,
         xp_multiplier: 2.0,
-        description: betForm.description || `Aposto ${betForm.xp_wagered} XP que alcanço ${betForm.target_value} ${betForm.bet_type}`,
+        description:
+          betForm.description ||
+          `Aposto ${betForm.xp_wagered} XP que alcanço ${betForm.target_value} ${betForm.bet_type}`,
         ends_at: endsAt.toISOString(),
       });
       if (error) throw error;
@@ -91,16 +124,30 @@ function PerformanceBetsComponent() {
     activities: { label: 'Atividades', icon: Flame },
   };
 
-  const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
+  const statusConfig: Record<
+    string,
+    { label: string; color: string; icon: typeof CheckCircle2 }
+  > = {
     active: { label: 'Em andamento', color: 'bg-primary/20 text-primary', icon: Timer },
     won: { label: 'GANHOU! 🎉', color: 'bg-success/20 text-success', icon: CheckCircle2 },
-    lost: { label: 'Perdeu 😞', color: 'bg-destructive/20 text-destructive', icon: XCircle },
-    cancelled: { label: 'Cancelada', color: 'bg-muted text-muted-foreground', icon: AlertTriangle },
+    lost: {
+      label: 'Perdeu 😞',
+      color: 'bg-destructive/20 text-destructive',
+      icon: XCircle,
+    },
+    cancelled: {
+      label: 'Cancelada',
+      color: 'bg-muted text-muted-foreground',
+      icon: AlertTriangle,
+    },
   };
 
   const activeBets = bets.filter((b: PerformanceBet) => b.status === 'active');
   const completedBets = bets.filter((b: PerformanceBet) => b.status !== 'active');
-  const totalXpAtStake = activeBets.reduce((sum: number, b: PerformanceBet) => sum + (b.xp_wagered || 0), 0);
+  const totalXpAtStake = activeBets.reduce(
+    (sum: number, b: PerformanceBet) => sum + (b.xp_wagered || 0),
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -109,19 +156,30 @@ function PerformanceBetsComponent() {
           <h2 className="text-section-title flex items-center gap-2">
             <Flame className="h-5 w-5 text-coins" /> Apostas de Performance
           </h2>
-          <p className="text-sm text-muted-foreground">Aposte XP nas suas próprias metas. Ganhe o dobro ou perca tudo!</p>
+          <p className="text-sm text-muted-foreground">
+            Aposte XP nas suas próprias metas. Ganhe o dobro ou perca tudo!
+          </p>
         </div>
         <Dialog open={showCreate} onOpenChange={setShowCreate}>
           <DialogTrigger asChild>
-            <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Nova Aposta</Button>
+            <Button size="sm">
+              <Plus className="h-4 w-4 mr-1" /> Nova Aposta
+            </Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>🎲 Fazer Aposta</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle>🎲 Fazer Aposta</DialogTitle>
+            </DialogHeader>
             <div className="space-y-4">
               <div>
                 <Label>Tipo de meta</Label>
-                <Select value={betForm.bet_type} onValueChange={v => setBetForm(p => ({ ...p, bet_type: v }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={betForm.bet_type}
+                  onValueChange={v => setBetForm(p => ({ ...p, bet_type: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="deals">Deals Fechados</SelectItem>
                     <SelectItem value="revenue">Receita (R$)</SelectItem>
@@ -133,21 +191,46 @@ function PerformanceBetsComponent() {
               </div>
               <div>
                 <Label>Meta alvo</Label>
-                <Input type="number" value={betForm.target_value} onChange={e => setBetForm(p => ({ ...p, target_value: parseFloat(e.target.value) || 0 }))} />
+                <Input
+                  type="number"
+                  value={betForm.target_value}
+                  onChange={e =>
+                    setBetForm(p => ({
+                      ...p,
+                      target_value: parseFloat(e.target.value) || 0,
+                    }))
+                  }
+                />
               </div>
               <div>
                 <Label>XP Apostado: {betForm.xp_wagered}</Label>
-                <Slider value={[betForm.xp_wagered]} onValueChange={([v]) => setBetForm(p => ({ ...p, xp_wagered: v }))} min={50} max={1000} step={50} className="mt-2" />
+                <Slider
+                  value={[betForm.xp_wagered]}
+                  onValueChange={([v]) => setBetForm(p => ({ ...p, xp_wagered: v }))}
+                  min={50}
+                  max={1000}
+                  step={50}
+                  className="mt-2"
+                />
                 <div className="flex justify-between text-xs text-muted-foreground mt-1">
                   <span>50 XP</span>
-                  <span className="text-primary font-semibold">Ganho potencial: {betForm.xp_wagered * 2} XP</span>
+                  <span className="text-primary font-semibold">
+                    Ganho potencial: {betForm.xp_wagered * 2} XP
+                  </span>
                   <span>1000 XP</span>
                 </div>
               </div>
               <div>
                 <Label>Prazo (dias)</Label>
-                <Select value={String(betForm.duration_days)} onValueChange={v => setBetForm(p => ({ ...p, duration_days: parseInt(v) }))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  value={String(betForm.duration_days)}
+                  onValueChange={v =>
+                    setBetForm(p => ({ ...p, duration_days: parseInt(v) }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="3">3 dias</SelectItem>
                     <SelectItem value="5">5 dias</SelectItem>
@@ -159,11 +242,18 @@ function PerformanceBetsComponent() {
               <Card className="border-coins/30 bg-coins/5">
                 <CardContent className="p-3 text-center text-sm">
                   <Flame className="h-5 w-5 mx-auto mb-1 text-coins" />
-                  Se bater: <strong className="text-success">+{betForm.xp_wagered * 2} XP</strong><br />
-                  Se falhar: <strong className="text-destructive">-{betForm.xp_wagered} XP</strong>
+                  Se bater:{' '}
+                  <strong className="text-success">+{betForm.xp_wagered * 2} XP</strong>
+                  <br />
+                  Se falhar:{' '}
+                  <strong className="text-destructive">-{betForm.xp_wagered} XP</strong>
                 </CardContent>
               </Card>
-              <Button className="w-full" onClick={() => createBet.mutate()} disabled={createBet.isPending}>
+              <Button
+                className="w-full"
+                onClick={() => createBet.mutate()}
+                disabled={createBet.isPending}
+              >
                 🎲 Apostar {betForm.xp_wagered} XP
               </Button>
             </div>
@@ -198,14 +288,24 @@ function PerformanceBetsComponent() {
       {/* Active Bets */}
       {activeBets.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">🔥 Apostas Ativas</h3>
+          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
+            🔥 Apostas Ativas
+          </h3>
           {activeBets.map((bet: PerformanceBet, i: number) => {
             const type = typeLabels[bet.bet_type] || typeLabels.deals;
-            const progress = bet.target_value > 0 ? Math.min((bet.current_value / bet.target_value) * 100, 100) : 0;
+            const progress =
+              bet.target_value > 0
+                ? Math.min((bet.current_value / bet.target_value) * 100, 100)
+                : 0;
             const hoursLeft = differenceInHours(new Date(bet.ends_at), new Date());
 
             return (
-              <motion.div key={bet.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
+              <motion.div
+                key={bet.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
                 <Card className="border-primary/20">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-3">
@@ -214,20 +314,32 @@ function PerformanceBetsComponent() {
                           <type.icon className="h-4 w-4 text-primary" />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm">{bet.salespeople?.name}</div>
-                          <div className="text-xs text-muted-foreground">{type.label}: {bet.bet_type === 'revenue' ? `R$ ${bet.target_value}` : bet.target_value}</div>
+                          <div className="font-semibold text-sm">
+                            {bet.salespeople?.name}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {type.label}:{' '}
+                            {bet.bet_type === 'revenue'
+                              ? `R$ ${bet.target_value}`
+                              : bet.target_value}
+                          </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge variant="outline" className="text-coins border-coins/30">{bet.xp_wagered} XP</Badge>
+                        <Badge variant="outline" className="text-coins border-coins/30">
+                          {bet.xp_wagered} XP
+                        </Badge>
                         <div className="text-xs text-muted-foreground mt-1">
-                          <Timer className="h-3 w-3 inline mr-1" />{hoursLeft > 0 ? `${hoursLeft}h restantes` : 'Expirado'}
+                          <Timer className="h-3 w-3 inline mr-1" />
+                          {hoursLeft > 0 ? `${hoursLeft}h restantes` : 'Expirado'}
                         </div>
                       </div>
                     </div>
                     <Progress value={progress} className="h-2" />
                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                      <span>{bet.current_value} / {bet.target_value}</span>
+                      <span>
+                        {bet.current_value} / {bet.target_value}
+                      </span>
                       <span>{progress.toFixed(0)}%</span>
                     </div>
                   </CardContent>
@@ -241,8 +353,10 @@ function PerformanceBetsComponent() {
       {/* Completed Bets */}
       {completedBets.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">📜 Histórico</h3>
-          {completedBets.slice(0, 10).map(( bet: PerformanceBet) => {
+          <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">
+            📜 Histórico
+          </h3>
+          {completedBets.slice(0, 10).map((bet: PerformanceBet) => {
             const status = statusConfig[bet.status] || statusConfig.cancelled;
             const StatusIcon = status.icon;
             return (
@@ -251,9 +365,13 @@ function PerformanceBetsComponent() {
                   <div className="flex items-center gap-2">
                     <StatusIcon className="h-4 w-4" />
                     <span className="text-sm">{bet.salespeople?.name}</span>
-                    <span className="text-xs text-muted-foreground">· {typeLabels[bet.bet_type]?.label}</span>
+                    <span className="text-xs text-muted-foreground">
+                      · {typeLabels[bet.bet_type]?.label}
+                    </span>
                   </div>
-                  <Badge variant="outline" className={status.color}>{status.label}</Badge>
+                  <Badge variant="outline" className={status.color}>
+                    {status.label}
+                  </Badge>
                 </CardContent>
               </Card>
             );
@@ -266,13 +384,14 @@ function PerformanceBetsComponent() {
           <CardContent className="p-12 text-center">
             <Coins className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
             <h3 className="text-section-title">Nenhuma aposta ainda</h3>
-            <p className="text-sm text-muted-foreground">Seja o primeiro a apostar em si mesmo! 💪</p>
+            <p className="text-sm text-muted-foreground">
+              Seja o primeiro a apostar em si mesmo! 💪
+            </p>
           </CardContent>
         </Card>
       )}
     </div>
   );
 }
-
 
 export const PerformanceBets = React.memo(PerformanceBetsComponent);

@@ -45,12 +45,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  ApprovalRequest,
-  AuditLog,
-  CommercialGoal,
-  ScoringRule,
-} from '@/types';
+import { ApprovalRequest, AuditLog, CommercialGoal, ScoringRule } from '@/types';
 import type { Json } from '@/integrations/supabase/types';
 import { parseRows, toJson } from '@/lib/supabase/parseRows';
 

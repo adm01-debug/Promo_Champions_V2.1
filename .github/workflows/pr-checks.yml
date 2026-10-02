@@ -88,12 +88,16 @@ jobs:
       - name: Run TypeScript check
         run: npm run typecheck
 
+      # Gate de formatação: depois do Prettier em massa (PR de higiene),
+      # nenhum arquivo de src/ pode regredir de formato.
+      - name: Prettier format check
+        run: npm run format:check
+
       # Flags estritas ainda não zeradas (noUncheckedIndexedAccess, noUnused*):
       # roda tsc com tsconfig.strict.json e reprova só erros NOVOS vs a baseline
       # em scripts/typecheck-baseline.json (ver docs/TYPE_DEBT.md).
       - name: Strict typecheck ratchet (baseline)
         run: npm run typecheck:baseline
-
       - name: Committed secrets scan
         run: npm run security:secrets
 
@@ -199,7 +203,10 @@ jobs:
     # completa: URL, publishable key e conta E2E. Configuração parcial falha
     # imediatamente para não produzir timeouts ou falso sinal de cobertura.
     # Sem nenhum segredo, a suíte é marcada explicitamente como skipped.
+    # environment: pr-preview — secrets ficam restritos a este job; fork PRs
+    # não acessam o ambiente (GitHub bloqueia deployments de fork por padrão).
     if: (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository) || github.event_name == 'workflow_dispatch'
+    environment: pr-preview
     env:
       HUSKY: 0
 

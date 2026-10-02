@@ -12,7 +12,7 @@ import type { EligibleBonus } from '@/hooks/useEligibleBonuses';
  */
 export function useAutoAwardBonuses(
   achieved: EligibleBonus[],
-  viewedSalespersonId: string | undefined,
+  viewedSalespersonId: string | undefined
 ) {
   const dispatched = useRef<Set<string>>(new Set());
 

@@ -49,15 +49,23 @@ export function MessageBubble({
         )}
       >
         <div className="whitespace-pre-wrap">{message.content || '...'}</div>
-        <div className={cn('flex items-center gap-2 mt-1', isUser ? 'justify-end' : 'justify-between')}>
+        <div
+          className={cn(
+            'flex items-center gap-2 mt-1',
+            isUser ? 'justify-end' : 'justify-between'
+          )}
+        >
           <span className={cn('text-[10px] opacity-60')}>
-            {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+            {message.timestamp.toLocaleTimeString('pt-BR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
           </span>
           {!isUser && showAudioButton && message.content && (
             <Button
               variant="ghost"
               size="icon"
-              aria-label={isSpeaking ? "Parar áudio" : "Ouvir mensagem"}
+              aria-label={isSpeaking ? 'Parar áudio' : 'Ouvir mensagem'}
               className={cn(
                 'h-5 w-5 opacity-60 hover:opacity-100 transition-opacity',
                 isSpeaking && 'text-primary opacity-100'

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export type NextGoalMode = 'hunting' | 'defending' | 'leader-only' | 'idle';
 
@@ -24,16 +24,19 @@ export interface NextGoalResult {
 export function useNextGoal(
   entries: RaceLeaderboardEntry[],
   currentUserSalespersonId?: string,
-  goalAmount = 0,
+  goalAmount = 0
 ): NextGoalResult {
   return useMemo(() => {
-    const sorted = [...entries].sort((a, b) => Number(b.total_sales) - Number(a.total_sales));
+    const sorted = [...entries].sort(
+      (a, b) => Number(b.total_sales) - Number(a.total_sales)
+    );
     const meIdx = currentUserSalespersonId
-      ? sorted.findIndex((e) => e.salesperson_id === currentUserSalespersonId)
+      ? sorted.findIndex(e => e.salesperson_id === currentUserSalespersonId)
       : -1;
     const me = meIdx >= 0 ? sorted[meIdx] : undefined;
     const mySales = me ? Number(me.total_sales) : 0;
-    const seasonProgress = goalAmount > 0 ? Math.min(100, (mySales / goalAmount) * 100) : 0;
+    const seasonProgress =
+      goalAmount > 0 ? Math.min(100, (mySales / goalAmount) * 100) : 0;
     const seasonRemaining = Math.max(0, goalAmount - mySales);
 
     if (!me) {
@@ -52,7 +55,8 @@ export function useNextGoal(
       const target = sorted[meIdx - 1];
       const targetSales = Number(target.total_sales);
       const gapAmount = Math.max(0, targetSales - mySales);
-      const gapPercent = targetSales > 0 ? Math.min(100, (mySales / targetSales) * 100) : 100;
+      const gapPercent =
+        targetSales > 0 ? Math.min(100, (mySales / targetSales) * 100) : 100;
       return {
         mode: 'hunting' as const,
         me,
@@ -70,7 +74,8 @@ export function useNextGoal(
     if (challenger) {
       const challengerSales = Number(challenger.total_sales);
       const gapAmount = Math.max(0, mySales - challengerSales);
-      const gapPercent = mySales > 0 ? Math.min(100, (challengerSales / mySales) * 100) : 0;
+      const gapPercent =
+        mySales > 0 ? Math.min(100, (challengerSales / mySales) * 100) : 0;
       return {
         mode: 'defending' as const,
         me,

@@ -1,10 +1,24 @@
-import React from "react";
+import React from 'react';
 // PortfolioStatsCards - aligned with PortfolioStats interface
-import { Users, UserCheck, UserX, DollarSign, Target, AlertCircle, CircleSlash, Zap } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PortfolioStats } from "@/hooks/crm/useClientPortfolio";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Users,
+  UserCheck,
+  UserX,
+  DollarSign,
+  Target,
+  AlertCircle,
+  CircleSlash,
+  Zap,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PortfolioStats } from '@/hooks/crm/useClientPortfolio';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface PortfolioStatsCardsProps {
   stats: PortfolioStats | undefined;
@@ -14,68 +28,68 @@ interface PortfolioStatsCardsProps {
 function PortfolioStatsCardsImpl({ stats, isLoading }: PortfolioStatsCardsProps) {
   const cards = [
     {
-      title: "Total de Clientes",
+      title: 'Total de Clientes',
       value: stats?.totalClients || 0,
       icon: Users,
-      iconWrapperClass: "bg-primary/10",
-      iconClass: "text-primary",
+      iconWrapperClass: 'bg-primary/10',
+      iconClass: 'text-primary',
     },
     {
-      title: "Clientes Ativos",
+      title: 'Clientes Ativos',
       value: stats?.activeClients || 0,
       icon: UserCheck,
-      iconWrapperClass: "bg-status-success/10",
-      iconClass: "text-status-success",
+      iconWrapperClass: 'bg-status-success/10',
+      iconClass: 'text-status-success',
     },
     {
-      title: "Clientes Inativos",
+      title: 'Clientes Inativos',
       value: stats?.inactiveClients || 0,
       icon: UserX,
-      iconWrapperClass: "bg-status-warning/10",
-      iconClass: "text-status-warning",
+      iconWrapperClass: 'bg-status-warning/10',
+      iconClass: 'text-status-warning',
     },
     {
-      title: "Clientes Ativados",
+      title: 'Clientes Ativados',
       value: stats?.activatedCount || 0,
       icon: Zap,
-      iconWrapperClass: "bg-amber-500/10",
-      iconClass: "text-amber-500",
-      tooltip: "Clientes que já realizaram a primeira compra (ativação)",
+      iconWrapperClass: 'bg-amber-500/10',
+      iconClass: 'text-amber-500',
+      tooltip: 'Clientes que já realizaram a primeira compra (ativação)',
     },
     {
-      title: "Valor Total",
-      value: new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
+      title: 'Valor Total',
+      value: new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
       }).format(stats?.totalValue || 0),
       icon: DollarSign,
-      iconWrapperClass: "bg-accent/10",
-      iconClass: "text-accent",
+      iconWrapperClass: 'bg-accent/10',
+      iconClass: 'text-accent',
       isValue: true,
     },
   ];
 
   const icpCards = [
     {
-      title: "ICP Match",
+      title: 'ICP Match',
       value: stats?.icpMatch || 0,
       icon: Target,
-      color: "success",
-      tooltip: "Clientes que atendem todos os critérios do ICP",
+      color: 'success',
+      tooltip: 'Clientes que atendem todos os critérios do ICP',
     },
     {
-      title: "ICP Parcial",
+      title: 'ICP Parcial',
       value: stats?.icpPartial || 0,
       icon: AlertCircle,
-      color: "warning",
-      tooltip: "Clientes com dados ICP incompletos",
+      color: 'warning',
+      tooltip: 'Clientes com dados ICP incompletos',
     },
     {
-      title: "Sem ICP",
+      title: 'Sem ICP',
       value: stats?.icpNone || 0,
       icon: CircleSlash,
-      color: "muted",
-      tooltip: "Clientes sem dados de ICP cadastrados",
+      color: 'muted',
+      tooltip: 'Clientes sem dados de ICP cadastrados',
     },
   ];
 
@@ -84,19 +98,27 @@ function PortfolioStatsCardsImpl({ stats, isLoading }: PortfolioStatsCardsProps)
       <div className="space-y-4">
         {/* Main Stats */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-          {cards.map((card) => (
+          {cards.map(card => (
             <Card key={card.title} className="glass hover-lift">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {card.title}
+                    </p>
                     {isLoading ? (
                       <Skeleton className="h-8 w-24 mt-1" />
                     ) : (
-                      <p className={`text-2xl font-bold ${card.isValue ? "gradient-text" : ""}`}>{card.value}</p>
+                      <p
+                        className={`text-2xl font-bold ${card.isValue ? 'gradient-text' : ''}`}
+                      >
+                        {card.value}
+                      </p>
                     )}
                   </div>
-                  <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${card.iconWrapperClass}`}>
+                  <div
+                    className={`h-12 w-12 rounded-xl flex items-center justify-center ${card.iconWrapperClass}`}
+                  >
                     <card.icon className={`h-6 w-6 ${card.iconClass}`} />
                   </div>
                 </div>
@@ -107,7 +129,7 @@ function PortfolioStatsCardsImpl({ stats, isLoading }: PortfolioStatsCardsProps)
 
         {/* ICP Stats */}
         <div className="grid gap-4 md:grid-cols-3">
-          {icpCards.map((card) => (
+          {icpCards.map(card => (
             <Tooltip key={card.title}>
               <TooltipTrigger asChild>
                 <Card className="glass hover-lift cursor-help border-border/40">
@@ -115,35 +137,37 @@ function PortfolioStatsCardsImpl({ stats, isLoading }: PortfolioStatsCardsProps)
                     <div className="flex items-center gap-4">
                       <div
                         className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                          card.color === "success"
-                            ? "bg-status-success/20"
-                            : card.color === "warning"
-                            ? "bg-status-warning/20"
-                            : "bg-muted/50"
+                          card.color === 'success'
+                            ? 'bg-status-success/20'
+                            : card.color === 'warning'
+                              ? 'bg-status-warning/20'
+                              : 'bg-muted/50'
                         }`}
                       >
                         <card.icon
                           className={`h-5 w-5 ${
-                            card.color === "success"
-                              ? "text-status-success"
-                              : card.color === "warning"
-                              ? "text-status-warning"
-                              : "text-muted-foreground"
+                            card.color === 'success'
+                              ? 'text-status-success'
+                              : card.color === 'warning'
+                                ? 'text-status-warning'
+                                : 'text-muted-foreground'
                           }`}
                         />
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs font-medium text-muted-foreground">{card.title}</p>
+                        <p className="text-xs font-medium text-muted-foreground">
+                          {card.title}
+                        </p>
                         {isLoading ? (
                           <Skeleton className="h-6 w-12 mt-1" />
                         ) : (
                           <p
                             className={`text-xl font-bold ${
-                              card.color === "success"
-                                ? "text-status-success"
-                                : card.color === "warning"
-                                ? "text-status-warning"
-                                : "text-muted-foreground"
+                              card.color === 'success'
+                                ? 'text-status-success'
+                                : card.color === 'warning'
+                                  ? 'text-status-warning'
+                                  : 'text-muted-foreground'
                             }`}
                           >
                             {card.value}

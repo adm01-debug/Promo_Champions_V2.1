@@ -97,8 +97,7 @@ export const WIN_LOSS_OUTCOME = {
   WON: 'won',
   LOST: 'lost',
 } as const;
-export type WinLossOutcome =
-  (typeof WIN_LOSS_OUTCOME)[keyof typeof WIN_LOSS_OUTCOME];
+export type WinLossOutcome = (typeof WIN_LOSS_OUTCOME)[keyof typeof WIN_LOSS_OUTCOME];
 
 export const ACTIVITY_TYPE = {
   CALL: 'call',

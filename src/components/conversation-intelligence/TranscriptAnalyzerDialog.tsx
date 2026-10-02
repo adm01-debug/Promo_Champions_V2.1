@@ -1,12 +1,24 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Loader2, Sparkles, Wand2 } from "lucide-react";
-import { useAnalyzeConversation } from "@/hooks/conversation-intelligence/useAnalyzeConversation";
-import type { ConvSource } from "./conversationHelpers";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Loader2, Sparkles, Wand2 } from 'lucide-react';
+import { useAnalyzeConversation } from '@/hooks/conversation-intelligence/useAnalyzeConversation';
+import type { ConvSource } from './conversationHelpers';
 
 interface Props {
   saleId?: string;
@@ -15,14 +27,14 @@ interface Props {
 
 export const TranscriptAnalyzerDialog = ({ saleId, trigger }: Props) => {
   const [open, setOpen] = useState(false);
-  const [source, setSource] = useState<ConvSource>("call");
-  const [transcript, setTranscript] = useState("");
+  const [source, setSource] = useState<ConvSource>('call');
+  const [transcript, setTranscript] = useState('');
   const mutation = useAnalyzeConversation();
 
   const handleAnalyze = async () => {
     if (transcript.trim().length < 30) return;
     await mutation.mutateAsync({ sale_id: saleId, source, transcript });
-    setTranscript("");
+    setTranscript('');
     setOpen(false);
   };
 
@@ -46,8 +58,10 @@ export const TranscriptAnalyzerDialog = ({ saleId, trigger }: Props) => {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label>Fonte</Label>
-            <Select value={source} onValueChange={(v) => setSource(v as ConvSource)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select value={source} onValueChange={v => setSource(v as ConvSource)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="call">📞 Call</SelectItem>
                 <SelectItem value="meeting">🤝 Reunião</SelectItem>
@@ -60,7 +74,7 @@ export const TranscriptAnalyzerDialog = ({ saleId, trigger }: Props) => {
             <Label>Transcrição / Texto</Label>
             <Textarea
               value={transcript}
-              onChange={(e) => setTranscript(e.target.value)}
+              onChange={e => setTranscript(e.target.value)}
               rows={10}
               placeholder="Cole aqui a transcrição da call, e-mail ou conversa…"
               className="font-mono text-sm"
@@ -70,16 +84,22 @@ export const TranscriptAnalyzerDialog = ({ saleId, trigger }: Props) => {
             </p>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+            <Button variant="ghost" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
             <Button
               onClick={handleAnalyze}
               disabled={mutation.isPending || transcript.trim().length < 30}
               className="gap-2"
             >
               {mutation.isPending ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Analisando…</>
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Analisando…
+                </>
               ) : (
-                <><Sparkles className="h-4 w-4" /> Analisar com IA</>
+                <>
+                  <Sparkles className="h-4 w-4" /> Analisar com IA
+                </>
               )}
             </Button>
           </div>

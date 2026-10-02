@@ -6,7 +6,13 @@ import { AlertTriangle, Ban, RefreshCw, Send } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -47,12 +53,12 @@ export function FailedDraftsCard() {
   }, [drafts]);
 
   const selectedIds = useMemo(
-    () => drafts.filter((d) => selected.has(d.id)).map((d) => d.id),
-    [drafts, selected],
+    () => drafts.filter(d => selected.has(d.id)).map(d => d.id),
+    [drafts, selected]
   );
 
   const toggle = (id: string) => {
-    setSelected((prev) => {
+    setSelected(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -61,7 +67,9 @@ export function FailedDraftsCard() {
   };
 
   const toggleAll = () => {
-    setSelected((prev) => (prev.size === drafts.length ? new Set() : new Set(drafts.map((d) => d.id))));
+    setSelected(prev =>
+      prev.size === drafts.length ? new Set() : new Set(drafts.map(d => d.id))
+    );
   };
 
   const handleRetry = async () => {
@@ -70,7 +78,7 @@ export function FailedDraftsCard() {
       setSelected(new Set());
       toast.success(
         `${result.retried} reenviado(s) de ${result.requested} solicitado(s).` +
-          (result.gaveUp > 0 ? ` ${result.gaveUp} bloqueado(s) por supressão.` : ''),
+          (result.gaveUp > 0 ? ` ${result.gaveUp} bloqueado(s) por supressão.` : '')
       );
     } catch (e) {
       toast.error((e as Error).message);
@@ -99,11 +107,17 @@ export function FailedDraftsCard() {
               Rascunhos em falha
             </CardTitle>
             <CardDescription>
-              Envios de campanha que não foram entregues. O robô reprocessa falhas temporárias a
-              cada 15 minutos; use o reenvio manual para antecipar ou forçar uma nova tentativa.
+              Envios de campanha que não foram entregues. O robô reprocessa falhas
+              temporárias a cada 15 minutos; use o reenvio manual para antecipar ou forçar
+              uma nova tentativa.
             </CardDescription>
           </div>
-          <Button variant="outline" size="sm" onClick={() => void refetch()} disabled={isFetching}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void refetch()}
+            disabled={isFetching}
+          >
             <RefreshCw className={cn('h-4 w-4 mr-2', isFetching && 'animate-spin')} />
             Atualizar
           </Button>
@@ -140,7 +154,9 @@ export function FailedDraftsCard() {
                 aria-label="Selecionar todos os rascunhos"
               />
               <label htmlFor="fd-all" className="text-sm text-muted-foreground">
-                {selected.size > 0 ? `${selected.size} selecionado(s)` : 'Selecionar todos'}
+                {selected.size > 0
+                  ? `${selected.size} selecionado(s)`
+                  : 'Selecionar todos'}
               </label>
               <div className="ml-auto flex gap-2">
                 <Button
@@ -148,7 +164,12 @@ export function FailedDraftsCard() {
                   onClick={() => void handleRetry()}
                   disabled={busy || selectedIds.length === 0}
                 >
-                  <Send className={cn('h-4 w-4 mr-2', retryMutation.isPending && 'animate-pulse')} />
+                  <Send
+                    className={cn(
+                      'h-4 w-4 mr-2',
+                      retryMutation.isPending && 'animate-pulse'
+                    )}
+                  />
                   Reenviar agora
                 </Button>
                 <Button
@@ -164,7 +185,7 @@ export function FailedDraftsCard() {
             </div>
 
             <ul className="space-y-2">
-              {drafts.map((d) => {
+              {drafts.map(d => {
                 const status = statuses.get(d.id) ?? 'pending';
                 return (
                   <li
@@ -189,11 +210,17 @@ export function FailedDraftsCard() {
                           {d.retry_count} tentativa(s)
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground truncate">{d.subject}</p>
-                      <p className="text-xs text-destructive/90">{humanizeError(d.error)}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {d.subject}
+                      </p>
+                      <p className="text-xs text-destructive/90">
+                        {humanizeError(d.error)}
+                      </p>
                       <p className="text-[11px] text-muted-foreground">
                         Última falha: {formatDate(d.last_error_at)}
-                        {d.next_retry_at ? ` • Próxima tentativa: ${formatDate(d.next_retry_at)}` : ''}
+                        {d.next_retry_at
+                          ? ` • Próxima tentativa: ${formatDate(d.next_retry_at)}`
+                          : ''}
                       </p>
                     </div>
                   </li>

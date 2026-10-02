@@ -1,25 +1,26 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Users, Gauge } from "lucide-react";
-import { useLeadAssignment } from "@/hooks/useLeadAssignment";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { capacityHealth } from "./routingHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Users, Gauge } from 'lucide-react';
+import { useLeadAssignment } from '@/hooks/useLeadAssignment';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { capacityHealth } from './routingHelpers';
 
 export function CapacityDashboard() {
   const { salespeople } = useLeadAssignment();
 
   const { data: openCounts, isLoading } = useQuery({
-    queryKey: ["lead-routing-open-counts"],
+    queryKey: ['lead-routing-open-counts'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sales")
-        .select("salesperson_id")
-        .in("status", ["lead", "qualified", "proposal", "negotiation"]);
+        .from('sales')
+        .select('salesperson_id')
+        .in('status', ['lead', 'qualified', 'proposal', 'negotiation']);
       if (error) throw error;
       const map = new Map<string, number>();
-      data?.forEach((r) => {
-        if (r.salesperson_id) map.set(r.salesperson_id, (map.get(r.salesperson_id) || 0) + 1);
+      data?.forEach(r => {
+        if (r.salesperson_id)
+          map.set(r.salesperson_id, (map.get(r.salesperson_id) || 0) + 1);
       });
       return map;
     },
@@ -39,11 +40,13 @@ export function CapacityDashboard() {
       <CardContent>
         {isLoading || !salespeople.length ? (
           <div className="space-y-2">
-            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full" />
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {salespeople.map((sp) => {
+            {salespeople.map(sp => {
               const current = openCounts?.get(sp.id) || 0;
               const h = capacityHealth(current, MAX);
               return (

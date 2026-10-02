@@ -1,12 +1,20 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { CheckCircle2, XCircle, Clock, RotateCw, Loader2, Copy, SkipForward } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  CheckCircle2,
+  XCircle,
+  Clock,
+  RotateCw,
+  Loader2,
+  Copy,
+  SkipForward,
+} from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface WebhookDeliveryItemProps {
   delivery: {
@@ -44,17 +52,17 @@ export function WebhookDeliveryItem({
   maxReplay,
   atLimit,
   toggleOne,
-  handleReplay
+  handleReplay,
 }: WebhookDeliveryItemProps) {
   const Icon = d.succeeded ? CheckCircle2 : XCircle;
-  const color = d.succeeded ? "text-emerald-500" : "text-destructive";
+  const color = d.succeeded ? 'text-emerald-500' : 'text-destructive';
 
   return (
     <li
       aria-busy={isProcessing}
       className={cn(
-        "relative flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2 transition-colors overflow-hidden",
-        isProcessing && "bg-primary/5 border-primary/30",
+        'relative flex items-start gap-3 rounded-md border bg-muted/20 px-3 py-2 transition-colors overflow-hidden',
+        isProcessing && 'bg-primary/5 border-primary/30'
       )}
     >
       {d.succeeded ? (
@@ -73,7 +81,8 @@ export function WebhookDeliveryItem({
           </TooltipTrigger>
           {atLimit && !isChecked && (
             <TooltipContent side="right" className="text-xs">
-              Máximo de {maxReplay} por reenvio — desmarque uma entrega para selecionar outra.
+              Máximo de {maxReplay} por reenvio — desmarque uma entrega para selecionar
+              outra.
             </TooltipContent>
           )}
         </Tooltip>
@@ -81,12 +90,14 @@ export function WebhookDeliveryItem({
       <Icon className={`h-4 w-4 mt-0.5 ${color}`} aria-hidden />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1.5">
-          <Badge variant="outline" className="text-[10px] py-0 px-1.5">{d.event}</Badge>
+          <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+            {d.event}
+          </Badge>
           <Badge
-            variant={d.succeeded ? "secondary" : "destructive"}
+            variant={d.succeeded ? 'secondary' : 'destructive'}
             className="text-[10px] py-0 px-1.5"
           >
-            HTTP {d.status || "—"}
+            HTTP {d.status || '—'}
           </Badge>
           <Badge variant="outline" className="text-[10px] py-0 px-1.5">
             tentativa {d.attempt}
@@ -97,28 +108,26 @@ export function WebhookDeliveryItem({
           </span>
         </div>
         {d.error_message && (
-          <p className="text-[11px] text-destructive mt-1 break-words">{d.error_message}</p>
+          <p className="text-[11px] text-destructive mt-1 break-words">
+            {d.error_message}
+          </p>
         )}
         <p className="text-[10px] text-muted-foreground mt-1">
           {formatDistanceToNow(new Date(d.created_at), { addSuffix: true, locale: ptBR })}
         </p>
         {(isProcessing || result) && (
-          <div
-            className="mt-1.5"
-            role="status"
-            aria-live="polite"
-          >
+          <div className="mt-1.5" role="status" aria-live="polite">
             {isProcessing ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium">
                 <Loader2 className="h-3 w-3 animate-spin" />
                 Reenviando…
               </span>
-            ) : result === "ok" ? (
+            ) : result === 'ok' ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success px-2 py-0.5 text-[10px] font-medium">
                 <CheckCircle2 className="h-3 w-3" />
                 Reenviado
               </span>
-            ) : result === "skipped" ? (
+            ) : result === 'skipped' ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-[10px] font-medium">
                 <SkipForward className="h-3 w-3" />
                 Já entregue
@@ -149,8 +158,8 @@ export function WebhookDeliveryItem({
                     type="button"
                     onClick={() => {
                       void navigator.clipboard?.writeText(reqId).then(
-                        () => toast.success("requestId copiado"),
-                        () => toast.error("Falha ao copiar"),
+                        () => toast.success('requestId copiado'),
+                        () => toast.error('Falha ao copiar')
                       );
                     }}
                     className="ml-1 inline-flex items-center gap-1 rounded-full border border-border/50 bg-muted/40 px-2 py-0.5 text-[10px] font-mono text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -180,10 +189,10 @@ export function WebhookDeliveryItem({
               onClick={() => handleReplay(d.id)}
               aria-label={
                 isProcessing
-                  ? "Reenvio em andamento para esta entrega"
+                  ? 'Reenvio em andamento para esta entrega'
                   : isReplaying
-                    ? "Aguardando reenvio em andamento concluir"
-                    : "Reenviar entrega"
+                    ? 'Aguardando reenvio em andamento concluir'
+                    : 'Reenviar entrega'
               }
             >
               {isProcessing ? (
@@ -196,10 +205,10 @@ export function WebhookDeliveryItem({
         </TooltipTrigger>
         <TooltipContent side="left" className="text-xs">
           {d.succeeded
-            ? "Já entregue com sucesso"
+            ? 'Já entregue com sucesso'
             : isProcessing
-              ? "Reenvio em andamento — aguarde…"
-              : "Reenviar este evento"}
+              ? 'Reenvio em andamento — aguarde…'
+              : 'Reenviar este evento'}
         </TooltipContent>
       </Tooltip>
       {isProcessing && (

@@ -14,13 +14,19 @@ interface RankNotificationsProps {
   className?: string;
 }
 
-const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId, className }) => {
-  const { notifications, unreadCount, isLoading, markAsRead, markAllRead } = useRankNotifications(salespersonId);
+const RankNotificationsComponent: FC<RankNotificationsProps> = ({
+  salespersonId,
+  className,
+}) => {
+  const { notifications, unreadCount, isLoading, markAsRead, markAllRead } =
+    useRankNotifications(salespersonId);
 
   if (isLoading) {
     return (
       <div className="space-y-2">
-        {[1, 2].map(i => <div key={i} className="h-16 rounded-xl bg-muted/30 animate-pulse" />)}
+        {[1, 2].map(i => (
+          <div key={i} className="h-16 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
       </div>
     );
   }
@@ -60,8 +66,12 @@ const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId,
           {!notifications?.length ? (
             <div className="text-center py-6">
               <Bell className="h-8 w-8 mx-auto text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">Nenhum alerta de ultrapassagem</p>
-              <p className="text-xs text-muted-foreground mt-1">Você será notificado quando alguém passar sua posição no ranking</p>
+              <p className="text-sm text-muted-foreground">
+                Nenhum alerta de ultrapassagem
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Você será notificado quando alguém passar sua posição no ranking
+              </p>
             </div>
           ) : (
             <AnimatePresence>
@@ -77,16 +87,22 @@ const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId,
                     className={cn(
                       'flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-muted/30',
                       !notif.is_read && 'bg-destructive/5 border-destructive/20',
-                      notif.is_read && 'border-border/20 opacity-60',
+                      notif.is_read && 'border-border/20 opacity-60'
                     )}
                   >
-                    <div className={cn(
-                      'h-9 w-9 rounded-lg flex items-center justify-center shrink-0',
-                      wentDown
-                        ? 'bg-destructive/15 text-destructive'
-                        : 'bg-success/15 text-success'
-                    )}>
-                      {wentDown ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
+                    <div
+                      className={cn(
+                        'h-9 w-9 rounded-lg flex items-center justify-center shrink-0',
+                        wentDown
+                          ? 'bg-destructive/15 text-destructive'
+                          : 'bg-success/15 text-success'
+                      )}
+                    >
+                      {wentDown ? (
+                        <TrendingDown className="h-4 w-4" />
+                      ) : (
+                        <TrendingUp className="h-4 w-4" />
+                      )}
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -104,7 +120,10 @@ const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId,
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Posição: #{notif.old_rank} → #{notif.new_rank} •{' '}
-                        {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: ptBR })}
+                        {formatDistanceToNow(new Date(notif.created_at), {
+                          addSuffix: true,
+                          locale: ptBR,
+                        })}
                       </p>
                     </div>
 
@@ -121,6 +140,5 @@ const RankNotificationsComponent: FC<RankNotificationsProps> = ({ salespersonId,
     </div>
   );
 };
-
 
 export const RankNotifications = React.memo(RankNotificationsComponent);

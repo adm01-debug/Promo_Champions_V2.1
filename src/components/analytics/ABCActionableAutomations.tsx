@@ -30,9 +30,7 @@ export function ABCActionableAutomations({ automations }: ABCActionableAutomatio
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Bot className="h-5 w-5 text-primary" />
-        <h3 className="text-section-title gradient-text">
-          Actionable Automations
-        </h3>
+        <h3 className="text-section-title gradient-text">Actionable Automations</h3>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {automations.map(auto => (

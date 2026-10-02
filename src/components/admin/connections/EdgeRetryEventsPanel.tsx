@@ -1,17 +1,17 @@
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Activity, RefreshCw, Search } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { EdgeRetryTimeSeriesChart } from "./EdgeRetryTimeSeriesChart";
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Activity, RefreshCw, Search } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { EdgeRetryTimeSeriesChart } from './EdgeRetryTimeSeriesChart';
 
-type Outcome = "retry" | "success_after_retry" | "exhausted" | "non_retryable";
+type Outcome = 'retry' | 'success_after_retry' | 'exhausted' | 'non_retryable';
 
 interface RetryRow {
   id: string;
@@ -28,28 +28,31 @@ interface RetryRow {
   created_at: string;
 }
 
-const outcomeVariant: Record<Outcome, "default" | "destructive" | "secondary" | "outline"> = {
-  retry: "secondary",
-  success_after_retry: "default",
-  exhausted: "destructive",
-  non_retryable: "outline",
+const outcomeVariant: Record<
+  Outcome,
+  'default' | 'destructive' | 'secondary' | 'outline'
+> = {
+  retry: 'secondary',
+  success_after_retry: 'default',
+  exhausted: 'destructive',
+  non_retryable: 'outline',
 };
 
 const outcomeLabel: Record<Outcome, string> = {
-  retry: "Retry",
-  success_after_retry: "Sucesso após retry",
-  exhausted: "Esgotado",
-  non_retryable: "Não-retriável",
+  retry: 'Retry',
+  success_after_retry: 'Sucesso após retry',
+  exhausted: 'Esgotado',
+  non_retryable: 'Não-retriável',
 };
 
 async function fetchRetryEvents(fnFilter: string): Promise<RetryRow[]> {
   let query = supabase
-    .from("edge_retry_events" as never)
-    .select("*")
-    .order("created_at", { ascending: false })
+    .from('edge_retry_events' as never)
+    .select('*')
+    .order('created_at', { ascending: false })
     .limit(100);
   if (fnFilter.trim()) {
-    query = query.ilike("function_name", `%${fnFilter.trim()}%`);
+    query = query.ilike('function_name', `%${fnFilter.trim()}%`);
   }
   const { data, error } = await query;
   if (error) throw error;
@@ -57,9 +60,9 @@ async function fetchRetryEvents(fnFilter: string): Promise<RetryRow[]> {
 }
 
 export function EdgeRetryEventsPanel() {
-  const [fnFilter, setFnFilter] = useState("");
+  const [fnFilter, setFnFilter] = useState('');
   const { data, isLoading, error, refetch, isFetching } = useQuery({
-    queryKey: ["admin", "edge-retry-events", fnFilter],
+    queryKey: ['admin', 'edge-retry-events', fnFilter],
     queryFn: () => fetchRetryEvents(fnFilter),
     refetchInterval: 60_000,
     staleTime: 30_000,
@@ -68,11 +71,11 @@ export function EdgeRetryEventsPanel() {
   const stats = useMemo(() => {
     if (!data) return { total: 0, exhausted24h: 0, success24h: 0 };
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-    const recent = data.filter((r) => new Date(r.created_at).getTime() >= cutoff);
+    const recent = data.filter(r => new Date(r.created_at).getTime() >= cutoff);
     return {
       total: data.length,
-      exhausted24h: recent.filter((r) => r.outcome === "exhausted").length,
-      success24h: recent.filter((r) => r.outcome === "success_after_retry").length,
+      exhausted24h: recent.filter(r => r.outcome === 'exhausted').length,
+      success24h: recent.filter(r => r.outcome === 'success_after_retry').length,
     };
   }, [data]);
 
@@ -103,16 +106,19 @@ export function EdgeRetryEventsPanel() {
           disabled={isFetching}
           aria-label="Atualizar eventos de retry"
         >
-          <RefreshCw className={`h-3.5 w-3.5 mr-2 ${isFetching ? "animate-spin" : ""}`} />
+          <RefreshCw className={`h-3.5 w-3.5 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
           Atualizar
         </Button>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="relative max-w-sm">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+          <Search
+            className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground"
+            aria-hidden
+          />
           <Input
             value={fnFilter}
-            onChange={(e) => setFnFilter(e.target.value)}
+            onChange={e => setFnFilter(e.target.value)}
             placeholder="Filtrar por função (ex.: forecast-narrative)"
             className="pl-7 h-8"
             aria-label="Filtrar por nome da função"
@@ -126,7 +132,6 @@ export function EdgeRetryEventsPanel() {
           <EdgeRetryTimeSeriesChart rows={data} />
         </div>
 
-
         {isLoading ? (
           <div className="space-y-2">
             <Skeleton className="h-14 w-full" />
@@ -134,44 +139,61 @@ export function EdgeRetryEventsPanel() {
             <Skeleton className="h-14 w-full" />
           </div>
         ) : error ? (
-          <p className="text-sm text-destructive">Erro ao carregar eventos: {(error as Error).message}</p>
+          <p className="text-sm text-destructive">
+            Erro ao carregar eventos: {(error as Error).message}
+          </p>
         ) : !data || data.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhum evento de retry registrado.</p>
+          <p className="text-sm text-muted-foreground">
+            Nenhum evento de retry registrado.
+          </p>
         ) : (
           <ul className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
-            {data.map((row) => (
+            {data.map(row => (
               <li
                 key={row.id}
                 className="rounded-md border border-border/40 bg-card/40 p-3 text-xs space-y-1"
               >
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant={outcomeVariant[row.outcome]}>{outcomeLabel[row.outcome]}</Badge>
-                    <span className="font-medium text-foreground">{row.function_name}</span>
+                    <Badge variant={outcomeVariant[row.outcome]}>
+                      {outcomeLabel[row.outcome]}
+                    </Badge>
+                    <span className="font-medium text-foreground">
+                      {row.function_name}
+                    </span>
                     <span className="text-muted-foreground">· {row.operation}</span>
                     <span className="text-muted-foreground">
                       · tentativa {row.attempt}
-                      {row.total_attempts ? `/${row.total_attempts}` : ""}
+                      {row.total_attempts ? `/${row.total_attempts}` : ''}
                     </span>
                     {row.status_code != null && (
                       <Badge variant="outline">HTTP {row.status_code}</Badge>
                     )}
-                    {row.delay_ms != null && row.outcome === "retry" && (
-                      <span className="text-muted-foreground">· aguardou {row.delay_ms}ms</span>
+                    {row.delay_ms != null && row.outcome === 'retry' && (
+                      <span className="text-muted-foreground">
+                        · aguardou {row.delay_ms}ms
+                      </span>
                     )}
                   </div>
                   <span className="text-muted-foreground shrink-0">
-                    {formatDistanceToNow(new Date(row.created_at), { locale: ptBR, addSuffix: true })}
+                    {formatDistanceToNow(new Date(row.created_at), {
+                      locale: ptBR,
+                      addSuffix: true,
+                    })}
                   </span>
                 </div>
                 {(row.error_name || row.error_message) && (
                   <p className="text-muted-foreground break-words">
-                    <span className="font-medium text-foreground">{row.error_name ?? "erro"}:</span>{" "}
-                    {row.error_message ?? "—"}
+                    <span className="font-medium text-foreground">
+                      {row.error_name ?? 'erro'}:
+                    </span>{' '}
+                    {row.error_message ?? '—'}
                   </p>
                 )}
                 {row.request_id && (
-                  <p className="text-muted-foreground font-mono text-[10px]">req: {row.request_id}</p>
+                  <p className="text-muted-foreground font-mono text-[10px]">
+                    req: {row.request_id}
+                  </p>
                 )}
               </li>
             ))}

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
-import type { RaceSeason } from "@/hooks/race/useRaceSeason";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
+import type { RaceSeason } from '@/hooks/race/useRaceSeason';
 
 export type GhostStatus = 'ahead' | 'behind' | 'tied' | 'no-data';
 
@@ -32,7 +32,11 @@ interface FinishedSeasonRow {
  * Calcula o ritmo histórico (PR pessoal) do usuário e onde o ghost car estaria agora.
  * Usa a melhor season anterior (maior progresso final) como referência linear de ritmo.
  */
-export function useGhostCar({ mySalespersonId, currentSeason, leaderboard }: Params): GhostCarResult {
+export function useGhostCar({
+  mySalespersonId,
+  currentSeason,
+  leaderboard,
+}: Params): GhostCarResult {
   const { data: history = [] } = useQuery({
     queryKey: ['ghost-car-history', mySalespersonId],
     enabled: !!mySalespersonId,
@@ -71,15 +75,24 @@ export function useGhostCar({ mySalespersonId, currentSeason, leaderboard }: Par
   });
 
   return useMemo<GhostCarResult>(() => {
-    const myEntry = leaderboard.find((e) => e.salesperson_id === mySalespersonId);
+    const myEntry = leaderboard.find(e => e.salesperson_id === mySalespersonId);
     const myProgress = Number(myEntry?.progress ?? 0);
 
     if (!mySalespersonId || !currentSeason || history.length === 0) {
-      return { status: 'no-data', ghostProgress: 0, myProgress, delta: 0, bestSeasonName: null };
+      return {
+        status: 'no-data',
+        ghostProgress: 0,
+        myProgress,
+        delta: 0,
+        bestSeasonName: null,
+      };
     }
 
     // Best PR = maior progresso final
-    const best = history.reduce((acc, cur) => (cur.final_progress > acc.final_progress ? cur : acc), history[0]);
+    const best = history.reduce(
+      (acc, cur) => (cur.final_progress > acc.final_progress ? cur : acc),
+      history[0]
+    );
 
     // Tempo decorrido na season atual (0..1)
     const start = new Date(currentSeason.start_date).getTime();

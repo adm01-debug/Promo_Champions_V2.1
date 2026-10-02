@@ -30,7 +30,7 @@ export const useMFA = () => {
     try {
       const { data, error } = await supabase.rpc('get_mfa_status');
       if (error) throw error;
-      
+
       const row = Array.isArray(data) ? data[0] : data;
       setStatus(row as MFAStatus | null);
     } catch (error) {
@@ -71,35 +71,42 @@ export const useMFA = () => {
   }, [user]);
 
   // Verify and enable TOTP via server-side RPC
-  const verifyAndEnableTOTP = useCallback(async (token: string): Promise<boolean> => {
-    if (!user) return false;
+  const verifyAndEnableTOTP = useCallback(
+    async (token: string): Promise<boolean> => {
+      if (!user) return false;
 
-    try {
-      const { data, error } = await supabase.rpc('verify_and_enable_totp', {
-        p_token: token,
-      });
+      try {
+        const { data, error } = await supabase.rpc('verify_and_enable_totp', {
+          p_token: token,
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const result = data as { success: boolean; backup_codes?: string[]; error?: string };
-      
-      if (result.success) {
-        setBackupCodes(result.backup_codes ?? null);
-        await fetchStatus();
-        toast.success('TOTP ativado com sucesso!');
-        return true;
-      } else {
-        toast.error(result.error || 'Código inválido');
+        const result = data as {
+          success: boolean;
+          backup_codes?: string[];
+          error?: string;
+        };
+
+        if (result.success) {
+          setBackupCodes(result.backup_codes ?? null);
+          await fetchStatus();
+          toast.success('TOTP ativado com sucesso!');
+          return true;
+        } else {
+          toast.error(result.error || 'Código inválido');
+          return false;
+        }
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error verifying TOTP:', error);
+        }
+        toast.error('Erro ao verificar TOTP');
         return false;
       }
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error verifying TOTP:', error);
-      }
-      toast.error('Erro ao verificar TOTP');
-      return false;
-    }
-  }, [user, fetchStatus]);
+    },
+    [user, fetchStatus]
+  );
 
   // Disable TOTP via server-side RPC
   const disableTOTP = useCallback(async (): Promise<boolean> => {
@@ -121,53 +128,59 @@ export const useMFA = () => {
   }, [user, fetchStatus]);
 
   // Setup SMS via server-side RPC (code generated server-side)
-  const setupSMS = useCallback(async (phoneNumber: string): Promise<boolean> => {
-    if (!user) return false;
+  const setupSMS = useCallback(
+    async (phoneNumber: string): Promise<boolean> => {
+      if (!user) return false;
 
-    try {
-      const { data, error } = await supabase.rpc('setup_sms_mfa', {
-        p_phone: phoneNumber,
-      });
+      try {
+        const { data, error } = await supabase.rpc('setup_sms_mfa', {
+          p_phone: phoneNumber,
+        });
 
-      if (error) throw error;
-      toast.info(`Código enviado para ${phoneNumber}`);
-      return !!data;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error setting up SMS:', error);
-      }
-      toast.error('Erro ao configurar SMS');
-      return false;
-    }
-  }, [user]);
-
-  // Verify SMS code via server-side RPC
-  const verifySMSCode = useCallback(async (code: string): Promise<boolean> => {
-    if (!user) return false;
-
-    try {
-      const { data, error } = await supabase.rpc('verify_and_enable_sms', {
-        p_code: code,
-      });
-
-      if (error) throw error;
-
-      if (data) {
-        await fetchStatus();
-        toast.success('SMS verificado e ativado!');
-        return true;
-      } else {
-        toast.error('Código inválido ou expirado');
+        if (error) throw error;
+        toast.info(`Código enviado para ${phoneNumber}`);
+        return !!data;
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error setting up SMS:', error);
+        }
+        toast.error('Erro ao configurar SMS');
         return false;
       }
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error verifying SMS:', error);
+    },
+    [user]
+  );
+
+  // Verify SMS code via server-side RPC
+  const verifySMSCode = useCallback(
+    async (code: string): Promise<boolean> => {
+      if (!user) return false;
+
+      try {
+        const { data, error } = await supabase.rpc('verify_and_enable_sms', {
+          p_code: code,
+        });
+
+        if (error) throw error;
+
+        if (data) {
+          await fetchStatus();
+          toast.success('SMS verificado e ativado!');
+          return true;
+        } else {
+          toast.error('Código inválido ou expirado');
+          return false;
+        }
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error verifying SMS:', error);
+        }
+        toast.error('Erro ao verificar SMS');
+        return false;
       }
-      toast.error('Erro ao verificar SMS');
-      return false;
-    }
-  }, [user, fetchStatus]);
+    },
+    [user, fetchStatus]
+  );
 
   // Disable SMS via server-side RPC
   const disableSMS = useCallback(async (): Promise<boolean> => {
@@ -189,34 +202,37 @@ export const useMFA = () => {
   }, [user, fetchStatus]);
 
   // Verify MFA code (for login) via server-side RPC
-  const verifyMFA = useCallback(async (code: string, method?: 'totp' | 'sms' | 'backup_code'): Promise<boolean> => {
-    if (!user) return false;
+  const verifyMFA = useCallback(
+    async (code: string, method?: 'totp' | 'sms' | 'backup_code'): Promise<boolean> => {
+      if (!user) return false;
 
-    try {
-      const { data, error } = await supabase.rpc('verify_mfa_code', {
-        p_code: method === 'backup_code' ? code.toUpperCase() : code,
-        p_method: method || undefined,
-      });
+      try {
+        const { data, error } = await supabase.rpc('verify_mfa_code', {
+          p_code: method === 'backup_code' ? code.toUpperCase() : code,
+          p_method: method || undefined,
+        });
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (data) {
-        if (method === 'backup_code') {
-          toast.success('Código de backup usado');
+        if (data) {
+          if (method === 'backup_code') {
+            toast.success('Código de backup usado');
+          }
+          return true;
+        } else {
+          toast.error('Código inválido');
+          return false;
         }
-        return true;
-      } else {
-        toast.error('Código inválido');
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error verifying MFA:', error);
+        }
+        toast.error('Erro na verificação MFA');
         return false;
       }
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error verifying MFA:', error);
-      }
-      toast.error('Erro na verificação MFA');
-      return false;
-    }
-  }, [user]);
+    },
+    [user]
+  );
 
   // Regenerate backup codes via server-side RPC
   const regenerateBackupCodes = useCallback(async (): Promise<string[] | null> => {
@@ -239,34 +255,39 @@ export const useMFA = () => {
   }, [user, fetchStatus]);
 
   // Set preferred method via server-side RPC
-  const setPreferredMethod = useCallback(async (method: 'totp' | 'sms'): Promise<boolean> => {
-    if (!user) return false;
+  const setPreferredMethod = useCallback(
+    async (method: 'totp' | 'sms'): Promise<boolean> => {
+      if (!user) return false;
 
-    try {
-      const { data, error } = await supabase.rpc('set_mfa_preferred_method', {
-        p_method: method,
-      });
+      try {
+        const { data, error } = await supabase.rpc('set_mfa_preferred_method', {
+          p_method: method,
+        });
 
-      if (error) throw error;
-      await fetchStatus();
-      toast.success(`Método preferido: ${method.toUpperCase()}`);
-      return !!data;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error setting preferred method:', error);
+        if (error) throw error;
+        await fetchStatus();
+        toast.success(`Método preferido: ${method.toUpperCase()}`);
+        return !!data;
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error setting preferred method:', error);
+        }
+        return false;
       }
-      return false;
-    }
-  }, [user, fetchStatus]);
+    },
+    [user, fetchStatus]
+  );
 
   return {
-    settings: status ? {
-      totp_enabled: status.totp_enabled,
-      sms_enabled: status.sms_enabled,
-      preferred_method: status.preferred_method,
-      totp_secret: null as string | null,
-      backup_codes: backupCodes,
-    } : null,
+    settings: status
+      ? {
+          totp_enabled: status.totp_enabled,
+          sms_enabled: status.sms_enabled,
+          preferred_method: status.preferred_method,
+          totp_secret: null as string | null,
+          backup_codes: backupCodes,
+        }
+      : null,
     attempts: [] as string[],
     isLoading,
     totpSecret: null as string | null,

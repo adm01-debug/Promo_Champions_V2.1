@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import type { AgentTargetType, AgentType } from "@/components/agents/agentHelpers";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import type { AgentTargetType, AgentType } from '@/components/agents/agentHelpers';
 
 export interface StartAgentInput {
   agent_type: AgentType;
@@ -19,19 +19,19 @@ export function useStartAgentRun() {
         run_id: string;
         status: string;
         result: Record<string, unknown>;
-      }>("ai-agent-orchestrator", { body: input });
+      }>('ai-agent-orchestrator', { body: input });
       if (error) throw error;
-      if (!data) throw new Error("Sem resposta do agente.");
+      if (!data) throw new Error('Sem resposta do agente.');
       return data;
     },
-    onSuccess: (data) => {
-      toast.success("Agente iniciado", {
+    onSuccess: data => {
+      toast.success('Agente iniciado', {
         description: `Run ${data.run_id.slice(0, 8)} • ${data.status}`,
       });
-      qc.invalidateQueries({ queryKey: ["agent-runs"] });
+      qc.invalidateQueries({ queryKey: ['agent-runs'] });
     },
     onError: (e: Error) => {
-      toast.error("Falha ao iniciar agente", { description: e.message });
+      toast.error('Falha ao iniciar agente', { description: e.message });
     },
   });
 }

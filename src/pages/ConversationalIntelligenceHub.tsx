@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
-import { ConversationalIntelligenceHub } from "@/components/conversational/ConversationalIntelligenceHub";
+import { Helmet } from 'react-helmet-async';
+import { ConversationalIntelligenceHub } from '@/components/conversational/ConversationalIntelligenceHub';
 
 const ConversationalIntelligenceHubPage = () => {
   return (

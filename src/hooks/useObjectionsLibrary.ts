@@ -41,7 +41,7 @@ export function useObjectionsLibrary(category?: string) {
       if (error) throw error;
 
       return data || [];
-    }
+    },
   });
 }
 
@@ -65,7 +65,7 @@ export function useAddObjection() {
     },
     onError: () => {
       toast.error('Erro ao adicionar objeção');
-    }
+    },
   });
 }
 
@@ -90,7 +90,7 @@ export function useUpdateObjection() {
     },
     onError: () => {
       toast.error('Erro ao atualizar objeção');
-    }
+    },
   });
 }
 
@@ -116,7 +116,7 @@ export function useIncrementObjectionUsage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['objections-library'] });
-    }
+    },
   });
 }
 
@@ -125,10 +125,7 @@ export function useDeleteObjection() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('objections_library')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('objections_library').delete().eq('id', id);
 
       if (error) throw error;
     },
@@ -138,6 +135,6 @@ export function useDeleteObjection() {
     },
     onError: () => {
       toast.error('Erro ao remover objeção');
-    }
+    },
   });
 }

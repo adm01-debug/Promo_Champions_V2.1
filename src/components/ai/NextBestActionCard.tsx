@@ -5,8 +5,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Lightbulb, Phone, Mail, Users, ArrowRight, MessageSquare, FileText, Loader2, AlertTriangle, MessagesSquare, Sparkles, Plus, Target, RefreshCw, TrendingUp, Calendar } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  Lightbulb,
+  Phone,
+  Mail,
+  Users,
+  ArrowRight,
+  MessageSquare,
+  FileText,
+  Loader2,
+  AlertTriangle,
+  MessagesSquare,
+  Sparkles,
+  Plus,
+  Target,
+  RefreshCw,
+  TrendingUp,
+  Calendar,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -58,7 +80,8 @@ const categoryStyles: Record<string, string> = {
 type FilterTab = 'all' | 'urgent' | 'growth' | 'retention' | 'prospecting';
 
 export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
-  const { data, isLoading, error, refetch, isFetching } = useNextBestActionQuery(salespersonId);
+  const { data, isLoading, error, refetch, isFetching } =
+    useNextBestActionQuery(salespersonId);
   const [filter, setFilter] = useState<FilterTab>('all');
   const [dismissed, setDismissed] = useState<Set<number>>(new Set());
 
@@ -178,7 +201,9 @@ export function NextBestActionCard({ salespersonId }: NextBestActionCardProps) {
                       key={action._idx}
                       action={action}
                       salespersonId={salespersonId}
-                      onDismiss={() => setDismissed(prev => new Set(prev).add(action._idx))}
+                      onDismiss={() =>
+                        setDismissed(prev => new Set(prev).add(action._idx))
+                      }
                     />
                   ))
                 )}
@@ -238,13 +263,9 @@ function ActionItem({
       'proposal',
       'other',
     ];
-    const taskType = (allowed.includes(action.actionType) ? action.actionType : 'other') as
-      | 'call'
-      | 'email'
-      | 'meeting'
-      | 'follow_up'
-      | 'proposal'
-      | 'other';
+    const taskType = (
+      allowed.includes(action.actionType) ? action.actionType : 'other'
+    ) as 'call' | 'email' | 'meeting' | 'follow_up' | 'proposal' | 'other';
     createTask.mutate(
       {
         title: action.title,
@@ -266,7 +287,8 @@ function ActionItem({
     );
   };
 
-  const confidence = action.confidence != null ? Math.round(action.confidence * 100) : null;
+  const confidence =
+    action.confidence != null ? Math.round(action.confidence * 100) : null;
 
   return (
     <div className="flex gap-3 p-3 rounded-lg border bg-card hover:bg-accent/30 transition-colors group">
@@ -279,11 +301,17 @@ function ActionItem({
         <div className="flex items-start gap-2 flex-wrap">
           <span className="font-medium text-sm leading-tight">{action.title}</span>
           <div className="flex items-center gap-1 ml-auto">
-            <Badge variant="outline" className={`text-[10px] ${priorityStyles[action.priority]}`}>
+            <Badge
+              variant="outline"
+              className={`text-[10px] ${priorityStyles[action.priority]}`}
+            >
               {priorityLabels[action.priority]}
             </Badge>
             {action.category && (
-              <Badge variant="outline" className={`text-[10px] ${categoryStyles[action.category]}`}>
+              <Badge
+                variant="outline"
+                className={`text-[10px] ${categoryStyles[action.category]}`}
+              >
                 {categoryLabels[action.category]}
               </Badge>
             )}

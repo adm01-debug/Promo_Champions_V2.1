@@ -277,10 +277,7 @@ const FollowUpInteligente = memo(() => {
       const vars = template.match(/{{(.*?)}}/g) || [];
       vars.forEach(v => {
         const key = v.replace(/{{|}}/g, '');
-        message = message.replace(
-          v,
-          String(lead[key as keyof ColdLead] || '')
-        );
+        message = message.replace(v, String(lead[key as keyof ColdLead] || ''));
       });
 
       logAction.mutate({

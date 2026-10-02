@@ -44,7 +44,7 @@ export const useClientPredictions = () => {
             confidence: 0,
             averageIntervalDays: 0,
             daysToNextPurchase: 0,
-            urgency: 'low'
+            urgency: 'low',
           };
           return;
         }
@@ -52,7 +52,7 @@ export const useClientPredictions = () => {
         // Calculate intervals
         const intervals: number[] = [];
         for (let i = 1; i < dates.length; i++) {
-          intervals.push(differenceInDays(dates[i], dates[i-1]));
+          intervals.push(differenceInDays(dates[i], dates[i - 1]));
         }
 
         const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
@@ -66,7 +66,13 @@ export const useClientPredictions = () => {
 
         const lastPurchaseDate = dates[dates.length - 1];
         const daysSinceLast = differenceInDays(now, lastPurchaseDate);
-        const riskOfChurn = daysSinceLast > avgInterval * 1.5 ? Math.min(100, Math.round(((daysSinceLast - (avgInterval * 1.5)) / avgInterval) * 100)) : 0;
+        const riskOfChurn =
+          daysSinceLast > avgInterval * 1.5
+            ? Math.min(
+                100,
+                Math.round(((daysSinceLast - avgInterval * 1.5) / avgInterval) * 100)
+              )
+            : 0;
 
         predictions[clientId] = {
           clientId,
@@ -75,7 +81,7 @@ export const useClientPredictions = () => {
           averageIntervalDays: Math.round(avgInterval),
           daysToNextPurchase: daysToNext,
           urgency,
-          riskOfChurn
+          riskOfChurn,
         };
       });
 

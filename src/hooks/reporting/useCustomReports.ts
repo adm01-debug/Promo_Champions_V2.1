@@ -8,8 +8,10 @@ import type { ReportEntity, ReportConfig } from './reportBuilderHelpers';
 
 // Linha gerada com colunas estreitadas: `entity`/`config` vêm como string/Json
 // no banco, mas o app só grava valores válidos de ReportEntity/ReportConfig.
-export interface CustomReport
-  extends Omit<Tables<'custom_reports'>, 'entity' | 'config'> {
+export interface CustomReport extends Omit<
+  Tables<'custom_reports'>,
+  'entity' | 'config'
+> {
   entity: ReportEntity;
   config: ReportConfig;
 }

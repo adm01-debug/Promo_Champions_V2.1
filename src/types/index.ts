@@ -19,7 +19,16 @@ export interface Deal {
   client_id: string;
   client_name?: string;
   stage_id: string;
-  status: 'open' | 'won' | 'lost' | 'abandoned' | 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed';
+  status:
+    | 'open'
+    | 'won'
+    | 'lost'
+    | 'abandoned'
+    | 'lead'
+    | 'qualified'
+    | 'proposal'
+    | 'negotiation'
+    | 'closed';
   probability: number;
   expected_close_date?: string;
   closed_at?: string;
@@ -45,7 +54,8 @@ export interface Activity {
   deal_id?: string;
   user_id: string;
   duration_seconds?: number;
-  outcome?: 'successful' | 'no_answer' | 'callback' | 'not_interested' | 'meeting_scheduled';
+  outcome?:
+    'successful' | 'no_answer' | 'callback' | 'not_interested' | 'meeting_scheduled';
   notes?: string;
   scheduled_at?: string;
   completed_at?: string;
@@ -192,7 +202,6 @@ export interface MetricData {
   change?: number;
   trend?: 'up' | 'down' | 'stable';
 }
-
 
 // ===== FILTERS & PAGINATION =====
 

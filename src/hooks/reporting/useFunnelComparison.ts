@@ -20,19 +20,23 @@ interface FunnelSnapshot {
 
 const STAGE_ORDER = ['lead', 'prospecting', 'qualified', 'proposal', 'negotiation'];
 
-const fetchFunnelSnapshot = async (startDate: Date, endDate: Date): Promise<FunnelSnapshot> => {
-  const [{ data: stageHistory, error: shErr }, { data: sales, error: sErr }] = await Promise.all([
-    supabase
-      .from('deal_stage_history')
-      .select('sale_id, stage, entered_at')
-      .gte('entered_at', startDate.toISOString())
-      .lt('entered_at', endDate.toISOString()),
-    supabase
-      .from('sales')
-      .select('id, amount, status, created_at')
-      .gte('created_at', startDate.toISOString())
-      .lt('created_at', endDate.toISOString()),
-  ]);
+const fetchFunnelSnapshot = async (
+  startDate: Date,
+  endDate: Date
+): Promise<FunnelSnapshot> => {
+  const [{ data: stageHistory, error: shErr }, { data: sales, error: sErr }] =
+    await Promise.all([
+      supabase
+        .from('deal_stage_history')
+        .select('sale_id, stage, entered_at')
+        .gte('entered_at', startDate.toISOString())
+        .lt('entered_at', endDate.toISOString()),
+      supabase
+        .from('sales')
+        .select('id, amount, status, created_at')
+        .gte('created_at', startDate.toISOString())
+        .lt('created_at', endDate.toISOString()),
+    ]);
 
   if (shErr) throw shErr;
   if (sErr) throw sErr;
@@ -124,7 +128,8 @@ export const useFunnelComparison = (timeframe: number = 30) => {
         deltas: computeStageDeltas(current.stages, previous.stages),
         kpiDeltas: {
           overallConversion:
-            Math.round((current.overallConversion - previous.overallConversion) * 10) / 10,
+            Math.round((current.overallConversion - previous.overallConversion) * 10) /
+            10,
           totalValue: current.totalValue - previous.totalValue,
           avgDealSize: current.avgDealSize - previous.avgDealSize,
           wonCount: current.wonCount - previous.wonCount,

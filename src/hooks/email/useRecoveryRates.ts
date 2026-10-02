@@ -41,10 +41,10 @@ export function useCampaignRecoveryRates(days = 90) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc(
         'get_campaign_recovery_rates' as never,
-        { _days: days } as never,
+        { _days: days } as never
       );
       if (error) throw new Error(error.message);
-      return ((data ?? []) as CampaignRecoveryRate[]).map((row) => ({
+      return ((data ?? []) as CampaignRecoveryRate[]).map(row => ({
         ...row,
         failed_total: num(row.failed_total),
         recovered_count: num(row.recovered_count),
@@ -64,10 +64,10 @@ export function useRecoveryByFailureType(days = 90) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc(
         'get_recovery_by_failure_type' as never,
-        { _days: days } as never,
+        { _days: days } as never
       );
       if (error) throw new Error(error.message);
-      return ((data ?? []) as FailureTypeRecoveryRate[]).map((row) => ({
+      return ((data ?? []) as FailureTypeRecoveryRate[]).map(row => ({
         ...row,
         failed_total: num(row.failed_total),
         recovered_count: num(row.recovered_count),

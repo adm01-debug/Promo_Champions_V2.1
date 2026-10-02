@@ -15,7 +15,7 @@ describe('generateFuzzData', () => {
     expect(data).toHaveLength(10);
     expect(data).toContain(Infinity);
     expect(data).toContain(-Infinity);
-    expect(data.some((n) => Number.isNaN(n))).toBe(true);
+    expect(data.some(n => Number.isNaN(n))).toBe(true);
   });
 
   it('gera 10 emails inválidos', () => {
@@ -29,7 +29,9 @@ describe('generateFuzzData', () => {
     const data = generateFuzzData('object') as unknown[];
     expect(data).toHaveLength(5);
     // deep-nested + prototype
-    expect(data.some((o) => o && typeof o === 'object' && 'constructor' in (o as object))).toBe(true);
+    expect(
+      data.some(o => o && typeof o === 'object' && 'constructor' in (o as object))
+    ).toBe(true);
   });
 
   it('retorna [] para tipo desconhecido', () => {
@@ -46,15 +48,15 @@ describe('runFuzzTest', () => {
     });
     const results = await runFuzzTest(fn, 'string');
     expect(results).toHaveLength(10);
-    expect(results.filter((r) => r.status === 'passed').length).toBeGreaterThan(0);
-    expect(results.filter((r) => r.status === 'failed').length).toBeGreaterThan(0);
-    const failed = results.find((r) => r.status === 'failed');
+    expect(results.filter(r => r.status === 'passed').length).toBeGreaterThan(0);
+    expect(results.filter(r => r.status === 'failed').length).toBeGreaterThan(0);
+    const failed = results.find(r => r.status === 'failed');
     expect(failed?.error).toBe('too long');
   });
 
   it('funciona com função síncrona', async () => {
     const results = await runFuzzTest((n: number) => n * 2, 'number');
-    expect(results.every((r) => r.status === 'passed')).toBe(true);
+    expect(results.every(r => r.status === 'passed')).toBe(true);
   });
 
   it('captura erro não-Error (string thrown) via String(error)', async () => {
@@ -63,7 +65,7 @@ describe('runFuzzTest', () => {
       return s;
     };
     const results = await runFuzzTest(fn, 'string');
-    const failed = results.find((r) => r.status === 'failed');
+    const failed = results.find(r => r.status === 'failed');
     expect(failed?.error).toBe('string-error-value');
   });
 });

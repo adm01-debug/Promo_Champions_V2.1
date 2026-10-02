@@ -166,7 +166,9 @@ export default function WinLossIntelligence() {
   const onCohort = (created: string, closed: string) =>
     openDrawer(`Cohort ${created} → ${closed}`);
   const onCycleBin = (bin: string, outcome: 'won' | 'lost') =>
-    openDrawer(`Ciclo ${bin} · ${outcome === WIN_LOSS_OUTCOME.WON ? 'Won' : 'Lost'}`, { outcome });
+    openDrawer(`Ciclo ${bin} · ${outcome === WIN_LOSS_OUTCOME.WON ? 'Won' : 'Lost'}`, {
+      outcome,
+    });
   const onLossLeaf = (stage: string, reason: string) =>
     openDrawer(`${reason} · ${stage}`, { outcome: 'lost', reason, stage });
 

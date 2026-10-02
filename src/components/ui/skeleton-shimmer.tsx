@@ -1,8 +1,8 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import { cn } from '@/lib/utils';
 
 interface SkeletonShimmerProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "circle" | "text" | "card" | "avatar" | "button";
+  variant?: 'default' | 'circle' | 'text' | 'card' | 'avatar' | 'button';
   width?: string | number;
   height?: string | number;
   lines?: number;
@@ -11,7 +11,7 @@ interface SkeletonShimmerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const SkeletonShimmer: React.FC<SkeletonShimmerProps> = ({
   className,
-  variant = "default",
+  variant = 'default',
   width,
   height,
   lines = 1,
@@ -19,17 +19,18 @@ export const SkeletonShimmer: React.FC<SkeletonShimmerProps> = ({
   ...props
 }) => {
   const baseClasses = cn(
-    "bg-muted/50 rounded-md",
-    animated && "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent"
+    'bg-muted/50 rounded-md',
+    animated &&
+      'relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent'
   );
 
   const variantStyles: Record<string, string> = {
-    default: "w-full h-4",
-    circle: "rounded-full",
-    text: "h-4 rounded",
-    card: "w-full h-32 rounded-xl",
-    avatar: "w-10 h-10 rounded-full",
-    button: "w-24 h-10 rounded-lg",
+    default: 'w-full h-4',
+    circle: 'rounded-full',
+    text: 'h-4 rounded',
+    card: 'w-full h-32 rounded-xl',
+    avatar: 'w-10 h-10 rounded-full',
+    button: 'w-24 h-10 rounded-lg',
   };
 
   const style: React.CSSProperties = {
@@ -38,15 +39,15 @@ export const SkeletonShimmer: React.FC<SkeletonShimmerProps> = ({
   };
 
   // For text variant with multiple lines
-  if (variant === "text" && lines > 1) {
+  if (variant === 'text' && lines > 1) {
     return (
-      <div className={cn("space-y-2", className)} {...props}>
+      <div className={cn('space-y-2', className)} {...props}>
         {Array.from({ length: lines }).map((_, i) => (
           <div
             key={i}
             className={cn(baseClasses, variantStyles.text)}
             style={{
-              width: i === lines - 1 ? "75%" : "100%",
+              width: i === lines - 1 ? '75%' : '100%',
             }}
           />
         ))}
@@ -65,7 +66,7 @@ export const SkeletonShimmer: React.FC<SkeletonShimmerProps> = ({
 
 // Preset skeleton components
 export const SkeletonCard: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={cn("p-4 rounded-xl border border-border bg-card space-y-4", className)}>
+  <div className={cn('p-4 rounded-xl border border-border bg-card space-y-4', className)}>
     <div className="flex items-center gap-3">
       <SkeletonShimmer variant="avatar" />
       <div className="flex-1 space-y-2">
@@ -82,7 +83,7 @@ export const SkeletonCard: React.FC<{ className?: string }> = ({ className }) =>
 );
 
 export const SkeletonStatCard: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={cn("p-5 rounded-xl border border-border bg-card space-y-3", className)}>
+  <div className={cn('p-5 rounded-xl border border-border bg-card space-y-3', className)}>
     <div className="flex items-center justify-between">
       <SkeletonShimmer width={100} height={12} />
       <SkeletonShimmer variant="circle" width={32} height={32} />
@@ -92,12 +93,12 @@ export const SkeletonStatCard: React.FC<{ className?: string }> = ({ className }
   </div>
 );
 
-export const SkeletonTable: React.FC<{ rows?: number; cols?: number; className?: string }> = ({ 
-  rows = 5, 
-  cols = 4,
-  className 
-}) => (
-  <div className={cn("rounded-xl border border-border overflow-hidden", className)}>
+export const SkeletonTable: React.FC<{
+  rows?: number;
+  cols?: number;
+  className?: string;
+}> = ({ rows = 5, cols = 4, className }) => (
+  <div className={cn('rounded-xl border border-border overflow-hidden', className)}>
     {/* Header */}
     <div className="flex gap-4 p-4 bg-muted/30 border-b border-border">
       {Array.from({ length: cols }).map((_, i) => (
@@ -106,16 +107,9 @@ export const SkeletonTable: React.FC<{ rows?: number; cols?: number; className?:
     </div>
     {/* Rows */}
     {Array.from({ length: rows }).map((_, rowIndex) => (
-      <div 
-        key={rowIndex} 
-        className="flex gap-4 p-4 border-b border-border last:border-0"
-      >
+      <div key={rowIndex} className="flex gap-4 p-4 border-b border-border last:border-0">
         {Array.from({ length: cols }).map((_, colIndex) => (
-          <SkeletonShimmer 
-            key={colIndex} 
-            width={`${100 / cols}%`} 
-            height={12} 
-          />
+          <SkeletonShimmer key={colIndex} width={`${100 / cols}%`} height={12} />
         ))}
       </div>
     ))}
@@ -123,18 +117,14 @@ export const SkeletonTable: React.FC<{ rows?: number; cols?: number; className?:
 );
 
 export const SkeletonChart: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={cn("p-4 rounded-xl border border-border bg-card space-y-4", className)}>
+  <div className={cn('p-4 rounded-xl border border-border bg-card space-y-4', className)}>
     <div className="flex items-center justify-between">
       <SkeletonShimmer width={120} height={16} />
       <SkeletonShimmer width={80} height={24} />
     </div>
     <div className="h-48 flex items-end gap-2">
       {[65, 45, 80, 55, 70, 40, 85, 60].map((height, i) => (
-        <SkeletonShimmer 
-          key={i} 
-          className="flex-1 rounded-t-md" 
-          height={`${height}%`} 
-        />
+        <SkeletonShimmer key={i} className="flex-1 rounded-t-md" height={`${height}%`} />
       ))}
     </div>
   </div>

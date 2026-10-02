@@ -211,9 +211,10 @@ export const useChannelStats = (days = 30) => {
         .gte('created_at', since.toISOString());
 
       if (error) throw error;
-      const interactions = parseRows<
-        Pick<ChannelInteraction, 'channel' | 'direction' | 'status' | 'created_at'>
-      >(data);
+      const interactions =
+        parseRows<
+          Pick<ChannelInteraction, 'channel' | 'direction' | 'status' | 'created_at'>
+        >(data);
 
       const channels: Channel[] = ['whatsapp', 'email', 'linkedin', 'sms', 'phone'];
       const stats = channels.map(ch => {

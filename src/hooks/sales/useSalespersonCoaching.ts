@@ -89,14 +89,18 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
 
       // Team average win rate
       const teamOutcomes = allTeamOutcomes || [];
-      const teamWins = teamOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
-      const teamWinRate = teamOutcomes.length > 0 ? (teamWins / teamOutcomes.length) * 100 : 0;
+      const teamWins = teamOutcomes.filter(
+        o => o.outcome === WIN_LOSS_OUTCOME.WON
+      ).length;
+      const teamWinRate =
+        teamOutcomes.length > 0 ? (teamWins / teamOutcomes.length) * 100 : 0;
       const comparisonToTeam = teamWinRate > 0 ? winRate - teamWinRate : 0;
 
       // Average deal value
       const completedSales = allSales.filter(s => isWonSaleStatus(s.status));
       const totalRevenue = completedSales.reduce((sum, s) => sum + (s.amount || 0), 0);
-      const avgDealValue = completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
+      const avgDealValue =
+        completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
 
       // Top loss reasons
       const lossReasons = allOutcomes
@@ -120,8 +124,13 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
 
       // Generate coaching insights
       const strengths: Array<{ title: string; description: string }> = [];
-      const improvements: Array<{ title: string; description: string; priority: string }> = [];
-      const actions: Array<{ action: string; timeline: string; expectedImpact: string }> = [];
+      const improvements: Array<{
+        title: string;
+        description: string;
+        priority: string;
+      }> = [];
+      const actions: Array<{ action: string; timeline: string; expectedImpact: string }> =
+        [];
 
       // Analyze and generate recommendations
       if (winRate >= 40) {

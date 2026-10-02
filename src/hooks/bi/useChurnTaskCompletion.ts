@@ -40,10 +40,11 @@ export function useChurnTaskCompletion(days = 30, salespersonId?: string | null)
       if (error) throw error;
       const rows = data ?? [];
       const total = rows.length;
-      const completed = rows.filter((t) => t.status === 'completed').length;
+      const completed = rows.filter(t => t.status === 'completed').length;
       const now = Date.now();
       const overdueRows = rows.filter(
-        (t) => t.status !== 'completed' && t.due_date && new Date(t.due_date).getTime() < now,
+        t =>
+          t.status !== 'completed' && t.due_date && new Date(t.due_date).getTime() < now
       );
       const pending = total - completed;
       const completionRate = total > 0 ? (completed / total) * 100 : 0;
@@ -53,8 +54,8 @@ export function useChurnTaskCompletion(days = 30, salespersonId?: string | null)
         pending,
         overdue: overdueRows.length,
         completionRate,
-        overdueIds: overdueRows.map((r) => r.id),
-        overdueTasks: overdueRows.map((r) => ({
+        overdueIds: overdueRows.map(r => r.id),
+        overdueTasks: overdueRows.map(r => ({
           id: r.id,
           description: r.description ?? null,
           due_date: r.due_date ?? null,
@@ -66,4 +67,3 @@ export function useChurnTaskCompletion(days = 30, salespersonId?: string | null)
     staleTime: 60_000,
   });
 }
-

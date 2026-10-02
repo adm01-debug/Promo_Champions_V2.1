@@ -25,17 +25,23 @@ export function QuoteSyncLogsPanel() {
 
   const statusIcon = (status: string) => {
     switch (status) {
-      case 'success': return <CheckCircle2 className="h-4 w-4 text-success" />;
-      case 'error': return <XCircle className="h-4 w-4 text-destructive" />;
-      default: return <Clock className="h-4 w-4 text-muted-foreground" />;
+      case 'success':
+        return <CheckCircle2 className="h-4 w-4 text-success" />;
+      case 'error':
+        return <XCircle className="h-4 w-4 text-destructive" />;
+      default:
+        return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const statusColor = (status: string) => {
     switch (status) {
-      case 'success': return 'bg-success/10 text-success border-success/20';
-      case 'error': return 'bg-destructive/10 text-destructive border-destructive/20';
-      default: return 'bg-muted text-muted-foreground';
+      case 'success':
+        return 'bg-success/10 text-success border-success/20';
+      case 'error':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      default:
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -49,7 +55,9 @@ export function QuoteSyncLogsPanel() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="text-sm text-muted-foreground py-4 text-center">Carregando...</div>
+          <div className="text-sm text-muted-foreground py-4 text-center">
+            Carregando...
+          </div>
         ) : logs.length === 0 ? (
           <div className="text-sm text-muted-foreground py-4 text-center">
             Nenhum log de sincronização encontrado.
@@ -57,13 +65,19 @@ export function QuoteSyncLogsPanel() {
         ) : (
           <ScrollArea className="h-[300px]">
             <div className="space-y-2">
-              {logs.map((log) => (
-                <div key={log.id} className="flex items-start gap-3 p-3 rounded-lg border bg-card">
+              {logs.map(log => (
+                <div
+                  key={log.id}
+                  className="flex items-start gap-3 p-3 rounded-lg border bg-card"
+                >
                   {statusIcon(log.status)}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium">{log.action}</span>
-                      <Badge variant="outline" className={`text-xs ${statusColor(log.status)}`}>
+                      <Badge
+                        variant="outline"
+                        className={`text-xs ${statusColor(log.status)}`}
+                      >
                         {log.status}
                       </Badge>
                       {log.quote_number && (
@@ -78,7 +92,9 @@ export function QuoteSyncLogsPanel() {
                       </p>
                     )}
                     <span className="text-xs text-muted-foreground">
-                      {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                      {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {
+                        locale: ptBR,
+                      })}
                     </span>
                   </div>
                 </div>

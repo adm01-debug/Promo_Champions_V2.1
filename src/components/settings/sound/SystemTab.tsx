@@ -1,9 +1,9 @@
-import { ListTodo, DollarSign, RefreshCw, Check } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { SystemSoundType } from "@/hooks/useSystemSoundSettings";
-import { VolumeControl } from "./VolumeControl";
-import { SystemSoundRow } from "./SystemSoundRow";
+import { ListTodo, DollarSign, RefreshCw, Check } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { SystemSoundType } from '@/hooks/useSystemSoundSettings';
+import { VolumeControl } from './VolumeControl';
+import { SystemSoundRow } from './SystemSoundRow';
 
 interface SystemPreference {
   sound: SystemSoundType;
@@ -24,37 +24,59 @@ interface SystemTabProps {
   soundOptions: { id: string; label: string; description: string }[];
 }
 
-export function SystemTab({ preferences, updatePreference, volume, setVolume, previewSound, soundOptions }: SystemTabProps) {
+export function SystemTab({
+  preferences,
+  updatePreference,
+  volume,
+  setVolume,
+  previewSound,
+  soundOptions,
+}: SystemTabProps) {
   return (
     <div className="space-y-6">
       <VolumeControl label="Volume Geral" volume={volume} onVolumeChange={setVolume} />
       <div className="space-y-4">
         <Label className="text-label">Notificações</Label>
         <SystemSoundRow
-          icon={ListTodo} iconColor="text-info" iconBg="bg-info/10"
-          label="Nova Tarefa" description="Toca quando uma nova tarefa é criada"
-          sound={preferences.newTask.sound} enabled={preferences.newTask.enabled} volume={volume}
+          icon={ListTodo}
+          iconColor="text-info"
+          iconBg="bg-info/10"
+          label="Nova Tarefa"
+          description="Toca quando uma nova tarefa é criada"
+          sound={preferences.newTask.sound}
+          enabled={preferences.newTask.enabled}
+          volume={volume}
           soundOptions={soundOptions}
-          onSoundChange={(s) => updatePreference('newTask', { sound: s })}
-          onEnabledChange={(e) => updatePreference('newTask', { enabled: e })}
+          onSoundChange={s => updatePreference('newTask', { sound: s })}
+          onEnabledChange={e => updatePreference('newTask', { enabled: e })}
           onPreview={previewSound}
         />
         <SystemSoundRow
-          icon={DollarSign} iconColor="text-success" iconBg="bg-success/10"
-          label="Nova Venda" description="Toca quando uma nova venda é registrada"
-          sound={preferences.newSale.sound} enabled={preferences.newSale.enabled} volume={volume}
+          icon={DollarSign}
+          iconColor="text-success"
+          iconBg="bg-success/10"
+          label="Nova Venda"
+          description="Toca quando uma nova venda é registrada"
+          sound={preferences.newSale.sound}
+          enabled={preferences.newSale.enabled}
+          volume={volume}
           soundOptions={soundOptions}
-          onSoundChange={(s) => updatePreference('newSale', { sound: s })}
-          onEnabledChange={(e) => updatePreference('newSale', { enabled: e })}
+          onSoundChange={s => updatePreference('newSale', { sound: s })}
+          onEnabledChange={e => updatePreference('newSale', { enabled: e })}
           onPreview={previewSound}
         />
         <SystemSoundRow
-          icon={RefreshCw} iconColor="text-rank-gold" iconBg="bg-rank-gold/10"
-          label="Atualização de Deal" description="Toca quando um deal muda de estágio"
-          sound={preferences.dealUpdate.sound} enabled={preferences.dealUpdate.enabled} volume={volume}
+          icon={RefreshCw}
+          iconColor="text-rank-gold"
+          iconBg="bg-rank-gold/10"
+          label="Atualização de Deal"
+          description="Toca quando um deal muda de estágio"
+          sound={preferences.dealUpdate.sound}
+          enabled={preferences.dealUpdate.enabled}
+          volume={volume}
           soundOptions={soundOptions}
-          onSoundChange={(s) => updatePreference('dealUpdate', { sound: s })}
-          onEnabledChange={(e) => updatePreference('dealUpdate', { enabled: e })}
+          onSoundChange={s => updatePreference('dealUpdate', { sound: s })}
+          onEnabledChange={e => updatePreference('dealUpdate', { enabled: e })}
           onPreview={previewSound}
         />
         <div className="flex items-center justify-between p-4 rounded-lg border border-border/40">
@@ -64,12 +86,14 @@ export function SystemTab({ preferences, updatePreference, volume, setVolume, pr
             </div>
             <div className="space-y-0.5">
               <Label className="text-label">Som de "Pronto"</Label>
-              <p className="text-xs text-muted-foreground">Toca quando o confetti estiver carregado</p>
+              <p className="text-xs text-muted-foreground">
+                Toca quando o confetti estiver carregado
+              </p>
             </div>
           </div>
           <Switch
             checked={preferences.ready.enabled}
-            onCheckedChange={(checked) => updatePreference('ready', { enabled: checked })}
+            onCheckedChange={checked => updatePreference('ready', { enabled: checked })}
           />
         </div>
       </div>

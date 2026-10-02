@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-export type TimelineSource = "delivery" | "dead_letter" | "alert";
+export type TimelineSource = 'delivery' | 'dead_letter' | 'alert';
 
 export interface TimelineItem {
   ts: string;
@@ -53,7 +53,7 @@ export function useWebhookTimeline(filters: TimelineFilters) {
 
   return useQuery<TimelineResponse>({
     queryKey: [
-      "winloss-webhook-timeline",
+      'winloss-webhook-timeline',
       requestIdValid ? filters.requestId : null,
       subIdValid ? filters.subscriptionId : null,
       filters.since ?? null,
@@ -69,11 +69,11 @@ export function useWebhookTimeline(filters: TimelineFilters) {
       if (filters.limit) body.limit = filters.limit;
 
       const { data, error } = await supabase.functions.invoke<TimelineResponse>(
-        "winloss-webhook-timeline",
-        { body },
+        'winloss-webhook-timeline',
+        { body }
       );
       if (error) throw error;
-      if (!data) throw new Error("Empty timeline response");
+      if (!data) throw new Error('Empty timeline response');
       return data;
     },
   });

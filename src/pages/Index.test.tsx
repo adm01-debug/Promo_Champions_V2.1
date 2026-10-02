@@ -3,11 +3,18 @@ import React from 'react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import Index from './Index';
 import { useAuth } from '@/contexts/AuthContext';
-import { useDashboardKPIsPeriod, type KPIPeriodResult } from '@/hooks/dashboard/useDashboardKPIsPeriod';
+import {
+  useDashboardKPIsPeriod,
+  type KPIPeriodResult,
+} from '@/hooks/dashboard/useDashboardKPIsPeriod';
 import { useGoalsDashboard } from '@/hooks/dashboard/useGoalsDashboard';
 import { useSalesChartData } from '@/hooks/sales/useSalesChartData';
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider, type UseQueryResult } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { DashboardThemeProvider } from '@/contexts/DashboardThemeContext';
 
@@ -77,9 +84,7 @@ const renderWithProviders = (ui: React.ReactNode) => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <DashboardThemeProvider>
-          <BrowserRouter>
-            {ui}
-          </BrowserRouter>
+          <BrowserRouter>{ui}</BrowserRouter>
         </DashboardThemeProvider>
       </QueryClientProvider>
     </HelmetProvider>

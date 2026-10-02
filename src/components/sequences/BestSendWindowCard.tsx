@@ -1,12 +1,12 @@
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Clock, TrendingUp } from "lucide-react";
-import { useContactSendProfile } from "@/hooks/sequences/useSendTimeOptimization";
-import { formatWindow, normalizeScore } from "./sendTimeHelpers";
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Clock, TrendingUp } from 'lucide-react';
+import { useContactSendProfile } from '@/hooks/sequences/useSendTimeOptimization';
+import { formatWindow, normalizeScore } from './sendTimeHelpers';
 
 interface Props {
   contactId: string;
-  contactType: "lead" | "client";
+  contactType: 'lead' | 'client';
 }
 
 export function BestSendWindowCard({ contactId, contactType }: Props) {
@@ -25,7 +25,7 @@ export function BestSendWindowCard({ contactId, contactType }: Props) {
     );
   }
 
-  const max = Math.max(...data.map((w) => Number(w.score)));
+  const max = Math.max(...data.map(w => Number(w.score)));
 
   return (
     <Card className="p-3 space-y-2">
@@ -34,16 +34,23 @@ export function BestSendWindowCard({ contactId, contactType }: Props) {
         Melhores janelas
       </div>
       <div className="space-y-1.5">
-        {data.map((w) => {
+        {data.map(w => {
           const pct = normalizeScore(Number(w.score), max);
           return (
             <div key={`${w.day_of_week}-${w.hour_of_day}`} className="space-y-0.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-mono">{formatWindow(w.day_of_week, w.hour_of_day)}</span>
-                <span className="text-muted-foreground">{w.opens}o · {w.clicks}c · {w.replies}r</span>
+                <span className="font-mono">
+                  {formatWindow(w.day_of_week, w.hour_of_day)}
+                </span>
+                <span className="text-muted-foreground">
+                  {w.opens}o · {w.clicks}c · {w.replies}r
+                </span>
               </div>
               <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
-                <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${pct}%` }} />
+                <div
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${pct}%` }}
+                />
               </div>
             </div>
           );

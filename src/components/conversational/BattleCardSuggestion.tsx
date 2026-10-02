@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Shield, ExternalLink, Copy } from "lucide-react";
-import { toast } from "sonner";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Shield, ExternalLink, Copy } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Props {
   battleCardId: string;
@@ -19,12 +19,12 @@ interface AssetSummary {
 
 export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
   const { data: asset, isLoading } = useQuery({
-    queryKey: ["sales-enablement-asset", battleCardId],
+    queryKey: ['sales-enablement-asset', battleCardId],
     queryFn: async (): Promise<AssetSummary | null> => {
       const { data, error } = await supabase
-        .from("sales_enablement_assets")
-        .select("id, title, description, file_url")
-        .eq("id", battleCardId)
+        .from('sales_enablement_assets')
+        .select('id, title, description, file_url')
+        .eq('id', battleCardId)
         .maybeSingle();
       if (error) throw error;
       return (data as AssetSummary) ?? null;
@@ -36,7 +36,7 @@ export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
   const copyTalkingPoints = async () => {
     const text = asset.description ?? asset.title;
     await navigator.clipboard.writeText(text);
-    toast.success("Talking points copiados");
+    toast.success('Talking points copiados');
   };
 
   return (
@@ -56,7 +56,12 @@ export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
         </div>
       </div>
       <div className="flex gap-2">
-        <Button size="sm" variant="outline" onClick={copyTalkingPoints} className="h-7 text-xs">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={copyTalkingPoints}
+          className="h-7 text-xs"
+        >
           <Copy className="h-3 w-3 mr-1" />
           Copiar
         </Button>

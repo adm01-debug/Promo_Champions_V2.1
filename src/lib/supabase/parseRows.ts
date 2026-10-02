@@ -29,10 +29,7 @@ export function parseRow<T>(data: unknown): T | null {
  * rowsWith — variante validada por schema zod para formas dinâmicas.
  * Lança erro quando a resposta não bate com o contrato esperado.
  */
-export function rowsWith<S extends z.ZodType>(
-  schema: S,
-  data: unknown,
-): z.output<S>[] {
+export function rowsWith<S extends z.ZodType>(schema: S, data: unknown): z.output<S>[] {
   const parsed = z.array(schema).safeParse(data ?? []);
   if (!parsed.success) {
     const first = parsed.error.issues[0];
@@ -40,7 +37,7 @@ export function rowsWith<S extends z.ZodType>(
     throw new Error(
       `rowsWith: resposta fora do schema esperado` +
         (where ? ` em '${where}'` : '') +
-        ` (${parsed.error.issues.length} problema(s))`,
+        ` (${parsed.error.issues.length} problema(s))`
     );
   }
   return parsed.data;

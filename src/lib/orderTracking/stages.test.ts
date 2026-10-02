@@ -19,7 +19,7 @@ describe('stages catálogo', () => {
 
   it('FINANCIAL_STAGES tem 4 estágios', () => {
     expect(FINANCIAL_STAGES).toHaveLength(4);
-    FINANCIAL_STAGES.forEach((s) => expect(s.track).toBe('financial'));
+    FINANCIAL_STAGES.forEach(s => expect(s.track).toBe('financial'));
   });
 
   it('POST_SALE_STAGES tem 3 estágios', () => {
@@ -31,7 +31,7 @@ describe('stages catálogo', () => {
   });
 
   it('TRACKS expõe accent semântico', () => {
-    const accents = TRACKS.map((t) => t.accent);
+    const accents = TRACKS.map(t => t.accent);
     expect(accents).toContain('primary');
     expect(accents).toContain('success');
     expect(accents).toContain('warning');

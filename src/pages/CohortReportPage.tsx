@@ -1,13 +1,13 @@
-import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
-import { Grid3x3 } from "lucide-react";
-import { CohortHeatmap } from "@/components/reporting/CohortHeatmap";
+import { Helmet } from 'react-helmet-async';
+import { motion } from 'framer-motion';
+import { Grid3x3 } from 'lucide-react';
+import { CohortHeatmap } from '@/components/reporting/CohortHeatmap';
 
 const PageTransition = ({ children }: { children: React.ReactNode }) => (
   <motion.div
-    initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-    transition={{ duration: 0.4, ease: "easeOut" }}
+    initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+    transition={{ duration: 0.4, ease: 'easeOut' }}
   >
     {children}
   </motion.div>

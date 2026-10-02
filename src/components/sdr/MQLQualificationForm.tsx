@@ -91,7 +91,6 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
 
       // Create Notification for Closer
       if (status === 'qualified' && closerId) {
-
         // Find auth_user_id for closer to send notification
         const { data: closerData } = await supabase
           .from('salespeople')
@@ -129,7 +128,10 @@ export function MQLQualificationForm({ saleId, clientName }: MQLQualificationFor
       queryClient.invalidateQueries({ queryKey: ['sdr-metrics'] });
     } catch (error: unknown) {
       console.error('Error saving qualification:', error);
-      toast.error('Erro ao salvar qualificação: ' + (error instanceof Error ? error.message : String(error)));
+      toast.error(
+        'Erro ao salvar qualificação: ' +
+          (error instanceof Error ? error.message : String(error))
+      );
     } finally {
       setLoading(false);
     }

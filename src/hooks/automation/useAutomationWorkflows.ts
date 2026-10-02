@@ -95,8 +95,7 @@ export const useCreateWorkflow = () => {
             trigger_config: payload.trigger_config as Json | undefined,
             conditions:
               payload.conditions === undefined ? undefined : toJson(payload.conditions),
-            actions:
-              payload.actions === undefined ? undefined : toJson(payload.actions),
+            actions: payload.actions === undefined ? undefined : toJson(payload.actions),
             is_active: payload.is_active,
           })
         )

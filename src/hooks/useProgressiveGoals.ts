@@ -66,7 +66,9 @@ export function useProgressiveGoals(salespersonId?: string) {
     goals: goals || [],
     allGoals: allGoals.data || [],
     isLoading,
-    getLabel: (type: string) => GOAL_LABELS[type] || { label: type, icon: '🎯', unit: '' },
-    getLevelTitle: (level: number) => LEVEL_TITLES[Math.min(level, 10)] || `Nível ${level}`,
+    getLabel: (type: string) =>
+      GOAL_LABELS[type] || { label: type, icon: '🎯', unit: '' },
+    getLevelTitle: (level: number) =>
+      LEVEL_TITLES[Math.min(level, 10)] || `Nível ${level}`,
   };
 }

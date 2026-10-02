@@ -1,9 +1,9 @@
-import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Clock, AlertTriangle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { differenceInDays } from "date-fns";
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Clock, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { differenceInDays } from 'date-fns';
 
 interface SLAIndicatorProps {
   stageEnteredAt: string;
@@ -20,7 +20,7 @@ const SLA_LIMITS: Record<string, number> = {
 };
 
 function SLAIndicatorComponent({ stageEnteredAt, stage, className }: SLAIndicatorProps) {
-  const normalizedStage = stage.toLowerCase().replace(/[^a-z]/g, "");
+  const normalizedStage = stage.toLowerCase().replace(/[^a-z]/g, '');
   const limit = SLA_LIMITS[normalizedStage];
   if (!limit) return null;
 
@@ -38,13 +38,19 @@ function SLAIndicatorComponent({ stageEnteredAt, stage, className }: SLAIndicato
         <Badge
           variant="outline"
           className={cn(
-            "text-[9px] gap-1 cursor-default",
-            isOverdue && "bg-destructive/10 text-destructive border-destructive/30 animate-pulse",
-            isWarning && "bg-status-warning/10 text-status-warning border-status-warning/30",
+            'text-[9px] gap-1 cursor-default',
+            isOverdue &&
+              'bg-destructive/10 text-destructive border-destructive/30 animate-pulse',
+            isWarning &&
+              'bg-status-warning/10 text-status-warning border-status-warning/30',
             className
           )}
         >
-          {isOverdue ? <AlertTriangle className="h-2.5 w-2.5" /> : <Clock className="h-2.5 w-2.5" />}
+          {isOverdue ? (
+            <AlertTriangle className="h-2.5 w-2.5" />
+          ) : (
+            <Clock className="h-2.5 w-2.5" />
+          )}
           {daysInStage}d/{limit}d
         </Badge>
       </TooltipTrigger>

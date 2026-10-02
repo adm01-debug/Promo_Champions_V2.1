@@ -3,8 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Users } from 'lucide-react';
 import { format, startOfMonth, subMonths, differenceInMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -44,19 +55,24 @@ export const CohortAnalysis: FC = () => {
 
       // Also fetch client names for mapping
       const allClientIds = (clients || []).map(c => c.id);
-      const clientNames = allClientIds.length > 0
-        ? await chunkedIn<{ id: string; name: string }>(
-            allClientIds,
-            (chunk) => supabase.from('clients').select('id, name').in('id', chunk as string[]),
-            { parallel: true, label: 'cohort.client-names' },
-          )
-        : [];
+      const clientNames =
+        allClientIds.length > 0
+          ? await chunkedIn<{ id: string; name: string }>(
+              allClientIds,
+              chunk =>
+                supabase
+                  .from('clients')
+                  .select('id, name')
+                  .in('id', chunk as string[]),
+              { parallel: true, label: 'cohort.client-names' }
+            )
+          : [];
 
       const nameToId = new Map(clientNames.map(c => [c.name, c.id]));
 
       // Build cohorts by month of client creation
       const cohortMap = new Map<string, Set<string>>();
-      
+
       (clients || []).forEach(client => {
         const cohortKey = format(new Date(client.created_at), 'yyyy-MM');
         if (!cohortMap.has(cohortKey)) cohortMap.set(cohortKey, new Set());
@@ -65,12 +81,13 @@ export const CohortAnalysis: FC = () => {
 
       // Build activity map: which months each client had sales
       const clientActivityMonths = new Map<string, Set<string>>();
-      
+
       (sales || []).forEach(sale => {
         const clientId = nameToId.get(sale.client_name);
         if (!clientId) return;
         const monthKey = format(new Date(sale.created_at), 'yyyy-MM');
-        if (!clientActivityMonths.has(clientId)) clientActivityMonths.set(clientId, new Set());
+        if (!clientActivityMonths.has(clientId))
+          clientActivityMonths.set(clientId, new Set());
         clientActivityMonths.get(clientId)!.add(monthKey);
       });
 
@@ -86,16 +103,20 @@ export const CohortAnalysis: FC = () => {
         const retention: number[] = [];
 
         for (let i = 0; i <= maxPeriods; i++) {
-          
-          const targetMonth = format(new Date(cohortDate.getFullYear(), cohortDate.getMonth() + i, 1), 'yyyy-MM');
-          
+          const targetMonth = format(
+            new Date(cohortDate.getFullYear(), cohortDate.getMonth() + i, 1),
+            'yyyy-MM'
+          );
+
           let activeCount = 0;
           clientIds.forEach(id => {
             const months = clientActivityMonths.get(id);
             if (months?.has(targetMonth)) activeCount++;
           });
 
-          retention.push(totalClients > 0 ? Math.round((activeCount / totalClients) * 100) : 0);
+          retention.push(
+            totalClients > 0 ? Math.round((activeCount / totalClients) * 100) : 0
+          );
         }
 
         result.push({
@@ -159,33 +180,49 @@ export const CohortAnalysis: FC = () => {
               <table className="w-full text-xs">
                 <thead>
                   <tr>
-                    <th className="text-left px-2 py-1.5 font-medium text-muted-foreground">Cohort</th>
-                    <th className="text-center px-2 py-1.5 font-medium text-muted-foreground">Clientes</th>
+                    <th className="text-left px-2 py-1.5 font-medium text-muted-foreground">
+                      Cohort
+                    </th>
+                    <th className="text-center px-2 py-1.5 font-medium text-muted-foreground">
+                      Clientes
+                    </th>
                     {Array.from({ length: numMonths + 1 }, (_, i) => (
-                      <th key={i} className="text-center px-2 py-1.5 font-medium text-muted-foreground">
+                      <th
+                        key={i}
+                        className="text-center px-2 py-1.5 font-medium text-muted-foreground"
+                      >
                         M{i}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {cohorts.map((cohort) => (
+                  {cohorts.map(cohort => (
                     <tr key={cohort.cohort}>
-                      <td className="px-2 py-1.5 font-medium whitespace-nowrap">{cohort.cohort}</td>
-                      <td className="text-center px-2 py-1.5 text-muted-foreground">{cohort.totalClients}</td>
+                      <td className="px-2 py-1.5 font-medium whitespace-nowrap">
+                        {cohort.cohort}
+                      </td>
+                      <td className="text-center px-2 py-1.5 text-muted-foreground">
+                        {cohort.totalClients}
+                      </td>
                       {Array.from({ length: numMonths + 1 }, (_, i) => {
                         const val = cohort.retention[i];
-                        if (val === undefined) return <td key={i} className="px-1 py-1" />;
+                        if (val === undefined)
+                          return <td key={i} className="px-1 py-1" />;
                         return (
                           <td key={i} className="px-1 py-1">
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <div className={`rounded px-2 py-1 text-center font-medium ${getColor(val)}`}>
+                                <div
+                                  className={`rounded px-2 py-1 text-center font-medium ${getColor(val)}`}
+                                >
                                   {val}%
                                 </div>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>{cohort.cohort} — Mês {i}: {val}% retidos</p>
+                                <p>
+                                  {cohort.cohort} — Mês {i}: {val}% retidos
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           </td>

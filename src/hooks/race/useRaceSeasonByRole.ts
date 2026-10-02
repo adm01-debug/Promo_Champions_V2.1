@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { RaceSeason } from "@/hooks/race/useRaceSeason";
+import type { RaceSeason } from '@/hooks/race/useRaceSeason';
 
 export type RoleType = 'closer' | 'sdr';
 
@@ -18,7 +18,7 @@ const channelCache = new Map<string, Channel>();
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
-    channelCache.forEach((ch) => supabase.removeChannel(ch));
+    channelCache.forEach(ch => supabase.removeChannel(ch));
     channelCache.clear();
   });
 }
@@ -51,9 +51,13 @@ export function useRaceSeasonByRole(roleType: RoleType) {
     if (!ch) {
       ch = supabase
         .channel(topic)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'race_seasons' }, () => {
-          qc.invalidateQueries({ queryKey: ['race-season-active', roleType] });
-        })
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'race_seasons' },
+          () => {
+            qc.invalidateQueries({ queryKey: ['race-season-active', roleType] });
+          }
+        )
         .subscribe();
       channelCache.set(topic, ch);
     }

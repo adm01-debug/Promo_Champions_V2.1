@@ -9,7 +9,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { motion, AnimatePresence, Variants, Easing, useReducedMotion } from 'framer-motion';
+import {
+  motion,
+  AnimatePresence,
+  Variants,
+  Easing,
+  useReducedMotion,
+} from 'framer-motion';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -18,14 +24,7 @@ import { cn } from '@/lib/utils';
 /* -------------------------------------------------------------------------- */
 
 export type TransitionVariant =
-  | 'fade'
-  | 'slide-x'
-  | 'slide-y'
-  | 'zoom'
-  | 'flip-x'
-  | 'flip-y'
-  | 'parallax'
-  | 'blur';
+  'fade' | 'slide-x' | 'slide-y' | 'zoom' | 'flip-x' | 'flip-y' | 'parallax' | 'blur';
 
 export interface PageTransitionConfig {
   variant?: TransitionVariant;
@@ -53,7 +52,9 @@ export const PageTransitionProvider: FC<{
   children: ReactNode;
   config?: PageTransitionConfig;
 }> = ({ children, config }) => (
-  <PageTransitionContext.Provider value={config ?? {}}>{children}</PageTransitionContext.Provider>
+  <PageTransitionContext.Provider value={config ?? {}}>
+    {children}
+  </PageTransitionContext.Provider>
 );
 
 export const usePageTransitionConfig = (): PageTransitionConfig =>
@@ -65,7 +66,7 @@ export const usePageTransitionConfig = (): PageTransitionConfig =>
 
 function buildVariants(
   cfg: Required<PageTransitionConfig>,
-  reducedMotion: boolean,
+  reducedMotion: boolean
 ): Variants {
   const { variant, duration, ease, distance } = cfg;
   const inT = { duration, ease };
@@ -84,7 +85,11 @@ function buildVariants(
       return {
         initial: (d: number) => ({ opacity: 0, x: d > 0 ? distance : -distance }),
         in: { opacity: 1, x: 0, transition: inT },
-        out: (d: number) => ({ opacity: 0, x: d > 0 ? -distance : distance, transition: outT }),
+        out: (d: number) => ({
+          opacity: 0,
+          x: d > 0 ? -distance : distance,
+          transition: outT,
+        }),
       };
     case 'slide-y':
       return {
@@ -216,14 +221,17 @@ export const PageTransition: FC<PageTransitionProps> = memo(
         ease: ease ?? ctx.ease ?? DEFAULTS.ease,
         distance: distance ?? ctx.distance ?? DEFAULTS.distance,
       }),
-      [variant, duration, ease, distance, ctx],
+      [variant, duration, ease, distance, ctx]
     );
 
-    const variants = useMemo(() => buildVariants(cfg, reducedMotion), [cfg, reducedMotion]);
+    const variants = useMemo(
+      () => buildVariants(cfg, reducedMotion),
+      [cfg, reducedMotion]
+    );
 
     const containerClass = useMemo(
       () => cn('w-full min-h-full will-change-[opacity,transform,filter]', className),
-      [className],
+      [className]
     );
 
     return (
@@ -241,7 +249,7 @@ export const PageTransition: FC<PageTransitionProps> = memo(
         </motion.div>
       </AnimatePresence>
     );
-  },
+  }
 );
 
 PageTransition.displayName = 'PageTransition';
@@ -263,11 +271,16 @@ export const StaggeredContainer: FC<{
         transition: { staggerChildren: 0.05, delayChildren: delay },
       },
     }),
-    [delay],
+    [delay]
   );
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={variants} className={cn(className)}>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={variants}
+      className={cn(className)}
+    >
       {children}
     </motion.div>
   );

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 export function QuoteCadenceEmptyState() {
   return (
@@ -14,7 +14,7 @@ export function QuoteCadenceEmptyState() {
         className="mx-auto mb-4"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
         aria-hidden="true"
       >
         <defs>
@@ -35,23 +35,16 @@ export function QuoteCadenceEmptyState() {
           strokeWidth="1.5"
           strokeDasharray="4 6"
           animate={{ rotate: 360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "60px 60px" }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+          style={{ transformOrigin: '60px 60px' }}
         />
 
         {/* Envelope */}
         <motion.g
           animate={{ y: [0, -3, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <rect
-            x="34"
-            y="44"
-            width="52"
-            height="36"
-            rx="6"
-            fill="url(#qc-env)"
-          />
+          <rect x="34" y="44" width="52" height="36" rx="6" fill="url(#qc-env)" />
           <path
             d="M34 50 L60 66 L86 50"
             fill="none"
@@ -65,8 +58,8 @@ export function QuoteCadenceEmptyState() {
         {/* Orbiting arrow dots */}
         <motion.g
           animate={{ rotate: 360 }}
-          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: "60px 60px" }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+          style={{ transformOrigin: '60px 60px' }}
         >
           <circle cx="60" cy="12" r="3" fill="hsl(var(--primary))" />
           <circle cx="108" cy="60" r="2.5" fill="hsl(var(--accent))" />
@@ -76,7 +69,8 @@ export function QuoteCadenceEmptyState() {
 
       <p className="font-display font-semibold text-base">Nenhum follow-up encontrado</p>
       <p className="text-sm text-muted-foreground mt-1.5 max-w-sm mx-auto">
-        Envie um orçamento para iniciar uma cadência automática de follow-up e acompanhar a conversão.
+        Envie um orçamento para iniciar uma cadência automática de follow-up e acompanhar
+        a conversão.
       </p>
     </div>
   );
