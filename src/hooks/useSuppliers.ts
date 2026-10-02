@@ -4,7 +4,11 @@
  * Maintains backward-compatible useSuppliers() composite hook.
  * @see src/hooks/suppliers/
  */
-import { useSupplierList, useSupplierProducts, useRiskAssessments } from './suppliers/useSupplierQueries';
+import {
+  useSupplierList,
+  useSupplierProducts,
+  useRiskAssessments,
+} from './suppliers/useSupplierQueries';
 import { useSupplierMutations } from './suppliers/useSupplierMutations';
 import { getPriceComparison, getBestSupplier } from './suppliers/useSupplierUtils';
 
@@ -24,7 +28,8 @@ export function useSuppliers() {
     riskAssessments,
     assessmentsLoading,
     ...mutations,
-    getPriceComparison: (productId: string) => getPriceComparison(supplierProducts, productId),
+    getPriceComparison: (productId: string) =>
+      getPriceComparison(supplierProducts, productId),
     getBestSupplier: (productId: string) => getBestSupplier(supplierProducts, productId),
   };
 }

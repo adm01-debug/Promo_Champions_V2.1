@@ -65,7 +65,7 @@ export function Fireworks({ active }: FireworksProps) {
   return (
     <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
       <AnimatePresence>
-        {bursts.map((burst) => (
+        {bursts.map(burst => (
           <motion.div
             key={burst.id}
             className="absolute"
@@ -89,7 +89,7 @@ export function Fireworks({ active }: FireworksProps) {
               transition={{ delay: burst.delay / 1000, duration: 0.5, ease: 'easeOut' }}
             />
             {/* Partículas */}
-            {burst.particles.map((p) => (
+            {burst.particles.map(p => (
               <motion.div
                 key={p.id}
                 className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"

@@ -217,15 +217,26 @@ export function KeyboardShortcutsProvider({ children }: KeyboardShortcutsProvide
     },
   ];
 
-  const value = useMemo(() => ({
-    openSearch,
-    openNewSale,
-    openNewClient,
-    showShortcutsDialog,
-    registerSearchHandler,
-    registerNewSaleHandler,
-    registerNewClientHandler,
-  }), [openSearch, openNewSale, openNewClient, showShortcutsDialog, registerSearchHandler, registerNewSaleHandler, registerNewClientHandler]);
+  const value = useMemo(
+    () => ({
+      openSearch,
+      openNewSale,
+      openNewClient,
+      showShortcutsDialog,
+      registerSearchHandler,
+      registerNewSaleHandler,
+      registerNewClientHandler,
+    }),
+    [
+      openSearch,
+      openNewSale,
+      openNewClient,
+      showShortcutsDialog,
+      registerSearchHandler,
+      registerNewSaleHandler,
+      registerNewClientHandler,
+    ]
+  );
 
   return (
     <KeyboardShortcutsContext.Provider value={value}>

@@ -156,10 +156,12 @@ const ImportExport = () => {
 
     const csvHeaders = Object.keys(data[0]);
     const csvRows = data.map(r =>
-      csvHeaders.map(h => {
-        const v = (r as Record<string, unknown>)[h] ?? '';
-        return `"${sanitizeCsvCell(String(v)).replace(/"/g, '""')}"`;
-      }).join(',')
+      csvHeaders
+        .map(h => {
+          const v = (r as Record<string, unknown>)[h] ?? '';
+          return `"${sanitizeCsvCell(String(v)).replace(/"/g, '""')}"`;
+        })
+        .join(',')
     );
     const csv = [csvHeaders.join(','), ...csvRows].join('\n');
 

@@ -1,20 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
-import {
-  Briefcase,
-  X,
-  Search,
-  Clock,
-  DollarSign,
-} from 'lucide-react';
+import { Briefcase, X, Search, Clock, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -60,14 +50,14 @@ export function DealContextSelector({
     queryKey: ['deals-for-chat', salespersonId],
     queryFn: async () => {
       if (!salespersonId) return [];
-      
+
       const { data, error } = await supabase
         .from('sales')
         .select('id, client_name, product_name, amount, status, created_at')
         .eq('salesperson_id', salespersonId)
         .order('updated_at', { ascending: false })
         .limit(50);
-      
+
       if (error) throw error;
       return data as Deal[];
     },
@@ -78,7 +68,7 @@ export function DealContextSelector({
   const filteredDeals = React.useMemo(() => {
     if (!deals) return [];
     if (!searchQuery.trim()) return deals;
-    
+
     const query = searchQuery.toLowerCase();
     return deals.filter(
       deal =>
@@ -140,7 +130,7 @@ export function DealContextSelector({
             <Input
               placeholder="Buscar por cliente ou produto..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="h-8 pl-8 text-xs"
             />
           </div>
@@ -157,10 +147,13 @@ export function DealContextSelector({
             </div>
           ) : (
             <div className="p-1">
-              {filteredDeals.map((deal) => {
-                const status = STATUS_LABELS[deal.status] || { label: deal.status, color: 'bg-muted' };
+              {filteredDeals.map(deal => {
+                const status = STATUS_LABELS[deal.status] || {
+                  label: deal.status,
+                  color: 'bg-muted',
+                };
                 const isSelected = selectedDeal?.id === deal.id;
-                
+
                 return (
                   <button
                     key={deal.id}
@@ -172,8 +165,13 @@ export function DealContextSelector({
                     )}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <span className="font-medium text-sm truncate">{deal.client_name}</span>
-                      <Badge variant="secondary" className={cn('text-[10px] px-1.5 py-0', status.color)}>
+                      <span className="font-medium text-sm truncate">
+                        {deal.client_name}
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className={cn('text-[10px] px-1.5 py-0', status.color)}
+                      >
                         {status.label}
                       </Badge>
                     </div>

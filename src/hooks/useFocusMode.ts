@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface FocusModeConfig {
   enabled: boolean;
@@ -26,9 +26,9 @@ const DEFAULT_CONFIG: FocusModeConfig = {
 export function useFocusMode() {
   const location = useLocation();
   const [config, setConfig] = useState<FocusModeConfig>(() => {
-    if (typeof window === "undefined") return DEFAULT_CONFIG;
-    
-    const stored = localStorage.getItem("focus-mode-config");
+    if (typeof window === 'undefined') return DEFAULT_CONFIG;
+
+    const stored = localStorage.getItem('focus-mode-config');
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -48,29 +48,29 @@ export function useFocusMode() {
   // Apply focus mode classes
   useEffect(() => {
     const root = document.documentElement;
-    
+
     if (config.enabled) {
-      root.classList.add("focus-mode");
-      
+      root.classList.add('focus-mode');
+
       if (config.hideSidebar) {
-        root.classList.add("focus-hide-sidebar");
+        root.classList.add('focus-hide-sidebar');
       }
       if (config.hideNotifications) {
-        root.classList.add("focus-hide-notifications");
+        root.classList.add('focus-hide-notifications');
       }
       if (config.hideGamification) {
-        root.classList.add("focus-hide-gamification");
+        root.classList.add('focus-hide-gamification');
       }
       if (config.dimInactiveElements) {
-        root.classList.add("focus-dim-inactive");
+        root.classList.add('focus-dim-inactive');
       }
     } else {
       root.classList.remove(
-        "focus-mode",
-        "focus-hide-sidebar",
-        "focus-hide-notifications",
-        "focus-hide-gamification",
-        "focus-dim-inactive"
+        'focus-mode',
+        'focus-hide-sidebar',
+        'focus-hide-notifications',
+        'focus-hide-gamification',
+        'focus-dim-inactive'
       );
     }
   }, [config]);
@@ -98,12 +98,17 @@ export function useFocusMode() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [config.enabled, config.startedAt, config.autoBreakReminder, config.breakIntervalMinutes]);
+  }, [
+    config.enabled,
+    config.startedAt,
+    config.autoBreakReminder,
+    config.breakIntervalMinutes,
+  ]);
 
   // Persist config (except enabled state)
   useEffect(() => {
     const { enabled: _enabled, startedAt: _startedAt, ...persistedConfig } = config;
-    localStorage.setItem("focus-mode-config", JSON.stringify(persistedConfig));
+    localStorage.setItem('focus-mode-config', JSON.stringify(persistedConfig));
   }, [config]);
 
   // Exit focus mode on route change (optional behavior)
@@ -112,10 +117,10 @@ export function useFocusMode() {
   }, [location]);
 
   const enableFocusMode = useCallback(() => {
-    setConfig(prev => ({ 
-      ...prev, 
-      enabled: true, 
-      startedAt: Date.now() 
+    setConfig(prev => ({
+      ...prev,
+      enabled: true,
+      startedAt: Date.now(),
     }));
   }, []);
 
@@ -123,7 +128,7 @@ export function useFocusMode() {
     setConfig(prev => ({
       ...prev,
       enabled: false,
-      startedAt: null
+      startedAt: null,
     }));
     timeInFocusRef.current = 0;
   }, []);
@@ -148,9 +153,8 @@ export function useFocusMode() {
   const hrs = Math.floor(timeInFocus / 3600);
   const mins = Math.floor((timeInFocus % 3600) / 60);
   const secs = timeInFocus % 60;
-  const formattedTime = hrs > 0
-    ? `${hrs}h ${mins}m`
-    : `${mins}:${secs.toString().padStart(2, "0")}`;
+  const formattedTime =
+    hrs > 0 ? `${hrs}h ${mins}m` : `${mins}:${secs.toString().padStart(2, '0')}`;
 
   return {
     isEnabled: config.enabled,

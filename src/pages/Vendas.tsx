@@ -46,7 +46,12 @@ const markupTierOptions: { label: string; value: MarkupTier }[] = [
   { label: MARKUP_TIER_LABELS.unknown, value: 'unknown' },
 ];
 
-const VALID_TIERS: ReadonlyArray<string> = ['excellent', 'healthy', 'critical', 'unknown'];
+const VALID_TIERS: ReadonlyArray<string> = [
+  'excellent',
+  'healthy',
+  'critical',
+  'unknown',
+];
 
 const EMPTY_SUMMARY = {
   average: null,
@@ -63,7 +68,7 @@ const Vendas = () => {
   const [sortBy, setSortBy] = useState<SalesSortKey>('date_desc');
   const [statusFilter, setStatusFilter] = useState('');
   const [markupFilter, setMarkupFilter] = useState<MarkupTier | ''>(
-    VALID_TIERS.includes(initialMarkup) ? (initialMarkup as MarkupTier) : '',
+    VALID_TIERS.includes(initialMarkup) ? (initialMarkup as MarkupTier) : ''
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -94,7 +99,6 @@ const Vendas = () => {
     setCurrentPage(1);
   }, [debouncedSearchTerm, statusFilter, markupFilter, sortBy, itemsPerPage]);
 
-
   const markupSummary = markupSummaryData ?? EMPTY_SUMMARY;
 
   return (
@@ -121,9 +125,7 @@ const Vendas = () => {
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   </div>
                   <div>
-                    <h1 className="text-page-title uppercase italic">
-                      Vendas
-                    </h1>
+                    <h1 className="text-page-title uppercase italic">Vendas</h1>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">
                         Database v2.4
@@ -179,7 +181,8 @@ const Vendas = () => {
                   onApplyFilter={filters => {
                     if (filters.searchTerm !== undefined)
                       setSearchTerm(filters.searchTerm as string);
-                    if (filters.sortBy !== undefined) setSortBy(filters.sortBy as SalesSortKey);
+                    if (filters.sortBy !== undefined)
+                      setSortBy(filters.sortBy as SalesSortKey);
                     if (filters.statusFilter !== undefined)
                       setStatusFilter(filters.statusFilter as string);
                     if (filters.markupFilter !== undefined)
@@ -220,7 +223,6 @@ const Vendas = () => {
                   </div>
                 </div>
               </div>
-
 
               {/* HUD Table */}
               {filteredAndSortedSales.length > 0 ? (

@@ -31,7 +31,11 @@ interface DailyChallengeWithProgress {
   xp_reward: number;
   challenge_date: string;
   is_active: boolean;
-  progress: { current_value: number; completed_at: string | null; xp_claimed: boolean } | null;
+  progress: {
+    current_value: number;
+    completed_at: string | null;
+    xp_claimed: boolean;
+  } | null;
 }
 
 export default function HistoricoDesafiosDiarios() {
@@ -84,7 +88,9 @@ export default function HistoricoDesafiosDiarios() {
       queryClient.invalidateQueries({ queryKey: ['daily-challenges'] });
       queryClient.invalidateQueries({ queryKey: ['daily-challenges-history'] });
     } catch {
-      toast.error('Erro ao gerar desafios', { description: 'Tente novamente mais tarde' });
+      toast.error('Erro ao gerar desafios', {
+        description: 'Tente novamente mais tarde',
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -118,8 +124,14 @@ export default function HistoricoDesafiosDiarios() {
     totalChallenges: history?.length || 0,
     completed: history?.filter(c => c.progress?.completed_at).length || 0,
     totalXPEarned:
-      history?.reduce((sum, c) => (c.progress?.xp_claimed ? sum + c.xp_reward : sum), 0) || 0,
-    streakDays: calculateStreak(Object.keys(groupedByDate).sort().reverse(), groupedByDate),
+      history?.reduce(
+        (sum, c) => (c.progress?.xp_claimed ? sum + c.xp_reward : sum),
+        0
+      ) || 0,
+    streakDays: calculateStreak(
+      Object.keys(groupedByDate).sort().reverse(),
+      groupedByDate
+    ),
   };
 
   if (isLoading) {
@@ -147,10 +159,20 @@ export default function HistoricoDesafiosDiarios() {
   }
 
   const statCards = [
-    { icon: Zap, color: 'amber', label: 'Total de Desafios', value: stats.totalChallenges },
+    {
+      icon: Zap,
+      color: 'amber',
+      label: 'Total de Desafios',
+      value: stats.totalChallenges,
+    },
     { icon: CheckCircle, color: 'green', label: 'Completados', value: stats.completed },
     { icon: Gift, color: 'purple', label: 'XP Ganho', value: stats.totalXPEarned },
-    { icon: TrendingUp, color: 'orange', label: 'Dias em Sequência', value: stats.streakDays },
+    {
+      icon: TrendingUp,
+      color: 'orange',
+      label: 'Dias em Sequência',
+      value: stats.streakDays,
+    },
   ];
 
   return (
@@ -170,7 +192,11 @@ export default function HistoricoDesafiosDiarios() {
               Acompanhe seu progresso nos desafios dos últimos 30 dias
             </p>
           </div>
-          <Button onClick={handleGenerateDailyChallenges} disabled={isGenerating} className="gap-2">
+          <Button
+            onClick={handleGenerateDailyChallenges}
+            disabled={isGenerating}
+            className="gap-2"
+          >
             <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
             Gerar Desafios (Teste)
           </Button>
@@ -222,7 +248,9 @@ export default function HistoricoDesafiosDiarios() {
           >
             <Button
               variant="outline"
-              onClick={() => checkStreakMilestone.mutate({ salespersonId: salesperson.id })}
+              onClick={() =>
+                checkStreakMilestone.mutate({ salespersonId: salesperson.id })
+              }
               disabled={checkStreakMilestone.isPending}
               className="gap-2"
             >
@@ -252,14 +280,18 @@ export default function HistoricoDesafiosDiarios() {
                   disabled={isGenerating}
                   className="mt-4 gap-2"
                 >
-                  <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`}
+                  />
                   Gerar Primeiros Desafios
                 </Button>
               </CardContent>
             </Card>
           ) : (
             Object.entries(groupedByDate).map(([date, challenges], index) => {
-              const completedCount = challenges.filter(c => c.progress?.completed_at).length;
+              const completedCount = challenges.filter(
+                c => c.progress?.completed_at
+              ).length;
               const allCompleted = completedCount === challenges.length;
               const isToday = date === getLocalISODate();
               return (

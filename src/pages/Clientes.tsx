@@ -21,7 +21,12 @@ import { ClientesLoadingSkeleton } from '@/components/skeletons/PageLoadingSkele
 import { SkeletonTransition } from '@/components/skeletons/SkeletonTransition';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useClientsPage, useClientByName, useDeleteClient, Client } from '@/hooks/crm/useClients';
+import {
+  useClientsPage,
+  useClientByName,
+  useDeleteClient,
+  Client,
+} from '@/hooks/crm/useClients';
 import type { ClientSortKey } from '@/services/clientService';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { CreateClientDialog } from '@/components/clients/CreateClientDialog';
@@ -90,7 +95,7 @@ const Clientes = () => {
   // Auto-abre Client 360 quando URL contém ?client360=<nome>
   const client360Target = searchParams.get('client360');
   const { data: deepLinkedClient } = useClientByName(
-    view360Client ? null : client360Target,
+    view360Client ? null : client360Target
   );
   useEffect(() => {
     if (!client360Target || !deepLinkedClient) return;
@@ -132,9 +137,7 @@ const Clientes = () => {
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background" />
                   </div>
                   <div>
-                    <h1 className="text-page-title uppercase italic">
-                      Clientes
-                    </h1>
+                    <h1 className="text-page-title uppercase italic">Clientes</h1>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none">
                         Intelligence Hub v4.0

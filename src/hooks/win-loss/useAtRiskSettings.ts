@@ -1,20 +1,29 @@
-import { useCallback } from "react";
-import { RISK_REASON_CODES, isRiskReasonCode, type RiskReasonCode } from "@/lib/winloss/riskReasons";
-import type { RiskSeverity } from "@/lib/winloss/severityFromScore";
-import { useSyncedSetting, type SyncStatus } from "@/hooks/useSyncedSetting";
+import { useCallback } from 'react';
+import {
+  RISK_REASON_CODES,
+  isRiskReasonCode,
+  type RiskReasonCode,
+} from '@/lib/winloss/riskReasons';
+import type { RiskSeverity } from '@/lib/winloss/severityFromScore';
+import { useSyncedSetting, type SyncStatus } from '@/hooks/useSyncedSetting';
 
-const VALID_SEVERITIES: readonly RiskSeverity[] = ["low", "medium", "high", "critical"] as const;
+const VALID_SEVERITIES: readonly RiskSeverity[] = [
+  'low',
+  'medium',
+  'high',
+  'critical',
+] as const;
 
 function isRiskSeverity(v: unknown): v is RiskSeverity {
-  return typeof v === "string" && (VALID_SEVERITIES as readonly string[]).includes(v);
+  return typeof v === 'string' && (VALID_SEVERITIES as readonly string[]).includes(v);
 }
 
-export type AtRiskSortBy = "score" | "recency";
+export type AtRiskSortBy = 'score' | 'recency';
 
-const VALID_SORTS: readonly AtRiskSortBy[] = ["score", "recency"] as const;
+const VALID_SORTS: readonly AtRiskSortBy[] = ['score', 'recency'] as const;
 
 function isAtRiskSortBy(v: unknown): v is AtRiskSortBy {
-  return typeof v === "string" && (VALID_SORTS as readonly string[]).includes(v);
+  return typeof v === 'string' && (VALID_SORTS as readonly string[]).includes(v);
 }
 
 export interface AtRiskSettings {
@@ -35,14 +44,14 @@ export const AT_RISK_DEFAULTS: AtRiskSettings = {
   maxVisible: 8,
   debug: false,
   stageFilter: [],
-  keywordFilter: "",
+  keywordFilter: '',
   reasonCodes: [],
   severityFilter: [],
-  sortBy: "score",
+  sortBy: 'score',
 };
 
-const STORAGE_KEY = "winloss-at-risk-settings";
-const SERVER_KEY = "winloss-at-risk";
+const STORAGE_KEY = 'winloss-at-risk-settings';
+const SERVER_KEY = 'winloss-at-risk';
 const SCHEMA_VERSION = 4;
 
 const clamp = (n: number, min: number, max: number) =>
@@ -51,14 +60,14 @@ const clamp = (n: number, min: number, max: number) =>
 function sanitizeStages(input: unknown): string[] {
   if (!Array.isArray(input)) return [];
   const cleaned = input
-    .filter((s): s is string => typeof s === "string")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && s.length <= 60);
+    .filter((s): s is string => typeof s === 'string')
+    .map(s => s.trim())
+    .filter(s => s.length > 0 && s.length <= 60);
   return Array.from(new Set(cleaned)).slice(0, 20);
 }
 
 function sanitizeKeyword(input: unknown): string {
-  if (typeof input !== "string") return "";
+  if (typeof input !== 'string') return '';
   return input.trim().slice(0, 100);
 }
 
@@ -75,7 +84,9 @@ export function sanitizeSeverities(input: unknown): RiskSeverity[] {
 }
 
 export function sanitize(input: unknown): AtRiskSettings {
-  const obj = (input && typeof input === "object" ? input : {}) as Partial<AtRiskSettings>;
+  const obj = (
+    input && typeof input === 'object' ? input : {}
+  ) as Partial<AtRiskSettings>;
   return {
     threshold: clamp(Number(obj.threshold ?? AT_RISK_DEFAULTS.threshold), 0, 100),
     limit: clamp(Number(obj.limit ?? AT_RISK_DEFAULTS.limit), 5, 50),
@@ -92,7 +103,12 @@ export function sanitize(input: unknown): AtRiskSettings {
 export type { SyncStatus };
 
 export function useAtRiskSettings() {
-  const { value: settings, update, reset, syncStatus } = useSyncedSetting<AtRiskSettings>({
+  const {
+    value: settings,
+    update,
+    reset,
+    syncStatus,
+  } = useSyncedSetting<AtRiskSettings>({
     key: SERVER_KEY,
     storageKey: STORAGE_KEY,
     schemaVersion: SCHEMA_VERSION,
@@ -103,7 +119,7 @@ export function useAtRiskSettings() {
   const clearFilters = useCallback(() => {
     update({
       stageFilter: [],
-      keywordFilter: "",
+      keywordFilter: '',
       reasonCodes: [],
       severityFilter: [],
     });

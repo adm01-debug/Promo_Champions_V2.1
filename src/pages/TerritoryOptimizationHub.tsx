@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
-import { TerritoryOptimizationHub } from "@/components/territory-optimization/TerritoryOptimizationHub";
+import { Helmet } from 'react-helmet-async';
+import { TerritoryOptimizationHub } from '@/components/territory-optimization/TerritoryOptimizationHub';
 
 const TerritoryOptimizationHubPage = () => {
   return (

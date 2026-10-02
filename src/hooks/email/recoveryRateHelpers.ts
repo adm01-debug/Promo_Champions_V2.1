@@ -68,7 +68,7 @@ export function recoveryHealth(code: string, rate: number): RecoveryHealth {
 }
 
 export function recoveryHealthVariant(
-  health: RecoveryHealth,
+  health: RecoveryHealth
 ): 'default' | 'secondary' | 'destructive' | 'outline' {
   if (health === 'critico') return 'destructive';
   if (health === 'atencao') return 'secondary';
@@ -108,7 +108,8 @@ export function sumRecovery(rows: readonly RecoveryTotalsLike[]): RecoveryTotals
     failedTotal,
     recoveredCount,
     stillFailing,
-    recoveryRate: failedTotal > 0 ? Math.round((recoveredCount * 10000) / failedTotal) / 100 : 0,
+    recoveryRate:
+      failedTotal > 0 ? Math.round((recoveredCount * 10000) / failedTotal) / 100 : 0,
   };
 }
 

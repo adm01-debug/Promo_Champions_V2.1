@@ -17,7 +17,9 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2].map(i => <div key={i} className="h-32 rounded-xl bg-muted/30 animate-pulse" />)}
+        {[1, 2].map(i => (
+          <div key={i} className="h-32 rounded-xl bg-muted/30 animate-pulse" />
+        ))}
       </div>
     );
   }
@@ -30,8 +32,12 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
       <Card className="border-dashed">
         <CardContent className="p-8 text-center">
           <Swords className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-sm font-semibold text-foreground">Sem duelos 1v1 esta semana</p>
-          <p className="text-xs text-muted-foreground mt-1">Duelos são pareados automaticamente toda segunda-feira</p>
+          <p className="text-sm font-semibold text-foreground">
+            Sem duelos 1v1 esta semana
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Duelos são pareados automaticamente toda segunda-feira
+          </p>
         </CardContent>
       </Card>
     );
@@ -66,11 +72,15 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
                 className="p-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-background to-accent/5"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <Badge variant="outline" className="text-xs animate-pulse border-destructive text-destructive">
+                  <Badge
+                    variant="outline"
+                    className="text-xs animate-pulse border-destructive text-destructive"
+                  >
                     🔴 AO VIVO
                   </Badge>
                   <Badge variant="outline" className="text-xs">
-                    <Zap className="h-3 w-3 mr-1" />{matchup.xp_reward} XP
+                    <Zap className="h-3 w-3 mr-1" />
+                    {matchup.xp_reward} XP
                   </Badge>
                 </div>
 
@@ -80,17 +90,27 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
                     <Avatar className="h-12 w-12 mx-auto border-2 border-primary/30 shadow-lg">
                       <AvatarImage src={matchup.salesperson_a.avatar_url || undefined} />
                       <AvatarFallback className="text-sm font-bold bg-primary/10 text-primary">
-                        {matchup.salesperson_a.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                        {matchup.salesperson_a.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')
+                          .slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-sm font-bold mt-1 truncate text-foreground">{matchup.salesperson_a.name.split(' ')[0]}</p>
-                    <p className="text-xl font-black text-primary">{matchup.score_a.toLocaleString('pt-BR')}</p>
+                    <p className="text-sm font-bold mt-1 truncate text-foreground">
+                      {matchup.salesperson_a.name.split(' ')[0]}
+                    </p>
+                    <p className="text-xl font-black text-primary">
+                      {matchup.score_a.toLocaleString('pt-BR')}
+                    </p>
                   </div>
 
                   {/* VS */}
                   <div className="flex flex-col items-center gap-1">
                     <div className="h-12 w-12 rounded-full bg-gradient-to-br from-destructive to-primary-glow flex items-center justify-center shadow-lg">
-                      <span className="text-primary-foreground font-black text-sm">VS</span>
+                      <span className="text-primary-foreground font-black text-sm">
+                        VS
+                      </span>
                     </div>
                   </div>
 
@@ -99,11 +119,19 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
                     <Avatar className="h-12 w-12 mx-auto border-2 border-accent/30 shadow-lg">
                       <AvatarImage src={matchup.salesperson_b.avatar_url || undefined} />
                       <AvatarFallback className="text-sm font-bold bg-accent/10 text-accent-foreground">
-                        {matchup.salesperson_b.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                        {matchup.salesperson_b.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')
+                          .slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-sm font-bold mt-1 truncate text-foreground">{matchup.salesperson_b.name.split(' ')[0]}</p>
-                    <p className="text-xl font-black text-accent-foreground">{matchup.score_b.toLocaleString('pt-BR')}</p>
+                    <p className="text-sm font-bold mt-1 truncate text-foreground">
+                      {matchup.salesperson_b.name.split(' ')[0]}
+                    </p>
+                    <p className="text-xl font-black text-accent-foreground">
+                      {matchup.score_b.toLocaleString('pt-BR')}
+                    </p>
                   </div>
                 </div>
 
@@ -132,12 +160,29 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
                 <Trophy className="h-3 w-3" /> Duelos Encerrados
               </p>
               {completed.slice(0, 3).map(m => (
-                <div key={m.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/20 text-sm">
-                  <span className={cn('font-bold', m.winner_id === m.salesperson_a.id ? 'text-primary' : 'text-muted-foreground')}>
+                <div
+                  key={m.id}
+                  className="flex items-center gap-3 p-2 rounded-lg bg-muted/20 text-sm"
+                >
+                  <span
+                    className={cn(
+                      'font-bold',
+                      m.winner_id === m.salesperson_a.id
+                        ? 'text-primary'
+                        : 'text-muted-foreground'
+                    )}
+                  >
                     {m.salesperson_a.name.split(' ')[0]} {m.score_a}
                   </span>
                   <span className="text-muted-foreground">vs</span>
-                  <span className={cn('font-bold', m.winner_id === m.salesperson_b.id ? 'text-primary' : 'text-muted-foreground')}>
+                  <span
+                    className={cn(
+                      'font-bold',
+                      m.winner_id === m.salesperson_b.id
+                        ? 'text-primary'
+                        : 'text-muted-foreground'
+                    )}
+                  >
                     {m.score_b} {m.salesperson_b.name.split(' ')[0]}
                   </span>
                   {m.winner_id && <Crown className="h-3 w-3 text-rank-gold ml-auto" />}
@@ -150,6 +195,5 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
     </div>
   );
 };
-
 
 export const HeadToHead = React.memo(HeadToHeadComponent);

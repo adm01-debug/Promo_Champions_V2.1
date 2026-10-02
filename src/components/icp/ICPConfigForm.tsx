@@ -1,53 +1,53 @@
-import { useState, useEffect } from "react";
-import { useICPConfig, useUpdateICPConfig } from "@/hooks/useICPConfig";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Settings2, Plus, X, Save, Target } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from 'react';
+import { useICPConfig, useUpdateICPConfig } from '@/hooks/useICPConfig';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Settings2, Plus, X, Save, Target } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function ICPConfigForm() {
   const { data: config, isLoading } = useICPConfig();
   const updateConfig = useUpdateICPConfig();
-  
+
   const [industries, setIndustries] = useState<string[]>([]);
   const [niches, setNiches] = useState<string[]>([]);
-  const [minCapital, setMinCapital] = useState("");
-  const [minEmployees, setMinEmployees] = useState("");
-  const [newIndustry, setNewIndustry] = useState("");
-  const [newNiche, setNewNiche] = useState("");
+  const [minCapital, setMinCapital] = useState('');
+  const [minEmployees, setMinEmployees] = useState('');
+  const [newIndustry, setNewIndustry] = useState('');
+  const [newNiche, setNewNiche] = useState('');
 
   useEffect(() => {
     if (config) {
       setIndustries(config.target_industries || []);
       setNiches(config.preferred_niches || []);
-      setMinCapital(config.min_capital?.toString() || "");
-      setMinEmployees(config.min_employees?.toString() || "");
+      setMinCapital(config.min_capital?.toString() || '');
+      setMinEmployees(config.min_employees?.toString() || '');
     }
   }, [config]);
 
   const handleAddIndustry = () => {
     if (newIndustry && !industries.includes(newIndustry)) {
       setIndustries([...industries, newIndustry]);
-      setNewIndustry("");
+      setNewIndustry('');
     }
   };
 
   const handleRemoveIndustry = (ind: string) => {
-    setIndustries(industries.filter((i) => i !== ind));
+    setIndustries(industries.filter(i => i !== ind));
   };
 
   const handleAddNiche = () => {
     if (newNiche && !niches.includes(newNiche)) {
       setNiches([...niches, newNiche]);
-      setNewNiche("");
+      setNewNiche('');
     }
   };
 
   const handleRemoveNiche = (nic: string) => {
-    setNiches(niches.filter((n) => n !== nic));
+    setNiches(niches.filter(n => n !== nic));
   };
 
   const handleSave = async () => {
@@ -80,18 +80,25 @@ export function ICPConfigForm() {
                 <Input
                   placeholder="Ex: Tecnologia"
                   value={newIndustry}
-                  onChange={(e) => setNewIndustry(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleAddIndustry()}
+                  onChange={e => setNewIndustry(e.target.value)}
+                  onKeyPress={e => e.key === 'Enter' && handleAddIndustry()}
                 />
                 <Button size="icon" variant="outline" onClick={handleAddIndustry}>
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {industries.map((ind) => (
-                  <Badge key={ind} variant="secondary" className="pl-2 pr-1 py-1 gap-1 group">
+                {industries.map(ind => (
+                  <Badge
+                    key={ind}
+                    variant="secondary"
+                    className="pl-2 pr-1 py-1 gap-1 group"
+                  >
                     {ind}
-                    <button onClick={() => handleRemoveIndustry(ind)} className="hover:text-destructive transition-colors">
+                    <button
+                      onClick={() => handleRemoveIndustry(ind)}
+                      className="hover:text-destructive transition-colors"
+                    >
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
@@ -107,18 +114,25 @@ export function ICPConfigForm() {
                 <Input
                   placeholder="Ex: SaaS"
                   value={newNiche}
-                  onChange={(e) => setNewNiche(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleAddNiche()}
+                  onChange={e => setNewNiche(e.target.value)}
+                  onKeyPress={e => e.key === 'Enter' && handleAddNiche()}
                 />
                 <Button size="icon" variant="outline" onClick={handleAddNiche}>
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {niches.map((nic) => (
-                  <Badge key={nic} variant="outline" className="pl-2 pr-1 py-1 gap-1 border-primary/30 text-primary">
+                {niches.map(nic => (
+                  <Badge
+                    key={nic}
+                    variant="outline"
+                    className="pl-2 pr-1 py-1 gap-1 border-primary/30 text-primary"
+                  >
                     {nic}
-                    <button onClick={() => handleRemoveNiche(nic)} className="hover:text-destructive transition-colors">
+                    <button
+                      onClick={() => handleRemoveNiche(nic)}
+                      className="hover:text-destructive transition-colors"
+                    >
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
@@ -129,7 +143,10 @@ export function ICPConfigForm() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="min_capital" className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              <Label
+                htmlFor="min_capital"
+                className="text-sm font-semibold text-muted-foreground uppercase tracking-wider"
+              >
                 Capital Social Mínimo (R$)
               </Label>
               <div className="relative">
@@ -139,14 +156,17 @@ export function ICPConfigForm() {
                   type="number"
                   className="pl-9"
                   value={minCapital}
-                  onChange={(e) => setMinCapital(e.target.value)}
+                  onChange={e => setMinCapital(e.target.value)}
                   placeholder="Ex: 500000"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="min_employees" className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              <Label
+                htmlFor="min_employees"
+                className="text-sm font-semibold text-muted-foreground uppercase tracking-wider"
+              >
                 Nº Mínimo de Colaboradores
               </Label>
               <div className="relative">
@@ -156,15 +176,15 @@ export function ICPConfigForm() {
                   type="number"
                   className="pl-9"
                   value={minEmployees}
-                  onChange={(e) => setMinEmployees(e.target.value)}
+                  onChange={e => setMinEmployees(e.target.value)}
                   placeholder="Ex: 50"
                 />
               </div>
             </div>
-            
+
             <div className="pt-4">
-              <Button 
-                onClick={handleSave} 
+              <Button
+                onClick={handleSave}
                 disabled={updateConfig.isPending}
                 className="w-full gap-2 shadow-lg shadow-primary/20"
               >

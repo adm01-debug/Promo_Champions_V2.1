@@ -21,9 +21,9 @@ export function useCreateStagnantTasks() {
       if (error) throw error;
       return data as StagnantTasksResult;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      
+
       if (data.tasksCreated > 0) {
         toast({
           title: 'Tarefas criadas!',
@@ -32,7 +32,8 @@ export function useCreateStagnantTasks() {
       } else {
         toast({
           title: 'Nenhum deal estagnado',
-          description: 'Todos os deals estão em movimento ou já possuem tarefas pendentes.',
+          description:
+            'Todos os deals estão em movimento ou já possuem tarefas pendentes.',
         });
       }
     },

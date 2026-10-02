@@ -3,30 +3,38 @@ import { ClientKanban } from '@/components/clients/ClientKanban';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { CreateTaskDialog } from '@/components/tasks/CreateTaskDialog';
 
 export default function KanbanClientes() {
-  const [taskModal, setTaskModal] = useState<{ open: boolean; clientId?: string; clientName?: string }>({ open: false });
+  const [taskModal, setTaskModal] = useState<{
+    open: boolean;
+    clientId?: string;
+    clientName?: string;
+  }>({ open: false });
 
   useEffect(() => {
     const handleCreateTask = (e: Event) => {
       const customEvent = e as CustomEvent<{ clientId: string; clientName: string }>;
-      setTaskModal({ 
-        open: true, 
-        clientId: customEvent.detail.clientId, 
-        clientName: customEvent.detail.clientName 
+      setTaskModal({
+        open: true,
+        clientId: customEvent.detail.clientId,
+        clientName: customEvent.detail.clientName,
       });
     };
     window.addEventListener('create-task-modal', handleCreateTask as EventListener);
-    return () => window.removeEventListener('create-task-modal', handleCreateTask as EventListener);
+    return () =>
+      window.removeEventListener('create-task-modal', handleCreateTask as EventListener);
   }, []);
 
   return (
     <>
       <Helmet>
         <title>Kanban de Clientes | PROMO CHAMPIONS</title>
-        <meta name="description" content="Visualize e gerencie seus clientes por estágio de relacionamento" />
+        <meta
+          name="description"
+          content="Visualize e gerencie seus clientes por estágio de relacionamento"
+        />
       </Helmet>
       <PageTransition>
         <div className="space-y-4 sm:space-y-6 px-3 py-4 sm:px-4 sm:py-6 lg:px-8 lg:py-8">
@@ -36,7 +44,9 @@ export default function KanbanClientes() {
             transition={{ duration: 0.3 }}
           >
             <h1 className="text-page-title text-xl sm:">Kanban de Clientes</h1>
-            <p className="text-sm text-muted-foreground">Gerencie o relacionamento arrastando clientes entre estágios</p>
+            <p className="text-sm text-muted-foreground">
+              Gerencie o relacionamento arrastando clientes entre estágios
+            </p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -48,16 +58,21 @@ export default function KanbanClientes() {
         </div>
       </PageTransition>
 
-      <Dialog open={taskModal.open} onOpenChange={(open) => setTaskModal(prev => ({ ...prev, open }))}>
+      <Dialog
+        open={taskModal.open}
+        onOpenChange={open => setTaskModal(prev => ({ ...prev, open }))}
+      >
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">Create Task for {taskModal.clientName}</DialogTitle>
+            <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">
+              Create Task for {taskModal.clientName}
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <CreateTaskDialog 
-              defaultClientId={taskModal.clientId} 
-              open={taskModal.open} 
-              onOpenChange={(open) => setTaskModal(prev => ({ ...prev, open }))}
+            <CreateTaskDialog
+              defaultClientId={taskModal.clientId}
+              open={taskModal.open}
+              onOpenChange={open => setTaskModal(prev => ({ ...prev, open }))}
             />
           </div>
         </DialogContent>

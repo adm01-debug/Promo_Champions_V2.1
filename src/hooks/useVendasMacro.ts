@@ -93,7 +93,13 @@ export function useVendasMacro(days: number = 30) {
       // Top sellers
       const sellerMap = new Map<
         string,
-        { quoted: number; sold: number; revenue: number; quotesCount: number; ordersCount: number }
+        {
+          quoted: number;
+          sold: number;
+          revenue: number;
+          quotesCount: number;
+          ordersCount: number;
+        }
       >();
       sales.forEach(s => {
         const sid = s.salesperson_id || 'unknown';

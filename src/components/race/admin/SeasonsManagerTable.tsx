@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlayCircle, Pause, Flag, Plus, Trash2, Trophy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,12 +47,19 @@ export function SeasonsManagerTable() {
   });
 
   useEffect(() => {
-    const ch = supabase.channel('admin-seasons')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'race_seasons' }, () => {
-        qc.invalidateQueries({ queryKey: ['admin-race-seasons'] });
-      })
+    const ch = supabase
+      .channel('admin-seasons')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'race_seasons' },
+        () => {
+          qc.invalidateQueries({ queryKey: ['admin-race-seasons'] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [qc]);
 
   const updateStatus = async (id: string, status: Season['status']) => {
@@ -55,11 +69,25 @@ export function SeasonsManagerTable() {
   };
 
   const finalize = async (id: string, name: string) => {
-    if (!confirm(`Finalizar e premiar campeão da temporada "${name}"? Isso encerrará a corrida e disparará a cerimônia para todos.`)) return;
-    const { data, error } = await supabase.rpc('finalize_race_season', { _season_id: id });
-    if (error) { toast.error(error.message); return; }
+    if (
+      !confirm(
+        `Finalizar e premiar campeão da temporada "${name}"? Isso encerrará a corrida e disparará a cerimônia para todos.`
+      )
+    )
+      return;
+    const { data, error } = await supabase.rpc('finalize_race_season', {
+      _season_id: id,
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     const winnerId = (data as { winner_id?: string } | null)?.winner_id;
-    toast.success(winnerId ? '🏆 Campeão coroado! Cerimônia disparada.' : 'Temporada finalizada (sem vencedor).');
+    toast.success(
+      winnerId
+        ? '🏆 Campeão coroado! Cerimônia disparada.'
+        : 'Temporada finalizada (sem vencedor).'
+    );
   };
 
   const remove = async (id: string) => {
@@ -72,7 +100,9 @@ export function SeasonsManagerTable() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-section-title flex items-center gap-2"><Flag className="w-5 h-5" /> Temporadas</CardTitle>
+        <CardTitle className="text-section-title flex items-center gap-2">
+          <Flag className="w-5 h-5" /> Temporadas
+        </CardTitle>
         <Button onClick={() => setOpenDialog(true)} size="sm">
           <Plus className="w-4 h-4 mr-1" /> Nova temporada
         </Button>
@@ -80,10 +110,14 @@ export function SeasonsManagerTable() {
       <CardContent>
         {isLoading ? (
           <div className="space-y-2">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12" />)}
+            {[1, 2, 3].map(i => (
+              <Skeleton key={i} className="h-12" />
+            ))}
           </div>
         ) : data.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Nenhuma temporada criada.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Nenhuma temporada criada.
+          </p>
         ) : (
           <Table>
             <TableHeader>
@@ -97,40 +131,73 @@ export function SeasonsManagerTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((s) => (
+              {data.map(s => (
                 <TableRow key={s.id}>
                   <TableCell className="font-medium">{s.name}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{s.role_type === 'closer' ? '🎯 Closer' : '📞 SDR'}</Badge>
+                    <Badge variant="outline">
+                      {s.role_type === 'closer' ? '🎯 Closer' : '📞 SDR'}
+                    </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={s.status === 'active' ? 'default' : s.status === 'finished' ? 'secondary' : 'outline'}>
+                    <Badge
+                      variant={
+                        s.status === 'active'
+                          ? 'default'
+                          : s.status === 'finished'
+                            ? 'secondary'
+                            : 'outline'
+                      }
+                    >
                       {s.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {format(new Date(s.start_date), 'dd/MM', { locale: ptBR })} → {format(new Date(s.end_date), 'dd/MM', { locale: ptBR })}
+                    {format(new Date(s.start_date), 'dd/MM', { locale: ptBR })} →{' '}
+                    {format(new Date(s.end_date), 'dd/MM', { locale: ptBR })}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {Number(s.goal_amount).toLocaleString('pt-BR')}
                   </TableCell>
                   <TableCell className="text-right space-x-1">
                     {s.status !== 'active' && (
-                      <Button size="icon-sm" variant="ghost" onClick={() => updateStatus(s.id, 'active')} title="Ativar">
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={() => updateStatus(s.id, 'active')}
+                        title="Ativar"
+                      >
                         <PlayCircle className="w-4 h-4" />
                       </Button>
                     )}
                     {s.status === 'active' && (
                       <>
-                        <Button size="icon-sm" variant="ghost" onClick={() => finalize(s.id, s.name)} title="Finalizar e premiar campeão" className="text-amber-600 hover:text-amber-700">
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          onClick={() => finalize(s.id, s.name)}
+                          title="Finalizar e premiar campeão"
+                          className="text-amber-600 hover:text-amber-700"
+                        >
                           <Trophy className="w-4 h-4" />
                         </Button>
-                        <Button size="icon-sm" variant="ghost" onClick={() => updateStatus(s.id, 'finished')} title="Encerrar sem premiação">
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          onClick={() => updateStatus(s.id, 'finished')}
+                          title="Encerrar sem premiação"
+                        >
                           <Pause className="w-4 h-4" />
                         </Button>
                       </>
                     )}
-                    <Button size="icon-sm" variant="ghost" onClick={() => remove(s.id)} title="Excluir" className="text-destructive">
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => remove(s.id)}
+                      title="Excluir"
+                      className="text-destructive"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </TableCell>

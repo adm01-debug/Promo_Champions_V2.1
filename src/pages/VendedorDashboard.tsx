@@ -306,7 +306,10 @@ const VendedorDashboard = () => {
 
             <PersonalAssistantSummaryCard onOpenHub={() => navigate('/meu-assistente')} />
 
-            <RunRateProjectionCard salespersonId={id} commissionRate={salesperson?.commission_rate} />
+            <RunRateProjectionCard
+              salespersonId={id}
+              commissionRate={salesperson?.commission_rate}
+            />
 
             <EligibleBonusesCard salespersonId={id} />
 

@@ -8,14 +8,14 @@ import { ptBR } from 'date-fns/locale';
 export function RaceBadgeShowcase() {
   const { data: car } = useMyRaceCar();
   const { data: badges = [] } = useRaceBadges(car?.salesperson_id);
-  const earnedMap = new Map(badges.map((b) => [b.badge_code, b]));
+  const earnedMap = new Map(badges.map(b => [b.badge_code, b]));
 
   return (
     <Card>
       <CardContent className="p-4">
         <h3 className="font-bold mb-3 flex items-center gap-2">🏆 Conquistas da Pista</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {RACE_BADGE_CATALOG.map((b) => {
+          {RACE_BADGE_CATALOG.map(b => {
             const earned = earnedMap.get(b.code);
             return (
               <div
@@ -26,9 +26,17 @@ export function RaceBadgeShowcase() {
                     : 'bg-muted/30 border-border opacity-60'
                 }`}
               >
-                <div className="text-3xl">{earned ? b.emoji : <Lock className="w-6 h-6 mx-auto text-muted-foreground" />}</div>
+                <div className="text-3xl">
+                  {earned ? (
+                    b.emoji
+                  ) : (
+                    <Lock className="w-6 h-6 mx-auto text-muted-foreground" />
+                  )}
+                </div>
                 <div className="text-xs font-bold mt-1">{b.label}</div>
-                <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{b.desc}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight">
+                  {b.desc}
+                </div>
                 {earned && (
                   <div className="text-[9px] text-amber-700 dark:text-amber-300 mt-1 font-medium">
                     {format(new Date(earned.earned_at), 'dd/MM', { locale: ptBR })}

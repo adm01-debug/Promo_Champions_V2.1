@@ -1,11 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { format, subDays, subMonths, eachDayOfInterval, eachWeekOfInterval, startOfWeek } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  format,
+  subDays,
+  subMonths,
+  eachDayOfInterval,
+  eachWeekOfInterval,
+  startOfWeek,
+} from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export type PeriodFilter = 'week' | 'month' | 'quarter';
 export type ViewMode = 'activity' | 'comparison';
-export type ActivityTypeFilter = 'all' | 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp';
+export type ActivityTypeFilter =
+  'all' | 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp';
 
 export interface ActivityChartDataPoint {
   date: string;
@@ -49,13 +57,18 @@ export const COLORS = [
   'hsl(var(--chart-5))',
 ];
 
-export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, viewMode: ViewMode, activityTypeFilter: ActivityTypeFilter) => {
+export const useSDRActivityTrend = (
+  period: PeriodFilter,
+  selectedSDR: string,
+  viewMode: ViewMode,
+  activityTypeFilter: ActivityTypeFilter
+) => {
   return useQuery({
     queryKey: ['sdr-activity-trend', period, selectedSDR, viewMode, activityTypeFilter],
     queryFn: async () => {
       const now = new Date();
       let startDate: Date;
-      
+
       switch (period) {
         case 'week':
           startDate = subDays(now, 7);
@@ -74,21 +87,32 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
         .eq('is_active', true)
         .in('role', ['sdr', 'hybrid']);
 
-      if (!sdrs?.length) return { 
-        activityData: [] as Record<string, unknown>[], 
-        comparisonData: [] as Record<string, unknown>[], 
-        sdrs: [] as { id: string; name: string }[], 
-        totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 },
-        dailyGoal: 0,
-        sdrGoals: {} as Record<string, number>,
-        underperformingSDRs: [] as { id: string; name: string; consecutiveDays: number; avgDeficit: number }[]
-      };
+      if (!sdrs?.length)
+        return {
+          activityData: [] as Record<string, unknown>[],
+          comparisonData: [] as Record<string, unknown>[],
+          sdrs: [] as { id: string; name: string }[],
+          totals: { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 },
+          dailyGoal: 0,
+          sdrGoals: {} as Record<string, number>,
+          underperformingSDRs: [] as {
+            id: string;
+            name: string;
+            consecutiveDays: number;
+            avgDeficit: number;
+          }[],
+        };
 
       const { data: goals } = await supabase
         .from('activity_goals')
-        .select('salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal')
+        .select(
+          'salesperson_id, calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal'
+        )
         // chunked-in-safe: sdrs.map derivado de is_active (~50)
-        .in('salesperson_id', sdrs.map(s => s.id));
+        .in(
+          'salesperson_id',
+          sdrs.map(s => s.id)
+        );
 
       const sdrGoals: Record<string, number> = {};
       let totalDailyGoal = 0;
@@ -96,11 +120,21 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
       if (selectedSDR !== 'all') {
         const sdrGoal = goals?.find(g => g.salesperson_id === selectedSDR);
         if (sdrGoal) {
-          totalDailyGoal = sdrGoal.calls_goal + sdrGoal.emails_goal + sdrGoal.meetings_goal + sdrGoal.linkedin_goal + sdrGoal.whatsapp_goal;
+          totalDailyGoal =
+            sdrGoal.calls_goal +
+            sdrGoal.emails_goal +
+            sdrGoal.meetings_goal +
+            sdrGoal.linkedin_goal +
+            sdrGoal.whatsapp_goal;
         }
       } else {
         goals?.forEach(goal => {
-          const sdrTotal = goal.calls_goal + goal.emails_goal + goal.meetings_goal + goal.linkedin_goal + goal.whatsapp_goal;
+          const sdrTotal =
+            goal.calls_goal +
+            goal.emails_goal +
+            goal.meetings_goal +
+            goal.linkedin_goal +
+            goal.whatsapp_goal;
           sdrGoals[goal.salesperson_id] = sdrTotal;
           totalDailyGoal += sdrTotal;
         });
@@ -111,7 +145,10 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
         .select('salesperson_id, created_at, activity_type')
         .gte('created_at', startDate.toISOString())
         // chunked-in-safe: sdrs.map derivado de is_active (~50)
-        .in('salesperson_id', sdrs.map(s => s.id));
+        .in(
+          'salesperson_id',
+          sdrs.map(s => s.id)
+        );
 
       if (viewMode === 'activity' && selectedSDR !== 'all') {
         activitiesQuery = activitiesQuery.eq('salesperson_id', selectedSDR);
@@ -130,11 +167,21 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
           ? `Sem ${format(date, 'dd/MM', { locale: ptBR })}`
           : format(date, 'dd/MM', { locale: ptBR });
 
-        const point: ActivityChartDataPoint = { date: dateKey, label, calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0, total: 0 };
+        const point: ActivityChartDataPoint = {
+          date: dateKey,
+          label,
+          calls: 0,
+          emails: 0,
+          meetings: 0,
+          linkedin: 0,
+          whatsapp: 0,
+          total: 0,
+        };
 
-        const filteredActivities = viewMode === 'activity' && selectedSDR !== 'all'
-          ? activities?.filter(a => a.salesperson_id === selectedSDR)
-          : activities;
+        const filteredActivities =
+          viewMode === 'activity' && selectedSDR !== 'all'
+            ? activities?.filter(a => a.salesperson_id === selectedSDR)
+            : activities;
 
         filteredActivities?.forEach(activity => {
           const actDate = new Date(activity.created_at);
@@ -144,11 +191,21 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
 
           if (matchDate) {
             switch (activity.activity_type) {
-              case 'call': point.calls++; break;
-              case 'email': point.emails++; break;
-              case 'meeting': point.meetings++; break;
-              case 'linkedin': point.linkedin++; break;
-              case 'whatsapp': point.whatsapp++; break;
+              case 'call':
+                point.calls++;
+                break;
+              case 'email':
+                point.emails++;
+                break;
+              case 'meeting':
+                point.meetings++;
+                break;
+              case 'linkedin':
+                point.linkedin++;
+                break;
+              case 'whatsapp':
+                point.whatsapp++;
+                break;
             }
             point.total++;
           }
@@ -166,14 +223,17 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
         const point: ComparisonChartDataPoint = { date: dateKey, label };
 
         sdrs.forEach(sdr => {
-          const sdrActivities = activities?.filter(a => {
-            const actDate = new Date(a.created_at);
-            const matchDate = useWeeklyAggregation
-              ? format(startOfWeek(actDate, { weekStartsOn: 1 }), 'yyyy-MM-dd') === dateKey
-              : format(actDate, 'yyyy-MM-dd') === dateKey;
-            const matchType = activityTypeFilter === 'all' || a.activity_type === activityTypeFilter;
-            return a.salesperson_id === sdr.id && matchDate && matchType;
-          }).length ?? 0;
+          const sdrActivities =
+            activities?.filter(a => {
+              const actDate = new Date(a.created_at);
+              const matchDate = useWeeklyAggregation
+                ? format(startOfWeek(actDate, { weekStartsOn: 1 }), 'yyyy-MM-dd') ===
+                  dateKey
+                : format(actDate, 'yyyy-MM-dd') === dateKey;
+              const matchType =
+                activityTypeFilter === 'all' || a.activity_type === activityTypeFilter;
+              return a.salesperson_id === sdr.id && matchDate && matchType;
+            }).length ?? 0;
 
           point[sdr.id] = sdrActivities;
         });
@@ -181,38 +241,46 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
         return point;
       });
 
-      const totals = activityData.reduce((acc, point) => ({
-        calls: acc.calls + point.calls,
-        emails: acc.emails + point.emails,
-        meetings: acc.meetings + point.meetings,
-        linkedin: acc.linkedin + point.linkedin,
-        whatsapp: acc.whatsapp + point.whatsapp,
-      }), { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 });
+      const totals = activityData.reduce(
+        (acc, point) => ({
+          calls: acc.calls + point.calls,
+          emails: acc.emails + point.emails,
+          meetings: acc.meetings + point.meetings,
+          linkedin: acc.linkedin + point.linkedin,
+          whatsapp: acc.whatsapp + point.whatsapp,
+        }),
+        { calls: 0, emails: 0, meetings: 0, linkedin: 0, whatsapp: 0 }
+      );
 
-      const underperformingSDRs: { id: string; name: string; consecutiveDays: number; avgDeficit: number }[] = [];
+      const underperformingSDRs: {
+        id: string;
+        name: string;
+        consecutiveDays: number;
+        avgDeficit: number;
+      }[] = [];
       const consecutiveThreshold = period === 'week' ? 2 : period === 'month' ? 3 : 5;
-      
+
       sdrs.forEach(sdr => {
         const goal = sdrGoals[sdr.id] || 0;
         if (goal <= 0) return;
-        
+
         let consecutiveCount = 0;
         let maxConsecutive = 0;
         let totalDeficit = 0;
         let deficitDays = 0;
-        
+
         comparisonData.forEach(point => {
           const value = (point[sdr.id] as number) || 0;
           if (value < goal) {
             consecutiveCount++;
-            totalDeficit += (goal - value);
+            totalDeficit += goal - value;
             deficitDays++;
             maxConsecutive = Math.max(maxConsecutive, consecutiveCount);
           } else {
             consecutiveCount = 0;
           }
         });
-        
+
         if (maxConsecutive >= consecutiveThreshold) {
           underperformingSDRs.push({
             id: sdr.id,
@@ -223,7 +291,15 @@ export const useSDRActivityTrend = (period: PeriodFilter, selectedSDR: string, v
         }
       });
 
-      return { activityData, comparisonData, sdrs, totals, dailyGoal: totalDailyGoal, sdrGoals, underperformingSDRs };
+      return {
+        activityData,
+        comparisonData,
+        sdrs,
+        totals,
+        dailyGoal: totalDailyGoal,
+        sdrGoals,
+        underperformingSDRs,
+      };
     },
     staleTime: 60000,
   });
