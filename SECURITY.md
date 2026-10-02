@@ -57,9 +57,9 @@ Para nos ajudar a resolver o problema rapidamente, inclua:
 Componentes acessíveis publicamente que merecem atenção em reports e revisões:
 
 - **Edge functions públicas** (~170 em `supabase/functions/`): autenticação JWT
-  + RBAC por role (`has_role`, `is_admin_or_manager`), rate limiting e
-  validação em `_shared/`. Funções chamáveis com `service_role` sem verificar o
-  chamador são a principal superfície de risco.
+  - RBAC por role (`has_role`, `is_admin_or_manager`), rate limiting e
+    validação em `_shared/`. Funções chamáveis com `service_role` sem verificar o
+    chamador são a principal superfície de risco.
 - **Webhooks e callbacks externos**: Twilio (`twilio-call-status`,
   `twilio-call-twiml`), Bitrix24 OAuth (`bitrix24-oauth`), e-mail inbound
   (`inbound-email-webhook`), multichannel status, `receive-quote-*` — validados

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { isWonSaleStatus, WON_SALE_STATUSES } from '@/constants';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 
@@ -184,20 +185,36 @@ export function useLeadSourceTrend() {
     queryKey: ['lead-source-trend'],
     queryFn: async () => {
       const now = new Date();
-      const months: { month: string; data: Record<LeadSource, number> }[] = [];
-
+      const monthRanges: { monthDate: Date; start: Date; end: Date }[] = [];
       for (let i = 5; i >= 0; i--) {
         const monthDate = subMonths(now, i);
-        const start = startOfMonth(monthDate);
-        const end = endOfMonth(monthDate);
+        monthRanges.push({
+          monthDate,
+          start: startOfMonth(monthDate),
+          end: endOfMonth(monthDate),
+        });
+      }
 
-        const { data: sales } = await supabase
-          .from('sales')
-          .select('source, status')
-          .in('status', [...WON_SALE_STATUSES])
-          .gte('created_at', start.toISOString())
-          .lte('created_at', end.toISOString());
+      const firstMonth = monthRanges[0];
+      const lastMonth = monthRanges[monthRanges.length - 1];
+      if (!firstMonth || !lastMonth) return [];
 
+      // Uma única query paginada cobrindo os 6 meses (evita N+1); o
+      // agrupamento por mês é feito no cliente. Paginação necessária: o
+      // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
+      const sales = await fetchAllRows(
+        (from, to) =>
+          supabase
+            .from('sales')
+            .select('source, status, created_at')
+            .in('status', [...WON_SALE_STATUSES])
+            .gte('created_at', firstMonth.start.toISOString())
+            .lte('created_at', lastMonth.end.toISOString())
+            .range(from, to),
+        { label: 'useLeadSourceTrend:sales' }
+      );
+
+      return monthRanges.map(({ monthDate, start, end }) => {
         const sourceCount: Record<LeadSource, number> = {
           linkedin: 0,
           referral: 0,
@@ -209,18 +226,19 @@ export function useLeadSourceTrend() {
           other: 0,
         };
 
-        (sales || []).forEach(sale => {
-          const source = (sale.source || 'other') as LeadSource;
-          sourceCount[source]++;
+        sales.forEach(sale => {
+          const createdAt = new Date(sale.created_at);
+          if (createdAt >= start && createdAt <= end) {
+            const source = (sale.source || 'other') as LeadSource;
+            sourceCount[source]++;
+          }
         });
 
-        months.push({
+        return {
           month: format(monthDate, 'MMM'),
           data: sourceCount,
-        });
-      }
-
-      return months;
+        };
+      });
     },
   });
 }
