@@ -1,14 +1,13 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { checkAudioSignature } from '../_shared/file-signature.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
-import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 
 const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 

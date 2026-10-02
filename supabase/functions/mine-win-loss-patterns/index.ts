@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
 interface Analysis {

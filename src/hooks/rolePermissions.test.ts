@@ -60,7 +60,9 @@ function computeLivePolicies(): LivePolicies {
   for (const file of files) {
     const sql = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
     for (const m of sql.matchAll(createRe)) {
-      const [, name, table, action] = m;
+      const name = m[1]!;
+      const table = m[2]!;
+      const action = m[3];
       const t = table.toLowerCase();
       live[t] ??= new Map();
       const actions = live[t].get(name) ?? new Set<string>();
@@ -72,7 +74,8 @@ function computeLivePolicies(): LivePolicies {
       live[t].set(name, actions);
     }
     for (const m of sql.matchAll(dropRe)) {
-      const [, name, table] = m;
+      const name = m[1]!;
+      const table = m[2]!;
       live[table.toLowerCase()]?.delete(name);
     }
   }
@@ -106,10 +109,11 @@ describe('fonte única de permissões (role-permissions.json)', () => {
       for (const perm of perms) {
         if (perm === '*') continue;
         const [resource, action] = perm.split(':');
-        const required = ACTION_TO_SQL[action];
+        const required = ACTION_TO_SQL[action!];
         expect(required, `ação desconhecida em "${perm}"`).toBeTruthy();
+        if (!required) continue;
         const tables =
-          (config.resourceTables as Record<string, string[]>)[resource] ?? [];
+          (config.resourceTables as Record<string, string[]>)[resource!] ?? [];
         if (tables.length === 0) continue; // permissão de app, sem tabela
         for (const table of tables) {
           const covered = coveredActions(live, table);
@@ -141,10 +145,10 @@ describe('fonte única de permissões (role-permissions.json)', () => {
         const [resource, action, extra] = perm.split(':');
         expect(extra, `permissão malformada: ${perm}`).toBeUndefined();
         expect(
-          (config.resourceTables as Record<string, unknown>)[resource] !== undefined,
+          (config.resourceTables as Record<string, unknown>)[resource!] !== undefined,
           `recurso "${resource}" sem entrada em resourceTables`
         ).toBe(true);
-        expect(validActions.has(action), `ação inválida em "${perm}"`).toBe(true);
+        expect(validActions.has(action!), `ação inválida em "${perm}"`).toBe(true);
       }
     }
   });

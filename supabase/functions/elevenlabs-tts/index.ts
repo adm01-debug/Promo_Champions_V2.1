@@ -1,13 +1,12 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
-import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 
 const MAX_TEXT_LENGTH = 2000;
 

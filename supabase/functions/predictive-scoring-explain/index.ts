@@ -5,6 +5,7 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { chunkedIn } from '../_shared/chunked-in.ts';
 
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 interface Driver {
   factor: string;
   label: string;
