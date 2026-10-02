@@ -50,7 +50,7 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
     const [ripples, setRipples] = React.useState<Ripple[]>([]);
     const nextId = React.useRef(0);
 
-    const createRipple = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const createRipple = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
       const size = Math.max(rect.width, rect.height);
       const x = e.clientX - rect.left - size / 2;
@@ -63,7 +63,7 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
     }, []);
 
     const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
+      (e: React.MouseEvent<HTMLElement>) => {
         // Trigger haptic feedback if available
         try {
           if (navigator?.vibrate) {
@@ -73,7 +73,9 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
           // Silently ignore
         }
         createRipple(e);
-        onClick?.(e);
+        // Os handlers públicos são tipados como button (props do componente);
+        // no modo asChild o elemento real é outro — downcast pontual.
+        onClick?.(e as React.MouseEvent<HTMLButtonElement>);
       },
       [onClick, createRipple]
     );
@@ -81,17 +83,17 @@ const RippleButton = React.forwardRef<HTMLButtonElement, RippleButtonProps>(
     if (asChild) {
       return (
         <span
-          // eslint-disable-next-line no-restricted-syntax
-          onClick={handleClick as unknown as React.MouseEventHandler<HTMLSpanElement>}
+          onClick={handleClick}
           className={cn(
             rippleButtonVariants({ variant, size }),
             'relative overflow-hidden',
             className
           )}
-          // eslint-disable-next-line no-restricted-syntax
-          ref={ref as unknown as React.Ref<HTMLSpanElement>}
-          // eslint-disable-next-line no-restricted-syntax
-          {...(props as unknown as React.HTMLAttributes<HTMLSpanElement>)}
+          ref={node => {
+            if (typeof ref === 'function') ref(node as HTMLButtonElement);
+            else if (ref) ref.current = node as HTMLButtonElement;
+          }}
+          {...(props as React.HTMLAttributes<HTMLSpanElement>)}
         >
           {ripples.map(r => (
             <span

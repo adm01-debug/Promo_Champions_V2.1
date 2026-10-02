@@ -1,6 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
@@ -171,27 +171,19 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) return json({ error: 'Unauthorized' }, 401);
+    const caller = await getUserClient(req);
 
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claims, error: authErr } = await userClient.auth.getClaims(token);
-    if (authErr || !claims?.claims?.sub) return json({ error: 'Unauthorized' }, 401);
 
     const body = await req.json().catch(() => ({}));
     const recording_id = body?.recording_id as string | undefined;
     if (!recording_id) return json({ error: 'recording_id is required' }, 400);
 
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-    const { data: rec, error: recErr } = await admin
+    // A RPC update_call_recording_diarization exige bypass de RLS; a leitura do
+    // recording usa o client do usuário para garantir que o chamador só diarize
+    // gravações que ele pode ver.
+    const admin = getServiceClient('rpc update_call_recording_diarization (bypass RLS)');
+    const { data: rec, error: recErr } = await caller.client
       .from('call_recordings')
       .select('id, transcript, duration_seconds, status')
       .eq('id', recording_id)
@@ -241,6 +233,7 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
 
     return json({ recording_id, ...stats, turns_count: turns.length });
   } catch (e) {
+    if (e instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
     console.error('diarize-call-recording fatal:', e);
     return json({ error: e instanceof Error ? e.message : 'Unknown error' }, 500);
   }

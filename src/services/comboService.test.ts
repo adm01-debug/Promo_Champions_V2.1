@@ -43,15 +43,15 @@ describe('comboService.getNextTier', () => {
 
 describe('COMBO_TIERS invariantes', () => {
   it('minActions é monotonicamente crescente e começa em 0', () => {
-    expect(COMBO_TIERS[0].minActions).toBe(0);
+    expect(COMBO_TIERS[0]!.minActions).toBe(0);
     for (let i = 1; i < COMBO_TIERS.length; i++) {
-      expect(COMBO_TIERS[i].minActions).toBeGreaterThan(COMBO_TIERS[i - 1].minActions);
+      expect(COMBO_TIERS[i]!.minActions).toBeGreaterThan(COMBO_TIERS[i - 1]!.minActions);
     }
   });
 
   it('multiplicador só aumenta ao subir de tier', () => {
     for (let i = 1; i < COMBO_TIERS.length; i++) {
-      expect(COMBO_TIERS[i].multiplier).toBeGreaterThan(COMBO_TIERS[i - 1].multiplier);
+      expect(COMBO_TIERS[i]!.multiplier).toBeGreaterThan(COMBO_TIERS[i - 1]!.multiplier);
     }
   });
 });

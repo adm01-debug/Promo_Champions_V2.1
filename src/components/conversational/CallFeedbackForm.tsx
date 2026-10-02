@@ -30,7 +30,7 @@ export function CallFeedbackForm({ recordingId, clientId, onSuccess }: Props) {
       await callFeedbackService.submitCallFeedback({
         clientId,
         recordingId,
-        score: rating[0],
+        score: rating[0]!,
         comment: feedback,
       });
 

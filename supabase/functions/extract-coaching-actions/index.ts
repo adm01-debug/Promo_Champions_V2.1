@@ -1,6 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
@@ -38,17 +38,20 @@ Deno.serve(withRequestId("extract-coaching-actions", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const caller = await getUserClient(req);
+
     const { recording_id } = await req.json();
     if (!recording_id) throw new Error("recording_id obrigatório");
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
     if (!lovableKey) throw new Error("LOVABLE_API_KEY ausente");
 
-    const supabase = createClient(supabaseUrl, serviceKey);
+    // Escritas em coaching_actions exigem bypass de RLS; a leitura do recording
+    // usa o client do usuário para garantir que o chamador só analise gravações
+    // que ele pode ver.
+    const supabase = getServiceClient("escrita em coaching_actions (RLS)");
 
-    const { data: rec, error: recErr } = await supabase
+    const { data: rec, error: recErr } = await caller.client
       .from("call_recordings")
       .select("id, salesperson_id, transcript, diarization, summary")
       .eq("id", recording_id)
@@ -179,6 +182,12 @@ Para cada ação, retorne timestamp_sec do momento citado e a quote literal (≤
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("extract-coaching-actions error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "erro desconhecido" }),

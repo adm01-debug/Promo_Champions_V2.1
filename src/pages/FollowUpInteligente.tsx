@@ -245,8 +245,7 @@ const FollowUpInteligente = memo(() => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
-      // eslint-disable-next-line no-restricted-syntax
-      .filter(v => !(lead as unknown as Record<string, string | number | undefined>)[v]);
+      .filter(v => !lead[v as keyof ColdLead]);
     return missing;
   }, []);
 
@@ -279,14 +278,7 @@ const FollowUpInteligente = memo(() => {
       const vars = template.match(/{{(.*?)}}/g) || [];
       vars.forEach(v => {
         const key = v.replace(/{{|}}/g, '');
-        message = message.replace(
-          v,
-
-          String(
-            // eslint-disable-next-line no-restricted-syntax
-            (lead as unknown as Record<string, string | number | undefined>)[key] || ''
-          )
-        );
+        message = message.replace(v, String(lead[key as keyof ColdLead] || ''));
       });
 
       logAction.mutate({

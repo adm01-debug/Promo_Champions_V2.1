@@ -1,6 +1,6 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getServiceClient, getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
@@ -26,6 +26,8 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
+    const caller = await getUserClient(req);
+
     const { recording_id } = await req.json();
     if (!recording_id || typeof recording_id !== 'string') {
       return new Response(JSON.stringify({ error: 'recording_id required' }), {
@@ -34,12 +36,14 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       });
     }
 
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-    const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
-    const supabase = createClient(SUPABASE_URL, SERVICE_ROLE);
+    // Escritas em stakeholders/committee_extraction_runs e a chamada interna a
+    // calculate-committee-coverage exigem service_role; a leitura do recording
+    // usa o client do usuário para garantir que o chamador só analise gravações
+    // que ele pode ver.
+    const supabase = getServiceClient('escrita em stakeholders/extraction_runs + invoke interno (RLS)');
 
-    const { data: rec, error: recErr } = await supabase
+    const { data: rec, error: recErr } = await caller.client
       .from('call_recordings')
       .select('id, sale_id, transcript, salesperson_id')
       .eq('id', recording_id)
@@ -254,6 +258,12 @@ Deno.serve(withRequestId("extract-committee-from-call", async (req, _ctx) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     console.error('extract-committee error', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),

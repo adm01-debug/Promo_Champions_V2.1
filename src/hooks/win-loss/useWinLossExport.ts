@@ -7,6 +7,7 @@ import {
 } from '@/utils/csvExport';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { WIN_LOSS_OUTCOME } from '@/constants';
 
 /**
  * Gera CSV das análises filtradas (outcome, valor, ciclo, motivo, concorrente, segmento).
@@ -19,7 +20,7 @@ export const useWinLossExport = (rows: WLAnalysisRow[]) => {
     }
     const data = rows.map(r => ({
       Data: formatDateForExport(r.analyzed_at),
-      Resultado: r.outcome === 'won' ? 'Ganho' : 'Perdido',
+      Resultado: r.outcome === WIN_LOSS_OUTCOME.WON ? 'Ganho' : 'Perdido',
       Valor: formatCurrencyForExport(Number(r.amount) || 0),
       'Ciclo (dias)': r.cycle_days ?? '',
       Motivo: r.primary_reason ?? '',

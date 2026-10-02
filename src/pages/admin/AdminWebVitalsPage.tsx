@@ -33,7 +33,7 @@ function formatValue(metric: string, value: number | null): string {
 }
 
 function ratingFor(
-  metric: string,
+  _metric: string,
   p75: number | null,
   budget: number | null
 ): 'good' | 'poor' | 'unknown' {
