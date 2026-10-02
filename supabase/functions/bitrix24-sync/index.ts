@@ -321,7 +321,39 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
       });
     }
 
-    // Batch lookup: pre-fetch all existing sales matching client names in this sync
+    // Dedupe primário por deal.ID (sales.external_deal_id, migration
+    // 20261001190000). Se a coluna ainda não existir em produção, cai no
+    // dedupe legado por client_name::product_name.
+    const dealIds = [...new Set(deals.map(d => d.ID))];
+    const existingByDealId = new Map<string, string>();
+    let hasExternalDealId = true;
+    try {
+      const dealIdRows = await chunkedIn<{
+        id: string;
+        external_deal_id: string | null;
+      }>(
+        dealIds,
+        chunk =>
+          supabase
+            .from('sales')
+            .select('id, external_deal_id')
+            .eq('source', 'bitrix24')
+            .in('external_deal_id', chunk),
+        { parallel: true, label: 'bitrix24-sync.existing_deals_by_deal_id' }
+      );
+      dealIdRows.forEach(s => {
+        if (s.external_deal_id) existingByDealId.set(s.external_deal_id, s.id);
+      });
+    } catch (lookupError) {
+      hasExternalDealId = false;
+      console.warn(
+        'external_deal_id indisponível; usando dedupe legado por nome',
+        lookupError
+      );
+    }
+
+    // Batch lookup (legado): pre-fetch sales por client_name p/ linhas
+    // sincronizadas antes do external_deal_id existir.
     const allClientNames = [
       ...new Set(
         deals.map(
@@ -350,20 +382,31 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
     const insertRows: Array<Record<string, unknown>> = [];
     const updateOps: Array<Promise<unknown>> = [];
     const syncNow = new Date().toISOString();
+    const seenDealIds = new Set<string>();
 
     for (const deal of deals) {
+      if (seenDealIds.has(deal.ID)) continue;
+      seenDealIds.add(deal.ID);
+
       const clientName =
         (deal.COMPANY_ID && clientNameByBitrixId.get(deal.COMPANY_ID)) || deal.TITLE;
       const status = stageMapping[deal.STAGE_ID || 'NEW'] || 'lead';
       const amount = deal.OPPORTUNITY ? parseFloat(deal.OPPORTUNITY) : 0;
       const key = `${clientName}::${deal.TITLE}`;
-      const existingId = existingSaleMap.get(key);
+      const existingId =
+        existingByDealId.get(deal.ID) ?? existingSaleMap.get(key);
 
       if (existingId) {
         updateOps.push(
           supabase
             .from('sales')
-            .update({ amount, status, updated_at: syncNow })
+            .update({
+              amount,
+              status,
+              updated_at: syncNow,
+              // Backfill do vínculo em linhas sincronizadas antes da coluna existir
+              ...(hasExternalDealId ? { external_deal_id: deal.ID } : {}),
+            })
             .eq('id', existingId)
         );
       } else {
@@ -373,13 +416,23 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
           amount,
           status,
           source: 'bitrix24',
+          ...(hasExternalDealId ? { external_deal_id: deal.ID } : {}),
         });
       }
     }
 
     await Promise.all([
       insertRows.length > 0
-        ? supabase.from('sales').insert(insertRows)
+        ? hasExternalDealId
+          ? // ON CONFLICT DO NOTHING: duas execuções concorrentes do sync
+            // não duplicam deals (ux_sales_source_external_deal)
+            supabase
+              .from('sales')
+              .upsert(insertRows, {
+                onConflict: 'source,external_deal_id',
+                ignoreDuplicates: true,
+              })
+          : supabase.from('sales').insert(insertRows)
         : Promise.resolve(),
       ...updateOps,
     ]);

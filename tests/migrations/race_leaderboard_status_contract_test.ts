@@ -1,7 +1,7 @@
 import { assert, assertMatch } from "jsr:@std/assert@1";
 
 const migrationUrl = new URL(
-  "./20260830000000_fix_race_leaderboard_status.sql",
+  "../../supabase/migrations/20260830000000_fix_race_leaderboard_status.sql",
   import.meta.url,
 );
 

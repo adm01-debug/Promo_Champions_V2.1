@@ -1,13 +1,22 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
 
 interface BriefingPayload {
   headline: string;
   narrative: string;
   key_wins: Array<{ title: string; detail: string }>;
-  key_risks: Array<{ title: string; detail: string; severity: "critical" | "warning" | "info" }>;
+  key_risks: Array<{
+    title: string;
+    detail: string;
+    severity: 'critical' | 'warning' | 'info';
+  }>;
   recommended_actions: Array<{ title: string; rationale: string; module?: string }>;
 }
 
@@ -22,168 +31,239 @@ Retorne via tool call \`generate_briefing\` com:
 - recommended_actions: exatamente 3 ações concretas para o dia
 Tom: estratégico, direto, sem jargão vazio.`;
 
-Deno.serve(withRequestId("generate-executive-briefing", async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+Deno.serve(
+  withRequestId('generate-executive-briefing', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
-    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
-    const caller = await getUserClient(req);
-
-    // Briefing executivo é material de gestão: restrito a admin/manager.
-    const { data: isManager, error: roleErr } = await caller.client.rpc(
-      "is_admin_or_manager" as never,
-      { _user_id: caller.userId } as never,
-    );
-    if (roleErr) throw roleErr;
-    if (!isManager) {
-      return new Response(JSON.stringify({ error: "forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY não configurada");
-
-    const authHeader = caller.authHeader;
-    const supabase = getServiceClient("escreve executive_briefings e lê histórico cross-user");
-
-    const body = await req.json().catch(() => ({}));
-    const generated_by: "auto" | "manual" = body?.auto ? "auto" : "manual";
-    const today = new Date().toISOString().slice(0, 10);
-
-    // Idempotência por dia
-    const { data: existing } = await supabase
-      .from("executive_briefings")
-      .select("*")
-      .eq("briefing_date", today)
-      .maybeSingle();
-    if (existing && !body?.force) {
-      return new Response(JSON.stringify(existing), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Snapshot do Pulse
-    const pulseRes = await fetchWithTimeout(`${SUPABASE_URL}/functions/v1/pipeline-pulse-aggregator`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: authHeader || `Bearer ${SERVICE_KEY}`,
-        apikey: SERVICE_KEY,
-      },
-      body: JSON.stringify({}),
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'generate-executive-briefing',
+      limit: 10,
+      windowSeconds: 60,
     });
-    const pulse = pulseRes.ok ? await pulseRes.json() : { pulse_score: 0, kpis: [], alerts: [], trends: {} };
+    if (rl) return rl;
 
-    // Histórico 7d
-    const { data: history } = await supabase
-      .from("executive_briefings")
-      .select("briefing_date, pulse_score, headline")
-      .order("briefing_date", { ascending: false })
-      .limit(7);
+    try {
+      // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+      const caller = await getUserClient(req);
 
-    // Lovable AI com tool calling
-    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          {
-            role: "user",
-            content: `SNAPSHOT DE HOJE (${today}):\n${JSON.stringify(pulse, null, 2)}\n\nHISTÓRICO RECENTE:\n${JSON.stringify(history ?? [], null, 2)}`,
+      // Briefing executivo é material de gestão: restrito a admin/manager.
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+      const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+      if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY não configurada');
+
+      const authHeader = caller.authHeader;
+      const supabase = getServiceClient(
+        'escreve executive_briefings e lê histórico cross-user'
+      );
+
+      const body = await req.json().catch(() => ({}));
+      const generated_by: 'auto' | 'manual' = body?.auto ? 'auto' : 'manual';
+      const today = new Date().toISOString().slice(0, 10);
+
+      // Idempotência por dia
+      const { data: existing } = await supabase
+        .from('executive_briefings')
+        .select('*')
+        .eq('briefing_date', today)
+        .maybeSingle();
+      if (existing && !body?.force) {
+        return new Response(JSON.stringify(existing), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Snapshot do Pulse
+      const pulseRes = await fetchWithTimeout(
+        `${SUPABASE_URL}/functions/v1/pipeline-pulse-aggregator`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authHeader || `Bearer ${SERVICE_KEY}`,
+            apikey: SERVICE_KEY,
           },
-        ],
-        tools: [{
-          type: "function",
-          function: {
-            name: "generate_briefing",
-            description: "Gera o briefing executivo diário",
-            parameters: {
-              type: "object",
-              properties: {
-                headline: { type: "string" },
-                narrative: { type: "string" },
-                key_wins: {
-                  type: "array",
-                  items: { type: "object", properties: { title: { type: "string" }, detail: { type: "string" } }, required: ["title", "detail"] },
-                },
-                key_risks: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: { title: { type: "string" }, detail: { type: "string" }, severity: { type: "string", enum: ["critical", "warning", "info"] } },
-                    required: ["title", "detail", "severity"],
-                  },
-                },
-                recommended_actions: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: { title: { type: "string" }, rationale: { type: "string" }, module: { type: "string" } },
-                    required: ["title", "rationale"],
+          body: JSON.stringify({}),
+        }
+      );
+      const pulse = pulseRes.ok
+        ? await pulseRes.json()
+        : { pulse_score: 0, kpis: [], alerts: [], trends: {} };
+
+      // Histórico 7d
+      const { data: history } = await supabase
+        .from('executive_briefings')
+        .select('briefing_date, pulse_score, headline')
+        .order('briefing_date', { ascending: false })
+        .limit(7);
+
+      // Lovable AI com tool calling
+      const aiRes = await fetchWithTimeout(
+        'https://ai.gateway.lovable.dev/v1/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-pro',
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              {
+                role: 'user',
+                content: `SNAPSHOT DE HOJE (${today}):\n${JSON.stringify(pulse, null, 2)}\n\nHISTÓRICO RECENTE:\n${JSON.stringify(history ?? [], null, 2)}`,
+              },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: 'generate_briefing',
+                  description: 'Gera o briefing executivo diário',
+                  parameters: {
+                    type: 'object',
+                    properties: {
+                      headline: { type: 'string' },
+                      narrative: { type: 'string' },
+                      key_wins: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            detail: { type: 'string' },
+                          },
+                          required: ['title', 'detail'],
+                        },
+                      },
+                      key_risks: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            detail: { type: 'string' },
+                            severity: {
+                              type: 'string',
+                              enum: ['critical', 'warning', 'info'],
+                            },
+                          },
+                          required: ['title', 'detail', 'severity'],
+                        },
+                      },
+                      recommended_actions: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            rationale: { type: 'string' },
+                            module: { type: 'string' },
+                          },
+                          required: ['title', 'rationale'],
+                        },
+                      },
+                    },
+                    required: [
+                      'headline',
+                      'narrative',
+                      'key_wins',
+                      'key_risks',
+                      'recommended_actions',
+                    ],
                   },
                 },
               },
-              required: ["headline", "narrative", "key_wins", "key_risks", "recommended_actions"],
-            },
-          },
-        }],
-        tool_choice: { type: "function", function: { name: "generate_briefing" } },
-      }),
-    });
+            ],
+            tool_choice: { type: 'function', function: { name: 'generate_briefing' } },
+          }),
+        }
+      );
 
-    if (!aiRes.ok) {
-      const t = await aiRes.text();
-      console.error("AI error", aiRes.status, t);
-      if (aiRes.status === 429) {
-        return new Response(JSON.stringify({ error: "Limite de requisições excedido. Tente novamente em instantes." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (!aiRes.ok) {
+        const t = await aiRes.text();
+        console.error('AI error', aiRes.status, t);
+        if (aiRes.status === 429) {
+          return new Response(
+            JSON.stringify({
+              error: 'Limite de requisições excedido. Tente novamente em instantes.',
+            }),
+            {
+              status: 429,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+        if (aiRes.status === 402) {
+          return new Response(
+            JSON.stringify({
+              error: 'Créditos de IA esgotados. Adicione créditos no workspace.',
+            }),
+            {
+              status: 402,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+        throw new Error('Falha na IA');
       }
-      if (aiRes.status === 402) {
-        return new Response(JSON.stringify({ error: "Créditos de IA esgotados. Adicione créditos no workspace." }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      }
-      throw new Error("Falha na IA");
-    }
 
-    const aiJson = await aiRes.json();
-    const toolCall = aiJson.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall?.function?.arguments) throw new Error("Resposta sem tool call");
-    const payload: BriefingPayload = JSON.parse(toolCall.function.arguments);
+      const aiJson = await aiRes.json();
+      const toolCall = aiJson.choices?.[0]?.message?.tool_calls?.[0];
+      if (!toolCall?.function?.arguments) throw new Error('Resposta sem tool call');
+      const payload: BriefingPayload = JSON.parse(toolCall.function.arguments);
 
-    const row = {
-      briefing_date: today,
-      pulse_score: Math.round(pulse.pulse_score ?? 0),
-      headline: payload.headline.slice(0, 200),
-      narrative: payload.narrative,
-      key_wins: payload.key_wins ?? [],
-      key_risks: payload.key_risks ?? [],
-      recommended_actions: (payload.recommended_actions ?? []).slice(0, 3),
-      generated_by,
-    };
+      const row = {
+        briefing_date: today,
+        pulse_score: Math.round(pulse.pulse_score ?? 0),
+        headline: payload.headline.slice(0, 200),
+        narrative: payload.narrative,
+        key_wins: payload.key_wins ?? [],
+        key_risks: payload.key_risks ?? [],
+        recommended_actions: (payload.recommended_actions ?? []).slice(0, 3),
+        generated_by,
+      };
 
-    const { data: upserted, error: upErr } = await supabase
-      .from("executive_briefings")
-      .upsert(row, { onConflict: "briefing_date" })
-      .select()
-      .single();
-    if (upErr) throw upErr;
+      const { data: upserted, error: upErr } = await supabase
+        .from('executive_briefings')
+        .upsert(row, { onConflict: 'briefing_date' })
+        .select()
+        .single();
+      if (upErr) throw upErr;
 
-    return new Response(JSON.stringify(upserted), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (e) {
-    if (e instanceof UnauthorizedError) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      return new Response(JSON.stringify(upserted), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    } catch (e) {
+      if (e instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      console.error('generate-executive-briefing error', e);
+      return new Response(
+        JSON.stringify({ error: e instanceof Error ? e.message : 'Erro desconhecido' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    console.error("generate-executive-briefing error", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erro desconhecido" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-}));
+  })
+);
