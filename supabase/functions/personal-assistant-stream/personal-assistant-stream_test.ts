@@ -4,39 +4,56 @@
 // simular a checagem de erros de validação/CORS via chamada direta ao handler
 // com Authorization ausente.
 
-import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import {
+  assertEquals,
+  assertStringIncludes,
+} from 'https://deno.land/std@0.224.0/assert/mod.ts';
 
-Deno.test("source: arquivo index.ts existe e é legível", async () => {
-  const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
-  assertEquals(typeof source, "string");
-  assertStringIncludes(source, "Deno.serve");
+Deno.test('source: arquivo index.ts existe e é legível', async () => {
+  const source = await Deno.readTextFile(new URL('./index.ts', import.meta.url));
+  assertEquals(typeof source, 'string');
+  assertStringIncludes(source, 'Deno.serve');
 });
 
-Deno.test("systemPrompt (via helper importado indiretamente): garante instruções chave", async () => {
-  // Este teste garante que o arquivo compila sob Deno + strings esperadas
-  // estão presentes no source. Não há export do buildSystemPrompt (para manter
-  // a superfície pequena), mas o smoke abaixo evita regressão silenciosa.
-  const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
-  assertStringIncludes(source, "SECRETÁRIO EXECUTIVO");
-  assertStringIncludes(source, "COACH DE VENDAS");
-  assertStringIncludes(source, "NO_NUDGE");
-  assertStringIncludes(source, "briefing");
-  assertStringIncludes(source, "proactive_nudge");
-});
-
-Deno.test("source: usa getUserClient (RLS) e não referencia SUPABASE_SERVICE_ROLE_KEY", async () => {
-  const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
-  assertStringIncludes(source, "getUserClient");
-  // Garante ausência de service role — respeita RLS do vendedor.
-  if (source.includes("SERVICE_ROLE_KEY")) {
-    throw new Error("personal-assistant-stream must NOT use service role");
+Deno.test(
+  'systemPrompt (via helper importado indiretamente): garante instruções chave',
+  async () => {
+    // Este teste garante que o arquivo compila sob Deno + strings esperadas
+    // estão presentes no source. Não há export do buildSystemPrompt (para manter
+    // a superfície pequena), mas o smoke abaixo evita regressão silenciosa.
+    const source = await Deno.readTextFile(new URL('./index.ts', import.meta.url));
+    assertStringIncludes(source, 'SECRETÁRIO EXECUTIVO');
+    assertStringIncludes(source, 'COACH DE VENDAS');
+    assertStringIncludes(source, 'NO_NUDGE');
+    assertStringIncludes(source, 'briefing');
+    assertStringIncludes(source, 'proactive_nudge');
   }
-});
+);
 
-Deno.test("source: importa corsHeaders do _shared/cors (sem duplicação)", async () => {
-  const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
+Deno.test(
+  'source: usa getUserClient (RLS) e não referencia SUPABASE_SERVICE_ROLE_KEY',
+  async () => {
+    const source = await Deno.readTextFile(new URL('./index.ts', import.meta.url));
+    assertStringIncludes(source, 'getUserClient');
+    // Garante ausência de service role — respeita RLS do vendedor.
+    if (source.includes('SERVICE_ROLE_KEY')) {
+      throw new Error('personal-assistant-stream must NOT use service role');
+    }
+  }
+);
+
+Deno.test('source: importa corsHeaders do _shared/cors (sem duplicação)', async () => {
+  const source = await Deno.readTextFile(new URL('./index.ts', import.meta.url));
   assertStringIncludes(source, `from "../_shared/cors.ts"`);
-  // Não deve declarar corsHeaders local (regra do lint compartilhado).
-  const localDecl = /const\s+corsHeaders\s*=/.test(source);
-  if (localDecl) throw new Error("must not redeclare corsHeaders locally");
+  // Não deve declarar um objeto corsHeaders próprio (regra do lint compartilhado).
+  // `const corsHeaders = getCorsHeaders(req)` é o shadow permitido do módulo
+  // canônico — só declarações que não derivam de getCorsHeaders são ofensores.
+  const localDecl = source
+    .split('\n')
+    .some(
+      line =>
+        /^\s*(?:const|let|var)\s+corsHeaders\b/.test(line) &&
+        !line.includes('getCorsHeaders(')
+    );
+  if (localDecl) throw new Error('must not redeclare corsHeaders locally');
 });

@@ -3,6 +3,8 @@ import { Resend } from 'npm:resend@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { errorEnvelope, jsonResponse } from '../_shared/http-envelope.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 interface LeadSLAViolation {
   id: string;
@@ -28,6 +30,43 @@ Deno.serve(
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Autorização: chamada interna (service_role/X-Cron-Secret) ou usuário admin/manager.
+    try {
+      const authorized = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from('_internal_secrets')
+          .select('value')
+          .eq('key', 'coaching_cron_secret')
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+      if (!authorized) {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          return errorEnvelope('FORBIDDEN', 'forbidden', { requestId: ctx.requestId });
+        }
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return errorEnvelope('UNAUTHORIZED', 'unauthorized', {
+          requestId: ctx.requestId,
+        });
+      }
+      ctx.log('error', 'authorization_failed', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return errorEnvelope('INTERNAL_ERROR', 'authorization_unavailable', {
+        status: 503,
+        requestId: ctx.requestId,
+      });
+    }
 
     let criticalHours = 8;
     let notifyEmail = '';

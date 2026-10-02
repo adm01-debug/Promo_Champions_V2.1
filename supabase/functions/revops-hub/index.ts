@@ -1,8 +1,7 @@
-import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { withRequestId } from "../_shared/request-id.ts";
-
-
+import { getCorsHeaders } from '../_shared/cors.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 
 const STAGE_WEIGHTS: Record<string, number> = {
   lead: 0.05,
@@ -13,133 +12,182 @@ const STAGE_WEIGHTS: Record<string, number> = {
   closed: 0.95,
 };
 
-Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+Deno.serve(
+  withRequestId('revops-hub', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    try {
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL')!,
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      );
 
-    const url = new URL(req.url);
-    const horizonDays = Number(url.searchParams.get("horizon") ?? "90");
-    const since = new Date(Date.now() - horizonDays * 86400000).toISOString();
+      // Autorização: exige usuário autenticado com papel admin/manager (dashboard agrega pipeline/comissões de toda a equipe).
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          'is_admin_or_manager' as never,
+          { _user_id: caller.userId } as never
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          return new Response(JSON.stringify({ error: 'forbidden' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        console.error('revops-hub authorization failed:', error);
+        return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
-    const [salesRes, activitiesRes, commissionsRes] = await Promise.all([
-      supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id").limit(10000),
-      supabase.from("activities").select("id,outcome,created_at").gte("created_at", since).limit(50000),
-      supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since).limit(10000),
-    ]);
+      const url = new URL(req.url);
+      const horizonDays = Number(url.searchParams.get('horizon') ?? '90');
+      const since = new Date(Date.now() - horizonDays * 86400000).toISOString();
 
-    const sales = salesRes.data ?? [];
-    const activities = activitiesRes.data ?? [];
-    const commissions = commissionsRes.data ?? [];
+      const [salesRes, activitiesRes, commissionsRes] = await Promise.all([
+        supabase
+          .from('sales')
+          .select('id,amount,stage,status,created_at,updated_at,salesperson_id')
+          .limit(10000),
+        supabase
+          .from('activities')
+          .select('id,outcome,created_at')
+          .gte('created_at', since)
+          .limit(50000),
+        supabase
+          .from('commissions')
+          .select('commission_amount,status,created_at')
+          .gte('created_at', since)
+          .limit(10000),
+      ]);
 
-    // Pipeline ativo
-    const openDeals = sales.filter((s) => !["completed", "lost", "cancelled"].includes(s.status));
-    const wonDeals = sales.filter((s) => s.status === "completed" && s.created_at >= since);
-    const lostDeals = sales.filter((s) => s.status === "lost" && s.created_at >= since);
+      const sales = salesRes.data ?? [];
+      const activities = activitiesRes.data ?? [];
+      const commissions = commissionsRes.data ?? [];
 
-    // Pipeline coverage e weighted forecast
-    const totalPipeline = openDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);
-    const weightedForecast = openDeals.reduce(
-      (sum, d) => sum + Number(d.amount || 0) * (STAGE_WEIGHTS[d.stage] ?? 0.1),
-      0,
-    );
-    const closedRevenue = wonDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+      // Pipeline ativo
+      const openDeals = sales.filter(
+        s => !['completed', 'lost', 'cancelled'].includes(s.status)
+      );
+      const wonDeals = sales.filter(
+        s => s.status === 'completed' && s.created_at >= since
+      );
+      const lostDeals = sales.filter(s => s.status === 'lost' && s.created_at >= since);
 
-    // Win rate
-    const totalClosed = wonDeals.length + lostDeals.length;
-    const winRate = totalClosed > 0 ? (wonDeals.length / totalClosed) * 100 : 0;
+      // Pipeline coverage e weighted forecast
+      const totalPipeline = openDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+      const weightedForecast = openDeals.reduce(
+        (sum, d) => sum + Number(d.amount || 0) * (STAGE_WEIGHTS[d.stage] ?? 0.1),
+        0
+      );
+      const closedRevenue = wonDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);
 
-    // Sales velocity (deals * avg_value * win_rate / cycle_days)
-    const cycleDays = wonDeals.length
-      ? wonDeals.reduce((sum, d) => {
-          const days =
-            (new Date(d.updated_at).getTime() - new Date(d.created_at).getTime()) / 86400000;
-          return sum + days;
-        }, 0) / wonDeals.length
-      : 0;
-    const avgDealSize = wonDeals.length ? closedRevenue / wonDeals.length : 0;
-    const velocity =
-      cycleDays > 0 ? (openDeals.length * avgDealSize * (winRate / 100)) / cycleDays : 0;
+      // Win rate
+      const totalClosed = wonDeals.length + lostDeals.length;
+      const winRate = totalClosed > 0 ? (wonDeals.length / totalClosed) * 100 : 0;
 
-    // Stage distribution
-    const stageDistribution: Record<string, { count: number; value: number }> = {};
-    openDeals.forEach((d) => {
-      if (!stageDistribution[d.stage]) stageDistribution[d.stage] = { count: 0, value: 0 };
-      stageDistribution[d.stage].count++;
-      stageDistribution[d.stage].value += Number(d.amount || 0);
-    });
+      // Sales velocity (deals * avg_value * win_rate / cycle_days)
+      const cycleDays = wonDeals.length
+        ? wonDeals.reduce((sum, d) => {
+            const days =
+              (new Date(d.updated_at).getTime() - new Date(d.created_at).getTime()) /
+              86400000;
+            return sum + days;
+          }, 0) / wonDeals.length
+        : 0;
+      const avgDealSize = wonDeals.length ? closedRevenue / wonDeals.length : 0;
+      const velocity =
+        cycleDays > 0
+          ? (openDeals.length * avgDealSize * (winRate / 100)) / cycleDays
+          : 0;
 
-    // Activity efficiency
-    const positiveOutcomes = activities.filter((a) =>
-      ["successful", "interested", "meeting_scheduled"].includes(a.outcome),
-    ).length;
-    const activityEfficiency =
-      activities.length > 0 ? (positiveOutcomes / activities.length) * 100 : 0;
+      // Stage distribution
+      const stageDistribution: Record<string, { count: number; value: number }> = {};
+      openDeals.forEach(d => {
+        if (!stageDistribution[d.stage])
+          stageDistribution[d.stage] = { count: 0, value: 0 };
+        stageDistribution[d.stage].count++;
+        stageDistribution[d.stage].value += Number(d.amount || 0);
+      });
 
-    // Commission earned
-    const earnedCommissions = commissions
-      .filter((c) => c.status === "paid")
-      .reduce((sum, c) => sum + Number(c.commission_amount || 0), 0);
-    const pendingCommissions = commissions
-      .filter((c) => c.status === "pending")
-      .reduce((sum, c) => sum + Number(c.commission_amount || 0), 0);
+      // Activity efficiency
+      const positiveOutcomes = activities.filter(a =>
+        ['successful', 'interested', 'meeting_scheduled'].includes(a.outcome)
+      ).length;
+      const activityEfficiency =
+        activities.length > 0 ? (positiveOutcomes / activities.length) * 100 : 0;
 
-    // Health: pipeline coverage ratio (3x cota geralmente saudável)
-    const monthlyTarget = closedRevenue * 1.2 || 100000;
-    const coverageRatio = monthlyTarget > 0 ? totalPipeline / monthlyTarget : 0;
+      // Commission earned
+      const earnedCommissions = commissions
+        .filter(c => c.status === 'paid')
+        .reduce((sum, c) => sum + Number(c.commission_amount || 0), 0);
+      const pendingCommissions = commissions
+        .filter(c => c.status === 'pending')
+        .reduce((sum, c) => sum + Number(c.commission_amount || 0), 0);
 
-    let healthLabel = "critical";
-    if (coverageRatio >= 3) healthLabel = "excellent";
-    else if (coverageRatio >= 2) healthLabel = "healthy";
-    else if (coverageRatio >= 1) healthLabel = "warning";
+      // Health: pipeline coverage ratio (3x cota geralmente saudável)
+      const monthlyTarget = closedRevenue * 1.2 || 100000;
+      const coverageRatio = monthlyTarget > 0 ? totalPipeline / monthlyTarget : 0;
 
-    return new Response(
-      JSON.stringify({
-        horizon_days: horizonDays,
-        kpis: {
-          total_pipeline: totalPipeline,
-          weighted_forecast: weightedForecast,
-          closed_revenue: closedRevenue,
-          win_rate: Math.round(winRate * 10) / 10,
-          avg_deal_size: Math.round(avgDealSize),
-          cycle_days: Math.round(cycleDays),
-          velocity: Math.round(velocity),
-          coverage_ratio: Math.round(coverageRatio * 100) / 100,
-          activity_efficiency: Math.round(activityEfficiency * 10) / 10,
-          earned_commissions: earnedCommissions,
-          pending_commissions: pendingCommissions,
-        },
-        health: {
-          label: healthLabel,
-          coverage_ratio: coverageRatio,
-          recommendation:
-            healthLabel === "critical"
-              ? "Pipeline insuficiente. Acelere prospecção urgentemente."
-              : healthLabel === "warning"
-                ? "Cobertura abaixo do ideal. Reforce geração de leads."
-                : healthLabel === "healthy"
-                  ? "Pipeline saudável. Mantenha o ritmo."
-                  : "Pipeline excelente. Foco em conversão e qualidade.",
-        },
-        stage_distribution: stageDistribution,
-        deal_counts: {
-          open: openDeals.length,
-          won: wonDeals.length,
-          lost: lostDeals.length,
-        },
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  } catch (e) {
-    console.error('revops-hub error:', e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
-}));
+      let healthLabel = 'critical';
+      if (coverageRatio >= 3) healthLabel = 'excellent';
+      else if (coverageRatio >= 2) healthLabel = 'healthy';
+      else if (coverageRatio >= 1) healthLabel = 'warning';
+
+      return new Response(
+        JSON.stringify({
+          horizon_days: horizonDays,
+          kpis: {
+            total_pipeline: totalPipeline,
+            weighted_forecast: weightedForecast,
+            closed_revenue: closedRevenue,
+            win_rate: Math.round(winRate * 10) / 10,
+            avg_deal_size: Math.round(avgDealSize),
+            cycle_days: Math.round(cycleDays),
+            velocity: Math.round(velocity),
+            coverage_ratio: Math.round(coverageRatio * 100) / 100,
+            activity_efficiency: Math.round(activityEfficiency * 10) / 10,
+            earned_commissions: earnedCommissions,
+            pending_commissions: pendingCommissions,
+          },
+          health: {
+            label: healthLabel,
+            coverage_ratio: coverageRatio,
+            recommendation:
+              healthLabel === 'critical'
+                ? 'Pipeline insuficiente. Acelere prospecção urgentemente.'
+                : healthLabel === 'warning'
+                  ? 'Cobertura abaixo do ideal. Reforce geração de leads.'
+                  : healthLabel === 'healthy'
+                    ? 'Pipeline saudável. Mantenha o ritmo.'
+                    : 'Pipeline excelente. Foco em conversão e qualidade.',
+          },
+          stage_distribution: stageDistribution,
+          deal_counts: {
+            open: openDeals.length,
+            won: wonDeals.length,
+            lost: lostDeals.length,
+          },
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (e) {
+      console.error('revops-hub error:', e);
+      return new Response(
+        JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+  })
+);

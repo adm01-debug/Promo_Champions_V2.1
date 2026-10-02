@@ -1,50 +1,58 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { getCorsHeaders } from "../_shared/cors.ts";
-import { withRequestId } from "../_shared/request-id.ts";
+import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
+import { getCorsHeaders } from '../_shared/cors.ts';
+import { withRequestId } from '../_shared/request-id.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 interface Schedule {
   id: string;
   report_id: string;
   name: string;
   frequency: string;
-  format: "csv" | "json";
+  format: 'csv' | 'json';
   recipients: string[];
   created_by: string;
 }
 
 function toCSV(rows: Record<string, unknown>[]): string {
-  if (!rows.length) return "";
+  if (!rows.length) return '';
   const headers = Object.keys(rows[0]);
   const escape = (v: unknown) => {
-    if (v == null) return "";
-    let s = typeof v === "object" ? JSON.stringify(v) : String(v);
+    if (v == null) return '';
+    let s = typeof v === 'object' ? JSON.stringify(v) : String(v);
     // Neutralize CSV formula injection (CWE-1236): a cell starting with
     // = + - @ TAB CR is executed as a formula by Excel/Sheets.
     if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   return [
-    headers.join(","),
-    ...rows.map((r) => headers.map((h) => escape(r[h])).join(",")),
-  ].join("\n");
+    headers.join(','),
+    ...rows.map(r => headers.map(h => escape(r[h])).join(',')),
+  ].join('\n');
 }
 
 async function executeReport(admin: ReturnType<typeof createClient>, reportId: string) {
-  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config").eq("id", reportId).single();
+  const { data: report, error } = await admin
+    .from('custom_reports')
+    .select('id, entity, config')
+    .eq('id', reportId)
+    .single();
   if (error || !report) throw new Error(`Report ${reportId} não encontrado`);
 
   const cfg = (report.config ?? {}) as Record<string, unknown>;
   let entity = String(report.entity);
-  if (entity === "salespeople") entity = "salespeople_public";
-  if (entity === "cross") entity = String(cfg.base ?? "sales");
+  if (entity === 'salespeople') entity = 'salespeople_public';
+  if (entity === 'cross') entity = String(cfg.base ?? 'sales');
 
-  const cols = Array.isArray(cfg.columns) && cfg.columns.length
-    ? (cfg.columns as string[]).filter((c) => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(c)).join(",") || "*"
-    : "*";
-  const limit = typeof cfg.limit === "number" ? Math.min(cfg.limit, 5000) : 1000;
+  const cols =
+    Array.isArray(cfg.columns) && cfg.columns.length
+      ? (cfg.columns as string[])
+          .filter(c => /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(c))
+          .join(',') || '*'
+      : '*';
+  const limit = typeof cfg.limit === 'number' ? Math.min(cfg.limit, 5000) : 1000;
 
   const { data, error: qErr } = await admin.from(entity).select(cols).limit(limit);
   if (qErr) throw new Error(qErr.message);
@@ -53,81 +61,125 @@ async function executeReport(admin: ReturnType<typeof createClient>, reportId: s
 
 async function processSchedule(admin: ReturnType<typeof createClient>, s: Schedule) {
   const { data: run } = await admin
-    .from("scheduled_report_runs")
-    .insert({ schedule_id: s.id, status: "running" })
+    .from('scheduled_report_runs')
+    .insert({ schedule_id: s.id, status: 'running' })
     .select()
     .single();
 
   try {
     const rows = await executeReport(admin, s.report_id);
-    const content = s.format === "json" ? JSON.stringify(rows, null, 2) : toCSV(rows);
+    const content = s.format === 'json' ? JSON.stringify(rows, null, 2) : toCSV(rows);
     const ext = s.format;
-    const path = `${s.created_by}/${s.id}/${new Date().toISOString().replace(/[:.]/g, "-")}.${ext}`;
+    const path = `${s.created_by}/${s.id}/${new Date().toISOString().replace(/[:.]/g, '-')}.${ext}`;
 
     const { error: upErr } = await admin.storage
-      .from("report-snapshots")
-      .upload(path, new Blob([content], { type: s.format === "csv" ? "text/csv" : "application/json" }), {
-        upsert: false,
-      });
+      .from('report-snapshots')
+      .upload(
+        path,
+        new Blob([content], {
+          type: s.format === 'csv' ? 'text/csv' : 'application/json',
+        }),
+        {
+          upsert: false,
+        }
+      );
     if (upErr) throw new Error(`Upload: ${upErr.message}`);
 
     await admin
-      .from("scheduled_report_runs")
+      .from('scheduled_report_runs')
       .update({
-        status: "success",
+        status: 'success',
         finished_at: new Date().toISOString(),
         rows_count: rows.length,
         file_path: path,
       })
-      .eq("id", run!.id);
+      .eq('id', run!.id);
 
     await admin
-      .from("scheduled_reports")
+      .from('scheduled_reports')
       .update({ last_run_at: new Date().toISOString() })
-      .eq("id", s.id);
+      .eq('id', s.id);
 
     return { ok: true, schedule_id: s.id, rows: rows.length, path };
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Erro desconhecido";
+    const msg = err instanceof Error ? err.message : 'Erro desconhecido';
     await admin
-      .from("scheduled_report_runs")
-      .update({ status: "failed", finished_at: new Date().toISOString(), error_message: msg })
-      .eq("id", run!.id);
+      .from('scheduled_report_runs')
+      .update({
+        status: 'failed',
+        finished_at: new Date().toISOString(),
+        error_message: msg,
+      })
+      .eq('id', run!.id);
     return { ok: false, schedule_id: s.id, error: msg };
   }
 }
 
-Deno.serve(withRequestId("scheduled-reports-runner", async (req, _ctx) => {
-  const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+Deno.serve(
+  withRequestId('scheduled-reports-runner', async (req, _ctx) => {
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-  try {
-    const admin = createClient(SUPABASE_URL, SERVICE_KEY);
-    const body = await req.json().catch(() => ({}));
-    const forceId: string | undefined = body.schedule_id;
+    try {
+      const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
-    let query = admin.from("scheduled_reports").select("id, report_id, name, frequency, format, recipients, created_by").eq("enabled", true);
-    if (forceId) {
-      query = query.eq("id", forceId);
-    } else {
-      query = query.lte("next_run_at", new Date().toISOString());
+      // Autorização: apenas chamada interna (service_role ou X-Cron-Secret do pg_cron).
+      try {
+        const authorized = await isAuthorizedCronRequest(req, async () => {
+          const { data, error } = await admin
+            .from('_internal_secrets')
+            .select('value')
+            .eq('key', 'coaching_cron_secret')
+            .maybeSingle();
+          if (error) throw error;
+          return (data as { value?: string | null } | null)?.value;
+        });
+        if (!authorized) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+      } catch (error) {
+        console.error('scheduled-reports-runner authorization failed:', error);
+        return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const body = await req.json().catch(() => ({}));
+      const forceId: string | undefined = body.schedule_id;
+
+      let query = admin
+        .from('scheduled_reports')
+        .select('id, report_id, name, frequency, format, recipients, created_by')
+        .eq('enabled', true);
+      if (forceId) {
+        query = query.eq('id', forceId);
+      } else {
+        query = query.lte('next_run_at', new Date().toISOString());
+      }
+
+      const { data: schedules, error } = await query.limit(50);
+      if (error) throw error;
+
+      const results = await Promise.all(
+        ((schedules ?? []) as unknown as Schedule[]).map(s => processSchedule(admin, s))
+      );
+
+      return new Response(
+        JSON.stringify({ ok: true, processed: results.length, results }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    } catch (err) {
+      console.error('scheduled-reports-runner error:', err);
+      return new Response(
+        JSON.stringify({ error: err instanceof Error ? err.message : 'Erro' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
-
-    const { data: schedules, error } = await query.limit(50);
-    if (error) throw error;
-
-    const results = await Promise.all(
-      ((schedules ?? []) as unknown as Schedule[]).map((s) => processSchedule(admin, s))
-    );
-
-    return new Response(JSON.stringify({ ok: true, processed: results.length, results }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    console.error('scheduled-reports-runner error:', err);
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : "Erro" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-  }
-}));
+  })
+);
