@@ -28,10 +28,19 @@ export const useSquads = () => {
         .select('*, squad_members(user_id)')
         .order('name');
       if (error) throw error;
-      return (data || []).map((s: { id: string; name: string; description: string | null; color: string; created_at: string; squad_members?: { user_id: string }[] }) => ({
-        ...s,
-        member_count: s.squad_members?.length || 0,
-      }));
+      return (data || []).map(
+        (s: {
+          id: string;
+          name: string;
+          description: string | null;
+          color: string;
+          created_at: string;
+          squad_members?: { user_id: string }[];
+        }) => ({
+          ...s,
+          member_count: s.squad_members?.length || 0,
+        })
+      );
     },
   });
 
@@ -109,7 +118,7 @@ export const useSquads = () => {
       if (error) throw error;
       return data as number;
     },
-    onSuccess: (count) => {
+    onSuccess: count => {
       qc.invalidateQueries({ queryKey: ['task-assignments'] });
       toast.success(`${count} atribuições criadas`);
     },

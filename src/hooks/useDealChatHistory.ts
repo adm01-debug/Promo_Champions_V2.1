@@ -30,7 +30,7 @@ export function useDealChatHistory(dealId: string | null) {
     queryKey: ['deal-chat-history', dealId],
     queryFn: async () => {
       if (!dealId) return [];
-      
+
       const { data, error } = await supabase
         .from('deal_chat_history')
         .select('*')
@@ -52,16 +52,16 @@ export function useDealChatHistory(dealId: string | null) {
   });
 
   const addEntry = useMutation({
-    mutationFn: async ({ 
-      dealId, 
-      salespersonId, 
-      question, 
+    mutationFn: async ({
+      dealId,
+      salespersonId,
+      question,
       questionType = 'general',
-      response 
-    }: { 
-      dealId: string; 
-      salespersonId: string | null; 
-      question: string; 
+      response,
+    }: {
+      dealId: string;
+      salespersonId: string | null;
+      question: string;
       questionType?: QuestionType;
       response?: string;
     }) => {
@@ -99,8 +99,8 @@ export function useDealChatHistory(dealId: string | null) {
     },
   });
 
-  const history = allHistory.filter(entry => 
-    filterType === 'all' || entry.question_type === filterType
+  const history = allHistory.filter(
+    entry => filterType === 'all' || entry.question_type === filterType
   );
 
   return {

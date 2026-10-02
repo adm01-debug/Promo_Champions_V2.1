@@ -1,8 +1,8 @@
-import { Helmet } from "react-helmet-async";
-import { AuthBackground } from "@/components/auth/AuthBackground";
-import { AuthBrandPanel } from "@/components/auth/AuthBrandPanel";
-import { AuthFormCard } from "@/components/auth/AuthFormCard";
-import { useAuthForm } from "@/hooks/auth/useAuthForm";
+import { Helmet } from 'react-helmet-async';
+import { AuthBackground } from '@/components/auth/AuthBackground';
+import { AuthBrandPanel } from '@/components/auth/AuthBrandPanel';
+import { AuthFormCard } from '@/components/auth/AuthFormCard';
+import { useAuthForm } from '@/hooks/auth/useAuthForm';
 
 export default function Auth() {
   const authProps = useAuthForm();
@@ -11,7 +11,10 @@ export default function Auth() {
     <>
       <Helmet>
         <title>Login | Circuito de Vencedores</title>
-        <meta name="description" content="Acesse a plataforma Circuito de Vencedores. Entre no jogo, acompanhe suas metas e supere seus limites no maior ecossistema de vendas inteligente." />
+        <meta
+          name="description"
+          content="Acesse a plataforma Circuito de Vencedores. Entre no jogo, acompanhe suas metas e supere seus limites no maior ecossistema de vendas inteligente."
+        />
         <meta name="robots" content="index, follow" />
       </Helmet>
 

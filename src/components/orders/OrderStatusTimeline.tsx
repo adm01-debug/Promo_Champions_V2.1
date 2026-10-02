@@ -1,13 +1,13 @@
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import {
   STATUS_STEPS,
   CANCELLED_STEP,
   statusIndex,
   formatDateTime,
   type OrderStatus,
-} from "./orderHelpers";
-import type { OrderEventRow } from "@/hooks/orders/useOrder";
+} from './orderHelpers';
+import type { OrderEventRow } from '@/hooks/orders/useOrder';
 
 interface Props {
   currentStatus: OrderStatus;
@@ -15,8 +15,12 @@ interface Props {
   cancellationReason?: string | null;
 }
 
-export function OrderStatusTimeline({ currentStatus, events, cancellationReason }: Props) {
-  const isCancelled = currentStatus === "cancelled";
+export function OrderStatusTimeline({
+  currentStatus,
+  events,
+  cancellationReason,
+}: Props) {
+  const isCancelled = currentStatus === 'cancelled';
   const currentIdx = isCancelled ? STATUS_STEPS.length : statusIndex(currentStatus);
 
   // Map first event date per status
@@ -33,7 +37,7 @@ export function OrderStatusTimeline({ currentStatus, events, cancellationReason 
         const Icon = step.icon;
         const isCurrent = !isCancelled && idx === currentIdx;
         const isDone = !isCancelled && idx < currentIdx;
-        const isCancelledStep = isCancelled && step.key === "cancelled";
+        const isCancelledStep = isCancelled && step.key === 'cancelled';
         const isFuture = !isDone && !isCurrent && !isCancelledStep;
         const ts = dateByStatus.get(step.key);
 
@@ -49,36 +53,40 @@ export function OrderStatusTimeline({ currentStatus, events, cancellationReason 
               <span
                 aria-hidden
                 className={cn(
-                  "absolute left-[19px] top-10 h-[calc(100%-0.5rem)] w-px",
-                  isDone ? "bg-success" : "bg-border"
+                  'absolute left-[19px] top-10 h-[calc(100%-0.5rem)] w-px',
+                  isDone ? 'bg-success' : 'bg-border'
                 )}
               />
             )}
             <div
               className={cn(
-                "relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors",
-                isDone && "bg-success/15 border-success text-success",
-                isCurrent && "bg-primary/15 border-primary text-primary",
-                isCancelledStep && "bg-destructive/15 border-destructive text-destructive",
-                isFuture && "bg-muted border-border text-muted-foreground"
+                'relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors',
+                isDone && 'bg-success/15 border-success text-success',
+                isCurrent && 'bg-primary/15 border-primary text-primary',
+                isCancelledStep &&
+                  'bg-destructive/15 border-destructive text-destructive',
+                isFuture && 'bg-muted border-border text-muted-foreground'
               )}
             >
               {isCurrent && (
-                <span className="absolute inset-0 rounded-full bg-primary/20 animate-ping" aria-hidden />
+                <span
+                  className="absolute inset-0 rounded-full bg-primary/20 animate-ping"
+                  aria-hidden
+                />
               )}
               <Icon className="h-5 w-5 relative" />
             </div>
             <div className="flex-1 pt-1.5">
               <p
                 className={cn(
-                  "font-display font-semibold",
-                  isFuture ? "text-muted-foreground" : "text-foreground"
+                  'font-display font-semibold',
+                  isFuture ? 'text-muted-foreground' : 'text-foreground'
                 )}
               >
                 {step.label}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {ts ? formatDateTime(ts) : "—"}
+                {ts ? formatDateTime(ts) : '—'}
               </p>
               {isCancelledStep && cancellationReason && (
                 <p className="text-sm text-destructive mt-1">{cancellationReason}</p>

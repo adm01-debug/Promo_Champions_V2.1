@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/command';
 import { Badge } from '@/components/ui/badge';
 
+import { formatBRL } from '@/lib/money';
 interface SearchResult {
   id: string;
   type: 'deal' | 'client';
@@ -138,9 +139,6 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
       navigate('/clientes');
     }
   };
-
-  const formatCurrency = (value: number) =>
-    `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
 
   const statusColors: Record<string, string> = {
     pending: 'bg-rank-gold/10 text-rank-gold',
@@ -261,7 +259,7 @@ export const GlobalSearch = forwardRef<GlobalSearchHandle>((_, ref) => {
                     )}
                     {result.amount && (
                       <span className="text-xs text-muted-foreground">
-                        {formatCurrency(result.amount)}
+                        {formatBRL(result.amount)}
                       </span>
                     )}
                   </div>

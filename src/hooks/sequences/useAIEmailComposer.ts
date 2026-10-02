@@ -1,12 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import type {
   EmailGoal,
   EmailLanguage,
   EmailLength,
   EmailTone,
-} from "@/components/sequences/emailComposerHelpers";
+} from '@/components/sequences/emailComposerHelpers';
 
 export interface ComposeEmailInput {
   contact_context?: {
@@ -32,26 +32,26 @@ export interface ComposeEmailResult {
 export function useGenerateEmail() {
   return useMutation({
     mutationFn: async (input: ComposeEmailInput): Promise<ComposeEmailResult> => {
-      const { data, error } = await supabase.functions.invoke("ai-email-composer", {
+      const { data, error } = await supabase.functions.invoke('ai-email-composer', {
         body: input,
       });
       if (error) {
-        throw new Error(error.message ?? "Falha ao gerar e-mail.");
+        throw new Error(error.message ?? 'Falha ao gerar e-mail.');
       }
       if (!data || data.error) {
-        throw new Error(data?.error ?? "Resposta inválida da IA.");
+        throw new Error(data?.error ?? 'Resposta inválida da IA.');
       }
       return data as ComposeEmailResult;
     },
     onError: (err: Error) => {
       toast({
-        title: "Erro ao gerar e-mail",
+        title: 'Erro ao gerar e-mail',
         description: err.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
     onSuccess: () => {
-      toast({ title: "E-mail gerado", description: "Conteúdo pronto para revisar." });
+      toast({ title: 'E-mail gerado', description: 'Conteúdo pronto para revisar.' });
     },
   });
 }

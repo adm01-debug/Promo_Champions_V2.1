@@ -28,7 +28,14 @@ export function CheckeredFlag({ width = 220, height = 140, className }: Props) {
       aria-hidden
     >
       {/* mastro */}
-      <line x1="2" y1="0" x2="2" y2={height + 20} stroke="hsl(var(--foreground))" strokeWidth="3" />
+      <line
+        x1="2"
+        y1="0"
+        x2="2"
+        y2={height + 20}
+        stroke="hsl(var(--foreground))"
+        strokeWidth="3"
+      />
 
       <motion.g
         animate={{ skewY: [-2, 2, -2] }}
@@ -51,7 +58,15 @@ export function CheckeredFlag({ width = 220, height = 140, className }: Props) {
           })
         )}
         {/* borda */}
-        <rect x="4" y="0" width={width} height={height} fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
+        <rect
+          x="4"
+          y="0"
+          width={width}
+          height={height}
+          fill="none"
+          stroke="hsl(var(--border))"
+          strokeWidth="1"
+        />
       </motion.g>
     </motion.svg>
   );

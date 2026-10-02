@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { MessageSquare, Send } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { callFeedbackService } from '@/services/callFeedbackService';
 
 interface Props {
   recordingId: string;
@@ -27,19 +27,12 @@ export function CallFeedbackForm({ recordingId, clientId, onSuccess }: Props) {
 
     setIsSubmitting(true);
     try {
-      // Registrar log detalhado de feedback manual
-      const { error } = await supabase.from('lead_detailed_logs').insert({
-        event_type: 'call_feedback',
-        client_id: clientId as string,
-        action: 'Manual Manager Feedback',
-        details: {
-          recording_id: recordingId,
-          score: rating[0],
-          comment: feedback,
-        },
+      await callFeedbackService.submitCallFeedback({
+        clientId,
+        recordingId,
+        score: rating[0],
+        comment: feedback,
       });
-
-      if (error) throw error;
 
       toast.success('Feedback enviado com sucesso!');
       setFeedback('');

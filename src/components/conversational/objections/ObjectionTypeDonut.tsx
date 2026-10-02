@@ -1,24 +1,32 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import {
   type CallObjection,
   type ObjectionType,
   objectionTypeHsl,
   objectionTypeLabel,
-} from "./objectionHelpers";
+} from './objectionHelpers';
 
 interface Props {
   objections: CallObjection[];
 }
 
-const TYPES: ObjectionType[] = ["price", "timing", "authority", "need", "competition", "trust", "other"];
+const TYPES: ObjectionType[] = [
+  'price',
+  'timing',
+  'authority',
+  'need',
+  'competition',
+  'trust',
+  'other',
+];
 
 export function ObjectionTypeDonut({ objections }: Props) {
-  const counts = TYPES.map((t) => ({
+  const counts = TYPES.map(t => ({
     type: t,
     name: objectionTypeLabel(t),
-    value: objections.filter((o) => o.objection_type === t).length,
+    value: objections.filter(o => o.objection_type === t).length,
     fill: objectionTypeHsl(t),
-  })).filter((c) => c.value > 0);
+  })).filter(c => c.value > 0);
 
   if (!counts.length) {
     return (
@@ -40,21 +48,21 @@ export function ObjectionTypeDonut({ objections }: Props) {
             outerRadius={75}
             paddingAngle={2}
           >
-            {counts.map((c) => (
+            {counts.map(c => (
               <Cell key={c.type} fill={c.fill} />
             ))}
           </Pie>
           <Tooltip
             contentStyle={{
-              background: "hsl(var(--popover))",
-              border: "1px solid hsl(var(--border))",
+              background: 'hsl(var(--popover))',
+              border: '1px solid hsl(var(--border))',
               borderRadius: 8,
             }}
           />
           <Legend
             iconSize={10}
             wrapperStyle={{ fontSize: 11 }}
-            formatter={(v) => <span className="text-muted-foreground">{v}</span>}
+            formatter={v => <span className="text-muted-foreground">{v}</span>}
           />
         </PieChart>
       </ResponsiveContainer>

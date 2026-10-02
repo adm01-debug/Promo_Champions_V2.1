@@ -1,13 +1,29 @@
-import { Play, ShieldAlert, Volume2, VolumeX } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { useSecurityAlertSoundSettings, SecurityAlertSoundType } from "@/hooks/useSecurityAlertSoundSettings";
+import { Play, ShieldAlert, Volume2, VolumeX } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import {
+  useSecurityAlertSoundSettings,
+  SecurityAlertSoundType,
+} from '@/hooks/useSecurityAlertSoundSettings';
 
 export function SecurityAlertSoundSettings() {
-  const { selectedSound, setSelectedSound, volume, setVolume, previewSound, soundOptions } = useSecurityAlertSoundSettings();
+  const {
+    selectedSound,
+    setSelectedSound,
+    volume,
+    setVolume,
+    previewSound,
+    soundOptions,
+  } = useSecurityAlertSoundSettings();
 
   return (
     <Card className="card-elevated">
@@ -17,7 +33,9 @@ export function SecurityAlertSoundSettings() {
             <ShieldAlert className="h-5 w-5 text-destructive" />
           </div>
           <div>
-            <CardTitle className="text-section-title">Som de Alerta de Segurança</CardTitle>
+            <CardTitle className="text-section-title">
+              Som de Alerta de Segurança
+            </CardTitle>
             <CardDescription>
               Escolha o som e volume para notificações de alertas de segurança
             </CardDescription>
@@ -49,10 +67,10 @@ export function SecurityAlertSoundSettings() {
           <Label className="text-label">Tipo de Som</Label>
           <RadioGroup
             value={selectedSound}
-            onValueChange={(value) => setSelectedSound(value as SecurityAlertSoundType)}
+            onValueChange={value => setSelectedSound(value as SecurityAlertSoundType)}
             className="space-y-3"
           >
-            {soundOptions.map((option) => (
+            {soundOptions.map(option => (
               <div
                 key={option.id}
                 className="flex items-center justify-between p-3 rounded-lg border border-border/40 hover:bg-accent/50 transition-colors"
@@ -69,7 +87,8 @@ export function SecurityAlertSoundSettings() {
                 {option.id !== 'none' && (
                   <Button
                     variant="ghost"
-                    size="icon" aria-label="Reproduzir"
+                    size="icon"
+                    aria-label="Reproduzir"
                     onClick={() => previewSound(option.id)}
                     className="hover-scale-sm"
                     disabled={volume === 0}

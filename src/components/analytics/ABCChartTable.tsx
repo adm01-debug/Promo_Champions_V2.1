@@ -25,6 +25,7 @@ import {
 import { toast } from 'sonner';
 import type { RechartsTooltipProps } from '@/types/recharts';
 
+import { formatBRL } from '@/lib/money';
 interface ABCItem {
   name: string;
   revenue: number;
@@ -39,9 +40,6 @@ const COLORS = {
   C: 'hsl(var(--status-error))',
 };
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
 function ABCTooltip({ active, payload }: RechartsTooltipProps) {
   if (!active || !payload?.length) return null;
   // eslint-disable-next-line no-restricted-syntax
@@ -55,7 +53,7 @@ function ABCTooltip({ active, payload }: RechartsTooltipProps) {
         <p className="text-sm text-muted-foreground">
           Receita:{' '}
           <span className="text-foreground font-medium">
-            {formatCurrency(data.revenue)}
+            {formatBRL(data.revenue, { decimals: 2 })}
           </span>
         </p>
         <p className="text-sm text-muted-foreground">
@@ -325,7 +323,7 @@ export const ABCChartTable = React.memo(function ABCChartTable({
                         {item.name}
                       </td>
                       <td className="text-right py-2.5 px-3 text-foreground">
-                        {formatCurrency(item.revenue)}
+                        {formatBRL(item.revenue, { decimals: 2 })}
                       </td>
                       <td className="text-right py-2.5 px-3 text-muted-foreground">
                         {item.percentage.toFixed(1)}%

@@ -2,7 +2,15 @@ import React, { FC } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Phone, Mail, MessageSquare, Clock, MapPin, Building, DollarSign } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  MessageSquare,
+  Clock,
+  MapPin,
+  Building,
+  DollarSign,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -45,8 +53,11 @@ const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
   className,
 }) => {
   return (
-    <Card 
-      className={cn('p-4 cursor-pointer hover:border-primary/50 transition-colors', className)}
+    <Card
+      className={cn(
+        'p-4 cursor-pointer hover:border-primary/50 transition-colors',
+        className
+      )}
       onClick={onClick}
     >
       <div className="flex items-start gap-4">
@@ -103,7 +114,10 @@ const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
             {client.lastContact && (
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock size={12} />
-                {formatDistanceToNow(client.lastContact, { addSuffix: true, locale: ptBR })}
+                {formatDistanceToNow(client.lastContact, {
+                  addSuffix: true,
+                  locale: ptBR,
+                })}
               </span>
             )}
           </div>
@@ -113,7 +127,10 @@ const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
           <div className="flex gap-1">
             {onCall && (
               <button
-                onClick={(e) => { e.stopPropagation(); onCall(); }}
+                onClick={e => {
+                  e.stopPropagation();
+                  onCall();
+                }}
                 className="p-2 rounded-lg hover:bg-muted transition-colors"
               >
                 <Phone size={16} />
@@ -121,7 +138,10 @@ const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
             )}
             {onEmail && (
               <button
-                onClick={(e) => { e.stopPropagation(); onEmail(); }}
+                onClick={e => {
+                  e.stopPropagation();
+                  onEmail();
+                }}
                 className="p-2 rounded-lg hover:bg-muted transition-colors"
               >
                 <Mail size={16} />
@@ -129,7 +149,10 @@ const ClientInfoCardBase: FC<ClientInfoCardProps> = ({
             )}
             {onMessage && (
               <button
-                onClick={(e) => { e.stopPropagation(); onMessage(); }}
+                onClick={e => {
+                  e.stopPropagation();
+                  onMessage();
+                }}
                 className="p-2 rounded-lg hover:bg-muted transition-colors"
               >
                 <MessageSquare size={16} />

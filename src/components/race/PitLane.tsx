@@ -26,7 +26,9 @@ export function PitLane({ count, pilotName }: Props) {
         <span
           className="inline-block h-1.5 w-1.5 rounded-full bg-destructive"
           style={{
-            animation: reducedMotion ? undefined : 'race-pit-blink 1s ease-in-out infinite',
+            animation: reducedMotion
+              ? undefined
+              : 'race-pit-blink 1s ease-in-out infinite',
           }}
         />
         <span className="text-[8px] font-black uppercase tracking-[0.18em] text-muted-foreground">
@@ -35,17 +37,41 @@ export function PitLane({ count, pilotName }: Props) {
       </div>
       <svg viewBox="0 0 90 50" width={90} height={50} aria-hidden>
         {/* Garagem */}
-        <rect x={4} y={6} width={82} height={38} rx={3}
-          fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth={1} />
+        <rect
+          x={4}
+          y={6}
+          width={82}
+          height={38}
+          rx={3}
+          fill="hsl(var(--muted))"
+          stroke="hsl(var(--border))"
+          strokeWidth={1}
+        />
         {/* Listra horizontal teto */}
         <rect x={4} y={6} width={82} height={5} fill="hsl(0 0% 12%)" />
         {/* Asfalto pit */}
         <rect x={6} y={36} width={78} height={6} fill="hsl(0 0% 22%)" />
-        <line x1={6} y1={39} x2={84} y2={39} stroke="hsl(45 95% 55%)" strokeWidth={0.6} strokeDasharray="3 2" />
+        <line
+          x1={6}
+          y1={39}
+          x2={84}
+          y2={39}
+          stroke="hsl(45 95% 55%)"
+          strokeWidth={0.6}
+          strokeDasharray="3 2"
+        />
         {/* Carro estilizado */}
         <g transform="translate(34, 22)">
           <rect x={0} y={0} width={22} height={9} rx={2} fill="hsl(var(--primary))" />
-          <rect x={3} y={1.5} width={16} height={4} rx={1} fill="hsl(var(--background))" opacity={0.7} />
+          <rect
+            x={3}
+            y={1.5}
+            width={16}
+            height={4}
+            rx={1}
+            fill="hsl(var(--background))"
+            opacity={0.7}
+          />
           <circle cx={4} cy={10} r={2} fill="hsl(0 0% 8%)" />
           <circle cx={18} cy={10} r={2} fill="hsl(0 0% 8%)" />
         </g>
@@ -65,9 +91,7 @@ export function PitLane({ count, pilotName }: Props) {
             stroke="hsl(0 0% 8%)"
             strokeWidth={0.5}
             animate={
-              reducedMotion
-                ? undefined
-                : { cy: [m.y, m.y - 2, m.y], scale: [1, 1.1, 1] }
+              reducedMotion ? undefined : { cy: [m.y, m.y - 2, m.y], scale: [1, 1.1, 1] }
             }
             transition={{
               duration: 0.6,

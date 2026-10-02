@@ -1,7 +1,13 @@
-import { useEffect, useState } from "react";
-import React from "react";
+import { useEffect, useState } from 'react';
+import React from 'react';
 
-export const AnimatedValue = React.memo(function AnimatedValue({ value, prefix = "" }: { value: number; prefix?: string }) {
+export const AnimatedValue = React.memo(function AnimatedValue({
+  value,
+  prefix = '',
+}: {
+  value: number;
+  prefix?: string;
+}) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
@@ -26,7 +32,8 @@ export const AnimatedValue = React.memo(function AnimatedValue({ value, prefix =
 
   return (
     <span>
-      {prefix}{displayValue.toLocaleString("pt-BR", { maximumFractionDigits: 0 })}
+      {prefix}
+      {displayValue.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
     </span>
   );
 });

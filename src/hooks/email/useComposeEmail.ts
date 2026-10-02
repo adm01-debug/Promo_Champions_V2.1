@@ -1,16 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useMutation } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import type {
   ComposeGoal,
   ComposeTone,
   ComposeLanguage,
   ComposeLength,
   RecipientType,
-} from "@/components/email/aiEmailHelpers";
+} from '@/components/email/aiEmailHelpers';
 
 export interface ComposeEmailInput {
-  mode?: "single" | "sequence";
+  mode?: 'single' | 'sequence';
   recipient_id?: string;
   recipient_type?: RecipientType;
   contact_context?: {
@@ -39,15 +39,19 @@ export interface ComposeEmailResult {
 export function useComposeEmail() {
   return useMutation({
     mutationFn: async (input: ComposeEmailInput): Promise<ComposeEmailResult> => {
-      const { data, error } = await supabase.functions.invoke("ai-email-composer", {
-        body: { mode: "single", ...input },
+      const { data, error } = await supabase.functions.invoke('ai-email-composer', {
+        body: { mode: 'single', ...input },
       });
-      if (error) throw new Error(error.message ?? "Falha ao gerar e-mail.");
-      if (!data || data.error) throw new Error(data?.error ?? "Resposta inválida da IA.");
+      if (error) throw new Error(error.message ?? 'Falha ao gerar e-mail.');
+      if (!data || data.error) throw new Error(data?.error ?? 'Resposta inválida da IA.');
       return data as ComposeEmailResult;
     },
     onError: (err: Error) => {
-      toast({ title: "Erro ao gerar e-mail", description: err.message, variant: "destructive" });
+      toast({
+        title: 'Erro ao gerar e-mail',
+        description: err.message,
+        variant: 'destructive',
+      });
     },
   });
 }
@@ -64,24 +68,34 @@ export interface SendEmailInput {
 export function useSendComposedEmail() {
   return useMutation({
     mutationFn: async (input: SendEmailInput) => {
-      const { data, error } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          to: input.to,
-          subject: input.subject,
-          html: input.body_html,
-          text: input.body_text,
-          purpose: "outreach",
-        },
-      });
-      if (error) throw new Error(error.message ?? "Falha ao enviar e-mail.");
-      if (!data || data.error) throw new Error(data?.error ?? "Falha ao enviar.");
+      const { data, error } = await supabase.functions.invoke(
+        'send-transactional-email',
+        {
+          body: {
+            to: input.to,
+            subject: input.subject,
+            html: input.body_html,
+            text: input.body_text,
+            purpose: 'outreach',
+          },
+        }
+      );
+      if (error) throw new Error(error.message ?? 'Falha ao enviar e-mail.');
+      if (!data || data.error) throw new Error(data?.error ?? 'Falha ao enviar.');
       return data;
     },
     onSuccess: () => {
-      toast({ title: "E-mail enviado", description: "Mensagem disparada via canal email." });
+      toast({
+        title: 'E-mail enviado',
+        description: 'Mensagem disparada via canal email.',
+      });
     },
     onError: (err: Error) => {
-      toast({ title: "Erro ao enviar", description: err.message, variant: "destructive" });
+      toast({
+        title: 'Erro ao enviar',
+        description: err.message,
+        variant: 'destructive',
+      });
     },
   });
 }

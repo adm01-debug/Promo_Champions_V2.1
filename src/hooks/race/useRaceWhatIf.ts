@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface WhatIfScenario {
   label: string;
@@ -19,11 +19,16 @@ interface Opts {
  * Simula 3 cenários (conservador, realista, agressivo) projetando quantas
  * posições o piloto sobe ao adicionar um delta de vendas hoje.
  */
-export function useRaceWhatIf({ entries, currentUserSalespersonId }: Opts): WhatIfScenario[] {
+export function useRaceWhatIf({
+  entries,
+  currentUserSalespersonId,
+}: Opts): WhatIfScenario[] {
   return useMemo(() => {
     if (!currentUserSalespersonId || entries.length === 0) return [];
-    const sorted = [...entries].sort((a, b) => Number(b.total_sales) - Number(a.total_sales));
-    const me = sorted.find((e) => e.salesperson_id === currentUserSalespersonId);
+    const sorted = [...entries].sort(
+      (a, b) => Number(b.total_sales) - Number(a.total_sales)
+    );
+    const me = sorted.find(e => e.salesperson_id === currentUserSalespersonId);
     if (!me) return [];
 
     const myTotal = Number(me.total_sales) || 0;
@@ -42,13 +47,17 @@ export function useRaceWhatIf({ entries, currentUserSalespersonId }: Opts): What
       const delta = Math.round(base * mult);
       const newTotal = myTotal + delta;
       const reSorted = sorted
-        .map((e) => ({
+        .map(e => ({
           id: e.salesperson_id,
-          total: e.salesperson_id === currentUserSalespersonId ? newTotal : Number(e.total_sales),
+          total:
+            e.salesperson_id === currentUserSalespersonId
+              ? newTotal
+              : Number(e.total_sales),
         }))
         .sort((a, b) => b.total - a.total);
-      const newRank = reSorted.findIndex((r) => r.id === currentUserSalespersonId) + 1;
-      const currentRank = sorted.findIndex((e) => e.salesperson_id === currentUserSalespersonId) + 1;
+      const newRank = reSorted.findIndex(r => r.id === currentUserSalespersonId) + 1;
+      const currentRank =
+        sorted.findIndex(e => e.salesperson_id === currentUserSalespersonId) + 1;
       return {
         label,
         delta,

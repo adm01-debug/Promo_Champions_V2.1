@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const STORAGE_KEY = "dashboard-sections-state";
+const STORAGE_KEY = 'dashboard-sections-state';
 
 /** Read persisted section states from localStorage */
 function getPersistedStates(): Record<string, boolean> {
@@ -55,15 +55,20 @@ export function DashboardSection({
   alwaysOpen = false,
   persistId,
 }: DashboardSectionProps) {
-  const sectionId = persistId || title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-  
+  const sectionId =
+    persistId ||
+    title
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+
   const [isOpen, setIsOpen] = useState(() => {
     const persisted = getPersistedStates();
     return sectionId in persisted ? persisted[sectionId] : defaultOpen;
   });
 
   const toggle = useCallback(() => {
-    setIsOpen((prev) => {
+    setIsOpen(prev => {
       const next = !prev;
       persistSectionState(sectionId, next);
       return next;
@@ -75,7 +80,7 @@ export function DashboardSection({
   }
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn('space-y-3', className)}>
       <button
         onClick={toggle}
         className="flex items-center gap-3 group w-full text-left py-2 px-2 rounded-xl hover:bg-muted/40 transition-all duration-200 -mx-2"
@@ -107,7 +112,7 @@ export function DashboardSection({
         {isOpen ? (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
+            animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
@@ -131,18 +136,36 @@ export function DashboardSection({
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   {previewStats.map((stat, i) => (
                     <div key={i} className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-foreground/90">{stat.value}</span>
-                      <span className="text-[10px] text-muted-foreground">{stat.label}</span>
-                      {i < previewStats.length - 1 && <span className="text-muted-foreground/30 mx-0.5">·</span>}
+                      <span className="text-xs font-bold text-foreground/90">
+                        {stat.value}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {stat.label}
+                      </span>
+                      {i < previewStats.length - 1 && (
+                        <span className="text-muted-foreground/30 mx-0.5">·</span>
+                      )}
                     </div>
                   ))}
                 </div>
               ) : (
                 <>
                   <div className="flex gap-1">
-                    <motion.div className="h-1.5 w-6 rounded-full bg-primary/30" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
-                    <motion.div className="h-1.5 w-4 rounded-full bg-primary/20" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.3, repeat: Infinity }} />
-                    <motion.div className="h-1.5 w-5 rounded-full bg-primary/15" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, delay: 0.6, repeat: Infinity }} />
+                    <motion.div
+                      className="h-1.5 w-6 rounded-full bg-primary/30"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
+                    <motion.div
+                      className="h-1.5 w-4 rounded-full bg-primary/20"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 2, delay: 0.3, repeat: Infinity }}
+                    />
+                    <motion.div
+                      className="h-1.5 w-5 rounded-full bg-primary/15"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 2, delay: 0.6, repeat: Infinity }}
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground group-hover/teaser:text-foreground transition-colors flex-1">
                     {teaser}

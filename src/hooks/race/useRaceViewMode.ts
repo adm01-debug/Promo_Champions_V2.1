@@ -9,7 +9,8 @@ const DEFAULT_MODE: RaceViewMode = 'focus';
 function read(): RaceViewMode {
   if (typeof window === 'undefined') return DEFAULT_MODE;
   const v = window.localStorage.getItem(STORAGE_KEY);
-  if (v === 'focus' || v === 'immersive' || v === 'competitive' || v === 'analysis') return v;
+  if (v === 'focus' || v === 'immersive' || v === 'competitive' || v === 'analysis')
+    return v;
   return DEFAULT_MODE;
 }
 
@@ -25,7 +26,11 @@ export function useRaceViewMode() {
 
   const setMode = useCallback((next: RaceViewMode) => {
     setModeState(next);
-    try { window.localStorage.setItem(STORAGE_KEY, next); } catch { /* noop */ }
+    try {
+      window.localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      /* noop */
+    }
   }, []);
 
   useEffect(() => {

@@ -11,9 +11,13 @@ export function useWinLossRealtime(opts?: { onNewPattern?: () => void }) {
   useEffect(() => {
     const channel = supabase
       .channel('win-loss-rt')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'win_loss_analyses' }, () => {
-        qc.invalidateQueries({ queryKey: ['wl-analyses-filtered'] });
-      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'win_loss_analyses' },
+        () => {
+          qc.invalidateQueries({ queryKey: ['wl-analyses-filtered'] });
+        }
+      )
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'win_loss_patterns' },
@@ -23,7 +27,9 @@ export function useWinLossRealtime(opts?: { onNewPattern?: () => void }) {
           const onNewPattern = onNewPatternRef.current;
           toast.success('Novo padrão detectado!', {
             description: p?.name ?? 'Padrão Win/Loss identificado pela IA.',
-            action: onNewPattern ? { label: 'Ver', onClick: () => onNewPattern() } : undefined,
+            action: onNewPattern
+              ? { label: 'Ver', onClick: () => onNewPattern() }
+              : undefined,
           });
         }
       )
@@ -34,9 +40,13 @@ export function useWinLossRealtime(opts?: { onNewPattern?: () => void }) {
           qc.invalidateQueries({ queryKey: ['win-loss-patterns'] });
         }
       )
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'win_loss_insights' }, () => {
-        qc.invalidateQueries({ queryKey: ['win-loss-insights'] });
-      })
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'win_loss_insights' },
+        () => {
+          qc.invalidateQueries({ queryKey: ['win-loss-insights'] });
+        }
+      )
       .subscribe();
     return () => {
       supabase.removeChannel(channel);

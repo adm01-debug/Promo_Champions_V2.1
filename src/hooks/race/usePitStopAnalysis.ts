@@ -32,9 +32,7 @@ interface Params {
   leaderboard: RaceLeaderboardEntry[];
   mySalespersonId?: string;
   season?:
-    | { start_date: string; end_date: string; goal_amount: number }
-    | RaceSeason
-    | null;
+    { start_date: string; end_date: string; goal_amount: number } | RaceSeason | null;
 }
 
 /**

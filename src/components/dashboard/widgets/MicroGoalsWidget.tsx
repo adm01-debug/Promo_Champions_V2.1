@@ -1,12 +1,12 @@
-import React from "react";
-import { useMicroGoals, MicroGoal } from "@/hooks/useMicroGoals";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Target } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import React from 'react';
+import { useMicroGoals, MicroGoal } from '@/hooks/useMicroGoals';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Target } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const MicroGoalsWidget = React.memo(function MicroGoalsWidget() {
   const { salesperson } = useAuth();
@@ -51,7 +51,7 @@ export const MicroGoalsWidget = React.memo(function MicroGoalsWidget() {
   );
 });
 
-MicroGoalsWidget.displayName = "MicroGoalsWidget";
+MicroGoalsWidget.displayName = 'MicroGoalsWidget';
 
 function MicroGoalItem({ goal, index }: { goal: MicroGoal; index: number }) {
   return (
@@ -72,10 +72,10 @@ function MicroGoalItem({ goal, index }: { goal: MicroGoal; index: number }) {
             <Progress
               value={goal.progress}
               className={cn(
-                "h-1.5 flex-1",
-                goal.progress >= 75 && "[&>div]:bg-success",
-                goal.progress >= 50 && goal.progress < 75 && "[&>div]:bg-warning",
-                goal.progress < 50 && "[&>div]:bg-primary"
+                'h-1.5 flex-1',
+                goal.progress >= 75 && '[&>div]:bg-success',
+                goal.progress >= 50 && goal.progress < 75 && '[&>div]:bg-warning',
+                goal.progress < 50 && '[&>div]:bg-primary'
               )}
             />
             <span className="text-[10px] text-muted-foreground whitespace-nowrap">

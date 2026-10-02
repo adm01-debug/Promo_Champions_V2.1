@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
+import { formatBRL } from '@/lib/money';
 type PeriodFilter = 'week' | 'month' | 'quarter';
 
 interface CloserRevenueEvolutionProps {
@@ -293,7 +294,7 @@ export function CloserRevenueEvolution({ period }: CloserRevenueEvolutionProps) 
                                 {closer?.name || String(entry.dataKey)}
                               </span>
                               <span className="text-[10px] font-mono font-black ml-auto">
-                                R$ {Number(entry.value).toLocaleString('pt-BR')}
+                                {formatBRL(Number(entry.value))}
                               </span>
                             </div>
                           );

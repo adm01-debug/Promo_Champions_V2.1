@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface SaleNotificationAudit {
   id: string;
@@ -17,12 +17,12 @@ export interface SaleNotificationAudit {
 
 export function useSaleNotificationAudits(limit = 100) {
   return useQuery({
-    queryKey: ["sale-notification-audits", limit],
+    queryKey: ['sale-notification-audits', limit],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sale_notifications_audit")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('sale_notifications_audit')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(limit);
       if (error) throw error;
       return data as SaleNotificationAudit[];

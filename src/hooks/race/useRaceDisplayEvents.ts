@@ -19,13 +19,16 @@ export function useRaceDisplayEvents() {
   const [broadcastEvents, setBroadcastEvents] = useState<BroadcastEvent[]>([]);
 
   const pushTickerEvent = useCallback((text: string, icon?: string) => {
-    setTickerEvents((prev) =>
-      [{ id: `${Date.now()}-${Math.random()}`, text, icon, at: Date.now() }, ...prev].slice(0, 8),
+    setTickerEvents(prev =>
+      [
+        { id: `${Date.now()}-${Math.random()}`, text, icon, at: Date.now() },
+        ...prev,
+      ].slice(0, 8)
     );
   }, []);
 
   const pushBroadcast = useCallback((evt: Omit<BroadcastEvent, 'id'>) => {
-    setBroadcastEvents((prev) => {
+    setBroadcastEvents(prev => {
       const id = `${Date.now()}-${Math.random()}`;
       return [{ id, ...evt }, ...prev].slice(0, 5);
     });
@@ -35,9 +38,7 @@ export function useRaceDisplayEvents() {
   useEffect(() => {
     const id = window.setInterval(() => {
       const cutoff = Date.now() - 60_000;
-      setBroadcastEvents((prev) =>
-        prev.filter((e) => Number(e.id.split('-')[0]) > cutoff),
-      );
+      setBroadcastEvents(prev => prev.filter(e => Number(e.id.split('-')[0]) > cutoff));
     }, 8_000);
     return () => window.clearInterval(id);
   }, []);

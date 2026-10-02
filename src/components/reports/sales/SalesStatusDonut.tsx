@@ -1,16 +1,16 @@
-import { FC } from "react";
-import { Card } from "@/components/ui/card";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import type { StatusSlice } from "@/hooks/reports/salesReportHelpers";
-import type { RechartsTooltipProps } from "@/types/recharts";
+import { FC } from 'react';
+import { Card } from '@/components/ui/card';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import type { StatusSlice } from '@/hooks/reports/salesReportHelpers';
+import type { RechartsTooltipProps } from '@/types/recharts';
 
 const COLORS = [
-  "hsl(var(--success))",
-  "hsl(var(--primary))",
-  "hsl(var(--warning))",
-  "hsl(var(--destructive))",
-  "hsl(var(--accent))",
-  "hsl(var(--muted-foreground))",
+  'hsl(var(--success))',
+  'hsl(var(--primary))',
+  'hsl(var(--warning))',
+  'hsl(var(--destructive))',
+  'hsl(var(--accent))',
+  'hsl(var(--muted-foreground))',
 ];
 
 const TT: FC<RechartsTooltipProps> = ({ active, payload }) =>
@@ -27,7 +27,16 @@ export const SalesStatusDonut: FC<{ data: StatusSlice[] }> = ({ data }) => (
     <div className="h-64">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={2}>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            innerRadius={50}
+            outerRadius={85}
+            paddingAngle={2}
+          >
             {data.map((_, i) => (
               <Cell key={i} fill={COLORS[i % COLORS.length]} />
             ))}

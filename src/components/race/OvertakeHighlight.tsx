@@ -12,17 +12,27 @@ interface Props {
 }
 
 function initials(name: string): string {
-  return name.split(' ').slice(0, 2).map((p) => p[0]?.toUpperCase() ?? '').join('');
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map(p => p[0]?.toUpperCase() ?? '')
+    .join('');
 }
 
-export function OvertakeHighlight({ overtakes, onDismiss, currentUserSalespersonId }: Props) {
+export function OvertakeHighlight({
+  overtakes,
+  onDismiss,
+  currentUserSalespersonId,
+}: Props) {
   const reduceMotion = useReducedMotion();
   const latestId = overtakes[0]?.id;
-  const latestInvolvesMe = !!latestId && !!currentUserSalespersonId && (
-    overtakes[0].overtaker.salesperson_id === currentUserSalespersonId ||
-    overtakes[0].overtaken.salesperson_id === currentUserSalespersonId
-  );
-  const userIsOvertaker = !!latestId && overtakes[0].overtaker.salesperson_id === currentUserSalespersonId;
+  const latestInvolvesMe =
+    !!latestId &&
+    !!currentUserSalespersonId &&
+    (overtakes[0].overtaker.salesperson_id === currentUserSalespersonId ||
+      overtakes[0].overtaken.salesperson_id === currentUserSalespersonId);
+  const userIsOvertaker =
+    !!latestId && overtakes[0].overtaker.salesperson_id === currentUserSalespersonId;
 
   // Haptic feedback ao detectar nova ultrapassagem
   useEffect(() => {
@@ -64,16 +74,18 @@ export function OvertakeHighlight({ overtakes, onDismiss, currentUserSalesperson
         aria-atomic="true"
       >
         <AnimatePresence>
-          {overtakes.map((o) => {
-            const involvesMe = !!currentUserSalespersonId && (
-              o.overtaker.salesperson_id === currentUserSalespersonId ||
-              o.overtaken.salesperson_id === currentUserSalespersonId
-            );
+          {overtakes.map(o => {
+            const involvesMe =
+              !!currentUserSalespersonId &&
+              (o.overtaker.salesperson_id === currentUserSalespersonId ||
+                o.overtaken.salesperson_id === currentUserSalespersonId);
             const meIsOvertaker = o.overtaker.salesperson_id === currentUserSalespersonId;
             return (
               <motion.div
                 key={o.id}
-                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -40, scale: 0.85 }}
+                initial={
+                  reduceMotion ? { opacity: 0 } : { opacity: 0, y: -40, scale: 0.85 }
+                }
                 animate={
                   reduceMotion
                     ? { opacity: 1 }
@@ -82,7 +94,12 @@ export function OvertakeHighlight({ overtakes, onDismiss, currentUserSalesperson
                       : { opacity: 1, y: 0, scale: 1 }
                 }
                 exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -20, scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 260, damping: 22, scale: { duration: 0.5 } }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 260,
+                  damping: 22,
+                  scale: { duration: 0.5 },
+                }}
                 className="pointer-events-auto"
               >
                 <div
@@ -99,12 +116,16 @@ export function OvertakeHighlight({ overtakes, onDismiss, currentUserSalesperson
                     aria-hidden
                     className="absolute inset-0 rounded-2xl pointer-events-none"
                     initial={{ boxShadow: '0 0 0 0 hsl(var(--primary) / 0.5)' }}
-                    animate={reduceMotion ? {} : {
-                      boxShadow: [
-                        `0 0 0 0 hsl(var(--${involvesMe && !meIsOvertaker ? 'destructive' : 'primary'}) / 0.6)`,
-                        `0 0 0 16px hsl(var(--${involvesMe && !meIsOvertaker ? 'destructive' : 'primary'}) / 0)`,
-                      ],
-                    }}
+                    animate={
+                      reduceMotion
+                        ? {}
+                        : {
+                            boxShadow: [
+                              `0 0 0 0 hsl(var(--${involvesMe && !meIsOvertaker ? 'destructive' : 'primary'}) / 0.6)`,
+                              `0 0 0 16px hsl(var(--${involvesMe && !meIsOvertaker ? 'destructive' : 'primary'}) / 0)`,
+                            ],
+                          }
+                    }
                     transition={{ duration: 1.2, repeat: 2 }}
                   />
 
@@ -119,13 +140,23 @@ export function OvertakeHighlight({ overtakes, onDismiss, currentUserSalesperson
                       className="w-12 h-12 ring-2 ring-offset-2 ring-offset-card"
                       style={{ boxShadow: `0 0 0 2px ${o.overtaker.primary_color}` }}
                     >
-                      {o.overtaker.avatar_url && <AvatarImage src={o.overtaker.avatar_url} alt={o.overtaker.salesperson_name} />}
-                      <AvatarFallback className="text-xs font-bold">{initials(o.overtaker.salesperson_name)}</AvatarFallback>
+                      {o.overtaker.avatar_url && (
+                        <AvatarImage
+                          src={o.overtaker.avatar_url}
+                          alt={o.overtaker.salesperson_name}
+                        />
+                      )}
+                      <AvatarFallback className="text-xs font-bold">
+                        {initials(o.overtaker.salesperson_name)}
+                      </AvatarFallback>
                     </Avatar>
                     <ArrowUpRight className="absolute -top-1 -right-1 w-4 h-4 text-success bg-card rounded-full p-0.5" />
                   </motion.div>
 
-                  <Zap className="w-5 h-5 text-warning shrink-0 animate-pulse" aria-hidden />
+                  <Zap
+                    className="w-5 h-5 text-warning shrink-0 animate-pulse"
+                    aria-hidden
+                  />
 
                   {/* Overtaken */}
                   <motion.div
@@ -138,21 +169,41 @@ export function OvertakeHighlight({ overtakes, onDismiss, currentUserSalesperson
                       className="w-12 h-12 opacity-70"
                       style={{ boxShadow: `0 0 0 2px ${o.overtaken.primary_color}` }}
                     >
-                      {o.overtaken.avatar_url && <AvatarImage src={o.overtaken.avatar_url} alt={o.overtaken.salesperson_name} />}
-                      <AvatarFallback className="text-xs font-bold">{initials(o.overtaken.salesperson_name)}</AvatarFallback>
+                      {o.overtaken.avatar_url && (
+                        <AvatarImage
+                          src={o.overtaken.avatar_url}
+                          alt={o.overtaken.salesperson_name}
+                        />
+                      )}
+                      <AvatarFallback className="text-xs font-bold">
+                        {initials(o.overtaken.salesperson_name)}
+                      </AvatarFallback>
                     </Avatar>
                     <ArrowDownRight className="absolute -top-1 -right-1 w-4 h-4 text-destructive bg-card rounded-full p-0.5" />
                   </motion.div>
 
                   <div className="flex flex-col min-w-0 pr-6">
                     <p className="font-display font-black text-sm leading-tight uppercase tracking-tight">
-                      <span className={meIsOvertaker ? 'text-primary' : 'text-foreground'}>
-                        {meIsOvertaker ? 'VOCÊ' : o.overtaker.salesperson_name.split(' ')[0]}
+                      <span
+                        className={meIsOvertaker ? 'text-primary' : 'text-foreground'}
+                      >
+                        {meIsOvertaker
+                          ? 'VOCÊ'
+                          : o.overtaker.salesperson_name.split(' ')[0]}
                       </span>
                       <span className="text-muted-foreground"> ultrapassou </span>
-                      <span className={!meIsOvertaker && involvesMe ? 'text-destructive' : 'text-foreground'}>
-                        {!meIsOvertaker && involvesMe ? 'VOCÊ' : o.overtaken.salesperson_name.split(' ')[0]}
-                      </span>!
+                      <span
+                        className={
+                          !meIsOvertaker && involvesMe
+                            ? 'text-destructive'
+                            : 'text-foreground'
+                        }
+                      >
+                        {!meIsOvertaker && involvesMe
+                          ? 'VOCÊ'
+                          : o.overtaken.salesperson_name.split(' ')[0]}
+                      </span>
+                      !
                     </p>
                     <p className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
                       P{o.overtakerNewRank} ← P{o.overtakerOldRank}

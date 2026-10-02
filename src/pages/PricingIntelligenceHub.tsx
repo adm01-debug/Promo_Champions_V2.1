@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
-import { PricingIntelligenceHub } from "@/components/pricing/PricingIntelligenceHub";
+import { Helmet } from 'react-helmet-async';
+import { PricingIntelligenceHub } from '@/components/pricing/PricingIntelligenceHub';
 
 const PricingIntelligenceHubPage = () => {
   return (

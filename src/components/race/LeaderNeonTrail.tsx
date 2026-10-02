@@ -30,7 +30,7 @@ export function LeaderNeonTrail({
       lastIdRef.current = leaderId;
       return;
     }
-    setPoints((prev) => {
+    setPoints(prev => {
       const last = prev[prev.length - 1];
       if (last !== undefined && Math.abs(leaderProgress - last) < 0.003) return prev;
       const next = [...prev, leaderProgress];

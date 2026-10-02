@@ -7,9 +7,18 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { useCollectibleBadges, type CollectibleBadge } from '@/hooks/gamification/useCollectibleBadges';
+import {
+  useCollectibleBadges,
+  type CollectibleBadge,
+} from '@/hooks/gamification/useCollectibleBadges';
 
 interface BadgesGalleryProps {
   salespersonId?: string;
@@ -54,8 +63,14 @@ const RARITY_FILTERS: { key: RarityKey; label: string }[] = [
 type BadgeWithEarned = CollectibleBadge & { earned: boolean };
 
 const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
-  const { badgesByCategory, earnedBadges, earnedCount, totalCount, leaderboard, isLoading } =
-    useCollectibleBadges(salespersonId);
+  const {
+    badgesByCategory,
+    earnedBadges,
+    earnedCount,
+    totalCount,
+    leaderboard,
+    isLoading,
+  } = useCollectibleBadges(salespersonId);
 
   const [rarity, setRarity] = useState<RarityKey>('all');
   const [query, setQuery] = useState('');
@@ -66,10 +81,11 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
     const q = query.trim().toLowerCase();
     const result: Record<string, BadgeWithEarned[]> = {};
     Object.entries(badgesByCategory).forEach(([cat, items]) => {
-      const list = items.filter((b) => {
+      const list = items.filter(b => {
         if (rarity !== 'all' && b.rarity !== rarity) return false;
         if (showOnlyEarned && !b.earned) return false;
-        if (q && !`${b.name} ${b.description ?? ''}`.toLowerCase().includes(q)) return false;
+        if (q && !`${b.name} ${b.description ?? ''}`.toLowerCase().includes(q))
+          return false;
         return true;
       });
       if (list.length) result[cat] = list;
@@ -78,14 +94,14 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
   }, [badgesByCategory, rarity, query, showOnlyEarned]);
 
   const recentUnlocks = useMemo(
-    () => earnedBadges.slice(0, 4).filter((b) => !!b.badge),
-    [earnedBadges],
+    () => earnedBadges.slice(0, 4).filter(b => !!b.badge),
+    [earnedBadges]
   );
 
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3].map(i => (
           <div key={i} className="h-32 rounded-xl bg-muted/30 animate-pulse" />
         ))}
       </div>
@@ -112,7 +128,9 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
           </CardHeader>
           <CardContent>
             <Progress value={progressPct} className="h-2" />
-            <p className="text-xs text-muted-foreground mt-1">{progressPct}% desbloqueado</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {progressPct}% desbloqueado
+            </p>
           </CardContent>
         </div>
       </Card>
@@ -128,7 +146,7 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              {recentUnlocks.map((eb) => (
+              {recentUnlocks.map(eb => (
                 <motion.button
                   key={eb.id}
                   type="button"
@@ -153,14 +171,14 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
             placeholder="Buscar badge por nome ou descrição..."
             className="pl-9"
             aria-label="Buscar badge"
           />
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {RARITY_FILTERS.map((r) => (
+          {RARITY_FILTERS.map(r => (
             <Button
               key={r.key}
               size="sm"
@@ -174,7 +192,7 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
           <Button
             size="sm"
             variant={showOnlyEarned ? 'default' : 'outline'}
-            onClick={() => setShowOnlyEarned((v) => !v)}
+            onClick={() => setShowOnlyEarned(v => !v)}
             className="h-8"
           >
             <Filter className="h-3.5 w-3.5 mr-1" />
@@ -211,7 +229,7 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
                   className={cn(
                     'relative flex flex-col items-center gap-2 p-4 rounded-xl border transition-all text-left',
                     rStyle,
-                    !badge.earned && 'opacity-40 grayscale',
+                    !badge.earned && 'opacity-40 grayscale'
                   )}
                   aria-label={`Ver detalhes do badge ${badge.name}`}
                 >
@@ -247,7 +265,9 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
       {leaderboard.length > 0 && (
         <Card className="border-none shadow-lg">
           <CardHeader className="pb-2">
-            <CardTitle className="text-section-title text-sm">🏅 Ranking de Colecionadores</CardTitle>
+            <CardTitle className="text-section-title text-sm">
+              🏅 Ranking de Colecionadores
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {leaderboard.slice(0, 5).map((sp, i) => (
@@ -255,12 +275,16 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
                 key={sp.id}
                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors"
               >
-                <span className="text-sm font-bold text-muted-foreground w-6">#{i + 1}</span>
+                <span className="text-sm font-bold text-muted-foreground w-6">
+                  #{i + 1}
+                </span>
                 <Avatar className="h-7 w-7">
                   <AvatarImage src={sp.avatar_url || undefined} />
                   <AvatarFallback className="text-xs">{sp.name[0]}</AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium text-foreground flex-1">{sp.name}</span>
+                <span className="text-sm font-medium text-foreground flex-1">
+                  {sp.name}
+                </span>
                 <Badge variant="secondary" className="text-xs">
                   {sp.badgeCount} 🏅
                 </Badge>
@@ -271,7 +295,7 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
       )}
 
       {/* Showcase Modal */}
-      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+      <Dialog open={!!selected} onOpenChange={o => !o && setSelected(null)}>
         <DialogContent className="sm:max-w-md">
           <AnimatePresence>
             {selected && (
@@ -287,7 +311,8 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
                     {selected.name}
                   </DialogTitle>
                   <DialogDescription>
-                    {selected.description || 'Continue conquistando para desbloquear novos marcos.'}
+                    {selected.description ||
+                      'Continue conquistando para desbloquear novos marcos.'}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="mt-4 flex flex-col items-center gap-4">
@@ -301,7 +326,7 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
                     className={cn(
                       'h-28 w-28 rounded-2xl border-2 flex items-center justify-center text-6xl',
                       RARITY_STYLES[selected.rarity] || RARITY_STYLES.common,
-                      !selected.earned && 'opacity-40 grayscale',
+                      !selected.earned && 'opacity-40 grayscale'
                     )}
                   >
                     {selected.earned ? selected.icon : <Lock className="h-10 w-10" />}
@@ -318,7 +343,9 @@ const BadgesGalleryComponent: FC<BadgesGalleryProps> = ({ salespersonId }) => {
                       {selected.xp_reward} XP
                     </Badge>
                     {CATEGORY_LABELS[selected.category] && (
-                      <Badge variant="outline">{CATEGORY_LABELS[selected.category]}</Badge>
+                      <Badge variant="outline">
+                        {CATEGORY_LABELS[selected.category]}
+                      </Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground text-center">
