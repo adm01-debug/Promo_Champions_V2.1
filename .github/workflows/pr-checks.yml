@@ -110,6 +110,36 @@ jobs:
       - name: Graphify wrapper tests
         run: npm run graphify:test
 
+  # Gate de higiene de migrations (pacote auditoria DB/integridade):
+  # nomenclatura ^\d{8,14}_.*\.sql$, versões únicas, sem arquivo vazio; em PR,
+  # migration nova exige versão estritamente maior que a base, CREATE TABLE
+  # exige ENABLE ROW LEVEL SECURITY e literais *.supabase.co / 'eyJhbGci'
+  # são proibidos. Regras de diff só rodam com a base disponível (fetch-depth: 0).
+  migrations-gate:
+    name: Migrations Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      HUSKY: 0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+
+      - name: Validate migrations
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            node scripts/check-migrations.mjs --base "origin/${{ github.base_ref }}"
+          else
+            node scripts/check-migrations.mjs
+          fi
+
   # Job próprio, FORA dos required checks do ruleset: npm audit consulta o
   # advisory DB em tempo de execução — um advisory novo ficaria vermelho e,
   # como required, bloquearia todo merge (inclusive a PR do próprio fix).

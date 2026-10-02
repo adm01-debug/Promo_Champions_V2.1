@@ -19787,6 +19787,7 @@ export type Database = {
           backup_codes_generated_at: string | null
           created_at: string | null
           id: string
+          migrated_to_native_mfa: boolean
           phone_number: string | null
           phone_verified_at: string | null
           preferred_method: string | null
@@ -19802,6 +19803,7 @@ export type Database = {
           backup_codes_generated_at?: string | null
           created_at?: string | null
           id?: string
+          migrated_to_native_mfa?: boolean
           phone_number?: string | null
           phone_verified_at?: string | null
           preferred_method?: string | null
@@ -19817,6 +19819,7 @@ export type Database = {
           backup_codes_generated_at?: string | null
           created_at?: string | null
           id?: string
+          migrated_to_native_mfa?: boolean
           phone_number?: string | null
           phone_verified_at?: string | null
           preferred_method?: string | null
@@ -24161,6 +24164,8 @@ export type Database = {
       get_mfa_status: {
         Args: never
         Returns: {
+          migrated_to_native_mfa: boolean
+          needs_reenrollment: boolean
           preferred_method: string
           sms_enabled: boolean
           totp_enabled: boolean
@@ -24756,6 +24761,10 @@ export type Database = {
       }
       verify_and_enable_sms: { Args: { p_code: string }; Returns: boolean }
       verify_and_enable_totp: { Args: { p_token: string }; Returns: Json }
+      verify_reauth_request: {
+        Args: { p_request_id: string; p_password?: string }
+        Returns: boolean
+      }
       verify_mfa_code: {
         Args: { p_code: string; p_method?: string }
         Returns: boolean

@@ -1,19 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-
-
-
-const STAGE_WEIGHTS: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.2,
-  proposal: 0.4,
-  negotiation: 0.6,
-  won: 1,
-  closed: 1,
-  lost: 0,
-};
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -65,9 +53,12 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
       }
     >();
 
+    // Pesos por estágio vêm de public.stage_probabilities
+    const stageProbs = await getStageProbabilities(supabase);
+
     for (const s of sales ?? []) {
       const owner = s.salesperson_id ?? "unassigned";
-      const w = STAGE_WEIGHTS[(s.stage ?? "").toLowerCase()] ?? 0.1;
+      const w = stageProbs[(s.stage ?? "").toLowerCase()] ?? 0.1;
       const amount = Number(s.amount ?? 0);
       const g = grouped.get(owner) ?? {
         owner_id: s.salesperson_id ?? null,

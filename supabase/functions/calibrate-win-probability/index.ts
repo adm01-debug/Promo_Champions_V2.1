@@ -2,14 +2,14 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 
 
-const STAGE_BASELINE: Record<string, number> = {
-  lead: 5, pending: 10, prospecting: 15, qualified: 25,
-  in_progress: 30, proposal: 50, negotiation: 75, completed: 100,
-  won: 100, lost: 0, cancelled: 0,
-};
+// Baseline por estágio — fonte única public.stage_probabilities (0-1),
+// convertida para a escala 0-100 usada no blend.
+let stageBaseline: Record<string, number> = {};
+const baseline = (stage: string): number => (stageBaseline[stage] ?? 0.2) * 100;
 
 interface SaleRow {
   id: string;
@@ -60,6 +60,8 @@ Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    stageBaseline = await getStageProbabilities(supabase);
+
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const lookbackDays = body.lookback_days ?? 180;
     const minSample = body.min_sample ?? 5;
@@ -104,8 +106,8 @@ Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
       const sample = b.won + b.lost;
       const winRate = sample > 0 ? (b.won / sample) * 100 : 0;
       const confidence = Math.min(sample / 30, 1);
-      const baseline = STAGE_BASELINE[stage] ?? 20;
-      const calibrated = sample >= minSample ? blendProbability(baseline, winRate, confidence) : baseline;
+      const base = baseline(stage);
+      const calibrated = sample >= minSample ? blendProbability(base, winRate, confidence) : base;
       return {
         scope,
         scope_value: scope_value_raw === "_" ? null : scope_value_raw,
@@ -114,7 +116,7 @@ Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
         sample_size: sample,
         confidence: Math.round(confidence * 100) / 100,
         calibrated_probability: calibrated,
-        baseline_probability: baseline,
+        baseline_probability: base,
         calculated_at: new Date().toISOString(),
       };
     });
@@ -133,7 +135,7 @@ Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
     const now = Date.now();
     const dealScores = open.map((s) => {
       const stage = s.status;
-      const baseline = STAGE_BASELINE[stage] ?? 20;
+      const base = baseline(stage);
       const owner = s.salesperson_id ?? null;
       const cat = s.category ?? null;
 
@@ -142,14 +144,14 @@ Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
       const srcCal = calMap[`source|${cat ?? "_"}|${stage}`];
       const globCal = calMap[`global|_|${stage}`];
 
-      const ownerAdj = ownerCal ? (ownerCal.calibrated_probability - baseline) * ownerCal.confidence : 0;
-      const segmentAdj = segCal ? (segCal.calibrated_probability - baseline) * segCal.confidence * 0.5 : 0;
-      const sourceAdj = srcCal ? (srcCal.calibrated_probability - baseline) * srcCal.confidence * 0.3 : 0;
+      const ownerAdj = ownerCal ? (ownerCal.calibrated_probability - base) * ownerCal.confidence : 0;
+      const segmentAdj = segCal ? (segCal.calibrated_probability - base) * segCal.confidence * 0.5 : 0;
+      const sourceAdj = srcCal ? (srcCal.calibrated_probability - base) * srcCal.confidence * 0.3 : 0;
 
       const ageDays = (now - new Date(s.updated_at).getTime()) / 86400000;
       const recencyAdj = ageDays <= 30 ? 5 : ageDays > 90 ? -10 : 0;
 
-      const globalCal = globCal?.calibrated_probability ?? baseline;
+      const globalCal = globCal?.calibrated_probability ?? base;
       const calibrated = Math.max(1, Math.min(99,
         globalCal + ownerAdj + segmentAdj + sourceAdj + recencyAdj
       ));
@@ -160,11 +162,11 @@ Deno.serve(withRequestId("calibrate-win-probability", async (req, _ctx) => {
 
       return {
         sale_id: s.id,
-        raw_probability: baseline,
+        raw_probability: base,
         calibrated_probability: Math.round(calibrated * 100) / 100,
         confidence: Math.round(confidence * 100) / 100,
         factors: {
-          stage_baseline: baseline,
+          stage_baseline: base,
           global_calibrated: globalCal,
           owner_adj: Math.round(ownerAdj * 100) / 100,
           segment_adj: Math.round(segmentAdj * 100) / 100,

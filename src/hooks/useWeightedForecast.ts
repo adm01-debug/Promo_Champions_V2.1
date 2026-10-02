@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WON_SALE_STATUSES } from '@/constants';
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 interface ForecastDeal {
   id: string;
@@ -39,47 +40,51 @@ export interface WeightedForecastData {
   avgCloseTime: number;
 }
 
-const STAGE_CONFIG: Record<
-  string,
-  { label: string; baseProbability: number; color: string }
-> = {
-  pending: { label: 'Lead', baseProbability: 0.1, color: 'hsl(var(--muted-foreground))' },
-  qualified: { label: 'Qualificado', baseProbability: 0.3, color: 'hsl(var(--primary))' },
-  proposal: { label: 'Proposta', baseProbability: 0.55, color: 'hsl(45, 93%, 47%)' },
-  negotiation: { label: 'Negociação', baseProbability: 0.8, color: 'hsl(142, 71%, 45%)' },
+const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
+  pending: { label: 'Lead', color: 'hsl(var(--muted-foreground))' },
+  qualified: { label: 'Qualificado', color: 'hsl(var(--primary))' },
+  proposal: { label: 'Proposta', color: 'hsl(45, 93%, 47%)' },
+  negotiation: { label: 'Negociação', color: 'hsl(142, 71%, 45%)' },
 };
 
 export function useWeightedForecast() {
   return useQuery({
     queryKey: ['weighted-forecast'],
     queryFn: async (): Promise<WeightedForecastData> => {
-      const [salesRes, scoresRes, stageHistoryRes, goalsRes, wonSalesRes] =
-        await Promise.all([
-          supabase
-            .from('sales')
-            .select('id, client_name, product_name, amount, status, created_at')
-            .in('status', ['pending', 'qualified', 'proposal', 'negotiation']),
-          supabase.from('lead_scores').select('sale_id, score'),
-          supabase
-            .from('deal_stage_history')
-            .select('sale_id, stage, entered_at, exited_at')
-            .is('exited_at', null),
-          supabase
-            .from('sales_goals')
-            .select('goal_amount')
-            .gte(
-              'month',
-              new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
-            ),
-          supabase
-            .from('sales')
-            .select('amount, created_at')
-            .in('status', [...WON_SALE_STATUSES])
-            .gte(
-              'created_at',
-              new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
-            ),
-        ]);
+      const [
+        salesRes,
+        scoresRes,
+        stageHistoryRes,
+        goalsRes,
+        wonSalesRes,
+        stageProbabilities,
+      ] = await Promise.all([
+        supabase
+          .from('sales')
+          .select('id, client_name, product_name, amount, status, created_at')
+          .in('status', ['pending', 'qualified', 'proposal', 'negotiation']),
+        supabase.from('lead_scores').select('sale_id, score'),
+        supabase
+          .from('deal_stage_history')
+          .select('sale_id, stage, entered_at, exited_at')
+          .is('exited_at', null),
+        supabase
+          .from('sales_goals')
+          .select('goal_amount')
+          .gte(
+            'month',
+            new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+          ),
+        supabase
+          .from('sales')
+          .select('amount, created_at')
+          .in('status', [...WON_SALE_STATUSES])
+          .gte(
+            'created_at',
+            new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+          ),
+        fetchStageProbabilities(),
+      ]);
 
       if (salesRes.error) throw salesRes.error;
 
@@ -94,7 +99,6 @@ export function useWeightedForecast() {
       const now = Date.now();
 
       const deals: ForecastDeal[] = sales.map(sale => {
-        const config = STAGE_CONFIG[sale.status];
         const leadScore = scoreMap.get(sale.id) || null;
         const enteredAt = stageEntryMap.get(sale.id);
         const daysInStage = enteredAt
@@ -104,7 +108,7 @@ export function useWeightedForecast() {
             );
 
         // Adjust probability based on lead score
-        let probability = config?.baseProbability || 0.1;
+        let probability = stageProbabilities[sale.status] ?? 0.1;
         if (leadScore !== null) {
           const scoreMultiplier = leadScore > 70 ? 1.2 : leadScore > 40 ? 1.0 : 0.8;
           probability = Math.min(0.95, probability * scoreMultiplier);
@@ -139,7 +143,7 @@ export function useWeightedForecast() {
             count: stageDeals.length,
             total_value: stageDeals.reduce((s, d) => s + d.amount, 0),
             weighted_value: stageDeals.reduce((s, d) => s + d.weighted_value, 0),
-            probability: config.baseProbability,
+            probability: stageProbabilities[key] ?? 0.1,
             color: config.color,
           };
         }

@@ -82,16 +82,20 @@ export const useReauthentication = () => {
           return false;
         }
 
-        // Marcar request como verificada
-        const { error: updateError } = await supabase
-          .from('reauthentication_requests')
-          .update({
-            verified: true,
-            verified_at: new Date().toISOString(),
-          })
-          .eq('id', pendingRequest.id);
+        // A senha já foi validada pelo signInWithPassword acima, que emitiu um
+        // JWT fresco. A RPC só marca verified quando o iat do token tem menos
+        // de 5 minutos — o cliente não pode mais fazer UPDATE direto na tabela.
+        const { data: verified, error: verifyError } = await supabase.rpc(
+          'verify_reauth_request',
+          { p_request_id: pendingRequest.id }
+        );
 
-        if (updateError) throw updateError;
+        if (verifyError) throw verifyError;
+
+        if (!verified) {
+          toast.error('Não foi possível confirmar a re-autenticação. Tente novamente.');
+          return false;
+        }
 
         toast.success('Re-autenticação bem sucedida');
         return true;
