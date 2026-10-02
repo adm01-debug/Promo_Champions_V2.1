@@ -4,7 +4,6 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import { alertFromEmail } from '../_shared/alert-escalation.ts';
 import { maskEmail } from '../_shared/pii.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 

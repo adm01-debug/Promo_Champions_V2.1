@@ -17,8 +17,8 @@ export function maskEmail(email: string | null | undefined): string {
   if (!email) return '';
   const m = EMAIL_RE.exec(email.trim());
   if (!m) return '***';
-  const local = email.trim().slice(0, email.trim().length - m[1].length - 1);
-  const domain = m[1];
+  const local = email.trim().slice(0, email.trim().length - m[1]!.length - 1);
+  const domain = m[1]!;
   const head = local.slice(0, 1);
   const tail = local.length > 1 ? local.slice(-1) : '';
   return `${head}***${tail}@${domain}`;
