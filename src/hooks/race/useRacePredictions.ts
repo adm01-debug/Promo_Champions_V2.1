@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface RacePrediction {
   salesperson_id: string;
@@ -28,7 +28,7 @@ function clampDays(n: number): number {
  */
 export function useRacePredictions(
   entries: RaceLeaderboardEntry[],
-  season?: SeasonRange,
+  season?: SeasonRange
 ): Map<string, RacePrediction> {
   return useMemo(() => {
     const map = new Map<string, RacePrediction>();
@@ -44,13 +44,13 @@ export function useRacePredictions(
 
     // Rank atual por total_sales
     const sortedCurrent = [...entries].sort(
-      (a, b) => Number(b.total_sales) - Number(a.total_sales),
+      (a, b) => Number(b.total_sales) - Number(a.total_sales)
     );
     const currentRankMap = new Map<string, number>();
     sortedCurrent.forEach((e, i) => currentRankMap.set(e.salesperson_id, i + 1));
 
     // Projeção
-    const projections = sortedCurrent.map((e) => {
+    const projections = sortedCurrent.map(e => {
       const total = Number(e.total_sales);
       const paceDaily = total / daysElapsed;
       const projectedTotal = total + paceDaily * daysRemaining;
@@ -59,7 +59,7 @@ export function useRacePredictions(
 
     // Re-rank por projeção
     const sortedProjected = [...projections].sort(
-      (a, b) => b.projectedTotal - a.projectedTotal,
+      (a, b) => b.projectedTotal - a.projectedTotal
     );
 
     sortedProjected.forEach((p, i) => {

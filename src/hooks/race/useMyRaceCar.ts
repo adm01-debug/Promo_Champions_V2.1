@@ -17,12 +17,21 @@ export interface RaceCar {
   total_overtakes: number;
 }
 
-export type RaceCarInput = Omit<Partial<RaceCar>, 'id' | 'salesperson_id' | 'total_races' | 'total_wins' | 'total_overtakes'>;
+export type RaceCarInput = Omit<
+  Partial<RaceCar>,
+  'id' | 'salesperson_id' | 'total_races' | 'total_wins' | 'total_overtakes'
+>;
 
 async function getMySalespersonId(): Promise<string | null> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data } = await supabase.from('salespeople').select('id').eq('auth_user_id', user.id).maybeSingle();
+  const { data } = await supabase
+    .from('salespeople')
+    .select('id')
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
   return data?.id ?? null;
 }
 

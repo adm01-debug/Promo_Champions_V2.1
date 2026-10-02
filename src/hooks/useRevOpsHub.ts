@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface RevOpsKPIs {
   total_pipeline: number;
@@ -19,7 +19,7 @@ export interface RevOpsData {
   horizon_days: number;
   kpis: RevOpsKPIs;
   health: {
-    label: "excellent" | "healthy" | "warning" | "critical";
+    label: 'excellent' | 'healthy' | 'warning' | 'critical';
     coverage_ratio: number;
     recommendation: string;
   };
@@ -29,11 +29,12 @@ export interface RevOpsData {
 
 export function useRevOpsHub(horizonDays = 90) {
   return useQuery({
-    queryKey: ["revops-hub", horizonDays],
+    queryKey: ['revops-hub', horizonDays],
     queryFn: async (): Promise<RevOpsData> => {
       const session = await supabase.auth.getSession();
       const token =
-        session.data.session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        session.data.session?.access_token ??
+        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/revops-hub?horizon=${horizonDays}`;
       const res = await fetch(url, {
         headers: {

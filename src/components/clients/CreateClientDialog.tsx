@@ -1,12 +1,18 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import { useCreateClient } from "@/hooks/crm/useClients";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Plus } from 'lucide-react';
+import { useCreateClient } from '@/hooks/crm/useClients';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -14,16 +20,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 const clientSchema = z.object({
-  name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome deve ter no máximo 100 caracteres"),
-  email: z.string().trim().email("E-mail inválido").max(255, "E-mail deve ter no máximo 255 caracteres").or(z.literal("")),
-  phone: z.string().trim().max(20, "Telefone deve ter no máximo 20 caracteres").optional().or(z.literal("")),
-  company: z.string().trim().max(100, "Empresa deve ter no máximo 100 caracteres").optional().or(z.literal("")),
-  lead_source: z.string().optional().or(z.literal("")),
-  lat: z.string().optional().or(z.literal("")),
-  lng: z.string().optional().or(z.literal("")),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+  email: z
+    .string()
+    .trim()
+    .email('E-mail inválido')
+    .max(255, 'E-mail deve ter no máximo 255 caracteres')
+    .or(z.literal('')),
+  phone: z
+    .string()
+    .trim()
+    .max(20, 'Telefone deve ter no máximo 20 caracteres')
+    .optional()
+    .or(z.literal('')),
+  company: z
+    .string()
+    .trim()
+    .max(100, 'Empresa deve ter no máximo 100 caracteres')
+    .optional()
+    .or(z.literal('')),
+  lead_source: z.string().optional().or(z.literal('')),
+  lat: z.string().optional().or(z.literal('')),
+  lng: z.string().optional().or(z.literal('')),
 });
 
 type ClientFormData = z.infer<typeof clientSchema>;
@@ -35,13 +60,13 @@ export const CreateClientDialog = () => {
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      lead_source: "",
-      lat: "",
-      lng: "",
+      name: '',
+      email: '',
+      phone: '',
+      company: '',
+      lead_source: '',
+      lat: '',
+      lng: '',
     },
   });
 
@@ -82,7 +107,9 @@ export const CreateClientDialog = () => {
       </DialogTrigger>
       <DialogContent className="glass border-border/50">
         <DialogHeader>
-          <DialogTitle className="text-section-title gradient-text">Novo Cliente</DialogTitle>
+          <DialogTitle className="text-section-title gradient-text">
+            Novo Cliente
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -213,11 +240,19 @@ export const CreateClientDialog = () => {
               />
             </div>
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" className="gradient-primary" disabled={createClient.isPending}>
-                {createClient.isPending ? "Criando..." : "Criar Cliente"}
+              <Button
+                type="submit"
+                className="gradient-primary"
+                disabled={createClient.isPending}
+              >
+                {createClient.isPending ? 'Criando...' : 'Criar Cliente'}
               </Button>
             </div>
           </form>

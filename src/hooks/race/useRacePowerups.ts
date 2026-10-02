@@ -24,12 +24,14 @@ export function useRacePowerups(seasonId?: string, salespersonId?: string) {
         .eq('season_id', seasonId)
         .eq('salesperson_id', salespersonId);
       if (error) throw error;
-      return (data ?? []).map((r) => ({
+      return (data ?? []).map(r => ({
         id: r.id,
         season_id: r.season_id,
         salesperson_id: r.salesperson_id,
         powerup_type: r.powerup_type as RacePowerup['powerup_type'],
-        position_pct: Number((r.effect_data as Record<string, unknown>)?.position_pct ?? 0),
+        position_pct: Number(
+          (r.effect_data as Record<string, unknown>)?.position_pct ?? 0
+        ),
         used_at: r.used_at,
       }));
     },
@@ -41,18 +43,31 @@ export function useRacePowerups(seasonId?: string, salespersonId?: string) {
     if (!seasonId) return;
     const channel = supabase
       .channel(`race-powerups-${seasonId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'race_powerups', filter: `season_id=eq.${seasonId}` }, () => {
-        qc.invalidateQueries({ queryKey: ['race-powerups', seasonId] });
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'race_powerups',
+          filter: `season_id=eq.${seasonId}`,
+        },
+        () => {
+          qc.invalidateQueries({ queryKey: ['race-powerups', seasonId] });
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [seasonId, qc]);
 
   return query;
 }
 
 export async function collectRacePowerup(powerupId: string) {
-  const { data, error } = await supabase.functions.invoke('collect-race-powerup', { body: { powerup_id: powerupId } });
+  const { data, error } = await supabase.functions.invoke('collect-race-powerup', {
+    body: { powerup_id: powerupId },
+  });
   if (error) throw error;
   return data;
 }

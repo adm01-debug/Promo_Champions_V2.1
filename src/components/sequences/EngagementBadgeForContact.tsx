@@ -1,5 +1,8 @@
-import { useEngagementScore, type ContactType } from "@/hooks/engagement/useEngagementScore";
-import { EngagementScoreBadge } from "@/components/engagement/EngagementScoreBadge";
+import {
+  useEngagementScore,
+  type ContactType,
+} from '@/hooks/engagement/useEngagementScore';
+import { EngagementScoreBadge } from '@/components/engagement/EngagementScoreBadge';
 
 interface Props {
   contactId: string;
@@ -10,5 +13,7 @@ interface Props {
 export function EngagementBadgeForContact({ contactId, contactType }: Props) {
   const { data } = useEngagementScore(contactId, contactType);
   if (!data?.score) return null;
-  return <EngagementScoreBadge score={data.score.score} tier={data.score.tier} size="sm" />;
+  return (
+    <EngagementScoreBadge score={data.score.score} tier={data.score.tier} size="sm" />
+  );
 }

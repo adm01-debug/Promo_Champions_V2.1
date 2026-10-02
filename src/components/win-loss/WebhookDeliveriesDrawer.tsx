@@ -172,7 +172,11 @@ export function WebhookDeliveriesDrawer({
 
     const validation = validateReplayIds(ids);
     if (!validation.ok) {
-      logReplayValidationFailure(ids, (validation as { ok: false; message: string }).message, { subscriptionId });
+      logReplayValidationFailure(
+        ids,
+        (validation as { ok: false; message: string }).message,
+        { subscriptionId }
+      );
       toast.error((validation as { ok: false; message: string }).message);
       return;
     }
@@ -212,7 +216,9 @@ export function WebhookDeliveriesDrawer({
         <DrawerHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <DrawerTitle className="text-section-title">Entregas de Webhook</DrawerTitle>
+              <DrawerTitle className="text-section-title">
+                Entregas de Webhook
+              </DrawerTitle>
               <DrawerDescription className="text-xs">
                 Acompanhe e reenvie falhas de entrega para esta assinatura.
               </DrawerDescription>

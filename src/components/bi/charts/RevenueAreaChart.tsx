@@ -22,7 +22,11 @@ const RevenueAreaChart = ({ data, formatCurrency }: RevenueAreaChartProps) => (
           <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
         </linearGradient>
       </defs>
-      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
+      <CartesianGrid
+        strokeDasharray="3 3"
+        stroke="hsl(var(--border))"
+        strokeOpacity={0.5}
+      />
       <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
       <YAxis
         stroke="hsl(var(--muted-foreground))"

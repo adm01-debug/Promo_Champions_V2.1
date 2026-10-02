@@ -11,7 +11,11 @@ interface ReplayButtonProps {
  * Botão flutuante de replay no canto inferior direito.
  * Pulsa suavemente quando há replay disponível.
  */
-export function ReplayButton({ onClick, disabled = false, isPlaying = false }: ReplayButtonProps) {
+export function ReplayButton({
+  onClick,
+  disabled = false,
+  isPlaying = false,
+}: ReplayButtonProps) {
   return (
     <button
       type="button"

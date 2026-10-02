@@ -1,12 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Loader2, PlayCircle } from 'lucide-react';
 import { format } from 'date-fns';
@@ -55,19 +67,28 @@ export default function AdminFilaTarefasAutomaticas() {
       })
       .eq('id', s.id);
     setSaving(false);
-    if (error) { toast.error('Não foi possível salvar'); return; }
+    if (error) {
+      toast.error('Não foi possível salvar');
+      return;
+    }
     toast.success('Configurações salvas');
   };
 
   const runNow = async () => {
     setRunning(true);
-    const { data, error } = await supabase.functions.invoke('generate-urgent-client-tasks', {
-      body: {},
-      // force execution regardless of schedule
-      method: 'POST',
-    });
+    const { data, error } = await supabase.functions.invoke(
+      'generate-urgent-client-tasks',
+      {
+        body: {},
+        // force execution regardless of schedule
+        method: 'POST',
+      }
+    );
     setRunning(false);
-    if (error) { toast.error('Falha ao executar'); return; }
+    if (error) {
+      toast.error('Falha ao executar');
+      return;
+    }
     toast.success(`Fila executada: ${JSON.stringify(data)}`);
   };
 
@@ -83,28 +104,42 @@ export default function AdminFilaTarefasAutomaticas() {
     <div className="container max-w-3xl py-8 space-y-6">
       <Helmet>
         <title>Fila Diária de Tarefas Automáticas</title>
-        <meta name="description" content="Configure a geração automática diária de tarefas para clientes com urgência alta." />
+        <meta
+          name="description"
+          content="Configure a geração automática diária de tarefas para clientes com urgência alta."
+        />
       </Helmet>
 
       <div>
         <h1 className="text-page-title">Fila Diária Automática</h1>
         <p className="text-muted-foreground mt-1">
-          Gera tarefas automaticamente para clientes com urgência alta todo dia após o horário definido.
+          Gera tarefas automaticamente para clientes com urgência alta todo dia após o
+          horário definido.
         </p>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Configurações</CardTitle>
-          <CardDescription>Ajuste horário, urgência mínima e limite por vendedor.</CardDescription>
+          <CardDescription>
+            Ajuste horário, urgência mínima e limite por vendedor.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="enabled" className="text-base">Fila ativa</Label>
-              <p className="text-sm text-muted-foreground">Quando ligada, roda diariamente após o horário limite.</p>
+              <Label htmlFor="enabled" className="text-base">
+                Fila ativa
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Quando ligada, roda diariamente após o horário limite.
+              </p>
             </div>
-            <Switch id="enabled" checked={s.enabled} onCheckedChange={(v) => setS({ ...s, enabled: v })} />
+            <Switch
+              id="enabled"
+              checked={s.enabled}
+              onCheckedChange={v => setS({ ...s, enabled: v })}
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,22 +149,30 @@ export default function AdminFilaTarefasAutomaticas() {
                 id="cutoff"
                 type="time"
                 value={s.cutoff_time.slice(0, 5)}
-                onChange={(e) => setS({ ...s, cutoff_time: `${e.target.value}:00` })}
+                onChange={e => setS({ ...s, cutoff_time: `${e.target.value}:00` })}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="tz">Fuso horário</Label>
-              <Input id="tz" value={s.timezone} onChange={(e) => setS({ ...s, timezone: e.target.value })} />
+              <Input
+                id="tz"
+                value={s.timezone}
+                onChange={e => setS({ ...s, timezone: e.target.value })}
+              />
             </div>
 
             <div className="space-y-2">
               <Label>Urgência mínima</Label>
               <Select
                 value={s.min_urgency}
-                onValueChange={(v) => setS({ ...s, min_urgency: v as QueueSettings['min_urgency'] })}
+                onValueChange={v =>
+                  setS({ ...s, min_urgency: v as QueueSettings['min_urgency'] })
+                }
               >
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="critical">Apenas crítica</SelectItem>
                   <SelectItem value="high">Alta ou crítica</SelectItem>
@@ -146,19 +189,28 @@ export default function AdminFilaTarefasAutomaticas() {
                 min={1}
                 max={50}
                 value={s.max_tasks_per_salesperson}
-                onChange={(e) => setS({ ...s, max_tasks_per_salesperson: Number(e.target.value) })}
+                onChange={e =>
+                  setS({ ...s, max_tasks_per_salesperson: Number(e.target.value) })
+                }
               />
             </div>
           </div>
 
           <div className="rounded-md border border-border/60 bg-muted/40 p-3 text-sm">
-            <div>Última execução: {s.last_run_date ? format(new Date(s.last_run_date), 'dd/MM/yyyy') : '—'}</div>
+            <div>
+              Última execução:{' '}
+              {s.last_run_date ? format(new Date(s.last_run_date), 'dd/MM/yyyy') : '—'}
+            </div>
             <div>Tarefas criadas na última execução: {s.last_run_created_count ?? 0}</div>
           </div>
 
           <div className="flex flex-wrap gap-2 justify-end">
             <Button variant="outline" onClick={runNow} disabled={running}>
-              {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />}
+              {running ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <PlayCircle className="h-4 w-4" />
+              )}
               <span className="ml-2">Executar agora</span>
             </Button>
             <Button onClick={save} disabled={saving}>

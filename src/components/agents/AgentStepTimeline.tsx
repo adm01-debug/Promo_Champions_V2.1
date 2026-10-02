@@ -1,12 +1,12 @@
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, AlertCircle, Clock, SkipForward } from "lucide-react";
-import type { AgentAction } from "./agentHelpers";
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2, AlertCircle, Clock, SkipForward } from 'lucide-react';
+import type { AgentAction } from './agentHelpers';
 
 const STATUS_ICON = {
-  success: { icon: CheckCircle2, className: "text-success" },
-  error: { icon: AlertCircle, className: "text-destructive" },
-  pending_approval: { icon: Clock, className: "text-warning" },
-  skipped: { icon: SkipForward, className: "text-muted-foreground" },
+  success: { icon: CheckCircle2, className: 'text-success' },
+  error: { icon: AlertCircle, className: 'text-destructive' },
+  pending_approval: { icon: Clock, className: 'text-warning' },
+  skipped: { icon: SkipForward, className: 'text-muted-foreground' },
 } as const;
 
 interface Props {
@@ -24,7 +24,7 @@ export function AgentStepTimeline({ actions }: Props) {
 
   return (
     <ol className="relative border-l border-border/60 ml-3 space-y-4">
-      {actions.map((a) => {
+      {actions.map(a => {
         const meta = STATUS_ICON[a.status];
         const Icon = meta.icon;
         return (

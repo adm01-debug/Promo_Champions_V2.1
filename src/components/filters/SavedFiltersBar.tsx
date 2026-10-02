@@ -14,7 +14,11 @@ interface SavedFiltersBarProps {
   onApplyFilter: (filters: Record<string, unknown>) => void;
 }
 
-export function SavedFiltersBar({ entityType, currentFilters, onApplyFilter }: SavedFiltersBarProps) {
+export function SavedFiltersBar({
+  entityType,
+  currentFilters,
+  onApplyFilter,
+}: SavedFiltersBarProps) {
   const { filters, saveFilter, deleteFilter } = useSavedFilters(entityType);
   const [newName, setNewName] = useState('');
   const [isDefault, setIsDefault] = useState(false);
@@ -34,12 +38,14 @@ export function SavedFiltersBar({ entityType, currentFilters, onApplyFilter }: S
     );
   };
 
-  const hasActiveFilters = Object.values(currentFilters).some(v => v !== '' && v !== null && v !== undefined);
+  const hasActiveFilters = Object.values(currentFilters).some(
+    v => v !== '' && v !== null && v !== undefined
+  );
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
       {/* Saved filter chips */}
-      {filters.map((filter) => (
+      {filters.map(filter => (
         <Badge
           key={filter.id}
           variant={filter.is_default ? 'default' : 'outline'}
@@ -51,7 +57,7 @@ export function SavedFiltersBar({ entityType, currentFilters, onApplyFilter }: S
           {filter.name}
           <button
             className="ml-1 hover:text-destructive transition-colors"
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               deleteFilter.mutate(filter.id);
             }}
@@ -77,8 +83,8 @@ export function SavedFiltersBar({ entityType, currentFilters, onApplyFilter }: S
               <Input
                 placeholder="Nome do filtro..."
                 value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                onChange={e => setNewName(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSave()}
                 className="h-8"
               />
               <div className="flex items-center gap-2">

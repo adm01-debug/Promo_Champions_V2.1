@@ -1,6 +1,9 @@
 import { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import {
+  useClientKanban,
+  useUpdateKanbanStatus,
+  type PortfolioEntry,
+} from '@/hooks/crm/useClientKanban';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -11,22 +14,7 @@ import { toast } from 'sonner';
 import { useCountUp } from '@/hooks/useCountUp';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface Client {
-  id: string;
-  name: string;
-  company: string | null;
-  email: string | null;
-  phone: string | null;
-  total_value: number;
-}
-
-interface PortfolioEntry {
-  id: string;
-  client_id: string;
-  status: string;
-  clients: Client;
-}
-
+import { formatBRL } from '@/lib/money';
 const STAGES = [
   { id: 'active', label: 'Ativo', color: 'bg-success/10 border-success/30 text-success' },
   { id: 'nurturing', label: 'Nutrição', color: 'bg-info/10 border-info/30 text-info' },
@@ -51,53 +39,18 @@ const StageValue = ({ value }: { value: number }) => {
   const animated = useCountUp(value, { duration: 1200 });
   return (
     <span className="text-xs font-bold text-primary tracking-tight">
-      R$ {animated.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
+      {formatBRL(animated)}
     </span>
   );
 };
 
 export function ClientKanban() {
-  const queryClient = useQueryClient();
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<string | null>(null);
 
-  const { data: portfolio = [], isLoading } = useQuery({
-    queryKey: ['client-kanban'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('client_portfolio')
-        .select(
-          'id, client_id, status, clients(id, name, company, email, phone, total_value)'
-        )
-        .order('updated_at', { ascending: false });
-      if (error) throw error;
-      return (data as PortfolioEntry[]) || [];
-    },
-  });
+  const { data: portfolio = [], isLoading } = useClientKanban();
 
-  const updateStatus = useMutation({
-    mutationFn: async ({
-      portfolioId,
-      newStatus,
-    }: {
-      portfolioId: string;
-      newStatus: string;
-    }) => {
-      const { error } = await supabase.rpc(
-        'update_client_portfolio_status' as never,
-        {
-          p_portfolio_id: portfolioId,
-          p_status: newStatus,
-          p_last_purchase_date: null,
-        } as never
-      );
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['client-kanban'] });
-      toast.success('Status do cliente atualizado');
-    },
-  });
+  const updateStatus = useUpdateKanbanStatus();
 
   const groupedByStage = useMemo(() => {
     const grouped: Record<string, PortfolioEntry[]> = {};
@@ -122,18 +75,16 @@ export function ClientKanban() {
 
   const handleDrop = (stageId: string) => {
     if (draggedItem) {
-      updateStatus.mutate({ portfolioId: draggedItem, newStatus: stageId });
+      updateStatus.mutate(
+        { portfolioId: draggedItem, newStatus: stageId },
+        { onSuccess: () => toast.success('Status do cliente atualizado') }
+      );
     }
     setDraggedItem(null);
     setDragOverStage(null);
   };
 
-  const formatValue = (value: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    }).format(value);
+  const formatValue = (value: number) => formatBRL(value);
 
   if (isLoading) {
     return (

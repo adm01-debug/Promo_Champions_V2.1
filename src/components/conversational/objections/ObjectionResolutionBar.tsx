@@ -1,4 +1,4 @@
-import { Progress } from "@/components/ui/progress";
+import { Progress } from '@/components/ui/progress';
 
 interface Props {
   resolved: number;
@@ -20,29 +20,36 @@ export function ObjectionResolutionBar({ resolved, partial, unresolved }: Props)
       <div className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
         <div
           className="h-full bg-success transition-all"
-          style={{ width: `${rPct}%`, backgroundColor: "hsl(var(--success, var(--primary)))" }}
+          style={{
+            width: `${rPct}%`,
+            backgroundColor: 'hsl(var(--success, var(--primary)))',
+          }}
         />
         <div
           className="h-full transition-all"
-          style={{ width: `${pPct}%`, backgroundColor: "hsl(var(--warning))" }}
+          style={{ width: `${pPct}%`, backgroundColor: 'hsl(var(--warning))' }}
         />
         <div
           className="h-full transition-all"
-          style={{ width: `${uPct}%`, backgroundColor: "hsl(var(--destructive))" }}
+          style={{ width: `${uPct}%`, backgroundColor: 'hsl(var(--destructive))' }}
         />
       </div>
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground">
-          <span className="font-medium" style={{ color: "hsl(var(--success, var(--primary)))" }}>
+          <span
+            className="font-medium"
+            style={{ color: 'hsl(var(--success, var(--primary)))' }}
+          >
             {resolved}
-          </span>{" "}
+          </span>{' '}
           resolvidas
         </span>
         <span className="text-muted-foreground">
           <span className="font-medium text-warning">{partial}</span> parciais
         </span>
         <span className="text-muted-foreground">
-          <span className="font-medium text-destructive">{unresolved}</span> não resolvidas
+          <span className="font-medium text-destructive">{unresolved}</span> não
+          resolvidas
         </span>
       </div>
       <Progress value={(resolved / total) * 100} className="hidden" />

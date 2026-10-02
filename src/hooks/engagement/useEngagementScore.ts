@@ -99,9 +99,12 @@ export function useRecomputeEngagement() {
         if (error) throw error;
         return { score: data as number };
       }
-      const { data, error } = await supabase.functions.invoke('engagement-score-recompute', {
-        body: {},
-      });
+      const { data, error } = await supabase.functions.invoke(
+        'engagement-score-recompute',
+        {
+          body: {},
+        }
+      );
       if (error) throw error;
       return data as { ok: boolean; updated: number };
     },

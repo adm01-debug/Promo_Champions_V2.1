@@ -3,6 +3,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 import { DispatcherPayloadSchema } from "./schema.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 
 
@@ -115,6 +117,59 @@ export const handler = async (req: Request): Promise<Response> => {
   const requestStart = Date.now();
 
   try {
+    // SEC: antes desta verificação, qualquer chamada com a anon key podia
+    // disparar POSTs para todas as URLs assinadas (broadcast) ou reenviar
+    // dead letters via __target_subscription_id/__replay_of como service_role.
+    // Agora só passa job interno (service_role — ex.: winloss-webhook-replay —
+    // ou X-Cron-Secret) ou usuário com papel admin/manager.
+    // Chamada sem nenhuma credencial é 401 antes de tocar env/banco.
+    if (!req.headers.get("Authorization") && !req.headers.get("X-Cron-Secret")) {
+      return envelope(requestId, 401, { error: "unauthorized" });
+    }
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (authError) {
+      structuredLog("error", { msg: "cron_authorization_unavailable", ...describeError(authError) }, requestId);
+      return envelope(requestId, 503, { error: "authorization_unavailable" });
+    }
+
+    if (!authorizedByCron) {
+      try {
+        const caller = await getUserClient(req);
+        const { data: allowed, error: roleError } = await caller.client.rpc(
+          "is_admin_or_manager" as never,
+          { _user_id: caller.userId } as never,
+        );
+        if (roleError) throw roleError;
+        if (!allowed) {
+          structuredLog("warn", { msg: "auth_forbidden", userId: caller.userId }, requestId);
+          return envelope(requestId, 403, { error: "forbidden" });
+        }
+      } catch (authError) {
+        if (authError instanceof UnauthorizedError) {
+          structuredLog("warn", { msg: "auth_unauthorized" }, requestId);
+          return envelope(requestId, 401, { error: "unauthorized" });
+        }
+        structuredLog("error", { msg: "authorization_failed", ...describeError(authError) }, requestId);
+        return envelope(requestId, 503, { error: "authorization_unavailable" });
+      }
+    }
+
     const rawPayload = await req.json().catch(() => null);
     if (!rawPayload || typeof rawPayload !== "object" || Array.isArray(rawPayload)) {
       structuredLog("warn", { msg: "invalid_payload", reason: "not_an_object" }, requestId);
@@ -140,11 +195,6 @@ export const handler = async (req: Request): Promise<Response> => {
     const event = payload.event;
     const targetSubId = payload.__target_subscription_id ?? null;
     const replayOf = payload.__replay_of ?? null;
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
 
     let targets: Subscription[];
     let activeSubsCount = 0;

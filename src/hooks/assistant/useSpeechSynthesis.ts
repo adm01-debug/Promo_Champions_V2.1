@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * TTS via Web Speech API (SpeechSynthesis) — pt-BR nativo, sem custo, sem rede.
@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * - Voz pt-BR pode carregar assíncrono → re-escuta `voiceschanged`.
  */
 export function useSpeechSynthesis(text: string) {
-  const supported = typeof window !== "undefined" && "speechSynthesis" in window;
+  const supported = typeof window !== 'undefined' && 'speechSynthesis' in window;
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
   const utterRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -20,15 +20,16 @@ export function useSpeechSynthesis(text: string) {
     if (!supported) return;
     const pickVoice = () => {
       const voices = window.speechSynthesis.getVoices();
-      const pt = voices.find((v) => v.lang?.toLowerCase().startsWith("pt-br"))
-        ?? voices.find((v) => v.lang?.toLowerCase().startsWith("pt"))
-        ?? voices[0]
-        ?? null;
+      const pt =
+        voices.find(v => v.lang?.toLowerCase().startsWith('pt-br')) ??
+        voices.find(v => v.lang?.toLowerCase().startsWith('pt')) ??
+        voices[0] ??
+        null;
       setVoice(pt);
     };
     pickVoice();
-    window.speechSynthesis.addEventListener("voiceschanged", pickVoice);
-    return () => window.speechSynthesis.removeEventListener("voiceschanged", pickVoice);
+    window.speechSynthesis.addEventListener('voiceschanged', pickVoice);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', pickVoice);
   }, [supported]);
 
   const stop = useCallback(() => {
@@ -41,14 +42,14 @@ export function useSpeechSynthesis(text: string) {
     if (!supported || !text?.trim()) return;
     // Remove marcações markdown básicas para não "ler" asteriscos e crases.
     const clean = text
-      .replace(/```[\s\S]*?```/g, " ")
-      .replace(/[#*_`>~-]+/g, " ")
-      .replace(/\[(.*?)\]\(.*?\)/g, "$1")
-      .replace(/\s+/g, " ")
+      .replace(/```[\s\S]*?```/g, ' ')
+      .replace(/[#*_`>~-]+/g, ' ')
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+      .replace(/\s+/g, ' ')
       .trim();
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(clean);
-    u.lang = voice?.lang ?? "pt-BR";
+    u.lang = voice?.lang ?? 'pt-BR';
     if (voice) u.voice = voice;
     u.rate = 1.05;
     u.pitch = 1;

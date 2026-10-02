@@ -1,18 +1,24 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Minus, 
-  AlertTriangle, 
-  Package, 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  AlertTriangle,
+  Package,
   RefreshCw,
-  BarChart3
-} from "lucide-react";
-import { useDemandForecast } from "@/hooks/useDemandForecast";
+  BarChart3,
+} from 'lucide-react';
+import { useDemandForecast } from '@/hooks/useDemandForecast';
 import {
   Table,
   TableBody,
@@ -20,12 +26,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 
 export function DemandForecastDashboard() {
-  const { 
-    generateForecasts, 
-    isGenerating, 
+  const {
+    generateForecasts,
+    isGenerating,
     lastForecastResult,
     storedForecasts,
     forecastsLoading,
@@ -45,11 +51,14 @@ export function DemandForecastDashboard() {
   };
 
   const getRiskBadge = (risk: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
-      critical: { variant: "destructive", label: "Crítico" },
-      high: { variant: "destructive", label: "Alto" },
-      medium: { variant: "secondary", label: "Médio" },
-      low: { variant: "outline", label: "Baixo" },
+    const variants: Record<
+      string,
+      { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }
+    > = {
+      critical: { variant: 'destructive', label: 'Crítico' },
+      high: { variant: 'destructive', label: 'Alto' },
+      medium: { variant: 'secondary', label: 'Médio' },
+      low: { variant: 'outline', label: 'Baixo' },
     };
     const { variant, label } = variants[risk] || variants.low;
     return <Badge variant={variant}>{label}</Badge>;
@@ -72,8 +81,8 @@ export function DemandForecastDashboard() {
             Análise preditiva de demanda de produtos
           </p>
         </div>
-        <Button 
-          onClick={() => generateForecasts()} 
+        <Button
+          onClick={() => generateForecasts()}
           disabled={isGenerating}
           className="gap-2"
         >
@@ -105,9 +114,7 @@ export function DemandForecastDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-status-error">
-              {criticalItems}
-            </div>
+            <div className="text-2xl font-bold text-status-error">{criticalItems}</div>
           </CardContent>
         </Card>
 
@@ -119,9 +126,7 @@ export function DemandForecastDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-status-warning">
-              {highRiskItems}
-            </div>
+            <div className="text-2xl font-bold text-status-warning">{highRiskItems}</div>
           </CardContent>
         </Card>
 
@@ -133,7 +138,7 @@ export function DemandForecastDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-sm font-medium">
-              {lastForecastResult?.generated_at 
+              {lastForecastResult?.generated_at
                 ? new Date(lastForecastResult.generated_at).toLocaleString('pt-BR')
                 : 'Nunca'}
             </div>
@@ -172,23 +177,37 @@ export function DemandForecastDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {forecasts.map((forecast) => (
+                {forecasts.map(forecast => (
                   <TableRow key={forecast.product_id}>
-                    <TableCell className="font-medium">
-                      {forecast.product_name}
-                    </TableCell>
+                    <TableCell className="font-medium">{forecast.product_name}</TableCell>
                     <TableCell className="text-center">
-                      <span className={forecast.current_stock <= 0 ? 'text-status-error font-bold' : ''}>
+                      <span
+                        className={
+                          forecast.current_stock <= 0 ? 'text-status-error font-bold' : ''
+                        }
+                      >
                         {forecast.current_stock}
                       </span>
                     </TableCell>
-                    <TableCell className="text-center">{forecast.predicted_demand_30d}</TableCell>
-                    <TableCell className="text-center">{forecast.predicted_demand_60d}</TableCell>
-                    <TableCell className="text-center">{forecast.predicted_demand_90d}</TableCell>
+                    <TableCell className="text-center">
+                      {forecast.predicted_demand_30d}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {forecast.predicted_demand_60d}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {forecast.predicted_demand_90d}
+                    </TableCell>
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-1">
                         {getTrendIcon(forecast.trend)}
-                        <span className="text-xs capitalize">{forecast.trend === 'increasing' ? 'Alta' : forecast.trend === 'decreasing' ? 'Baixa' : 'Estável'}</span>
+                        <span className="text-xs capitalize">
+                          {forecast.trend === 'increasing'
+                            ? 'Alta'
+                            : forecast.trend === 'decreasing'
+                              ? 'Baixa'
+                              : 'Estável'}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
@@ -196,7 +215,10 @@ export function DemandForecastDashboard() {
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex items-center gap-2">
-                        <Progress value={forecast.confidence * 100} className="h-2 w-16" />
+                        <Progress
+                          value={forecast.confidence * 100}
+                          className="h-2 w-16"
+                        />
                         <span className="text-xs text-muted-foreground">
                           {Math.round(forecast.confidence * 100)}%
                         </span>
@@ -226,9 +248,7 @@ export function DemandForecastDashboard() {
             <Package className="h-5 w-5 text-primary" />
             Níveis de Estoque
           </CardTitle>
-          <CardDescription>
-            Status atual do inventário por produto
-          </CardDescription>
+          <CardDescription>Status atual do inventário por produto</CardDescription>
         </CardHeader>
         <CardContent>
           {inventoryLoading ? (
@@ -239,16 +259,20 @@ export function DemandForecastDashboard() {
             </div>
           ) : inventoryLevels && inventoryLevels.length > 0 ? (
             <div className="space-y-4">
-              {inventoryLevels.slice(0, 10).map((item) => {
+              {inventoryLevels.slice(0, 10).map(item => {
                 const percentage = (item.current_stock / item.max_stock_level) * 100;
                 const isCritical = item.current_stock <= item.reorder_point;
-                
+
                 return (
                   <div key={item.id} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium">{item.products?.name || 'Produto'}</span>
+                      <span className="font-medium">
+                        {item.products?.name || 'Produto'}
+                      </span>
                       <div className="flex items-center gap-2">
-                        <span className={`text-sm ${isCritical ? 'text-status-error font-bold' : 'text-muted-foreground'}`}>
+                        <span
+                          className={`text-sm ${isCritical ? 'text-status-error font-bold' : 'text-muted-foreground'}`}
+                        >
                           {item.current_stock} / {item.max_stock_level}
                         </span>
                         {isCritical && (
@@ -256,8 +280,8 @@ export function DemandForecastDashboard() {
                         )}
                       </div>
                     </div>
-                    <Progress 
-                      value={percentage} 
+                    <Progress
+                      value={percentage}
                       className={`h-2 ${isCritical ? '[&>div]:bg-status-error' : ''}`}
                     />
                   </div>
@@ -267,7 +291,9 @@ export function DemandForecastDashboard() {
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <p>Nenhum nível de estoque cadastrado.</p>
-              <p className="text-sm">Os níveis serão criados automaticamente ao gerar previsões.</p>
+              <p className="text-sm">
+                Os níveis serão criados automaticamente ao gerar previsões.
+              </p>
             </div>
           )}
         </CardContent>

@@ -1,0 +1,74 @@
+name: Dependabot Auto-merge
+
+# Destrava a fila de PRs do Dependabot:
+#   - Em toda PR aberta/atualizada pelo dependabot[bot], habilita auto-merge
+#     (squash) — o merge acontece sozinho quando os checks ficam verdes.
+#   - Job diário varre PRs antigas do Dependabot, habilita auto-merge nas que
+#     ainda não têm e pede `@dependabot rebase` nas conflitantes.
+#
+# Requer "Allow auto-merge" habilitado em Settings → General → Pull Requests.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  schedule:
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-automerge:
+    name: Auto-merge na PR nova do Dependabot
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+    steps:
+      - name: Habilitar auto-merge (squash)
+        run: gh pr merge --auto --squash "$PR_URL"
+
+  reconcile:
+    name: Varredura diária da fila do Dependabot
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name != 'pull_request'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Auto-merge + rebase nas PRs do Dependabot
+        run: |
+          set -uo pipefail
+          gh pr list --state open --author 'dependabot[bot]' --limit 100 \
+            --json number,url,mergeStateStatus,autoMergeRequest,title \
+            > /tmp/dep_prs.json
+
+          COUNT=$(jq 'length' /tmp/dep_prs.json)
+          echo "PRs do Dependabot abertas: $COUNT"
+          [ "$COUNT" -eq 0 ] && exit 0
+
+          for i in $(seq 0 $((COUNT - 1))); do
+            PR=$(jq -c ".[$i]" /tmp/dep_prs.json)
+            NUMBER=$(jq -r '.number' <<<"$PR")
+            URL=$(jq -r '.url' <<<"$PR")
+            MERGE_STATE=$(jq -r '.mergeStateStatus' <<<"$PR")
+            HAS_AUTOMERGE=$(jq -r '.autoMergeRequest != null' <<<"$PR")
+
+            echo "PR #$NUMBER: mergeState=$MERGE_STATE autoMerge=$HAS_AUTOMERGE"
+
+            if [ "$HAS_AUTOMERGE" != "true" ]; then
+              gh pr merge --auto --squash "$URL" \
+                && echo "  auto-merge habilitado" \
+                || echo "  ::warning::falha ao habilitar auto-merge (checks vermelhos ou repo sem auto-merge)"
+            fi
+
+            if [ "$MERGE_STATE" = "DIRTY" ] || [ "$MERGE_STATE" = "BEHIND" ]; then
+              gh pr comment "$NUMBER" --body "@dependabot rebase" \
+                && echo "  rebase solicitado" \
+                || echo "  ::warning::falha ao pedir rebase"
+            fi
+          done

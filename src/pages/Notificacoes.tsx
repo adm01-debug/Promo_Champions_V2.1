@@ -56,6 +56,7 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 const DEFAULT_PREF: {
   email: string;
   frequency: 'realtime' | 'daily' | 'weekly';
@@ -429,7 +430,7 @@ export default function Notificacoes() {
                                       <span className="text-muted-foreground font-normal">
                                         vendeu
                                       </span>{' '}
-                                      R$ {audit.sale_amount.toLocaleString('pt-BR')}
+                                      {formatBRL(audit.sale_amount)}
                                     </p>
                                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
                                       <Badge

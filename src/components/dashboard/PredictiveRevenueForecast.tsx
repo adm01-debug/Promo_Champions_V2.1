@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 export const PredictiveRevenueForecast = () => {
   const [horizon, setHorizon] = useState(30);
 
@@ -23,13 +24,6 @@ export const PredictiveRevenueForecast = () => {
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
   });
-
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    }).format(val);
 
   if (isLoading) {
     return (
@@ -97,7 +91,7 @@ export const PredictiveRevenueForecast = () => {
             </span>
           </div>
           <div className="text-3xl font-bold tracking-tight">
-            {formatCurrency(forecast?.scenarios.realistic)}
+            {formatBRL(forecast?.scenarios.realistic)}
           </div>
           <div className="mt-2 space-y-1">
             <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider">
@@ -125,7 +119,7 @@ export const PredictiveRevenueForecast = () => {
               Pessimista
             </span>
             <div className="text-xs font-bold text-danger/80">
-              {formatCurrency(forecast?.scenarios.pessimistic)}
+              {formatBRL(forecast?.scenarios.pessimistic)}
             </div>
           </div>
           <div className="space-y-1 text-center border-x border-primary/5">
@@ -133,7 +127,7 @@ export const PredictiveRevenueForecast = () => {
               Otimista
             </span>
             <div className="text-xs font-bold text-success/80">
-              {formatCurrency(forecast?.scenarios.optimistic)}
+              {formatBRL(forecast?.scenarios.optimistic)}
             </div>
           </div>
           <div className="space-y-1 text-right">
@@ -141,7 +135,7 @@ export const PredictiveRevenueForecast = () => {
               Meta ({horizon}d)
             </span>
             <div className="text-xs font-bold text-primary">
-              {formatCurrency(forecast?.metrics.goal_for_horizon)}
+              {formatBRL(forecast?.metrics.goal_for_horizon)}
             </div>
           </div>
         </div>

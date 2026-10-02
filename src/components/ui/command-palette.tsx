@@ -1,7 +1,16 @@
 import { FC, useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Search, ArrowUp, ArrowDown, CornerDownLeft, X, Clock, Hash, FileText } from 'lucide-react';
+import {
+  Search,
+  ArrowUp,
+  ArrowDown,
+  CornerDownLeft,
+  X,
+  Clock,
+  Hash,
+  FileText,
+} from 'lucide-react';
 
 interface SearchResult {
   id: string;
@@ -36,7 +45,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
   recentSearches = [],
   onSearch,
   onSelect,
-  placeholder = "Buscar...",
+  placeholder = 'Buscar...',
   isLoading = false,
   className,
 }) => {
@@ -55,13 +64,16 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
   }, [isOpen]);
 
   // Group results by category
-  const groupedResults = results.reduce((acc, result) => {
-    if (!acc[result.category]) {
-      acc[result.category] = [];
-    }
-    acc[result.category].push(result);
-    return acc;
-  }, {} as Record<string, SearchResult[]>);
+  const groupedResults = results.reduce(
+    (acc, result) => {
+      if (!acc[result.category]) {
+        acc[result.category] = [];
+      }
+      acc[result.category].push(result);
+      return acc;
+    },
+    {} as Record<string, SearchResult[]>
+  );
 
   // Flatten for navigation
   const allItems = query ? results : recentSearches;
@@ -71,11 +83,11 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          setSelectedIndex((i) => Math.min(i + 1, allItems.length - 1));
+          setSelectedIndex(i => Math.min(i + 1, allItems.length - 1));
           break;
         case 'ArrowUp':
           e.preventDefault();
-          setSelectedIndex((i) => Math.max(i - 1, 0));
+          setSelectedIndex(i => Math.max(i - 1, 0));
           break;
         case 'Enter':
           e.preventDefault();
@@ -132,9 +144,9 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             className={cn(
-              "fixed top-[20%] left-1/2 -translate-x-1/2 z-50",
-              "w-full max-w-xl",
-              "bg-card rounded-2xl border border-border shadow-2xl overflow-hidden",
+              'fixed top-[20%] left-1/2 -translate-x-1/2 z-50',
+              'w-full max-w-xl',
+              'bg-card rounded-2xl border border-border shadow-2xl overflow-hidden',
               className
             )}
           >
@@ -149,8 +161,8 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
                 className={cn(
-                  "flex-1 bg-transparent text-foreground placeholder:text-muted-foreground",
-                  "outline-none text-base"
+                  'flex-1 bg-transparent text-foreground placeholder:text-muted-foreground',
+                  'outline-none text-base'
                 )}
               />
               {query && (
@@ -195,7 +207,7 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                       {category}
                     </div>
                     {items.map((result, _index) => {
-                      const globalIndex = results.findIndex((r) => r.id === result.id);
+                      const globalIndex = results.findIndex(r => r.id === result.id);
                       const isSelected = globalIndex === selectedIndex;
 
                       return (
@@ -206,19 +218,21 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                             onClose();
                           }}
                           className={cn(
-                            "w-full px-4 py-3 flex items-center gap-3 text-left",
-                            "transition-colors",
-                            isSelected ? "bg-primary/10" : "hover:bg-muted/50"
+                            'w-full px-4 py-3 flex items-center gap-3 text-left',
+                            'transition-colors',
+                            isSelected ? 'bg-primary/10' : 'hover:bg-muted/50'
                           )}
                         >
                           <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
                             {result.icon || <FileText className="h-4 w-4" />}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className={cn(
-                              "font-medium truncate",
-                              isSelected ? "text-primary" : "text-foreground"
-                            )}>
+                            <p
+                              className={cn(
+                                'font-medium truncate',
+                                isSelected ? 'text-primary' : 'text-foreground'
+                              )}
+                            >
                               {result.title}
                             </p>
                             {result.description && (
@@ -256,16 +270,18 @@ export const CommandPalette: FC<CommandPaletteProps> = ({
                           onClose();
                         }}
                         className={cn(
-                          "w-full px-4 py-3 flex items-center gap-3 text-left",
-                          "transition-colors",
-                          isSelected ? "bg-primary/10" : "hover:bg-muted/50"
+                          'w-full px-4 py-3 flex items-center gap-3 text-left',
+                          'transition-colors',
+                          isSelected ? 'bg-primary/10' : 'hover:bg-muted/50'
                         )}
                       >
                         <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className={cn(
-                          "flex-1",
-                          isSelected ? "text-primary" : "text-foreground"
-                        )}>
+                        <span
+                          className={cn(
+                            'flex-1',
+                            isSelected ? 'text-primary' : 'text-foreground'
+                          )}
+                        >
                           {result.title}
                         </span>
                       </button>

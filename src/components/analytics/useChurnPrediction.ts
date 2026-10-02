@@ -32,9 +32,11 @@ export const useChurnPrediction = (options?: UseChurnPredictionOptions) => {
       const now = new Date();
 
       return (clients || [])
-        .map((client) => {
+        .map(client => {
           const lastUpdate = new Date(client.updated_at);
-          const daysSince = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
+          const daysSince = Math.floor(
+            (now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24)
+          );
 
           let riskScore = Math.min(100, daysSince * 2);
           let riskLevel: ChurnPredictionItem['riskLevel'] = 'low';
@@ -68,7 +70,7 @@ export const useChurnPrediction = (options?: UseChurnPredictionOptions) => {
             daysSinceLastPurchase: daysSince,
           };
         })
-        .filter((client) => client.riskScore > 20);
+        .filter(client => client.riskScore > 20);
     },
     staleTime: CACHE_TIMES.STALE_TIME,
     gcTime: CACHE_TIMES.GC_TIME,

@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 export function triggerRaceEvent(saleId: string) {
   supabase.functions
     .invoke('process-race-event', { body: { sale_id: saleId } })
-    .catch((e) => {
+    .catch(e => {
       console.warn('race-event trigger failed', e);
     });
 }

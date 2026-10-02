@@ -8,17 +8,21 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
-  const { steps, completedCount, totalSteps, progress, isComplete } = useOnboardingChecklist();
+  const { steps, completedCount, totalSteps, progress, isComplete } =
+    useOnboardingChecklist();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
   if (dismissed || isComplete) return null;
 
-  const nextStep = steps.find((s, i) => !s.completed && steps.slice(0, i).every(st => st.completed));
+  const nextStep = steps.find(
+    (s, i) => !s.completed && steps.slice(0, i).every(st => st.completed)
+  );
 
   return (
-    <motion.div ref={ref}
+    <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -27,7 +31,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="rounded-xl border border-primary/30 bg-black/40 backdrop-blur-md p-5 shadow-[0_0_30px_rgba(14,165,233,0.05)] group relative overflow-hidden">
         {/* Animated accent line */}
         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-        
+
         {/* Compact Header — always visible */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative z-10">
           <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
@@ -41,12 +45,12 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
                 <button
                   onClick={() => !step.completed && navigate(step.route)}
                   className={cn(
-                    "flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap",
+                    'flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap',
                     step.completed
-                      ? "bg-success/15 text-success"
+                      ? 'bg-success/15 text-success'
                       : step === nextStep
-                        ? "bg-primary/15 text-primary ring-1 ring-primary/30"
-                        : "bg-muted/50 text-muted-foreground"
+                        ? 'bg-primary/15 text-primary ring-1 ring-primary/30'
+                        : 'bg-muted/50 text-muted-foreground'
                   )}
                   aria-label={step.title}
                 >
@@ -90,9 +94,14 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
               size="icon"
               className="h-6 w-6 text-muted-foreground hover:text-foreground"
               onClick={() => setExpanded(!expanded)}
-              aria-label={expanded ? "Recolher detalhes" : "Expandir detalhes"}
+              aria-label={expanded ? 'Recolher detalhes' : 'Expandir detalhes'}
             >
-              <ChevronRight className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-90")} />
+              <ChevronRight
+                className={cn(
+                  'h-3.5 w-3.5 transition-transform',
+                  expanded && 'rotate-90'
+                )}
+              />
             </Button>
             <Button
               variant="ghost"
@@ -111,7 +120,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
           {expanded && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
+              animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
@@ -123,12 +132,12 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
                     <motion.button
                       key={step.id}
                       className={cn(
-                        "flex items-start gap-2.5 p-3 rounded-lg text-left transition-colors",
+                        'flex items-start gap-2.5 p-3 rounded-lg text-left transition-colors',
                         step.completed
-                          ? "opacity-60"
+                          ? 'opacity-60'
                           : isNext
-                            ? "bg-primary/10 border border-primary/20"
-                            : "hover:bg-muted/50"
+                            ? 'bg-primary/10 border border-primary/20'
+                            : 'hover:bg-muted/50'
                       )}
                       onClick={() => !step.completed && navigate(step.route)}
                       whileHover={{ scale: step.completed ? 1 : 1.02 }}
@@ -136,16 +145,29 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
                       {step.completed ? (
                         <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
                       ) : (
-                        <span className={cn(
-                          "h-4 w-4 rounded-full border-2 flex items-center justify-center text-[9px] font-bold shrink-0 mt-0.5",
-                          isNext ? "border-primary text-primary" : "border-muted-foreground text-muted-foreground"
-                        )}>
+                        <span
+                          className={cn(
+                            'h-4 w-4 rounded-full border-2 flex items-center justify-center text-[9px] font-bold shrink-0 mt-0.5',
+                            isNext
+                              ? 'border-primary text-primary'
+                              : 'border-muted-foreground text-muted-foreground'
+                          )}
+                        >
                           {i + 1}
                         </span>
                       )}
                       <div className="min-w-0">
-                        <p className={cn("text-xs font-medium", step.completed && "line-through")}>{step.title}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">{step.description}</p>
+                        <p
+                          className={cn(
+                            'text-xs font-medium',
+                            step.completed && 'line-through'
+                          )}
+                        >
+                          {step.title}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate">
+                          {step.description}
+                        </p>
                       </div>
                     </motion.button>
                   );
@@ -158,4 +180,4 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
     </motion.div>
   );
 });
-OnboardingChecklist.displayName = "OnboardingChecklist";
+OnboardingChecklist.displayName = 'OnboardingChecklist';

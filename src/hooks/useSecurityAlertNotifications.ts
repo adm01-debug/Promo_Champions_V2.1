@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useUserRoles } from "@/hooks/useUserRoles";
-import { useSecurityAlertSoundSettings } from "@/hooks/useSecurityAlertSoundSettings";
+import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { useSecurityAlertSoundSettings } from '@/hooks/useSecurityAlertSoundSettings';
 
 export function useSecurityAlertNotifications() {
   const { toast } = useToast();
@@ -20,10 +20,9 @@ export function useSecurityAlertNotifications() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'security_alert_history'
+          table: 'security_alert_history',
         },
-        (payload) => {
-          
+        payload => {
           const newAlert = payload.new as {
             access_count: number;
             threshold_used: number;
@@ -31,9 +30,9 @@ export function useSecurityAlertNotifications() {
           };
 
           toast({
-            title: "🛡️ Alerta de Segurança",
+            title: '🛡️ Alerta de Segurança',
             description: `Detectado pico de ${newAlert.access_count} acessos negados (threshold: ${newAlert.threshold_used}) nas últimas ${newAlert.time_window_hours}h`,
-            variant: "destructive",
+            variant: 'destructive',
             duration: 10000,
           });
 
@@ -41,10 +40,10 @@ export function useSecurityAlertNotifications() {
           playSound();
 
           // Also show browser notification if permitted
-          if (Notification.permission === "granted") {
-            new Notification("Alerta de Segurança", {
+          if (Notification.permission === 'granted') {
+            new Notification('Alerta de Segurança', {
               body: `Pico de ${newAlert.access_count} acessos negados detectado`,
-              icon: "/favicon.ico",
+              icon: '/favicon.ico',
             });
           }
         }

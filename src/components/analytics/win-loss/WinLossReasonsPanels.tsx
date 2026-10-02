@@ -18,11 +18,11 @@ const ReasonPanel: FC<PanelProps> = memo(({ title, reasons, total, tone }) => {
   const Icon = tone === 'success' ? Trophy : XCircle;
   const rows = useMemo(
     () =>
-      reasons.map((r) => ({
+      reasons.map(r => ({
         ...r,
         pct: total > 0 ? (r.count / total) * 100 : 0,
       })),
-    [reasons, total],
+    [reasons, total]
   );
   return (
     <Card className="glass border-border/40">
@@ -62,10 +62,25 @@ interface Props {
   totalLosses: number;
 }
 
-const WinLossReasonsPanelsBase: FC<Props> = ({ topWinReasons, topLossReasons, totalWins, totalLosses }) => (
+const WinLossReasonsPanelsBase: FC<Props> = ({
+  topWinReasons,
+  topLossReasons,
+  totalWins,
+  totalLosses,
+}) => (
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <ReasonPanel title="Por que Ganhamos" reasons={topWinReasons} total={totalWins} tone="success" />
-    <ReasonPanel title="Por que Perdemos" reasons={topLossReasons} total={totalLosses} tone="destructive" />
+    <ReasonPanel
+      title="Por que Ganhamos"
+      reasons={topWinReasons}
+      total={totalWins}
+      tone="success"
+    />
+    <ReasonPanel
+      title="Por que Perdemos"
+      reasons={topLossReasons}
+      total={totalLosses}
+      tone="destructive"
+    />
   </div>
 );
 

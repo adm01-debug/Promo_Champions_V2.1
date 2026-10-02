@@ -48,12 +48,14 @@ export const Stepper: FC<StepperProps> = ({
   const isHorizontal = orientation === 'horizontal';
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn('w-full', className)}>
       {/* Progress bar */}
       {showProgress && (
         <div className="mb-4">
           <div className="flex justify-between text-xs text-muted-foreground mb-2">
-            <span>Passo {currentStep + 1} de {steps.length}</span>
+            <span>
+              Passo {currentStep + 1} de {steps.length}
+            </span>
             <span>{Math.round(progressPercent)}% completo</span>
           </div>
           <div className="h-1.5 bg-muted rounded-full overflow-hidden">
@@ -69,10 +71,7 @@ export const Stepper: FC<StepperProps> = ({
 
       {/* Steps */}
       <div
-        className={cn(
-          "flex gap-2",
-          isHorizontal ? "flex-row items-start" : "flex-col"
-        )}
+        className={cn('flex gap-2', isHorizontal ? 'flex-row items-start' : 'flex-col')}
         role="tablist"
         aria-label="Passos do processo"
       >
@@ -84,10 +83,7 @@ export const Stepper: FC<StepperProps> = ({
           return (
             <div
               key={step.id}
-              className={cn(
-                "flex items-start gap-3",
-                isHorizontal ? "flex-1" : "w-full"
-              )}
+              className={cn('flex items-start gap-3', isHorizontal ? 'flex-1' : 'w-full')}
             >
               {/* Step indicator */}
               <motion.button
@@ -96,12 +92,14 @@ export const Stepper: FC<StepperProps> = ({
                 onClick={() => isClickable && onStepClick(index)}
                 disabled={!isClickable}
                 className={cn(
-                  "relative flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center",
-                  "border-2 transition-colors font-semibold text-sm",
-                  isCompleted && "bg-success border-success text-success-foreground",
-                  isActive && "bg-primary border-primary text-primary-foreground",
-                  !isActive && !isCompleted && "bg-muted border-border text-muted-foreground",
-                  isClickable && "cursor-pointer hover:opacity-80"
+                  'relative flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
+                  'border-2 transition-colors font-semibold text-sm',
+                  isCompleted && 'bg-success border-success text-success-foreground',
+                  isActive && 'bg-primary border-primary text-primary-foreground',
+                  !isActive &&
+                    !isCompleted &&
+                    'bg-muted border-border text-muted-foreground',
+                  isClickable && 'cursor-pointer hover:opacity-80'
                 )}
                 role="tab"
                 aria-selected={isActive}
@@ -131,8 +129,10 @@ export const Stepper: FC<StepperProps> = ({
                 <div className="flex items-center gap-2">
                   <span
                     className={cn(
-                      "font-semibold text-sm",
-                      isActive || isCompleted ? "text-foreground" : "text-muted-foreground"
+                      'font-semibold text-sm',
+                      isActive || isCompleted
+                        ? 'text-foreground'
+                        : 'text-muted-foreground'
                     )}
                   >
                     {step.title}
@@ -171,8 +171,8 @@ export const Stepper: FC<StepperProps> = ({
                 <div className="flex-shrink-0 w-8 h-10 flex items-center justify-center">
                   <div
                     className={cn(
-                      "h-0.5 w-full rounded",
-                      isCompleted ? "bg-success" : "bg-border"
+                      'h-0.5 w-full rounded',
+                      isCompleted ? 'bg-success' : 'bg-border'
                     )}
                   />
                 </div>
@@ -231,14 +231,19 @@ export const StepNavigation: FC<StepNavigationProps> = ({
   const isLastStep = currentStep === totalSteps - 1;
 
   return (
-    <div className={cn("flex items-center justify-between pt-4 border-t border-border", className)}>
+    <div
+      className={cn(
+        'flex items-center justify-between pt-4 border-t border-border',
+        className
+      )}
+    >
       <button
         onClick={onPrevious}
         disabled={currentStep === 0 || isPreviousDisabled}
         className={cn(
-          "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-          "text-muted-foreground hover:text-foreground hover:bg-muted",
-          (currentStep === 0 || isPreviousDisabled) && "opacity-50 cursor-not-allowed"
+          'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+          'text-muted-foreground hover:text-foreground hover:bg-muted',
+          (currentStep === 0 || isPreviousDisabled) && 'opacity-50 cursor-not-allowed'
         )}
       >
         Anterior
@@ -248,10 +253,10 @@ export const StepNavigation: FC<StepNavigationProps> = ({
         onClick={isLastStep ? onComplete : onNext}
         disabled={isNextDisabled || isLoading}
         className={cn(
-          "px-6 py-2 rounded-lg text-sm font-semibold transition-all",
-          "bg-primary text-primary-foreground",
-          "hover:bg-primary/90 active:scale-95",
-          (isNextDisabled || isLoading) && "opacity-50 cursor-not-allowed"
+          'px-6 py-2 rounded-lg text-sm font-semibold transition-all',
+          'bg-primary text-primary-foreground',
+          'hover:bg-primary/90 active:scale-95',
+          (isNextDisabled || isLoading) && 'opacity-50 cursor-not-allowed'
         )}
       >
         {isLoading ? (
@@ -260,7 +265,7 @@ export const StepNavigation: FC<StepNavigationProps> = ({
             Processando...
           </span>
         ) : isLastStep ? (
-          "Concluir"
+          'Concluir'
         ) : (
           <span className="flex items-center gap-1">
             Próximo

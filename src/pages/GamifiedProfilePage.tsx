@@ -50,9 +50,7 @@ export default function GamifiedProfilePage() {
 
               <div className="flex-1 text-center md:text-left space-y-2">
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                  <h1 className="text-page-title gradient-text">
-                    {profile?.name}
-                  </h1>
+                  <h1 className="text-page-title gradient-text">{profile?.name}</h1>
                   <Badge
                     variant="outline"
                     className="bg-primary/20 text-primary border-primary/30 font-bold uppercase tracking-widest px-3"

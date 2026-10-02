@@ -3,7 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
-import { getAllCircuitStates, resetCircuit, resetAllCircuits } from '@/hooks/useCircuitBreaker';
+import {
+  getAllCircuitStates,
+  resetCircuit,
+  resetAllCircuits,
+} from '@/hooks/useCircuitBreaker';
 import { useCircuitBreakerHistory } from '@/hooks/useCircuitBreakerHistory';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +26,7 @@ export const CircuitBreakerDashboard: FC = () => {
     const interval = setInterval(() => {
       setCircuits(getAllCircuitStates());
     }, 1000);
-    
+
     setCircuits(getAllCircuitStates());
     return () => clearInterval(interval);
   }, []);
@@ -95,7 +99,8 @@ export const CircuitBreakerDashboard: FC = () => {
                   <div>
                     <p className="font-medium">{name}</p>
                     <p className="text-xs text-muted-foreground">
-                      Failures: {circuit.failures} | Half-open attempts: {circuit.halfOpenAttempts}
+                      Failures: {circuit.failures} | Half-open attempts:{' '}
+                      {circuit.halfOpenAttempts}
                     </p>
                   </div>
                 </div>
@@ -118,7 +123,7 @@ export const CircuitBreakerDashboard: FC = () => {
           <div className="mt-6">
             <h4 className="font-medium mb-3">Histórico Recente</h4>
             <div className="space-y-2 max-h-48 overflow-y-auto">
-              {history.slice(0, 10).map((event) => (
+              {history.slice(0, 10).map(event => (
                 <div
                   key={event.id}
                   className="flex items-center justify-between text-sm p-2 rounded bg-muted/50"

@@ -10,14 +10,22 @@ const point = (i: number, isForecast = false): ScenarioChartKeyPoint => ({
 });
 
 describe('buildScenarioChartKey', () => {
-  const base = { fitN: 6, bandMode: 'see' as const, confidenceZ: 1.96, horizon: 3, stdDev: 12.5 };
+  const base = {
+    fitN: 6,
+    bandMode: 'see' as const,
+    confidenceZ: 1.96,
+    horizon: 3,
+    stdDev: 12.5,
+  };
 
   it('retorna scenario-empty quando data vazia', () => {
     expect(buildScenarioChartKey({ ...base, data: [] })).toBe('scenario-empty');
   });
 
   it('retorna scenario-empty quando fitN=0 mesmo com data', () => {
-    expect(buildScenarioChartKey({ ...base, fitN: 0, data: [point(1)] })).toBe('scenario-empty');
+    expect(buildScenarioChartKey({ ...base, fitN: 0, data: [point(1)] })).toBe(
+      'scenario-empty'
+    );
   });
 
   it('retorna scenario-insufficient com fitN < 3', () => {
@@ -26,7 +34,11 @@ describe('buildScenarioChartKey', () => {
   });
 
   it('retorna scenario-insufficient-x quando primeiro period ausente', () => {
-    const k = buildScenarioChartKey({ ...base, fitN: 1, data: [{ ...point(1), period: undefined }] });
+    const k = buildScenarioChartKey({
+      ...base,
+      fitN: 1,
+      data: [{ ...point(1), period: undefined }],
+    });
     expect(k).toBe('scenario-insufficient-1-x');
   });
 
@@ -48,24 +60,46 @@ describe('buildScenarioChartKey', () => {
   });
 
   it('marca -partial quando ponto tem NaN', () => {
-    const bad: ScenarioChartKeyPoint = { period: '2026-04', realistic: NaN, pessimistic: 0, optimistic: 0, isForecast: false };
-    const k = buildScenarioChartKey({ ...base, data: [point(1), point(2), point(3), bad] });
+    const bad: ScenarioChartKeyPoint = {
+      period: '2026-04',
+      realistic: NaN,
+      pessimistic: 0,
+      optimistic: 0,
+      isForecast: false,
+    };
+    const k = buildScenarioChartKey({
+      ...base,
+      data: [point(1), point(2), point(3), bad],
+    });
     expect(k.endsWith('-partial')).toBe(true);
   });
 
   it('sanitiza stdDev/confidenceZ não-finitos', () => {
-    const k = buildScenarioChartKey({ ...base, stdDev: NaN, confidenceZ: Infinity, data: [point(1), point(2), point(3)] });
+    const k = buildScenarioChartKey({
+      ...base,
+      stdDev: NaN,
+      confidenceZ: Infinity,
+      data: [point(1), point(2), point(3)],
+    });
     expect(k).toContain('σ0.00');
     expect(k).toContain('z1.00');
   });
 
   it('sanitiza confidenceLevel não-finito para 0.95 (linha 86)', () => {
-    const k = buildScenarioChartKey({ ...base, confidenceLevel: NaN, data: [point(1), point(2), point(3)] });
+    const k = buildScenarioChartKey({
+      ...base,
+      confidenceLevel: NaN,
+      data: [point(1), point(2), point(3)],
+    });
     expect(k).toContain('l0.95');
   });
 
   it('inclui confidenceLevel quando fornecido', () => {
-    const k = buildScenarioChartKey({ ...base, confidenceLevel: 0.99, data: [point(1), point(2), point(3)] });
+    const k = buildScenarioChartKey({
+      ...base,
+      confidenceLevel: 0.99,
+      data: [point(1), point(2), point(3)],
+    });
     expect(k).toContain('l0.99');
   });
 });

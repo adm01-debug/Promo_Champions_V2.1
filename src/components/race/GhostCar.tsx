@@ -21,9 +21,11 @@ export function GhostCar({ ghost }: Props) {
     <motion.g
       initial={false}
       animate={{ x: pos.x, y: pos.y, rotate: pos.rotation }}
-      transition={prefersReducedMotion
-        ? { duration: 0 }
-        : { type: 'spring', stiffness: 50, damping: 20, duration: 1.2 }}
+      transition={
+        prefersReducedMotion
+          ? { duration: 0 }
+          : { type: 'spring', stiffness: 50, damping: 20, duration: 1.2 }
+      }
       style={{ opacity: 0.4, filter: 'grayscale(1)' }}
       aria-label="Ghost car (seu PR pessoal)"
     >

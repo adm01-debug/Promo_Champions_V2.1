@@ -96,7 +96,7 @@ O sistema encontra-se em estado **enterprise-grade** com hardening recente já i
 
 ## 5. Benchmarking
 
-| Prática                          | SalesPro | Mercado (P75) | Nota |
+| Prática                          | Promo Champions | Mercado (P75) | Nota |
 |----------------------------------|----------|---------------|------|
 | RLS coverage                     | 100 %    | 60 %          | 🏆 |
 | SECURITY DEFINER hardening       | Least-priv seletiva | Grant-all authenticated | 🏆 |

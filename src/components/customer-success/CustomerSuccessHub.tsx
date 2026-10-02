@@ -24,6 +24,7 @@ import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { ChurnRiskDetailDialog } from './ChurnRiskDetailDialog';
 
+import { formatBRL } from '@/lib/money';
 const RISK_VARIANTS: Record<AccountHealth['churn_risk'], string> = {
   low: 'bg-success/15 text-success border-success/30',
   medium: 'bg-warning/15 text-warning border-warning/30',
@@ -37,14 +38,6 @@ const RISK_LABELS: Record<AccountHealth['churn_risk'], string> = {
   high: 'Em Risco',
   critical: 'Crítico',
 };
-
-function formatBRL(value: number) {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 const KPICard = ({
   icon: Icon,
@@ -155,9 +148,7 @@ export function CustomerSuccessHub() {
               <Sparkles className="size-3" /> IA-Powered Retention
             </Badge>
           </div>
-          <h1 className="text-page-title gradient-text">
-            Customer Success Hub
-          </h1>
+          <h1 className="text-page-title gradient-text">Customer Success Hub</h1>
           <p className="text-muted-foreground mt-1 font-medium">
             Radar de saúde e motor de expansão de receita
           </p>
@@ -222,7 +213,9 @@ export function CustomerSuccessHub() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Heart className="size-5 text-primary" />
-              <CardTitle className="text-section-title">Radar de Saúde por Conta</CardTitle>
+              <CardTitle className="text-section-title">
+                Radar de Saúde por Conta
+              </CardTitle>
             </div>
             <Badge
               variant="secondary"

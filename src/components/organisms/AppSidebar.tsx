@@ -40,7 +40,7 @@ import {
   systemItems,
   adminOnlyItems,
 } from '../layout/sidebar/sidebarMenuData';
-import * as Pages from '@/routes/lazyPages';
+import { routePrefetchMap } from '@/routes/pagePrefetchMap';
 
 const userTypeAccentClasses = {
   sdr: 'bg-info/15 text-info',
@@ -50,39 +50,6 @@ const userTypeAccentClasses = {
   manager: 'bg-primary/15 text-primary',
   salesperson: 'bg-muted text-muted-foreground',
 } as const;
-
-// Helper to map route URL to lazy component for prefetching
-const componentMap: Record<
-  string,
-  React.LazyExoticComponent<React.ComponentType<unknown>>
-> = {
-  '/sdr': Pages.SDRDashboard,
-  '/closer': Pages.CloserDashboard,
-  '/pipeline': Pages.Pipeline,
-  '/atividades': Pages.Atividades,
-  '/clientes': Pages.Clientes,
-  '/agenda': Pages.Agenda,
-  '/ranking': Pages.RankingCompetitivo,
-  '/arena': Pages.ArenaCompetitiva,
-  '/race-arena': Pages.RaceArena,
-  '/orcamentos': Pages.Orcamentos,
-  '/cadencias-orcamentos': Pages.QuoteCadencias,
-  '/vendas': Pages.Vendas,
-  '/comissoes': Pages.Comissoes,
-  '/vendedores': Pages.Vendedores,
-  '/metas': Pages.Metas,
-  '/analytics': Pages.Analytics,
-  '/relatorios': Pages.Relatorios,
-  '/configuracoes': Pages.Configuracoes,
-  '/notificacoes': Pages.Notificacoes,
-  '/admin': Pages.AdminDashboard,
-  '/bi-gestor': Pages.BIGestor,
-  '/bi-sdr': Pages.BISDR,
-  '/bi-closer': Pages.BICloser,
-  '/funil': Pages.FunnelAnalysis,
-  '/nps': Pages.NPSDashboard,
-  '/assistente': Pages.Assistente,
-};
 
 export const AppSidebar = memo(function AppSidebar() {
   const { theme } = useDashboardTheme();
@@ -106,12 +73,7 @@ export const AppSidebar = memo(function AppSidebar() {
   }, [location.pathname]);
 
   const userType = useMemo(():
-    | 'admin'
-    | 'manager'
-    | 'sdr'
-    | 'closer'
-    | 'hybrid'
-    | 'salesperson' => {
+    'admin' | 'manager' | 'sdr' | 'closer' | 'hybrid' | 'salesperson' => {
     const role = currentUserRole?.role;
     if (role === 'admin') return 'admin';
     if (role === 'manager') return 'manager';
@@ -161,7 +123,7 @@ export const AppSidebar = memo(function AppSidebar() {
           isCollapsed={isCollapsed}
           badgeCount={isNotifications ? alertCount : 0}
           badgeVariant={isNotifications ? 'warning' : 'default'}
-          component={componentMap[item.url]}
+          prefetch={routePrefetchMap[item.url]}
           id={`nav-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
         />
       );

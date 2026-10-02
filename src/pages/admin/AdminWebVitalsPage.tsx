@@ -5,26 +5,26 @@
  * (LCP > 2.5s, CLS > 0.1, INP > 200ms). Agrupa por rota + device.
  */
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useWebVitalsP75 } from '@/hooks/admin/useWebVitalsP75';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-interface Row {
-  day: string;
-  route: string;
-  device_type: 'mobile' | 'tablet' | 'desktop' | 'unknown';
-  metric_name: string;
-  samples: number;
-  p50: number | null;
-  p75: number | null;
-  p95: number | null;
-  budget_p75: number | null;
-}
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 function formatValue(metric: string, value: number | null): string {
   if (value === null || value === undefined) return '—';
@@ -32,7 +32,11 @@ function formatValue(metric: string, value: number | null): string {
   return `${value.toFixed(0)} ms`;
 }
 
-function ratingFor(metric: string, p75: number | null, budget: number | null): 'good' | 'poor' | 'unknown' {
+function ratingFor(
+  metric: string,
+  p75: number | null,
+  budget: number | null
+): 'good' | 'poor' | 'unknown' {
   if (p75 === null || budget === null) return 'unknown';
   return p75 <= budget ? 'good' : 'poor';
 }
@@ -41,20 +45,11 @@ export default function AdminWebVitalsPage() {
   const [device, setDevice] = useState<string>('all');
   const [search, setSearch] = useState('');
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['admin', 'web-vitals-p75'],
-    queryFn: async (): Promise<Row[]> => {
-      const { data, error } = await supabase.rpc('fn_admin_web_vitals_p75' as never);
-      if (error) throw error;
-      return (data ?? []) as Row[];
-    },
-    refetchInterval: 120_000,
-    staleTime: 60_000,
-  });
+  const { data, isLoading, isError, error } = useWebVitalsP75();
 
   const filtered = useMemo(() => {
     if (!data) return [];
-    return data.filter((r) => {
+    return data.filter(r => {
       if (device !== 'all' && r.device_type !== device) return false;
       if (search && !r.route.toLowerCase().includes(search.toLowerCase())) return false;
       return true;
@@ -66,7 +61,7 @@ export default function AdminWebVitalsPage() {
     if (!data) return null;
     const latestDay = data[0]?.day;
     if (!latestDay) return null;
-    const dayRows = data.filter((r) => r.day === latestDay);
+    const dayRows = data.filter(r => r.day === latestDay);
     const byMetric = new Map<string, { good: number; poor: number }>();
     for (const r of dayRows) {
       const bucket = byMetric.get(r.metric_name) ?? { good: 0, poor: 0 };
@@ -83,8 +78,8 @@ export default function AdminWebVitalsPage() {
       <header className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">Web Vitals P75</h1>
         <p className="text-sm text-muted-foreground">
-          Métricas de performance do frontend agregadas em 30 dias. Alerta quando o P75 exceder o budget
-          (LCP 2500ms, CLS 0.1, INP 200ms, FCP 1800ms, TTFB 800ms).
+          Métricas de performance do frontend agregadas em 30 dias. Alerta quando o P75
+          exceder o budget (LCP 2500ms, CLS 0.1, INP 200ms, FCP 1800ms, TTFB 800ms).
         </p>
       </header>
 
@@ -105,12 +100,16 @@ export default function AdminWebVitalsPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-emerald-500">{counts.good}</span>
+                  <span className="text-2xl font-bold text-emerald-500">
+                    {counts.good}
+                  </span>
                   <span className="text-xs text-muted-foreground">rotas ok</span>
                 </div>
                 {counts.poor > 0 && (
                   <div className="mt-1 flex items-baseline gap-2">
-                    <span className="text-lg font-semibold text-destructive">{counts.poor}</span>
+                    <span className="text-lg font-semibold text-destructive">
+                      {counts.poor}
+                    </span>
                     <span className="text-xs text-muted-foreground">acima do budget</span>
                   </div>
                 )}
@@ -127,7 +126,7 @@ export default function AdminWebVitalsPage() {
             <Input
               placeholder="Filtrar rota…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               className="w-56"
             />
             <Select value={device} onValueChange={setDevice}>
@@ -168,25 +167,45 @@ export default function AdminWebVitalsPage() {
                   {filtered.map((r, i) => {
                     const rating = ratingFor(r.metric_name, r.p75, r.budget_p75);
                     return (
-                      <TableRow key={`${r.day}-${r.route}-${r.device_type}-${r.metric_name}-${i}`}>
+                      <TableRow
+                        key={`${r.day}-${r.route}-${r.device_type}-${r.metric_name}-${i}`}
+                      >
                         <TableCell className="whitespace-nowrap">{r.day}</TableCell>
-                        <TableCell className="max-w-xs truncate font-mono text-xs">{r.route}</TableCell>
+                        <TableCell className="max-w-xs truncate font-mono text-xs">
+                          {r.route}
+                        </TableCell>
                         <TableCell>{r.device_type}</TableCell>
                         <TableCell className="font-medium">{r.metric_name}</TableCell>
-                        <TableCell className="text-right tabular-nums">{r.samples}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatValue(r.metric_name, r.p50)}</TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {r.samples}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {formatValue(r.metric_name, r.p50)}
+                        </TableCell>
                         <TableCell className="text-right tabular-nums font-medium">
                           {formatValue(r.metric_name, r.p75)}
                         </TableCell>
-                        <TableCell className="text-right tabular-nums">{formatValue(r.metric_name, r.p95)}</TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {formatValue(r.metric_name, r.p95)}
+                        </TableCell>
                         <TableCell className="text-right tabular-nums text-muted-foreground">
                           {formatValue(r.metric_name, r.budget_p75)}
                         </TableCell>
                         <TableCell>
                           <Badge
-                            variant={rating === 'good' ? 'default' : rating === 'poor' ? 'destructive' : 'secondary'}
+                            variant={
+                              rating === 'good'
+                                ? 'default'
+                                : rating === 'poor'
+                                  ? 'destructive'
+                                  : 'secondary'
+                            }
                           >
-                            {rating === 'good' ? 'Meta' : rating === 'poor' ? 'Acima' : 'N/A'}
+                            {rating === 'good'
+                              ? 'Meta'
+                              : rating === 'poor'
+                                ? 'Acima'
+                                : 'N/A'}
                           </Badge>
                         </TableCell>
                       </TableRow>
@@ -194,7 +213,10 @@ export default function AdminWebVitalsPage() {
                   })}
                   {filtered.length === 0 && !isLoading && (
                     <TableRow>
-                      <TableCell colSpan={10} className="py-8 text-center text-sm text-muted-foreground">
+                      <TableCell
+                        colSpan={10}
+                        className="py-8 text-center text-sm text-muted-foreground"
+                      >
                         Nenhuma métrica no filtro atual.
                       </TableCell>
                     </TableRow>
