@@ -1,7 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 
 
@@ -57,9 +57,10 @@ Deno.serve(withRequestId("predictive-intelligence", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const url = Deno.env.get("SUPABASE_URL")!;
-    const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(url, key);
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    await getUserClient(req);
+
+    const supabase = getServiceClient("lê visão agregada cross-user do pipeline para o painel preditivo");
 
     const body = await req.json().catch(() => ({}));
     const horizonDays = Number(body.horizon_days ?? 90);
@@ -223,6 +224,11 @@ Deno.serve(withRequestId("predictive-intelligence", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("predictive-intelligence error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },

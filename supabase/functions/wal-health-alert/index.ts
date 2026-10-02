@@ -22,6 +22,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry } from "../_shared/retry.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 const DEFAULT_SLOT_LAG = 64 * 1024 * 1024; // 64 MiB
 const DEFAULT_WAL_SIZE = 500 * 1024 * 1024; // 500 MiB
@@ -105,6 +106,39 @@ Deno.serve(withRequestId("wal-health-alert", async (req, ctx) => {
     const supabase = createClient(url, serviceKey, {
       auth: { persistSession: false },
     });
+
+    // Autorização: apenas chamada interna (service_role ou X-Cron-Secret do pg_cron).
+    try {
+      const authorized = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+      if (!authorized) {
+        return new Response(
+          JSON.stringify({ error: "unauthorized", requestId: ctx.requestId }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    } catch (error) {
+      ctx.log("error", "authorization_failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return new Response(
+        JSON.stringify({ error: "authorization_unavailable", requestId: ctx.requestId }),
+        {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
 
     // Lê a view (service_role tem SELECT total).
     const { data, error } = await supabase

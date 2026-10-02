@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface MetricRow {
   salesperson_id: string;
@@ -50,6 +51,34 @@ Deno.serve(withRequestId("detect-coaching-opportunities", async (req, _ctx) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // Autorização: exige usuário autenticado com papel admin/manager (grava benchmarks de toda a equipe).
+    try {
+      const caller = await getUserClient(req);
+      const { data: allowed, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleError) throw roleError;
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("detect-coaching-opportunities authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const since = new Date(Date.now() - 90 * 86400000).toISOString();
 

@@ -793,6 +793,13 @@ export function LeadScoringDashboard() {
                 const cfg = categoryConfig[lead.category];
                 const Icon = cfg.icon;
                 const isServerScore = 'dealValue' in lead.factors;
+                const factorVals = {
+                  dealValue: 0,
+                  companySize: 0,
+                  industry: 0,
+                  engagement: 0,
+                  ...lead.factors,
+                };
 
                 return (
                   <div
@@ -960,16 +967,7 @@ export function LeadScoringDashboard() {
                                   {!lead.labels && (
                                     <FactorBar
                                       label="Deal Momentum"
-                                      value={
-                                        /* eslint-disable no-restricted-syntax */
-                                        (
-                                          lead.factors as unknown as Record<
-                                            string,
-                                            number
-                                          >
-                                        ).dealValue
-                                        /* eslint-enable no-restricted-syntax */
-                                      }
+                                      value={factorVals.dealValue}
                                       maxValue={25}
                                     />
                                   )}
@@ -978,29 +976,17 @@ export function LeadScoringDashboard() {
                                 <>
                                   <FactorBar
                                     label="Firmographics"
-                                    value={
-                                      // eslint-disable-next-line no-restricted-syntax
-                                      (lead.factors as unknown as Record<string, number>)
-                                        .companySize
-                                    }
+                                    value={factorVals.companySize}
                                     maxValue={20}
                                   />
                                   <FactorBar
                                     label="ICP Fit"
-                                    value={
-                                      // eslint-disable-next-line no-restricted-syntax
-                                      (lead.factors as unknown as Record<string, number>)
-                                        .industry
-                                    }
+                                    value={factorVals.industry}
                                     maxValue={15}
                                   />
                                   <FactorBar
                                     label="Engajamento"
-                                    value={
-                                      // eslint-disable-next-line no-restricted-syntax
-                                      (lead.factors as unknown as Record<string, number>)
-                                        .engagement
-                                    }
+                                    value={factorVals.engagement}
                                     maxValue={25}
                                   />
                                 </>

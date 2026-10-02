@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from '@/hooks/use-toast';
 
 export type DialerQueue = {
@@ -48,8 +49,7 @@ export const useDialerQueues = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as DialerQueue[];
+      return parseRows<DialerQueue>(data);
     },
   });
 };
@@ -66,8 +66,7 @@ export const useQueueItems = (queueId: string | null) => {
         .order('queue_position', { ascending: true })
         .limit(100);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as DialerQueueItem[];
+      return parseRows<DialerQueueItem>(data);
     },
   });
 };
@@ -254,8 +253,7 @@ export const useCallLogsForSale = (saleId: string | null) => {
         .order('created_at', { ascending: false })
         .limit(5);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as CallLog[];
+      return parseRows<CallLog>(data);
     },
   });
 };

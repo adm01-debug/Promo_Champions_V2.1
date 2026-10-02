@@ -132,7 +132,7 @@ export function AchievementComparisonChart() {
                 radius={[0, 0, 0, 0]}
                 animationDuration={1500}
               >
-                {chartData.map((entry, index) => (
+                {chartData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fillOpacity={0.8} />
                 ))}
               </Bar>
@@ -143,7 +143,7 @@ export function AchievementComparisonChart() {
                 radius={[8, 8, 0, 0]}
                 animationDuration={1500}
               >
-                {chartData.map((entry, index) => (
+                {chartData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fillOpacity={0.8} />
                 ))}
               </Bar>

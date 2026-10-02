@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useRef, memo } from 'react';
+import { forwardRef, useCallback, useRef, memo } from 'react';
 import { NavLink as RouterNavLink, NavLinkProps } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { triggerHaptic } from '@/lib/haptics';

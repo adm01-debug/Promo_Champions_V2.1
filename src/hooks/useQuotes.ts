@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { insertPayload, type TableUpdate } from '@/lib/supabase/typed-payloads';
+import { parseRow, parseRows, toJson } from '@/lib/supabase/parseRows';
 
 export interface Quote {
   id: string;
@@ -97,8 +98,7 @@ export function useQuotes(statusFilter?: string) {
 
       const { data, error } = await query;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as Quote[];
+      return parseRows<Quote>(data);
     },
   });
 }
@@ -155,8 +155,7 @@ export function useCreateQuote() {
     mutationFn: async (input: CreateQuoteInput) => {
       const payload = insertPayload('quotes', {
         ...input,
-        // eslint-disable-next-line no-restricted-syntax
-        items: input.items as unknown as import('@/integrations/supabase/types').Json,
+        items: input.items === undefined ? undefined : toJson(input.items),
       });
       const { data, error } = await supabase
         .from('quotes')
@@ -338,20 +337,13 @@ export function useConvertQuoteToSale() {
       }
 
       const t0 = performance.now();
-      /* eslint-disable no-restricted-syntax */
-      const { data, error } = await (
-        supabase.rpc as unknown as (
-          fn: string,
-          args: Record<string, unknown>
-        ) => Promise<{
-          data: ConvertQuoteResult | null;
-          error: { message: string } | null;
-        }>
-      )('fn_convert_quote_to_sale', { _quote_id: quoteId });
-      /* eslint-enable no-restricted-syntax */
+      const { data, error } = await supabase.rpc('fn_convert_quote_to_sale', {
+        _quote_id: quoteId,
+      });
+      const result = parseRow<ConvertQuoteResult>(data);
       const latencyMs = Math.round(performance.now() - t0);
 
-      if (error || !data) {
+      if (error || !result) {
         const message = error?.message ?? '[UNKNOWN] Resposta vazia da conversão';
         const code = parseConvertQuoteError(message);
         void dispatchConversionNotification({
@@ -369,19 +361,19 @@ export function useConvertQuoteToSale() {
 
       void dispatchConversionNotification({
         quote_id: quoteId,
-        sale_id: data.sale_id,
-        order_id: data.order_id,
-        order_number: data.order_number ?? null,
+        sale_id: result.sale_id,
+        order_id: result.order_id,
+        order_number: result.order_number ?? null,
         previous_status: previousStatus,
         new_status: 'converted',
-        reused_order: data.reused_order ?? false,
-        idempotent: data.idempotent,
+        reused_order: result.reused_order ?? false,
+        idempotent: result.idempotent,
         success: true,
         latency_ms: latencyMs,
         request_id: requestId,
       });
 
-      return data;
+      return result;
     },
     onSuccess: result => {
       qc.invalidateQueries({ queryKey: ['quotes'] });
