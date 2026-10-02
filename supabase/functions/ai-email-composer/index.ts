@@ -4,7 +4,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+
 
 const MAX_CUSTOM_INSTRUCTIONS = 500;
 
@@ -105,6 +106,10 @@ Deno.serve(withRequestId('ai-email-composer', async (req, _ctx) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "ai-email-composer", limit: 20, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
+
   try {
     // All modes require a valid JWT — prevents anonymous AI credit abuse
     let authHeader: string;
@@ -184,7 +189,7 @@ ${body.custom_instructions ? `Instruções extras do vendedor: ${body.custom_ins
 
 Gere o e-mail agora chamando a tool emit_email.`;
 
-    const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
+    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,

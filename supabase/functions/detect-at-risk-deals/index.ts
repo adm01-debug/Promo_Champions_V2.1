@@ -1,8 +1,10 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 Deno.serve(
   withRequestId('detect-at-risk-deals', async (req, _ctx) => {
@@ -10,6 +12,14 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'detect-at-risk-deals',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       const { dealId } = await req.json();
@@ -141,20 +151,23 @@ Responda em JSON com exatamente esta estrutura:
 ${JSON.stringify(context, null, 2)}`;
 
       // Call AI for analysis
-      const aiResponse = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${lovableApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
-        }),
-      });
+      const aiResponse = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+          }),
+        }
+      );
 
       if (!aiResponse.ok) {
         const errorText = await aiResponse.text();

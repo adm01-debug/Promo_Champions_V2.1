@@ -1,12 +1,14 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 interface BriefingPayload {
   headline: string;
@@ -35,6 +37,14 @@ Deno.serve(
   withRequestId('generate-executive-briefing', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'generate-executive-briefing',
+      limit: 10,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
@@ -104,85 +114,88 @@ Deno.serve(
         .limit(7);
 
       // Lovable AI com tool calling
-      const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-pro',
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            {
-              role: 'user',
-              content: `SNAPSHOT DE HOJE (${today}):\n${JSON.stringify(pulse, null, 2)}\n\nHISTÓRICO RECENTE:\n${JSON.stringify(history ?? [], null, 2)}`,
-            },
-          ],
-          tools: [
-            {
-              type: 'function',
-              function: {
-                name: 'generate_briefing',
-                description: 'Gera o briefing executivo diário',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    headline: { type: 'string' },
-                    narrative: { type: 'string' },
-                    key_wins: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          title: { type: 'string' },
-                          detail: { type: 'string' },
-                        },
-                        required: ['title', 'detail'],
-                      },
-                    },
-                    key_risks: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          title: { type: 'string' },
-                          detail: { type: 'string' },
-                          severity: {
-                            type: 'string',
-                            enum: ['critical', 'warning', 'info'],
+      const aiRes = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-pro',
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              {
+                role: 'user',
+                content: `SNAPSHOT DE HOJE (${today}):\n${JSON.stringify(pulse, null, 2)}\n\nHISTÓRICO RECENTE:\n${JSON.stringify(history ?? [], null, 2)}`,
+              },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: 'generate_briefing',
+                  description: 'Gera o briefing executivo diário',
+                  parameters: {
+                    type: 'object',
+                    properties: {
+                      headline: { type: 'string' },
+                      narrative: { type: 'string' },
+                      key_wins: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            detail: { type: 'string' },
                           },
+                          required: ['title', 'detail'],
                         },
-                        required: ['title', 'detail', 'severity'],
+                      },
+                      key_risks: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            detail: { type: 'string' },
+                            severity: {
+                              type: 'string',
+                              enum: ['critical', 'warning', 'info'],
+                            },
+                          },
+                          required: ['title', 'detail', 'severity'],
+                        },
+                      },
+                      recommended_actions: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            rationale: { type: 'string' },
+                            module: { type: 'string' },
+                          },
+                          required: ['title', 'rationale'],
+                        },
                       },
                     },
-                    recommended_actions: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          title: { type: 'string' },
-                          rationale: { type: 'string' },
-                          module: { type: 'string' },
-                        },
-                        required: ['title', 'rationale'],
-                      },
-                    },
+                    required: [
+                      'headline',
+                      'narrative',
+                      'key_wins',
+                      'key_risks',
+                      'recommended_actions',
+                    ],
                   },
-                  required: [
-                    'headline',
-                    'narrative',
-                    'key_wins',
-                    'key_risks',
-                    'recommended_actions',
-                  ],
                 },
               },
-            },
-          ],
-          tool_choice: { type: 'function', function: { name: 'generate_briefing' } },
-        }),
-      });
+            ],
+            tool_choice: { type: 'function', function: { name: 'generate_briefing' } },
+          }),
+        }
+      );
 
       if (!aiRes.ok) {
         const t = await aiRes.text();

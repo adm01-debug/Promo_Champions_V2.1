@@ -1,26 +1,15 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { getStageProbabilities } from '../_shared/stage-probabilities.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
-const STAGE_PROB: Record<string, number> = {
-  pending: 0.1,
-  lead: 0.1,
-  prospecting: 0.2,
-  qualified: 0.3,
-  in_progress: 0.3,
-  proposal: 0.55,
-  negotiation: 0.8,
-  completed: 1.0,
-  won: 1.0,
-  cancelled: 0,
-  lost: 0,
-};
 
 interface PredictiveSnapshot {
   forecast: {
@@ -73,6 +62,14 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'predictive-intelligence',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
+
     try {
       // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
       await getUserClient(req);
@@ -116,7 +113,8 @@ Deno.serve(
         scoreMap.set(r.sale_id, r.total_score)
       );
 
-      // FORECAST
+      // FORECAST — probabilidades por estágio vêm de public.stage_probabilities
+      const stageProbs = await getStageProbabilities(supabase);
       let weighted = 0,
         best = 0,
         worst = 0;
@@ -132,7 +130,7 @@ Deno.serve(
       }> = [];
 
       openDeals.forEach(d => {
-        const baseProb = STAGE_PROB[d.status] ?? 0.1;
+        const baseProb = stageProbs[d.status] ?? 0.1;
         const score = scoreMap.get(d.id);
         const scoreMult = score ? (score > 70 ? 1.2 : score > 40 ? 1.0 : 0.8) : 1.0;
         const prob = Math.min(0.95, baseProb * scoreMult);
@@ -255,46 +253,52 @@ Deno.serve(
         const aiKey = Deno.env.get('LOVABLE_API_KEY');
         if (aiKey) {
           try {
-            const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-              method: 'POST',
-              headers: {
-                Authorization: `Bearer ${aiKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model: 'google/gemini-2.5-flash',
-                messages: [
-                  {
-                    role: 'system',
-                    content:
-                      'Você é um analista de Revenue Intelligence sênior. Analise os dados preditivos e responda em JSON estrito com { summary: string, recommendations: string[], risks: string[] }. Use português brasileiro, seja conciso e acionável (max 3 itens cada).',
-                  },
-                  {
-                    role: 'user',
-                    content: `Dados:\n${JSON.stringify(snapshot, null, 2)}`,
-                  },
-                ],
-                tools: [
-                  {
-                    type: 'function',
-                    function: {
-                      name: 'report_insights',
-                      description: 'Reporta insights preditivos',
-                      parameters: {
-                        type: 'object',
-                        properties: {
-                          summary: { type: 'string' },
-                          recommendations: { type: 'array', items: { type: 'string' } },
-                          risks: { type: 'array', items: { type: 'string' } },
+            const aiResp = await fetchWithTimeout(
+              LOVABLE_AI_CHAT_COMPLETIONS_URL,
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${aiKey}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'google/gemini-2.5-flash',
+                  messages: [
+                    {
+                      role: 'system',
+                      content:
+                        'Você é um analista de Revenue Intelligence sênior. Analise os dados preditivos e responda em JSON estrito com { summary: string, recommendations: string[], risks: string[] }. Use português brasileiro, seja conciso e acionável (max 3 itens cada).',
+                    },
+                    {
+                      role: 'user',
+                      content: `Dados:\n${JSON.stringify(snapshot, null, 2)}`,
+                    },
+                  ],
+                  tools: [
+                    {
+                      type: 'function',
+                      function: {
+                        name: 'report_insights',
+                        description: 'Reporta insights preditivos',
+                        parameters: {
+                          type: 'object',
+                          properties: {
+                            summary: { type: 'string' },
+                            recommendations: { type: 'array', items: { type: 'string' } },
+                            risks: { type: 'array', items: { type: 'string' } },
+                          },
+                          required: ['summary', 'recommendations', 'risks'],
                         },
-                        required: ['summary', 'recommendations', 'risks'],
                       },
                     },
+                  ],
+                  tool_choice: {
+                    type: 'function',
+                    function: { name: 'report_insights' },
                   },
-                ],
-                tool_choice: { type: 'function', function: { name: 'report_insights' } },
-              }),
-            });
+                }),
+              }
+            );
             if (aiResp.ok) {
               const aiData = await aiResp.json();
               const args =

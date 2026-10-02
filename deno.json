@@ -1,6 +1,7 @@
 {
   "tasks": {
     "check": "deno check supabase/functions/*/index.ts supabase/functions/_shared/*.ts",
+    "test:migrations": "deno test --allow-read tests/migrations/",
     "lint:functions": "deno lint"
   },
   "lint": {

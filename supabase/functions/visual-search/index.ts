@@ -2,11 +2,9 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import {
-  LOVABLE_AI_CHAT_COMPLETIONS_URL,
-  LOVABLE_AI_EMBEDDINGS_URL,
-} from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL, LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
 
 interface VisualSearchRequest {
   image: string; // data URL or base64
@@ -19,6 +17,14 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'visual-search',
+      limit: 30,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       // Autorização: exige usuário autenticado (JWT válido).
@@ -59,73 +65,79 @@ Deno.serve(
         : `data:image/jpeg;base64,${image}`;
 
       // 1. Analyze image via Gemini multimodal
-      const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            {
-              role: 'system',
-              content:
-                'Você analisa imagens de produtos (brindes corporativos, itens promocionais). Identifique o objeto e descreva-o com palavras-chave em português, categoria e atributos visuais (cor, material).',
-            },
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: 'Identifique este produto e extraia palavras-chave para busca.',
-                },
-                { type: 'image_url', image_url: { url: imageUrl } },
-              ],
-            },
-          ],
-          tools: [
-            {
-              type: 'function',
-              function: {
-                name: 'describe_product_image',
-                description:
-                  'Describe the product visible in the image with searchable keywords.',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    product_name: {
-                      type: 'string',
-                      description: 'Nome curto do produto identificado.',
-                    },
-                    keywords: {
-                      type: 'array',
-                      items: { type: 'string' },
-                      description: 'Lista de 5-10 palavras-chave em português.',
-                    },
-                    category: { type: 'string', description: 'Categoria provável.' },
-                    color: {
-                      type: 'string',
-                      description: 'Cor predominante (opcional).',
-                    },
-                    material: {
-                      type: 'string',
-                      description: 'Material aparente (opcional).',
-                    },
-                    description: {
-                      type: 'string',
-                      description: 'Descrição curta do produto.',
-                    },
+      const aiRes = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'Você analisa imagens de produtos (brindes corporativos, itens promocionais). Identifique o objeto e descreva-o com palavras-chave em português, categoria e atributos visuais (cor, material).',
+              },
+              {
+                role: 'user',
+                content: [
+                  {
+                    type: 'text',
+                    text: 'Identifique este produto e extraia palavras-chave para busca.',
                   },
-                  required: ['product_name', 'keywords'],
-                  additionalProperties: false,
+                  { type: 'image_url', image_url: { url: imageUrl } },
+                ],
+              },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: 'describe_product_image',
+                  description:
+                    'Describe the product visible in the image with searchable keywords.',
+                  parameters: {
+                    type: 'object',
+                    properties: {
+                      product_name: {
+                        type: 'string',
+                        description: 'Nome curto do produto identificado.',
+                      },
+                      keywords: {
+                        type: 'array',
+                        items: { type: 'string' },
+                        description: 'Lista de 5-10 palavras-chave em português.',
+                      },
+                      category: { type: 'string', description: 'Categoria provável.' },
+                      color: {
+                        type: 'string',
+                        description: 'Cor predominante (opcional).',
+                      },
+                      material: {
+                        type: 'string',
+                        description: 'Material aparente (opcional).',
+                      },
+                      description: {
+                        type: 'string',
+                        description: 'Descrição curta do produto.',
+                      },
+                    },
+                    required: ['product_name', 'keywords'],
+                    additionalProperties: false,
+                  },
                 },
               },
+            ],
+            tool_choice: {
+              type: 'function',
+              function: { name: 'describe_product_image' },
             },
-          ],
-          tool_choice: { type: 'function', function: { name: 'describe_product_image' } },
-        }),
-      });
+          }),
+        }
+      );
 
       if (!aiRes.ok) {
         if (aiRes.status === 429) {
@@ -202,17 +214,20 @@ Deno.serve(
         .join(' ');
 
       // Generate query embedding for true semantic search
-      const embRes = await fetchWithTimeout(LOVABLE_AI_EMBEDDINGS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/text-embedding-004',
-          input: searchQuery,
-        }),
-      });
+      const embRes = await fetchWithTimeout(
+        LOVABLE_AI_EMBEDDINGS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/text-embedding-004',
+            input: searchQuery,
+          }),
+        }
+      );
 
       if (!embRes.ok) {
         console.error('Embedding error:', await embRes.text());

@@ -3,6 +3,7 @@ import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.4
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface Sale {
@@ -381,6 +382,10 @@ async function processOne(supabase: SupabaseClient, saleId: string) {
 Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'calculate-deal-health', limit: 20, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     const url = Deno.env.get('SUPABASE_URL')!;

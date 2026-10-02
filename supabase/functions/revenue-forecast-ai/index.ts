@@ -7,8 +7,10 @@ import {
   validationErrorResponse,
 } from '../_shared/validation.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface ForecastRow {
   salesperson_id: string | null;
@@ -31,6 +33,14 @@ Deno.serve(
   withRequestId('revenue-forecast-ai', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'revenue-forecast-ai',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
@@ -140,43 +150,53 @@ Deno.serve(
 - Categorias: Commit R$ ${categories.commit} | Best Case R$ ${categories.best_case} | Pipeline R$ ${categories.pipeline}
 - Gap vs meta: R$ ${gapToGoal.toFixed(0)}`;
 
-          const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model: 'google/gemini-2.0-flash',
-              messages: [
-                { role: 'system', content: 'Responda apenas com JSON válido.' },
-                { role: 'user', content: prompt },
-              ],
-              tools: [
-                {
-                  type: 'function',
-                  function: {
-                    name: 'forecast_insights',
-                    description: 'Gera insights de forecast',
-                    parameters: {
-                      type: 'object',
-                      properties: {
-                        narrative: { type: 'string' },
-                        risks: { type: 'array', items: { type: 'string' }, maxItems: 3 },
-                        opportunities: {
-                          type: 'array',
-                          items: { type: 'string' },
-                          maxItems: 3,
+          const aiRes = await fetchWithTimeout(
+            LOVABLE_AI_CHAT_COMPLETIONS_URL,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: 'google/gemini-2.0-flash',
+                messages: [
+                  { role: 'system', content: 'Responda apenas com JSON válido.' },
+                  { role: 'user', content: prompt },
+                ],
+                tools: [
+                  {
+                    type: 'function',
+                    function: {
+                      name: 'forecast_insights',
+                      description: 'Gera insights de forecast',
+                      parameters: {
+                        type: 'object',
+                        properties: {
+                          narrative: { type: 'string' },
+                          risks: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            maxItems: 3,
+                          },
+                          opportunities: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            maxItems: 3,
+                          },
                         },
+                        required: ['narrative', 'risks', 'opportunities'],
                       },
-                      required: ['narrative', 'risks', 'opportunities'],
                     },
                   },
+                ],
+                tool_choice: {
+                  type: 'function',
+                  function: { name: 'forecast_insights' },
                 },
-              ],
-              tool_choice: { type: 'function', function: { name: 'forecast_insights' } },
-            }),
-          });
+              }),
+            }
+          );
 
           if (aiRes.ok) {
             const j = await aiRes.json();

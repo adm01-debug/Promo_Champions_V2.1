@@ -3,8 +3,10 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 const admin = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -87,28 +89,34 @@ async function callAi(
     },
   ];
   try {
-    const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Você é um coach de vendas B2B sênior. Responda em português do Brasil.',
-          },
-          {
-            role: 'user',
-            content: `Estágio: ${stage}\nTaxa de conversão: ${rate.toFixed(1)}%\nTop motivos de perda: ${
-              lossReasons.map(r => `${r.reason} (${r.count})`).join(', ') || 'n/a'
-            }\nGere diagnóstico curto + 3-5 ações táticas para destravar este gargalo.`,
-          },
-        ],
-        tools,
-        tool_choice: { type: 'function', function: { name: 'report_bottleneck' } },
-      }),
-    });
+    const resp = await fetchWithTimeout(
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Você é um coach de vendas B2B sênior. Responda em português do Brasil.',
+            },
+            {
+              role: 'user',
+              content: `Estágio: ${stage}\nTaxa de conversão: ${rate.toFixed(1)}%\nTop motivos de perda: ${
+                lossReasons.map(r => `${r.reason} (${r.count})`).join(', ') || 'n/a'
+              }\nGere diagnóstico curto + 3-5 ações táticas para destravar este gargalo.`,
+            },
+          ],
+          tools,
+          tool_choice: { type: 'function', function: { name: 'report_bottleneck' } },
+        }),
+      }
+    );
     if (!resp.ok) return null;
     const json = await resp.json();
     const args = json.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
@@ -123,6 +131,14 @@ Deno.serve(
   withRequestId('analyze-stage-conversion', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'analyze-stage-conversion',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
     try {
       // Autorização: exige usuário autenticado com papel admin/manager (recomputa métricas globais).
       try {

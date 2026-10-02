@@ -5,21 +5,9 @@ import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/a
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
-
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.25,
-  proposal: 0.5,
-  negotiation: 0.75,
-  closed_won: 1,
-  closed_lost: 0,
-  won: 1,
-  lost: 0,
-};
 
 interface OpenDeal {
   amount: number;
@@ -65,7 +53,7 @@ async function generateAdvancedActions(supabase: ReturnType<typeof createClient>
   const sys = "Você é um head of sales experiente. Gere de 1 a 3 ações táticas e específicas para o vendedor atingir a meta. Responda em pt-BR.";
   const usr = `Vendedor: ${params.salespersonName}\nMeta: R$ ${params.quota.toFixed(0)}\nProjeção P50: R$ ${params.p50.toFixed(0)}\nGap: R$ ${gap.toFixed(0)}\nProbabilidade: ${(params.prob * 100).toFixed(0)}%\nRisco: ${params.risk}`;
   try {
-    const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
+    const resp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -117,6 +105,10 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "predict-quota-attainment", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
     // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
     const caller = await getUserClient(req);
@@ -134,6 +126,9 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     }
 
     const supabase = getServiceClient("grava predições, alertas e forecasts de quota de toda a equipe");
+
+    // Probabilidade base por estágio — fonte única stage_probabilities
+    const stageProbabilities = await getStageProbabilities(supabase);
 
     const body = await req.json().catch(() => ({}));
 
@@ -239,7 +234,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
       const openDeals: OpenDeal[] = (openBySp.get(sp.id) ?? []).map((d) => {
         const stage = String(d.stage ?? "lead").toLowerCase();
-        const probability = latestScore.get(d.id) ?? STAGE_PROBABILITY[stage] ?? 0.1;
+        const probability = latestScore.get(d.id) ?? stageProbabilities[stage] ?? 0.1;
         return { amount: Number(d.amount ?? 0), probability };
       });
 

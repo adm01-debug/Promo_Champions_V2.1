@@ -13,6 +13,7 @@ import {
   queryTopClients,
   type ResolverArgs,
 } from './queryResolvers.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const MAX_QUESTION_LENGTH = 1000;
@@ -151,6 +152,10 @@ async function resolveTool(name: string, args: ResolverArgs, supabase: SupabaseC
 Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'nlq-query', limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
       status: 405,

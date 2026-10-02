@@ -20,6 +20,7 @@ import { useLocation } from 'react-router-dom';
 import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
 import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
+import { useFeatureGate } from '@/hooks/useFeatureFlags';
 
 // Lazy load non-critical components
 const GlobalSearch = lazy(() =>
@@ -76,6 +77,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const searchRef = useRef<GlobalSearchHandle>(null);
   const { currentPageInfo } = useMobileNavigation();
   const location = useLocation();
+  const aiCopilotEnabled = useFeatureGate('ai_copilot');
   const aiCopilotEnabled = useFeatureGate('ai_copilot');
 
   const smartSkeleton = useMemo(() => <SmartSkeleton />, []);

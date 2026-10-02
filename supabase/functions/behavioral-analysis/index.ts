@@ -1,12 +1,14 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 interface AnalysisRequest {
   interactionId?: string;
@@ -44,6 +46,14 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'behavioral-analysis',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
+
     try {
       await getUserClient(req);
 
@@ -74,21 +84,24 @@ Retorne APENAS JSON válido, sem markdown.`;
 
       const userPrompt = `Contato: ${contactName ?? 'N/A'} | Canal: ${channel ?? 'N/A'}\n\nInteração:\n"""${text}"""`;
 
-      const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
-          response_format: { type: 'json_object' },
-        }),
-      });
+      const aiRes = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+            response_format: { type: 'json_object' },
+          }),
+        }
+      );
 
       if (aiRes.status === 429) {
         return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {

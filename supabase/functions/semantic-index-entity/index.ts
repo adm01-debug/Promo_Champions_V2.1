@@ -8,9 +8,10 @@ import {
   validationErrorResponse,
 } from '../_shared/validation.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isInternalServiceRequest } from '../_shared/internal-service-auth.ts';
+import { LOVABLE_AI_EMBEDDINGS_URL } from '../_shared/ai-gateway.ts';
 
 type EntityType =
   | 'client'
@@ -144,6 +145,14 @@ Deno.serve(
   withRequestId('semantic-index-entity', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'semantic-index-entity',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       // Autorização: chamada interna (service_role) ou usuário autenticado.

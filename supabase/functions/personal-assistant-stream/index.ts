@@ -21,7 +21,8 @@ import {
   collectErrors,
   validationErrorResponse,
 } from "../_shared/validation.ts";
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+
 
 type Mode = "briefing" | "chat" | "proactive_nudge";
 
@@ -232,6 +233,10 @@ Deno.serve(
     const corsHeaders = getCorsHeaders(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "personal-assistant-stream", limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
+
     try {
       const auth = await getUserClient(req).catch((e) => {
         throw e instanceof UnauthorizedError ? e : new UnauthorizedError("unauthorized");
@@ -327,7 +332,7 @@ Deno.serve(
       }
 
       const MODEL = "google/gemini-2.5-flash";
-      const upstream = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
+      const upstream = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({ model: MODEL, messages, stream: true }),

@@ -7,8 +7,10 @@ import {
   validationErrorResponse,
 } from '../_shared/validation.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface SearchRequest {
   query: string;
@@ -36,6 +38,14 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'semantic-search',
+      limit: 30,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       // Autorização: exige usuário autenticado (JWT válido).
@@ -75,56 +85,62 @@ Deno.serve(
       if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
 
       // 1. Extract keywords + intent via Lovable AI (tool calling)
-      const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            {
-              role: 'system',
-              content:
-                'Você é um analista de busca para um catálogo de brindes corporativos e produtos promocionais. Extraia palavras-chave RELEVANTES (em português) e categorias do produto descrito pelo usuário. Seja generoso com sinônimos.',
-            },
-            { role: 'user', content: query },
-          ],
-          tools: [
-            {
-              type: 'function',
-              function: {
-                name: 'extract_search_intent',
-                description:
-                  'Extract product keywords and category hints from the user query.',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    keywords: {
-                      type: 'array',
-                      items: { type: 'string' },
-                      description:
-                        'Lista de palavras-chave (3-8) representando o produto desejado.',
+      const aiRes = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'Você é um analista de busca para um catálogo de brindes corporativos e produtos promocionais. Extraia palavras-chave RELEVANTES (em português) e categorias do produto descrito pelo usuário. Seja generoso com sinônimos.',
+              },
+              { role: 'user', content: query },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: 'extract_search_intent',
+                  description:
+                    'Extract product keywords and category hints from the user query.',
+                  parameters: {
+                    type: 'object',
+                    properties: {
+                      keywords: {
+                        type: 'array',
+                        items: { type: 'string' },
+                        description:
+                          'Lista de palavras-chave (3-8) representando o produto desejado.',
+                      },
+                      category: {
+                        type: 'string',
+                        description: 'Categoria provável (opcional).',
+                      },
+                      intent: {
+                        type: 'string',
+                        description: 'Resumo curto da intenção do usuário.',
+                      },
                     },
-                    category: {
-                      type: 'string',
-                      description: 'Categoria provável (opcional).',
-                    },
-                    intent: {
-                      type: 'string',
-                      description: 'Resumo curto da intenção do usuário.',
-                    },
+                    required: ['keywords'],
+                    additionalProperties: false,
                   },
-                  required: ['keywords'],
-                  additionalProperties: false,
                 },
               },
+            ],
+            tool_choice: {
+              type: 'function',
+              function: { name: 'extract_search_intent' },
             },
-          ],
-          tool_choice: { type: 'function', function: { name: 'extract_search_intent' } },
-        }),
-      });
+          }),
+        }
+      );
 
       if (!aiRes.ok) {
         if (aiRes.status === 429) {

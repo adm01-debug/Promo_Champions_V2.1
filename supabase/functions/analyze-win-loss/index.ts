@@ -2,8 +2,10 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface SaleRow {
   id: string;
@@ -33,57 +35,60 @@ async function classifyWithAI(
     };
   }
   try {
-    const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Você classifica motivos de vitória/derrota de deals B2B em PT-BR. Responda APENAS via tool call.',
-          },
-          {
-            role: 'user',
-            content: `Outcome: ${outcome}\nNotas: ${notes.slice(0, 1500)}`,
-          },
-        ],
-        tools: [
-          {
-            type: 'function',
-            function: {
-              name: 'classify_outcome',
-              description: 'Classifica motivo do outcome',
-              parameters: {
-                type: 'object',
-                properties: {
-                  primary_reason: {
-                    type: 'string',
-                    description:
-                      'Motivo principal em 2-4 palavras (ex: Preço alto, Bom relacionamento, Sem orçamento)',
+    const resp = await fetchWithTimeout(
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Você classifica motivos de vitória/derrota de deals B2B em PT-BR. Responda APENAS via tool call.',
+            },
+            {
+              role: 'user',
+              content: `Outcome: ${outcome}\nNotas: ${notes.slice(0, 1500)}`,
+            },
+          ],
+          tools: [
+            {
+              type: 'function',
+              function: {
+                name: 'classify_outcome',
+                description: 'Classifica motivo do outcome',
+                parameters: {
+                  type: 'object',
+                  properties: {
+                    primary_reason: {
+                      type: 'string',
+                      description:
+                        'Motivo principal em 2-4 palavras (ex: Preço alto, Bom relacionamento, Sem orçamento)',
+                    },
+                    secondary_reasons: {
+                      type: 'array',
+                      items: { type: 'string' },
+                      description: 'Até 3 motivos adicionais',
+                    },
+                    competitor: {
+                      type: 'string',
+                      description: 'Nome do concorrente mencionado, ou string vazia',
+                    },
                   },
-                  secondary_reasons: {
-                    type: 'array',
-                    items: { type: 'string' },
-                    description: 'Até 3 motivos adicionais',
-                  },
-                  competitor: {
-                    type: 'string',
-                    description: 'Nome do concorrente mencionado, ou string vazia',
-                  },
+                  required: ['primary_reason', 'secondary_reasons', 'competitor'],
                 },
-                required: ['primary_reason', 'secondary_reasons', 'competitor'],
               },
             },
-          },
-        ],
-        tool_choice: { type: 'function', function: { name: 'classify_outcome' } },
-      }),
-    });
+          ],
+          tool_choice: { type: 'function', function: { name: 'classify_outcome' } },
+        }),
+      }
+    );
     if (!resp.ok) throw new Error(`AI ${resp.status}`);
     const data = await resp.json();
     const args = JSON.parse(
@@ -113,6 +118,15 @@ Deno.serve(
   withRequestId('analyze-win-loss', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, {
+      name: 'analyze-win-loss',
+      limit: 20,
+      windowSeconds: 60,
+      key: rateLimitUserKey(req),
+    });
+    if (rl) return rl;
     try {
       const caller = await getUserClient(req);
 
@@ -142,27 +156,30 @@ Deno.serve(
           );
         }
         try {
-          const r = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model: 'google/gemini-2.5-flash',
-              messages: [
-                {
-                  role: 'system',
-                  content:
-                    "Você explica insights de Win/Loss em PT-BR de forma direta e acionável. Use 3-5 frases curtas. Use **negrito** para destacar 1-2 termos-chave. Termine com uma recomendação prática iniciada com 'Recomendação:'.",
-                },
-                {
-                  role: 'user',
-                  content: `Insight: ${body.title ?? ''}\nDescrição: ${body.description ?? ''}\n\nExplique por que esse padrão acontece e como agir.`,
-                },
-              ],
-            }),
-          });
+          const r = await fetchWithTimeout(
+            LOVABLE_AI_CHAT_COMPLETIONS_URL,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${LOVABLE_API_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: 'google/gemini-2.5-flash',
+                messages: [
+                  {
+                    role: 'system',
+                    content:
+                      "Você explica insights de Win/Loss em PT-BR de forma direta e acionável. Use 3-5 frases curtas. Use **negrito** para destacar 1-2 termos-chave. Termine com uma recomendação prática iniciada com 'Recomendação:'.",
+                  },
+                  {
+                    role: 'user',
+                    content: `Insight: ${body.title ?? ''}\nDescrição: ${body.description ?? ''}\n\nExplique por que esse padrão acontece e como agir.`,
+                  },
+                ],
+              }),
+            }
+          );
           if (!r.ok) throw new Error(`AI ${r.status}`);
           const j = await r.json();
           const explanation =

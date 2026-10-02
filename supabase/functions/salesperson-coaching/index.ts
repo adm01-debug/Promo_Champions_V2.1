@@ -1,12 +1,14 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 Deno.serve(
   withRequestId('salesperson-coaching', async (req, _ctx) => {
@@ -14,6 +16,14 @@ Deno.serve(
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'salesperson-coaching',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       const { salespersonId } = await req.json();
@@ -194,78 +204,84 @@ ${context.topWinReasons.map(r => `- ${r.reason}: ${r.count}x (${r.percentage}%)`
 
 Forneça coaching estruturado com: pontos fortes, áreas de melhoria e ações recomendadas.`;
 
-      const aiResponse = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
-          tools: [
-            {
-              type: 'function',
-              function: {
-                name: 'provide_coaching',
-                description: 'Fornecer coaching estruturado para o vendedor',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    summary: {
-                      type: 'string',
-                      description: 'Resumo geral da performance em 1-2 frases',
-                    },
-                    strengths: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          title: { type: 'string' },
-                          description: { type: 'string' },
-                        },
-                        required: ['title', 'description'],
+      const aiResponse = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+            tools: [
+              {
+                type: 'function',
+                function: {
+                  name: 'provide_coaching',
+                  description: 'Fornecer coaching estruturado para o vendedor',
+                  parameters: {
+                    type: 'object',
+                    properties: {
+                      summary: {
+                        type: 'string',
+                        description: 'Resumo geral da performance em 1-2 frases',
                       },
-                      description: 'Pontos fortes identificados (1-3 itens)',
-                    },
-                    improvements: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          title: { type: 'string' },
-                          description: { type: 'string' },
-                          priority: { type: 'string', enum: ['alta', 'média', 'baixa'] },
+                      strengths: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            description: { type: 'string' },
+                          },
+                          required: ['title', 'description'],
                         },
-                        required: ['title', 'description', 'priority'],
+                        description: 'Pontos fortes identificados (1-3 itens)',
                       },
-                      description: 'Áreas de melhoria (2-4 itens)',
-                    },
-                    actions: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          action: { type: 'string' },
-                          timeline: { type: 'string' },
-                          expectedImpact: { type: 'string' },
+                      improvements: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            title: { type: 'string' },
+                            description: { type: 'string' },
+                            priority: {
+                              type: 'string',
+                              enum: ['alta', 'média', 'baixa'],
+                            },
+                          },
+                          required: ['title', 'description', 'priority'],
                         },
-                        required: ['action', 'timeline', 'expectedImpact'],
+                        description: 'Áreas de melhoria (2-4 itens)',
                       },
-                      description: 'Ações recomendadas específicas (2-4 itens)',
+                      actions: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            action: { type: 'string' },
+                            timeline: { type: 'string' },
+                            expectedImpact: { type: 'string' },
+                          },
+                          required: ['action', 'timeline', 'expectedImpact'],
+                        },
+                        description: 'Ações recomendadas específicas (2-4 itens)',
+                      },
                     },
+                    required: ['summary', 'strengths', 'improvements', 'actions'],
                   },
-                  required: ['summary', 'strengths', 'improvements', 'actions'],
                 },
               },
-            },
-          ],
-          tool_choice: { type: 'function', function: { name: 'provide_coaching' } },
-        }),
-      });
+            ],
+            tool_choice: { type: 'function', function: { name: 'provide_coaching' } },
+          }),
+        }
+      );
 
       if (!aiResponse.ok) {
         const errorText = await aiResponse.text();

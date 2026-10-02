@@ -2,8 +2,10 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 const SKILLS = [
   'discovery',
@@ -52,55 +54,64 @@ async function aiPlan(
   weeks: number;
 }> {
   try {
-    const res = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Você é coach sênior de vendas B2B. Responda apenas com a função fornecida.',
-          },
-          {
-            role: 'user',
-            content: `Vendedor ${sellerName} tem score ${score}/100 em "${skill}" com ${gaps} gaps recentes. Crie um plano de 4 milestones acionáveis e estimativa total de semanas.`,
-          },
-        ],
-        tools: [
-          {
-            type: 'function',
-            function: {
-              name: 'development_plan',
-              description: 'Plano de desenvolvimento de skill',
-              parameters: {
-                type: 'object',
-                properties: {
-                  summary: {
-                    type: 'string',
-                    description: 'Resumo do plano em 1-2 frases',
-                  },
-                  milestones: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: { week: { type: 'number' }, title: { type: 'string' } },
-                      required: ['week', 'title'],
+    const res = await fetchWithTimeout(
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Você é coach sênior de vendas B2B. Responda apenas com a função fornecida.',
+            },
+            {
+              role: 'user',
+              content: `Vendedor ${sellerName} tem score ${score}/100 em "${skill}" com ${gaps} gaps recentes. Crie um plano de 4 milestones acionáveis e estimativa total de semanas.`,
+            },
+          ],
+          tools: [
+            {
+              type: 'function',
+              function: {
+                name: 'development_plan',
+                description: 'Plano de desenvolvimento de skill',
+                parameters: {
+                  type: 'object',
+                  properties: {
+                    summary: {
+                      type: 'string',
+                      description: 'Resumo do plano em 1-2 frases',
                     },
-                    minItems: 4,
-                    maxItems: 4,
+                    milestones: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          week: { type: 'number' },
+                          title: { type: 'string' },
+                        },
+                        required: ['week', 'title'],
+                      },
+                      minItems: 4,
+                      maxItems: 4,
+                    },
+                    estimated_weeks: { type: 'number' },
                   },
-                  estimated_weeks: { type: 'number' },
+                  required: ['summary', 'milestones', 'estimated_weeks'],
                 },
-                required: ['summary', 'milestones', 'estimated_weeks'],
               },
             },
-          },
-        ],
-        tool_choice: { type: 'function', function: { name: 'development_plan' } },
-      }),
-    });
+          ],
+          tool_choice: { type: 'function', function: { name: 'development_plan' } },
+        }),
+      }
+    );
     if (!res.ok) throw new Error(`AI ${res.status}`);
     const data = await res.json();
     const args = JSON.parse(
@@ -130,6 +141,14 @@ Deno.serve(
   withRequestId('analyze-skill-gaps', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'analyze-skill-gaps',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
     try {
       // Avaliação de skill gaps de toda a equipe + escrita de assessments/tracks
       // de outros usuários: restrito a admin/manager.

@@ -45,6 +45,7 @@ import { useDealProbabilities } from '@/hooks/useDealProbability';
 import { useLeadScores, useCalculateLeadScores } from '@/hooks/useLeadScoring';
 import { useActiveCadencesBySaleIds } from '@/hooks/useCadences';
 import { useICPByClientName } from '@/hooks/useICPData';
+import { useStageProbabilities } from '@/hooks/useStageProbabilities';
 
 import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
@@ -59,6 +60,7 @@ export const PipelineBoard = () => {
   const { data: pipelines, isLoading: pipelinesLoading } = usePipelines();
   const { data: dynamicStages, isLoading: stagesLoading } =
     usePipelineStages(selectedPipelineId);
+  const { data: stageProbabilities } = useStageProbabilities();
   const {
     data: multiDealsByStage,
     isLoading: multiDealsLoading,
@@ -86,7 +88,15 @@ export const PipelineBoard = () => {
   // Current stages to render
   const currentStages = useMemo(() => {
     if (isDefaultPipeline) {
-      return PIPELINE_STAGES;
+      // Probabilidade do pipeline padrão vem da fonte única stage_probabilities
+      // (fração 0-1 → percentual 0-100); o valor em PIPELINE_STAGES é fallback.
+      return PIPELINE_STAGES.map(s => ({
+        ...s,
+        probability:
+          stageProbabilities?.[s.id] !== undefined
+            ? Math.round(stageProbabilities[s.id]! * 100)
+            : s.probability,
+      }));
     }
     return (dynamicStages || []).map(s => ({
       id: s.name as PipelineStageId,
@@ -95,7 +105,7 @@ export const PipelineBoard = () => {
       order: s.stage_order,
       probability: s.probability,
     }));
-  }, [isDefaultPipeline, dynamicStages]);
+  }, [isDefaultPipeline, dynamicStages, stageProbabilities]);
 
   // Current deals grouped by stage
   const currentDealsByStage = useMemo(() => {
@@ -466,6 +476,7 @@ export const PipelineBoard = () => {
                         className="h-6 w-6 border-2 border-background ring-2 ring-primary/20"
                       >
                         <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`} />
+                        src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`}
                       </Avatar>
                     ))}
                   </div>

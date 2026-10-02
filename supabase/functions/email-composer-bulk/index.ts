@@ -2,6 +2,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -155,6 +156,10 @@ async function processInBatches<T, R>(
 Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "email-composer-bulk", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY missing');

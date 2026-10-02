@@ -9,6 +9,7 @@ import {
 } from 'date-fns';
 import { BIGestorData, BIVendedorData } from '@/types/bi';
 import * as helpers from '@/utils/bi-helpers';
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 import { WON_SALE_STATUSES, isWonSaleStatus } from '@/constants';
 import {
   sentimentDistribution,
@@ -32,6 +33,7 @@ export const biService = {
       pipelineRes,
       activitiesRes,
       last6MonthsSalesRes,
+      stageProbabilities,
     ] = await Promise.all([
       supabase
         .from('salespeople')
@@ -65,6 +67,7 @@ export const biService = {
         .select('amount, status, created_at')
         .in('status', [...WON_SALE_STATUSES])
         .gte('created_at', subMonths(now, 6).toISOString()),
+      fetchStageProbabilities(),
     ]);
 
     const salespeople = salespeopleRes.data || [];
@@ -118,7 +121,8 @@ export const biService = {
         totalTeamRevenue,
         totalTeamGoal,
         daysRemaining,
-        daysPassed
+        daysPassed,
+        stageProbabilities
       );
 
     return {

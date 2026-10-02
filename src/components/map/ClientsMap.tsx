@@ -18,7 +18,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
-import { NOMINATIM_SEARCH_URL } from '@/config/external';
 import {
   Select,
   SelectContent,
@@ -86,19 +85,23 @@ function getMarkerIcon(value: number) {
 
 const geocodeCache = new Map<string, { lat: number; lng: number } | null>();
 
+// Geocodificação passa pela edge function `geocode-proxy` (autenticada,
+// com cache no Postgres) — o navegador não fala mais com o Nominatim.
 async function geocodeLocation(
   location: string
 ): Promise<{ lat: number; lng: number } | null> {
   const key = location.trim().toLowerCase();
   if (geocodeCache.has(key)) return geocodeCache.get(key)!;
   try {
-    const res = await fetch(
-      `${NOMINATIM_SEARCH_URL}?format=json&limit=1&q=${encodeURIComponent(location)}`,
-      { headers: { 'User-Agent': 'SalesArena/1.0' } }
-    );
-    const data = await res.json();
-    if (data.length > 0) {
-      const coords = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    const { data, error } = await supabase.functions.invoke('geocode-proxy', {
+      body: { query: location },
+    });
+    if (error || !data) {
+      geocodeCache.set(key, null);
+      return null;
+    }
+    if (typeof data.lat === 'number' && typeof data.lng === 'number') {
+      const coords = { lat: data.lat, lng: data.lng };
       geocodeCache.set(key, coords);
       return coords;
     }

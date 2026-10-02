@@ -6,12 +6,14 @@ import {
   validationErrorResponse,
 } from '../_shared/validation.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
 
@@ -57,6 +59,14 @@ Deno.serve(
   withRequestId('next-best-action', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'next-best-action',
+      limit: 30,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
@@ -393,25 +403,28 @@ Gere ${safeLimit} próximas melhores ações usando a tool generate_next_best_ac
         },
       ];
 
-      const aiResponse = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${lovableApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
-          tools,
-          tool_choice: {
-            type: 'function',
-            function: { name: 'generate_next_best_actions' },
+      const aiResponse = await fetchWithTimeout(
+        LOVABLE_AI_CHAT_COMPLETIONS_URL,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${lovableApiKey}`,
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt },
+            ],
+            tools,
+            tool_choice: {
+              type: 'function',
+              function: { name: 'generate_next_best_actions' },
+            },
+          }),
+        }
+      );
 
       if (!aiResponse.ok) {
         const errText = await aiResponse.text();

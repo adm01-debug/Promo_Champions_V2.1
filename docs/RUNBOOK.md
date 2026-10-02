@@ -43,6 +43,7 @@ npm run build      # build de produção
 - Existem functions no repo não publicadas (ex.: `elevenlabs-stt` responde 404)
 
 #### Secrets obrigatórios (Supabase Dashboard → Edge Functions → Secrets)
+
 - `ALLOWED_ORIGINS` — allowlist de CORS de produção:
   `https://promochampions.com.br,https://championgifts.lovable.app,https://pixels-with-personality-09.lovable.app`.
   Sem ele o CORS cai no fallback `*` (só aceitável em dev).

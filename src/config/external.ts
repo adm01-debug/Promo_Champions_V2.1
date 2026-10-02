@@ -3,19 +3,14 @@
  * `VITE_APP_URL`/`VITE_CANONICAL_URL` permitem sobrescrever em build/deploy;
  * os demais são endpoints de terceiros com fallback para o valor padrão.
  */
-
 // ── URLs do próprio app ──
-
 /** URL pública do app (deploy Lovable). Sobrescrever com VITE_APP_URL em outros ambientes. */
 export const APP_URL =
   import.meta.env.VITE_APP_URL ?? 'https://championgifts.lovable.app';
-
 /** Domínio canônico de produção (SEO/links públicos). */
 export const CANONICAL_URL =
   import.meta.env.VITE_CANONICAL_URL ?? 'https://promochampions.com.br';
-
 // ── Serviços externos ──
-
 export const WA_ME_URL = 'https://wa.me';
 export const DICEBEAR_AVATARS_URL = 'https://api.dicebear.com/7.x/avataaars/svg';
 export const PRAVATAR_URL = 'https://i.pravatar.cc/150';

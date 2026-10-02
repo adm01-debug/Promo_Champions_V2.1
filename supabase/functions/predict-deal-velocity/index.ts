@@ -7,12 +7,14 @@ import {
 } from '../_shared/validation.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
+
   getServiceClient,
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 interface PredictBody {
   sale_id?: string;
@@ -76,61 +78,68 @@ async function aiRefine(
 }> {
   if (!LOVABLE_API_KEY) return {};
   try {
-    const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Você é um analista de previsão de vendas B2B. Estime dias até fechamento (won/lost) com base nos dados.',
-          },
-          {
-            role: 'user',
-            content: JSON.stringify({
-              stage,
-              amount,
-              daysInStage,
-              expectedDays,
-              baseline,
-              health,
-              coverage,
-            }),
-          },
-        ],
-        tools: [
-          {
-            type: 'function',
-            function: {
-              name: 'set_prediction',
-              description: 'Define a previsão',
-              parameters: {
-                type: 'object',
-                properties: {
-                  predicted_days_remaining: { type: 'integer', minimum: 1, maximum: 365 },
-                  confidence_score: { type: 'integer', minimum: 0, maximum: 100 },
-                  factors: {
-                    type: 'object',
-                    properties: {
-                      drivers: { type: 'array', items: { type: 'string' } },
-                      brakes: { type: 'array', items: { type: 'string' } },
+    const aiResp = await fetchWithTimeout(
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Você é um analista de previsão de vendas B2B. Estime dias até fechamento (won/lost) com base nos dados.',
+            },
+            {
+              role: 'user',
+              content: JSON.stringify({
+                stage,
+                amount,
+                daysInStage,
+                expectedDays,
+                baseline,
+                health,
+                coverage,
+              }),
+            },
+          ],
+          tools: [
+            {
+              type: 'function',
+              function: {
+                name: 'set_prediction',
+                description: 'Define a previsão',
+                parameters: {
+                  type: 'object',
+                  properties: {
+                    predicted_days_remaining: {
+                      type: 'integer',
+                      minimum: 1,
+                      maximum: 365,
                     },
-                    required: ['drivers', 'brakes'],
+                    confidence_score: { type: 'integer', minimum: 0, maximum: 100 },
+                    factors: {
+                      type: 'object',
+                      properties: {
+                        drivers: { type: 'array', items: { type: 'string' } },
+                        brakes: { type: 'array', items: { type: 'string' } },
+                      },
+                      required: ['drivers', 'brakes'],
+                    },
                   },
+                  required: ['predicted_days_remaining', 'confidence_score', 'factors'],
                 },
-                required: ['predicted_days_remaining', 'confidence_score', 'factors'],
               },
             },
-          },
-        ],
-        tool_choice: { type: 'function', function: { name: 'set_prediction' } },
-      }),
-    });
+          ],
+          tool_choice: { type: 'function', function: { name: 'set_prediction' } },
+        }),
+      }
+    );
     if (!aiResp.ok) return {};
     const aiJson = await aiResp.json();
     const args = aiJson?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
@@ -528,6 +537,14 @@ async function batchPredict(limit: number): Promise<Response> {
 Deno.serve(
   withRequestId('predict-deal-velocity', async (req, _ctx) => {
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'predict-deal-velocity',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
     try {
       // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
       const caller = await getUserClient(req);

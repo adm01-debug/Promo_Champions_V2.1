@@ -2,8 +2,10 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 interface MetricRow {
   salesperson_id: string;
@@ -62,6 +64,14 @@ Deno.serve(
   withRequestId('detect-coaching-opportunities', async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
     if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'detect-coaching-opportunities',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       const supabase = createClient(
@@ -225,24 +235,27 @@ Deno.serve(
         if (apiKey && topGaps.length > 0) {
           try {
             const prompt = `Vendedor: ${sp.name}. Top ${topGaps.length} gaps de performance vs equipe:\n${topGaps.map((g, i) => `${i + 1}. ${METRICS_META[g.key].label}: atual ${g.current.toFixed(2)}, equipe ${g.benchmark.toFixed(2)} (gap ${g.gap.toFixed(0)}%)`).join('\n')}\n\nGere uma ação de coaching curta e específica (máx 120 chars) para CADA gap. Responda em JSON: {"actions": ["ação 1", "ação 2", "ação 3"]}`;
-            const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
-              method: 'POST',
-              headers: {
-                Authorization: `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model: 'google/gemini-2.5-flash',
-                messages: [
-                  {
-                    role: 'system',
-                    content: 'Você é um coach de vendas. Responda apenas JSON válido.',
-                  },
-                  { role: 'user', content: prompt },
-                ],
-                response_format: { type: 'json_object' },
-              }),
-            });
+            const aiRes = await fetchWithTimeout(
+              LOVABLE_AI_CHAT_COMPLETIONS_URL,
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${apiKey}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: 'google/gemini-2.5-flash',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'Você é um coach de vendas. Responda apenas JSON válido.',
+                    },
+                    { role: 'user', content: prompt },
+                  ],
+                  response_format: { type: 'json_object' },
+                }),
+              }
+            );
             if (aiRes.ok) {
               const j = await aiRes.json();
               const content = j.choices?.[0]?.message?.content ?? '{}';

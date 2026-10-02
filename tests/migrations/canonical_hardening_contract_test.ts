@@ -1,7 +1,9 @@
 import { assert, assertEquals, assertMatch, assertNotMatch } from 'jsr:@std/assert@1';
 
+const MIGRATIONS_DIR = new URL("../../supabase/migrations/", import.meta.url);
+
 const readMigration = (name: string) =>
-  Deno.readTextFile(new URL(`./${name}`, import.meta.url));
+  Deno.readTextFile(new URL(name, MIGRATIONS_DIR));
 
 Deno.test('migrations pendentes preservam idempotência e autorização', async () => {
   const [webhooks, prizeWheel, leadRouting] = await Promise.all([
@@ -264,4 +266,103 @@ Deno.test('crons de saúde WAL/webhook seguem o mesmo padrão interno', async ()
   assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+});
+
+
+Deno.test("diretório de migrations segue nomenclatura canônica e versões únicas", async () => {
+  const names: string[] = [];
+  for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+    names.push(entry.name);
+  }
+  assert(names.length > 0, "diretório de migrations não pode estar vazio");
+
+  const versions = new Map<string, string>();
+  for (const name of names) {
+    assertMatch(
+      name,
+      /^\d{8,14}_.*\.sql$/,
+      `nome fora do padrão '<versão numérica>_<descrição>.sql': ${name}`,
+    );
+    const version = name.split("_")[0];
+    assert(
+      !versions.has(version),
+      `versão duplicada '${version}': ${versions.get(version)} e ${name}`,
+    );
+    versions.set(version, name);
+  }
+});
+
+Deno.test("nenhuma migration é vazia (apenas comentários)", async () => {
+  for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+    if (!entry.name.endsWith(".sql")) continue;
+    const sql = await readMigration(entry.name);
+    const executable = sql
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .split("\n")
+      .filter((line) => {
+        const trimmed = line.trim();
+        return trimmed !== "" && !trimmed.startsWith("--");
+      });
+    assert(
+      executable.length > 0,
+      `migration sem nenhum statement executável: ${entry.name}`,
+    );
+  }
+});
+
+Deno.test("dedupe via constraints é idempotente e defensivo", async () => {
+  const sql = await readMigration("20261001190000_dedupe_unique_constraints.sql");
+
+  // clients: dedupe procedural antes do índice único parcial
+  assertMatch(sql, /merge_clients\(v_target,\s*v_dups\)/i);
+  assertMatch(sql, /deleted_at\s*=\s*now\(\)/i);
+  assertMatch(
+    sql,
+    /CREATE\s+UNIQUE\s+INDEX\s+IF\s+NOT\s+EXISTS\s+ux_clients_email[\s\S]*WHERE\s+email\s+IS\s+NOT\s+NULL\s+AND\s+deleted_at\s+IS\s+NULL/i,
+  );
+
+  // icp_data: índice único TOTAL (inferência de ON CONFLICT exige índice sem predicado)
+  assertMatch(
+    sql,
+    /CREATE\s+UNIQUE\s+INDEX\s+IF\s+NOT\s+EXISTS\s+ux_icp_data_bitrix_id\s+ON\s+public\.icp_data\s*\(bitrix_id\)/i,
+  );
+  assertNotMatch(sql, /ux_icp_data_bitrix_id[\s\S]{0,400}WHERE\s+bitrix_id\s+IS\s+NOT\s+NULL/i);
+
+  // sales: external_deal_id + unique composta real p/ ON CONFLICT
+  assertMatch(sql, /ADD\s+COLUMN\s+IF\s+NOT\s+EXISTS\s+external_deal_id/i);
+  assertMatch(
+    sql,
+    /CREATE\s+UNIQUE\s+INDEX\s+IF\s+NOT\s+EXISTS\s+ux_sales_source_external_deal\s+ON\s+public\.sales\s*\(source,\s*external_deal_id\)/i,
+  );
+
+  // corrida em upsert_client_from_quote tratada
+  assertMatch(sql, /EXCEPTION\s+WHEN\s+unique_violation/i);
+
+  assertNotMatch(sql, /\bCONCURRENTLY\b/i);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+  assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
+});
+
+Deno.test("FK-ONDELETE resolve constraints dinamicamente com guardas", async () => {
+  const sql = await readMigration("20261001190500_fk_on_delete_actions.sql");
+
+  // Resolução dinâmica do nome real da constraint + pulo quando já correto
+  assertMatch(sql, /pg_constraint/i);
+  assertMatch(sql, /confdeltype/i);
+  assertMatch(sql, /DROP\s+CONSTRAINT\s+%I/i);
+  assertMatch(sql, /ON\s+DELETE\s+%s/i);
+
+  // Filhos dependentes CASCADE; atribuição/auditoria SET NULL
+  assertMatch(sql, /'matchup_id'[\s\S]*'CASCADE'/i);
+  assertMatch(sql, /'league_id'[\s\S]*'CASCADE'/i);
+  assertMatch(sql, /'quote_items','product_id'[\s\S]*'SET NULL'/i);
+  assertMatch(sql, /'clients','user_id','auth','users'/i);
+
+  // Fallback RESTRICT quando a coluna é NOT NULL
+  assertMatch(sql, /attnotnull/i);
+  assertMatch(sql, /v_action\s*:=\s*'RESTRICT'/i);
+
+  assertNotMatch(sql, /\bCONCURRENTLY\b/i);
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+  assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
 });

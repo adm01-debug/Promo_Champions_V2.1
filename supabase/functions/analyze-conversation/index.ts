@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface Payload {
@@ -16,6 +17,10 @@ const SOURCES = new Set(["call", "email", "meeting", "whatsapp"]);
 Deno.serve(withRequestId('analyze-conversation', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "analyze-conversation", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
