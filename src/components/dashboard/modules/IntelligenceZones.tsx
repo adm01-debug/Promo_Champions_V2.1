@@ -28,6 +28,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { formatBRL } from '@/lib/money';
 export const IntelligenceZones = () => {
   const { data, isLoading } = useIntelligenceZones();
   const { exportToPDF, isExporting } = useBIDossierExport();
@@ -43,13 +44,6 @@ export const IntelligenceZones = () => {
       </div>
     );
   }
-
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    }).format(val);
 
   const getIntensityColor = (intensity: number) => {
     if (intensity >= 85) return 'bg-violet-600';
@@ -110,13 +104,13 @@ export const IntelligenceZones = () => {
             {[
               {
                 label: 'LTV',
-                value: formatCurrency(data?.customer360.ltv || 0),
+                value: formatBRL(data?.customer360.ltv || 0),
                 icon: Star,
                 color: 'text-amber-500',
               },
               {
                 label: 'Ticket Médio',
-                value: formatCurrency(data?.customer360.avgTicket || 0),
+                value: formatBRL(data?.customer360.avgTicket || 0),
                 icon: Target,
                 color: 'text-blue-500',
               },
@@ -167,7 +161,7 @@ export const IntelligenceZones = () => {
                         {new Date(order.date).toLocaleDateString('pt-BR')}
                       </p>
                       <p className="text-sm font-black text-primary mt-1">
-                        {formatCurrency(order.value)}
+                        {formatBRL(order.value)}
                       </p>
                     </div>
                   )

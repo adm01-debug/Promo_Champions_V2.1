@@ -35,9 +35,7 @@ import { PriceAlertsPanel } from '@/components/comparador/PriceAlertsPanel';
 import { PriceHistoryTable } from '@/components/comparador/PriceHistoryTable';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
+import { formatBRL } from '@/lib/money';
 export default function ComparadorPrecos() {
   const { supplierProducts, productsLoading, getPriceComparison, getBestSupplier } =
     useSuppliers();
@@ -128,7 +126,7 @@ export default function ComparadorPrecos() {
                 alerts={alerts as never[]}
                 unreadCount={unreadCount}
                 onMarkAllRead={() => markAllAsRead.mutate()}
-                formatCurrency={formatCurrency}
+                formatCurrency={(v: number) => formatBRL(v, { decimals: 2 })}
               />
             )}
 
@@ -227,8 +225,8 @@ export default function ComparadorPrecos() {
                                   <>
                                     <span>•</span>
                                     <span>
-                                      {formatCurrency(priceRange.min)} -{' '}
-                                      {formatCurrency(priceRange.max)}
+                                      {formatBRL(priceRange.min, { decimals: 2 })} -{' '}
+                                      {formatBRL(priceRange.max, { decimals: 2 })}
                                     </span>
                                   </>
                                 )}
@@ -275,7 +273,7 @@ export default function ComparadorPrecos() {
                                     )}
                                   </TableCell>
                                   <TableCell className="text-right font-mono">
-                                    {formatCurrency(sp.unit_price)}
+                                    {formatBRL(sp.unit_price, { decimals: 2 })}
                                     {index === 0 && comparison.length > 1 && (
                                       <Badge className="ml-2 bg-status-success text-xs">
                                         Menor
@@ -324,7 +322,7 @@ export default function ComparadorPrecos() {
 
             <PriceHistoryTable
               priceHistory={priceHistory || []}
-              formatCurrency={formatCurrency}
+              formatCurrency={(v: number) => formatBRL(v, { decimals: 2 })}
             />
           </div>
         </div>

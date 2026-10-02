@@ -16,6 +16,7 @@ import {
 import { SDRHandoffContext } from './SDRHandoffContext';
 import { Button } from '@/components/ui/button';
 
+import { formatBRL } from '@/lib/money';
 export function RecentClosedDeals() {
   const { data: deals } = useRecentClosedDeals();
 
@@ -36,7 +37,7 @@ export function RecentClosedDeals() {
               variant="secondary"
               className="text-[10px] bg-status-success/10 text-status-success shadow-sm"
             >
-              R$ {totalValue.toLocaleString('pt-BR')}
+              {formatBRL(totalValue)}
             </Badge>
           )}
         </div>
@@ -106,7 +107,7 @@ export function RecentClosedDeals() {
                       index === 0 ? 'gradient-text' : 'text-status-success'
                     )}
                   >
-                    R$ {Number(deal.amount).toLocaleString('pt-BR')}
+                    {formatBRL(Number(deal.amount))}
                   </p>
                   <div className="flex items-center gap-1 justify-end text-[10px] text-muted-foreground">
                     <Clock className="h-2.5 w-2.5" />
@@ -159,7 +160,7 @@ export function RecentClosedDeals() {
                             Valor
                           </span>
                           <span className="text-sm font-bold text-status-success">
-                            R$ {Number(deal.amount).toLocaleString('pt-BR')}
+                            {formatBRL(Number(deal.amount))}
                           </span>
                         </div>
                       </div>

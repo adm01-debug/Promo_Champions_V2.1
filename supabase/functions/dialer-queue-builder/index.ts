@@ -1,7 +1,7 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface BuildPayload {
   queue_id: string;
@@ -13,31 +13,10 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const caller = await getUserClient(req);
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-    const userClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-
-    const { data: claims, error: claimsError } = await userClient.auth.getClaims(
-      authHeader.replace("Bearer ", ""),
-    );
-    if (claimsError || !claims?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    // Rebuild delete+reinsere dialer_queue_items: exige bypass de RLS.
+    const supabase = getServiceClient("rebuild de dialer_queue_items (bypass RLS)");
 
     const body = (await req.json()) as BuildPayload;
     if (!body.queue_id) {
@@ -54,6 +33,21 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
       return new Response(JSON.stringify({ error: "Queue not found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Só o dono da fila (ou admin) pode reconstruí-la — espelha a policy de
+    // escrita de dialer_queues.
+    if (queue.owner_id !== caller.userId) {
+      const { data: isAdmin, error: roleErr } = await caller.client.rpc(
+        "has_role" as never,
+        { _user_id: caller.userId, _role: "admin" } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const filter = (queue.filter ?? {}) as Record<string, unknown>;
@@ -139,6 +133,11 @@ Deno.serve(withRequestId("dialer-queue-builder", async (req, _ctx) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error('dialer-queue-builder error:', err);
     const message = err instanceof Error ? err.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {

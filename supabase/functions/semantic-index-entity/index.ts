@@ -3,6 +3,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 
 type EntityType =
   | "client" | "lead" | "deal" | "activity" | "call_recording"
@@ -86,6 +88,25 @@ Deno.serve(withRequestId("semantic-index-entity", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Autorização: chamada interna (service_role) ou usuário autenticado.
+    if (!isInternalServiceRequest(req)) {
+      try {
+        await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: "unauthorized" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        console.error("semantic-index-entity authorization failed:", error);
+        return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     const { entity_type, entity_id, force = false } = (await req.json()) as IndexRequest;
 
     const errs = collectErrors([

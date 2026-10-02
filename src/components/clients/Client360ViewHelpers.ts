@@ -4,6 +4,7 @@
  */
 import type { Client360Data } from '@/hooks/crm/useClient360';
 
+import { formatBRL as __formatBRL } from '@/lib/money';
 export interface SelectedOrder {
   id?: string | number;
   status?: string | null;
@@ -21,8 +22,7 @@ export interface SelectedOrder {
 }
 
 export const formatCurrency = (value: number): string =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
+  __formatBRL(value, { decimals: 2 });
 export function extractCategories(orders: Client360Data['orders'] | undefined): string[] {
   if (!orders) return [];
   const cats = new Set<string>();

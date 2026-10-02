@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
+import { formatBRL } from '@/lib/money';
 const PREF_KEY = 'race_smart_notifications_enabled';
 
 function isEnabled(): boolean {
@@ -68,7 +69,7 @@ export function useRaceSmartNotifications({
     if (myRank === 4 && !podiumFiredRef.current) {
       const p3 = sorted[2];
       const gap = Number(p3.total_sales) - Number(me.total_sales);
-      toast.info(`🥉 Você está a R$ ${gap.toLocaleString('pt-BR')} do pódio`, {
+      toast.info(`🥉 Você está a ${formatBRL(gap)} do pódio`, {
         description: 'Mais uma venda forte e você sobe.',
       });
       podiumFiredRef.current = true;

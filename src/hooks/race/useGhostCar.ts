@@ -52,25 +52,34 @@ export function useGhostCar({
         .limit(10);
       if (error || !seasons?.length) return [];
 
-      const results: FinishedSeasonRow[] = [];
-      for (const s of seasons) {
-        const { data: lb } = await supabase
-          .from('race_leaderboard_view')
-          .select('progress, salesperson_id')
-          .eq('season_id', s.id)
-          .eq('salesperson_id', mySalespersonId)
-          .maybeSingle();
-        if (lb?.progress !== undefined && lb?.progress !== null) {
-          results.push({
-            id: s.id,
-            name: s.name,
-            start_date: s.start_date,
-            end_date: s.end_date,
-            final_progress: Number(lb.progress),
-          });
-        }
-      }
-      return results;
+      // Uma única query para todas as seasons (evita N+1): o progresso do
+      // usuário é mapeado por season_id.
+      const { data: leaderboardRows, error: lbError } = await supabase
+        .from('race_leaderboard_view')
+        .select('progress, season_id, salesperson_id')
+        .in(
+          'season_id',
+          seasons.map(s => s.id)
+        )
+        .eq('salesperson_id', mySalespersonId);
+      if (lbError || !leaderboardRows?.length) return [];
+
+      const progressBySeason = new Map(
+        leaderboardRows.map(row => [row.season_id, Number(row.progress)])
+      );
+
+      return seasons
+        .filter(s => {
+          const progress = progressBySeason.get(s.id);
+          return progress !== undefined && progress !== null;
+        })
+        .map(s => ({
+          id: s.id,
+          name: s.name,
+          start_date: s.start_date,
+          end_date: s.end_date,
+          final_progress: progressBySeason.get(s.id) as number,
+        }));
     },
   });
 

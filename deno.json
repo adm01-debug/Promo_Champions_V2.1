@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "check": "deno check src/main.ts",
+    "check": "deno check supabase/functions/*/index.ts supabase/functions/_shared/*.ts",
     "lint:functions": "deno lint"
   },
   "lint": {

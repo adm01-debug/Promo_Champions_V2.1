@@ -30,8 +30,8 @@ import { CloserSelector } from './CloserSelector';
 const editTeamSchema = z.object({
   name: z.string().trim().min(1, 'Nome é obrigatório').max(100),
   sdr_id: z.string().min(1, 'SDR é obrigatório'),
-  inactivity_days: z.string().default('365'),
-  is_active: z.boolean().default(true),
+  inactivity_days: z.string(),
+  is_active: z.boolean(),
 });
 
 type EditTeamFormData = z.infer<typeof editTeamSchema>;

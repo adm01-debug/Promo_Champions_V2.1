@@ -89,13 +89,16 @@ export function useWebhookDeadLetters(status: DeadLetterStatus = 'pending') {
           error: string | null;
         }>,
       };
-      for (const chunk of chunks) {
-        const { data, error } = await supabase.functions.invoke(
-          'winloss-webhook-replay',
-          {
+      // Chunks independentes — dispara em paralelo (evita roundtrips
+      // sequenciais); a ordem dos resultados é preservada pelo Promise.all.
+      const responses = await Promise.all(
+        chunks.map(chunk =>
+          supabase.functions.invoke('winloss-webhook-replay', {
             body: { dead_letter_ids: chunk },
-          }
-        );
+          })
+        )
+      );
+      for (const { data, error } of responses) {
         if (error) throw error;
         const d = data as { requestId: string; results: typeof aggregated.results };
         if (!aggregated.requestId) aggregated.requestId = d.requestId;

@@ -29,160 +29,250 @@ function candidateUrls(req: Request): string[] {
   return [...urls];
 }
 
-Deno.serve(withRequestId("twilio-call-status", async (req, ctx) => {
-  const limited = enforceRateLimit(req, {
-    name: "twilio-call-status",
-    limit: 240,
-    windowSeconds: 60,
-  });
-  if (limited) return limited;
-
-  // Corpo cru ANTES de qualquer parse: a assinatura da Twilio cobre o corpo
-  // form-urlencoded byte a byte (padrão do multichannel-status-webhook).
-  const rawBody = await readUtf8BodyWithinLimit(req, 64 * 1024);
-  if (rawBody === null) {
-    return new Response(JSON.stringify({ error: "payload_too_large" }), {
-      status: 413,
-      headers: { "Content-Type": "application/json" },
+Deno.serve(
+  withRequestId("twilio-call-status", async (req, ctx) => {
+    const limited = enforceRateLimit(req, {
+      name: "twilio-call-status",
+      limit: 240,
+      windowSeconds: 60,
     });
-  }
+    if (limited) return limited;
 
-  try {
-    const form = new URLSearchParams(rawBody);
-    const callSid = form.get("CallSid");
-    if (!callSid) {
-      return new Response("Missing CallSid", { status: 400 });
-    }
-
-    const admin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
-    // Sessão primeiro: além do update, ela dá o owner e portanto o auth_token
-    // do tenant que originou a chamada (credenciais Twilio são por tenant).
-    const { data: session, error: sessionErr } = await admin
-      .from("twilio_call_sessions")
-      .select("*")
-      .eq("call_sid", callSid)
-      .maybeSingle();
-    if (sessionErr) {
-      // Falha de banco não pode decidir o caminho de auth (503/401 enganoso) —
-      // a Twilio não repete callbacks; 500 sinaliza problema nosso.
-      ctx.log("error", "session_lookup_failed", { detail: sessionErr.message });
-      return new Response(JSON.stringify({ error: "internal_error" }), {
-        status: 500,
+    // Corpo cru ANTES de qualquer parse: a assinatura da Twilio cobre o corpo
+    // form-urlencoded byte a byte (padrão do multichannel-status-webhook).
+    const rawBody = await readUtf8BodyWithinLimit(req, 64 * 1024);
+    if (rawBody === null) {
+      return new Response(JSON.stringify({ error: "payload_too_large" }), {
+        status: 413,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    let tenantToken: string | null = null;
-    if (session?.owner_id) {
-      const { data: cred, error: credErr } = await admin
-        .from("channel_credentials")
-        .select("credentials")
-        .eq("owner_id", session.owner_id)
-        .eq("provider", "twilio")
-        .eq("enabled", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
+    try {
+      const form = new URLSearchParams(rawBody);
+      const callSid = form.get("CallSid");
+      if (!callSid) {
+        return new Response("Missing CallSid", { status: 400 });
+      }
+
+      const admin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+
+      // Sessão primeiro: além do update, ela dá o owner e portanto o auth_token
+      // do tenant que originou a chamada (credenciais Twilio são por tenant).
+      const { data: session, error: sessionErr } = await admin
+        .from("twilio_call_sessions")
+        .select("*")
+        .eq("call_sid", callSid)
         .maybeSingle();
-      if (credErr) {
-        ctx.log("error", "credentials_lookup_failed", { detail: credErr.message });
+      if (sessionErr) {
+        // Falha de banco não pode decidir o caminho de auth (503/401 enganoso) —
+        // a Twilio não repete callbacks; 500 sinaliza problema nosso.
+        ctx.log("error", "session_lookup_failed", {
+          detail: sessionErr.message,
+        });
         return new Response(JSON.stringify({ error: "internal_error" }), {
           status: 500,
           headers: { "Content-Type": "application/json" },
         });
       }
-      tenantToken = (cred?.credentials as Record<string, string> | null)?.auth_token ?? null;
-    }
 
-    // Tenant tem precedência; global é só fallback (nunca em paralelo — senão
-    // vira chave-mestra cross-tenant). Sem token nenhum, cai no 401 genérico
-    // abaixo (sem oráculo de configuração); o log diferencia.
-    const globalToken = Deno.env.get("TWILIO_AUTH_TOKEN") ?? null;
-    const tokens = tenantToken ? [tenantToken] : [globalToken];
-    if (!tenantToken && !globalToken) {
-      ctx.log("error", "webhook_not_configured", { reason: "no_twilio_auth_token" });
-    }
+      let tenantToken: string | null = null;
+      if (session?.owner_id) {
+        const { data: cred, error: credErr } = await admin
+          .from("channel_credentials")
+          .select("credentials")
+          .eq("owner_id", session.owner_id)
+          .eq("provider", "twilio")
+          .eq("enabled", true)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (credErr) {
+          ctx.log("error", "credentials_lookup_failed", {
+            detail: credErr.message,
+          });
+          return new Response(JSON.stringify({ error: "internal_error" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        tenantToken =
+          (cred?.credentials as Record<string, string> | null)?.auth_token ??
+            null;
+      }
 
-    const signatureOk = await verifyTwilioSignatureAny(
-      tokens,
-      candidateUrls(req),
-      rawBody,
-      req.headers.get("content-type") ?? "",
-      req.headers.get("x-twilio-signature"),
-    );
-    if (!signatureOk) {
-      ctx.log("warn", "invalid_signature", { call_sid: callSid });
-      return new Response(JSON.stringify({ error: "invalid_signature" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    if (!session) {
-      return new Response(JSON.stringify({ error: "unknown_call_sid" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    const status = form.get("CallStatus") ?? "";
-    const duration = form.get("CallDuration");
-    const recordingUrl = form.get("RecordingUrl");
-    const recordingSid = form.get("RecordingSid");
-    const price = form.get("Price");
-
-    // Callbacks de gravação chegam SEM CallStatus — não sobrescrever o estado
-    // real com string vazia.
-    const update: Record<string, unknown> = {};
-    if (status) update.status = status;
-    if (duration) update.duration_seconds = parseInt(duration, 10);
-    if (recordingUrl) update.recording_url = `${recordingUrl}.mp3`;
-    if (recordingSid) update.recording_sid = recordingSid;
-    if (price) update.price = parseFloat(price);
-    if (status === "completed" || status === "failed" || status === "canceled" || status === "busy" || status === "no-answer") {
-      update.ended_at = new Date().toISOString();
-    }
-
-    const { data: updated } = await admin
-      .from("twilio_call_sessions")
-      .update(update)
-      .eq("call_sid", callSid)
-      .select()
-      .maybeSingle();
-
-    // Auto-create call_log on completion
-    if (updated && (status === "completed" || status === "no-answer" || status === "busy" || status === "failed")) {
-      const disposition = dispositionMap[status] ?? "no_answer";
-      const { data: existing } = await admin
-        .from("call_logs")
-        .select("id")
-        .eq("call_sid", callSid)
-        .maybeSingle();
-
-      if (!existing) {
-        await admin.from("call_logs").insert({
-          owner_id: updated.owner_id,
-          sale_id: updated.sale_id,
-          queue_item_id: updated.queue_item_id,
-          call_sid: callSid,
-          disposition,
-          duration_seconds: updated.duration_seconds ?? 0,
-          notes: status === "completed" ? "Chamada Twilio concluída" : `Chamada Twilio: ${status}`,
+      // Tenant tem precedência; global é só fallback (nunca em paralelo — senão
+      // vira chave-mestra cross-tenant). Sem token nenhum, cai no 401 genérico
+      // abaixo (sem oráculo de configuração); o log diferencia.
+      const globalToken = Deno.env.get("TWILIO_AUTH_TOKEN") ?? null;
+      const tokens = tenantToken ? [tenantToken] : [globalToken];
+      if (!tenantToken && !globalToken) {
+        ctx.log("error", "webhook_not_configured", {
+          reason: "no_twilio_auth_token",
         });
       }
-    }
 
-    return new Response("ok", { status: 200 });
-  } catch (e) {
-    ctx.log("error", "twilio_call_status_failed", {
-      error: e instanceof Error ? e.message : String(e),
-    });
-    return new Response(JSON.stringify({ error: "internal_error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-}));
+      const signatureOk = await verifyTwilioSignatureAny(
+        tokens,
+        candidateUrls(req),
+        rawBody,
+        req.headers.get("content-type") ?? "",
+        req.headers.get("x-twilio-signature"),
+      );
+      if (!signatureOk) {
+        ctx.log("warn", "invalid_signature", { call_sid: callSid });
+        return new Response(JSON.stringify({ error: "invalid_signature" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      if (!session) {
+        return new Response(JSON.stringify({ error: "unknown_call_sid" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const status = form.get("CallStatus") ?? "";
+      const duration = form.get("CallDuration");
+      const recordingUrl = form.get("RecordingUrl");
+      const recordingSid = form.get("RecordingSid");
+      const price = form.get("Price");
+
+      // Dedupe (mesmo padrão de receive-quote-sync): a reserva única precede
+      // qualquer efeito colateral. A chave inclui hash do corpo cru — um
+      // reenvio byte-idêntico cai no 23505 e é ignorado, mas um callback do
+      // mesmo status trazendo dados novos (Price/CallDuration/RecordingSid)
+      // tem hash diferente e é processado normalmente.
+      const digest = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(rawBody),
+      );
+      const payloadHash = Array.from(new Uint8Array(digest))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("")
+        .slice(0, 16);
+      const dedupeKey = `twilio-call-status:${callSid}:${payloadHash}`;
+      const { data: dedupeReservation, error: dedupeErr } = await admin
+        .from("webhook_inbound_dedupe")
+        .insert({
+          correlation_key: dedupeKey,
+          event: status ? `call-status:${status}` : "call-status:recording",
+          source: "twilio",
+          payload: Object.fromEntries(form.entries()),
+        })
+        .select("id")
+        .single();
+      if (dedupeErr) {
+        if ((dedupeErr as { code?: string }).code === "23505") {
+          return new Response("duplicate_ignored", { status: 200 });
+        }
+        ctx.log("error", "dedupe_failed", {
+          detail: dedupeErr.message,
+          call_sid: callSid,
+        });
+        return new Response(JSON.stringify({ error: "internal_error" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      const dedupeReservationId =
+        (dedupeReservation as { id?: string } | null)?.id ?? null;
+
+      // A resposta continua 200 (a Twilio não repete statusCallback), mas a
+      // reserva é liberada quando um efeito falha para um reenvio legítimo
+      // não ser engolido como duplicado.
+      const releaseDedupeReservation = async () => {
+        if (!dedupeReservationId) return;
+        const { error: releaseErr } = await admin
+          .from("webhook_inbound_dedupe")
+          .delete()
+          .eq("id", dedupeReservationId);
+        if (releaseErr) {
+          ctx.log("error", "dedupe_release_failed", {
+            detail: releaseErr.message,
+          });
+        }
+      };
+
+      // Callbacks de gravação chegam SEM CallStatus — não sobrescrever o estado
+      // real com string vazia.
+      const update: Record<string, unknown> = {};
+      if (status) update.status = status;
+      if (duration) update.duration_seconds = parseInt(duration, 10);
+      if (recordingUrl) update.recording_url = `${recordingUrl}.mp3`;
+      if (recordingSid) update.recording_sid = recordingSid;
+      if (price) update.price = parseFloat(price);
+      if (
+        status === "completed" ||
+        status === "failed" ||
+        status === "canceled" ||
+        status === "busy" ||
+        status === "no-answer"
+      ) {
+        update.ended_at = new Date().toISOString();
+      }
+
+      const { data: updated, error: updateErr } = await admin
+        .from("twilio_call_sessions")
+        .update(update)
+        .eq("call_sid", callSid)
+        .select()
+        .maybeSingle();
+      if (updateErr) {
+        await releaseDedupeReservation();
+      }
+
+      // Auto-create call_log on completion
+      if (
+        updated &&
+        (status === "completed" ||
+          status === "no-answer" ||
+          status === "busy" ||
+          status === "failed")
+      ) {
+        const disposition = dispositionMap[status] ?? "no_answer";
+        const { data: existing } = await admin
+          .from("call_logs")
+          .select("id")
+          .eq("call_sid", callSid)
+          .maybeSingle();
+
+        if (!existing) {
+          const { error: logErr } = await admin.from("call_logs").insert({
+            owner_id: updated.owner_id,
+            sale_id: updated.sale_id,
+            queue_item_id: updated.queue_item_id,
+            call_sid: callSid,
+            disposition,
+            duration_seconds: updated.duration_seconds ?? 0,
+            notes: status === "completed"
+              ? "Chamada Twilio concluída"
+              : `Chamada Twilio: ${status}`,
+          });
+          if (logErr) {
+            ctx.log("error", "call_log_insert_failed", {
+              detail: logErr.message,
+              call_sid: callSid,
+            });
+            await releaseDedupeReservation();
+          }
+        }
+      }
+
+      return new Response("ok", { status: 200 });
+    } catch (e) {
+      ctx.log("error", "twilio_call_status_failed", {
+        error: e instanceof Error ? e.message : String(e),
+      });
+      return new Response(JSON.stringify({ error: "internal_error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }),
+);

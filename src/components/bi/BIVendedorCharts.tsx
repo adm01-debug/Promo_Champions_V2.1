@@ -28,6 +28,7 @@ import {
 import { SentimentDistributionCard } from '@/components/conversation-intelligence/SentimentDistributionCard';
 import { ObjectionsTrendChart } from '@/components/conversation-intelligence/ObjectionsTrendChart';
 
+import { formatBRL } from '@/lib/money';
 const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--chart-2))',
@@ -43,7 +44,7 @@ const STAGE_LABELS: Record<string, string> = {
 };
 
 function formatCurrency(value: number) {
-  return `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
+  return `${formatBRL(value)}`;
 }
 
 interface BIVendedorChartsProps {

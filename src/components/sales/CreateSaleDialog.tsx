@@ -37,6 +37,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
+import { formatBRL } from '@/lib/money';
 const saleSchema = z.object({
   client_id: z.string().optional(),
   client_name: z.string().trim().min(1, 'Nome do cliente é obrigatório'),
@@ -51,8 +52,8 @@ const saleSchema = z.object({
     }, 'Valor deve ser maior que zero'),
   sdr_id: z.string().optional(),
   closer_id: z.string().optional(),
-  is_first_sale: z.boolean().default(true),
-  source: z.string().default('other'),
+  is_first_sale: z.boolean(),
+  source: z.string(),
 });
 
 type SaleFormData = z.infer<typeof saleSchema>;
@@ -217,7 +218,7 @@ export const CreateSaleDialog = () => {
                         <SelectContent>
                           {products.map(product => (
                             <SelectItem key={product.id} value={product.id}>
-                              {product.name} - R$ {product.price.toLocaleString('pt-BR')}
+                              {product.name} - {formatBRL(product.price)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -272,7 +273,7 @@ export const CreateSaleDialog = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-xs font-black text-primary">
-                            R$ {rec.price.toLocaleString('pt-BR')}
+                            {formatBRL(rec.price)}
                           </p>
                         </div>
                       </button>

@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useFeatureFlags, useFeatureFlag } from '@/hooks/useFeatureFlags';
+import {
+  useCreateFeatureFlag,
+  useUpdateFeatureFlag,
+  useDeleteFeatureFlag,
+} from '@/hooks/useFeatureFlagsAdmin';
 import { PageTransition, itemVariants } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -23,7 +26,6 @@ import {
 } from '@/components/ui/tooltip';
 
 const FeatureFlagsAdmin = () => {
-  const queryClient = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [newKey, setNewKey] = useState('');
   const [newDesc, setNewDesc] = useState('');
@@ -31,90 +33,32 @@ const FeatureFlagsAdmin = () => {
   const { flags, isLoading } = useFeatureFlags();
   const testFlag = useFeatureFlag('experimental_ui');
 
-  const toggleMutation = useMutation({
-    mutationFn: async ({ id, is_enabled }: { id: string; is_enabled: boolean }) => {
-      const { error } = await supabase
-        .from('feature_flags')
-        .update({ is_enabled, updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feature-flags'] });
-      toast.success('Flag atualizada');
-    },
-  });
+  const updateFlag = useUpdateFeatureFlag();
+  const createFlag = useCreateFeatureFlag();
+  const deleteFlag = useDeleteFeatureFlag();
 
-  const rolloutMutation = useMutation({
-    mutationFn: async ({
-      id,
-      rollout_percentage,
-    }: {
-      id: string;
-      rollout_percentage: number;
-    }) => {
-      const { error } = await supabase
-        .from('feature_flags')
-        .update({ rollout_percentage, updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feature-flags'] });
-      toast.success('Rollout atualizado');
-    },
-  });
-
-  const rolesMutation = useMutation({
-    mutationFn: async ({
-      id,
-      allowed_roles,
-    }: {
-      id: string;
-      allowed_roles: string[];
-    }) => {
-      const { error } = await supabase
-        .from('feature_flags')
-        .update({ allowed_roles, updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feature-flags'] });
-      toast.success('Regras de acesso atualizadas');
-    },
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async () => {
-      if (!newKey.trim()) throw new Error('Key obrigatória');
-      const { error } = await supabase.from('feature_flags').insert({
+  const handleCreate = () => {
+    if (!newKey.trim()) {
+      toast.error('Key obrigatória');
+      return;
+    }
+    createFlag.mutate(
+      {
         key: newKey.trim().toLowerCase().replace(/\s+/g, '_'),
         description: newDesc || null,
         is_enabled: false,
         rollout_percentage: 100,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feature-flags'] });
-      setNewKey('');
-      setNewDesc('');
-      setShowAdd(false);
-      toast.success('Feature flag criada');
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('feature_flags').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feature-flags'] });
-      toast.success('Feature flag removida');
-    },
-  });
+      },
+      {
+        onSuccess: () => {
+          setNewKey('');
+          setNewDesc('');
+          setShowAdd(false);
+          toast.success('Feature flag criada');
+        },
+      }
+    );
+  };
 
   return (
     <>
@@ -169,7 +113,7 @@ const FeatureFlagsAdmin = () => {
                   <Button variant="outline" size="sm" onClick={() => setShowAdd(false)}>
                     Cancelar
                   </Button>
-                  <Button size="sm" onClick={() => createMutation.mutate()}>
+                  <Button size="sm" onClick={handleCreate}>
                     Criar
                   </Button>
                 </div>
@@ -249,10 +193,10 @@ const FeatureFlagsAdmin = () => {
                         <Slider
                           value={[flag.rollout_percentage]}
                           onValueCommit={v =>
-                            rolloutMutation.mutate({
-                              id: flag.id,
-                              rollout_percentage: v[0],
-                            })
+                            updateFlag.mutate(
+                              { id: flag.id, patch: { rollout_percentage: v[0] } },
+                              { onSuccess: () => toast.success('Rollout atualizado') }
+                            )
                           }
                           max={100}
                           step={5}
@@ -275,13 +219,21 @@ const FeatureFlagsAdmin = () => {
                                   flag.allowed_roles?.join(', ') || ''
                                 );
                                 if (roles !== null) {
-                                  rolesMutation.mutate({
-                                    id: flag.id,
-                                    allowed_roles: roles
-                                      .split(',')
-                                      .map(r => r.trim())
-                                      .filter(Boolean),
-                                  });
+                                  updateFlag.mutate(
+                                    {
+                                      id: flag.id,
+                                      patch: {
+                                        allowed_roles: roles
+                                          .split(',')
+                                          .map(r => r.trim())
+                                          .filter(Boolean),
+                                      },
+                                    },
+                                    {
+                                      onSuccess: () =>
+                                        toast.success('Regras de acesso atualizadas'),
+                                    }
+                                  );
                                 }
                               }}
                             >
@@ -294,14 +246,21 @@ const FeatureFlagsAdmin = () => {
                       <Switch
                         checked={flag.is_enabled}
                         onCheckedChange={checked =>
-                          toggleMutation.mutate({ id: flag.id, is_enabled: checked })
+                          updateFlag.mutate(
+                            { id: flag.id, patch: { is_enabled: checked } },
+                            { onSuccess: () => toast.success('Flag atualizada') }
+                          )
                         }
                       />
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-destructive"
-                        onClick={() => deleteMutation.mutate(flag.id)}
+                        onClick={() =>
+                          deleteFlag.mutate(flag.id, {
+                            onSuccess: () => toast.success('Feature flag removida'),
+                          })
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import { FC, memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -11,9 +11,7 @@ import {
   TopCompanyData,
 } from '@/hooks/bi/useBITopClients';
 
-const formatCurrency = (value: number) =>
-  `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
-
+import { formatBRL } from '@/lib/money';
 const _RANK_COLORS = [
   'bg-rank-gold',
   'bg-rank-silver',
@@ -76,7 +74,7 @@ const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
                   <span className="font-bold text-sm">
-                    {formatCurrency(client.totalValue)}
+                    {formatBRL(client.totalValue)}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     ({client.ordersCount} ped.)
@@ -139,7 +137,7 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
                 </span>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
                   <span className="font-bold text-sm">
-                    {formatCurrency(supplier.totalValue)}
+                    {formatBRL(supplier.totalValue)}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {supplier.productsCount} prod. · {supplier.itemsCount} itens
@@ -201,7 +199,7 @@ const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = 
                   {company.company}
                 </span>
                 <span className="text-xs text-muted-foreground shrink-0 ml-2">
-                  {company.ordersCount} pedidos · {formatCurrency(company.totalValue)}
+                  {company.ordersCount} pedidos · {formatBRL(company.totalValue)}
                 </span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">

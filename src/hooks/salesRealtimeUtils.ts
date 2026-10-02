@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { getLevelInfo } from '@/hooks/gamification/useSalespersonXP';
 import { toast } from 'sonner';
 
+import { formatBRL } from '@/lib/money';
 export const RANK_TITLES = {
   1: { title: 'Lenda', emoji: '👑', color: 'text-rank-gold' },
   2: { title: 'Elite', emoji: '⚔️', color: 'text-rank-silver' },
@@ -90,11 +91,7 @@ export async function awardSaleXP(
   saleAmount: number,
   salespersonName: string
 ): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
-  const formattedAmount = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-  }).format(saleAmount);
+  const formattedAmount = formatBRL(saleAmount);
 
   try {
     const { data, error } = await supabase.rpc('award_salesperson_xp', {
