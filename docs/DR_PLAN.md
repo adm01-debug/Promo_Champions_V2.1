@@ -46,7 +46,8 @@ vivem no cofre de senhas da empresa (Bitwarden/1Password), na pasta
    codes e guardar de volta no cofre** (os usados expiram).
 3. Rotacionar todas as chaves de API afetadas imediatamente
    (Supabase: Settings → API → rotate keys; GitHub: revogar PATs/tokens;
-   re-cadastrar secrets no Lovable/Supabase Edge Functions).
+   re-cadastrar secrets no Lovable/Supabase Edge Functions) — inventário,
+   donos e procedimento sem downtime em [SECRETS_ROTATION.md](SECRETS_ROTATION.md).
 4. Registrar o evento em `docs/postmortems/` (quem, quando, o que girou).
 
 **Teste:** o acesso emergencial deve ser exercitado pelo menos 1x por semestre
