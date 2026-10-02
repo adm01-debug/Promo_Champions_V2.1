@@ -230,7 +230,7 @@ export function LeadRankingCard({
                       </div>
                       {lead.trend && lead.trend.length > 1 && (
                         <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-accent/30 border border-white/5">
-                          {lead.trend[lead.trend.length - 1] > lead.trend[0] ? (
+                          {lead.trend[lead.trend.length - 1]! > lead.trend[0]! ? (
                             <TrendingUp className="h-3 w-3 text-emerald-500" />
                           ) : (
                             <TrendingUp className="h-3 w-3 text-rose-500 rotate-180" />
@@ -238,12 +238,15 @@ export function LeadRankingCard({
                           <span
                             className={cn(
                               'text-[10px] font-black tracking-tighter',
-                              lead.trend[lead.trend.length - 1] > lead.trend[0]
+                              lead.trend[lead.trend.length - 1]! > lead.trend[0]!
                                 ? 'text-emerald-500'
                                 : 'text-rose-500'
                             )}
                           >
-                            {Math.abs(lead.trend[lead.trend.length - 1] - lead.trend[0])}%
+                            {Math.abs(
+                              lead.trend[lead.trend.length - 1]! - lead.trend[0]!
+                            )}
+                            %
                           </span>
                         </div>
                       )}
@@ -331,7 +334,7 @@ export function LeadRankingCard({
                                     value={
                                       /* eslint-disable no-restricted-syntax */
                                       (lead.factors as unknown as Record<string, number>)
-                                        .dealValue
+                                        .dealValue ?? 0
                                       /* eslint-enable no-restricted-syntax */
                                     }
                                     maxValue={25}
@@ -345,7 +348,7 @@ export function LeadRankingCard({
                                   value={
                                     // eslint-disable-next-line no-restricted-syntax
                                     (lead.factors as unknown as Record<string, number>)
-                                      .companySize
+                                      .companySize ?? 0
                                   }
                                   maxValue={20}
                                 />
@@ -354,7 +357,7 @@ export function LeadRankingCard({
                                   value={
                                     // eslint-disable-next-line no-restricted-syntax
                                     (lead.factors as unknown as Record<string, number>)
-                                      .industry
+                                      .industry ?? 0
                                   }
                                   maxValue={15}
                                 />
@@ -363,7 +366,7 @@ export function LeadRankingCard({
                                   value={
                                     // eslint-disable-next-line no-restricted-syntax
                                     (lead.factors as unknown as Record<string, number>)
-                                      .engagement
+                                      .engagement ?? 0
                                   }
                                   maxValue={25}
                                 />

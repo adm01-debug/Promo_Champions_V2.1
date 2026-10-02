@@ -73,7 +73,7 @@ export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
                 <span className="text-muted-foreground">Recência (Últ. Compra):</span>
                 <span>
                   {data.orders.length > 0
-                    ? `${Math.floor((new Date().getTime() - new Date(data.orders[0].created_at).getTime()) / (1000 * 60 * 60 * 24))} dias`
+                    ? `${Math.floor((new Date().getTime() - new Date(data.orders[0]!.created_at).getTime()) / (1000 * 60 * 60 * 24))} dias`
                     : 'N/A'}
                 </span>
               </div>
