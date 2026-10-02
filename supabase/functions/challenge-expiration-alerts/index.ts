@@ -5,6 +5,7 @@ import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 Deno.serve(
   withRequestId("challenge-expiration-alerts", async (req, ctx) => {
@@ -56,7 +57,7 @@ Deno.serve(
       });
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const today = toBusinessDate();
 
     const { data: expiringChallenges, error: challengesError } = await supabase
       .from("weekly_challenges")

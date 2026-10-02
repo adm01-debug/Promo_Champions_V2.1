@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { TaskPriority } from '@/hooks/tasks/types';
+import { toBusinessDate } from '@/lib/date';
 
 interface CreateArgs {
   insightId: string;
@@ -31,7 +32,7 @@ export function useInsightTaskCreation() {
     }: CreateArgs) => {
       const due = new Date();
       due.setDate(due.getDate() + dueInDays);
-      const dueISO = due.toISOString().split('T')[0];
+      const dueISO = toBusinessDate(due);
 
       const row = {
         title: title.slice(0, 200),

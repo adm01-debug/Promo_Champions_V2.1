@@ -18,6 +18,7 @@ import {
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { isWonSaleStatus } from '@/constants';
+import { toBusinessDate } from '@/lib/date';
 
 export type KPIPeriod = 'week' | 'current_month' | 'last_month' | 'quarter' | 'year';
 
@@ -141,7 +142,7 @@ const fetchData = async (
     .from('daily_metrics')
     .select('new_clients, conversion_rate, date')
     .gte('date', allStart)
-    .lte('date', allEnd.split('T')[0]);
+    .lte('date', toBusinessDate(allEnd));
 
   const [salesRes, tasksRes, metricsRes] = await Promise.all([
     salesQuery,

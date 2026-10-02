@@ -4,6 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import { alertFromEmail } from '../_shared/alert-escalation.ts';
 import { maskEmail } from '../_shared/pii.ts';
+import { toBusinessDate } from '../_shared/business-date.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
@@ -79,7 +80,7 @@ Deno.serve(
       const dayEnd = new Date(today);
       dayEnd.setHours(23, 59, 59, 999);
 
-      log('info', 'checking_activities', { date: today.toISOString().split('T')[0] });
+      log('info', 'checking_activities', { date: toBusinessDate(today) });
 
       // Fetch active salespeople with emails
       const { data: salespeople, error: spError } = await supabase

@@ -7,6 +7,7 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface OpenDeal {
   amount: number;
@@ -259,8 +260,8 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     // Batch insert all predictions (was N individual inserts)
     const predRows = metricsPerSp.map((m) => ({
       salesperson_id: m.sp.id,
-      period_start: periodStart.toISOString().slice(0, 10),
-      period_end: periodEnd.toISOString().slice(0, 10),
+      period_start: toBusinessDate(periodStart),
+      period_end: toBusinessDate(periodEnd),
       quota_amount: m.quotaAmount,
       closed_amount: m.closedAmount,
       weighted_pipeline: m.weightedPipeline,
@@ -314,8 +315,8 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     // Batch upsert all forecasts (was N individual upserts)
     const fcRows = metricsPerSp.map((m) => ({
       salesperson_id: m.sp.id,
-      period_start: periodStart.toISOString().slice(0, 10),
-      period_end: periodEnd.toISOString().slice(0, 10),
+      period_start: toBusinessDate(periodStart),
+      period_end: toBusinessDate(periodEnd),
       quota: m.quotaAmount,
       closed: m.closedAmount,
       weighted_open: m.weightedPipeline,

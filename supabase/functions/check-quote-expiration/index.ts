@@ -1,6 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { partitionNotificationBatch } from '../_shared/notification-categories.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -50,8 +51,8 @@ Deno.serve(withRequestId('check-quote-expiration', async (req, ctx) => {
     .from('quotes')
     .select('*, salespeople:created_by(id, name)')
     .eq('status', 'sent')
-    .lte('valid_until', threeDaysFromNow.toISOString().split('T')[0])
-    .gte('valid_until', now.toISOString().split('T')[0])
+    .lte('valid_until', toBusinessDate(threeDaysFromNow))
+    .gte('valid_until', toBusinessDate(now))
     .limit(1000);
 
   if (fetchError) {
@@ -100,7 +101,7 @@ Deno.serve(withRequestId('check-quote-expiration', async (req, ctx) => {
     .from('quotes')
     .update({ status: 'expired' })
     .eq('status', 'sent')
-    .lt('valid_until', now.toISOString().split('T')[0]);
+    .lt('valid_until', toBusinessDate(now));
 
   if (expireError) {
     ctx.log('error', 'auto_expire_failed', { error: expireError.message });

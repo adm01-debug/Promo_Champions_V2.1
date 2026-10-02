@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { toBusinessMonthStart } from '@/lib/date';
 
 const goalEditSchema = z.object({
   commission_rate: z
@@ -82,7 +83,7 @@ export function GoalEditDialog({ open, onOpenChange, salesperson }: GoalEditDial
       if (spError) throw spError;
 
       // Upsert goal for current month
-      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+      const currentMonth = toBusinessMonthStart();
       const { error: goalError } = await supabase.from('sales_goals').upsert(
         {
           salesperson_id: salesperson.id,

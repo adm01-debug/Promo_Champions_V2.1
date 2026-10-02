@@ -5,6 +5,7 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { alertFromEmail } from '../_shared/alert-escalation.ts';
+import { toBusinessMonthStart } from '../_shared/business-date.ts';
 import { maskEmail } from '../_shared/pii.ts';
 import {
   getServiceClient,
@@ -151,7 +152,7 @@ const generateAlerts = async (
       .eq('is_active', true)
       .limit(500);
 
-    const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+    const currentMonth = toBusinessMonthStart();
     const { data: goals } = await supabase
       .from('sales_goals')
       .select('salesperson_id, goal_amount')

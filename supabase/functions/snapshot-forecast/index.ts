@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
+import { toBusinessMonthStart, toBusinessMonthEnd } from "../_shared/business-date.ts";
 
 Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -28,10 +29,10 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
     const today = new Date();
     const periodStart =
       body.period_start ??
-      new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+      toBusinessMonthStart(today);
     const periodEnd =
       body.period_end ??
-      new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().slice(0, 10);
+      toBusinessMonthEnd(today);
     const source = body.source ?? "weighted";
 
     const { data: sales, error: salesErr } = await supabase

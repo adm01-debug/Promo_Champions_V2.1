@@ -1,6 +1,7 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface AnalysisRow {
   outcome: string;
@@ -85,7 +86,7 @@ Deno.serve(withRequestId("export-winloss-pdf", async (req, _ctx) => {
 
     // Persist as plain text artifact in storage bucket if available; else return inline.
     const bucket = 'winloss-reports';
-    const fileName = `winloss-report-${new Date().toISOString().slice(0, 10)}-${crypto.randomUUID().slice(0, 8)}.md`;
+    const fileName = `winloss-report-${toBusinessDate()}-${crypto.randomUUID().slice(0, 8)}.md`;
 
     let signedUrl: string | null = null;
     try {

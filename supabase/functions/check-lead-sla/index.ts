@@ -70,14 +70,26 @@ Deno.serve(
       });
     }
 
-    let criticalHours = 8;
+    // SLA configurável via public.app_config ('sla.lead_critical_hours');
+    // o body segue podendo sobrescrever explicitamente.
+    let criticalHours: number | null = null;
     let notifyEmail = '';
     try {
       const body = await req.json();
-      criticalHours = body.criticalHours || 8;
+      criticalHours = typeof body.criticalHours === 'number' ? body.criticalHours : null;
       notifyEmail = body.notifyEmail || '';
     } catch {
       // Use defaults if no body
+    }
+
+    if (criticalHours === null) {
+      const { data: cfg } = await supabase
+        .from('app_config')
+        .select('value')
+        .eq('key', 'sla.lead_critical_hours')
+        .maybeSingle();
+      const raw = cfg?.value as unknown;
+      criticalHours = (typeof raw === 'number' ? raw : Number(raw)) || 8;
     }
 
     const { data: leads, error: leadsError } = await supabase
