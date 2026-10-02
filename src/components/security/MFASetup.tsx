@@ -35,6 +35,7 @@ export const MFASetup = () => {
     isLoading,
     isMFAEnabled,
     qrCodeUrl,
+    needsReenrollment,
     initializeTOTP,
     verifyAndEnableTOTP,
     disableTOTP,
@@ -105,6 +106,18 @@ export const MFASetup = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {needsReenrollment && (
+            <Alert className="mb-4 bg-status-warning/10 border-status-warning/20">
+              <AlertTriangle className="h-4 w-4 text-status-warning" />
+              <AlertTitle className="text-section-title text-status-warning">
+                Reative seu MFA
+              </AlertTitle>
+              <AlertDescription>
+                A autenticação de dois fatores foi migrada para um sistema mais seguro.
+                Configure o TOTP novamente abaixo para manter sua conta protegida.
+              </AlertDescription>
+            </Alert>
+          )}
           {isMFAEnabled ? (
             <Alert className="bg-status-success/10 border-status-success/20">
               <CheckCircle2 className="h-4 w-4 text-status-success" />

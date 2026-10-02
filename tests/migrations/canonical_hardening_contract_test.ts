@@ -1,7 +1,9 @@
 import { assert, assertEquals, assertMatch, assertNotMatch } from 'jsr:@std/assert@1';
 
+const MIGRATIONS_DIR = new URL("../../supabase/migrations/", import.meta.url);
+
 const readMigration = (name: string) =>
-  Deno.readTextFile(new URL(`./${name}`, import.meta.url));
+  Deno.readTextFile(new URL(name, MIGRATIONS_DIR));
 
 Deno.test('migrations pendentes preservam idempotência e autorização', async () => {
   const [webhooks, prizeWheel, leadRouting] = await Promise.all([
@@ -264,6 +266,48 @@ Deno.test('crons de saúde WAL/webhook seguem o mesmo padrão interno', async ()
   assertNotMatch(sql, /rapjswienfhkobhlamxb|usyxfpqlsspldubptrdl/i);
   assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
   assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+});
+
+
+Deno.test("diretório de migrations segue nomenclatura canônica e versões únicas", async () => {
+  const names: string[] = [];
+  for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+    names.push(entry.name);
+  }
+  assert(names.length > 0, "diretório de migrations não pode estar vazio");
+
+  const versions = new Map<string, string>();
+  for (const name of names) {
+    assertMatch(
+      name,
+      /^\d{8,14}_.*\.sql$/,
+      `nome fora do padrão '<versão numérica>_<descrição>.sql': ${name}`,
+    );
+    const version = name.split("_")[0];
+    assert(
+      !versions.has(version),
+      `versão duplicada '${version}': ${versions.get(version)} e ${name}`,
+    );
+    versions.set(version, name);
+  }
+});
+
+Deno.test("nenhuma migration é vazia (apenas comentários)", async () => {
+  for await (const entry of Deno.readDir(MIGRATIONS_DIR)) {
+    if (!entry.name.endsWith(".sql")) continue;
+    const sql = await readMigration(entry.name);
+    const executable = sql
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .split("\n")
+      .filter((line) => {
+        const trimmed = line.trim();
+        return trimmed !== "" && !trimmed.startsWith("--");
+      });
+    assert(
+      executable.length > 0,
+      `migration sem nenhum statement executável: ${entry.name}`,
+    );
+  }
 });
 
 Deno.test("dedupe via constraints é idempotente e defensivo", async () => {
