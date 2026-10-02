@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Search, Clock, Play } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { useSearchCallLibrary } from "@/hooks/conversational/useCallLibrarySearch";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import React, { useState } from 'react';
+import { Search, Clock, Play } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { useSearchCallLibrary } from '@/hooks/conversational/useCallLibrarySearch';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface Props {
   onSelectRecording?: (recordingId: string) => void;
@@ -15,7 +15,7 @@ interface Props {
 function formatDuration(seconds: number) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 function HighlightedSnippet({ html }: { html: string }) {
@@ -26,27 +26,35 @@ function HighlightedSnippet({ html }: { html: string }) {
   const nodes: React.ReactNode[] = [];
   for (let i = 0; i < parts.length; i++) {
     const p = parts[i];
-    if (p.toLowerCase() === "<b>") { bold = true; continue; }
-    if (p.toLowerCase() === "</b>") { bold = false; continue; }
+    if (p.toLowerCase() === '<b>') {
+      bold = true;
+      continue;
+    }
+    if (p.toLowerCase() === '</b>') {
+      bold = false;
+      continue;
+    }
     if (!p) continue;
     const text = p
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
       .replace(/&quot;/g, '"');
     nodes.push(
-      bold
-        ? <b key={i} className="bg-primary/20 text-foreground font-semibold rounded px-1">{text}</b>
-        : text,
+      bold ? (
+        <b key={i} className="bg-primary/20 text-foreground font-semibold rounded px-1">
+          {text}
+        </b>
+      ) : (
+        text
+      )
     );
   }
-  return (
-    <p className="text-sm text-muted-foreground leading-relaxed">{nodes}</p>
-  );
+  return <p className="text-sm text-muted-foreground leading-relaxed">{nodes}</p>;
 }
 
 export function CallLibrarySearch({ onSelectRecording }: Props) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const { data: results, isLoading } = useSearchCallLibrary(query);
 
   return (
@@ -55,7 +63,7 @@ export function CallLibrarySearch({ onSelectRecording }: Props) {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={e => setQuery(e.target.value)}
           placeholder="Buscar por palavras, objeções, concorrentes nas calls…"
           className="pl-10 h-11"
         />
@@ -67,7 +75,7 @@ export function CallLibrarySearch({ onSelectRecording }: Props) {
 
       {isLoading && (
         <div className="space-y-2">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2].map(i => (
             <Skeleton key={i} className="h-24 w-full" />
           ))}
         </div>
@@ -82,9 +90,9 @@ export function CallLibrarySearch({ onSelectRecording }: Props) {
       {!isLoading && results && results.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground">
-            {results.length} resultado{results.length === 1 ? "" : "s"}
+            {results.length} resultado{results.length === 1 ? '' : 's'}
           </p>
-          {results.map((r) => (
+          {results.map(r => (
             <Card
               key={r.id}
               className="p-4 hover:border-primary/40 transition-colors cursor-pointer group"
@@ -112,7 +120,7 @@ export function CallLibrarySearch({ onSelectRecording }: Props) {
                   rank {r.rank.toFixed(2)}
                 </Badge>
               </div>
-              <HighlightedSnippet html={r.snippet ?? ""} />
+              <HighlightedSnippet html={r.snippet ?? ''} />
               <div className="flex items-center gap-1 text-xs text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Play className="h-3 w-3" />
                 Abrir gravação

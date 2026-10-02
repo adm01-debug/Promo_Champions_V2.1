@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus, Inbox } from "lucide-react";
-import { useSequenceSteps, useDeleteSequenceStep, type SequenceStep } from "@/hooks/sequences/useSequenceSteps";
-import { useSequence } from "@/hooks/sequences/useSequences";
-import { SequenceStepCard } from "./SequenceStepCard";
-import { SequenceStepDialog } from "./SequenceStepDialog";
-import { SendTimeOptimizationToggle } from "./SendTimeOptimizationToggle";
-import { AutoPauseSettingsCard } from "./AutoPauseSettingsCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus, Inbox } from 'lucide-react';
+import {
+  useSequenceSteps,
+  useDeleteSequenceStep,
+  type SequenceStep,
+} from '@/hooks/sequences/useSequenceSteps';
+import { useSequence } from '@/hooks/sequences/useSequences';
+import { SequenceStepCard } from './SequenceStepCard';
+import { SequenceStepDialog } from './SequenceStepDialog';
+import { SendTimeOptimizationToggle } from './SendTimeOptimizationToggle';
+import { AutoPauseSettingsCard } from './AutoPauseSettingsCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Props {
   sequenceId: string;
@@ -21,7 +25,7 @@ export function SequenceBuilder({ sequenceId }: Props) {
   const [editing, setEditing] = useState<SequenceStep | null>(null);
   const [open, setOpen] = useState(false);
 
-  const nextOrder = (steps?.length ?? 0);
+  const nextOrder = steps?.length ?? 0;
 
   const handleNew = () => {
     setEditing(null);
@@ -35,7 +39,9 @@ export function SequenceBuilder({ sequenceId }: Props) {
   if (isLoading) {
     return (
       <div className="space-y-3">
-        {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full" />)}
+        {[1, 2, 3].map(i => (
+          <Skeleton key={i} className="h-24 w-full" />
+        ))}
       </div>
     );
   }
@@ -58,8 +64,13 @@ export function SequenceBuilder({ sequenceId }: Props) {
       {(steps ?? []).length === 0 ? (
         <Card className="p-12 text-center">
           <Inbox className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">Nenhum passo ainda. Comece criando o primeiro.</p>
-          <Button onClick={handleNew}><Plus className="h-4 w-4 mr-2" />Criar primeiro passo</Button>
+          <p className="text-sm text-muted-foreground mb-4">
+            Nenhum passo ainda. Comece criando o primeiro.
+          </p>
+          <Button onClick={handleNew}>
+            <Plus className="h-4 w-4 mr-2" />
+            Criar primeiro passo
+          </Button>
         </Card>
       ) : (
         <>
@@ -73,7 +84,8 @@ export function SequenceBuilder({ sequenceId }: Props) {
             />
           ))}
           <Button variant="outline" className="w-full" onClick={handleNew}>
-            <Plus className="h-4 w-4 mr-2" />Adicionar passo
+            <Plus className="h-4 w-4 mr-2" />
+            Adicionar passo
           </Button>
         </>
       )}

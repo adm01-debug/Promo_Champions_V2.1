@@ -6,14 +6,14 @@ import {
   PaginationNext,
   PaginationPrevious,
   PaginationEllipsis,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 interface TablePaginationProps {
   currentPage: number;
@@ -41,7 +41,7 @@ export function TablePagination({
   if (totalItems === 0) return null;
 
   const getPageNumbers = () => {
-    const pages: (number | "ellipsis")[] = [];
+    const pages: (number | 'ellipsis')[] = [];
     const showEllipsisStart = currentPage > 3;
     const showEllipsisEnd = currentPage < totalPages - 2;
 
@@ -52,7 +52,7 @@ export function TablePagination({
     pages.push(1);
 
     if (showEllipsisStart) {
-      pages.push("ellipsis");
+      pages.push('ellipsis');
     }
 
     const start = Math.max(2, currentPage - 1);
@@ -65,7 +65,7 @@ export function TablePagination({
     }
 
     if (showEllipsisEnd) {
-      pages.push("ellipsis");
+      pages.push('ellipsis');
     }
 
     if (!pages.includes(totalPages)) {
@@ -75,7 +75,8 @@ export function TablePagination({
     return pages;
   };
 
-  const showItemsPerPageSelector = itemsPerPage !== undefined && onItemsPerPageChange !== undefined;
+  const showItemsPerPageSelector =
+    itemsPerPage !== undefined && onItemsPerPageChange !== undefined;
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
@@ -88,13 +89,13 @@ export function TablePagination({
             <span className="text-sm text-muted-foreground">|</span>
             <Select
               value={itemsPerPage.toString()}
-              onValueChange={(value) => onItemsPerPageChange(parseInt(value))}
+              onValueChange={value => onItemsPerPageChange(parseInt(value))}
             >
               <SelectTrigger className="h-8 w-[70px] text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {itemsPerPageOptions.map((option) => (
+                {itemsPerPageOptions.map(option => (
                   <SelectItem key={option} value={option.toString()}>
                     {option}
                   </SelectItem>
@@ -105,19 +106,21 @@ export function TablePagination({
           </div>
         )}
       </div>
-      
+
       {totalPages > 1 && (
         <Pagination>
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => onPageChange(currentPage - 1)}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                className={
+                  currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                }
               />
             </PaginationItem>
 
             {getPageNumbers().map((page, index) =>
-              page === "ellipsis" ? (
+              page === 'ellipsis' ? (
                 <PaginationItem key={`ellipsis-${index}`}>
                   <PaginationEllipsis />
                 </PaginationItem>
@@ -137,7 +140,11 @@ export function TablePagination({
             <PaginationItem>
               <PaginationNext
                 onClick={() => onPageChange(currentPage + 1)}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                className={
+                  currentPage === totalPages
+                    ? 'pointer-events-none opacity-50'
+                    : 'cursor-pointer'
+                }
               />
             </PaginationItem>
           </PaginationContent>

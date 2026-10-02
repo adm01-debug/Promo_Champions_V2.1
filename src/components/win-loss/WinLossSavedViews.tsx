@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Bookmark, BookmarkPlus, Check, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { Bookmark, BookmarkPlus, Check, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,24 +8,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   useWinLossSavedViews,
   useSaveWinLossView,
   useDeleteWinLossView,
   type SavedView,
-} from "@/hooks/win-loss/useWinLossSavedViews";
-import type { WinLossFilterState } from "@/components/win-loss/winLossFiltersHelpers";
+} from '@/hooks/win-loss/useWinLossSavedViews';
+import type { WinLossFilterState } from '@/components/win-loss/winLossFiltersHelpers';
 
 interface Props {
   currentFilters: WinLossFilterState;
@@ -37,7 +37,7 @@ export function WinLossSavedViews({ currentFilters, onLoad }: Props) {
   const save = useSaveWinLossView();
   const del = useDeleteWinLossView();
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [makeDefault, setMakeDefault] = useState(false);
 
   const submit = () => {
@@ -47,10 +47,10 @@ export function WinLossSavedViews({ currentFilters, onLoad }: Props) {
       {
         onSuccess: () => {
           setOpen(false);
-          setName("");
+          setName('');
           setMakeDefault(false);
         },
-      },
+      }
     );
   };
 
@@ -67,13 +67,18 @@ export function WinLossSavedViews({ currentFilters, onLoad }: Props) {
           <DropdownMenuLabel>Minhas visões</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {!views.length && (
-            <p className="px-2 py-3 text-xs text-muted-foreground text-center">Nenhuma visão salva.</p>
+            <p className="px-2 py-3 text-xs text-muted-foreground text-center">
+              Nenhuma visão salva.
+            </p>
           )}
           {views.map(v => (
             <DropdownMenuItem
               key={v.id}
               className="flex items-center justify-between gap-2"
-              onSelect={(e) => { e.preventDefault(); onLoad(v); }}
+              onSelect={e => {
+                e.preventDefault();
+                onLoad(v);
+              }}
             >
               <span className="flex items-center gap-1.5 truncate">
                 {v.is_default && <Check className="h-3 w-3 text-primary" />}
@@ -83,14 +88,22 @@ export function WinLossSavedViews({ currentFilters, onLoad }: Props) {
                 type="button"
                 aria-label={`Remover ${v.name}`}
                 className="text-muted-foreground hover:text-destructive transition-colors"
-                onClick={(e) => { e.stopPropagation(); del.mutate(v.id); }}
+                onClick={e => {
+                  e.stopPropagation();
+                  del.mutate(v.id);
+                }}
               >
                 <Trash2 className="h-3 w-3" />
               </button>
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setOpen(true); }}>
+          <DropdownMenuItem
+            onSelect={e => {
+              e.preventDefault();
+              setOpen(true);
+            }}
+          >
             <BookmarkPlus className="h-3.5 w-3.5 mr-1.5" />
             Salvar visão atual
           </DropdownMenuItem>
@@ -104,7 +117,9 @@ export function WinLossSavedViews({ currentFilters, onLoad }: Props) {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label htmlFor="view-name" className="text-xs">Nome</Label>
+              <Label htmlFor="view-name" className="text-xs">
+                Nome
+              </Label>
               <Input
                 id="view-name"
                 placeholder="Ex.: Q1 enterprise · vs. Concorrente X"
@@ -114,14 +129,19 @@ export function WinLossSavedViews({ currentFilters, onLoad }: Props) {
               />
             </div>
             <label className="flex items-center gap-2 text-xs">
-              <Checkbox checked={makeDefault} onCheckedChange={c => setMakeDefault(!!c)} />
+              <Checkbox
+                checked={makeDefault}
+                onCheckedChange={c => setMakeDefault(!!c)}
+              />
               Definir como padrão
             </label>
           </div>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancelar</Button>
+            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
             <Button size="sm" onClick={submit} disabled={!name.trim() || save.isPending}>
-              {save.isPending ? "Salvando…" : "Salvar"}
+              {save.isPending ? 'Salvando…' : 'Salvar'}
             </Button>
           </DialogFooter>
         </DialogContent>

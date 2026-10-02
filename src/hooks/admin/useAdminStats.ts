@@ -87,7 +87,8 @@ export function useAdminStats() {
         }
       });
 
-      const totalRevenue = revenueData?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
+      const totalRevenue =
+        revenueData?.reduce((sum, s) => sum + Number(s.amount), 0) || 0;
       const openCircuits = circuitEvents?.filter(e => e.new_state === 'OPEN') || [];
       const queryMetrics = getQueryMetrics();
 

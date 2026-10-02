@@ -1,14 +1,29 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
-import { UserPlus, Loader2, Phone, Target, Users, Mail, Percent, DollarSign } from "lucide-react";
-import { z } from "zod";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { toast } from '@/hooks/use-toast';
+import {
+  UserPlus,
+  Loader2,
+  Phone,
+  Target,
+  Users,
+  Mail,
+  Percent,
+  DollarSign,
+} from 'lucide-react';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -16,26 +31,51 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 
 export type SalespersonRole = 'sdr' | 'closer' | 'hybrid';
 
-const roleLabels: Record<SalespersonRole, { label: string; icon: typeof Phone; color: string; bgColor: string }> = {
-  sdr: { label: "SDR", icon: Phone, color: "text-status-info", bgColor: "bg-status-info/10" },
-  closer: { label: "Closer", icon: Target, color: "text-status-success", bgColor: "bg-status-success/10" },
-  hybrid: { label: "Híbrido", icon: Users, color: "text-status-purple", bgColor: "bg-status-purple/10" },
+const roleLabels: Record<
+  SalespersonRole,
+  { label: string; icon: typeof Phone; color: string; bgColor: string }
+> = {
+  sdr: {
+    label: 'SDR',
+    icon: Phone,
+    color: 'text-status-info',
+    bgColor: 'bg-status-info/10',
+  },
+  closer: {
+    label: 'Closer',
+    icon: Target,
+    color: 'text-status-success',
+    bgColor: 'bg-status-success/10',
+  },
+  hybrid: {
+    label: 'Híbrido',
+    icon: Users,
+    color: 'text-status-purple',
+    bgColor: 'bg-status-purple/10',
+  },
 };
 
 const salespersonSchema = z.object({
-  name: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
-  email: z.string().trim().email("Email inválido").max(255, "Email muito longo").or(z.literal("")),
-  commission_rate: z.string()
-    .refine((val) => !isNaN(parseFloat(val)), "Valor inválido")
-    .refine((val) => parseFloat(val) >= 0, "Taxa mínima é 0%")
-    .refine((val) => parseFloat(val) <= 100, "Taxa máxima é 100%"),
-  goal_amount: z.string()
-    .refine((val) => !isNaN(parseFloat(val)), "Valor inválido")
-    .refine((val) => parseFloat(val) >= 0, "Meta deve ser positiva"),
+  name: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
+  email: z
+    .string()
+    .trim()
+    .email('Email inválido')
+    .max(255, 'Email muito longo')
+    .or(z.literal('')),
+  commission_rate: z
+    .string()
+    .refine(val => !isNaN(parseFloat(val)), 'Valor inválido')
+    .refine(val => parseFloat(val) >= 0, 'Taxa mínima é 0%')
+    .refine(val => parseFloat(val) <= 100, 'Taxa máxima é 100%'),
+  goal_amount: z
+    .string()
+    .refine(val => !isNaN(parseFloat(val)), 'Valor inválido')
+    .refine(val => parseFloat(val) >= 0, 'Meta deve ser positiva'),
   role: z.enum(['sdr', 'closer', 'hybrid']),
 });
 
@@ -52,11 +92,11 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
   const form = useForm<SalespersonFormData>({
     resolver: zodResolver(salespersonSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      role: "hybrid",
-      commission_rate: "10",
-      goal_amount: "100000",
+      name: '',
+      email: '',
+      role: 'hybrid',
+      commission_rate: '10',
+      goal_amount: '100000',
     },
   });
 
@@ -64,7 +104,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
     mutationFn: async (data: SalespersonFormData) => {
       // Insert salesperson
       const { data: salesperson, error: spError } = await supabase
-        .from("salespeople")
+        .from('salespeople')
         .insert({
           name: data.name,
           email: data.email || null,
@@ -77,35 +117,33 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
       if (spError) throw spError;
 
       // Insert goal for current month
-      const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
-      const { error: goalError } = await supabase
-        .from("sales_goals")
-        .insert({
-          salesperson_id: salesperson.id,
-          month: currentMonth,
-          goal_amount: parseFloat(data.goal_amount),
-        });
+      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+      const { error: goalError } = await supabase.from('sales_goals').insert({
+        salesperson_id: salesperson.id,
+        month: currentMonth,
+        goal_amount: parseFloat(data.goal_amount),
+      });
 
       if (goalError) throw goalError;
 
       return salesperson;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["salespeople"] });
-      queryClient.invalidateQueries({ queryKey: ["salespeople_ranking"] });
-      queryClient.invalidateQueries({ queryKey: ["sales_goals"] });
+      queryClient.invalidateQueries({ queryKey: ['salespeople'] });
+      queryClient.invalidateQueries({ queryKey: ['salespeople_ranking'] });
+      queryClient.invalidateQueries({ queryKey: ['sales_goals'] });
       toast({
-        title: "Vendedor cadastrado",
-        description: "O vendedor foi adicionado com sucesso.",
+        title: 'Vendedor cadastrado',
+        description: 'O vendedor foi adicionado com sucesso.',
       });
       handleClose();
       onSuccess?.();
     },
     onError: (error: Error) => {
       toast({
-        title: "Erro ao cadastrar",
+        title: 'Erro ao cadastrar',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -119,10 +157,14 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
     createMutation.mutate(data);
   };
 
-  
-
   return (
-    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) form.reset(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={o => {
+        setOpen(o);
+        if (!o) form.reset();
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="gap-2 gradient-primary border-0 hover-glow transition-all">
           <UserPlus className="h-4 w-4" />
@@ -195,7 +237,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
                   </FormLabel>
                   <FormControl>
                     <div className="grid grid-cols-3 gap-2">
-                      {(Object.keys(roleLabels) as SalespersonRole[]).map((r) => {
+                      {(Object.keys(roleLabels) as SalespersonRole[]).map(r => {
                         const info = roleLabels[r];
                         const Icon = info.icon;
                         const isSelected = field.value === r;
@@ -207,13 +249,17 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
                             className={`p-3 rounded-xl border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
                               isSelected
                                 ? `border-primary ${info.bgColor} ${info.color} shadow-lg shadow-primary/10`
-                                : "glass border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                                : 'glass border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground'
                             }`}
                           >
-                            <div className={`p-1.5 rounded-lg transition-all ${
-                              isSelected ? info.bgColor : "bg-muted/50"
-                            }`}>
-                              <Icon className={`h-4 w-4 ${isSelected ? info.color : ""}`} />
+                            <div
+                              className={`p-1.5 rounded-lg transition-all ${
+                                isSelected ? info.bgColor : 'bg-muted/50'
+                              }`}
+                            >
+                              <Icon
+                                className={`h-4 w-4 ${isSelected ? info.color : ''}`}
+                              />
                             </div>
                             {info.label}
                           </button>
@@ -276,17 +322,17 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-border/40">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={handleClose}
                 className="glass border-border/50"
               >
                 Cancelar
               </Button>
-              <Button 
-                variant="glow-pulse" 
-                type="submit" 
+              <Button
+                variant="glow-pulse"
+                type="submit"
                 disabled={createMutation.isPending}
                 className="transition-all"
               >

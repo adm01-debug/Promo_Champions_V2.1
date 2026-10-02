@@ -29,7 +29,7 @@ describe('computeRevenueForecast', () => {
   it('produz horizonte solicitado', () => {
     const r = computeRevenueForecast(history, { horizon: 3, rng: seededRng(42) });
     expect(r.forecast).toHaveLength(3);
-    r.forecast.forEach((f) => expect(f.isForecast).toBe(true));
+    r.forecast.forEach(f => expect(f.isForecast).toBe(true));
   });
 
   it('respeita bounds do horizonte (1-24)', () => {
@@ -50,7 +50,7 @@ describe('computeRevenueForecast', () => {
 
   it('p10 <= p50 <= p90 em todos os pontos', () => {
     const r = computeRevenueForecast(history, { horizon: 6, rng: seededRng(7) });
-    r.forecast.forEach((f) => {
+    r.forecast.forEach(f => {
       expect(f.p10).toBeLessThanOrEqual(f.p50);
       expect(f.p50).toBeLessThanOrEqual(f.p90);
     });
@@ -63,7 +63,7 @@ describe('computeRevenueForecast', () => {
       { period: '2026-03', revenue: 10 },
     ];
     const r = computeRevenueForecast(decline, { horizon: 12, rng: seededRng(3) });
-    r.forecast.forEach((f) => {
+    r.forecast.forEach(f => {
       expect(f.p10).toBeGreaterThanOrEqual(0);
       expect(f.p50).toBeGreaterThanOrEqual(0);
       expect(f.p90).toBeGreaterThanOrEqual(0);
@@ -112,8 +112,12 @@ describe('computeRevenueForecast', () => {
 
   it('respeita bounds de simulações (50-5000)', () => {
     // Só valida que não crasha — resultados dependem do RNG mesmo com sims diferentes.
-    expect(() => computeRevenueForecast(history, { horizon: 3, simulations: 10 })).not.toThrow();
-    expect(() => computeRevenueForecast(history, { horizon: 3, simulations: 99999 })).not.toThrow();
+    expect(() =>
+      computeRevenueForecast(history, { horizon: 3, simulations: 10 })
+    ).not.toThrow();
+    expect(() =>
+      computeRevenueForecast(history, { horizon: 3, simulations: 99999 })
+    ).not.toThrow();
   });
 });
 
@@ -144,7 +148,7 @@ describe('applyWhatIf', () => {
 
   it('deltas extremos clampados em 0', () => {
     const r = applyWhatIf(base, { winRateDelta: -2 }); // -200%
-    r.forecast.forEach((f) => expect(f.p50).toBe(0));
+    r.forecast.forEach(f => expect(f.p50).toBe(0));
   });
 
   it('recalcula summary após ajuste', () => {
@@ -160,7 +164,9 @@ describe('defensive branch guards', () => {
       { period: '2026-01', revenue: NaN },
       { period: '2026-02', revenue: NaN },
     ];
-    expect(() => computeRevenueForecast(nanHistory, { horizon: 1, rng: seededRng(0) })).not.toThrow();
+    expect(() =>
+      computeRevenueForecast(nanHistory, { horizon: 1, rng: seededRng(0) })
+    ).not.toThrow();
     const r = computeRevenueForecast(nanHistory, { horizon: 1, rng: seededRng(0) });
     // MAPE → NaN → invHw/Lin/Mc = NaN → totalInv = NaN || 1 = 1 (branch hit)
     // weights = NaN / 1 = NaN (expected side-effect)

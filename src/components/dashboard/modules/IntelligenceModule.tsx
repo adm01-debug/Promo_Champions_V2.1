@@ -1,16 +1,15 @@
-import IntelligenceCockpit from "@/components/intelligence/IntelligenceCockpit";
-import { MicroGoalsWidget } from "@/components/dashboard/widgets/MicroGoalsWidget";
-import { VelocityScoreWidget } from "@/components/dashboard/widgets/VelocityScoreWidget";
-import { ActivityQualityWidget } from "@/components/dashboard/widgets/ActivityQualityWidget";
-import { SelfBenchmarkWidget } from "@/components/dashboard/widgets/SelfBenchmarkWidget";
-import { CompetencyRadar } from "@/components/analytics/CompetencyRadar";
-import { useCompetencyData } from "@/hooks/useCompetencyData";
-import { useAuth } from "@/contexts/AuthContext";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Brain, LayoutDashboard, Target, Zap } from "lucide-react";
-import { SDRDashboard } from "@/components/sdr/SDRDashboard";
-import { IntelligenceZones } from "./IntelligenceZones";
-
+import IntelligenceCockpit from '@/components/intelligence/IntelligenceCockpit';
+import { MicroGoalsWidget } from '@/components/dashboard/widgets/MicroGoalsWidget';
+import { VelocityScoreWidget } from '@/components/dashboard/widgets/VelocityScoreWidget';
+import { ActivityQualityWidget } from '@/components/dashboard/widgets/ActivityQualityWidget';
+import { SelfBenchmarkWidget } from '@/components/dashboard/widgets/SelfBenchmarkWidget';
+import { CompetencyRadar } from '@/components/analytics/CompetencyRadar';
+import { useCompetencyData } from '@/hooks/useCompetencyData';
+import { useAuth } from '@/contexts/AuthContext';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sparkles, Brain, LayoutDashboard, Target, Zap } from 'lucide-react';
+import { SDRDashboard } from '@/components/sdr/SDRDashboard';
+import { IntelligenceZones } from './IntelligenceZones';
 
 export const IntelligenceModule = () => {
   const { salesperson } = useAuth();
@@ -21,19 +20,31 @@ export const IntelligenceModule = () => {
       <Tabs defaultValue="cockpit" className="space-y-8">
         <div className="flex justify-center sm:justify-start">
           <TabsList className="bg-muted/50 p-1 border border-border/40 backdrop-blur-sm">
-            <TabsTrigger value="cockpit" className="data-[state=active]:bg-background gap-2">
+            <TabsTrigger
+              value="cockpit"
+              className="data-[state=active]:bg-background gap-2"
+            >
               <LayoutDashboard className="w-4 h-4" />
               Cockpit Hub
             </TabsTrigger>
-            <TabsTrigger value="skills" className="data-[state=active]:bg-background gap-2">
+            <TabsTrigger
+              value="skills"
+              className="data-[state=active]:bg-background gap-2"
+            >
               <Sparkles className="w-4 h-4" />
               Skills & Analytics
             </TabsTrigger>
-            <TabsTrigger value="zones" className="data-[state=active]:bg-background gap-2 text-primary">
+            <TabsTrigger
+              value="zones"
+              className="data-[state=active]:bg-background gap-2 text-primary"
+            >
               <Zap className="w-4 h-4" />
               Zonas de Inteligência
             </TabsTrigger>
-            <TabsTrigger value="performance" className="data-[state=active]:bg-background gap-2">
+            <TabsTrigger
+              value="performance"
+              className="data-[state=active]:bg-background gap-2"
+            >
               <Brain className="w-4 h-4" />
               Tactical Insights
             </TabsTrigger>
@@ -52,9 +63,9 @@ export const IntelligenceModule = () => {
         <TabsContent value="skills" className="mt-0 outline-none space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8">
-              <CompetencyRadar 
-                data={competencyData} 
-                compact 
+              <CompetencyRadar
+                data={competencyData}
+                compact
                 showDetails={false}
                 className="h-full glass border-border/40"
               />
@@ -75,7 +86,6 @@ export const IntelligenceModule = () => {
         </TabsContent>
 
         <TabsContent value="performance" className="mt-0 outline-none">
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/30 transition-all hover:shadow-primary/5">
               <ActivityQualityWidget />

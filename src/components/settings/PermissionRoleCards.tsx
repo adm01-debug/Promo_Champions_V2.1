@@ -1,7 +1,7 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { AppRole } from "@/hooks/useUserRoles";
-import { Crown, UserCheck, Users } from "lucide-react";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { AppRole } from '@/hooks/useUserRoles';
+import { Crown, UserCheck, Users } from 'lucide-react';
 
 interface RoleConfig {
   label: string;
@@ -12,55 +12,59 @@ interface RoleConfig {
 
 export const roleConfig: Record<AppRole, RoleConfig> = {
   admin: {
-    label: "Administrador",
+    label: 'Administrador',
     icon: <Crown className="h-4 w-4" />,
-    color: "bg-destructive text-destructive-foreground",
-    description: "Acesso total ao sistema",
+    color: 'bg-destructive text-destructive-foreground',
+    description: 'Acesso total ao sistema',
   },
   manager: {
-    label: "Gerente",
+    label: 'Gerente',
     icon: <UserCheck className="h-4 w-4" />,
-    color: "bg-primary text-primary-foreground",
-    description: "Gerencia equipes e relatórios",
+    color: 'bg-primary text-primary-foreground',
+    description: 'Gerencia equipes e relatórios',
   },
   salesperson: {
-    label: "Vendedor",
+    label: 'Vendedor',
     icon: <Users className="h-4 w-4" />,
-    color: "bg-secondary text-secondary-foreground",
-    description: "Acesso às funcionalidades de vendas",
+    color: 'bg-secondary text-secondary-foreground',
+    description: 'Acesso às funcionalidades de vendas',
   },
 };
 
 export const resourceLabels: Record<string, string> = {
-  dashboard: "Dashboard",
-  analytics: "Analytics",
-  sales: "Vendas",
-  clients: "Clientes",
-  products: "Produtos",
-  team: "Equipe",
-  goals: "Metas",
-  reports: "Relatórios",
-  settings: "Configurações",
-  roles: "Roles",
-  audit: "Auditoria",
-  playbooks: "Playbooks",
-  cadences: "Cadências",
+  dashboard: 'Dashboard',
+  analytics: 'Analytics',
+  sales: 'Vendas',
+  clients: 'Clientes',
+  products: 'Produtos',
+  team: 'Equipe',
+  goals: 'Metas',
+  reports: 'Relatórios',
+  settings: 'Configurações',
+  roles: 'Roles',
+  audit: 'Auditoria',
+  playbooks: 'Playbooks',
+  cadences: 'Cadências',
 };
 
 export const actionLabels: Record<string, string> = {
-  view: "Visualizar",
-  create: "Criar",
-  update: "Editar",
-  delete: "Deletar",
-  manage: "Gerenciar",
-  export: "Exportar",
+  view: 'Visualizar',
+  create: 'Criar',
+  update: 'Editar',
+  delete: 'Deletar',
+  manage: 'Gerenciar',
+  export: 'Exportar',
 };
 
 interface PermissionRoleCardsProps {
   roles: AppRole[];
   selectedRole: AppRole;
   onSelectRole: (role: AppRole) => void;
-  getPermissionStats: (role: AppRole) => { total: number; granted: number; percentage: number };
+  getPermissionStats: (role: AppRole) => {
+    total: number;
+    granted: number;
+    percentage: number;
+  };
 }
 
 export const PermissionRoleCards = React.memo(function PermissionRoleCards({
@@ -71,14 +75,14 @@ export const PermissionRoleCards = React.memo(function PermissionRoleCards({
 }: PermissionRoleCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {roles.map((role) => {
+      {roles.map(role => {
         const stats = getPermissionStats(role);
         const config = roleConfig[role];
 
         return (
           <Card
             key={role}
-            className={`cursor-pointer transition-all ${selectedRole === role ? "ring-2 ring-primary" : ""}`}
+            className={`cursor-pointer transition-all ${selectedRole === role ? 'ring-2 ring-primary' : ''}`}
             onClick={() => onSelectRole(role)}
           >
             <CardContent className="pt-6">
@@ -93,7 +97,9 @@ export const PermissionRoleCards = React.memo(function PermissionRoleCards({
                 <div className="text-right">
                   <span className="text-metric">{stats.granted}</span>
                   <span className="text-muted-foreground">/{stats.total}</span>
-                  <p className="text-xs text-muted-foreground">{stats.percentage}% ativo</p>
+                  <p className="text-xs text-muted-foreground">
+                    {stats.percentage}% ativo
+                  </p>
                 </div>
               </div>
             </CardContent>

@@ -2,16 +2,28 @@ import { describe, it, expect } from 'vitest';
 import { applyMergeTags, extractMergeTags, AVAILABLE_MERGE_TAGS } from './mergeTags';
 
 const ctx = {
-  sale: { client_name: 'Fallback Cliente', amount: 12500.5, stage: 'qualified', category: 'Premium', source: 'Linkedin' },
-  client: { name: 'Ana Souza', company: 'Acme', email: 'ana@acme.com', phone: '(11) 9 8888-7777' },
+  sale: {
+    client_name: 'Fallback Cliente',
+    amount: 12500.5,
+    stage: 'qualified',
+    category: 'Premium',
+    source: 'Linkedin',
+  },
+  client: {
+    name: 'Ana Souza',
+    company: 'Acme',
+    email: 'ana@acme.com',
+    phone: '(11) 9 8888-7777',
+  },
   salesperson: { name: 'Maria', email: 'maria@ent.com' },
   custom: { 'singu.primeira_frase': 'Vi que vocês cresceram 30%' },
 };
 
 describe('applyMergeTags', () => {
   it('substitui tags de cliente', () => {
-    expect(applyMergeTags('Olá {{cliente.nome}} da {{cliente.empresa}}', ctx))
-      .toBe('Olá Ana Souza da Acme');
+    expect(applyMergeTags('Olá {{cliente.nome}} da {{cliente.empresa}}', ctx)).toBe(
+      'Olá Ana Souza da Acme'
+    );
   });
 
   it('faz fallback para sale.client_name se client.name ausente', () => {
@@ -20,18 +32,19 @@ describe('applyMergeTags', () => {
   });
 
   it('mostra placeholder [x] quando ausente', () => {
-    expect(applyMergeTags('{{cliente.telefone}}', { client: {}, sale: {} }))
-      .toBe('[telefone]');
+    expect(applyMergeTags('{{cliente.telefone}}', { client: {}, sale: {} })).toBe(
+      '[telefone]'
+    );
   });
 
   it('mostra placeholder [email] quando cliente.email ausente', () => {
-    expect(applyMergeTags('{{cliente.email}}', { client: {}, sale: {} }))
-      .toBe('[email]');
+    expect(applyMergeTags('{{cliente.email}}', { client: {}, sale: {} })).toBe('[email]');
   });
 
   it('mostra placeholder [email-vendedor] quando vendedor.email ausente', () => {
-    expect(applyMergeTags('{{vendedor.email}}', { salesperson: {} }))
-      .toBe('[email-vendedor]');
+    expect(applyMergeTags('{{vendedor.email}}', { salesperson: {} })).toBe(
+      '[email-vendedor]'
+    );
   });
 
   it('formata valor como BRL', () => {
@@ -52,7 +65,9 @@ describe('applyMergeTags', () => {
   });
 
   it('resolve singu.primeira_frase via custom', () => {
-    expect(applyMergeTags('{{singu.primeira_frase}}', ctx)).toBe('Vi que vocês cresceram 30%');
+    expect(applyMergeTags('{{singu.primeira_frase}}', ctx)).toBe(
+      'Vi que vocês cresceram 30%'
+    );
   });
 
   it('retorna placeholder [estágio] quando stage ausente', () => {
@@ -94,16 +109,21 @@ describe('applyMergeTags', () => {
   });
 
   it('substitui múltiplas ocorrências', () => {
-    expect(applyMergeTags('{{vendedor.nome}} — {{vendedor.nome}}', ctx))
-      .toBe('Maria — Maria');
+    expect(applyMergeTags('{{vendedor.nome}} — {{vendedor.nome}}', ctx)).toBe(
+      'Maria — Maria'
+    );
   });
 
   it('retorna [cliente] quando client.name e sale.client_name ausentes (linha 63)', () => {
-    expect(applyMergeTags('{{cliente.nome}}', { client: {}, sale: {} })).toBe('[cliente]');
+    expect(applyMergeTags('{{cliente.nome}}', { client: {}, sale: {} })).toBe(
+      '[cliente]'
+    );
   });
 
   it('retorna [empresa] quando client.company ausente (linha 65)', () => {
-    expect(applyMergeTags('{{cliente.empresa}}', { client: {}, sale: {} })).toBe('[empresa]');
+    expect(applyMergeTags('{{cliente.empresa}}', { client: {}, sale: {} })).toBe(
+      '[empresa]'
+    );
   });
 
   it('retorna [vendedor] quando salesperson.name ausente (linha 71)', () => {
@@ -116,12 +136,16 @@ describe('applyMergeTags', () => {
   });
 
   it('resolve singu.noticia_empresa via custom (linha 92 true branch)', () => {
-    const out = applyMergeTags('{{singu.noticia_empresa}}', { custom: { 'singu.noticia_empresa': 'Tech cresce 20%' } });
+    const out = applyMergeTags('{{singu.noticia_empresa}}', {
+      custom: { 'singu.noticia_empresa': 'Tech cresce 20%' },
+    });
     expect(out).toBe('Tech cresce 20%');
   });
 
   it('resolve singu.tecnologias via custom (linha 94 true branch)', () => {
-    const out = applyMergeTags('{{singu.tecnologias}}', { custom: { 'singu.tecnologias': 'React, Node' } });
+    const out = applyMergeTags('{{singu.tecnologias}}', {
+      custom: { 'singu.tecnologias': 'React, Node' },
+    });
     expect(out).toBe('React, Node');
   });
 });

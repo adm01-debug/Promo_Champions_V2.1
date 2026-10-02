@@ -33,8 +33,14 @@ export const useNotificationPreferences = () => {
 export const useCreateNotificationPreference = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (pref: Omit<NotificationPreference, 'id' | 'created_at' | 'updated_at'>) => {
-      const { data, error } = await supabase.from('notification_preferences').insert(pref).select().single();
+    mutationFn: async (
+      pref: Omit<NotificationPreference, 'id' | 'created_at' | 'updated_at'>
+    ) => {
+      const { data, error } = await supabase
+        .from('notification_preferences')
+        .insert(pref)
+        .select()
+        .single();
       if (error) throw error;
       return data;
     },
@@ -49,8 +55,16 @@ export const useCreateNotificationPreference = () => {
 export const useUpdateNotificationPreference = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<NotificationPreference>) => {
-      const { data, error } = await supabase.from('notification_preferences').update(updates).eq('id', id).select().single();
+    mutationFn: async ({
+      id,
+      ...updates
+    }: { id: string } & Partial<NotificationPreference>) => {
+      const { data, error } = await supabase
+        .from('notification_preferences')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
       if (error) throw error;
       return data;
     },
@@ -65,7 +79,10 @@ export const useDeleteNotificationPreference = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('notification_preferences').delete().eq('id', id);
+      const { error } = await supabase
+        .from('notification_preferences')
+        .delete()
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

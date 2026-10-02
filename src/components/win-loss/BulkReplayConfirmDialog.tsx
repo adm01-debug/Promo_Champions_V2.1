@@ -7,12 +7,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertTriangle, Loader2, RotateCcw } from "lucide-react";
-import { useMemo } from "react";
-import type { DeadLetter } from "@/hooks/win-loss/useWebhookDeadLetters";
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertTriangle, Loader2, RotateCcw } from 'lucide-react';
+import { useMemo } from 'react';
+import type { DeadLetter } from '@/hooks/win-loss/useWebhookDeadLetters';
 
 export const BULK_REPLAY_HARD_CAP = 200;
 export const BULK_REPLAY_CHUNK_SIZE = 50;
@@ -64,10 +64,10 @@ export function BulkReplayConfirmDialog({
           <AlertDialogDescription asChild>
             <div className="space-y-3 text-sm">
               <p>
-                Você está prestes a reenviar{" "}
-                <strong className="text-foreground">{summary.total}</strong>{" "}
-                webhook(s) em dead-letter. Cada item será disparado novamente para a
-                URL da assinatura correspondente.
+                Você está prestes a reenviar{' '}
+                <strong className="text-foreground">{summary.total}</strong> webhook(s) em
+                dead-letter. Cada item será disparado novamente para a URL da assinatura
+                correspondente.
               </p>
 
               {overCap && (
@@ -128,7 +128,7 @@ export function BulkReplayConfirmDialog({
 
               {!overCap && summary.chunks > 1 && (
                 <p className="text-[11px] text-muted-foreground">
-                  Será processado em <strong>{summary.chunks}</strong> lote(s) de até{" "}
+                  Será processado em <strong>{summary.chunks}</strong> lote(s) de até{' '}
                   {BULK_REPLAY_CHUNK_SIZE} itens.
                 </p>
               )}
@@ -138,7 +138,7 @@ export function BulkReplayConfirmDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isReplaying}>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={(e) => {
+            onClick={e => {
               e.preventDefault();
               if (overCap || isReplaying) return;
               onConfirm();

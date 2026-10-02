@@ -13,9 +13,16 @@ function TyreStack({ x, y, rotation }: { x: number; y: number; rotation: number 
   return (
     <g transform={`translate(${x} ${y}) rotate(${rotation})`}>
       {/* sombra */}
-      <ellipse cx={1.5} cy={3} rx={9} ry={2.5} fill="hsl(var(--race-checkered-dark))" opacity={0.35} />
+      <ellipse
+        cx={1.5}
+        cy={3}
+        rx={9}
+        ry={2.5}
+        fill="hsl(var(--race-checkered-dark))"
+        opacity={0.35}
+      />
       {/* 3 pneus alinhados */}
-      {[-6, 0, 6].map((dx) => (
+      {[-6, 0, 6].map(dx => (
         <g key={dx} transform={`translate(${dx} 0)`}>
           <circle r={3.5} fill="hsl(var(--race-checkered-dark))" />
           <circle r={2} fill="hsl(var(--race-asphalt))" />

@@ -3,7 +3,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { LifeBuoy } from 'lucide-react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -56,19 +62,22 @@ export const RecoveryRateCard = React.memo(function RecoveryRateCard() {
   const campaignRows = useMemo(
     () =>
       [...(campaigns.data ?? [])]
-        .sort((a, b) => a.recovery_rate - b.recovery_rate || b.failed_total - a.failed_total)
+        .sort(
+          (a, b) => a.recovery_rate - b.recovery_rate || b.failed_total - a.failed_total
+        )
         .slice(0, 10),
-    [campaigns.data],
+    [campaigns.data]
   );
 
   const typeRows = useMemo(
     () => [...(types.data ?? [])].sort((a, b) => b.failed_total - a.failed_total),
-    [types.data],
+    [types.data]
   );
 
   const totals = useMemo(() => sumRecovery(types.data ?? []), [types.data]);
 
-  if (campaigns.isLoading || types.isLoading) return <Skeleton className="h-80 rounded-xl" />;
+  if (campaigns.isLoading || types.isLoading)
+    return <Skeleton className="h-80 rounded-xl" />;
 
   if (campaigns.isError || types.isError) {
     return (
@@ -88,10 +97,10 @@ export const RecoveryRateCard = React.memo(function RecoveryRateCard() {
           Recuperação após reenvio
         </CardTitle>
         <CardDescription>
-          Últimos {WINDOW_DAYS} dias. Considera apenas rascunhos que falharam ao menos uma vez:
-          &quot;recuperado&quot; significa entregue depois da falha (robô ou reenvio manual). Falhas
-          permanentes (supressão, endereço inválido) não são cobradas — meta de{' '}
-          {RECOVERY_RISK_THRESHOLD}% vale para falhas transitórias.
+          Últimos {WINDOW_DAYS} dias. Considera apenas rascunhos que falharam ao menos uma
+          vez: &quot;recuperado&quot; significa entregue depois da falha (robô ou reenvio
+          manual). Falhas permanentes (supressão, endereço inválido) não são cobradas —
+          meta de {RECOVERY_RISK_THRESHOLD}% vale para falhas transitórias.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -99,7 +108,10 @@ export const RecoveryRateCard = React.memo(function RecoveryRateCard() {
           <Stat label="Falharam" value={String(totals.failedTotal)} />
           <Stat label="Recuperados" value={String(totals.recoveredCount)} />
           <Stat label="Ainda em falha" value={String(totals.stillFailing)} />
-          <Stat label="Taxa de recuperação" value={`${totals.recoveryRate.toFixed(2)}%`} />
+          <Stat
+            label="Taxa de recuperação"
+            value={`${totals.recoveryRate.toFixed(2)}%`}
+          />
         </div>
 
         {totals.failedTotal === 0 ? (
@@ -129,14 +141,16 @@ export const RecoveryRateCard = React.memo(function RecoveryRateCard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {typeRows.map((row) => {
+                  {typeRows.map(row => {
                     const health = recoveryHealth(row.failure_type, row.recovery_rate);
                     return (
                       <TableRow key={row.failure_type}>
                         <TableCell className="font-medium">
                           {failureTypeLabel(row.failure_type)}
                         </TableCell>
-                        <TableCell className="text-right tabular-nums">{row.failed_total}</TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {row.failed_total}
+                        </TableCell>
                         <TableCell className="text-right tabular-nums">
                           {row.recovered_count}
                         </TableCell>
@@ -173,13 +187,17 @@ export const RecoveryRateCard = React.memo(function RecoveryRateCard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {campaignRows.map((row) => (
+                    {campaignRows.map(row => (
                       <TableRow key={row.job_id}>
-                        <TableCell className="font-medium">{campaignLabel(row.prompt)}</TableCell>
+                        <TableCell className="font-medium">
+                          {campaignLabel(row.prompt)}
+                        </TableCell>
                         <TableCell className="text-xs text-muted-foreground">
                           {format(new Date(row.created_at), 'dd/MM/yy', { locale: ptBR })}
                         </TableCell>
-                        <TableCell className="text-right tabular-nums">{row.failed_total}</TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {row.failed_total}
+                        </TableCell>
                         <TableCell className="text-right tabular-nums">
                           {row.recovered_count}
                         </TableCell>

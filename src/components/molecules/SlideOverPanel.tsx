@@ -25,13 +25,13 @@ export const SlideOverPanel: FC<SlideOverPanelProps> = ({
   children,
   footer,
   width = 'md',
-  side = 'right'
+  side = 'right',
 }) => {
   const widths = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg',
-    xl: 'max-w-xl'
+    xl: 'max-w-xl',
   };
 
   return (
@@ -76,7 +76,8 @@ export const SlideOverPanel: FC<SlideOverPanelProps> = ({
               </div>
               <Button
                 variant="ghost"
-                size="icon" aria-label="Fechar"
+                size="icon"
+                aria-label="Fechar"
                 onClick={onClose}
                 className="h-8 w-8"
               >
@@ -85,16 +86,10 @@ export const SlideOverPanel: FC<SlideOverPanelProps> = ({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4">
-              {children}
-            </div>
+            <div className="flex-1 overflow-y-auto p-4">{children}</div>
 
             {/* Footer */}
-            {footer && (
-              <div className="border-t p-4">
-                {footer}
-              </div>
-            )}
+            {footer && <div className="border-t p-4">{footer}</div>}
           </motion.div>
         </>
       )}
@@ -122,7 +117,7 @@ export const CollapsibleSidebar: FC<CollapsibleSidebarProps> = ({
   width = 280,
   collapsedWidth = 64,
   side = 'left',
-  className
+  className,
 }) => {
   return (
     <motion.aside
@@ -140,14 +135,16 @@ export const CollapsibleSidebar: FC<CollapsibleSidebarProps> = ({
         variant="ghost"
         size="icon"
         onClick={onToggle}
-        aria-label={expanded ? "Fechar painel" : "Abrir painel"}
+        aria-label={expanded ? 'Fechar painel' : 'Abrir painel'}
         className={cn(
           'absolute top-3 z-10 h-6 w-6',
           side === 'left' ? 'right-2' : 'left-2'
         )}
       >
         <motion.span
-          animate={{ rotate: expanded ? (side === 'left' ? 180 : 0) : (side === 'left' ? 0 : 180) }}
+          animate={{
+            rotate: expanded ? (side === 'left' ? 180 : 0) : side === 'left' ? 0 : 180,
+          }}
         >
           <ChevronRight className="w-4 h-4" />
         </motion.span>

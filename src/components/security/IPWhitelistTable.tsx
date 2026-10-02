@@ -1,13 +1,27 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trash2, Globe, Clock } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Trash2, Globe, Clock } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export interface WhitelistedIP {
   id: string;
@@ -23,7 +37,10 @@ interface IPWhitelistTableProps {
   onRemove: (id: string) => void;
 }
 
-export const IPWhitelistTable = React.memo(function IPWhitelistTable({ whitelistedIPs, onRemove }: IPWhitelistTableProps) {
+export const IPWhitelistTable = React.memo(function IPWhitelistTable({
+  whitelistedIPs,
+  onRemove,
+}: IPWhitelistTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -36,27 +53,38 @@ export const IPWhitelistTable = React.memo(function IPWhitelistTable({ whitelist
           </TableRow>
         </TableHeader>
         <TableBody>
-          {whitelistedIPs.map((ip) => (
+          {whitelistedIPs.map(ip => (
             <TableRow key={ip.id}>
               <TableCell>
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-muted-foreground" />
-                  <code className="text-sm font-mono bg-muted px-2 py-1 rounded">{ip.ip_address}</code>
+                  <code className="text-sm font-mono bg-muted px-2 py-1 rounded">
+                    {ip.ip_address}
+                  </code>
                 </div>
               </TableCell>
               <TableCell>
-                <span className="text-sm text-muted-foreground">{ip.description || "-"}</span>
+                <span className="text-sm text-muted-foreground">
+                  {ip.description || '-'}
+                </span>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  {format(new Date(ip.created_at), "dd MMM yyyy, HH:mm", { locale: ptBR })}
+                  {format(new Date(ip.created_at), 'dd MMM yyyy, HH:mm', {
+                    locale: ptBR,
+                  })}
                 </div>
               </TableCell>
               <TableCell>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" aria-label="Remover IP" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Remover IP"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </AlertDialogTrigger>
@@ -64,13 +92,20 @@ export const IPWhitelistTable = React.memo(function IPWhitelistTable({ whitelist
                     <AlertDialogHeader>
                       <AlertDialogTitle>Remover IP do Whitelist?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        O IP <code className="font-mono bg-muted px-1 rounded">{ip.ip_address}</code> será removido do whitelist.
-                        Acessos deste IP poderão ser bloqueados ou limitados.
+                        O IP{' '}
+                        <code className="font-mono bg-muted px-1 rounded">
+                          {ip.ip_address}
+                        </code>{' '}
+                        será removido do whitelist. Acessos deste IP poderão ser
+                        bloqueados ou limitados.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => onRemove(ip.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      <AlertDialogAction
+                        onClick={() => onRemove(ip.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
                         Remover
                       </AlertDialogAction>
                     </AlertDialogFooter>

@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { detectDeviceInfo, getStoredSessionId, setStoredSessionId, clearStoredSessionId } from './sessionHelpers';
+import {
+  detectDeviceInfo,
+  getStoredSessionId,
+  setStoredSessionId,
+  clearStoredSessionId,
+} from './sessionHelpers';
 
 interface ActiveSession {
   id: string;
@@ -56,10 +61,10 @@ export const useSessionManagement = () => {
       if (error) throw error;
 
       setCurrentSession(data as ActiveSession);
-      
+
       // Salvar token no localStorage
       setStoredSessionId(data.id);
-      
+
       return data.id;
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -128,8 +133,8 @@ export const useSessionManagement = () => {
     if (!sessionId) return false;
 
     try {
-      const { data, error } = await supabase.rpc('refresh_session', { 
-        session_id: sessionId 
+      const { data, error } = await supabase.rpc('refresh_session', {
+        session_id: sessionId,
       });
 
       if (error) throw error;
@@ -148,13 +153,16 @@ export const useSessionManagement = () => {
   }, [fetchSessions]);
 
   // Validar sessão
-  const validateSession = useCallback(async (): Promise<{ valid: boolean; needsRefresh: boolean }> => {
+  const validateSession = useCallback(async (): Promise<{
+    valid: boolean;
+    needsRefresh: boolean;
+  }> => {
     const sessionId = getStoredSessionId();
     if (!sessionId) return { valid: false, needsRefresh: false };
 
     try {
-      const { data, error } = await supabase.rpc('validate_session', { 
-        session_id: sessionId 
+      const { data, error } = await supabase.rpc('validate_session', {
+        session_id: sessionId,
       });
 
       if (error) throw error;
@@ -173,34 +181,37 @@ export const useSessionManagement = () => {
   }, []);
 
   // Encerrar sessão específica
-  const terminateSession = useCallback(async (sessionId: string): Promise<boolean> => {
-    try {
-      const { error } = await supabase
-        .from('active_sessions')
-        .delete()
-        .eq('id', sessionId);
+  const terminateSession = useCallback(
+    async (sessionId: string): Promise<boolean> => {
+      try {
+        const { error } = await supabase
+          .from('active_sessions')
+          .delete()
+          .eq('id', sessionId);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Se for a sessão atual, fazer logout
-      if (sessionId === getStoredSessionId()) {
-        clearStoredSessionId();
-        await supabase.auth.signOut();
-        toast.info('Sessão encerrada');
-      } else {
-        toast.success('Sessão encerrada');
+        // Se for a sessão atual, fazer logout
+        if (sessionId === getStoredSessionId()) {
+          clearStoredSessionId();
+          await supabase.auth.signOut();
+          toast.info('Sessão encerrada');
+        } else {
+          toast.success('Sessão encerrada');
+        }
+
+        await fetchSessions();
+        return true;
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Error terminating session:', error);
+        }
+        toast.error('Erro ao encerrar sessão');
+        return false;
       }
-
-      await fetchSessions();
-      return true;
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Error terminating session:', error);
-      }
-      toast.error('Erro ao encerrar sessão');
-      return false;
-    }
-  }, [fetchSessions]);
+    },
+    [fetchSessions]
+  );
 
   // Encerrar todas as outras sessões
   const terminateOtherSessions = useCallback(async (): Promise<boolean> => {

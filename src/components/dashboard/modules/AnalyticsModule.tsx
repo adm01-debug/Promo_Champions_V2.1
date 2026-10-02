@@ -1,12 +1,12 @@
-import { DashboardNLQWidget } from "@/components/nlq/DashboardNLQWidget";
-import { KPIGrid } from "@/components/dashboard/KPIGrid";
-import { AlertsPanel } from "@/components/dashboard/AlertsPanel";
-import { FunnelChart } from "@/components/dashboard/FunnelChart";
-import { SalesForecast } from "@/components/dashboard/SalesForecast";
-import { BenchmarkPanel } from "@/components/analytics/BenchmarkPanel";
-import { TeamActivityFeed } from "@/components/collaboration/TeamActivityFeed";
-import { ClientHealthPanel } from "@/components/analytics/ClientHealthPanel";
-import { EngagementLeaderboardWidget } from "@/components/engagement/EngagementLeaderboardWidget";
+import { DashboardNLQWidget } from '@/components/nlq/DashboardNLQWidget';
+import { KPIGrid } from '@/components/dashboard/KPIGrid';
+import { AlertsPanel } from '@/components/dashboard/AlertsPanel';
+import { FunnelChart } from '@/components/dashboard/FunnelChart';
+import { SalesForecast } from '@/components/dashboard/SalesForecast';
+import { BenchmarkPanel } from '@/components/analytics/BenchmarkPanel';
+import { TeamActivityFeed } from '@/components/collaboration/TeamActivityFeed';
+import { ClientHealthPanel } from '@/components/analytics/ClientHealthPanel';
+import { EngagementLeaderboardWidget } from '@/components/engagement/EngagementLeaderboardWidget';
 
 export const AnalyticsModule = () => {
   return (
@@ -14,7 +14,7 @@ export const AnalyticsModule = () => {
       <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-2xl p-1 border border-primary/10">
         <DashboardNLQWidget />
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 rounded-2xl bg-card border border-border/40 p-1 shadow-lg overflow-hidden">
           <KPIGrid />

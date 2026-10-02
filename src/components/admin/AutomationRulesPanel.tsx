@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useAutomationRules, useAutomationLogs, useToggleAutomationRule } from "@/hooks/automation/useAutomationRules";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Activity, AlertCircle, CheckCircle2, Clock, Zap } from "lucide-react";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  useAutomationRules,
+  useAutomationLogs,
+  useToggleAutomationRule,
+} from '@/hooks/automation/useAutomationRules';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Activity, AlertCircle, CheckCircle2, Clock, Zap } from 'lucide-react';
 
 export function AutomationRulesPanel() {
   const [selectedRule, setSelectedRule] = useState<string | undefined>();
@@ -17,12 +21,12 @@ export function AutomationRulesPanel() {
   const toggle = useToggleAutomationRule();
 
   const statusVariant = (s: string) =>
-    s === "success" ? "default" : s === "failed" ? "destructive" : "secondary";
+    s === 'success' ? 'default' : s === 'failed' ? 'destructive' : 'secondary';
 
   const statusIcon = (s: string) =>
-    s === "success" ? (
+    s === 'success' ? (
       <CheckCircle2 className="h-3.5 w-3.5" />
-    ) : s === "failed" ? (
+    ) : s === 'failed' ? (
       <AlertCircle className="h-3.5 w-3.5" />
     ) : (
       <Clock className="h-3.5 w-3.5" />
@@ -49,7 +53,7 @@ export function AutomationRulesPanel() {
           <TabsContent value="rules" className="mt-4">
             {rulesLoading ? (
               <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3].map(i => (
                   <Skeleton key={i} className="h-16 w-full" />
                 ))}
               </div>
@@ -60,7 +64,7 @@ export function AutomationRulesPanel() {
             ) : (
               <ScrollArea className="h-[400px] pr-4">
                 <div className="space-y-2">
-                  {rules.map((rule) => (
+                  {rules.map(rule => (
                     <div
                       key={rule.id}
                       className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/30 transition-colors cursor-pointer"
@@ -82,7 +86,7 @@ export function AutomationRulesPanel() {
                           <span>Execuções: {rule.run_count}</span>
                           {rule.last_run_at && (
                             <span>
-                              Última:{" "}
+                              Última:{' '}
                               {formatDistanceToNow(new Date(rule.last_run_at), {
                                 addSuffix: true,
                                 locale: ptBR,
@@ -94,8 +98,8 @@ export function AutomationRulesPanel() {
                       <Switch
                         checked={rule.is_active}
                         disabled={toggle.isPending}
-                        onClick={(e) => e.stopPropagation()}
-                        onCheckedChange={(checked) =>
+                        onClick={e => e.stopPropagation()}
+                        onCheckedChange={checked =>
                           toggle.mutate({ id: rule.id, active: checked })
                         }
                       />
@@ -120,7 +124,7 @@ export function AutomationRulesPanel() {
             )}
             {logsLoading ? (
               <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3].map(i => (
                   <Skeleton key={i} className="h-12 w-full" />
                 ))}
               </div>
@@ -131,16 +135,13 @@ export function AutomationRulesPanel() {
             ) : (
               <ScrollArea className="h-[400px] pr-4">
                 <div className="space-y-2">
-                  {logs.map((log) => (
+                  {logs.map(log => (
                     <div
                       key={log.id}
                       className="flex items-center justify-between p-3 rounded-lg border bg-card text-sm"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <Badge
-                          variant={statusVariant(log.status)}
-                          className="gap-1"
-                        >
+                        <Badge variant={statusVariant(log.status)} className="gap-1">
                           {statusIcon(log.status)}
                           {log.status}
                         </Badge>

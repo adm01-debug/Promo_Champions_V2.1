@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface AttemptBucket {
   attempt: number;
@@ -30,12 +30,12 @@ export interface WebhookDeliveryStats {
   failureReasons: FailureReasonBucket[];
 }
 
-export type WebhookStatsWindow = "24h" | "7d" | "30d";
+export type WebhookStatsWindow = '24h' | '7d' | '30d';
 
 const WINDOW_HOURS: Record<WebhookStatsWindow, number> = {
-  "24h": 24,
-  "7d": 24 * 7,
-  "30d": 24 * 30,
+  '24h': 24,
+  '7d': 24 * 7,
+  '30d': 24 * 30,
 };
 
 const MAX_REASON_BUCKETS = 6;
@@ -48,12 +48,16 @@ interface FailureRow {
 }
 
 /** Map a delivery row to a stable reason key + display label. */
-function classifyFailure(row: FailureRow): { key: string; label: string; status: number | null } {
+function classifyFailure(row: FailureRow): {
+  key: string;
+  label: string;
+  status: number | null;
+} {
   const code = row.status ?? 0;
   // status === 0 is the dispatcher's sentinel for "request never produced an HTTP response"
   // (network failure, DNS error, timeout, abort). Treat anything outside 100..599 the same way.
   if (code < 100 || code > 599) {
-    return { key: "network", label: "Timeout/Rede", status: null };
+    return { key: 'network', label: 'Timeout/Rede', status: null };
   }
   return { key: `status:${code}`, label: `HTTP ${code}`, status: code };
 }
@@ -67,38 +71,38 @@ function truncate(s: string | null, max = 140): string | null {
 
 export function useWebhookDeliveryStats(
   subscriptionId?: string | null,
-  windowKey: WebhookStatsWindow = "7d",
+  windowKey: WebhookStatsWindow = '7d'
 ) {
   return useQuery({
-    queryKey: ["winloss-webhook-delivery-stats", subscriptionId ?? "all", windowKey],
+    queryKey: ['winloss-webhook-delivery-stats', subscriptionId ?? 'all', windowKey],
     staleTime: 30_000,
     queryFn: async (): Promise<WebhookDeliveryStats> => {
       const hours = WINDOW_HOURS[windowKey];
       const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
       let query = supabase
-        .from("winloss_webhook_deliveries")
-        .select("attempt, succeeded, status, error_message, created_at")
-        .gte("created_at", since)
-        .order("created_at", { ascending: false })
+        .from('winloss_webhook_deliveries')
+        .select('attempt, succeeded, status, error_message, created_at')
+        .gte('created_at', since)
+        .order('created_at', { ascending: false })
         .limit(2000);
 
-      if (subscriptionId) query = query.eq("subscription_id", subscriptionId);
+      if (subscriptionId) query = query.eq('subscription_id', subscriptionId);
 
       const { data, error } = await query;
       if (error) throw error;
 
       const rows = (data ?? []) as FailureRow[];
       const total = rows.length;
-      const succeeded = rows.filter((r) => r.succeeded).length;
+      const succeeded = rows.filter(r => r.succeeded).length;
       const failed = total - succeeded;
       const successRate = total === 0 ? 0 : (succeeded / total) * 100;
 
-      const buckets: AttemptBucket[] = [1, 2, 3].map((attempt) => {
-        const inAttempt = rows.filter((r) => r.attempt === attempt);
+      const buckets: AttemptBucket[] = [1, 2, 3].map(attempt => {
+        const inAttempt = rows.filter(r => r.attempt === attempt);
         return {
           attempt,
-          failures: inAttempt.filter((r) => !r.succeeded).length,
+          failures: inAttempt.filter(r => !r.succeeded).length,
           total: inAttempt.length,
         };
       });
@@ -113,7 +117,8 @@ export function useWebhookDeliveryStats(
         const existing = reasonMap.get(key);
         if (existing) {
           existing.count += 1;
-          if (!existing.sampleMessage) existing.sampleMessage = truncate(row.error_message);
+          if (!existing.sampleMessage)
+            existing.sampleMessage = truncate(row.error_message);
         } else {
           reasonMap.set(key, {
             key,
@@ -136,7 +141,13 @@ export function useWebhookDeliveryStats(
           .reduce((acc, b) => acc + b.count, 0);
         failureReasons = [
           ...top,
-          { key: "other", label: "Outros", status: null, count: restCount, sampleMessage: null },
+          {
+            key: 'other',
+            label: 'Outros',
+            status: null,
+            count: restCount,
+            sampleMessage: null,
+          },
         ];
       }
 

@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
-import { useResumeEnrollment } from "@/hooks/sequences/useAutoPause";
+import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
+import { useResumeEnrollment } from '@/hooks/sequences/useAutoPause';
 
 interface Props {
   enrollmentId: string;

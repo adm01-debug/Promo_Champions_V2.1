@@ -59,13 +59,17 @@ describe('campaignDeliveryHelpers', () => {
   it('completionRate usa alvo e cai para o total conhecido', () => {
     expect(completionRate(row({ target_count: 200, sent_count: 50 }))).toBe(25);
     expect(
-      completionRate(row({ target_count: 0, sent_count: 5, failed_count: 5, pending_count: 0 })),
+      completionRate(
+        row({ target_count: 0, sent_count: 5, failed_count: 5, pending_count: 0 })
+      )
     ).toBe(50);
     expect(completionRate(row({ target_count: 10, sent_count: 50 }))).toBe(100);
   });
 
   it('classifyDelivery marca falhando acima do limiar de erro', () => {
-    expect(classifyDelivery(row({ sent_count: 80, failed_count: 20 }), NOW)).toBe('falhando');
+    expect(classifyDelivery(row({ sent_count: 80, failed_count: 20 }), NOW)).toBe(
+      'falhando'
+    );
   });
 
   it('classifyDelivery marca travado quando há pendentes e ociosidade longa', () => {
@@ -86,7 +90,11 @@ describe('campaignDeliveryHelpers', () => {
   });
 
   it('classifyDelivery ignora datas inválidas sem quebrar', () => {
-    const invalid = row({ pending_count: 5, last_sent_at: 'data-invalida', created_at: 'x' });
+    const invalid = row({
+      pending_count: 5,
+      last_sent_at: 'data-invalida',
+      created_at: 'x',
+    });
     expect(classifyDelivery(invalid, NOW)).toBe('ok');
   });
 
@@ -102,10 +110,20 @@ describe('campaignDeliveryHelpers', () => {
     const summary = summarizeDelivery(
       [
         row(),
-        row({ job_id: 'job-2', sent_count: 50, failed_count: 20, throughput_per_minute: 20 }),
-        row({ job_id: 'job-3', sent_count: 0, pending_count: 10, throughput_per_minute: 0 }),
+        row({
+          job_id: 'job-2',
+          sent_count: 50,
+          failed_count: 20,
+          throughput_per_minute: 20,
+        }),
+        row({
+          job_id: 'job-3',
+          sent_count: 0,
+          pending_count: 10,
+          throughput_per_minute: 0,
+        }),
       ],
-      NOW,
+      NOW
     );
     expect(summary.campaigns).toBe(3);
     expect(summary.sent).toBe(150);

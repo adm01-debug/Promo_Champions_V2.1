@@ -99,7 +99,10 @@ function pct(n: number | null): string {
   return `${(n * 100).toFixed(2)}%`;
 }
 
-function statusFor(ratio: number | null, target: number): 'meta' | 'abaixo' | 'sem-dados' {
+function statusFor(
+  ratio: number | null,
+  target: number
+): 'meta' | 'abaixo' | 'sem-dados' {
   if (ratio === null || ratio === undefined) return 'sem-dados';
   return ratio >= target ? 'meta' : 'abaixo';
 }
@@ -120,12 +123,24 @@ export default function AdminPlatformSLOPage() {
     if (!data) return [];
     return [...data]
       .sort((a, b) => a.day.localeCompare(b.day))
-      .map((r) => ({
+      .map(r => ({
         day: format(parseISO(r.day), 'dd/MM', { locale: ptBR }),
-        Webhook: r.webhook_success_ratio !== null ? Number((r.webhook_success_ratio * 100).toFixed(2)) : null,
-        V4: r.v4_callback_success_ratio !== null ? Number((r.v4_callback_success_ratio * 100).toFixed(2)) : null,
-        Circuit: r.circuit_stability_ratio !== null ? Number((r.circuit_stability_ratio * 100).toFixed(2)) : null,
-        Errors: r.error_free_ratio !== null ? Number((r.error_free_ratio * 100).toFixed(2)) : null,
+        Webhook:
+          r.webhook_success_ratio !== null
+            ? Number((r.webhook_success_ratio * 100).toFixed(2))
+            : null,
+        V4:
+          r.v4_callback_success_ratio !== null
+            ? Number((r.v4_callback_success_ratio * 100).toFixed(2))
+            : null,
+        Circuit:
+          r.circuit_stability_ratio !== null
+            ? Number((r.circuit_stability_ratio * 100).toFixed(2))
+            : null,
+        Errors:
+          r.error_free_ratio !== null
+            ? Number((r.error_free_ratio * 100).toFixed(2))
+            : null,
       }));
   }, [data]);
 
@@ -149,7 +164,7 @@ export default function AdminPlatformSLOPage() {
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {SLOS.map((slo) => {
+        {SLOS.map(slo => {
           const ratio = latest ? (latest[slo.ratioField] as number | null) : null;
           const target = latest ? (latest[slo.targetField] as number) : 0.99;
           const ok = latest ? (latest[slo.okField] as number) : 0;
@@ -161,9 +176,19 @@ export default function AdminPlatformSLOPage() {
                 <CardTitle className="flex items-center justify-between text-sm font-medium">
                   <span>{slo.label}</span>
                   <Badge
-                    variant={status === 'meta' ? 'default' : status === 'abaixo' ? 'destructive' : 'secondary'}
+                    variant={
+                      status === 'meta'
+                        ? 'default'
+                        : status === 'abaixo'
+                          ? 'destructive'
+                          : 'secondary'
+                    }
                   >
-                    {status === 'meta' ? 'Meta' : status === 'abaixo' ? 'Abaixo' : 'Sem dados'}
+                    {status === 'meta'
+                      ? 'Meta'
+                      : status === 'abaixo'
+                        ? 'Abaixo'
+                        : 'Sem dados'}
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -207,11 +232,40 @@ export default function AdminPlatformSLOPage() {
                   }}
                 />
                 <Legend />
-                <ReferenceLine y={99} stroke="hsl(var(--muted-foreground))" strokeDasharray="4 4" label="99%" />
-                <Line type="monotone" dataKey="Webhook" stroke="hsl(var(--primary))" dot={false} connectNulls />
-                <Line type="monotone" dataKey="V4" stroke="hsl(142 76% 36%)" dot={false} connectNulls />
-                <Line type="monotone" dataKey="Circuit" stroke="hsl(48 96% 53%)" dot={false} connectNulls />
-                <Line type="monotone" dataKey="Errors" stroke="hsl(346 87% 43%)" dot={false} connectNulls />
+                <ReferenceLine
+                  y={99}
+                  stroke="hsl(var(--muted-foreground))"
+                  strokeDasharray="4 4"
+                  label="99%"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Webhook"
+                  stroke="hsl(var(--primary))"
+                  dot={false}
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="V4"
+                  stroke="hsl(142 76% 36%)"
+                  dot={false}
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Circuit"
+                  stroke="hsl(48 96% 53%)"
+                  dot={false}
+                  connectNulls
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Errors"
+                  stroke="hsl(346 87% 43%)"
+                  dot={false}
+                  connectNulls
+                />
               </LineChart>
             </ResponsiveContainer>
           )}
@@ -224,23 +278,25 @@ export default function AdminPlatformSLOPage() {
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>
-            <strong className="text-foreground">Webhook Dispatch:</strong> proporção de entregas bem-sucedidas em{' '}
-            <code>winloss_webhook_deliveries</code>. Meta 99%.
+            <strong className="text-foreground">Webhook Dispatch:</strong> proporção de
+            entregas bem-sucedidas em <code>winloss_webhook_deliveries</code>. Meta 99%.
           </p>
           <p>
-            <strong className="text-foreground">V4 Callbacks:</strong> proporção de callbacks confirmados vs.
-            falhas/exauridos em <code>v4_callback_metrics</code>. Meta 99%.
+            <strong className="text-foreground">V4 Callbacks:</strong> proporção de
+            callbacks confirmados vs. falhas/exauridos em <code>v4_callback_metrics</code>
+            . Meta 99%.
           </p>
           <p>
-            <strong className="text-foreground">Circuit Stability:</strong> 1 − (aberturas / eventos totais) em{' '}
-            <code>circuit_breaker_events</code>. Meta 95%.
+            <strong className="text-foreground">Circuit Stability:</strong> 1 − (aberturas
+            / eventos totais) em <code>circuit_breaker_events</code>. Meta 95%.
           </p>
           <p>
-            <strong className="text-foreground">Error-Free:</strong> 1 − (erros críticos / total de logs) em{' '}
-            <code>error_logs</code>. Meta 99%.
+            <strong className="text-foreground">Error-Free:</strong> 1 − (erros críticos /
+            total de logs) em <code>error_logs</code>. Meta 99%.
           </p>
           <p className="text-xs">
-            Fonte: view <code>public.v_platform_slo</code> · RPC <code>fn_admin_platform_slo()</code>.
+            Fonte: view <code>public.v_platform_slo</code> · RPC{' '}
+            <code>fn_admin_platform_slo()</code>.
           </p>
         </CardContent>
       </Card>

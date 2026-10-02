@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { TrendingUp, Sigma, Calculator, Target } from "lucide-react";
+import { memo } from 'react';
+import { TrendingUp, Sigma, Calculator, Target } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -7,9 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import type { BandMode } from "@/hooks/win-loss/useWinLossScenarios";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import type { BandMode } from '@/hooks/win-loss/useWinLossScenarios';
 
 interface Stats {
   stdDev: number;
@@ -79,7 +79,7 @@ function OlsMiniChart() {
         y={18}
         textAnchor="end"
         className="fill-muted-foreground"
-        style={{ fontSize: 9, fontFamily: "monospace" }}
+        style={{ fontSize: 9, fontFamily: 'monospace' }}
       >
         ŷ = β₀ + β₁·x
       </text>
@@ -125,122 +125,126 @@ function Formula({ children, label }: { children: React.ReactNode; label?: strin
   );
 }
 
-export const ScenarioFormulaExplainerDialog = memo(function ScenarioFormulaExplainerDialog({
-  open,
-  onOpenChange,
-  stats,
-}: Props) {
-  const { stdDev, fitN, dof, meanX, confidenceZ, bandMode, tCritical } = stats;
-  const hasFit = fitN >= 3;
+export const ScenarioFormulaExplainerDialog = memo(
+  function ScenarioFormulaExplainerDialog({ open, onOpenChange, stats }: Props) {
+    const { stdDev, fitN, dof, meanX, confidenceZ, bandMode, tCritical } = stats;
+    const hasFit = fitN >= 3;
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-section-title flex items-center gap-2">
-            <Calculator className="h-4 w-4 text-primary" aria-hidden />
-            Como as bandas são calculadas?
-          </DialogTitle>
-          <DialogDescription>
-            Da reta de regressão até o intervalo de previsão da OLS, em 4 passos.
-          </DialogDescription>
-        </DialogHeader>
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-section-title flex items-center gap-2">
+              <Calculator className="h-4 w-4 text-primary" aria-hidden />
+              Como as bandas são calculadas?
+            </DialogTitle>
+            <DialogDescription>
+              Da reta de regressão até o intervalo de previsão da OLS, em 4 passos.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-5 mt-2">
-          <Section icon={TrendingUp} step={1} title="Ajustamos uma reta (OLS)">
-            <p>
-              Sobre a série histórica de winRate, encontramos a reta que minimiza a soma dos
-              quadrados dos resíduos (diferença entre ponto observado e previsto):
-            </p>
-            <Formula label="y chapéu igual a beta zero mais beta um vezes x">
-              ŷ = β₀ + β₁·x{"\n"}resíduo = y − ŷ
-            </Formula>
-            <OlsMiniChart />
-            <p className="text-[10px]">
-              Pontos pretos = observados · linha = ajuste OLS · pontilhado = resíduo
-            </p>
-          </Section>
-
-          <Section icon={Sigma} step={2} title="σ residual (SEE) vem dos resíduos">
-            <p>
-              O <strong className="text-foreground">Standard Error of the Estimate</strong> mede o
-              desvio típico dos pontos em torno da reta — não em torno da média:
-            </p>
-            <Formula label="sigma chapéu igual à raiz quadrada de SSE dividido por n menos dois">
-              σ̂ = √( SSE / (n − 2) ){"\n"}SSE = Σ (y − ŷ)²
-            </Formula>
-            {hasFit ? (
+          <div className="space-y-5 mt-2">
+            <Section icon={TrendingUp} step={1} title="Ajustamos uma reta (OLS)">
               <p>
-                <span className="text-foreground">Nos seus dados:</span>{" "}
+                Sobre a série histórica de winRate, encontramos a reta que minimiza a soma
+                dos quadrados dos resíduos (diferença entre ponto observado e previsto):
+              </p>
+              <Formula label="y chapéu igual a beta zero mais beta um vezes x">
+                ŷ = β₀ + β₁·x{'\n'}resíduo = y − ŷ
+              </Formula>
+              <OlsMiniChart />
+              <p className="text-[10px]">
+                Pontos pretos = observados · linha = ajuste OLS · pontilhado = resíduo
+              </p>
+            </Section>
+
+            <Section icon={Sigma} step={2} title="σ residual (SEE) vem dos resíduos">
+              <p>
+                O{' '}
+                <strong className="text-foreground">
+                  Standard Error of the Estimate
+                </strong>{' '}
+                mede o desvio típico dos pontos em torno da reta — não em torno da média:
+              </p>
+              <Formula label="sigma chapéu igual à raiz quadrada de SSE dividido por n menos dois">
+                σ̂ = √( SSE / (n − 2) ){'\n'}SSE = Σ (y − ŷ)²
+              </Formula>
+              {hasFit ? (
+                <p>
+                  <span className="text-foreground">Nos seus dados:</span>{' '}
+                  <span className="font-mono tabular-nums">
+                    σ = {stdDev.toFixed(2)}pp · n = {fitN} · dof = {dof}
+                  </span>
+                </p>
+              ) : (
+                <p className="italic">Sem ajuste ainda — necessário ≥ 3 períodos.</p>
+              )}
+            </Section>
+
+            <Section icon={Calculator} step={3} title="Largura da banda no horizonte x">
+              <p>
+                O σ residual é inflado pelo fator do prediction interval da OLS. A banda{' '}
+                <strong className="text-foreground">abre</strong> conforme x se afasta do
+                centro x̄ dos dados:
+              </p>
+              <Formula label="largura igual a z vezes sigma vezes raiz de um mais um sobre n mais x menos x barra ao quadrado dividido por Sxx">
+                width(x) = z · σ · √( 1 + 1/n + (x − x̄)² / Sxx )
+              </Formula>
+              <ul className="space-y-1 list-none pl-0">
+                <li>
+                  <code className="text-foreground font-mono">1</code> → variância
+                  irredutível de uma observação futura
+                </li>
+                <li>
+                  <code className="text-foreground font-mono">1/n</code> → incerteza no
+                  intercept (β₀)
+                </li>
+                <li>
+                  <code className="text-foreground font-mono">(x−x̄)² / Sxx</code> →
+                  incerteza no slope — é isso que faz a banda <em>abrir no horizonte</em>
+                </li>
+              </ul>
+              {hasFit && (
+                <p>
+                  <span className="text-foreground">Nos seus dados:</span>{' '}
+                  <span className="font-mono tabular-nums">x̄ = {meanX.toFixed(2)}</span>
+                </p>
+              )}
+            </Section>
+
+            <Section icon={Target} step={4} title="Multiplicador define a cobertura">
+              <p>
+                O multiplicador na frente de σ controla qual % de cobertura você quer:
+              </p>
+              <Formula>
+                {'SEE z=1.00  →  ~68%   (1 desvio-padrão)\n'}
+                {'SEE z=1.28  →  ~80%\n'}
+                {'SEE z=1.645 →  ~90%\n'}
+                {'SEE z=1.96  →  ~95%\n'}
+                {'PI 95%      →  t-Student (ajusta para n pequeno)'}
+              </Formula>
+              <p>
+                <span className="text-foreground">Modo ativo:</span>{' '}
                 <span className="font-mono tabular-nums">
-                  σ = {stdDev.toFixed(2)}pp · n = {fitN} · dof = {dof}
+                  {bandMode === 'pi95'
+                    ? `PI 95% · t = ${(tCritical ?? 0).toFixed(2)}`
+                    : `SEE · z = ${confidenceZ.toFixed(2)}`}
                 </span>
               </p>
-            ) : (
-              <p className="italic">Sem ajuste ainda — necessário ≥ 3 períodos.</p>
-            )}
-          </Section>
-
-          <Section icon={Calculator} step={3} title="Largura da banda no horizonte x">
-            <p>
-              O σ residual é inflado pelo fator do prediction interval da OLS. A banda{" "}
-              <strong className="text-foreground">abre</strong> conforme x se afasta do centro x̄
-              dos dados:
-            </p>
-            <Formula label="largura igual a z vezes sigma vezes raiz de um mais um sobre n mais x menos x barra ao quadrado dividido por Sxx">
-              width(x) = z · σ · √( 1 + 1/n + (x − x̄)² / Sxx )
-            </Formula>
-            <ul className="space-y-1 list-none pl-0">
-              <li>
-                <code className="text-foreground font-mono">1</code> → variância irredutível de uma observação futura
-              </li>
-              <li>
-                <code className="text-foreground font-mono">1/n</code> → incerteza no intercept (β₀)
-              </li>
-              <li>
-                <code className="text-foreground font-mono">(x−x̄)² / Sxx</code> → incerteza no slope
-                — é isso que faz a banda <em>abrir no horizonte</em>
-              </li>
-            </ul>
-            {hasFit && (
-              <p>
-                <span className="text-foreground">Nos seus dados:</span>{" "}
-                <span className="font-mono tabular-nums">x̄ = {meanX.toFixed(2)}</span>
+              <p className="text-[10px] italic">
+                Cenários otimista/pessimista = ŷ(x) ± width(x), com clamp em [0, 100]
+                (winRate é %).
               </p>
-            )}
-          </Section>
+            </Section>
+          </div>
 
-          <Section icon={Target} step={4} title="Multiplicador define a cobertura">
-            <p>
-              O multiplicador na frente de σ controla qual % de cobertura você quer:
-            </p>
-            <Formula>
-              {"SEE z=1.00  →  ~68%   (1 desvio-padrão)\n"}
-              {"SEE z=1.28  →  ~80%\n"}
-              {"SEE z=1.645 →  ~90%\n"}
-              {"SEE z=1.96  →  ~95%\n"}
-              {"PI 95%      →  t-Student (ajusta para n pequeno)"}
-            </Formula>
-            <p>
-              <span className="text-foreground">Modo ativo:</span>{" "}
-              <span className="font-mono tabular-nums">
-                {bandMode === "pi95"
-                  ? `PI 95% · t = ${(tCritical ?? 0).toFixed(2)}`
-                  : `SEE · z = ${confidenceZ.toFixed(2)}`}
-              </span>
-            </p>
-            <p className="text-[10px] italic">
-              Cenários otimista/pessimista = ŷ(x) ± width(x), com clamp em [0, 100] (winRate é %).
-            </p>
-          </Section>
-        </div>
-
-        <DialogFooter className="mt-4">
-          <Button onClick={() => onOpenChange(false)} size="sm">
-            Entendi
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-});
+          <DialogFooter className="mt-4">
+            <Button onClick={() => onOpenChange(false)} size="sm">
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);

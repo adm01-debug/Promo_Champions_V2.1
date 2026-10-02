@@ -1,18 +1,18 @@
-import { useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { useMemo, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import { buildRevenueForecastCsv } from "@/lib/revenueForecast/csvExport";
+} from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
+import { buildRevenueForecastCsv } from '@/lib/revenueForecast/csvExport';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -23,18 +23,18 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-} from "recharts";
-import { TrendingUp, TrendingDown, Minus, Sparkles } from "lucide-react";
-import { useRevenueHistory } from "@/hooks/revenue/useRevenueHistory";
+} from 'recharts';
+import { TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react';
+import { useRevenueHistory } from '@/hooks/revenue/useRevenueHistory';
 import {
   computeRevenueForecast,
   applyWhatIf,
   type HistoricalPoint,
-} from "@/lib/revenueForecast/forecastEngine";
+} from '@/lib/revenueForecast/forecastEngine';
 
-const brl = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
+const brl = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
   maximumFractionDigits: 0,
 });
 
@@ -50,7 +50,7 @@ export default function RevenueForecastV2() {
       history && history.length > 0
         ? computeRevenueForecast(history as HistoricalPoint[], { horizon })
         : null,
-    [history, horizon],
+    [history, horizon]
   );
 
   const adjusted = useMemo(() => {
@@ -65,14 +65,14 @@ export default function RevenueForecastV2() {
   const chartData = useMemo(() => {
     if (!adjusted) return [];
     return [
-      ...adjusted.history.map((h) => ({
+      ...adjusted.history.map(h => ({
         period: h.period,
         actual: h.revenue,
         p10: null as number | null,
         p50: null as number | null,
         p90: null as number | null,
       })),
-      ...adjusted.forecast.map((f) => ({
+      ...adjusted.forecast.map(f => ({
         period: f.period,
         actual: null as number | null,
         p10: f.p10,
@@ -83,9 +83,9 @@ export default function RevenueForecastV2() {
   }, [adjusted]);
 
   const trendIcon =
-    adjusted?.summary.trend === "up" ? (
+    adjusted?.summary.trend === 'up' ? (
       <TrendingUp className="h-5 w-5 text-success" />
-    ) : adjusted?.summary.trend === "down" ? (
+    ) : adjusted?.summary.trend === 'down' ? (
       <TrendingDown className="h-5 w-5 text-destructive" />
     ) : (
       <Minus className="h-5 w-5 text-muted-foreground" />
@@ -111,7 +111,8 @@ export default function RevenueForecastV2() {
                 Revenue Forecast v2
               </h1>
               <p className="text-sm text-muted-foreground">
-                Ensemble Holt-Winters + Linear + Monte Carlo · bandas P10/P50/P90 · what-if
+                Ensemble Holt-Winters + Linear + Monte Carlo · bandas P10/P50/P90 ·
+                what-if
               </p>
             </div>
           </div>
@@ -122,9 +123,9 @@ export default function RevenueForecastV2() {
             onClick={() => {
               if (!adjusted) return;
               const csv = buildRevenueForecastCsv(adjusted);
-              const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
               const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
+              const a = document.createElement('a');
               a.href = url;
               a.download = `revenue-forecast-v2-${horizon}m.csv`;
               document.body.appendChild(a);
@@ -142,24 +143,24 @@ export default function RevenueForecastV2() {
         <div className="grid gap-4 md:grid-cols-4">
           <SummaryCard
             title="Próximo período (P50)"
-            value={adjusted ? brl.format(adjusted.summary.nextPeriodP50) : "—"}
+            value={adjusted ? brl.format(adjusted.summary.nextPeriodP50) : '—'}
             icon={trendIcon}
             loading={isLoading}
           />
           <SummaryCard
             title={`Horizonte ${horizon}m · P50`}
-            value={adjusted ? brl.format(adjusted.summary.horizonTotalP50) : "—"}
+            value={adjusted ? brl.format(adjusted.summary.horizonTotalP50) : '—'}
             loading={isLoading}
           />
           <SummaryCard
             title="Piso (P10 acumulado)"
-            value={adjusted ? brl.format(adjusted.summary.horizonTotalP10) : "—"}
+            value={adjusted ? brl.format(adjusted.summary.horizonTotalP10) : '—'}
             loading={isLoading}
             muted
           />
           <SummaryCard
             title="Teto (P90 acumulado)"
-            value={adjusted ? brl.format(adjusted.summary.horizonTotalP90) : "—"}
+            value={adjusted ? brl.format(adjusted.summary.horizonTotalP90) : '—'}
             loading={isLoading}
             muted
           />
@@ -171,9 +172,9 @@ export default function RevenueForecastV2() {
               Projeção com bandas de confiança
               {adjusted && (
                 <Badge variant="outline">
-                  HW {(adjusted.ensemble.weights.holtWinters * 100).toFixed(0)}% ·
-                  Linear {(adjusted.ensemble.weights.linear * 100).toFixed(0)}% ·
-                  MC {(adjusted.ensemble.weights.monteCarlo * 100).toFixed(0)}%
+                  HW {(adjusted.ensemble.weights.holtWinters * 100).toFixed(0)}% · Linear{' '}
+                  {(adjusted.ensemble.weights.linear * 100).toFixed(0)}% · MC{' '}
+                  {(adjusted.ensemble.weights.monteCarlo * 100).toFixed(0)}%
                 </Badge>
               )}
             </CardTitle>
@@ -187,10 +188,10 @@ export default function RevenueForecastV2() {
                 <ComposedChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis dataKey="period" />
-                  <YAxis tickFormatter={(v) => brl.format(v)} width={100} />
+                  <YAxis tickFormatter={v => brl.format(v)} width={100} />
                   <Tooltip
-                    formatter={(value) =>
-                      typeof value === 'number' ? brl.format(value) : "—"
+                    formatter={value =>
+                      typeof value === 'number' ? brl.format(value) : '—'
                     }
                   />
                   <Legend />
@@ -238,9 +239,7 @@ export default function RevenueForecastV2() {
           <Card>
             <CardHeader>
               <CardTitle>Horizonte de previsão</CardTitle>
-              <CardDescription>
-                Meses à frente (1–24)
-              </CardDescription>
+              <CardDescription>Meses à frente (1–24)</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Slider
@@ -248,7 +247,7 @@ export default function RevenueForecastV2() {
                 min={1}
                 max={24}
                 step={1}
-                onValueChange={(v) => setHorizon(v[0])}
+                onValueChange={v => setHorizon(v[0])}
               />
               <p className="text-2xl font-semibold">{horizon} meses</p>
             </CardContent>
@@ -307,10 +306,10 @@ function SummaryCard({
         </div>
         <p
           className={`mt-2 text-2xl font-semibold ${
-            muted ? "text-muted-foreground" : ""
-          } ${loading ? "opacity-40" : ""}`}
+            muted ? 'text-muted-foreground' : ''
+          } ${loading ? 'opacity-40' : ''}`}
         >
-          {loading ? "…" : value}
+          {loading ? '…' : value}
         </p>
       </CardContent>
     </Card>
@@ -333,13 +332,13 @@ function WhatIfSlider({
         <span
           className={`text-sm font-medium ${
             value > 0
-              ? "text-success"
+              ? 'text-success'
               : value < 0
-                ? "text-destructive"
-                : "text-muted-foreground"
+                ? 'text-destructive'
+                : 'text-muted-foreground'
           }`}
         >
-          {value > 0 ? "+" : ""}
+          {value > 0 ? '+' : ''}
           {value}%
         </span>
       </div>
@@ -348,7 +347,7 @@ function WhatIfSlider({
         min={-50}
         max={50}
         step={1}
-        onValueChange={(v) => onChange(v[0])}
+        onValueChange={v => onChange(v[0])}
       />
     </div>
   );

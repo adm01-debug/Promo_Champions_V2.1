@@ -12,11 +12,15 @@ export function useRaceCommentaryLogic() {
 
   const pushCommentary = useCallback((text: string) => {
     if (!text) return;
-    const line: CommentaryLine = { id: `${Date.now()}-${Math.random()}`, text, createdAt: Date.now() };
+    const line: CommentaryLine = {
+      id: `${Date.now()}-${Math.random()}`,
+      text,
+      createdAt: Date.now(),
+    };
     setCommentary(line);
     if (commentaryTimerRef.current) window.clearTimeout(commentaryTimerRef.current);
     commentaryTimerRef.current = window.setTimeout(() => {
-      setCommentary((cur) => (cur?.id === line.id ? null : cur));
+      setCommentary(cur => (cur?.id === line.id ? null : cur));
     }, 3000);
   }, []);
 

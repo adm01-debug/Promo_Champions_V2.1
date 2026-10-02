@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   Activity,
   AlertCircle,
@@ -8,53 +8,58 @@ import {
   Search,
   Skull,
   XCircle,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   useWebhookTimeline,
   type TimelineItem,
   type TimelineSource,
-} from "@/hooks/win-loss/useWebhookTimeline";
-import { cn } from "@/lib/utils";
+} from '@/hooks/win-loss/useWebhookTimeline';
+import { cn } from '@/lib/utils';
 
 const SOURCE_LABEL: Record<TimelineSource, string> = {
-  delivery: "Entrega",
-  dead_letter: "Dead-letter",
-  alert: "Alerta",
+  delivery: 'Entrega',
+  dead_letter: 'Dead-letter',
+  alert: 'Alerta',
 };
 
 function SourceIcon({ item }: { item: TimelineItem }) {
-  if (item.source === "dead_letter") return <Skull className="h-4 w-4 text-destructive" aria-hidden />;
-  if (item.source === "alert") return <AlertCircle className="h-4 w-4 text-warning" aria-hidden />;
-  if (item.succeeded) return <CheckCircle2 className="h-4 w-4 text-success" aria-hidden />;
+  if (item.source === 'dead_letter')
+    return <Skull className="h-4 w-4 text-destructive" aria-hidden />;
+  if (item.source === 'alert')
+    return <AlertCircle className="h-4 w-4 text-warning" aria-hidden />;
+  if (item.succeeded)
+    return <CheckCircle2 className="h-4 w-4 text-success" aria-hidden />;
   return <XCircle className="h-4 w-4 text-destructive" aria-hidden />;
 }
 
 function statusToneClass(status: number | null): string {
-  if (status === null) return "text-muted-foreground";
-  if (status >= 500 || status === 0) return "text-destructive";
-  if (status >= 400) return "text-warning";
-  if (status >= 200 && status < 300) return "text-success";
-  return "text-muted-foreground";
+  if (status === null) return 'text-muted-foreground';
+  if (status >= 500 || status === 0) return 'text-destructive';
+  if (status >= 400) return 'text-warning';
+  if (status >= 200 && status < 300) return 'text-success';
+  return 'text-muted-foreground';
 }
 
 export default function WebhookTimelinePage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [requestIdInput, setRequestIdInput] = useState(searchParams.get("requestId") ?? "");
-  const [subIdInput, setSubIdInput] = useState(searchParams.get("subscriptionId") ?? "");
+  const [requestIdInput, setRequestIdInput] = useState(
+    searchParams.get('requestId') ?? ''
+  );
+  const [subIdInput, setSubIdInput] = useState(searchParams.get('subscriptionId') ?? '');
 
   const filters = useMemo(
     () => ({
-      requestId: searchParams.get("requestId") ?? null,
-      subscriptionId: searchParams.get("subscriptionId") ?? null,
+      requestId: searchParams.get('requestId') ?? null,
+      subscriptionId: searchParams.get('subscriptionId') ?? null,
     }),
-    [searchParams],
+    [searchParams]
   );
 
   const { data, isLoading, isFetching, error } = useWebhookTimeline(filters);
@@ -62,8 +67,8 @@ export default function WebhookTimelinePage() {
   const apply = (e: React.FormEvent) => {
     e.preventDefault();
     const next = new URLSearchParams();
-    if (requestIdInput.trim()) next.set("requestId", requestIdInput.trim());
-    if (subIdInput.trim()) next.set("subscriptionId", subIdInput.trim());
+    if (requestIdInput.trim()) next.set('requestId', requestIdInput.trim());
+    if (subIdInput.trim()) next.set('subscriptionId', subIdInput.trim());
     setSearchParams(next, { replace: true });
   };
 
@@ -88,10 +93,15 @@ export default function WebhookTimelinePage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-section-title">Correlação por requestId / subscription</CardTitle>
+            <CardTitle className="text-section-title">
+              Correlação por requestId / subscription
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={apply} className="grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
+            <form
+              onSubmit={apply}
+              className="grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end"
+            >
               <div className="space-y-1">
                 <Label htmlFor="rid" className="text-xs text-muted-foreground">
                   Request ID (UUID)
@@ -99,7 +109,7 @@ export default function WebhookTimelinePage() {
                 <Input
                   id="rid"
                   value={requestIdInput}
-                  onChange={(e) => setRequestIdInput(e.target.value)}
+                  onChange={e => setRequestIdInput(e.target.value)}
                   placeholder="ex: 771bdc95-e50b-476b-af27-528d7c7d910f"
                   className="font-mono text-xs"
                 />
@@ -111,7 +121,7 @@ export default function WebhookTimelinePage() {
                 <Input
                   id="sid"
                   value={subIdInput}
-                  onChange={(e) => setSubIdInput(e.target.value)}
+                  onChange={e => setSubIdInput(e.target.value)}
                   placeholder="opcional"
                   className="font-mono text-xs"
                 />
@@ -136,8 +146,8 @@ export default function WebhookTimelinePage() {
         ) : error ? (
           <Alert variant="destructive">
             <AlertDescription>
-              Falha ao carregar a timeline:{" "}
-              {error instanceof Error ? error.message : "erro desconhecido"}.
+              Falha ao carregar a timeline:{' '}
+              {error instanceof Error ? error.message : 'erro desconhecido'}.
             </AlertDescription>
           </Alert>
         ) : isLoading ? (
@@ -162,7 +172,7 @@ export default function WebhookTimelinePage() {
                 arr.push(it);
                 byAttempt.set(it.attempt, arr);
               }
-              const attempts = [1, 2, 3].filter((n) => byAttempt.has(n));
+              const attempts = [1, 2, 3].filter(n => byAttempt.has(n));
               if (attempts.length === 0) return null;
               return (
                 <Card>
@@ -170,15 +180,18 @@ export default function WebhookTimelinePage() {
                     <CardTitle className="text-section-title">Tentativas</CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-wrap gap-2">
-                    {attempts.map((n) => (
+                    {attempts.map(n => (
                       <a
                         key={n}
                         href={`#attempt-${n}`}
                         className="inline-flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-xs hover:bg-muted/50 transition-colors"
                       >
-                        <Badge variant="outline" className="font-normal">Tentativa {n}</Badge>
+                        <Badge variant="outline" className="font-normal">
+                          Tentativa {n}
+                        </Badge>
                         <span className="text-muted-foreground tabular-nums">
-                          {byAttempt.get(n)!.length} evento{byAttempt.get(n)!.length === 1 ? "" : "s"}
+                          {byAttempt.get(n)!.length} evento
+                          {byAttempt.get(n)!.length === 1 ? '' : 's'}
                         </span>
                       </a>
                     ))}
@@ -190,13 +203,15 @@ export default function WebhookTimelinePage() {
             <Card>
               <CardHeader className="pb-2 flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-section-title">
-                  {items.length} evento{items.length === 1 ? "" : "s"}
+                  {items.length} evento{items.length === 1 ? '' : 's'}
                 </CardTitle>
-                {isFetching && <span className="text-xs text-muted-foreground">Atualizando…</span>}
+                {isFetching && (
+                  <span className="text-xs text-muted-foreground">Atualizando…</span>
+                )}
               </CardHeader>
               <CardContent>
                 <ol className="relative border-l border-border ml-3 space-y-3">
-                  {items.map((it) => (
+                  {items.map(it => (
                     <li
                       key={`${it.source}:${it.ref_id}`}
                       id={it.attempt !== null ? `attempt-${it.attempt}` : undefined}
@@ -221,8 +236,13 @@ export default function WebhookTimelinePage() {
                             </Badge>
                           )}
                           {it.status !== null && (
-                            <span className={cn("font-semibold tabular-nums", statusToneClass(it.status))}>
-                              {it.status === 0 ? "rede/timeout" : `HTTP ${it.status}`}
+                            <span
+                              className={cn(
+                                'font-semibold tabular-nums',
+                                statusToneClass(it.status)
+                              )}
+                            >
+                              {it.status === 0 ? 'rede/timeout' : `HTTP ${it.status}`}
                             </span>
                           )}
                           {it.duration_ms !== null && (
