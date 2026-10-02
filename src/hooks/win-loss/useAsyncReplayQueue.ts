@@ -114,6 +114,9 @@ export function useAsyncReplayQueue() {
       });
 
       for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        if (!chunk) continue;
+
         if (cancelRef.current) {
           setState(s => ({
             ...s,
@@ -132,14 +135,14 @@ export function useAsyncReplayQueue() {
 
         const t0 = performance.now();
         try {
-          const d = await invokeReplayChunk(chunks[i]);
+          const d = await invokeReplayChunk(chunk);
           const ok = d.results.filter(r => r.succeeded).length;
           const fail = d.results.length - ok;
           const dur = Math.round(performance.now() - t0);
 
           setState(s => ({
             ...s,
-            processedIds: s.processedIds + chunks[i].length,
+            processedIds: s.processedIds + chunk.length,
             succeededIds: s.succeededIds + ok,
             failedIds: s.failedIds + fail,
             chunks: s.chunks.map((c, idx) =>
@@ -160,14 +163,14 @@ export function useAsyncReplayQueue() {
           const msg = e instanceof Error ? e.message : 'Erro desconhecido';
           setState(s => ({
             ...s,
-            processedIds: s.processedIds + chunks[i].length,
-            failedIds: s.failedIds + chunks[i].length,
+            processedIds: s.processedIds + chunk.length,
+            failedIds: s.failedIds + chunk.length,
             chunks: s.chunks.map((c, idx) =>
               idx === i
                 ? {
                     ...c,
                     status: 'failed',
-                    failed: chunks[i].length,
+                    failed: chunk.length,
                     error: msg,
                     durationMs: dur,
                   }

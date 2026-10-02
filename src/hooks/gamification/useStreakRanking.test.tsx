@@ -87,7 +87,7 @@ describe('useStreakRanking — agregação sem N+1', () => {
 
     const salespersonCalls = inCalls.filter(c => c.column === 'salesperson_id');
     expect(salespersonCalls).toHaveLength(1);
-    expect(salespersonCalls[0].values).toEqual(['sp1', 'sp2', 'sp3']);
+    expect(salespersonCalls[0]?.values).toEqual(['sp1', 'sp2', 'sp3']);
   });
 
   it('monta ranking correto com múltiplos vendedores e conquistas', async () => {

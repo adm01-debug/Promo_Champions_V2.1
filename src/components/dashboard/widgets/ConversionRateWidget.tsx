@@ -27,6 +27,10 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
         weekRanges.push({ weekStart, weekEnd });
       }
 
+      const firstWeek = weekRanges[0];
+      const lastWeek = weekRanges[weekRanges.length - 1];
+      if (!firstWeek || !lastWeek) return [];
+
       // Uma única query paginada cobrindo as 8 semanas (evita N+1); o
       // agrupamento por semana é feito no cliente. Paginação necessária: o
       // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
@@ -35,8 +39,8 @@ export const ConversionRateWidget = React.memo(function ConversionRateWidget() {
           supabase
             .from('sales')
             .select('status, created_at')
-            .gte('created_at', weekRanges[0].weekStart.toISOString())
-            .lte('created_at', weekRanges[weekRanges.length - 1].weekEnd.toISOString())
+            .gte('created_at', firstWeek.weekStart.toISOString())
+            .lte('created_at', lastWeek.weekEnd.toISOString())
             .range(from, to),
         { label: 'ConversionRateWidget:sales' }
       );

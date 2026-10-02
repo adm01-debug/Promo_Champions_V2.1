@@ -43,6 +43,10 @@ const RankingCompetitivo = () => {
         });
       }
 
+      const firstMonth = monthRanges[0];
+      const lastMonth = monthRanges[monthRanges.length - 1];
+      if (!firstMonth || !lastMonth) return [];
+
       // Uma única query paginada cobrindo os 6 meses (evita N+1); o
       // agrupamento por mês é feito no cliente. Paginação necessária: o
       // teto de 1000 linhas do PostgREST perderia vendas do intervalo.
@@ -52,8 +56,8 @@ const RankingCompetitivo = () => {
             .from('sales')
             .select('salesperson_id, amount, created_at')
             .in('status', [...WON_SALE_STATUSES])
-            .gte('created_at', monthRanges[0].start.toISOString())
-            .lte('created_at', monthRanges[monthRanges.length - 1].end.toISOString())
+            .gte('created_at', firstMonth.start.toISOString())
+            .lte('created_at', lastMonth.end.toISOString())
             .range(from, to),
         { label: 'RankingCompetitivo:sales' }
       );

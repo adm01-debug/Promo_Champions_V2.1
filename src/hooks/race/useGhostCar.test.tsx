@@ -113,7 +113,7 @@ describe('useGhostCar — histórico sem N+1', () => {
 
     const seasonCalls = inCalls.filter(c => c.column === 'season_id');
     expect(seasonCalls).toHaveLength(1);
-    expect(seasonCalls[0].values).toEqual(['season-1', 'season-2', 'season-3']);
+    expect(seasonCalls[0]?.values).toEqual(['season-1', 'season-2', 'season-3']);
   });
 
   it('usa a melhor season do usuário como referência do ghost', async () => {
