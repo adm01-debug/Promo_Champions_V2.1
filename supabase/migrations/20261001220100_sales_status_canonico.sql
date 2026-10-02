@@ -30,6 +30,14 @@ WHERE deal_status IS NOT NULL
 DROP TRIGGER IF EXISTS tr_sync_sales_statuses ON public.sales;
 DROP FUNCTION IF EXISTS public.sync_sales_statuses();
 
+-- Triggers que referenciam deal_status precisam cair ANTES do DROP COLUMN
+-- (dependência em WHEN/UPDATE OF bloqueia o drop da coluna).
+DROP TRIGGER IF EXISTS trg_broadcast_sale_completed ON public.sales;
+DROP TRIGGER IF EXISTS tr_victory_sale ON public.sales;
+DROP TRIGGER IF EXISTS tr_notify_sale_victory ON public.sales;
+DROP TRIGGER IF EXISTS tr_auto_create_commission ON public.sales;
+DROP TRIGGER IF EXISTS tr_auto_create_commission_insert ON public.sales;
+
 -- Recria deal_status como GENERATED ALWAYS — espelho derivado de status.
 -- Valores fora do enum deal_status colapsam para o equivalente mais próximo:
 -- 'won'/'closed' -> completed, 'cancelled' -> lost,
@@ -49,9 +57,23 @@ ALTER TABLE public.sales ADD COLUMN deal_status public.deal_status
     END
   ) STORED;
 
-DROP TRIGGER IF EXISTS tr_auto_create_commission ON public.sales;
-CREATE TRIGGER tr_auto_create_commission
+-- tr_auto_create_commission(-_insert) NÃO são recriados: foram desabilitados
+-- intencionalmente em 20260517141803 (comissões ficam a cargo de
+-- tr_handle_sale_commissions; reativá-los geraria INSERT duplicado em
+-- salesperson_commissions, que tem UNIQUE(sale_id), abortando a venda).
+CREATE TRIGGER tr_victory_sale
   AFTER UPDATE ON public.sales
   FOR EACH ROW
-  WHEN (NEW.deal_status = 'completed' AND OLD.deal_status IS DISTINCT FROM 'completed')
-  EXECUTE FUNCTION public.auto_create_commission();
+  WHEN (OLD.deal_status IS DISTINCT FROM NEW.deal_status)
+  EXECUTE FUNCTION public.auto_victory_post();
+
+CREATE TRIGGER tr_notify_sale_victory
+  AFTER UPDATE ON public.sales
+  FOR EACH ROW
+  WHEN (NEW.deal_status = 'completed')
+  EXECUTE FUNCTION public.fn_notify_victory();
+
+CREATE TRIGGER trg_broadcast_sale_completed
+  AFTER INSERT OR UPDATE OF status, deal_status ON public.sales
+  FOR EACH ROW
+  EXECUTE FUNCTION public.broadcast_sale_completed();

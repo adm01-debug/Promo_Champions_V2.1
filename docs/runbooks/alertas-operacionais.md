@@ -50,7 +50,7 @@ carregam `traceparent` derivado do `X-Request-Id` do request original e logam
 ## SLO burn-rate
 
 A função SQL `public.fn_check_slo_burn_rate()` (migration
-`20261002000000_slo_burn_rate.sql`) calcula a taxa de falha nas últimas 1h e
+`20261002000100_slo_burn_rate.sql`) calcula a taxa de falha nas últimas 1h e
 24h sobre entregas operacionais (webhooks winloss + email_logs) e insere um
 `security_events` `severity=critical` quando acima do threshold.
 

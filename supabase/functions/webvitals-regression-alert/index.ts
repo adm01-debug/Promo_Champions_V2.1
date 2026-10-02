@@ -26,6 +26,11 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from "../_shared/circuit-breaker.ts";
 import { withRetry } from "../_shared/retry.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import {
+  collectErrors,
+  validateEnum,
+  validationErrorResponse,
+} from "../_shared/validation.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -227,6 +232,25 @@ Deno.serve(withRequestId("webvitals-regression-alert", async (req, ctx) => {
     }, 503);
   }
 
+  let dryRun = false;
+  const rawBody = await req.text();
+  if (rawBody.trim()) {
+    let body: { mode?: unknown };
+    try {
+      body = JSON.parse(rawBody) as { mode?: unknown };
+    } catch {
+      return json({ error: "invalid_json" }, 400);
+    }
+    if (typeof body !== "object" || body === null || Array.isArray(body)) {
+      return json({ error: "invalid_body" }, 400);
+    }
+    const errors = collectErrors([
+      validateEnum(body.mode, "mode", ["run", "dry_run"], false),
+    ]);
+    if (errors.length > 0) return validationErrorResponse(errors, corsHeaders);
+    dryRun = body.mode === "dry_run";
+  }
+
   const factor = Number(Deno.env.get("WEBVITALS_REGRESSION_FACTOR") ?? 1.4);
   const minDaySamples = Number(Deno.env.get("WEBVITALS_MIN_DAY_SAMPLES") ?? 30);
   const minBaselineDays = Number(Deno.env.get("WEBVITALS_MIN_BASELINE_DAYS") ?? 3);
@@ -287,7 +311,7 @@ Deno.serve(withRequestId("webvitals-regression-alert", async (req, ctx) => {
     );
 
     if (regressions.length === 0) {
-      return json({ ok: true, regressions: 0 });
+      return json({ ok: true, dry_run: dryRun, regressions: 0 });
     }
 
     const lines = regressions.map(r =>
@@ -300,6 +324,10 @@ Deno.serve(withRequestId("webvitals-regression-alert", async (req, ctx) => {
     const text =
       `*[Web Vitals Regression]* ${regressions.length} regressão(ões) em ${regressions[0].day}\n` +
       lines.join("\n");
+
+    if (dryRun) {
+      return json({ ok: true, dry_run: true, regressions, preview: text });
+    }
 
     await postSlack(slack, text, [
       { type: "section", text: { type: "mrkdwn", text } },

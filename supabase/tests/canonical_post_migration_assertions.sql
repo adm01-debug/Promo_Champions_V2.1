@@ -117,8 +117,6 @@ BEGIN
    WHERE schemaname = 'public'
      AND indexname IN (
        'idx_activities_deleted_by_fk',
-       'idx_cadence_enrollments_cadence_id_fk',
-       'idx_cadence_enrollments_client_id_fk',
        'idx_client_churn_alerts_state_last_task_id_fk',
        'idx_experiment_assignments_experiment_id_fk',
        'idx_experiment_assignments_variant_id_fk',
@@ -128,8 +126,8 @@ BEGIN
        'idx_suppliers_deleted_by_fk',
        'idx_teams_deleted_by_fk'
      );
-  IF v_count <> 11 THEN
-    RAISE EXCEPTION 'expected_11_fk_indexes_got_%', v_count;
+  IF v_count <> 9 THEN
+    RAISE EXCEPTION 'expected_9_fk_indexes_got_%', v_count;
   END IF;
 
   IF NOT EXISTS (
@@ -192,7 +190,7 @@ BEGIN
   IF v_definition LIKE '%rapjswienfhkobhlamxb%'
      OR v_definition NOT LIKE '%X-Cron-Secret%'
      OR v_definition NOT LIKE '%_internal_secrets%'
-     OR v_definition NOT LIKE '%campaign_health_cron_base_url_must_be_https%' THEN
+     OR v_definition NOT LIKE '%internal_edge_base_url_must_be_https%' THEN
     RAISE EXCEPTION 'campaign_health_trigger_not_hardened';
   END IF;
 

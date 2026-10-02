@@ -201,14 +201,24 @@ SET search_path TO 'public'
 AS $$
 DECLARE
   v_current text;
+  v_owner   uuid;
 BEGIN
-  SELECT status INTO v_current
+  SELECT status, salesperson_id INTO v_current, v_owner
     FROM public.sales
     WHERE id = p_sale_id
     FOR UPDATE;
 
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Venda não encontrada: %', p_sale_id;
+  END IF;
+
+  -- SECURITY DEFINER ignora RLS: replica a regra das policies de UPDATE em
+  -- sales (dono da venda ou admin/manager). Chamadas via service_role ou
+  -- pg_cron (auth.uid() IS NULL) seguem autorizadas.
+  IF auth.uid() IS NOT NULL
+     AND NOT public.is_admin_or_manager(auth.uid())
+     AND v_owner IS DISTINCT FROM public.get_current_salesperson_id() THEN
+    RAISE EXCEPTION 'not_authorized' USING ERRCODE = 'insufficient_privilege';
   END IF;
 
   IF v_current IS DISTINCT FROM p_new_status
@@ -247,6 +257,13 @@ BEGIN
 
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Comissão não encontrada: %', p_commission_id;
+  END IF;
+
+  -- SECURITY DEFINER ignora RLS: replica a regra das policies de commissions
+  -- (somente admin/manager modifica; vendedor só lê as próprias). Chamadas
+  -- via service_role ou pg_cron (auth.uid() IS NULL) seguem autorizadas.
+  IF auth.uid() IS NOT NULL AND NOT public.is_admin_or_manager(auth.uid()) THEN
+    RAISE EXCEPTION 'not_authorized' USING ERRCODE = 'insufficient_privilege';
   END IF;
 
   IF v_current IS DISTINCT FROM p_new_status

@@ -21,14 +21,24 @@ AS $$
 DECLARE
   v_current text;
   v_version integer;
+  v_owner   uuid;
 BEGIN
-  SELECT status, version INTO v_current, v_version
+  SELECT status, version, salesperson_id INTO v_current, v_version, v_owner
     FROM public.sales
     WHERE id = p_sale_id
     FOR UPDATE;
 
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Venda não encontrada: %', p_sale_id;
+  END IF;
+
+  -- SECURITY DEFINER ignora RLS: replica a regra das policies de UPDATE em
+  -- sales (dono da venda ou admin/manager). Chamadas via service_role ou
+  -- pg_cron (auth.uid() IS NULL) seguem autorizadas.
+  IF auth.uid() IS NOT NULL
+     AND NOT public.is_admin_or_manager(auth.uid())
+     AND v_owner IS DISTINCT FROM public.get_current_salesperson_id() THEN
+    RAISE EXCEPTION 'not_authorized' USING ERRCODE = 'insufficient_privilege';
   END IF;
 
   IF p_expected_version IS NOT NULL
@@ -54,3 +64,6 @@ $$;
 
 COMMENT ON FUNCTION public.transition_sale_status(uuid, text, uuid, integer) IS
   'Transição de status via máquina de estados; p_expected_version aplica optimistic locking (conflito → optimistic_lock_conflict).';
+
+REVOKE ALL ON FUNCTION public.transition_sale_status(uuid, text, uuid, integer) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.transition_sale_status(uuid, text, uuid, integer) TO authenticated, service_role;

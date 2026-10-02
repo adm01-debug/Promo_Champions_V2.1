@@ -44,8 +44,6 @@ export function useRaceSmartNotifications({
   useEffect(() => {
     if (!flagEnabled || !isEnabled() || !currentUserSalespersonId || entries.length === 0)
       return;
-    if (!flagEnabled || !isEnabled() || !currentUserSalespersonId || entries.length === 0)
-      return;
 
     const sorted = [...entries].sort(
       (a, b) => Number(b.total_sales) - Number(a.total_sales)
@@ -87,8 +85,6 @@ export function useRaceSmartNotifications({
 
   // 3. Última hora da corrida
   useEffect(() => {
-    if (!flagEnabled || !isEnabled() || !seasonEndDate || lastHourFiredRef.current)
-      return;
     if (!flagEnabled || !isEnabled() || !seasonEndDate || lastHourFiredRef.current)
       return;
     const end = new Date(seasonEndDate).getTime();

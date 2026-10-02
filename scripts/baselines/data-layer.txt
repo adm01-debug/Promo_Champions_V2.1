@@ -48,7 +48,6 @@ src/components/competitive/TerritoryWars.tsx
 src/components/competitive/TournamentBrackets.tsx
 src/components/competitive/WallOfFame.tsx
 src/components/conversational/BattleCardSuggestion.tsx
-src/components/copilot/AICopilotFab.tsx
 src/components/dashboard/ActivityChart.tsx
 src/components/dashboard/DevKpiDebugPanel.tsx
 src/components/dashboard/FuturisticSpeedometerDashboard.tsx

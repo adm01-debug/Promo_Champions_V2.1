@@ -17,7 +17,7 @@ Colunas `deleted_at`, `deleted_by`, `delete_reason` e listagens filtram
 - `sales` (não há delete no frontend; coluna criada para consistência e a view
   `sales_with_markup` já filtra `deleted_at IS NULL`)
 - `activities` (coluna já existia; sem delete no frontend)
-- `tasks` (via `useDeleteTask`)
+- `tasks`
 - `products` (coluna já existia)
 - `teams` (coluna já existia)
 - `client_portfolio` (via `useRemoveFromPortfolio`)
