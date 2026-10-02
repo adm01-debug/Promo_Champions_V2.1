@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
+import { toBusinessDate, toBusinessMonth } from "../_shared/business-date.ts";
 import {
   getServiceClient,
   getUserClient,
@@ -58,8 +59,8 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
     }
 
     // 2) Find QBRs scheduled within the next 30 days that don't have an agenda event yet
-    const today = new Date().toISOString().split("T")[0];
-    const horizon = new Date(Date.now() + 30 * 86400000).toISOString().split("T")[0];
+    const today = toBusinessDate();
+    const horizon = toBusinessDate(Date.now() + 30 * 86400000);
     const { data: schedules } = await supabase
       .from("qbr_schedule")
       .select("id, account_id, owner_salesperson_id, next_qbr_at, frequency")
@@ -115,7 +116,7 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
     // Build dedup set: "salesperson_id:YYYY-MM" — one QBR per salesperson per calendar month
     const existingQbrKeys = new Set(
       existingEvents.map((e) => {
-        const month = e.scheduled_at.slice(0, 7); // "YYYY-MM"
+        const month = toBusinessMonth(e.scheduled_at); // "YYYY-MM"
         return `${e.salesperson_id}:${month}`;
       })
     );
@@ -125,7 +126,7 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
 
     for (const s of active) {
       const accountName = accountNameById.get(s.account_id) ?? "Conta";
-      const month = (s.next_qbr_at as string).slice(0, 7);
+      const month = toBusinessMonth(s.next_qbr_at as string);
       const dedupKey = `${s.owner_salesperson_id}:${month}`;
       if (existingQbrKeys.has(dedupKey)) continue;
       existingQbrKeys.add(dedupKey); // prevent duplicates within same run

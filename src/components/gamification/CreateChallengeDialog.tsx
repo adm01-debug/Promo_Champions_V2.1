@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Plus, Loader2 } from 'lucide-react';
 import { CHALLENGE_ICONS } from '@/hooks/gamification/useWeeklyChallenges';
+import { toBusinessDate } from '@/lib/date';
 
 const CHALLENGE_TYPES = [
   { value: 'calls', label: 'Ligações' },
@@ -109,8 +110,8 @@ export function CreateChallengeDialog({ children }: CreateChallengeDialogProps) 
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-    setStartDate(startOfWeek.toISOString().split('T')[0]);
-    setEndDate(endOfWeek.toISOString().split('T')[0]);
+    setStartDate(toBusinessDate(startOfWeek));
+    setEndDate(toBusinessDate(endOfWeek));
   };
 
   return (

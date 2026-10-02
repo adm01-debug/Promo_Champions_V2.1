@@ -4,6 +4,7 @@ import { chunkedIn } from '../_shared/chunked-in.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -19,7 +20,7 @@ function periodEnd(start: string, type: PeriodType): string {
     d.setUTCMonth(d.getUTCMonth() + 3);
     d.setUTCDate(d.getUTCDate() - 1);
   }
-  return d.toISOString().slice(0, 10);
+  return toBusinessDate(d);
 }
 
 interface DealRow {
@@ -71,7 +72,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const defaultStart =
       period_type === "month"
         ? `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, "0")}-01`
-        : today.toISOString().slice(0, 10);
+        : toBusinessDate(today);
     const period_start: string = body.period_start ?? defaultStart;
     const owner_id: string | null = body.owner_id ?? null;
     const period_end_str = periodEnd(period_start, period_type);

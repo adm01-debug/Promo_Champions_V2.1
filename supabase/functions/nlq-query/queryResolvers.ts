@@ -1,6 +1,7 @@
 // Pure resolvers for whitelisted NLQ tools. Uses caller's Supabase client (RLS applied).
 import { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { toBusinessDate, toBusinessMonth } from "../_shared/business-date.ts";
 
 export type ResolverResult = {
   rows: Record<string, unknown>[];
@@ -84,8 +85,8 @@ function clampDate(s: string | undefined, fallback: string): string {
 
 function bucketKey(iso: string, group: 'day' | 'week' | 'month'): string {
   const d = new Date(iso);
-  if (group === 'day') return d.toISOString().slice(0, 10);
-  if (group === 'month') return d.toISOString().slice(0, 7);
+  if (group === 'day') return toBusinessDate(d);
+  if (group === 'month') return toBusinessMonth(d);
   // week: yyyy-Www
   const onejan = new Date(d.getFullYear(), 0, 1);
   const week = Math.ceil(

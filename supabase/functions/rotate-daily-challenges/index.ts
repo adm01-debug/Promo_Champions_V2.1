@@ -1,5 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 import {
   getServiceClient,
   getUserClient,
@@ -47,7 +48,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
       "rotacao diaria escreve desafios globais que usuarios nao escrevem",
     )
 
-    const today = new Date().toISOString().split('T')[0]
+    const today = toBusinessDate()
 
     // Check if today's challenges already exist
     const { data: existingChallenges } = await supabase
@@ -68,7 +69,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
     // Deactivate yesterday's challenges
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayStr = yesterday.toISOString().split('T')[0]
+    const yesterdayStr = toBusinessDate(yesterday)
 
     await supabase
       .from('daily_challenges')

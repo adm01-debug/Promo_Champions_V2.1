@@ -34,6 +34,7 @@ import {
 import {
   usePricingIntelligence,
   type PricingHealth,
+  type PricingIntelligenceResponse,
 } from '@/hooks/usePricingIntelligence';
 import { cn } from '@/lib/utils';
 import { formatBRL } from '@/lib/money';
@@ -78,6 +79,41 @@ const healthMeta: Record<
     desc: 'Erosão de margem significativa. Ação imediata necessária.',
   },
 };
+
+function PricingAnalysisCards({ data }: { data: PricingIntelligenceResponse }) {
+  return (
+    <>
+      {/* Revenue Leakage Map */}
+      <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
+        <RevenueLeakageCard
+          totalLost={data.kpis.revenue_lost}
+          discountLost={data.leakage_segments?.discount ?? 0}
+          competitorLost={data.leakage_segments?.competitor ?? 0}
+          marginErosion={data.leakage_segments?.erosion ?? 0}
+        />
+      </Suspense>
+
+      {/* Price Elasticity Chart */}
+      <Suspense fallback={<Skeleton className="h-80 w-full rounded-xl" />}>
+        <PriceElasticityChart
+          data={data.elasticity?.points}
+          optimalPrice={data.elasticity?.optimal_price ?? undefined}
+          productName={data.elasticity?.product_name ?? undefined}
+        />
+      </Suspense>
+
+      {/* Simulator */}
+      <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
+        <DiscountOptimizer
+          baseWinRate={data.optimizer?.base_win_rate}
+          discountElasticity={data.optimizer?.discount_elasticity}
+          avgDealValue={data.optimizer?.avg_deal_value}
+          avgMargin={data.optimizer?.avg_margin}
+        />
+      </Suspense>
+    </>
+  );
+}
 
 export function PricingIntelligenceHub() {
   const [days, setDays] = useState<7 | 30 | 90>(30);
@@ -284,25 +320,7 @@ export function PricingIntelligenceHub() {
         />
       </div>
 
-      {/* Revenue Leakage Map */}
-      <Suspense fallback={<Skeleton className="h-40 w-full rounded-xl" />}>
-        <RevenueLeakageCard
-          totalLost={k.revenue_lost}
-          discountLost={data.leakage_segments?.discount ?? k.revenue_lost * 0.55}
-          competitorLost={data.leakage_segments?.competitor ?? k.revenue_lost * 0.3}
-          marginErosion={data.leakage_segments?.erosion ?? k.revenue_lost * 0.15}
-        />
-      </Suspense>
-
-      {/* Price Elasticity Chart */}
-      <Suspense fallback={<Skeleton className="h-80 w-full rounded-xl" />}>
-        <PriceElasticityChart />
-      </Suspense>
-
-      {/* Simulator */}
-      <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
-        <DiscountOptimizer />
-      </Suspense>
+      <PricingAnalysisCards data={data} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Distribution chart */}
@@ -400,35 +418,13 @@ export function PricingIntelligenceHub() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-white/5">
-              {(data.competitor_threats && data.competitor_threats.length > 0
-                ? data.competitor_threats
-                : [
-                    {
-                      product_name: 'Advanced Analytics Suite',
-                      our_price: 12500,
-                      competitor_price: 9800,
-                      threat_level: 'high',
-                    },
-                    {
-                      product_name: 'CRM Integration Module',
-                      our_price: 4500,
-                      competitor_price: 3900,
-                      threat_level: 'medium',
-                    },
-                    {
-                      product_name: 'Priority Support SLA',
-                      our_price: 2200,
-                      competitor_price: 1800,
-                      threat_level: 'high',
-                    },
-                    {
-                      product_name: 'Security Hardening Kit',
-                      our_price: 8900,
-                      competitor_price: 7500,
-                      threat_level: 'medium',
-                    },
-                  ]
-              ).map((threat, i) => (
+              {(!data.competitor_threats || data.competitor_threats.length === 0) && (
+                <div className="p-6 text-sm text-muted-foreground text-center">
+                  Nenhum preço de concorrente registrado em competitors_pricing — sem
+                  dados para o radar.
+                </div>
+              )}
+              {(data.competitor_threats ?? []).map((threat, i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between p-4 hover:bg-white/5 transition-all group"

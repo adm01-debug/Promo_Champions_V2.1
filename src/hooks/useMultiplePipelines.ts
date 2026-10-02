@@ -148,22 +148,27 @@ export const useMoveDealMultiPipeline = () => {
       /** Versão lida do deal (optimistic locking) — quando presente, exige casar. */
       expectedVersion?: number;
     }) => {
-      let updateQuery = supabase
-        .from('sales')
-        .update({
-          status: newStage,
-          pipeline_id: pipelineId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', dealId);
-      if (typeof expectedVersion === 'number') {
-        updateQuery = updateQuery.eq('version', expectedVersion);
+      // Transição via RPC da máquina de estados (valida status_origem -> destino);
+      // p_expected_version aplica optimistic locking quando informado.
+      const { error } = await supabase.rpc(
+        'transition_sale_status' as never,
+        {
+          p_sale_id: dealId,
+          p_new_status: newStage,
+          p_pipeline_id: pipelineId,
+          p_expected_version: expectedVersion ?? null,
+        } as never
+      );
+      if (error) {
+        if (
+          typeof error.message === 'string' &&
+          error.message.includes('optimistic_lock_conflict')
+        ) {
+          throw new OptimisticLockConflictError();
+        }
+        throw error;
       }
-
-      const { data, error } = await updateQuery.select().maybeSingle();
-      if (error) throw error;
-      if (!data) throw new OptimisticLockConflictError();
-      return data;
+      return { id: dealId, status: newStage };
     },
     onSuccess: (_data, { newStage }) => {
       toast.success(`Deal movido para ${newStage}`);

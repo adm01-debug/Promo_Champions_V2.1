@@ -11,6 +11,42 @@
  *  - Result is clamped to [0, 100].
  */
 
+import {
+  DEAL_RISK_THRESHOLD,
+  STUCK_STATUSES,
+  extractCompetitorMatches,
+  severityFromScore,
+  suggestedActionFor,
+} from "../_shared/winloss-contract.ts";
+import type {
+  CompetitorMatch,
+  RiskReason,
+  RiskSeverity,
+} from "../_shared/winloss-contract.ts";
+
+// Re-exporta o contrato compartilhado para manter compat com os consumers que
+// importam de "./scoring.ts" (index.ts, testes, _dump_scenarios.ts).
+export {
+  CANONICAL_PATTERN_TYPES,
+  COMPETITOR_KEYWORDS_RE,
+  DEAL_RISK_THRESHOLD,
+  RISK_REASON_CODES,
+  RISK_REASON_LABELS,
+  STUCK_STATUSES,
+  WIN_OVERRIDE_ACTION,
+  extractCompetitorKeywords,
+  extractCompetitorMatches,
+  severityFromScore,
+  suggestedActionFor,
+} from "../_shared/winloss-contract.ts";
+export type {
+  CompetitorMatch,
+  RiskReason,
+  RiskReasonCode,
+  RiskReasonSource,
+  RiskSeverity,
+} from "../_shared/winloss-contract.ts";
+
 export interface LossPattern {
   pattern_type: string | null;
   label: string | null;
@@ -31,47 +67,6 @@ export interface OpenDeal {
   source: string | null;
   updated_at: string | null;
   created_at: string | null;
-}
-
-export type RiskSeverity = "low" | "medium" | "high" | "critical";
-
-export type RiskReasonCode =
-  | "STAGNATION_HIGH"
-  | "STAGNATION_LOW"
-  | "AMOUNT_ALIGNED"
-  | "STAGE_STUCK"
-  | "COMPETITOR_PRESSURE"
-  | "CROSSED_SIGNALS";
-
-export const RISK_REASON_CODES: readonly RiskReasonCode[] = [
-  "STAGNATION_HIGH",
-  "STAGNATION_LOW",
-  "AMOUNT_ALIGNED",
-  "STAGE_STUCK",
-  "COMPETITOR_PRESSURE",
-  "CROSSED_SIGNALS",
-] as const;
-
-export type RiskReasonSource =
-  | "stagnation"
-  | "amount"
-  | "stage"
-  | "competitor"
-  | "generic";
-
-export interface RiskReason {
-  code: RiskReasonCode;
-  message: string;
-  params: Record<string, string | number>;
-  source: RiskReasonSource;
-  contribution: number;
-}
-
-export interface CompetitorMatch {
-  keyword: string;
-  matched_substring: string;
-  regex: string;
-  confidence: number;
 }
 
 export interface RiskBreakdown {
@@ -96,60 +91,6 @@ export interface RiskBreakdown {
   severity?: RiskSeverity;
 }
 
-export const COMPETITOR_KEYWORDS_RE = /concorr\w*|competitor\w*|leila\w*|cota[cç]\w*/gi;
-
-const COMPETITOR_REGEX_LABEL: Array<[string, string]> = [
-  ["concorr", "/concorr\\w*/i"],
-  ["competitor", "/competitor\\w*/i"],
-  ["leila", "/leila\\w*/i"],
-  ["cota", "/cota[c\u00e7]\\w*/i"],
-];
-
-function attributeRegexSource(hit: string): string {
-  const lower = hit.toLowerCase();
-  for (const [needle, label] of COMPETITOR_REGEX_LABEL) {
-    if (lower.includes(needle)) return label;
-  }
-  return "/" + COMPETITOR_KEYWORDS_RE.source + "/gi";
-}
-
-// CompetitorMatch interface declared at the top of this file (near RiskBreakdown).
-
-/**
- * Detailed competitor matches with original substring and originating regex.
- * Dedup by lowercased keyword preserving first occurrence.
- */
-export function extractCompetitorMatches(
-  source: string | null | undefined,
-  confidence = 0.5,
-): CompetitorMatch[] {
-  if (!source) return [];
-  // Split on commas / whitespace to recover the "token" each match lives in.
-  const tokens = source.split(/[\s,;]+/).filter(Boolean);
-  const seen = new Set<string>();
-  const out: CompetitorMatch[] = [];
-  for (const token of tokens) {
-    const m = token.match(COMPETITOR_KEYWORDS_RE);
-    if (!m) continue;
-    for (const hit of m) {
-      const key = hit.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push({
-        keyword: hit,
-        matched_substring: token,
-        regex: attributeRegexSource(hit),
-        confidence,
-      });
-    }
-  }
-  return out;
-}
-
-export function extractCompetitorKeywords(source: string | null | undefined): string[] {
-  return extractCompetitorMatches(source).map(m => m.keyword);
-}
-
 export interface RiskResult {
   sale_id: string;
   client_name: string | null;
@@ -161,13 +102,6 @@ export interface RiskResult {
   reasons: string[];
   breakdown: RiskBreakdown;
 }
-
-export const STUCK_STATUSES = new Set([
-  "negotiation",
-  "proposal",
-  "qualified",
-  "pending",
-]);
 
 export function daysBetween(fromIso: string | null, now: Date): number {
   if (!fromIso) return 0;
@@ -215,92 +149,20 @@ export function stageMatchScore(status: string | null, stuckPattern: LossPattern
   return Math.round(25 * conf);
 }
 
-export function severityFromScore(score: number, confidence: number | null | undefined): RiskSeverity {
-  const c = Math.max(0, Math.min(1, confidence ?? 0.5));
-  if (score >= 80 && c >= 0.7) return "critical";
-  if (score >= 65) return "high";
-  if (score >= 50) return "medium";
-  return "low";
-}
-
 export function ensureNonEmpty(value: string | null | undefined, fallback: string): string {
   const v = (value ?? "").trim();
   return v.length > 0 ? v : fallback;
 }
 
-interface ActionOpts {
-  outcome?: string | null;
-  severity: RiskSeverity;
-}
-
-/**
- * Suggested action coherent with pattern type, outcome and severity.
- * `win_factor` patterns (positive outcome) never produce urgency markers.
- * Critical/high severity on loss-related patterns get urgency markers
- * ("URGENTE", "IMEDIATA", "24h"). Medium/low get measured language.
- */
-export function suggestedActionFor(
-  patternType: string,
-  status: string | null,
-  opts: ActionOpts,
-): string {
-  const sev = opts.severity;
-  const outcome = (opts.outcome ?? "").toLowerCase();
-  const stage = status ?? "atual";
-
-  // Positive patterns — never urgent, regardless of severity.
-  if (patternType === "win_factor" || outcome === "won") {
-    return "Reaplicar abordagem consultiva vencedora deste perfil de cliente";
-  }
-
-  switch (patternType) {
-    case "loss_factor":
-      if (sev === "critical")
-        return "AÇÃO IMEDIATA: agendar call de resgate em 24h e revisar proposta com condição estratégica";
-      if (sev === "high")
-        return "Revisar proposta nas próximas 48h com foco em valor percebido e desbloqueio";
-      if (sev === "medium")
-        return "Reforçar valor percebido e ajustar narrativa de ROI nesta semana";
-      return "Revisar abordagem e confirmar interesse do cliente nas próximas semanas";
-
-    case "stuck_stage":
-      if (sev === "critical")
-        return `URGENTE: desbloquear estágio "${stage}" hoje — escalar para gestor se necessário`;
-      if (sev === "high")
-        return `Acelerar saída do estágio "${stage}" com próxima ação concreta em 48h`;
-      if (sev === "medium")
-        return `Definir próxima ação para destravar estágio "${stage}" esta semana`;
-      return `Revisar estágio "${stage}" e confirmar critério de avanço`;
-
-    case "competitor":
-      if (sev === "critical")
-        return "Concorrência ativa detectada — disparar battle card e ligar ao decisor em 24h";
-      if (sev === "high")
-        return "Reforçar diferenciação competitiva e adicionar prova social em 48h";
-      if (sev === "medium")
-        return "Revisar posicionamento competitivo e preparar contra-argumentos";
-      return "Confirmar se há concorrente no deal e mapear objeções";
-
-    default:
-      if (sev === "critical")
-        return "Revisar deal urgente com gestor — múltiplos sinais de risco cruzados";
-      if (sev === "high")
-        return "Revisar abordagem com o cliente nas próximas 48h";
-      if (sev === "medium")
-        return "Revisar abordagem com o cliente nas próximas 72h";
-      return "Confirmar próximo passo do deal com o cliente";
-  }
-}
-
 /**
  * Compute risk score for a single deal against the pattern set.
- * Returns null when score is below the inclusion threshold (40).
+ * Returns null when score is below the inclusion threshold (DEAL_RISK_THRESHOLD).
  */
 export function computeDealRisk(
   deal: OpenDeal,
   patterns: LossPattern[],
   now: Date,
-  threshold = 40,
+  threshold = DEAL_RISK_THRESHOLD,
 ): RiskResult | null {
   const dealAmount = Number(deal.amount) || 0;
   const days = daysBetween(deal.updated_at ?? deal.created_at, now);
@@ -312,13 +174,13 @@ export function computeDealRisk(
   // Pick the loss pattern whose avg_amount is closest to deal amount (best signal).
   let bestLoss: LossPattern | null = null;
   if (lossPatterns.length) {
-    bestLoss = lossPatterns.reduce((best, p) => {
+    bestLoss = lossPatterns.reduce<LossPattern | null>((best, p) => {
       if (!p.avg_amount) return best;
       if (!best || !best.avg_amount) return p;
       const dBest = Math.abs(dealAmount - (best.avg_amount ?? 0));
       const dCur = Math.abs(dealAmount - (p.avg_amount ?? 0));
       return dCur < dBest ? p : best;
-    }, lossPatterns[0]);
+    }, lossPatterns[0] ?? null);
   }
 
   // Pick highest-confidence stuck pattern.
@@ -503,7 +365,7 @@ export function computeAtRiskDeals(
   now: Date,
   opts: { threshold?: number; limit?: number } = {},
 ): RiskResult[] {
-  const { threshold = 40, limit = 20 } = opts;
+  const { threshold = DEAL_RISK_THRESHOLD, limit = 20 } = opts;
   const results: RiskResult[] = [];
   for (const d of deals) {
     const r = computeDealRisk(d, patterns, now, threshold);

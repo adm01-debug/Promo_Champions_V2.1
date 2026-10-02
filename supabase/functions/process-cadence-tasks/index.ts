@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface CadenceStep {
   action_type: string;
@@ -83,7 +84,7 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, ctx) => {
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   try {
-    const today = new Date().toISOString().split("T")[0];
+    const today = toBusinessDate();
 
     // ── Atomic claim: flip status → 'processing' in a single UPDATE, return
     //    only the rows WE changed. This prevents duplicate sends when two

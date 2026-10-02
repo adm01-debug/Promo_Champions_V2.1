@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessMonth } from "../_shared/business-date.ts";
 
 interface ImpactRow {
   session_id: string;
@@ -86,7 +87,7 @@ Deno.serve(withRequestId("coaching-impact-summary", async (req, _ctx) => {
     // Timeline: monthly avg delta
     const monthly = new Map<string, { sum: number; count: number }>();
     for (const r of rows) {
-      const key = r.completed_at.slice(0, 7);
+      const key = toBusinessMonth(r.completed_at);
       const cur = monthly.get(key) ?? { sum: 0, count: 0 };
       cur.sum += r.delta_overall;
       cur.count += 1;

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
+import { toBusinessHourKey } from '@/lib/date';
 
 export interface CircuitBreakerEvent {
   id: string;
@@ -201,7 +202,7 @@ export function useCircuitBreakerTrends(days = 7, circuitFilter?: string) {
 
       data?.forEach(event => {
         const date = new Date(event.created_at);
-        const hourKey = `${date.toISOString().slice(0, 13)}:00`;
+        const hourKey = `${toBusinessHourKey(date)}:00`;
         const displayHour = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}h`;
 
         if (!hourlyData[hourKey]) {

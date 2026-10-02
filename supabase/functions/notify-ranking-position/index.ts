@@ -1,5 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 import {
   getServiceClient,
   getUserClient,
@@ -67,7 +68,7 @@ Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-    const periodStart = monthStart.toISOString().slice(0, 10);
+    const periodStart = toBusinessDate(monthStart);
 
     const [{ data: salespeople, error: spErr }, { data: sales, error: sErr }] = await Promise.all([
       supabase.from("salespeople").select("id, name").eq("is_active", true).limit(500),

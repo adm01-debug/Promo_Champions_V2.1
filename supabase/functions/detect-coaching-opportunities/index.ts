@@ -4,6 +4,7 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 interface MetricRow {
   salesperson_id: string;
@@ -284,13 +285,13 @@ Deno.serve(
 
       // Insert opportunities (use today date as part of unique key)
       if (opportunities.length > 0) {
-        const today = new Date().toISOString().slice(0, 10);
-        // Delete existing today entries to allow re-run
-        await supabase
-          .from('coaching_opportunities')
-          .delete()
-          .gte('detected_at', `${today}T00:00:00Z`)
-          .lte('detected_at', `${today}T23:59:59Z`);
+        const today = toBusinessDate();
+      // Delete existing today entries to allow re-run
+      await supabase
+        .from('coaching_opportunities')
+        .delete()
+        .gte('detected_at', `${today}T00:00:00Z`)
+        .lte('detected_at', `${today}T23:59:59Z`);
 
         const rows = opportunities.map(o => ({
           salesperson_id: o.salesperson_id,

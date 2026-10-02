@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export type CommissionStatus = 'pending' | 'approved' | 'paid' | 'cancelled';
 
@@ -89,19 +88,19 @@ export const useUpdateCommissionStatus = () => {
       status: CommissionStatus;
       payment_notes?: string;
     }) => {
-      const updates: TableUpdate<'commissions'> = { status };
-      if (status === 'approved') {
-        updates.approved_at = new Date().toISOString();
-        const user = (await supabase.auth.getUser()).data.user;
-        if (user) updates.approved_by = user.id;
-      }
-      if (status === 'paid') {
-        updates.paid_at = new Date().toISOString();
-        const user = (await supabase.auth.getUser()).data.user;
-        if (user) updates.paid_by = user.id;
-        if (payment_notes) updates.payment_notes = payment_notes;
-      }
-      const { error } = await supabase.from('commissions').update(updates).eq('id', id);
+      // Transição via RPC da máquina de estados: valida o fluxo
+      // pending -> approved -> paid (+ cancelamentos) e carimba
+      // approved_at/approved_by, paid_at/paid_by no servidor.
+      const actor = (await supabase.auth.getUser()).data.user;
+      const { error } = await supabase.rpc(
+        'transition_commission_status' as never,
+        {
+          p_commission_id: id,
+          p_new_status: status,
+          p_actor: actor?.id ?? null,
+          p_payment_notes: payment_notes ?? null,
+        } as never
+      );
       if (error) throw error;
     },
     onSuccess: (_d, vars) => {

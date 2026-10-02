@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { toBusinessDate } from '@/lib/date';
 
 export const COMBO_TIERS = [
   { minActions: 0, multiplier: 1.0, label: 'Normal', color: '#94a3b8', emoji: '⭐' },
@@ -31,7 +32,7 @@ export const comboService = {
   },
 
   async getTodayCombo(salespersonId: string) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toBusinessDate();
     const { data, error } = await supabase
       .from('combo_tracking')
       .select('*')
@@ -44,7 +45,7 @@ export const comboService = {
   },
 
   async registerAction(salespersonId: string) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toBusinessDate();
 
     // Try to get existing combo
     const combo = await this.getTodayCombo(salespersonId);
