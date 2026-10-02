@@ -310,6 +310,60 @@ Deno.test("nenhuma migration é vazia (apenas comentários)", async () => {
   }
 });
 
+Deno.test("sync_quote_from_webhook concentra fluxo quote→items→sale em RPC atômica", async () => {
+  const sql = await readMigration(
+    "20261001200000_atomic_quote_sync_rpc.sql",
+  );
+  const webhook = await Deno.readTextFile(
+    new URL("../../supabase/functions/receive-quote-webhook/index.ts", import.meta.url),
+  );
+
+  // RPC existe, é SECURITY DEFINER com search_path fixado
+  assertMatch(sql, /CREATE OR REPLACE FUNCTION public\.sync_quote_from_webhook/i);
+  assertMatch(sql, /SECURITY DEFINER/i);
+  assertMatch(sql, /SET\s+search_path\s*=\s*public/i);
+
+  // Grants mínimos: revoga de todos, concede só a service_role
+  assertMatch(
+    sql,
+    /REVOKE ALL ON FUNCTION public\.sync_quote_from_webhook[\s\S]*FROM PUBLIC, anon, authenticated/i,
+  );
+  assertMatch(
+    sql,
+    /GRANT EXECUTE ON FUNCTION public\.sync_quote_from_webhook[\s\S]*TO service_role/i,
+  );
+
+  // Todas as escritas do fluxo vivem dentro da função (transação implícita)
+  for (const frag of [
+    "public.upsert_client_from_quote",
+    "public.external_seller_map",
+    "public.quotes",
+    "public.quote_items",
+    "public.sales",
+  ]) {
+    assertMatch(sql, new RegExp(frag.replace(/\./g, "\\."), "i"));
+  }
+  // Corrida de criação tratada e lock para serializar retries
+  assertMatch(sql, /unique_violation/i);
+  assertMatch(sql, /FOR UPDATE/i);
+
+  // Webhook delega à RPC; única escrita direta restante em quotes é pdf_url
+  assertMatch(webhook, /\.rpc\(\s*"sync_quote_from_webhook"/);
+  assertMatch(webhook, /from\("quote_sync_logs"\)/);
+  assertNotMatch(webhook, /from\("quote_items"\)/);
+  assertNotMatch(webhook, /from\("sales"\)/);
+  assertNotMatch(webhook, /from\("external_seller_map"\)/);
+  const quotesCalls = webhook.match(/from\("quotes"\)[\s\S]*?;/g) ?? [];
+  assertEquals(quotesCalls.length, 1, "esperado apenas o update de pdf_url");
+  assertMatch(quotesCalls.join(" "), /pdf_url/);
+
+  // Sem drops destrutivos nem segredos literais
+  assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);
+  assertNotMatch(sql, /eyJ[A-Za-z0-9_-]{20,}/);
+});
+
+
+
 Deno.test("pacote LGPD: consentimento, DSR e anonimização defensiva", async () => {
   const sql = await readMigration(
     "20261001150000_lgpd_consent_and_anonymization.sql",
