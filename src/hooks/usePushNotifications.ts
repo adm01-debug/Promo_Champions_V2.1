@@ -32,7 +32,9 @@ export function usePushNotifications() {
   const registerServiceWorker =
     useCallback(async (): Promise<ServiceWorkerRegistration | null> => {
       try {
-        const registration = await navigator.serviceWorker.register('/sw.js', {
+        // SW canônico do app (vite-plugin-pwa) — o legado /sw.js foi removido
+        // para evitar dois SWs disputando o mesmo scope.
+        const registration = await navigator.serviceWorker.register('/pwa-sw.js', {
           scope: '/',
         });
         if (import.meta.env.DEV) {

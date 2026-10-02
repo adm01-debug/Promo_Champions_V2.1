@@ -1,6 +1,6 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 
 
@@ -20,28 +20,7 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claims, error: cErr } = await supabase.auth.getClaims(token);
-    if (cErr || !claims?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const caller = await getUserClient(req);
 
     const { recording_id } = await req.json();
     if (!recording_id || typeof recording_id !== "string") {
@@ -51,13 +30,12 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
       });
     }
 
-    // Service-role client for cross-table reads (registry is global)
-    const admin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    // competitors_registry é global e competitor_mentions exige bypass de RLS;
+    // a leitura do recording usa o client do usuário (RLS) para garantir que o
+    // chamador só analise gravações que ele pode ver.
+    const admin = getServiceClient("registry global + escrita em competitor_mentions (RLS)");
 
-    const { data: rec, error: rErr } = await supabase
+    const { data: rec, error: rErr } = await caller.client
       .from("call_recordings")
       .select("id, transcript, diarization, salesperson_id")
       .eq("id", recording_id)
@@ -165,6 +143,12 @@ Deno.serve(withRequestId("detect-competitor-mentions", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("detect-competitor-mentions error", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),

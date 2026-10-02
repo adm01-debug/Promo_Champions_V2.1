@@ -1,3 +1,4 @@
+import { formatBRL } from '@/lib/money';
 export function calcConfidence(sampleSize: number, target = 30): number {
   return Math.min(sampleSize / target, 1);
 }
@@ -39,9 +40,5 @@ export function formatPercent(value: number, digits = 1): string {
 }
 
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(value);
+  return formatBRL(value);
 }

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Users, Star, Target, Clock, Package, TrendingUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
+import { formatBRL } from '@/lib/money';
 interface ClientOverview360Props {
   data: {
     ltv: number;
@@ -13,13 +14,6 @@ interface ClientOverview360Props {
 }
 
 export function ClientOverview360({ data }: ClientOverview360Props) {
-  const formatCurrency = (val: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    }).format(val);
-
   return (
     <Card className="p-8 border-border/40 bg-card/30 backdrop-blur-xl relative overflow-hidden group rounded-3xl">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" />
@@ -35,13 +29,13 @@ export function ClientOverview360({ data }: ClientOverview360Props) {
         {[
           {
             label: 'LTV',
-            value: formatCurrency(data.ltv),
+            value: formatBRL(data.ltv),
             icon: Star,
             color: 'text-amber-500',
           },
           {
             label: 'Ticket Médio',
-            value: formatCurrency(data.avgTicket),
+            value: formatBRL(data.avgTicket),
             icon: Target,
             color: 'text-blue-500',
           },
@@ -90,7 +84,7 @@ export function ClientOverview360({ data }: ClientOverview360Props) {
                 {new Date(order.date).toLocaleDateString('pt-BR')}
               </p>
               <p className="text-sm font-black text-primary mt-1">
-                {formatCurrency(order.value)}
+                {formatBRL(order.value)}
               </p>
             </div>
           ))}

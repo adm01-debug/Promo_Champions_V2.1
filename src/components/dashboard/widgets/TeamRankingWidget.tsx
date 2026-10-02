@@ -13,6 +13,7 @@ import {
   Cell,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 const RANK_COLORS = [
   'hsl(var(--primary))',
   'hsl(262, 70%, 65%)',
@@ -60,10 +61,7 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
                 tickLine={false}
               />
               <Tooltip
-                formatter={(v: number) => [
-                  `R$ ${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
-                  'Receita',
-                ]}
+                formatter={(v: number) => [`${formatBRL(v)}`, 'Receita']}
                 contentStyle={{
                   borderRadius: 8,
                   border: 'none',

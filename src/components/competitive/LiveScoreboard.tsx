@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useCompetitiveRanking } from '@/hooks/useCompetitiveRanking';
 
+import { formatBRL } from '@/lib/money';
 const RANK_COLORS = [
   'from-rank-gold to-coins',
   'from-rank-silver to-rank-silver/70',
@@ -174,7 +175,7 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                   </span>
                   <strong>{lastDeal.name}</strong> lidera a arena com{' '}
                   <strong className="text-emerald-400 font-black">
-                    R$ {lastDeal.value.toLocaleString('pt-BR')}
+                    {formatBRL(lastDeal.value)}
                   </strong>
                 </span>
               </motion.div>

@@ -70,6 +70,39 @@ export function validateArray(
 }
 
 /**
+ * Validate numeric field
+ */
+export function validateNumber(
+  value: unknown,
+  field: string,
+  opts?: { required?: boolean; min?: number; max?: number; integer?: boolean }
+): ValidationError | null {
+  const { required = false, min, max, integer = false } = opts ?? {};
+
+  if (value === undefined || value === null) {
+    return required ? { field, message: `${field} é obrigatório` } : null;
+  }
+
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return { field, message: `${field} deve ser um número` };
+  }
+
+  if (integer && !Number.isInteger(value)) {
+    return { field, message: `${field} deve ser um número inteiro` };
+  }
+
+  if (min !== undefined && value < min) {
+    return { field, message: `${field} deve ser no mínimo ${min}` };
+  }
+
+  if (max !== undefined && value > max) {
+    return { field, message: `${field} deve ser no máximo ${max}` };
+  }
+
+  return null;
+}
+
+/**
  * Validate enum field
  */
 export function validateEnum(

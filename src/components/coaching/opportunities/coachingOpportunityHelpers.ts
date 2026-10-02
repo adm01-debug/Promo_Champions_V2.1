@@ -3,6 +3,7 @@ import type {
   CoachingSkillFocus,
 } from '@/hooks/coaching/useCoachingOpportunities';
 
+import { formatBRL } from '@/lib/money';
 export const SEVERITY_LABELS: Record<CoachingSeverity, string> = {
   low: 'Baixa',
   medium: 'Média',
@@ -54,11 +55,7 @@ export const SKILL_COLORS: Record<CoachingSkillFocus, string> = {
 
 export function formatMetricValue(metric_key: string, value: number): string {
   if (metric_key === 'avg_ticket') {
-    return value.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    });
+    return formatBRL(value);
   }
   if (metric_key === 'stage_duration') return `${value.toFixed(1)}d`;
   if (metric_key === 'activities_per_day') return value.toFixed(1);

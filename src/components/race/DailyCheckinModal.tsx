@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Flame, TrendingUp, TrendingDown, Minus, Trophy, Sparkles } from 'lucide-react';
 import type { DailyCheckinResult } from '@/hooks/race/useDailyRaceCheckin';
 
+import { formatBRL } from '@/lib/money';
 interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -150,10 +151,7 @@ export function DailyCheckinModal({ open, onOpenChange, data }: Props) {
                     Vendas
                   </p>
                   <p className="text-lg font-display font-black tabular-nums">
-                    R${' '}
-                    {(data.today?.total_sales ?? 0).toLocaleString('pt-BR', {
-                      maximumFractionDigits: 0,
-                    })}
+                    {formatBRL(data.today?.total_sales ?? 0)}
                   </p>
                   <DeltaBadge
                     value={Math.round(data.delta?.total_sales ?? 0)}

@@ -3,6 +3,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { verifyTwilioSignatureAny } from "../_shared/webhook-auth.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { collectErrors, validateUUID, validationErrorResponse } from "../_shared/validation.ts";
 
 // Antes deste hardening a function era um oráculo público: qualquer GET com
 // ?owner_id=<uuid> devolvia o telefone do agente daquele owner no TwiML.
@@ -54,6 +55,12 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
 
   const url = new URL(req.url);
   const ownerId = url.searchParams.get("owner_id");
+
+  // owner_id alimenta uma query com service_role antes da checagem de
+  // assinatura: um valor malformado derrubava a consulta (500) e servia de
+  // sonda. UUID inválido nunca casa uma linha — responder 400 imediato.
+  const ownerIdErrors = collectErrors([validateUUID(ownerId, "owner_id")]);
+  if (ownerIdErrors.length) return validationErrorResponse(ownerIdErrors, {});
 
   let agentPhone: string | null = null;
   let tenantToken: string | null = null;

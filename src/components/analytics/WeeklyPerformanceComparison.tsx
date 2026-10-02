@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useWeeklyComparison } from '@/hooks/useWeeklyComparison';
 
+import { formatBRL } from '@/lib/money';
 interface WeeklyMetrics {
   revenue: number;
   salesCount: number;
@@ -103,7 +104,7 @@ export function WeeklyPerformanceComparison({
         icon: Zap,
         current: currentWeek.revenue,
         previous: previousWeek.revenue,
-        format: (v: number) => `R$ ${v.toLocaleString('pt-BR')}`,
+        format: (v: number) => `${formatBRL(v)}`,
         color: 'text-primary',
       },
       {
@@ -127,7 +128,7 @@ export function WeeklyPerformanceComparison({
         icon: BarChart3,
         current: currentWeek.avgTicket,
         previous: previousWeek.avgTicket,
-        format: (v: number) => `R$ ${v.toLocaleString('pt-BR')}`,
+        format: (v: number) => `${formatBRL(v)}`,
         color: 'text-primary',
       },
       {

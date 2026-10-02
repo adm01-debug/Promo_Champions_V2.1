@@ -1,4 +1,4 @@
-# Auditoria Profunda de Back-End — SalesPro / Lovable Cloud
+# Auditoria Profunda de Back-End — Promo Champions / Lovable Cloud
 
 **Data:** 2026-07-11  
 **Auditor:** Back-End Sênior (persona)  
@@ -173,7 +173,7 @@ Tabelas de log/audit crescem indefinidamente. Criar job (`pg_cron` ou Edge Funct
 
 ## 4. Benchmarking
 
-| Dimensão | SalesPro | Padrão mercado (SaaS B2B maduro) |
+| Dimensão | Promo Champions | Padrão mercado (SaaS B2B maduro) |
 |---|---|---|
 | RLS coverage | 100% | 100% |
 | Migrations versionadas | ✅ | ✅ |

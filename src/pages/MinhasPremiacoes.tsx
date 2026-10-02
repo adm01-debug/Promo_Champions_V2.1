@@ -40,10 +40,10 @@ import {
 import type { AwardStatus } from '@/hooks/useCommissionBonusAwards';
 import { buildCsv, downloadCsv } from '@/lib/csv';
 
+import { formatBRL } from '@/lib/money';
 const PAGE_SIZE = 10;
 
-const brl = (v: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+const brl = (v: number) => formatBRL(v, { decimals: 2 });
 
 const statusConfig: Record<
   AwardStatus,

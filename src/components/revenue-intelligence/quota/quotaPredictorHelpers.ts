@@ -1,5 +1,6 @@
 import type { RiskLevel } from '@/hooks/revenue/useQuotaAttainment';
 
+import { formatBRL } from '@/lib/money';
 export const RISK_COLOR: Record<RiskLevel, string> = {
   safe: 'hsl(var(--success))',
   on_track: 'hsl(var(--primary))',
@@ -32,11 +33,7 @@ export function classifyRisk(prob: number): RiskLevel {
 }
 
 export function formatCurrency(v: number): string {
-  return v.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  });
+  return formatBRL(v);
 }
 
 export function formatPace(v: number): string {

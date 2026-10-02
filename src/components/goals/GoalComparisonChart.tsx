@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { BarChart3 } from 'lucide-react';
 
+import { formatBRL } from '@/lib/money';
 interface GoalComparisonChartProps {
   salespeople: {
     id: string;
@@ -96,7 +97,7 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
             <Tooltip
               cursor={{ fill: 'hsl(var(--primary)/0.05)' }}
               formatter={(v: number | string, name: string) => [
-                `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                `${formatBRL(Number(v))}`,
                 name === 'vendido' ? 'Vendido' : name === 'meta' ? 'Meta' : 'Forecast',
               ]}
               contentStyle={{

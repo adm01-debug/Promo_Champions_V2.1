@@ -4,7 +4,7 @@
 Aceito — Janeiro 2025
 
 ## Contexto
-O SalesPro é uma aplicação data-intensive com 55+ páginas que consomem dados do backend. Precisávamos de uma solução para gerenciar cache, refetch, deduplicação de queries e estados de loading/error.
+O Promo Champions é uma aplicação data-intensive com 55+ páginas que consomem dados do backend. Precisávamos de uma solução para gerenciar cache, refetch, deduplicação de queries e estados de loading/error.
 
 ## Decisão
 Adotamos `@tanstack/react-query` como gerenciador de estado do servidor, sem Redux ou Zustand para estado global.

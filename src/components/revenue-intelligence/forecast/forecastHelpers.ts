@@ -1,3 +1,4 @@
+import { formatBRL as __formatBRL } from '@/lib/money';
 export const biasLabel: Record<string, string> = {
   optimistic: 'Otimista',
   pessimistic: 'Pessimista',
@@ -18,13 +19,7 @@ export const sourceLabel: Record<string, string> = {
 
 export const formatMape = (n: number) => `${(n ?? 0).toFixed(1)}%`;
 
-export const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
-
+export const formatBRL = (n: number) => __formatBRL(n);
 export function mapeHealth(mape: number): {
   label: string;
   color: string;

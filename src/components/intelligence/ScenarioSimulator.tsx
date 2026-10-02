@@ -26,6 +26,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
+import { formatBRL } from '@/lib/money';
 export const ScenarioSimulator = () => {
   const [pipeline, setPipeline] = useState([70]);
   const [conversion, setConversion] = useState([25]);
@@ -61,10 +62,7 @@ export const ScenarioSimulator = () => {
   ];
 
   const calculateRevenue = () => {
-    return (pipeline[0] * conversion[0] * dealSize[0] * 100).toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
+    return formatBRL(pipeline[0] * conversion[0] * dealSize[0] * 100, { decimals: 2 });
   };
 
   const handleSimulate = (strategyId?: string) => {
