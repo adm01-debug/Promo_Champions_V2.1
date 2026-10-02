@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateArray, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
 
 const MAX_QUERY_LENGTH = 500;
 const MAX_RESULT_LIMIT = 50;
@@ -59,6 +60,10 @@ async function generateAnswer(query: string, results: Array<{ entity_type: strin
 Deno.serve(withRequestId("semantic-search-universal", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "semantic-search-universal", limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     // Validate JWT — presence check alone is insufficient

@@ -60,6 +60,32 @@ function getClientIp(req: Request): string {
   return 'unknown';
 }
 
+/**
+ * Extrai `user:<sub>` do Bearer JWT SEM verificar assinatura — serve só
+ * como chave de bucket de rate limit. A verificação de identidade continua
+ * sendo responsabilidade do auth da própria função; quem falsifica o token
+ * é rejeitado no auth e não alcança a operação custosa (a fuga do bucket
+ * só afetaria a contagem de 401s, que é barata).
+ *
+ * ATENÇÃO: em functions SEM autenticação o sub é falsificável — use
+ * `enforceRateLimit` sem `key` (bucket por IP) nessas.
+ */
+export function rateLimitUserKey(req: Request): string | undefined {
+  const header = req.headers.get('authorization');
+  if (!header?.startsWith('Bearer ')) return undefined;
+  const token = header.slice('Bearer '.length).trim();
+  const parts = token.split('.');
+  if (parts.length < 2) return undefined;
+  try {
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+    const sub = payload?.sub;
+    if (typeof sub !== 'string' || sub.length === 0 || sub.length > 64) return undefined;
+    return `user:${sub}`;
+  } catch {
+    return undefined;
+  }
+}
+
 export interface RateLimitResult {
   allowed: boolean;
   limit: number;
