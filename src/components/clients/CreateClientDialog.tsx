@@ -13,6 +13,7 @@ import { useCreateClient } from '@/hooks/crm/useClients';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { brPhoneField } from '@/lib/validators/brSchemas';
 import {
   Form,
   FormControl,
@@ -34,12 +35,7 @@ const clientSchema = z.object({
     .email('E-mail inválido')
     .max(255, 'E-mail deve ter no máximo 255 caracteres')
     .or(z.literal('')),
-  phone: z
-    .string()
-    .trim()
-    .max(20, 'Telefone deve ter no máximo 20 caracteres')
-    .optional()
-    .or(z.literal('')),
+  phone: brPhoneField().optional().or(z.literal('')),
   company: z
     .string()
     .trim()

@@ -5,10 +5,10 @@ ou quando os monitores de docs/RUNBOOK.md §4 começarem a falhar.
 
 ## Supabase
 
-| Plano | O que muda | Gatilho para subir |
-|-------|-----------|--------------------|
-| **Free → Pro** | Backup diário gerenciado (retenção 7d), sem pausa por inatividade, 8 GB DB, 100 GB bandwidth, suporte | (1) Backup off-site próprio já roda (`db-backup.yml`), mas retenção >7 dias ou PITR virar requisito; (2) banco passar de ~4 GB (50% do limite Free); (3) qualquer incidente de pausa por inatividade |
-| **Pro → Team/Enterprise** | PITR (point-in-time recovery), mais read replicas, SLA de uptime | (1) RPO < 24h virar requisito de negócio (perda de um dia de vendas inaceitável); (2) alertas de CPU/RAM recorrentes no dashboard; (3) necessidade de SLA contratual |
+| Plano                     | O que muda                                                                                            | Gatilho para subir                                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Free → Pro**            | Backup diário gerenciado (retenção 7d), sem pausa por inatividade, 8 GB DB, 100 GB bandwidth, suporte | (1) Backup off-site próprio já roda (`db-backup.yml`), mas retenção >7 dias ou PITR virar requisito; (2) banco passar de ~4 GB (50% do limite Free); (3) qualquer incidente de pausa por inatividade |
+| **Pro → Team/Enterprise** | PITR (point-in-time recovery), mais read replicas, SLA de uptime                                      | (1) RPO < 24h virar requisito de negócio (perda de um dia de vendas inaceitável); (2) alertas de CPU/RAM recorrentes no dashboard; (3) necessidade de SLA contratual                                 |
 
 ### Sinais práticos (verificar no dashboard do projeto)
 

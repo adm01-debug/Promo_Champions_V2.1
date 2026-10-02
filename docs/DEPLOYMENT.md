@@ -6,12 +6,12 @@
 
 ## 1. Componentes de produção
 
-| Componente | Onde roda | Como é atualizado |
-|------------|-----------|-------------------|
-| Frontend (SPA Vite) | Lovable Cloud — `championgifts.lovable.app` | Botão **Publish** no Lovable (build a partir da `main` do GitHub) |
-| Banco Postgres + Auth + PostgREST | Supabase Cloud — projeto `usyxfpqlsspldubptrdl` | Migrations aplicadas **manualmente** via SQL (ver §3) |
-| Edge Functions (169, Deno) | Supabase Edge Runtime do mesmo projeto | Deploy **manual** (ver §4) |
-| Cron jobs | `pg_cron` no próprio Postgres | Criados/alterados por migration |
+| Componente                        | Onde roda                                       | Como é atualizado                                                 |
+| --------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------- |
+| Frontend (SPA Vite)               | Lovable Cloud — `championgifts.lovable.app`     | Botão **Publish** no Lovable (build a partir da `main` do GitHub) |
+| Banco Postgres + Auth + PostgREST | Supabase Cloud — projeto `usyxfpqlsspldubptrdl` | Migrations aplicadas **manualmente** via SQL (ver §3)             |
+| Edge Functions (169, Deno)        | Supabase Edge Runtime do mesmo projeto          | Deploy **manual** (ver §4)                                        |
+| Cron jobs                         | `pg_cron` no próprio Postgres                   | Criados/alterados por migration                                   |
 
 ## 2. Deploy do frontend (Lovable)
 
@@ -59,7 +59,7 @@ supabase functions deploy <nome> --project-ref usyxfpqlsspldubptrdl
 Antes de mexer numa function:
 
 - `deno lint supabase/functions/<nome>/` e `deno check
-  --node-modules-dir=none supabase/functions/<nome>/index.ts` precisam
+--node-modules-dir=none supabase/functions/<nome>/index.ts` precisam
   passar (o CI `edge-functions-*` cobre isso).
 - Toda function passa pelo wrapper `withRequestId` e pelos headers
   compartilhados de `_shared/` — manter o padrão.
@@ -72,12 +72,12 @@ Antes de mexer numa function:
 
 ## 5. Secrets e variáveis (configuração manual)
 
-| Onde | O que | Exemplos |
-|------|-------|----------|
-| Supabase → Edge Functions → Secrets | Chaves usadas pelas functions | `RESEND_API_KEY`, `ELEVENLABS_API_KEY`, `TWILIO_AUTH_TOKEN`, `BITRIX24_*`, `LOVABLE_API_KEY`, `SLACK_WEBHOOK_URL`, `V4_CALLBACK_*`, `*_WEBHOOK_SECRET` |
-| Lovable → integração Supabase | Vars do frontend (`VITE_*`) | `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` |
-| GitHub → Settings → Secrets | Credenciais de CI | `VITE_SUPABASE_*`, `E2E_*`, `SUPABASE_ACCESS_TOKEN` |
-| Tabela `provider_credentials` / `integration_connections` | Conectores configurados na UI admin `/admin/conexoes` | Meta Cloud, Z-API, Twilio, n8n, bancos externos |
+| Onde                                                      | O que                                                 | Exemplos                                                                                                                                               |
+| --------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Supabase → Edge Functions → Secrets                       | Chaves usadas pelas functions                         | `RESEND_API_KEY`, `ELEVENLABS_API_KEY`, `TWILIO_AUTH_TOKEN`, `BITRIX24_*`, `LOVABLE_API_KEY`, `SLACK_WEBHOOK_URL`, `V4_CALLBACK_*`, `*_WEBHOOK_SECRET` |
+| Lovable → integração Supabase                             | Vars do frontend (`VITE_*`)                           | `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`                                                                                                   |
+| GitHub → Settings → Secrets                               | Credenciais de CI                                     | `VITE_SUPABASE_*`, `E2E_*`, `SUPABASE_ACCESS_TOKEN`                                                                                                    |
+| Tabela `provider_credentials` / `integration_connections` | Conectores configurados na UI admin `/admin/conexoes` | Meta Cloud, Z-API, Twilio, n8n, bancos externos                                                                                                        |
 
 Referência de envs do frontend em `.env.example` (só o que o código lê).
 

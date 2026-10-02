@@ -10,12 +10,12 @@
 
 ## Configuração
 
-| Item | Onde |
-|------|------|
-| `BITRIX24_DOMAIN`, `BITRIX24_CLIENT_ID`, `BITRIX24_CLIENT_SECRET` | Secrets das edge functions (Supabase) |
-| Token de acesso persistido | `portfolio_settings` (`setting_key='bitrix24_access_token'`) |
-| UI de conexão | `/admin/conexoes` |
-| Log de execuções | tabela `bitrix24_sync_logs` |
+| Item                                                              | Onde                                                         |
+| ----------------------------------------------------------------- | ------------------------------------------------------------ |
+| `BITRIX24_DOMAIN`, `BITRIX24_CLIENT_ID`, `BITRIX24_CLIENT_SECRET` | Secrets das edge functions (Supabase)                        |
+| Token de acesso persistido                                        | `portfolio_settings` (`setting_key='bitrix24_access_token'`) |
+| UI de conexão                                                     | `/admin/conexoes`                                            |
+| Log de execuções                                                  | tabela `bitrix24_sync_logs`                                  |
 
 ## Sinais de falha
 

@@ -6,6 +6,7 @@ import { useUpdateClient, Client } from '@/hooks/crm/useClients';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { brPhoneField } from '@/lib/validators/brSchemas';
 import {
   Form,
   FormControl,
@@ -27,7 +28,7 @@ const editClientSchema = z.object({
     .email('E-mail inválido')
     .max(255, 'E-mail deve ter no máximo 255 caracteres')
     .or(z.literal('')),
-  phone: z.string().trim().max(20, 'Telefone deve ter no máximo 20 caracteres'),
+  phone: brPhoneField(),
   company: z.string().trim().max(100, 'Empresa deve ter no máximo 100 caracteres'),
   total_value: z
     .string()
