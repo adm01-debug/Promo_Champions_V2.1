@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { supabase } from '@/integrations/supabase/client';
+import { knownDeviceService } from '@/services/knownDeviceService';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Monitor,
@@ -47,14 +47,8 @@ export const KnownDevices = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('known_devices')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('last_seen_at', { ascending: false });
-
-      if (error) throw error;
-      setDevices(data || []);
+      const data = await knownDeviceService.listForUser(user.id);
+      setDevices(data);
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching devices:', error);
@@ -71,12 +65,7 @@ export const KnownDevices = () => {
 
   const toggleTrust = async (deviceId: string, currentTrust: boolean) => {
     try {
-      const { error } = await supabase
-        .from('known_devices')
-        .update({ is_trusted: !currentTrust })
-        .eq('id', deviceId);
-
-      if (error) throw error;
+      await knownDeviceService.setTrusted(deviceId, !currentTrust);
 
       toast.success(
         currentTrust
@@ -94,9 +83,7 @@ export const KnownDevices = () => {
 
   const removeDevice = async (deviceId: string) => {
     try {
-      const { error } = await supabase.from('known_devices').delete().eq('id', deviceId);
-
-      if (error) throw error;
+      await knownDeviceService.remove(deviceId);
 
       toast.success('Dispositivo removido');
       fetchDevices();

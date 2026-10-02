@@ -1,3 +1,4 @@
+import { formatBRL } from '@/lib/money';
 export interface PulseKpi {
   label: string;
   value: number;
@@ -27,11 +28,7 @@ export interface PulsePayload {
 
 export const formatKpi = (k: PulseKpi): string => {
   if (k.format === 'currency') {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      maximumFractionDigits: 0,
-    }).format(k.value);
+    return formatBRL(k.value);
   }
   if (k.format === 'percent') return `${k.value.toFixed(1)}%`;
   if (k.format === 'score') return k.value.toFixed(0);

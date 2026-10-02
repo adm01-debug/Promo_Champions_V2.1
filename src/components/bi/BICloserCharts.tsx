@@ -16,6 +16,7 @@ import {
   Cell,
 } from 'recharts';
 
+import { formatBRL } from '@/lib/money';
 const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--chart-2))',
@@ -23,9 +24,6 @@ const COLORS = [
   'hsl(var(--chart-4))',
   'hsl(var(--chart-5))',
 ];
-const formatCurrency = (value: number) =>
-  `R$ ${value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`;
-
 interface BICloserChartsProps {
   revenueByDay: { day: string; value: number }[];
   dealsByCategory: { category: string; value: number }[];
@@ -90,7 +88,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                   />
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    formatter={(value: number) => [formatCurrency(value), 'Faturamento']}
+                    formatter={(value: number) => [formatBRL(value), 'Faturamento']}
                   />
                   <Area
                     type="monotone"
@@ -138,7 +136,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => [formatCurrency(value)]}
+                      formatter={(value: number) => [formatBRL(value)]}
                       contentStyle={tooltipStyle}
                     />
                   </PieChart>
@@ -154,9 +152,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                         style={{ backgroundColor: COLORS[idx % COLORS.length] }}
                       />
                       <span className="truncate">{cat.category}</span>
-                      <span className="ml-auto font-bold">
-                        {formatCurrency(cat.value)}
-                      </span>
+                      <span className="ml-auto font-bold">{formatBRL(cat.value)}</span>
                     </div>
                   ))}
                 </div>
@@ -197,7 +193,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                 />
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  formatter={(value: number) => [formatCurrency(value), 'Faturamento']}
+                  formatter={(value: number) => [formatBRL(value), 'Faturamento']}
                 />
                 <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>

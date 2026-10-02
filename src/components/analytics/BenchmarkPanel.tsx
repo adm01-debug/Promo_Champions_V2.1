@@ -8,6 +8,7 @@ import { Minus, ArrowUpRight, ArrowDownRight, Activity, Zap } from 'lucide-react
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
+import { formatBRLCompact } from '@/lib/money';
 const PERIOD_LABELS: Record<BenchmarkPeriod, string> = {
   mom: 'MoM',
   qoq: 'QoQ',
@@ -17,11 +18,7 @@ const PERIOD_LABELS: Record<BenchmarkPeriod, string> = {
 const formatValue = (value: number, fmt: BenchmarkResult['format']) => {
   switch (fmt) {
     case 'currency':
-      return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        notation: 'compact',
-      }).format(value);
+      return formatBRLCompact(value);
     case 'percent':
       return `${value.toFixed(1)}%`;
     case 'number':

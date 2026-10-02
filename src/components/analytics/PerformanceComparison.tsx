@@ -10,6 +10,7 @@ import { Users, Trophy, TrendingUp, Phone, Target, Crown } from 'lucide-react';
 import { SalespersonCard } from './performance/SalespersonCard';
 import { PerformanceCharts } from './performance/PerformanceCharts';
 
+import { formatBRL } from '@/lib/money';
 const ROLE_LABELS: Record<string, string> = {
   sdr: 'SDRs',
   closer: 'Closers',
@@ -22,11 +23,7 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-  }).format(value);
+  return formatBRL(value);
 }
 
 export function PerformanceComparison() {

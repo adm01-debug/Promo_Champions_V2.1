@@ -15,6 +15,7 @@ import { Percent, DollarSign } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { WIN_LOSS_OUTCOME } from '@/constants';
 
+import { formatBRL } from '@/lib/money';
 export function ICPPerformanceChart() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['icp-performance-stats'],
@@ -144,10 +145,7 @@ export function ICPPerformanceChart() {
                   color: '#fff',
                 }}
                 formatter={(value: number | string) => [
-                  new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(Number(value)),
+                  formatBRL(Number(value), { decimals: 2 }),
                   'Ticket Médio',
                 ]}
               />

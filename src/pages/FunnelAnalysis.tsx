@@ -33,16 +33,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { formatBRLCompact } from '@/lib/money';
 const FunnelAnalysis = () => {
   const [timeframe, setTimeframe] = useState(30);
   const { data, isLoading } = useFunnelData(timeframe);
-
-  const fmtCurrency = (v: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      notation: 'compact',
-    }).format(v);
 
   return (
     <>
@@ -118,7 +112,7 @@ const FunnelAnalysis = () => {
                     </div>
                   </div>
                   <p className="text-2xl font-display font-bold">
-                    {fmtCurrency(data.totalValue)}
+                    {formatBRLCompact(data.totalValue)}
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
                     Valor Total Won
@@ -131,7 +125,7 @@ const FunnelAnalysis = () => {
                     </div>
                   </div>
                   <p className="text-2xl font-display font-bold">
-                    {fmtCurrency(data.avgDealSize)}
+                    {formatBRLCompact(data.avgDealSize)}
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
                     Ticket Médio
@@ -215,7 +209,7 @@ const FunnelAnalysis = () => {
                                   </div>
                                   <p className="text-xs text-muted-foreground font-medium">
                                     {stage.count} deals <span className="mx-1">•</span>{' '}
-                                    {fmtCurrency(stage.value)}
+                                    {formatBRLCompact(stage.value)}
                                   </p>
                                 </div>
                               </div>
@@ -340,7 +334,7 @@ const FunnelAnalysis = () => {
                             Proj. Fim do Mês
                           </p>
                           <p className="text-lg font-display font-bold">
-                            {fmtCurrency(data.totalValue * 1.4)}
+                            {formatBRLCompact(data.totalValue * 1.4)}
                           </p>
                         </div>
                         <div className="p-2 rounded-lg border border-border/40 bg-background/40">
@@ -348,7 +342,7 @@ const FunnelAnalysis = () => {
                             Gap vs Meta
                           </p>
                           <p className="text-lg font-display font-bold text-destructive">
-                            -{fmtCurrency(50000)}
+                            -{formatBRLCompact(50000)}
                           </p>
                         </div>
                       </div>

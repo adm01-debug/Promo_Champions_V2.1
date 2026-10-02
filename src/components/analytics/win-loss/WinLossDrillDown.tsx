@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, Package, Clock, Trophy, XCircle } from 'lucide-react';
+import { formatBRL } from '@/lib/money';
 import { WIN_LOSS_OUTCOME } from '@/constants';
 
 interface SP {
@@ -25,7 +26,7 @@ interface Detail {
   salespeople?: { name?: string } | null;
 }
 
-const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const currency = (v: number) => formatBRL(v, { decimals: 2 });
 
 const SalespersonList: FC<{ items: SP[] }> = memo(({ items }) => (
   <Card className="glass border-border/40 lg:col-span-1">
@@ -143,7 +144,7 @@ const RecentList: FC<{ items: Detail[] }> = memo(({ items }) => {
                     {d.salespeople?.name || 'Vendedor'}
                   </Badge>
                   <span className="text-[9px] font-bold text-primary">
-                    {d.sales?.amount ? currency.format(d.sales.amount) : ''}
+                    {d.sales?.amount ? currency(d.sales.amount) : ''}
                   </span>
                 </div>
               </div>

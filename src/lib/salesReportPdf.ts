@@ -3,6 +3,8 @@ import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import type jsPDF from 'jspdf';
 
+import { formatBRL } from '@/lib/money';
+
 /** jspdf-autotable preenche `lastAutoTable` no doc após cada chamada. */
 interface JsPdfWithAutoTable extends jsPDF {
   lastAutoTable?: { finalY: number };
@@ -66,7 +68,7 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
   const kpis = [
     {
       label: 'Faturamento',
-      value: `R$ ${data.revenue.current.toLocaleString('pt-BR')}`,
+      value: `${formatBRL(data.revenue.current)}`,
       change: data.revenue.change,
     },
     { label: 'Vendas', value: String(data.sales.current), change: data.sales.change },
@@ -77,7 +79,7 @@ function addKPISection(doc: jsPDF, data: ReportData, startY: number): number {
     },
     {
       label: 'Ticket Médio',
-      value: `R$ ${data.avgTicket.current.toLocaleString('pt-BR')}`,
+      value: `${formatBRL(data.avgTicket.current)}`,
       change: data.avgTicket.change,
     },
   ];
@@ -123,7 +125,7 @@ function addTopDeals(
       String(i + 1),
       d.client,
       d.product,
-      `R$ ${d.amount.toLocaleString('pt-BR')}`,
+      `${formatBRL(d.amount)}`,
       d.status,
     ]),
     theme: 'grid',
@@ -162,8 +164,8 @@ function addTeamRanking(
     body: team.map((t, i) => [
       `${i + 1}º`,
       t.name,
-      `R$ ${t.sales.toLocaleString('pt-BR')}`,
-      `R$ ${t.goal.toLocaleString('pt-BR')}`,
+      `${formatBRL(t.sales)}`,
+      `${formatBRL(t.goal)}`,
       `${t.progress.toFixed(0)}%`,
     ]),
     theme: 'grid',

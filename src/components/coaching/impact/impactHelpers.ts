@@ -1,3 +1,4 @@
+import { formatBRL } from '@/lib/money';
 export function formatDelta(value: number, suffix = '%'): string {
   if (!Number.isFinite(value) || value === 0) return `0${suffix}`;
   const sign = value > 0 ? '+' : '';
@@ -25,11 +26,7 @@ export function heatmapShade(value: number): string {
 }
 
 export function formatCurrency(v: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(v || 0);
+  return formatBRL(v || 0);
 }
 
 export function estimateMonthlyROI(roi: number, sessions: number): number {

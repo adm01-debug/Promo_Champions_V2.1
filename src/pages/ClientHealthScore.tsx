@@ -25,6 +25,7 @@ import {
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRLCompact } from '@/lib/money';
 interface ClientHealth {
   id: string;
   name: string;
@@ -318,11 +319,7 @@ const ClientHealthScore = () => {
 
                             <div className="text-right shrink-0">
                               <p className="font-display font-bold text-sm text-primary">
-                                {new Intl.NumberFormat('pt-BR', {
-                                  style: 'currency',
-                                  currency: 'BRL',
-                                  notation: 'compact',
-                                }).format(client.totalValue)}
+                                {formatBRLCompact(client.totalValue)}
                               </p>
                               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
                                 LTV

@@ -191,10 +191,14 @@ export const useSessionManagement = () => {
 
         if (error) throw error;
 
-        // Se for a sessão atual, fazer logout
+        // Se for a sessão atual, fazer logout somente dela (o GoTrue revoga o
+        // refresh token desta sessão; as demais continuam válidas). Para sessões
+        // remotas o supabase-js não oferece revogação pontual — o caminho real é
+        // "Encerrar outras" (scope 'others'), que invalida todos os refresh
+        // tokens exceto o desta sessão.
         if (sessionId === getStoredSessionId()) {
           clearStoredSessionId();
-          await supabase.auth.signOut();
+          await supabase.auth.signOut({ scope: 'local' });
           toast.info('Sessão encerrada');
         } else {
           toast.success('Sessão encerrada');
@@ -213,7 +217,7 @@ export const useSessionManagement = () => {
     [fetchSessions]
   );
 
-  // Encerrar todas as outras sessões
+  // Encerrar todas as outras sessões (revoga os refresh tokens delas no GoTrue)
   const terminateOtherSessions = useCallback(async (): Promise<boolean> => {
     if (!user) return false;
 
@@ -228,6 +232,9 @@ export const useSessionManagement = () => {
 
       if (error) throw error;
 
+      // Revoga os refresh tokens das outras sessões do usuário; a atual segue válida.
+      await supabase.auth.signOut({ scope: 'others' });
+
       toast.success('Outras sessões encerradas');
       await fetchSessions();
       return true;
@@ -240,6 +247,33 @@ export const useSessionManagement = () => {
     }
   }, [user, fetchSessions]);
 
+  // Encerrar TODAS as sessões, incluindo a atual (logout global)
+  const terminateAllSessions = useCallback(async (): Promise<boolean> => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('active_sessions')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      clearStoredSessionId();
+      // Revoga todos os refresh tokens do usuário, incluindo o desta sessão.
+      await supabase.auth.signOut({ scope: 'global' });
+
+      toast.info('Todas as sessões foram encerradas');
+      return true;
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Error terminating all sessions:', error);
+      }
+      toast.error('Erro ao encerrar sessões');
+      return false;
+    }
+  }, [user]);
+
   // Verificação periódica da sessão
   useEffect(() => {
     if (!user) return;
@@ -250,7 +284,7 @@ export const useSessionManagement = () => {
       if (!valid) {
         toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
         clearStoredSessionId();
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'local' });
         return;
       }
 
@@ -303,6 +337,7 @@ export const useSessionManagement = () => {
     validateSession,
     terminateSession,
     terminateOtherSessions,
+    terminateAllSessions,
     updateActivity,
     refetch: fetchSessions,
   };

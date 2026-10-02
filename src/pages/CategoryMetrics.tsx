@@ -20,6 +20,7 @@ import {
 import { BarChart3, Package, TrendingUp } from 'lucide-react';
 import type { RechartsTooltipProps } from '@/types/recharts';
 
+import { formatBRL, formatBRLCompact } from '@/lib/money';
 const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--accent))',
@@ -45,7 +46,7 @@ const CustomTooltip = ({ active, payload }: RechartsTooltipProps) => {
     <div className="bg-popover border border-border rounded-lg p-3 shadow-xl text-xs">
       <p className="font-semibold text-foreground">{data.category}</p>
       <p className="text-muted-foreground">
-        {data.count} produtos • R${data.revenue?.toLocaleString('pt-BR')}
+        {data.count} produtos • {formatBRL(data.revenue)}
       </p>
     </div>
   );
@@ -211,11 +212,7 @@ const CategoryMetrics = () => {
                       </div>
                       <div className="text-right">
                         <p className="font-display font-bold text-sm">
-                          {new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            notation: 'compact',
-                          }).format(cat.revenue)}
+                          {formatBRLCompact(cat.revenue)}
                         </p>
                         <p className="text-xs text-muted-foreground">{pct}%</p>
                       </div>

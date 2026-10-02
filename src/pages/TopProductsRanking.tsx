@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { useTopProducts } from '@/hooks/useProducts';
 import { Package, Star, Crown, Medal } from 'lucide-react';
 
+import { formatBRLCompact } from '@/lib/money';
 const RANK_ICONS = [Crown, Medal, Medal];
 const RANK_COLORS = ['text-rank-gold', 'text-slate-400', 'text-amber-700'];
 
@@ -16,13 +17,6 @@ const TopProductsRanking = () => {
   const { data: products, isLoading } = useTopProducts(20);
 
   const maxSales = products?.[0]?.sales_count || 1;
-  const fmtCurrency = (v: number) =>
-    new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      notation: 'compact',
-    }).format(v);
-
   return (
     <>
       <Helmet>
@@ -91,7 +85,7 @@ const TopProductsRanking = () => {
                         {product.sales_count} vendas
                       </p>
                       <p className="text-xs text-status-success">
-                        {fmtCurrency(product.revenue)}
+                        {formatBRLCompact(product.revenue)}
                       </p>
                     </div>
                     {product.rating > 0 && (

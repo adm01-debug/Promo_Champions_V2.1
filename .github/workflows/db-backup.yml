@@ -1,0 +1,80 @@
+name: DB Backup (off-site)
+
+# Backup agendado do Postgres de produção via pg_dump, diário às 03:00 UTC.
+#
+# O passo real só roda quando o secret SUPABASE_DB_URL está configurado
+# (connection string Postgres completa, ex:
+#   postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[region].pooler.supabase.com:6543/postgres
+# — gerada em Supabase Dashboard → Settings → Database → Connection string).
+# Sem o secret, o job é informativo: documenta o passo e sai verde.
+#
+# Retenção: o dump sobe como artifact com retenção curta (7 dias) — o objetivo
+# é ter um recovery point recente sempre disponível, não um arquivo histórico
+# no GitHub. Para retenção longa/off-site real, mover o artifact para um
+# bucket S3/GCS (passo comentado no fim) ou contratar o backup gerenciado
+# do Supabase (ver docs/SIZING.md).
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - name: Verificar secret
+        id: gate
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SUPABASE_DB_URL não configurado — backup pulado."
+            echo "Para ativar: Settings → Secrets → SUPABASE_DB_URL com a"
+            echo "connection string do pooler (porta 6543) do projeto usyxfpqlsspldubptrdl."
+            exit 0
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+
+      - name: Instalar cliente Postgres
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-16
+
+      - name: pg_dump → artifact
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          FILE="promo-champions-db-${STAMP}.dump"
+          pg_dump "$SUPABASE_DB_URL" \
+            --format=custom --compress=9 --no-owner --no-privileges \
+            --file="$FILE"
+          echo "BACKUP_FILE=$FILE" >> "$GITHUB_ENV"
+          ls -lh "$FILE"
+
+      - name: Upload artifact (retenção 7 dias)
+        if: steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: promo-champions-db-*.dump
+          retention-days: 7
+
+      # Off-site real (ex.: S3): descomentar quando os secrets AWS existirem.
+      # - name: Upload para bucket off-site
+      #   if: steps.gate.outputs.run == 'true'
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_BACKUP_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_BACKUP_SECRET_ACCESS_KEY }}
+      #   run: aws s3 cp "$BACKUP_FILE" s3://promo-backups/db/

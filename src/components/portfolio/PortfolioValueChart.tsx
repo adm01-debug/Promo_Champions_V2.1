@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { BarChart3 } from 'lucide-react';
 
+import { formatBRL } from '@/lib/money';
 interface PortfolioValueChartProps {
   portfolio: Array<{
     salesperson_id: string;
@@ -83,7 +84,7 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
             />
             <Tooltip
               formatter={(v: number | string) => [
-                `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                `${formatBRL(Number(v))}`,
                 'Valor Total',
               ]}
               contentStyle={{
