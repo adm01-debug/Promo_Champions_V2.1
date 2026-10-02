@@ -1,7 +1,7 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
 import { checkAudioSignature } from '../_shared/file-signature.ts';
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import {
@@ -12,7 +12,7 @@ import {
 const MAX_AUDIO_BASE64_LENGTH = 10 * 1024 * 1024; // ~7.5 MB decoded
 
 Deno.serve(
-  withRequestId('elevenlabs-stt', async (req, _ctx) => {
+  withRequestId('elevenlabs-stt', async (req, ctx) => {
     const corsHeaders = getCorsHeaders(req);
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
@@ -63,9 +63,7 @@ Deno.serve(
       const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
 
       if (!ELEVENLABS_API_KEY) {
-        console.info(
-          'ElevenLabs API key not configured - returning placeholder response'
-        );
+        ctx.log('warn', 'elevenlabs_api_key_not_configured');
         return new Response(
           JSON.stringify({
             error: 'api_key_not_configured',
@@ -104,21 +102,26 @@ Deno.serve(
       formData.append('model_id', 'scribe_v1');
       formData.append('language_code', 'pt');
 
-      console.info(`Processing STT for audio (${audioBytes.length} bytes)`);
+      ctx.log('info', 'stt_process', { audio_bytes: audioBytes.length });
 
       let response: Response;
       try {
         response = await withEdgeCircuitBreaker(
           'elevenlabs:stt',
           async () => {
-            const r = await fetchWithTimeout(
-              'https://api.elevenlabs.io/v1/speech-to-text',
+            const r = await fetchWithTrace(
+'https://api.elevenlabs.io/v1/speech-to-text',
               {
                 method: 'POST',
                 headers: {
                   'xi-api-key': ELEVENLABS_API_KEY,
                 },
                 body: formData,
+              },
+              {
+                requestId: ctx.requestId,
+                fnName: 'elevenlabs-stt',
+                operation: 'elevenlabs_stt',
               }
             );
             if (r.status >= 500) throw new Error(`elevenlabs_5xx_${r.status}`);

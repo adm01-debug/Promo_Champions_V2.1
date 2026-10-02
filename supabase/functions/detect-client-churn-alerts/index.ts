@@ -91,7 +91,8 @@ function thresholdDaysFor(level: Level, expectedInterval: number | null): number
   return ABSOLUTE_THRESHOLDS[level];
 }
 
-Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
+Deno.serve(withRequestId('detect-client-churn-alerts', async (req, ctx) => {
+  const log = ctx.log;
   const responseCorsHeaders = getCorsHeaders(req);
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
@@ -106,7 +107,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!supabaseUrl || !serviceRoleKey) {
-    console.error('detect-client-churn-alerts missing Supabase service credentials');
+    log('error', 'service_credentials_missing');
     return json({ error: 'service_not_configured' }, 503);
   }
 
@@ -121,7 +122,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
       }
     } catch (error) {
       if (error instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
-      console.error('detect-client-churn-alerts authorization failed:', error);
+      log('error', 'authorization_failed');
       return json({ error: 'authorization_unavailable' }, 503);
     }
   }
@@ -292,14 +293,16 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
           },
         ]);
       if (invalidNotifications.length > 0) {
-        console.error('invalid churn notification', invalidNotifications);
+        log('error', 'invalid_churn_notification', {
+          reasons: invalidNotifications.map(i => i.reason),
+        });
         continue;
       }
       const { error: insErr } = await supabase
         .from('notifications')
         .insert(validNotifications);
       if (insErr) {
-        console.error('notification insert failed', insErr);
+        log('error', 'notification_insert_failed', { error: insErr.message });
         continue;
       }
       created++;
@@ -353,7 +356,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
             .maybeSingle();
 
           if (taskErr) {
-            console.error('auto task insert failed', taskErr);
+            log('error', 'auto_task_insert_failed', { error: taskErr.message });
           } else if (taskRow) {
             tasksCreated++;
             newTaskId = taskRow.id;
@@ -382,7 +385,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
       const { error: upErr } = await supabase
         .from('client_churn_alerts_state')
         .upsert(upserts, { onConflict: 'salesperson_id,client_name' });
-      if (upErr) console.error('state upsert failed', upErr);
+      if (upErr) log('error', 'state_upsert_failed', { error: upErr.message });
     }
 
     return new Response(
@@ -396,7 +399,7 @@ Deno.serve(withRequestId('detect-client-churn-alerts', async req => {
       { headers: { ...responseCorsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
-    console.error('detect-client-churn-alerts error', e);
+    log('error', 'detect_client_churn_alerts_failed');
     return new Response(
       JSON.stringify({ ok: false, error: String((e as Error).message ?? e) }),
       {

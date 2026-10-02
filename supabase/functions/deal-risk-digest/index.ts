@@ -5,7 +5,8 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId, logWithRequestId } from '../_shared/request-id.ts';
+import { runbookUrl } from '../_shared/alert-escalation.ts';
 import { withEdgeCircuitBreaker, CircuitBreakerOpenError } from '../_shared/circuit-breaker.ts';
 import { withRetry, RetryError } from '../_shared/retry.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -62,15 +63,15 @@ async function postSlack(text: string, requestId?: string | null): Promise<Slack
     return { attempted: true, ok: true };
   } catch (err) {
     if (err instanceof CircuitBreakerOpenError) {
-      console.warn('[deal-risk-digest] slack circuit open, skipping fallback');
+      logWithRequestId('warn', 'deal-risk-digest', requestId ?? '-', 'slack_circuit_open');
       return { attempted: false, ok: false, error: 'circuit_open', circuit_open: true };
     }
     if (err instanceof RetryError) {
-      console.warn('[deal-risk-digest] slack retry exhausted', err.attempts);
+      logWithRequestId('warn', 'deal-risk-digest', requestId ?? '-', 'slack_retry_exhausted', { attempts: err.attempts });
       return { attempted: true, ok: false, error: `retry_exhausted:${err.attempts}` };
     }
     const msg = err instanceof Error ? err.message : String(err);
-    console.warn('[deal-risk-digest] slack fallback failed', msg);
+    logWithRequestId('warn', 'deal-risk-digest', requestId ?? '-', 'slack_fallback_failed', { error: msg });
     return { attempted: true, ok: false, error: msg };
   }
 }
@@ -88,7 +89,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!supabaseUrl || !serviceKey) {
-    console.error('[deal-risk-digest] supabase_service_credentials_missing');
+    ctx.log('error', 'service_credentials_missing');
     return new Response(JSON.stringify({ error: 'service_not_configured' }), {
       status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -114,7 +115,9 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
       });
     }
   } catch (error) {
-    console.error('[deal-risk-digest] cron_authorization_unavailable', error);
+    ctx.log('error', 'cron_authorization_unavailable', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
       status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -131,7 +134,7 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
     .limit(2000);
 
   if (riskyErr) {
-    console.error('[deal-risk-digest] query failed', riskyErr);
+    ctx.log('error', 'deal_health_query_failed', { error: riskyErr.message });
     return new Response(JSON.stringify({ error: riskyErr.message }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -234,16 +237,16 @@ Deno.serve(withRequestId('deal-risk-digest', async (req, ctx) => {
   if (toInsert.length > 0) {
     const { valid, invalid } = partitionNotificationBatch(toInsert);
     if (invalid.length > 0) {
-      console.warn('[deal-risk-digest] notifications_invalid', { count: invalid.length, samples: invalid.slice(0, 3).map(i => i.reason) });
+      ctx.log('warn', 'notifications_invalid', { count: invalid.length, samples: invalid.slice(0, 3).map(i => i.reason) });
     }
     if (valid.length > 0) {
       const { error: insErr, count } = await admin
         .from('notifications')
         .insert(valid, { count: 'exact' });
       if (insErr) {
-        console.error('[deal-risk-digest] insert failed', insErr);
+        ctx.log('error', 'notifications_insert_failed', { error: insErr.message });
         await postSlack(
-          `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}`,
+          `:rotating_light: *Deal Risk Digest falhou* — ${insErr.message}. requestId=${ctx.requestId}\nRunbook: ${runbookUrl('deal-risk-digest')}`,
           ctx.requestId,
         );
         return new Response(JSON.stringify({ error: insErr.message, partial: true }), {
