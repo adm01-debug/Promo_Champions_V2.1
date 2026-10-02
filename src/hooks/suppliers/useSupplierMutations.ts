@@ -9,9 +9,14 @@ export function useSupplierMutations() {
 
   const createSupplier = useMutation({
     mutationFn: async (supplier: {
-      name: string; contact_name?: string; email?: string;
-      phone?: string; cnpj?: string; category?: string;
-      payment_terms?: string; lead_time_days?: number;
+      name: string;
+      contact_name?: string;
+      email?: string;
+      phone?: string;
+      cnpj?: string;
+      category?: string;
+      payment_terms?: string;
+      lead_time_days?: number;
     }) => {
       const { data, error } = await supabase
         .from('suppliers')
@@ -22,11 +27,14 @@ export function useSupplierMutations() {
       return data;
     },
     onSuccess: () => {
-      toast({ title: "Fornecedor criado", description: "Fornecedor adicionado com sucesso." });
+      toast({
+        title: 'Fornecedor criado',
+        description: 'Fornecedor adicionado com sucesso.',
+      });
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
     },
-    onError: (error) => {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     },
   });
 
@@ -42,11 +50,11 @@ export function useSupplierMutations() {
       return data;
     },
     onSuccess: () => {
-      toast({ title: "Fornecedor atualizado" });
+      toast({ title: 'Fornecedor atualizado' });
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
     },
-    onError: (error) => {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     },
   });
 
@@ -56,18 +64,20 @@ export function useSupplierMutations() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: "Fornecedor removido" });
+      toast({ title: 'Fornecedor removido' });
       queryClient.invalidateQueries({ queryKey: ['suppliers'] });
     },
-    onError: (error) => {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     },
   });
 
   const addSupplierProduct = useMutation({
     mutationFn: async (data: {
-      supplier_id: string; product_id: string;
-      unit_price: number; min_order_quantity?: number;
+      supplier_id: string;
+      product_id: string;
+      unit_price: number;
+      min_order_quantity?: number;
     }) => {
       const { data: result, error } = await supabase
         .from('supplier_products')
@@ -78,25 +88,27 @@ export function useSupplierMutations() {
       return result;
     },
     onSuccess: () => {
-      toast({ title: "Produto vinculado ao fornecedor" });
+      toast({ title: 'Produto vinculado ao fornecedor' });
       queryClient.invalidateQueries({ queryKey: ['supplier-products'] });
     },
-    onError: (error) => {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     },
   });
 
   const createRiskAssessment = useMutation({
     mutationFn: async (assessment: {
-      supplier_id: string; financial_risk?: number;
-      delivery_risk?: number; quality_risk?: number;
+      supplier_id: string;
+      financial_risk?: number;
+      delivery_risk?: number;
+      quality_risk?: number;
       recommendations?: string;
     }) => {
-      const overallRisk = (
-        (assessment.financial_risk || 0.5) +
-        (assessment.delivery_risk || 0.5) +
-        (assessment.quality_risk || 0.5)
-      ) / 3;
+      const overallRisk =
+        ((assessment.financial_risk || 0.5) +
+          (assessment.delivery_risk || 0.5) +
+          (assessment.quality_risk || 0.5)) /
+        3;
 
       let riskLevel = 'low';
       if (overallRisk >= 0.75) riskLevel = 'critical';
@@ -105,26 +117,28 @@ export function useSupplierMutations() {
 
       const { data, error } = await supabase
         .from('supplier_risk_assessments')
-        .insert([{
-          supplier_id: assessment.supplier_id,
-          financial_risk: assessment.financial_risk,
-          delivery_risk: assessment.delivery_risk,
-          quality_risk: assessment.quality_risk,
-          overall_risk: overallRisk,
-          risk_level: riskLevel,
-          recommendations: assessment.recommendations,
-        }])
+        .insert([
+          {
+            supplier_id: assessment.supplier_id,
+            financial_risk: assessment.financial_risk,
+            delivery_risk: assessment.delivery_risk,
+            quality_risk: assessment.quality_risk,
+            overall_risk: overallRisk,
+            risk_level: riskLevel,
+            recommendations: assessment.recommendations,
+          },
+        ])
         .select()
         .single();
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      toast({ title: "Avaliação de risco criada" });
+      toast({ title: 'Avaliação de risco criada' });
       queryClient.invalidateQueries({ queryKey: ['supplier-risk-assessments'] });
     },
-    onError: (error) => {
-      toast({ title: "Erro", description: error.message, variant: "destructive" });
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
     },
   });
 

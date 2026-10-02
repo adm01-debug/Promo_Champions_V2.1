@@ -34,7 +34,14 @@ export const CLIENT_MAP = {
 
 // ── Pipeline & Deals ──
 export const PIPELINE = {
-  STAGES: ['lead', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost'] as const,
+  STAGES: [
+    'lead',
+    'qualified',
+    'proposal',
+    'negotiation',
+    'closed_won',
+    'closed_lost',
+  ] as const,
   SLA_HOURS_DEFAULT: 48,
   STAGNANT_DAYS: 14,
   WIN_PROBABILITY: {

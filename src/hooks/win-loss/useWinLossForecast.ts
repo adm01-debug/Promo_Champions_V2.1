@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import type { TrendPoint } from "@/hooks/win-loss/useWinLossAggregations";
+import { useMemo } from 'react';
+import type { TrendPoint } from '@/hooks/win-loss/useWinLossAggregations';
 
 export interface ForecastResult {
   next14d: number;
@@ -18,7 +18,13 @@ export const useWinLossForecast = (points: TrendPoint[], lastN = 8): ForecastRes
     const series = points.slice(-lastN);
     if (series.length < 2) {
       const fallback = series[0]?.winRate ?? 0;
-      return { next14d: fallback, next30d: fallback, confidence: series.length ? 30 : 0, slope: 0, basePoints: series.length };
+      return {
+        next14d: fallback,
+        next30d: fallback,
+        confidence: series.length ? 30 : 0,
+        slope: 0,
+        basePoints: series.length,
+      };
     }
     const n = series.length;
     const xs = series.map((_, i) => i);
@@ -31,7 +37,10 @@ export const useWinLossForecast = (points: TrendPoint[], lastN = 8): ForecastRes
     const intercept = meanY - slope * meanX;
 
     const ssTot = ys.reduce((acc, y) => acc + (y - meanY) ** 2, 0) || 1;
-    const ssRes = ys.reduce((acc, y, i) => acc + (y - (slope * xs[i] + intercept)) ** 2, 0);
+    const ssRes = ys.reduce(
+      (acc, y, i) => acc + (y - (slope * xs[i] + intercept)) ** 2,
+      0
+    );
     const r2 = Math.max(0, 1 - ssRes / ssTot);
     const confidence = Math.min(95, Math.round(r2 * 70 + (n / lastN) * 30));
 

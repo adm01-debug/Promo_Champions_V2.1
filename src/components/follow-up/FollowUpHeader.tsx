@@ -15,15 +15,15 @@ interface FollowUpHeaderProps {
   isAdmin?: boolean;
 }
 
-export function FollowUpHeader({ 
-  selectedCount, 
-  onBulkCreate, 
-  isBulkCreating, 
-  searchQuery, 
+export function FollowUpHeader({
+  selectedCount,
+  onBulkCreate,
+  isBulkCreating,
+  searchQuery,
   onSearchChange,
   minDaysInactive,
   onMinDaysChange,
-  isAdmin
+  isAdmin,
 }: FollowUpHeaderProps) {
   return (
     <motion.div
@@ -52,7 +52,7 @@ export function FollowUpHeader({
               Ver Auditoria
             </Link>
           </Button>
-          
+
           {isAdmin && (
             <Button variant="outline" size="sm" asChild className="gap-2">
               <Link to="/configuracoes?tab=follow-up">
@@ -61,7 +61,7 @@ export function FollowUpHeader({
               </Link>
             </Button>
           )}
-          
+
           {selectedCount > 0 && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -95,17 +95,17 @@ export function FollowUpHeader({
         {/* Configuration */}
         <div className="flex items-center gap-2 whitespace-nowrap bg-muted/50 p-1 rounded-lg border">
           <span className="text-xs font-medium px-2">Inatividade:</span>
-          {[2, 3, 5, 7, 15].map((d) => (
+          {[2, 3, 5, 7, 15].map(d => (
             <button
               key={d}
               onClick={() => onMinDaysChange(d)}
               className={`px-3 py-1 rounded-md text-xs transition-all ${
-                minDaysInactive === d 
-                  ? "bg-primary text-primary-foreground shadow-sm" 
-                  : "hover:bg-muted text-muted-foreground"
+                minDaysInactive === d
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'hover:bg-muted text-muted-foreground'
               }`}
             >
-              {d === 2 ? "48h" : `${d}d`}
+              {d === 2 ? '48h' : `${d}d`}
             </button>
           ))}
         </div>

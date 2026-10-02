@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { comboService, COMBO_TIERS } from "@/services/comboService";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { comboService, COMBO_TIERS } from '@/services/comboService';
 
 let tierUpCallback: ((tier: number) => void) | null = null;
 
@@ -11,7 +11,7 @@ export { COMBO_TIERS };
 
 export function useTodayCombo(salespersonId?: string) {
   return useQuery({
-    queryKey: ["combo", "today", salespersonId],
+    queryKey: ['combo', 'today', salespersonId],
     queryFn: () => comboService.getTodayCombo(salespersonId!),
     enabled: !!salespersonId,
     refetchInterval: 30000,
@@ -23,8 +23,8 @@ export function useRegisterComboAction(salespersonId?: string) {
 
   return useMutation({
     mutationFn: () => comboService.registerAction(salespersonId!),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["combo", "today", salespersonId] });
+    onSuccess: result => {
+      queryClient.invalidateQueries({ queryKey: ['combo', 'today', salespersonId] });
       if (result.tierChanged && tierUpCallback) {
         tierUpCallback(result.newTier);
       }

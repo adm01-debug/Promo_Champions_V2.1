@@ -1,12 +1,24 @@
 import { useState, useMemo } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ROLE_METRICS, METRIC_LABELS, type MetricCode, type ScoringRule } from '@/hooks/race/useRaceScoringRules';
+import {
+  ROLE_METRICS,
+  METRIC_LABELS,
+  type MetricCode,
+  type ScoringRule,
+} from '@/hooks/race/useRaceScoringRules';
 import { Sparkles, Target, Scale } from 'lucide-react';
 
 interface Props {
@@ -17,9 +29,17 @@ interface Props {
   onConfirm: (rules: Array<Omit<ScoringRule, 'id' | 'season_id'>>) => void;
 }
 
-type RuleDraft = { metric_code: MetricCode; weight: number; points_per_unit: number; label: string };
+type RuleDraft = {
+  metric_code: MetricCode;
+  weight: number;
+  points_per_unit: number;
+  label: string;
+};
 
-const PRESETS: Record<'closer' | 'sdr', Record<string, Record<MetricCode, Partial<RuleDraft>>>> = {
+const PRESETS: Record<
+  'closer' | 'sdr',
+  Record<string, Record<MetricCode, Partial<RuleDraft>>>
+> = {
   closer: {
     volume: {
       sales_value: { weight: 2.0, points_per_unit: 1 },
@@ -67,7 +87,7 @@ const PRESETS: Record<'closer' | 'sdr', Record<string, Record<MetricCode, Partia
 
 function buildDefault(roleType: 'closer' | 'sdr'): RuleDraft[] {
   const preset = PRESETS[roleType].equilibrado;
-  return ROLE_METRICS[roleType].map((mc) => ({
+  return ROLE_METRICS[roleType].map(mc => ({
     metric_code: mc,
     weight: preset[mc]?.weight ?? 1,
     points_per_unit: preset[mc]?.points_per_unit ?? 1,
@@ -75,10 +95,16 @@ function buildDefault(roleType: 'closer' | 'sdr'): RuleDraft[] {
   }));
 }
 
-export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules, onConfirm }: Props) {
+export function ScoringRulesEditor({
+  open,
+  onOpenChange,
+  roleType,
+  initialRules,
+  onConfirm,
+}: Props) {
   const [rules, setRules] = useState<RuleDraft[]>(() => {
     if (initialRules && initialRules.length > 0) {
-      return initialRules.map((r) => ({
+      return initialRules.map(r => ({
         metric_code: r.metric_code as MetricCode,
         weight: Number(r.weight),
         points_per_unit: Number(r.points_per_unit),
@@ -92,25 +118,29 @@ export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules,
 
   const applyPreset = (preset: 'volume' | 'qualidade' | 'equilibrado') => {
     const p = PRESETS[roleType][preset];
-    setRules(ROLE_METRICS[roleType].map((mc) => ({
-      metric_code: mc,
-      weight: p[mc]?.weight ?? 1,
-      points_per_unit: p[mc]?.points_per_unit ?? 1,
-      label: METRIC_LABELS[mc].label,
-    })));
+    setRules(
+      ROLE_METRICS[roleType].map(mc => ({
+        metric_code: mc,
+        weight: p[mc]?.weight ?? 1,
+        points_per_unit: p[mc]?.points_per_unit ?? 1,
+        label: METRIC_LABELS[mc].label,
+      }))
+    );
   };
 
   const updateRule = (mc: MetricCode, patch: Partial<RuleDraft>) => {
-    setRules((prev) => prev.map((r) => r.metric_code === mc ? { ...r, ...patch } : r));
+    setRules(prev => prev.map(r => (r.metric_code === mc ? { ...r, ...patch } : r)));
   };
 
   const handleConfirm = () => {
-    onConfirm(rules.map((r) => ({
-      metric_code: r.metric_code,
-      weight: r.weight,
-      points_per_unit: r.points_per_unit,
-      label: r.label,
-    })));
+    onConfirm(
+      rules.map(r => ({
+        metric_code: r.metric_code,
+        weight: r.weight,
+        points_per_unit: r.points_per_unit,
+        label: r.label,
+      }))
+    );
     onOpenChange(false);
   };
 
@@ -123,7 +153,8 @@ export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules,
             Regras de Pontuação — {roleType === 'closer' ? 'Closer' : 'SDR'}
           </DialogTitle>
           <DialogDescription>
-            Defina o peso e os pontos por unidade de cada métrica. O leaderboard será recalculado automaticamente em tempo real.
+            Defina o peso e os pontos por unidade de cada métrica. O leaderboard será
+            recalculado automaticamente em tempo real.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +174,7 @@ export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules,
         </div>
 
         <div className="space-y-3">
-          {rules.map((r) => {
+          {rules.map(r => {
             const meta = METRIC_LABELS[r.metric_code];
             const contributionPct = totalWeight > 0 ? (r.weight / totalWeight) * 100 : 0;
             return (
@@ -154,7 +185,9 @@ export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules,
                       <span className="text-2xl">{meta.icon}</span>
                       <div>
                         <div className="font-semibold text-sm">{meta.label}</div>
-                        <div className="text-xs text-muted-foreground">por {meta.unit}</div>
+                        <div className="text-xs text-muted-foreground">
+                          por {meta.unit}
+                        </div>
                       </div>
                     </div>
                     <Badge variant="outline" className="font-mono">
@@ -179,7 +212,11 @@ export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules,
                         step="0.1"
                         min="0"
                         value={r.points_per_unit}
-                        onChange={(e) => updateRule(r.metric_code, { points_per_unit: Number(e.target.value) })}
+                        onChange={e =>
+                          updateRule(r.metric_code, {
+                            points_per_unit: Number(e.target.value),
+                          })
+                        }
                       />
                     </div>
                   </div>
@@ -190,7 +227,9 @@ export function ScoringRulesEditor({ open, onOpenChange, roleType, initialRules,
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
           <Button onClick={handleConfirm}>Aplicar regras</Button>
         </DialogFooter>
       </DialogContent>

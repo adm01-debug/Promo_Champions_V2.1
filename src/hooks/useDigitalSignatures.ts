@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export interface DocumentSigner {
   id: string;
@@ -34,21 +34,27 @@ export interface CreateDocumentInput {
 }
 
 export const DIGITAL_SIGNATURE_INTEGRATION_MESSAGE =
-  "O envio e a confirmação de assinatura estão indisponíveis até que uma integração de assinatura seja configurada e validada.";
+  'O envio e a confirmação de assinatura estão indisponíveis até que uma integração de assinatura seja configurada e validada.';
 
 export function useDigitalSignatures() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: documents = [], isLoading, error } = useQuery({
+  const {
+    data: documents = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['digital-signatures'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('digital_signatures')
-        .select(`
+        .select(
+          `
           *,
           document_signers (*)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -100,15 +106,16 @@ export function useDigitalSignatures() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
       toast({
-        title: "Rascunho criado",
-        description: "O documento foi salvo internamente; ele ainda não foi enviado para assinatura.",
+        title: 'Rascunho criado',
+        description:
+          'O documento foi salvo internamente; ele ainda não foi enviado para assinatura.',
       });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Erro ao criar documento",
+        title: 'Erro ao criar documento',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -119,9 +126,9 @@ export function useDigitalSignatures() {
     },
     onError: () => {
       toast({
-        title: "Envio para assinatura indisponível",
+        title: 'Envio para assinatura indisponível',
         description: DIGITAL_SIGNATURE_INTEGRATION_MESSAGE,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -132,9 +139,9 @@ export function useDigitalSignatures() {
     },
     onError: () => {
       toast({
-        title: "Confirmação de assinatura indisponível",
+        title: 'Confirmação de assinatura indisponível',
         description: DIGITAL_SIGNATURE_INTEGRATION_MESSAGE,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -151,21 +158,29 @@ export function useDigitalSignatures() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
       toast({
-        title: "Documento excluído",
-        description: "O documento foi removido com sucesso.",
+        title: 'Documento excluído',
+        description: 'O documento foi removido com sucesso.',
       });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Erro ao excluir documento",
+        title: 'Erro ao excluir documento',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
 
   const addSigner = useMutation({
-    mutationFn: async ({ documentId, name, email }: { documentId: string; name: string; email: string }) => {
+    mutationFn: async ({
+      documentId,
+      name,
+      email,
+    }: {
+      documentId: string;
+      name: string;
+      email: string;
+    }) => {
       const { data: existingSigners } = await supabase
         .from('document_signers')
         .select('sign_order')
@@ -175,22 +190,20 @@ export function useDigitalSignatures() {
 
       const nextOrder = (existingSigners?.[0]?.sign_order || 0) + 1;
 
-      const { error } = await supabase
-        .from('document_signers')
-        .insert({
-          document_id: documentId,
-          name,
-          email,
-          sign_order: nextOrder,
-        });
+      const { error } = await supabase.from('document_signers').insert({
+        document_id: documentId,
+        name,
+        email,
+        sign_order: nextOrder,
+      });
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
       toast({
-        title: "Signatário adicionado",
-        description: "O signatário foi adicionado ao documento.",
+        title: 'Signatário adicionado',
+        description: 'O signatário foi adicionado ao documento.',
       });
     },
   });

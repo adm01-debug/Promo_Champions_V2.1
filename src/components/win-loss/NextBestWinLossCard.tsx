@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowUpRight } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Link } from "react-router-dom";
-import { useNextBestWinLossDeal } from "@/hooks/win-loss/useNextBestWinLossDeal";
-import { fmtBRL } from "@/components/deal-intelligence/winloss/winLossHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Sparkles, ArrowUpRight } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Link } from 'react-router-dom';
+import { useNextBestWinLossDeal } from '@/hooks/win-loss/useNextBestWinLossDeal';
+import { fmtBRL } from '@/components/deal-intelligence/winloss/winLossHelpers';
 
 export function NextBestWinLossCard() {
   const { data, isLoading } = useNextBestWinLossDeal();
@@ -12,7 +12,9 @@ export function NextBestWinLossCard() {
   if (isLoading) {
     return (
       <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-transparent">
-        <CardContent className="py-4"><Skeleton className="h-16" /></CardContent>
+        <CardContent className="py-4">
+          <Skeleton className="h-16" />
+        </CardContent>
       </Card>
     );
   }
@@ -32,7 +34,9 @@ export function NextBestWinLossCard() {
             <p className="text-sm font-semibold truncate">{data.clientName}</p>
             <p className="text-xs text-muted-foreground">{data.reason}</p>
             {data.amount && (
-              <p className="text-xs tabular-nums text-primary mt-0.5">{fmtBRL(data.amount)}</p>
+              <p className="text-xs tabular-nums text-primary mt-0.5">
+                {fmtBRL(data.amount)}
+              </p>
             )}
           </div>
           {data.accountId ? (
@@ -42,7 +46,9 @@ export function NextBestWinLossCard() {
               </Link>
             </Button>
           ) : (
-            <Button size="sm" variant="outline" disabled className="shrink-0">Sem conta</Button>
+            <Button size="sm" variant="outline" disabled className="shrink-0">
+              Sem conta
+            </Button>
           )}
         </div>
         <p className="text-[11px] italic text-muted-foreground border-l-2 border-primary/40 pl-2">

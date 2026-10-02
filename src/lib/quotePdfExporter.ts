@@ -2,6 +2,7 @@ import type { Quote, QuoteItem } from '@/hooks/useQuotes';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 export async function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
   const { default: jsPDF } = await import('jspdf');
   const { default: autoTable } = await import('jspdf-autotable');
@@ -150,5 +151,5 @@ export async function generateQuotePDF(quote: Quote, items: QuoteItem[]) {
 }
 
 function fmt(value: number) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return formatBRL(value, { decimals: 2 });
 }

@@ -40,8 +40,12 @@ export function NextRaceActionCard({ salespersonId }: Props) {
                 Próxima jogada
               </span>
             </div>
-            <p className="text-sm font-bold text-foreground truncate mt-0.5">{action.title}</p>
-            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{action.description}</p>
+            <p className="text-sm font-bold text-foreground truncate mt-0.5">
+              {action.title}
+            </p>
+            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+              {action.description}
+            </p>
           </div>
           <div className="flex items-center gap-1 shrink-0">
             <Button asChild size="sm" className="h-8">

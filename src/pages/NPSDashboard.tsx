@@ -119,9 +119,7 @@ export default function NPSDashboard() {
               <MessageSquare className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h1 className="text-page-title gradient-text">
-                NPS & Satisfação
-              </h1>
+              <h1 className="text-page-title gradient-text">NPS & Satisfação</h1>
               <p className="text-muted-foreground text-sm">
                 Acompanhe a satisfação dos seus clientes em tempo real
               </p>

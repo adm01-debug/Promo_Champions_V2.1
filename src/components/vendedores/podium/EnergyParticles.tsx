@@ -1,7 +1,11 @@
-import { motion } from "framer-motion";
-import React from "react";
+import { motion } from 'framer-motion';
+import React from 'react';
 
-export const EnergyParticles = React.memo(function EnergyParticles({ color }: { color: string }) {
+export const EnergyParticles = React.memo(function EnergyParticles({
+  color,
+}: {
+  color: string;
+}) {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {Array.from({ length: 15 }).map((_, i) => (
@@ -25,7 +29,7 @@ export const EnergyParticles = React.memo(function EnergyParticles({ color }: { 
             duration: 2 + Math.random() * 2,
             repeat: Infinity,
             delay: Math.random() * 3,
-            ease: "easeOut",
+            ease: 'easeOut',
           }}
         />
       ))}

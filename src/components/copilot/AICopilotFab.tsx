@@ -75,11 +75,9 @@ export const AICopilotFab: FC = () => {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className={cn(
-              "fixed z-[60] bg-[#0d1117]/80 border border-primary/20 rounded-2xl shadow-[0_0_30px_rgba(var(--primary),0.15)]",
-              "backdrop-blur-2xl overflow-hidden",
-              isMobile
-                ? "bottom-24 right-4 left-4"
-                : "bottom-20 right-6 w-80"
+              'fixed z-[60] bg-[#0d1117]/80 border border-primary/20 rounded-2xl shadow-[0_0_30px_rgba(var(--primary),0.15)]',
+              'backdrop-blur-2xl overflow-hidden',
+              isMobile ? 'bottom-24 right-4 left-4' : 'bottom-20 right-6 w-80'
             )}
           >
             {/* Header */}
@@ -88,14 +86,16 @@ export const AICopilotFab: FC = () => {
                 <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary via-primary-glow to-primary flex items-center justify-center shadow-[0_0_10px_rgba(var(--primary),0.4)]">
                   <Sparkles className="h-4 w-4 text-primary-foreground animate-pulse-gentle" />
                 </div>
-                <span className="text-sm font-black uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">Circuito Copilot</span>
+                <span className="text-sm font-black uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">
+                  Circuito Copilot
+                </span>
               </div>
               <Button
                 variant="ghost"
-                size="icon" aria-label="Fechar"
+                size="icon"
+                aria-label="Fechar"
                 className="h-7 w-7"
                 onClick={dismiss}
-               
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -120,16 +120,27 @@ export const AICopilotFab: FC = () => {
             </div>
 
             {/* Skills strip */}
-            <div className="px-3 pb-2 flex flex-wrap gap-1.5" role="group" aria-label="Skills do Copilot">
+            <div
+              className="px-3 pb-2 flex flex-wrap gap-1.5"
+              role="group"
+              aria-label="Skills do Copilot"
+            >
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 disabled={isLoading || !skillTargets?.forecastId}
-                onClick={() => skillTargets?.forecastId && getForecastNarrative(skillTargets.forecastId)}
+                onClick={() =>
+                  skillTargets?.forecastId &&
+                  getForecastNarrative(skillTargets.forecastId)
+                }
                 className="h-7 gap-1.5 text-[11px] font-semibold border-primary/20 hover:border-primary/50 hover:bg-primary/10"
                 aria-label="Explicar o forecast atual"
-                title={skillTargets?.forecastId ? 'Explica o forecast mais recente' : 'Sem forecast disponível'}
+                title={
+                  skillTargets?.forecastId
+                    ? 'Explica o forecast mais recente'
+                    : 'Sem forecast disponível'
+                }
               >
                 <TrendingUp className="h-3 w-3" aria-hidden="true" />
                 Forecast
@@ -139,10 +150,16 @@ export const AICopilotFab: FC = () => {
                 variant="outline"
                 size="sm"
                 disabled={isLoading || !skillTargets?.recordingId}
-                onClick={() => skillTargets?.recordingId && getCoachingPlan(skillTargets.recordingId)}
+                onClick={() =>
+                  skillTargets?.recordingId && getCoachingPlan(skillTargets.recordingId)
+                }
                 className="h-7 gap-1.5 text-[11px] font-semibold border-primary/20 hover:border-primary/50 hover:bg-primary/10"
                 aria-label="Gerar plano de coaching da última call"
-                title={skillTargets?.recordingId ? 'Coaching da call mais recente' : 'Sem gravação disponível'}
+                title={
+                  skillTargets?.recordingId
+                    ? 'Coaching da call mais recente'
+                    : 'Sem gravação disponível'
+                }
               >
                 <Headphones className="h-3 w-3" aria-hidden="true" />
                 Coaching
@@ -151,20 +168,20 @@ export const AICopilotFab: FC = () => {
 
             {/* Quick Ask Input */}
             <form onSubmit={handleSubmit} className="px-3 pb-3">
-
               <div className="flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-xl px-3 py-2.5 focus-within:border-primary/40 focus-within:bg-primary/10 transition-all">
                 <input
                   ref={inputRef}
                   type="text"
                   value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
+                  onChange={e => setQuestion(e.target.value)}
                   placeholder="Pergunte ao Copilot..."
                   className="flex-1 text-sm bg-transparent border-none outline-none placeholder:text-muted-foreground/60"
                   disabled={isLoading}
                 />
                 <Button
                   type="submit"
-                  size="icon" aria-label="Enviar"
+                  size="icon"
+                  aria-label="Enviar"
                   variant="ghost"
                   className="h-7 w-7 shrink-0"
                   disabled={!question.trim() || isLoading}
@@ -181,12 +198,12 @@ export const AICopilotFab: FC = () => {
       <motion.button
         onClick={toggle}
         className={cn(
-          "fixed z-[60] rounded-full shadow-lg transition-colors",
-          "bg-gradient-to-br from-primary via-primary-glow to-primary text-primary-foreground",
-          "hover:shadow-[0_0_20px_rgba(var(--primary),0.5)] active:scale-95",
-          "border border-white/20",
-          "flex items-center justify-center",
-          isMobile ? "bottom-20 right-4 h-12 w-12" : "bottom-6 right-6 h-12 w-12"
+          'fixed z-[60] rounded-full shadow-lg transition-colors',
+          'bg-gradient-to-br from-primary via-primary-glow to-primary text-primary-foreground',
+          'hover:shadow-[0_0_20px_rgba(var(--primary),0.5)] active:scale-95',
+          'border border-white/20',
+          'flex items-center justify-center',
+          isMobile ? 'bottom-20 right-4 h-12 w-12' : 'bottom-6 right-6 h-12 w-12'
         )}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -194,11 +211,21 @@ export const AICopilotFab: FC = () => {
       >
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <motion.div key="loading" initial={{ rotate: 0 }} animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }}>
+            <motion.div
+              key="loading"
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1 }}
+            >
               <Loader2 className="h-5 w-5" />
             </motion.div>
           ) : (
-            <motion.div key="icon" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+            <motion.div
+              key="icon"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+            >
               <Sparkles className="h-5 w-5" />
             </motion.div>
           )}

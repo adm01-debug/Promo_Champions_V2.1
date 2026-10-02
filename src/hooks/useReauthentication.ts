@@ -4,11 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 type ActionType =
-  | 'password_change'
-  | 'email_change'
-  | 'mfa_config'
-  | 'admin_action'
-  | 'delete_account';
+  'password_change' | 'email_change' | 'mfa_config' | 'admin_action' | 'delete_account';
 
 interface ReauthRequest {
   id: string;

@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { buildABCAnalysis } from '@/utils/bi-helpers';
-import { getLevelFromXP, getLevelInfo, formatXP, getXPForNextLevel, LEVELS } from '@/lib/gamification';
+import {
+  getLevelFromXP,
+  getLevelInfo,
+  formatXP,
+  getXPForNextLevel,
+  LEVELS,
+} from '@/lib/gamification';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 describe('Regression: ABC Analysis', () => {
@@ -14,7 +20,18 @@ describe('Regression: ABC Analysis', () => {
 
   it('handles zero total revenue', () => {
     const result = buildABCAnalysis([
-      { id: '1', name: 'A', avatar_url: null, role: 'sdr', revenue: 0, deals: 0, conversionRate: 0, goalProgress: 0, avgTicket: 0, activities: 0 },
+      {
+        id: '1',
+        name: 'A',
+        avatar_url: null,
+        role: 'sdr',
+        revenue: 0,
+        deals: 0,
+        conversionRate: 0,
+        goalProgress: 0,
+        avgTicket: 0,
+        activities: 0,
+      },
     ]);
     expect(result[0].count).toBe(0); // A
     expect(result[2].count).toBe(1); // C
@@ -22,9 +39,42 @@ describe('Regression: ABC Analysis', () => {
 
   it('classifies by Pareto 80/15/5', () => {
     const data = [
-      { id: '1', name: 'Top', avatar_url: null, role: 'closer', revenue: 800, deals: 10, conversionRate: 50, goalProgress: 200, avgTicket: 80, activities: 10 },
-      { id: '2', name: 'Mid', avatar_url: null, role: 'sdr', revenue: 150, deals: 3, conversionRate: 30, goalProgress: 40, avgTicket: 50, activities: 5 },
-      { id: '3', name: 'Low', avatar_url: null, role: 'sdr', revenue: 50, deals: 2, conversionRate: 20, goalProgress: 10, avgTicket: 25, activities: 2 },
+      {
+        id: '1',
+        name: 'Top',
+        avatar_url: null,
+        role: 'closer',
+        revenue: 800,
+        deals: 10,
+        conversionRate: 50,
+        goalProgress: 200,
+        avgTicket: 80,
+        activities: 10,
+      },
+      {
+        id: '2',
+        name: 'Mid',
+        avatar_url: null,
+        role: 'sdr',
+        revenue: 150,
+        deals: 3,
+        conversionRate: 30,
+        goalProgress: 40,
+        avgTicket: 50,
+        activities: 5,
+      },
+      {
+        id: '3',
+        name: 'Low',
+        avatar_url: null,
+        role: 'sdr',
+        revenue: 50,
+        deals: 2,
+        conversionRate: 20,
+        goalProgress: 10,
+        avgTicket: 25,
+        activities: 2,
+      },
     ];
     const result = buildABCAnalysis(data);
     expect(result[0].classification).toBe('A');

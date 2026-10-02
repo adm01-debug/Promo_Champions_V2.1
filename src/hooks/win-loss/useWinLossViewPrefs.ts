@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-export type WLGranularity = "week" | "month";
+export type WLGranularity = 'week' | 'month';
 export type WLForecastHorizon = 3 | 6 | 12;
 
 export interface WinLossViewPrefs {
@@ -9,33 +9,35 @@ export interface WinLossViewPrefs {
 }
 
 export const VIEW_PREFS_DEFAULTS: WinLossViewPrefs = {
-  granularity: "month",
+  granularity: 'month',
   forecastHorizon: 3,
 };
 
-const STORAGE_KEY = "winloss-view-prefs";
+const STORAGE_KEY = 'winloss-view-prefs';
 const SCHEMA_VERSION = 1;
 
-const ALLOWED_GRAN: WLGranularity[] = ["week", "month"];
+const ALLOWED_GRAN: WLGranularity[] = ['week', 'month'];
 const ALLOWED_HORIZON: WLForecastHorizon[] = [3, 6, 12];
 
 export function sanitize(input: Partial<WinLossViewPrefs>): WinLossViewPrefs {
   const granularity = ALLOWED_GRAN.includes(input.granularity as WLGranularity)
     ? (input.granularity as WLGranularity)
     : VIEW_PREFS_DEFAULTS.granularity;
-  const forecastHorizon = ALLOWED_HORIZON.includes(Number(input.forecastHorizon) as WLForecastHorizon)
+  const forecastHorizon = ALLOWED_HORIZON.includes(
+    Number(input.forecastHorizon) as WLForecastHorizon
+  )
     ? (Number(input.forecastHorizon) as WLForecastHorizon)
     : VIEW_PREFS_DEFAULTS.forecastHorizon;
   return { granularity, forecastHorizon };
 }
 
 function read(): WinLossViewPrefs {
-  if (typeof window === "undefined") return VIEW_PREFS_DEFAULTS;
+  if (typeof window === 'undefined') return VIEW_PREFS_DEFAULTS;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return VIEW_PREFS_DEFAULTS;
     const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object" || parsed.version !== SCHEMA_VERSION) {
+    if (!parsed || typeof parsed !== 'object' || parsed.version !== SCHEMA_VERSION) {
       return VIEW_PREFS_DEFAULTS;
     }
     return sanitize(parsed.prefs ?? {});
@@ -45,11 +47,11 @@ function read(): WinLossViewPrefs {
 }
 
 function write(prefs: WinLossViewPrefs) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ version: SCHEMA_VERSION, prefs }),
+      JSON.stringify({ version: SCHEMA_VERSION, prefs })
     );
   } catch {
     /* ignore quota errors */
@@ -64,7 +66,7 @@ export function useWinLossViewPrefs() {
   }, [prefs]);
 
   const update = useCallback((partial: Partial<WinLossViewPrefs>) => {
-    setPrefs((prev) => sanitize({ ...prev, ...partial }));
+    setPrefs(prev => sanitize({ ...prev, ...partial }));
   }, []);
 
   const reset = useCallback(() => {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface OvertakeEvent {
   id: string;
@@ -24,7 +24,7 @@ export function useOvertakeDetector(entries: RaceLeaderboardEntry[]) {
   const [recentOvertakes, setRecentOvertakes] = useState<OvertakeEvent[]>([]);
 
   const dismissOvertake = useCallback((id: string) => {
-    setRecentOvertakes((prev) => prev.filter((o) => o.id !== id));
+    setRecentOvertakes(prev => prev.filter(o => o.id !== id));
   }, []);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function useOvertakeDetector(entries: RaceLeaderboardEntry[]) {
 
     const prev = prevRanksRef.current;
     const newOvertakes: OvertakeEvent[] = [];
-    const byId = new Map(entries.map((e) => [e.salesperson_id, e]));
+    const byId = new Map(entries.map(e => [e.salesperson_id, e]));
 
     currentRanks.forEach((newRank, id) => {
       const oldRank = prev.get(id);
@@ -68,17 +68,24 @@ export function useOvertakeDetector(entries: RaceLeaderboardEntry[]) {
     });
 
     if (newOvertakes.length > 0) {
-      setRecentOvertakes((prevQueue) => [...newOvertakes, ...prevQueue].slice(0, MAX_QUEUE));
+      setRecentOvertakes(prevQueue =>
+        [...newOvertakes, ...prevQueue].slice(0, MAX_QUEUE)
+      );
     }
     prevRanksRef.current = currentRanks;
   }, [entries]);
 
   useEffect(() => {
     if (recentOvertakes.length === 0) return;
-    const timers = recentOvertakes.map((o) =>
-      setTimeout(() => dismissOvertake(o.id), AUTO_DISMISS_MS - (Date.now() - o.timestamp))
+    const timers = recentOvertakes.map(o =>
+      setTimeout(
+        () => dismissOvertake(o.id),
+        AUTO_DISMISS_MS - (Date.now() - o.timestamp)
+      )
     );
-    return () => { timers.forEach(clearTimeout); };
+    return () => {
+      timers.forEach(clearTimeout);
+    };
   }, [recentOvertakes, dismissOvertake]);
 
   return { recentOvertakes, dismissOvertake };

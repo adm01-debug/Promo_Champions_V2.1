@@ -1,23 +1,32 @@
-import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { AlertTriangle, Webhook, Plus, Trash2, History } from "lucide-react";
-import { useWebhookSubscriptions } from "@/hooks/win-loss/useWebhookSubscriptions";
-import { useWebhookAlerts, activeAlertsBySubscription, type WebhookAlert } from "@/hooks/win-loss/useWebhookAlerts";
-import { WebhookDeliveriesDrawer } from "./WebhookDeliveriesDrawer";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { AlertTriangle, Webhook, Plus, Trash2, History } from 'lucide-react';
+import { useWebhookSubscriptions } from '@/hooks/win-loss/useWebhookSubscriptions';
+import {
+  useWebhookAlerts,
+  activeAlertsBySubscription,
+  type WebhookAlert,
+} from '@/hooks/win-loss/useWebhookAlerts';
+import { WebhookDeliveriesDrawer } from './WebhookDeliveriesDrawer';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-const ALL_EVENTS = ["critical_pattern", "anomaly", "perf_drop"] as const;
+const ALL_EVENTS = ['critical_pattern', 'anomaly', 'perf_drop'] as const;
 
 const KIND_LABEL: Record<string, string> = {
-  consecutive_failures: "Falhas consecutivas",
-  high_retry_rate: "Taxa de retry alta",
-  attempts_exhausted: "Tentativas 1–3 esgotadas",
+  consecutive_failures: 'Falhas consecutivas',
+  high_retry_rate: 'Taxa de retry alta',
+  attempts_exhausted: 'Tentativas 1–3 esgotadas',
 };
 
 function DegradedBadge({ alerts }: { alerts: WebhookAlert[] }) {
@@ -25,23 +34,33 @@ function DegradedBadge({ alerts }: { alerts: WebhookAlert[] }) {
     <TooltipProvider delayDuration={150}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge variant="destructive" className="text-[9px] py-0 px-1.5 gap-1 cursor-help">
+          <Badge
+            variant="destructive"
+            className="text-[9px] py-0 px-1.5 gap-1 cursor-help"
+          >
             <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
             Degradado
           </Badge>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs space-y-1.5 text-xs">
-          {alerts.map((a) => (
+          {alerts.map(a => (
             <div key={a.id}>
               <p className="font-medium">{KIND_LABEL[a.kind] ?? a.kind}</p>
               <p className="text-muted-foreground">
-                Disparado {formatDistanceToNow(new Date(a.fired_at), { addSuffix: true, locale: ptBR })}
+                Disparado{' '}
+                {formatDistanceToNow(new Date(a.fired_at), {
+                  addSuffix: true,
+                  locale: ptBR,
+                })}
               </p>
               <p className="text-muted-foreground text-[10px] break-all">
                 {Object.entries(a.details)
-                  .filter(([k]) => k !== "request_id")
-                  .map(([k, v]) => `${k}=${typeof v === "object" ? JSON.stringify(v) : String(v)}`)
-                  .join(" · ")}
+                  .filter(([k]) => k !== 'request_id')
+                  .map(
+                    ([k, v]) =>
+                      `${k}=${typeof v === 'object' ? JSON.stringify(v) : String(v)}`
+                  )
+                  .join(' · ')}
               </p>
             </div>
           ))}
@@ -54,20 +73,22 @@ function DegradedBadge({ alerts }: { alerts: WebhookAlert[] }) {
 export function WebhookSubscriptionsPanel() {
   const { list, create, toggle, remove, isCreating } = useWebhookSubscriptions();
   const { data: alerts } = useWebhookAlerts();
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState('');
   const [events, setEvents] = useState<string[]>([...ALL_EVENTS]);
-  const [deliveriesFor, setDeliveriesFor] = useState<{ id: string; url: string } | null>(null);
+  const [deliveriesFor, setDeliveriesFor] = useState<{ id: string; url: string } | null>(
+    null
+  );
 
   const alertsBySub = useMemo(() => activeAlertsBySubscription(alerts ?? []), [alerts]);
 
   const submit = () => {
     if (!url.trim() || !/^https?:\/\//.test(url)) return;
     create({ url: url.trim(), events });
-    setUrl("");
+    setUrl('');
   };
 
   const toggleEvent = (e: string) => {
-    setEvents(prev => prev.includes(e) ? prev.filter(x => x !== e) : [...prev, e]);
+    setEvents(prev => (prev.includes(e) ? prev.filter(x => x !== e) : [...prev, e]));
   };
 
   return (
@@ -94,7 +115,9 @@ export function WebhookSubscriptionsPanel() {
                 type="button"
                 onClick={() => toggleEvent(e)}
                 className={`text-[11px] px-2 py-0.5 rounded-full border transition-colors ${
-                  events.includes(e) ? "bg-primary/15 border-primary/40 text-primary" : "bg-muted border-muted text-muted-foreground"
+                  events.includes(e)
+                    ? 'bg-primary/15 border-primary/40 text-primary'
+                    : 'bg-muted border-muted text-muted-foreground'
                 }`}
               >
                 {e}
@@ -110,13 +133,35 @@ export function WebhookSubscriptionsPanel() {
           {(list.data ?? []).map(w => {
             const subAlerts = alertsBySub.get(w.id) ?? [];
             return (
-              <div key={w.id} className="flex items-center gap-2 rounded-md border bg-muted/30 px-2.5 py-1.5">
-                <Switch checked={w.active} onCheckedChange={(v) => toggle({ id: w.id, active: v })} aria-label="Ativar webhook" />
+              <div
+                key={w.id}
+                className="flex items-center gap-2 rounded-md border bg-muted/30 px-2.5 py-1.5"
+              >
+                <Switch
+                  checked={w.active}
+                  onCheckedChange={v => toggle({ id: w.id, active: v })}
+                  aria-label="Ativar webhook"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="text-xs truncate">{w.url}</p>
                   <div className="flex flex-wrap items-center gap-1 mt-0.5">
-                    {w.events.map(e => <Badge key={e} variant="outline" className="text-[9px] py-0 px-1.5">{e}</Badge>)}
-                    {w.last_status && <Badge variant={w.last_status >= 200 && w.last_status < 300 ? "secondary" : "destructive"} className="text-[9px] py-0 px-1.5">HTTP {w.last_status}</Badge>}
+                    {w.events.map(e => (
+                      <Badge key={e} variant="outline" className="text-[9px] py-0 px-1.5">
+                        {e}
+                      </Badge>
+                    ))}
+                    {w.last_status && (
+                      <Badge
+                        variant={
+                          w.last_status >= 200 && w.last_status < 300
+                            ? 'secondary'
+                            : 'destructive'
+                        }
+                        className="text-[9px] py-0 px-1.5"
+                      >
+                        HTTP {w.last_status}
+                      </Badge>
+                    )}
                     {subAlerts.length > 0 && <DegradedBadge alerts={subAlerts} />}
                   </div>
                 </div>
@@ -130,14 +175,22 @@ export function WebhookSubscriptionsPanel() {
                 >
                   <History className="h-3 w-3" />
                 </Button>
-                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => remove(w.id)} aria-label="Remover webhook">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 w-7 p-0"
+                  onClick={() => remove(w.id)}
+                  aria-label="Remover webhook"
+                >
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
             );
           })}
           {list.data && !list.data.length && (
-            <p className="text-xs text-muted-foreground py-2 text-center">Nenhum webhook configurado.</p>
+            <p className="text-xs text-muted-foreground py-2 text-center">
+              Nenhum webhook configurado.
+            </p>
           )}
         </div>
       </CardContent>
@@ -145,7 +198,7 @@ export function WebhookSubscriptionsPanel() {
         subscriptionId={deliveriesFor?.id ?? null}
         url={deliveriesFor?.url}
         open={!!deliveriesFor}
-        onOpenChange={(v) => !v && setDeliveriesFor(null)}
+        onOpenChange={v => !v && setDeliveriesFor(null)}
       />
     </Card>
   );

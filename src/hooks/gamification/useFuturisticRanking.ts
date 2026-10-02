@@ -15,7 +15,9 @@ export interface RankingRow {
   revenueChangePct: number;
 }
 
-const buildMap = (rows: { salesperson_id: string | null; amount: number; status: string }[]) => {
+const buildMap = (
+  rows: { salesperson_id: string | null; amount: number; status: string }[]
+) => {
   const map = new Map<string, { revenue: number; deals: number }>();
   rows
     .filter(r => isWonSaleStatus(r.status) && r.salesperson_id)
@@ -47,7 +49,10 @@ export const useFuturisticRanking = () => {
       const prevEnd = format(endOfMonth(prev), 'yyyy-MM-dd');
 
       const [spRes, curRes, prevRes] = await Promise.all([
-        supabase.from('salespeople_public').select('id, name, avatar_url').eq('is_active', true),
+        supabase
+          .from('salespeople_public')
+          .select('id, name, avatar_url')
+          .eq('is_active', true),
         supabase
           .from('sales')
           .select('salesperson_id, amount, status')
@@ -79,7 +84,11 @@ export const useFuturisticRanking = () => {
           const delta = prevPosition != null ? prevPosition - position : null;
           const prevRev = prev?.revenue ?? 0;
           const revenueChangePct =
-            prevRev === 0 ? (cur.revenue > 0 ? 100 : 0) : ((cur.revenue - prevRev) / prevRev) * 100;
+            prevRev === 0
+              ? cur.revenue > 0
+                ? 100
+                : 0
+              : ((cur.revenue - prevRev) / prevRev) * 100;
           return {
             id: sp.id,
             name: sp.name,

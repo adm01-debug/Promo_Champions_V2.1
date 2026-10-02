@@ -71,7 +71,10 @@ const mape = (actual: number[], predicted: number[]): number => {
 // ---------- modelos ----------
 
 /** Holt-Winters aditivo simples (level + trend). alpha=0.5, beta=0.3. */
-function holtWintersForecast(data: number[], horizon: number): { fit: number[]; forecast: number[] } {
+function holtWintersForecast(
+  data: number[],
+  horizon: number
+): { fit: number[]; forecast: number[] } {
   if (data.length < 2) {
     const flat = new Array(horizon).fill(data[0] ?? 0);
     return { fit: [...data], forecast: flat };
@@ -93,7 +96,10 @@ function holtWintersForecast(data: number[], horizon: number): { fit: number[]; 
 }
 
 /** Regressão linear y = a + b·x (mínimos quadrados). */
-function linearForecast(data: number[], horizon: number): { fit: number[]; forecast: number[] } {
+function linearForecast(
+  data: number[],
+  horizon: number
+): { fit: number[]; forecast: number[] } {
   const n = data.length;
   if (n === 0) return { fit: [], forecast: new Array(horizon).fill(0) };
   if (n === 1) return { fit: [data[0]], forecast: new Array(horizon).fill(data[0]) };
@@ -106,7 +112,7 @@ function linearForecast(data: number[], horizon: number): { fit: number[]; forec
   const b = num / den;
   const a = yMean - b * xMean;
 
-  const fit = xs.map((x) => a + b * x);
+  const fit = xs.map(x => a + b * x);
   const forecast: number[] = [];
   for (let h = 1; h <= horizon; h++) forecast.push(a + b * (n - 1 + h));
   return { fit, forecast };
@@ -117,14 +123,14 @@ function monteCarloForecast(
   data: number[],
   horizon: number,
   sims: number = 1000,
-  rng: () => number = Math.random,
+  rng: () => number = Math.random
 ): { fit: number[]; samples: number[][] } {
   if (data.length === 0) {
     return { fit: [], samples: Array.from({ length: horizon }, () => []) };
   }
   const m = mean(data);
   const fit = new Array(data.length).fill(m);
-  const residuals = data.map((v) => v - m);
+  const residuals = data.map(v => v - m);
 
   const samples: number[][] = Array.from({ length: horizon }, () => []);
   for (let s = 0; s < sims; s++) {
@@ -146,13 +152,13 @@ export interface EnsembleOptions {
 
 export function computeRevenueForecast(
   history: HistoricalPoint[],
-  opts: EnsembleOptions = {},
+  opts: EnsembleOptions = {}
 ): ForecastResult {
   const horizon = Math.max(1, Math.min(24, opts.horizon ?? 3));
   const sims = Math.max(50, Math.min(5000, opts.simulations ?? 1000));
   const rng = opts.rng ?? Math.random;
 
-  const values = history.map((h) => h.revenue);
+  const values = history.map(h => h.revenue);
 
   const hw = holtWintersForecast(values, horizon);
   const lin = linearForecast(values, horizon);
@@ -188,11 +194,14 @@ export function computeRevenueForecast(
 
     const p50 = wHw * hwPoint + wLin * linPoint + wMc * mcP50;
     const spread = sigma * Math.sqrt(h + 1);
-    const p10 = wHw * (hwPoint + z10 * spread) + wLin * (linPoint + z10 * spread) + wMc * mcP10;
-    const p90 = wHw * (hwPoint + z90 * spread) + wLin * (linPoint + z90 * spread) + wMc * mcP90;
+    const p10 =
+      wHw * (hwPoint + z10 * spread) + wLin * (linPoint + z10 * spread) + wMc * mcP10;
+    const p90 =
+      wHw * (hwPoint + z90 * spread) + wLin * (linPoint + z90 * spread) + wMc * mcP90;
 
     // Extrapola label do período: incrementa mês YYYY-MM.
-    const lastPeriod = forecast[h - 1]?.period ?? history[history.length - 1]?.period ?? '2026-01';
+    const lastPeriod =
+      forecast[h - 1]?.period ?? history[history.length - 1]?.period ?? '2026-01';
     forecast.push({
       period: incrementPeriod(lastPeriod),
       p10: Math.max(0, p10),
@@ -212,7 +221,7 @@ export function computeRevenueForecast(
     Math.abs(delta) < lastHist * 0.02 ? 'flat' : delta > 0 ? 'up' : 'down';
 
   return {
-    history: history.map((h) => ({ ...h, isForecast: false as const })),
+    history: history.map(h => ({ ...h, isForecast: false as const })),
     forecast,
     ensemble: {
       weights: { holtWinters: wHw, linear: wLin, monteCarlo: wMc },
@@ -253,7 +262,7 @@ export function applyWhatIf(base: ForecastResult, inputs: WhatIfInputs): Forecas
   const vel = 1 + (inputs.velocityDelta ?? 0);
   const multiplier = Math.max(0, wr * at * vel);
 
-  const forecast = base.forecast.map((f) => ({
+  const forecast = base.forecast.map(f => ({
     ...f,
     p10: f.p10 * multiplier,
     p50: f.p50 * multiplier,

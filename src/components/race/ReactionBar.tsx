@@ -19,7 +19,11 @@ export function ReactionBar({ carId, seasonId, visible }: Props) {
   const handleClick = async (emoji: string) => {
     setPulsed(emoji);
     if (navigator.vibrate) navigator.vibrate(15);
-    try { await send.mutateAsync({ carId, emoji, seasonId }); } catch { /* silent */ }
+    try {
+      await send.mutateAsync({ carId, emoji, seasonId });
+    } catch {
+      /* silent */
+    }
     setTimeout(() => setPulsed(null), 250);
   };
 
@@ -35,7 +39,7 @@ export function ReactionBar({ carId, seasonId, visible }: Props) {
           role="group"
           aria-label="Reagir ao carro"
         >
-          {REACTION_EMOJIS.map((e) => (
+          {REACTION_EMOJIS.map(e => (
             <button
               key={e}
               type="button"
@@ -43,7 +47,11 @@ export function ReactionBar({ carId, seasonId, visible }: Props) {
               className="text-base hover:scale-125 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
               aria-label={`Reagir com ${e}`}
             >
-              <span className={pulsed === e ? 'inline-block animate-ping' : 'inline-block'}>{e}</span>
+              <span
+                className={pulsed === e ? 'inline-block animate-ping' : 'inline-block'}
+              >
+                {e}
+              </span>
             </button>
           ))}
         </motion.div>

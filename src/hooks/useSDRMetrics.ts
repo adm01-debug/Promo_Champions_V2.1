@@ -104,14 +104,16 @@ export function useSDRMetrics(
         };
 
         const buildTasksQuery = (range: { start: Date; end: Date }) => {
-          return supabase
-            .from('tasks')
-            .select('id, salesperson_id')
-            .eq('task_type', 'meeting')
-            // chunked-in-safe: sdrIds derivado do time (~50)
-            .in('salesperson_id', sdrIds)
-            .gte('created_at', range.start.toISOString())
-            .lte('created_at', range.end.toISOString());
+          return (
+            supabase
+              .from('tasks')
+              .select('id, salesperson_id')
+              .eq('task_type', 'meeting')
+              // chunked-in-safe: sdrIds derivado do time (~50)
+              .in('salesperson_id', sdrIds)
+              .gte('created_at', range.start.toISOString())
+              .lte('created_at', range.end.toISOString())
+          );
         };
 
         const [

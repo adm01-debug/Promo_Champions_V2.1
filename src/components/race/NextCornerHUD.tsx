@@ -30,7 +30,10 @@ export function NextCornerHUD({ info }: NextCornerHUDProps) {
         </span>
       </div>
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[12px] font-black text-foreground" style={{ fontFamily: 'system-ui, sans-serif' }}>
+        <span
+          className="text-[12px] font-black text-foreground"
+          style={{ fontFamily: 'system-ui, sans-serif' }}
+        >
           {info.name}
         </span>
         <span className="text-[10px] font-mono font-black tabular-nums text-primary">

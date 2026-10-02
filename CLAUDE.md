@@ -1,7 +1,7 @@
 # CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)
 
 > CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes.
-> Maior sistema do lote: 173 páginas, ~170 edge functions, 595 migrations.
+> Maior sistema do lote: 160+ páginas, ~170 edge functions, 600+ migrations.
 
 ---
 
@@ -13,7 +13,7 @@
 | URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                                             |
 | Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl                            |
 | MCP para SQL     | gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "…LOVABLE CLOUD…") |
-| Migrations       | **595+** (timestamp YYYYMMDDHHmmss)                                                    |
+| Migrations       | **600+** (timestamp YYYYMMDDHHmmss)                                                    |
 
 > Corrigido em 2026-09-02 (ref antigo `rapjswienfhkobhlamxb`) e **reprovado em
 > 2026-09-13**: a "prova" anterior citava `_internal_secrets.functions_base_url`,

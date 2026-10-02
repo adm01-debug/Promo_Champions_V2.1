@@ -7,7 +7,10 @@ export const useBulkApprovals = () => {
   const qc = useQueryClient();
 
   const bulkApprove = useMutation({
-    mutationFn: async (input: { ids: string[]; xpOverrides?: Record<string, number> }) => {
+    mutationFn: async (input: {
+      ids: string[];
+      xpOverrides?: Record<string, number>;
+    }) => {
       const { data, error } = await supabase.rpc('bulk_approve_assignments', {
         _ids: input.ids,
         _xp_overrides: (input.xpOverrides ?? {}) as never,
@@ -15,7 +18,7 @@ export const useBulkApprovals = () => {
       if (error) throw error;
       return data as number;
     },
-    onSuccess: (count) => {
+    onSuccess: count => {
       qc.invalidateQueries({ queryKey: ['task-assignments'] });
       qc.invalidateQueries({ queryKey: ['xp-adjustments'] });
       toast.success(`${count} aprovações processadas`);
@@ -28,21 +31,22 @@ export const useBulkApprovals = () => {
       const { data: u } = await supabase.auth.getUser();
       await chunkedIn<{ id: string }>(
         input.ids,
-        (chunk) => supabase
-          .from('task_assignments')
-          .update({
-            status: 'rejected',
-            reviewed_by: u.user?.id,
-            reviewed_at: new Date().toISOString(),
-            submission_note: input.reason ?? null,
-          })
-          .in('id', chunk as string[])
-          .select('id'),
-        { label: 'admin-tasks.bulkReject' },
+        chunk =>
+          supabase
+            .from('task_assignments')
+            .update({
+              status: 'rejected',
+              reviewed_by: u.user?.id,
+              reviewed_at: new Date().toISOString(),
+              submission_note: input.reason ?? null,
+            })
+            .in('id', chunk as string[])
+            .select('id'),
+        { label: 'admin-tasks.bulkReject' }
       );
       return input.ids.length;
     },
-    onSuccess: (count) => {
+    onSuccess: count => {
       qc.invalidateQueries({ queryKey: ['task-assignments'] });
       toast.success(`${count} submissões rejeitadas`);
     },

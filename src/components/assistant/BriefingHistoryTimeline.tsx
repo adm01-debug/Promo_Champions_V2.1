@@ -1,13 +1,16 @@
-import { FC, useMemo, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import { format, parseISO, isToday, isYesterday } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { History, ChevronDown, ChevronRight, Search, Printer } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/atoms/skeleton";
-import { Button } from "@/components/ui/button";
-import { useBriefingHistory, BriefingHistoryEntry } from "@/hooks/assistant/useBriefingHistory";
-import { cn } from "@/lib/utils";
+import { FC, useMemo, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { format, parseISO, isToday, isYesterday } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { History, ChevronDown, ChevronRight, Search, Printer } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/atoms/skeleton';
+import { Button } from '@/components/ui/button';
+import {
+  useBriefingHistory,
+  BriefingHistoryEntry,
+} from '@/hooks/assistant/useBriefingHistory';
+import { cn } from '@/lib/utils';
 
 interface Props {
   salespersonId: string | null;
@@ -16,8 +19,8 @@ interface Props {
 function labelForDate(iso: string): string {
   try {
     const d = parseISO(iso);
-    if (isToday(d)) return "Hoje";
-    if (isYesterday(d)) return "Ontem";
+    if (isToday(d)) return 'Hoje';
+    if (isYesterday(d)) return 'Ontem';
     return format(d, "EEE, dd 'de' MMM", { locale: ptBR });
   } catch {
     return iso;
@@ -26,12 +29,12 @@ function labelForDate(iso: string): string {
 
 const Item: FC<{ entry: BriefingHistoryEntry }> = ({ entry }) => {
   const [open, setOpen] = useState(false);
-  const preview = (entry.content ?? "").replace(/[#*_`>]/g, "").slice(0, 90);
+  const preview = (entry.content ?? '').replace(/[#*_`>]/g, '').slice(0, 90);
 
   return (
     <div className="border rounded-lg overflow-hidden bg-muted/20">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(v => !v)}
         className="w-full flex items-center gap-2 px-3 py-2 hover:bg-muted/40 transition-colors text-left"
         aria-expanded={open}
       >
@@ -41,17 +44,24 @@ const Item: FC<{ entry: BriefingHistoryEntry }> = ({ entry }) => {
           <ChevronRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
         )}
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-semibold text-foreground">{labelForDate(entry.briefing_date)}</div>
+          <div className="text-xs font-semibold text-foreground">
+            {labelForDate(entry.briefing_date)}
+          </div>
           {!open && (
             <div className="text-[11px] text-muted-foreground truncate">
-              {preview || "Briefing gerado"}
+              {preview || 'Briefing gerado'}
             </div>
           )}
         </div>
       </button>
       {open && (
-        <div className={cn("px-4 py-3 bg-background/60 border-t", "prose prose-sm dark:prose-invert max-w-none text-sm max-h-72 overflow-y-auto")}>
-          <ReactMarkdown>{entry.content || "_Sem conteúdo_"}</ReactMarkdown>
+        <div
+          className={cn(
+            'px-4 py-3 bg-background/60 border-t',
+            'prose prose-sm dark:prose-invert max-w-none text-sm max-h-72 overflow-y-auto'
+          )}
+        >
+          <ReactMarkdown>{entry.content || '_Sem conteúdo_'}</ReactMarkdown>
         </div>
       )}
     </div>
@@ -62,20 +72,22 @@ const Item: FC<{ entry: BriefingHistoryEntry }> = ({ entry }) => {
  * Escapa string para uso em RegExp — evita ReDoS / erros de sintaxe com input do usuário.
  */
 function escapeRegex(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export const BriefingHistoryTimeline: FC<Props> = ({ salespersonId }) => {
   const { data, isLoading, error } = useBriefingHistory(salespersonId);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   const filtered = useMemo(() => {
     if (!data) return [] as BriefingHistoryEntry[];
     const q = query.trim();
     if (!q) return data;
     try {
-      const re = new RegExp(escapeRegex(q), "i");
-      return data.filter((e) => re.test(e.content ?? "") || re.test(labelForDate(e.briefing_date)));
+      const re = new RegExp(escapeRegex(q), 'i');
+      return data.filter(
+        e => re.test(e.content ?? '') || re.test(labelForDate(e.briefing_date))
+      );
     } catch {
       return data;
     }
@@ -83,12 +95,12 @@ export const BriefingHistoryTimeline: FC<Props> = ({ salespersonId }) => {
 
   const handlePrint = () => {
     // Toggle temporário do body para ativar CSS @media print dedicado
-    document.body.classList.add("printing-briefings");
+    document.body.classList.add('printing-briefings');
     const restore = () => {
-      document.body.classList.remove("printing-briefings");
-      window.removeEventListener("afterprint", restore);
+      document.body.classList.remove('printing-briefings');
+      window.removeEventListener('afterprint', restore);
     };
-    window.addEventListener("afterprint", restore);
+    window.addEventListener('afterprint', restore);
     window.print();
   };
 
@@ -118,7 +130,7 @@ export const BriefingHistoryTimeline: FC<Props> = ({ salespersonId }) => {
           <Search className="h-3 w-3 text-muted-foreground absolute left-2 top-1/2 -translate-y-1/2" />
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
             placeholder="Buscar nos briefings…"
             className="w-full text-xs pl-6 pr-2 py-1.5 rounded-md bg-muted/40 border focus:border-primary/50 outline-none"
           />
@@ -138,10 +150,12 @@ export const BriefingHistoryTimeline: FC<Props> = ({ salespersonId }) => {
           Seus briefings diários vão aparecer aqui a partir de amanhã.
         </p>
       ) : filtered.length === 0 ? (
-        <p className="text-xs text-muted-foreground">Nenhum briefing corresponde a "{query}".</p>
+        <p className="text-xs text-muted-foreground">
+          Nenhum briefing corresponde a "{query}".
+        </p>
       ) : (
         <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1 no-print">
-          {filtered.map((entry) => (
+          {filtered.map(entry => (
             <Item key={entry.id} entry={entry} />
           ))}
         </div>
@@ -150,17 +164,21 @@ export const BriefingHistoryTimeline: FC<Props> = ({ salespersonId }) => {
       {/* Bloco dedicado para impressão: só visível durante print */}
       {data && data.length > 0 && (
         <div className="print-only" aria-hidden>
-          <h1 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Histórico de Briefings</h1>
-          <p style={{ fontSize: 11, color: "#666", marginBottom: 16 }}>
-            Gerado em {format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })} · {filtered.length} briefing(s)
+          <h1 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
+            Histórico de Briefings
+          </h1>
+          <p style={{ fontSize: 11, color: '#666', marginBottom: 16 }}>
+            Gerado em {format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })} ·{' '}
+            {filtered.length} briefing(s)
           </p>
-          {filtered.map((entry) => (
-            <section key={entry.id} style={{ marginBottom: 16, breakInside: "avoid" }}>
+          {filtered.map(entry => (
+            <section key={entry.id} style={{ marginBottom: 16, breakInside: 'avoid' }}>
               <h2 style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
-                {labelForDate(entry.briefing_date)} · {format(parseISO(entry.briefing_date), "dd/MM/yyyy")}
+                {labelForDate(entry.briefing_date)} ·{' '}
+                {format(parseISO(entry.briefing_date), 'dd/MM/yyyy')}
               </h2>
               <div className="prose prose-sm max-w-none" style={{ fontSize: 11 }}>
-                <ReactMarkdown>{entry.content || ""}</ReactMarkdown>
+                <ReactMarkdown>{entry.content || ''}</ReactMarkdown>
               </div>
             </section>
           ))}

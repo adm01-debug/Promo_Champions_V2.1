@@ -20,13 +20,14 @@ interface Props {
   limit?: number;
 }
 
-const TYPE_META: Record<string, { icon: typeof Sparkles; label: string; tone: string }> = {
-  victory: { icon: Trophy, label: 'Vitória', tone: 'text-coins' },
-  overtake: { icon: TrendingUp, label: 'Ultrapassagem', tone: 'text-success' },
-  boost: { icon: Zap, label: 'Boost', tone: 'text-streak' },
-  leader_change: { icon: Crown, label: 'Novo líder', tone: 'text-primary' },
-  checkpoint: { icon: Sparkles, label: 'Checkpoint', tone: 'text-accent' },
-};
+const TYPE_META: Record<string, { icon: typeof Sparkles; label: string; tone: string }> =
+  {
+    victory: { icon: Trophy, label: 'Vitória', tone: 'text-coins' },
+    overtake: { icon: TrendingUp, label: 'Ultrapassagem', tone: 'text-success' },
+    boost: { icon: Zap, label: 'Boost', tone: 'text-streak' },
+    leader_change: { icon: Crown, label: 'Novo líder', tone: 'text-primary' },
+    checkpoint: { icon: Sparkles, label: 'Checkpoint', tone: 'text-accent' },
+  };
 
 /**
  * Timeline lateral com top eventos da temporada (highlights).
@@ -35,7 +36,7 @@ const TYPE_META: Record<string, { icon: typeof Sparkles; label: string; tone: st
 export function RaceHighlightsTimeline({ events, cars, limit = 5 }: Props) {
   const carById = useMemo(() => {
     const map = new Map<string, RaceLeaderboardEntry>();
-    cars.forEach((c) => map.set(c.salesperson_id, c));
+    cars.forEach(c => map.set(c.salesperson_id, c));
     return map;
   }, [cars]);
 
@@ -65,7 +66,11 @@ export function RaceHighlightsTimeline({ events, cars, limit = 5 }: Props) {
         <ul className="space-y-2 relative" aria-label="Eventos em destaque">
           <span className="absolute left-2 top-2 bottom-2 w-px bg-border" aria-hidden />
           {top.map((ev, idx) => {
-            const meta = TYPE_META[ev.event_type] ?? { icon: Sparkles, label: ev.event_type, tone: 'text-muted-foreground' };
+            const meta = TYPE_META[ev.event_type] ?? {
+              icon: Sparkles,
+              label: ev.event_type,
+              tone: 'text-muted-foreground',
+            };
             const Icon = meta.icon;
             const car = carById.get(ev.salesperson_id);
             return (
@@ -76,7 +81,9 @@ export function RaceHighlightsTimeline({ events, cars, limit = 5 }: Props) {
                 transition={{ delay: idx * 0.05 }}
                 className="relative pl-6 text-xs"
               >
-                <span className={`absolute left-0 top-0.5 w-4 h-4 rounded-full bg-background border-2 border-current flex items-center justify-center ${meta.tone}`}>
+                <span
+                  className={`absolute left-0 top-0.5 w-4 h-4 rounded-full bg-background border-2 border-current flex items-center justify-center ${meta.tone}`}
+                >
                   <Icon className="w-2.5 h-2.5" aria-hidden />
                 </span>
                 <div className="flex items-baseline justify-between gap-2">
@@ -84,7 +91,10 @@ export function RaceHighlightsTimeline({ events, cars, limit = 5 }: Props) {
                     {car?.salesperson_name?.split(' ')[0] ?? '—'}
                   </span>
                   <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                    {formatDistanceToNow(new Date(ev.created_at), { addSuffix: true, locale: ptBR })}
+                    {formatDistanceToNow(new Date(ev.created_at), {
+                      addSuffix: true,
+                      locale: ptBR,
+                    })}
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">{meta.label}</p>

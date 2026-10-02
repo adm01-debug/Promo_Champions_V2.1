@@ -1,6 +1,6 @@
-import { FuturisticSpeedometerDashboard } from "@/components/dashboard/FuturisticSpeedometerDashboard";
-import { PeriodTrendChart } from "@/components/dashboard/PeriodTrendChart";
-import { TrendsChartsPanel } from "@/components/dashboard/TrendsChartsPanel";
+import { FuturisticSpeedometerDashboard } from '@/components/dashboard/FuturisticSpeedometerDashboard';
+import { PeriodTrendChart } from '@/components/dashboard/PeriodTrendChart';
+import { TrendsChartsPanel } from '@/components/dashboard/TrendsChartsPanel';
 
 export const PerformanceModule = () => {
   return (
