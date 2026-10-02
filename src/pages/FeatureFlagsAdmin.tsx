@@ -48,14 +48,14 @@ const FeatureFlagsAdmin = () => {
         description: newDesc || null,
         is_enabled: false,
         rollout_percentage: 100,
-    },
+      },
       {
-    onSuccess: () => {
-      setNewKey('');
-      setNewDesc('');
-      setShowAdd(false);
-      toast.success('Feature flag criada');
-    },
+        onSuccess: () => {
+          setNewKey('');
+          setNewDesc('');
+          setShowAdd(false);
+          toast.success('Feature flag criada');
+        },
       }
     );
   };
@@ -221,12 +221,12 @@ const FeatureFlagsAdmin = () => {
                                 if (roles !== null) {
                                   updateFlag.mutate(
                                     {
-                                    id: flag.id,
+                                      id: flag.id,
                                       patch: {
-                                    allowed_roles: roles
-                                      .split(',')
-                                      .map(r => r.trim())
-                                      .filter(Boolean),
+                                        allowed_roles: roles
+                                          .split(',')
+                                          .map(r => r.trim())
+                                          .filter(Boolean),
                                       },
                                     },
                                     {
