@@ -4,16 +4,40 @@ import {
   WebhookContracts,
   validateWebhookPayload,
 } from '../_shared/webhook-validator.ts';
+import { collectErrors, validateNumber, validateString } from '../_shared/validation.ts';
 
 Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const { iterations = 100, targetContract = 'crmEvent' } = await req.json();
+    const parsed: unknown = await req.json().catch(() => ({}));
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return new Response(JSON.stringify({ error: 'corpo_json_invalido' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { iterations = 100, targetContract = 'crmEvent' } = parsed as {
+      iterations?: unknown;
+      targetContract?: unknown;
+    };
+
+    const payloadErrors = collectErrors([
+      validateNumber(iterations, 'iterations', { integer: true, min: 1, max: 10_000 }),
+      validateString(targetContract, 'targetContract', { maxLength: 200 }),
+    ]);
+    if (payloadErrors.length) {
+      return new Response(JSON.stringify({ error: 'dados_invalidos', details: payloadErrors }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const totalIterations = iterations as number;
+    const contractName = targetContract as string;
 
     // @ts-expect-error: Dynamic access by string key
-    const schema = WebhookContracts[targetContract];
+    const schema = WebhookContracts[contractName];
     if (!schema) {
       return new Response(JSON.stringify({ error: 'Contract not found' }), {
         status: 404,
@@ -22,7 +46,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     }
 
     const results = {
-      total: iterations,
+      total: totalIterations,
       passed: 0,
       failed: 0,
       vulnerabilities_detected: [] as Array<{
@@ -45,7 +69,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
       return scenarios[Math.floor(Math.random() * scenarios.length)];
     };
 
-    for (let i = 0; i < iterations; i++) {
+    for (let i = 0; i < totalIterations; i++) {
       const scenario = fuzz();
       const validation = validateWebhookPayload(schema, scenario.payload);
 
@@ -67,7 +91,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     });
   } catch (e) {
     console.error('stress-test-contracts error:', e);
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

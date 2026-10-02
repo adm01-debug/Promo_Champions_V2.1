@@ -1,6 +1,12 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {
+  collectErrors,
+  validateEnum,
+  validateString,
+  validateUUID,
+} from '../_shared/validation.ts';
+import {
   getServiceClient,
   getUserClient,
   UnauthorizedError,
@@ -26,12 +32,23 @@ Deno.serve(
         'gerencia push_subscriptions do proprio usuario autenticado',
       );
 
-      const body = await req.json();
-      const { subscription, user_id, action } = body;
-
-      if (!action || !['subscribe', 'unsubscribe', 'get-vapid-key'].includes(action)) {
-        return json({ error: 'Invalid action. Must be subscribe, unsubscribe, or get-vapid-key' }, 400);
+      const body = await req.json().catch(() => null);
+      if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return json({ error: 'invalid_json_body' }, 400);
       }
+
+      const actionErrors = collectErrors([
+        validateEnum(body.action, 'action', ['subscribe', 'unsubscribe', 'get-vapid-key'], true),
+      ]);
+      if (actionErrors.length) {
+        return json({ error: 'dados_invalidos', details: actionErrors }, 400);
+      }
+
+      const { subscription, user_id, action } = body as {
+        subscription?: { endpoint?: unknown; keys?: { p256dh?: unknown; auth?: unknown } };
+        user_id?: unknown;
+        action: 'subscribe' | 'unsubscribe' | 'get-vapid-key';
+      };
 
       // get-vapid-key is public — no auth required
       if (action === 'get-vapid-key') {
@@ -52,26 +69,38 @@ Deno.serve(
       }
       const callerUserId = caller.userId;
 
-      if (!user_id || typeof user_id !== 'string') {
-        return json({ error: 'user_id is required' }, 400);
+      const userIdErrors = collectErrors([
+        validateUUID(user_id, 'user_id', true),
+      ]);
+      if (userIdErrors.length) {
+        return json({ error: 'dados_invalidos', details: userIdErrors }, 400);
       }
       if (user_id !== callerUserId) {
         return json({ error: 'Forbidden: cannot manage another user\'s subscription' }, 403);
       }
 
       if (action === 'subscribe') {
-        if (!subscription?.endpoint || !subscription?.keys?.p256dh || !subscription?.keys?.auth) {
-          return json({ error: 'Valid subscription with endpoint and keys is required' }, 400);
+        const subscriptionErrors = collectErrors([
+          validateString(subscription?.endpoint, 'subscription.endpoint', { required: true, maxLength: 2048 }),
+          validateString(subscription?.keys?.p256dh, 'subscription.keys.p256dh', { required: true, maxLength: 512 }),
+          validateString(subscription?.keys?.auth, 'subscription.keys.auth', { required: true, maxLength: 512 }),
+        ]);
+        if (subscriptionErrors.length) {
+          return json({ error: 'dados_invalidos', details: subscriptionErrors }, 400);
         }
+        const validSubscription = subscription as {
+          endpoint: string;
+          keys: { p256dh: string; auth: string };
+        };
 
         const { error } = await supabase
           .from('push_subscriptions')
           .upsert(
             {
-              user_id,
-              endpoint: subscription.endpoint,
-              p256dh: subscription.keys.p256dh,
-              auth: subscription.keys.auth,
+              user_id: user_id as string,
+              endpoint: validSubscription.endpoint,
+              p256dh: validSubscription.keys.p256dh,
+              auth: validSubscription.keys.auth,
               updated_at: new Date().toISOString(),
             },
             { onConflict: 'user_id' },
@@ -87,7 +116,7 @@ Deno.serve(
       const { error } = await supabase
         .from('push_subscriptions')
         .delete()
-        .eq('user_id', user_id);
+        .eq('user_id', user_id as string);
       if (error) throw error;
       return json({ success: true, message: 'Subscription removed' });
     } catch (error: unknown) {
