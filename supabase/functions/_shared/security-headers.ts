@@ -13,9 +13,9 @@
 // para os headers recomendados na camada de hosting.
 
 export const htmlSecurityHeaders: Record<string, string> = {
-  'Cache-Control': 'no-store',
-  'Referrer-Policy': 'no-referrer',
-  'X-Content-Type-Options': 'nosniff',
-  'Content-Security-Policy':
+  "Cache-Control": "no-store",
+  "Referrer-Policy": "no-referrer",
+  "X-Content-Type-Options": "nosniff",
+  "Content-Security-Policy":
     "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
 };

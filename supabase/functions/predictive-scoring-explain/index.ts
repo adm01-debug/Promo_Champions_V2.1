@@ -1,12 +1,8 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import {
-  getServiceClient,
-  getUserClient,
-  UnauthorizedError,
-} from '../_shared/auth-client.ts';
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface Driver {
   factor: string;
@@ -104,27 +100,21 @@ Recomendação principal: ${recommendations[0]?.action ?? 'n/d'}.
 
 Em 2-3 frases curtas em português do Brasil, explique o porquê desse score e qual a próxima ação prioritária. Tom direto, profissional, sem jargão.`;
 
-    const resp = await fetchWithTimeout(
-      'https://ai.gateway.lovable.dev/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
-          messages: [
-            {
-              role: 'system',
-              content:
-                'Você é um analista de vendas B2B. Responda apenas com a explicação solicitada, em PT-BR, sem preâmbulos.',
-            },
-            { role: 'user', content: prompt },
-          ],
-        }),
-      }
-    );
+    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'Você é um analista de vendas B2B. Responda apenas com a explicação solicitada, em PT-BR, sem preâmbulos.',
+          },
+          { role: 'user', content: prompt },
+        ],
+      }),
+    });
 
     if (!resp.ok) {
       console.warn('AI gateway returned', resp.status);
@@ -233,91 +223,93 @@ async function explainOne(
   return { sale_id: saleId, score: ls.score, ok: true };
 }
 
-Deno.serve(
-  withRequestId('predictive-scoring-explain', async (req, _ctx) => {
-    const corsHeaders = getCorsHeaders(req);
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
-    try {
-      const body = await req.json().catch(() => ({}));
-      const ids: string[] = body.sale_id
-        ? [body.sale_id]
-        : Array.isArray(body.sale_ids)
-          ? body.sale_ids
-          : [];
+  try {
+    const body = await req.json().catch(() => ({}));
+    const ids: string[] = body.sale_id
+      ? [body.sale_id]
+      : Array.isArray(body.sale_ids)
+        ? body.sale_ids
+        : [];
 
-      if (ids.length === 0 || ids.length > 50) {
-        return new Response(
-          JSON.stringify({ error: 'Provide sale_id or sale_ids (1-50)' }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
-
-      // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
-      const caller = await getUserClient(req);
-
-      const supabase = getServiceClient(
-        'recomputa explicações de score de deals e grava lead_score_explanations'
-      );
-
-      // Só o dono dos deals (ou admin/manager) pode disparar a explicação em lote.
-      const { data: callerSp } = await supabase
-        .from('salespeople')
-        .select('id')
-        .eq('auth_user_id', caller.userId)
-        .maybeSingle();
-      const { data: saleRows } = await supabase
-        .from('sales')
-        .select('id, salesperson_id')
-        .in('id', ids);
-      const hasForeign = (saleRows ?? []).some(
-        s => s.salesperson_id && s.salesperson_id !== callerSp?.id
-      );
-      if (hasForeign) {
-        const { data: isManager, error: roleErr } = await caller.client.rpc(
-          'is_admin_or_manager' as never,
-          { _user_id: caller.userId } as never
-        );
-        if (roleErr) throw roleErr;
-        if (!isManager) {
-          return new Response(JSON.stringify({ error: 'forbidden' }), {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-      }
-
-      const results: Array<{
-        sale_id: string;
-        score: number;
-        ok: boolean;
-        error?: string;
-      }> = [];
-      for (const id of ids) {
-        results.push(await explainOne(supabase, id));
-      }
-
-      return new Response(JSON.stringify({ results, count: results.length }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    } catch (e) {
-      if (e instanceof UnauthorizedError) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      console.error('predictive-scoring-explain error:', e);
+    if (ids.length === 0 || ids.length > 50) {
       return new Response(
-        JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
+        JSON.stringify({ error: 'Provide sale_id or sale_ids (1-50)' }),
         {
-          status: 500,
+          status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
     }
-  })
-);
+
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    const supabase = getServiceClient("recomputa explicações de score de deals e grava lead_score_explanations");
+
+    // Só o dono dos deals (ou admin/manager) pode disparar a explicação em lote.
+    const { data: callerSp } = await supabase
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', caller.userId)
+      .maybeSingle();
+    const { data: saleRows } = await supabase
+      .from('sales')
+      .select('id, salesperson_id')
+      .in('id', ids);
+    const hasForeign = (saleRows ?? []).some(
+      (s) => s.salesperson_id && s.salesperson_id !== callerSp?.id,
+    );
+    if (hasForeign) {
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(
+          JSON.stringify({ error: 'forbidden' }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
+    const results: Array<{
+      sale_id: string;
+      score: number;
+      ok: boolean;
+      error?: string;
+    }> = [];
+    for (const id of ids) {
+      results.push(await explainOne(supabase, id));
+    }
+
+    return new Response(JSON.stringify({ results, count: results.length }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: 'unauthorized' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    console.error('predictive-scoring-explain error:', e);
+    return new Response(
+      JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+}));

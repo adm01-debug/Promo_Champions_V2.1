@@ -4,9 +4,9 @@
 // it to structured logs and echoes it in the response headers so callers can
 // correlate a request across dispatcher → downstream → DB.
 
-import { getCorsHeaders } from './cors.ts';
+import { getCorsHeaders } from "./cors.ts";
 
-const REQ_ID_HEADER = 'X-Request-Id';
+const REQ_ID_HEADER = "X-Request-Id";
 // Accept UUIDs or short opaque ids (letters, digits, dash/underscore, 8-64 chars).
 const SAFE_ID = /^[A-Za-z0-9_-]{8,64}$/;
 
@@ -22,25 +22,24 @@ export function extractOrMintRequestId(req: Request): string {
  * Retorna null quando não há bearer token ou o payload não é um JWT válido.
  */
 export function extractUserIdFromJwt(req: Request): string | null {
-  const auth = req.headers.get('Authorization');
-  if (!auth || !auth.startsWith('Bearer ')) return null;
-  const token = auth.slice('Bearer '.length).trim();
-  const parts = token.split('.');
+  const auth = req.headers.get("Authorization");
+  if (!auth || !auth.startsWith("Bearer ")) return null;
+  const token = auth.slice("Bearer ".length).trim();
+  const parts = token.split(".");
   if (parts.length !== 3) return null;
   try {
-    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4);
+    const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = payload + "=".repeat((4 - (payload.length % 4)) % 4);
     const decoded = JSON.parse(atob(padded)) as { sub?: unknown };
-    return typeof decoded.sub === 'string' && decoded.sub.length > 0 ? decoded.sub : null;
+    return typeof decoded.sub === "string" && decoded.sub.length > 0
+      ? decoded.sub
+      : null;
   } catch {
     return null;
   }
 }
 
-export function withRequestIdHeader(
-  headers: HeadersInit | undefined,
-  requestId: string
-): Headers {
+export function withRequestIdHeader(headers: HeadersInit | undefined, requestId: string): Headers {
   const h = new Headers(headers ?? {});
   h.set(REQ_ID_HEADER, requestId);
   return h;
@@ -49,21 +48,17 @@ export function withRequestIdHeader(
 /** Wrap a Response so it always carries the X-Request-Id header. */
 export function attachRequestId(res: Response, requestId: string): Response {
   const headers = withRequestIdHeader(res.headers, requestId);
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
-    headers,
-  });
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
 }
 
 /** Structured JSON log entry with request correlation. Never logs headers/body. */
 export function logWithRequestId(
-  level: 'info' | 'warn' | 'error',
+  level: "info" | "warn" | "error",
   fnName: string,
   requestId: string,
   message: string,
   extra: Record<string, unknown> = {},
-  userId: string | null = null
+  userId: string | null = null,
 ): void {
   const entry = {
     ts: new Date().toISOString(),
@@ -75,8 +70,8 @@ export function logWithRequestId(
     ...extra,
   };
   const line = JSON.stringify(entry);
-  if (level === 'error') console.error(line);
-  else if (level === 'warn') console.warn(line);
+  if (level === "error") console.error(line);
+  else if (level === "warn") console.warn(line);
   else console.info(line);
 }
 
@@ -84,11 +79,7 @@ export interface RequestIdContext {
   requestId: string;
   /** `sub` do access_token do chamador (só correlação, sem verificação). */
   userId: string | null;
-  log: (
-    level: 'info' | 'warn' | 'error',
-    message: string,
-    extra?: Record<string, unknown>
-  ) => void;
+  log: (level: "info" | "warn" | "error", message: string, extra?: Record<string, unknown>) => void;
 }
 
 /**
@@ -97,7 +88,7 @@ export interface RequestIdContext {
  */
 export function withRequestId(
   fnName: string,
-  handler: (req: Request, ctx: RequestIdContext) => Promise<Response>
+  handler: (req: Request, ctx: RequestIdContext) => Promise<Response>,
 ): (req: Request) => Promise<Response> {
   return async (req: Request): Promise<Response> => {
     const requestId = extractOrMintRequestId(req);
@@ -105,31 +96,24 @@ export function withRequestId(
     const ctx: RequestIdContext = {
       requestId,
       userId,
-      log: (level, message, extra) =>
-        logWithRequestId(level, fnName, requestId, message, extra, userId),
+      log: (level, message, extra) => logWithRequestId(level, fnName, requestId, message, extra, userId),
     };
     const started = Date.now();
     try {
       const res = await handler(req, ctx);
-      ctx.log('info', 'request_completed', {
-        status: res.status,
-        duration_ms: Date.now() - started,
-      });
+      ctx.log("info", "request_completed", { status: res.status, duration_ms: Date.now() - started });
       return attachRequestId(res, requestId);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      ctx.log('error', 'request_failed', {
-        duration_ms: Date.now() - started,
-        error: message,
-      });
+      ctx.log("error", "request_failed", { duration_ms: Date.now() - started, error: message });
       // O detalhe fica só no log estruturado acima; a resposta carrega um código
       // opaco + requestId para correlação (não vazar internals em 500).
-      const body = JSON.stringify({ requestId, error: 'internal_error' });
+      const body = JSON.stringify({ requestId, error: "internal_error" });
       return new Response(body, {
         status: 500,
         headers: {
           ...getCorsHeaders(req),
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           [REQ_ID_HEADER]: requestId,
         },
       });

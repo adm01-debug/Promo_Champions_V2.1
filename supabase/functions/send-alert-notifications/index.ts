@@ -165,15 +165,14 @@ const generateAlerts = async (
     const monthSales = spIds.length
       ? await chunkedIn<{ salesperson_id: string; amount: number }>(
           spIds,
-          chunk =>
-            supabase
-              .from('sales')
-              .select('salesperson_id, amount')
-              .in('salesperson_id', chunk)
-              .eq('status', 'completed')
-              .gte('created_at', currentMonth)
-              .limit(50000),
-          { parallel: true, label: 'send-alert-notifications.month-sales' }
+          (chunk) => supabase
+            .from('sales')
+            .select('salesperson_id, amount')
+            .in('salesperson_id', chunk)
+            .eq('status', 'completed')
+            .gte('created_at', currentMonth)
+            .limit(50000),
+          { parallel: true, label: 'send-alert-notifications.month-sales' },
         )
       : [];
 
@@ -188,9 +187,7 @@ const generateAlerts = async (
     for (const g of goals ?? []) {
       goalsMap.set(
         (g as { salesperson_id: string; goal_amount: number | string }).salesperson_id,
-        Number(
-          (g as { salesperson_id: string; goal_amount: number | string }).goal_amount
-        )
+        Number((g as { salesperson_id: string; goal_amount: number | string }).goal_amount)
       );
     }
 
@@ -260,7 +257,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     // Bypass de RLS necessário: alertas cobrem sales/metas de toda a equipe.
     const supabase = getServiceClient(
-      'alertas agregam vendas e metas de toda a equipe para envio de email'
+      'alertas agregam vendas e metas de toda a equipe para envio de email',
     );
 
     // Autoriza job interno (service_role ou X-Cron-Secret do pg_cron) ou,
@@ -294,7 +291,7 @@ const handler = async (req: Request): Promise<Response> => {
       }
       const { data: isPrivileged, error: roleError } = await caller.client.rpc(
         'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never
+        { _user_id: caller.userId } as never,
       );
       if (roleError) {
         console.error('send-alert-notifications role check failed:', roleError);
@@ -326,9 +323,7 @@ const handler = async (req: Request): Promise<Response> => {
       // Fetch all active notification preferences
       const { data: preferences, error: prefError } = await supabase
         .from('notification_preferences')
-        .select(
-          'id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time'
-        )
+        .select('id, email, is_active, frequency, notify_stagnant_deals, notify_inactive_clients, notify_at_risk_goals, stagnant_threshold_days, inactive_threshold_days, preferred_time')
         .eq('is_active', true)
         .limit(200);
 

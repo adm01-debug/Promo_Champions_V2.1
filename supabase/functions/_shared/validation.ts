@@ -24,11 +24,11 @@ export function validateString(
 ): ValidationError | null {
   const { required = false, maxLength = 10000, minLength = 0 } = opts ?? {};
 
-  if (value === undefined || value === null || value === '') {
+  if (value === undefined || value === null || value === "") {
     return required ? { field, message: `${field} é obrigatório` } : null;
   }
 
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     return { field, message: `${field} deve ser uma string` };
   }
 
@@ -46,20 +46,12 @@ export function validateString(
 /**
  * Validate UUID field
  */
-export function validateUUID(
-  value: unknown,
-  field: string,
-  required = false
-): ValidationError | null {
+export function validateUUID(value: unknown, field: string, required = false): ValidationError | null {
   if (!value) return required ? { field, message: `${field} é obrigatório` } : null;
-  if (typeof value !== 'string')
-    return { field, message: `${field} deve ser uma string` };
+  if (typeof value !== "string") return { field, message: `${field} deve ser uma string` };
 
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(value)
-    ? null
-    : { field, message: `${field} não é um UUID válido` };
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value) ? null : { field, message: `${field} não é um UUID válido` };
 }
 
 /**
@@ -73,8 +65,7 @@ export function validateArray(
   const { required = false, maxLength = 100 } = opts ?? {};
   if (!value) return required ? { field, message: `${field} é obrigatório` } : null;
   if (!Array.isArray(value)) return { field, message: `${field} deve ser um array` };
-  if (value.length > maxLength)
-    return { field, message: `${field} excede o limite de ${maxLength} itens` };
+  if (value.length > maxLength) return { field, message: `${field} excede o limite de ${maxLength} itens` };
   return null;
 }
 
@@ -92,7 +83,7 @@ export function validateNumber(
     return required ? { field, message: `${field} é obrigatório` } : null;
   }
 
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
     return { field, message: `${field} deve ser um número` };
   }
 
@@ -121,11 +112,8 @@ export function validateEnum(
   required = false
 ): ValidationError | null {
   if (!value) return required ? { field, message: `${field} é obrigatório` } : null;
-  if (typeof value !== 'string')
-    return { field, message: `${field} deve ser uma string` };
-  return allowed.includes(value)
-    ? null
-    : { field, message: `${field} deve ser: ${allowed.join(', ')}` };
+  if (typeof value !== "string") return { field, message: `${field} deve ser uma string` };
+  return allowed.includes(value) ? null : { field, message: `${field} deve ser: ${allowed.join(", ")}` };
 }
 
 /**
@@ -142,8 +130,8 @@ export function validationErrorResponse(
   errors: ValidationError[],
   corsHeaders: Record<string, string>
 ): Response {
-  return new Response(JSON.stringify({ error: 'Dados inválidos', details: errors }), {
-    status: 400,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
+  return new Response(
+    JSON.stringify({ error: "Dados inválidos", details: errors }),
+    { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+  );
 }

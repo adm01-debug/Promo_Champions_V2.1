@@ -1,29 +1,29 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
-import { errorEnvelope, jsonResponse } from '../_shared/http-envelope.ts';
-import { chunkedIn } from '../_shared/chunked-in.ts';
-import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
+import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { errorEnvelope, jsonResponse } from "../_shared/http-envelope.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 Deno.serve(
-  withRequestId('challenge-expiration-alerts', async (req, ctx) => {
+  withRequestId("challenge-expiration-alerts", async (req, ctx) => {
     const corsHeaders = getCorsHeaders(req);
-    if (req.method === 'OPTIONS') {
+    if (req.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Autorização: chamada interna (service_role/X-Cron-Secret) ou usuário admin/manager.
     try {
       const authorized = await isAuthorizedCronRequest(req, async () => {
         const { data, error } = await supabase
-          .from('_internal_secrets')
-          .select('value')
-          .eq('key', 'coaching_cron_secret')
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
           .maybeSingle();
         if (error) throw error;
         return (data as { value?: string | null } | null)?.value;
@@ -31,71 +31,75 @@ Deno.serve(
       if (!authorized) {
         const caller = await getUserClient(req);
         const { data: allowed, error: roleError } = await caller.client.rpc(
-          'is_admin_or_manager' as never,
-          { _user_id: caller.userId } as never
+          "is_admin_or_manager" as never,
+          { _user_id: caller.userId } as never,
         );
         if (roleError) throw roleError;
         if (!allowed) {
-          return errorEnvelope('FORBIDDEN', 'forbidden', { requestId: ctx.requestId });
+          return errorEnvelope("FORBIDDEN", "forbidden", {
+            requestId: ctx.requestId,
+          });
         }
       }
     } catch (error) {
       if (error instanceof UnauthorizedError) {
-        return errorEnvelope('UNAUTHORIZED', 'unauthorized', {
+        return errorEnvelope("UNAUTHORIZED", "unauthorized", {
           requestId: ctx.requestId,
         });
       }
-      ctx.log('error', 'authorization_failed', {
+      ctx.log("error", "authorization_failed", {
         error: error instanceof Error ? error.message : String(error),
       });
-      return errorEnvelope('INTERNAL_ERROR', 'authorization_unavailable', {
+      return errorEnvelope("INTERNAL_ERROR", "authorization_unavailable", {
         status: 503,
         requestId: ctx.requestId,
       });
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
     const { data: expiringChallenges, error: challengesError } = await supabase
-      .from('weekly_challenges')
-      .select('id, title, xp_reward, target_value')
-      .eq('is_active', true)
-      .eq('end_date', today);
+      .from("weekly_challenges")
+      .select("id, title, xp_reward, target_value")
+      .eq("is_active", true)
+      .eq("end_date", today);
 
     if (challengesError) {
-      ctx.log('error', 'fetch_challenges_failed', { error: challengesError.message });
-      return errorEnvelope('INTERNAL_ERROR', challengesError.message, {
+      ctx.log("error", "fetch_challenges_failed", {
+        error: challengesError.message,
+      });
+      return errorEnvelope("INTERNAL_ERROR", challengesError.message, {
         requestId: ctx.requestId,
       });
     }
 
     if (!expiringChallenges || expiringChallenges.length === 0) {
-      ctx.log('info', 'no_expiring_challenges');
+      ctx.log("info", "no_expiring_challenges");
       return jsonResponse(
-        { message: 'No challenges expiring today', notified: 0 },
+        { message: "No challenges expiring today", notified: 0 },
         {
           requestId: ctx.requestId,
-        }
+        },
       );
     }
 
-    ctx.log('info', 'expiring_found', { count: expiringChallenges.length });
+    ctx.log("info", "expiring_found", { count: expiringChallenges.length });
 
     const { data: salespeople, error: spError } = await supabase
-      .from('salespeople')
-      .select('id, name, email')
-      .eq('is_active', true)
+      .from("salespeople")
+      .select("id, name, email")
+      .eq("is_active", true)
       .limit(500);
 
     if (spError) {
-      ctx.log('error', 'fetch_salespeople_failed', { error: spError.message });
-      return errorEnvelope('INTERNAL_ERROR', spError.message, {
+      ctx.log("error", "fetch_salespeople_failed", { error: spError.message });
+      return errorEnvelope("INTERNAL_ERROR", spError.message, {
         requestId: ctx.requestId,
       });
     }
 
     // Batch-fetch all challenge_progress in one query — eliminates N+1 (one per challenge)
-    const challengeIds = expiringChallenges.map(c => c.id);
+    const challengeIds = expiringChallenges.map((c) => c.id);
     const allProgressData = await chunkedIn<{
       challenge_id: string;
       salesperson_id: string;
@@ -103,12 +107,12 @@ Deno.serve(
       xp_claimed: boolean;
     }>(
       challengeIds,
-      chunk =>
+      (chunk) =>
         supabase
-          .from('challenge_progress')
-          .select('challenge_id, salesperson_id, current_value, xp_claimed')
-          .in('challenge_id', chunk),
-      { parallel: true, label: 'challenge-expiration-alerts.progress' }
+          .from("challenge_progress")
+          .select("challenge_id, salesperson_id, current_value, xp_claimed")
+          .in("challenge_id", chunk),
+      { parallel: true, label: "challenge-expiration-alerts.progress" },
     );
 
     const progressByChallenge = new Map<
@@ -116,8 +120,9 @@ Deno.serve(
       Map<string, { current_value: number; xp_claimed: boolean }>
     >();
     for (const p of allProgressData) {
-      if (!progressByChallenge.has(p.challenge_id))
+      if (!progressByChallenge.has(p.challenge_id)) {
         progressByChallenge.set(p.challenge_id, new Map());
+      }
       progressByChallenge
         .get(p.challenge_id)!
         .set(p.salesperson_id, {
@@ -139,7 +144,9 @@ Deno.serve(
 
         if (!isClaimed) {
           const remaining = challenge.target_value - currentValue;
-          const percentage = Math.round((currentValue / challenge.target_value) * 100);
+          const percentage = Math.round(
+            (currentValue / challenge.target_value) * 100,
+          );
           notifications.push({
             salesperson_id: sp.id,
             salesperson_name: sp.name,
@@ -157,12 +164,12 @@ Deno.serve(
       }
     }
 
-    ctx.log('info', 'notifications_generated', { count: notifications.length });
+    ctx.log("info", "notifications_generated", { count: notifications.length });
 
     if (notifications.length > 0) {
-      const achievementRows = notifications.map(notif => ({
+      const achievementRows = notifications.map((notif) => ({
         salesperson_id: notif.salesperson_id,
-        achievement_type: 'challenge_expiring',
+        achievement_type: "challenge_expiring",
         achievement_date: today,
         details: {
           challenge_id: notif.challenge_id,
@@ -178,17 +185,17 @@ Deno.serve(
             : `⏰ Último dia! Faltam ${notif.remaining} para completar "${notif.challenge_title}" (+${notif.xp_reward} XP)`,
         },
       }));
-      await supabase.from('achievements').insert(achievementRows);
+      await supabase.from("achievements").insert(achievementRows);
     }
 
     return jsonResponse(
       {
-        message: 'Challenge expiration notifications sent',
+        message: "Challenge expiration notifications sent",
         challenges_expiring: expiringChallenges.length,
         notifications_sent: notifications.length,
         notifications,
       },
-      { requestId: ctx.requestId }
+      { requestId: ctx.requestId },
     );
-  })
+  }),
 );

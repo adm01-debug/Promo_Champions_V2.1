@@ -1,10 +1,6 @@
-import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
-import {
-  getServiceClient,
-  getUserClient,
-  UnauthorizedError,
-} from '../_shared/auth-client.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface CoachingTarget {
   salesperson_id: string;
@@ -16,152 +12,124 @@ interface CoachingTarget {
   avg_deal_size: number;
   activities_30d: number;
   health_score: number; // 0-100
-  priority: 'critical' | 'warning' | 'healthy';
+  priority: "critical" | "warning" | "healthy";
   top_issue: string;
   recommended_action: string;
 }
 
-Deno.serve(
-  withRequestId('coaching-intelligence', async (req, _ctx) => {
-    const corsHeaders = getCorsHeaders(req);
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-    try {
-      // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
-      const caller = await getUserClient(req);
+  try {
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
 
-      // Painel de coaching da equipe inteira: restrito a admin/manager.
-      const { data: isManager, error: roleErr } = await caller.client.rpc(
-        'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never
-      );
-      if (roleErr) throw roleErr;
-      if (!isManager) {
-        return new Response(JSON.stringify({ error: 'forbidden' }), {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      const supabase = getServiceClient(
-        'agrega métricas de coaching de toda a equipe para gestores'
-      );
-
-      const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
-
-      const [{ data: salespeople }, { data: sales }, { data: activities }] =
-        await Promise.all([
-          supabase
-            .from('salespeople')
-            .select('id, name, avatar_url, role, is_active')
-            .eq('is_active', true)
-            .limit(500),
-          supabase
-            .from('sales')
-            .select('id, salesperson_id, status, amount, created_at')
-            .gte('created_at', since30)
-            .limit(10000),
-          supabase
-            .from('activities')
-            .select('id, salesperson_id, created_at')
-            .gte('created_at', since30)
-            .limit(50000),
-        ]);
-
-      const targets: CoachingTarget[] = (salespeople ?? []).map(sp => {
-        const myDeals = (sales ?? []).filter(s => s.salesperson_id === sp.id);
-        const won = myDeals.filter(d => d.status === 'completed');
-        const lost = myDeals.filter(d => d.status === 'lost');
-        const revenue = won.reduce((sum, d) => sum + Number(d.amount ?? 0), 0);
-        const winRate =
-          won.length + lost.length > 0
-            ? (won.length / (won.length + lost.length)) * 100
-            : 0;
-        const myActs = (activities ?? []).filter(a => a.salesperson_id === sp.id).length;
-        const avgDeal = won.length > 0 ? revenue / won.length : 0;
-
-        // Health score = win rate weight + activity weight + revenue
-        const activityScore = Math.min(100, (myActs / 30) * 100); // 30+ activities = max
-        const revenueScore = Math.min(100, (revenue / 50000) * 100); // 50k = max
-        const healthScore = Math.round(
-          winRate * 0.5 + activityScore * 0.3 + revenueScore * 0.2
-        );
-
-        let priority: CoachingTarget['priority'] = 'healthy';
-        let topIssue = 'Performance dentro da média';
-        let recommendedAction = 'Manter ritmo atual';
-
-        if (myActs < 5) {
-          priority = 'critical';
-          topIssue = 'Baixíssimo volume de atividades (menos de 5 em 30 dias)';
-          recommendedAction = 'Sessão urgente: revisar rotina diária e cadências';
-        } else if (winRate < 15 && myDeals.length >= 3) {
-          priority = 'critical';
-          topIssue = `Win rate crítico: ${Math.round(winRate)}%`;
-          recommendedAction = 'Coaching de qualificação BANT e tratamento de objeções';
-        } else if (winRate < 30 && myDeals.length >= 3) {
-          priority = 'warning';
-          topIssue = `Win rate abaixo do esperado: ${Math.round(winRate)}%`;
-          recommendedAction = 'Roleplay de fechamento + revisão de propostas perdidas';
-        } else if (myActs < 15) {
-          priority = 'warning';
-          topIssue = `Volume de atividades baixo: ${myActs} em 30 dias`;
-          recommendedAction = 'Aumentar prospecção ativa e cadências';
-        } else if (avgDeal < 2000 && won.length >= 2) {
-          priority = 'warning';
-          topIssue = `Ticket médio baixo: R$ ${avgDeal.toFixed(0)}`;
-          recommendedAction = 'Treinamento em upsell e cross-sell';
-        }
-
-        return {
-          salesperson_id: sp.id,
-          name: sp.name,
-          avatar_url: sp.avatar_url,
-          win_rate: Math.round(winRate),
-          deals_count: myDeals.length,
-          total_revenue: revenue,
-          avg_deal_size: Math.round(avgDeal),
-          activities_30d: myActs,
-          health_score: healthScore,
-          priority,
-          top_issue: topIssue,
-          recommended_action: recommendedAction,
-        };
-      });
-
-      // Sort: critical → warning → healthy
-      const order = { critical: 0, warning: 1, healthy: 2 };
-      targets.sort(
-        (a, b) => order[a.priority] - order[b.priority] || a.health_score - b.health_score
-      );
-
-      const summary = {
-        total: targets.length,
-        critical: targets.filter(t => t.priority === 'critical').length,
-        warning: targets.filter(t => t.priority === 'warning').length,
-        healthy: targets.filter(t => t.priority === 'healthy').length,
-        avg_health_score:
-          targets.length > 0
-            ? Math.round(targets.reduce((s, t) => s + t.health_score, 0) / targets.length)
-            : 0,
-      };
-
-      return new Response(JSON.stringify({ targets, summary }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      console.error('coaching-intelligence error:', error);
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      return new Response(JSON.stringify({ error: msg }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    // Painel de coaching da equipe inteira: restrito a admin/manager.
+    const { data: isManager, error: roleErr } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleErr) throw roleErr;
+    if (!isManager) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-  })
-);
+
+    const supabase = getServiceClient("agrega métricas de coaching de toda a equipe para gestores");
+
+    const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
+
+    const [{ data: salespeople }, { data: sales }, { data: activities }] = await Promise.all([
+      supabase.from("salespeople").select("id, name, avatar_url, role, is_active").eq("is_active", true).limit(500),
+      supabase.from("sales").select("id, salesperson_id, status, amount, created_at").gte("created_at", since30).limit(10000),
+      supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since30).limit(50000),
+    ]);
+
+    const targets: CoachingTarget[] = (salespeople ?? []).map((sp) => {
+      const myDeals = (sales ?? []).filter((s) => s.salesperson_id === sp.id);
+      const won = myDeals.filter((d) => d.status === "completed");
+      const lost = myDeals.filter((d) => d.status === "lost");
+      const revenue = won.reduce((sum, d) => sum + Number(d.amount ?? 0), 0);
+      const winRate = (won.length + lost.length) > 0 ? (won.length / (won.length + lost.length)) * 100 : 0;
+      const myActs = (activities ?? []).filter((a) => a.salesperson_id === sp.id).length;
+      const avgDeal = won.length > 0 ? revenue / won.length : 0;
+
+      // Health score = win rate weight + activity weight + revenue
+      const activityScore = Math.min(100, (myActs / 30) * 100); // 30+ activities = max
+      const revenueScore = Math.min(100, (revenue / 50000) * 100); // 50k = max
+      const healthScore = Math.round(winRate * 0.5 + activityScore * 0.3 + revenueScore * 0.2);
+
+      let priority: CoachingTarget["priority"] = "healthy";
+      let topIssue = "Performance dentro da média";
+      let recommendedAction = "Manter ritmo atual";
+
+      if (myActs < 5) {
+        priority = "critical";
+        topIssue = "Baixíssimo volume de atividades (menos de 5 em 30 dias)";
+        recommendedAction = "Sessão urgente: revisar rotina diária e cadências";
+      } else if (winRate < 15 && myDeals.length >= 3) {
+        priority = "critical";
+        topIssue = `Win rate crítico: ${Math.round(winRate)}%`;
+        recommendedAction = "Coaching de qualificação BANT e tratamento de objeções";
+      } else if (winRate < 30 && myDeals.length >= 3) {
+        priority = "warning";
+        topIssue = `Win rate abaixo do esperado: ${Math.round(winRate)}%`;
+        recommendedAction = "Roleplay de fechamento + revisão de propostas perdidas";
+      } else if (myActs < 15) {
+        priority = "warning";
+        topIssue = `Volume de atividades baixo: ${myActs} em 30 dias`;
+        recommendedAction = "Aumentar prospecção ativa e cadências";
+      } else if (avgDeal < 2000 && won.length >= 2) {
+        priority = "warning";
+        topIssue = `Ticket médio baixo: R$ ${avgDeal.toFixed(0)}`;
+        recommendedAction = "Treinamento em upsell e cross-sell";
+      }
+
+      return {
+        salesperson_id: sp.id,
+        name: sp.name,
+        avatar_url: sp.avatar_url,
+        win_rate: Math.round(winRate),
+        deals_count: myDeals.length,
+        total_revenue: revenue,
+        avg_deal_size: Math.round(avgDeal),
+        activities_30d: myActs,
+        health_score: healthScore,
+        priority,
+        top_issue: topIssue,
+        recommended_action: recommendedAction,
+      };
+    });
+
+    // Sort: critical → warning → healthy
+    const order = { critical: 0, warning: 1, healthy: 2 };
+    targets.sort((a, b) => order[a.priority] - order[b.priority] || a.health_score - b.health_score);
+
+    const summary = {
+      total: targets.length,
+      critical: targets.filter((t) => t.priority === "critical").length,
+      warning: targets.filter((t) => t.priority === "warning").length,
+      healthy: targets.filter((t) => t.priority === "healthy").length,
+      avg_health_score: targets.length > 0 ? Math.round(targets.reduce((s, t) => s + t.health_score, 0) / targets.length) : 0,
+    };
+
+    return new Response(JSON.stringify({ targets, summary }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    console.error("coaching-intelligence error:", error);
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    return new Response(JSON.stringify({ error: msg }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+}));

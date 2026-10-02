@@ -39,16 +39,16 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 export function computeDealProbability(
   deal: DealProbabilityInput,
   stageHistory: readonly StageHistoryEntry[],
-  nowMs: number = Date.now()
+  nowMs: number = Date.now(),
 ): DealProbabilityResult {
   const factors: string[] = [];
   let probability = STAGE_PROBABILITIES[deal.status] || 10;
 
   // Fator 1: tempo no estágio atual (deals parados têm probabilidade menor)
-  const currentStageEntry = stageHistory.find(h => !h.exited_at);
+  const currentStageEntry = stageHistory.find((h) => !h.exited_at);
   if (currentStageEntry) {
     const daysInStage = Math.floor(
-      (nowMs - new Date(currentStageEntry.entered_at).getTime()) / MS_PER_DAY
+      (nowMs - new Date(currentStageEntry.entered_at).getTime()) / MS_PER_DAY,
     );
     if (daysInStage > 14) {
       probability -= 15;
@@ -92,8 +92,7 @@ export function computeDealProbability(
           return acc + days;
         }
         return acc;
-      }, 0) /
-      (stageHistory.length - 1);
+      }, 0) / (stageHistory.length - 1);
 
     if (avgDaysPerStage < 5) {
       probability += 10;

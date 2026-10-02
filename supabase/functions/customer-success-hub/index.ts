@@ -1,8 +1,8 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { chunkedIn } from '../_shared/chunked-in.ts';
-import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { chunkedIn } from "../_shared/chunked-in.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface HealthFactor {
   label: string;
@@ -30,80 +30,70 @@ interface AccountHealth {
   };
 }
 
-Deno.serve(
-  withRequestId('customer-success-hub', async (req, _ctx) => {
-    const corsHeaders = getCorsHeaders(req);
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+Deno.serve(withRequestId("customer-success-hub", async (req, _ctx) => {
+  const corsHeaders = getCorsHeaders(req);
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, serviceKey);
+
+    // Autorização: exige usuário autenticado com papel admin/manager (dashboard agrega dados de todas as contas).
     try {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, serviceKey);
-
-      // Autorização: exige usuário autenticado com papel admin/manager (dashboard agrega dados de todas as contas).
-      try {
-        const caller = await getUserClient(req);
-        const { data: allowed, error: roleError } = await caller.client.rpc(
-          'is_admin_or_manager' as never,
-          { _user_id: caller.userId } as never
-        );
-        if (roleError) throw roleError;
-        if (!allowed) {
-          return new Response(JSON.stringify({ error: 'forbidden' }), {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-      } catch (error) {
-        if (error instanceof UnauthorizedError) {
-          return new Response(JSON.stringify({ error: 'unauthorized' }), {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
-        }
-        console.error('customer-success-hub authorization failed:', error);
-        return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
-          status: 503,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      const { data: accounts } = await supabase
-        .from('accounts')
-        .select(
-          'id, name, tier, health_status, account_score, annual_revenue, updated_at'
-        )
-        .order('annual_revenue', { ascending: false, nullsFirst: false })
-        .limit(100);
-
-      if (!accounts) {
-        return new Response(JSON.stringify({ accounts: [], summary: {} }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      // Batch-fetch latest activity date per account — replaces N serial queries
-      const accountIds = accounts.map(a => a.id);
-      const allActivities = await chunkedIn<{ account_id: string; occurred_at: string }>(
-        accountIds,
-        chunk =>
-          supabase
-            .from('account_activities')
-            .select('account_id, occurred_at')
-            .in('account_id', chunk)
-            .order('occurred_at', { ascending: false })
-            .limit(chunk.length * 50),
-        { parallel: true, label: 'customer-success-hub.activities' }
+      const caller = await getUserClient(req);
+      const { data: allowed, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never
       );
-      const lastActivityByAccount = new Map<string, string>();
-      for (const act of allActivities) {
-        const cur = lastActivityByAccount.get(act.account_id);
-        if (!cur || act.occurred_at > cur)
-          lastActivityByAccount.set(act.account_id, act.occurred_at);
+      if (roleError) throw roleError;
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("customer-success-hub authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-      const now = Date.now();
-      const enriched: AccountHealth[] = accounts.map(acc => {
+    const { data: accounts } = await supabase
+      .from('accounts')
+      .select('id, name, tier, health_status, account_score, annual_revenue, updated_at')
+      .order('annual_revenue', { ascending: false, nullsFirst: false })
+      .limit(100);
+
+    if (!accounts) {
+      return new Response(JSON.stringify({ accounts: [], summary: {} }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Batch-fetch latest activity date per account — replaces N serial queries
+    const accountIds = accounts.map(a => a.id);
+    const allActivities = await chunkedIn<{ account_id: string; occurred_at: string }>(
+      accountIds,
+      (chunk) => supabase.from('account_activities').select('account_id, occurred_at').in('account_id', chunk).order('occurred_at', { ascending: false }).limit(chunk.length * 50),
+      { parallel: true, label: 'customer-success-hub.activities' },
+    );
+    const lastActivityByAccount = new Map<string, string>();
+    for (const act of allActivities) {
+      const cur = lastActivityByAccount.get(act.account_id);
+      if (!cur || act.occurred_at > cur) lastActivityByAccount.set(act.account_id, act.occurred_at);
+    }
+
+    const now = Date.now();
+    const enriched: AccountHealth[] = accounts.map(acc => {
         const lastOccurredAt = lastActivityByAccount.get(acc.id);
         const lastDate = lastOccurredAt
           ? new Date(lastOccurredAt).getTime()
@@ -159,35 +149,32 @@ Deno.serve(
         };
       });
 
-      const summary = {
-        total_accounts: enriched.length,
-        at_risk: enriched.filter(
-          a => a.churn_risk === 'high' || a.churn_risk === 'critical'
-        ).length,
-        critical: enriched.filter(a => a.churn_risk === 'critical').length,
-        expansion_ready: enriched.filter(a => a.expansion_potential > 70).length,
-        total_revenue_at_risk: enriched
-          .filter(a => a.churn_risk === 'high' || a.churn_risk === 'critical')
-          .reduce((sum, a) => sum + a.total_revenue, 0),
-        avg_health_score: Math.round(
-          enriched.reduce((s, a) => s + a.health_score, 0) / Math.max(enriched.length, 1)
-        ),
-      };
+    const summary = {
+      total_accounts: enriched.length,
+      at_risk: enriched.filter(
+        a => a.churn_risk === 'high' || a.churn_risk === 'critical'
+      ).length,
+      critical: enriched.filter(a => a.churn_risk === 'critical').length,
+      expansion_ready: enriched.filter(a => a.expansion_potential > 70).length,
+      total_revenue_at_risk: enriched
+        .filter(a => a.churn_risk === 'high' || a.churn_risk === 'critical')
+        .reduce((sum, a) => sum + a.total_revenue, 0),
+      avg_health_score: Math.round(
+        enriched.reduce((s, a) => s + a.health_score, 0) / Math.max(enriched.length, 1)
+      ),
+    };
 
-      return new Response(JSON.stringify({ accounts: enriched, summary }), {
+    return new Response(JSON.stringify({ accounts: enriched, summary }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('customer-success-hub error:', error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    } catch (error) {
-      console.error('customer-success-hub error:', error);
-      return new Response(
-        JSON.stringify({
-          error: error instanceof Error ? error.message : 'Unknown error',
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-  })
-);
+      }
+    );
+  }
+}));

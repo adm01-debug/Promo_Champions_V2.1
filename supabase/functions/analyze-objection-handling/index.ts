@@ -1,22 +1,33 @@
-import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
 import {
   getServiceClient,
   getUserClient,
   UnauthorizedError,
-} from '../_shared/auth-client.ts';
-import { chunkedIn } from '../_shared/chunked-in.ts';
+} from "../_shared/auth-client.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 type Turn = {
-  speaker: 'seller' | 'client' | string;
+  speaker: "seller" | "client" | string;
   text: string;
   start?: number;
   end?: number;
 };
 type ObjType =
-  'price' | 'timing' | 'authority' | 'need' | 'competition' | 'trust' | 'other';
-type Quality = 'acknowledged' | 'reframed' | 'resolved' | 'deflected' | 'ignored';
-type Status = 'resolved' | 'partial' | 'unresolved';
+  | "price"
+  | "timing"
+  | "authority"
+  | "need"
+  | "competition"
+  | "trust"
+  | "other";
+type Quality =
+  | "acknowledged"
+  | "reframed"
+  | "resolved"
+  | "deflected"
+  | "ignored";
+type Status = "resolved" | "partial" | "unresolved";
 
 const PATTERNS: Record<ObjType, RegExp[]> = {
   price: [
@@ -65,7 +76,9 @@ const PATTERNS: Record<ObjType, RegExp[]> = {
   other: [],
 };
 
-function classifyObjection(text: string): { type: ObjType; pattern: string } | null {
+function classifyObjection(
+  text: string,
+): { type: ObjType; pattern: string } | null {
   for (const [type, regs] of Object.entries(PATTERNS)) {
     for (const re of regs) {
       const m = text.match(re);
@@ -82,60 +95,65 @@ const PROOF =
   /(\d+%|\d+\s*(reais|r\$|clientes|empresas|meses|dias|x\s+mais)|case|estudo|garantia|roi|economia)/i;
 
 function classifyResponse(text: string | null): Quality {
-  if (!text || text.trim().length < 3) return 'ignored';
+  if (!text || text.trim().length < 3) return "ignored";
   const ack = ACK.test(text);
   const reframe = REFRAME.test(text);
   const proof = PROOF.test(text);
-  if (ack && reframe && proof) return 'resolved';
-  if (ack && reframe) return 'reframed';
-  if (ack) return 'acknowledged';
-  return 'deflected';
+  if (ack && reframe && proof) return "resolved";
+  if (ack && reframe) return "reframed";
+  if (ack) return "acknowledged";
+  return "deflected";
 }
 
 function qualityToStatus(q: Quality): Status {
-  if (q === 'resolved') return 'resolved';
-  if (q === 'reframed' || q === 'acknowledged') return 'partial';
-  return 'unresolved';
+  if (q === "resolved") return "resolved";
+  if (q === "reframed" || q === "acknowledged") return "partial";
+  return "unresolved";
 }
 
 function healthFor(score: number): string {
-  if (score >= 80) return 'excellent';
-  if (score >= 60) return 'good';
-  if (score >= 40) return 'fair';
-  return 'poor';
+  if (score >= 80) return "excellent";
+  if (score >= 60) return "good";
+  if (score >= 40) return "fair";
+  return "poor";
 }
 
 Deno.serve(
-  withRequestId('analyze-objection-handling', async (req, _ctx) => {
+  withRequestId("analyze-objection-handling", async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
-    if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+    if (req.method === "OPTIONS") {
+      return new Response("ok", { headers: corsHeaders });
+    }
 
     try {
       const caller = await getUserClient(req);
 
       const { recording_id } = await req.json();
       if (!recording_id) {
-        return new Response(JSON.stringify({ error: 'recording_id required' }), {
-          status: 400,
-          headers: corsHeaders,
-        });
+        return new Response(
+          JSON.stringify({ error: "recording_id required" }),
+          {
+            status: 400,
+            headers: corsHeaders,
+          },
+        );
       }
 
       // Escritas em call_objections/call_objection_analysis/objection_library
       // exigem bypass de RLS; a leitura do recording usa o client do usuário
       // para garantir que o chamador só analise gravações que ele pode ver.
       const admin = getServiceClient(
-        'escrita em call_objections/analysis/objection_library (RLS)'
+        "escrita em call_objections/analysis/objection_library (RLS)",
       );
 
       const { data: rec, error: recErr } = await caller.client
-        .from('call_recordings')
-        .select('id, diarization, duration_seconds')
-        .eq('id', recording_id)
+        .from("call_recordings")
+        .select("id, diarization, duration_seconds")
+        .eq("id", recording_id)
         .single();
 
       if (recErr || !rec) {
-        return new Response(JSON.stringify({ error: 'Recording not found' }), {
+        return new Response(JSON.stringify({ error: "Recording not found" }), {
           status: 404,
           headers: corsHeaders,
         });
@@ -145,10 +163,13 @@ Deno.serve(
         ? rec.diarization
         : (rec.diarization?.turns ?? []);
       if (!turns.length) {
-        return new Response(JSON.stringify({ error: 'No diarization available' }), {
-          status: 422,
-          headers: corsHeaders,
-        });
+        return new Response(
+          JSON.stringify({ error: "No diarization available" }),
+          {
+            status: 422,
+            headers: corsHeaders,
+          },
+        );
       }
 
       const objections: Array<{
@@ -165,26 +186,24 @@ Deno.serve(
 
       for (let i = 0; i < turns.length; i++) {
         const t = turns[i];
-        if (t.speaker !== 'client') continue;
-        const cls = classifyObjection(t.text || '');
+        if (t.speaker !== "client") continue;
+        const cls = classifyObjection(t.text || "");
         if (!cls) continue;
 
         const responseTurns: Turn[] = [];
         for (let j = i + 1; j < Math.min(i + 4, turns.length); j++) {
-          if (turns[j].speaker === 'seller') responseTurns.push(turns[j]);
+          if (turns[j].speaker === "seller") responseTurns.push(turns[j]);
           if (responseTurns.length >= 3) break;
         }
-        const responseText =
-          responseTurns
-            .map(r => r.text)
-            .join(' ')
-            .trim() || null;
+        const responseText = responseTurns
+          .map((r) => r.text)
+          .join(" ")
+          .trim() || null;
         const quality = classifyResponse(responseText);
         const status = qualityToStatus(quality);
-        const responseTime =
-          responseTurns[0]?.start && t.end
-            ? Math.max(0, responseTurns[0].start - t.end)
-            : 0;
+        const responseTime = responseTurns[0]?.start && t.end
+          ? Math.max(0, responseTurns[0].start - t.end)
+          : 0;
 
         objections.push({
           client_turn_index: i,
@@ -200,10 +219,14 @@ Deno.serve(
       }
 
       const total = objections.length;
-      const resolved = objections.filter(o => o.resolution_status === 'resolved').length;
-      const partial = objections.filter(o => o.resolution_status === 'partial').length;
+      const resolved = objections.filter((o) =>
+        o.resolution_status === "resolved"
+      ).length;
+      const partial = objections.filter((o) =>
+        o.resolution_status === "partial"
+      ).length;
       const unresolved = objections.filter(
-        o => o.resolution_status === 'unresolved'
+        (o) => o.resolution_status === "unresolved",
       ).length;
       const avgRT = total
         ? objections.reduce((a, o) => a + o.response_time, 0) / total
@@ -213,10 +236,13 @@ Deno.serve(
       const score = Math.max(0, Math.min(100, baseScore - latencyPenalty));
       const health = healthFor(score);
 
-      await admin.from('call_objections').delete().eq('recording_id', recording_id);
+      await admin.from("call_objections").delete().eq(
+        "recording_id",
+        recording_id,
+      );
       if (total > 0) {
-        await admin.from('call_objections').insert(
-          objections.map(o => ({
+        await admin.from("call_objections").insert(
+          objections.map((o) => ({
             recording_id,
             client_turn_index: o.client_turn_index,
             objection_text: o.objection_text,
@@ -226,11 +252,11 @@ Deno.serve(
             resolution_status: o.resolution_status,
             start_estimate: o.start_estimate,
             factors: { response_time: o.response_time, pattern: o.pattern },
-          }))
+          })),
         );
       }
 
-      await admin.from('call_objection_analysis').upsert(
+      await admin.from("call_objection_analysis").upsert(
         {
           recording_id,
           total_objections: total,
@@ -243,13 +269,18 @@ Deno.serve(
           factors: { latency_penalty: latencyPenalty, base_score: baseScore },
           calculated_at: new Date().toISOString(),
         },
-        { onConflict: 'recording_id' }
+        { onConflict: "recording_id" },
       );
 
       // Update objection_library
       const grouped = new Map<
         string,
-        { type: ObjType; pattern: string; bestQ: Quality; bestText: string | null }
+        {
+          type: ObjType;
+          pattern: string;
+          bestQ: Quality;
+          bestText: string | null;
+        }
       >();
       const QRANK: Record<Quality, number> = {
         resolved: 4,
@@ -272,8 +303,10 @@ Deno.serve(
       }
 
       // Batch-fetch all existing library entries for all grouped patterns in one query
-      const allTypes = [...new Set([...grouped.values()].map(v => v.type))];
-      const allPatterns = [...new Set([...grouped.values()].map(v => v.pattern))];
+      const allTypes = [...new Set([...grouped.values()].map((v) => v.type))];
+      const allPatterns = [
+        ...new Set([...grouped.values()].map((v) => v.pattern)),
+      ];
       const libraryRows = await chunkedIn<{
         id: string;
         frequency_count: number;
@@ -282,20 +315,20 @@ Deno.serve(
         pattern_text: string;
       }>(
         allPatterns,
-        chunk =>
+        (chunk) =>
           admin
-            .from('objection_library')
+            .from("objection_library")
             .select(
-              'id, frequency_count, best_response_text, objection_type, pattern_text'
+              "id, frequency_count, best_response_text, objection_type, pattern_text",
             )
-            .in('objection_type', allTypes)
-            .in('pattern_text', chunk)
+            .in("objection_type", allTypes)
+            .in("pattern_text", chunk)
             .limit(grouped.size * 2),
-        { parallel: true, label: 'analyze-objection-handling.library' }
+        { parallel: true, label: "analyze-objection-handling.library" },
       );
 
       const libraryByKey = new Map(
-        libraryRows.map(r => [`${r.objection_type}::${r.pattern_text}`, r])
+        libraryRows.map((r) => [`${r.objection_type}::${r.pattern_text}`, r]),
       );
 
       const insertRows: Array<Record<string, unknown>> = [];
@@ -311,20 +344,22 @@ Deno.serve(
             last_seen_at: nowStr,
             updated_at: nowStr,
           };
-          if (v.bestQ === 'resolved' && v.bestText) {
+          if (v.bestQ === "resolved" && v.bestText) {
             update.best_response_text = v.bestText;
             update.best_response_recording_id = recording_id;
           }
           updateOps.push(() =>
-            admin.from('objection_library').update(update).eq('id', existing.id)
+            admin.from("objection_library").update(update).eq("id", existing.id)
           );
         } else {
           insertRows.push({
             objection_type: v.type,
             pattern_text: v.pattern,
             frequency_count: 1,
-            best_response_text: v.bestQ === 'resolved' ? v.bestText : null,
-            best_response_recording_id: v.bestQ === 'resolved' ? recording_id : null,
+            best_response_text: v.bestQ === "resolved" ? v.bestText : null,
+            best_response_recording_id: v.bestQ === "resolved"
+              ? recording_id
+              : null,
           });
         }
       }
@@ -332,9 +367,9 @@ Deno.serve(
       // Batch insert new entries + parallelize updates — replaces 2N serial queries
       await Promise.all([
         insertRows.length > 0
-          ? admin.from('objection_library').insert(insertRows)
+          ? admin.from("objection_library").insert(insertRows)
           : Promise.resolve(),
-        ...updateOps.map(fn => fn()),
+        ...updateOps.map((fn) => fn()),
       ]);
 
       return new Response(
@@ -347,23 +382,26 @@ Deno.serve(
           handling_score: score,
           health,
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
       );
     } catch (e) {
       if (e instanceof UnauthorizedError) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
           status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      console.error('analyze-objection-handling error:', e);
+      console.error("analyze-objection-handling error:", e);
       return new Response(
-        JSON.stringify({ error: e instanceof Error ? e.message : 'unknown' }),
+        JSON.stringify({ error: e instanceof Error ? e.message : "unknown" }),
         {
           status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
-  })
+  }),
 );

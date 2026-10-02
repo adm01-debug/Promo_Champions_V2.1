@@ -7,7 +7,10 @@ import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
-import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import {
+  getUserClient,
+  UnauthorizedError,
+} from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
 const BITRIX24_DOMAIN = Deno.env.get('BITRIX24_DOMAIN');
@@ -600,28 +603,22 @@ Deno.serve(
           );
           if (roleError) throw roleError;
           if (!allowed) {
-            return new Response(JSON.stringify({ success: false, error: 'forbidden' }), {
-              status: 403,
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            });
+            return new Response(
+              JSON.stringify({ success: false, error: 'forbidden' }),
+              { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
           }
         } catch (authError) {
           if (authError instanceof UnauthorizedError) {
             return new Response(
               JSON.stringify({ success: false, error: 'unauthorized' }),
-              {
-                status: 401,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-              }
+              { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
           }
           console.error('bitrix24-sync authorization failed:', authError);
           return new Response(
             JSON.stringify({ success: false, error: 'authorization_unavailable' }),
-            {
-              status: 503,
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            }
+            { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
       }

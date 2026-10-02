@@ -82,7 +82,7 @@ Deno.serve(
       }
       const { data: isPrivileged, error: roleError } = await caller.client.rpc(
         'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never
+        { _user_id: caller.userId } as never,
       );
       if (roleError) throw roleError;
       if (!isPrivileged) {
@@ -94,7 +94,7 @@ Deno.serve(
 
       // Bypass de RLS necessário: avalia playbooks x contas de toda a base.
       const supabase = getServiceClient(
-        'deteccao de expansao avalia todas as contas e playbooks'
+        'deteccao de expansao avalia todas as contas e playbooks',
       );
 
       const { data: pbs } = await supabase

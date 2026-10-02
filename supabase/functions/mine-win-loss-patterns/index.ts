@@ -1,10 +1,10 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { getCorsHeaders } from '../_shared/cors.ts';
-import { withRequestId } from '../_shared/request-id.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
-import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { withRequestId } from "../_shared/request-id.ts";
+import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
 interface Analysis {
   outcome: string;
@@ -17,7 +17,10 @@ interface Analysis {
 }
 
 function aggregate(rows: Analysis[]) {
-  const winFactors = new Map<string, { count: number; cycle: number[]; amt: number[] }>();
+  const winFactors = new Map<
+    string,
+    { count: number; cycle: number[]; amt: number[] }
+  >();
   const lossFactors = new Map<
     string,
     { count: number; cycle: number[]; amt: number[] }
@@ -33,18 +36,19 @@ function aggregate(rows: Analysis[]) {
   const segments = new Map<string, { wins: number; losses: number }>();
 
   for (const r of rows) {
-    const key = r.primary_reason ?? 'Não informado';
+    const key = r.primary_reason ?? "Não informado";
     const cycle = r.cycle_days ?? 0;
     const amt = r.amount ?? 0;
-    const target = r.outcome === 'won' ? winFactors : lossFactors;
+    const target = r.outcome === "won" ? winFactors : lossFactors;
     const e = target.get(key) ?? { count: 0, cycle: [], amt: [] };
     e.count++;
     e.cycle.push(cycle);
     e.amt.push(amt);
     target.set(key, e);
 
-    if (r.outcome === 'lost' && r.lost_stage) {
-      const s = stuckStages.get(r.lost_stage) ?? { count: 0, cycle: [], amt: [] };
+    if (r.outcome === "lost" && r.lost_stage) {
+      const s = stuckStages.get(r.lost_stage) ??
+        { count: 0, cycle: [], amt: [] };
       s.count++;
       s.cycle.push(cycle);
       s.amt.push(amt);
@@ -58,14 +62,14 @@ function aggregate(rows: Analysis[]) {
         amt: [],
       };
       c.encounters++;
-      if (r.outcome === 'won') c.wins++;
+      if (r.outcome === "won") c.wins++;
       c.cycle.push(cycle);
       c.amt.push(amt);
       competitors.set(r.competitor, c);
     }
     if (r.segment) {
       const sg = segments.get(r.segment) ?? { wins: 0, losses: 0 };
-      if (r.outcome === 'won') sg.wins++;
+      if (r.outcome === "won") sg.wins++;
       else sg.losses++;
       segments.set(r.segment, sg);
     }
@@ -78,9 +82,9 @@ function aggregate(rows: Analysis[]) {
   const patterns: Array<Record<string, unknown>> = [];
   for (const [label, v] of winFactors) {
     patterns.push({
-      pattern_type: 'win_factor',
+      pattern_type: "win_factor",
       label,
-      outcome: 'won',
+      outcome: "won",
       frequency: v.count,
       win_rate: 100,
       avg_cycle_days: avg(v.cycle),
@@ -90,9 +94,9 @@ function aggregate(rows: Analysis[]) {
   }
   for (const [label, v] of lossFactors) {
     patterns.push({
-      pattern_type: 'loss_factor',
+      pattern_type: "loss_factor",
       label,
-      outcome: 'lost',
+      outcome: "lost",
       frequency: v.count,
       win_rate: 0,
       avg_cycle_days: avg(v.cycle),
@@ -102,9 +106,9 @@ function aggregate(rows: Analysis[]) {
   }
   for (const [label, v] of stuckStages) {
     patterns.push({
-      pattern_type: 'stuck_stage',
+      pattern_type: "stuck_stage",
       label,
-      outcome: 'lost',
+      outcome: "lost",
       frequency: v.count,
       win_rate: 0,
       avg_cycle_days: avg(v.cycle),
@@ -114,7 +118,7 @@ function aggregate(rows: Analysis[]) {
   }
   for (const [label, v] of competitors) {
     patterns.push({
-      pattern_type: 'competitor',
+      pattern_type: "competitor",
       label,
       outcome: null,
       frequency: v.encounters,
@@ -127,7 +131,7 @@ function aggregate(rows: Analysis[]) {
   for (const [label, v] of segments) {
     const tot = v.wins + v.losses;
     patterns.push({
-      pattern_type: 'icp_match',
+      pattern_type: "icp_match",
       label,
       outcome: null,
       frequency: tot,
@@ -142,7 +146,7 @@ function aggregate(rows: Analysis[]) {
 
 async function generateInsights(
   patterns: Array<Record<string, unknown>>,
-  totalRows: number
+  totalRows: number,
 ): Promise<Array<Record<string, unknown>>> {
   if (!LOVABLE_API_KEY || patterns.length === 0) return [];
   try {
@@ -151,140 +155,158 @@ async function generateInsights(
       .sort((a, b) => (b.frequency as number) - (a.frequency as number))
       .slice(0, 20);
     const resp = await fetchWithTimeout(
-      'https://ai.gateway.lovable.dev/v1/chat/completions',
+      "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+          model: "google/gemini-2.5-flash",
           messages: [
             {
-              role: 'system',
+              role: "system",
               content:
-                'Você é um analista de vendas B2B. Gere 3-5 insights acionáveis em PT-BR a partir de padrões de win/loss. Use tool call.',
+                "Você é um analista de vendas B2B. Gere 3-5 insights acionáveis em PT-BR a partir de padrões de win/loss. Use tool call.",
             },
             {
-              role: 'user',
-              content: `Total deals analisados: ${totalRows}\nPadrões:\n${JSON.stringify(top)}`,
+              role: "user",
+              content: `Total deals analisados: ${totalRows}\nPadrões:\n${
+                JSON.stringify(top)
+              }`,
             },
           ],
           tools: [
             {
-              type: 'function',
+              type: "function",
               function: {
-                name: 'emit_insights',
-                description: 'Emite insights acionáveis',
+                name: "emit_insights",
+                description: "Emite insights acionáveis",
                 parameters: {
-                  type: 'object',
+                  type: "object",
                   properties: {
                     insights: {
-                      type: 'array',
+                      type: "array",
                       items: {
-                        type: 'object',
+                        type: "object",
                         properties: {
                           insight_type: {
-                            type: 'string',
+                            type: "string",
                             enum: [
-                              'win_pattern',
-                              'loss_pattern',
-                              'competitor',
-                              'icp',
-                              'process',
+                              "win_pattern",
+                              "loss_pattern",
+                              "competitor",
+                              "icp",
+                              "process",
                             ],
                           },
-                          title: { type: 'string' },
+                          title: { type: "string" },
                           description: {
-                            type: 'string',
-                            description: 'Recomendação acionável em 1-2 frases',
+                            type: "string",
+                            description: "Recomendação acionável em 1-2 frases",
                           },
                           severity: {
-                            type: 'string',
-                            enum: ['info', 'opportunity', 'risk'],
+                            type: "string",
+                            enum: ["info", "opportunity", "risk"],
                           },
                         },
-                        required: ['insight_type', 'title', 'description', 'severity'],
+                        required: [
+                          "insight_type",
+                          "title",
+                          "description",
+                          "severity",
+                        ],
                       },
                     },
                   },
-                  required: ['insights'],
+                  required: ["insights"],
                 },
               },
             },
           ],
-          tool_choice: { type: 'function', function: { name: 'emit_insights' } },
+          tool_choice: {
+            type: "function",
+            function: { name: "emit_insights" },
+          },
         }),
-      }
+      },
     );
     if (!resp.ok) throw new Error(`AI ${resp.status}`);
     const data = await resp.json();
     const args = JSON.parse(
-      data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ?? '{}'
+      data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ?? "{}",
     );
     return Array.isArray(args.insights)
       ? args.insights.slice(0, 5).map((i: Record<string, unknown>) => ({
-          ...i,
-          evidence: { sample_size: totalRows, top_patterns: top.slice(0, 5) },
-        }))
+        ...i,
+        evidence: { sample_size: totalRows, top_patterns: top.slice(0, 5) },
+      }))
       : [];
   } catch (e) {
-    console.error('AI insights error', e);
+    console.error("AI insights error", e);
     return [];
   }
 }
 
 Deno.serve(
-  withRequestId('mine-win-loss-patterns', async (req, _ctx) => {
+  withRequestId("mine-win-loss-patterns", async (req, _ctx) => {
     const corsHeaders = getCorsHeaders(req);
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+    if (req.method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
+    }
     try {
       // Apaga e regenera win_loss_patterns/win_loss_insights de toda a
       // organização (operação destrutiva): restrito a admin/manager.
       const caller = await getUserClient(req);
       const { data: isManager, error: roleError } = await caller.client.rpc(
-        'is_admin_or_manager' as never,
-        { _user_id: caller.userId } as never
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
       );
       if (roleError) throw roleError;
       if (!isManager) {
-        return new Response(JSON.stringify({ error: 'forbidden' }), {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
           status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
       const admin = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       );
       const { data: rows, error } = await admin
-        .from('win_loss_analyses')
-        .select('outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment')
-        .order('created_at', { ascending: false })
+        .from("win_loss_analyses")
+        .select(
+          "outcome,primary_reason,competitor,lost_stage,cycle_days,amount,segment",
+        )
+        .order("created_at", { ascending: false })
         .limit(5000);
       if (error) throw error;
 
       const analyses = (rows as Analysis[] | null) ?? [];
-      const patterns = aggregate(analyses).map(p => ({
+      const patterns = aggregate(analyses).map((p) => ({
         ...p,
         computed_at: new Date().toISOString(),
       }));
 
       // Replace patterns: delete then insert
       await admin
-        .from('win_loss_patterns')
+        .from("win_loss_patterns")
         .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000');
-      if (patterns.length) await admin.from('win_loss_patterns').insert(patterns);
+        .neq("id", "00000000-0000-0000-0000-000000000000");
+      if (patterns.length) {
+        await admin.from("win_loss_patterns").insert(patterns);
+      }
 
       const insights = await generateInsights(patterns, analyses.length);
       await admin
-        .from('win_loss_insights')
+        .from("win_loss_insights")
         .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000');
-      if (insights.length) await admin.from('win_loss_insights').insert(insights);
+        .neq("id", "00000000-0000-0000-0000-000000000000");
+      if (insights.length) {
+        await admin.from("win_loss_insights").insert(insights);
+      }
 
       return new Response(
         JSON.stringify({
@@ -294,21 +316,24 @@ Deno.serve(
           analyzed: analyses.length,
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     } catch (e) {
       if (e instanceof UnauthorizedError) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
           status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      console.error('mine-win-loss-patterns error', e);
+      console.error("mine-win-loss-patterns error", e);
       return new Response(
-        JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
-  })
+  }),
 );

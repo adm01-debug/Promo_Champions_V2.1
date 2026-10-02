@@ -7,11 +7,7 @@ import {
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
-import {
-  collectErrors,
-  validateUUID,
-  validationErrorResponse,
-} from '../_shared/validation.ts';
+import { collectErrors, validateUUID, validationErrorResponse } from '../_shared/validation.ts';
 
 interface Payload {
   to_number: string;
@@ -124,8 +120,7 @@ Deno.serve(
         return new Response(
           JSON.stringify({
             error: 'invalid_to_number',
-            message:
-              'Número inválido — informe DDD + número (BR) ou formato E.164 (+55...)',
+            message: 'Número inválido — informe DDD + número (BR) ou formato E.164 (+55...)',
           }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -173,19 +168,16 @@ Deno.serve(
       // um valor cru ia direto para o parâmetro From da Twilio.
       let fromNumber: string | null = cred.from_number;
       if (body.from_number) {
-        fromNumber =
-          typeof body.from_number === 'string' ? normalizeToE164(body.from_number) : null;
+        fromNumber = typeof body.from_number === 'string'
+          ? normalizeToE164(body.from_number)
+          : null;
         if (!fromNumber) {
           return new Response(
             JSON.stringify({
               error: 'invalid_from_number',
-              message:
-                'from_number inválido — informe formato E.164 (+55...) ou nacional BR',
+              message: 'from_number inválido — informe formato E.164 (+55...) ou nacional BR',
             }),
-            {
-              status: 400,
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            }
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
       }
