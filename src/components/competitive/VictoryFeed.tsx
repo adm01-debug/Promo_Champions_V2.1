@@ -64,38 +64,40 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
         </Card>
       ) : (
         <AnimatePresence mode="popLayout">
-          {feedItems.map((item: { id?: string } & Record<string, unknown>, index: number) => (
-            <motion.div
-              key={String(item.id ?? index)}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <VictoryFeedItem
-                item={item}
-                currentSalespersonId={currentSalespersonId}
-                eventIcons={eventIcons}
-                eventColors={eventColors}
-                onReaction={(feedItemId, reaction) => {
-                  if (!currentSalespersonId) return;
-                  addReaction.mutate({
-                    feedItemId,
-                    salespersonId: currentSalespersonId,
-                    reaction,
-                  });
-                }}
-                onComment={(feedItemId, content) => {
-                  if (!currentSalespersonId) return;
-                  addComment.mutate({
-                    feedItemId,
-                    salespersonId: currentSalespersonId,
-                    content,
-                  });
-                }}
-              />
-            </motion.div>
-          ))}
+          {feedItems.map(
+            (item: { id?: string } & Record<string, unknown>, index: number) => (
+              <motion.div
+                key={String(item.id ?? index)}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <VictoryFeedItem
+                  item={item}
+                  currentSalespersonId={currentSalespersonId}
+                  eventIcons={eventIcons}
+                  eventColors={eventColors}
+                  onReaction={(feedItemId, reaction) => {
+                    if (!currentSalespersonId) return;
+                    addReaction.mutate({
+                      feedItemId,
+                      salespersonId: currentSalespersonId,
+                      reaction,
+                    });
+                  }}
+                  onComment={(feedItemId, content) => {
+                    if (!currentSalespersonId) return;
+                    addComment.mutate({
+                      feedItemId,
+                      salespersonId: currentSalespersonId,
+                      content,
+                    });
+                  }}
+                />
+              </motion.div>
+            )
+          )}
         </AnimatePresence>
       )}
     </div>

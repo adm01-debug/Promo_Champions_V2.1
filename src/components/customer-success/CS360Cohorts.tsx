@@ -1,14 +1,32 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from "recharts";
+import React from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 
 const CHART_COLORS = [
-  "hsl(var(--primary))",
-  "hsl(var(--success))",
-  "hsl(var(--warning))",
-  "hsl(var(--destructive))",
-  "hsl(var(--info))",
-  "hsl(var(--accent))"
+  'hsl(var(--primary))',
+  'hsl(var(--success))',
+  'hsl(var(--warning))',
+  'hsl(var(--destructive))',
+  'hsl(var(--info))',
+  'hsl(var(--accent))',
 ];
 
 export interface CohortData {
@@ -32,26 +50,65 @@ interface CS360CohortsProps {
   onStatusClick: (status: string) => void;
 }
 
-export function CS360Cohorts({ cohortData, ordersByStatus, onStatusClick }: CS360CohortsProps) {
+export function CS360Cohorts({
+  cohortData,
+  ordersByStatus,
+  onStatusClick,
+}: CS360CohortsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-3">
       <Card className="md:col-span-2 glass border-border/50">
         <CardHeader>
-          <CardTitle className="text-section-title text-sm">Análise de Coortes (Retenção por Mês de Renovação)</CardTitle>
-          <CardDescription className="text-[10px]">Visualização da retenção baseada na primeira compra</CardDescription>
+          <CardTitle className="text-section-title text-sm">
+            Análise de Coortes (Retenção por Mês de Renovação)
+          </CardTitle>
+          <CardDescription className="text-[10px]">
+            Visualização da retenção baseada na primeira compra
+          </CardDescription>
         </CardHeader>
         <CardContent className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={cohortData} layout="vertical" margin={{ left: 30 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border)/0.3)" />
-              <XAxis type="number" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis dataKey="month" type="category" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                horizontal={false}
+                stroke="hsl(var(--border)/0.3)"
+              />
+              <XAxis
+                type="number"
+                tick={{ fontSize: 10 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                dataKey="month"
+                type="category"
+                tick={{ fontSize: 10 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--popover))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px',
+                }}
               />
               <Legend wrapperStyle={{ fontSize: 10 }} />
-              <Bar dataKey="retained" name="Retidos (Health > 40)" stackId="a" fill="hsl(var(--success))" radius={[0, 0, 0, 0]} />
-              <Bar dataKey="churned" name="Risco/Churn" stackId="a" fill="hsl(var(--destructive))" radius={[0, 4, 4, 0]} />
+              <Bar
+                dataKey="retained"
+                name="Retidos (Health > 40)"
+                stackId="a"
+                fill="hsl(var(--success))"
+                radius={[0, 0, 0, 0]}
+              />
+              <Bar
+                dataKey="churned"
+                name="Risco/Churn"
+                stackId="a"
+                fill="hsl(var(--destructive))"
+                radius={[0, 4, 4, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -60,7 +117,9 @@ export function CS360Cohorts({ cohortData, ordersByStatus, onStatusClick }: CS36
       <Card className="glass border-border/50">
         <CardHeader>
           <CardTitle className="text-section-title text-sm">Status de Pedidos</CardTitle>
-          <CardDescription className="text-[10px]">Distribuição de faturamento por status</CardDescription>
+          <CardDescription className="text-[10px]">
+            Distribuição de faturamento por status
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col h-[400px]">
           <div className="flex-1">
@@ -77,24 +136,34 @@ export function CS360Cohorts({ cohortData, ordersByStatus, onStatusClick }: CS36
                   nameKey="status"
                 >
                   {ordersByStatus.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={CHART_COLORS[index % CHART_COLORS.length]}
+                    />
                   ))}
                 </Pie>
-                <Tooltip 
-                   contentStyle={{ backgroundColor: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: "8px" }}
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                  }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
           <div className="space-y-2 mt-4">
             {ordersByStatus.map((s, idx) => (
-              <div 
-                key={s.key} 
+              <div
+                key={s.key}
                 className="flex items-center justify-between p-2 rounded-lg border border-border/40 hover:bg-muted/50 cursor-pointer transition-colors"
                 onClick={() => onStatusClick(s.key)}
               >
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }} />
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }}
+                  />
                   <span className="text-xs font-medium">{s.status}</span>
                 </div>
                 <div className="text-xs font-bold">{s.count}</div>

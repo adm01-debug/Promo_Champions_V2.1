@@ -1,18 +1,29 @@
-import { useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-const CACHE_KEY = "wl-insight-explain-v1";
+const CACHE_KEY = 'wl-insight-explain-v1';
 const TTL_MS = 24 * 60 * 60 * 1000;
 
-interface CacheEntry { text: string; ts: number }
+interface CacheEntry {
+  text: string;
+  ts: number;
+}
 type Cache = Record<string, CacheEntry>;
 
 const readCache = (): Cache => {
-  try { return JSON.parse(localStorage.getItem(CACHE_KEY) ?? "{}") as Cache; } catch { return {}; }
+  try {
+    return JSON.parse(localStorage.getItem(CACHE_KEY) ?? '{}') as Cache;
+  } catch {
+    return {};
+  }
 };
 const writeCache = (c: Cache): void => {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(c)); } catch { /* ignore */ }
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(c));
+  } catch {
+    /* ignore */
+  }
 };
 
 export const useInsightExplanation = () => {
@@ -26,26 +37,30 @@ export const useInsightExplanation = () => {
     return out;
   });
 
-  const explain = useCallback(async (insightId: string, title: string, description: string) => {
-    if (explanations[insightId]) return;
-    setLoading(insightId);
-    try {
-      const { data, error } = await supabase.functions.invoke("analyze-win-loss", {
-        body: { mode: "explain", insight_id: insightId, title, description },
-      });
-      if (error) throw error;
-      const text = (data?.explanation as string | undefined) ?? "Sem explicação disponível.";
-      setExplanations(prev => ({ ...prev, [insightId]: text }));
-      const cache = readCache();
-      cache[insightId] = { text, ts: Date.now() };
-      writeCache(cache);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Falha ao gerar explicação";
-      toast.error(msg);
-    } finally {
-      setLoading(null);
-    }
-  }, [explanations]);
+  const explain = useCallback(
+    async (insightId: string, title: string, description: string) => {
+      if (explanations[insightId]) return;
+      setLoading(insightId);
+      try {
+        const { data, error } = await supabase.functions.invoke('analyze-win-loss', {
+          body: { mode: 'explain', insight_id: insightId, title, description },
+        });
+        if (error) throw error;
+        const text =
+          (data?.explanation as string | undefined) ?? 'Sem explicação disponível.';
+        setExplanations(prev => ({ ...prev, [insightId]: text }));
+        const cache = readCache();
+        cache[insightId] = { text, ts: Date.now() };
+        writeCache(cache);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Falha ao gerar explicação';
+        toast.error(msg);
+      } finally {
+        setLoading(null);
+      }
+    },
+    [explanations]
+  );
 
   return { explain, explanations, loading };
 };

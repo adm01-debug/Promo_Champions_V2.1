@@ -1,7 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, ShieldAlert } from "lucide-react";
-import { objectionCategoryColor, type Decision, type Objection } from "./meetingSummaryHelpers";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2, ShieldAlert } from 'lucide-react';
+import {
+  objectionCategoryColor,
+  type Decision,
+  type Objection,
+} from './meetingSummaryHelpers';
 
 interface Props {
   decisions: Decision[];
@@ -23,10 +27,15 @@ export const DecisionsAndObjectionsPanel = ({ decisions, objections }: Props) =>
         <CardContent className="space-y-2">
           {decisions?.length ? (
             decisions.map((d, i) => (
-              <div key={i} className="text-sm border-l-2 border-status-success/40 pl-3 py-1">
+              <div
+                key={i}
+                className="text-sm border-l-2 border-status-success/40 pl-3 py-1"
+              >
                 <p className="leading-snug">{d.text}</p>
                 {d.made_by_hint && (
-                  <p className="text-xs text-muted-foreground mt-0.5">— {d.made_by_hint}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    — {d.made_by_hint}
+                  </p>
                 )}
               </div>
             ))
@@ -48,7 +57,10 @@ export const DecisionsAndObjectionsPanel = ({ decisions, objections }: Props) =>
             objections.map((o, i) => (
               <div key={i} className="text-sm space-y-1">
                 <p className="leading-snug">{o.text}</p>
-                <Badge variant="outline" className={objectionCategoryColor[o.category] + " text-xs capitalize"}>
+                <Badge
+                  variant="outline"
+                  className={objectionCategoryColor[o.category] + ' text-xs capitalize'}
+                >
                   {o.category}
                 </Badge>
               </div>

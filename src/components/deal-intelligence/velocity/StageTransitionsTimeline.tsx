@@ -1,6 +1,6 @@
-import { ArrowRight } from "lucide-react";
-import { formatHours, stageLabel } from "./velocityHelpers";
-import type { StageTransition } from "@/hooks/deal-intelligence/useStageVelocity";
+import { ArrowRight } from 'lucide-react';
+import { formatHours, stageLabel } from './velocityHelpers';
+import type { StageTransition } from '@/hooks/deal-intelligence/useStageVelocity';
 
 interface Props {
   transitions: StageTransition[];
@@ -23,14 +23,14 @@ export function StageTransitionsTimeline({ transitions }: Props) {
             <div
               className={`px-2 py-1 rounded-md border text-[11px] font-medium ${
                 isOpen
-                  ? "border-primary/40 bg-primary/10 text-primary"
-                  : "border-border/50 bg-muted/30 text-foreground/80"
+                  ? 'border-primary/40 bg-primary/10 text-primary'
+                  : 'border-border/50 bg-muted/30 text-foreground/80'
               }`}
             >
               <div className="leading-tight">{stageLabel(t.to_stage)}</div>
               <div className="text-[10px] text-muted-foreground tabular-nums">
                 {formatHours(hours)}
-                {isOpen ? " · ativo" : ""}
+                {isOpen ? ' · ativo' : ''}
               </div>
             </div>
             {i < transitions.length - 1 && (

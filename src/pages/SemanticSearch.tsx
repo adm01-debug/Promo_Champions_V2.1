@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { Sparkles } from "lucide-react";
-import { SemanticSearchDialog } from "@/components/semantic/SemanticSearchDialog";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Sparkles } from 'lucide-react';
+import { SemanticSearchDialog } from '@/components/semantic/SemanticSearchDialog';
+import { Button } from '@/components/ui/button';
 
 export default function SemanticSearch() {
   const [open, setOpen] = useState(true);
 
-  useEffect(() => { setOpen(true); }, []);
+  useEffect(() => {
+    setOpen(true);
+  }, []);
 
   return (
     <>
       <Helmet>
         <title>Busca Semântica | Promo Champions</title>
-        <meta name="description" content="Busca semântica universal com IA: encontre clientes, leads, deals, atividades e calls usando linguagem natural." />
+        <meta
+          name="description"
+          content="Busca semântica universal com IA: encontre clientes, leads, deals, atividades e calls usando linguagem natural."
+        />
       </Helmet>
 
       <div className="container mx-auto px-4 py-10 max-w-3xl">
@@ -23,13 +28,17 @@ export default function SemanticSearch() {
           </div>
           <h1 className="text-page-title">Busca Semântica Universal</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Pergunte em linguagem natural. A IA entende a intenção e encontra resultados relevantes em clientes, leads, deals, atividades e gravações.
+            Pergunte em linguagem natural. A IA entende a intenção e encontra resultados
+            relevantes em clientes, leads, deals, atividades e gravações.
           </p>
           <Button size="lg" onClick={() => setOpen(true)} className="gap-2">
             <Sparkles className="h-4 w-4" />
             Abrir busca
           </Button>
-          <p className="text-xs text-muted-foreground">Atalho: <kbd className="px-1.5 py-0.5 rounded bg-muted">Ctrl/⌘ + Shift + F</kbd></p>
+          <p className="text-xs text-muted-foreground">
+            Atalho:{' '}
+            <kbd className="px-1.5 py-0.5 rounded bg-muted">Ctrl/⌘ + Shift + F</kbd>
+          </p>
         </div>
       </div>
 

@@ -1,7 +1,15 @@
-import { FC, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
-import { BarChart3 } from "lucide-react";
+import { FC, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+} from 'recharts';
+import { BarChart3 } from 'lucide-react';
 
 interface PortfolioValueChartProps {
   portfolio: Array<{
@@ -12,14 +20,14 @@ interface PortfolioValueChartProps {
 }
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(262, 60%, 65%)",
-  "hsl(var(--success))",
-  "hsl(var(--warning))",
-  "hsl(185, 90%, 48%)",
-  "hsl(30, 90%, 55%)",
-  "hsl(340, 75%, 55%)",
-  "hsl(210, 70%, 55%)",
+  'hsl(var(--primary))',
+  'hsl(262, 60%, 65%)',
+  'hsl(var(--success))',
+  'hsl(var(--warning))',
+  'hsl(185, 90%, 48%)',
+  'hsl(30, 90%, 55%)',
+  'hsl(340, 75%, 55%)',
+  'hsl(210, 70%, 55%)',
 ];
 
 export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
@@ -28,9 +36,9 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
 }) => {
   const data = useMemo(() => {
     const values: Record<string, number> = {};
-    portfolio.forEach((p) => {
-      const sp = salespeople.find((s) => s.id === p.salesperson_id);
-      const name = sp?.name?.split(" ")[0] || "N/A";
+    portfolio.forEach(p => {
+      const sp = salespeople.find(s => s.id === p.salesperson_id);
+      const name = sp?.name?.split(' ')[0] || 'N/A';
       values[name] = (values[name] || 0) + (p.client?.total_value || 0);
     });
     return Object.entries(values)
@@ -39,7 +47,7 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
       .slice(0, 8);
   }, [portfolio, salespeople]);
 
-  if (data.length === 0 || data.every((d) => d.value === 0)) {
+  if (data.length === 0 || data.every(d => d.value === 0)) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-64">
@@ -62,23 +70,28 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
           <BarChart data={data} margin={{ top: 10, right: 10, bottom: 5, left: 5 }}>
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
               axisLine={false}
               tickLine={false}
               width={50}
-              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+              tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
               formatter={(v: number | string) => [
-                `R$ ${Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}`,
-                "Valor Total",
+                `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                'Valor Total',
               ]}
-              contentStyle={{ borderRadius: 8, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", fontSize: 12 }}
+              contentStyle={{
+                borderRadius: 8,
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                fontSize: 12,
+              }}
             />
             <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={28}>
               {data.map((_, i) => (

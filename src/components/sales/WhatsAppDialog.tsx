@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import type { Sale } from "@/types/sales";
-import { Button } from "@/components/ui/button";
-import { MessageCircle, Send, Loader2 } from "lucide-react";
-import { useWhatsApp } from "@/hooks/useWhatsApp";
-import { Textarea } from "@/components/ui/textarea";
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import type { Sale } from '@/types/sales';
+import { Button } from '@/components/ui/button';
+import { MessageCircle, Send, Loader2 } from 'lucide-react';
+import { useWhatsApp } from '@/hooks/useWhatsApp';
+import { Textarea } from '@/components/ui/textarea';
 
 interface WhatsAppDialogProps {
   open: boolean;
@@ -14,7 +14,9 @@ interface WhatsAppDialogProps {
 
 export function WhatsAppDialog({ open, onOpenChange, sale }: WhatsAppDialogProps) {
   const { sendMessage, isSending } = useWhatsApp();
-  const [message, setMessage] = useState(`Olá ${sale.cliente}, notei que estamos avançando com o ${sale.produto}. Gostaria de agendar uma breve call?`);
+  const [message, setMessage] = useState(
+    `Olá ${sale.cliente}, notei que estamos avançando com o ${sale.produto}. Gostaria de agendar uma breve call?`
+  );
 
   const handleSend = async () => {
     const success = await sendMessage(sale.fullId, message);
@@ -32,23 +34,29 @@ export function WhatsAppDialog({ open, onOpenChange, sale }: WhatsAppDialogProps
             WhatsApp Tactical Dispatch
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 block">Mensagem para {sale.cliente}</span>
-            <Textarea 
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 block">
+              Mensagem para {sale.cliente}
+            </span>
+            <Textarea
               className="min-h-[120px] bg-background/50 border-emerald-500/10"
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={e => setMessage(e.target.value)}
             />
           </div>
-          
-          <Button 
-            onClick={handleSend} 
+
+          <Button
+            onClick={handleSend}
             disabled={isSending || !message.trim()}
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest py-6 rounded-2xl"
           >
-            {isSending ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <Send className="h-5 w-5 mr-2" />}
+            {isSending ? (
+              <Loader2 className="h-5 w-5 animate-spin mr-2" />
+            ) : (
+              <Send className="h-5 w-5 mr-2" />
+            )}
             Disparar Agora
           </Button>
         </div>

@@ -1,6 +1,6 @@
-import { Helmet } from "react-helmet-async";
-import { RevenueIntelligenceHub } from "@/components/revenue-intelligence/RevenueIntelligenceHub";
-import { PageTransition } from "@/components/transitions/PageTransition";
+import { Helmet } from 'react-helmet-async';
+import { RevenueIntelligenceHub } from '@/components/revenue-intelligence/RevenueIntelligenceHub';
+import { PageTransition } from '@/components/transitions/PageTransition';
 
 export default function RevenueIntelligence() {
   return (

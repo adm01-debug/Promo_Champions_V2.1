@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Swords, ExternalLink } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import type { CompetitorStat } from "@/hooks/win-loss/useWinLossAggregations";
-import { fmtBRL, fmtPct } from "@/components/deal-intelligence/winloss/winLossHelpers";
-import { CompetitorBattleCardModal } from "./CompetitorBattleCardModal";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Swords, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import type { CompetitorStat } from '@/hooks/win-loss/useWinLossAggregations';
+import { fmtBRL, fmtPct } from '@/components/deal-intelligence/winloss/winLossHelpers';
+import { CompetitorBattleCardModal } from './CompetitorBattleCardModal';
 
 interface Props {
   competitors: CompetitorStat[];
@@ -26,7 +26,9 @@ export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) 
       </CardHeader>
       <CardContent>
         {!competitors.length ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">Nenhum concorrente identificado no período.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">
+            Nenhum concorrente identificado no período.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {competitors.map((c, idx) => {
@@ -47,14 +49,16 @@ export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) 
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div>
                         <p className="font-medium text-sm">{c.name}</p>
-                        <p className="text-[11px] text-muted-foreground">{c.encounters} confrontos</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {c.encounters} confrontos
+                        </p>
                       </div>
                       <Badge
                         variant="outline"
                         className={
                           losingBadly
-                            ? "border-rose-500/40 text-rose-700 bg-rose-500/10"
-                            : "border-emerald-500/40 text-emerald-700 bg-emerald-500/10"
+                            ? 'border-rose-500/40 text-rose-700 bg-rose-500/10'
+                            : 'border-emerald-500/40 text-emerald-700 bg-emerald-500/10'
                         }
                       >
                         Win {fmtPct(c.winRateVs)}
@@ -63,16 +67,21 @@ export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) 
                     <div className="grid grid-cols-2 gap-2 text-[11px]">
                       <div>
                         <p className="text-muted-foreground">Wins / Losses</p>
-                        <p className="font-medium tabular-nums">{c.wins} / {c.losses}</p>
+                        <p className="font-medium tabular-nums">
+                          {c.wins} / {c.losses}
+                        </p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">Ticket perdido méd.</p>
-                        <p className="font-medium tabular-nums">{fmtBRL(c.avgLostAmount)}</p>
+                        <p className="font-medium tabular-nums">
+                          {fmtBRL(c.avgLostAmount)}
+                        </p>
                       </div>
                     </div>
-                    {c.topReason && c.topReason !== "—" && (
+                    {c.topReason && c.topReason !== '—' && (
                       <p className="mt-2 text-[11px] text-muted-foreground">
-                        Top motivo perda: <span className="text-foreground">{c.topReason}</span>
+                        Top motivo perda:{' '}
+                        <span className="text-foreground">{c.topReason}</span>
                       </p>
                     )}
                   </button>
@@ -94,7 +103,11 @@ export function CompetitorBattleCard({ competitors, onCompetitorClick }: Props) 
         )}
       </CardContent>
 
-      <CompetitorBattleCardModal open={!!openCard} onOpenChange={(o) => !o && setOpenCard(null)} competitor={openCard} />
+      <CompetitorBattleCardModal
+        open={!!openCard}
+        onOpenChange={o => !o && setOpenCard(null)}
+        competitor={openCard}
+      />
     </Card>
   );
 }

@@ -1,55 +1,75 @@
-import { useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, Search, Copy, User2, Clock, Hash, ListChecks } from "lucide-react";
-import { formatDistanceToNow, format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { toast } from "sonner";
-import { useReplayInvocations, type ReplayInvocation } from "@/hooks/win-loss/useReplayInvocations";
+import { useMemo, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2, Search, Copy, User2, Clock, Hash, ListChecks } from 'lucide-react';
+import { formatDistanceToNow, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
+import {
+  useReplayInvocations,
+  type ReplayInvocation,
+} from '@/hooks/win-loss/useReplayInvocations';
 
 function copy(text: string, label: string) {
   void navigator.clipboard?.writeText(text).then(
     () => toast.success(`${label} copiado`),
-    () => toast.error("Falha ao copiar"),
+    () => toast.error('Falha ao copiar')
   );
 }
 
 function InvocationCard({ inv }: { inv: ReplayInvocation }) {
-  const successRate = inv.item_count > 0
-    ? Math.round((inv.succeeded_count / inv.item_count) * 100)
-    : 0;
-  const tone = inv.failed_count === 0 ? "success" : inv.succeeded_count === 0 ? "destructive" : "warning";
+  const successRate =
+    inv.item_count > 0 ? Math.round((inv.succeeded_count / inv.item_count) * 100) : 0;
+  const tone =
+    inv.failed_count === 0
+      ? 'success'
+      : inv.succeeded_count === 0
+        ? 'destructive'
+        : 'warning';
   const toneClass =
-    tone === "success" ? "text-success" : tone === "destructive" ? "text-destructive" : "text-amber-500";
+    tone === 'success'
+      ? 'text-success'
+      : tone === 'destructive'
+        ? 'text-destructive'
+        : 'text-amber-500';
 
   return (
     <li className="rounded-lg border bg-card p-3 space-y-2">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="min-w-0 space-y-1">
           <div className="flex items-center gap-2 text-xs">
-            <Badge variant="outline" className="capitalize">{inv.source}</Badge>
+            <Badge variant="outline" className="capitalize">
+              {inv.source}
+            </Badge>
             <Badge variant="secondary" className="gap-1">
               <ListChecks className="h-3 w-3" />
-              {inv.item_count} {inv.item_count === 1 ? "item" : "itens"}
+              {inv.item_count} {inv.item_count === 1 ? 'item' : 'itens'}
             </Badge>
             <span className={`font-semibold ${toneClass}`}>{successRate}% sucesso</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <User2 className="h-3 w-3 shrink-0" />
             <span className="truncate" title={inv.actor_email ?? inv.actor_user_id}>
-              {inv.actor_email ?? inv.actor_user_id.slice(0, 8) + "…"}
+              {inv.actor_email ?? inv.actor_user_id.slice(0, 8) + '…'}
             </span>
           </div>
         </div>
         <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground shrink-0">
-          <span title={format(new Date(inv.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })}>
+          <span
+            title={format(new Date(inv.created_at), 'dd/MM/yyyy HH:mm:ss', {
+              locale: ptBR,
+            })}
+          >
             <Clock className="h-3 w-3 inline mr-1" />
-            {formatDistanceToNow(new Date(inv.created_at), { addSuffix: true, locale: ptBR })}
+            {formatDistanceToNow(new Date(inv.created_at), {
+              addSuffix: true,
+              locale: ptBR,
+            })}
           </span>
-          {typeof inv.duration_ms === "number" && (
+          {typeof inv.duration_ms === 'number' && (
             <span>{(inv.duration_ms / 1000).toFixed(2)}s</span>
           )}
         </div>
@@ -77,7 +97,7 @@ function InvocationCard({ inv }: { inv: ReplayInvocation }) {
           variant="ghost"
           size="sm"
           className="h-6 px-1.5"
-          onClick={() => copy(inv.request_id, "requestId")}
+          onClick={() => copy(inv.request_id, 'requestId')}
           aria-label="Copiar requestId"
         >
           <Copy className="h-3 w-3" />
@@ -89,16 +109,17 @@ function InvocationCard({ inv }: { inv: ReplayInvocation }) {
 
 export function ReplayInvocationsPanel() {
   const { data, isLoading } = useReplayInvocations(200);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState('');
 
   const filtered = useMemo(() => {
     const list = (data ?? []) as ReplayInvocation[];
     const q = filter.trim().toLowerCase();
     if (!q) return list;
-    return list.filter((i) =>
-      (i.actor_email ?? "").toLowerCase().includes(q) ||
-      i.actor_user_id.toLowerCase().includes(q) ||
-      i.request_id.toLowerCase().includes(q),
+    return list.filter(
+      i =>
+        (i.actor_email ?? '').toLowerCase().includes(q) ||
+        i.actor_user_id.toLowerCase().includes(q) ||
+        i.request_id.toLowerCase().includes(q)
     );
   }, [data, filter]);
 
@@ -118,7 +139,7 @@ export function ReplayInvocationsPanel() {
           <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={e => setFilter(e.target.value)}
             placeholder="Filtrar por email, user_id ou requestId…"
             className="pl-8"
             aria-label="Filtrar auditoria de invocações"
@@ -137,7 +158,7 @@ export function ReplayInvocationsPanel() {
         ) : (
           <ScrollArea className="max-h-[640px] pr-2">
             <ol className="space-y-2" aria-label="Histórico de invocações de replay">
-              {filtered.map((inv) => (
+              {filtered.map(inv => (
                 <InvocationCard key={inv.id} inv={inv} />
               ))}
             </ol>

@@ -1,23 +1,36 @@
-import React from "react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
-import { CheckCircle2, MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
+import React from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+import { CheckCircle2, MessageSquare, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface PulseQuestion {
   id: string;
   question: string;
-  type: "scale" | "boolean" | "enps";
+  type: 'scale' | 'boolean' | 'enps';
 }
 
 const PULSE_QUESTIONS: PulseQuestion[] = [
-  { id: "satisfaction", question: "Quão satisfeito você está com seu ambiente de trabalho?", type: "scale" },
-  { id: "tools", question: "Você tem as ferramentas necessárias para atingir suas metas?", type: "boolean" },
-  { id: "enps", question: "De 0 a 10, qual a chance de recomendar nossa empresa como local de trabalho?", type: "enps" },
+  {
+    id: 'satisfaction',
+    question: 'Quão satisfeito você está com seu ambiente de trabalho?',
+    type: 'scale',
+  },
+  {
+    id: 'tools',
+    question: 'Você tem as ferramentas necessárias para atingir suas metas?',
+    type: 'boolean',
+  },
+  {
+    id: 'enps',
+    question:
+      'De 0 a 10, qual a chance de recomendar nossa empresa como local de trabalho?',
+    type: 'enps',
+  },
 ];
 
 function PulseSurveyWidgetImpl({ className }: { className?: string }) {
@@ -40,35 +53,44 @@ function PulseSurveyWidgetImpl({ className }: { className?: string }) {
   };
 
   const getENPSCategory = (score: number) => {
-    if (score >= 9) return { label: "Promotor", color: "text-success dark:text-success" };
-    if (score >= 7) return { label: "Neutro", color: "text-warning dark:text-coins" };
-    return { label: "Detrator", color: "text-destructive" };
+    if (score >= 9) return { label: 'Promotor', color: 'text-success dark:text-success' };
+    if (score >= 7) return { label: 'Neutro', color: 'text-warning dark:text-coins' };
+    return { label: 'Detrator', color: 'text-destructive' };
   };
 
   if (isComplete) {
-    const enpsScore = answers["enps"];
+    const enpsScore = answers['enps'];
     const category = enpsScore !== undefined ? getENPSCategory(enpsScore) : null;
 
     return (
-      <Card className={cn("overflow-hidden", className)}>
+      <Card className={cn('overflow-hidden', className)}>
         <CardContent className="pt-6 text-center space-y-3">
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}>
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring' }}
+          >
             <CheckCircle2 className="h-10 w-10 text-primary mx-auto" />
           </motion.div>
           <p className="font-semibold text-foreground">Obrigado pelo feedback!</p>
           {category && (
             <p className="text-sm text-muted-foreground">
-              Seu eNPS: <span className={cn("font-bold", category.color)}>{enpsScore} ({category.label})</span>
+              Seu eNPS:{' '}
+              <span className={cn('font-bold', category.color)}>
+                {enpsScore} ({category.label})
+              </span>
             </p>
           )}
-          <p className="text-xs text-muted-foreground">Suas respostas ajudam a melhorar nosso ambiente.</p>
+          <p className="text-xs text-muted-foreground">
+            Suas respostas ajudam a melhorar nosso ambiente.
+          </p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className={cn("overflow-hidden", className)}>
+    <Card className={cn('overflow-hidden', className)}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm flex items-center gap-2">
@@ -90,11 +112,13 @@ function PulseSurveyWidgetImpl({ className }: { className?: string }) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-3"
           >
-            <p className="text-sm font-medium text-foreground">{currentQuestion.question}</p>
+            <p className="text-sm font-medium text-foreground">
+              {currentQuestion.question}
+            </p>
 
-            {currentQuestion.type === "scale" && (
+            {currentQuestion.type === 'scale' && (
               <div className="flex gap-1.5">
-                {[1, 2, 3, 4, 5].map((val) => (
+                {[1, 2, 3, 4, 5].map(val => (
                   <Button
                     key={val}
                     size="sm"
@@ -108,7 +132,7 @@ function PulseSurveyWidgetImpl({ className }: { className?: string }) {
               </div>
             )}
 
-            {currentQuestion.type === "boolean" && (
+            {currentQuestion.type === 'boolean' && (
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -127,19 +151,19 @@ function PulseSurveyWidgetImpl({ className }: { className?: string }) {
               </div>
             )}
 
-            {currentQuestion.type === "enps" && (
+            {currentQuestion.type === 'enps' && (
               <div className="grid grid-cols-6 gap-1">
-                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => (
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(val => (
                   <Button
                     key={val}
                     size="sm"
                     variant="outline"
                     onClick={() => handleAnswer(val)}
                     className={cn(
-                      "h-9 text-xs hover:text-primary-foreground transition-colors",
-                      val <= 6 && "hover:bg-destructive",
-                      val >= 7 && val <= 8 && "hover:bg-warning",
-                      val >= 9 && "hover:bg-primary"
+                      'h-9 text-xs hover:text-primary-foreground transition-colors',
+                      val <= 6 && 'hover:bg-destructive',
+                      val >= 7 && val <= 8 && 'hover:bg-warning',
+                      val >= 9 && 'hover:bg-primary'
                     )}
                   >
                     {val}

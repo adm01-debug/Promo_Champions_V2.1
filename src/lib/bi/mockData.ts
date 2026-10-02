@@ -9,7 +9,7 @@ export const MOCK_CLIENT_STATS = {
     { id: '3', date: '2026-05-08', value: 4100, status: 'delivered' },
     { id: '4', date: '2026-04-28', value: 2800, status: 'delivered' },
     { id: '5', date: '2026-04-15', value: 3900, status: 'delivered' },
-  ]
+  ],
 };
 
 export const getMockIndustryTrends = () => [
@@ -25,6 +25,6 @@ export const getMockSeasonality = (seedString: string = 'default') => {
     month: i + 1,
     quotes_count: Math.floor(10 + Math.sin(seed + i) * 8 + 10),
     total_revenue: Math.floor(30000 + Math.cos(seed + i) * 15000 + 20000),
-    avg_ticket: 2000 + (seed % 1000)
+    avg_ticket: 2000 + (seed % 1000),
   }));
 };

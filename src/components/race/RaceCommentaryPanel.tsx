@@ -80,7 +80,10 @@ export function RaceCommentaryPanel({ items, isGenerating, onRegenerate }: Props
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-1.5 uppercase tracking-wider">
                   {CONTEXT_LABEL[latest.context] ?? latest.context} ·{' '}
-                  {formatDistanceToNowStrict(new Date(latest.generated_at), { locale: ptBR, addSuffix: true })}
+                  {formatDistanceToNowStrict(new Date(latest.generated_at), {
+                    locale: ptBR,
+                    addSuffix: true,
+                  })}
                 </p>
               </motion.div>
             </AnimatePresence>
@@ -95,7 +98,10 @@ export function RaceCommentaryPanel({ items, isGenerating, onRegenerate }: Props
             </summary>
             <ul className="mt-2 space-y-1.5 max-h-40 overflow-y-auto pr-1">
               {items.slice(1).map(it => (
-                <li key={it.id} className="text-xs text-muted-foreground border-l-2 border-border pl-2">
+                <li
+                  key={it.id}
+                  className="text-xs text-muted-foreground border-l-2 border-border pl-2"
+                >
                   &ldquo;{it.text}&rdquo;
                 </li>
               ))}

@@ -1,26 +1,34 @@
-import { Helmet } from "react-helmet-async";
-import { motion } from "framer-motion";
-import { PageTransition } from "@/components/transitions/PageTransition";
-import { StalledDealsTable } from "@/components/deal-intelligence/StalledDealsTable";
-import { WeakCoverageDealsTable } from "@/components/deal-intelligence/WeakCoverageDealsTable";
-import { CommitteeInsightsPanel } from "@/components/deal-intelligence/committee/CommitteeInsightsPanel";
-import { StageBaselinesPanel } from "@/components/deal-intelligence/StageBaselinesPanel";
-import { StuckDealsPanel } from "@/components/deal-intelligence/velocity/StuckDealsPanel";
-import { StageBottlenecksChart } from "@/components/deal-intelligence/velocity/StageBottlenecksChart";
-import { ConversionOptimizerPanel } from "@/components/deal-intelligence/ConversionOptimizerPanel";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Heart, Users, Gauge, TrendingDown, Trophy, AlertTriangle } from "lucide-react";
-import { RiskAssessmentPanel } from "@/components/deal-intelligence/RiskAssessmentPanel";
-import { RelationshipHealthGraph } from "@/components/deal-intelligence/committee/RelationshipHealthGraph";
-import { NextBestActionPanel } from "@/components/deal-intelligence/NextBestActionPanel";
-import { useState } from "react";
-import { useWeakCoverageDeals } from "@/hooks/deal-intelligence/useCommitteeCoverage";
-import WinLossIntelligence from "./WinLossIntelligence";
+import { Helmet } from 'react-helmet-async';
+import { motion } from 'framer-motion';
+import { PageTransition } from '@/components/transitions/PageTransition';
+import { StalledDealsTable } from '@/components/deal-intelligence/StalledDealsTable';
+import { WeakCoverageDealsTable } from '@/components/deal-intelligence/WeakCoverageDealsTable';
+import { CommitteeInsightsPanel } from '@/components/deal-intelligence/committee/CommitteeInsightsPanel';
+import { StageBaselinesPanel } from '@/components/deal-intelligence/StageBaselinesPanel';
+import { StuckDealsPanel } from '@/components/deal-intelligence/velocity/StuckDealsPanel';
+import { StageBottlenecksChart } from '@/components/deal-intelligence/velocity/StageBottlenecksChart';
+import { ConversionOptimizerPanel } from '@/components/deal-intelligence/ConversionOptimizerPanel';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Sparkles,
+  Heart,
+  Users,
+  Gauge,
+  TrendingDown,
+  Trophy,
+  AlertTriangle,
+} from 'lucide-react';
+import { RiskAssessmentPanel } from '@/components/deal-intelligence/RiskAssessmentPanel';
+import { RelationshipHealthGraph } from '@/components/deal-intelligence/committee/RelationshipHealthGraph';
+import { NextBestActionPanel } from '@/components/deal-intelligence/NextBestActionPanel';
+import { useState } from 'react';
+import { useWeakCoverageDeals } from '@/hooks/deal-intelligence/useCommitteeCoverage';
+import WinLossIntelligence from './WinLossIntelligence';
 
 export default function DealIntelligence() {
   const { data: weakDeals } = useWeakCoverageDeals();
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
-  
+
   // Use first weak deal as default for the graph if none selected
   const displaySaleId = selectedSaleId || weakDeals?.[0]?.sale_id;
 
@@ -28,7 +36,10 @@ export default function DealIntelligence() {
     <>
       <Helmet>
         <title>Inteligência de Deals | Promo Champions</title>
-        <meta name="description" content="Saúde dos deals e mapeamento do comitê de compra com IA" />
+        <meta
+          name="description"
+          content="Saúde dos deals e mapeamento do comitê de compra com IA"
+        />
       </Helmet>
       <PageTransition>
         <div className="space-y-6">
@@ -90,7 +101,7 @@ export default function DealIntelligence() {
                     <RelationshipHealthGraph saleId={displaySaleId} />
                   </div>
                 </div>
-                <WeakCoverageDealsTable onSelectDeal={(id) => setSelectedSaleId(id)} />
+                <WeakCoverageDealsTable onSelectDeal={id => setSelectedSaleId(id)} />
               </TabsContent>
               <TabsContent value="velocity" className="mt-4 space-y-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">

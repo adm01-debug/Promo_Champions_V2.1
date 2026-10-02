@@ -8,7 +8,7 @@ export const TRACK_VIEWBOX = { width: 600, height: 1000 };
 // SCENE = TRACK / 0.75 → 800x1333. A pista é centralizada via TRACK_OFFSET.
 export const SCENE_VIEWBOX = { width: 800, height: 1333 };
 export const TRACK_OFFSET = {
-  x: (SCENE_VIEWBOX.width - TRACK_VIEWBOX.width) / 2,   // 100
+  x: (SCENE_VIEWBOX.width - TRACK_VIEWBOX.width) / 2, // 100
   y: (SCENE_VIEWBOX.height - TRACK_VIEWBOX.height) / 2, // 166.5
 };
 
@@ -41,12 +41,17 @@ export interface TrackPosition {
 }
 
 // ---------- Parser mínimo + amostragem De Casteljau ----------
-interface Point { x: number; y: number; }
+interface Point {
+  x: number;
+  y: number;
+}
 
 function cubicPoint(p0: Point, p1: Point, p2: Point, p3: Point, t: number): Point {
   const u = 1 - t;
-  const uu = u * u, uuu = uu * u;
-  const tt = t * t, ttt = tt * t;
+  const uu = u * u,
+    uuu = uu * u;
+  const tt = t * t,
+    ttt = tt * t;
   return {
     x: uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x,
     y: uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y,
@@ -168,7 +173,7 @@ export const CHECKPOINTS = [0.25, 0.5, 0.75];
 export const CORNERS: Array<{ progress: number; name: string; isChicane?: boolean }> = [
   { progress: 0.05, name: 'Curva 1' },
   { progress: 0.25, name: 'Curva 2' },
-  { progress: 0.50, name: 'Chicane', isChicane: true },
+  { progress: 0.5, name: 'Chicane', isChicane: true },
   { progress: 0.75, name: 'Curva 3' },
   { progress: 0.95, name: 'Curva 4' },
 ];
@@ -185,11 +190,11 @@ export interface NextCornerInfo {
 /** Retorna informações da próxima curva à frente do progresso atual. */
 export function getNextCornerInfo(progress: number): NextCornerInfo {
   const p = ((progress % 1) + 1) % 1;
-  let next = CORNERS.find((c) => c.progress > p);
+  let next = CORNERS.find(c => c.progress > p);
   if (!next) next = CORNERS[0]; // wrap-around
   const distance = next.progress > p ? next.progress - p : 1 - p + next.progress;
   // DRS zone vai começar em breve se está dentro de ~5% antes do início de uma DRS_ZONE
-  const isDRS = DRS_ZONES.some((z) => {
+  const isDRS = DRS_ZONES.some(z => {
     const d = z.start > p ? z.start - p : 1 - p + z.start;
     return d < distance + 0.02;
   });
@@ -206,17 +211,20 @@ export const SECTOR_BOUNDARIES = [1 / 3, 2 / 3, 0.999];
 
 /** Zonas DRS — trechos retos verticais para ultrapassagem. */
 export const DRS_ZONES: Array<{ start: number; end: number }> = [
-  { start: 0.05, end: 0.22 },   // reta esquerda (descendo)
-  { start: 0.55, end: 0.70 },   // reta direita (subindo, após chicane)
+  { start: 0.05, end: 0.22 }, // reta esquerda (descendo)
+  { start: 0.55, end: 0.7 }, // reta direita (subindo, após chicane)
 ];
 
 export function isInDRSZone(progress: number): boolean {
   const p = ((progress % 1) + 1) % 1;
-  return DRS_ZONES.some((z) => p >= z.start && p <= z.end);
+  return DRS_ZONES.some(z => p >= z.start && p <= z.end);
 }
 
 /** Calcula a volta atual (1-based) e total estimado a partir do progress acumulado. */
-export function computeLapInfo(progress: number, totalLaps = 10): { current: number; total: number } {
+export function computeLapInfo(
+  progress: number,
+  totalLaps = 10
+): { current: number; total: number } {
   const lapsDone = Math.floor(Math.max(0, progress));
   const current = Math.min(totalLaps, lapsDone + 1);
   return { current, total: totalLaps };
@@ -259,10 +267,14 @@ export function makeCommentaryLine(opts: {
 /** Detecta ultrapassagens comparando dois snapshots ordenados por progresso desc. */
 export function detectOvertakes(
   prev: Array<{ id: string; progress: number }>,
-  curr: Array<{ id: string; progress: number }>,
+  curr: Array<{ id: string; progress: number }>
 ): Array<{ overtaker: string; overtaken: string }> {
-  const prevRank = new Map(prev.sort((a, b) => b.progress - a.progress).map((r, i) => [r.id, i]));
-  const currRank = new Map(curr.sort((a, b) => b.progress - a.progress).map((r, i) => [r.id, i]));
+  const prevRank = new Map(
+    prev.sort((a, b) => b.progress - a.progress).map((r, i) => [r.id, i])
+  );
+  const currRank = new Map(
+    curr.sort((a, b) => b.progress - a.progress).map((r, i) => [r.id, i])
+  );
   const overtakes: Array<{ overtaker: string; overtaken: string }> = [];
   currRank.forEach((newPos, id) => {
     const oldPos = prevRank.get(id);

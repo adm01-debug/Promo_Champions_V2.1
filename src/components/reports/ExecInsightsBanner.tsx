@@ -1,9 +1,9 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, CheckCircle2, AlertTriangle, Brain } from "lucide-react";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Sparkles, CheckCircle2, AlertTriangle, Brain } from 'lucide-react';
 
 interface Insight {
-  type: "success" | "warning" | "info";
+  type: 'success' | 'warning' | 'info';
   text: string;
 }
 
@@ -18,7 +18,10 @@ const ICON_MAP = {
   info: <Brain className="h-4 w-4 text-primary mt-0.5 shrink-0" />,
 };
 
-export const ExecInsightsBanner = React.memo(function ExecInsightsBanner({ insights, periodLabel }: ExecInsightsBannerProps) {
+export const ExecInsightsBanner = React.memo(function ExecInsightsBanner({
+  insights,
+  periodLabel,
+}: ExecInsightsBannerProps) {
   if (insights.length === 0) return null;
 
   return (

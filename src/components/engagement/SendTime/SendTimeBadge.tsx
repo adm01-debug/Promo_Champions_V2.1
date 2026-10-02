@@ -1,16 +1,16 @@
-import { Clock, Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useSendTimeProfile } from "@/hooks/sequences/useSendTimeOptimization";
-import { formatWindow, normalizeScore } from "@/components/sequences/sendTimeHelpers";
-import { SendTimeHeatmap } from "./SendTimeHeatmap";
+import { Clock, Sparkles } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useSendTimeProfile } from '@/hooks/sequences/useSendTimeOptimization';
+import { formatWindow, normalizeScore } from '@/components/sequences/sendTimeHelpers';
+import { SendTimeHeatmap } from './SendTimeHeatmap';
 
 interface Props {
   saleId: string;
-  variant?: "default" | "compact";
+  variant?: 'default' | 'compact';
 }
 
-export function SendTimeBadge({ saleId, variant = "default" }: Props) {
+export function SendTimeBadge({ saleId, variant = 'default' }: Props) {
   const { data: profile, isLoading } = useSendTimeProfile(saleId);
 
   if (isLoading) {
@@ -37,11 +37,11 @@ export function SendTimeBadge({ saleId, variant = "default" }: Props) {
     <Tooltip>
       <TooltipTrigger asChild>
         <Badge
-          variant={isHigh ? "default" : "secondary"}
+          variant={isHigh ? 'default' : 'secondary'}
           className="gap-1 text-xs cursor-help"
         >
           <Sparkles className="h-3 w-3" />
-          {variant === "compact" ? window : `Melhor: ${window}`}
+          {variant === 'compact' ? window : `Melhor: ${window}`}
           <span className="opacity-70 ml-1">· {conf}%</span>
         </Badge>
       </TooltipTrigger>
@@ -56,7 +56,8 @@ export function SendTimeBadge({ saleId, variant = "default" }: Props) {
             compact
           />
           <div className="text-[10px] text-muted-foreground">
-            Confiança: {conf}% (Wilson lower bound). Normalizado: {normalizeScore(conf, 100)}.
+            Confiança: {conf}% (Wilson lower bound). Normalizado:{' '}
+            {normalizeScore(conf, 100)}.
           </div>
         </div>
       </TooltipContent>

@@ -1,12 +1,19 @@
-import { FC, useMemo, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { AlertCircle, Search, ArrowUpDown } from "lucide-react";
-import { Link } from "react-router-dom";
-import type { HealthTier } from "@/hooks/deal-intelligence/useDealHealth";
-import { DealHealthScoreBadge } from "../DealHealthScoreBadge";
+import { FC, useMemo, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { AlertCircle, Search, ArrowUpDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import type { HealthTier } from '@/hooks/deal-intelligence/useDealHealth';
+import { DealHealthScoreBadge } from '../DealHealthScoreBadge';
 
 interface Row {
   id: string;
@@ -24,50 +31,60 @@ interface Row {
   } | null;
 }
 
-type SortKey = "health_score" | "amount" | "days_in_stage";
+type SortKey = 'health_score' | 'amount' | 'days_in_stage';
 
 interface Props {
   rows: Row[];
 }
 
 const fmtBRL = (v: number | null | undefined) =>
-  typeof v === "number"
-    ? v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })
-    : "—";
+  typeof v === 'number'
+    ? v.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        maximumFractionDigits: 0,
+      })
+    : '—';
 
 export const CriticalDealsTable: FC<Props> = ({ rows }) => {
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<SortKey>("health_score");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<SortKey>('health_score');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let list = rows.filter((r) => r.tier === "critical" || r.tier === "at_risk");
+    let list = rows.filter(r => r.tier === 'critical' || r.tier === 'at_risk');
     if (q) {
-      list = list.filter((r) =>
-        (r.sales?.client_name || "").toLowerCase().includes(q) ||
-        (r.sales?.product_name || "").toLowerCase().includes(q),
+      list = list.filter(
+        r =>
+          (r.sales?.client_name || '').toLowerCase().includes(q) ||
+          (r.sales?.product_name || '').toLowerCase().includes(q)
       );
     }
     list = [...list].sort((a, b) => {
-      const av = sortBy === "amount"
-        ? (a.sales?.amount ?? 0)
-        : sortBy === "days_in_stage"
-          ? (a.days_in_stage ?? 0)
-          : a.health_score;
-      const bv = sortBy === "amount"
-        ? (b.sales?.amount ?? 0)
-        : sortBy === "days_in_stage"
-          ? (b.days_in_stage ?? 0)
-          : b.health_score;
-      return sortDir === "asc" ? av - bv : bv - av;
+      const av =
+        sortBy === 'amount'
+          ? (a.sales?.amount ?? 0)
+          : sortBy === 'days_in_stage'
+            ? (a.days_in_stage ?? 0)
+            : a.health_score;
+      const bv =
+        sortBy === 'amount'
+          ? (b.sales?.amount ?? 0)
+          : sortBy === 'days_in_stage'
+            ? (b.days_in_stage ?? 0)
+            : b.health_score;
+      return sortDir === 'asc' ? av - bv : bv - av;
     });
     return list.slice(0, 25);
   }, [rows, search, sortBy, sortDir]);
 
   const toggleSort = (k: SortKey) => {
-    if (sortBy === k) setSortDir(sortDir === "asc" ? "desc" : "asc");
-    else { setSortBy(k); setSortDir(k === "health_score" ? "asc" : "desc"); }
+    if (sortBy === k) setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
+    else {
+      setSortBy(k);
+      setSortDir(k === 'health_score' ? 'asc' : 'desc');
+    }
   };
 
   return (
@@ -82,7 +99,7 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
               placeholder="Buscar cliente/produto..."
               className="pl-8 h-9 text-sm"
             />
@@ -101,17 +118,32 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
                 <TableRow>
                   <TableHead>Cliente / Produto</TableHead>
                   <TableHead>
-                    <Button variant="ghost" size="sm" className="-ml-2 h-7" onClick={() => toggleSort("health_score")}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="-ml-2 h-7"
+                      onClick={() => toggleSort('health_score')}
+                    >
                       Score <ArrowUpDown className="h-3 w-3 ml-1" />
                     </Button>
                   </TableHead>
                   <TableHead>
-                    <Button variant="ghost" size="sm" className="-ml-2 h-7" onClick={() => toggleSort("amount")}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="-ml-2 h-7"
+                      onClick={() => toggleSort('amount')}
+                    >
                       Valor <ArrowUpDown className="h-3 w-3 ml-1" />
                     </Button>
                   </TableHead>
                   <TableHead>
-                    <Button variant="ghost" size="sm" className="-ml-2 h-7" onClick={() => toggleSort("days_in_stage")}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="-ml-2 h-7"
+                      onClick={() => toggleSort('days_in_stage')}
+                    >
                       Dias <ArrowUpDown className="h-3 w-3 ml-1" />
                     </Button>
                   </TableHead>
@@ -119,23 +151,30 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((r) => (
+                {filtered.map(r => (
                   <TableRow key={r.id}>
                     <TableCell>
-                      <Link to={`/vendas/${r.sale_id}`} className="text-sm font-medium hover:underline">
-                        {r.sales?.client_name || "—"}
+                      <Link
+                        to={`/vendas/${r.sale_id}`}
+                        className="text-sm font-medium hover:underline"
+                      >
+                        {r.sales?.client_name || '—'}
                       </Link>
                       <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-                        {r.sales?.product_name || ""}
+                        {r.sales?.product_name || ''}
                       </p>
                     </TableCell>
                     <TableCell>
                       <DealHealthScoreBadge score={r.health_score} tier={r.tier} />
                     </TableCell>
-                    <TableCell className="text-sm tabular-nums">{fmtBRL(r.sales?.amount)}</TableCell>
-                    <TableCell className="text-sm tabular-nums">{r.days_in_stage ?? 0}d</TableCell>
+                    <TableCell className="text-sm tabular-nums">
+                      {fmtBRL(r.sales?.amount)}
+                    </TableCell>
+                    <TableCell className="text-sm tabular-nums">
+                      {r.days_in_stage ?? 0}d
+                    </TableCell>
                     <TableCell className="hidden md:table-cell text-xs text-muted-foreground italic max-w-[280px] truncate">
-                      {r.ai_recommendation || "—"}
+                      {r.ai_recommendation || '—'}
                     </TableCell>
                   </TableRow>
                 ))}

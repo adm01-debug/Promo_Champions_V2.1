@@ -15,11 +15,11 @@ export const RouteProgressBar = React.memo(() => {
     // Reset and show on location change
     setIsVisible(true);
     setProgress(0);
-    
+
     // Quick jump to simulate initial loading
     const timer1 = setTimeout(() => setProgress(30), 50);
     const timer2 = setTimeout(() => setProgress(70), 200);
-    
+
     // Complete after a short delay
     const timer3 = setTimeout(() => {
       setProgress(100);
@@ -36,9 +36,12 @@ export const RouteProgressBar = React.memo(() => {
     };
   }, [location.pathname]);
 
-  const progressBarStyles = useMemo(() => ({
-    width: `${progress}%`
-  }), [progress]);
+  const progressBarStyles = useMemo(
+    () => ({
+      width: `${progress}%`,
+    }),
+    [progress]
+  );
 
   return (
     <AnimatePresence>
@@ -52,15 +55,15 @@ export const RouteProgressBar = React.memo(() => {
           <motion.div
             initial={{ width: '0%' }}
             animate={progressBarStyles}
-            transition={{ 
-              width: { type: "spring", stiffness: 100, damping: 30 },
-              opacity: { duration: 0.2 }
+            transition={{
+              width: { type: 'spring', stiffness: 100, damping: 30 },
+              opacity: { duration: 0.2 },
             }}
             className="h-full bg-gradient-to-r from-primary via-primary-glow to-accent shadow-[0_0_20px_hsl(var(--primary)/0.6)] relative will-change-[width]"
           >
-            <motion.div 
+            <motion.div
               animate={{ x: ['-100%', '200%'] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
               className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"
             />
           </motion.div>
@@ -70,4 +73,4 @@ export const RouteProgressBar = React.memo(() => {
   );
 });
 
-RouteProgressBar.displayName = "RouteProgressBar";
+RouteProgressBar.displayName = 'RouteProgressBar';

@@ -45,7 +45,9 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     if (!salespeople || !sales) return [];
 
     const filteredPeople =
-      selectedIds.length > 0 ? salespeople.filter(sp => selectedIds.includes(sp.id)) : salespeople;
+      selectedIds.length > 0
+        ? salespeople.filter(sp => selectedIds.includes(sp.id))
+        : salespeople;
 
     // Group sales by day and salesperson
     const days = new Map<string, Record<string, number>>();

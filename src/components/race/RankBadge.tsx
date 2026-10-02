@@ -29,10 +29,16 @@ export function RankBadge({ rank, size = 'sm', className }: RankBadgeProps) {
         aria-label={ariaLabel}
         className={cn(
           'inline-flex items-center justify-center rounded-full bg-warning/20 ring-1 ring-warning/60',
-          dims, className,
+          dims,
+          className
         )}
       >
-        <Crown className="text-warning" strokeWidth={2.5} width={iconSize} height={iconSize} />
+        <Crown
+          className="text-warning"
+          strokeWidth={2.5}
+          width={iconSize}
+          height={iconSize}
+        />
       </span>
     );
   }
@@ -42,11 +48,17 @@ export function RankBadge({ rank, size = 'sm', className }: RankBadgeProps) {
         aria-label={ariaLabel}
         className={cn(
           'inline-flex items-center justify-center bg-muted/60 ring-1 ring-muted-foreground/40',
-          dims, className,
+          dims,
+          className
         )}
         style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
       >
-        <Trophy className="text-foreground/80" strokeWidth={2.5} width={iconSize} height={iconSize} />
+        <Trophy
+          className="text-foreground/80"
+          strokeWidth={2.5}
+          width={iconSize}
+          height={iconSize}
+        />
       </span>
     );
   }
@@ -56,10 +68,16 @@ export function RankBadge({ rank, size = 'sm', className }: RankBadgeProps) {
         aria-label={ariaLabel}
         className={cn(
           'inline-flex items-center justify-center rounded-md bg-accent/30 ring-1 ring-accent',
-          dims, className,
+          dims,
+          className
         )}
       >
-        <Medal className="text-accent-foreground" strokeWidth={2.5} width={iconSize} height={iconSize} />
+        <Medal
+          className="text-accent-foreground"
+          strokeWidth={2.5}
+          width={iconSize}
+          height={iconSize}
+        />
       </span>
     );
   }
@@ -69,9 +87,12 @@ export function RankBadge({ rank, size = 'sm', className }: RankBadgeProps) {
       aria-label={ariaLabel}
       className={cn(
         'inline-flex items-center justify-center bg-muted/40 font-black tabular-nums text-muted-foreground ring-1 ring-border',
-        dims, className,
+        dims,
+        className
       )}
-      style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' }}
+      style={{
+        clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+      }}
     >
       {rank}
     </span>

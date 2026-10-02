@@ -38,22 +38,26 @@ describe('funnelReportHelpers.computeStageDeltas', () => {
   });
 
   it('trata previous ausente como zero (novo estágio ganha 100%)', () => {
-    const result = computeStageDeltas(
-      [stage({ stage: 'novo', count: 10 })],
-      [],
-    );
-    expect(result[0]).toMatchObject({ countDelta: 10, countDeltaPct: 100, valueDelta: 0 });
+    const result = computeStageDeltas([stage({ stage: 'novo', count: 10 })], []);
+    expect(result[0]).toMatchObject({
+      countDelta: 10,
+      countDeltaPct: 100,
+      valueDelta: 0,
+    });
   });
 
   it('retorna 0% quando previous é 0 e current também', () => {
-    const r = computeStageDeltas([stage({ stage: 'a', count: 0 })], [stage({ stage: 'a', count: 0 })]);
+    const r = computeStageDeltas(
+      [stage({ stage: 'a', count: 0 })],
+      [stage({ stage: 'a', count: 0 })]
+    );
     expect(r[0].countDeltaPct).toBe(0);
   });
 
   it('retorna delta negativo quando estágio encolhe', () => {
     const r = computeStageDeltas(
       [stage({ stage: 'a', count: 5, value: 100, conversionRate: 10 })],
-      [stage({ stage: 'a', count: 10, value: 200, conversionRate: 20 })],
+      [stage({ stage: 'a', count: 10, value: 200, conversionRate: 20 })]
     );
     expect(r[0].countDelta).toBe(-5);
     expect(r[0].countDeltaPct).toBe(-50);

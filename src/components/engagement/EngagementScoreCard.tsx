@@ -1,17 +1,17 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { RefreshCw, Eye, MousePointerClick, MessageSquare } from "lucide-react";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RefreshCw, Eye, MousePointerClick, MessageSquare } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   useEngagementScore,
   useRecomputeEngagement,
   type ContactType,
-} from "@/hooks/engagement/useEngagementScore";
-import { EngagementScoreBadge } from "./EngagementScoreBadge";
-import { TIER_META } from "./engagementScoreHelpers";
+} from '@/hooks/engagement/useEngagementScore';
+import { EngagementScoreBadge } from './EngagementScoreBadge';
+import { TIER_META } from './engagementScoreHelpers';
 
 interface Props {
   contactId: string;
@@ -34,7 +34,7 @@ export function EngagementScoreCard({ contactId, contactType }: Props) {
 
   const score = data?.score;
   const history = data?.history ?? [];
-  const tier = score?.tier ?? "cold";
+  const tier = score?.tier ?? 'cold';
   const meta = TIER_META[tier];
 
   return (
@@ -50,14 +50,23 @@ export function EngagementScoreCard({ contactId, contactType }: Props) {
           onClick={() => recompute.mutate({ contactId, contactType })}
           disabled={recompute.isPending}
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${recompute.isPending ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-3.5 w-3.5 ${recompute.isPending ? 'animate-spin' : ''}`}
+          />
         </Button>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center gap-3">
-          <div className="text-3xl font-bold tabular-nums">{Math.round(score?.score ?? 0)}</div>
+          <div className="text-3xl font-bold tabular-nums">
+            {Math.round(score?.score ?? 0)}
+          </div>
           <div className="text-xs text-muted-foreground">/ 100</div>
-          <EngagementScoreBadge score={score?.score} tier={tier} showLabel className="ml-auto" />
+          <EngagementScoreBadge
+            score={score?.score}
+            tier={tier}
+            showLabel
+            className="ml-auto"
+          />
         </div>
 
         {history.length >= 2 ? (
@@ -68,8 +77,10 @@ export function EngagementScoreCard({ contactId, contactType }: Props) {
                 <YAxis domain={[0, 100]} hide />
                 <Tooltip
                   contentStyle={{ fontSize: 11, padding: 4 }}
-                  labelFormatter={(v) => format(new Date(v as string), "dd/MM", { locale: ptBR })}
-                  formatter={(v: number | string) => [Math.round(Number(v)), "Score"]}
+                  labelFormatter={v =>
+                    format(new Date(v as string), 'dd/MM', { locale: ptBR })
+                  }
+                  formatter={(v: number | string) => [Math.round(Number(v)), 'Score']}
                 />
                 <Line
                   type="monotone"
@@ -107,7 +118,8 @@ export function EngagementScoreCard({ contactId, contactType }: Props) {
 
         {score?.last_signal_at && (
           <div className="text-[11px] text-muted-foreground text-center">
-            Último sinal: {format(new Date(score.last_signal_at), "dd MMM HH:mm", { locale: ptBR })}
+            Último sinal:{' '}
+            {format(new Date(score.last_signal_at), 'dd MMM HH:mm', { locale: ptBR })}
           </div>
         )}
       </CardContent>
