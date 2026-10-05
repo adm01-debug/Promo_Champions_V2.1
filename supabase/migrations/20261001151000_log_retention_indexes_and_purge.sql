@@ -2,8 +2,8 @@
 -- Pacote de auditoria BANCO DE DADOS/INTEGRIDADE.
 --
 -- 1. Índices compostos (discriminador + timestamp) nas tabelas de log de alto
---    volume — os padrões table_name+created_at e user_id+created_at já existem
---    em audit_log (idx_audit_table, idx_audit_user) e NÃO são duplicados aqui.
+--    volume — audit_logs canônica usa entity_type/actor_id/created_at — índices
+--    alinhados ao schema real em produção.
 -- 2. public.data_retention_policies: política de retenção versionada por tabela
 --    (janelas definidas em docs/DATA_RETENTION.md).
 -- 3. public.fn_apply_data_retention(): purge em lotes de 10k por política,
@@ -22,8 +22,8 @@
 DO $$
 BEGIN
   IF to_regclass('public.audit_logs') IS NOT NULL THEN
-    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_table_changed ON public.audit_logs (table_name, changed_at DESC)';
-    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_by_changed ON public.audit_logs (changed_by, changed_at DESC)';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_table_changed ON public.audit_logs (entity_type, created_at DESC)';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_by_changed ON public.audit_logs (actor_id, created_at DESC)';
   END IF;
 
   IF to_regclass('public.query_telemetry') IS NOT NULL THEN
@@ -98,7 +98,7 @@ CREATE POLICY "Admins leem data_retention_policies" ON public.data_retention_pol
 
 INSERT INTO public.data_retention_policies (table_name, ts_column, retention_days, notes) VALUES
   ('audit_log',                'created_at',    365, 'auditoria: janela jurídica 12m (decisão docs/DATA_RETENTION.md)'),
-  ('audit_logs',               'changed_at',    365, 'auditoria: janela jurídica 12m'),
+  ('audit_logs',               'created_at',    365, 'auditoria: janela jurídica 12m'),
   ('data_access_log',          'created_at',    365, 'auditoria de acesso: 12m'),
   ('website_visitor_logs',     'identified_at',  90, 'legítimo interesse LGPD; consent_records prolonga'),
   ('webhook_inbound_dedupe',   'received_at',    30, 'dedupe só precisa da janela de retry'),
