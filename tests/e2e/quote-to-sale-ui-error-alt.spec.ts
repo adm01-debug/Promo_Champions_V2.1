@@ -60,6 +60,18 @@ test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
+    // Aprovar dispara convert_quote_to_order: o pedido criado precisa ser
+    // removido ANTES da quote (orders.quote_id é ON DELETE SET NULL e
+    // sobreviveria órfão).
+    const { data: orders } = await client
+      .from('orders')
+      .select('id')
+      .eq('quote_id', quoteId);
+    const orderIds = (orders ?? []).map(o => o.id as string);
+    if (orderIds.length) {
+      await client.from('order_items').delete().in('order_id', orderIds);
+      await client.from('orders').delete().in('id', orderIds);
+    }
     await client.from('quote_items').delete().eq('quote_id', quoteId);
     await client.from('quotes').delete().eq('id', quoteId);
   });
@@ -116,5 +128,14 @@ test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
       .single();
     expect(after?.sale_id).toBeNull();
     expect(after?.status).not.toBe('converted');
+
+    // Efeito colateral documentado: aprovar dispara convert_quote_to_order,
+    // que cria o pedido mesmo quando a conversão falha depois (limpo no
+    // afterAll). A asserção evita esconder mudanças nesse comportamento.
+    const { count: orderCount } = await client
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .eq('quote_id', quoteId);
+    expect(orderCount).toBe(1);
   });
 });
