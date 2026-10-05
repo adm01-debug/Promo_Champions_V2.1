@@ -11,12 +11,15 @@ import {
 import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
 
 /**
- * E2E: Fluxo alternativo do frontend (menu de ações em vez do botão
- * primário no dialog) também deve exibir a mensagem PT-BR mapeada para
- * o código [TOTAL_MISMATCH]. Cobre a regressão em que apenas o
- * onError do dialog estava tratando o código.
+ * E2E: Fluxo alternativo do frontend — aprovar o orçamento pelo card
+ * (botão "Aprovar") e só então converter via dialog — também deve exibir
+ * a mensagem PT-BR mapeada para o código [TOTAL_MISMATCH]. Cobre a
+ * regressão em que apenas o onError do dialog tratava o código.
+ *
+ * Nota: o card não possui mais menu de ações (⋮); o fluxo alternativo
+ * real é a transição de status pelo próprio card.
  */
-test.describe('UI alternativa: TOTAL_MISMATCH via menu de ações', () => {
+test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
   test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
 
   let client: SupabaseClient;
@@ -38,7 +41,7 @@ test.describe('UI alternativa: TOTAL_MISMATCH via menu de ações', () => {
         title: 'E2E UI Alt Total Mismatch',
         total_value: 90,
         subtotal: 90,
-        status: 'approved',
+        status: 'sent',
         source: 'manual',
       })
       .select('id')
@@ -83,26 +86,22 @@ test.describe('UI alternativa: TOTAL_MISMATCH via menu de ações', () => {
     const row = page.getByText('E2E UI Alt Total Mismatch').first();
     await row.waitFor({ state: 'visible', timeout: 15_000 });
 
-    // Fluxo alternativo: tenta menu de ações (⋮) na linha antes de cair no dialog.
-    const rowContainer = row.locator('xpath=ancestor::*[self::tr or self::li or self::div][1]');
-    const kebab = rowContainer
-      .getByRole('button', { name: /Mais opções|Ações|Menu|⋮/i })
-      .first();
+    // Fluxo alternativo real do card: aprova a quote 'sent' pelo botão do
+    // card e só depois abre o dialog (via "Detalhes") para converter.
+    const card = row.locator(
+      'xpath=ancestor::div[.//button[contains(normalize-space(.), "Detalhes")]][1]'
+    );
 
-    if (await kebab.count()) {
-      await kebab.click();
-      const menuConvert = page.getByRole('menuitem', { name: /Converter em venda/i }).first();
-      if (await menuConvert.count()) {
-        await menuConvert.click();
-      } else {
-        await row.click();
-        await page.getByRole('button', { name: /Converter em venda/i }).click();
-      }
-    } else {
-      // Fallback: abre dialog e clica no botão primário
-      await row.click();
-      await page.getByRole('button', { name: /Converter em venda/i }).click();
-    }
+    await card.getByRole('button', { name: /^Aprovar$/i }).click();
+    // Aguarda a transição de status concluir (botão some do card).
+    await expect(
+      card.getByRole('button', { name: /^Aprovar$/i })
+    ).toHaveCount(0, { timeout: 15_000 });
+
+    await card.getByRole('button', { name: /Detalhes/i }).click();
+    const convertBtn = page.getByRole('button', { name: /Converter em venda/i });
+    await expect(convertBtn).toBeVisible();
+    await convertBtn.click();
 
     // Toast do sonner com a mensagem exata mapeada
     await expect(page.getByText(EXPECTED, { exact: true }).first()).toBeVisible({
