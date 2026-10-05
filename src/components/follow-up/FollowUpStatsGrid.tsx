@@ -9,9 +9,19 @@ interface FollowUpStatsGridProps {
 }
 
 const statConfig = [
-  { key: 'total', label: 'Total em Risco', icon: AlertTriangle, colorClass: 'text-foreground' },
+  {
+    key: 'total',
+    label: 'Total em Risco',
+    icon: AlertTriangle,
+    colorClass: 'text-foreground',
+  },
   { key: 'hot', label: 'Quentes', icon: Flame, colorClass: 'text-destructive' },
-  { key: 'warm', label: 'Mornos', icon: ThermometerSun, colorClass: 'text-status-warning' },
+  {
+    key: 'warm',
+    label: 'Mornos',
+    icon: ThermometerSun,
+    colorClass: 'text-status-warning',
+  },
   { key: 'cold', label: 'Frios', icon: Snowflake, colorClass: 'text-status-info' },
   { key: 'frozen', label: 'Congelados', icon: Snowflake, colorClass: 'text-primary' },
 ] as const;
@@ -39,7 +49,9 @@ export function FollowUpStatsGrid({ leads, onFilterChange }: FollowUpStatsGridPr
             onClick={() => onFilterChange(stat.key === 'total' ? 'all' : stat.key)}
           >
             <CardContent className="p-4 text-center">
-              <stat.icon className={`h-6 w-6 mx-auto mb-2 ${stat.colorClass} group-hover:scale-110 transition-transform`} />
+              <stat.icon
+                className={`h-6 w-6 mx-auto mb-2 ${stat.colorClass} group-hover:scale-110 transition-transform`}
+              />
               <div className="text-metric">{counts[stat.key]}</div>
               <div className="text-xs text-muted-foreground">{stat.label}</div>
             </CardContent>

@@ -2,6 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { insertPayload, type TableUpdate } from '@/lib/supabase/typed-payloads';
+import {
+  OptimisticLockConflictError,
+  isOptimisticLockConflict,
+} from '@/lib/supabase/optimisticLock';
+import { parseRow, parseRows, toJson } from '@/lib/supabase/parseRows';
 
 export interface Quote {
   id: string;
@@ -21,6 +26,9 @@ export interface Quote {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  /** Optimistic locking — presente após migration 20261001193200. */
+  version?: number;
+  deleted_at?: string | null;
   // New fields from GIFT STORE integration
   quote_number: string | null;
   subtotal: number | null;
@@ -86,6 +94,7 @@ export function useQuotes(statusFilter?: string) {
         .select(
           `*, salespeople:created_by (name), sales:sale_id (client_name, product_name, status)`
         )
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         // Janela explícita: a página renderiza a lista inteira sem paginação;
         // sem limite, o teto de 1000 linhas do PostgREST truncava silencioso.
@@ -97,8 +106,7 @@ export function useQuotes(statusFilter?: string) {
 
       const { data, error } = await query;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as Quote[];
+      return parseRows<Quote>(data);
     },
   });
 }
@@ -109,7 +117,8 @@ export function useQuoteSummary() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('quotes')
-        .select('status, total_value, valid_until');
+        .select('status, total_value, valid_until')
+        .is('deleted_at', null);
       if (error) throw error;
 
       const now = new Date();
@@ -155,8 +164,7 @@ export function useCreateQuote() {
     mutationFn: async (input: CreateQuoteInput) => {
       const payload = insertPayload('quotes', {
         ...input,
-        // eslint-disable-next-line no-restricted-syntax
-        items: input.items as unknown as import('@/integrations/supabase/types').Json,
+        items: input.items === undefined ? undefined : toJson(input.items),
       });
       const { data, error } = await supabase
         .from('quotes')
@@ -182,10 +190,13 @@ export function useUpdateQuoteStatus() {
       id,
       status,
       rejection_reason,
+      version,
     }: {
       id: string;
       status: string;
       rejection_reason?: string;
+      /** Versão lida do orçamento (optimistic locking) — quando presente, exige casar. */
+      version?: number;
     }) => {
       const updates: TableUpdate<'quotes'> = { status };
       if (status === 'sent') updates.sent_at = new Date().toISOString();
@@ -195,13 +206,14 @@ export function useUpdateQuoteStatus() {
         if (rejection_reason) updates.rejection_reason = rejection_reason;
       }
 
-      const { data: quote, error } = await supabase
-        .from('quotes')
-        .update(updates)
-        .eq('id', id)
-        .select('sale_id')
-        .single();
+      let updateQuery = supabase.from('quotes').update(updates).eq('id', id);
+      if (typeof version === 'number') {
+        updateQuery = updateQuery.eq('version', version);
+      }
+
+      const { data: quote, error } = await updateQuery.select('sale_id').maybeSingle();
       if (error) throw error;
+      if (!quote) throw new OptimisticLockConflictError();
 
       // Sincronização automática com pipeline
       if (quote?.sale_id) {
@@ -212,10 +224,15 @@ export function useUpdateQuoteStatus() {
         if (status === 'expired') newPipelineStatus = 'closed';
 
         if (newPipelineStatus) {
-          await supabase
-            .from('sales')
-            .update({ status: newPipelineStatus })
-            .eq('id', quote.sale_id);
+          // Transição via RPC da máquina de estados (rejeita saltos inválidos)
+          const { error: saleError } = await supabase.rpc(
+            'transition_sale_status' as never,
+            {
+              p_sale_id: quote.sale_id,
+              p_new_status: newPipelineStatus,
+            } as never
+          );
+          if (saleError) throw saleError;
         }
       }
     },
@@ -226,7 +243,14 @@ export function useUpdateQuoteStatus() {
       qc.invalidateQueries({ queryKey: ['sales'] });
       toast.success('Status atualizado e pipeline sincronizado');
     },
-    onError: () => toast.error('Erro ao atualizar status'),
+    onError: err => {
+      if (isOptimisticLockConflict(err)) {
+        qc.invalidateQueries({ queryKey: ['quotes'] });
+        toast.warning('Registro alterado por outro usuário — dados atualizados');
+      } else {
+        toast.error('Erro ao atualizar status');
+      }
+    },
   });
 }
 
@@ -234,7 +258,13 @@ export function useDeleteQuote() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('quotes').delete().eq('id', id);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('quotes')
+        .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -253,6 +283,7 @@ export function useDealsForQuotes() {
       const { data, error } = await supabase
         .from('sales')
         .select('id, client_name, product_name, status')
+        .is('deleted_at', null)
         .in('status', ['lead', 'qualified', 'proposal', 'negotiation'])
         .order('created_at', { ascending: false });
 
@@ -338,20 +369,13 @@ export function useConvertQuoteToSale() {
       }
 
       const t0 = performance.now();
-      /* eslint-disable no-restricted-syntax */
-      const { data, error } = await (
-        supabase.rpc as unknown as (
-          fn: string,
-          args: Record<string, unknown>
-        ) => Promise<{
-          data: ConvertQuoteResult | null;
-          error: { message: string } | null;
-        }>
-      )('fn_convert_quote_to_sale', { _quote_id: quoteId });
-      /* eslint-enable no-restricted-syntax */
+      const { data, error } = await supabase.rpc('fn_convert_quote_to_sale', {
+        _quote_id: quoteId,
+      });
+      const result = parseRow<ConvertQuoteResult>(data);
       const latencyMs = Math.round(performance.now() - t0);
 
-      if (error || !data) {
+      if (error || !result) {
         const message = error?.message ?? '[UNKNOWN] Resposta vazia da conversão';
         const code = parseConvertQuoteError(message);
         void dispatchConversionNotification({
@@ -369,19 +393,19 @@ export function useConvertQuoteToSale() {
 
       void dispatchConversionNotification({
         quote_id: quoteId,
-        sale_id: data.sale_id,
-        order_id: data.order_id,
-        order_number: data.order_number ?? null,
+        sale_id: result.sale_id,
+        order_id: result.order_id,
+        order_number: result.order_number ?? null,
         previous_status: previousStatus,
         new_status: 'converted',
-        reused_order: data.reused_order ?? false,
-        idempotent: data.idempotent,
+        reused_order: result.reused_order ?? false,
+        idempotent: result.idempotent,
         success: true,
         latency_ms: latencyMs,
         request_id: requestId,
       });
 
-      return data;
+      return result;
     },
     onSuccess: result => {
       qc.invalidateQueries({ queryKey: ['quotes'] });

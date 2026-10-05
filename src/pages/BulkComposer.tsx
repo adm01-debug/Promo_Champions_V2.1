@@ -1,24 +1,30 @@
-import { useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { useSearchParams } from "react-router-dom";
-import { Plus, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { BulkComposerWizard } from "@/components/engagement/BulkComposer/BulkComposerWizard";
-import { useBulkJobs } from "@/hooks/engagement/useBulkComposer";
-import { STATUS_LABEL, STATUS_TONE, truncate } from "@/components/engagement/BulkComposer/bulkComposerHelpers";
+import { useMemo, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useSearchParams } from 'react-router-dom';
+import { Plus, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { BulkComposerWizard } from '@/components/engagement/BulkComposer/BulkComposerWizard';
+import { useBulkJobs } from '@/hooks/engagement/useBulkComposer';
+import {
+  STATUS_LABEL,
+  STATUS_TONE,
+  truncate,
+} from '@/components/engagement/BulkComposer/bulkComposerHelpers';
 
 export default function BulkComposerPage() {
   const [params, setParams] = useSearchParams();
-  const initialJobId = params.get("job") ?? undefined;
+  const initialJobId = params.get('job') ?? undefined;
   const initialLeads = useMemo(() => {
-    const raw = params.get("leads");
+    const raw = params.get('leads');
     if (!raw) return [];
-    return raw.split(",").map((id) => ({ id }));
+    return raw.split(',').map(id => ({ id }));
   }, [params]);
 
-  const [showWizard, setShowWizard] = useState<boolean>(!!initialJobId || initialLeads.length > 0);
+  const [showWizard, setShowWizard] = useState<boolean>(
+    !!initialJobId || initialLeads.length > 0
+  );
   const [activeJobId, setActiveJobId] = useState<string | undefined>(initialJobId);
   const { data: jobs, isLoading } = useBulkJobs();
 
@@ -38,7 +44,10 @@ export default function BulkComposerPage() {
     <>
       <Helmet>
         <title>Composer IA em massa | Promo Champions</title>
-        <meta name="description" content="Gere e envie e-mails personalizados em massa com IA, mantendo personalização individual por destinatário." />
+        <meta
+          name="description"
+          content="Gere e envie e-mails personalizados em massa com IA, mantendo personalização individual por destinatário."
+        />
       </Helmet>
 
       <div className="container mx-auto py-6 space-y-6">
@@ -48,7 +57,8 @@ export default function BulkComposerPage() {
               <Sparkles className="h-6 w-6 text-primary" /> Composer IA em massa
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Gere até 50 e-mails personalizados por lote, revise individualmente e envie apenas os aprovados.
+              Gere até 50 e-mails personalizados por lote, revise individualmente e envie
+              apenas os aprovados.
             </p>
           </div>
           <Button onClick={newJob}>
@@ -60,7 +70,7 @@ export default function BulkComposerPage() {
           <BulkComposerWizard
             initialLeads={initialLeads}
             jobId={activeJobId}
-            onJobCreated={(id) => {
+            onJobCreated={id => {
               setActiveJobId(id);
               setParams({ job: id });
             }}
@@ -72,11 +82,15 @@ export default function BulkComposerPage() {
             <CardTitle>Histórico de lotes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
-            {!isLoading && (jobs?.length ?? 0) === 0 && (
-              <div className="text-sm text-muted-foreground">Nenhum lote ainda. Crie o primeiro acima.</div>
+            {isLoading && (
+              <div className="text-sm text-muted-foreground">Carregando…</div>
             )}
-            {jobs?.map((job) => (
+            {!isLoading && (jobs?.length ?? 0) === 0 && (
+              <div className="text-sm text-muted-foreground">
+                Nenhum lote ainda. Crie o primeiro acima.
+              </div>
+            )}
+            {jobs?.map(job => (
               <button
                 key={job.id}
                 onClick={() => openJob(job.id)}
@@ -85,10 +99,11 @@ export default function BulkComposerPage() {
                 <div className="space-y-1">
                   <div className="text-sm font-medium">{truncate(job.prompt, 96)}</div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(job.created_at).toLocaleString()} · {job.target_count} alvos · {job.tone}
+                    {new Date(job.created_at).toLocaleString()} · {job.target_count} alvos
+                    · {job.tone}
                   </div>
                 </div>
-                <Badge variant={STATUS_TONE[job.status] ?? "outline"}>
+                <Badge variant={STATUS_TONE[job.status] ?? 'outline'}>
                   {STATUS_LABEL[job.status] ?? job.status}
                 </Badge>
               </button>

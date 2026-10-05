@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 interface BitrixConnectionStatus {
   connected: boolean;
@@ -35,39 +36,47 @@ export function useBitrix24() {
   const queryClient = useQueryClient();
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const { data: connectionStatus, isLoading: isLoadingStatus, refetch: refetchStatus } = useQuery({
-    queryKey: ["bitrix24-status"],
+  const {
+    data: connectionStatus,
+    isLoading: isLoadingStatus,
+    refetch: refetchStatus,
+  } = useQuery({
+    queryKey: ['bitrix24-status'],
     queryFn: async (): Promise<BitrixConnectionStatus> => {
-      const { data, error } = await supabase.functions.invoke("bitrix24-oauth");
-      
+      const { data, error } = await supabase.functions.invoke('bitrix24-oauth');
+
       if (error) {
         if (import.meta.env.DEV) {
-          console.error("Error checking Bitrix24 status:", error);
+          console.error('Error checking Bitrix24 status:', error);
         }
-        return { connected: false, needsReauth: false, domain: "" };
+        return { connected: false, needsReauth: false, domain: '' };
       }
-      
+
       return data;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  const { data: syncLogs, isLoading: isLoadingLogs, refetch: refetchLogs } = useQuery({
-    queryKey: ["bitrix24-sync-logs"],
+  const {
+    data: syncLogs,
+    isLoading: isLoadingLogs,
+    refetch: refetchLogs,
+  } = useQuery({
+    queryKey: ['bitrix24-sync-logs'],
     queryFn: async (): Promise<SyncLog[]> => {
       const { data, error } = await supabase
-        .from("bitrix24_sync_logs")
-        .select("*")
-        .order("created_at", { ascending: false })
+        .from('bitrix24_sync_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
         .limit(20);
-      
+
       if (error) {
         if (import.meta.env.DEV) {
-          console.error("Error fetching sync logs:", error);
+          console.error('Error fetching sync logs:', error);
         }
         return [];
       }
-      
+
       return data as SyncLog[];
     },
     staleTime: 1000 * 30, // 30 seconds
@@ -75,16 +84,21 @@ export function useBitrix24() {
 
   const getAuthUrl = useMutation({
     mutationFn: async (): Promise<string> => {
-      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+      const projectUrl = SUPABASE_URL;
       const authUrl = `${projectUrl}/functions/v1/bitrix24-oauth?action=authorize`;
-      
-      const response = await fetch(authUrl);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const response = await fetch(authUrl, {
+        headers: {
+          Authorization: `Bearer ${sessionData.session?.access_token ?? ''}`,
+        },
+      });
       const result = await response.json();
-      
+
       if (result.error) {
         throw new Error(result.error);
       }
-      
+
       return result.authUrl;
     },
   });
@@ -92,14 +106,14 @@ export function useBitrix24() {
   const authorize = async () => {
     try {
       const authUrl = await getAuthUrl.mutateAsync();
-      window.open(authUrl, "_blank", "width=600,height=700");
-      
+      window.open(authUrl, '_blank', 'width=600,height=700');
+
       // Poll for connection status after authorization
       const pollInterval = setInterval(async () => {
         const result = await refetchStatus();
         if (result.data?.connected) {
           clearInterval(pollInterval);
-          toast.success("Bitrix24 conectado com sucesso!");
+          toast.success('Bitrix24 conectado com sucesso!');
         }
       }, 3000);
 
@@ -107,42 +121,42 @@ export function useBitrix24() {
       setTimeout(() => clearInterval(pollInterval), 120000);
     } catch (error) {
       if (import.meta.env.DEV) {
-        console.error("Error getting auth URL:", error);
+        console.error('Error getting auth URL:', error);
       }
-      toast.error("Erro ao iniciar autorização");
+      toast.error('Erro ao iniciar autorização');
     }
   };
 
   const syncMutation = useMutation({
     mutationFn: async (action?: string): Promise<SyncResult> => {
       setIsSyncing(true);
-      const { data, error } = await supabase.functions.invoke("bitrix24-sync", {
-        body: { action: action || "sync-all", triggered_by: "manual" },
+      const { data, error } = await supabase.functions.invoke('bitrix24-sync', {
+        body: { action: action || 'sync-all', triggered_by: 'manual' },
       });
-      
+
       if (error) {
         throw new Error(error.message);
       }
-      
+
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.success) {
-        toast.success("Sincronização concluída!", {
+        toast.success('Sincronização concluída!', {
           description: `Empresas: ${data.result?.companiesFromBitrix || 0} importadas, ${data.result?.companiesToBitrix || 0} exportadas. Deals: ${data.result?.dealsFromBitrix || 0} importados, ${data.result?.dealsToBitrix || 0} exportados.`,
         });
         // Invalidate related queries
-        queryClient.invalidateQueries({ queryKey: ["clients"] });
-        queryClient.invalidateQueries({ queryKey: ["sales"] });
-        queryClient.invalidateQueries({ queryKey: ["pipeline"] });
-        queryClient.invalidateQueries({ queryKey: ["bitrix24-sync-logs"] });
+        queryClient.invalidateQueries({ queryKey: ['clients'] });
+        queryClient.invalidateQueries({ queryKey: ['sales'] });
+        queryClient.invalidateQueries({ queryKey: ['pipeline'] });
+        queryClient.invalidateQueries({ queryKey: ['bitrix24-sync-logs'] });
       } else {
-        toast.error("Erro na sincronização", { description: data.error });
+        toast.error('Erro na sincronização', { description: data.error });
       }
     },
-    onError: (error) => {
-      toast.error("Erro na sincronização", { description: error.message });
-      queryClient.invalidateQueries({ queryKey: ["bitrix24-sync-logs"] });
+    onError: error => {
+      toast.error('Erro na sincronização', { description: error.message });
+      queryClient.invalidateQueries({ queryKey: ['bitrix24-sync-logs'] });
     },
     onSettled: () => {
       setIsSyncing(false);
@@ -151,22 +165,30 @@ export function useBitrix24() {
 
   const refreshToken = useMutation({
     mutationFn: async () => {
-      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
-      const response = await fetch(`${projectUrl}/functions/v1/bitrix24-oauth?action=refresh`);
+      const projectUrl = SUPABASE_URL;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const response = await fetch(
+        `${projectUrl}/functions/v1/bitrix24-oauth?action=refresh`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionData.session?.access_token ?? ''}`,
+          },
+        }
+      );
       const result = await response.json();
-      
+
       if (result.error) {
         throw new Error(result.error);
       }
-      
+
       return result;
     },
     onSuccess: () => {
-      toast.success("Token atualizado com sucesso!");
+      toast.success('Token atualizado com sucesso!');
       refetchStatus();
     },
-    onError: (error) => {
-      toast.error("Erro ao atualizar token", { description: error.message });
+    onError: error => {
+      toast.error('Erro ao atualizar token', { description: error.message });
     },
   });
 
@@ -175,7 +197,7 @@ export function useBitrix24() {
     isLoadingStatus,
     isConnected: connectionStatus?.connected || false,
     needsReauth: connectionStatus?.needsReauth || false,
-    domain: connectionStatus?.domain || "",
+    domain: connectionStatus?.domain || '',
     authorize,
     isAuthorizing: getAuthUrl.isPending,
     sync: syncMutation.mutate,

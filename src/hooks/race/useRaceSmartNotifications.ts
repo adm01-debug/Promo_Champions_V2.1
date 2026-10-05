@@ -1,12 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import { useFeatureGate } from '@/hooks/useFeatureFlags';
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
+import { formatBRL } from '@/lib/money';
 const PREF_KEY = 'race_smart_notifications_enabled';
 
 function isEnabled(): boolean {
   if (typeof window === 'undefined') return false;
-  try { return localStorage.getItem(PREF_KEY) === '1'; } catch { return false; }
+  try {
+    return localStorage.getItem(PREF_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
 interface Opts {
@@ -27,23 +33,29 @@ export function useRaceSmartNotifications({
   rivalSalespersonId,
   seasonEndDate,
 }: Opts) {
+  // Kill-switch global (feature_flags.race_smart_notifications):
+  // ausente na tabela => ligado; desligado lá => mata toda a feature.
+  const flagEnabled = useFeatureGate('race_smart_notifications');
   const prevRankRef = useRef<number | null>(null);
   const prevRivalAheadRef = useRef<boolean | null>(null);
   const lastHourFiredRef = useRef(false);
   const podiumFiredRef = useRef(false);
 
   useEffect(() => {
-    if (!isEnabled() || !currentUserSalespersonId || entries.length === 0) return;
+    if (!flagEnabled || !isEnabled() || !currentUserSalespersonId || entries.length === 0)
+      return;
 
-    const sorted = [...entries].sort((a, b) => Number(b.total_sales) - Number(a.total_sales));
-    const meIdx = sorted.findIndex((e) => e.salesperson_id === currentUserSalespersonId);
+    const sorted = [...entries].sort(
+      (a, b) => Number(b.total_sales) - Number(a.total_sales)
+    );
+    const meIdx = sorted.findIndex(e => e.salesperson_id === currentUserSalespersonId);
     const me = meIdx >= 0 ? sorted[meIdx] : null;
     if (!me) return;
     const myRank = meIdx + 1;
 
     // 1. Rival ultrapassou
     if (rivalSalespersonId) {
-      const rivalIdx = sorted.findIndex((e) => e.salesperson_id === rivalSalespersonId);
+      const rivalIdx = sorted.findIndex(e => e.salesperson_id === rivalSalespersonId);
       const rivalAhead = rivalIdx >= 0 && rivalIdx < meIdx;
       if (
         prevRivalAheadRef.current === false &&
@@ -62,35 +74,43 @@ export function useRaceSmartNotifications({
     if (myRank === 4 && !podiumFiredRef.current) {
       const p3 = sorted[2];
       const gap = Number(p3.total_sales) - Number(me.total_sales);
-      toast.info(`🥉 Você está a R$ ${gap.toLocaleString('pt-BR')} do pódio`, {
+      toast.info(`🥉 Você está a ${formatBRL(gap)} do pódio`, {
         description: 'Mais uma venda forte e você sobe.',
       });
       podiumFiredRef.current = true;
     }
 
     prevRankRef.current = myRank;
-  }, [entries, currentUserSalespersonId, rivalSalespersonId]);
+  }, [flagEnabled, entries, currentUserSalespersonId, rivalSalespersonId]);
 
   // 3. Última hora da corrida
   useEffect(() => {
-    if (!isEnabled() || !seasonEndDate || lastHourFiredRef.current) return;
+    if (!flagEnabled || !isEnabled() || !seasonEndDate || lastHourFiredRef.current)
+      return;
     const end = new Date(seasonEndDate).getTime();
     const now = Date.now();
     const msToEnd = end - now;
     if (msToEnd <= 0 || msToEnd > 60 * 60 * 1000) return;
-    const t = window.setTimeout(() => {
-      toast.error('⏱️ Última hora de corrida!', {
-        description: 'Cada venda agora pode mudar o pódio.',
-        duration: 8000,
-      });
-      lastHourFiredRef.current = true;
-    }, Math.min(msToEnd, 5000));
+    const t = window.setTimeout(
+      () => {
+        toast.error('⏱️ Última hora de corrida!', {
+          description: 'Cada venda agora pode mudar o pódio.',
+          duration: 8000,
+        });
+        lastHourFiredRef.current = true;
+      },
+      Math.min(msToEnd, 5000)
+    );
     return () => window.clearTimeout(t);
-  }, [seasonEndDate]);
+  }, [flagEnabled, seasonEndDate]);
 }
 
 export function setRaceNotificationsEnabled(enabled: boolean) {
-  try { localStorage.setItem(PREF_KEY, enabled ? '1' : '0'); } catch { /* noop */ }
+  try {
+    localStorage.setItem(PREF_KEY, enabled ? '1' : '0');
+  } catch {
+    /* noop */
+  }
   window.dispatchEvent(new CustomEvent('race-smart-notif-change'));
 }
 

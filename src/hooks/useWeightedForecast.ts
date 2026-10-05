@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WON_SALE_STATUSES } from '@/constants';
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 interface ForecastDeal {
   id: string;
@@ -39,18 +40,25 @@ export interface WeightedForecastData {
   avgCloseTime: number;
 }
 
-const STAGE_CONFIG: Record<string, { label: string; baseProbability: number; color: string }> = {
-  pending: { label: 'Lead', baseProbability: 0.1, color: 'hsl(var(--muted-foreground))' },
-  qualified: { label: 'Qualificado', baseProbability: 0.3, color: 'hsl(var(--primary))' },
-  proposal: { label: 'Proposta', baseProbability: 0.55, color: 'hsl(45, 93%, 47%)' },
-  negotiation: { label: 'Negociação', baseProbability: 0.8, color: 'hsl(142, 71%, 45%)' },
+const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
+  pending: { label: 'Lead', color: 'hsl(var(--muted-foreground))' },
+  qualified: { label: 'Qualificado', color: 'hsl(var(--primary))' },
+  proposal: { label: 'Proposta', color: 'hsl(45, 93%, 47%)' },
+  negotiation: { label: 'Negociação', color: 'hsl(142, 71%, 45%)' },
 };
 
 export function useWeightedForecast() {
   return useQuery({
     queryKey: ['weighted-forecast'],
     queryFn: async (): Promise<WeightedForecastData> => {
-      const [salesRes, scoresRes, stageHistoryRes, goalsRes, wonSalesRes] = await Promise.all([
+      const [
+        salesRes,
+        scoresRes,
+        stageHistoryRes,
+        goalsRes,
+        wonSalesRes,
+        stageProbabilities,
+      ] = await Promise.all([
         supabase
           .from('sales')
           .select('id, client_name, product_name, amount, status, created_at')
@@ -63,7 +71,10 @@ export function useWeightedForecast() {
         supabase
           .from('sales_goals')
           .select('goal_amount')
-          .gte('month', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()),
+          .gte(
+            'month',
+            new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+          ),
         supabase
           .from('sales')
           .select('amount, created_at')
@@ -72,6 +83,7 @@ export function useWeightedForecast() {
             'created_at',
             new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
           ),
+        fetchStageProbabilities(),
       ]);
 
       if (salesRes.error) throw salesRes.error;
@@ -87,15 +99,16 @@ export function useWeightedForecast() {
       const now = Date.now();
 
       const deals: ForecastDeal[] = sales.map(sale => {
-        const config = STAGE_CONFIG[sale.status];
         const leadScore = scoreMap.get(sale.id) || null;
         const enteredAt = stageEntryMap.get(sale.id);
         const daysInStage = enteredAt
           ? Math.round((now - new Date(enteredAt).getTime()) / (1000 * 60 * 60 * 24))
-          : Math.round((now - new Date(sale.created_at).getTime()) / (1000 * 60 * 60 * 24));
+          : Math.round(
+              (now - new Date(sale.created_at).getTime()) / (1000 * 60 * 60 * 24)
+            );
 
         // Adjust probability based on lead score
-        let probability = config?.baseProbability || 0.1;
+        let probability = stageProbabilities[sale.status] ?? 0.1;
         if (leadScore !== null) {
           const scoreMultiplier = leadScore > 70 ? 1.2 : leadScore > 40 ? 1.0 : 0.8;
           probability = Math.min(0.95, probability * scoreMultiplier);
@@ -121,26 +134,34 @@ export function useWeightedForecast() {
         };
       });
 
-      const stages: StageBreakdown[] = Object.entries(STAGE_CONFIG).map(([key, config]) => {
-        const stageDeals = deals.filter(d => d.status === key);
-        return {
-          stage: key,
-          label: config.label,
-          count: stageDeals.length,
-          total_value: stageDeals.reduce((s, d) => s + d.amount, 0),
-          weighted_value: stageDeals.reduce((s, d) => s + d.weighted_value, 0),
-          probability: config.baseProbability,
-          color: config.color,
-        };
-      });
+      const stages: StageBreakdown[] = Object.entries(STAGE_CONFIG).map(
+        ([key, config]) => {
+          const stageDeals = deals.filter(d => d.status === key);
+          return {
+            stage: key,
+            label: config.label,
+            count: stageDeals.length,
+            total_value: stageDeals.reduce((s, d) => s + d.amount, 0),
+            weighted_value: stageDeals.reduce((s, d) => s + d.weighted_value, 0),
+            probability: stageProbabilities[key] ?? 0.1,
+            color: config.color,
+          };
+        }
+      );
 
       const totalPipeline = deals.reduce((s, d) => s + d.amount, 0);
       const weightedForecast = deals.reduce((s, d) => s + d.weighted_value, 0);
-      const bestCase = deals.reduce((s, d) => s + d.amount * Math.min(1, d.probability * 1.3), 0);
+      const bestCase = deals.reduce(
+        (s, d) => s + d.amount * Math.min(1, d.probability * 1.3),
+        0
+      );
       const worstCase = deals.reduce((s, d) => s + d.amount * d.probability * 0.6, 0);
 
       const currentRevenue = wonSales.reduce((s, sale) => s + Number(sale.amount), 0);
-      const monthlyGoal = (goalsRes.data || []).reduce((s, g) => s + Number(g.goal_amount), 0);
+      const monthlyGoal = (goalsRes.data || []).reduce(
+        (s, g) => s + Number(g.goal_amount),
+        0
+      );
 
       const dayOfMonth = new Date().getDate();
       const daysInMonth = new Date(
@@ -162,7 +183,9 @@ export function useWeightedForecast() {
         Math.round(
           (deals.length > 0 ? 20 : 0) +
             (weightedForecast > 0 ? 30 : 0) +
-            (deals.filter(d => d.lead_score !== null).length / Math.max(1, deals.length)) * 30 +
+            (deals.filter(d => d.lead_score !== null).length /
+              Math.max(1, deals.length)) *
+              30 +
             (currentRevenue / Math.max(1, monthlyGoal)) * 20
         )
       );

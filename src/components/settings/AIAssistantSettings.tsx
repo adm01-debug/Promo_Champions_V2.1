@@ -19,6 +19,7 @@ import { VoiceId } from '@/hooks/useElevenLabsVoice';
 import { Bot, Sparkles, Save, Loader2, Volume2, MessageSquare, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { fetchWithUserToken } from '@/lib/edgeFetch';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 const SUGGESTED_NAMES = [
   { name: 'Max', emoji: '🤖' },
@@ -73,7 +74,7 @@ export function AIAssistantSettings() {
       const testText = `Olá! Eu sou ${name || 'seu assistente'}. Estou aqui para ajudar você a vender mais!`;
 
       const response = await fetchWithUserToken(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        `${SUPABASE_URL}/functions/v1/elevenlabs-tts`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

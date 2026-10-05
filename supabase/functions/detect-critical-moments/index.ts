@@ -1,7 +1,9 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 
 
@@ -69,30 +71,13 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "detect-critical-moments", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
+
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsErr } = await supabase.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const userId = claimsData.claims.sub as string;
+    const caller = await getUserClient(req);
+    const userId = caller.userId;
 
     const body = await req.json().catch(() => ({}));
     const recordingId: string | undefined = body?.recording_id;
@@ -103,12 +88,12 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
       });
     }
 
-    const admin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    // Escrita em call_critical_moments exige bypass de RLS; as leituras usam o
+    // client do usuário para garantir que o chamador só analise gravações que
+    // ele pode ver.
+    const admin = getServiceClient("escrita em call_critical_moments (RLS)");
 
-    const { data: rec, error: recErr } = await admin
+    const { data: rec, error: recErr } = await caller.client
       .from("call_recordings")
       .select("id, salesperson_id, transcript, diarization, title")
       .eq("id", recordingId)
@@ -128,7 +113,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
       );
     }
 
-    const { data: timeline } = await admin
+    const { data: timeline } = await caller.client
       .from("call_sentiment_timeline")
       .select("start_sec, end_sec, sentiment, score, excerpt")
       .eq("recording_id", recordingId)
@@ -143,7 +128,7 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) throw new Error("LOVABLE_API_KEY ausente");
 
-    const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -230,6 +215,12 @@ Deno.serve(withRequestId("detect-critical-moments", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("detect-critical-moments error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),

@@ -2,11 +2,11 @@
  * Feature Flags Hook
  * Provides feature flag checking with caching and rollout support.
  */
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { CONFIG_QUERY_OPTIONS } from "@/config/queryOptions";
-import { useAuth } from "@/contexts/AuthContext";
-import { useMemo, useCallback } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { CONFIG_QUERY_OPTIONS } from '@/config/queryOptions';
+import { useAuth } from '@/contexts/AuthContext';
+import { useMemo, useCallback } from 'react';
 
 interface FeatureFlag {
   id: string;
@@ -27,7 +27,7 @@ function hashUserFlag(userId: string, flagKey: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash |= 0;
   }
   return Math.abs(hash) % 100;
@@ -37,12 +37,12 @@ export function useFeatureFlags() {
   const { user } = useAuth();
 
   const { data: flags = [], isLoading } = useQuery({
-    queryKey: ["feature-flags"],
+    queryKey: ['feature-flags'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("feature_flags")
-        .select("*")
-        .order("key");
+        .from('feature_flags')
+        .select('*')
+        .order('key');
 
       if (error) throw error;
       return (data ?? []) as FeatureFlag[];
@@ -52,7 +52,7 @@ export function useFeatureFlags() {
 
   const flagMap = useMemo(() => {
     const map = new Map<string, FeatureFlag>();
-    flags.forEach((f) => map.set(f.key, f));
+    flags.forEach(f => map.set(f.key, f));
     return map;
   }, [flags]);
 
@@ -80,7 +80,19 @@ export function useFeatureFlags() {
     [flagMap, user?.id]
   );
 
-  return { flags, isEnabled, isLoading };
+  /**
+   * Semântica de kill-switch: flag ausente na tabela => `fallback`
+   * (default true = feature ligada até o admin desligar explicitamente).
+   */
+  const isEnabledOrDefault = useCallback(
+    (key: string, fallback = true): boolean => {
+      if (!flagMap.has(key)) return fallback;
+      return isEnabled(key);
+    },
+    [flagMap, isEnabled]
+  );
+
+  return { flags, isEnabled, isEnabledOrDefault, isLoading };
 }
 
 /**
@@ -89,4 +101,13 @@ export function useFeatureFlags() {
 export function useFeatureFlag(key: string): boolean {
   const { isEnabled } = useFeatureFlags();
   return isEnabled(key);
+}
+
+/**
+ * Kill-switch: feature ligada por padrão enquanto a flag não existir na
+ * tabela; basta criar a linha com is_enabled=false para desligar.
+ */
+export function useFeatureGate(key: string, fallback = true): boolean {
+  const { isEnabledOrDefault } = useFeatureFlags();
+  return isEnabledOrDefault(key, fallback);
 }

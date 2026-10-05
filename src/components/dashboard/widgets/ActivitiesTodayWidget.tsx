@@ -1,25 +1,25 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Activity } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { format } from 'date-fns';
 
 export const ActivitiesTodayWidget = React.memo(function ActivitiesTodayWidget() {
   const { salesperson } = useAuth();
-  const today = format(new Date(), "yyyy-MM-dd");
+  const today = format(new Date(), 'yyyy-MM-dd');
 
   const { data, isLoading } = useQuery({
-    queryKey: ["activities-today-widget", salesperson?.id, today],
+    queryKey: ['activities-today-widget', salesperson?.id, today],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("activities")
-        .select("id, activity_type, outcome")
-        .eq("salesperson_id", salesperson!.id)
-        .gte("created_at", `${today}T00:00:00`)
-        .lte("created_at", `${today}T23:59:59`);
+        .from('activities')
+        .select('id, activity_type, outcome')
+        .eq('salesperson_id', salesperson!.id)
+        .gte('created_at', `${today}T00:00:00`)
+        .lte('created_at', `${today}T23:59:59`);
       if (error) throw error;
       return data || [];
     },
@@ -29,7 +29,13 @@ export const ActivitiesTodayWidget = React.memo(function ActivitiesTodayWidget()
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
   const total = data?.length ?? 0;
-  const positive = data?.filter(a => a.outcome === "connected" || a.outcome === "qualified" || a.outcome === "scheduled").length ?? 0;
+  const positive =
+    data?.filter(
+      a =>
+        a.outcome === 'connected' ||
+        a.outcome === 'qualified' ||
+        a.outcome === 'scheduled'
+    ).length ?? 0;
 
   return (
     <Card className="h-full">
@@ -49,4 +55,4 @@ export const ActivitiesTodayWidget = React.memo(function ActivitiesTodayWidget()
   );
 });
 
-ActivitiesTodayWidget.displayName = "ActivitiesTodayWidget";
+ActivitiesTodayWidget.displayName = 'ActivitiesTodayWidget';

@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
+import { toBusinessDate } from '@/lib/date';
 
 export type Channel = 'whatsapp' | 'email' | 'linkedin' | 'sms' | 'phone';
 export type InteractionStatus =
@@ -51,8 +53,7 @@ export const useMessageTemplates = (channel?: Channel) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as MessageTemplate[];
+      return parseRows<MessageTemplate>(data);
     },
   });
 };
@@ -82,24 +83,6 @@ export const useCreateTemplate = () => {
       toast.success('Template criado com sucesso');
     },
     onError: () => toast.error('Erro ao criar template'),
-  });
-};
-
-export const useUpdateTemplate = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<MessageTemplate>) => {
-      const { error } = await supabase
-        .from('message_templates')
-        .update(updates)
-        .eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['message-templates'] });
-      toast.success('Template atualizado');
-    },
-    onError: () => toast.error('Erro ao atualizar template'),
   });
 };
 
@@ -141,60 +124,8 @@ export const useChannelInteractions = (filters?: {
 
       const { data, error } = await query;
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data || []) as unknown as ChannelInteraction[];
+      return parseRows<ChannelInteraction>(data);
     },
-  });
-};
-
-export const useCreateInteraction = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (interaction: {
-      channel: Channel;
-      direction: Direction;
-      contact_name: string;
-      contact_info?: string;
-      message_preview?: string;
-      status?: InteractionStatus;
-      template_id?: string;
-      deal_id?: string;
-      salesperson_id: string;
-    }) => {
-      const { data, error } = await supabase
-        .from('channel_interactions')
-        .insert(interaction)
-        .select()
-        .single();
-      if (error) throw error;
-
-      // If template was used, increment usage count
-      if (interaction.template_id) {
-        try {
-          const { data: tpl } = await supabase
-            .from('message_templates')
-            .select('usage_count')
-            .eq('id', interaction.template_id)
-            .single();
-          if (tpl) {
-            await supabase
-              .from('message_templates')
-              .update({ usage_count: (tpl.usage_count || 0) + 1 })
-              .eq('id', interaction.template_id);
-          }
-        } catch {
-          // Silent fail — usage count is non-critical
-        }
-      }
-
-      return data;
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['channel-interactions'] });
-      qc.invalidateQueries({ queryKey: ['message-templates'] });
-      toast.success('Interação registrada');
-    },
-    onError: () => toast.error('Erro ao registrar interação'),
   });
 };
 
@@ -212,11 +143,10 @@ export const useChannelStats = (days = 30) => {
         .gte('created_at', since.toISOString());
 
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      const interactions = (data || []) as unknown as Pick<
-        ChannelInteraction,
-        'channel' | 'direction' | 'status' | 'created_at'
-      >[];
+      const interactions =
+        parseRows<
+          Pick<ChannelInteraction, 'channel' | 'direction' | 'status' | 'created_at'>
+        >(data);
 
       const channels: Channel[] = ['whatsapp', 'email', 'linkedin', 'sms', 'phone'];
       const stats = channels.map(ch => {
@@ -250,7 +180,7 @@ export const useChannelStats = (days = 30) => {
 function groupByDay(interactions: Pick<ChannelInteraction, 'channel' | 'created_at'>[]) {
   const map = new Map<string, Record<string, number>>();
   interactions.forEach(i => {
-    const day = i.created_at.split('T')[0];
+    const day = toBusinessDate(i.created_at);
     if (!map.has(day)) map.set(day, {});
     const entry = map.get(day)!;
     entry[i.channel] = (entry[i.channel] || 0) + 1;

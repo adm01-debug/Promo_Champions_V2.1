@@ -2,6 +2,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { collectErrors, validateUUID, validationErrorResponse } from '../_shared/validation.ts';
 
 interface LeaderboardRow {
   car_id: string;
@@ -33,6 +34,12 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
     );
 
     const body = await req.json().catch(() => ({}));
+
+    const payloadErrors = collectErrors([
+      validateUUID(body?.sale_id, 'sale_id'),
+    ]);
+    if (payloadErrors.length) return validationErrorResponse(payloadErrors, corsHeaders);
+
     const sale_id: string | undefined = body.sale_id;
 
     // 1. season ativa
@@ -143,7 +150,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
             .eq('id', season.id);
           await supabase
             .rpc('increment_race_car_wins', { _salesperson_id: row.salesperson_id })
-            .catch(() => null);
+            .then(() => null, () => null);
           break;
         }
       }
@@ -168,7 +175,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
     for (const id of overtakers) {
       await supabase
         .rpc('increment_race_car_overtakes', { _salesperson_id: id })
-        .catch(() => null);
+        .then(() => null, () => null);
     }
 
     // ===== POWER-UPS & BADGES =====
@@ -217,14 +224,14 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       // 2. XP Boost (Power-up): 3 vendas seguidas (independente de tempo)
       const { data: lastSales } = await supabase
         .from('sales')
-        .select('deal_status')
+        .select('status')
         .eq('salesperson_id', salespersonId)
         .order('created_at', { ascending: false })
         .limit(3);
 
       if (
         lastSales?.length === 3 &&
-        lastSales.every(s => s.deal_status === 'completed')
+        lastSales.every(s => ['completed', 'won', 'closed'].includes(s.status))
       ) {
         await grantPowerUp(salespersonId, 'xp_boost', {
           multiplier: 2,

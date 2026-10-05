@@ -1,6 +1,7 @@
-import { useState, useCallback } from "react";
-import { toast } from "sonner";
-import { fetchWithUserToken } from "@/lib/edgeFetch";
+import { useState, useCallback } from 'react';
+import { toast } from 'sonner';
+import { fetchWithUserToken } from '@/lib/edgeFetch';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 export interface SemanticProduct {
   id: string;
@@ -30,10 +31,10 @@ export function useSemanticSearch() {
     if (!query.trim()) return;
     setLoading(true);
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/semantic-search`;
+      const url = `${SUPABASE_URL}/functions/v1/semantic-search`;
       const res = await fetchWithUserToken(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, limit: 20 }),
       });
 
@@ -46,8 +47,8 @@ export function useSemanticSearch() {
       setData(json);
       return json;
     } catch (err) {
-      toast.error("Falha na busca semântica", {
-        description: err instanceof Error ? err.message : "Tente novamente.",
+      toast.error('Falha na busca semântica', {
+        description: err instanceof Error ? err.message : 'Tente novamente.',
       });
       return null;
     } finally {

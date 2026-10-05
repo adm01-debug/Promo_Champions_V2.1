@@ -1,23 +1,14 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
-
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.25,
-  proposal: 0.5,
-  negotiation: 0.75,
-  closed_won: 1,
-  closed_lost: 0,
-  won: 1,
-  lost: 0,
-};
 
 interface OpenDeal {
   amount: number;
@@ -115,11 +106,30 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "predict-quota-attainment", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    // Grava predições, alertas e forecasts de quota em lote: restrito a admin/manager.
+    const { data: isManager, error: roleErr } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
     );
+    if (roleErr) throw roleErr;
+    if (!isManager) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabase = getServiceClient("grava predições, alertas e forecasts de quota de toda a equipe");
+
+    // Probabilidade base por estágio — fonte única stage_probabilities
+    const stageProbabilities = await getStageProbabilities(supabase);
 
     const body = await req.json().catch(() => ({}));
 
@@ -225,7 +235,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
       const openDeals: OpenDeal[] = (openBySp.get(sp.id) ?? []).map((d) => {
         const stage = String(d.stage ?? "lead").toLowerCase();
-        const probability = latestScore.get(d.id) ?? STAGE_PROBABILITY[stage] ?? 0.1;
+        const probability = latestScore.get(d.id) ?? stageProbabilities[stage] ?? 0.1;
         return { amount: Number(d.amount ?? 0), probability };
       });
 
@@ -251,8 +261,8 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     // Batch insert all predictions (was N individual inserts)
     const predRows = metricsPerSp.map((m) => ({
       salesperson_id: m.sp.id,
-      period_start: periodStart.toISOString().slice(0, 10),
-      period_end: periodEnd.toISOString().slice(0, 10),
+      period_start: toBusinessDate(periodStart),
+      period_end: toBusinessDate(periodEnd),
       quota_amount: m.quotaAmount,
       closed_amount: m.closedAmount,
       weighted_pipeline: m.weightedPipeline,
@@ -306,8 +316,8 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     // Batch upsert all forecasts (was N individual upserts)
     const fcRows = metricsPerSp.map((m) => ({
       salesperson_id: m.sp.id,
-      period_start: periodStart.toISOString().slice(0, 10),
-      period_end: periodEnd.toISOString().slice(0, 10),
+      period_start: toBusinessDate(periodStart),
+      period_end: toBusinessDate(periodEnd),
       quota: m.quotaAmount,
       closed: m.closedAmount,
       weighted_open: m.weightedPipeline,
@@ -362,6 +372,11 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     console.error("predict-quota-attainment error", e);
     return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500,

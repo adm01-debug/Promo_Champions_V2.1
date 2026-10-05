@@ -2,10 +2,20 @@ import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { subDays, subMonths, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import {
+  subDays,
+  subMonths,
+  startOfDay,
+  endOfDay,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+} from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-export type TimeRange = 'today' | 'yesterday' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+export type TimeRange =
+  'today' | 'yesterday' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
 
 interface DateRange {
   start: Date;
@@ -21,7 +31,7 @@ interface TimeRangePickerProps {
 
 const getDateRange = (range: TimeRange): DateRange => {
   const now = new Date();
-  
+
   switch (range) {
     case 'today':
       return { start: startOfDay(now), end: endOfDay(now) };
@@ -30,7 +40,10 @@ const getDateRange = (range: TimeRange): DateRange => {
       return { start: startOfDay(yesterday), end: endOfDay(yesterday) };
     }
     case 'week':
-      return { start: startOfWeek(now, { locale: ptBR }), end: endOfWeek(now, { locale: ptBR }) };
+      return {
+        start: startOfWeek(now, { locale: ptBR }),
+        end: endOfWeek(now, { locale: ptBR }),
+      };
     case 'month':
       return { start: startOfMonth(now), end: endOfMonth(now) };
     case 'quarter':
@@ -97,7 +110,8 @@ export const ComparisonPeriod: FC<ComparisonPeriodProps> = ({
   <div className={cn('flex items-center justify-between', className)}>
     <Button
       variant="ghost"
-      size="icon" aria-label="Anterior"
+      size="icon"
+      aria-label="Anterior"
       onClick={() => onNavigate?.('prev')}
     >
       <ChevronLeft size={16} />
@@ -108,7 +122,8 @@ export const ComparisonPeriod: FC<ComparisonPeriodProps> = ({
     </div>
     <Button
       variant="ghost"
-      size="icon" aria-label="Próximo"
+      size="icon"
+      aria-label="Próximo"
       onClick={() => onNavigate?.('next')}
       disabled={!canGoNext}
     >

@@ -1,18 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { Target } from "lucide-react";
-import { SalespersonActivityData } from "@/hooks/sales/useSalespersonActivityReport";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { Target } from 'lucide-react';
+import { SalespersonActivityData } from '@/hooks/sales/useSalespersonActivityReport';
 
 interface ActivityOutcomesChartProps {
   data: SalespersonActivityData[];
 }
 
 const OUTCOME_COLORS = {
-  connected: { color: "hsl(142, 76%, 36%)", label: "Conectou" },
-  scheduled: { color: "hsl(217, 91%, 60%)", label: "Agendou" },
-  qualified: { color: "hsl(280, 87%, 63%)", label: "Qualificou" },
-  no_answer: { color: "hsl(45, 93%, 47%)", label: "Sem Resposta" },
-  not_interested: { color: "hsl(0, 84%, 60%)", label: "Sem Interesse" },
+  connected: { color: 'hsl(142, 76%, 36%)', label: 'Conectou' },
+  scheduled: { color: 'hsl(217, 91%, 60%)', label: 'Agendou' },
+  qualified: { color: 'hsl(280, 87%, 63%)', label: 'Qualificou' },
+  no_answer: { color: 'hsl(45, 93%, 47%)', label: 'Sem Resposta' },
+  not_interested: { color: 'hsl(0, 84%, 60%)', label: 'Sem Interesse' },
 };
 
 export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
@@ -32,7 +32,8 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
     .map(([key, value]) => ({
       name: OUTCOME_COLORS[key as keyof typeof OUTCOME_COLORS]?.label || key,
       value,
-      color: OUTCOME_COLORS[key as keyof typeof OUTCOME_COLORS]?.color || "hsl(var(--muted))",
+      color:
+        OUTCOME_COLORS[key as keyof typeof OUTCOME_COLORS]?.color || 'hsl(var(--muted))',
     }));
 
   const total = chartData.reduce((sum, item) => sum + item.value, 0);
@@ -67,32 +68,36 @@ export function ActivityOutcomesChart({ data }: ActivityOutcomesChartProps) {
                   outerRadius={80}
                   paddingAngle={2}
                   dataKey="value"
-                  label={({ percent }: { percent?: number }) => `${((percent ?? 0) * 100).toFixed(0)}%`}
+                  label={({ percent }: { percent?: number }) =>
+                    `${((percent ?? 0) * 100).toFixed(0)}%`
+                  }
                   labelLine={false}
                 >
                   {chartData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
+                    <Cell
+                      key={`cell-${index}`}
                       fill={entry.color}
                       style={{
-                        filter: "drop-shadow(0 4px 8px hsl(var(--primary) / 0.15))",
+                        filter: 'drop-shadow(0 4px 8px hsl(var(--primary) / 0.15))',
                       }}
                     />
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number | string) => [value, "Quantidade"]}
+                  formatter={(value: number | string) => [value, 'Quantidade']}
                   contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                    boxShadow: "0 10px 40px -10px hsl(var(--primary) / 0.2)",
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.2)',
                   }}
                 />
-                <Legend 
-                  wrapperStyle={{ fontSize: "10px" }}
-                  formatter={(value) => <span className="text-muted-foreground">{value}</span>}
+                <Legend
+                  wrapperStyle={{ fontSize: '10px' }}
+                  formatter={value => (
+                    <span className="text-muted-foreground">{value}</span>
+                  )}
                 />
               </PieChart>
             </ResponsiveContainer>

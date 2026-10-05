@@ -36,9 +36,12 @@ export const SmartSkeleton: FC = () => {
 
   const skeleton = useMemo(() => {
     // Exact matches or prefixes
-    if (path === '/' || path === '/dashboard/visao-geral') return <DashboardLoadingSkeleton />;
-    if (path.startsWith('/dashboard/performance')) return <VendedorDashboardLoadingSkeleton />;
-    if (path.startsWith('/dashboard/analises') || path.startsWith('/analytics')) return <AnalyticsLoadingSkeleton />;
+    if (path === '/' || path === '/dashboard/visao-geral')
+      return <DashboardLoadingSkeleton />;
+    if (path.startsWith('/dashboard/performance'))
+      return <VendedorDashboardLoadingSkeleton />;
+    if (path.startsWith('/dashboard/analises') || path.startsWith('/analytics'))
+      return <AnalyticsLoadingSkeleton />;
     if (path.startsWith('/pipeline')) return <PipelineLoadingSkeleton />;
     if (path.startsWith('/ranking')) return <RankingLoadingSkeleton />;
     if (path.startsWith('/sdr')) return <SDRDashboardLoadingSkeleton />;
@@ -58,14 +61,10 @@ export const SmartSkeleton: FC = () => {
     if (path.startsWith('/vendedores')) return <VendedoresLoadingSkeleton />;
     if (path.startsWith('/configuracoes')) return <ConfiguracoesLoadingSkeleton />;
     if (path.startsWith('/gamificacao')) return <GamificationLoadingSkeleton />;
-    
+
     // Default fallback (Index skeleton is a good all-rounder)
     return <IndexLoadingSkeleton />;
   }, [path]);
 
-  return (
-    <div className="w-full animate-in fade-in duration-300">
-      {skeleton}
-    </div>
-  );
+  return <div className="w-full animate-in fade-in duration-300">{skeleton}</div>;
 };

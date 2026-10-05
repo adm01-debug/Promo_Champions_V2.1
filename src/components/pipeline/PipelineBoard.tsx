@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
+import { DICEBEAR_AVATARS_URL } from '@/config/external';
 
 import {
   DndContext,
@@ -44,7 +45,9 @@ import { useDealProbabilities } from '@/hooks/useDealProbability';
 import { useLeadScores, useCalculateLeadScores } from '@/hooks/useLeadScoring';
 import { useActiveCadencesBySaleIds } from '@/hooks/useCadences';
 import { useICPByClientName } from '@/hooks/useICPData';
+import { useStageProbabilities } from '@/hooks/useStageProbabilities';
 
+import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
 export const PipelineBoard = () => {
@@ -57,6 +60,7 @@ export const PipelineBoard = () => {
   const { data: pipelines, isLoading: pipelinesLoading } = usePipelines();
   const { data: dynamicStages, isLoading: stagesLoading } =
     usePipelineStages(selectedPipelineId);
+  const { data: stageProbabilities } = useStageProbabilities();
   const {
     data: multiDealsByStage,
     isLoading: multiDealsLoading,
@@ -84,7 +88,15 @@ export const PipelineBoard = () => {
   // Current stages to render
   const currentStages = useMemo(() => {
     if (isDefaultPipeline) {
-      return PIPELINE_STAGES;
+      // Probabilidade do pipeline padrão vem da fonte única stage_probabilities
+      // (fração 0-1 → percentual 0-100); o valor em PIPELINE_STAGES é fallback.
+      return PIPELINE_STAGES.map(s => ({
+        ...s,
+        probability:
+          stageProbabilities?.[s.id] !== undefined
+            ? Math.round(stageProbabilities[s.id]! * 100)
+            : s.probability,
+      }));
     }
     return (dynamicStages || []).map(s => ({
       id: s.name as PipelineStageId,
@@ -93,7 +105,7 @@ export const PipelineBoard = () => {
       order: s.stage_order,
       probability: s.probability,
     }));
-  }, [isDefaultPipeline, dynamicStages]);
+  }, [isDefaultPipeline, dynamicStages, stageProbabilities]);
 
   // Current deals grouped by stage
   const currentDealsByStage = useMemo(() => {
@@ -223,20 +235,28 @@ export const PipelineBoard = () => {
       }
 
       let currentStageId: string | null = null;
+      let draggedVersion: number | undefined;
       for (const stage of currentStages) {
-        if (currentDealsByStage?.[stage.id]?.some(d => d.id === dealId)) {
+        const dragged = currentDealsByStage?.[stage.id]?.find(d => d.id === dealId);
+        if (dragged) {
           currentStageId = stage.id;
+          draggedVersion = dragged.version;
           break;
         }
       }
       if (currentStageId && currentStageId !== targetStage.id) {
         if (isDefaultPipeline) {
-          moveDeal.mutate({ dealId, newStage: targetStage.id as PipelineStageId });
+          moveDeal.mutate({
+            dealId,
+            newStage: targetStage.id as PipelineStageId,
+            expectedVersion: draggedVersion,
+          });
         } else {
           moveDealMulti.mutate({
             dealId,
             newStage: targetStage.id,
             pipelineId: selectedPipelineId,
+            expectedVersion: draggedVersion,
           });
         }
       }
@@ -245,12 +265,17 @@ export const PipelineBoard = () => {
         const dealInStage = currentDealsByStage?.[stage.id]?.find(d => d.id === overId);
         if (dealInStage) {
           if (isDefaultPipeline) {
-            moveDeal.mutate({ dealId, newStage: stage.id as PipelineStageId });
+            moveDeal.mutate({
+              dealId,
+              newStage: stage.id as PipelineStageId,
+              expectedVersion: dealInStage.version,
+            });
           } else {
             moveDealMulti.mutate({
               dealId,
               newStage: stage.id,
               pipelineId: selectedPipelineId,
+              expectedVersion: dealInStage.version,
             });
           }
           return;
@@ -381,11 +406,7 @@ export const PipelineBoard = () => {
                 Ganho Potencial
               </span>
               <span className="text-xs font-black text-foreground">
-                {new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                  notation: 'compact',
-                }).format(weightedTotalValue * (ticketSimulation / 100))}
+                {formatBRLCompact(weightedTotalValue * (ticketSimulation / 100))}
               </span>
             </div>
           </div>
@@ -467,9 +488,8 @@ export const PipelineBoard = () => {
                         key={i}
                         className="h-6 w-6 border-2 border-background ring-2 ring-primary/20"
                       >
-                        <AvatarImage
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`}
-                        />
+                        <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`} />
+                        src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`}
                       </Avatar>
                     ))}
                   </div>
@@ -565,8 +585,7 @@ export const PipelineBoard = () => {
                   activeCadence={activeCadences?.[activeDeal.id]}
                   icpData={
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
-                      | { is_icp_match: boolean; grupo_nicho?: string }
-                      | undefined
+                      { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
                 />
               </div>

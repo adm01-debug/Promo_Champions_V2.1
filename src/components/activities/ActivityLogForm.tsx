@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { WA_ME_URL } from '@/config/external';
 import {
   Command,
   CommandEmpty,
@@ -33,7 +34,15 @@ import {
 } from '@/hooks/activities/useActivities';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useClients } from '@/hooks/crm/useClients';
-import { Phone, Mail, Users, MessageCircle, MoreHorizontal, Plus, FileText } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  Users,
+  MessageCircle,
+  MoreHorizontal,
+  Plus,
+  FileText,
+} from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { toast } from 'sonner';
 
@@ -93,14 +102,11 @@ const activitySchema = z.object({
   duration_minutes: z
     .string()
     .optional()
-    .transform(val => (val ? parseInt(val) : undefined))
-    .pipe(
-      z
-        .number()
-        .min(1, 'Duração mínima é 1 minuto')
-        .max(480, 'Duração máxima é 8 horas')
-        .optional()
-    ),
+    .refine(val => {
+      if (!val) return true;
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 1 && num <= 480;
+    }, 'Duração deve ser entre 1 e 480 minutos'),
   notes: z
     .string()
     .max(1000, 'Observações devem ter no máximo 1000 caracteres')
@@ -222,7 +228,7 @@ export function ActivityLogForm({
     }
     const cleanPhone = phone.replace(/\D/g, '');
     const text = encodeURIComponent(form.getValues('notes') || 'Olá, tudo bem?');
-    window.open(`https://wa.me/${cleanPhone}?text=${text}`, '_blank');
+    window.open(`${WA_ME_URL}/${cleanPhone}?text=${text}`, '_blank');
   };
 
   const handleSubmit = (data: ActivityFormData) => {
@@ -248,7 +254,9 @@ export function ActivityLogForm({
         activity_type: data.activity_type,
         outcome: data.outcome,
         notes: finalNotes || undefined,
-        duration_minutes: data.duration_minutes,
+        duration_minutes: data.duration_minutes
+          ? parseInt(data.duration_minutes)
+          : undefined,
         contact_name: data.contact_name || undefined,
       },
       {

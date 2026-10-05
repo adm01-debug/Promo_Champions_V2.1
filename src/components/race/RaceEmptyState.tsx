@@ -68,13 +68,11 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
             </defs>
             <polygon points="60,180 340,180 240,40 160,40" fill="url(#trackGrad)" />
             {/* Linhas tracejadas centrais */}
-            {[0, 1, 2, 3, 4].map((i) => {
+            {[0, 1, 2, 3, 4].map(i => {
               const t = i / 5;
               const yTop = 180 - t * 140;
               const yBot = 180 - (t + 0.06) * 140;
               const xCenterTop = 200;
-              const _widthTop = (340 - 60) * (1 - t * 0.78);
-              const _widthBot = (340 - 60) * (1 - (t + 0.06) * 0.78);
               return (
                 <line
                   key={i}
@@ -105,11 +103,27 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
               />
-              <circle cx="184" cy="174" r="4" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeDasharray="2 2" />
-              <circle cx="216" cy="174" r="4" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="1.5" strokeDasharray="2 2" />
+              <circle
+                cx="184"
+                cy="174"
+                r="4"
+                fill="none"
+                stroke="hsl(var(--muted-foreground))"
+                strokeWidth="1.5"
+                strokeDasharray="2 2"
+              />
+              <circle
+                cx="216"
+                cy="174"
+                r="4"
+                fill="none"
+                stroke="hsl(var(--muted-foreground))"
+                strokeWidth="1.5"
+                strokeDasharray="2 2"
+              />
             </motion.g>
             {/* Partículas de poeira sutis */}
-            {[0, 1, 2].map((i) => (
+            {[0, 1, 2].map(i => (
               <motion.circle
                 key={i}
                 cx={170 + i * 30}
@@ -117,7 +131,12 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
                 r="1.5"
                 fill="hsl(var(--muted-foreground))"
                 animate={{ opacity: [0, 0.6, 0], y: [0, -8, -16] }}
-                transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.6, ease: 'easeOut' }}
+                transition={{
+                  duration: 2.4,
+                  repeat: Infinity,
+                  delay: i * 0.6,
+                  ease: 'easeOut',
+                }}
               />
             ))}
           </svg>
@@ -134,9 +153,7 @@ export const RaceEmptyState: FC<Props> = ({ roleType, isAdmin, onStartSeason }) 
           transition={{ delay: 0.2, duration: 0.4 }}
           className="space-y-2"
         >
-          <h2 className="text-section-title sm:text-3xl">
-            A pista está silenciosa
-          </h2>
+          <h2 className="text-section-title sm:text-3xl">A pista está silenciosa</h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-md">
             {isAdmin
               ? `Nenhuma temporada ativa para ${roleLabel}. Solte a bandeira verde e dê a largada na próxima corrida.`

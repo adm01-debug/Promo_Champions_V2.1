@@ -1,13 +1,59 @@
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Share2, Users, Briefcase, Zap, Globe, Shield } from "lucide-react";
+import { motion } from 'framer-motion';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Share2, Users, Briefcase, Zap, Globe, Shield } from 'lucide-react';
 
 const nodes = [
-  { id: 1, x: 50, y: 50, icon: Shield, label: "HQ Security", color: "text-blue-500", bg: "bg-blue-500/10" },
-  { id: 2, x: 150, y: 20, icon: Users, label: "Acme Corp", color: "text-emerald-500", bg: "bg-emerald-500/10" },
-  { id: 3, x: 250, y: 80, icon: Briefcase, label: "Global Tech", color: "text-purple-500", bg: "bg-purple-500/10" },
-  { id: 4, x: 120, y: 120, icon: Zap, label: "NexGen Deal", color: "text-amber-500", bg: "bg-amber-500/10" },
-  { id: 5, x: 200, y: 150, icon: Globe, label: "Cloud Infra", color: "text-primary", bg: "bg-primary/10" },
+  {
+    id: 1,
+    x: 50,
+    y: 50,
+    icon: Shield,
+    label: 'HQ Security',
+    color: 'text-blue-500',
+    bg: 'bg-blue-500/10',
+  },
+  {
+    id: 2,
+    x: 150,
+    y: 20,
+    icon: Users,
+    label: 'Acme Corp',
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+  },
+  {
+    id: 3,
+    x: 250,
+    y: 80,
+    icon: Briefcase,
+    label: 'Global Tech',
+    color: 'text-purple-500',
+    bg: 'bg-purple-500/10',
+  },
+  {
+    id: 4,
+    x: 120,
+    y: 120,
+    icon: Zap,
+    label: 'NexGen Deal',
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/10',
+  },
+  {
+    id: 5,
+    x: 200,
+    y: 150,
+    icon: Globe,
+    label: 'Cloud Infra',
+    color: 'text-primary',
+    bg: 'bg-primary/10',
+  },
 ];
 
 const connections = [
@@ -28,7 +74,9 @@ export const RelationshipGraph = () => {
               <Share2 className="size-4 text-primary" />
               Insight <span className="text-primary">Relationship Graph</span>
             </CardTitle>
-            <CardDescription className="text-[10px] uppercase font-bold opacity-60">Visualizando Conexões Estratégicas</CardDescription>
+            <CardDescription className="text-[10px] uppercase font-bold opacity-60">
+              Visualizando Conexões Estratégicas
+            </CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -48,31 +96,35 @@ export const RelationshipGraph = () => {
                 strokeWidth="1"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
-                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
               />
             );
           })}
         </svg>
 
-        {nodes.map((node) => (
+        {nodes.map(node => (
           <motion.div
             key={node.id}
             className={`absolute p-2 rounded-xl border border-white/5 backdrop-blur-md shadow-xl flex items-center gap-2 cursor-pointer z-10 ${node.bg}`}
-            style={{ 
-              left: `${(node.x / 300) * 100}%`, 
+            style={{
+              left: `${(node.x / 300) * 100}%`,
               top: `${(node.y / 180) * 100}%`,
-              transform: 'translate(-50%, -50%)' 
+              transform: 'translate(-50%, -50%)',
             }}
             whileHover={{ scale: 1.1, zIndex: 20 }}
           >
             <node.icon className={`size-3 ${node.color}`} />
-            <span className="text-[9px] font-black uppercase tracking-tighter whitespace-nowrap">{node.label}</span>
+            <span className="text-[9px] font-black uppercase tracking-tighter whitespace-nowrap">
+              {node.label}
+            </span>
           </motion.div>
         ))}
 
         <div className="absolute bottom-4 left-4 right-4 p-3 rounded-lg bg-black/60 border border-white/5 backdrop-blur-md">
           <p className="text-[9px] font-medium text-muted-foreground leading-snug">
-            <span className="text-primary font-black uppercase">AI Discovery:</span> "Global Tech" e "Acme Corp" compartilham o mesmo stakeholder técnico. Risco de cross-deal detectado.
+            <span className="text-primary font-black uppercase">AI Discovery:</span>{' '}
+            "Global Tech" e "Acme Corp" compartilham o mesmo stakeholder técnico. Risco de
+            cross-deal detectado.
           </p>
         </div>
       </CardContent>

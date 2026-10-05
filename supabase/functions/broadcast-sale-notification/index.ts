@@ -2,7 +2,9 @@ import { Resend } from 'npm:resend@2';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
 
+import { alertFromEmail } from '../_shared/alert-escalation.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
 const resend = new Resend(RESEND_API_KEY);
@@ -14,20 +16,34 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
   }
 
   // ── Authentication ────────────────────────────────────────────────────
-  // Require a valid user JWT. Content (salesperson_name, client_name, amount)
-  // is read from the DB — NOT the request body — to prevent content injection.
-  let callerUserId: string;
+  // Exige JWT de usuário válido OU chamada interna autenticada (service_role
+  // / X-Cron-Secret — usada pelo trigger de broadcast de venda no Postgres).
+  // Conteúdo (salesperson_name, client_name, amount) é lido do banco — NUNCA
+  // do corpo da requisição — para prevenir injeção de conteúdo.
+  let callerUserId: string | null = null;
+  let isInternalCall = false;
   try {
     const ctx2 = await getUserClient(req);
     callerUserId = ctx2.userId;
   } catch (e) {
-    if (e instanceof UnauthorizedError) {
+    if (!(e instanceof UnauthorizedError)) throw e;
+    isInternalCall = await isAuthorizedCronRequest(req, async () => {
+      const admin = getServiceClient(
+        'broadcast-sale-notification: consulta X-Cron-Secret em _internal_secrets para autenticar jobs internos'
+      );
+      const { data } = await admin
+        .from('_internal_secrets')
+        .select('value')
+        .eq('key', 'coaching_cron_secret')
+        .maybeSingle();
+      return (data as { value?: string | null } | null)?.value;
+    });
+    if (!isInternalCall) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized: ' + e.message }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    throw e;
   }
 
   try {
@@ -54,8 +70,9 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
       });
     }
 
-    // Authorization: only the salesperson on the sale or an admin may trigger.
-    if (sale.salesperson_id !== callerUserId) {
+    // Authorization: chamada interna (trigger) é confiável; com JWT de
+    // usuário, só o vendedor da venda ou admin/manager pode disparar.
+    if (!isInternalCall && sale.salesperson_id !== callerUserId) {
       const { data: roleRow } = await supabase
         .from('user_roles')
         .select('role')
@@ -167,7 +184,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
           });
           auditRows.push({ ...baseAudit, notification_type: 'in-app', channel: 'in-app', status: 'success' });
         } catch (e) {
-          console.error(`In-app failed for ${recipient.id}:`, e);
+          ctx.log('error', 'in_app_notification_failed', { recipient_id: recipient.id });
           auditRows.push({ ...baseAudit, notification_type: 'in-app', channel: 'in-app', status: 'failed', error_log: String(e) });
         }
       }
@@ -186,7 +203,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
           `;
 
           const emailResponse = await resend.emails.send({
-            from: 'Vendas Elite <vendas@resend.dev>',
+            from: alertFromEmail(),
             to: [recipient.email],
             subject: emailSubject,
             html: emailHtml,
@@ -200,7 +217,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
             error_log: emailResponse.error ? JSON.stringify(emailResponse.error) : null,
           });
         } catch (e) {
-          console.error(`Email failed for ${recipient.id}:`, e);
+          ctx.log('error', 'email_notification_failed', { recipient_id: recipient.id });
           auditRows.push({ ...baseAudit, notification_type: 'email', channel: 'email', status: 'failed', error_log: String(e) });
         }
       }
@@ -211,7 +228,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     // Single batch insert for all audit rows (replaces N individual inserts)
     if (auditRows.length > 0) {
       const { error: auditErr } = await supabase.from('sale_notifications_audit').insert(auditRows);
-      if (auditErr) console.error('[broadcast-sale-notification] Audit batch insert error:', auditErr);
+      if (auditErr) ctx.log('error', 'audit_batch_insert_failed', { error: auditErr.message });
     }
 
     ctx.log('info', 'broadcast_ok', { notified: results.length, sale_id });

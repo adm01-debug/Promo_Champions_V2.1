@@ -1,17 +1,8 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-
-
-
-const STAGE_WEIGHTS: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.15,
-  qualified: 0.3,
-  proposal: 0.55,
-  negotiation: 0.75,
-  closed: 0.95,
-};
+import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 
 Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -22,6 +13,34 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // Autorização: exige usuário autenticado com papel admin/manager (dashboard agrega pipeline/comissões de toda a equipe).
+    try {
+      const caller = await getUserClient(req);
+      const { data: allowed, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleError) throw roleError;
+      if (!allowed) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      console.error("revops-hub authorization failed:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const url = new URL(req.url);
     const horizonDays = Number(url.searchParams.get("horizon") ?? "90");
@@ -42,10 +61,11 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     const wonDeals = sales.filter((s) => s.status === "completed" && s.created_at >= since);
     const lostDeals = sales.filter((s) => s.status === "lost" && s.created_at >= since);
 
-    // Pipeline coverage e weighted forecast
+    // Pipeline coverage e weighted forecast — pesos vêm de public.stage_probabilities
+    const stageProbs = await getStageProbabilities(supabase);
     const totalPipeline = openDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);
     const weightedForecast = openDeals.reduce(
-      (sum, d) => sum + Number(d.amount || 0) * (STAGE_WEIGHTS[d.stage] ?? 0.1),
+      (sum, d) => sum + Number(d.amount || 0) * (stageProbs[d.stage] ?? 0.1),
       0,
     );
     const closedRevenue = wonDeals.reduce((sum, d) => sum + Number(d.amount || 0), 0);

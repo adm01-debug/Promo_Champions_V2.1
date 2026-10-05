@@ -1,6 +1,7 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface InventoryLevel {
   product_id: string;
@@ -28,13 +29,26 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    const supabase = getServiceClient("forecast de demanda lê todo o catálogo e grava demand_forecasts");
 
     const { action, product_id } = await req.json();
 
     if (action === 'generate-forecasts') {
+      // Geração de forecast grava demand_forecasts em lote: restrita a admin/manager.
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       console.info('[Demand Forecast] Generating forecasts for all products...');
 
       // Get all active products, sales history, and inventory in parallel
@@ -154,7 +168,7 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
       if (forecasts.length > 0) {
         const forecastDate = new Date();
         forecastDate.setDate(forecastDate.getDate() + 30);
-        const forecastDateStr = forecastDate.toISOString().split('T')[0];
+        const forecastDateStr = toBusinessDate(forecastDate);
         const updatedAt = new Date().toISOString();
 
         // Need per-product data; rebuild from products map
@@ -224,6 +238,12 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: unknown) {
+    if (error instanceof UnauthorizedError) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     console.error('[Demand Forecast] Error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: message }), {

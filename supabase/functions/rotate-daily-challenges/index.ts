@@ -1,6 +1,11 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.49.4'
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 
 // Pool of daily challenge templates with smaller targets
@@ -24,11 +29,26 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    // Qualquer usuário autenticado pode disparar a rotação (idempotente —
+    // o card do frontend a invoca para garantir os desafios do dia).
+    try {
+      await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: 'unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      throw error;
+    }
 
-    const today = new Date().toISOString().split('T')[0]
+    // Bypass de RLS necessário: escreve daily_challenges globais.
+    const supabase = getServiceClient(
+      "rotacao diaria escreve desafios globais que usuarios nao escrevem",
+    )
+
+    const today = toBusinessDate()
 
     // Check if today's challenges already exist
     const { data: existingChallenges } = await supabase
@@ -49,7 +69,7 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
     // Deactivate yesterday's challenges
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayStr = yesterday.toISOString().split('T')[0]
+    const yesterdayStr = toBusinessDate(yesterday)
 
     await supabase
       .from('daily_challenges')

@@ -9,6 +9,7 @@ export function useSupplierList() {
       const { data, error } = await supabase
         .from('suppliers')
         .select('*')
+        .is('deleted_at', null)
         .order('name');
 
       if (error) throw error;
@@ -23,7 +24,9 @@ export function useSupplierProducts() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('supplier_products')
-        .select(`*, suppliers (id, name, reliability_score, lead_time_days), products (id, name, price)`)
+        .select(
+          `*, suppliers (id, name, reliability_score, lead_time_days), products (id, name, price)`
+        )
         .order('unit_price', { ascending: true });
 
       if (error) throw error;

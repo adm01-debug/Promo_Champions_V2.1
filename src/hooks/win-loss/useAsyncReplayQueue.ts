@@ -1,11 +1,11 @@
-import { useCallback, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useCallback, useRef, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export const ASYNC_REPLAY_CHUNK_SIZE = 25;
 
-export type ChunkStatus = "pending" | "running" | "succeeded" | "failed" | "cancelled";
+export type ChunkStatus = 'pending' | 'running' | 'succeeded' | 'failed' | 'cancelled';
 
 export interface ChunkResult {
   index: number;
@@ -48,7 +48,22 @@ const initialState = (): AsyncReplayState => ({
 
 interface InvokeResult {
   requestId: string;
-  results: Array<{ id: string; succeeded: boolean; status: number; error: string | null }>;
+  results: Array<{
+    id: string;
+    succeeded: boolean;
+    status: number;
+    error: string | null;
+  }>;
+}
+
+// Sequencial de propósito: cada chunk é processado um a um para alimentar o
+// progresso por chunk na UI e respeitar o cancelamento entre iterações.
+async function invokeReplayChunk(deadLetterIds: string[]): Promise<InvokeResult> {
+  const { data, error } = await supabase.functions.invoke('winloss-webhook-replay', {
+    body: { dead_letter_ids: deadLetterIds },
+  });
+  if (error) throw error;
+  return data as InvokeResult;
 }
 
 export function useAsyncReplayQueue() {
@@ -63,7 +78,7 @@ export function useAsyncReplayQueue() {
 
   const cancel = useCallback(() => {
     cancelRef.current = true;
-    setState((s) => ({ ...s, isCancelling: true }));
+    setState(s => ({ ...s, isCancelling: true }));
   }, []);
 
   const start = useCallback(
@@ -73,12 +88,13 @@ export function useAsyncReplayQueue() {
 
       cancelRef.current = false;
       const chunks: string[][] = [];
-      for (let i = 0; i < unique.length; i += chunkSize) chunks.push(unique.slice(i, i + chunkSize));
+      for (let i = 0; i < unique.length; i += chunkSize)
+        chunks.push(unique.slice(i, i + chunkSize));
 
       const initial: ChunkResult[] = chunks.map((c, i) => ({
         index: i,
         ids: c,
-        status: "pending",
+        status: 'pending',
         succeeded: 0,
         failed: 0,
       }));
@@ -98,73 +114,83 @@ export function useAsyncReplayQueue() {
       });
 
       for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        if (!chunk) continue;
+
         if (cancelRef.current) {
-          setState((s) => ({
+          setState(s => ({
             ...s,
             chunks: s.chunks.map((c, idx) =>
-              idx >= i && c.status === "pending" ? { ...c, status: "cancelled" } : c,
+              idx >= i && c.status === 'pending' ? { ...c, status: 'cancelled' } : c
             ),
           }));
           break;
         }
 
-        setState((s) => ({
+        setState(s => ({
           ...s,
           currentChunkIndex: i,
-          chunks: s.chunks.map((c, idx) => (idx === i ? { ...c, status: "running" } : c)),
+          chunks: s.chunks.map((c, idx) => (idx === i ? { ...c, status: 'running' } : c)),
         }));
 
         const t0 = performance.now();
         try {
-          const { data, error } = await supabase.functions.invoke("winloss-webhook-replay", {
-            body: { dead_letter_ids: chunks[i] },
-          });
-          if (error) throw error;
-          const d = data as InvokeResult;
-          const ok = d.results.filter((r) => r.succeeded).length;
+          const d = await invokeReplayChunk(chunk);
+          const ok = d.results.filter(r => r.succeeded).length;
           const fail = d.results.length - ok;
           const dur = Math.round(performance.now() - t0);
 
-          setState((s) => ({
+          setState(s => ({
             ...s,
-            processedIds: s.processedIds + chunks[i].length,
+            processedIds: s.processedIds + chunk.length,
             succeededIds: s.succeededIds + ok,
             failedIds: s.failedIds + fail,
             chunks: s.chunks.map((c, idx) =>
               idx === i
                 ? {
                     ...c,
-                    status: "succeeded",
+                    status: 'succeeded',
                     succeeded: ok,
                     failed: fail,
                     requestId: d.requestId,
                     durationMs: dur,
                   }
-                : c,
+                : c
             ),
           }));
         } catch (e) {
           const dur = Math.round(performance.now() - t0);
-          const msg = e instanceof Error ? e.message : "Erro desconhecido";
-          setState((s) => ({
+          const msg = e instanceof Error ? e.message : 'Erro desconhecido';
+          setState(s => ({
             ...s,
-            processedIds: s.processedIds + chunks[i].length,
-            failedIds: s.failedIds + chunks[i].length,
+            processedIds: s.processedIds + chunk.length,
+            failedIds: s.failedIds + chunk.length,
             chunks: s.chunks.map((c, idx) =>
               idx === i
-                ? { ...c, status: "failed", failed: chunks[i].length, error: msg, durationMs: dur }
-                : c,
+                ? {
+                    ...c,
+                    status: 'failed',
+                    failed: chunk.length,
+                    error: msg,
+                    durationMs: dur,
+                  }
+                : c
             ),
           }));
         }
       }
 
-      setState((s) => ({ ...s, isRunning: false, isCancelling: false, finishedAt: Date.now() }));
-      qc.invalidateQueries({ queryKey: ["winloss-dead-letters"] });
-      qc.invalidateQueries({ queryKey: ["winloss-replay-audit"] });
+      setState(s => ({
+        ...s,
+        isRunning: false,
+        isCancelling: false,
+        finishedAt: Date.now(),
+      }));
+      qc.invalidateQueries({ queryKey: ['winloss-dead-letters'] });
+      qc.invalidateQueries({ queryKey: ['winloss-replay-audit'] });
 
-      const finalSnap = await new Promise<AsyncReplayState>((resolve) => {
-        setState((s) => {
+      const finalSnap = await new Promise<AsyncReplayState>(resolve => {
+        setState(s => {
           resolve(s);
           return s;
         });
@@ -172,17 +198,19 @@ export function useAsyncReplayQueue() {
       const wasCancelled = cancelRef.current;
       if (wasCancelled) {
         toast.warning(
-          `Fila cancelada · ${finalSnap.succeededIds} sucesso · ${finalSnap.failedIds} falha(s)`,
+          `Fila cancelada · ${finalSnap.succeededIds} sucesso · ${finalSnap.failedIds} falha(s)`
         );
       } else if (finalSnap.failedIds === 0) {
-        toast.success(`Fila concluída · ${finalSnap.succeededIds} reprocessado(s) com sucesso`);
+        toast.success(
+          `Fila concluída · ${finalSnap.succeededIds} reprocessado(s) com sucesso`
+        );
       } else {
         toast.warning(
-          `Fila concluída · ${finalSnap.succeededIds} sucesso · ${finalSnap.failedIds} falha(s)`,
+          `Fila concluída · ${finalSnap.succeededIds} sucesso · ${finalSnap.failedIds} falha(s)`
         );
       }
     },
-    [qc],
+    [qc]
   );
 
   return { state, start, cancel, reset };

@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 
 
@@ -10,6 +11,10 @@ interface AnalysisRow { id: string; sale_id: string; outcome: string; primary_re
 Deno.serve(withRequestId("generate-loss-coaching", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "generate-loss-coaching", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const { analysis_id, salesperson_id } = await req.json();

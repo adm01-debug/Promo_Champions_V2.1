@@ -52,7 +52,9 @@ export default tseslint.config(
         },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
-      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      // CONSOLE-ENVELOPE: bloqueia console.* novo — usar @/lib/log/logger.
+      // allowlist temporária de warn/error até a baseline restante migrar.
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       // Discourage double-cast `as unknown as T` — it bypasses TypeScript safety.
       'no-restricted-syntax': [
         'warn',

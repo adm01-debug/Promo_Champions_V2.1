@@ -12,12 +12,13 @@ import { cn } from '@/lib/utils';
 
 import { useActivities } from '@/hooks/activities/useActivities';
 import { format, subDays, isSameDay } from 'date-fns';
+import { toBusinessDate } from '@/lib/date';
 
 const HEATMAP_DAYS = 35;
 
 export const ActivityHeatmap: React.FC = () => {
   const since = useMemo(() => {
-    return subDays(new Date(), HEATMAP_DAYS - 1).toISOString().slice(0, 10);
+    return toBusinessDate(subDays(new Date(), HEATMAP_DAYS - 1));
   }, []);
 
   const { data: activities } = useActivities({ since, limit: 5000 });

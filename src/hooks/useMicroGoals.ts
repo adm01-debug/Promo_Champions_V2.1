@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import { toBusinessMonthStart } from '@/lib/date';
 
+import { formatBRL } from '@/lib/money';
 export interface MicroGoal {
   id: string;
   type: 'overtake' | 'record' | 'milestone' | 'challenge' | 'streak';
@@ -27,7 +29,7 @@ export function useMicroGoals(salespersonId?: string) {
         supabase
           .from('sales_goals')
           .select('salesperson_id, goal_amount')
-          .eq('month', now.toISOString().slice(0, 7) + '-01'),
+          .eq('month', toBusinessMonthStart(now)),
         supabase
           .from('sales')
           .select('salesperson_id, amount')
@@ -57,7 +59,11 @@ export function useMicroGoals(salespersonId?: string) {
       });
 
       const sorted = Array.from(salesBySp.entries())
-        .map(([id, total]) => ({ id, total, name: salespeople.find(s => s.id === id)?.name || '' }))
+        .map(([id, total]) => ({
+          id,
+          total,
+          name: salespeople.find(s => s.id === id)?.name || '',
+        }))
         .sort((a, b) => b.total - a.total);
 
       const myIndex = sorted.findIndex(s => s.id === salespersonId);
@@ -72,9 +78,9 @@ export function useMicroGoals(salespersonId?: string) {
             id: 'overtake',
             type: 'overtake',
             icon: '⚔️',
-            message: `Faltam R$ ${gap.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} para ultrapassar ${nextPerson.name}!`,
+            message: `Faltam ${formatBRL(gap)} para ultrapassar ${nextPerson.name}!`,
             progress: Math.round((mySales / nextPerson.total) * 100),
-            remaining: `R$ ${gap.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+            remaining: `${formatBRL(gap)}`,
             priority: 1,
           });
         }
@@ -99,9 +105,9 @@ export function useMicroGoals(salespersonId?: string) {
                 id: `milestone-${nextMilestone}`,
                 type: 'milestone',
                 icon: nextMilestone === 100 ? '🏆' : '🎯',
-                message: `Faltam R$ ${toMilestone.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} para ${nextMilestone}% da meta!`,
+                message: `Faltam ${formatBRL(toMilestone)} para ${nextMilestone}% da meta!`,
                 progress,
-                remaining: `R$ ${toMilestone.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`,
+                remaining: `${formatBRL(toMilestone)}`,
                 priority: 2,
               });
             }
@@ -111,7 +117,7 @@ export function useMicroGoals(salespersonId?: string) {
             id: 'goal-exceeded',
             type: 'milestone',
             icon: '🚀',
-            message: `Meta batida! R$ ${Math.abs(remaining).toLocaleString('pt-BR', { maximumFractionDigits: 0 })} acima do objetivo!`,
+            message: `Meta batida! ${formatBRL(Math.abs(remaining))} acima do objetivo!`,
             progress: 100,
             remaining: 'Superada!',
             priority: 5,

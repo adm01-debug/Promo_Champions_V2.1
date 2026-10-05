@@ -1,7 +1,7 @@
 # CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)
 
 > CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes.
-> Maior sistema do lote: 173 páginas, ~170 edge functions, 595 migrations.
+> Maior sistema do lote: 162 páginas, 169 edge functions, 611 migrations.
 
 ---
 
@@ -13,7 +13,7 @@
 | URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                                             |
 | Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl                            |
 | MCP para SQL     | gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "…LOVABLE CLOUD…") |
-| Migrations       | **595+** (timestamp YYYYMMDDHHmmss)                                                    |
+| Migrations       | **611** (timestamp YYYYMMDDHHmmss)                                                     |
 
 > Corrigido em 2026-09-02 (ref antigo `rapjswienfhkobhlamxb`) e **reprovado em
 > 2026-09-13**: a "prova" anterior citava `_internal_secrets.functions_base_url`,
@@ -38,7 +38,9 @@
 3. Versão = timestamp estritamente crescente. Conferir `SELECT max(version)` antes.
 4. Toda DDL = arquivo em `supabase/migrations/` + comentário descritivo no topo.
 5. `CREATE INDEX CONCURRENTLY` falha (gateway transacional) — usar `CREATE INDEX` simples.
-6. Padrão de hardening: functions com `SECURITY INVOKER`, grants mínimos por role.
+6. Convenções de schema (nomes, `TIMESTAMPTZ`, `NUMERIC(15,2)` para dinheiro,
+   RLS + `updated_at` obrigatórios): **docs/SCHEMA_CONVENTIONS.md**.
+7. Padrão de hardening: functions com `SECURITY INVOKER`, grants mínimos por role.
 
 ---
 
@@ -90,7 +92,7 @@
 
 ---
 
-## 4. Edge Functions (~170 funções Deno)
+## 4. Edge Functions (169 funções Deno)
 
 Grupos por domínio:
 
@@ -149,7 +151,7 @@ src/
     playbooks/, race/, revenue-intelligence/, scoring/, sequences/
     win-loss/, customer-success/, multichannel/
   hooks/        # TanStack Query hooks por dominio
-  pages/        # 173 paginas/rotas
+  pages/        # 162 paginas/rotas
   integrations/supabase/  # client.ts + tipos gerados
   services/     # logica nao-React
   lib/          # race, winloss, revenueForecast, bi, reports

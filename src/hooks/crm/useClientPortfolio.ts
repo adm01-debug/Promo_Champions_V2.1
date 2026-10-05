@@ -34,7 +34,8 @@ export const useClientPortfolio = (salespersonId?: string) => {
         .from('client_portfolio')
         .select(
           '*, client:clients(name, email, phone, company, total_value, is_activated, activated_at), salesperson:salespeople!client_portfolio_salesperson_id_fkey(name)'
-        );
+        )
+        .is('deleted_at', null);
 
       if (salespersonId) {
         query = query.eq('salesperson_id', salespersonId);
@@ -84,9 +85,12 @@ export const useRemoveFromPortfolio = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (portfolioId: string) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { error } = await supabase
         .from('client_portfolio')
-        .delete()
+        .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
         .eq('id', portfolioId);
       if (error) throw error;
     },
@@ -186,12 +190,13 @@ export const useUnassignedClients = () => {
     queryFn: async () => {
       const { data: assigned, error: assignedError } = await supabase
         .from('client_portfolio')
-        .select('client_id');
+        .select('client_id')
+        .is('deleted_at', null);
       if (assignedError) throw assignedError;
 
       const assignedIds = (assigned || []).map(a => a.client_id).filter(Boolean);
 
-      let query = supabase.from('clients').select('*');
+      let query = supabase.from('clients').select('*').is('deleted_at', null);
       if (assignedIds.length > 0) {
         const inFilter = `(${assignedIds.map(id => `"${id}"`).join(',')})`;
         query = query.not('id', 'in', inFilter);

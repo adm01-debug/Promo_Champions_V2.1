@@ -1,9 +1,10 @@
 import type { Metric } from 'web-vitals';
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
+import { logger } from '@/lib/log/logger';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+const log = logger.for('webVitals');
+
 const ENDPOINT = `${SUPABASE_URL}/functions/v1/log-web-vitals`;
-
 
 // Persistent per-session id (survives SPA navigation; resets on tab close)
 function getSessionId(): string {
@@ -48,7 +49,10 @@ function sendBeacon(body: string): void {
   try {
     // sendBeacon precisa de Content-Type CORS-safelisted → Blob text/plain
     const blob = new Blob([body], { type: 'text/plain' });
-    const queued = navigator.sendBeacon?.(`${ENDPOINT}?apikey=${SUPABASE_PUBLISHABLE_KEY}`, blob);
+    const queued = navigator.sendBeacon?.(
+      `${ENDPOINT}?apikey=${SUPABASE_PUBLISHABLE_KEY}`,
+      blob
+    );
     if (queued) return;
   } catch {
     /* fall through to fetch */
@@ -105,10 +109,11 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
     }
 
     if (import.meta.env.DEV) {
-      const label =
-        metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
-       
-      console.info(`${label} [${metric.name}] ${Math.round(metric.value)} (${metric.rating})`);
+      log.info('web_vital', {
+        metric: metric.name,
+        value: Math.round(metric.value),
+        rating: metric.rating,
+      });
       return;
     }
 
@@ -133,4 +138,3 @@ export function reportWebVitals(onReport?: (metric: Metric) => void) {
     onTTFB(handler);
   });
 }
-

@@ -1,15 +1,19 @@
-import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BackButton } from "@/components/navigation/BackButton";
-import { useOrder } from "@/hooks/orders/useOrder";
-import { OrderStatusTimeline } from "@/components/orders/OrderStatusTimeline";
-import { OrderItemsCard } from "@/components/orders/OrderItemsCard";
-import { OrderSummaryCard } from "@/components/orders/OrderSummaryCard";
-import { statusLabel, statusTone, formatDateTime } from "@/components/orders/orderHelpers";
+import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BackButton } from '@/components/navigation/BackButton';
+import { useOrder } from '@/hooks/orders/useOrder';
+import { OrderStatusTimeline } from '@/components/orders/OrderStatusTimeline';
+import { OrderItemsCard } from '@/components/orders/OrderItemsCard';
+import { OrderSummaryCard } from '@/components/orders/OrderSummaryCard';
+import {
+  statusLabel,
+  statusTone,
+  formatDateTime,
+} from '@/components/orders/orderHelpers';
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -18,8 +22,14 @@ export default function OrderDetailPage() {
   return (
     <div className="container mx-auto max-w-5xl px-4 py-6 space-y-6">
       <Helmet>
-        <title>{data?.order ? `Pedido ${data.order.order_number}` : "Detalhe do pedido"} | Meus Pedidos</title>
-        <meta name="description" content="Acompanhe os detalhes, itens e status do seu pedido em tempo real." />
+        <title>
+          {data?.order ? `Pedido ${data.order.order_number}` : 'Detalhe do pedido'} | Meus
+          Pedidos
+        </title>
+        <meta
+          name="description"
+          content="Acompanhe os detalhes, itens e status do seu pedido em tempo real."
+        />
       </Helmet>
 
       <BackButton label="Voltar para Meus Pedidos" fallbackPath="/meus-pedidos" />

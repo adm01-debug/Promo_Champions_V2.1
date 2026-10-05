@@ -16,7 +16,20 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       workbox: {
         cleanupOutdatedCaches: true,
-        globPatterns: ['**/*.{css,html,ico,png,svg,woff2}'],
+        // Precache do caminho crítico: CSS/imagens + os chunks JS eager do build
+        // (entry index-*, runtime rolldown-runtime-* e o vendor catch-all —
+        // `vendor-????????.js` casa apenas o hash de 8 chars, excluindo os
+        // chunks lazy `vendor-<nome>-*`). Sem isso o SW prometia cache mas não
+        // conseguia recarregar o app offline: index.html sem os bundles.
+        globPatterns: [
+          '**/*.{css,html,ico,png,svg,woff2}',
+          'assets/index-*.js',
+          'assets/rolldown-runtime-*.js',
+          'assets/vendor-????????.js',
+        ],
+        // Shell do SPA para navegações offline — só é honesto porque o
+        // precache acima cobre o JS do caminho crítico.
+        navigateFallback: 'index.html',
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
@@ -125,7 +138,7 @@ export default defineConfig({
       // precisam deles. Removê-los do preload evita ~193 KB gzip antecipados; os
       // chunks continuam sendo baixados sob demanda quando o lazy() é resolvido.
       resolveDependencies: (_filename, deps) =>
-        deps.filter((dep) => !/vendor-(pdf|markdown)-/.test(dep)),
+        deps.filter(dep => !/vendor-(pdf|markdown)-/.test(dep)),
     },
     rollupOptions: {
       output: {

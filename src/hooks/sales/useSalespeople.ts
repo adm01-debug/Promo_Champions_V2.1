@@ -29,13 +29,6 @@ export interface Salesperson {
   notify_sales_email?: boolean;
 }
 
-interface SalesGoal {
-  id: string;
-  salesperson_id: string;
-  month: string;
-  goal_amount: number;
-}
-
 export interface SalespersonWithStats extends Salesperson {
   totalSales: number;
   completedSales: number;
@@ -76,21 +69,6 @@ export function useSalespeople() {
         notify_sales_in_app: sp.notify_sales_in_app ?? true,
         notify_sales_email: sp.notify_sales_email ?? false,
       })) as Salesperson[];
-    },
-  });
-}
-
-export function useSalesGoals(month?: Date) {
-  const targetMonth = month || new Date();
-  const monthStr = targetMonth.toISOString().slice(0, 7) + '-01';
-
-  return useQuery({
-    queryKey: ['sales_goals', monthStr],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('sales_goals').select('*').eq('month', monthStr);
-
-      if (error) throw error;
-      return data as SalesGoal[];
     },
   });
 }

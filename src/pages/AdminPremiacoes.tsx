@@ -41,6 +41,7 @@ import {
   type CommissionBonus,
 } from '@/hooks/useCommissionBonuses';
 
+import { formatBRL } from '@/lib/money';
 const bonusTypeLabels: Record<BonusType, string> = {
   first_sale: 'Primeira Venda',
   milestone: 'Marco de Faturamento',
@@ -56,9 +57,6 @@ const bonusTypeColors: Record<BonusType, string> = {
   streak: 'bg-purple-500/15 text-purple-500 border-purple-500/30',
   other: 'bg-muted text-muted-foreground border-border',
 };
-
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n || 0);
 
 interface FormState {
   id?: string;
@@ -148,7 +146,7 @@ export default function AdminPremiacoes() {
     setOpen(false);
   };
 
-  const totalActive = useMemo(() => bonuses.filter((b) => b.is_active).length, [bonuses]);
+  const totalActive = useMemo(() => bonuses.filter(b => b.is_active).length, [bonuses]);
 
   return (
     <>
@@ -169,9 +167,8 @@ export default function AdminPremiacoes() {
               Premiações e Bônus
             </h1>
             <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
-              Cadastro de prêmios, bônus por marcos, ranking e sequências que
-              complementam o percentual de comissão. Ativos aparecem para os
-              vendedores elegíveis.
+              Cadastro de prêmios, bônus por marcos, ranking e sequências que complementam
+              o percentual de comissão. Ativos aparecem para os vendedores elegíveis.
             </p>
           </div>
           <Button onClick={openNew} className="gap-2">
@@ -200,7 +197,7 @@ export default function AdminPremiacoes() {
               Globais
             </p>
             <p className="text-2xl font-black tabular-nums">
-              {bonuses.filter((b) => !b.salesperson_id).length}
+              {bonuses.filter(b => !b.salesperson_id).length}
             </p>
           </Card>
           <Card className="p-4">
@@ -208,7 +205,7 @@ export default function AdminPremiacoes() {
               Individuais
             </p>
             <p className="text-2xl font-black tabular-nums">
-              {bonuses.filter((b) => !!b.salesperson_id).length}
+              {bonuses.filter(b => !!b.salesperson_id).length}
             </p>
           </Card>
         </div>
@@ -229,7 +226,10 @@ export default function AdminPremiacoes() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell
+                    colSpan={7}
+                    className="text-center text-muted-foreground py-8"
+                  >
                     Carregando…
                   </TableCell>
                 </TableRow>
@@ -243,7 +243,7 @@ export default function AdminPremiacoes() {
                   </TableCell>
                 </TableRow>
               ) : (
-                bonuses.map((b) => (
+                bonuses.map(b => (
                   <TableRow key={b.id}>
                     <TableCell>
                       <p className="font-semibold">{b.name}</p>
@@ -260,13 +260,15 @@ export default function AdminPremiacoes() {
                     </TableCell>
                     <TableCell className="tabular-nums font-semibold">
                       {b.bonus_kind === 'fixed'
-                        ? formatBRL(Number(b.bonus_amount))
+                        ? formatBRL(Number(b.bonus_amount), { decimals: 2 })
                         : `${Number(b.bonus_amount).toFixed(2)}%`}
                     </TableCell>
                     <TableCell>
-                      {b.salesperson_id
-                        ? b.salespeople?.name ?? 'Vendedor'
-                        : <span className="text-muted-foreground">Global</span>}
+                      {b.salesperson_id ? (
+                        (b.salespeople?.name ?? 'Vendedor')
+                      ) : (
+                        <span className="text-muted-foreground">Global</span>
+                      )}
                     </TableCell>
                     <TableCell className="tabular-nums">{b.priority}</TableCell>
                     <TableCell>
@@ -316,9 +318,7 @@ export default function AdminPremiacoes() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {form.id ? 'Editar Premiação' : 'Nova Premiação'}
-            </DialogTitle>
+            <DialogTitle>{form.id ? 'Editar Premiação' : 'Nova Premiação'}</DialogTitle>
             <DialogDescription>
               Prêmios ativos ficam visíveis para vendedores elegíveis. A aplicação
               automática em folha de comissão é opcional e configurada em etapa futura.
@@ -331,7 +331,7 @@ export default function AdminPremiacoes() {
               <Input
                 id="name"
                 value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                onChange={e => setForm({ ...form, name: e.target.value })}
                 placeholder="Ex.: Bônus Top 3 do mês"
               />
             </div>
@@ -341,7 +341,7 @@ export default function AdminPremiacoes() {
               <Textarea
                 id="description"
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={e => setForm({ ...form, description: e.target.value })}
                 placeholder="Explique o critério e como é comunicado à equipe"
                 rows={2}
               />
@@ -357,7 +357,7 @@ export default function AdminPremiacoes() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(bonusTypeLabels) as BonusType[]).map((t) => (
+                  {(Object.keys(bonusTypeLabels) as BonusType[]).map(t => (
                     <SelectItem key={t} value={t}>
                       {bonusTypeLabels[t]}
                     </SelectItem>
@@ -392,9 +392,7 @@ export default function AdminPremiacoes() {
                 min={0}
                 step={form.bonus_kind === 'fixed' ? 10 : 0.1}
                 value={form.bonus_amount}
-                onChange={(e) =>
-                  setForm({ ...form, bonus_amount: Number(e.target.value) })
-                }
+                onChange={e => setForm({ ...form, bonus_amount: Number(e.target.value) })}
               />
             </div>
 
@@ -404,7 +402,7 @@ export default function AdminPremiacoes() {
                 id="priority"
                 type="number"
                 value={form.priority}
-                onChange={(e) => setForm({ ...form, priority: Number(e.target.value) })}
+                onChange={e => setForm({ ...form, priority: Number(e.target.value) })}
               />
             </div>
 
@@ -412,7 +410,7 @@ export default function AdminPremiacoes() {
               <Label>Vendedor</Label>
               <Select
                 value={form.salesperson_id ?? 'global'}
-                onValueChange={(v) =>
+                onValueChange={v =>
                   setForm({ ...form, salesperson_id: v === 'global' ? null : v })
                 }
               >
@@ -431,13 +429,11 @@ export default function AdminPremiacoes() {
             </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="trigger">
-                Condição de disparo (JSON)
-              </Label>
+              <Label htmlFor="trigger">Condição de disparo (JSON)</Label>
               <Textarea
                 id="trigger"
                 value={form.trigger_condition_text}
-                onChange={(e) =>
+                onChange={e =>
                   setForm({ ...form, trigger_condition_text: e.target.value })
                 }
                 rows={4}
@@ -445,12 +441,13 @@ export default function AdminPremiacoes() {
                 placeholder='{ "milestone_amount": 50000 }'
               />
               {jsonError && (
-                <p className="text-xs text-destructive mt-1">JSON inválido: {jsonError}</p>
+                <p className="text-xs text-destructive mt-1">
+                  JSON inválido: {jsonError}
+                </p>
               )}
               <p className="text-[11px] text-muted-foreground mt-1">
                 Exemplos: <code>{'{"milestone_amount": 50000}'}</code> ·{' '}
-                <code>{'{"rank_top": 3}'}</code> ·{' '}
-                <code>{'{"streak_days": 7}'}</code>
+                <code>{'{"rank_top": 3}'}</code> · <code>{'{"streak_days": 7}'}</code>
               </p>
             </div>
 
@@ -458,7 +455,7 @@ export default function AdminPremiacoes() {
               <Switch
                 id="active"
                 checked={form.is_active}
-                onCheckedChange={(v) => setForm({ ...form, is_active: v })}
+                onCheckedChange={v => setForm({ ...form, is_active: v })}
               />
               <Label htmlFor="active">Premiação ativa</Label>
             </div>
@@ -468,10 +465,7 @@ export default function AdminPremiacoes() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={!form.name.trim() || upsert.isPending}
-            >
+            <Button onClick={handleSave} disabled={!form.name.trim() || upsert.isPending}>
               {upsert.isPending ? 'Salvando…' : 'Salvar'}
             </Button>
           </DialogFooter>

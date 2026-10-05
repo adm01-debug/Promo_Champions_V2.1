@@ -52,6 +52,26 @@ export const DEAL_STATUS = {
   CANCELLED: 'cancelled',
 } as const;
 
+/**
+ * Vocabulário real de sales.status (espelha a constraint sales_status_check) +
+ * 'open', valor legado fora do CHECK que ainda é consultado
+ * (ex.: useFollowUpData). Coluna canônica: sales.status (texto);
+ * deal_status é GENERATED derivado — ver migration 20261001220100.
+ */
+export type SaleStatus =
+  | 'pending'
+  | 'lead'
+  | 'prospecting'
+  | 'qualified'
+  | 'proposal'
+  | 'negotiation'
+  | 'completed'
+  | 'won'
+  | 'closed'
+  | 'lost'
+  | 'cancelled'
+  | 'open';
+
 export const SALE_STATUS_LABELS: Record<string, string> = {
   pending: 'Pendente',
   qualified: 'Qualificada',
@@ -76,6 +96,27 @@ export const isLostSaleStatus = (status?: string | null): boolean =>
 
 export const isOpenSaleStatus = (status?: string | null): boolean =>
   !!status && !isWonSaleStatus(status) && !isLostSaleStatus(status);
+
+// Subconjunto rotulado de sales.status (espelha as chaves de SALE_STATUS_LABELS).
+// O domínio completo da coluna é o tipo SaleStatus acima — use os helpers
+// isWonSaleStatus/isLostSaleStatus/isOpenSaleStatus para agrupamentos.
+export const SALE_STATUS = {
+  PENDING: 'pending',
+  QUALIFIED: 'qualified',
+  PROPOSAL: 'proposal',
+  NEGOTIATION: 'negotiation',
+  COMPLETED: 'completed',
+  LOST: 'lost',
+  CANCELLED: 'cancelled',
+} as const;
+
+// Domínio `outcome` das tabelas win_loss_* (espelha o check constraint do
+// banco — apenas 'won'/'lost'). Centraliza as comparações de resultado.
+export const WIN_LOSS_OUTCOME = {
+  WON: 'won',
+  LOST: 'lost',
+} as const;
+export type WinLossOutcome = (typeof WIN_LOSS_OUTCOME)[keyof typeof WIN_LOSS_OUTCOME];
 
 export const ACTIVITY_TYPE = {
   CALL: 'call',
@@ -105,5 +146,5 @@ export const ERROR_MESSAGES = {
 
 // ===== TIPOS AUXILIARES =====
 
-export type DealStatus = (typeof DEAL_STATUS)[keyof typeof DEAL_STATUS];
+export type DealStatus = SaleStatus | (typeof DEAL_STATUS)[keyof typeof DEAL_STATUS];
 export type ActivityType = (typeof ACTIVITY_TYPE)[keyof typeof ACTIVITY_TYPE];

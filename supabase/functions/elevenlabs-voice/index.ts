@@ -1,6 +1,8 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -13,7 +15,31 @@ Deno.serve(
       return new Response(null, { headers: corsHeaders });
     }
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: 'elevenlabs-voice', limit: 10, windowSeconds: 60 });
+    if (rl) return rl;
+
     try {
+      // Requer JWT válido — endpoint consome créditos pagos da ElevenLabs
+      let userId: string;
+      try {
+        ({ userId } = await getUserClient(req));
+      } catch (authErr) {
+        const isUnauth = authErr instanceof UnauthorizedError;
+        return new Response(
+          JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const rateLimited = enforceRateLimit(req, {
+        name: 'elevenlabs-voice',
+        key: userId,
+        limit: 30,
+        windowSeconds: 60,
+      });
+      if (rateLimited) return rateLimited;
+
       const { text, voiceId, action = 'tts' } = await req.json();
 
       const apiKey = Deno.env.get('ELEVENLABS_API_KEY');

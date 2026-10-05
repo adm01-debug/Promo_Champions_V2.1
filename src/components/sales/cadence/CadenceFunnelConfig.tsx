@@ -44,7 +44,7 @@ export function CadenceFunnelConfig() {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
 
-  const [newRule, setNewRule] = useState<Omit<FunnelRule, "id" | "cadence_id">>({
+  const [newRule, setNewRule] = useState<Omit<FunnelRule, 'id' | 'cadence_id'>>({
     from_stage: 'new',
     to_stage: 'high_interest',
     condition_type: 'email_open',
@@ -209,7 +209,10 @@ export function CadenceFunnelConfig() {
                 <Select
                   value={newRule.condition_type}
                   onValueChange={v =>
-                    setNewRule({ ...newRule, condition_type: v as FunnelRule['condition_type'] })
+                    setNewRule({
+                      ...newRule,
+                      condition_type: v as FunnelRule['condition_type'],
+                    })
                   }
                 >
                   <SelectTrigger className="h-8 text-xs">
@@ -294,7 +297,12 @@ export function CadenceFunnelConfig() {
                 </label>
                 <Select
                   value={newRule.alert_priority}
-                  onValueChange={v => setNewRule({ ...newRule, alert_priority: v as FunnelRule['alert_priority'] })}
+                  onValueChange={v =>
+                    setNewRule({
+                      ...newRule,
+                      alert_priority: v as FunnelRule['alert_priority'],
+                    })
+                  }
                 >
                   <SelectTrigger className="h-8 text-xs">
                     <SelectValue />

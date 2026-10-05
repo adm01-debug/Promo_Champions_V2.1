@@ -29,18 +29,23 @@ export const useProductRecommendations = (productId?: string) => {
 
       // 2. Get other products bought by these clients — usa chunkedIn para
       // evitar overflow de URL PostgREST quando o portfolio ultrapassa ~200 clientes.
-      type OtherSaleRow = { product_id: string | null; product_name: string | null; amount: number | null };
+      type OtherSaleRow = {
+        product_id: string | null;
+        product_name: string | null;
+        amount: number | null;
+      };
       let otherSales: OtherSaleRow[] = [];
       try {
         otherSales = await chunkedIn<OtherSaleRow>(
           clientIds.filter((c): c is string => !!c),
-          (chunk) => supabase
-            .from('sales')
-            .select('product_id, product_name, amount')
-            .in('client_id', chunk as string[])
-            .neq('product_id', productId)
-            .not('product_id', 'is', null),
-          { parallel: true, label: 'useProductRecommendations' },
+          chunk =>
+            supabase
+              .from('sales')
+              .select('product_id, product_name, amount')
+              .in('client_id', chunk as string[])
+              .neq('product_id', productId)
+              .not('product_id', 'is', null),
+          { parallel: true, label: 'useProductRecommendations' }
         );
       } catch {
         otherSales = [];
@@ -70,7 +75,7 @@ export const useProductRecommendations = (productId?: string) => {
           id: p.id,
           name: p.name,
           price: p.price,
-          confidence: 0.5
+          confidence: 0.5,
         }));
       }
 
@@ -79,7 +84,11 @@ export const useProductRecommendations = (productId?: string) => {
       otherSales.forEach(s => {
         if (!s.product_id) return;
         if (!counts[s.product_id]) {
-          counts[s.product_id] = { count: 0, name: s.product_name ?? '', price: Number(s.amount ?? 0) };
+          counts[s.product_id] = {
+            count: 0,
+            name: s.product_name ?? '',
+            price: Number(s.amount ?? 0),
+          };
         }
         counts[s.product_id].count++;
       });
@@ -90,7 +99,7 @@ export const useProductRecommendations = (productId?: string) => {
           id,
           name: info.name,
           price: info.price,
-          confidence: info.count / clientIds.length
+          confidence: info.count / clientIds.length,
         }))
         .sort((a, b) => b.confidence - a.confidence)
         .slice(0, 3);

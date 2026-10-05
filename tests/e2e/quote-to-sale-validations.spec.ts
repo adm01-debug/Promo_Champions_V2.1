@@ -12,7 +12,13 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  *   • Concorrência     — order_number continua único mesmo em rajadas paralelas.
  */
 
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  STORAGE_KEY,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+} from './helpers/auth';
 
 type RpcResult = {
   sale_id: string;
@@ -23,14 +29,20 @@ type RpcResult = {
 };
 
 test.describe('Conversão de orçamento — validações e concorrência', () => {
-  test.skip(!HAS_AUTH, 'Sessão Supabase gerenciada não injetada; pulando E2E autenticado.');
+  test.skip(
+    !HAS_AUTH,
+    'Sessão Supabase gerenciada não injetada; pulando E2E autenticado.'
+  );
 
   let client: SupabaseClient;
   const createdQuotes: string[] = [];
   const createdSales: string[] = [];
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -71,7 +83,7 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
     createdQuotes.push(quote.id);
 
     if (opts.items?.length) {
-      const rows = opts.items.map((it) => ({
+      const rows = opts.items.map(it => ({
         quote_id: quote.id,
         product_name: 'Prod E2E',
         quantity: it.qty,
@@ -85,7 +97,10 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
   }
 
   async function callRpc(quoteId: string) {
-    return client.rpc('fn_convert_quote_to_sale' as never, { _quote_id: quoteId } as never);
+    return client.rpc(
+      'fn_convert_quote_to_sale' as never,
+      { _quote_id: quoteId } as never
+    );
   }
 
   test('EMPTY_ITEMS: orçamento sem itens é bloqueado e mensagem PT-BR na UI', async ({
@@ -98,18 +113,22 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
     expect(error?.message ?? '').toContain('[EMPTY_ITEMS]');
 
     // UI: abre detalhe, clica e valida toast
-    await context.addInitScript(
-      ([k, j]) => window.localStorage.setItem(k, j),
-      [STORAGE_KEY, SESSION_JSON] as const,
-    );
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await context.addInitScript(([k, j]) => window.localStorage.setItem(k, j), [
+      STORAGE_KEY,
+      SESSION_JSON,
+    ] as const);
+    await page.goto('/orcamentos', {
+      waitUntil: 'domcontentloaded',
+    });
     const card = page.getByText(/E2E Validation/).first();
     if (await card.isVisible().catch(() => false)) {
       await card.click();
       const btn = page.getByRole('button', { name: /Converter em venda/i });
       if (await btn.isVisible().catch(() => false)) {
         await btn.click();
-        await expect(page.getByText(/sem itens/i).first()).toBeVisible({ timeout: 8_000 });
+        await expect(page.getByText(/sem itens/i).first()).toBeVisible({
+          timeout: 8_000,
+        });
       }
     }
   });
@@ -144,11 +163,17 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
     // Se o caller for admin no seed, o teste apenas verifica que o código
     // FORBIDDEN existe e é parseável — não falsifica o role.
     const { data: me } = await client.auth.getUser();
-    const { data: isAdmin } = await client.rpc('has_role' as never, {
-      _user_id: me.user?.id,
-      _role: 'admin',
-    } as never);
-    test.skip(Boolean(isAdmin), 'Caller é admin; FORBIDDEN é testado no unit test do parser.');
+    const { data: isAdmin } = await client.rpc(
+      'has_role' as never,
+      {
+        _user_id: me.user?.id,
+        _role: 'admin',
+      } as never
+    );
+    test.skip(
+      Boolean(isAdmin),
+      'Caller é admin; FORBIDDEN é testado no unit test do parser.'
+    );
 
     const foreignSp = '00000000-0000-0000-0000-000000000000';
     const { data: quote } = await client
@@ -184,11 +209,11 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
         seedQuote({
           total: 10,
           items: [{ qty: 1, unit: 10, total: 10 }],
-        }),
-      ),
+        })
+      )
     );
 
-    const results = await Promise.all(quotes.map((q) => callRpc(q)));
+    const results = await Promise.all(quotes.map(q => callRpc(q)));
     const numbers: string[] = [];
     for (const r of results) {
       expect(r.error).toBeNull();

@@ -34,7 +34,8 @@ export const useTeams = () => {
     queryFn: async (): Promise<Team[]> => {
       const { data: teams, error } = await supabase
         .from('teams')
-        .select(`
+        .select(
+          `
           *,
           sdr:salespeople!teams_sdr_id_fkey(id, name, email, role, avatar_url),
           closers:team_closers(
@@ -42,10 +43,12 @@ export const useTeams = () => {
             closer_id,
             salesperson:salespeople(id, name, email, role, avatar_url)
           )
-        `);
-      
+        `
+        )
+        .is('deleted_at', null);
+
       if (error) throw error;
-      
+
       return (teams || []).map(t => ({
         id: t.id,
         name: t.name,
@@ -64,17 +67,17 @@ export const useTeams = () => {
 
 export const useCreateTeam = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async (input: { 
-      name: string; 
-      sdr_id?: string | null; 
+    mutationFn: async (input: {
+      name: string;
+      sdr_id?: string | null;
       inactivity_days?: number;
       closer_ids?: string[];
     }) => {
       const { data, error } = await supabase
         .from('teams')
-        .insert({ 
+        .insert({
           name: input.name,
           sdr_id: input.sdr_id || null,
           inactivity_days: input.inactivity_days || 365,
@@ -82,19 +85,19 @@ export const useCreateTeam = () => {
         })
         .select()
         .single();
-      
+
       if (error) throw error;
-      
+
       // Add closers if provided
       if (input.closer_ids && input.closer_ids.length > 0) {
-        await supabase
-          .from('team_closers')
-          .insert(input.closer_ids.map(closerId => ({
+        await supabase.from('team_closers').insert(
+          input.closer_ids.map(closerId => ({
             team_id: data.id,
             closer_id: closerId,
-          })));
+          }))
+        );
       }
-      
+
       return data;
     },
     onSuccess: () => {
@@ -105,18 +108,18 @@ export const useCreateTeam = () => {
 
 export const useUpdateTeam = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ 
-      id, 
-      name, 
-      sdr_id, 
-      is_active, 
+    mutationFn: async ({
+      id,
+      name,
+      sdr_id,
+      is_active,
       inactivity_days,
-      closer_ids 
-    }: { 
-      id: string; 
-      name?: string; 
+      closer_ids,
+    }: {
+      id: string;
+      name?: string;
       sdr_id?: string | null;
       is_active?: boolean;
       inactivity_days?: number;
@@ -127,31 +130,28 @@ export const useUpdateTeam = () => {
       if (sdr_id !== undefined) updates.sdr_id = sdr_id;
       if (is_active !== undefined) updates.is_active = is_active;
       if (inactivity_days !== undefined) updates.inactivity_days = inactivity_days;
-      
+
       if (Object.keys(updates).length > 0) {
-        const { error } = await supabase
-          .from('teams')
-          .update(updates)
-          .eq('id', id);
-        
+        const { error } = await supabase.from('teams').update(updates).eq('id', id);
+
         if (error) throw error;
       }
-      
+
       if (closer_ids) {
         // Remove existing closers
         await supabase.from('team_closers').delete().eq('team_id', id);
-        
+
         // Add new closers
         if (closer_ids.length > 0) {
-          await supabase
-            .from('team_closers')
-            .insert(closer_ids.map(closerId => ({
+          await supabase.from('team_closers').insert(
+            closer_ids.map(closerId => ({
               team_id: id,
               closer_id: closerId,
-            })));
+            }))
+          );
         }
       }
-      
+
       return { id };
     },
     onSuccess: () => {
@@ -169,7 +169,7 @@ export const useAvailableClosers = () => {
         .select('id, name, email, role, avatar_url')
         .eq('is_active', true)
         .in('role', ['closer', 'hybrid']);
-      
+
       if (error) throw error;
       return (data || []) as TeamMember[];
     },
@@ -180,18 +180,24 @@ export const useAvailableClosers = () => {
 
 export const useDeleteTeam = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (teamId: string) => {
-      // Delete team closers first
+      // Remove vínculos (tabela volátil — hard delete)
       await supabase.from('team_closers').delete().eq('team_id', teamId);
-      
-      // Then delete the team
+
+      // Soft delete da equipe
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { error } = await supabase
         .from('teams')
-        .delete()
+        .update({
+          deleted_at: new Date().toISOString(),
+          deleted_by: user?.id ?? null,
+        })
         .eq('id', teamId);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {

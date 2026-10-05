@@ -1,8 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { isWonSaleStatus, WON_SALE_STATUSES } from '@/constants';
+import {
+  isWonSaleStatus,
+  WON_SALE_STATUSES,
+  WIN_LOSS_OUTCOME,
+  isLostSaleStatus,
+} from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { DateRange, getPreviousPeriodRange, getSamePeriodLastYear } from '@/hooks/bi/useBIFilters';
+import {
+  DateRange,
+  getPreviousPeriodRange,
+  getSamePeriodLastYear,
+} from '@/hooks/bi/useBIFilters';
 import {
   differenceInDays,
   format,
@@ -11,7 +20,11 @@ import {
   endOfMonth,
   startOfMonth,
 } from 'date-fns';
-import { transformClientInsights, transformChartData } from '@/hooks/bi/useBICloserTransformers';
+import {
+  transformClientInsights,
+  transformChartData,
+} from '@/hooks/bi/useBICloserTransformers';
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 export interface BICloserData {
   totalRevenue: number;
@@ -32,8 +45,18 @@ export interface BICloserData {
   pipelineByStage: { stage: string; count: number; value: number; probability: number }[];
   avgDaysToClose: number;
   avgDaysInPipeline: number;
-  previousPeriod: { revenue: number; deals: number; avgTicket: number; conversionRate: number };
-  sameLastYear: { revenue: number; deals: number; avgTicket: number; conversionRate: number };
+  previousPeriod: {
+    revenue: number;
+    deals: number;
+    avgTicket: number;
+    conversionRate: number;
+  };
+  sameLastYear: {
+    revenue: number;
+    deals: number;
+    avgTicket: number;
+    conversionRate: number;
+  };
   currentRank: number;
   totalClosers: number;
   topClients: {
@@ -96,7 +119,9 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
       ] = await Promise.all([
         supabase
           .from('sales')
-          .select('id, amount, status, category, source, client_name, created_at, updated_at')
+          .select(
+            'id, amount, status, category, source, client_name, created_at, updated_at'
+          )
           .eq('salesperson_id', targetSalespersonId)
           .gte('created_at', dateRange.start.toISOString())
           .lte('created_at', dateRange.end.toISOString()),
@@ -185,13 +210,9 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
 
       // Pipeline
       const pipelineValue = pipelineDeals.reduce((sum, d) => sum + Number(d.amount), 0);
-      const stageProbabilities: Record<string, number> = {
-        qualified: 0.3,
-        proposal: 0.6,
-        negotiation: 0.8,
-      };
+      const stageProbabilities = await fetchStageProbabilities();
       const weightedPipeline = pipelineDeals.reduce(
-        (sum, d) => sum + Number(d.amount) * (stageProbabilities[d.status] || 0.3),
+        (sum, d) => sum + Number(d.amount) * (stageProbabilities[d.status] ?? 0.3),
         0
       );
       const pipelineByStage = ['qualified', 'proposal', 'negotiation'].map(stage => ({
@@ -200,7 +221,7 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
         value: pipelineDeals
           .filter(d => d.status === stage)
           .reduce((sum, d) => sum + Number(d.amount), 0),
-        probability: stageProbabilities[stage] || 0.3,
+        probability: stageProbabilities[stage] ?? 0.3,
       }));
       const avgDaysInPipeline =
         pipelineDeals.length > 0
@@ -212,7 +233,8 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
       const avgDaysToClose =
         completedSales.length > 0
           ? completedSales.reduce(
-              (sum, s) => sum + differenceInDays(parseISO(s.updated_at), parseISO(s.created_at)),
+              (sum, s) =>
+                sum + differenceInDays(parseISO(s.updated_at), parseISO(s.created_at)),
               0
             ) / completedSales.length
           : 0;
@@ -225,17 +247,25 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
         deals: prevCompleted.length,
         avgTicket: prevCompleted.length > 0 ? prevRevenue / prevCompleted.length : 0,
         conversionRate:
-          previousSales.length > 0 ? (prevCompleted.length / previousSales.length) * 100 : 0,
+          previousSales.length > 0
+            ? (prevCompleted.length / previousSales.length) * 100
+            : 0,
       };
 
       const lastYearCompleted = lastYearSales.filter(s => isWonSaleStatus(s.status));
-      const lastYearRevenue = lastYearCompleted.reduce((sum, s) => sum + Number(s.amount), 0);
+      const lastYearRevenue = lastYearCompleted.reduce(
+        (sum, s) => sum + Number(s.amount),
+        0
+      );
       const sameLastYear = {
         revenue: lastYearRevenue,
         deals: lastYearCompleted.length,
-        avgTicket: lastYearCompleted.length > 0 ? lastYearRevenue / lastYearCompleted.length : 0,
+        avgTicket:
+          lastYearCompleted.length > 0 ? lastYearRevenue / lastYearCompleted.length : 0,
         conversionRate:
-          lastYearSales.length > 0 ? (lastYearCompleted.length / lastYearSales.length) * 100 : 0,
+          lastYearSales.length > 0
+            ? (lastYearCompleted.length / lastYearSales.length) * 100
+            : 0,
       };
 
       // Ranking
@@ -266,22 +296,21 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
         transformClientInsights(allClientSales);
 
       // Recent deals
-      const recentDeals = currentSales
-        .slice(0, 10)
-        .map(s => ({
-          clientName: s.client_name,
-          value: Number(s.amount),
-          status: s.status,
-          date: format(parseISO(s.created_at), 'dd/MM/yyyy'),
-        }));
+      const recentDeals = currentSales.slice(0, 10).map(s => ({
+        clientName: s.client_name,
+        value: Number(s.amount),
+        status: s.status,
+        date: format(parseISO(s.created_at), 'dd/MM/yyyy'),
+      }));
 
       // Win/Loss
       const wonDeals = currentSales.filter(s => isWonSaleStatus(s.status)).length;
-      const lostDeals = currentSales.filter(s => s.status === 'lost').length;
-      const winRate = wonDeals + lostDeals > 0 ? (wonDeals / (wonDeals + lostDeals)) * 100 : 0;
+      const lostDeals = currentSales.filter(s => isLostSaleStatus(s.status)).length;
+      const winRate =
+        wonDeals + lostDeals > 0 ? (wonDeals / (wonDeals + lostDeals)) * 100 : 0;
       const lostReasonCounts: Record<string, number> = {};
       dealOutcomes
-        .filter(d => d.outcome === 'lost')
+        .filter(d => d.outcome === WIN_LOSS_OUTCOME.LOST)
         .forEach(d => {
           lostReasonCounts[d.reason] = (lostReasonCounts[d.reason] || 0) + 1;
         });
@@ -290,11 +319,8 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
         .sort((a, b) => b.count - a.count);
 
       // Charts (extracted)
-      const { revenueByDay, dealsByCategory, revenueByMonth, dealVelocity } = transformChartData(
-        completedSales,
-        allClientSales,
-        stageHistory
-      );
+      const { revenueByDay, dealsByCategory, revenueByMonth, dealVelocity } =
+        transformChartData(completedSales, allClientSales, stageHistory);
 
       return {
         totalRevenue,

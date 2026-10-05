@@ -54,24 +54,6 @@ export const useDialerQueues = () => {
   });
 };
 
-export const useQueueItems = (queueId: string | null) => {
-  return useQuery<DialerQueueItem[]>({
-    queryKey: ['dialer-queue-items', queueId],
-    enabled: !!queueId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('dialer_queue_items')
-        .select('*')
-        .eq('queue_id', queueId!)
-        .order('queue_position', { ascending: true })
-        .limit(100);
-      if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data ?? []) as unknown as DialerQueueItem[];
-    },
-  });
-};
-
 export const useQueueStats = (queueId: string | null) => {
   return useQuery({
     queryKey: ['dialer-queue-stats', queueId],

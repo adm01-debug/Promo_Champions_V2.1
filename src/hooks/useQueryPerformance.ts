@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('useQueryPerformance');
 
 interface QueryMetrics {
   queryKey: string;
@@ -64,16 +66,14 @@ function addMetric(metric: QueryMetrics) {
     alertedQueries.set(metric.queryKey, Date.now());
 
     // Silently capture slow queries for backend monitoring without console warnings in production
-    if (import.meta.env.DEV && alertConfig.logToConsole) {
-      console.warn(
-        `⚠️ [SLOW QUERY ALERT] ${metric.queryKey} took ${metric.duration}ms (threshold: ${alertConfig.threshold}ms)`,
-        {
-          queryKey: metric.queryKey,
-          duration: metric.duration,
-          threshold: alertConfig.threshold,
-          timestamp: new Date(metric.timestamp).toISOString(),
-        }
-      );
+    if (alertConfig.logToConsole) {
+      // logger.info é dev-gated — preserva o comportamento dev-only anterior.
+      log.info('slow_query_alert', {
+        queryKey: metric.queryKey,
+        duration: metric.duration,
+        threshold: alertConfig.threshold,
+        timestamp: new Date(metric.timestamp).toISOString(),
+      });
     }
 
     // Show toast notification
@@ -92,11 +92,14 @@ function addMetric(metric: QueryMetrics) {
 
   // Standard dev logging for moderately slow queries
   if (
-    import.meta.env.DEV &&
     metric.duration > SLOW_QUERY_THRESHOLD_MS &&
     metric.duration <= alertConfig.threshold
   ) {
-    console.warn(`[SLOW QUERY] ${metric.queryKey} took ${metric.duration}ms`, metric);
+    log.debug('slow_query', {
+      queryKey: metric.queryKey,
+      duration: metric.duration,
+      metric,
+    });
   }
 }
 
@@ -191,61 +194,25 @@ export function useQueryPerformance<T>(
   }, [isLoading, isError, queryKey, data]);
 }
 
-// Hook to get live metrics
-export function useQueryMetricsLive() {
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    // Subscribe to query cache changes
-    const unsubscribe = queryClient.getQueryCache().subscribe(event => {
-      if (event?.type === 'updated' && event.query.state.fetchStatus === 'idle') {
-        const queryKey = JSON.stringify(event.query.queryKey);
-        const state = event.query.state;
-
-        if (state.dataUpdatedAt && state.fetchMeta) {
-          // Query completed
-          const meta = state.fetchMeta as { startTime?: number };
-          if (meta.startTime) {
-            const duration = state.dataUpdatedAt - meta.startTime;
-            addMetric({
-              queryKey,
-              duration,
-              timestamp: Date.now(),
-              status: state.status === 'error' ? 'error' : 'success',
-            });
-          }
-        }
-      }
-    });
-
-    return () => unsubscribe();
-  }, [queryClient]);
-
-  return getQueryMetrics;
-}
-
 // Console logger for metrics (call manually or on interval)
 export function logQueryMetrics() {
-  if (!import.meta.env.DEV) return; // Only log in development
-
   const metrics = getQueryMetrics();
 
-  console.info('📊 Query Performance Metrics');
-  console.info(`Total Queries: ${metrics.totalQueries}`);
-  console.info(`Avg Duration: ${metrics.avgDuration}ms`);
-  console.info(`Slow Queries (>${SLOW_QUERY_THRESHOLD_MS}ms): ${metrics.slowQueries}`);
-  console.info(`Error Rate: ${metrics.errorRate}%`);
-
-  if (Object.keys(metrics.byQueryKey).length > 0) {
-    console.info('By Query Key:');
-    Object.entries(metrics.byQueryKey)
-      .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
-      .forEach(([key, data]) => {
-        console.info(
-          `${key}: ${data.count} calls, avg ${data.avgDuration}ms, ${data.errors} errors`
-        );
-      });
-  }
+  log.info('query_metrics', {
+    totalQueries: metrics.totalQueries,
+    avgDurationMs: metrics.avgDuration,
+    slowQueries: metrics.slowQueries,
+    slowThresholdMs: SLOW_QUERY_THRESHOLD_MS,
+    errorRatePct: metrics.errorRate,
+    byQueryKey: Object.fromEntries(
+      Object.entries(metrics.byQueryKey)
+        .sort((a, b) => b[1].avgDuration - a[1].avgDuration)
+        .map(([key, data]) => [
+          key,
+          { count: data.count, avgDuration: data.avgDuration, errors: data.errors },
+        ])
+    ),
+  });
 }
 
 // Get current alert config

@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, memo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { WA_ME_URL } from '@/config/external';
 import {
   Select,
   SelectContent,
@@ -244,8 +245,7 @@ const FollowUpInteligente = memo(() => {
     const vars = template.match(/{{(.*?)}}/g) || [];
     const missing = vars
       .map(v => v.replace(/{{|}}/g, ''))
-      // eslint-disable-next-line no-restricted-syntax
-      .filter(v => !(lead as unknown as Record<string, string | number | undefined>)[v]);
+      .filter(v => !lead[v as keyof ColdLead]);
     return missing;
   }, []);
 
@@ -278,14 +278,7 @@ const FollowUpInteligente = memo(() => {
       const vars = template.match(/{{(.*?)}}/g) || [];
       vars.forEach(v => {
         const key = v.replace(/{{|}}/g, '');
-        message = message.replace(
-          v,
-
-          String(
-            // eslint-disable-next-line no-restricted-syntax
-            (lead as unknown as Record<string, string | number | undefined>)[key] || ''
-          )
-        );
+        message = message.replace(v, String(lead[key as keyof ColdLead] || ''));
       });
 
       logAction.mutate({
@@ -298,7 +291,7 @@ const FollowUpInteligente = memo(() => {
         status: 'attempted',
       });
 
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`${WA_ME_URL}/?text=${encodeURIComponent(message)}`, '_blank');
       setIsPreviewOpen(false);
     },
     [followUpSettings, logAction, missingVariables]

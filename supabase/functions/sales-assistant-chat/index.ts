@@ -8,15 +8,22 @@ import {
   collectErrors,
   validationErrorResponse,
 } from '../_shared/validation.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'sales-assistant-chat', limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     try {
@@ -74,7 +81,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
         .single();
 
       // Get current month goals
-      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+      const currentMonth = toBusinessMonthStart();
       const { data: goals } = await supabase
         .from('sales_goals')
         .select('salesperson_id, goal_amount')
@@ -120,7 +127,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const winRate = outcomes?.length ? Math.round((wins / outcomes.length) * 100) : 0;
 
       // Get activity goals progress
-      const today = new Date().toISOString().split('T')[0];
+      const today = toBusinessDate();
       const { data: activities } = await supabase
         .from('activities')
         .select('activity_type, outcome')
@@ -374,7 +381,7 @@ DIRETRIZES:
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

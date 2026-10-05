@@ -1,6 +1,6 @@
-import { Helmet } from "react-helmet-async";
-import { RevenueForecastHub } from "@/components/forecast/RevenueForecastHub";
-import { PageTransition } from "@/components/transitions/PageTransition";
+import { Helmet } from 'react-helmet-async';
+import { RevenueForecastHub } from '@/components/forecast/RevenueForecastHub';
+import { PageTransition } from '@/components/transitions/PageTransition';
 
 export default function RevenueForecast() {
   return (

@@ -12,12 +12,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AlertOctagon, CheckCircle2, Clock, TimerOff, ArrowRight, Download } from 'lucide-react';
+import {
+  AlertOctagon,
+  CheckCircle2,
+  Clock,
+  TimerOff,
+  ArrowRight,
+  Download,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useChurnTaskCompletion } from '@/hooks/bi/useChurnTaskCompletion';
 import { useChurnPeriodPreference } from '@/hooks/bi/useChurnPeriodPreference';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { toBusinessDate } from '@/lib/date';
 
 interface Props {
   className?: string;
@@ -41,7 +49,7 @@ export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
   const { days, setDays, options } = useChurnPeriodPreference();
   const { data, isLoading } = useChurnTaskCompletion(
     days,
-    salespersonId === 'all' ? null : salespersonId,
+    salespersonId === 'all' ? null : salespersonId
   );
 
   const { data: sellers } = useQuery<SalespersonOption[]>({
@@ -70,28 +78,30 @@ export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
 
   const exportOverdueCsv = () => {
     if (!data?.overdueTasks?.length) return;
-    const sellerMap = new Map((sellers ?? []).map((s) => [s.id, s.name]));
+    const sellerMap = new Map((sellers ?? []).map(s => [s.id, s.name]));
     const header = ['ID', 'Descrição', 'Vencimento', 'Criada em', 'Vendedor'];
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
     const lines = [
       header.join(';'),
-      ...data.overdueTasks.map((t) =>
+      ...data.overdueTasks.map(t =>
         [
           t.id,
           (t.description ?? '').replace(/\s+/g, ' ').trim(),
           t.due_date ? new Date(t.due_date).toLocaleString('pt-BR') : '',
           new Date(t.created_at).toLocaleString('pt-BR'),
-          t.salesperson_id ? sellerMap.get(t.salesperson_id) ?? t.salesperson_id : '',
+          t.salesperson_id ? (sellerMap.get(t.salesperson_id) ?? t.salesperson_id) : '',
         ]
-          .map((v) => escape(String(v)))
-          .join(';'),
+          .map(v => escape(String(v)))
+          .join(';')
       ),
     ];
-    const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\uFEFF' + lines.join('\n')], {
+      type: 'text/csv;charset=utf-8;',
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `tarefas-churn-atrasadas-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `tarefas-churn-atrasadas-${toBusinessDate()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -105,15 +115,12 @@ export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
             Tarefas de Churn — últimos {days} dias
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Select
-              value={String(days)}
-              onValueChange={(v) => setDays(Number(v))}
-            >
+            <Select value={String(days)} onValueChange={v => setDays(Number(v))}>
               <SelectTrigger className="h-8 w-[110px] text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {options.map((d) => (
+                {options.map(d => (
                   <SelectItem key={d} value={String(d)}>
                     {PERIOD_LABEL[d]}
                   </SelectItem>
@@ -126,7 +133,7 @@ export const ChurnTaskCompletionCard = memo(({ className }: Props) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os vendedores</SelectItem>
-                {sellers?.map((s) => (
+                {sellers?.map(s => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.name}
                   </SelectItem>

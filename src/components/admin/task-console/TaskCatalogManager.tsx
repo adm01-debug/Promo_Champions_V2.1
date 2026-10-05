@@ -2,14 +2,38 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { useTaskCatalog, type TaskCatalogItem, type TaskCatalogInput } from '@/hooks/admin-tasks/useTaskCatalog';
+import {
+  useTaskCatalog,
+  type TaskCatalogItem,
+  type TaskCatalogInput,
+} from '@/hooks/admin-tasks/useTaskCatalog';
 import {
   DIFFICULTY_LABELS,
   DIFFICULTY_TONES,
@@ -59,14 +83,16 @@ export function TaskCatalogManager() {
   };
 
   const onDifficultyChange = (d: TaskDifficulty) =>
-    setForm((f) => ({ ...f, difficulty: d, xp_reward: DIFFICULTY_XP_DEFAULTS[d] }));
+    setForm(f => ({ ...f, difficulty: d, xp_reward: DIFFICULTY_XP_DEFAULTS[d] }));
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-display text-lg">Catálogo de Tarefas</h3>
-          <p className="text-sm text-muted-foreground">Defina tarefas, dificuldade e recompensa de XP.</p>
+          <p className="text-sm text-muted-foreground">
+            Defina tarefas, dificuldade e recompensa de XP.
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -81,24 +107,40 @@ export function TaskCatalogManager() {
             <div className="space-y-3">
               <div>
                 <Label>Título</Label>
-                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                <Input
+                  value={form.title}
+                  onChange={e => setForm({ ...form, title: e.target.value })}
+                />
               </div>
               <div>
                 <Label>Descrição</Label>
-                <Textarea value={form.description || ''} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                <Textarea
+                  value={form.description || ''}
+                  onChange={e => setForm({ ...form, description: e.target.value })}
+                />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>Categoria</Label>
-                  <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+                  <Input
+                    value={form.category}
+                    onChange={e => setForm({ ...form, category: e.target.value })}
+                  />
                 </div>
                 <div>
                   <Label>Dificuldade</Label>
-                  <Select value={form.difficulty} onValueChange={(v) => onDifficultyChange(v as TaskDifficulty)}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select
+                    value={form.difficulty}
+                    onValueChange={v => onDifficultyChange(v as TaskDifficulty)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
-                      {(Object.keys(DIFFICULTY_LABELS) as TaskDifficulty[]).map((d) => (
-                        <SelectItem key={d} value={d}>{DIFFICULTY_LABELS[d]}</SelectItem>
+                      {(Object.keys(DIFFICULTY_LABELS) as TaskDifficulty[]).map(d => (
+                        <SelectItem key={d} value={d}>
+                          {DIFFICULTY_LABELS[d]}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -110,25 +152,41 @@ export function TaskCatalogManager() {
                   <Input
                     type="number"
                     value={form.xp_reward}
-                    onChange={(e) => setForm({ ...form, xp_reward: Number(e.target.value) })}
+                    onChange={e =>
+                      setForm({ ...form, xp_reward: Number(e.target.value) })
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between rounded-lg border p-3">
                   <Label>Ativa</Label>
-                  <Switch checked={form.active} onCheckedChange={(c) => setForm({ ...form, active: c })} />
+                  <Switch
+                    checked={form.active}
+                    onCheckedChange={c => setForm({ ...form, active: c })}
+                  />
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-              <Button onClick={handleSubmit} disabled={create.isPending || update.isPending}>Salvar</Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={create.isPending || update.isPending}
+              >
+                Salvar
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
       {isLoading ? (
-        <div className="space-y-2">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}</div>
+        <div className="space-y-2">
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
       ) : (
         <div className="rounded-lg border">
           <Table>
@@ -143,29 +201,55 @@ export function TaskCatalogManager() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(data || []).map((item) => (
+              {(data || []).map(item => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.title}</TableCell>
                   <TableCell className="text-muted-foreground">{item.category}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={DIFFICULTY_TONES[item.difficulty]}>
+                    <Badge
+                      variant="outline"
+                      className={DIFFICULTY_TONES[item.difficulty]}
+                    >
                       {DIFFICULTY_LABELS[item.difficulty]}
                     </Badge>
                   </TableCell>
                   <TableCell className="font-mono">{item.xp_reward}</TableCell>
                   <TableCell>
-                    {item.active ? <Badge variant="secondary">Ativa</Badge> : <Badge variant="outline">Inativa</Badge>}
+                    {item.active ? (
+                      <Badge variant="secondary">Ativa</Badge>
+                    ) : (
+                      <Badge variant="outline">Inativa</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right space-x-1">
-                    <Button size="icon" variant="ghost" aria-label="Editar tarefa" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="ghost" aria-label="Excluir tarefa" onClick={() => remove.mutate(item.id)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label="Editar tarefa"
+                      onClick={() => openEdit(item)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label="Excluir tarefa"
+                      onClick={() => remove.mutate(item.id)}
+                    >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>
                 </TableRow>
               ))}
               {!data?.length && (
-                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Nenhuma tarefa cadastrada</TableCell></TableRow>
+                <TableRow>
+                  <TableCell
+                    colSpan={6}
+                    className="text-center text-muted-foreground py-8"
+                  >
+                    Nenhuma tarefa cadastrada
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>

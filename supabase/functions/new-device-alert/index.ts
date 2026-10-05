@@ -2,8 +2,10 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
 import { corsHeaders } from "../_shared/cors.ts";
-import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { escapeHtml } from "../_shared/html-escape.ts";
+import { alertFromEmail } from "../_shared/alert-escalation.ts";
+import { maskEmail } from "../_shared/pii.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
@@ -95,8 +97,9 @@ const generateEmailHTML = (data: NewDeviceAlertRequest) => `
 </html>
 `;
 
-const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Response> => {
-  console.info("New device alert function called");
+const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Response> => {
+  const log = ctx.log;
+  log('info', 'new_device_alert_called');
 
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -142,7 +145,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
         .update({ last_seen_at: new Date().toISOString() })
         .eq("id", existingDevice.id);
 
-      console.info("Known device, updating last_seen");
+      log('info', 'known_device_last_seen_updated', { user_id: data.user_id });
       return new Response(
         JSON.stringify({ message: "Known device", is_new: false }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -164,7 +167,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
       });
 
     if (insertDeviceError) {
-      console.error("Error inserting device:", insertDeviceError);
+      log('error', 'device_insert_failed', { user_id: data.user_id });
     }
 
     // Create login alert
@@ -184,20 +187,20 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
       .single();
 
     if (alertError) {
-      console.error("Error creating alert:", alertError);
+      log('error', 'login_alert_insert_failed', { user_id: data.user_id });
     }
 
     // Send email notification
-    console.info("Sending new device alert email to:", data.user_email);
-    
-    const emailResponse = await resend.emails.send({
-      from: "PROMO CHAMPIONS Security <onboarding@resend.dev>",
+    log('info', 'sending_device_alert_email', { to: maskEmail(data.user_email) });
+
+    await resend.emails.send({
+      from: alertFromEmail(),
       to: [data.user_email],
       subject: "⚠️ Novo dispositivo detectado em sua conta",
       html: generateEmailHTML(data),
     });
 
-    console.info("Email sent:", emailResponse);
+    log('info', 'device_alert_email_sent', { to: maskEmail(data.user_email) });
 
     // Update alert as sent
     if (alert) {
@@ -221,7 +224,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
 
     // Send push notification to user
     try {
-      console.info("Sending push notification for new device...");
+      log('info', 'sending_push_notification', { user_id: data.user_id });
       
       // Get user's push subscriptions
       const { data: subscriptions } = await supabase
@@ -246,7 +249,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
         };
         
         // Call the send-push-notification function
-        const pushResponse = await fetchWithTimeout(
+        const pushResponse = await fetchWithTrace(
           `${supabaseUrl}/functions/v1/send-push-notification`,
           {
             method: "POST",
@@ -255,16 +258,24 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
               "Authorization": `Bearer ${supabaseServiceKey}`,
             },
             body: JSON.stringify(pushPayload),
+          },
+          {
+            requestId: ctx.requestId,
+            fnName: 'new-device-alert',
+            operation: 'send_push_notification',
           }
         );
-        
+
         const pushResult = await pushResponse.json();
-        console.info("Push notification result:", pushResult);
+        log('info', 'push_notification_result', { result: pushResult });
       } else {
-        console.info("No push subscriptions found for user");
+        log('info', 'no_push_subscriptions', { user_id: data.user_id });
       }
     } catch (pushError) {
-      console.error("Error sending push notification:", pushError);
+      log('error', 'push_notification_failed', {
+        user_id: data.user_id,
+        error: pushError instanceof Error ? pushError.message : String(pushError),
+      });
       // Don't fail the request if push fails
     }
 
@@ -278,7 +289,7 @@ const handler = withRequestId('new-device-alert', async (req, _ctx): Promise<Res
     );
 
   } catch (error: unknown) {
-    console.error("Error in new-device-alert function:", error);
+    log('error', 'new_device_alert_failed');
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),

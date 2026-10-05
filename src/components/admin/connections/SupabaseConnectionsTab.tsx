@@ -1,29 +1,41 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
-import { ExternalDBSettings } from "@/components/admin/ExternalDBSettings";
-import { useCreateConnection, useIntegrationConnections } from "@/hooks/admin/useIntegrationConnections";
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Plus } from 'lucide-react';
+import { ExternalDBSettings } from '@/components/admin/ExternalDBSettings';
+import {
+  useCreateConnection,
+  useIntegrationConnections,
+} from '@/hooks/admin/useIntegrationConnections';
 
 export function SupabaseConnectionsTab() {
-  const [label, setLabel] = useState("");
-  const [url, setUrl] = useState("");
-  const [anonKey, setAnonKey] = useState("");
-  const [testTable, setTestTable] = useState("salespeople");
+  const [label, setLabel] = useState('');
+  const [url, setUrl] = useState('');
+  const [anonKey, setAnonKey] = useState('');
+  const [testTable, setTestTable] = useState('salespeople');
   const create = useCreateConnection();
-  const { data: dbs = [] } = useIntegrationConnections("database");
+  const { data: dbs = [] } = useIntegrationConnections('database');
 
   const submit = async () => {
     if (!label || !url || !anonKey) return;
     await create.mutateAsync({
-      kind: "database",
+      kind: 'database',
       label,
       config: { url, anon_key: anonKey, test_table: testTable },
-      source: "db",
+      source: 'db',
     });
-    setLabel(""); setUrl(""); setAnonKey(""); setTestTable("salespeople");
+    setLabel('');
+    setUrl('');
+    setAnonKey('');
+    setTestTable('salespeople');
   };
 
   return (
@@ -41,19 +53,31 @@ export function SupabaseConnectionsTab() {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <Label>Rótulo</Label>
-              <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="GIFT STORE prod" />
+              <Input
+                value={label}
+                onChange={e => setLabel(e.target.value)}
+                placeholder="GIFT STORE prod"
+              />
             </div>
             <div>
               <Label>Tabela de teste</Label>
-              <Input value={testTable} onChange={(e) => setTestTable(e.target.value)} />
+              <Input value={testTable} onChange={e => setTestTable(e.target.value)} />
             </div>
             <div className="sm:col-span-2">
               <Label>URL</Label>
-              <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://xxx.supabase.co" />
+              <Input
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+                placeholder="https://xxx.supabase.co"
+              />
             </div>
             <div className="sm:col-span-2">
               <Label>Anon key</Label>
-              <Input value={anonKey} onChange={(e) => setAnonKey(e.target.value)} type="password" />
+              <Input
+                value={anonKey}
+                onChange={e => setAnonKey(e.target.value)}
+                type="password"
+              />
             </div>
           </div>
           <div className="flex justify-end">

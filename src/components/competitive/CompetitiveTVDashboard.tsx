@@ -11,6 +11,7 @@ import { useWeeklyMatchups } from '@/hooks/gamification/useWeeklyMatchups';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 interface StreakEntry {
   id: string;
   current_streak: number;
@@ -28,7 +29,7 @@ interface MatchupEntry {
 }
 
 const SLIDES = ['ranking', 'streaks', 'matchups', 'stats'] as const;
-type _Slide = typeof SLIDES[number];
+type _Slide = (typeof SLIDES)[number];
 
 const SLIDE_DURATION = 8000; // 8s per slide
 
@@ -49,9 +50,15 @@ const CompetitiveTVDashboardComponent: FC = () => {
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      document.documentElement
+        .requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch(() => {});
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      document
+        .exitFullscreen()
+        .then(() => setIsFullscreen(false))
+        .catch(() => {});
     }
   };
 
@@ -65,7 +72,9 @@ const CompetitiveTVDashboardComponent: FC = () => {
         <div className="flex items-center gap-2">
           <Monitor className="h-5 w-5 text-primary" />
           <h3 className="text-sm font-bold text-foreground">Dashboard TV</h3>
-          <Badge variant="secondary" className="text-xs animate-pulse">AO VIVO</Badge>
+          <Badge variant="secondary" className="text-xs animate-pulse">
+            AO VIVO
+          </Badge>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
@@ -76,12 +85,17 @@ const CompetitiveTVDashboardComponent: FC = () => {
                 aria-label={`Slide ${i + 1}: ${s}`}
                 className={cn(
                   'h-2 rounded-full transition-all',
-                  i === currentSlide ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/30',
+                  i === currentSlide ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/30'
                 )}
               />
             ))}
           </div>
-          <Button variant="outline" size="sm" className="h-7 text-xs gap-1" onClick={toggleFullscreen}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs gap-1"
+            onClick={toggleFullscreen}
+          >
             <Maximize className="h-3 w-3" />
             {isFullscreen ? 'Sair' : 'Tela Cheia'}
           </Button>
@@ -92,8 +106,12 @@ const CompetitiveTVDashboardComponent: FC = () => {
       <div className="relative min-h-[400px] rounded-xl overflow-hidden bg-gradient-to-br from-background to-muted/30 border shadow-xl">
         {/* Clock overlay */}
         <div className="absolute top-4 right-4 z-10 text-right">
-          <p className="text-2xl font-bold text-foreground tabular-nums">{format(now, 'HH:mm')}</p>
-          <p className="text-xs text-muted-foreground">{format(now, "EEEE, d 'de' MMMM", { locale: ptBR })}</p>
+          <p className="text-2xl font-bold text-foreground tabular-nums">
+            {format(now, 'HH:mm')}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {format(now, "EEEE, d 'de' MMMM", { locale: ptBR })}
+          </p>
         </div>
 
         <AnimatePresence mode="wait">
@@ -123,7 +141,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
                         i === 0 && 'bg-rank-gold/10 border border-rank-gold/30',
                         i === 1 && 'bg-rank-silver/10 border border-rank-silver/20',
                         i === 2 && 'bg-rank-bronze/10 border border-rank-bronze/20',
-                        i > 2 && 'bg-muted/20',
+                        i > 2 && 'bg-muted/20'
                       )}
                     >
                       <span className="text-lg font-bold w-8 text-center">
@@ -135,10 +153,12 @@ const CompetitiveTVDashboardComponent: FC = () => {
                       </Avatar>
                       <div className="flex-1">
                         <p className="font-bold text-foreground">{sp.name}</p>
-                        <p className="text-xs text-muted-foreground">{sp.dealsCount} negócios</p>
+                        <p className="text-xs text-muted-foreground">
+                          {sp.dealsCount} negócios
+                        </p>
                       </div>
                       <p className="text-lg font-bold text-primary">
-                        R${sp.totalSales.toLocaleString('pt-BR')}
+                        {formatBRL(sp.totalSales)}
                       </p>
                     </motion.div>
                   ))}
@@ -153,27 +173,40 @@ const CompetitiveTVDashboardComponent: FC = () => {
                   <h2 className="text-section-title text-foreground">Streaks Ativos</h2>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  {(streaks || []).filter((s: StreakEntry) => s.current_streak > 0).slice(0, 6).map((streak: StreakEntry, i: number) => (
-                    <motion.div
-                      key={streak.id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-streak/10 to-destructive/10 border border-streak/20"
-                    >
-                      <div className="text-3xl">🔥</div>
-                      <div>
-                        <p className="font-bold text-foreground">{streak.salespeople?.name || 'Vendedor'}</p>
-                        <p className="text-2xl font-black text-streak">{streak.current_streak} dias</p>
-                        <p className="text-xs text-muted-foreground">Multiplicador: {streak.xp_multiplier}x</p>
-                      </div>
-                    </motion.div>
-                  ))}
+                  {(streaks || [])
+                    .filter((s: StreakEntry) => s.current_streak > 0)
+                    .slice(0, 6)
+                    .map((streak: StreakEntry, i: number) => (
+                      <motion.div
+                        key={streak.id}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-streak/10 to-destructive/10 border border-streak/20"
+                      >
+                        <div className="text-3xl">🔥</div>
+                        <div>
+                          <p className="font-bold text-foreground">
+                            {streak.salespeople?.name || 'Vendedor'}
+                          </p>
+                          <p className="text-2xl font-black text-streak">
+                            {streak.current_streak} dias
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Multiplicador: {streak.xp_multiplier}x
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
                 </div>
-                {(!streaks || streaks.filter((s: StreakEntry) => s.current_streak > 0).length === 0) && (
+                {(!streaks ||
+                  streaks.filter((s: StreakEntry) => s.current_streak > 0).length ===
+                    0) && (
                   <div className="text-center py-12">
                     <Flame className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-                    <p className="text-muted-foreground">Nenhum streak ativo no momento</p>
+                    <p className="text-muted-foreground">
+                      Nenhum streak ativo no momento
+                    </p>
                   </div>
                 )}
               </div>
@@ -186,27 +219,40 @@ const CompetitiveTVDashboardComponent: FC = () => {
                   <h2 className="text-section-title text-foreground">Duelos da Semana</h2>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {(matchups || []).filter((m: MatchupEntry) => m.status === 'active').slice(0, 4).map((matchup: MatchupEntry, i: number) => (
-                    <motion.div
-                      key={matchup.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.15 }}
-                      className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
-                    >
-                      <div className="text-center flex-1">
-                        <p className="font-bold text-foreground">{matchup.player1?.name || '?'}</p>
-                        <p className="text-2xl font-black text-primary">{matchup.player1_score}</p>
-                      </div>
-                      <div className="text-xl font-bold text-muted-foreground">VS</div>
-                      <div className="text-center flex-1">
-                        <p className="font-bold text-foreground">{matchup.player2?.name || '?'}</p>
-                        <p className="text-2xl font-black text-primary">{matchup.player2_score}</p>
-                      </div>
-                    </motion.div>
-                  ))}
+                  {(matchups || [])
+                    .filter((m: MatchupEntry) => m.status === 'active')
+                    .slice(0, 4)
+                    .map((matchup: MatchupEntry, i: number) => (
+                      <motion.div
+                        key={matchup.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.15 }}
+                        className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
+                      >
+                        <div className="text-center flex-1">
+                          <p className="font-bold text-foreground">
+                            {matchup.player1?.name || '?'}
+                          </p>
+                          <p className="text-2xl font-black text-primary">
+                            {matchup.player1_score}
+                          </p>
+                        </div>
+                        <div className="text-xl font-bold text-muted-foreground">VS</div>
+                        <div className="text-center flex-1">
+                          <p className="font-bold text-foreground">
+                            {matchup.player2?.name || '?'}
+                          </p>
+                          <p className="text-2xl font-black text-primary">
+                            {matchup.player2_score}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
                 </div>
-                {(!matchups || matchups.filter((m: MatchupEntry) => m.status === 'active').length === 0) && (
+                {(!matchups ||
+                  matchups.filter((m: MatchupEntry) => m.status === 'active').length ===
+                    0) && (
                   <div className="text-center py-12">
                     <Swords className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
                     <p className="text-muted-foreground">Nenhum duelo ativo no momento</p>
@@ -223,10 +269,28 @@ const CompetitiveTVDashboardComponent: FC = () => {
                 </div>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
-                    { label: 'Total Vendedores', value: ranking?.length || 0, icon: '👥' },
-                    { label: 'Vendas do Mês', value: ranking?.reduce((s, r) => s + r.dealsCount, 0) || 0, icon: '📊' },
-                    { label: 'Receita Total', value: `R$${((ranking?.reduce((s, r) => s + r.totalSales, 0) || 0) / 1000).toFixed(0)}k`, icon: '💰' },
-                    { label: 'Streaks Ativos', value: streaks?.filter((s: StreakEntry) => s.current_streak > 0).length || 0, icon: '🔥' },
+                    {
+                      label: 'Total Vendedores',
+                      value: ranking?.length || 0,
+                      icon: '👥',
+                    },
+                    {
+                      label: 'Vendas do Mês',
+                      value: ranking?.reduce((s, r) => s + r.dealsCount, 0) || 0,
+                      icon: '📊',
+                    },
+                    {
+                      label: 'Receita Total',
+                      value: `R$${((ranking?.reduce((s, r) => s + r.totalSales, 0) || 0) / 1000).toFixed(0)}k`,
+                      icon: '💰',
+                    },
+                    {
+                      label: 'Streaks Ativos',
+                      value:
+                        streaks?.filter((s: StreakEntry) => s.current_streak > 0)
+                          .length || 0,
+                      icon: '🔥',
+                    },
                   ].map((stat, i) => (
                     <motion.div
                       key={stat.label}
@@ -249,6 +313,5 @@ const CompetitiveTVDashboardComponent: FC = () => {
     </div>
   );
 };
-
 
 export const CompetitiveTVDashboard = React.memo(CompetitiveTVDashboardComponent);

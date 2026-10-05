@@ -2,6 +2,11 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { chunkedIn } from '../_shared/chunked-in.ts';
+
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 interface Driver {
   factor: string;
@@ -99,7 +104,7 @@ Recomendação principal: ${recommendations[0]?.action ?? 'n/d'}.
 
 Em 2-3 frases curtas em português do Brasil, explique o porquê desse score e qual a próxima ação prioritária. Tom direto, profissional, sem jargão.`;
 
-    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -225,6 +230,13 @@ async function explainOne(
 Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'predictive-scoring-explain',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
   try {
     const body = await req.json().catch(() => ({}));
@@ -244,10 +256,45 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    // Exige JWT válido: sem isso a function rodava como service_role para qualquer chamador com a anon key.
+    const caller = await getUserClient(req);
+
+    const supabase = getServiceClient("recomputa explicações de score de deals e grava lead_score_explanations");
+
+    // Só o dono dos deals (ou admin/manager) pode disparar a explicação em lote.
+    const { data: callerSp } = await supabase
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', caller.userId)
+      .maybeSingle();
+    const saleRows = await chunkedIn<{
+      id: string;
+      salesperson_id: string | null;
+    }>(
+      ids,
+      (chunk) =>
+        supabase.from('sales').select('id, salesperson_id').in('id', chunk),
+      { label: 'predictive-scoring-explain/sales' },
     );
+    const hasForeign = saleRows.some(
+      (s) => s.salesperson_id && s.salesperson_id !== callerSp?.id,
+    );
+    if (hasForeign) {
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(
+          JSON.stringify({ error: 'forbidden' }),
+          {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
 
     const results: Array<{
       sale_id: string;
@@ -263,6 +310,15 @@ Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    if (e instanceof UnauthorizedError) {
+      return new Response(
+        JSON.stringify({ error: 'unauthorized' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
     console.error('predictive-scoring-explain error:', e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown' }),

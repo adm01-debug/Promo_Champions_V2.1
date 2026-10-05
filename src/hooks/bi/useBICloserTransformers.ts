@@ -1,9 +1,16 @@
-import { differenceInDays, format, parseISO } from "date-fns";
+import { differenceInDays, format, parseISO } from 'date-fns';
 
 /**
  * Transforms raw sales data into client insights for Closer BI
  */
-export function transformClientInsights(allClientSales: { client_name: string; amount: number | string; category: string; created_at: string }[]) {
+export function transformClientInsights(
+  allClientSales: {
+    client_name: string;
+    amount: number | string;
+    category: string;
+    created_at: string;
+  }[]
+) {
   const clientTotals: Record<string, { value: number; count: number }> = {};
   allClientSales.forEach(sale => {
     if (!clientTotals[sale.client_name]) {
@@ -14,22 +21,38 @@ export function transformClientInsights(allClientSales: { client_name: string; a
   });
 
   const topClients = Object.entries(clientTotals)
-    .map(([name, data]) => ({ name, company: name, totalValue: data.value, dealsCount: data.count, avgTicket: data.value / data.count }))
+    .map(([name, data]) => ({
+      name,
+      company: name,
+      totalValue: data.value,
+      dealsCount: data.count,
+      avgTicket: data.value / data.count,
+    }))
     .sort((a, b) => b.totalValue - a.totalValue)
     .slice(0, 10);
 
   const highestTicketClients = Object.entries(clientTotals)
-    .map(([name, data]) => ({ name, avgTicket: data.value / data.count, totalPurchases: data.count }))
+    .map(([name, data]) => ({
+      name,
+      avgTicket: data.value / data.count,
+      totalPurchases: data.count,
+    }))
     .filter(c => c.totalPurchases >= 2)
     .sort((a, b) => b.avgTicket - a.avgTicket)
     .slice(0, 10);
 
-  const clientPurchaseHistory = Object.keys(clientTotals).slice(0, 5).map(clientName => ({
-    clientName,
-    purchases: allClientSales
-      .filter(s => s.client_name === clientName)
-      .map(s => ({ date: format(parseISO(s.created_at), "dd/MM/yyyy"), value: Number(s.amount), category: s.category }))
-  }));
+  const clientPurchaseHistory = Object.keys(clientTotals)
+    .slice(0, 5)
+    .map(clientName => ({
+      clientName,
+      purchases: allClientSales
+        .filter(s => s.client_name === clientName)
+        .map(s => ({
+          date: format(parseISO(s.created_at), 'dd/MM/yyyy'),
+          value: Number(s.amount),
+          category: s.category,
+        })),
+    }));
 
   return { topClients, highestTicketClients, clientPurchaseHistory };
 }
@@ -45,10 +68,13 @@ export function transformChartData(
   // Revenue by day
   const revenueByDayMap: Record<string, number> = {};
   completedSales.forEach(sale => {
-    const day = format(parseISO(sale.created_at), "dd/MM");
+    const day = format(parseISO(sale.created_at), 'dd/MM');
     revenueByDayMap[day] = (revenueByDayMap[day] || 0) + Number(sale.amount);
   });
-  const revenueByDay = Object.entries(revenueByDayMap).map(([day, value]) => ({ day, value }));
+  const revenueByDay = Object.entries(revenueByDayMap).map(([day, value]) => ({
+    day,
+    value,
+  }));
 
   // Deals by category
   const categoryMap: Record<string, { value: number; count: number }> = {};
@@ -57,17 +83,23 @@ export function transformChartData(
     categoryMap[sale.category].value += Number(sale.amount);
     categoryMap[sale.category].count++;
   });
-  const dealsByCategory = Object.entries(categoryMap).map(([category, data]) => ({ category, ...data }));
+  const dealsByCategory = Object.entries(categoryMap).map(([category, data]) => ({
+    category,
+    ...data,
+  }));
 
   // Revenue by month
   const revenueByMonthMap: Record<string, { value: number; deals: number }> = {};
   allClientSales.forEach(sale => {
-    const month = format(parseISO(sale.created_at), "MMM/yy");
+    const month = format(parseISO(sale.created_at), 'MMM/yy');
     if (!revenueByMonthMap[month]) revenueByMonthMap[month] = { value: 0, deals: 0 };
     revenueByMonthMap[month].value += Number(sale.amount);
     revenueByMonthMap[month].deals++;
   });
-  const revenueByMonth = Object.entries(revenueByMonthMap).map(([month, data]) => ({ month, ...data }));
+  const revenueByMonth = Object.entries(revenueByMonthMap).map(([month, data]) => ({
+    month,
+    ...data,
+  }));
 
   // Deal velocity
   const stageAvgDays: Record<string, { total: number; count: number }> = {};
@@ -79,7 +111,10 @@ export function transformChartData(
       stageAvgDays[h.stage].count++;
     }
   });
-  const dealVelocity = Object.entries(stageAvgDays).map(([stage, data]) => ({ stage, avgDays: data.count > 0 ? data.total / data.count : 0 }));
+  const dealVelocity = Object.entries(stageAvgDays).map(([stage, data]) => ({
+    stage,
+    avgDays: data.count > 0 ? data.total / data.count : 0,
+  }));
 
   return { revenueByDay, dealsByCategory, revenueByMonth, dealVelocity };
 }

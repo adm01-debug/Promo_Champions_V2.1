@@ -4,6 +4,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateString, validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const MAX_TRANSCRIPT_LENGTH = 20_000;
 
@@ -15,6 +17,10 @@ interface AnalyzePayload {
 Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "analyze-call", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     // Verify caller identity before consuming AI credits
@@ -56,7 +62,7 @@ Deno.serve(withRequestId('analyze-call', async (req, _ctx) => {
     });
 
     // Análise via Lovable AI
-    const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

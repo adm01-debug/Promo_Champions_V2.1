@@ -2,6 +2,8 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -74,7 +76,7 @@ async function generateOne(
   const sys = `Você é um copywriter B2B de elite. Gere um e-mail individual e personalizado em ${language}, com tom ${toneHint}. NUNCA use placeholders genéricos como {{nome}} — sempre escreva o nome real do destinatário. Sempre retorne JSON válido.`;
   const userPrompt = `Briefing do remetente:\n${prompt}\n\nContexto do destinatário:\n${JSON.stringify(ctx, null, 2)}\n\nTarefa: gere um e-mail único, com gancho específico baseado no contexto acima. Forneça também uma frase explicando qual gancho de personalização foi usado.`;
 
-  const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -154,6 +156,10 @@ async function processInBatches<T, R>(
 Deno.serve(withRequestId("email-composer-bulk", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "email-composer-bulk", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY missing');

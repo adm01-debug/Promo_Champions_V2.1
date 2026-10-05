@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { parseRows, toJson } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
 import type { Json } from '@/integrations/supabase/types';
 import { insertPayload } from '@/lib/supabase/typed-payloads';
@@ -56,8 +57,7 @@ export const useAutomationWorkflows = () => {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return data as unknown as AutomationWorkflow[];
+      return parseRows<AutomationWorkflow>(data);
     },
   });
 };
@@ -93,10 +93,9 @@ export const useCreateWorkflow = () => {
             description: payload.description,
             trigger_type: payload.trigger_type,
             trigger_config: payload.trigger_config as Json | undefined,
-            // eslint-disable-next-line no-restricted-syntax
-            conditions: payload.conditions as unknown as Json | undefined,
-            // eslint-disable-next-line no-restricted-syntax
-            actions: payload.actions as unknown as Json | undefined,
+            conditions:
+              payload.conditions === undefined ? undefined : toJson(payload.conditions),
+            actions: payload.actions === undefined ? undefined : toJson(payload.actions),
             is_active: payload.is_active,
           })
         )

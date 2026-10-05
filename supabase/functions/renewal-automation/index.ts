@@ -1,8 +1,13 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { partitionNotificationBatch } from "../_shared/notification-categories.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 interface RenewalRow {
   id: string;
@@ -19,19 +24,48 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    // Detecta riscos e cria tarefas/notificações de renovação para todos
+    // os owners — exige JWT de usuário com papel admin/manager.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw error;
+    }
+    const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isPrivileged) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Bypass de RLS necessário: renovações e tarefas cobrem toda a equipe.
+    const supabase = getServiceClient(
+      "automacao de renovacoes cobre contratos e owners de toda a equipe",
+    );
 
     // 1) Atualiza status via RPC
     const { data: riskUpdated } = await supabase.rpc("detect_renewal_risks");
 
     // 2) Carrega renovações nos próximos 90 dias
     const today = new Date();
-    const horizon = new Date(today.getTime() + 90 * 86400000).toISOString().slice(0, 10);
+    const horizon = toBusinessDate(today.getTime() + 90 * 86400000);
     const { data: rows } = await supabase
       .from("renewals")
       .select("id, account_id, contract_value, renewal_date, status, auto_renew, owner_salesperson_id")
       .lte("renewal_date", horizon)
-      .gte("renewal_date", today.toISOString().slice(0, 10))
+      .gte("renewal_date", toBusinessDate(today))
       .in("status", ["upcoming", "at_risk"])
       .limit(1000);
 
@@ -77,7 +111,7 @@ Deno.serve(withRequestId("renewal-automation", async (req, _ctx) => {
       else if (days <= 90) { bucket = 90; buckets.d90++; }
       if (bucket === null || !r.owner_salesperson_id) continue;
 
-      const dueDate = new Date(today.getTime() + Math.min(bucket, 7) * 86400000).toISOString().slice(0, 10);
+      const dueDate = toBusinessDate(today.getTime() + Math.min(bucket, 7) * 86400000);
       const title = `Renovação em ${bucket}d — ${r.contract_value > 0 ? `R$ ${Number(r.contract_value).toLocaleString("pt-BR")}` : "contrato"}`;
       const taskKey = `${r.owner_salesperson_id}:${bucket}`;
 

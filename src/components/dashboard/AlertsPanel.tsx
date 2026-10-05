@@ -1,39 +1,39 @@
-import React, { useState, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Bell, Info, CheckCircle2, X, Radio } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import React, { useState, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertTriangle, Bell, Info, CheckCircle2, X, Radio } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 interface Alert {
   id: string;
-  type: "warning" | "info" | "success";
+  type: 'warning' | 'info' | 'success';
   message: string;
 }
 
 const initialAlerts: Alert[] = [
-  { id: "1", type: "warning", message: "3 anomalous deals detected: 5+ days inactive" },
-  { id: "2", type: "info", message: "Sector meta reached 85% completion" },
+  { id: '1', type: 'warning', message: '3 anomalous deals detected: 5+ days inactive' },
+  { id: '2', type: 'info', message: 'Sector meta reached 85% completion' },
 ];
 
 const alertConfig = {
   warning: {
     icon: AlertTriangle,
-    bg: "bg-destructive/10 border-destructive/30",
-    iconColor: "text-destructive",
-    glow: "rgba(239, 68, 68, 0.4)",
+    bg: 'bg-destructive/10 border-destructive/30',
+    iconColor: 'text-destructive',
+    glow: 'rgba(239, 68, 68, 0.4)',
   },
   info: {
     icon: Info,
-    bg: "bg-primary/10 border-primary/30",
-    iconColor: "text-primary",
-    glow: "rgba(14, 165, 233, 0.4)",
+    bg: 'bg-primary/10 border-primary/30',
+    iconColor: 'text-primary',
+    glow: 'rgba(14, 165, 233, 0.4)',
   },
   success: {
     icon: CheckCircle2,
-    bg: "bg-success/10 border-success/30",
-    iconColor: "text-success",
-    glow: "rgba(34, 197, 94, 0.4)",
+    bg: 'bg-success/10 border-success/30',
+    iconColor: 'text-success',
+    glow: 'rgba(34, 197, 94, 0.4)',
   },
 };
 
@@ -41,7 +41,7 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
   const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
 
   const dismissAlert = useCallback((id: string) => {
-    setAlerts((prev) => prev.filter((a) => a.id !== id));
+    setAlerts(prev => prev.filter(a => a.id !== id));
   }, []);
 
   return (
@@ -90,16 +90,24 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3, delay: idx * 0.1 }}
                   className={cn(
-                    "relative flex items-start gap-4 p-4 rounded-xl border group transition-all duration-300",
+                    'relative flex items-start gap-4 p-4 rounded-xl border group transition-all duration-300',
                     config.bg,
-                    "hover:bg-white/5"
+                    'hover:bg-white/5'
                   )}
                 >
-                  <div className={cn("p-1.5 rounded-lg bg-black/40 shrink-0 border border-white/5", config.iconColor)} style={{ filter: `drop-shadow(0 0 5px ${config.glow})` }}>
+                  <div
+                    className={cn(
+                      'p-1.5 rounded-lg bg-black/40 shrink-0 border border-white/5',
+                      config.iconColor
+                    )}
+                    style={{ filter: `drop-shadow(0 0 5px ${config.glow})` }}
+                  >
                     <Icon className="h-4 w-4" />
                   </div>
-                  <p className="text-[11px] font-mono font-bold leading-relaxed pr-6 uppercase tracking-tight group-hover:text-foreground transition-colors">{alert.message}</p>
-                  
+                  <p className="text-[11px] font-mono font-bold leading-relaxed pr-6 uppercase tracking-tight group-hover:text-foreground transition-colors">
+                    {alert.message}
+                  </p>
+
                   <button
                     onClick={() => dismissAlert(alert.id)}
                     className="absolute top-2 right-2 opacity-0 group-hover:opacity-60 transition-opacity p-1 rounded-md hover:bg-black/60 text-muted-foreground hover:text-foreground"
@@ -110,11 +118,11 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
 
                   {/* Activity pulse for the specific alert */}
                   <div className="absolute right-0 top-0 h-full w-[2px] overflow-hidden rounded-r-xl">
-                     <motion.div 
-                        className={cn("w-full bg-current", config.iconColor)}
-                        animate={{ height: ["0%", "100%", "0%"] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: idx * 0.5 }}
-                     />
+                    <motion.div
+                      className={cn('w-full bg-current', config.iconColor)}
+                      animate={{ height: ['0%', '100%', '0%'] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: idx * 0.5 }}
+                    />
                   </div>
                 </motion.div>
               );
@@ -126,7 +134,7 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
               className="flex flex-col items-center justify-center py-14 text-center space-y-4"
             >
               <div className="relative">
-                <motion.div 
+                <motion.div
                   animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.3, 0.1] }}
                   transition={{ duration: 3, repeat: Infinity }}
                   className="absolute inset-0 bg-success blur-xl rounded-full"
@@ -136,10 +144,14 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-foreground">Zero Anomalias</p>
+                <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-foreground">
+                  Zero Anomalias
+                </p>
                 <div className="flex items-center justify-center gap-2">
-                   <Radio className="h-3 w-3 text-success/60 animate-pulse" />
-                   <p className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-widest italic">All systems nominal</p>
+                  <Radio className="h-3 w-3 text-success/60 animate-pulse" />
+                  <p className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-widest italic">
+                    All systems nominal
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -148,7 +160,7 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
       </CardContent>
 
       {/* Decorative vertical scanline */}
-      <motion.div 
+      <motion.div
         className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 3, repeat: Infinity }}
@@ -157,4 +169,4 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
   );
 });
 
-AlertsPanel.displayName = "AlertsPanel";
+AlertsPanel.displayName = 'AlertsPanel';

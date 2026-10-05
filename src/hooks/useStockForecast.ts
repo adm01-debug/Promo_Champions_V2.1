@@ -40,32 +40,38 @@ export const useStockForecast = () => {
         }
       });
 
-      return inventory.map(item => {
-        const productId = item.product_id!;
-        const productName = (item as { products?: { name?: string } | null }).products?.name || 'Produto Desconhecido';
-        const currentStock = item.current_stock;
-        const totalSales = salesCounts[productId] || 0;
-        const dailyVelocity = totalSales / 30;
-        
-        const daysRemaining = dailyVelocity > 0 ? Math.floor(currentStock / dailyVelocity) : 999;
-        const expectedOutOfStockDate = dailyVelocity > 0 
-          ? new Date(Date.now() + daysRemaining * 24 * 60 * 60 * 1000) 
-          : null;
+      return inventory
+        .map(item => {
+          const productId = item.product_id!;
+          const productName =
+            (item as { products?: { name?: string } | null }).products?.name ||
+            'Produto Desconhecido';
+          const currentStock = item.current_stock;
+          const totalSales = salesCounts[productId] || 0;
+          const dailyVelocity = totalSales / 30;
 
-        let urgency: 'critical' | 'warning' | 'stable' = 'stable';
-        if (daysRemaining <= 7) urgency = 'critical';
-        else if (daysRemaining <= 15) urgency = 'warning';
+          const daysRemaining =
+            dailyVelocity > 0 ? Math.floor(currentStock / dailyVelocity) : 999;
+          const expectedOutOfStockDate =
+            dailyVelocity > 0
+              ? new Date(Date.now() + daysRemaining * 24 * 60 * 60 * 1000)
+              : null;
 
-        return {
-          productId,
-          productName,
-          currentStock,
-          dailyVelocity,
-          daysRemaining,
-          expectedOutOfStockDate,
-          urgency
-        };
-      }).sort((a, b) => a.daysRemaining - b.daysRemaining);
+          let urgency: 'critical' | 'warning' | 'stable' = 'stable';
+          if (daysRemaining <= 7) urgency = 'critical';
+          else if (daysRemaining <= 15) urgency = 'warning';
+
+          return {
+            productId,
+            productName,
+            currentStock,
+            dailyVelocity,
+            daysRemaining,
+            expectedOutOfStockDate,
+            urgency,
+          };
+        })
+        .sort((a, b) => a.daysRemaining - b.daysRemaining);
     },
     staleTime: 1000 * 60 * 30, // 30 mins
   });

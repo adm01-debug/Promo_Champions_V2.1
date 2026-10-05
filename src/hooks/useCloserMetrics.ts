@@ -79,13 +79,15 @@ export function useCloserMetrics(period: PeriodFilter = 'month') {
         if (closerIds.length === 0) throw new Error('No closers found');
 
         const buildSalesQuery = (range: { start: Date; end: Date }) => {
-          return supabase
-            .from('sales')
-            .select('id, status, amount, salesperson_id')
-            // chunked-in-safe: closerIds do time ativo (~30)
-            .in('salesperson_id', closerIds)
-            .gte('created_at', range.start.toISOString())
-            .lte('created_at', range.end.toISOString());
+          return (
+            supabase
+              .from('sales')
+              .select('id, status, amount, salesperson_id')
+              // chunked-in-safe: closerIds do time ativo (~30)
+              .in('salesperson_id', closerIds)
+              .gte('created_at', range.start.toISOString())
+              .lte('created_at', range.end.toISOString())
+          );
         };
 
         const [currentSalesRes, prevSalesRes] = await Promise.all([
@@ -225,7 +227,10 @@ export function useTopClosers() {
         const stats = new Map<string, { closedDeals: number; closedValue: number }>();
         sales?.forEach(sale => {
           if (!sale.salesperson_id) return;
-          const current = stats.get(sale.salesperson_id) || { closedDeals: 0, closedValue: 0 };
+          const current = stats.get(sale.salesperson_id) || {
+            closedDeals: 0,
+            closedValue: 0,
+          };
           current.closedDeals++;
           current.closedValue += Number(sale.amount || 0);
           stats.set(sale.salesperson_id, current);

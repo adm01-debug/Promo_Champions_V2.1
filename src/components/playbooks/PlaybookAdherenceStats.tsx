@@ -1,7 +1,7 @@
-import { usePlaybookAdherence } from "@/hooks/usePlaybooks";
-import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, Target, CheckCircle } from "lucide-react";
+import { usePlaybookAdherence } from '@/hooks/usePlaybooks';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { TrendingUp, TrendingDown, Target, CheckCircle } from 'lucide-react';
 
 export const PlaybookAdherenceStats = () => {
   const { data: adherence } = usePlaybookAdherence();
@@ -30,7 +30,9 @@ export const PlaybookAdherenceStats = () => {
         <CardContent className="p-4 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Taxa de Aderência</span>
-            <span className="text-sm font-bold text-primary">{adherence.overallRate}%</span>
+            <span className="text-sm font-bold text-primary">
+              {adherence.overallRate}%
+            </span>
           </div>
           <Progress value={adherence.overallRate} className="h-2" />
           <div className="flex gap-4 mt-2">
@@ -39,8 +41,11 @@ export const PlaybookAdherenceStats = () => {
                 <TrendingUp className="h-3 w-3" />
                 <span>Mais completados</span>
               </div>
-              {adherence.mostCompleted.slice(0, 2).map((item) => (
-                <p key={item.itemId} className="text-[11px] text-muted-foreground truncate">
+              {adherence.mostCompleted.slice(0, 2).map(item => (
+                <p
+                  key={item.itemId}
+                  className="text-[11px] text-muted-foreground truncate"
+                >
                   {item.content} ({item.completions}x)
                 </p>
               ))}
@@ -50,8 +55,11 @@ export const PlaybookAdherenceStats = () => {
                 <TrendingDown className="h-3 w-3" />
                 <span>Menos completados</span>
               </div>
-              {adherence.leastCompleted.slice(0, 2).map((item) => (
-                <p key={item.itemId} className="text-[11px] text-muted-foreground truncate">
+              {adherence.leastCompleted.slice(0, 2).map(item => (
+                <p
+                  key={item.itemId}
+                  className="text-[11px] text-muted-foreground truncate"
+                >
                   {item.content} ({item.completions}x)
                 </p>
               ))}

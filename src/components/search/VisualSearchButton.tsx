@@ -1,13 +1,14 @@
-import { useRef, useState } from "react";
-import { Camera, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { fetchWithUserToken } from "@/lib/edgeFetch";
+import { useRef, useState } from 'react';
+import { Camera, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { fetchWithUserToken } from '@/lib/edgeFetch';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 interface VisualSearchButtonProps {
   onResults: (data: VisualSearchResponse) => void;
-  variant?: "default" | "outline" | "secondary" | "ghost";
-  size?: "default" | "sm" | "lg" | "icon";
+  variant?: 'default' | 'outline' | 'secondary' | 'ghost';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
 }
 
@@ -45,8 +46,8 @@ const fileToBase64 = (file: File): Promise<string> =>
 
 export function VisualSearchButton({
   onResults,
-  variant = "outline",
-  size = "default",
+  variant = 'outline',
+  size = 'default',
   className,
 }: VisualSearchButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,25 +57,25 @@ export function VisualSearchButton({
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = ""; // reset
+    e.target.value = ''; // reset
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Imagem muito grande", { description: "Limite de 5 MB." });
+      toast.error('Imagem muito grande', { description: 'Limite de 5 MB.' });
       return;
     }
-    if (!file.type.startsWith("image/")) {
-      toast.error("Arquivo inválido", { description: "Selecione uma imagem." });
+    if (!file.type.startsWith('image/')) {
+      toast.error('Arquivo inválido', { description: 'Selecione uma imagem.' });
       return;
     }
 
     setLoading(true);
     try {
       const dataUrl = await fileToBase64(file);
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/visual-search`;
+      const url = `${SUPABASE_URL}/functions/v1/visual-search`;
       const res = await fetchWithUserToken(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: dataUrl, limit: 20 }),
       });
 
@@ -91,8 +92,8 @@ export function VisualSearchButton({
           : undefined,
       });
     } catch (err) {
-      toast.error("Falha na busca visual", {
-        description: err instanceof Error ? err.message : "Tente novamente.",
+      toast.error('Falha na busca visual', {
+        description: err instanceof Error ? err.message : 'Tente novamente.',
       });
     } finally {
       setLoading(false);
@@ -122,7 +123,7 @@ export function VisualSearchButton({
         ) : (
           <Camera className="h-4 w-4" />
         )}
-        {size !== "icon" && <span className="ml-2">Busca Visual</span>}
+        {size !== 'icon' && <span className="ml-2">Busca Visual</span>}
       </Button>
     </>
   );

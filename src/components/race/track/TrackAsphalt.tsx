@@ -1,4 +1,9 @@
-import { TRACK_PATH_D, CHECKPOINTS, DRS_ZONES, getPositionOnTrack } from '../raceTrackHelpers';
+import {
+  TRACK_PATH_D,
+  CHECKPOINTS,
+  DRS_ZONES,
+  getPositionOnTrack,
+} from '../raceTrackHelpers';
 
 /**
  * Asfalto top-down polido — estilo Micro Machines / Mario Kart 2D:
@@ -115,7 +120,7 @@ export function TrackAsphalt() {
       />
 
       {/* checkpoints discretos */}
-      {CHECKPOINTS.map((p) => {
+      {CHECKPOINTS.map(p => {
         const inner = getPositionOnTrack(p, -TRACK_WIDTH / 2);
         const outer = getPositionOnTrack(p, TRACK_WIDTH / 2);
         return (
@@ -142,7 +147,10 @@ export function TrackAsphalt() {
           pts.push(getPositionOnTrack(p, 0));
         }
         const d = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`).join(' ');
-        const labelPos = getPositionOnTrack((zone.start + zone.end) / 2, -TRACK_WIDTH / 2 - 14);
+        const labelPos = getPositionOnTrack(
+          (zone.start + zone.end) / 2,
+          -TRACK_WIDTH / 2 - 14
+        );
         return (
           <g key={`drs-${zi}`} pointerEvents="none">
             <path
@@ -155,8 +163,23 @@ export function TrackAsphalt() {
               opacity={0.18}
             />
             <g transform={`translate(${labelPos.x} ${labelPos.y})`}>
-              <rect x={-11} y={-5} width={22} height={10} rx={2} fill="hsl(142 76% 38%)" opacity={0.9} />
-              <text y={3} textAnchor="middle" fontSize={7} fontWeight={900} fill="hsl(0 0% 100%)" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.08em' }}>
+              <rect
+                x={-11}
+                y={-5}
+                width={22}
+                height={10}
+                rx={2}
+                fill="hsl(142 76% 38%)"
+                opacity={0.9}
+              />
+              <text
+                y={3}
+                textAnchor="middle"
+                fontSize={7}
+                fontWeight={900}
+                fill="hsl(0 0% 100%)"
+                style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: '0.08em' }}
+              >
                 DRS
               </text>
             </g>

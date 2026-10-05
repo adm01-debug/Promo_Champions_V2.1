@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { useMemo } from "react";
+import { cn } from '@/lib/utils';
+import { useMemo } from 'react';
 
 interface ProgressRingProps {
   /** 0–100 progress value */
@@ -14,25 +14,25 @@ interface ProgressRingProps {
   showValue?: boolean;
   className?: string;
   /** Semantic color variant */
-  variant?: "default" | "primary" | "success" | "warning" | "destructive" | "xp";
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'destructive' | 'xp';
 }
 
 const variantColors: Record<string, string> = {
-  default: "text-muted-foreground",
-  primary: "text-primary",
-  success: "text-success",
-  warning: "text-warning",
-  destructive: "text-destructive",
-  xp: "text-xp",
+  default: 'text-muted-foreground',
+  primary: 'text-primary',
+  success: 'text-success',
+  warning: 'text-warning',
+  destructive: 'text-destructive',
+  xp: 'text-xp',
 };
 
 const trackColors: Record<string, string> = {
-  default: "stroke-muted/40",
-  primary: "stroke-primary/15",
-  success: "stroke-success/15",
-  warning: "stroke-warning/15",
-  destructive: "stroke-destructive/15",
-  xp: "stroke-xp/15",
+  default: 'stroke-muted/40',
+  primary: 'stroke-primary/15',
+  success: 'stroke-success/15',
+  warning: 'stroke-warning/15',
+  destructive: 'stroke-destructive/15',
+  xp: 'stroke-xp/15',
 };
 
 /**
@@ -46,7 +46,7 @@ export function ProgressRing({
   label,
   showValue = true,
   className,
-  variant = "primary",
+  variant = 'primary',
 }: ProgressRingProps) {
   const clamped = Math.max(0, Math.min(100, value));
 
@@ -57,7 +57,10 @@ export function ProgressRing({
   }, [size, strokeWidth, clamped]);
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
+    <div
+      className={cn('relative inline-flex items-center justify-center', className)}
+      style={{ width: size, height: size }}
+    >
       <svg width={size} height={size} className="-rotate-90" aria-hidden="true">
         {/* Track */}
         <circle
@@ -79,14 +82,22 @@ export function ProgressRing({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className={cn("transition-[stroke-dashoffset] duration-700 ease-out", variantColors[variant])}
+          className={cn(
+            'transition-[stroke-dashoffset] duration-700 ease-out',
+            variantColors[variant]
+          )}
         />
       </svg>
 
       {/* Center content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {showValue && (
-          <span className={cn("font-bold tabular-nums font-display leading-none", size >= 80 ? "text-lg" : size >= 56 ? "text-sm" : "text-xs")}>
+          <span
+            className={cn(
+              'font-bold tabular-nums font-display leading-none',
+              size >= 80 ? 'text-lg' : size >= 56 ? 'text-sm' : 'text-xs'
+            )}
+          >
             {Math.round(clamped)}%
           </span>
         )}

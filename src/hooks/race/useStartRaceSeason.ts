@@ -21,7 +21,9 @@ export function useStartRaceSeason() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: StartSeasonInput) => {
-      const { data, error } = await supabase.functions.invoke('start-race-season', { body: input });
+      const { data, error } = await supabase.functions.invoke('start-race-season', {
+        body: input,
+      });
       if (error) throw error;
       return data;
     },
@@ -30,8 +32,10 @@ export function useStartRaceSeason() {
       qc.invalidateQueries({ queryKey: ['race-leaderboard'] });
       toast.success('Nova temporada iniciada! 🏁');
     },
-    onError: (err) => {
-      toast.error(`Erro ao iniciar temporada: ${err instanceof Error ? err.message : 'desconhecido'}`);
+    onError: err => {
+      toast.error(
+        `Erro ao iniciar temporada: ${err instanceof Error ? err.message : 'desconhecido'}`
+      );
     },
   });
 }

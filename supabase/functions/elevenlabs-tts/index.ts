@@ -1,7 +1,8 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
-import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
+import { fetchWithTrace } from '../_shared/fetch-with-timeout.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import {
   withEdgeCircuitBreaker,
   CircuitBreakerOpenError,
@@ -10,17 +11,22 @@ import {
 const MAX_TEXT_LENGTH = 2000;
 
 Deno.serve(
-  withRequestId('elevenlabs-tts', async (req, _ctx) => {
+  withRequestId('elevenlabs-tts', async (req, ctx) => {
     const corsHeaders = getCorsHeaders(req);
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
 
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'elevenlabs-tts', limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
+
     try {
       // Require a valid Supabase JWT — prevents anonymous billing abuse
+      let userId: string;
       try {
-        await getUserClient(req);
+        ({ userId } = await getUserClient(req));
       } catch (authErr) {
         const isUnauth = authErr instanceof UnauthorizedError;
         return new Response(
@@ -28,6 +34,14 @@ Deno.serve(
           { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      const rateLimited = enforceRateLimit(req, {
+        name: 'elevenlabs-tts',
+        key: userId,
+        limit: 30,
+        windowSeconds: 60,
+      });
+      if (rateLimited) return rateLimited;
 
       const { text, voiceId } = await req.json();
 
@@ -48,9 +62,7 @@ Deno.serve(
       const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY');
 
       if (!ELEVENLABS_API_KEY) {
-        console.info(
-          'ElevenLabs API key not configured - returning placeholder response'
-        );
+        ctx.log('warn', 'elevenlabs_api_key_not_configured');
         return new Response(
           JSON.stringify({
             error: 'api_key_not_configured',
@@ -67,17 +79,15 @@ Deno.serve(
       // Default voice: Roger (professional male voice in PT-BR)
       const selectedVoiceId = voiceId || 'CwhRBWXzGAHq8TQ4Fs17';
 
-      console.info(
-        `Generating TTS for text (${text.length} chars) with voice ${selectedVoiceId}`
-      );
+      ctx.log('info', 'tts_generate', { text_len: text.length, voice_id: selectedVoiceId });
 
       let response: Response;
       try {
         response = await withEdgeCircuitBreaker(
           'elevenlabs:tts',
           async () => {
-            const r = await fetchWithTimeout(
-              `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
+            const r = await fetchWithTrace(
+`https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`,
               {
                 method: 'POST',
                 headers: {
@@ -96,6 +106,11 @@ Deno.serve(
                     speed: 1.0,
                   },
                 }),
+              },
+              {
+                requestId: ctx.requestId,
+                fnName: 'elevenlabs-tts',
+                operation: 'elevenlabs_tts',
               }
             );
             if (r.status >= 500) throw new Error(`elevenlabs_5xx_${r.status}`);

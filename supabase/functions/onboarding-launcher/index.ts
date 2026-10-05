@@ -2,6 +2,12 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
+import {
+  getServiceClient,
+  getUserClient,
+  UnauthorizedError,
+} from "../_shared/auth-client.ts";
 
 interface StepTemplate {
   title: string;
@@ -40,7 +46,36 @@ Deno.serve(withRequestId("onboarding-launcher", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    // Cria onboarding_journeys/steps de contas de toda a equipe — exige
+    // JWT de usuário com papel admin/manager.
+    let caller;
+    try {
+      caller = await getUserClient(req);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return new Response(JSON.stringify({ error: "unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      throw error;
+    }
+    const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+      "is_admin_or_manager" as never,
+      { _user_id: caller.userId } as never,
+    );
+    if (roleError) throw roleError;
+    if (!isPrivileged) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Bypass de RLS necessário: cria jornadas de onboarding de toda a base.
+    const supabase = getServiceClient(
+      "lancamento de onboarding cobre contas de toda a equipe",
+    );
     const body = await req.json().catch(() => ({}));
     const { account_id, template_key = "standard", owner_salesperson_id, action = "launch" } = body;
 
@@ -133,7 +168,7 @@ async function launchJourney(supabase: ReturnType<typeof createClient>, accountI
     description: s.description,
     order_index: idx,
     status: "pending",
-    due_date: new Date(today.getTime() + s.days_offset * 86400000).toISOString().split("T")[0],
+    due_date: toBusinessDate(today.getTime() + s.days_offset * 86400000),
   }));
 
   const { error: sErr } = await supabase.from("onboarding_steps").insert(stepRows);

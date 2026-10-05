@@ -2,18 +2,10 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
-
-
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead: 0.05,
-  prospecting: 0.1,
-  qualified: 0.25,
-  proposal: 0.5,
-  negotiation: 0.75,
-  closed_won: 1.0,
-  closed_lost: 0,
-};
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "strong" {
   if (ratio < 1.5) return "critical";
@@ -26,6 +18,10 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "analyze-pipeline-coverage", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
     const supabase = createClient(
@@ -33,6 +29,9 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
+
+    // Probabilidade base por estágio — fonte única stage_probabilities
+    const stageProbabilities = await getStageProbabilities(supabase);
 
     const body = await req.json().catch(() => ({}));
     const periodDays: number = Number(body.period_days ?? 90);
@@ -77,7 +76,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     (deals ?? []).forEach((d: { salesperson_id: string | null; stage: string; value: number }) => {
       const stage = (d.stage || "lead").toLowerCase();
       const key = `${d.salesperson_id ?? "global"}::${stage}`;
-      const prob = STAGE_PROBABILITY[stage] ?? 0.1;
+      const prob = stageProbabilities[stage] ?? 0.1;
       const b = buckets.get(key) ?? { owner: d.salesperson_id, stage, pipeline: 0, weighted: 0, count: 0 };
       b.pipeline += Number(d.value || 0);
       b.weighted += Number(d.value || 0) * prob;
@@ -93,8 +92,8 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
       const ratio = quota > 0 ? b.weighted / quota : 0;
       const gap = Math.max(quota * targetRatio - b.weighted, 0);
       snapshots.push({
-        period_start: periodStart.toISOString().slice(0, 10),
-        period_end: periodEnd.toISOString().slice(0, 10),
+        period_start: toBusinessDate(periodStart),
+        period_end: toBusinessDate(periodEnd),
         owner_id: b.owner,
         stage: b.stage,
         segment: null,
@@ -131,7 +130,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (LOVABLE_API_KEY && worst.length > 0) {
       try {
-        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${LOVABLE_API_KEY}`,

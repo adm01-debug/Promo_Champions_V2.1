@@ -3,6 +3,8 @@
  * Mantidas fora do hook para permitir testes determinísticos.
  */
 
+import { toBusinessDate } from '@/lib/date';
+
 export interface OptOutRecordLite {
   /** ISO timestamp de criação do registro. */
   created_at: string;
@@ -39,7 +41,7 @@ const DAY_MS = 86_400_000;
 export function toDayKey(iso: string): string {
   const t = Date.parse(iso);
   if (Number.isNaN(t)) return '';
-  return new Date(t).toISOString().slice(0, 10);
+  return toBusinessDate(t);
 }
 
 /** Rótulo legível (PT-BR) para cada origem conhecida. */
@@ -73,7 +75,7 @@ export function sourceLabel(source: string): string {
 export function aggregateOptOutMetrics(
   records: readonly OptOutRecordLite[],
   now: number = Date.now(),
-  windowDays = 30,
+  windowDays = 30
 ): OptOutMetrics {
   const bySource = new Map<string, number>();
   const byDay = new Map<string, number>();
@@ -108,7 +110,7 @@ export function aggregateOptOutMetrics(
 
   const daily: OptOutDailyPoint[] = [];
   for (let i = windowDays - 1; i >= 0; i -= 1) {
-    const key = new Date(now - i * DAY_MS).toISOString().slice(0, 10);
+    const key = toBusinessDate(now - i * DAY_MS);
     daily.push({ date: key, count: byDay.get(key) ?? 0 });
   }
 

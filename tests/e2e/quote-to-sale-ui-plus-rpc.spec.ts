@@ -69,12 +69,12 @@ test.describe('Concorrência: UI + RPC direta no mesmo quote', () => {
 
   test('UI + RPC simultâneos convergem para o mesmo order/sale', async ({ page }) => {
     // Hidrata sessão no browser antes de navegar
-    await page.goto('http://localhost:8080');
+    await page.goto('/');
     await page.evaluate(
       ([key, json]) => window.localStorage.setItem(key as string, json as string),
       [STORAGE_KEY, SESSION_JSON],
     );
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
     // Localiza botão de conversão. Fallback: se UI não expõe botão direto,
     // marcamos como coverage-only e disparamos 2 RPCs (que também exercita

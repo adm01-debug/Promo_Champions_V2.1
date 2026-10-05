@@ -6,12 +6,19 @@ import {
   WebhookContracts,
 } from '../_shared/webhook-validator.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 
 Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'ai-copilot', limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   // Require authentication — this function uses SERVICE_ROLE_KEY to read sensitive salesperson data
   const authHeader = req.headers.get('Authorization');
@@ -199,7 +206,7 @@ ${context.extra ? `Contexto extra: ${context.extra}` : ''}`;
       userMessage = context.question || 'O que devo fazer agora?';
     }
 
-    const response = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const response = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

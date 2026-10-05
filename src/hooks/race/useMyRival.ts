@@ -1,7 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import type { RaceLeaderboardEntry } from "@/hooks/race/useRaceLeaderboard";
+import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 export interface MyRival {
   rival_car_id: string;
@@ -30,7 +29,7 @@ export function useMyRival(args: {
     queryFn: async (): Promise<MyRival | null> => {
       if (!seasonId || !myCarId || entries.length < 2) return null;
 
-      const myIdx = entries.findIndex((e) => e.car_id === myCarId);
+      const myIdx = entries.findIndex(e => e.car_id === myCarId);
       if (myIdx === -1) return null;
       const me = entries[myIdx];
 
@@ -51,7 +50,7 @@ export function useMyRival(args: {
       }
 
       if (!rivalId) return null;
-      const rival = entries.find((e) => e.car_id === rivalId);
+      const rival = entries.find(e => e.car_id === rivalId);
       if (!rival) return null;
 
       const myProgress = Number(me.progress);
@@ -69,22 +68,5 @@ export function useMyRival(args: {
     },
     enabled: !!seasonId && !!myCarId && entries.length > 1,
     staleTime: 15_000,
-  });
-}
-
-export function useSetMyRival() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (input: { season_id: string; car_id: string; rival_car_id: string }) => {
-      const { error } = await supabase
-        .from('race_rivalries_persistent')
-        .upsert(input, { onConflict: 'season_id,car_id' });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success('⚔️ Rival definido!');
-      qc.invalidateQueries({ queryKey: ['my-rival'] });
-    },
-    onError: (e: Error) => toast.error(e.message || 'Erro ao definir rival'),
   });
 }

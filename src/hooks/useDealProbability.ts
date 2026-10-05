@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 export const useDealProbability = (saleId: string) => {
   return useQuery<{ probability: number; factors: string[] }>({
@@ -32,15 +33,23 @@ export const useDealProbability = (saleId: string) => {
         .select('id', { count: 'exact', head: true })
         .eq('sale_id', saleId);
 
+      const stageProbabilities = await fetchStageProbabilities();
+
       const factors: string[] = [];
-      let probability = calculateStageScore(sale.status);
+      let probability = calculateStageScore(sale.status, stageProbabilities);
       factors.push(`Etapa: ${sale.status}`);
 
       const engScore = calculateEngagementScore(activityCount || 0);
       if (engScore > 50) factors.push('Alta atividade');
       else if (engScore < 20) factors.push('Baixa atividade');
 
-      probability = Math.round((probability + engScore + calculateValueScore(sale.amount) + calculateTimeScore(sale.created_at)) / 4);
+      probability = Math.round(
+        (probability +
+          engScore +
+          calculateValueScore(sale.amount) +
+          calculateTimeScore(sale.created_at)) /
+          4
+      );
 
       return { probability, factors: factors.length > 0 ? factors : ['Análise padrão'] };
     },
@@ -70,7 +79,9 @@ export const useDealProbabilities = () => {
 
         if (!error && data?.probabilities) {
           const result: Record<string, number> = {};
-          Object.entries(data.probabilities as Record<string, { probability: number }>).forEach(([id, val]) => {
+          Object.entries(
+            data.probabilities as Record<string, { probability: number }>
+          ).forEach(([id, val]) => {
             result[id] = val.probability;
           });
           return result;
@@ -80,28 +91,23 @@ export const useDealProbabilities = () => {
       }
 
       // Local fallback
-      return sales.reduce((acc, sale) => {
-        acc[sale.id] = Math.round(calculateStageScore(sale.status));
-        return acc;
-      }, {} as Record<string, number>);
+      const stageProbabilities = await fetchStageProbabilities();
+      return sales.reduce(
+        (acc, sale) => {
+          acc[sale.id] = Math.round(calculateStageScore(sale.status, stageProbabilities));
+          return acc;
+        },
+        {} as Record<string, number>
+      );
     },
   });
 };
 
-function calculateStageScore(status: string): number {
-  const scores: Record<string, number> = {
-    'pending': 30,
-    'completed': 100,
-    'cancelled': 0,
-    'lead': 10,
-    'prospecting': 20,
-    'qualified': 40,
-    'proposal': 60,
-    'negotiation': 75,
-    'won': 100,
-    'lost': 0,
-  };
-  return scores[status] || 20;
+function calculateStageScore(
+  status: string,
+  stageProbabilities: Record<string, number>
+): number {
+  return (stageProbabilities[status] ?? 0.2) * 100;
 }
 
 function calculateValueScore(value: number): number {

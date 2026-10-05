@@ -30,7 +30,9 @@ export default function RaceSpectator() {
     async function load() {
       const { data } = await supabase
         .from('race_spectator_view')
-        .select('car_id, salesperson_id, salesperson_name, avatar_url, car_number, primary_color, total_sales, progress')
+        .select(
+          'car_id, salesperson_id, salesperson_name, avatar_url, car_number, primary_color, total_sales, progress'
+        )
         .eq('season_id', seasonId as string);
       if (cancelled) return;
       const sorted = (data ?? []).sort((a, b) => Number(b.progress) - Number(a.progress));
@@ -54,7 +56,10 @@ export default function RaceSpectator() {
     <div className="min-h-screen bg-background p-6">
       <Helmet>
         <title>Race Arena — Modo Espectador</title>
-        <meta name="description" content="Acompanhe a corrida em tempo real no modo público (somente exibição)." />
+        <meta
+          name="description"
+          content="Acompanhe a corrida em tempo real no modo público (somente exibição)."
+        />
         <meta name="robots" content="noindex" />
       </Helmet>
 
@@ -83,9 +88,13 @@ export default function RaceSpectator() {
                   #{r.car_number}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">P{i + 1}</p>
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+                    P{i + 1}
+                  </p>
                   <p className="text-sm font-bold truncate">{r.salesperson_name}</p>
-                  <p className="text-xs text-muted-foreground tabular-nums">{fmtCompact(Number(r.total_sales))} pts</p>
+                  <p className="text-xs text-muted-foreground tabular-nums">
+                    {fmtCompact(Number(r.total_sales))} pts
+                  </p>
                 </div>
               </CardContent>
             </Card>

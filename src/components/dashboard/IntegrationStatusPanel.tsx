@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -95,7 +95,7 @@ export const IntegrationStatusPanel = () => {
 
         if (emailError) throw emailError;
 
-        const formattedLogs: LogEntry[] = (emailLogs || []).map((log) => ({
+        const formattedLogs: LogEntry[] = (emailLogs || []).map(log => ({
           id: log.id,
           timestamp: log.created_at,
           type: 'email',
@@ -107,7 +107,7 @@ export const IntegrationStatusPanel = () => {
 
         setLogs(formattedLogs);
       } else {
-        const formattedLogs: LogEntry[] = (unifiedLogs || []).map((log) => ({
+        const formattedLogs: LogEntry[] = (unifiedLogs || []).map(log => ({
           id: log.id,
           timestamp: log.timestamp ?? '',
           type: log.integration_type as LogEntry['type'],

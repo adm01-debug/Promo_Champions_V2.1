@@ -3,6 +3,9 @@ import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -18,7 +21,7 @@ function periodEnd(start: string, type: PeriodType): string {
     d.setUTCMonth(d.getUTCMonth() + 3);
     d.setUTCDate(d.getUTCDate() - 1);
   }
-  return d.toISOString().slice(0, 10);
+  return toBusinessDate(d);
 }
 
 interface DealRow {
@@ -52,6 +55,10 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "generate-revenue-forecast", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
     const supabase = createClient(
@@ -66,7 +73,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const defaultStart =
       period_type === "month"
         ? `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, "0")}-01`
-        : today.toISOString().slice(0, 10);
+        : toBusinessDate(today);
     const period_start: string = body.period_start ?? defaultStart;
     const owner_id: string | null = body.owner_id ?? null;
     const period_end_str = periodEnd(period_start, period_type);
@@ -76,6 +83,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
       .from("sales")
       .select("id, product_name, client_name, total_amount, stage, status, expected_close_date, salesperson_id, probability")
       .in("status", ["open", "in_progress", "qualified", "proposal", "negotiation"])
+      .is("deleted_at", null)
       .gte("expected_close_date", period_start)
       .lte("expected_close_date", period_end_str);
     if (owner_id) dealsQ = dealsQ.eq("salesperson_id", owner_id);
@@ -168,7 +176,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (apiKey && dealList.length > 0) {
       try {
-        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({

@@ -1,19 +1,58 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import {
   WebhookContracts,
   validateWebhookPayload,
 } from '../_shared/webhook-validator.ts';
+import { collectErrors, validateNumber, validateString } from '../_shared/validation.ts';
+
+const MAX_ITERATIONS = 1000;
 
 Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  // Chamada vem do painel admin via supabase.functions.invoke — requer JWT
+  // de usuário válido (fuzzing consome CPU; não deve ser anônimo).
   try {
-    const { iterations = 100, targetContract = 'crmEvent' } = await req.json();
+    await getUserClient(req);
+  } catch (authErr) {
+    const isUnauth = authErr instanceof UnauthorizedError;
+    return new Response(
+      JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  try {
+    const parsed: unknown = await req.json().catch(() => ({}));
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return new Response(JSON.stringify({ error: 'corpo_json_invalido' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { iterations = 100, targetContract = 'crmEvent' } = parsed as {
+      iterations?: unknown;
+      targetContract?: unknown;
+    };
+
+    const payloadErrors = collectErrors([
+      validateNumber(iterations, 'iterations', { integer: true, min: 1, max: MAX_ITERATIONS }),
+      validateString(targetContract, 'targetContract', { maxLength: 200 }),
+    ]);
+    if (payloadErrors.length) {
+      return new Response(JSON.stringify({ error: 'dados_invalidos', details: payloadErrors }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const totalIterations = iterations as number;
+    const contractName = targetContract as string;
 
     // @ts-expect-error: Dynamic access by string key
-    const schema = WebhookContracts[targetContract];
+    const schema = WebhookContracts[contractName];
     if (!schema) {
       return new Response(JSON.stringify({ error: 'Contract not found' }), {
         status: 404,
@@ -22,7 +61,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     }
 
     const results = {
-      total: iterations,
+      total: totalIterations,
       passed: 0,
       failed: 0,
       vulnerabilities_detected: [] as Array<{
@@ -45,7 +84,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
       return scenarios[Math.floor(Math.random() * scenarios.length)];
     };
 
-    for (let i = 0; i < iterations; i++) {
+    for (let i = 0; i < totalIterations; i++) {
       const scenario = fuzz();
       const validation = validateWebhookPayload(schema, scenario.payload);
 
@@ -67,7 +106,7 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
     });
   } catch (e) {
     console.error('stress-test-contracts error:', e);
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

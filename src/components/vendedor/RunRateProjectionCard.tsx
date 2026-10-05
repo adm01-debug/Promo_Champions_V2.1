@@ -1,6 +1,14 @@
 import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Sparkles, Target, AlertTriangle, CheckCircle2, Wallet, Trophy } from 'lucide-react';
+import {
+  TrendingUp,
+  Sparkles,
+  Target,
+  AlertTriangle,
+  CheckCircle2,
+  Wallet,
+  Trophy,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,6 +18,7 @@ import { useEligibleBonuses } from '@/hooks/useEligibleBonuses';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { formatBRL } from '@/lib/money';
 interface RunRateProjectionCardProps {
   salespersonId: string | null | undefined;
   /** Percentual de comissão do vendedor (ex.: 5 para 5%). */
@@ -17,17 +26,16 @@ interface RunRateProjectionCardProps {
   className?: string;
 }
 
-const formatBRL = (n: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(n || 0);
-
 const confidenceMeta = {
   low: { label: 'Baixa', className: 'bg-muted text-muted-foreground border-border' },
-  medium: { label: 'Média', className: 'bg-amber-500/15 text-amber-600 border-amber-500/30' },
-  high: { label: 'Alta', className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30' },
+  medium: {
+    label: 'Média',
+    className: 'bg-amber-500/15 text-amber-600 border-amber-500/30',
+  },
+  high: {
+    label: 'Alta',
+    className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/30',
+  },
 } as const;
 
 export const RunRateProjectionCard = memo(function RunRateProjectionCard({
@@ -140,7 +148,12 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
         <CardContent className="space-y-4">
           <div className="flex items-end gap-3 flex-wrap">
             <div>
-              <p className={cn('text-3xl md:text-4xl font-black tabular-nums', statusColor)}>
+              <p
+                className={cn(
+                  'text-3xl md:text-4xl font-black tabular-nums',
+                  statusColor
+                )}
+              >
                 {formatBRL(projectedEOM)}
               </p>
               <p className="text-xs text-muted-foreground">
@@ -206,9 +219,19 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
                 </p>
               </div>
               <div className="text-right text-[11px] text-muted-foreground tabular-nums">
-                <p>Já acumulado: <span className="font-semibold text-foreground">{formatBRL(mtdCommission)}</span></p>
+                <p>
+                  Já acumulado:{' '}
+                  <span className="font-semibold text-foreground">
+                    {formatBRL(mtdCommission)}
+                  </span>
+                </p>
                 {hasGoal && commissionGap > 0 && (
-                  <p>Falta p/ meta: <span className="font-semibold text-amber-600 dark:text-amber-400">{formatBRL(commissionGap)}</span></p>
+                  <p>
+                    Falta p/ meta:{' '}
+                    <span className="font-semibold text-amber-600 dark:text-amber-400">
+                      {formatBRL(commissionGap)}
+                    </span>
+                  </p>
                 )}
               </div>
             </div>
@@ -225,18 +248,29 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
                   Bônus conquistados este ciclo
                 </p>
                 <p className="text-xl font-black tabular-nums text-amber-600 dark:text-amber-400">
-                  {achievedFixedTotal > 0 ? `+ ${formatBRL(achievedFixedTotal)}` : `${achievedCount} ativo(s)`}
+                  {achievedFixedTotal > 0
+                    ? `+ ${formatBRL(achievedFixedTotal)}`
+                    : `${achievedCount} ativo(s)`}
                 </p>
               </div>
               <div className="text-right text-[11px] text-muted-foreground tabular-nums">
-                {achievedCount > 0 && <p>Conquistados: <span className="font-semibold text-foreground">{achievedCount}</span></p>}
-                {inProgressCount > 0 && <p>Em progresso: <span className="font-semibold text-foreground">{inProgressCount}</span></p>}
+                {achievedCount > 0 && (
+                  <p>
+                    Conquistados:{' '}
+                    <span className="font-semibold text-foreground">{achievedCount}</span>
+                  </p>
+                )}
+                {inProgressCount > 0 && (
+                  <p>
+                    Em progresso:{' '}
+                    <span className="font-semibold text-foreground">
+                      {inProgressCount}
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
           )}
-
-
-
 
           {/* Insight secundário */}
           <p className="text-sm text-foreground/90">

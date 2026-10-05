@@ -1,5 +1,6 @@
 import { differenceInDays, parseISO, format, subDays } from 'date-fns';
 import type { SalespersonPerformanceData } from '@/types/bi';
+import { STAGE_PROBABILITY_FALLBACK } from '@/lib/stageProbabilities';
 
 // Types used in helpers
 interface SaleRecord {
@@ -29,13 +30,6 @@ interface SalespersonRecord {
   avatar_url: string | null;
   role: string;
 }
-
-const STAGE_PROBABILITIES: Record<string, number> = {
-  pending: 0.1,
-  qualified: 0.3,
-  proposal: 0.6,
-  negotiation: 0.8,
-};
 
 // --- GESTOR HELPERS ---
 
@@ -79,8 +73,10 @@ export function computePipelineHealth(pipelineDeals: SaleRecord[], now: Date) {
   ).length;
   const avgDaysInPipeline =
     pipelineDeals.length > 0
-      ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) /
-        pipelineDeals.length
+      ? pipelineDeals.reduce(
+          (sum, d) => sum + differenceInDays(now, parseISO(d.created_at)),
+          0
+        ) / pipelineDeals.length
       : 0;
 
   const stages = ['pending', 'qualified', 'proposal', 'negotiation'];
@@ -100,10 +96,11 @@ export function computeForecast(
   totalTeamRevenue: number,
   totalTeamGoal: number,
   daysRemaining: number,
-  daysPassed: number
+  daysPassed: number,
+  stageProbabilities: Record<string, number> = STAGE_PROBABILITY_FALLBACK
 ) {
   const weightedForecast = pipelineDeals.reduce(
-    (sum, d) => sum + Number(d.amount) * (STAGE_PROBABILITIES[d.status] || 0.1),
+    (sum, d) => sum + Number(d.amount) * (stageProbabilities[d.status] ?? 0.1),
     0
   );
   const dailyAvg = daysPassed > 0 ? totalTeamRevenue / daysPassed : 0;
@@ -200,7 +197,8 @@ export function computeRanking(
   const salesBySp: Record<string, number> = {};
   rankingData.forEach(sale => {
     if (sale.salesperson_id) {
-      salesBySp[sale.salesperson_id] = (salesBySp[sale.salesperson_id] || 0) + Number(sale.amount);
+      salesBySp[sale.salesperson_id] =
+        (salesBySp[sale.salesperson_id] || 0) + Number(sale.amount);
     }
   });
   const rankings = Object.entries(salesBySp)
@@ -252,8 +250,10 @@ export function computePipelineByStage(pipelineDeals: SaleRecord[], now: Date) {
   }));
   const avgDaysInPipeline =
     pipelineDeals.length > 0
-      ? pipelineDeals.reduce((sum, d) => sum + differenceInDays(now, parseISO(d.created_at)), 0) /
-        pipelineDeals.length
+      ? pipelineDeals.reduce(
+          (sum, d) => sum + differenceInDays(now, parseISO(d.created_at)),
+          0
+        ) / pipelineDeals.length
       : 0;
   return { pipelineValue, dealsByStage, avgDaysInPipeline };
 }
@@ -267,7 +267,9 @@ export function buildSalesByDay(sales: SaleRecord[]) {
   return Object.entries(map).map(([day, value]) => ({ day, value }));
 }
 
-export function buildSalesByCategory(sales: Array<{ category?: string | null; amount: number }>) {
+export function buildSalesByCategory(
+  sales: Array<{ category?: string | null; amount: number }>
+) {
   const map: Record<string, number> = {};
   sales.forEach(sale => {
     const cat = sale.category || 'other';
