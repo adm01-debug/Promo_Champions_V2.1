@@ -73,7 +73,7 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
       [STORAGE_KEY, SESSION_JSON] as const,
     );
 
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
     await waitForNetworkIdle();
 
     const quoteCard = page.getByText('E2E UI Total Mismatch').first();
