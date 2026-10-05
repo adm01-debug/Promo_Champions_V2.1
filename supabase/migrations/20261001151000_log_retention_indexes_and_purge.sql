@@ -116,6 +116,13 @@ INSERT INTO public.data_retention_policies (table_name, ts_column, retention_day
   ('access_denied_logs',       'created_at',    180, 'segurança: janela investigativa maior')
 ON CONFLICT (table_name) DO NOTHING;
 
+-- Linhas gravadas por uma execução anterior desta migration podem apontar
+-- para coluna inexistente no schema canônico (ON CONFLICT acima não as
+-- atualiza). Sem esta correção, fn_apply_data_retention pularia audit_logs.
+UPDATE public.data_retention_policies
+SET ts_column = 'created_at'
+WHERE table_name = 'audit_logs' AND ts_column = 'changed_at';
+
 -- ============================================================
 -- 3. Purge por política (lotes de 10k para não segurar lock)
 -- ============================================================
