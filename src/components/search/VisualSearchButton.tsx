@@ -3,6 +3,7 @@ import { Camera, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { fetchWithUserToken } from '@/lib/edgeFetch';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 interface VisualSearchButtonProps {
   onResults: (data: VisualSearchResponse) => void;
@@ -71,7 +72,7 @@ export function VisualSearchButton({
     setLoading(true);
     try {
       const dataUrl = await fileToBase64(file);
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/visual-search`;
+      const url = `${SUPABASE_URL}/functions/v1/visual-search`;
       const res = await fetchWithUserToken(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

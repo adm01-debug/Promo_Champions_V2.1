@@ -103,10 +103,12 @@ function runSuite(file, extraEnv = {}) {
 }
 
 async function checkKey(baseUrl, key) {
-  // GET /rest/v1/ devolve o spec OpenAPI quando a apikey é aceita; 401/403
-  // quando inválida. Erro de rede = backend inacessível.
+  // GET /auth/v1/settings devolve 200 quando a apikey é aceita e 401/403
+  // quando inválida. Erro de rede = backend inacessível. (A raiz /rest/v1/
+  // não serve de probe: rejeita a apikey publishable — que não é JWT — com
+  // 401 mesmo válida, enquanto endpoints de tabela a aceitam.)
   try {
-    const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/rest/v1/`, {
+    const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/auth/v1/settings`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
       signal: AbortSignal.timeout(15_000),
     });

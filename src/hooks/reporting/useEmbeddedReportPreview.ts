@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import type { EmbeddedReportPayload } from '@/components/reporting/embedHelpers';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
-const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/report-embed-public`;
+const FN_URL = `${SUPABASE_URL}/functions/v1/report-embed-public`;
 
 export function useEmbeddedReportPreview(token: string | undefined) {
   return useQuery({

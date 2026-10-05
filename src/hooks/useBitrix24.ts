@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 interface BitrixConnectionStatus {
   connected: boolean;
@@ -83,7 +84,7 @@ export function useBitrix24() {
 
   const getAuthUrl = useMutation({
     mutationFn: async (): Promise<string> => {
-      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+      const projectUrl = SUPABASE_URL;
       const authUrl = `${projectUrl}/functions/v1/bitrix24-oauth?action=authorize`;
 
       const { data: sessionData } = await supabase.auth.getSession();
@@ -164,7 +165,7 @@ export function useBitrix24() {
 
   const refreshToken = useMutation({
     mutationFn: async () => {
-      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
+      const projectUrl = SUPABASE_URL;
       const { data: sessionData } = await supabase.auth.getSession();
       const response = await fetch(
         `${projectUrl}/functions/v1/bitrix24-oauth?action=refresh`,

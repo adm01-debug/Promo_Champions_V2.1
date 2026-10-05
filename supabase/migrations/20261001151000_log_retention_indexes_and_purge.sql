@@ -2,8 +2,8 @@
 -- Pacote de auditoria BANCO DE DADOS/INTEGRIDADE.
 --
 -- 1. Índices compostos (discriminador + timestamp) nas tabelas de log de alto
---    volume — os padrões table_name+created_at e user_id+created_at já existem
---    em audit_log (idx_audit_table, idx_audit_user) e NÃO são duplicados aqui.
+--    volume — audit_logs canônica usa entity_type/actor_id/created_at — índices
+--    alinhados ao schema real em produção.
 -- 2. public.data_retention_policies: política de retenção versionada por tabela
 --    (janelas definidas em docs/DATA_RETENTION.md).
 -- 3. public.fn_apply_data_retention(): purge em lotes de 10k por política,
@@ -22,8 +22,8 @@
 DO $$
 BEGIN
   IF to_regclass('public.audit_logs') IS NOT NULL THEN
-    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_table_changed ON public.audit_logs (table_name, changed_at DESC)';
-    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_by_changed ON public.audit_logs (changed_by, changed_at DESC)';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_table_changed ON public.audit_logs (entity_type, created_at DESC)';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_audit_logs_changed_by_changed ON public.audit_logs (actor_id, created_at DESC)';
   END IF;
 
   IF to_regclass('public.query_telemetry') IS NOT NULL THEN
@@ -98,7 +98,7 @@ CREATE POLICY "Admins leem data_retention_policies" ON public.data_retention_pol
 
 INSERT INTO public.data_retention_policies (table_name, ts_column, retention_days, notes) VALUES
   ('audit_log',                'created_at',    365, 'auditoria: janela jurídica 12m (decisão docs/DATA_RETENTION.md)'),
-  ('audit_logs',               'changed_at',    365, 'auditoria: janela jurídica 12m'),
+  ('audit_logs',               'created_at',    365, 'auditoria: janela jurídica 12m'),
   ('data_access_log',          'created_at',    365, 'auditoria de acesso: 12m'),
   ('website_visitor_logs',     'identified_at',  90, 'legítimo interesse LGPD; consent_records prolonga'),
   ('webhook_inbound_dedupe',   'received_at',    30, 'dedupe só precisa da janela de retry'),
@@ -115,6 +115,13 @@ INSERT INTO public.data_retention_policies (table_name, ts_column, retention_day
   ('rate_limit_logs',          'created_at',     30, 'rate limiting operacional'),
   ('access_denied_logs',       'created_at',    180, 'segurança: janela investigativa maior')
 ON CONFLICT (table_name) DO NOTHING;
+
+-- Linhas gravadas por uma execução anterior desta migration podem apontar
+-- para coluna inexistente no schema canônico (ON CONFLICT acima não as
+-- atualiza). Sem esta correção, fn_apply_data_retention pularia audit_logs.
+UPDATE public.data_retention_policies
+SET ts_column = 'created_at'
+WHERE table_name = 'audit_logs' AND ts_column = 'changed_at';
 
 -- ============================================================
 -- 3. Purge por política (lotes de 10k para não segurar lock)
