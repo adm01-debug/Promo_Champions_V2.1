@@ -19545,7 +19545,7 @@ export type Database = {
             foreignKeyName: "territory_history_territory_id_fkey"
             columns: ["territory_id"]
             isOneToOne: false
-            referencedRelation: "sales_territories"
+            referencedRelation: "territories"
             referencedColumns: ["id"]
           },
         ]
