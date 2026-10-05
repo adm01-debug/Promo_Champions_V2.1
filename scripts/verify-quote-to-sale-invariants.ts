@@ -63,14 +63,15 @@ async function main(): Promise<void> {
     }
   }
 
-  // 2) 0 sales órfãos entre as vindas de conversão de quote
-  // (fn_convert_quote_to_sale marca source='quote_conversion'; vendas diretas
+  // 2) 0 sales órfãos entre as vindas de cotação
+  // (fn_convert_quote_to_sale marca source='quote_conversion' e
+  // sync_quote_from_webhook marca 'gift_store'; vendas diretas
   // de outras fontes — referral, organic, inbound… — não têm quote por design)
   {
     const { data: sales, error } = await client
       .from('sales')
       .select('id')
-      .eq('source', 'quote_conversion')
+      .in('source', ['quote_conversion', 'gift_store'])
       .limit(10000);
     if (error) throw error;
     const saleIds = (sales ?? []).map((s) => s.id as string);
