@@ -32,6 +32,7 @@ DECLARE
     total_deals_val INTEGER;
     total_revenue_val NUMERIC;
     old_owner_id UUID;
+    v_territory_id UUID;
 BEGIN
     FOR territory_rec IN
         SELECT DISTINCT COALESCE(product_name, category, 'Outros') as t_name FROM public.sales WHERE status IN ('won', 'completed')
@@ -65,9 +66,18 @@ BEGIN
 
         IF top_owner_id IS NOT NULL
            AND (old_owner_id IS NULL OR old_owner_id <> top_owner_id) THEN
-             INSERT INTO public.territory_history (territory_id, salesperson_id, revenue_contribution, deals_count, conquered_at)
-             SELECT id, top_owner_id, top_revenue, total_deals_val, now()
+             SELECT id INTO v_territory_id
              FROM public.territories WHERE name = territory_rec.t_name;
+
+             -- A conquista anterior do dono destronado passa a constar
+             -- como perdida (lost_at preenchido na troca de dono).
+             UPDATE public.territory_history
+                SET lost_at = now()
+              WHERE territory_id = v_territory_id
+                AND lost_at IS NULL;
+
+             INSERT INTO public.territory_history (territory_id, salesperson_id, revenue_contribution, deals_count, conquered_at)
+             VALUES (v_territory_id, top_owner_id, top_revenue, total_deals_val, now());
         END IF;
     END LOOP;
 END;
