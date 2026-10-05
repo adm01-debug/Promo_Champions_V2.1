@@ -1,9 +1,9 @@
 import type { Metric } from 'web-vitals';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 import { logger } from '@/lib/log/logger';
 
 const log = logger.for('webVitals');
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 const ENDPOINT = `${SUPABASE_URL}/functions/v1/log-web-vitals`;
 

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 export type ForecastCategory = 'commit' | 'best_case' | 'pipeline' | 'omitted' | 'closed';
 
@@ -61,7 +62,7 @@ export function useRevenueIntelligenceHub(
       const token =
         session.data.session?.access_token ??
         import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/revenue-intelligence?horizon=${horizonDays}&dimension=${dimension}`;
+      const url = `${SUPABASE_URL}/functions/v1/revenue-intelligence?horizon=${horizonDays}&dimension=${dimension}`;
       const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 export interface CIRecording {
   id: string;
@@ -46,7 +47,7 @@ export function useConversationalIntelligence(days = 30) {
       const token =
         session.data.session?.access_token ??
         import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/conversational-intelligence?days=${days}`;
+      const url = `${SUPABASE_URL}/functions/v1/conversational-intelligence?days=${days}`;
       const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,

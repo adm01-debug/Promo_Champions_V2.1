@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 export interface RevOpsKPIs {
   total_pipeline: number;
@@ -35,7 +36,7 @@ export function useRevOpsHub(horizonDays = 90) {
       const token =
         session.data.session?.access_token ??
         import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/revops-hub?horizon=${horizonDays}`;
+      const url = `${SUPABASE_URL}/functions/v1/revops-hub?horizon=${horizonDays}`;
       const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,

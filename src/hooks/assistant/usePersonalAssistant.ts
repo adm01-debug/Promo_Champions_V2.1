@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 import {
   drainSSEChunk,
   getAssistantErrorMessage,
@@ -20,7 +21,7 @@ interface StreamOptions {
 }
 
 async function streamRequest(opts: StreamOptions): Promise<void> {
-  const url = `${import.meta.env.VITE_SUPABASE_URL}${FUNCTION_PATH}`;
+  const url = `${SUPABASE_URL}${FUNCTION_PATH}`;
   const sess = await supabase.auth.getSession();
   const token =
     sess.data.session?.access_token ?? import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
