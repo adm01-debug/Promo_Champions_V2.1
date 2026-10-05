@@ -65,7 +65,15 @@ export async function seedQuote(
     status: 'draft',
     source: 'manual',
   };
-  if (opts.ownerSpId) insertPayload.created_by = opts.ownerSpId;
+  if (opts.ownerSpId) {
+    insertPayload.created_by = opts.ownerSpId;
+  } else {
+    // Sem ownerSpId explícito, atribui o vendedor do usuário autenticado:
+    // a policy de quote_items exige dono (created_by) OU admin/manager —
+    // sem isto o seed só funciona para sessões gestoras.
+    const { data: spId } = await client.rpc('get_current_salesperson_id');
+    if (spId) insertPayload.created_by = spId;
+  }
 
   const { data: q, error } = await client
     .from('quotes')
