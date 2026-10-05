@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
-import { SUPABASE_URL } from '@/integrations/supabase/env';
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
 
 export interface ChatMessage {
   id: string;
@@ -194,7 +194,7 @@ export const useSalesAssistant = (
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${session?.access_token}`,
-              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              apikey: SUPABASE_PUBLISHABLE_KEY,
             },
             body: JSON.stringify({
               message: content,

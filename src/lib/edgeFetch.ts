@@ -4,11 +4,9 @@
 // so the Supabase gateway accepts the request.
 
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_PUBLISHABLE_KEY } from '@/integrations/supabase/env';
 
-const PUBLISHABLE_KEY =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
-  import.meta.env.VITE_SUPABASE_ANON_KEY ??
-  '';
+const PUBLISHABLE_KEY = SUPABASE_PUBLISHABLE_KEY ?? SUPABASE_PUBLISHABLE_KEY ?? '';
 
 export async function fetchWithUserToken(
   url: string,

@@ -6,11 +6,10 @@
  * Usa fetch direto contra a Data API (PostgREST) para contornar o mock
  * global de `@supabase/supabase-js` presente em `src/test/setup.ts`.
  */
-import { SUPABASE_URL } from '@/integrations/supabase/env';
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
 import { describe, it, expect } from 'vitest';
 
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as
-  string | undefined;
+const SUPABASE_ANON_KEY = SUPABASE_PUBLISHABLE_KEY as string | undefined;
 const ISOLATED_UNIT_ENV = import.meta.env.VITE_SUPABASE_TEST_MODE === 'true';
 
 interface PrivilegeRow {
