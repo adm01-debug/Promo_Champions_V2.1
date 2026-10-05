@@ -14,3 +14,43 @@ GRANT EXECUTE ON FUNCTION public.get_current_salesperson_id() TO anon;
 GRANT EXECUTE ON FUNCTION public.get_user_role(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION public.is_admin_or_manager(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION public.is_admin_or_manager() TO anon;
+
+-- Blindagem contra enumeração anônima de cargos (Devin Review SEC):
+-- get_user_role(uuid)/is_admin_or_manager(uuid) são SECURITY DEFINER e
+-- contornam a RLS de user_roles — com EXECUTE para anon, qualquer visitante
+-- podia consultar o cargo de um UUID conhecido via rpc(). As policies sempre
+-- chamam com auth.uid() (NULL sob anon → mesmo resultado), então negar a
+-- role 'anon' preserva a semântica do RLS e elimina o vazamento.
+CREATE OR REPLACE FUNCTION public.get_user_role(_user_id uuid)
+RETURNS app_role
+LANGUAGE sql
+STABLE SECURITY DEFINER
+SET search_path TO 'public'
+AS $function$
+  SELECT CASE WHEN auth.role() = 'anon' THEN NULL ELSE (
+    SELECT role
+    FROM public.user_roles
+    WHERE user_id = _user_id
+    ORDER BY
+      CASE role
+        WHEN 'admin' THEN 1
+        WHEN 'manager' THEN 2
+        WHEN 'salesperson' THEN 3
+      END
+    LIMIT 1
+  ) END
+$function$;
+
+CREATE OR REPLACE FUNCTION public.is_admin_or_manager(_user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE SECURITY DEFINER
+SET search_path TO 'public'
+AS $function$
+  SELECT COALESCE(auth.role(), 'anon') <> 'anon' AND EXISTS (
+    SELECT 1
+    FROM public.user_roles
+    WHERE user_id = _user_id
+      AND role IN ('admin', 'manager')
+  )
+$function$;
