@@ -60,8 +60,8 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
     if (rl) return rl;
 
   try {
-    const body = (await req.json()) as CommentaryRequest;
-    if (!body.leaderboard || !Array.isArray(body.leaderboard)) {
+    const body = (await req.json()) as CommentaryRequest | null;
+    if (!body || !Array.isArray(body.leaderboard)) {
       return new Response(JSON.stringify({ error: "Invalid leaderboard" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
