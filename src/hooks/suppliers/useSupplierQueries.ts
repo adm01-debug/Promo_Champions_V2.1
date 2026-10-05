@@ -6,7 +6,11 @@ export function useSupplierList() {
   return useQuery({
     queryKey: ['suppliers'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('suppliers').select('*').order('name');
+      const { data, error } = await supabase
+        .from('suppliers')
+        .select('*')
+        .is('deleted_at', null)
+        .order('name');
 
       if (error) throw error;
       return data as Supplier[];

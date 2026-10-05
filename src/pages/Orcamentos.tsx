@@ -45,6 +45,7 @@ import {
 } from 'lucide-react';
 import { QuoteDetailDialog } from '@/components/quotes/QuoteDetailDialog';
 import { QuoteCard } from '@/components/quotes/QuoteCard';
+import { VirtualizedList } from '@/components/ui/virtualized-list';
 import { motion } from 'framer-motion';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { cn } from '@/lib/utils';
@@ -603,15 +604,21 @@ export default function Orcamentos() {
                 </p>
               </Card>
             ) : (
-              quotes.map(quote => (
-                <QuoteCard
-                  key={quote.id}
-                  quote={quote as Quote}
-                  onView={setSelectedQuote}
-                  onUpdateStatus={updateStatus.mutate}
-                  onDelete={deleteQuote.mutate}
-                />
-              ))
+              <VirtualizedList
+                items={quotes}
+                height={560}
+                itemHeight={132}
+                renderItem={quote => (
+                  <div className="pb-3">
+                    <QuoteCard
+                      quote={quote as Quote}
+                      onView={setSelectedQuote}
+                      onUpdateStatus={updateStatus.mutate}
+                      onDelete={deleteQuote.mutate}
+                    />
+                  </div>
+                )}
+              />
             )}
           </motion.div>
           <QuoteDetailDialog

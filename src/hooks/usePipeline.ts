@@ -2,6 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
+import {
+  OptimisticLockConflictError,
+  isOptimisticLockConflict,
+} from '@/lib/supabase/optimisticLock';
 
 // Pipeline stage type for the kanban board
 export type PipelineStageId =
@@ -69,6 +73,8 @@ export interface Deal {
   source: string | null;
   created_at: string;
   updated_at: string;
+  /** Optimistic locking — presente após migration 20261001193200. */
+  version?: number;
   closing_date?: string; // Etapa 3: Predictive utility
   health_score?: number; // Etapa 2: Heatmap
   interaction_history?: number[]; // Etapa 4: Sparklines
@@ -81,6 +87,7 @@ export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
       let query = supabase
         .from('sales')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (filters?.salespersonId) {
@@ -125,19 +132,33 @@ export const useMoveDeal = () => {
     mutationFn: async ({
       dealId,
       newStage,
+      expectedVersion,
     }: {
       dealId: string;
       newStage: PipelineStageId;
+      /** Versão lida do deal (optimistic locking) — quando presente, exige casar. */
+      expectedVersion?: number;
     }) => {
-      const { data, error } = await supabase
-        .from('sales')
-        .update({ status: newStage, updated_at: new Date().toISOString() })
-        .eq('id', dealId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      // Transição via RPC da máquina de estados (valida status_origem -> destino);
+      // p_expected_version aplica optimistic locking quando informado.
+      const { error } = await supabase.rpc(
+        'transition_sale_status' as never,
+        {
+          p_sale_id: dealId,
+          p_new_status: newStage,
+          p_expected_version: expectedVersion ?? null,
+        } as never
+      );
+      if (error) {
+        if (
+          typeof error.message === 'string' &&
+          error.message.includes('optimistic_lock_conflict')
+        ) {
+          throw new OptimisticLockConflictError();
+        }
+        throw error;
+      }
+      return { id: dealId, status: newStage };
     },
     // Optimistic update for smooth drag & drop
     onMutate: async ({ dealId, newStage }) => {
@@ -174,9 +195,13 @@ export const useMoveDeal = () => {
       const stageLabel = PIPELINE_STAGES.find(s => s.id === newStage)?.label || newStage;
       toast.success(`Deal movido para ${stageLabel}`);
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       queryClient.setQueryData(['pipeline-deals'], context?.previousDeals);
-      toast.error('Erro ao mover deal');
+      if (isOptimisticLockConflict(err)) {
+        toast.warning('Registro alterado por outro usuário — dados atualizados');
+      } else {
+        toast.error('Erro ao mover deal');
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['pipeline-deals'] });

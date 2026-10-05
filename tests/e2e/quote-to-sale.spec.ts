@@ -89,7 +89,7 @@ test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
       [STORAGE_KEY, SESSION_JSON] as const,
     );
 
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
     // Localiza o card do orçamento e abre o detalhe
     const quoteCard = page.getByText('E2E Orçamento Convert').first();

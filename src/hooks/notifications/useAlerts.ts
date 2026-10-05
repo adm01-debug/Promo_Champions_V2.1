@@ -3,6 +3,7 @@ import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { differenceInDays, parseISO } from 'date-fns';
+import { toBusinessMonthStart } from '@/lib/date';
 
 export type AlertType = 'stagnant_deal' | 'inactive_client' | 'at_risk_goal';
 export type AlertSeverity = 'warning' | 'critical';
@@ -94,7 +95,7 @@ export const useAlerts = () => {
         .select('id, name')
         .eq('is_active', true);
 
-      const currentMonth = new Date().toISOString().slice(0, 7) + '-01';
+      const currentMonth = toBusinessMonthStart();
       const { data: goals } = await supabase
         .from('sales_goals')
         .select('*')

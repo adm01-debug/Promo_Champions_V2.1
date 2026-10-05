@@ -1,5 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface CommentaryRequest {
   seasonName?: string;
@@ -53,7 +55,19 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "race-commentary", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
+
   try {
+    const body = (await req.json()) as CommentaryRequest | null;
+    if (!body || !Array.isArray(body.leaderboard)) {
+      return new Response(JSON.stringify({ error: "Invalid leaderboard" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       // Return 200 + skipped flag so the UI doesn't blank-screen when AI isn't configured
@@ -61,14 +75,6 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
         JSON.stringify({ commentary: "", skipped: true, reason: "no_api_key" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
-    }
-
-    const body = (await req.json()) as CommentaryRequest;
-    if (!body.leaderboard || !Array.isArray(body.leaderboard)) {
-      return new Response(JSON.stringify({ error: "Invalid leaderboard" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
     }
 
     // Coalesce concurrent identical requests via TTL cache (60s)
@@ -102,7 +108,7 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
 
     let aiResp: Response;
     try {
-      aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      aiResp = await fetch(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,

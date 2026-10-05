@@ -1,12 +1,8 @@
 import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
-import {
-  generateNextActions,
-  analyzeSentiment,
-  createEmailTemplate,
-} from '@/hooks/sales/useSalesAssistantHelpers';
+import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
 
 export interface ChatMessage {
   id: string;
@@ -34,22 +30,6 @@ export interface DealContext {
   productName: string;
   amount: number;
   status: string;
-}
-
-interface SalesInsight {
-  type: 'action' | 'risk' | 'opportunity';
-  title: string;
-  description: string;
-  priority: 'high' | 'medium' | 'low';
-  actionable: boolean;
-}
-
-interface AssistantResponse {
-  insights: SalesInsight[];
-  nextActions: string[];
-  emailTemplate?: { subject: string; body: string; tone: 'formal' | 'casual' | 'urgent' };
-  sentiment: 'positive' | 'neutral' | 'negative';
-  confidence: number;
 }
 
 export const useSalesAssistant = (
@@ -208,13 +188,13 @@ export const useSalesAssistant = (
           data: { session },
         } = await supabase.auth.getSession();
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sales-assistant-chat`,
+          `${SUPABASE_URL}/functions/v1/sales-assistant-chat`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${session?.access_token}`,
-              apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              apikey: SUPABASE_PUBLISHABLE_KEY,
             },
             body: JSON.stringify({
               message: content,
@@ -396,109 +376,4 @@ export const useSalesAssistant = (
     dealContext,
     setDealContext,
   };
-};
-
-export const useDealAssistant = (dealId: string) => {
-  const queryClient = useQueryClient();
-
-  const getInsights = useQuery<AssistantResponse>({
-    queryKey: ['sales-assistant', 'insights', dealId],
-    queryFn: async (): Promise<AssistantResponse> => {
-      const { data: deal, error } = await supabase
-        .from('sales')
-        .select('*, activities(*)')
-        .eq('id', dealId)
-        .single();
-      if (error) throw error;
-
-      const insights: SalesInsight[] = [];
-      const lastActivity = deal.activities?.[0];
-      if (lastActivity) {
-        const daysSinceActivity =
-          (Date.now() - new Date(lastActivity.created_at).getTime()) /
-          (1000 * 60 * 60 * 24);
-        if (daysSinceActivity > 7) {
-          insights.push({
-            type: 'risk',
-            title: 'No recent activity',
-            description: `Deal has been inactive for ${Math.round(daysSinceActivity)} days. Consider reaching out.`,
-            priority: 'high',
-            actionable: true,
-          });
-        }
-      }
-      if (deal.amount > 50000 && deal.status === 'Lead') {
-        insights.push({
-          type: 'opportunity',
-          title: 'High-value lead',
-          description: 'This is a high-value opportunity. Prioritize qualification.',
-          priority: 'high',
-          actionable: true,
-        });
-      }
-
-      return {
-        insights,
-        nextActions: generateNextActions(deal, insights),
-        sentiment: analyzeSentiment(deal.activities || []),
-        confidence: 0.85,
-      };
-    },
-    staleTime: 1000 * 60 * 5,
-    enabled: !!dealId,
-  });
-
-  const generateEmail = useMutation({
-    mutationFn: async (params: {
-      purpose: 'follow-up' | 'proposal' | 'check-in' | 'closing';
-      context?: string;
-    }) => {
-      const { data: deal } = await supabase
-        .from('sales')
-        .select('*')
-        .eq('id', dealId)
-        .single();
-      if (!deal) throw new Error('Deal not found');
-      return createEmailTemplate(params.purpose, deal, params.context);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sales-assistant', 'insights', dealId],
-      });
-    },
-  });
-
-  return {
-    insights: getInsights.data,
-    isLoading: getInsights.isLoading,
-    isSuccess: getInsights.isSuccess,
-    error: getInsights.error,
-    data: getInsights.data,
-    generateEmail,
-  };
-};
-
-export const useAISuggestions = (dealId: string) => {
-  return useQuery({
-    queryKey: ['ai-suggestions', dealId],
-    queryFn: async () => ({
-      talking_points: [
-        'Emphasize ROI and time-to-value',
-        'Address potential objections proactively',
-        'Highlight competitive advantages',
-      ],
-      questions_to_ask: [
-        'What are your key success metrics?',
-        'Who else should be involved in the decision?',
-        'What is your timeline for implementation?',
-      ],
-      objection_handling: {
-        'Too expensive': 'Focus on total cost of ownership and ROI over time',
-        'Not the right time': 'Highlight the cost of waiting and competitive risks',
-        'Need more features': 'Explain our roadmap and customization options',
-      },
-    }),
-    staleTime: 1000 * 60 * 30,
-    enabled: !!dealId,
-  });
 };

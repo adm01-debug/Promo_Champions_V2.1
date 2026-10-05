@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import { toBusinessMonthStart } from '@/lib/date';
 
 import { formatBRL } from '@/lib/money';
 export interface MicroGoal {
@@ -28,7 +29,7 @@ export function useMicroGoals(salespersonId?: string) {
         supabase
           .from('sales_goals')
           .select('salesperson_id, goal_amount')
-          .eq('month', now.toISOString().slice(0, 7) + '-01'),
+          .eq('month', toBusinessMonthStart(now)),
         supabase
           .from('sales')
           .select('salesperson_id, amount')

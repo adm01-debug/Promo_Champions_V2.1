@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchWithUserToken } from '@/lib/edgeFetch';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 export type TerritoryHealth = 'excellent' | 'healthy' | 'warning' | 'critical';
 export type TerritoryStatus =
@@ -66,7 +67,7 @@ export function useTerritoryOptimization(days: 30 | 60 | 90 = 30) {
   return useQuery<TerritoryOptimizationResponse>({
     queryKey: ['territory-optimization', days],
     queryFn: async () => {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/territory-optimization?days=${days}`;
+      const url = `${SUPABASE_URL}/functions/v1/territory-optimization?days=${days}`;
       const resp = await fetchWithUserToken(url, { method: 'GET' });
       if (!resp.ok) throw new Error(`Territory optimization failed: ${resp.status}`);
       return (await resp.json()) as TerritoryOptimizationResponse;

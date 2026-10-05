@@ -60,7 +60,13 @@ export function useSupplierMutations() {
 
   const deleteSupplier = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('suppliers').delete().eq('id', id);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('suppliers')
+        .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

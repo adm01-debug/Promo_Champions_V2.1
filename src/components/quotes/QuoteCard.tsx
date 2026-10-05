@@ -25,7 +25,7 @@ import { formatBRL } from '@/lib/money';
 interface QuoteCardProps {
   quote: Quote;
   onView: (quote: Quote) => void;
-  onUpdateStatus: (params: { id: string; status: string }) => void;
+  onUpdateStatus: (params: { id: string; status: string; version?: number }) => void;
   onDelete: (id: string) => void;
 }
 
@@ -115,7 +115,9 @@ export const QuoteCard = React.memo(function QuoteCard({
               size="sm"
               variant="outline"
               className="gap-1 text-xs"
-              onClick={() => onUpdateStatus({ id: quote.id, status: 'sent' })}
+              onClick={() =>
+                onUpdateStatus({ id: quote.id, status: 'sent', version: quote.version })
+              }
             >
               <Send className="h-3 w-3" />
               Enviar
@@ -131,7 +133,13 @@ export const QuoteCard = React.memo(function QuoteCard({
                 size="sm"
                 variant="outline"
                 className="gap-1 text-xs text-status-success border-status-success/30"
-                onClick={() => onUpdateStatus({ id: quote.id, status: 'approved' })}
+                onClick={() =>
+                  onUpdateStatus({
+                    id: quote.id,
+                    status: 'approved',
+                    version: quote.version,
+                  })
+                }
               >
                 <CheckCircle2 className="h-3 w-3" />
                 Aprovar
@@ -140,7 +148,13 @@ export const QuoteCard = React.memo(function QuoteCard({
                 size="sm"
                 variant="outline"
                 className="gap-1 text-xs text-destructive border-destructive/30"
-                onClick={() => onUpdateStatus({ id: quote.id, status: 'rejected' })}
+                onClick={() =>
+                  onUpdateStatus({
+                    id: quote.id,
+                    status: 'rejected',
+                    version: quote.version,
+                  })
+                }
               >
                 <XCircle className="h-3 w-3" />
                 Rejeitar

@@ -2,6 +2,8 @@ import { corsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface Turn {
   speaker: 'seller' | 'client' | 'unknown';
@@ -109,7 +111,7 @@ function computeStats(turns: Turn[]) {
 }
 
 async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] | null> {
-  const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -168,6 +170,10 @@ async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] 
 
 Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: "diarize-call-recording", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     const caller = await getUserClient(req);

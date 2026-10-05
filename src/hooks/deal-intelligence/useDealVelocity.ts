@@ -68,29 +68,6 @@ export const useDealVelocityPrediction = (saleId: string | undefined) => {
   return query;
 };
 
-export const useDealVelocityBatch = (filters?: {
-  status?: VelocityStatus[];
-  ownerId?: string;
-}) => {
-  return useQuery({
-    queryKey: ['deal-velocity-batch', filters],
-    queryFn: async () => {
-      let q = supabase
-        .from('deal_velocity_predictions')
-        .select(
-          '*, sales!inner(id, client_name, product_name, amount, status, salesperson_id)'
-        )
-        .order('confidence_score', { ascending: false });
-      if (filters?.status?.length) q = q.in('velocity_status', filters.status);
-      if (filters?.ownerId) q = q.eq('owner_id', filters.ownerId);
-      const { data, error } = await q.limit(100);
-      if (error) throw error;
-      return data || [];
-    },
-    staleTime: CACHE_TIMES.STALE_TIME,
-  });
-};
-
 export const usePredictDealVelocity = () => {
   const qc = useQueryClient();
   return useMutation({

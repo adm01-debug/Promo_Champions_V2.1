@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { WA_ME_URL } from '@/config/external';
 import {
   useTodaysCadenceTasks,
   useCompleteCadenceTask,
@@ -40,6 +41,9 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('TodaysCadenceTasks');
 
 const actionIcons: Record<ActionType, typeof Phone> = {
   call: Phone,
@@ -117,7 +121,7 @@ export function TodaysCadenceTasks() {
             .eq('id', prospectCadenceId);
         } else if (rule.next_action === 'retry') {
           // Lógica de retry seria disparada por um cron ou worker baseado no retry_delay_hours
-          console.info(`Retry agendado em ${rule.retry_delay_hours}h`);
+          log.info('retry_scheduled', { retryDelayHours: rule.retry_delay_hours });
         }
 
         // 3. Registrar Log de Auditoria
@@ -139,7 +143,9 @@ export function TodaysCadenceTasks() {
         });
       }
     } catch (err) {
-      console.error('Erro ao aplicar regras de desfecho:', err);
+      log.error('outcome_rules_failed', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
@@ -187,7 +193,9 @@ export function TodaysCadenceTasks() {
             ]);
           }
         } catch (err) {
-          console.error('Erro ao salvar resultado da ligação:', err);
+          log.error('call_result_save_failed', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       }
 
@@ -436,7 +444,7 @@ export function TodaysCadenceTasks() {
                                   className="h-7 text-[10px] gap-1.5 flex-1 bg-green-500/10 text-green-600 border-green-500/30 hover:bg-green-500/20"
                                   onClick={() =>
                                     window.open(
-                                      `https://wa.me/${String(sale?.client_phone ?? '').replace(/\D/g, '')}`,
+                                      `${WA_ME_URL}/${String(sale?.client_phone ?? '').replace(/\D/g, '')}`,
                                       '_blank'
                                     )
                                   }

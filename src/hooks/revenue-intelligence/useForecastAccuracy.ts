@@ -39,21 +39,6 @@ export interface ConfidenceScore {
   computed_at: string;
 }
 
-export function useForecastSnapshots(limit = 100) {
-  return useQuery({
-    queryKey: ['forecast-snapshots', limit],
-    queryFn: async (): Promise<ForecastSnapshot[]> => {
-      const { data, error } = await supabase
-        .from('forecast_snapshots')
-        .select('*')
-        .order('period_start', { ascending: false })
-        .limit(limit);
-      if (error) throw error;
-      return (data as ForecastSnapshot[]) ?? [];
-    },
-  });
-}
-
 export function useForecastAccuracy(limit = 100) {
   return useQuery({
     queryKey: ['forecast-accuracy', limit],

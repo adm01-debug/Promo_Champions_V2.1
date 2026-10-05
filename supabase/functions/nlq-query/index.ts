@@ -13,6 +13,9 @@ import {
   queryTopClients,
   type ResolverArgs,
 } from './queryResolvers.ts';
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 const MAX_QUESTION_LENGTH = 1000;
 
@@ -126,7 +129,7 @@ const TOOLS = [
 ];
 
 const SYSTEM_PROMPT = `Você é um analista de dados do CRM da Promo Champions. Responda em PT-BR.
-Hoje é ${new Date().toISOString().slice(0, 10)}.
+Hoje é ${toBusinessDate()}.
 SEMPRE chame uma das ferramentas disponíveis para buscar dados reais antes de responder.
 NUNCA invente números. Se a ferramenta retornar zero registros, diga isso claramente.
 Quando o usuário citar um período (ex.: "março", "essa semana", "último trimestre"), converta para datas ISO precisas.
@@ -150,6 +153,10 @@ async function resolveTool(name: string, args: ResolverArgs, supabase: SupabaseC
 Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'nlq-query', limit: 30, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'method_not_allowed' }), {
       status: 405,
@@ -206,7 +213,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     ];
 
     // First call: model decides which tool to invoke
-    const firstRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const firstRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -303,7 +310,7 @@ Deno.serve(withRequestId('nlq-query', async (req: Request, _ctx) => {
     }
 
     // Second call: model writes the final natural-language answer
-    const secondRes = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const secondRes = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({

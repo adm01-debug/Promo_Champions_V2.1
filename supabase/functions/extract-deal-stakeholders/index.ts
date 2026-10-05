@@ -2,6 +2,8 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface ExtractedStakeholder {
   name: string;
@@ -22,6 +24,10 @@ interface ExtractedStakeholder {
 Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, { name: 'extract-deal-stakeholders', limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
+    if (rl) return rl;
 
   try {
     const authHeader = req.headers.get('Authorization');
@@ -99,7 +105,7 @@ Deno.serve(withRequestId("extract-deal-stakeholders", async (req, _ctx) => {
     const ownerId = sp?.user_id || user.id;
 
     // Call Lovable AI with tool calling
-    const aiResp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,

@@ -2,6 +2,8 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 interface PrepRequest {
   salesperson_id: string;
@@ -19,6 +21,10 @@ interface PrepResponse {
 Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "coaching-session-prep", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const authHeader = req.headers.get("Authorization");
@@ -141,7 +147,7 @@ Considere a relação entre as atividades e os gaps de skill (ex: se o gap é ob
 Retorne apenas a lista de frases diretas.`;
 
       try {
-        const aiResp = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
           method: "POST",
           headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({

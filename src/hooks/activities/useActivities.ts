@@ -68,6 +68,7 @@ export const useActivities = (filters?: UseActivitiesOptions) => {
       let query = supabase
         .from('activities')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(filters?.limit ?? 1000);
 
@@ -95,6 +96,7 @@ export const useRecentActivities = (limit: number = 100) => {
       const { data, error } = await supabase
         .from('activities')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(limit);
 
@@ -117,10 +119,12 @@ export const useActivityStats = (salespersonId?: string) => {
         supabase
           .from('activities')
           .select('*')
+          .is('deleted_at', null)
           .match(salespersonId ? { salesperson_id: salespersonId } : {}),
         supabase
           .from('activities')
           .select('*')
+          .is('deleted_at', null)
           .match(salespersonId ? { salesperson_id: salespersonId } : {})
           .gte('created_at', today),
       ]);
@@ -335,6 +339,7 @@ export const useSDRLeaderboard = () => {
       const { data, error } = await supabase
         .from('activities')
         .select('salesperson_id, salespeople:salespeople(name, avatar_url)')
+        .is('deleted_at', null)
         .gte('created_at', today);
 
       if (error) throw error;

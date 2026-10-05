@@ -1,6 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { toBusinessDate } from "../_shared/business-date.ts";
 
 
 
@@ -30,7 +31,7 @@ Deno.serve(withRequestId("compute-forecast-accuracy", async (req, _ctx) => {
       });
     }
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = toBusinessDate();
 
     const { data: snapshots, error: snapErr } = await supabase
       .from("forecast_snapshots")

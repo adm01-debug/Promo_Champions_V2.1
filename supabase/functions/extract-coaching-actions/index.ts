@@ -7,6 +7,8 @@ import {
 } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
+
 interface DiarSegment {
   speaker?: string;
   start?: number;
@@ -40,6 +42,13 @@ Deno.serve(
     if (req.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'extract-coaching-actions',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
     try {
       const caller = await getUserClient(req);

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
 import { formatBRL } from '@/lib/money';
@@ -32,13 +33,17 @@ export function useRaceSmartNotifications({
   rivalSalespersonId,
   seasonEndDate,
 }: Opts) {
+  // Kill-switch global (feature_flags.race_smart_notifications):
+  // ausente na tabela => ligado; desligado lá => mata toda a feature.
+  const flagEnabled = useFeatureGate('race_smart_notifications');
   const prevRankRef = useRef<number | null>(null);
   const prevRivalAheadRef = useRef<boolean | null>(null);
   const lastHourFiredRef = useRef(false);
   const podiumFiredRef = useRef(false);
 
   useEffect(() => {
-    if (!isEnabled() || !currentUserSalespersonId || entries.length === 0) return;
+    if (!flagEnabled || !isEnabled() || !currentUserSalespersonId || entries.length === 0)
+      return;
 
     const sorted = [...entries].sort(
       (a, b) => Number(b.total_sales) - Number(a.total_sales)
@@ -76,11 +81,12 @@ export function useRaceSmartNotifications({
     }
 
     prevRankRef.current = myRank;
-  }, [entries, currentUserSalespersonId, rivalSalespersonId]);
+  }, [flagEnabled, entries, currentUserSalespersonId, rivalSalespersonId]);
 
   // 3. Última hora da corrida
   useEffect(() => {
-    if (!isEnabled() || !seasonEndDate || lastHourFiredRef.current) return;
+    if (!flagEnabled || !isEnabled() || !seasonEndDate || lastHourFiredRef.current)
+      return;
     const end = new Date(seasonEndDate).getTime();
     const now = Date.now();
     const msToEnd = end - now;
@@ -96,7 +102,7 @@ export function useRaceSmartNotifications({
       Math.min(msToEnd, 5000)
     );
     return () => window.clearTimeout(t);
-  }, [seasonEndDate]);
+  }, [flagEnabled, seasonEndDate]);
 }
 
 export function setRaceNotificationsEnabled(enabled: boolean) {

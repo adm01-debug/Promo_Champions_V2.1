@@ -2,6 +2,8 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 
 
 
@@ -49,6 +51,10 @@ function buildWindows(turns: DiarizationTurn[]) {
 Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, { name: "analyze-sentiment-timeline", limit: 20, windowSeconds: 60 });
+    if (rl) return rl;
 
   try {
     const caller = await getUserClient(req);
@@ -102,7 +108,7 @@ Deno.serve(withRequestId('analyze-sentiment-timeline', async (req, _ctx) => {
       .join("\n")}`;
 
     const aiRes = await fetchWithTimeout(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      LOVABLE_AI_CHAT_COMPLETIONS_URL,
       {
         method: "POST",
         headers: {

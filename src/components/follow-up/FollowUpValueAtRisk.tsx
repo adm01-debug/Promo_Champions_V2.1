@@ -2,6 +2,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingDown, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useStageProbabilities } from '@/hooks/useStageProbabilities';
+import { STAGE_PROBABILITY_FALLBACK } from '@/lib/stageProbabilities';
 import type { ColdLead } from './types';
 
 import { formatBRL } from '@/lib/money';
@@ -14,19 +16,16 @@ export function FollowUpValueAtRisk({
   leads,
   onSelectCritical,
 }: FollowUpValueAtRiskProps) {
-  const statusProbabilities: Record<string, number> = {
-    lead: 0.1,
-    qualified: 0.3,
-    proposal: 0.5,
-    negotiation: 0.8,
-    open: 0.1,
-  };
+  const { data: stageProbabilities } = useStageProbabilities();
+  const statusProbabilities = stageProbabilities ?? STAGE_PROBABILITY_FALLBACK;
 
   const totalValue = leads.reduce((sum, l) => sum + (l.amount || 0), 0);
   const weightedValue = leads.reduce((sum, l) => {
     // Usar a probabilidade calibrada se disponível, caso contrário usar a média por status
     const prob =
-      l.probability !== undefined ? l.probability : statusProbabilities[l.status] || 0.1;
+      l.probability !== undefined
+        ? l.probability
+        : (statusProbabilities[l.status] ?? 0.1);
     return sum + (l.amount || 0) * prob;
   }, 0);
 

@@ -23,7 +23,11 @@ export const useProducts = (filters?: { category?: string }) => {
   return useQuery<Product[]>({
     queryKey: ['products', filters],
     queryFn: async (): Promise<Product[]> => {
-      let query = supabase.from('products').select('*').order('name');
+      let query = supabase
+        .from('products')
+        .select('*')
+        .is('deleted_at', null)
+        .order('name');
 
       if (filters?.category) {
         query = query.eq('category', filters.category);
@@ -57,6 +61,7 @@ export const useTopProducts = (limit: number = 10) => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .is('deleted_at', null)
         .order('sales_count', { ascending: false })
         .limit(limit);
 
@@ -186,7 +191,16 @@ export const useDeleteProduct = () => {
 
   return useMutation({
     mutationFn: async (productId: string) => {
-      const { error } = await supabase.from('products').delete().eq('id', productId);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from('products')
+        .update({
+          deleted_at: new Date().toISOString(),
+          deleted_by: user?.id ?? null,
+        })
+        .eq('id', productId);
 
       if (error) throw error;
     },

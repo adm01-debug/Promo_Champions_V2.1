@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { toBusinessDate } from '@/lib/date';
 
 export interface WeeklyChallenge {
   id: string;
@@ -56,7 +57,7 @@ export function useWeeklyChallenges() {
   return useQuery({
     queryKey: ['weekly-challenges'],
     queryFn: async () => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = toBusinessDate();
 
       const { data, error } = await supabase
         .from('weekly_challenges')
@@ -124,59 +125,6 @@ export function useChallengesWithProgress(salespersonId?: string) {
     challenges: challengesWithProgress,
     isLoading: loadingChallenges || loadingProgress,
   };
-}
-
-export function useUpdateChallengeProgress() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      challengeId,
-      salespersonId,
-      incrementBy = 1,
-    }: {
-      challengeId: string;
-      salespersonId: string;
-      incrementBy?: number;
-    }) => {
-      // Check if progress exists
-      const { data: existing } = await supabase
-        .from('challenge_progress')
-        .select('*')
-        .eq('challenge_id', challengeId)
-        .eq('salesperson_id', salespersonId)
-        .single();
-
-      if (existing) {
-        const newValue = existing.current_value + incrementBy;
-        const { data, error } = await supabase
-          .from('challenge_progress')
-          .update({ current_value: newValue })
-          .eq('id', existing.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      } else {
-        const { data, error } = await supabase
-          .from('challenge_progress')
-          .insert({
-            challenge_id: challengeId,
-            salesperson_id: salespersonId,
-            current_value: incrementBy,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['challenge-progress'] });
-    },
-  });
 }
 
 export function useClaimChallengeReward() {

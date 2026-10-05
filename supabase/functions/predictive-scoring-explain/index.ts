@@ -5,6 +5,9 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { chunkedIn } from '../_shared/chunked-in.ts';
 
+import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+
 interface Driver {
   factor: string;
   label: string;
@@ -101,7 +104,7 @@ Recomendação principal: ${recommendations[0]?.action ?? 'n/d'}.
 
 Em 2-3 frases curtas em português do Brasil, explique o porquê desse score e qual a próxima ação prioritária. Tom direto, profissional, sem jargão.`;
 
-    const resp = await fetchWithTimeout('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await fetchWithTimeout(LOVABLE_AI_CHAT_COMPLETIONS_URL, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -227,6 +230,13 @@ async function explainOne(
 Deno.serve(withRequestId('predictive-scoring-explain', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    const rl = enforceRateLimit(req, {
+      name: 'predictive-scoring-explain',
+      limit: 20,
+      windowSeconds: 60,
+    });
+    if (rl) return rl;
 
   try {
     const body = await req.json().catch(() => ({}));

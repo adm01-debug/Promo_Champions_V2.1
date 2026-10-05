@@ -1,2 +1,0 @@
--- Soft Delete Integration
--- Additional database improvements

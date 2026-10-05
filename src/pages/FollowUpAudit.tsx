@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { WA_ME_URL } from '@/config/external';
 import {
   Select,
   SelectContent,
@@ -127,7 +128,7 @@ const FollowUpAudit = () => {
       const message =
         details?.message_preview || 'Olá! Gostaríamos de retomar nosso contato.';
 
-      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`${WA_ME_URL}/?text=${encodeURIComponent(message)}`, '_blank');
 
       // Update retry count and status in audit logs
       const { error } = await supabase

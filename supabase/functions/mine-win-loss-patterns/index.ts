@@ -4,6 +4,8 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
+import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
+
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
 interface Analysis {
@@ -255,6 +257,14 @@ Deno.serve(
     if (req.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders });
     }
+    // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
+    const rl = enforceRateLimit(req, {
+      name: 'mine-win-loss-patterns',
+      limit: 20,
+      windowSeconds: 60,
+      key: rateLimitUserKey(req),
+    });
+    if (rl) return rl;
     try {
       // Apaga e regenera win_loss_patterns/win_loss_insights de toda a
       // organização (operação destrutiva): restrito a admin/manager.

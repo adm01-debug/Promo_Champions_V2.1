@@ -23,6 +23,7 @@ import { PageTransition } from '@/components/transitions/PageTransition';
 import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
 import { useCountUp } from '@/hooks/useCountUp';
+import { VirtualizedList } from '@/components/ui/virtualized-list';
 
 const NPSGauge = React.memo(({ nps }: { nps: number }) => {
   const color =
@@ -232,12 +233,13 @@ export default function NPSDashboard() {
             <div className="p-4 border-b border-border/30">
               <h3 className="font-display font-semibold text-sm">Pesquisas Recentes</h3>
             </div>
-            <div className="divide-y divide-border/30 max-h-[500px] overflow-y-auto">
-              {(surveys || []).slice(0, 50).map(survey => (
-                <div
-                  key={survey.id}
-                  className="p-3 flex items-center justify-between hover:bg-muted/30 transition-colors"
-                >
+            <VirtualizedList
+              items={surveys ?? []}
+              height={500}
+              itemHeight={64}
+              className="rounded-none border-0 bg-transparent"
+              renderItem={survey => (
+                <div className="h-16 p-3 flex items-center justify-between hover:bg-muted/30 transition-colors border-b border-border/30">
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={cn(
@@ -327,8 +329,8 @@ export default function NPSDashboard() {
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
+              )}
+            />
           </div>
         </div>
       </PageTransition>

@@ -118,29 +118,3 @@ export function usePriceAlerts() {
     markAllAsRead,
   };
 }
-
-export function usePriceEvolution(productId: string, days: number = 30) {
-  return useQuery({
-    queryKey: ['price-evolution', productId, days],
-    queryFn: async () => {
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - days);
-
-      const { data, error } = await supabase
-        .from('price_history')
-        .select(
-          `
-          *,
-          suppliers:supplier_id (name)
-        `
-        )
-        .eq('product_id', productId)
-        .gte('recorded_at', startDate.toISOString())
-        .order('recorded_at', { ascending: true });
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!productId,
-  });
-}

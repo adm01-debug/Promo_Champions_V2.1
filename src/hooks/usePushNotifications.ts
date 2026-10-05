@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { logger } from '@/lib/log/logger';
+
+const log = logger.for('usePushNotifications');
 
 interface PushSubscriptionState {
   isSupported: boolean;
@@ -28,22 +31,22 @@ export function usePushNotifications() {
     );
   }, []);
 
-  // Register service worker
+  // Register service worker — SW de push dedicado em scope próprio ('/push/').
+  // NÃO usar '/' aqui: colidiria com o pwa-sw.js (workbox) e faria o SW legado
+  // assumir o controle da página inteira.
   const registerServiceWorker =
     useCallback(async (): Promise<ServiceWorkerRegistration | null> => {
       try {
-        // SW canônico do app (vite-plugin-pwa) — o legado /sw.js foi removido
-        // para evitar dois SWs disputando o mesmo scope.
-        const registration = await navigator.serviceWorker.register('/pwa-sw.js', {
-          scope: '/',
+        const registration = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/push/',
         });
-        if (import.meta.env.DEV) {
-          console.info('Service Worker registered:', registration);
-        }
+        log.info('service_worker_registered', { scope: registration.scope });
         return registration;
       } catch (error) {
         if (import.meta.env.DEV) {
-          console.error('Service Worker registration failed:', error);
+          log.error('service_worker_registration_failed', {
+            error: error instanceof Error ? error.message : String(error),
+          });
         }
         return null;
       }
@@ -243,7 +246,15 @@ export function usePushNotifications() {
       // Check for existing service worker
       if ('serviceWorker' in navigator) {
         try {
-          registration = (await navigator.serviceWorker.getRegistration('/')) ?? null;
+          // Remover registro legado: versões antigas registravam /sw.js em '/',
+          // substituindo o workbox e interceptando todos os fetches.
+          const legacy = await navigator.serviceWorker.getRegistration('/');
+          if (legacy?.active?.scriptURL.endsWith('/sw.js')) {
+            await legacy.unregister();
+          }
+
+          registration =
+            (await navigator.serviceWorker.getRegistration('/push/')) ?? null;
 
           if (registration && permission === 'granted') {
             const subscription = await registration.pushManager.getSubscription();

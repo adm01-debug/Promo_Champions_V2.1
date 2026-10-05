@@ -30,8 +30,7 @@ export const PersonalAssistantSummaryCard: FC<Props> = ({ onOpenChat, onOpenHub 
 
   useEffect(() => {
     if (salespersonId) void refreshBriefing();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [salespersonId]);
+  }, [salespersonId, refreshBriefing]);
 
   const displayName = useMemo(
     () => salesperson?.name?.split(' ')[0] ?? 'Vendedor',

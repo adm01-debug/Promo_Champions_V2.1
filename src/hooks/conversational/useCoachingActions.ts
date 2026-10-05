@@ -24,25 +24,6 @@ export function useCoachingActions(recordingId?: string) {
   });
 }
 
-export function useCoachingActionsBySalesperson(salespersonId?: string, days = 30) {
-  return useQuery({
-    queryKey: ['coaching-actions-sp', salespersonId, days],
-    queryFn: async () => {
-      if (!salespersonId) return [];
-      const since = new Date(Date.now() - days * 86400000).toISOString();
-      const { data, error } = await supabase
-        .from('coaching_actions')
-        .select('*')
-        .eq('salesperson_id', salespersonId)
-        .gte('created_at', since)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as CoachingAction[];
-    },
-    enabled: !!salespersonId,
-  });
-}
-
 export function useUpdateCoachingAction() {
   const qc = useQueryClient();
   return useMutation({
