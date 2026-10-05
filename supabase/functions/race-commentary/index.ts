@@ -60,6 +60,14 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
     if (rl) return rl;
 
   try {
+    const body = (await req.json()) as CommentaryRequest;
+    if (!body.leaderboard || !Array.isArray(body.leaderboard)) {
+      return new Response(JSON.stringify({ error: "Invalid leaderboard" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       // Return 200 + skipped flag so the UI doesn't blank-screen when AI isn't configured
@@ -67,14 +75,6 @@ Deno.serve(withRequestId("race-commentary", async (req, _ctx) => {
         JSON.stringify({ commentary: "", skipped: true, reason: "no_api_key" }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
-    }
-
-    const body = (await req.json()) as CommentaryRequest;
-    if (!body.leaderboard || !Array.isArray(body.leaderboard)) {
-      return new Response(JSON.stringify({ error: "Invalid leaderboard" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
     }
 
     // Coalesce concurrent identical requests via TTL cache (60s)
