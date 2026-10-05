@@ -77,10 +77,17 @@ test.describe('Idempotência sequencial: 2 conversões seguidas do mesmo quote',
       .eq('order_number', p1!.order_number);
     expect(dupOrderNumber).toBe(1);
 
+    const { data: qRow } = await client
+      .from('quotes')
+      .select('sale_id')
+      .eq('id', quoteId)
+      .single();
+    expect(qRow?.sale_id).toBeTruthy();
+
     const { count: salesCount } = await client
       .from('sales')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('id', qRow!.sale_id!);
     expect(salesCount).toBe(1);
 
     await checkpoint('depois-conversao');

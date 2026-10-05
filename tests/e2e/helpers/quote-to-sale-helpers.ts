@@ -59,7 +59,10 @@ export async function seedQuote(
     title: label,
     total_value: total,
     subtotal: total,
-    status: opts.status,
+    // Insere como 'draft' para o trigger trg_convert_quote_to_order só
+    // disparar no UPDATE, quando os items já existem (guard anti-sync-race
+    // pula INSERT approved sem items).
+    status: 'draft',
     source: 'manual',
   };
   if (opts.ownerSpId) insertPayload.created_by = opts.ownerSpId;
@@ -81,6 +84,14 @@ export async function seedQuote(
       total_price: itemTotal,
     });
     if (iErr) throw new Error(`seedQuote: falha ao inserir item: ${iErr.message}`);
+  }
+
+  if (opts.status !== 'draft') {
+    const { error: uErr } = await client
+      .from('quotes')
+      .update({ status: opts.status })
+      .eq('id', q.id);
+    if (uErr) throw new Error(`seedQuote: falha ao aprovar quote: ${uErr.message}`);
   }
 
   // Trigger legado pode ter criado uma order PED-*

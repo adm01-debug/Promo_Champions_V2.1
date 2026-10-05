@@ -115,7 +115,7 @@ test.describe('Fluxo approved: reuso exato de order existente', () => {
     const { count: salesCount2 } = await client
       .from('sales')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('id', qMid!.sale_id!);
     expect(salesCount2).toBe(1);
 
     // 8. Sequence permanece intacta após 2ª chamada

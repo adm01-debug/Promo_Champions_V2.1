@@ -145,7 +145,7 @@ test.describe('Race: approved-trigger + botão UI no mesmo quote', () => {
     const { count: salesCount } = await client
       .from('sales')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('id', qFinal!.sale_id!);
     expect(salesCount).toBe(1);
 
     const { count: dupOrderNumber } = await client
