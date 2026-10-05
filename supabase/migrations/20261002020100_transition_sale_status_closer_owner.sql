@@ -6,8 +6,10 @@
 -- 'not_authorized' ao aceitar o lead e avançar a venda (qualified → proposal...).
 --
 -- Guard agora: dono da venda (salesperson_id) OU closer atribuído (closer_id)
--- OU admin/manager. Sem mudança em transition_commission_status (comissão é
--- sempre admin/manager).
+-- OU admin/manager — e exige que o chamador tenha salespeople.id próprio
+-- (get_current_salesperson_id() NULL nunca autoriza; fecha o buraco
+-- NULL-IS-DISTINCT-FROM-NULL apontado no review). Sem mudança em
+-- transition_commission_status (comissão é sempre admin/manager).
 --
 -- Sobrecarga removida: manter as assinaturas (uuid,text,uuid) e
 -- (uuid,text,uuid,integer) com defaults tornava AMBÍGUA toda chamada de 2
@@ -33,6 +35,7 @@ DECLARE
   v_version integer;
   v_owner   uuid;
   v_closer  uuid;
+  v_caller  uuid;
 BEGIN
   SELECT status, version, salesperson_id, closer_id INTO v_current, v_version, v_owner, v_closer
     FROM public.sales
@@ -46,10 +49,15 @@ BEGIN
   -- SECURITY DEFINER ignora RLS: replica a regra das policies de UPDATE em
   -- sales (dono da venda, closer atribuído ou admin/manager). Chamadas via
   -- service_role ou pg_cron (auth.uid() IS NULL) seguem autorizadas.
+  -- O chamador precisa ter salespeople.id próprio: sem ele, IS DISTINCT FROM
+  -- com NULLs dos dois lados passaria sem checar nada (NULL não é distinto de
+  -- NULL), autorizando qualquer usuário logado sem vínculo com a venda.
+  v_caller := public.get_current_salesperson_id();
   IF auth.uid() IS NOT NULL
      AND NOT public.is_admin_or_manager(auth.uid())
-     AND v_owner  IS DISTINCT FROM public.get_current_salesperson_id()
-     AND v_closer IS DISTINCT FROM public.get_current_salesperson_id() THEN
+     AND (v_caller IS NULL
+          OR (v_owner IS DISTINCT FROM v_caller
+              AND v_closer IS DISTINCT FROM v_caller)) THEN
     RAISE EXCEPTION 'not_authorized' USING ERRCODE = 'insufficient_privilege';
   END IF;
 
