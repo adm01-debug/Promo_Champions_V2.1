@@ -106,7 +106,7 @@
     "npm:react-markdown@^10.1.0": "10.1.0_@types+react@18.3.31_react@18.3.1",
     "npm:react-resizable-panels@2": "2.1.9_react@18.3.1_react-dom@18.3.1",
     "npm:react-router-dom@^7.18.4": "7.18.4_react@18.3.1_react-dom@18.3.1",
-    "npm:react-window@^2.3.0": "2.3.0_react@18.3.1_react-dom@18.3.1",
+    "npm:react-window@^2.3.3": "2.3.3_react@18.3.1_react-dom@18.3.1",
     "npm:react@^18.3.1": "18.3.1",
     "npm:recharts@^2.12.0": "2.15.4_react@18.3.1_react-dom@18.3.1",
     "npm:resend@2": "2.1.0",
@@ -7254,8 +7254,8 @@
         "react-dom@18.3.1_react@18.3.1"
       ]
     },
-    "react-window@2.3.0_react@18.3.1_react-dom@18.3.1": {
-      "integrity": "sha512-FW6TIpaOH646k51X7yE+LSCWGkt5Pfsnc1fVyq/sCI9h0pTqmMiBXM04pzFKg3Bt7NGkeV6kqbU8d/QjmFS7Ug==",
+    "react-window@2.3.3_react@18.3.1_react-dom@18.3.1": {
+      "integrity": "sha512-uu/dTwysXp+YL+i5GW/cC/3JrqyE7oE6DYXYVlTeMaDSDgCI+UGo+XCKwXfS8uoFPih8TJYTnikqjAnbDvn75Q==",
       "dependencies": [
         "react@18.3.1",
         "react-dom@18.3.1_react@18.3.1"
@@ -9084,7 +9084,7 @@
         "npm:react-markdown@^10.1.0",
         "npm:react-resizable-panels@2",
         "npm:react-router-dom@^7.18.4",
-        "npm:react-window@^2.3.0",
+        "npm:react-window@^2.3.3",
         "npm:react@^18.3.1",
         "npm:recharts@^2.12.0",
         "npm:rollup-plugin-visualizer@^7.0.1",
