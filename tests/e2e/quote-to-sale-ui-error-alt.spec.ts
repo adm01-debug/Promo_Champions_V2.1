@@ -78,7 +78,7 @@ test.describe('UI alternativa: TOTAL_MISMATCH via menu de ações', () => {
       [STORAGE_KEY, SESSION_JSON] as const,
     );
 
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
     const row = page.getByText('E2E UI Alt Total Mismatch').first();
     await row.waitFor({ state: 'visible', timeout: 15_000 });
