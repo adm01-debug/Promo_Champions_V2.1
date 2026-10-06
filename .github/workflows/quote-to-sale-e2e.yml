@@ -47,9 +47,12 @@ jobs:
     name: Production Invariants
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    needs: unit-tests
+    # Roda DEPOIS da suíte E2E: o check bate em produção e sales mid-flight
+    # de specs em execução apareceriam como órfãs falsas.
+    needs: [unit-tests, e2e-quote-to-sale]
     # Somente PRs internas — evita expor credenciais em fork PRs.
-    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'workflow_dispatch'
+    # always() garante execução mesmo se a suíte E2E falhar.
+    if: always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository))
     environment: pr-preview
     env:
       HUSKY: 0

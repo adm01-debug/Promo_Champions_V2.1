@@ -63,8 +63,15 @@ test.describe('Race trigger×RPC no mesmo quote', () => {
         _quote_id: quoteId,
       } as never
     );
-    // Reforça o status para tentar (re)disparar o trigger em paralelo
-    const upd = client.from('quotes').update({ status: 'approved' }).eq('id', quoteId);
+    // Reforça o status para tentar (re)disparar o trigger em paralelo.
+    // O guard `.neq('status','converted')` impede que o UPDATE sobrescreva
+    // 'converted' quando a RPC vence a corrida — sem ele o resultado final
+    // dependeria de qual transação comita por último (flaky).
+    const upd = client
+      .from('quotes')
+      .update({ status: 'approved' })
+      .eq('id', quoteId)
+      .neq('status', 'converted');
 
     const [rRpc, rUpd] = await Promise.all([rpc, upd]);
     expect(rRpc.error).toBeNull();
