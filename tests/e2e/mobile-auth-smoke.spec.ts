@@ -59,7 +59,11 @@ async function installAuthMocks(page: Page) {
 
 for (const { name, device } of mobileDevices) {
   test.describe(`Mobile smoke • ${name}`, () => {
-    test.use({ ...device });
+    // defaultBrowserType não pode ir em test.use dentro de describe (força
+    // novo worker); viewport/UA/touch do device ainda são emulados no
+    // browser do projeto.
+    const { defaultBrowserType: _engine, ...deviceContext } = device;
+    test.use(deviceContext);
 
     test('redireciona deep link → /auth → faz login → volta ao deep link → sign-out', async ({
       page,

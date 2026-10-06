@@ -77,11 +77,26 @@ test.describe('Idempotência sequencial: 2 conversões seguidas do mesmo quote',
       .eq('order_number', p1!.order_number);
     expect(dupOrderNumber).toBe(1);
 
+    const { data: qRow } = await client
+      .from('quotes')
+      .select('sale_id')
+      .eq('id', quoteId)
+      .single();
+    expect(qRow?.sale_id).toBeTruthy();
+
     const { count: salesCount } = await client
       .from('sales')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('id', qRow!.sale_id!);
     expect(salesCount).toBe(1);
+
+    // Unicidade por vínculo independente: uma venda extra criada na conversão
+    // não mudaria quotes.sale_id — conta por client_name do seed.
+    const { count: clientSales } = await client
+      .from('sales')
+      .select('*', { count: 'exact', head: true })
+      .eq('client_name', 'E2E Idem Sequencial');
+    expect(clientSales).toBe(1);
 
     await checkpoint('depois-conversao');
   });
