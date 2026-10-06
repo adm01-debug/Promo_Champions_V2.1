@@ -126,7 +126,9 @@ export async function seedQuote(
  *      reenvios podem gravar mais de uma sale para a mesma quote, e só a
  *      última fica linkada. As demais só são localizáveis pelo
  *      `client_name` semeado — por isso `opts.clientNames` (prefixos) é
- *      obrigatório para specs que convertem de verdade.
+ *      obrigatório para specs que convertem de verdade. O match é
+ *      case-sensitive e limitado a `created_at >= opts.since` (padrão:
+ *      3h) para nunca tocar em vendas de outra spec ou de dados reais.
  *   3. Nullificar `quotes.sale_id` para liberar a FK
  *   4. Limpar filhos de `sales` que NÃO possuem ON DELETE CASCADE/SET NULL:
  *        - `sale_notifications_audit` (populada por tr_notify_sale_victory)
@@ -143,7 +145,7 @@ export async function seedQuote(
 export async function cleanupQuote(
   client: SupabaseClient,
   quoteId: string | null | undefined,
-  opts: { strict?: boolean; clientNames?: string[] } = {}
+  opts: { strict?: boolean; clientNames?: string[]; since?: string } = {}
 ): Promise<void> {
   if (!quoteId) return;
 
@@ -156,12 +158,14 @@ export async function cleanupQuote(
   const saleIds = new Set<string>();
   if (q?.sale_id) saleIds.add(q.sale_id);
 
+  const since = opts.since ?? new Date(Date.now() - 3 * 3600_000).toISOString();
   for (const prefix of opts.clientNames ?? []) {
     const { data: extra, error } = await client
       .from('sales')
       .select('id')
-      .ilike('client_name', `${prefix}%`)
-      .eq('source', 'quote_conversion');
+      .like('client_name', `${prefix}%`)
+      .eq('source', 'quote_conversion')
+      .gte('created_at', since);
     if (error)
       throw new Error(
         `cleanupQuote: falha ao listar sales '${prefix}%': ${error.message}`
