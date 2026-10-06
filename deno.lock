@@ -91,7 +91,7 @@
     "npm:leaflet.markercluster@^1.5.3": "1.5.3_leaflet@1.9.4",
     "npm:leaflet@^1.9.4": "1.9.4",
     "npm:lint-staged@^15.5.2": "15.5.2",
-    "npm:lucide-react@1.48.0": "1.48.0_react@18.3.1",
+    "npm:lucide-react@1.49.0": "1.49.0_@types+react@18.3.31_react@18.3.1",
     "npm:next-themes@~0.4.6": "0.4.6_react@18.3.1_react-dom@18.3.1",
     "npm:papaparse@^5.5.3": "5.7.0",
     "npm:postcss@^8.5.23": "8.5.28",
@@ -6265,10 +6265,14 @@
         "yallist"
       ]
     },
-    "lucide-react@1.48.0_react@18.3.1": {
-      "integrity": "sha512-R0CIKY/fXiC6y9xRBADgsK+VW2p/pcTJOMhLZf1T+uG+vJUvyUR02nGOgmIIC7MPkiNK4Ox8QDnbqF8rJYWPZQ==",
+    "lucide-react@1.49.0_@types+react@18.3.31_react@18.3.1": {
+      "integrity": "sha512-ApfaNM4/7jBrVopqLJ84Jz8TMQ1Q1JeZ1PmKh25aeS3E1FTVcMkSh1bEQB7dfzdIrwXRP8p3z4AJjTIHHb5IIA==",
       "dependencies": [
+        "@types/react",
         "react@18.3.1"
+      ],
+      "optionalPeers": [
+        "@types/react"
       ]
     },
     "lz-string@1.5.0": {
@@ -9069,7 +9073,7 @@
         "npm:leaflet.markercluster@^1.5.3",
         "npm:leaflet@^1.9.4",
         "npm:lint-staged@^15.5.2",
-        "npm:lucide-react@1.48.0",
+        "npm:lucide-react@1.49.0",
         "npm:next-themes@~0.4.6",
         "npm:papaparse@^5.5.3",
         "npm:postcss@^8.5.23",
