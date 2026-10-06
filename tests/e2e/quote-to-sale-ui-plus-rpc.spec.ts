@@ -1,6 +1,14 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, STORAGE_KEY, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  STORAGE_KEY,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Concorrência UI + RPC direta no mesmo quote.
@@ -21,7 +29,10 @@ test.describe('Concorrência: UI + RPC direta no mesmo quote', () => {
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -55,16 +66,7 @@ test.describe('Concorrência: UI + RPC direta no mesmo quote', () => {
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
-    const { data: orders } = await client.from('orders').select('id').eq('quote_id', quoteId);
-    for (const o of orders ?? []) await client.from('orders').delete().eq('id', o.id);
-    const { data: q } = await client
-      .from('quotes')
-      .select('sale_id')
-      .eq('id', quoteId)
-      .maybeSingle();
-    if (q?.sale_id) await client.from('sales').delete().eq('id', q.sale_id);
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E UI+RPC'] });
   });
 
   test('UI + RPC simultâneos convergem para o mesmo order/sale', async ({ page }) => {
@@ -72,16 +74,14 @@ test.describe('Concorrência: UI + RPC direta no mesmo quote', () => {
     await page.goto('/');
     await page.evaluate(
       ([key, json]) => window.localStorage.setItem(key as string, json as string),
-      [STORAGE_KEY, SESSION_JSON],
+      [STORAGE_KEY, SESSION_JSON]
     );
     await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
     // Localiza botão de conversão. Fallback: se UI não expõe botão direto,
     // marcamos como coverage-only e disparamos 2 RPCs (que também exercita
     // a idempotência sob concorrência entre canais distintos).
-    const btn = page
-      .getByRole('button', { name: /converter (em )?venda/i })
-      .first();
+    const btn = page.getByRole('button', { name: /converter (em )?venda/i }).first();
 
     const uiCall = (async () => {
       try {
@@ -108,15 +108,18 @@ test.describe('Concorrência: UI + RPC direta no mesmo quote', () => {
             anon: SUPABASE_ANON,
             token: (JSON.parse(SESSION_JSON) as { access_token: string }).access_token,
             qId: quoteId,
-          },
+          }
         );
         return { via: 'fetch', ok: res.status === 200, res };
       }
     })();
 
-    const rpcCall = client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: quoteId,
-    } as never);
+    const rpcCall = client.rpc(
+      'fn_convert_quote_to_sale' as never,
+      {
+        _quote_id: quoteId,
+      } as never
+    );
 
     const [uiResult, rpcResult] = await Promise.all([uiCall, rpcCall]);
     expect(rpcResult.error).toBeNull();

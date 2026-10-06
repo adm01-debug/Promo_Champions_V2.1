@@ -1,6 +1,13 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Chamada HTTP direta na REST API (PostgREST) sem permissão.
@@ -20,7 +27,10 @@ test.describe('API: 403 + [FORBIDDEN] via chamada REST direta', () => {
   const FOREIGN_USER = '00000000-0000-0000-0000-0000000000fe';
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     accessToken = session.access_token;
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -59,11 +69,12 @@ test.describe('API: 403 + [FORBIDDEN] via chamada REST direta', () => {
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E API Forbidden'] });
   });
 
-  test('POST /rest/v1/rpc/fn_convert_quote_to_sale devolve [FORBIDDEN]', async ({ request }) => {
+  test('POST /rest/v1/rpc/fn_convert_quote_to_sale devolve [FORBIDDEN]', async ({
+    request,
+  }) => {
     const resp = await request.post(
       `${SUPABASE_URL}/rest/v1/rpc/fn_convert_quote_to_sale`,
       {
@@ -74,7 +85,7 @@ test.describe('API: 403 + [FORBIDDEN] via chamada REST direta', () => {
           Prefer: 'return=representation',
         },
         data: { _quote_id: quoteId },
-      },
+      }
     );
 
     const status = resp.status();

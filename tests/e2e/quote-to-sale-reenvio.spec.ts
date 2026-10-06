@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORDER_NUMBER_REGEX,
   cleanupQuote,
@@ -19,7 +25,10 @@ test.describe('Idempotência: reenviar conversão 3x', () => {
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -35,7 +44,7 @@ test.describe('Idempotência: reenviar conversão 3x', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupQuote(client, quoteId, { strict: true });
+    await cleanupQuote(client, quoteId, { strict: true, clientNames: ['E2E Reenvio'] });
   });
 
   test('3 chamadas sequenciais: 1 real + 2 idempotentes, todas com order_number', async () => {

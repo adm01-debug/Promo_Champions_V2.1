@@ -13,7 +13,15 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  * Skip gracioso se ausente para não quebrar CI sem auth.
  */
 
-import { HAS_AUTH, SESSION_JSON, STORAGE_KEY, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  STORAGE_KEY,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
   test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
@@ -61,32 +69,19 @@ test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
-    // Cleanup em cascata; orders/order_items são apagados via FK CASCADE ao remover a order.
-    const { data: order } = await client
-      .from('orders')
-      .select('id')
-      .eq('quote_id', quoteId)
-      .maybeSingle();
-    if (order?.id) await client.from('orders').delete().eq('id', order.id);
-
-    const { data: quote } = await client
-      .from('quotes')
-      .select('sale_id')
-      .eq('id', quoteId)
-      .maybeSingle();
-    if (quote?.sale_id) await client.from('sales').delete().eq('id', quote.sale_id);
-
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E Cliente Convert'] });
   });
 
-  test('converte via UI e é idempotente na segunda chamada', async ({ page, context }) => {
+  test('converte via UI e é idempotente na segunda chamada', async ({
+    page,
+    context,
+  }) => {
     // Restaura sessão no browser
     await context.addInitScript(
       ([key, json]) => {
         window.localStorage.setItem(key, json);
       },
-      [STORAGE_KEY, SESSION_JSON] as const,
+      [STORAGE_KEY, SESSION_JSON] as const
     );
 
     await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
@@ -102,8 +97,9 @@ test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
     await convertBtn.click();
 
     // Aguarda toast de sucesso
-    await expect(page.getByText(/Convertido em venda|Pedido ORC-/i).first())
-      .toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/Convertido em venda|Pedido ORC-/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Valida no banco: exatamente 1 sale e 1 order
     const { data: quoteAfter } = await client
@@ -131,7 +127,7 @@ test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
     const first = orders![0].id;
     const { data: retry, error: retryErr } = await client.rpc(
       'fn_convert_quote_to_sale' as never,
-      { _quote_id: quoteId } as never,
+      { _quote_id: quoteId } as never
     );
     expect(retryErr).toBeNull();
     expect((retry as { idempotent: boolean; order_id: string }).idempotent).toBe(true);

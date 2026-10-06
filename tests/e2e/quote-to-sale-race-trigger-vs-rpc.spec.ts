@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORDER_NUMBER_REGEX,
   cleanupQuote,
@@ -22,7 +28,10 @@ test.describe('Race trigger×RPC no mesmo quote', () => {
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -41,13 +50,19 @@ test.describe('Race trigger×RPC no mesmo quote', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupQuote(client, quoteId, { strict: true });
+    await cleanupQuote(client, quoteId, {
+      strict: true,
+      clientNames: ['E2E Race Trigger vs RPC'],
+    });
   });
 
   test('UPDATE→approved paralelo com fn_convert produz 1 order + 1 sale', async () => {
-    const rpc = client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: quoteId,
-    } as never);
+    const rpc = client.rpc(
+      'fn_convert_quote_to_sale' as never,
+      {
+        _quote_id: quoteId,
+      } as never
+    );
     // Reforça o status para tentar (re)disparar o trigger em paralelo
     const upd = client.from('quotes').update({ status: 'approved' }).eq('id', quoteId);
 

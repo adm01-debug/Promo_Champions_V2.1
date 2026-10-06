@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORC_PATTERN,
   cleanupQuote,
@@ -21,7 +27,10 @@ test.describe('Concorrência x5 (path won → ORC-*)', () => {
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -38,7 +47,10 @@ test.describe('Concorrência x5 (path won → ORC-*)', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupQuote(client, quoteId, { strict: true });
+    await cleanupQuote(client, quoteId, {
+      strict: true,
+      clientNames: ['E2E Concurrent Won'],
+    });
   });
 
   test('5 RPCs paralelas em won → 1 ORC-*, sequence +1, 4 idempotentes', async () => {
@@ -49,14 +61,14 @@ test.describe('Concorrência x5 (path won → ORC-*)', () => {
     const results = await Promise.all(Array.from({ length: N }, call));
     for (const r of results) expect(r.error).toBeNull();
 
-    const payloads = results.map((r) => r.data as ConversionPayload);
+    const payloads = results.map(r => r.data as ConversionPayload);
     const first = payloads[0];
     for (const p of payloads) {
       expect(p.order_id).toBe(first.order_id);
       expect(p.order_number).toBe(first.order_number);
     }
     expect(first.order_number).toMatch(ORC_PATTERN);
-    expect(payloads.filter((p) => p.idempotent).length).toBeGreaterThanOrEqual(N - 1);
+    expect(payloads.filter(p => p.idempotent).length).toBeGreaterThanOrEqual(N - 1);
 
     const seqAfter = await getSeqLast(client);
     expect(seqAfter).toBe(seqBefore + 1);

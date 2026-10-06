@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import { cleanupQuote, convert, seedQuote } from './helpers/quote-to-sale-helpers';
 
 /**
@@ -25,7 +31,10 @@ test.describe('audit_logs: convert_quote_to_sale grava histórico corretamente',
   const createdQuoteIds: string[] = [];
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -34,7 +43,8 @@ test.describe('audit_logs: convert_quote_to_sale grava histórico corretamente',
   });
 
   test.afterAll(async () => {
-    for (const id of createdQuoteIds) await cleanupQuote(client, id);
+    for (const id of createdQuoteIds)
+      await cleanupQuote(client, id, { clientNames: ['E2E Audit'] });
   });
 
   async function fetchAuditRows(quoteId: string) {

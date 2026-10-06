@@ -1,7 +1,18 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
-import { cleanupQuote, convert, getSeqLast, seedQuote } from './helpers/quote-to-sale-helpers';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
+import {
+  cleanupQuote,
+  convert,
+  getSeqLast,
+  seedQuote,
+} from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Falhas de conversão (TOTAL_MISMATCH e FORBIDDEN) NÃO devem avançar
@@ -20,7 +31,10 @@ test.describe('Sequence: falha de conversão não avança sequence', () => {
   const createdQuoteIds: string[] = [];
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -29,7 +43,8 @@ test.describe('Sequence: falha de conversão não avança sequence', () => {
   });
 
   test.afterAll(async () => {
-    for (const id of createdQuoteIds) await cleanupQuote(client, id);
+    for (const id of createdQuoteIds)
+      await cleanupQuote(client, id, { clientNames: ['E2E Seq NoAdv'] });
   });
 
   test('TOTAL_MISMATCH: sequence estável e zero orders/sales', async () => {
@@ -83,7 +98,10 @@ test.describe('Sequence: falha de conversão não avança sequence', () => {
         label: 'E2E Seq NoAdv FORBIDDEN',
       });
     } catch {
-      test.skip(true, 'RLS bloqueou seed com created_by alheio — cenário não reproduzível.');
+      test.skip(
+        true,
+        'RLS bloqueou seed com created_by alheio — cenário não reproduzível.'
+      );
       return;
     }
     createdQuoteIds.push(seed.quoteId);

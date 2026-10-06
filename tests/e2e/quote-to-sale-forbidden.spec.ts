@@ -1,6 +1,13 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Bloqueio por permissão — `[FORBIDDEN]`.
@@ -22,7 +29,10 @@ test.describe('Validação: conversão sem permissão retorna [FORBIDDEN]', () =
   const FOREIGN_USER = '00000000-0000-0000-0000-0000000000ff';
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -60,14 +70,16 @@ test.describe('Validação: conversão sem permissão retorna [FORBIDDEN]', () =
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E Forbidden'] });
   });
 
   test('RPC bloqueia com [FORBIDDEN] e não cria sales/orders', async () => {
-    const { data, error } = await client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: quoteId,
-    } as never);
+    const { data, error } = await client.rpc(
+      'fn_convert_quote_to_sale' as never,
+      {
+        _quote_id: quoteId,
+      } as never
+    );
 
     if (!error) {
       // Usuário provavelmente admin com bypass — cobertura garantida em unit tests.
