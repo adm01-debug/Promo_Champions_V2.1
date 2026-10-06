@@ -73,12 +73,17 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
       [STORAGE_KEY, SESSION_JSON] as const,
     );
 
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
     await waitForNetworkIdle();
 
     const quoteCard = page.getByText('E2E UI Total Mismatch').first();
     await quoteCard.waitFor({ state: 'visible', timeout: 15_000 });
-    await quoteCard.click();
+
+    // O card não é clicável: o dialog abre pelo botão "Detalhes".
+    const card = quoteCard.locator(
+      'xpath=ancestor::div[.//button[contains(normalize-space(.), "Detalhes")]][1]'
+    );
+    await card.getByRole('button', { name: /Detalhes/i }).click();
 
     const convertBtn = page.getByRole('button', { name: /Converter em venda/i });
     await expect(convertBtn).toBeVisible();

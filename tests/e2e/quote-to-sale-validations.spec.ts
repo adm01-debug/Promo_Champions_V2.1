@@ -117,7 +117,7 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
       STORAGE_KEY,
       SESSION_JSON,
     ] as const);
-    await page.goto('http://localhost:8080/orcamentos', {
+    await page.goto('/orcamentos', {
       waitUntil: 'domcontentloaded',
     });
     const card = page.getByText(/E2E Validation/).first();

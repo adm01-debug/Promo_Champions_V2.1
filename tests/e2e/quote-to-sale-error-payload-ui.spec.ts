@@ -36,7 +36,7 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
   });
 
   async function hydrateBrowser(page: import('@playwright/test').Page): Promise<void> {
-    await page.goto('http://localhost:8080');
+    await page.goto('/');
     await page.evaluate(
       ([key, json]) => window.localStorage.setItem(key as string, json as string),
       [STORAGE_KEY, SESSION_JSON],
@@ -76,7 +76,7 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
 
     // 2. UI: dispara conversão e valida toast
     await hydrateBrowser(page);
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
     const convertBtn = page.getByRole('button', { name: /converter (em )?venda/i }).first();
     if (!(await convertBtn.isVisible().catch(() => false))) {
@@ -131,7 +131,7 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
     expect(rpcErr.message).toMatch(/\[FORBIDDEN\]/);
 
     await hydrateBrowser(page);
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
     const convertBtn = page.getByRole('button', { name: /converter (em )?venda/i }).first();
     if (!(await convertBtn.isVisible().catch(() => false))) {
       test.info().annotations.push({
