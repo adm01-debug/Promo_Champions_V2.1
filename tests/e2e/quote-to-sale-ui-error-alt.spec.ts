@@ -11,13 +11,15 @@ import {
 import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
 
 /**
- * E2E: Fluxo alternativo do frontend — aprovar o orçamento pelo card
- * (botão "Aprovar") e só então converter via dialog — também deve exibir
- * a mensagem PT-BR mapeada para o código [TOTAL_MISMATCH]. Cobre a
- * regressão em que apenas o onError do dialog tratava o código.
+ * E2E: aprovar o orçamento pelo botão "Aprovar" do card e só então
+ * converter via dialog — deve exibir a mesma mensagem PT-BR mapeada
+ * para o código [TOTAL_MISMATCH].
  *
- * Nota: o card não possui mais menu de ações (⋮); o fluxo alternativo
- * real é a transição de status pelo próprio card.
+ * O que esta spec cobre de diferente da spec primária é o caminho até a
+ * conversão: a transição de status no card dispara o trigger
+ * convert_quote_to_order (documentado na asserção orderCount=1 e na
+ * limpeza do afterAll). O tratamento de erro em si é o mesmo do dialog —
+ * não existe um handler alternativo a ser exercitado aqui.
  */
 test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
   test.skip(!HAS_AUTH, `Sessão E2E ausente: ${skipReason()}`);
