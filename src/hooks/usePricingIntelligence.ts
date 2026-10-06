@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchWithUserToken } from '@/lib/edgeFetch';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 export interface PricingKPIs {
   total_revenue: number;
@@ -76,7 +77,7 @@ export function usePricingIntelligence(days: 7 | 30 | 90 = 30) {
   return useQuery<PricingIntelligenceResponse>({
     queryKey: ['pricing-intelligence', days],
     queryFn: async () => {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/pricing-intelligence?days=${days}`;
+      const url = `${SUPABASE_URL}/functions/v1/pricing-intelligence?days=${days}`;
       const resp = await fetchWithUserToken(url, { method: 'GET' });
       if (!resp.ok) throw new Error(`Pricing intelligence failed: ${resp.status}`);
       return (await resp.json()) as PricingIntelligenceResponse;

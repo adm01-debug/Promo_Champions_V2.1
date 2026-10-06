@@ -72,12 +72,12 @@ test.describe('Race: approved-trigger + botão UI no mesmo quote', () => {
 
   test('approved + UI quase simultâneos → 1 order (reuso) + 1 sale', async ({ page }) => {
     // Hidrata sessão no browser
-    await page.goto('http://localhost:8080');
+    await page.goto('/');
     await page.evaluate(
       ([key, json]) => window.localStorage.setItem(key as string, json as string),
       [STORAGE_KEY, SESSION_JSON],
     );
-    await page.goto('http://localhost:8080/orcamentos', { waitUntil: 'domcontentloaded' });
+    await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
     // Race: UPDATE para approved em paralelo com clique da UI + fallback RPC.
     const approveP = client.from('quotes').update({ status: 'approved' }).eq('id', quoteId);
@@ -145,7 +145,7 @@ test.describe('Race: approved-trigger + botão UI no mesmo quote', () => {
     const { count: salesCount } = await client
       .from('sales')
       .select('*', { count: 'exact', head: true })
-      .eq('quote_id', quoteId);
+      .eq('id', qFinal!.sale_id!);
     expect(salesCount).toBe(1);
 
     const { count: dupOrderNumber } = await client
