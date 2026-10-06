@@ -69,16 +69,14 @@ async function main(): Promise<void> {
   // (fn_convert_quote_to_sale marca source='quote_conversion' e
   // sync_quote_from_webhook marca 'gift_store'; vendas diretas
   // de outras fontes — referral, organic, inbound… — não têm quote por design)
-  // Grace de 15min: sales recém-criadas podem estar mid-flight em uma suíte
-  // E2E de outra PR rodando contra a mesma base — só flag quem sobreviveu
-  // à janela de cleanup.
+  // A suíte E2E é serializada repo-wide (concurrency group único no workflow),
+  // então qualquer órfão presente aqui é vazamento real — inclusive recém-
+  // criado pela execução que acabou de terminar.
   {
-    const graceIso = new Date(Date.now() - 15 * 60_000).toISOString();
     const { data: sales, error } = await client
       .from('sales')
       .select('id')
       .in('source', ['quote_conversion', 'gift_store'])
-      .lt('created_at', graceIso)
       .limit(10000);
     if (error) throw error;
     const saleIds = (sales ?? []).map(s => s.id as string);

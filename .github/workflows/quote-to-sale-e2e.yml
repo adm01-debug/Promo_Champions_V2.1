@@ -20,9 +20,13 @@ permissions:
   contents: read
   actions: write
 
+# Grupo único repo-wide: a suíte e os invariantes batem na MESMA base de
+# produção — duas PRs em paralelo fariam o invariants de uma flagar sales
+# mid-flight da outra. Sem cancel-in-progress: cancelar uma suíte no meio
+# deixaria dados de teste órfãos.
 concurrency:
-  group: quote-to-sale-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: quote-to-sale
+  cancel-in-progress: false
 
 jobs:
   unit-tests:
