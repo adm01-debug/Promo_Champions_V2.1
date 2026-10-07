@@ -169,7 +169,10 @@ jobs:
           VITE_SUPABASE_PROJECT_ID: ${{ steps.precheck.outputs.project_ref || secrets.VITE_SUPABASE_PROJECT_ID }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-        run: npx playwright test tests/e2e/quote-to-sale-*.spec.ts --workers=1
+        # Seleção por projeto (testMatch /quote-to-sale.*\.spec\.ts/) — o glob
+        # anterior 'quote-to-sale-*.spec.ts' deixava fora 'quote-to-sale.spec.ts'
+        # (sem sufixo), que hoje só rodava por acidente no job genérico de E2E.
+        run: npx playwright test --project=quote-to-sale --workers=1
       - name: Upload report
         if: always() && steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
