@@ -19,6 +19,7 @@ import {
   SUPABASE_ANON,
   SUPABASE_URL,
 } from './helpers/auth';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 type RpcResult = {
   sale_id: string;
@@ -53,9 +54,9 @@ test.describe('Conversão de orçamento — validações e concorrência', () =>
   test.afterAll(async () => {
     if (!client) return;
     for (const qid of createdQuotes) {
-      await client.from('orders').delete().eq('quote_id', qid);
-      await client.from('quote_items').delete().eq('quote_id', qid);
-      await client.from('quotes').delete().eq('id', qid);
+      await cleanupQuote(client, qid, {
+        clientNames: ['E2E Validation', 'E2E FORBIDDEN'],
+      });
     }
     for (const sid of createdSales) {
       await client.from('sales').delete().eq('id', sid);

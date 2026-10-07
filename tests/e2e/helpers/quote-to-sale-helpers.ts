@@ -48,7 +48,7 @@ export async function seedQuote(
     ownerSpId?: string;
     withItems?: boolean; // default true
     label?: string;
-  },
+  }
 ): Promise<SeedResult> {
   const total = opts.total;
   const itemTotal = opts.itemTotal ?? total;
@@ -121,21 +121,31 @@ export async function seedQuote(
 /**
  * Cleanup determinístico. Ordem crítica para evitar bloqueios de FK:
  *   1. Ler `quotes.sale_id`
- *   2. Nullificar `quotes.sale_id` para liberar a FK
- *   3. Limpar filhos de `sales` que NÃO possuem ON DELETE CASCADE/SET NULL:
+ *   2. Localizar TODAS as sales criadas pelo teste — a linkada em
+ *      `quotes.sale_id` E eventuais gêmeas: conversões concorrentes ou
+ *      reenvios podem gravar mais de uma sale para a mesma quote, e só a
+ *      última fica linkada. As demais só são localizáveis pelo
+ *      `client_name` semeado — por isso `opts.clientNames` (prefixos) é
+ *      obrigatório para specs que convertem de verdade. O match é
+ *      case-sensitive e limitado a `created_at >= opts.since` (padrão:
+ *      3h) para nunca tocar em vendas de outra spec ou de dados reais.
+ *   3. Nullificar `quotes.sale_id` para liberar a FK
+ *   4. Limpar filhos de `sales` que NÃO possuem ON DELETE CASCADE/SET NULL:
  *        - `sale_notifications_audit` (populada por tr_notify_sale_victory)
  *        - `follow_up_notifications`  (populada por tr_auto_followup_on_sale)
  *        - `follow_up_audit_logs`     (populada por triggers de follow-up)
  *      Sem isso, o DELETE em `sales` falha com foreign_key_violation.
- *   4. Deletar `sales` (demais filhos caem via CASCADE)
- *   5. Deletar `orders` (FK quote_id -> quotes é SET NULL, precisa delete explícito)
- *   6. Deletar `quotes` (CASCADE remove `quote_items`; delete explícito é defensivo)
+ *   5. Deletar `sales` (demais filhos caem via CASCADE)
+ *   6. Deletar `orders` (FK quote_id -> quotes é SET NULL, precisa delete explícito)
+ *   7. Deletar `quotes` (CASCADE remove `quote_items`; delete explícito é defensivo)
+ * Todos os DELETEs têm erro verificado — silenciar aqui deixava vendas de
+ * teste órfãs em produção (invariante orphan_sales do CI).
  * Se `strict=true`, verifica ao final que não sobraram linhas.
  */
 export async function cleanupQuote(
   client: SupabaseClient,
   quoteId: string | null | undefined,
-  opts: { strict?: boolean } = {},
+  opts: { strict?: boolean; clientNames?: string[]; since?: string } = {}
 ): Promise<void> {
   if (!quoteId) return;
 
@@ -145,31 +155,79 @@ export async function cleanupQuote(
     .eq('id', quoteId)
     .maybeSingle();
 
-  if (q?.sale_id) {
-    await client.from('quotes').update({ sale_id: null }).eq('id', quoteId);
-    // Filhos de sales sem CASCADE — precisam ser removidos antes do DELETE em sales.
-    await client.from('sale_notifications_audit').delete().eq('sale_id', q.sale_id);
-    await client.from('follow_up_notifications').delete().eq('sale_id', q.sale_id);
-    await client.from('follow_up_audit_logs').delete().eq('sale_id', q.sale_id);
-    await client.from('sales').delete().eq('id', q.sale_id);
+  const saleIds = new Set<string>();
+  if (q?.sale_id) saleIds.add(q.sale_id);
+
+  const since = opts.since ?? new Date(Date.now() - 3 * 3600_000).toISOString();
+  for (const prefix of opts.clientNames ?? []) {
+    const { data: extra, error } = await client
+      .from('sales')
+      .select('id')
+      .like('client_name', `${prefix}%`)
+      .eq('source', 'quote_conversion')
+      .gte('created_at', since);
+    if (error)
+      throw new Error(
+        `cleanupQuote: falha ao listar sales '${prefix}%': ${error.message}`
+      );
+    for (const s of extra ?? []) saleIds.add(s.id as string);
   }
 
-  await client.from('orders').delete().eq('quote_id', quoteId);
-  await client.from('quote_items').delete().eq('quote_id', quoteId);
-  await client.from('quotes').delete().eq('id', quoteId);
+  if (saleIds.size > 0) {
+    const ids = [...saleIds];
+    if (q?.sale_id) {
+      const { error } = await client
+        .from('quotes')
+        .update({ sale_id: null })
+        .eq('id', quoteId);
+      if (error)
+        throw new Error(`cleanupQuote: falha ao nullificar sale_id: ${error.message}`);
+    }
+    // Filhos de sales sem CASCADE — precisam ser removidos antes do DELETE em sales.
+    for (const t of [
+      'sale_notifications_audit',
+      'follow_up_notifications',
+      'follow_up_audit_logs',
+    ] as const) {
+      const { error } = await client.from(t).delete().in('sale_id', ids);
+      if (error) throw new Error(`cleanupQuote: falha ao limpar ${t}: ${error.message}`);
+    }
+    const { error } = await client.from('sales').delete().in('id', ids);
+    if (error) throw new Error(`cleanupQuote: falha ao deletar sales: ${error.message}`);
+  }
 
+  const { error: oErr } = await client.from('orders').delete().eq('quote_id', quoteId);
+  if (oErr) throw new Error(`cleanupQuote: falha ao deletar orders: ${oErr.message}`);
+  const { error: iErr } = await client
+    .from('quote_items')
+    .delete()
+    .eq('quote_id', quoteId);
+  if (iErr)
+    throw new Error(`cleanupQuote: falha ao deletar quote_items: ${iErr.message}`);
+  const { error: qErr } = await client.from('quotes').delete().eq('id', quoteId);
+  if (qErr) throw new Error(`cleanupQuote: falha ao deletar quote: ${qErr.message}`);
 
   if (opts.strict) {
     const { count: remQuotes } = await client
       .from('quotes')
       .select('*', { count: 'exact', head: true })
       .eq('id', quoteId);
-    if ((remQuotes ?? 0) > 0) throw new Error(`cleanupQuote: quote ${quoteId} não removido`);
+    if ((remQuotes ?? 0) > 0)
+      throw new Error(`cleanupQuote: quote ${quoteId} não removido`);
     const { count: remOrders } = await client
       .from('orders')
       .select('*', { count: 'exact', head: true })
       .eq('quote_id', quoteId);
-    if ((remOrders ?? 0) > 0) throw new Error(`cleanupQuote: orders órfãs para ${quoteId}`);
+    if ((remOrders ?? 0) > 0)
+      throw new Error(`cleanupQuote: orders órfãs para ${quoteId}`);
+    if (saleIds.size > 0) {
+      const { count: remSales } = await client
+        .from('sales')
+        .select('*', { count: 'exact', head: true })
+        .in('id', [...saleIds]);
+      if ((remSales ?? 0) > 0)
+        throw new Error(`cleanupQuote: sales órfãs para ${quoteId}`);
+    }
   }
 }
 
@@ -183,10 +241,13 @@ export async function getSeqLast(client: SupabaseClient): Promise<number> {
 
 export async function convert(
   client: SupabaseClient,
-  quoteId: string,
+  quoteId: string
 ): Promise<{ payload: ConversionPayload | null; error: unknown }> {
-  const { data, error } = await client.rpc('fn_convert_quote_to_sale' as never, {
-    _quote_id: quoteId,
-  } as never);
+  const { data, error } = await client.rpc(
+    'fn_convert_quote_to_sale' as never,
+    {
+      _quote_id: quoteId,
+    } as never
+  );
   return { payload: (data as ConversionPayload | null) ?? null, error };
 }

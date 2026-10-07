@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORDER_NUMBER_REGEX,
   cleanupQuote,
@@ -29,7 +35,10 @@ test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -45,7 +54,7 @@ test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupQuote(client, quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E Concorrência x5'] });
   });
 
   test('5 RPCs em paralelo produzem 1 order + 1 sale sem colisão', async () => {
@@ -58,7 +67,7 @@ test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
 
     for (const r of results) expect(r.error).toBeNull();
 
-    const payloads = results.map((r) => r.data as ConversionPayload);
+    const payloads = results.map(r => r.data as ConversionPayload);
 
     // Convergência total
     const firstOrderId = payloads[0].order_id;
@@ -70,12 +79,12 @@ test.describe('Concorrência: 5 chamadas simultâneas da RPC', () => {
     expect(firstOrderNumber).toMatch(ORDER_NUMBER_REGEX);
 
     // Somente 1 conversão real; N-1 idempotentes
-    const idempotentCount = payloads.filter((p) => p.idempotent).length;
+    const idempotentCount = payloads.filter(p => p.idempotent).length;
     expect(idempotentCount).toBeGreaterThanOrEqual(N - 1);
 
     // Sequence: só avança quando o path novo (ORC-*) foi exercitado
     const seqAfter = await getSeqLast(client);
-    const wasReused = payloads.some((p) => p.reused_order === true);
+    const wasReused = payloads.some(p => p.reused_order === true);
     if (wasReused || firstOrderNumber.startsWith('PED-')) {
       expect(seqAfter).toBe(seqBefore);
     } else {

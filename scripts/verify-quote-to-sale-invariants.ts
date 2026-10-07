@@ -22,7 +22,9 @@ async function main(): Promise<void> {
   const password = process.env.E2E_TEST_PASSWORD;
 
   if (!url || !anon) {
-    console.error('[invariants] VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY ausentes');
+    console.error(
+      '[invariants] VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY ausentes'
+    );
     process.exit(2);
   }
   if (!email || !password) {
@@ -67,6 +69,9 @@ async function main(): Promise<void> {
   // (fn_convert_quote_to_sale marca source='quote_conversion' e
   // sync_quote_from_webhook marca 'gift_store'; vendas diretas
   // de outras fontes — referral, organic, inbound… — não têm quote por design)
+  // A suíte E2E é serializada repo-wide (concurrency group único no workflow),
+  // então qualquer órfão presente aqui é vazamento real — inclusive recém-
+  // criado pela execução que acabou de terminar.
   {
     const { data: sales, error } = await client
       .from('sales')
@@ -74,14 +79,15 @@ async function main(): Promise<void> {
       .in('source', ['quote_conversion', 'gift_store'])
       .limit(10000);
     if (error) throw error;
-    const saleIds = (sales ?? []).map((s) => s.id as string);
+    const saleIds = (sales ?? []).map(s => s.id as string);
     if (saleIds.length) {
       const { data: quotes } = await client
         .from('quotes')
         .select('sale_id')
-        .not('sale_id', 'is', null);
-      const referenced = new Set((quotes ?? []).map((q) => q.sale_id as string));
-      const orphans = saleIds.filter((id) => !referenced.has(id));
+        .not('sale_id', 'is', null)
+        .limit(10000);
+      const referenced = new Set((quotes ?? []).map(q => q.sale_id as string));
+      const orphans = saleIds.filter(id => !referenced.has(id));
       if (orphans.length) {
         violations.push({
           check: 'orphan_sales',
@@ -117,7 +123,7 @@ async function main(): Promise<void> {
   // 4) orders_conversion_seq monotônica vs max sufixo numérico dos ORC-*
   {
     const { data: seq, error: e1 } = await client.rpc(
-      'fn_get_orders_conversion_seq_last' as never,
+      'fn_get_orders_conversion_seq_last' as never
     );
     if (e1) throw e1;
     const seqLast = Number(seq);
@@ -150,7 +156,7 @@ async function main(): Promise<void> {
   process.exit(1);
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error('[invariants] erro fatal:', err);
   process.exit(3);
 });

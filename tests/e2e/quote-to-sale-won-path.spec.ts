@@ -1,7 +1,18 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
-import { cleanupQuote, convert, getSeqLast, seedQuote } from './helpers/quote-to-sale-helpers';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
+import {
+  cleanupQuote,
+  convert,
+  getSeqLast,
+  seedQuote,
+} from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Path de criação nova (status='won'), único caminho que gera
@@ -18,7 +29,10 @@ test.describe('Path novo (won): RPC cria ORC-* e avança sequence', () => {
   const createdQuoteIds: string[] = [];
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -27,7 +41,8 @@ test.describe('Path novo (won): RPC cria ORC-* e avança sequence', () => {
   });
 
   test.afterAll(async () => {
-    for (const id of createdQuoteIds) await cleanupQuote(client, id);
+    for (const id of createdQuoteIds)
+      await cleanupQuote(client, id, { clientNames: ['E2E Won'] });
   });
 
   test('won: 1 conversão gera ORC-* e sequence +1', async () => {

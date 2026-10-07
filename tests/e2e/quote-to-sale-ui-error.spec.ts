@@ -9,6 +9,7 @@ import {
   skipReason,
 } from './helpers/auth';
 import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Frontend deve renderizar EXATAMENTE a mensagem PT-BR mapeada para
@@ -25,7 +26,10 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
   const EXPECTED_MESSAGE = CONVERT_QUOTE_ERROR_MESSAGES.TOTAL_MISMATCH;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -58,8 +62,7 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E UI TotalMismatch'] });
   });
 
   test('exibe toast PT-BR mapeado para TOTAL_MISMATCH e não cria sale', async ({
@@ -68,10 +71,10 @@ test.describe('UI: mensagem padronizada para [TOTAL_MISMATCH]', () => {
     checkpoint,
     waitForNetworkIdle,
   }) => {
-    await context.addInitScript(
-      ([key, json]) => window.localStorage.setItem(key, json),
-      [STORAGE_KEY, SESSION_JSON] as const,
-    );
+    await context.addInitScript(([key, json]) => window.localStorage.setItem(key, json), [
+      STORAGE_KEY,
+      SESSION_JSON,
+    ] as const);
 
     await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
     await waitForNetworkIdle();

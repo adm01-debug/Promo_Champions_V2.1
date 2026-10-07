@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORDER_NUMBER_REGEX,
   cleanupQuote,
@@ -21,7 +27,10 @@ test.describe('Concorrência: duas conversões simultâneas', () => {
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -37,7 +46,10 @@ test.describe('Concorrência: duas conversões simultâneas', () => {
   });
 
   test.afterAll(async () => {
-    await cleanupQuote(client, quoteId, { strict: true });
+    await cleanupQuote(client, quoteId, {
+      strict: true,
+      clientNames: ['E2E Concurrent x2'],
+    });
   });
 
   test('duas RPCs em paralelo produzem 1 sale + 1 order sem colisão', async () => {
@@ -57,7 +69,7 @@ test.describe('Concorrência: duas conversões simultâneas', () => {
     expect(Boolean(results[0].idempotent) || Boolean(results[1].idempotent)).toBe(true);
 
     const seqAfter = await getSeqLast(client);
-    const wasReused = results.some((p) => p.reused_order === true);
+    const wasReused = results.some(p => p.reused_order === true);
     if (wasReused || results[0].order_number.startsWith('PED-')) {
       expect(seqAfter).toBe(seqBefore);
     } else {

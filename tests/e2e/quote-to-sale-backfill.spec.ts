@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORC_PATTERN,
   cleanupQuote,
@@ -24,7 +30,10 @@ test.describe('Backfill orders_conversion_seq: reexecução segura', () => {
   const quoteIds: string[] = [];
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -33,7 +42,8 @@ test.describe('Backfill orders_conversion_seq: reexecução segura', () => {
   });
 
   test.afterAll(async () => {
-    for (const id of quoteIds) await cleanupQuote(client, id, { strict: true });
+    for (const id of quoteIds)
+      await cleanupQuote(client, id, { strict: true, clientNames: ['E2E Backfill Won'] });
   });
 
   test('reexecução mantém last_value monotônico e ORC-* únicos', async () => {
@@ -44,7 +54,11 @@ test.describe('Backfill orders_conversion_seq: reexecução segura', () => {
       test.skip(true, 'Usuário E2E não é admin.');
     }
     expect(b1.error).toBeNull();
-    const r1 = b1.data as { previous_value: number; new_value: number; legacy_max: number };
+    const r1 = b1.data as {
+      previous_value: number;
+      new_value: number;
+      legacy_max: number;
+    };
     expect(r1.new_value).toBeGreaterThanOrEqual(beforeVal);
     expect(r1.new_value).toBeGreaterThanOrEqual(r1.legacy_max);
 
@@ -64,7 +78,7 @@ test.describe('Backfill orders_conversion_seq: reexecução segura', () => {
     }
     expect(new Set(numbers).size).toBe(3);
 
-    const counters = numbers.map((n) => Number(n.split('-')[2]));
+    const counters = numbers.map(n => Number(n.split('-')[2]));
     for (let i = 1; i < counters.length; i++) {
       expect(counters[i]).toBeGreaterThan(counters[i - 1]);
     }

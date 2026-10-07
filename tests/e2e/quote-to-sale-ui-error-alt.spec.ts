@@ -9,6 +9,7 @@ import {
   skipReason,
 } from './helpers/auth';
 import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Fluxo alternativo do frontend — aprovar o orçamento pelo card
@@ -27,7 +28,10 @@ test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
   const EXPECTED = CONVERT_QUOTE_ERROR_MESSAGES.TOTAL_MISMATCH;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -60,20 +64,7 @@ test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
 
   test.afterAll(async () => {
     if (!client || !quoteId) return;
-    // Aprovar dispara convert_quote_to_order: o pedido criado precisa ser
-    // removido ANTES da quote (orders.quote_id é ON DELETE SET NULL e
-    // sobreviveria órfão).
-    const { data: orders } = await client
-      .from('orders')
-      .select('id')
-      .eq('quote_id', quoteId);
-    const orderIds = (orders ?? []).map(o => o.id as string);
-    if (orderIds.length) {
-      await client.from('order_items').delete().in('order_id', orderIds);
-      await client.from('orders').delete().in('id', orderIds);
-    }
-    await client.from('quote_items').delete().eq('quote_id', quoteId);
-    await client.from('quotes').delete().eq('id', quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E UI Alt TotalMismatch'] });
   });
 
   test('fluxo alternativo exibe toast padronizado de TOTAL_MISMATCH', async ({
@@ -84,14 +75,15 @@ test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
     // (fallback resiliente caso o menu alternativo esteja atrás de outro
     // trigger visual).
     const toasts: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'log' && msg.text().startsWith('[toast]')) toasts.push(msg.text());
+    page.on('console', msg => {
+      if (msg.type() === 'log' && msg.text().startsWith('[toast]'))
+        toasts.push(msg.text());
     });
 
-    await context.addInitScript(
-      ([key, json]) => window.localStorage.setItem(key, json),
-      [STORAGE_KEY, SESSION_JSON] as const,
-    );
+    await context.addInitScript(([key, json]) => window.localStorage.setItem(key, json), [
+      STORAGE_KEY,
+      SESSION_JSON,
+    ] as const);
 
     await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
@@ -106,9 +98,9 @@ test.describe('UI alternativa: TOTAL_MISMATCH via ação do card', () => {
 
     await card.getByRole('button', { name: /^Aprovar$/i }).click();
     // Aguarda a transição de status concluir (botão some do card).
-    await expect(
-      card.getByRole('button', { name: /^Aprovar$/i })
-    ).toHaveCount(0, { timeout: 15_000 });
+    await expect(card.getByRole('button', { name: /^Aprovar$/i })).toHaveCount(0, {
+      timeout: 15_000,
+    });
 
     await card.getByRole('button', { name: /Detalhes/i }).click();
     const convertBtn = page.getByRole('button', { name: /Converter em venda/i });

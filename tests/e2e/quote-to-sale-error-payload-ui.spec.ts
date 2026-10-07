@@ -1,7 +1,15 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, STORAGE_KEY, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  STORAGE_KEY,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import { CONVERT_QUOTE_ERROR_MESSAGES } from '../../src/hooks/quoteErrorMessages';
+import { cleanupQuote } from './helpers/quote-to-sale-helpers';
 
 /**
  * E2E: Payload de erro padronizado + renderização no toast da UI.
@@ -19,7 +27,10 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
   const createdQuoteIds: string[] = [];
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -30,8 +41,7 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
   test.afterAll(async () => {
     if (!client) return;
     for (const id of createdQuoteIds) {
-      await client.from('quote_items').delete().eq('quote_id', id);
-      await client.from('quotes').delete().eq('id', id);
+      await cleanupQuote(client, id, { clientNames: ['E2E Payload'] });
     }
   });
 
@@ -39,11 +49,13 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
     await page.goto('/');
     await page.evaluate(
       ([key, json]) => window.localStorage.setItem(key as string, json as string),
-      [STORAGE_KEY, SESSION_JSON],
+      [STORAGE_KEY, SESSION_JSON]
     );
   }
 
-  test('TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada', async ({ page }) => {
+  test('TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada', async ({
+    page,
+  }) => {
     const { data: q, error } = await client
       .from('quotes')
       .insert({
@@ -67,9 +79,12 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
     });
 
     // 1. RPC direta
-    const { data, error: rpcErr } = await client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: q.id,
-    } as never);
+    const { data, error: rpcErr } = await client.rpc(
+      'fn_convert_quote_to_sale' as never,
+      {
+        _quote_id: q.id,
+      } as never
+    );
     expect(data).toBeNull();
     expect(rpcErr).not.toBeNull();
     expect(rpcErr!.message).toMatch(/\[TOTAL_MISMATCH\]/);
@@ -78,7 +93,9 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
     await hydrateBrowser(page);
     await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
 
-    const convertBtn = page.getByRole('button', { name: /converter (em )?venda/i }).first();
+    const convertBtn = page
+      .getByRole('button', { name: /converter (em )?venda/i })
+      .first();
     if (!(await convertBtn.isVisible().catch(() => false))) {
       test.info().annotations.push({
         type: 'ui-fallback',
@@ -89,10 +106,14 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
     await convertBtn.click();
 
     const expected = CONVERT_QUOTE_ERROR_MESSAGES.TOTAL_MISMATCH;
-    await expect(page.getByText(expected, { exact: false }).first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(expected, { exact: false }).first()).toBeVisible({
+      timeout: 8000,
+    });
   });
 
-  test('FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada', async ({ page }) => {
+  test('FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada', async ({
+    page,
+  }) => {
     const FOREIGN_USER = '00000000-0000-0000-0000-0000000000fc';
     const { data: q, error } = await client
       .from('quotes')
@@ -120,9 +141,12 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
       total_price: 400,
     });
 
-    const { data, error: rpcErr } = await client.rpc('fn_convert_quote_to_sale' as never, {
-      _quote_id: q.id,
-    } as never);
+    const { data, error: rpcErr } = await client.rpc(
+      'fn_convert_quote_to_sale' as never,
+      {
+        _quote_id: q.id,
+      } as never
+    );
     if (!rpcErr) {
       test.skip(true, 'Sessão E2E tem bypass de ownership; FORBIDDEN não aplicável.');
       return;
@@ -132,7 +156,9 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
 
     await hydrateBrowser(page);
     await page.goto('/orcamentos', { waitUntil: 'domcontentloaded' });
-    const convertBtn = page.getByRole('button', { name: /converter (em )?venda/i }).first();
+    const convertBtn = page
+      .getByRole('button', { name: /converter (em )?venda/i })
+      .first();
     if (!(await convertBtn.isVisible().catch(() => false))) {
       test.info().annotations.push({
         type: 'ui-fallback',
@@ -143,6 +169,8 @@ test.describe('Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN
     await convertBtn.click();
 
     const expected = CONVERT_QUOTE_ERROR_MESSAGES.FORBIDDEN;
-    await expect(page.getByText(expected, { exact: false }).first()).toBeVisible({ timeout: 8000 });
+    await expect(page.getByText(expected, { exact: false }).first()).toBeVisible({
+      timeout: 8000,
+    });
   });
 });

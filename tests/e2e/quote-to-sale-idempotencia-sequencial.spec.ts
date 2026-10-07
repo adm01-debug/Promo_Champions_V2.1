@@ -1,6 +1,12 @@
 import { test, expect } from './helpers/quote-to-sale-fixtures';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { HAS_AUTH, SESSION_JSON, SUPABASE_ANON, SUPABASE_URL, skipReason } from './helpers/auth';
+import {
+  HAS_AUTH,
+  SESSION_JSON,
+  SUPABASE_ANON,
+  SUPABASE_URL,
+  skipReason,
+} from './helpers/auth';
 import {
   ORDER_NUMBER_REGEX,
   cleanupQuote,
@@ -24,7 +30,10 @@ test.describe('Idempotência sequencial: 2 conversões seguidas do mesmo quote',
   let quoteId: string;
 
   test.beforeAll(async () => {
-    const session = JSON.parse(SESSION_JSON) as { access_token: string; refresh_token: string };
+    const session = JSON.parse(SESSION_JSON) as {
+      access_token: string;
+      refresh_token: string;
+    };
     client = createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { headers: { Authorization: `Bearer ${session.access_token}` } },
@@ -41,7 +50,7 @@ test.describe('Idempotência sequencial: 2 conversões seguidas do mesmo quote',
   });
 
   test.afterAll(async () => {
-    await cleanupQuote(client, quoteId);
+    await cleanupQuote(client, quoteId, { clientNames: ['E2E Idem Sequencial'] });
   });
 
   test('2 RPCs sequenciais devolvem mesmo order_id/order_number sem duplicar', async ({
