@@ -502,7 +502,11 @@ jobs:
           VITE_SUPABASE_PROJECT_ID: ${{ steps.precheck.outputs.project_ref || 'usyxfpqlsspldubptrdl' }}
           E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-        run: npm run test:e2e
+        # A suíte quote-to-sale NÃO roda aqui: ela é dona do grupo de
+        # concorrência `quote-to-sale` (workflow próprio, serializado repo-wide)
+        # porque grava vendas reais no banco compartilhado — rodá-la em
+        # paralelo aqui reprovaria o job `invariants` por vendas em voo.
+        run: npx playwright test --project=chromium-desktop --project=page-smoke --project=mobile-ios-safari --project=mobile-android-chrome
 
       - name: Upload Playwright Report
         if: always() && steps.skip.outputs.run == 'true' && steps.precheck.outputs.valid == 'true'
