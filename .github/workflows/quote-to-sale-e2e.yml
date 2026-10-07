@@ -8,8 +8,14 @@ on:
       - 'src/pages/*Quote*'
       - 'src/components/quotes/**'
       - 'tests/e2e/quote-to-sale-*'
+      # Sem sufixo: o glob acima não cobre quote-to-sale.spec.ts.
+      - 'tests/e2e/quote-to-sale.spec.ts'
       - 'tests/e2e/helpers/quote-to-sale-*'
       - 'scripts/verify-quote-to-sale-invariants.ts'
+      # Mudanças na config da suíte ou no próprio workflow também devem
+      # rodar os guard rails que eles controlam.
+      - 'playwright.config.ts'
+      - '.github/workflows/quote-to-sale-e2e.yml'
       - 'supabase/migrations/**convert**'
       - 'supabase/migrations/**quote**'
       - 'supabase/functions/**'
