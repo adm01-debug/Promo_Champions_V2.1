@@ -43,6 +43,12 @@ export default defineConfig({
       name: 'quote-to-sale',
       testMatch: /quote-to-sale.*\.spec\.ts/,
       retries: 2,
+      // Serializa testes DENTRO de cada spec: o cleanup por prefixo de
+      // client_name (ex.: 'E2E Won%' cobre 'E2E Won Single'/'Multi') deletaria
+      // vendas de um teste irmão ainda em voo se rodassem em workers paralelos.
+      // Prefixos entre arquivos são disjuntos, então arquivos distintos
+      // continuam paralelos entre si.
+      fullyParallel: false,
       outputDir: `./test-results/quote-to-sale/${RUN_ID}`,
       use: {
         ...devices['Desktop Chrome'],
