@@ -89,7 +89,11 @@ test.describe('Fluxo: aprovar orçamento e converter em venda', () => {
     // Localiza o card do orçamento e abre o detalhe
     const quoteCard = page.getByText('E2E Orçamento Convert').first();
     await quoteCard.waitFor({ state: 'visible', timeout: 15_000 });
-    await quoteCard.click();
+    // O card não é clicável: o dialog abre pelo botão "Detalhes".
+    const card = quoteCard.locator(
+      'xpath=ancestor::div[.//button[contains(normalize-space(.), "Detalhes")]][1]'
+    );
+    await card.getByRole('button', { name: /Detalhes/i }).click();
 
     // Botão visível e conversão
     const convertBtn = page.getByRole('button', { name: /Converter em venda/i });
