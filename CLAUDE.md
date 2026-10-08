@@ -1,7 +1,7 @@
 # CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)
 
 > CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes.
-> Maior sistema do lote: 162 páginas, 169 edge functions, 611 migrations.
+> Maior sistema do lote: 175 rotas, 172 edge functions, 644 migrations.
 
 ---
 
@@ -13,7 +13,7 @@
 | URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                                             |
 | Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl                            |
 | MCP para SQL     | gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "…LOVABLE CLOUD…") |
-| Migrations       | **611** (timestamp YYYYMMDDHHmmss)                                                     |
+| Migrations       | **644** (timestamp YYYYMMDDHHmmss)                                                     |
 
 > Corrigido em 2026-09-02 (ref antigo `rapjswienfhkobhlamxb`) e **reprovado em
 > 2026-09-13**: a "prova" anterior citava `_internal_secrets.functions_base_url`,
@@ -54,7 +54,7 @@
 | Mapas             | Leaflet + react-leaflet (clusters de clientes)                                    |
 | Workflows visuais | @xyflow/react                                                                     |
 | Export            | Excel/PDF (xlsx, pdf-lib)                                                         |
-| Deploy            | Lovable Cloud                                                                     |
+| Deploy            | Vercel + GitHub (frontend repontado em código para `usyxfpqlsspldubptrdl` via `src/integrations/supabase/env.ts`)                                                                     |
 
 ---
 
@@ -92,7 +92,7 @@
 
 ---
 
-## 4. Edge Functions (169 funções Deno)
+## 4. Edge Functions (172 funções Deno; plano Supabase limita a 100 deployadas)
 
 Grupos por domínio:
 
@@ -151,7 +151,7 @@ src/
     playbooks/, race/, revenue-intelligence/, scoring/, sequences/
     win-loss/, customer-success/, multichannel/
   hooks/        # TanStack Query hooks por dominio
-  pages/        # 162 paginas/rotas
+  pages/        # 175 rotas
   integrations/supabase/  # client.ts + tipos gerados
   services/     # logica nao-React
   lib/          # race, winloss, revenueForecast, bi, reports
