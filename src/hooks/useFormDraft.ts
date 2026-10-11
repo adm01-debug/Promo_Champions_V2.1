@@ -9,9 +9,14 @@ import { useCallback, useEffect, useRef } from 'react';
  *
  * Genérico para qualquer estado serializável (ex.: { form, items } de um
  * formulário composto). Chave por página/contexto evita colisão.
+ *
+ * `storageKey` pode ser `null` enquanto o contexto da chave não resolveu
+ * (ex.: usuário ainda carregando): nesse estado o hook fica inerte — não
+ * restaura nem persiste — para nunca gravar dados de uma conta sob uma
+ * chave genérica/anon.
  */
 export function useFormDraft<T>(
-  storageKey: string,
+  storageKey: string | null,
   state: T,
   restore: (draft: T) => void
 ) {
@@ -22,7 +27,7 @@ export function useFormDraft<T>(
   useEffect(() => {
     // Restaura uma vez por chave — troca de chave (ex.: usuário carregou)
     // restaura o rascunho da nova chave.
-    if (restoredKeyRef.current === storageKey) return;
+    if (storageKey === null || restoredKeyRef.current === storageKey) return;
     restoredKeyRef.current = storageKey;
     try {
       const raw = localStorage.getItem(storageKey);
@@ -33,6 +38,7 @@ export function useFormDraft<T>(
   }, [storageKey]);
 
   useEffect(() => {
+    if (storageKey === null) return;
     const timer = setTimeout(() => {
       try {
         localStorage.setItem(storageKey, JSON.stringify(state));
@@ -44,6 +50,7 @@ export function useFormDraft<T>(
   }, [storageKey, state]);
 
   const clearDraft = useCallback(() => {
+    if (storageKey === null) return;
     try {
       localStorage.removeItem(storageKey);
     } catch {

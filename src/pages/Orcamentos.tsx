@@ -104,9 +104,11 @@ export default function Orcamentos() {
   // Rascunho automático: sair da página/fechar a aba não perde o orçamento
   // em edição. Limpo após criação bem-sucedida.
   // Chave por usuário: troca de conta no mesmo navegador não restaura
-  // o rascunho de outra conta (dados de cliente/valores).
+  // o rascunho de outra conta (dados de cliente/valores). Enquanto o id do
+  // vendedor não resolve, a chave fica null e o rascunho fica inerte —
+  // nunca grava em chave genérica/anon compartilhada entre contas.
   const { clearDraft } = useFormDraft(
-    `orcamentos:create:draft:${salesperson?.id ?? 'anon'}`,
+    salesperson ? `orcamentos:create:draft:${salesperson.id}` : null,
     { form, items },
     draft => {
       if (draft?.form) setForm(draft.form);

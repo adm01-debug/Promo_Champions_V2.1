@@ -100,6 +100,13 @@ export function useBackNavigation(options?: BackNavigationOptions) {
 
   const isHomePage = HOME_PATHS.has(pathname);
   const fallback = options?.fallbackPath ?? resolveBackFallback(pathname);
+  // A entrada atual foi criada por um voltar-fallback anterior? Sem esta
+  // marca, deep-link → detalhe → voltar (fallback p/ lista) → voltar de
+  // novo faria navigate(-1) de volta ao detalhe — loop A→B→A. Com ela,
+  // o voltar continua subindo (lista → dashboard).
+  const arrivedViaFallback = Boolean(
+    (location.state as Record<string, unknown> | null)?.__pcBackFallback
+  );
 
   const goBack = useCallback(() => {
     // Modal aberta ganha: fecha o modal do topo, não navega.
@@ -109,15 +116,18 @@ export function useBackNavigation(options?: BackNavigationOptions) {
     // (flush acontece na saída da página, no RouteTracker).
     trackInteraction();
 
-    if (window.history.length > 2 && !options?.preferParent) {
+    if (window.history.length > 2 && !options?.preferParent && !arrivedViaFallback) {
       // Formulário sujo: o navigate(-1) dispara popstate, interceptado
       // pelo navigationGuard (pushState de retorno + confirmação).
       navigate(-1);
     } else {
       // Fallback é PUSH/REPLACE — não passa por popstate; guarda aqui.
-      void requestNavigation(() => navigate(fallback, { replace: true }));
+      // A entrada criada é marcada para o próximo voltar continuar subindo.
+      void requestNavigation(() =>
+        navigate(fallback, { replace: true, state: { __pcBackFallback: true } })
+      );
     }
-  }, [navigate, fallback, options?.preferParent]);
+  }, [navigate, fallback, options?.preferParent, arrivedViaFallback]);
 
   return { goBack, isHomePage, fallback };
 }

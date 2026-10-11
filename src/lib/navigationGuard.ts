@@ -27,10 +27,24 @@ interface DirtySource {
   message: string;
 }
 
+/**
+ * window.location.href é absoluta e o Router não normaliza origem —
+ * navigate('http://host/x') vira pathname literal 'http://host/x' e
+ * renderiza 404. Toda URL injetada no Router precisa ser path relativo.
+ */
+function toAppPath(href: string): string {
+  try {
+    const url = new URL(href, window.location.href);
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return href;
+  }
+}
+
 const dirtySources = new Map<string, DirtySource>();
 let confirmHandler: ConfirmHandler | null = null;
 let navigateFn: NavigateFn | null = null;
-let lastHref = typeof window !== 'undefined' ? window.location.href : '/';
+let lastHref = typeof window !== 'undefined' ? toAppPath(window.location.href) : '/';
 let askingConfirmation = false;
 let pendingDestination: string | null = null;
 
@@ -64,7 +78,7 @@ export function setNavigateFn(fn: NavigateFn | null) {
  * corrente para re-empurrá-la quando um pop é interceptado.
  */
 export function setCurrentHref(href: string) {
-  lastHref = href;
+  lastHref = toAppPath(href);
 }
 
 async function askConfirmation(): Promise<boolean> {
@@ -91,16 +105,19 @@ export async function requestNavigation(action: () => void) {
  * Intercepta pops de histórico (Voltar/Avançar do browser, navigate(-1)).
  * O pop já aconteceu quando o evento dispara: o browser está no destino e
  * o React Router vai renderizá-lo. Re-empurramos a URL da página suja e
- * ressincronizamos o Router com `navigate(lastHref, replace)` no mesmo lote
- * de render — assim a página suja nunca desmonta, independente da ordem em
- * que os listeners de popstate rodam. Confirmado, navegamos para o destino
- * real do pop (funciona para Voltar e Avançar, sem `history.back()` — que
- * dispararia outro popstate e re-cairia na confirmação).
+ * ressincronizamos o Router com `navigate(lastHref)` PUSH no mesmo lote
+ * de render — PUSH (não replace) preserva a entrada anterior na pilha e
+ * mantém o índice interno do Router consistente; pushState manual o
+ * corromperia. Assim a página suja nunca desmonta, independente da ordem
+ * em que os listeners de popstate rodam. Confirmado, navegamos para o
+ * destino real do pop com replace (funciona para Voltar e Avançar, sem
+ * `history.back()` — que dispararia outro popstate e re-cairia na
+ * confirmação).
  */
 export function handlePopState() {
   if (!hasDirtySources() || !navigateFn) return;
   // Destino real do pop — o último vence em pops repetidos durante o diálogo.
-  pendingDestination = window.location.href;
+  pendingDestination = toAppPath(window.location.href);
   // Reempurra a página suja via navigate PUSH (preserva a entrada anterior
   // na pilha e mantém o índice interno do Router consistente — pushState
   // manual o corromperia). O state marcado evita que a restauração de

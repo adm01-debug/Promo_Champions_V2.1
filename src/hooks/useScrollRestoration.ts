@@ -87,7 +87,18 @@ export function useScrollRestoration() {
         const timers = [120, 320, 640, 1000, 1600].map(ms =>
           setTimeout(() => window.scrollTo({ top: target, behavior: 'instant' }), ms)
         );
-        return () => timers.forEach(clearTimeout);
+        // Gesto de rolagem do usuário cancela as retentativas — o restore
+        // não disputa posição com quem já começou a rolar manualmente.
+        const cancelRetries = () => timers.forEach(clearTimeout);
+        window.addEventListener('wheel', cancelRetries, { passive: true });
+        window.addEventListener('touchmove', cancelRetries, { passive: true });
+        window.addEventListener('keydown', cancelRetries);
+        return () => {
+          cancelRetries();
+          window.removeEventListener('wheel', cancelRetries);
+          window.removeEventListener('touchmove', cancelRetries);
+          window.removeEventListener('keydown', cancelRetries);
+        };
       }
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
