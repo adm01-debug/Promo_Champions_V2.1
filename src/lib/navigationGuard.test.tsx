@@ -194,7 +194,8 @@ describe('navigationGuard', () => {
     });
 
     // O PUSH de restauração aconteceu de verdade na pilha do Router
-    const restored = locations[locations.length - 1];
+    const restored = locations.at(-1);
+    if (!restored) throw new Error('RouterHarness não registrou nenhuma location');
     expect(restored.pathname).toBe('/pagina-suja');
     expect((restored.state as Record<string, unknown>).__pcNavGuardRestore).toBe(true);
 
@@ -204,7 +205,7 @@ describe('navigationGuard', () => {
     });
 
     // Confirmação resolve com o Router terminando no destino capturado no pop
-    expect(locations[locations.length - 1].pathname).toBe('/destino-pop');
+    expect(locations.at(-1)?.pathname).toBe('/destino-pop');
     window.history.pushState({}, '', '/');
   });
 });
