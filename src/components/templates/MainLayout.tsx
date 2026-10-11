@@ -17,6 +17,7 @@ import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { cn } from '@/lib/utils';
 import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
 import { useLocation } from 'react-router-dom';
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
 import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
@@ -80,10 +81,8 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   const smartSkeleton = useMemo(() => <SmartSkeleton />, []);
 
-  // Unified Scroll to Top logic with premium feel
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [location.pathname]);
+  // Scroll: POP restaura posição salva; PUSH/REPLACE sobe ao topo
+  useScrollRestoration();
 
   // A11y: anuncia a troca de rota e leva o foco ao conteúdo (leitores de tela)
   const [routeAnnouncement, setRouteAnnouncement] = useState('');
