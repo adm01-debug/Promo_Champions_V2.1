@@ -17,7 +17,6 @@ import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { cn } from '@/lib/utils';
 import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
 import { useLocation } from 'react-router-dom';
-import { recordNavTrail } from '@/hooks/useBackNavigation';
 import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
 import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
@@ -84,11 +83,6 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Unified Scroll to Top logic with premium feel
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [location.pathname]);
-
-  // Trail de navegação para o loop-guard do voltar compartilhado
-  useEffect(() => {
-    recordNavTrail(location.pathname);
   }, [location.pathname]);
 
   // A11y: anuncia a troca de rota e leva o foco ao conteúdo (leitores de tela)

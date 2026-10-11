@@ -1,6 +1,6 @@
 import { FC, memo, useCallback, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
+import { hasOpenDialog, useBackNavigation } from '@/hooks/useBackNavigation';
 import { ArrowLeft, ChevronDown, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -94,8 +94,8 @@ export const BackButton: FC<BackButtonProps> = memo(
           if (e.key === 'Escape') {
             // If at home, don't do anything
             if (isHomePage) return;
-            // If there's a modal, let the modal handle it (it usually does by default)
-            if (document.querySelectorAll('[role="dialog"]').length > 0) return;
+            // If there's a modal (dialog ou alertdialog), let the modal handle it
+            if (hasOpenDialog()) return;
           }
 
           e.preventDefault();

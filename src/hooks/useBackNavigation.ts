@@ -1,17 +1,26 @@
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const NAV_TRAIL_KEY = 'app_nav_trail';
-const TRAIL_LIMIT = 8;
-
 const HOME_PATHS = new Set(['/', '/dashboard']);
+
+/**
+ * Rotas de detalhe cujo caminho-mãe não é o prefixo da rota.
+ * Derivado de AppRoutes.tsx: padrões `/:param` cujo prefixo não existe
+ * como rota de listagem (ex.: `/vendedor/:id` → lista é `/vendedores`).
+ */
+const PARENT_OVERRIDES: Record<string, string> = {
+  '/vendedor': '/vendedores',
+  '/meus-pedidos': '/acompanhamento-pedidos',
+  '/race-arena/spectator': '/race-arena',
+};
 
 /**
  * Caminho de fallback contextual: deriva a "página-mãe" da rota atual.
  * Último segmento que parece um identificador (uuid, número ou slug longo)
- * indica página de detalhe → sobe um nível. Caso contrário, tenta subir um
- * nível dentro de namespaces conhecidos (admin/*, configurações, etc.).
- * Sem correspondência, cai no dashboard.
+ * indica página de detalhe → sobe um nível (via PARENT_OVERRIDES quando o
+ * prefixo não é rota válida). Caso contrário, tenta subir um nível dentro
+ * de namespaces conhecidos (admin/*, settings/*). Sem correspondência,
+ * cai no dashboard.
  */
 export function resolveBackFallback(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean);
@@ -25,7 +34,8 @@ export function resolveBackFallback(pathname: string): string {
     /^[0-9a-f]{16,}$/i.test(last);
 
   if (looksLikeId) {
-    return `/${segments.slice(0, -1).join('/')}`;
+    const parent = `/${segments.slice(0, -1).join('/')}`;
+    return PARENT_OVERRIDES[parent] ?? parent;
   }
 
   // Namespaces com subpáginas administrativas → sobe para a raiz da seção.
@@ -37,27 +47,11 @@ export function resolveBackFallback(pathname: string): string {
   return '/dashboard';
 }
 
-function readTrail(): string[] {
-  try {
-    const raw = sessionStorage.getItem(NAV_TRAIL_KEY);
-    return raw ? (JSON.parse(raw) as string[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeTrail(trail: string[]) {
-  try {
-    sessionStorage.setItem(NAV_TRAIL_KEY, JSON.stringify(trail.slice(-TRAIL_LIMIT)));
-  } catch {
-    // sessionStorage indisponível (modo privado raro) — sem trail, sem loop-guard.
-  }
-}
+/** Seletor de modais Radix/shadcn — usado pelo guard do atalho Esc também. */
+const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
 
 function closeTopmostDialog(): boolean {
-  const dialogs = document.querySelectorAll<HTMLElement>(
-    '[role="dialog"], [role="alertdialog"]'
-  );
+  const dialogs = document.querySelectorAll<HTMLElement>(DIALOG_SELECTOR);
   if (dialogs.length === 0) return false;
   const top = dialogs[dialogs.length - 1];
   const closeBtn = top.querySelector<HTMLElement>(
@@ -67,7 +61,9 @@ function closeTopmostDialog(): boolean {
     closeBtn.click();
     return true;
   }
-  // Radix/feche-por-ESC: dispara keydown para o modal tratar.
+  // Radix DismissableLayer escuta Escape no document; o evento sintético
+  // borbulha até lá e fecha o modal. O listener global de teclado ignora
+  // Escape enquanto houver dialog aberto — sem recursão.
   top.dispatchEvent(
     new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })
   );
@@ -81,10 +77,14 @@ interface BackNavigationOptions {
   preferParent?: boolean;
 }
 
+/** Há modal/dialog aberto no momento? (exportado para guards de atalho) */
+export function hasOpenDialog(): boolean {
+  return document.querySelectorAll(DIALOG_SELECTOR).length > 0;
+}
+
 /**
  * Navegação "voltar" compartilhada (desktop + mobile):
  * - fecha o modal do topo em vez de ignorar o clique;
- * - detecta loops A→B→A no trail de sessão e sobe para a página-mãe;
  * - usa navigate(-1) quando há histórico real; senão, fallback contextual
  *   (resolveBackFallback) ou o fallbackPath passado pelo chamador.
  */
@@ -97,40 +97,15 @@ export function useBackNavigation(options?: BackNavigationOptions) {
   const fallback = options?.fallbackPath ?? resolveBackFallback(pathname);
 
   const goBack = useCallback(() => {
-    // 1) Modal aberta ganha: fecha o modal do topo, não navega.
+    // Modal aberta ganha: fecha o modal do topo, não navega.
     if (closeTopmostDialog()) return;
 
-    // 2) Loop-guard: trail termina em A→B→A (o -1 voltaria para B, que
-    //    levaria de volta a A). Sobe para a página-mãe.
-    const trail = readTrail();
-    if (
-      trail.length >= 3 &&
-      trail[trail.length - 1] === pathname &&
-      trail[trail.length - 3] === pathname
-    ) {
-      navigate(fallback, { replace: true });
-      return;
-    }
-
-    // 3) Histórico real do browser → voltar; senão, fallback contextual.
     if (window.history.length > 2 && !options?.preferParent) {
       navigate(-1);
     } else {
       navigate(fallback, { replace: true });
     }
-  }, [navigate, pathname, fallback, options?.preferParent]);
+  }, [navigate, fallback, options?.preferParent]);
 
   return { goBack, isHomePage, fallback };
-}
-
-/**
- * Registra o path atual no trail de sessão — chamado pelo MainLayout a cada
- * mudança de rota (mantido fora do hook para registrar uma única vez por rota).
- */
-export function recordNavTrail(pathname: string) {
-  const trail = readTrail();
-  if (trail[trail.length - 1] !== pathname) {
-    trail.push(pathname);
-    writeTrail(trail);
-  }
 }
