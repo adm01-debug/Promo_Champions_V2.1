@@ -23,6 +23,10 @@ export function useFormDraft<T>(
   const restoredKeyRef = useRef<string | null>(null);
   const restoreRef = useRef(restore);
   restoreRef.current = restore;
+  // JSON do estado na primeira render de cada chave: referência para saber
+  // se ESTA aba editou algo. `lastWriteRef` guarda o que esta aba gravou.
+  const mountJsonRef = useRef(new Map<string, string>());
+  const lastWriteRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Restaura uma vez por chave — troca de chave (ex.: usuário carregou)
@@ -41,7 +45,23 @@ export function useFormDraft<T>(
     if (storageKey === null) return;
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem(storageKey, JSON.stringify(state));
+        const json = JSON.stringify(state);
+        if (!mountJsonRef.current.has(storageKey)) {
+          mountJsonRef.current.set(storageKey, json);
+        }
+        const stored = localStorage.getItem(storageKey);
+        // Uma aba que nunca editou (estado == snapshot da montagem) não
+        // sobrescreve um rascunho gravado por outra aba — sem isso, uma
+        // aba ociosa com o form vazio apagava o trabalho da aba em edição.
+        if (
+          json === mountJsonRef.current.get(storageKey) &&
+          stored !== null &&
+          stored !== lastWriteRef.current
+        ) {
+          return;
+        }
+        localStorage.setItem(storageKey, json);
+        lastWriteRef.current = json;
       } catch {
         // Quota excedida / modo privado — draft é best-effort.
       }
