@@ -44,6 +44,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { QuoteDetailDialog } from '@/components/quotes/QuoteDetailDialog';
+import { useFormDraft } from '@/hooks/useFormDraft';
 import { QuoteCard } from '@/components/quotes/QuoteCard';
 import { VirtualizedList } from '@/components/ui/virtualized-list';
 import { motion } from 'framer-motion';
@@ -100,6 +101,19 @@ export default function Orcamentos() {
     unit_price: number;
   }>({ product_name: '', quantity: 1, unit_price: 0 });
 
+  // Rascunho automático: sair da página/fechar a aba não perde o orçamento
+  // em edição. Limpo após criação bem-sucedida.
+  // Chave por usuário: troca de conta no mesmo navegador não restaura
+  // o rascunho de outra conta (dados de cliente/valores).
+  const { clearDraft } = useFormDraft(
+    `orcamentos:create:draft:${salesperson?.id ?? 'anon'}`,
+    { form, items },
+    draft => {
+      if (draft?.form) setForm(draft.form);
+      if (draft?.items) setItems(draft.items);
+    }
+  );
+
   const addItem = () => {
     if (!newItem.product_name || newItem.unit_price <= 0) return;
     const total = newItem.quantity * newItem.unit_price;
@@ -151,6 +165,7 @@ export default function Orcamentos() {
       {
         onSuccess: () => {
           setIsCreateOpen(false);
+          clearDraft();
           setForm({
             client_name: '',
             title: '',

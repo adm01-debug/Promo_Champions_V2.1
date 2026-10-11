@@ -1,5 +1,5 @@
 import { FC, ReactNode, memo, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { ArrowLeft, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -18,21 +18,13 @@ interface MobilePageHeaderProps {
 
 export const MobilePageHeader: FC<MobilePageHeaderProps> = memo(
   ({ title, subtitle, showBack = true, rightAction, className, onMenuClick }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
     const isMobile = useIsMobile();
-
-    const isHomePage = location.pathname === '/' || location.pathname === '/dashboard';
-    const canGoBack = !isHomePage && window.history.length > 2;
+    const { goBack, isHomePage } = useBackNavigation();
 
     const handleBack = useCallback(() => {
       triggerHaptic('light');
-      if (canGoBack) {
-        navigate(-1);
-      } else {
-        navigate('/dashboard', { replace: true });
-      }
-    }, [canGoBack, navigate]);
+      goBack();
+    }, [goBack]);
 
     // Swipe to back logic
     const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {

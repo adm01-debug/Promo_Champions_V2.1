@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useNavigate } from 'react-router-dom';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 import type { ReportPeriod } from '@/hooks/reports/salesReportHelpers';
 
 interface Props {
@@ -36,7 +36,7 @@ export const SalesReportHeader: FC<Props> = ({
   onExportMarkupCsv,
   exporting,
 }) => {
-  const navigate = useNavigate();
+  const { goBack } = useBackNavigation({ fallbackPath: '/relatorios' });
   const dateLabel =
     period === 'weekly'
       ? `Semana de ${format(refDate, "dd 'de' MMM", { locale: ptBR })}`
@@ -46,12 +46,7 @@ export const SalesReportHeader: FC<Props> = ({
     <div className="rounded-2xl border border-border/50 bg-card p-5 sm:p-6 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-start gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            aria-label="Voltar"
-          >
+          <Button variant="ghost" size="icon" onClick={goBack} aria-label="Voltar">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>

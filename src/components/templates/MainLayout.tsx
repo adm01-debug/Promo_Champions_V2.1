@@ -1,5 +1,5 @@
 // MainLayout - primary layout wrapper (performance-optimized)
-import { useRef, lazy, Suspense, useEffect, useMemo } from 'react';
+import { useRef, lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { SmartSkeleton } from '@/components/skeletons/SmartSkeleton';
 import { SearchTrigger } from '@/components/atoms/SearchTrigger';
@@ -17,6 +17,8 @@ import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { cn } from '@/lib/utils';
 import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
 import { useLocation } from 'react-router-dom';
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
+import { NavigationGuardBridge } from '@/components/navigation/NavigationGuard';
 import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
 import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
@@ -80,10 +82,19 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   const smartSkeleton = useMemo(() => <SmartSkeleton />, []);
 
-  // Unified Scroll to Top logic with premium feel
+  // Scroll: POP restaura posição salva; PUSH/REPLACE sobe ao topo
+  useScrollRestoration();
+
+  // A11y: anuncia a troca de rota e leva o foco ao conteúdo (leitores de tela)
+  const [routeAnnouncement, setRouteAnnouncement] = useState('');
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [location.pathname]);
+    const main = document.getElementById('main-content');
+    main?.focus({ preventScroll: true });
+    // currentPageInfo vem do mapa de rotas (determinístico) — document.title
+    // ainda seria o da página anterior neste ponto do render.
+    const pageTitle = currentPageInfo.title ?? document.title.split('|')[0]?.trim() ?? '';
+    setRouteAnnouncement(`Você está em ${pageTitle}`);
+  }, [location.pathname, currentPageInfo.title]);
 
   // Dynamic Title Sync for excellence
   useEffect(() => {
@@ -126,7 +137,11 @@ export function MainLayout({ children }: MainLayoutProps) {
         <RouteTracker />
       </Suspense>
 
+      <NavigationGuardBridge />
       <SkipLinks />
+      <div aria-live="polite" role="status" className="sr-only">
+        {routeAnnouncement}
+      </div>
       <CyberArenaBackground />
       <div className="min-h-screen flex w-full bg-background/50">
         <ErrorBoundary fallback={sidebarFallback}>
@@ -143,6 +158,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
         <main
           id="main-content"
+          tabIndex={-1}
           className={cn(
             'flex-1 relative flex flex-col bg-background/40 backdrop-blur-[2px]',
             isMobile && 'pb-[calc(5rem+env(safe-area-inset-bottom,0px))]'
