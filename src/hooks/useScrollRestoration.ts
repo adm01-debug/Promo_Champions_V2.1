@@ -60,6 +60,11 @@ export function useScrollRestoration() {
 
   // Aplica a política ao trocar de rota.
   useEffect(() => {
+    // Re-push do navigationGuard (cancelamento de voltar com form sujo):
+    // mesma página, não é navegação de verdade — não mexe no scroll.
+    const state = location.state as Record<string, unknown> | null;
+    if (state?.__pcNavGuardRestore) return undefined;
+
     if (navType === 'POP') {
       const target = readPositions()[location.key] ?? 0;
       if (target > 0) {
@@ -74,5 +79,5 @@ export function useScrollRestoration() {
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
     return undefined;
-  }, [location.key, location.pathname, navType]);
+  }, [location.key, location.pathname, location.state, navType]);
 }

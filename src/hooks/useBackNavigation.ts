@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { requestNavigation } from '@/lib/navigationGuard';
 
 const HOME_PATHS = new Set(['/', '/dashboard']);
 
@@ -28,6 +29,7 @@ export function resolveBackFallback(pathname: string): string {
   if (segments.length === 1) return '/dashboard';
 
   const last = segments[segments.length - 1];
+  if (!last) return '/dashboard';
   const looksLikeId =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(last) ||
     /^\d+$/.test(last) ||
@@ -40,8 +42,9 @@ export function resolveBackFallback(pathname: string): string {
 
   // Namespaces com subpáginas administrativas → sobe para a raiz da seção.
   const sectionRoots = new Set(['admin', 'settings', 'configuracoes']);
-  if (segments.length > 1 && sectionRoots.has(segments[0])) {
-    return `/${segments[0]}`;
+  const root = segments[0];
+  if (segments.length > 1 && root && sectionRoots.has(root)) {
+    return `/${root}`;
   }
 
   return '/dashboard';
@@ -54,6 +57,7 @@ function closeTopmostDialog(): boolean {
   const dialogs = document.querySelectorAll<HTMLElement>(DIALOG_SELECTOR);
   if (dialogs.length === 0) return false;
   const top = dialogs[dialogs.length - 1];
+  if (!top) return false;
   const closeBtn = top.querySelector<HTMLElement>(
     'button[aria-label*="Close" i], button[aria-label*="Fechar" i], [data-dialog-close]'
   );
@@ -101,9 +105,12 @@ export function useBackNavigation(options?: BackNavigationOptions) {
     if (closeTopmostDialog()) return;
 
     if (window.history.length > 2 && !options?.preferParent) {
+      // Formulário sujo: o navigate(-1) dispara popstate, interceptado
+      // pelo navigationGuard (pushState de retorno + confirmação).
       navigate(-1);
     } else {
-      navigate(fallback, { replace: true });
+      // Fallback é PUSH/REPLACE — não passa por popstate; guarda aqui.
+      void requestNavigation(() => navigate(fallback, { replace: true }));
     }
   }, [navigate, fallback, options?.preferParent]);
 

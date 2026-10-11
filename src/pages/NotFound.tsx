@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useLocation, Link } from 'react-router-dom';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Home, ArrowLeft, Search } from 'lucide-react';
 
 const NotFound = () => {
   const location = useLocation();
+  const { goBack } = useBackNavigation({ fallbackPath: '/' });
 
   useEffect(() => {
     // Silent tracking for 404s can be added here if needed via captureError
@@ -42,12 +44,7 @@ const NotFound = () => {
           </p>
 
           <div className="flex items-center justify-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.history.back()}
-              className="gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={goBack} className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Voltar
             </Button>

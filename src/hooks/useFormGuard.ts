@@ -1,37 +1,53 @@
-import { useEffect } from 'react';
+import { useEffect, useId, useRef } from 'react';
+import { registerDirtySource, unregisterDirtySource } from '@/lib/navigationGuard';
 
 /**
- * useFormGuard - Avisa o usuário antes de fechar/recarregar a aba com alterações não salvas.
+ * useFormGuard - Protege formulários com alterações não salvas.
  *
- * Observação: `useBlocker` do react-router-dom exige um data router
- * (`createBrowserRouter`). O projeto usa `<BrowserRouter>` clássico, portanto
- * o bloqueio de navegação SPA foi removido para eliminar o erro
- * "useBlocker must be used within a data router". A proteção via
- * `beforeunload` (fechar/recarregar aba) continua ativa e cobre o caso crítico
- * de perda de dados. Diálogos de confirmação em navegação interna devem ser
- * implementados pontualmente no componente (ex.: interceptar clique/close).
+ * Cobertura:
+ * - `beforeunload`: fechar/recarregar a aba (diálogo nativo do browser);
+ * - navegação SPA interna: registra a página como "fonte suja" no
+ *   navigationGuard, que intercepta links internos, o botão Voltar do app
+ *   (useBackNavigation) e o Voltar do browser (popstate), exibindo o
+ *   `NavigationGuardDialog` (AlertDialog) antes de sair.
+ *
+ * O projeto usa `<BrowserRouter>` clássico (sem data router), por isso o
+ * bloqueio interno é feito pelo navigationGuard em vez de `useBlocker`.
  *
  * @param isDirty - Se o formulário possui alterações não salvas.
- * @param message - Mensagem exibida no diálogo do navegador (a maioria dos
- *                  browsers modernos mostra um texto genérico).
+ * @param message - Mensagem exibida no diálogo de confirmação.
  */
 export function useFormGuard(
   isDirty: boolean,
   message: string = 'Você tem alterações não salvas. Deseja realmente sair?'
 ) {
+  const id = useId();
+  const messageRef = useRef(message);
+  messageRef.current = message;
+
+  // Registro no guard de navegação interna.
+  useEffect(() => {
+    if (isDirty) {
+      registerDirtySource(id, messageRef.current);
+      return () => unregisterDirtySource(id);
+    }
+    return undefined;
+  }, [isDirty, id]);
+
+  // Diálogo nativo para fechar/recarregar a aba.
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        e.returnValue = message;
-        return message;
+        e.returnValue = messageRef.current;
+        return messageRef.current;
       }
       return undefined;
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDirty, message]);
+  }, [isDirty]);
 
   // Mantém shape estável para consumidores existentes.
   return { state: 'unblocked' as const, proceed: () => {}, reset: () => {} };

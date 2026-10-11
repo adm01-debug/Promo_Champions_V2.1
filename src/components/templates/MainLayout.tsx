@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import type { GlobalSearchHandle } from '@/components/molecules/GlobalSearch';
 import { useLocation } from 'react-router-dom';
 import { useScrollRestoration } from '@/hooks/useScrollRestoration';
+import { NavigationGuardBridge } from '@/components/navigation/NavigationGuard';
 import { useVoiceNavigation } from '@/hooks/useVoiceNavigation';
 import { useFeatureGate } from '@/hooks/useFeatureFlags';
 import { CyberArenaBackground } from '@/components/effects/CyberArenaBackground';
@@ -89,7 +90,8 @@ export function MainLayout({ children }: MainLayoutProps) {
   useEffect(() => {
     const main = document.getElementById('main-content');
     main?.focus({ preventScroll: true });
-    setRouteAnnouncement(`Você está em ${document.title.split('|')[0].trim()}`);
+    const pageTitle = document.title.split('|')[0]?.trim() ?? '';
+    setRouteAnnouncement(`Você está em ${pageTitle}`);
   }, [location.pathname]);
 
   // Dynamic Title Sync for excellence
@@ -133,6 +135,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <RouteTracker />
       </Suspense>
 
+      <NavigationGuardBridge />
       <SkipLinks />
       <div aria-live="polite" role="status" className="sr-only">
         {routeAnnouncement}

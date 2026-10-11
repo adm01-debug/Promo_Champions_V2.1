@@ -3,10 +3,12 @@ import { ShieldX, ArrowLeft, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { motion } from 'framer-motion';
 
 const AccessDenied = () => {
   const { currentUserRole } = useUserRoles();
+  const { goBack } = useBackNavigation({ fallbackPath: '/' });
 
   const roleLabels: Record<string, string> = {
     admin: 'Administrador',
@@ -69,7 +71,7 @@ const AccessDenied = () => {
                 Ir para Dashboard
               </Link>
             </Button>
-            <Button variant="ghost" onClick={() => window.history.back()}>
+            <Button variant="ghost" onClick={goBack}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
             </Button>
