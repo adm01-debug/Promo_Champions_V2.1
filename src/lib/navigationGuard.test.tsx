@@ -1,4 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { useEffect } from 'react';
+import { act, render } from '@testing-library/react';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import {
   registerDirtySource,
   unregisterDirtySource,
@@ -10,6 +13,28 @@ import {
   setNavigateFn,
   setCurrentHref,
 } from './navigationGuard';
+
+/**
+ * Componente-ponte para o teste de integração: registra o navigate REAL do
+ * Router no guard (em vez de mock) e registra cada mudança de location —
+ * assim o spec verifica o estado final do histórico, não só as chamadas.
+ */
+function RouterHarness({
+  onLocation,
+}: {
+  onLocation: (loc: { pathname: string; state: unknown }) => void;
+}) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    setNavigateFn((path, options) => navigate(path, options));
+    return () => setNavigateFn(null);
+  }, [navigate]);
+  useEffect(() => {
+    onLocation({ pathname: location.pathname, state: location.state });
+  }, [location, onLocation]);
+  return null;
+}
 
 describe('navigationGuard', () => {
   beforeEach(() => {
@@ -87,14 +112,16 @@ describe('navigationGuard', () => {
     setNavigateFn(navigate);
 
     handlePopState();
-    // Restaura a página suja via PUSH marcado (pop já havia acontecido)
-    expect(navigate).toHaveBeenCalledWith('http://localhost/pagina-suja', {
+    // Restaura a página suja via PUSH marcado (pop já havia acontecido).
+    // A URL é normalizada para path relativo — navigate() com URL absoluta
+    // geraria pathname quebrado no Router.
+    expect(navigate).toHaveBeenCalledWith('/pagina-suja', {
       replace: false,
       state: { __pcNavGuardRestore: true },
     });
     await new Promise(r => setTimeout(r, 0));
     // Confirmação → navega para o destino real do pop via replace
-    expect(navigate).toHaveBeenLastCalledWith(window.location.href, {
+    expect(navigate).toHaveBeenLastCalledWith('/', {
       replace: true,
     });
   });
@@ -136,8 +163,49 @@ describe('navigationGuard', () => {
     expect(navigate).toHaveBeenCalledTimes(2);
     await new Promise(r => setTimeout(r, 20));
     // Confirma → sai para o destino do último pop
-    expect(navigate).toHaveBeenLastCalledWith(window.location.href, {
+    expect(navigate).toHaveBeenLastCalledWith('/', {
       replace: true,
     });
+  });
+
+  it('integração com Router real: pop restaura, confirma sai p/ destino', async () => {
+    registerDirtySource('a', 'Sujo');
+    let resolveConfirm: ((confirmed: boolean) => void) | null = null;
+    setConfirmHandler(
+      () =>
+        new Promise<boolean>(resolve => {
+          resolveConfirm = resolve;
+        })
+    );
+
+    const locations: Array<{ pathname: string; state: unknown }> = [];
+    render(
+      <MemoryRouter initialEntries={['/lista', '/pagina-suja']} initialIndex={1}>
+        <RouterHarness onLocation={l => locations.push(l)} />
+      </MemoryRouter>
+    );
+
+    setCurrentHref('http://localhost/pagina-suja');
+    // Simula o pop já consumado pelo browser: URL corrente é o destino real
+    window.history.pushState({}, '', '/destino-pop');
+
+    act(() => {
+      handlePopState();
+    });
+
+    // O PUSH de restauração aconteceu de verdade na pilha do Router
+    const restored = locations.at(-1);
+    if (!restored) throw new Error('RouterHarness não registrou nenhuma location');
+    expect(restored.pathname).toBe('/pagina-suja');
+    expect((restored.state as Record<string, unknown>).__pcNavGuardRestore).toBe(true);
+
+    await act(async () => {
+      resolveConfirm?.(true);
+      await new Promise(r => setTimeout(r, 0));
+    });
+
+    // Confirmação resolve com o Router terminando no destino capturado no pop
+    expect(locations.at(-1)?.pathname).toBe('/destino-pop');
+    window.history.pushState({}, '', '/');
   });
 });

@@ -45,7 +45,13 @@ export function NavigationGuardBridge() {
     setConfirmHandler(
       message =>
         new Promise<boolean>(resolve => {
-          setPending({ message, resolve });
+          setPending(prev => {
+            // Nova solicitação substitui a pendente: resolve a anterior
+            // como cancelada — sem isso a promessa dela ficaria suspensa
+            // para sempre (ex.: dois cliques rápidos em links).
+            prev?.resolve(false);
+            return { message, resolve };
+          });
         })
     );
     document.addEventListener('click', handleDocumentClick, true);
@@ -55,6 +61,8 @@ export function NavigationGuardBridge() {
       setConfirmHandler(null);
       document.removeEventListener('click', handleDocumentClick, true);
       window.removeEventListener('popstate', handlePopState);
+      // Desmontagem com diálogo aberto: resolve a promessa pendurada.
+      resolveRef.current?.(false);
     };
   }, [navigate]);
 

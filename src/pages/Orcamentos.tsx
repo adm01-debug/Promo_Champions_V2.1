@@ -55,7 +55,7 @@ export default function Orcamentos() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
-  const { salesperson } = useAuth();
+  const { salesperson, user } = useAuth();
 
   const { data: quotes, isLoading } = useQuotes(statusFilter);
   const { data: summary } = useQuoteSummary();
@@ -103,10 +103,12 @@ export default function Orcamentos() {
 
   // Rascunho automático: sair da página/fechar a aba não perde o orçamento
   // em edição. Limpo após criação bem-sucedida.
-  // Chave por usuário: troca de conta no mesmo navegador não restaura
-  // o rascunho de outra conta (dados de cliente/valores).
+  // Chave pela conta de autenticação (user.id resolve antes da página
+  // renderizar na ProtectedRoute): troca de conta no mesmo navegador não
+  // restaura o rascunho de outra conta, e usuário sem registro na tabela
+  // salespeople também tem rascunho próprio — nunca cai em chave genérica.
   const { clearDraft } = useFormDraft(
-    `orcamentos:create:draft:${salesperson?.id ?? 'anon'}`,
+    user ? `orcamentos:create:draft:${user.id}` : null,
     { form, items },
     draft => {
       if (draft?.form) setForm(draft.form);
