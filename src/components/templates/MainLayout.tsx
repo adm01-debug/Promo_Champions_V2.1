@@ -90,7 +90,9 @@ export function MainLayout({ children }: MainLayoutProps) {
   useEffect(() => {
     const main = document.getElementById('main-content');
     main?.focus({ preventScroll: true });
-    const pageTitle = document.title.split('|')[0]?.trim() ?? '';
+    // currentPageInfo vem do mapa de rotas (determinístico) — document.title
+    // ainda seria o da página anterior neste ponto do render.
+    const pageTitle = currentPageInfo.title ?? document.title.split('|')[0]?.trim() ?? '';
     setRouteAnnouncement(`Você está em ${pageTitle}`);
   }, [location.pathname]);
 

@@ -36,6 +36,18 @@ export function useScrollRestoration() {
   const navType = useNavigationType();
   const lastYRef = useRef(0);
 
+  // Controle manual: o scrollRestoration nativo do browser disputa com o
+  // nosso restore no POP e pode zerar a posição depois do primeiro scrollTo.
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+      return () => {
+        window.history.scrollRestoration = 'auto';
+      };
+    }
+    return undefined;
+  }, []);
+
   // Registra a posição de scroll da entrada de histórico corrente.
   useEffect(() => {
     const key = location.key;
@@ -69,9 +81,10 @@ export function useScrollRestoration() {
       const target = readPositions()[location.key] ?? 0;
       if (target > 0) {
         // Primeiro restore imediato; retentativas cobrem conteúdo lazy que
-        // cresce a altura da página depois do primeiro paint.
+        // cresce a altura da página depois do primeiro paint (dashboards
+        // pesados podem levar >1s para renderizar a altura total).
         window.scrollTo({ top: target, behavior: 'instant' });
-        const timers = [120, 320, 640].map(ms =>
+        const timers = [120, 320, 640, 1000, 1600].map(ms =>
           setTimeout(() => window.scrollTo({ top: target, behavior: 'instant' }), ms)
         );
         return () => timers.forEach(clearTimeout);

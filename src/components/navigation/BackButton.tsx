@@ -79,7 +79,8 @@ export const BackButton: FC<BackButtonProps> = memo(
       goBack();
     }, [goBack]);
 
-    // Keyboard shortcut listener (Alt + Left and Esc)
+    // Atalho de teclado: Esc volta. (Alt+← foi removido — o Chrome captura
+    // o acelerador nativo de voltar antes da página e a aba sai do app.)
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
         // Ignore if user is in an input
@@ -90,13 +91,11 @@ export const BackButton: FC<BackButtonProps> = memo(
           target.isContentEditable;
         if (isInput) return;
 
-        if ((e.altKey && e.key === 'ArrowLeft') || e.key === 'Escape') {
-          if (e.key === 'Escape') {
-            // If at home, don't do anything
-            if (isHomePage) return;
-            // If there's a modal (dialog ou alertdialog), let the modal handle it
-            if (hasOpenDialog()) return;
-          }
+        if (e.key === 'Escape') {
+          // If at home, don't do anything
+          if (isHomePage) return;
+          // If there's a modal (dialog ou alertdialog), let the modal handle it
+          if (hasOpenDialog()) return;
 
           e.preventDefault();
           handleBack();
@@ -131,7 +130,7 @@ export const BackButton: FC<BackButtonProps> = memo(
                       'text-muted-foreground hover:text-foreground hover:bg-accent/10',
                     className
                   )}
-                  aria-label={`${label} (Alt + Seta Esquerda)`}
+                  aria-label={`${label} (Esc)`}
                 >
                   <ArrowLeft className={cn('h-4 w-4', showLabel && 'mr-0.5')} />
                   {showLabel && <span className="text-xs font-medium">{label}</span>}
@@ -192,7 +191,7 @@ export const BackButton: FC<BackButtonProps> = memo(
               </motion.div>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="text-[10px] font-medium">
-              {label} (Alt + ←)
+              {label} (Esc)
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
