@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { requestNavigation } from '@/lib/navigationGuard';
+import { trackInteraction } from '@/lib/analytics';
 
 const HOME_PATHS = new Set(['/', '/dashboard']);
 
@@ -103,6 +104,10 @@ export function useBackNavigation(options?: BackNavigationOptions) {
   const goBack = useCallback(() => {
     // Modal aberta ganha: fecha o modal do topo, não navega.
     if (closeTopmostDialog()) return;
+
+    // Telemetria: contabiliza uso do voltar na página de origem
+    // (flush acontece na saída da página, no RouteTracker).
+    trackInteraction();
 
     if (window.history.length > 2 && !options?.preferParent) {
       // Formulário sujo: o navigate(-1) dispara popstate, interceptado
