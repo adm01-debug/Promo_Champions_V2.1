@@ -1,5 +1,6 @@
 import { FC, memo, useCallback, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 import { ArrowLeft, ChevronDown, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -31,7 +32,7 @@ const SESSION_HISTORY_KEY = 'app_nav_history';
 export const BackButton: FC<BackButtonProps> = memo(
   ({
     label = 'Voltar',
-    fallbackPath = '/',
+    fallbackPath,
     className,
     variant = 'ghost',
     showLabel = true,
@@ -71,24 +72,12 @@ export const BackButton: FC<BackButtonProps> = memo(
       });
     }, [location.pathname, isHomePage]);
 
+    const { goBack } = useBackNavigation({ fallbackPath });
+
     const handleBack = useCallback(() => {
       triggerHaptic('light');
-
-      // Check if there are modals open before going back
-      const modals = document.querySelectorAll('[role="dialog"]');
-      if (modals.length > 0) {
-        // Find the active close button or use the ESC behavior
-        return;
-      }
-
-      // Advanced history management: go back, but ensure we stay within the app context
-      if (window.history.length > 2) {
-        navigate(-1);
-      } else {
-        // Safe fallback if history is lost
-        navigate(fallbackPath, { replace: true });
-      }
-    }, [navigate, fallbackPath]);
+      goBack();
+    }, [goBack]);
 
     // Keyboard shortcut listener (Alt + Left and Esc)
     useEffect(() => {
