@@ -4302,9 +4302,9 @@
     "semantic_hash": ""
   },
   "src/components/navigation/BackButton.tsx": {
-    "mtime": 1791723624.8248384,
-    "seen": 1791723781.5435224,
-    "ast_hash": "cae9147a8cb30cd44fa8131fb7acd83c",
+    "mtime": 1791725563.6842666,
+    "seen": 1791725590.7597349,
+    "ast_hash": "efaeb8fef07c053d467fb2ae72562334",
     "semantic_hash": ""
   },
   "src/components/navigation/Breadcrumbs.tsx": {
@@ -5658,9 +5658,9 @@
     "semantic_hash": ""
   },
   "src/components/reports/sales/SalesReportHeader.tsx": {
-    "mtime": 1791723531.6724412,
-    "seen": 1791723781.5439463,
-    "ast_hash": "a28b5d3752b45fd364c14806c6046149",
+    "mtime": 1791725479.3779774,
+    "seen": 1791725485.8678296,
+    "ast_hash": "695aa119165a08433842b843d02f825e",
     "semantic_hash": ""
   },
   "src/components/reports/sales/SalesReportKpis.tsx": {
@@ -6846,9 +6846,9 @@
     "semantic_hash": ""
   },
   "src/components/templates/MainLayout.tsx": {
-    "mtime": 1791723655.3539338,
-    "seen": 1791723781.5441678,
-    "ast_hash": "5935056ece88747945d9c48ea863aff9",
+    "mtime": 1791725563.7092667,
+    "seen": 1791725590.763604,
+    "ast_hash": "48e92f3fce3681e2d063b3c4d91d8a47",
     "semantic_hash": ""
   },
   "src/components/territories/TerritoriesBoard.tsx": {
@@ -9786,9 +9786,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useFormGuard.ts": {
-    "mtime": 1791723531.8244436,
-    "seen": 1791723781.544673,
-    "ast_hash": "1ac752caf3958380b51627f20323b510",
+    "mtime": 1791724895.233009,
+    "seen": 1791725485.8686192,
+    "ast_hash": "ce5b47274ec9605455024c3865163cc3",
     "semantic_hash": ""
   },
   "src/hooks/useGlobalKeyboardShortcuts.ts": {
@@ -11076,9 +11076,9 @@
     "semantic_hash": ""
   },
   "src/pages/AccessDenied.tsx": {
-    "mtime": 1791723531.853444,
-    "seen": 1791723781.5449002,
-    "ast_hash": "e735d94a6dbea8f8761d905484f2e799",
+    "mtime": 1791725014.0033934,
+    "seen": 1791725485.8688884,
+    "ast_hash": "2191687a910690c7a622afda604398c7",
     "semantic_hash": ""
   },
   "src/pages/AccountBasedEngagement.tsx": {
@@ -11664,9 +11664,9 @@
     "semantic_hash": ""
   },
   "src/pages/NotFound.tsx": {
-    "mtime": 1791723531.8704443,
-    "seen": 1791723781.5470777,
-    "ast_hash": "b938196639a5e7fdcd15b5abaefc977f",
+    "mtime": 1791725479.9869795,
+    "seen": 1791725485.8689945,
+    "ast_hash": "18fa80d260a283c359afc92761653df9",
     "semantic_hash": ""
   },
   "src/pages/Notificacoes.tsx": {
@@ -11688,9 +11688,9 @@
     "semantic_hash": ""
   },
   "src/pages/Orcamentos.tsx": {
-    "mtime": 1791723531.8734443,
-    "seen": 1791723781.547084,
-    "ast_hash": "33b5749d0333c1807cf5e114f6db78c4",
+    "mtime": 1791725638.715524,
+    "seen": 1791725728.5595655,
+    "ast_hash": "1019ecafe41cd8d491675815988933db",
     "semantic_hash": ""
   },
   "src/pages/OrderDetailPage.tsx": {
@@ -20370,15 +20370,15 @@
     "semantic_hash": ""
   },
   "src/hooks/useBackNavigation.test.ts": {
-    "mtime": 1791723766.2462933,
-    "seen": 1791723781.544628,
-    "ast_hash": "f1e2aaa90359b90e9b88e92a9fc6b175",
+    "mtime": 1791724182.3155942,
+    "seen": 1791724187.4470556,
+    "ast_hash": "4b26e9534bf2310f163a972d8be7e93d",
     "semantic_hash": ""
   },
   "src/hooks/useBackNavigation.ts": {
-    "mtime": 1791723766.3272934,
-    "seen": 1791723781.5446296,
-    "ast_hash": "2f1265e58cfa9b26ef0dc330e17deee3",
+    "mtime": 1791725648.1425562,
+    "seen": 1791725728.5591853,
+    "ast_hash": "aa22cf91ed3c09ec60a233d98c6626fc",
     "semantic_hash": ""
   },
   "supabase/migrations/20261005210000_territory_history_fk_and_conquest_fix.sql": {
@@ -20397,6 +20397,42 @@
     "mtime": 1791723531.9684458,
     "seen": 1791723781.5484672,
     "ast_hash": "f1115207f99dbde7391f43bae7d7fe2a",
+    "semantic_hash": ""
+  },
+  "src/hooks/useScrollRestoration.test.tsx": {
+    "mtime": 1791724749.933541,
+    "seen": 1791724762.380105,
+    "ast_hash": "80dd00080ff374b250f0e8056c146067",
+    "semantic_hash": ""
+  },
+  "src/hooks/useScrollRestoration.ts": {
+    "mtime": 1791725571.2462924,
+    "seen": 1791725590.764217,
+    "ast_hash": "1ae9eee841bf0999e39d834a97cc2d98",
+    "semantic_hash": ""
+  },
+  "src/components/navigation/NavigationGuard.tsx": {
+    "mtime": 1791724984.1302967,
+    "seen": 1791725485.8675687,
+    "ast_hash": "7b9ff0e6573a25fb6b33a2e88a645fb9",
+    "semantic_hash": ""
+  },
+  "src/lib/navigationGuard.test.ts": {
+    "mtime": 1791725031.822451,
+    "seen": 1791725485.8688266,
+    "ast_hash": "b97caabe1e746609fd83135d4cdda60f",
+    "semantic_hash": ""
+  },
+  "src/lib/navigationGuard.ts": {
+    "mtime": 1791725479.8959792,
+    "seen": 1791725485.8688278,
+    "ast_hash": "33f41192a199a9aa3ea561af2ebd404a",
+    "semantic_hash": ""
+  },
+  "src/hooks/useFormDraft.ts": {
+    "mtime": 1791725617.0304494,
+    "seen": 1791725728.5592322,
+    "ast_hash": "238b5cbc791ecfdc57db88e78ed69423",
     "semantic_hash": ""
   }
 }

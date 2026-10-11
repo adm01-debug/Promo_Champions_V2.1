@@ -94,7 +94,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     // ainda seria o da página anterior neste ponto do render.
     const pageTitle = currentPageInfo.title ?? document.title.split('|')[0]?.trim() ?? '';
     setRouteAnnouncement(`Você está em ${pageTitle}`);
-  }, [location.pathname]);
+  }, [location.pathname, currentPageInfo.title]);
 
   // Dynamic Title Sync for excellence
   useEffect(() => {
