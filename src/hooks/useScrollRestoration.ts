@@ -83,21 +83,33 @@ export function useScrollRestoration() {
         // Primeiro restore imediato; retentativas cobrem conteúdo lazy que
         // cresce a altura da página depois do primeiro paint (dashboards
         // pesados podem levar >1s para renderizar a altura total).
-        window.scrollTo({ top: target, behavior: 'instant' });
-        const timers = [120, 320, 640, 1000, 1600].map(ms =>
-          setTimeout(() => window.scrollTo({ top: target, behavior: 'instant' }), ms)
-        );
-        // Gesto de rolagem do usuário cancela as retentativas — o restore
-        // não disputa posição com quem já começou a rolar manualmente.
+        let lastApplied = window.scrollY;
+        const apply = () => {
+          window.scrollTo({ top: target, behavior: 'instant' });
+          lastApplied = window.scrollY;
+        };
+        apply();
+        const timers = [120, 320, 640, 1000, 1600].map(ms => setTimeout(apply, ms));
+        // Qualquer scroll vindo de fora cancela as retentativas — o restore
+        // não disputa posição com o usuário. Dois sinais: gesto direto
+        // (wheel/touch/tecla) e desvio da posição que nosso último scrollTo
+        // deixou (cobre scrollbar e botões programáticos tipo "voltar ao
+        // topo"). Conteúdo lazy crescendo embaixo não muda scrollY, então
+        // não cancela as retentativas por engano.
         const cancelRetries = () => timers.forEach(clearTimeout);
+        const onExternalScroll = () => {
+          if (Math.abs(window.scrollY - lastApplied) > 40) cancelRetries();
+        };
         window.addEventListener('wheel', cancelRetries, { passive: true });
         window.addEventListener('touchmove', cancelRetries, { passive: true });
         window.addEventListener('keydown', cancelRetries);
+        window.addEventListener('scroll', onExternalScroll, { passive: true });
         return () => {
           cancelRetries();
           window.removeEventListener('wheel', cancelRetries);
           window.removeEventListener('touchmove', cancelRetries);
           window.removeEventListener('keydown', cancelRetries);
+          window.removeEventListener('scroll', onExternalScroll);
         };
       }
     }
