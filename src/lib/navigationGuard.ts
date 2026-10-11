@@ -8,15 +8,20 @@
  *   1. cliques em links internos (`<a href="/...">`) — captura no document;
  *   2. botão Voltar do app (`useBackNavigation`) — o `navigate(-1)` dispara
  *      popstate, interceptado aqui;
- *   3. Voltar do browser (popstate) — ao disparar com sujeira, re-empurramos
- *      a URL da página (o browser já popou) e perguntamos: confirma →
- *      `history.back()` de verdade; cancela → usuário segue na página;
+ *   3. Voltar/Avançar do browser (popstate) — ao disparar com sujeira,
+ *      re-empurramos a página via `navigate` PUSH e ressincronizamos o
+ *      Router no mesmo lote (a página suja nunca desmonta);
+ *      confirma → `navigate(replace)` para o destino real do pop;
+ *      cancela → usuário já está de volta à página;
  * - a confirmação visual fica em `NavigationGuardBridge` (AlertDialog),
  *   registrada via `setConfirmHandler` — sem `window.confirm` no fluxo SPA.
  */
 
 type ConfirmHandler = (message: string) => Promise<boolean>;
-type NavigateFn = (path: string) => void;
+type NavigateFn = (
+  path: string,
+  options?: { replace?: boolean; state?: unknown }
+) => void;
 
 interface DirtySource {
   message: string;
@@ -26,7 +31,8 @@ const dirtySources = new Map<string, DirtySource>();
 let confirmHandler: ConfirmHandler | null = null;
 let navigateFn: NavigateFn | null = null;
 let lastHref = typeof window !== 'undefined' ? window.location.href : '/';
-let interceptingPop = false;
+let askingConfirmation = false;
+let pendingDestination: string | null = null;
 
 export function registerDirtySource(id: string, message: string) {
   dirtySources.set(id, { message });
@@ -82,26 +88,39 @@ export async function requestNavigation(action: () => void) {
 }
 
 /**
- * Intercepta pops de histórico (Voltar do browser, navigate(-1) do app).
- * O pop já aconteceu quando o evento dispara — então restauramos a página
- * via pushState e perguntamos. Instalado uma vez pelo NavigationGuardBridge.
+ * Intercepta pops de histórico (Voltar/Avançar do browser, navigate(-1)).
+ * O pop já aconteceu quando o evento dispara: o browser está no destino e
+ * o React Router vai renderizá-lo. Re-empurramos a URL da página suja e
+ * ressincronizamos o Router com `navigate(lastHref, replace)` no mesmo lote
+ * de render — assim a página suja nunca desmonta, independente da ordem em
+ * que os listeners de popstate rodam. Confirmado, navegamos para o destino
+ * real do pop (funciona para Voltar e Avançar, sem `history.back()` — que
+ * dispararia outro popstate e re-cairia na confirmação).
  */
 export function handlePopState() {
-  if (!hasDirtySources() || interceptingPop) return;
-  interceptingPop = true;
-  // Volta para a página suja (a URL corrente já é a do destino do pop).
-  // O state marcado evita que a restauração de scroll trate o re-push
-  // como navegação nova e resete a posição do usuário.
-  window.history.pushState({ __pcNavGuardRestore: true }, '', lastHref);
+  if (!hasDirtySources() || !navigateFn) return;
+  // Destino real do pop — o último vence em pops repetidos durante o diálogo.
+  pendingDestination = window.location.href;
+  // Reempurra a página suja via navigate PUSH (preserva a entrada anterior
+  // na pilha e mantém o índice interno do Router consistente — pushState
+  // manual o corromperia). O state marcado evita que a restauração de
+  // scroll trate o re-push como navegação nova.
+  navigateFn(lastHref, {
+    replace: false,
+    state: { __pcNavGuardRestore: true },
+  });
+  if (askingConfirmation) return;
+  askingConfirmation = true;
   void askConfirmation()
     .then(confirmed => {
-      if (confirmed) {
-        window.history.back(); // sai para o destino real do pop
-      }
-      // Cancelado: permanece na entrada re-empurrada (mesma página).
+      const destination = pendingDestination;
+      pendingDestination = null;
+      // Substituir a entrada de restauração mantém a pilha limpa:
+      // confirma → [anterior, destino]; cancela → já estamos na página suja.
+      if (confirmed && destination) navigateFn?.(destination, { replace: true });
     })
     .finally(() => {
-      interceptingPop = false;
+      askingConfirmation = false;
     });
 }
 

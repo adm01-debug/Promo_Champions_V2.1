@@ -79,33 +79,65 @@ describe('navigationGuard', () => {
     document.body.removeChild(anchor);
   });
 
-  it('handlePopState re-empurra a página e sai ao confirmar', async () => {
+  it('handlePopState restaura a página e sai ao confirmar', async () => {
     registerDirtySource('a', 'Sujo');
-    setCurrentHref(window.location.href);
+    setCurrentHref('http://localhost/pagina-suja');
     setConfirmHandler(vi.fn().mockResolvedValue(true));
-    const pushState = vi.spyOn(window.history, 'pushState');
-    const back = vi.spyOn(window.history, 'back').mockImplementation(() => {});
+    const navigate = vi.fn();
+    setNavigateFn(navigate);
 
     handlePopState();
-    expect(pushState).toHaveBeenCalled();
+    // Restaura a página suja via PUSH marcado (pop já havia acontecido)
+    expect(navigate).toHaveBeenCalledWith('http://localhost/pagina-suja', {
+      replace: false,
+      state: { __pcNavGuardRestore: true },
+    });
     await new Promise(r => setTimeout(r, 0));
-    expect(back).toHaveBeenCalled();
+    // Confirmação → navega para o destino real do pop via replace
+    expect(navigate).toHaveBeenLastCalledWith(window.location.href, {
+      replace: true,
+    });
   });
 
-  it('handlePopState não sai quando o usuário cancela', async () => {
+  it('handlePopState fica na página quando o usuário cancela', async () => {
     registerDirtySource('a', 'Sujo');
-    setCurrentHref(window.location.href);
+    setCurrentHref('http://localhost/pagina-suja');
     setConfirmHandler(vi.fn().mockResolvedValue(false));
-    const back = vi.spyOn(window.history, 'back').mockImplementation(() => {});
+    const navigate = vi.fn();
+    setNavigateFn(navigate);
 
     handlePopState();
     await new Promise(r => setTimeout(r, 0));
-    expect(back).not.toHaveBeenCalled();
+    // Apenas a restauração — nenhuma navegação de saída após o cancelamento
+    expect(navigate).toHaveBeenCalledTimes(1);
   });
 
   it('handlePopState ignora sem sujeira', () => {
-    const pushState = vi.spyOn(window.history, 'pushState');
+    const navigate = vi.fn();
+    setNavigateFn(navigate);
     handlePopState();
-    expect(pushState).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('handlePopState reutiliza a confirmação aberta em pops repetidos', async () => {
+    registerDirtySource('a', 'Sujo');
+    setCurrentHref('http://localhost/pagina-suja');
+    const confirm = vi
+      .fn()
+      .mockImplementation(() => new Promise<boolean>(r => setTimeout(() => r(true), 10)));
+    setConfirmHandler(confirm);
+    const navigate = vi.fn();
+    setNavigateFn(navigate);
+
+    handlePopState();
+    handlePopState();
+    expect(confirm).toHaveBeenCalledTimes(1);
+    // Segunda restauração também reempurra a página suja
+    expect(navigate).toHaveBeenCalledTimes(2);
+    await new Promise(r => setTimeout(r, 20));
+    // Confirma → sai para o destino do último pop
+    expect(navigate).toHaveBeenLastCalledWith(window.location.href, {
+      replace: true,
+    });
   });
 });

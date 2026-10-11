@@ -41,7 +41,7 @@ export function NavigationGuardBridge() {
   }, [location]);
 
   useEffect(() => {
-    setNavigateFn(path => navigate(path));
+    setNavigateFn((path, options) => navigate(path, options));
     setConfirmHandler(
       message =>
         new Promise<boolean>(resolve => {

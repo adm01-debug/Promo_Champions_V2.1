@@ -15,13 +15,15 @@ export function useFormDraft<T>(
   state: T,
   restore: (draft: T) => void
 ) {
-  const restoredRef = useRef(false);
+  const restoredKeyRef = useRef<string | null>(null);
   const restoreRef = useRef(restore);
   restoreRef.current = restore;
 
   useEffect(() => {
-    if (restoredRef.current) return;
-    restoredRef.current = true;
+    // Restaura uma vez por chave — troca de chave (ex.: usuário carregou)
+    // restaura o rascunho da nova chave.
+    if (restoredKeyRef.current === storageKey) return;
+    restoredKeyRef.current = storageKey;
     try {
       const raw = localStorage.getItem(storageKey);
       if (raw) restoreRef.current(JSON.parse(raw) as T);
