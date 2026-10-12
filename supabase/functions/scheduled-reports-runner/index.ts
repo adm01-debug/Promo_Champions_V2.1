@@ -33,8 +33,21 @@ function toCSV(rows: Record<string, unknown>[]): string {
   ].join("\n");
 }
 
-async function executeReport(admin: ReturnType<typeof createClient>, reportId: string) {
-  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config").eq("id", reportId).single();
+// Entidades com coluna de dono (mesmo critério que a RLS aplica na UI).
+// clients não tem coluna de dono própria: a carteira é client_portfolio.
+const OWNER_SCOPED_ENTITIES = new Map<string, { column: string; idSpace: "sp" | "portfolio" }>([
+  ["sales", { column: "salesperson_id", idSpace: "sp" }],
+  ["accounts", { column: "owner_id", idSpace: "sp" }],
+  ["activities", { column: "salesperson_id", idSpace: "sp" }],
+  ["clients", { column: "id", idSpace: "portfolio" }],
+]);
+
+async function executeReport(
+  admin: ReturnType<typeof createClient>,
+  reportId: string,
+  ownerAuthId: string,
+) {
+  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config, owner_id").eq("id", reportId).single();
   if (error || !report) throw new Error(`Report ${reportId} não encontrado`);
 
   const cfg = (report.config ?? {}) as Record<string, unknown>;
@@ -47,7 +60,44 @@ async function executeReport(admin: ReturnType<typeof createClient>, reportId: s
     : "*";
   const limit = typeof cfg.limit === "number" ? Math.min(cfg.limit, 5000) : 1000;
 
-  const { data, error: qErr } = await admin.from(entity).select(cols).limit(limit);
+  let query = admin.from(entity).select(cols).limit(limit);
+
+  // O client service_role ignora RLS: o relatório rodava SEMPRE com escopo
+  // global, expondo dados de toda a equipe no arquivo de um vendedor.
+  // Aplica o mesmo recorte da RLS: admin/manager vê tudo; vendedor vê só
+  // as linhas do seu salesperson_id.
+  const scope = OWNER_SCOPED_ENTITIES.get(entity);
+  if (scope) {
+    const { data: isPrivileged } = await admin.rpc("is_admin_or_manager", {
+      _user_id: ownerAuthId,
+    });
+    if (!isPrivileged) {
+      const { data: sp } = await admin
+        .from("salespeople")
+        .select("id")
+        .eq("auth_user_id", ownerAuthId)
+        .maybeSingle();
+      if (!sp?.id) {
+        throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
+      }
+      if (scope.idSpace === "portfolio") {
+        // Carteira de clientes via client_portfolio (mesma leitura da RLS).
+        const { data: portfolio } = await admin
+          .from("client_portfolio")
+          .select("client_id")
+          .eq("salesperson_id", sp.id)
+          .limit(5000);
+        const ids = (portfolio ?? []).map((p) => p.client_id);
+        query = ids.length
+          ? query.in(scope.column, ids)
+          : query.eq(scope.column, "00000000-0000-0000-0000-000000000000");
+      } else {
+        query = query.eq(scope.column, sp.id);
+      }
+    }
+  }
+
+  const { data, error: qErr } = await query;
   if (qErr) throw new Error(qErr.message);
   return (data ?? []) as Record<string, unknown>[];
 }
@@ -60,7 +110,7 @@ async function processSchedule(admin: ReturnType<typeof createClient>, s: Schedu
     .single();
 
   try {
-    const rows = await executeReport(admin, s.report_id);
+    const rows = await executeReport(admin, s.report_id, s.created_by);
     const content = s.format === "json" ? JSON.stringify(rows, null, 2) : toCSV(rows);
     const ext = s.format;
     const path = `${s.created_by}/${s.id}/${new Date().toISOString().replace(/[:.]/g, "-")}.${ext}`;

@@ -239,11 +239,43 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
             const binaryStr = atob(pdf_base64);
             const bytes = new Uint8Array(binaryStr.length);
             for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
-            // Magic bytes: o bucket é público — só gravar se for PDF de verdade.
+            // Magic bytes: só gravar se for PDF de verdade.
             if (detectFileSignature(bytes) !== 'pdf') {
               console.warn(`[receive-quote-webhook] pdf_base64 rejeitado — assinatura não é %PDF`);
             } else {
-            const pdfPath = `proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}.pdf`;
+            // Bucket é PRIVADO: a política de leitura exige o auth.uid() do
+            // dono como primeiro segmento do path ({owner}/proposta-N.pdf).
+            let ownerFolder: string | null = null;
+            if (salespersonId) {
+              const { data: sp } = await supabase
+                .from("salespeople")
+                .select("auth_user_id")
+                .eq("id", salespersonId)
+                .maybeSingle();
+              if (sp?.auth_user_id) ownerFolder = sp.auth_user_id;
+            }
+            // Sem vendedor vinculado, tenta o criador da cotação — criado por
+            // sync guarda salespeople.id, então resolve para auth_user_id.
+            // Fallback "unassigned/": legível por admin/manager (a policy só
+            // exige dono OU gestor).
+            if (!ownerFolder) {
+              const { data: q } = await supabase
+                .from("quotes")
+                .select("created_by")
+                .eq("id", quoteId)
+                .maybeSingle();
+              if (q?.created_by) {
+                const { data: sp2 } = await supabase
+                  .from("salespeople")
+                  .select("auth_user_id")
+                  .eq("id", q.created_by)
+                  .maybeSingle();
+                ownerFolder = sp2?.auth_user_id ?? null;
+              }
+            }
+            // quote.id no nome: mesmo quote_number em cotações distintas não
+            // pode se sobrescrever via upsert; retry da mesma cotação reusa.
+            const pdfPath = `${ownerFolder ?? "unassigned"}/proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}-${quoteId}.pdf`;
             const { error: uploadErr } = await supabase.storage
               .from("quote-pdfs")
               .upload(pdfPath, bytes, { contentType: "application/pdf", upsert: true });
