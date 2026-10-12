@@ -148,7 +148,6 @@ export default function Orcamentos() {
     } catch {
       // best-effort
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- roda uma vez; o ref impede re-execução
   }, [user, salesperson, form, items]);
 
   const addItem = () => {
