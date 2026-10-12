@@ -162,14 +162,23 @@ Deno.serve(
           });
           if (pauseError) throw pauseError;
           if (event.eventType === 'reply') {
-            // Registra a resposta na execução atual da cadência — é o dado
-            // que o sequence-record-reply alimentaria (endereço já casado
-            // pelo match_reply_to_enrollment).
-            await admin
+            // Marca APENAS a execução enviada mais recente — senão uma
+            // resposta contamina a métrica de todas as variantes A/B da
+            // inscrição (mesmo critério do sequence-record-reply).
+            const { data: latestExec } = await admin
               .from('sequence_step_executions')
-              .update({ replied_at: event.receivedAt })
+              .select('id')
               .eq('enrollment_id', matchedEnrollmentId)
-              .is('replied_at', null);
+              .is('replied_at', null)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (latestExec?.id) {
+              await admin
+                .from('sequence_step_executions')
+                .update({ replied_at: event.receivedAt })
+                .eq('id', latestExec.id);
+            }
           }
           matchedEnrollmentIds.push(matchedEnrollmentId);
         }

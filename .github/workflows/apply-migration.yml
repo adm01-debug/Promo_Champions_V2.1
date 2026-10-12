@@ -38,18 +38,26 @@ jobs:
     timeout-minutes: 15
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      # Input via env, nunca interpolado no script — evita injeção de shell.
+      MIGRATION_FILE: ${{ inputs.migration_file }}
     steps:
+      # Sempre a main: um dispatch a partir de outra branch não pode aplicar
+      # SQL não revisado — a migration precisa estar mergeada primeiro.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
 
       - name: Instalar psql
         run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
 
       - name: Validar input
         run: |
-          FILE="supabase/migrations/${{ inputs.migration_file }}"
-          case "${{ inputs.migration_file }}" in
-            */*|*..*) echo "::error::nome de arquivo inválido"; exit 1;;
+          FILE="supabase/migrations/$MIGRATION_FILE"
+          case "$MIGRATION_FILE" in
+            */*|*..*|*\;*|*\`*|*\$*) echo "::error::nome de arquivo inválido"; exit 1;;
           esac
+          echo "$MIGRATION_FILE" | grep -qE '^[0-9]{8,14}_[a-zA-Z0-9_-]+\.sql$' || {
+            echo "::error::nome de arquivo inválido"; exit 1; }
           if [ ! -f "$FILE" ]; then
             echo "::error::arquivo não encontrado: $FILE"
             exit 1
