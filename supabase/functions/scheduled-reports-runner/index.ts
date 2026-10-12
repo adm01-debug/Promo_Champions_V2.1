@@ -34,12 +34,12 @@ function toCSV(rows: Record<string, unknown>[]): string {
 }
 
 // Entidades com coluna de dono (mesmo critério que a RLS aplica na UI).
-// sales/activities/accounts usam salespeople.id; clients usa auth.users.id.
-const OWNER_SCOPED_ENTITIES = new Map<string, { column: string; idSpace: "sp" | "auth" }>([
+// clients não tem coluna de dono própria: a carteira é client_portfolio.
+const OWNER_SCOPED_ENTITIES = new Map<string, { column: string; idSpace: "sp" | "portfolio" }>([
   ["sales", { column: "salesperson_id", idSpace: "sp" }],
   ["accounts", { column: "owner_id", idSpace: "sp" }],
   ["activities", { column: "salesperson_id", idSpace: "sp" }],
-  ["clients", { column: "user_id", idSpace: "auth" }],
+  ["clients", { column: "id", idSpace: "portfolio" }],
 ]);
 
 async function executeReport(
@@ -72,17 +72,26 @@ async function executeReport(
       _user_id: ownerAuthId,
     });
     if (!isPrivileged) {
-      if (scope.idSpace === "auth") {
-        query = query.eq(scope.column, ownerAuthId);
+      const { data: sp } = await admin
+        .from("salespeople")
+        .select("id")
+        .eq("auth_user_id", ownerAuthId)
+        .maybeSingle();
+      if (!sp?.id) {
+        throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
+      }
+      if (scope.idSpace === "portfolio") {
+        // Carteira de clientes via client_portfolio (mesma leitura da RLS).
+        const { data: portfolio } = await admin
+          .from("client_portfolio")
+          .select("client_id")
+          .eq("salesperson_id", sp.id)
+          .limit(5000);
+        const ids = (portfolio ?? []).map((p) => p.client_id);
+        query = ids.length
+          ? query.in(scope.column, ids)
+          : query.eq(scope.column, "00000000-0000-0000-0000-000000000000");
       } else {
-        const { data: sp } = await admin
-          .from("salespeople")
-          .select("id")
-          .eq("auth_user_id", ownerAuthId)
-          .maybeSingle();
-        if (!sp?.id) {
-          throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
-        }
         query = query.eq(scope.column, sp.id);
       }
     }

@@ -254,19 +254,28 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
                 .maybeSingle();
               if (sp?.auth_user_id) ownerFolder = sp.auth_user_id;
             }
-            // Sem vendedor vinculado, guarda na pasta do criador da cotação —
-            // a policy só lê a própria pasta, então "shared" seria inacessível.
+            // Sem vendedor vinculado, tenta o criador da cotação — criado por
+            // sync guarda salespeople.id, então resolve para auth_user_id.
+            // Fallback "unassigned/": legível por admin/manager (a policy só
+            // exige dono OU gestor).
             if (!ownerFolder) {
               const { data: q } = await supabase
                 .from("quotes")
                 .select("created_by")
                 .eq("id", quoteId)
                 .maybeSingle();
-              ownerFolder = q?.created_by ?? null;
+              if (q?.created_by) {
+                const { data: sp2 } = await supabase
+                  .from("salespeople")
+                  .select("auth_user_id")
+                  .eq("id", q.created_by)
+                  .maybeSingle();
+                ownerFolder = sp2?.auth_user_id ?? null;
+              }
             }
             // quote.id no nome: mesmo quote_number em cotações distintas não
             // pode se sobrescrever via upsert; retry da mesma cotação reusa.
-            const pdfPath = `${ownerFolder ?? "shared"}/proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}-${quoteId}.pdf`;
+            const pdfPath = `${ownerFolder ?? "unassigned"}/proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}-${quoteId}.pdf`;
             const { error: uploadErr } = await supabase.storage
               .from("quote-pdfs")
               .upload(pdfPath, bytes, { contentType: "application/pdf", upsert: true });
