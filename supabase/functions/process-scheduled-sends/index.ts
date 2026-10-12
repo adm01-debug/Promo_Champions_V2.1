@@ -4,7 +4,7 @@ import {
 } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
 
 interface Scheduled {
   id: string;
@@ -119,7 +119,12 @@ Deno.serve(withRequestId("process-scheduled-sends", async (req, ctx) => {
     ctx.log("error", "environment_not_configured");
     return json({ error: "service_not_configured" }, 503);
   }
-  if (!isInternalServiceRequest(req)) {
+  if (
+    !(await isAuthorizedCronJob(
+      req,
+      createClient(supabaseUrl, serviceRoleKey),
+    ))
+  ) {
     return json({ error: "unauthorized" }, 401);
   }
 

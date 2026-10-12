@@ -6,7 +6,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
-import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
 
 type ServiceClient = SupabaseClient;
 
@@ -199,8 +199,13 @@ Deno.serve(withRequestId("sequence-runner", async (req, ctx) => {
     );
   }
 
+  const supabase = createClient(
+    supabaseUrl,
+    serviceRoleKey,
+  );
+
   let callerUserId: string | null = null;
-  if (!isInternalServiceRequest(req)) {
+  if (!(await isAuthorizedCronJob(req, supabase))) {
     try {
       callerUserId = (await getUserClient(req)).userId;
     } catch (error) {
@@ -231,11 +236,6 @@ Deno.serve(withRequestId("sequence-runner", async (req, ctx) => {
       );
     }
   }
-
-  const supabase = createClient(
-    supabaseUrl,
-    serviceRoleKey,
-  );
 
   const startedAt = Date.now();
   let processed = 0;
@@ -310,10 +310,8 @@ Deno.serve(withRequestId("sequence-runner", async (req, ctx) => {
     };
     type LeadRow = {
       id: string;
-      name?: string;
-      company?: string;
-      position?: string;
-      phone?: string;
+      client_name?: string;
+      client_id?: string | null;
     };
     type AccountContactRow = {
       id: string;
@@ -363,7 +361,7 @@ Deno.serve(withRequestId("sequence-runner", async (req, ctx) => {
       chunkedIn<LeadRow>(
         leadIds,
         (chunk) =>
-          supabase.from("leads").select("id, name, company, position, phone")
+          supabase.from("sales").select("id, client_name, client_id")
             .in("id", chunk),
         { parallel: true, label: "sequence-runner.leads" },
       ),
@@ -437,12 +435,36 @@ Deno.serve(withRequestId("sequence-runner", async (req, ctx) => {
         email: client.email,
       });
     }
+    // Leads vivem na tabela `sales` (status='lead'); dados de contato vêm do
+    // `clients` vinculado — busca extra para os client_ids que ainda não foram
+    // carregados pelo lote de enrollments do tipo 'client'.
+    const clientById = new Map(clientsData.map((c) => [c.id, c]));
+    const missingClientIds = [
+      ...new Set(
+        leadsData
+          .map((l) => l.client_id)
+          .filter((id): id is string => !!id && !clientById.has(id)),
+      ),
+    ];
+    if (missingClientIds.length > 0) {
+      const extraClients = await chunkedIn<ClientRow>(
+        missingClientIds,
+        (chunk) =>
+          supabase.from("clients").select("id, name, company, phone, email").in(
+            "id",
+            chunk,
+          ),
+        { parallel: true, label: "sequence-runner.lead-clients" },
+      );
+      for (const c of extraClients) clientById.set(c.id, c);
+    }
     for (const lead of leadsData) {
+      const client = lead.client_id ? clientById.get(lead.client_id) : undefined;
       contactCtxByKey.set(contactContextKey("lead", lead.id), {
-        nome: lead.name,
-        empresa: lead.company,
-        cargo: lead.position,
-        phone: lead.phone,
+        nome: client?.name ?? lead.client_name,
+        empresa: client?.company,
+        phone: client?.phone,
+        email: client?.email,
       });
     }
     for (const contact of accountContactsData) {

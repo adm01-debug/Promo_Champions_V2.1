@@ -6,6 +6,7 @@ import { chunkedIn } from '../_shared/chunked-in.ts';
 import { alertFromEmail, escalateCriticalAlert } from '../_shared/alert-escalation.ts';
 import { maskEmail } from '../_shared/pii.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronJob } from '../_shared/cron-job-auth.ts';
 
 type LogFn = RequestIdContext['log'];
 
@@ -155,12 +156,22 @@ const handler = withRequestId(
 
     try {
       // Logs de segurança de todos os usuários + disparo de e-mail aos admins:
-      // operação restrita a administradores.
-      const caller = await getUserClient(req);
-      const { data: isAdmin, error: roleError } = await caller.client.rpc(
-        'has_role' as never,
-        { _user_id: caller.userId, _role: 'admin' } as never
+      // restrito a administradores ou ao dispatcher interno de crons
+      // (service_role ou X-Cron-Secret).
+      const authorizedByCron = await isAuthorizedCronJob(
+        req,
+        createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        ),
       );
+      const caller = authorizedByCron ? null : await getUserClient(req);
+      const { data: isAdmin, error: roleError } = authorizedByCron
+        ? { data: true, error: null }
+        : await caller!.client.rpc(
+            'has_role' as never,
+            { _user_id: caller!.userId, _role: 'admin' } as never
+          );
       if (roleError) throw roleError;
       if (!isAdmin) {
         return new Response(JSON.stringify({ error: 'forbidden' }), {

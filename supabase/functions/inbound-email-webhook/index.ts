@@ -161,6 +161,16 @@ Deno.serve(
             _reason: reason,
           });
           if (pauseError) throw pauseError;
+          if (event.eventType === 'reply') {
+            // Registra a resposta na execução atual da cadência — é o dado
+            // que o sequence-record-reply alimentaria (endereço já casado
+            // pelo match_reply_to_enrollment).
+            await admin
+              .from('sequence_step_executions')
+              .update({ replied_at: event.receivedAt })
+              .eq('enrollment_id', matchedEnrollmentId)
+              .is('replied_at', null);
+          }
           matchedEnrollmentIds.push(matchedEnrollmentId);
         }
       }
