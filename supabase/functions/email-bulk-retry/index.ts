@@ -4,10 +4,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 import { decideRetry, type RetryableDraft } from "../_shared/retry-policy.ts";
-import {
-  filterOptedOut,
-  unsubscribeFooterHtml,
-} from "../_shared/unsubscribe.ts";
+import { filterOptedOut } from "../_shared/unsubscribe.ts";
 import { sendTransactionalEmail } from "../_shared/transactional-email-sender.ts";
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
 import { withRequestId } from "../_shared/request-id.ts";
