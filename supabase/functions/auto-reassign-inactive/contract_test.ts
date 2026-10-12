@@ -10,9 +10,11 @@ Deno.test("auto-reassign-inactive aceita somente POST do serviço interno", asyn
     /req\.method\s*!==\s*["']POST["']/.test(source),
     "a edge deve restringir o método a POST",
   );
-  assertStringIncludes(source, "isInternalServiceRequest(req)");
+  // isAuthorizedCronJob exige service_role OU o segredo de cron —
+  // continua cobrindo a autorização interna via isInternalServiceRequest.
+  assertStringIncludes(source, "isAuthorizedCronJob(req");
 
-  const authAt = source.indexOf("isInternalServiceRequest(req)");
+  const authAt = source.indexOf("isAuthorizedCronJob(req");
   const clientAt = source.indexOf("const supabase = createClient");
   assert(
     authAt >= 0 && authAt < clientAt,

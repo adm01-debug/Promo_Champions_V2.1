@@ -43,7 +43,10 @@ interface CronJobStatus {
 function cronJobStatus(j: CronJobStatus): 'ok' | 'erro' | 'pendente' | 'inativo' {
   if (!j.active) return 'inativo';
   if (!j.last_status) return 'pendente';
-  if (j.last_status === 'succeeded' && (j.last_return_code === null || j.last_return_code < 400))
+  if (
+    j.last_status === 'succeeded' &&
+    (j.last_return_code === null || j.last_return_code < 400)
+  )
     return 'ok';
   return 'erro';
 }
@@ -52,9 +55,7 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
   const { data: cronJobs } = useQuery({
     queryKey: ['admin-edge-cron-status'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc(
-        'admin_edge_cron_status' as never,
-      );
+      const { data, error } = await supabase.rpc('admin_edge_cron_status' as never);
       if (error) throw error;
       return (data ?? []) as CronJobStatus[];
     },
