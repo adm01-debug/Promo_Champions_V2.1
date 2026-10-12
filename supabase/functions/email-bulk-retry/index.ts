@@ -187,14 +187,14 @@ Deno.serve(withRequestId("email-bulk-retry", async (req, ctx) => {
       }
 
       try {
-        const footer = await unsubscribeFooterHtml(d.recipient_email);
-
+        // Rodapé/headers de descadastro entram uma única vez via prepareEmail
+        // (purpose outreach) — não duplicar aqui.
         const { error } = await sendTransactionalEmail({
           supabaseUrl: SUPABASE_URL,
           serviceRoleKey: SERVICE_ROLE,
           to: d.recipient_email,
           subject: d.subject,
-          html: `${d.body ?? ""}${footer}`,
+          html: d.body ?? "",
         });
         if (error) throw error;
 

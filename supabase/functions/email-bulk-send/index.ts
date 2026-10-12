@@ -120,17 +120,14 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
         continue;
       }
       try {
-        // Conformidade LGPD/CAN-SPAM: todo envio em massa carrega descadastro
-        // visível (rodapé) e one-click (RFC 8058) para provedores.
-        const footer = await unsubscribeFooterHtml(d.recipient_email);
-        const html = `${d.body ?? ''}${footer}`;
-
+        // Conformidade LGPD/CAN-SPAM: rodapé e headers de descadastro são
+        // acrescentados uma única vez por prepareEmail (purpose outreach).
         const { error } = await sendTransactionalEmail({
           supabaseUrl: SUPABASE_URL,
           serviceRoleKey: SERVICE_ROLE,
           to: d.recipient_email,
           subject: d.subject,
-          html,
+          html: d.body ?? '',
         });
         if (error) throw error;
 

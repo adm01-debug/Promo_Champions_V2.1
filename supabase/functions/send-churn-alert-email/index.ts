@@ -124,6 +124,9 @@ Deno.serve(withRequestId('send-churn-alert-email', async (req, ctx) => {
         to: recipient,
         subject,
         html,
+        // Alerta operacional interno — não é campanha; transactional ignora
+        // opt-out comercial para não silenciar o aviso de churn.
+        purpose: "transactional",
       });
       if (sendErr) failedRecipients.push(`${recipient}: ${sendErr.message}`);
     }
