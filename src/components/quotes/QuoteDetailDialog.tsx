@@ -108,7 +108,7 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                   onClick={async () => {
                     // Bucket privado: pdf_url guarda o path — assina na hora.
                     const match = quote.pdf_url!.match(/\/quote-pdfs\/(.+)$/);
-                    const path = match ? decodeURIComponent(match[1]) : null;
+                    const path = match?.[1] ? decodeURIComponent(match[1]) : null;
                     if (!path) {
                       window.open(quote.pdf_url!, '_blank', 'noopener');
                       return;
