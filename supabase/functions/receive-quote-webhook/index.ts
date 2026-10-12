@@ -245,7 +245,7 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
             } else {
             // Bucket é PRIVADO: a política de leitura exige o auth.uid() do
             // dono como primeiro segmento do path ({owner}/proposta-N.pdf).
-            let ownerFolder = "shared";
+            let ownerFolder: string | null = null;
             if (salespersonId) {
               const { data: sp } = await supabase
                 .from("salespeople")
@@ -254,7 +254,19 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
                 .maybeSingle();
               if (sp?.auth_user_id) ownerFolder = sp.auth_user_id;
             }
-            const pdfPath = `${ownerFolder}/proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}.pdf`;
+            // Sem vendedor vinculado, guarda na pasta do criador da cotação —
+            // a policy só lê a própria pasta, então "shared" seria inacessível.
+            if (!ownerFolder) {
+              const { data: q } = await supabase
+                .from("quotes")
+                .select("created_by")
+                .eq("id", quoteId)
+                .maybeSingle();
+              ownerFolder = q?.created_by ?? null;
+            }
+            // quote.id no nome: mesmo quote_number em cotações distintas não
+            // pode se sobrescrever via upsert; retry da mesma cotação reusa.
+            const pdfPath = `${ownerFolder ?? "shared"}/proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}-${quoteId}.pdf`;
             const { error: uploadErr } = await supabase.storage
               .from("quote-pdfs")
               .upload(pdfPath, bytes, { contentType: "application/pdf", upsert: true });

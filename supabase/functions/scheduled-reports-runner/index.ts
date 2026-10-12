@@ -34,11 +34,12 @@ function toCSV(rows: Record<string, unknown>[]): string {
 }
 
 // Entidades com coluna de dono (mesmo critério que a RLS aplica na UI).
-const OWNER_SCOPED_ENTITIES = new Set([
-  "sales",
-  "accounts",
-  "activities",
-  "clients",
+// sales/activities/accounts usam salespeople.id; clients usa auth.users.id.
+const OWNER_SCOPED_ENTITIES = new Map<string, { column: string; idSpace: "sp" | "auth" }>([
+  ["sales", { column: "salesperson_id", idSpace: "sp" }],
+  ["accounts", { column: "owner_id", idSpace: "sp" }],
+  ["activities", { column: "salesperson_id", idSpace: "sp" }],
+  ["clients", { column: "user_id", idSpace: "auth" }],
 ]);
 
 async function executeReport(
@@ -65,20 +66,25 @@ async function executeReport(
   // global, expondo dados de toda a equipe no arquivo de um vendedor.
   // Aplica o mesmo recorte da RLS: admin/manager vê tudo; vendedor vê só
   // as linhas do seu salesperson_id.
-  if (OWNER_SCOPED_ENTITIES.has(entity)) {
+  const scope = OWNER_SCOPED_ENTITIES.get(entity);
+  if (scope) {
     const { data: isPrivileged } = await admin.rpc("is_admin_or_manager", {
       _user_id: ownerAuthId,
     });
     if (!isPrivileged) {
-      const { data: sp } = await admin
-        .from("salespeople")
-        .select("id")
-        .eq("auth_user_id", ownerAuthId)
-        .maybeSingle();
-      if (!sp?.id) {
-        throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
+      if (scope.idSpace === "auth") {
+        query = query.eq(scope.column, ownerAuthId);
+      } else {
+        const { data: sp } = await admin
+          .from("salespeople")
+          .select("id")
+          .eq("auth_user_id", ownerAuthId)
+          .maybeSingle();
+        if (!sp?.id) {
+          throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
+        }
+        query = query.eq(scope.column, sp.id);
       }
-      query = query.eq("salesperson_id", sp.id);
     }
   }
 
