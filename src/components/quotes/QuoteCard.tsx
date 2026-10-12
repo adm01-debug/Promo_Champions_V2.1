@@ -18,6 +18,10 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { QUOTE_STATUSES, type Quote } from '@/hooks/useQuotes';
+import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { differenceInDays } from 'date-fns';
 import { EnrollQuoteCadenceDialog } from '@/components/cadences/quote/EnrollQuoteCadenceDialog';
 
@@ -47,7 +51,34 @@ export const QuoteCard = React.memo(function QuoteCard({
   onUpdateStatus,
   onDelete,
 }: QuoteCardProps) {
+  const queryClient = useQueryClient();
+  const [sending, setSending] = useState(false);
   const statusConfig = getStatusConfig(quote.status);
+
+  const handleSend = async () => {
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-quote-to-client', {
+        body: { quote_id: quote.id, channels: ['email', 'whatsapp'] },
+      });
+      if (error) throw error;
+      const results = (data as { results?: Record<string, unknown> } | null)?.results;
+      const delivered = results && (results.email || results.whatsapp);
+      toast.success(
+        delivered
+          ? 'Orçamento enviado ao cliente.'
+          : 'Orçamento marcado como enviado (sem canal de contato).'
+      );
+      queryClient.invalidateQueries({ queryKey: ['quotes'] });
+      queryClient.invalidateQueries({ queryKey: ['quotes-summary'] });
+    } catch (e) {
+      toast.error(
+        `Falha ao enviar orçamento: ${e instanceof Error ? e.message : 'erro'}`
+      );
+    } finally {
+      setSending(false);
+    }
+  };
   const expiration = getExpirationInfo(quote.valid_until, quote.status);
 
   return (
@@ -115,12 +146,11 @@ export const QuoteCard = React.memo(function QuoteCard({
               size="sm"
               variant="outline"
               className="gap-1 text-xs"
-              onClick={() =>
-                onUpdateStatus({ id: quote.id, status: 'sent', version: quote.version })
-              }
+              disabled={sending}
+              onClick={handleSend}
             >
               <Send className="h-3 w-3" />
-              Enviar
+              {sending ? 'Enviando…' : 'Enviar'}
             </Button>
           )}
           {quote.status === 'sent' && (

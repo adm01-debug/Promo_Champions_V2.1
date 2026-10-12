@@ -1,6 +1,7 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
-import { filterOptedOut, unsubscribeFooterHtml, unsubscribeHeaders } from "../_shared/unsubscribe.ts";
+import { filterOptedOut, unsubscribeFooterHtml } from "../_shared/unsubscribe.ts";
+import { sendTransactionalEmail } from '../_shared/transactional-email-sender.ts';
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
 import { backoffMs } from "../_shared/retry-policy.ts";
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
@@ -122,20 +123,16 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
         // Conformidade LGPD/CAN-SPAM: todo envio em massa carrega descadastro
         // visível (rodapé) e one-click (RFC 8058) para provedores.
         const footer = await unsubscribeFooterHtml(d.recipient_email);
-        const headers = await unsubscribeHeaders(d.recipient_email);
         const html = `${d.body ?? ''}${footer}`;
 
-        const { error } = await admin.rpc('enqueue_email', {
-          p_to: [d.recipient_email],
-          p_from: fromAddress,
-          p_reply_to: null,
-          p_subject: d.subject,
-          p_html: html,
-          p_purpose: 'transactional',
-          p_template_name: 'bulk-composer',
-          p_headers: headers,
-        } as never);
-        if (error) throw new Error(error.message);
+        const { error } = await sendTransactionalEmail({
+          supabaseUrl: SUPABASE_URL,
+          serviceRoleKey: SERVICE_ROLE,
+          to: d.recipient_email,
+          subject: d.subject,
+          html,
+        });
+        if (error) throw error;
 
         await admin
           .from('email_bulk_drafts')
@@ -145,7 +142,7 @@ Deno.serve(withRequestId("email-bulk-send", async (req, _ctx) => {
         throttledMs += await pacer.afterSend();
       } catch (e) {
         const msg = (e as Error).message ?? String(e);
-        if (/enqueue_email/i.test(msg) && /does not exist/i.test(msg)) {
+        if (/email_provider_not_configured|service_not_configured/i.test(msg)) {
           // Falha de infraestrutura: aborta o lote em vez de queimar destinatários.
           await admin
             .from('email_bulk_jobs')

@@ -7,8 +7,8 @@ import { decideRetry, type RetryableDraft } from "../_shared/retry-policy.ts";
 import {
   filterOptedOut,
   unsubscribeFooterHtml,
-  unsubscribeHeaders,
 } from "../_shared/unsubscribe.ts";
+import { sendTransactionalEmail } from "../_shared/transactional-email-sender.ts";
 import { resolveThrottle, SendPacer } from "../_shared/send-pacer.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
@@ -188,19 +188,15 @@ Deno.serve(withRequestId("email-bulk-retry", async (req, ctx) => {
 
       try {
         const footer = await unsubscribeFooterHtml(d.recipient_email);
-        const headers = await unsubscribeHeaders(d.recipient_email);
 
-        const { error } = await admin.rpc("enqueue_email", {
-          p_to: [d.recipient_email],
-          p_from: fromAddress,
-          p_reply_to: null,
-          p_subject: d.subject,
-          p_html: `${d.body ?? ""}${footer}`,
-          p_purpose: "transactional",
-          p_template_name: "bulk-composer-retry",
-          p_headers: headers,
-        } as never);
-        if (error) throw new Error(error.message);
+        const { error } = await sendTransactionalEmail({
+          supabaseUrl: SUPABASE_URL,
+          serviceRoleKey: SERVICE_ROLE,
+          to: d.recipient_email,
+          subject: d.subject,
+          html: `${d.body ?? ""}${footer}`,
+        });
+        if (error) throw error;
 
         await admin
           .from("email_bulk_drafts")

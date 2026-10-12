@@ -19,7 +19,7 @@ export function WhatsAppDialog({ open, onOpenChange, sale }: WhatsAppDialogProps
   );
 
   const handleSend = async () => {
-    const success = await sendMessage(sale.fullId, message);
+    const success = await sendMessage(sale.fullId, message, sale.client_id);
     if (success) {
       onOpenChange(false);
     }

@@ -5,11 +5,38 @@ import { toast } from 'sonner';
 export function useWhatsApp() {
   const [isSending, setIsSending] = useState(false);
 
-  const sendMessage = async (saleId: string, body: string) => {
+  const sendMessage = async (saleId: string, body: string, clientId?: string | null) => {
     setIsSending(true);
     try {
-      // 1. Log the message in the database (simulated successful outbound)
-      const { error: dbError } = await supabase.from('whatsapp_conversations').insert({
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error('Sessão expirada — faça login novamente.');
+
+      let to: string | null = null;
+      if (clientId) {
+        const { data: client } = await supabase
+          .from('clients')
+          .select('phone')
+          .eq('id', clientId)
+          .maybeSingle();
+        to = client?.phone ?? null;
+      }
+      if (!to) {
+        toast.error('Cliente sem telefone cadastrado para receber WhatsApp.');
+        return false;
+      }
+
+      const { data, error } = await supabase.functions.invoke(
+        'send-multichannel-message',
+        {
+          body: { ownerId: user.id, channel: 'whatsapp', to, body },
+        }
+      );
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      await supabase.from('whatsapp_conversations').insert({
         sale_id: saleId,
         direction: 'outbound',
         body,
@@ -17,9 +44,6 @@ export function useWhatsApp() {
         sent_at: new Date().toISOString(),
       });
 
-      if (dbError) throw dbError;
-
-      // 2. Update last interaction on sales
       await supabase
         .from('sales')
         .update({
@@ -30,9 +54,10 @@ export function useWhatsApp() {
 
       toast.success('Mensagem enviada via WhatsApp!');
       return true;
-    } catch (_err) {
-      // Errors are tracked via edge function logs and RLS audit if necessary
-      toast.error('Falha ao enviar mensagem via WhatsApp');
+    } catch (err) {
+      toast.error(
+        `Falha ao enviar mensagem via WhatsApp: ${err instanceof Error ? err.message : 'erro'}`
+      );
       return false;
     } finally {
       setIsSending(false);

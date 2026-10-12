@@ -44,7 +44,7 @@ export function useLoginAttempts(filters?: { email?: string; limit?: number }) {
 export function useLogLoginAttempt() {
   const logAttempt = async ({
     email,
-    ip_address,
+    ip_address: _ip_address,
     user_agent,
     success,
     failure_reason,
@@ -55,13 +55,19 @@ export function useLogLoginAttempt() {
     success: boolean;
     failure_reason?: string;
   }) => {
-    await supabase.from('login_attempts').insert({
-      email,
-      ip_address,
-      user_agent,
-      success,
-      failure_reason,
-    });
+    // INSERT direto em login_attempts é bloqueado por RLS — o caminho
+    // oficial são as RPCs gravadas para anon (mesmas do useLoginRateLimiter).
+    if (success) {
+      await supabase.rpc('record_successful_login_attempt', {
+        p_user_agent: user_agent ?? undefined,
+      });
+    } else {
+      await supabase.rpc('record_failed_login_attempt', {
+        p_email: email.toLowerCase().trim(),
+        p_failure_reason: failure_reason ?? undefined,
+        p_user_agent: user_agent ?? undefined,
+      });
+    }
   };
 
   return { logAttempt };

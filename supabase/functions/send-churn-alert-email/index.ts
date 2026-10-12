@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { sendTransactionalEmail } from '../_shared/transactional-email-sender.ts';
 
 interface Payload {
   test?: boolean;
@@ -113,20 +114,26 @@ Deno.serve(withRequestId('send-churn-alert-email', async (req, ctx) => {
     });
     const html = renderHtml(emailCtx);
 
-    // Tenta usar infra de e-mail do Lovable (enqueue_email). Se ausente, orienta setup.
-    const { error: qErr } = await supabase.rpc('enqueue_email', {
-      p_to: s.email_recipients,
-      p_from: s.email_from,
-      p_reply_to: s.email_reply_to,
-      p_subject: subject,
-      p_html: html,
-      p_purpose: 'transactional',
-      p_template_name: 'churn-alert',
-    } as never);
+    // Envio real via send-transactional-email (Resend + opt-out + auditoria).
+    // A RPC enqueue_email não existe — os erros abaixo cobrem o gap de setup.
+    const failedRecipients: string[] = [];
+    for (const recipient of s.email_recipients as string[]) {
+      const { error: sendErr } = await sendTransactionalEmail({
+        supabaseUrl,
+        serviceRoleKey,
+        to: recipient,
+        subject,
+        html,
+      });
+      if (sendErr) failedRecipients.push(`${recipient}: ${sendErr.message}`);
+    }
+    const qErr = failedRecipients.length
+      ? { message: failedRecipients.join('; ') }
+      : null;
 
     if (qErr) {
       const msg = qErr.message ?? String(qErr);
-      if (/function .*enqueue_email.* does not exist/i.test(msg)) {
+      if (/email_provider_not_configured|service_not_configured/i.test(msg)) {
         return new Response(
           JSON.stringify({
             ok: false,
