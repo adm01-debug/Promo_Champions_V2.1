@@ -91,7 +91,7 @@ O sistema tem **muito código pronto e pouca coisa ligada de ponta a ponta**. O 
 
 | Fatia (anexo) | Universo analisado | Não executado / parcial / divergente | Destaques numéricos |
 |---|---|---|---|
-| **A — Planos de execução** | 2 planos de 100 etapas (26/08 e 30/08), handoff, reconciliações, validações, plano graphify | Plano 26/08: **53 P + 36 NI** (11 C). Plano 30/08: **52 P + 31 NI** (17 C). Demais planos: ver anexo | Nenhum dos dois planos passou de 17% de conclusão |
+| **A — Planos de execução** | 15 documentos de plano e execução, **552 itens** (dois planos de 100 etapas, plano mestre de 50, RELATORIO_FALHAS, handoff, reconciliações, validações, plano graphify) | **202 P + 160 NI + 4 D** (186 C = 34%) | Os dois planos de 100 etapas estão em **11% e 17%** de conclusão |
 | **B — Docs de funcionalidades** | FUNCIONALIDADES_*, GAPS_CLASSE_MUNDIAL, FEATURE_SUMMARY, benchmark Ramper, ADRs, LGPD, TECH/TYPE_DEBT | **118 itens**: 52 P, 35 NI, 31 D (cerca de 62 completos) | 19 rotas citadas em docs não existem |
 | **C — Docs de estado e runbooks** | `docs/estado/*`, runbooks, postmortem, RLS_MATRIX, SEC-08, ARCHITECTURE, API | **304 itens**: 117 NI, 56 P, 40 D, 29 não verificáveis (54 resolvidos) | 20 de 20 rotas seguem sem link; 14 edge functions sem chamador |
 | **D — Frontend** | 2.022 arquivos e 175 rotas | 38 telas com dado fixo ou fictício; cerca de 55 botões mortos em 30 telas; 16 ações que só mostram toast; 16 grupos de feature órfãos; 14 rotas sem link; 5 links quebrados | **148 arquivos mortos (cerca de 19 mil linhas)**; 264 exports nunca importados |
@@ -137,6 +137,24 @@ Esforço estimado:
 | 23 | **CNPJ alfanumérico (2026) rejeitado** e assinatura digital sem provedor | NÃO INICIADO | `brDocuments.ts:110`; envio e confirmação de assinatura bloqueados (`useDigitalSignatures.ts:123-146`) | Validador novo; contratar provedor de assinatura | P / M | D |
 | 24 | **Gamificação depende do navegador** | PARCIAL | `process-race-event` só é chamada pela UI ao criar venda (venda do Bitrix, V4 ou import não pontua); diff de placar sempre vazio (`process-race-event/index.ts:61-90`); desafios não giram; roleta e XP desligados (mig `20260814190000`); matchmaking fora do restore | Trigger SQL em `sales`; cron diário; reativar | M | C, E, F |
 | 25 | **A CI não protege e ninguém fica sabendo quando quebra** | PARCIAL | 5 workflows vermelhos todo dia (release-please, db-backup, cron-monitoring, dependabot-automerge, pr-review-sla); `SLACK_CI_WEBHOOK_URL` não existe; o CI Gate cobre 3 jobs e aceita job cancelado; credenciais de CI inválidas desligam suítes live; 8 testes de autorização se auto-pulam; cobertura de 3,99% | Canal de alerta (N8N para WhatsApp), gate completo, conta E2E sem privilégio | M | G |
+
+### 3.1 Itens de alto impacto que vêm dos planos não executados (Anexo A)
+
+Estes itens não aparecem nas fatias B a G porque nasceram em auditorias e planos anteriores que ficaram sem execução. A tabela usa os mesmos critérios de esforço do top 25.
+
+| # | Problema (efeito no negócio) | Estado | Evidência principal | O que falta | Esforço |
+|---|---|---|---|---|---|
+| A1 | **Cálculo de comissão errado:** ignora faixa e categoria, a regra global sobrepõe a específica, gera comissão duplicada e paga o SDR em dobro | NÃO INICIADO | `private.handle_sale_commissions` (mig `20260619145322:138-197`) sem redefinição posterior; RELATORIO_FALHAS L684/690/695/733 | Reescrever a regra com testes de mesa usando casos reais da folha de comissão | M |
+| A2 | **Nenhuma rotação de credencial foi executada**, e a service_role antiga está no histórico Git de um repositório **público** | NÃO INICIADO | `docs/SECRETS_ROTATION.md:128`; STATUS §3.2 | Rotacionar as chaves do projeto antigo e do oficial e registrar | P |
+| A3 | **Relatórios agendados sem filtro de dono e export win-loss sem escopo:** um usuário pode receber dado de vendas de outro | NÃO INICIADO / PARCIAL | `scheduled-reports-runner/index.ts:37-50`; `export-winloss-pdf/index.ts:22` | Aplicar o escopo do dono e do papel no runner e no export | P |
+| A4 | **PDFs de orçamento em bucket público:** as propostas comerciais ficam acessíveis por URL | NÃO INICIADO | `receive-quote-webhook/index.ts:253` (`getPublicUrl`) | Bucket privado e URL assinada com expiração | P |
+| A5 | **Prompt injection nos assistentes de IA** (chat de vendas, copiloto, orquestrador) | NÃO INICIADO / PARCIAL | `sales-assistant-chat/index.ts:372-375`; `ai-copilot/index.ts:192-202` | Separar instrução de dado, fazer allowlist de ferramentas e confirmar ações | M |
+| A6 | **Gamificação manipulável:** power-ups inseríveis pelo cliente, dupla coleta, XP gravado pelo front, roleta anuncia prêmio sem conceder | NÃO INICIADO | mig `20260418104126:72-74`; `collect-race-powerup/index.ts:109-112`; mig `20260830000001:137-145` | Mover as regras para o servidor com idempotência | M |
+| A7 | **CS-360 usa `orders.user_id` como `account_id`**, o que mostra o cliente errado no painel | NÃO INICIADO | `customer-success-360/index.ts:73-76` | Corrigir o join | P |
+| A8 | **Sessão exposta a XSS:** CORS cai para `*`, a sessão fica em `localStorage` e a CSP tem `unsafe-eval` | PARCIAL | `_shared/cors.ts:7`; `client.ts:11`; `index.html:56` | Allowlist de origem, headers no host e remoção de `unsafe-eval` | M |
+| A9 | **Ledger de produção não reconciliado:** o próximo `db push` pode reaplicar ou falhar, e não há replay em banco limpo | NÃO INICIADO | `MIGRATION_RENAME_MAP` §4-9; `20260903000002` nunca aplicada (IDENTIDADE §3) | Reconciliar `schema_migrations` e fazer replay num banco efêmero | M |
+
+> Um achado do Anexo A (policies de webhooks que decidem admin por `raw_user_meta_data`) foi **rebaixado para NÃO VERIFICADO** na consolidação. A migration `20260416180740` recria `public.webhooks` sem `IF NOT EXISTS`, o que indica que a de janeiro não foi aplicada. Confirmar em `pg_policies`.
 
 ---
 
@@ -324,7 +342,7 @@ Ordem pensada para **destravar receita primeiro e limpar depois**. Cada onda dep
 
 **Onda 0: destravar e proteger (1 a 2 dias)**
 1. Conferir no banco oficial e gravar `functions_base_url` e `anon_key` em `_internal_secrets`; validar com `cron.job_run_details`. (R1)
-2. Tornar o repositório privado e limpar `scripts/seed-real-people.ts`. (top 25 #10)
+2. Tornar o repositório privado, limpar `scripts/seed-real-people.ts` e rotacionar as credenciais que já vazaram no histórico. (top 25 #10, A2)
 3. Corrigir o secret do backup (pooler IPv4 de `usyxfpqlsspldubptrdl`) e tirar o dump de artifact público. (#9)
 4. Criar o canal de alerta de CI (N8N para WhatsApp) para as falhas pararem de passar em silêncio. (#25)
 5. Confirmar `LOVABLE_API_KEY` no projeto oficial (ou o gateway alternativo). (#13)
@@ -335,6 +353,7 @@ Ordem pensada para **destravar receita primeiro e limpar depois**. Cada onda dep
 3. Botão "Enviar" da cotação ligado a `send-quote-to-client`; WhatsApp e e-mail IA ligados aos envios reais. (#4, #5)
 4. Trocar `enqueue_email` por Resend. (#6)
 5. Corrigir o registro de tentativas de login e os botões do Pipeline Pulse. (#19, #20)
+6. Corrigir o cálculo de comissão, o escopo dos relatórios agendados e o bucket público de PDFs de orçamento. (A1, A3, A4)
 
 **Onda 2: número confiável (2 a 3 semanas)**
 1. Metas lidas de `sales_goals`; remover stubs e mocks de BI e dashboard (ou estado vazio honesto). (#7)

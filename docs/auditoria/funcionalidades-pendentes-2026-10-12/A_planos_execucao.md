@@ -499,3 +499,54 @@ Médio/baixo/info **concluídos (22):** L29 (rate limit de login no servidor: `u
 `docs/graphify/EXECUCAO_LOTE_A…F` e `README.md`: as entregas declaradas conferem com os arquivos de `scripts/graphify/` e `tools/graphify/` (nenhuma D). "Próximos gates" de `BASELINE_AST_SRC`: adaptador multigrafo **C**; migrations em lote separado **C** (`static-contracts.mjs`); ligação com o catálogo canônico **NI**.
 
 ---
+
+## A.15 Resumo numérico
+
+| Documento-fonte | C | P | NI | D | Total |
+|---|---:|---:|---:|---:|---:|
+| AUDITORIA_EXAUSTIVA 08-26: plano de 100 etapas (≡ STATUS §4) | 11 | 53 | 36 | 0 | 100 |
+| AUDITORIA_EXAUSTIVA 08-30: plano de 100 etapas (≡ HANDOFF P001–P100) | 17 | 52 | 31 | 0 | 100 |
+| HANDOFF: itens próprios (§14/§16/§18) | 1 | 5 | 2 | 0 | 8 |
+| STATUS_100_ETAPAS: itens próprios (§6–§8) | 3 | 4 | 3 | 0 | 10 |
+| 00_PLANO_MESTRE (50 etapas) | 34 | 13 | 3 | 0 | 50 |
+| RELATORIO_FALHAS (101 reverificados de 129) | 46 | 25 | 30 | 0 | 101 |
+| AUDITORIA_TECNICA 09-02 (top 10 + roadmap) | 5 | 8 | 2 | 0 | 15 |
+| VALIDACAO_ADVERSARIAL 09-02 | 7 | 3 | 1 | 0 | 11 |
+| VALIDACAO_SINCRONIA 09-10 §8 | 0 | 2 | 6 | 0 | 8 |
+| HARDENING / ROLLBACK / RECONCILIACAO 08-31 | 5 | 4 | 5 | 0 | 14 |
+| Docs de onda e contrato (08-26/27) | 13 | 9 | 16 | 0 | 38 |
+| MIGRATION_RENAME_MAP | 3 | 0 | 6 | 0 | 9 |
+| estado/15_PLANO_COBERTURA_MODULOS | 5 | 2 | 0 | 1 | 8 |
+| auditoria_enterprise_v5 | 17 | 3 | 5 | 2 | 27 |
+| PLANO_GRAPHIFY (50) + docs/graphify | 19 | 19 | 14 | 1 | 53 |
+| **Total** | **186** | **202** | **160** | **4** | **552** |
+
+Leitura: **34% concluído, 37% parcial, 29% não iniciado**. Os dois planos de 100 etapas estão em 11% e 17% concluídos. Quase tudo que foi entregue é código e migration no repo. **Nada do que depende de operação viva tem prova no repositório:** rotação de segredos, publicação de Edge, reparo do ledger, restore, staging, canário, tráfego real.
+
+As 4 divergências:
+1. `docs/estado/15_PLANO_COBERTURA_MODULOS.md` lista `src/lib/schemas/` como módulo coberto, mas o diretório não existe.
+2. `auditoria_enterprise_v5.md` dá Conversational Intelligence como implementada; o fluxo de upload/transcrição/diarização só existe numa página não roteada.
+3. `auditoria_enterprise_v5.md` cita "MFA obrigatório" como mitigação; o MFA é opcional.
+4. O README do Graphify proíbe hook automático, mas `.husky/post-commit` e `.husky/post-checkout` instalam auto-rebuild (PR #221).
+
+Risco correlato, sem classificação própria: `20261001160000_centralize_internal_edge_calls.sql` depende de `_internal_secrets.functions_base_url`, chave que o `CLAUDE.md` §1 afirma não existir no banco.
+
+## A.16 Top 15 pendências de maior impacto de negócio
+
+| # | Pendência (fontes) | Estado | Evidência | Impacto |
+|---|---|---|---|---|
+| 1 | Repositório GitHub **público** com PII de funcionários (AUDITORIA_TECNICA T1) | P | `gh api` → `"private": false`; `scripts/seed-real-people.ts` com 8 e-mails `@promobrindes.com.br` | Exposição de todo o CRM e violação LGPD; ação de 1 clique |
+| 2 | Nenhuma rotação de credencial executada (A.1#5–7, A.2#3–4, T6) | NI | `docs/SECRETS_ROTATION.md:128`; service_role no histórico Git (STATUS §3.2) | Chaves vazadas seguem válidas e o repo é público |
+| 3 | Segredos de CI inválidos: E2E (inclusive quote-to-sale) não executa (A.1#84, FALHAS L295) | P | `SECRETS_ROTATION.md:59` ("inválidas desde ≥2026-09-28") | Regressões no fluxo de receita passam sem gate |
+| 4 | Cálculo de comissão errado: ignora faixa e categoria, regra global sobrepõe, comissão duplicada, SDR em dobro (FALHAS L684/690/695/733) | NI | `private.handle_sale_commissions` (`20260619145322:138-197`) inalterada | Pagamento financeiro incorreto |
+| 5 | Edge Functions sem publicação comprovada e crons HTTP não restaurados (SINCRONIA §8 #8, HARDENING 10/10 #3–4, ADVERSARIAL pend. 2) | NI | `20260913150000_restore_sql_maintenance_crons.sql:16-18`; deploy exige token (`deploy.yml:19-21`); limite de 100 para 172 functions | As correções de segurança do repo não chegam à produção; alertas e automações parados |
+| 6 | Policies que decidem admin por `raw_user_meta_data` (A.2#33) | NI | `20260104143931_webhooks_system.sql:30,37,42,49`; `20260104143930_audit_trail.sql:25,32`; nunca removidas | Escalada de privilégio: o usuário se declara admin e gerencia webhooks e logs  — **Reconferência na consolidação:** `20260416180740_*.sql:2` recria `public.webhooks` sem `IF NOT EXISTS`. Isso indica que a migration de janeiro não foi aplicada nesta linhagem. Além disso, `authenticated` não lê `auth.users` dentro de policy. Classificar como **NÃO VERIFICADO**: confirmar em `pg_policies` antes de tratar como escalada ativa. |
+| 7 | Prompt injection em chat/copilot/orquestrador (FALHAS L519/525/543/531) | NI/P | `sales-assistant-chat/index.ts:372-375`; `ai-copilot/index.ts:192-202` | Manipulação da IA, vazamento de dados e ações indevidas |
+| 8 | Runner de relatórios agendados sem filtro de dono; export win/loss sem escopo (FALHAS L508/514) | NI/P | `scheduled-reports-runner/index.ts:37-50`; `export-winloss-pdf/index.ts:22` | Vazamento de vendas e clientes entre usuários |
+| 9 | PDFs de orçamento em bucket público + opt-out ignorado no WhatsApp/cadências (FALHAS L722/L618) | NI/P | `receive-quote-webhook/index.ts:253` (`getPublicUrl`); `send-multichannel-message` sem checagem de supressão | Exposição de propostas comerciais; envio a quem pediu opt-out (LGPD) |
+| 10 | Gamificação manipulável: power-ups auto-inseríveis, dupla coleta, XP pelo cliente, roleta anuncia prêmio sem conceder (FALHAS L666/728/738; ONDA_0 #9) | NI | `20260418104126:72-74`; `collect-race-powerup/index.ts:109-112`; `20260830000001:137-145` | Ranking e premiações sem integridade |
+| 11 | Dados fabricados exibidos como reais (A.1#54/65, A.2#73/74/78, FALHAS L537) | P/NI | `useABCAnalysis.ts:122-135`; `EliteCadenceAnalytics.tsx:95,112`; `ApprovalQueue.tsx:54-63`; `LiveIntelligenceFeed.tsx:21`; `RecordingSummaryDrawer.tsx:46-57`; `workflow-executor/index.ts:136-157` | Decisões comerciais sobre números inventados |
+| 12 | Contratos quebrados em runtime (A.1#45/56; ROTEAMENTO) | NI/P | `leads` e `team_members` sem migration (`sequence-runner:366`, `ranking-api:89`); `enqueue_email` (`email-bulk-send:128`); `auth_users_view` (`FollowUpTerritoryRules.tsx:61,83`); `smart-lead-router` (`useQuickAction.ts:21`); CS-360 usando `orders.user_id` como `account_id` (`:73-76`) | Telas e automações falham ou mostram dado errado |
+| 13 | Ledger de produção não reconciliado; sem replay em banco limpo (MIGRATION_RENAME_MAP §4–9; A.2#52/57; SINCRONIA §8 #7) | NI | sem registro de execução; `20260903000002` nunca aplicada (IDENTIDADE §3) | O próximo `db push` pode reaplicar ou falhar; produção não reconstruível |
+| 14 | Superfície de sessão: CORS cai para `*`, sessão em localStorage, CSP com `unsafe-eval` (A.1#88, A.2#67, ADVERSARIAL pend. 1) | P | `_shared/cors.ts:7`; `client.ts:11`; `index.html:56` | Um XSS vira sequestro de sessão de vendedor ou admin |
+| 15 | Sem restore testado, sem staging e sem canário (A.1#80/98, A.2#19/94/95/99) | NI/P | `db-backup.yml` sem restore; `docs/STAGING.md:3` ("único projeto") | Incidente sem recuperação comprovada; toda mudança vai direto a produção |
