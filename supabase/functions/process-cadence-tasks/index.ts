@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
+import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
@@ -54,6 +55,7 @@ Deno.serve(withRequestId("process-cadence-tasks", async (req, ctx) => {
   }
 
   if (
+    !isInternalServiceRequest(req) &&
     !(await isAuthorizedCronJob(
       req,
       createClient(supabaseUrl, serviceRoleKey),
