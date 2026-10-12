@@ -26,6 +26,8 @@ import { cn } from '@/lib/utils';
 import { generateQuotePDF } from '@/lib/quotePdfExporter';
 
 import { formatBRL } from '@/lib/money';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 interface QuoteDetailDialogProps {
   quote: Quote | null;
   open: boolean;
@@ -99,11 +101,30 @@ export function QuoteDetailDialog({ quote, open, onOpenChange }: QuoteDetailDial
                 </Badge>
               )}
               {quote.pdf_url ? (
-                <Button size="sm" variant="outline" className="gap-1" asChild>
-                  <a href={quote.pdf_url} target="_blank" rel="noopener noreferrer">
-                    <FileDown className="h-4 w-4" />
-                    PDF Original
-                  </a>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1"
+                  onClick={async () => {
+                    // Bucket privado: pdf_url guarda o path — assina na hora.
+                    const match = quote.pdf_url!.match(/\/quote-pdfs\/(.+)$/);
+                    const path = match ? decodeURIComponent(match[1]) : null;
+                    if (!path) {
+                      window.open(quote.pdf_url!, '_blank', 'noopener');
+                      return;
+                    }
+                    const { data, error } = await supabase.storage
+                      .from('quote-pdfs')
+                      .createSignedUrl(path, 3600);
+                    if (error || !data?.signedUrl) {
+                      toast.error('Sem acesso ao PDF desta cotação');
+                      return;
+                    }
+                    window.open(data.signedUrl, '_blank', 'noopener');
+                  }}
+                >
+                  <FileDown className="h-4 w-4" />
+                  PDF Original
                 </Button>
               ) : (
                 <Button

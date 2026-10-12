@@ -33,8 +33,20 @@ function toCSV(rows: Record<string, unknown>[]): string {
   ].join("\n");
 }
 
-async function executeReport(admin: ReturnType<typeof createClient>, reportId: string) {
-  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config").eq("id", reportId).single();
+// Entidades com coluna de dono (mesmo critério que a RLS aplica na UI).
+const OWNER_SCOPED_ENTITIES = new Set([
+  "sales",
+  "accounts",
+  "activities",
+  "clients",
+]);
+
+async function executeReport(
+  admin: ReturnType<typeof createClient>,
+  reportId: string,
+  ownerAuthId: string,
+) {
+  const { data: report, error } = await admin.from("custom_reports").select("id, entity, config, owner_id").eq("id", reportId).single();
   if (error || !report) throw new Error(`Report ${reportId} não encontrado`);
 
   const cfg = (report.config ?? {}) as Record<string, unknown>;
@@ -47,7 +59,30 @@ async function executeReport(admin: ReturnType<typeof createClient>, reportId: s
     : "*";
   const limit = typeof cfg.limit === "number" ? Math.min(cfg.limit, 5000) : 1000;
 
-  const { data, error: qErr } = await admin.from(entity).select(cols).limit(limit);
+  let query = admin.from(entity).select(cols).limit(limit);
+
+  // O client service_role ignora RLS: o relatório rodava SEMPRE com escopo
+  // global, expondo dados de toda a equipe no arquivo de um vendedor.
+  // Aplica o mesmo recorte da RLS: admin/manager vê tudo; vendedor vê só
+  // as linhas do seu salesperson_id.
+  if (OWNER_SCOPED_ENTITIES.has(entity)) {
+    const { data: isPrivileged } = await admin.rpc("is_admin_or_manager", {
+      _user_id: ownerAuthId,
+    });
+    if (!isPrivileged) {
+      const { data: sp } = await admin
+        .from("salespeople")
+        .select("id")
+        .eq("auth_user_id", ownerAuthId)
+        .maybeSingle();
+      if (!sp?.id) {
+        throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
+      }
+      query = query.eq("salesperson_id", sp.id);
+    }
+  }
+
+  const { data, error: qErr } = await query;
   if (qErr) throw new Error(qErr.message);
   return (data ?? []) as Record<string, unknown>[];
 }
@@ -60,7 +95,7 @@ async function processSchedule(admin: ReturnType<typeof createClient>, s: Schedu
     .single();
 
   try {
-    const rows = await executeReport(admin, s.report_id);
+    const rows = await executeReport(admin, s.report_id, s.created_by);
     const content = s.format === "json" ? JSON.stringify(rows, null, 2) : toCSV(rows);
     const ext = s.format;
     const path = `${s.created_by}/${s.id}/${new Date().toISOString().replace(/[:.]/g, "-")}.${ext}`;

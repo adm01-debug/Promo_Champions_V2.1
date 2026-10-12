@@ -239,11 +239,22 @@ Deno.serve(withRequestId("receive-quote-webhook", async (req, _ctx) => {
             const binaryStr = atob(pdf_base64);
             const bytes = new Uint8Array(binaryStr.length);
             for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
-            // Magic bytes: o bucket é público — só gravar se for PDF de verdade.
+            // Magic bytes: só gravar se for PDF de verdade.
             if (detectFileSignature(bytes) !== 'pdf') {
               console.warn(`[receive-quote-webhook] pdf_base64 rejeitado — assinatura não é %PDF`);
             } else {
-            const pdfPath = `proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}.pdf`;
+            // Bucket é PRIVADO: a política de leitura exige o auth.uid() do
+            // dono como primeiro segmento do path ({owner}/proposta-N.pdf).
+            let ownerFolder = "shared";
+            if (salespersonId) {
+              const { data: sp } = await supabase
+                .from("salespeople")
+                .select("auth_user_id")
+                .eq("id", salespersonId)
+                .maybeSingle();
+              if (sp?.auth_user_id) ownerFolder = sp.auth_user_id;
+            }
+            const pdfPath = `${ownerFolder}/proposta-${quote.quote_number.replace(/[^a-zA-Z0-9-_]/g, "-")}.pdf`;
             const { error: uploadErr } = await supabase.storage
               .from("quote-pdfs")
               .upload(pdfPath, bytes, { contentType: "application/pdf", upsert: true });
