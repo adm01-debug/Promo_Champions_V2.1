@@ -28,6 +28,9 @@ export function useFormDraft<T>(
   // esta aba gravou por último.
   const baselineRef = useRef(new Map<string, string>());
   const lastWriteRef = useRef<string | null>(null);
+  // Estado ainda não persistido — flush sem debounce quando a página sai
+  // (pagehide/fechar aba) ou o componente desmonta (navegação interna).
+  const pendingRef = useRef<{ key: string; state: T } | null>(null);
 
   useEffect(() => {
     // Restaura uma vez por chave — troca de chave (ex.: usuário carregou)
@@ -48,12 +51,16 @@ export function useFormDraft<T>(
   }, [storageKey]);
 
   useEffect(() => {
-    if (storageKey === null) return;
+    if (storageKey === null) {
+      pendingRef.current = null;
+      return;
+    }
     // Baseline capturada no corpo do efeito (primeira render da chave),
     // não dentro do timer — lá o estado já pode incluir a primeira edição.
     if (!baselineRef.current.has(storageKey)) {
       baselineRef.current.set(storageKey, JSON.stringify(state));
     }
+    pendingRef.current = { key: storageKey, state };
     const timer = setTimeout(() => {
       try {
         const json = JSON.stringify(state);
@@ -66,6 +73,7 @@ export function useFormDraft<T>(
           stored !== null &&
           stored !== lastWriteRef.current
         ) {
+          pendingRef.current = null;
           return;
         }
         localStorage.setItem(storageKey, json);
@@ -73,9 +81,42 @@ export function useFormDraft<T>(
       } catch {
         // Quota excedida / modo privado — draft é best-effort.
       }
+      pendingRef.current = null;
     }, 400);
     return () => clearTimeout(timer);
   }, [storageKey, state]);
+
+  // O debounce não roda quando a página sai antes de 400ms — flush
+  // imediato no pagehide/unload e na desmontagem (navegação interna).
+  useEffect(() => {
+    const flush = () => {
+      const pending = pendingRef.current;
+      if (!pending) return;
+      pendingRef.current = null;
+      try {
+        const json = JSON.stringify(pending.state);
+        const stored = localStorage.getItem(pending.key);
+        if (
+          json === baselineRef.current.get(pending.key) &&
+          stored !== null &&
+          stored !== lastWriteRef.current
+        ) {
+          return;
+        }
+        localStorage.setItem(pending.key, json);
+        lastWriteRef.current = json;
+      } catch {
+        // best-effort
+      }
+    };
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    return () => {
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('beforeunload', flush);
+      flush();
+    };
+  }, []);
 
   const clearDraft = useCallback(() => {
     if (storageKey === null) return;
