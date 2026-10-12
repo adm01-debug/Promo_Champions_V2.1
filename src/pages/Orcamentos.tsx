@@ -131,10 +131,28 @@ export default function Orcamentos() {
       const legacyKey = `orcamentos:create:draft:${salesperson.id}`;
       const legacy = localStorage.getItem(legacyKey);
       if (legacy === null) return;
-      localStorage.removeItem(legacyKey);
       const key = `orcamentos:create:draft:${user.id}`;
-      if (localStorage.getItem(key) !== null) return;
+      const existing = localStorage.getItem(key);
+      if (existing !== null) {
+        // A chave nova pode conter só o baseline vazio que o hook grava
+        // numa visita sem edição — aí o legado ainda é o rascunho real e
+        // migra por cima. Destino com conteúdo real preserva os dois.
+        try {
+          const existingDraft = JSON.parse(existing) as {
+            form?: { client_name?: string; title?: string };
+            items?: unknown[];
+          };
+          const hasRealContent =
+            Boolean(existingDraft?.form?.client_name) ||
+            Boolean(existingDraft?.form?.title) ||
+            (existingDraft?.items?.length ?? 0) > 0;
+          if (hasRealContent) return;
+        } catch {
+          // Destino corrompido — o legado migra por cima.
+        }
+      }
       localStorage.setItem(key, legacy);
+      localStorage.removeItem(legacyKey);
       // A restauração da chave nova já rodou sem achar nada — aplica o
       // rascunho migrado direto, só se ninguém começou a digitar ainda.
       if (items.length === 0 && !form.client_name && !form.title) {
