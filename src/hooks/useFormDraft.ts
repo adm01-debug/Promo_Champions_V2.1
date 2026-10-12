@@ -23,10 +23,14 @@ export function useFormDraft<T>(
   const restoredKeyRef = useRef<string | null>(null);
   const restoreRef = useRef(restore);
   restoreRef.current = restore;
-  // JSON do estado na primeira render de cada chave: referência para saber
-  // se ESTA aba editou algo. `lastWriteRef` guarda o que esta aba gravou.
-  const mountJsonRef = useRef(new Map<string, string>());
+  // JSON de referência por chave — "esta aba editou?". É o estado na
+  // montagem ou o conteúdo recém-restaurado; `lastWriteRef` guarda o que
+  // esta aba gravou por último.
+  const baselineRef = useRef(new Map<string, string>());
   const lastWriteRef = useRef<string | null>(null);
+  // Estado ainda não persistido — flush sem debounce quando a página sai
+  // (pagehide/fechar aba) ou o componente desmonta (navegação interna).
+  const pendingRef = useRef<{ key: string; state: T } | null>(null);
 
   useEffect(() => {
     // Restaura uma vez por chave — troca de chave (ex.: usuário carregou)
@@ -35,29 +39,41 @@ export function useFormDraft<T>(
     restoredKeyRef.current = storageKey;
     try {
       const raw = localStorage.getItem(storageKey);
-      if (raw) restoreRef.current(JSON.parse(raw) as T);
+      if (raw) {
+        // O conteúdo restaurado é a baseline: não conta como edição e uma
+        // aba que só restaurou não cloba rascunho mais novo de outra aba.
+        baselineRef.current.set(storageKey, raw);
+        restoreRef.current(JSON.parse(raw) as T);
+      }
     } catch {
       // Draft corrompido ou storage indisponível — ignora silenciosamente.
     }
   }, [storageKey]);
 
   useEffect(() => {
-    if (storageKey === null) return;
+    if (storageKey === null) {
+      pendingRef.current = null;
+      return;
+    }
+    // Baseline capturada no corpo do efeito (primeira render da chave),
+    // não dentro do timer — lá o estado já pode incluir a primeira edição.
+    if (!baselineRef.current.has(storageKey)) {
+      baselineRef.current.set(storageKey, JSON.stringify(state));
+    }
+    pendingRef.current = { key: storageKey, state };
     const timer = setTimeout(() => {
       try {
         const json = JSON.stringify(state);
-        if (!mountJsonRef.current.has(storageKey)) {
-          mountJsonRef.current.set(storageKey, json);
-        }
         const stored = localStorage.getItem(storageKey);
-        // Uma aba que nunca editou (estado == snapshot da montagem) não
-        // sobrescreve um rascunho gravado por outra aba — sem isso, uma
-        // aba ociosa com o form vazio apagava o trabalho da aba em edição.
+        // Uma aba que nunca editou (estado == baseline) não sobrescreve um
+        // rascunho gravado por outra aba — sem isso, uma aba ociosa com o
+        // form vazio apagava o trabalho da aba em edição.
         if (
-          json === mountJsonRef.current.get(storageKey) &&
+          json === baselineRef.current.get(storageKey) &&
           stored !== null &&
           stored !== lastWriteRef.current
         ) {
+          pendingRef.current = null;
           return;
         }
         localStorage.setItem(storageKey, json);
@@ -65,9 +81,42 @@ export function useFormDraft<T>(
       } catch {
         // Quota excedida / modo privado — draft é best-effort.
       }
+      pendingRef.current = null;
     }, 400);
     return () => clearTimeout(timer);
   }, [storageKey, state]);
+
+  // O debounce não roda quando a página sai antes de 400ms — flush
+  // imediato no pagehide/unload e na desmontagem (navegação interna).
+  useEffect(() => {
+    const flush = () => {
+      const pending = pendingRef.current;
+      if (!pending) return;
+      pendingRef.current = null;
+      try {
+        const json = JSON.stringify(pending.state);
+        const stored = localStorage.getItem(pending.key);
+        if (
+          json === baselineRef.current.get(pending.key) &&
+          stored !== null &&
+          stored !== lastWriteRef.current
+        ) {
+          return;
+        }
+        localStorage.setItem(pending.key, json);
+        lastWriteRef.current = json;
+      } catch {
+        // best-effort
+      }
+    };
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    return () => {
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('beforeunload', flush);
+      flush();
+    };
+  }, []);
 
   const clearDraft = useCallback(() => {
     if (storageKey === null) return;

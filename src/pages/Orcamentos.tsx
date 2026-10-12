@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,11 +45,31 @@ import {
 } from 'lucide-react';
 import { QuoteDetailDialog } from '@/components/quotes/QuoteDetailDialog';
 import { useFormDraft } from '@/hooks/useFormDraft';
+import { migrateLegacyDraft } from '@/lib/draftMigration';
 import { QuoteCard } from '@/components/quotes/QuoteCard';
 import { VirtualizedList } from '@/components/ui/virtualized-list';
 import { motion } from 'framer-motion';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { cn } from '@/lib/utils';
+
+const INITIAL_FORM = {
+  client_name: '',
+  title: '',
+  description: '',
+  total_value: '0',
+  external_reference: '',
+  valid_until: '',
+  notes: '',
+  sale_id: '',
+  subtotal: '0',
+  discount_amount: '0',
+  currency: 'BRL',
+  subscription_type: 'one-time',
+};
+
+/** Form ainda intocado (igual ao estado inicial em todos os campos). */
+const formIsBaseline = (f: Record<string, unknown>): boolean =>
+  Object.entries(INITIAL_FORM).every(([k, v]) => f?.[k] === v);
 
 export default function Orcamentos() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -64,20 +84,7 @@ export default function Orcamentos() {
   const deleteQuote = useDeleteQuote();
   const { data: deals } = useDealsForQuotes();
 
-  const [form, setForm] = useState({
-    client_name: '',
-    title: '',
-    description: '',
-    total_value: '0',
-    external_reference: '',
-    valid_until: '',
-    notes: '',
-    sale_id: '',
-    subtotal: '0',
-    discount_amount: '0',
-    currency: 'BRL',
-    subscription_type: 'one-time',
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
 
   interface LocalQuoteItem {
     product_name: string;
@@ -115,6 +122,44 @@ export default function Orcamentos() {
       if (draft?.items) setItems(draft.items);
     }
   );
+
+  // Migração pontual: rascunhos anteriores à chave por user.id viviam em
+  // `...:${salesperson.id}` (mesma conta → migra e aplica se o form ainda
+  // estiver vazio) ou `...:anon` (compartilhada entre contas → só descarta;
+  // importar reabriria o vazamento entre contas).
+  const migratedDraftRef = useRef(false);
+  useEffect(() => {
+    if (migratedDraftRef.current || !user) return;
+    try {
+      localStorage.removeItem('orcamentos:create:draft:anon');
+      // Perfil ainda carregando: tenta de novo quando salesperson resolver.
+      if (!salesperson) return;
+      migratedDraftRef.current = true;
+      const key = `orcamentos:create:draft:${user.id}`;
+      const result = migrateLegacyDraft(
+        `orcamentos:create:draft:${salesperson.id}`,
+        key,
+        draft =>
+          draft?.form !== undefined &&
+          formIsBaseline(draft.form) &&
+          (draft?.items?.length ?? 0) === 0
+      );
+      if (result !== 'migrated') return;
+      // A restauração da chave nova já rodou sem achar nada — aplica o
+      // rascunho migrado direto, só se ninguém começou a digitar ainda.
+      const raw = localStorage.getItem(key);
+      if (raw && items.length === 0 && formIsBaseline(form)) {
+        const draft = JSON.parse(raw) as {
+          form?: typeof form;
+          items?: typeof items;
+        };
+        if (draft.form) setForm(draft.form);
+        if (draft.items) setItems(draft.items);
+      }
+    } catch {
+      // best-effort
+    }
+  }, [user, salesperson, form, items]);
 
   const addItem = () => {
     if (!newItem.product_name || newItem.unit_price <= 0) return;
@@ -168,20 +213,7 @@ export default function Orcamentos() {
         onSuccess: () => {
           setIsCreateOpen(false);
           clearDraft();
-          setForm({
-            client_name: '',
-            title: '',
-            description: '',
-            total_value: '0',
-            external_reference: '',
-            valid_until: '',
-            notes: '',
-            sale_id: '',
-            subtotal: '0',
-            discount_amount: '0',
-            currency: 'BRL',
-            subscription_type: 'one-time',
-          });
+          setForm(INITIAL_FORM);
           setItems([]);
         },
       }

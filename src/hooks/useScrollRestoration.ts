@@ -93,12 +93,14 @@ export function useScrollRestoration() {
         // Qualquer scroll vindo de fora cancela as retentativas — o restore
         // não disputa posição com o usuário. Dois sinais: gesto direto
         // (wheel/touch/tecla) e desvio da posição que nosso último scrollTo
-        // deixou (cobre scrollbar e botões programáticos tipo "voltar ao
-        // topo"). Conteúdo lazy crescendo embaixo não muda scrollY, então
-        // não cancela as retentativas por engano.
+        // deixou (cobre arrasto de scrollbar e botões programáticos tipo
+        // "voltar ao topo" — gestos que não disparam wheel/touch/keydown).
+        // Threshold pequeno: qualquer desvio acima de jitter é do usuário;
+        // conteúdo lazy crescendo embaixo não muda scrollY, então não
+        // cancela as retentativas por engano.
         const cancelRetries = () => timers.forEach(clearTimeout);
         const onExternalScroll = () => {
-          if (Math.abs(window.scrollY - lastApplied) > 40) cancelRetries();
+          if (Math.abs(window.scrollY - lastApplied) > 8) cancelRetries();
         };
         window.addEventListener('wheel', cancelRetries, { passive: true });
         window.addEventListener('touchmove', cancelRetries, { passive: true });
