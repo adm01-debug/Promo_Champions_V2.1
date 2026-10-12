@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { corsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
 
 interface PortfolioSetting {
   setting_key: string;
@@ -61,7 +61,16 @@ Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
 
   // Este job usa service_role para alterar carteira; um JWT de usuário não é
   // suficiente para dispará-lo nem para assumir seus privilégios.
-  if (!isInternalServiceRequest(req)) {
+  // Aceita service_role ou o X-Cron-Secret do dispatcher interno de crons.
+  if (
+    !(await isAuthorizedCronJob(
+      req,
+      createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      ),
+    ))
+  ) {
     return json({ error: "unauthorized" }, 401);
   }
 

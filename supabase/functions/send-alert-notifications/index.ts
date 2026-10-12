@@ -319,6 +319,9 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
       // Empty body means CRON job trigger
       isCronJob = true;
     }
+    // O dispatcher envia {"scheduled_at": ...} — chamada autenticada pelo
+    // segredo cron sem recipientEmail é o fluxo agregado, não o manual.
+    if (authorizedByCron && !recipientEmail) isCronJob = true;
 
     const results: {
       email: string;

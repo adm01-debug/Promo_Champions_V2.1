@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminSystemStatusProps {
   edgeStatus:
@@ -26,16 +28,41 @@ interface AdminSystemStatusProps {
   };
 }
 
-const EDGE_FUNCTIONS = [
-  { name: 'sdr-consecutive-alerts', schedule: '8h diário' },
-  { name: 'activity-goal-alerts', schedule: '15h diário' },
-  { name: 'access-denied-alerts', schedule: 'Horário' },
-  { name: 'auto-reassign-inactive', schedule: '6h diário' },
-  { name: 'bitrix24-sync', schedule: 'Horário' },
-  { name: 'check-lead-sla', schedule: 'Configurável' },
-];
+interface CronJobStatus {
+  jobid: number;
+  jobname: string;
+  schedule: string;
+  active: boolean;
+  function_name: string | null;
+  last_status: string | null;
+  last_run_at: string | null;
+  last_return_code: number | null;
+  run_count: number;
+}
+
+function cronJobStatus(j: CronJobStatus): 'ok' | 'erro' | 'pendente' | 'inativo' {
+  if (!j.active) return 'inativo';
+  if (!j.last_status) return 'pendente';
+  if (
+    j.last_status === 'succeeded' &&
+    (j.last_return_code === null || j.last_return_code < 400)
+  )
+    return 'ok';
+  return 'erro';
+}
 
 export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatusProps) {
+  const { data: cronJobs } = useQuery({
+    queryKey: ['admin-edge-cron-status'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('admin_edge_cron_status' as never);
+      if (error) throw error;
+      return (data ?? []) as CronJobStatus[];
+    },
+    refetchInterval: 60_000,
+    retry: 1,
+  });
+
   return (
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
@@ -52,20 +79,44 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
             <Zap className="h-4 w-4 text-primary" />
             Edge Functions
           </h4>
-          <div className="grid grid-cols-2 gap-2">
-            {EDGE_FUNCTIONS.map(fn => (
-              <div
-                key={fn.name}
-                className="flex items-center gap-2 p-2 rounded-md bg-muted/30"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5 text-success flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate">{fn.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{fn.schedule}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {cronJobs && cronJobs.length > 0 ? (
+            <div className="grid grid-cols-2 gap-2">
+              {cronJobs.map(job => {
+                const status = cronJobStatus(job);
+                return (
+                  <div
+                    key={job.jobname}
+                    className="flex items-center gap-2 p-2 rounded-md bg-muted/30"
+                  >
+                    {status === 'ok' && (
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success flex-shrink-0" />
+                    )}
+                    {status === 'erro' && (
+                      <XCircle className="h-3.5 w-3.5 text-destructive flex-shrink-0" />
+                    )}
+                    {(status === 'pendente' || status === 'inativo') && (
+                      <Activity className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">
+                        {job.function_name ?? job.jobname}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {job.schedule}
+                        {job.last_run_at
+                          ? ` · ${format(new Date(job.last_run_at), 'dd/MM HH:mm', { locale: ptBR })}`
+                          : ' · sem execuções'}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Nenhum job de edge function agendado encontrado.
+            </p>
+          )}
         </div>
 
         <div className="p-3 rounded-lg bg-muted/30 border border-border/30">

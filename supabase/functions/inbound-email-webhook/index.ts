@@ -161,6 +161,26 @@ Deno.serve(
             _reason: reason,
           });
           if (pauseError) throw pauseError;
+          if (event.eventType === 'reply') {
+            // Marca APENAS a execução enviada mais recente — senão uma
+            // resposta contamina a métrica de todas as variantes A/B da
+            // inscrição (mesmo critério do sequence-record-reply).
+            const { data: latestExec } = await admin
+              .from('sequence_step_executions')
+              .select('id')
+              .eq('enrollment_id', matchedEnrollmentId)
+              .eq('status', 'sent')
+              .is('replied_at', null)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (latestExec?.id) {
+              await admin
+                .from('sequence_step_executions')
+                .update({ replied_at: event.receivedAt })
+                .eq('id', latestExec.id);
+            }
+          }
           matchedEnrollmentIds.push(matchedEnrollmentId);
         }
       }

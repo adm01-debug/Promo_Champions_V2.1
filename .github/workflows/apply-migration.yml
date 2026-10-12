@@ -1,0 +1,98 @@
+name: Apply Migration
+
+# Aplica UMA migration já commitada no banco oficial via SUPABASE_DB_URL
+# (pooler IPv4) e registra a versão em supabase_migrations.schema_migrations.
+#
+# É o caminho canônico de deploy de DDL deste repo: `db push` é proibido
+# (CLAUDE.md §1) e o MCP/PAT depende de credencial pessoal. O workflow só
+# roda por dispatch manual e só executa arquivo já revisado na main —
+# não aceita SQL arbitrário por input.
+#
+# Uso: Actions → Apply Migration → Run workflow → informar o nome do arquivo
+# (ex.: 20261013120000_agenda_crons_maquina_vendas.sql).
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration_file:
+        description: 'Arquivo em supabase/migrations/ (ex.: 20261013120000_x.sql)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Somente valida o arquivo (não aplica)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apply-migration-prod
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    name: Aplicar migration no projeto oficial
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      # Input via env, nunca interpolado no script — evita injeção de shell.
+      MIGRATION_FILE: ${{ inputs.migration_file }}
+    steps:
+      # Sempre a main: um dispatch a partir de outra branch não pode aplicar
+      # SQL não revisado — a migration precisa estar mergeada primeiro.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+
+      - name: Instalar psql
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+
+      - name: Validar input
+        run: |
+          FILE="supabase/migrations/$MIGRATION_FILE"
+          case "$MIGRATION_FILE" in
+            */*|*..*|*\;*|*\`*|*\$*) echo "::error::nome de arquivo inválido"; exit 1;;
+          esac
+          echo "$MIGRATION_FILE" | grep -qE '^[0-9]{8,14}_[a-zA-Z0-9_-]+\.sql$' || {
+            echo "::error::nome de arquivo inválido"; exit 1; }
+          if [ ! -f "$FILE" ]; then
+            echo "::error::arquivo não encontrado: $FILE"
+            exit 1
+          fi
+          base="$(basename "$FILE")"
+          echo "$base" | grep -qE '^[0-9]{8,14}_.*\.sql$' || {
+            echo "::error::versão fora do padrão timestamp: $base"; exit 1; }
+          version="${base%%_*}"
+          echo "version=$version" >> "$GITHUB_ENV"
+          echo "file=$FILE" >> "$GITHUB_ENV"
+
+      - name: Checar se já aplicada
+        id: check
+        run: |
+          applied=$(psql "$SUPABASE_DB_URL" -tAc \
+            "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '$version'")
+          echo "applied=$applied" >> "$GITHUB_OUTPUT"
+          if [ "$applied" != "0" ]; then
+            echo "::warning::versão $version já registrada — pulando apply"
+          fi
+
+      - name: Aplicar migration
+        if: steps.check.outputs.applied == '0' && inputs.dry_run == false
+        run: psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f "$file"
+
+      - name: Registrar versão no ledger
+        if: steps.check.outputs.applied == '0' && inputs.dry_run == false
+        run: |
+          psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -c \
+            "INSERT INTO supabase_migrations.schema_migrations (version, name, statements)
+             VALUES ('$version', '$(basename "$file" .sql)', NULL)
+             ON CONFLICT (version) DO NOTHING"
+
+      - name: Dry-run (só validação)
+        if: inputs.dry_run == true
+        run: |
+          echo "Migration $file validada — nenhuma alteração aplicada."
+          head -20 "$file"
