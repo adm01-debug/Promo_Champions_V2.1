@@ -15,6 +15,7 @@ interface AIEmailDialogProps {
 
 export function AIEmailDialog({ open, onOpenChange, sale }: AIEmailDialogProps) {
   const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
   const [email, setEmail] = useState<{ subject: string; body_text: string } | null>(null);
   const [instructions, setInstructions] = useState('');
 
@@ -40,6 +41,47 @@ export function AIEmailDialog({ open, onOpenChange, sale }: AIEmailDialogProps) 
       toast.error('Erro ao gerar e-mail com IA');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const sendEmail = async () => {
+    if (!email) return;
+    if (!sale.client_id) {
+      toast.error('Cliente sem vínculo cadastrado.');
+      return;
+    }
+    setSending(true);
+    try {
+      const { data: client } = await supabase
+        .from('clients')
+        .select('email')
+        .eq('id', sale.client_id)
+        .maybeSingle();
+      if (!client?.email) {
+        toast.error('Cliente sem e-mail cadastrado.');
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke(
+        'send-transactional-email',
+        {
+          body: {
+            to: client.email,
+            subject: email.subject,
+            text: email.body_text,
+            purpose: 'outreach',
+          },
+        }
+      );
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success('E-mail enviado ao cliente!');
+      setEmail(null);
+      onOpenChange(false);
+    } catch (err) {
+      console.error(err);
+      toast.error('Falha ao enviar e-mail');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -105,12 +147,14 @@ export function AIEmailDialog({ open, onOpenChange, sale }: AIEmailDialogProps) 
                 </Button>
                 <Button
                   className="flex-1 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest"
-                  onClick={() => {
-                    toast.success('E-mail enviado para fila de processamento!');
-                    onOpenChange(false);
-                  }}
+                  disabled={sending}
+                  onClick={() => void sendEmail()}
                 >
-                  <Send className="h-4 w-4 mr-2" />
+                  {sending ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-2" />
+                  )}
                   Enviar Agora
                 </Button>
               </div>

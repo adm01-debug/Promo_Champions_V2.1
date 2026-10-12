@@ -13,13 +13,12 @@ const ACTION_META: Record<
   { fn: string; body?: Record<string, unknown>; label: string }
 > = {
   'recompute-health': {
-    fn: 'deal-health-scorer',
+    fn: 'calculate-deal-health',
     body: { batch: true },
     label: 'Health Scores recomputados',
   },
   'route-pending-leads': {
-    fn: 'smart-lead-router',
-    body: { batch: true },
+    fn: 'dialer-queue-builder',
     label: 'Leads pendentes roteados',
   },
   'refresh-forecast': {
@@ -39,8 +38,23 @@ export function useQuickAction() {
   return useMutation({
     mutationFn: async (id: QuickActionId) => {
       const meta = ACTION_META[id];
+      let body = meta.body;
+      if (id === 'route-pending-leads') {
+        // Distribui os leads na fila de discagem mais recente.
+        const { data: queues } = await supabase
+          .from('dialer_queues')
+          .select('id')
+          .order('created_at', { ascending: false })
+          .limit(1);
+        const queueId = queues?.[0]?.id;
+        if (!queueId)
+          throw new Error(
+            'Nenhuma fila de discagem cadastrada — crie uma no Power Dialer.'
+          );
+        body = { queue_id: queueId };
+      }
       const { data, error } = await supabase.functions.invoke(meta.fn, {
-        body: meta.body,
+        body,
       });
       if (error) throw error;
       return { id, data, label: meta.label };
