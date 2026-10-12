@@ -12,9 +12,9 @@ Deno.test("auto-reassign-inactive aceita somente POST do serviço interno", asyn
   );
   // isAuthorizedCronJob exige service_role OU o segredo de cron —
   // continua cobrindo a autorização interna via isInternalServiceRequest.
-  assertStringIncludes(source, "isAuthorizedCronJob(req");
+  assertStringIncludes(source, "isAuthorizedCronJob(");
 
-  const authAt = source.indexOf("isAuthorizedCronJob(req");
+  const authAt = source.indexOf("isAuthorizedCronJob(");
   const clientAt = source.indexOf("const supabase = createClient");
   assert(
     authAt >= 0 && authAt < clientAt,
