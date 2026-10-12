@@ -169,6 +169,7 @@ Deno.serve(
               .from('sequence_step_executions')
               .select('id')
               .eq('enrollment_id', matchedEnrollmentId)
+              .eq('status', 'sent')
               .is('replied_at', null)
               .order('created_at', { ascending: false })
               .limit(1)
