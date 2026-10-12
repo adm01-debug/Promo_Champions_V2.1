@@ -48,9 +48,7 @@ describe('useFormDraft', () => {
     act(() => {
       vi.advanceTimersByTime(400);
     });
-    expect(localStorage.getItem(KEY)).toBe(
-      JSON.stringify({ name: 'minha-edicao' })
-    );
+    expect(localStorage.getItem(KEY)).toBe(JSON.stringify({ name: 'minha-edicao' }));
   });
 
   it('aba que nunca editou não sobrescreve rascunho de outra aba', () => {
@@ -76,9 +74,7 @@ describe('useFormDraft', () => {
     act(() => {
       window.dispatchEvent(new Event('pagehide'));
     });
-    expect(localStorage.getItem(KEY)).toBe(
-      JSON.stringify({ name: 'ultima-edicao' })
-    );
+    expect(localStorage.getItem(KEY)).toBe(JSON.stringify({ name: 'ultima-edicao' }));
   });
 
   it('grava pendência na desmontagem (navegação interna)', () => {

@@ -5,10 +5,7 @@ const LEGACY = 'draft:legacy';
 const NEW_KEY = 'draft:new';
 
 // Baseline de exemplo: form com todos os campos vazios e sem itens.
-const destIsBaseline = (d: {
-  form?: Record<string, unknown>;
-  items?: unknown[];
-}) =>
+const destIsBaseline = (d: { form?: Record<string, unknown>; items?: unknown[] }) =>
   d?.form !== undefined &&
   Object.values(d.form).every(v => v === '' || v === '0') &&
   (d?.items?.length ?? 0) === 0;
@@ -37,9 +34,7 @@ describe('migrateLegacyDraft', () => {
 
   it('migra quando o destino não existe', () => {
     localStorage.setItem(LEGACY, LEGACY_DRAFT);
-    expect(migrateLegacyDraft(LEGACY, NEW_KEY, destIsBaseline)).toBe(
-      'migrated'
-    );
+    expect(migrateLegacyDraft(LEGACY, NEW_KEY, destIsBaseline)).toBe('migrated');
     expect(localStorage.getItem(NEW_KEY)).toBe(LEGACY_DRAFT);
     expect(localStorage.getItem(LEGACY)).toBeNull();
   });
@@ -47,9 +42,7 @@ describe('migrateLegacyDraft', () => {
   it('migra por cima de destino que é só baseline vazio', () => {
     localStorage.setItem(LEGACY, LEGACY_DRAFT);
     localStorage.setItem(NEW_KEY, EMPTY_DRAFT);
-    expect(migrateLegacyDraft(LEGACY, NEW_KEY, destIsBaseline)).toBe(
-      'migrated'
-    );
+    expect(migrateLegacyDraft(LEGACY, NEW_KEY, destIsBaseline)).toBe('migrated');
     expect(localStorage.getItem(NEW_KEY)).toBe(LEGACY_DRAFT);
     expect(localStorage.getItem(LEGACY)).toBeNull();
   });
@@ -84,9 +77,7 @@ describe('migrateLegacyDraft', () => {
   it('destino corrompido não impede a migração', () => {
     localStorage.setItem(LEGACY, LEGACY_DRAFT);
     localStorage.setItem(NEW_KEY, '{invalido');
-    expect(migrateLegacyDraft(LEGACY, NEW_KEY, destIsBaseline)).toBe(
-      'migrated'
-    );
+    expect(migrateLegacyDraft(LEGACY, NEW_KEY, destIsBaseline)).toBe('migrated');
     expect(localStorage.getItem(NEW_KEY)).toBe(LEGACY_DRAFT);
   });
 });
