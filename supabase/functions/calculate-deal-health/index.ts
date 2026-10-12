@@ -433,13 +433,21 @@ Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-      const { data: sales } = await supabase
-        .from('sales')
+      // sales.salesperson_id referencia salespeople.id — não o auth uid.
+      const { data: sp } = await supabase
+        .from('salespeople')
         .select('id')
-        .eq('salesperson_id', user.id)
-        .neq('status', 'closed')
-        .neq('status', 'lost')
-        .limit(50);
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+      const { data: sales } = sp?.id
+        ? await supabase
+            .from('sales')
+            .select('id')
+            .eq('salesperson_id', sp.id)
+            .neq('status', 'closed')
+            .neq('status', 'lost')
+            .limit(50)
+        : { data: [] };
 
       const results = await Promise.all((sales || []).map(s => processOne(supabase, s.id)));
       return new Response(JSON.stringify({ processed: results.length, results }), {

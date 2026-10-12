@@ -160,14 +160,28 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
     }
   }
 
+  // Fallback de contato: cotações manuais não preenchem client_email/
+  // client_phone — resolve pelo cadastro do cliente vinculado.
+  let clientEmail = quote.client_email as string | null;
+  let clientPhone = quote.client_phone as string | null;
+  if ((!clientEmail || !clientPhone) && quote.client_id) {
+    const { data: cli } = await svcSupabase
+      .from("clients")
+      .select("email, phone")
+      .eq("id", quote.client_id)
+      .maybeSingle();
+    clientEmail = clientEmail ?? cli?.email ?? null;
+    clientPhone = clientPhone ?? cli?.phone ?? null;
+  }
+
   const pdfLine = signedPdfUrl ? `\n\nAcesse a proposta: ${signedPdfUrl}` : "";
   const customLine = body.custom_message ? `\n\n${body.custom_message}` : "";
 
   // ── Email ──
-  if (channels.includes("email") && quote.client_email) {
+  if (channels.includes("email") && clientEmail) {
     try {
       const emailPayload = {
-        to: quote.client_email,
+        to: clientEmail,
         subject: `Sua proposta ${quote.quote_number}`,
         html: `<p>Olá ${escapeHtml(quote.client_name) || "cliente"},</p>
                <p>Segue sua proposta no valor de <strong>R$ ${Number(quote.total_value).toFixed(2)}</strong>.</p>
@@ -188,14 +202,14 @@ Deno.serve(withRequestId("send-quote-to-client", async (req, _ctx) => {
   }
 
   // ── WhatsApp ──
-  if (channels.includes("whatsapp") && quote.client_phone) {
+  if (channels.includes("whatsapp") && clientPhone) {
     try {
       const msg = `Olá ${quote.client_name || "cliente"}! Sua proposta ${quote.quote_number} está pronta.\nValor: R$ ${Number(quote.total_value).toFixed(2)}${pdfLine}${customLine}`;
       const { data, error } = await svcSupabase.functions.invoke("send-multichannel-message", {
         body: {
           ownerId: auth.userId,
           channel: "whatsapp",
-          to: quote.client_phone,
+          to: clientPhone,
           body: msg,
         },
       });

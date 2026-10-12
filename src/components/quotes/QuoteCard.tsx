@@ -62,12 +62,23 @@ export const QuoteCard = React.memo(function QuoteCard({
         body: { quote_id: quote.id, channels: ['email', 'whatsapp'] },
       });
       if (error) throw error;
-      const results = (data as { results?: Record<string, unknown> } | null)?.results;
-      const delivered = results && (results.email || results.whatsapp);
+      const res = data as {
+        success?: boolean;
+        channels?: Record<string, { ok?: boolean; error?: string; skipped?: string }>;
+      } | null;
+      if (!res?.success) {
+        // Função responde 200 mesmo sem enviar — detalha por canal.
+        const detail = Object.entries(res?.channels ?? {})
+          .map(([ch, r]) => `${ch}: ${r?.error ?? r?.skipped ?? 'falhou'}`)
+          .join(' · ');
+        toast.error(`Orçamento não enviado — ${detail || 'sem canal de contato'}`);
+        return;
+      }
+      const sent = Object.entries(res?.channels ?? {})
+        .filter(([, r]) => r?.ok)
+        .map(([ch]) => ch);
       toast.success(
-        delivered
-          ? 'Orçamento enviado ao cliente.'
-          : 'Orçamento marcado como enviado (sem canal de contato).'
+        `Orçamento enviado ao cliente${sent.length ? ` via ${sent.join(' + ')}` : ''}.`
       );
       queryClient.invalidateQueries({ queryKey: ['quotes'] });
       queryClient.invalidateQueries({ queryKey: ['quotes-summary'] });

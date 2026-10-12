@@ -26,7 +26,9 @@ export async function sendTransactionalEmail(params: {
           to: params.to,
           subject: params.subject,
           html: params.html,
-          purpose: params.purpose ?? "transactional",
+          // outreach (não transactional): campanhas precisam respeitar
+          // opt-out/descadastro — prepareEmail só aplica a supressão nesse modo.
+          purpose: params.purpose ?? "outreach",
         }),
       },
     );
