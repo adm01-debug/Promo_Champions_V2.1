@@ -23,9 +23,10 @@ export function useFormDraft<T>(
   const restoredKeyRef = useRef<string | null>(null);
   const restoreRef = useRef(restore);
   restoreRef.current = restore;
-  // JSON do estado na primeira render de cada chave: referência para saber
-  // se ESTA aba editou algo. `lastWriteRef` guarda o que esta aba gravou.
-  const mountJsonRef = useRef(new Map<string, string>());
+  // JSON de referência por chave — "esta aba editou?". É o estado na
+  // montagem ou o conteúdo recém-restaurado; `lastWriteRef` guarda o que
+  // esta aba gravou por último.
+  const baselineRef = useRef(new Map<string, string>());
   const lastWriteRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -35,7 +36,12 @@ export function useFormDraft<T>(
     restoredKeyRef.current = storageKey;
     try {
       const raw = localStorage.getItem(storageKey);
-      if (raw) restoreRef.current(JSON.parse(raw) as T);
+      if (raw) {
+        // O conteúdo restaurado é a baseline: não conta como edição e uma
+        // aba que só restaurou não cloba rascunho mais novo de outra aba.
+        baselineRef.current.set(storageKey, raw);
+        restoreRef.current(JSON.parse(raw) as T);
+      }
     } catch {
       // Draft corrompido ou storage indisponível — ignora silenciosamente.
     }
@@ -43,18 +49,20 @@ export function useFormDraft<T>(
 
   useEffect(() => {
     if (storageKey === null) return;
+    // Baseline capturada no corpo do efeito (primeira render da chave),
+    // não dentro do timer — lá o estado já pode incluir a primeira edição.
+    if (!baselineRef.current.has(storageKey)) {
+      baselineRef.current.set(storageKey, JSON.stringify(state));
+    }
     const timer = setTimeout(() => {
       try {
         const json = JSON.stringify(state);
-        if (!mountJsonRef.current.has(storageKey)) {
-          mountJsonRef.current.set(storageKey, json);
-        }
         const stored = localStorage.getItem(storageKey);
-        // Uma aba que nunca editou (estado == snapshot da montagem) não
-        // sobrescreve um rascunho gravado por outra aba — sem isso, uma
-        // aba ociosa com o form vazio apagava o trabalho da aba em edição.
+        // Uma aba que nunca editou (estado == baseline) não sobrescreve um
+        // rascunho gravado por outra aba — sem isso, uma aba ociosa com o
+        // form vazio apagava o trabalho da aba em edição.
         if (
-          json === mountJsonRef.current.get(storageKey) &&
+          json === baselineRef.current.get(storageKey) &&
           stored !== null &&
           stored !== lastWriteRef.current
         ) {

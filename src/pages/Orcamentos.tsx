@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -115,6 +115,41 @@ export default function Orcamentos() {
       if (draft?.items) setItems(draft.items);
     }
   );
+
+  // Migração pontual: rascunhos anteriores à chave por user.id viviam em
+  // `...:${salesperson.id}` (mesma conta → migra e aplica se o form ainda
+  // estiver vazio) ou `...:anon` (compartilhada entre contas → só descarta;
+  // importar reabriria o vazamento entre contas).
+  const migratedDraftRef = useRef(false);
+  useEffect(() => {
+    if (migratedDraftRef.current || !user) return;
+    try {
+      localStorage.removeItem('orcamentos:create:draft:anon');
+      // Perfil ainda carregando: tenta de novo quando salesperson resolver.
+      if (!salesperson) return;
+      migratedDraftRef.current = true;
+      const legacyKey = `orcamentos:create:draft:${salesperson.id}`;
+      const legacy = localStorage.getItem(legacyKey);
+      if (legacy === null) return;
+      localStorage.removeItem(legacyKey);
+      const key = `orcamentos:create:draft:${user.id}`;
+      if (localStorage.getItem(key) !== null) return;
+      localStorage.setItem(key, legacy);
+      // A restauração da chave nova já rodou sem achar nada — aplica o
+      // rascunho migrado direto, só se ninguém começou a digitar ainda.
+      if (items.length === 0 && !form.client_name && !form.title) {
+        const draft = JSON.parse(legacy) as {
+          form?: typeof form;
+          items?: typeof items;
+        };
+        if (draft.form) setForm(draft.form);
+        if (draft.items) setItems(draft.items);
+      }
+    } catch {
+      // best-effort
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- roda uma vez; o ref impede re-execução
+  }, [user, salesperson, form, items]);
 
   const addItem = () => {
     if (!newItem.product_name || newItem.unit_price <= 0) return;
