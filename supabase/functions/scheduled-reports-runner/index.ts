@@ -123,7 +123,7 @@ async function executeReport(
             admin.from(entity).select(selectCols).in("id", chunk).limit(limit) as unknown as PostgrestLike<
               Record<string, unknown>
             >,
-          { label: "report-clients" },
+          { parallel: true, label: "report-clients" },
         );
         const seen = new Set<string>();
         const merged: Record<string, unknown>[] = [];
