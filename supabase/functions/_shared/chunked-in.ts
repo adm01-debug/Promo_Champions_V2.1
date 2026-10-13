@@ -50,7 +50,7 @@ export async function chunkedIn<T>(
     const results: Awaited<PostgrestLike<T>>[] = new Array(chunks.length);
     let next = 0;
     const workers = Array.from(
-      { length: Math.min(maxConcurrency, chunks.length) },
+      { length: Math.max(1, Math.min(Math.floor(maxConcurrency), chunks.length)) },
       async () => {
         while (next < chunks.length) {
           const i = next++;
