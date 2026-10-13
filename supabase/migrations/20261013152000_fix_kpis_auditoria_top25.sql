@@ -44,8 +44,10 @@
 --    apenas deal_stage_transitions, então velocity/funil/conversão liam
 --    tabela vazia. Correção: trigger espelho em sales (mesmo padrão
 --    SECURITY DEFINER + search_path do trigger irmão) + backfill
---    idempotente que (a) replaya deal_stage_transitions na tabela legada
---    e (b) semeia uma linha com o status atual para vendas sem histórico.
+--    idempotente que (a) replaya deal_stage_transitions na tabela legada,
+--    (a2) reconstrói o estágio anterior à primeira transição quando há
+--    from_stage registrado e (b) semeia uma linha com o status atual
+--    para vendas sem histórico — tudo marcado em is_backfilled.
 --
 -- Tudo idempotente (reaplicar a migration é no-op onde faz sentido) e sem
 -- dados destrutivos: objetos recriados preservam nomes/colunas/grants.
@@ -54,16 +56,27 @@
 -- 1) mv_competitive_ranking — status ganho real + janela pelo fechamento
 -- ════════════════════════════════════════════════════════════════════════
 
--- Carimbo de fechamento: qualquer transição para status ganho grava
--- closed_at na própria linha (BEFORE — persiste junto com o UPDATE, em
--- qualquer writer). Só preenche quando ainda NULL e quando o status mudou,
--- para não regravar edições posteriores da mesma venda ganha.
+-- Carimbo de fechamento: transição para status ganho grava closed_at na
+-- própria linha (BEFORE — persiste junto com o UPDATE, em qualquer writer).
+-- Regras:
+--   * saída de status terminal (reabertura) limpa closed_at — a máquina de
+--     estados permite lost/closed -> estágio aberto, e o backfill de
+--     20260814072502 também carimbou vendas perdidas;
+--   * entrada em ganho com closed_at NULL carimba now() — inclui re-ganho
+--     após reabertura; entre aliases de ganho (won->completed etc.) o
+--     primeiro fechamento é preservado.
 CREATE OR REPLACE FUNCTION public.trg_sales_stamp_closed_at()
 RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
+  IF TG_OP = 'UPDATE'
+     AND OLD.status IN ('completed', 'won', 'closed', 'lost', 'cancelled')
+     AND NEW.status NOT IN ('completed', 'won', 'closed', 'lost', 'cancelled') THEN
+    NEW.closed_at := NULL;
+  END IF;
+
   IF NEW.status IN ('completed', 'won', 'closed')
      AND NEW.closed_at IS NULL
      AND (TG_OP = 'INSERT' OR OLD.status IS DISTINCT FROM NEW.status) THEN
@@ -303,9 +316,14 @@ CREATE TRIGGER trg_deal_stage_history
   EXECUTE FUNCTION public.trg_deal_stage_history();
 
 -- Backfill idempotente.
+-- Marcador de linha sintética: consumidores/auditorias podem distinguir
+-- histórico reconstruído de histórico observado pelo trigger.
+ALTER TABLE public.deal_stage_history
+  ADD COLUMN IF NOT EXISTS is_backfilled boolean NOT NULL DEFAULT false;
+
 -- (a) Replay das transições reais já registradas em deal_stage_transitions:
-INSERT INTO public.deal_stage_history (sale_id, stage, entered_at, exited_at)
-SELECT t.sale_id, t.to_stage, t.entered_at, t.exited_at
+INSERT INTO public.deal_stage_history (sale_id, stage, entered_at, exited_at, is_backfilled)
+SELECT t.sale_id, t.to_stage, t.entered_at, t.exited_at, true
 FROM public.deal_stage_transitions t
 WHERE NOT EXISTS (
   SELECT 1 FROM public.deal_stage_history h
@@ -314,13 +332,34 @@ WHERE NOT EXISTS (
     AND h.entered_at = t.entered_at
 );
 
+-- (a2) Estágio anterior à primeira transição registrada: quando a transição
+-- mais antiga tem from_stage, a venda estava nesse estágio desde a criação
+-- (evidência real, não estimativa) até a entrada da transição.
+INSERT INTO public.deal_stage_history (sale_id, stage, entered_at, exited_at, is_backfilled)
+SELECT s.id, t.from_stage, s.created_at, t.entered_at, true
+FROM public.sales s
+JOIN LATERAL (
+  SELECT t0.from_stage, t0.entered_at
+  FROM public.deal_stage_transitions t0
+  WHERE t0.sale_id = s.id
+  ORDER BY t0.entered_at ASC
+  LIMIT 1
+) t ON t.from_stage IS NOT NULL
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.deal_stage_history h
+  WHERE h.sale_id = s.id
+    AND h.stage = t.from_stage
+    AND h.entered_at = s.created_at
+);
+
 -- (b) Vendas sem histórico nenhum (criadas antes dos triggers): semeia a
 -- linha inicial com o status atual em COALESCE(updated_at, created_at) —
--- último instante de mudança verificável. Usar created_at afirmaria que o
--- estágio vigente existe desde a criação e inflaria tempo-no-estágio/SLA
--- para vendas que mudaram de status antes do trigger existir.
-INSERT INTO public.deal_stage_history (sale_id, stage, entered_at)
-SELECT s.id, s.status, COALESCE(s.updated_at, s.created_at, now())
+-- último instante de mudança verificável. O horário real de entrada é
+-- incognoscível: created_at inflaria tempo-no-estágio/SLA (venda que mudou
+-- de status antes do trigger), então updated_at é o piso conservador; a
+-- linha fica marcada em is_backfilled para quem precisar excluir estimativas.
+INSERT INTO public.deal_stage_history (sale_id, stage, entered_at, is_backfilled)
+SELECT s.id, s.status, COALESCE(s.updated_at, s.created_at, now()), true
 FROM public.sales s
 WHERE s.status IS NOT NULL
   AND NOT EXISTS (
