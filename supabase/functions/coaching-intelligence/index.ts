@@ -42,22 +42,30 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
 
     const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
 
-    const [{ data: salespeople }, { data: sales }, { data: activities }, { data: goals }] = await Promise.all([
-      supabase.from("salespeople").select("id, name, avatar_url, role, is_active, monthly_goal").eq("is_active", true).limit(500),
+    const [{ data: salespeople }, { data: sales }, { data: activities }, goalsRes] = await Promise.all([
+      supabase.from("salespeople").select("id, name, avatar_url, role, is_active").eq("is_active", true).limit(500),
       supabase.from("sales").select("id, salesperson_id, status, amount, created_at").gte("created_at", since30).limit(10000),
       supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since30).limit(50000),
-      supabase.from("sales_goals").select("salesperson_id, goal_amount").eq("month", toBusinessMonthStart()).limit(1000),
+      supabase
+        .from("sales_goals")
+        .select("salesperson_id, goal_amount, month")
+        .lte("month", toBusinessMonthStart())
+        .order("month", { ascending: false })
+        .limit(5000),
     ]);
 
-    // Meta real por vendedor: sales_goals do mês corrente; fallback =
-    // salespeople.monthly_goal; fallback final = média das metas configuradas
-    // do time (vendedor sem meta nenhuma usa a média). Sem constante inventada.
+    if (goalsRes.error) throw goalsRes.error;
+    const goals = goalsRes.data ?? [];
+
+    // Meta real por vendedor = goal_amount mais recente de sales_goals
+    // (mês ≤ corrente — cobre vendedor sem meta lançada no mês corrente).
+    // Fallback = média das metas configuradas do time; sem nenhuma meta → 0.
     const goalBySp = new Map<string, number>();
-    (goals ?? []).forEach((g) => goalBySp.set(g.salesperson_id, Number(g.goal_amount ?? 0)));
-    (salespeople ?? []).forEach((sp) => {
-      const mg = Number(sp.monthly_goal ?? 0);
-      if (mg > 0 && !goalBySp.has(sp.id)) goalBySp.set(sp.id, mg);
-    });
+    for (const g of goals ?? []) {
+      if (!goalBySp.has(g.salesperson_id)) {
+        goalBySp.set(g.salesperson_id, Number(g.goal_amount ?? 0));
+      }
+    }
     const configuredGoals = Array.from(goalBySp.values()).filter((v) => v > 0);
     const avgTeamGoal = configuredGoals.length > 0
       ? configuredGoals.reduce((s, v) => s + v, 0) / configuredGoals.length

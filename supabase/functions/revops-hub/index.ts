@@ -47,19 +47,23 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     const horizonDays = Number(url.searchParams.get("horizon") ?? "90");
     const since = new Date(Date.now() - horizonDays * 86400000).toISOString();
 
-    const [salesRes, activitiesRes, commissionsRes, goalsRes, salespeopleRes] = await Promise.all([
+    const [salesRes, activitiesRes, commissionsRes, goalsRes] = await Promise.all([
       supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id").limit(10000),
       supabase.from("activities").select("id,outcome,created_at").gte("created_at", since).limit(50000),
       supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since).limit(10000),
-      supabase.from("sales_goals").select("goal_amount").eq("month", toBusinessMonthStart()).limit(500),
-      supabase.from("salespeople").select("monthly_goal").eq("is_active", true).limit(500),
+      supabase
+        .from("sales_goals")
+        .select("salesperson_id, goal_amount, month")
+        .lte("month", toBusinessMonthStart())
+        .order("month", { ascending: false })
+        .limit(5000),
     ]);
 
     const sales = salesRes.data ?? [];
     const activities = activitiesRes.data ?? [];
     const commissions = commissionsRes.data ?? [];
+    if (goalsRes.error) throw goalsRes.error;
     const salesGoals = goalsRes.data ?? [];
-    const salespeople = salespeopleRes.data ?? [];
 
     // Pipeline ativo
     const openDeals = sales.filter((s) => !["completed", "lost", "cancelled"].includes(s.status));
@@ -115,13 +119,18 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
       .reduce((sum, c) => sum + Number(c.commission_amount || 0), 0);
 
     // Health: pipeline coverage ratio (3x cota geralmente saudável).
-    // Meta real = soma de sales_goals do mês corrente; fallback = soma de
-    // salespeople.monthly_goal. Escalada pelo horizonte (meta mensal × horizon/30).
+    // Meta mensal por vendedor = goal_amount mais recente de sales_goals
+    // (mês ≤ corrente — cobre vendedor sem meta lançada no mês corrente).
+    // Escalada pelo horizonte (meta mensal × horizon/30).
     // Sem meta configurada → target 0 e ratio 0 (sem constante inventada).
-    const salesGoalsSum = salesGoals.reduce((sum, g) => sum + Number(g.goal_amount ?? 0), 0);
-    const monthlyGoalsSum = salespeople.reduce((sum, sp) => sum + Number(sp.monthly_goal ?? 0), 0);
-    const monthlyBase = salesGoalsSum > 0 ? salesGoalsSum : monthlyGoalsSum;
-    const goalSource = salesGoalsSum > 0 ? "sales_goals" : monthlyGoalsSum > 0 ? "monthly_goal" : "none";
+    const latestGoalBySp = new Map<string, number>();
+    for (const g of salesGoals) {
+      if (!latestGoalBySp.has(g.salesperson_id)) {
+        latestGoalBySp.set(g.salesperson_id, Number(g.goal_amount ?? 0));
+      }
+    }
+    const monthlyBase = Array.from(latestGoalBySp.values()).reduce((sum, v) => sum + v, 0);
+    const goalSource = monthlyBase > 0 ? "sales_goals" : "none";
     const monthlyTarget = monthlyBase * (horizonDays / 30);
     const coverageRatio = monthlyTarget > 0 ? totalPipeline / monthlyTarget : 0;
 

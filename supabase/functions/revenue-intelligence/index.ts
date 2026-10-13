@@ -32,7 +32,7 @@ Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
     const horizon = Number(url.searchParams.get("horizon") ?? "90");
     const dimension = url.searchParams.get("dimension") ?? "category";
 
-    const [rollupRes, breakdownRes, inspectionRes, prevRollupRes, goalsRes, salespeopleRes] = await Promise.all([
+    const [rollupRes, breakdownRes, inspectionRes, prevRollupRes, goalsRes] = await Promise.all([
       supabase.rpc("compute_forecast_rollup", { _horizon_days: horizon }),
       supabase.rpc("win_rate_breakdown", { _dimension: dimension, _days: 180 }),
       supabase
@@ -41,34 +41,38 @@ Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
         .order("inspected_at", { ascending: false })
         .limit(200),
       supabase.rpc("compute_forecast_rollup", { _horizon_days: horizon * 2 }),
-      supabase.from("sales_goals").select("goal_amount").eq("month", toBusinessMonthStart()).limit(500),
-      supabase.from("salespeople").select("monthly_goal").eq("is_active", true).limit(500),
+      supabase
+        .from("sales_goals")
+        .select("salesperson_id, goal_amount, month")
+        .lte("month", toBusinessMonthStart())
+        .order("month", { ascending: false })
+        .limit(5000),
     ]);
 
     if (rollupRes.error) throw rollupRes.error;
+    if (goalsRes.error) throw goalsRes.error;
     const rollup = rollupRes.data ?? [];
     const breakdown = breakdownRes.data ?? [];
     const inspection = inspectionRes.data ?? [];
 
     // Coverage ratio: weighted pipeline / meta real da equipe.
-    // Meta = soma de sales_goals do mês corrente; fallback = soma de
-    // salespeople.monthly_goal. Escalada pelo horizonte (meta mensal × horizon/30).
+    // Meta mensal por vendedor = goal_amount mais recente de sales_goals
+    // (mês ≤ corrente — cobre vendedor sem meta lançada no mês corrente).
+    // Escalada pelo horizonte (meta mensal × horizon/30).
     // Sem meta configurada → target 0 e ratio 0 (sem constante inventada).
     const totalWeighted = rollup.reduce(
       (s: number, r: { weighted_amount: number; category: string }) =>
         r.category !== "closed" && r.category !== "omitted" ? s + Number(r.weighted_amount) : s,
       0,
     );
-    const salesGoalsSum = (goalsRes.data ?? []).reduce(
-      (s: number, g: { goal_amount: number }) => s + Number(g.goal_amount ?? 0),
-      0,
-    );
-    const monthlyGoalsSum = (salespeopleRes.data ?? []).reduce(
-      (s: number, sp: { monthly_goal: number | null }) => s + Number(sp.monthly_goal ?? 0),
-      0,
-    );
-    const monthlyBase = salesGoalsSum > 0 ? salesGoalsSum : monthlyGoalsSum;
-    const goalSource = salesGoalsSum > 0 ? "sales_goals" : monthlyGoalsSum > 0 ? "monthly_goal" : "none";
+    const latestGoalBySp = new Map<string, number>();
+    for (const g of goalsRes.data ?? []) {
+      if (!latestGoalBySp.has(g.salesperson_id)) {
+        latestGoalBySp.set(g.salesperson_id, Number(g.goal_amount ?? 0));
+      }
+    }
+    const monthlyBase = Array.from(latestGoalBySp.values()).reduce((s, v) => s + v, 0);
+    const goalSource = monthlyBase > 0 ? "sales_goals" : "none";
     const target = monthlyBase * (horizon / 30);
     const coverageRatio = target > 0 ? totalWeighted / target : 0;
 

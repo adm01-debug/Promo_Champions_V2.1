@@ -5,7 +5,8 @@ import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
-import { getServiceClient } from "../_shared/auth-client.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "strong" {
   if (ratio < 1.5) return "critical";
@@ -18,16 +19,74 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    // Rate limit por IP — endpoint de IA consome créditos
     const rl = enforceRateLimit(req, { name: "analyze-pipeline-coverage", limit: 20, windowSeconds: 60 });
     if (rl) return rl;
 
   try {
-    // Bypass de RLS necessário: job agrega pipeline/metas de toda a equipe e
-    // roda sem JWT de usuário (cron/manual); anon key não lê sales/sales_goals.
+    // Bypass de RLS necessário: job agrega pipeline/metas de toda a equipe;
+    // anon key não lê sales/sales_goals e o insert de snapshots exigiria RLS.
     const supabase = getServiceClient(
       "agrega pipeline e metas de toda a equipe para snapshots de cobertura",
     );
+
+    // Autoriza job interno (service_role ou X-Cron-Secret do pg_cron) ou,
+    // no disparo manual pelo app, usuário com papel admin/manager — chamador
+    // anônimo não pode gravar snapshots gerenciais nem gastar créditos de IA.
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (error) {
+      console.error("analyze-pipeline-coverage cron authorization unavailable:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!authorizedByCron) {
+      let caller;
+      try {
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: "unauthorized" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        console.error("analyze-pipeline-coverage auth client failed:", error);
+        return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleError) {
+        console.error("analyze-pipeline-coverage role check failed:", roleError);
+        return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!isPrivileged) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     // Probabilidade base por estágio — fonte única stage_probabilities
     const stageProbabilities = await getStageProbabilities(supabase);
@@ -51,34 +110,25 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const { data: deals, error: dealsErr } = await dealsQuery.limit(10000);
     if (dealsErr) throw dealsErr;
 
-    // Metas reais por dono: sales_goals do mês corrente; fallback =
-    // salespeople.monthly_goal; fallback final = média das metas configuradas
-    // do time (dono sem meta nenhuma usa a média). Sem constante inventada.
-    const currentMonth = toBusinessMonthStart();
+    // Metas reais por dono = goal_amount mais recente de sales_goals
+    // (mês ≤ corrente — cobre dono sem meta lançada no mês corrente).
+    // Fallback = média das metas configuradas do time. Sem constante inventada.
     let goalsQuery = supabase
       .from("sales_goals")
-      .select("salesperson_id, goal_amount")
-      .eq("month", currentMonth)
-      .limit(1000);
+      .select("salesperson_id, goal_amount, month")
+      .lte("month", toBusinessMonthStart())
+      .order("month", { ascending: false })
+      .limit(5000);
     if (ownerFilter) goalsQuery = goalsQuery.eq("salesperson_id", ownerFilter);
-    const { data: goals } = await goalsQuery;
-
-    let spQuery = supabase
-      .from("salespeople")
-      .select("id, monthly_goal")
-      .eq("is_active", true)
-      .limit(500);
-    if (ownerFilter) spQuery = spQuery.eq("id", ownerFilter);
-    const { data: salespeople } = await spQuery;
+    const { data: goals, error: goalsErr } = await goalsQuery;
+    if (goalsErr) throw goalsErr;
 
     const goalByOwner = new Map<string, number>();
-    (goals ?? []).forEach((g: { salesperson_id: string; goal_amount: number }) => {
-      goalByOwner.set(g.salesperson_id, Number(g.goal_amount ?? 0));
-    });
-    (salespeople ?? []).forEach((sp: { id: string; monthly_goal: number | null }) => {
-      const mg = Number(sp.monthly_goal ?? 0);
-      if (mg > 0 && !goalByOwner.has(sp.id)) goalByOwner.set(sp.id, mg);
-    });
+    for (const g of goals ?? []) {
+      if (!goalByOwner.has(g.salesperson_id)) {
+        goalByOwner.set(g.salesperson_id, Number(g.goal_amount ?? 0));
+      }
+    }
     const configuredGoals = Array.from(goalByOwner.values()).filter((v) => v > 0);
     const avgTeamGoal = configuredGoals.length > 0
       ? configuredGoals.reduce((s, v) => s + v, 0) / configuredGoals.length
