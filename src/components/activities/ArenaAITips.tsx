@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, ArrowRight, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,8 @@ interface ArenaAITipsProps {
 }
 
 export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
+  const navigate = useNavigate();
+  const [dismissed, setDismissed] = useState<string[]>([]);
   const tips = useMemo(() => {
     const activeData = data.filter(d => d.hasGoals);
     if (activeData.length === 0) return [];
@@ -23,12 +26,14 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
     )[0];
     const lowCalls = activeData.filter(d => d.current.calls / d.goals.calls < 0.4);
 
-    // Preditivo: Tendência de queda
-    const isDownwardTrend = activeData.length > 2 && Math.random() > 0.7;
+    // Regra real: gap entre líder e lanterna indica desempenho disperso
+    const gap =
+      leader && laggard ? leader.progress.overall - laggard.progress.overall : 0;
 
     if (laggard && laggard.progress.overall < 40) {
       results.push({
         id: 1,
+        key: `1-${laggard.salesperson_name}`,
         title: 'Protocolo de Recuperação',
         description: `Tático: ${laggard.salesperson_name} em zona crítica (${laggard.progress.overall.toFixed(0)}%). Disparar script de reativação imediata.`,
         impact: 'Crítico',
@@ -38,22 +43,23 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
       });
     }
 
-    if (isDownwardTrend) {
+    if (gap >= 50 && activeData.length > 2 && leader && laggard) {
       results.push({
         id: 4,
-        title: 'Alerta de Desaceleração',
-        description:
-          'Inteligência detectou queda de ritmo no grupo nos últimos 15 min. Iniciar sprint coletivo de 30 min.',
+        key: `4-${leader.salesperson_name}-${laggard.salesperson_name}`,
+        title: 'Gap de Performance',
+        description: `Dispersão de ${gap.toFixed(0)} pts entre ${leader.salesperson_name} e ${laggard.salesperson_name}. Sugerido pareamento para coaching.`,
         impact: 'Estratégico',
         color: 'text-status-warning',
         bgColor: 'bg-status-warning/10',
-        action: 'Iniciar Sprint',
+        action: 'Ver Atividades',
       });
     }
 
     if (lowCalls.length > 0) {
       results.push({
         id: 2,
+        key: `2-${lowCalls.map(d => d.salesperson_name).join(',')}`,
         title: 'Gargalo de Conexão',
         description: `Tático: Baixo volume em ${lowCalls.length} pilotos. Sugestão: 'Power Hour' focada em leads qualificados.`,
         impact: 'Alta',
@@ -66,6 +72,7 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
     if (leader && leader.progress.overall >= 90) {
       results.push({
         id: 3,
+        key: `3-${leader.salesperson_name}`,
         title: 'Otimização de Fechamento',
         description: `Liderança: ${leader.salesperson_name} próximo ao 100%. Priorizar negociações de alto ticket agora.`,
         impact: 'Oportunidade',
@@ -78,7 +85,9 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
     return results.slice(0, 3);
   }, [data]);
 
-  if (tips.length === 0) return null;
+  const visibleTips = tips.filter(t => !dismissed.includes(t.key));
+
+  if (visibleTips.length === 0) return null;
 
   return (
     <div className="space-y-4 animate-fade-in-up">
@@ -89,9 +98,9 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
         </h3>
       </div>
 
-      {tips.map(tip => (
+      {visibleTips.map(tip => (
         <Card
-          key={tip.id}
+          key={tip.key}
           className={cn(
             'border bg-background/40 backdrop-blur-xl shadow-2xl group transition-all duration-500 overflow-hidden relative',
             tip.color.replace('text-', 'border-') + '/20',
@@ -142,6 +151,10 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
                 <Button
                   size="sm"
                   className="h-7 text-[9px] font-black uppercase tracking-widest gap-2 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30"
+                  onClick={e => {
+                    e.stopPropagation();
+                    navigate('/atividades');
+                  }}
                 >
                   <ArrowRight className="h-3 w-3" /> {tip.action || 'Executar Protocolo'}
                 </Button>
@@ -149,6 +162,10 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
                   variant="ghost"
                   size="sm"
                   className="h-7 text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDismissed(prev => [...prev, tip.key]);
+                  }}
                 >
                   Arquivar
                 </Button>

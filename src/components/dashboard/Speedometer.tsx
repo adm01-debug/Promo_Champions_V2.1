@@ -8,8 +8,6 @@ import {
   FileText as FileTextIcon,
   Download,
   RefreshCw,
-  Smartphone,
-  Mail,
   Hash,
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -38,19 +36,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
-import { type KPIPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
 
 export interface SpeedometerProps {
   value: number;
@@ -65,15 +56,10 @@ export interface SpeedometerProps {
   size?: number;
   ticksCount?: number;
   drilldownData?: Array<{ name: string; value: number; [key: string]: unknown }>;
+  drilldownPeriodLabel?: string;
+  channelBreakdown?: { label: string; pct: number }[];
   explanation?: string;
 }
-
-const PERIOD_OPTIONS: { value: KPIPeriod; label: string }[] = [
-  { value: 'current_month', label: 'Mês Atual' },
-  { value: 'last_month', label: 'Último Mês' },
-  { value: 'quarter', label: 'Trimestre' },
-  { value: 'year', label: 'Ano' },
-];
 
 const accentMap = {
   primary: {
@@ -112,6 +98,8 @@ export const Speedometer = memo(
     size = 280,
     ticksCount = 33,
     drilldownData = [],
+    drilldownPeriodLabel = 'Período Atual',
+    channelBreakdown = [],
     explanation = '',
   }: SpeedometerProps) => {
     const { theme } = useDashboardTheme();
@@ -119,7 +107,6 @@ export const Speedometer = memo(
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentSize, setCurrentSize] = useState(size);
     const [isDrilldownOpen, setIsDrilldownOpen] = useState(false);
-    const [drilldownPeriod, setDrilldownPeriod] = useState<KPIPeriod>('current_month');
 
     const colors = accentMap[accent];
     const range = max - min;
@@ -158,7 +145,7 @@ export const Speedometer = memo(
       link.setAttribute('href', url);
       link.setAttribute(
         'download',
-        `drilldown_${label.toLowerCase()}_${drilldownPeriod}.csv`
+        `drilldown_${label.toLowerCase()}_${drilldownPeriodLabel}.csv`
       );
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
@@ -180,11 +167,7 @@ export const Speedometer = memo(
 
       doc.setFontSize(12);
       doc.setTextColor(100);
-      doc.text(
-        `Período: ${PERIOD_OPTIONS.find(p => p.value === drilldownPeriod)?.label}`,
-        14,
-        32
-      );
+      doc.text(`Período: ${drilldownPeriodLabel}`, 14, 32);
       doc.text(`Data de Geração: ${format(new Date(), 'dd/MM/yyyy HH:mm')}`, 14, 38);
 
       doc.setFontSize(14);
@@ -208,7 +191,7 @@ export const Speedometer = memo(
         headStyles: { fillColor: accentMap[accent].stroke },
       });
 
-      doc.save(`drilldown_${label.toLowerCase()}_${drilldownPeriod}.pdf`);
+      doc.save(`drilldown_${label.toLowerCase()}_${drilldownPeriodLabel}.pdf`);
     };
 
     const s = currentSize;
@@ -272,24 +255,8 @@ export const Speedometer = memo(
     }, [tickStructure, animatedPct]);
 
     useEffect(() => {
-      if (!drilldownData.length) return;
-
-      const multiplier =
-        drilldownPeriod === 'year'
-          ? 12
-          : drilldownPeriod === 'quarter'
-            ? 3
-            : drilldownPeriod === 'last_month'
-              ? 1.1
-              : 1;
-
-      const newData = drilldownData.map(d => ({
-        ...d,
-        value: d.value * multiplier * (0.9 + Math.random() * 0.2),
-      }));
-
-      setDisplayData(newData);
-    }, [drilldownPeriod, drilldownData]);
+      setDisplayData(drilldownData);
+    }, [drilldownData]);
 
     useEffect(() => {
       const startValue = animatedValue;
@@ -597,25 +564,12 @@ export const Speedometer = memo(
                   </DialogDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Select
-                    value={drilldownPeriod}
-                    onValueChange={v => setDrilldownPeriod(v as KPIPeriod)}
+                  <Badge
+                    variant="outline"
+                    className="h-9 px-3 text-[10px] font-mono uppercase bg-background/40 border-border/40"
                   >
-                    <SelectTrigger className="w-[140px] h-9 text-[10px] font-mono uppercase bg-background/40 border-border/40">
-                      <SelectValue placeholder="Período" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background/95 backdrop-blur-3xl border-border/40">
-                      {PERIOD_OPTIONS.map(opt => (
-                        <SelectItem
-                          key={opt.value}
-                          value={opt.value}
-                          className="text-[10px] font-mono uppercase"
-                        >
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    {drilldownPeriodLabel}
+                  </Badge>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -702,9 +656,22 @@ export const Speedometer = memo(
                   <div className="text-2xl font-black font-mono tracking-tighter">
                     {percentStr}
                   </div>
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-success">
-                    <TrendingUp className="h-3 w-3" /> +4.2% vs prev.
-                  </div>
+                  {delta !== undefined && (
+                    <div
+                      className={cn(
+                        'flex items-center gap-1.5 text-[10px] font-mono font-bold',
+                        delta >= 0 ? 'text-success' : 'text-destructive'
+                      )}
+                    >
+                      {delta >= 0 ? (
+                        <TrendingUp className="h-3 w-3" />
+                      ) : (
+                        <TrendingDown className="h-3 w-3" />
+                      )}
+                      {delta >= 0 ? '+' : ''}
+                      {delta.toFixed(1)}% vs período anterior
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -714,63 +681,71 @@ export const Speedometer = memo(
                     Tendência Temporal
                   </h4>
                   <div className="h-[300px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={displayData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          vertical={false}
-                          stroke="hsl(var(--muted)/0.2)"
-                        />
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{
-                            fontSize: 9,
-                            fontFamily: 'var(--font-mono)',
-                            fill: 'hsl(var(--muted-foreground))',
-                          }}
-                        />
-                        <YAxis
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{
-                            fontSize: 9,
-                            fontFamily: 'var(--font-mono)',
-                            fill: 'hsl(var(--muted-foreground))',
-                          }}
-                        />
-                        <RechartsTooltip
-                          cursor={{ fill: 'hsl(var(--muted)/0.1)' }}
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              return (
-                                <div className="bg-background/95 backdrop-blur-xl border border-border/40 p-3 rounded-xl shadow-2xl">
-                                  <p className="text-[10px] font-mono uppercase text-muted-foreground mb-1">
-                                    {payload[0].payload.name}
-                                  </p>
-                                  <p className="text-sm font-black font-mono text-primary">
-                                    {formatValue
-                                      ? formatValue(Number(payload[0].value))
-                                      : payload[0].value}
-                                  </p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
-                        <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={24}>
-                          {displayData.map((_, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={colors.stroke}
-                              fillOpacity={0.8}
-                            />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+                    {displayData.length === 0 ? (
+                      <div className="h-full flex items-center justify-center">
+                        <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+                          Sem dados no período selecionado
+                        </p>
+                      </div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={displayData}>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="hsl(var(--muted)/0.2)"
+                          />
+                          <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{
+                              fontSize: 9,
+                              fontFamily: 'var(--font-mono)',
+                              fill: 'hsl(var(--muted-foreground))',
+                            }}
+                          />
+                          <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{
+                              fontSize: 9,
+                              fontFamily: 'var(--font-mono)',
+                              fill: 'hsl(var(--muted-foreground))',
+                            }}
+                          />
+                          <RechartsTooltip
+                            cursor={{ fill: 'hsl(var(--muted)/0.1)' }}
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="bg-background/95 backdrop-blur-xl border border-border/40 p-3 rounded-xl shadow-2xl">
+                                    <p className="text-[10px] font-mono uppercase text-muted-foreground mb-1">
+                                      {payload[0].payload.name}
+                                    </p>
+                                    <p className="text-sm font-black font-mono text-primary">
+                                      {formatValue
+                                        ? formatValue(Number(payload[0].value))
+                                        : payload[0].value}
+                                    </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={24}>
+                            {displayData.map((_, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={colors.stroke}
+                                fillOpacity={0.8}
+                              />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
                   </div>
                 </div>
 
@@ -780,38 +755,26 @@ export const Speedometer = memo(
                       Composição de Canais
                     </h4>
                     <div className="space-y-4">
-                      {[
-                        {
-                          label: 'Direto',
-                          val: 45,
-                          icon: Smartphone,
-                          color: 'text-primary',
-                        },
-                        { label: 'E-mail', val: 30, icon: Mail, color: 'text-success' },
-                        { label: 'Outros', val: 25, icon: Hash, color: 'text-warning' },
-                      ].map((channel, i) => (
+                      {channelBreakdown.length === 0 && (
+                        <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
+                          Sem dados de canal no período
+                        </p>
+                      )}
+                      {channelBreakdown.map((channel, i) => (
                         <div key={i} className="flex items-center gap-4">
-                          <div
-                            className={cn(
-                              'p-2 rounded-lg bg-background border border-border/20',
-                              channel.color
-                            )}
-                          >
-                            <channel.icon className="h-3 w-3" />
+                          <div className="p-2 rounded-lg bg-background border border-border/20 text-primary">
+                            <Hash className="h-3 w-3" />
                           </div>
                           <div className="flex-1 space-y-1">
                             <div className="flex justify-between text-[10px] font-mono">
                               <span className="uppercase">{channel.label}</span>
-                              <span>{channel.val}%</span>
+                              <span>{channel.pct}%</span>
                             </div>
                             <div className="h-1 w-full bg-muted/20 rounded-full overflow-hidden">
                               <motion.div
-                                className={cn(
-                                  'h-full',
-                                  channel.color.replace('text-', 'bg-')
-                                )}
+                                className="h-full bg-primary"
                                 initial={{ width: 0 }}
-                                animate={{ width: `${channel.val}%` }}
+                                animate={{ width: `${channel.pct}%` }}
                               />
                             </div>
                           </div>
