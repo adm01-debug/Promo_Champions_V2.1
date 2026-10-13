@@ -138,6 +138,37 @@ async function sendMetaCloud(
   return { ok: true, providerMessageId: result?.messages?.[0]?.id };
 }
 
+// Evolution API (instância wpp2 na VPS): URL, apikey e instância padrão vêm de
+// secrets da function, nunca hardcoded. `credentials.instance` pode sobrescrever
+// a instância por dono; o número vai sem prefixo "whatsapp:".
+async function sendEvolution(
+  creds: Record<string, string>,
+  to: string,
+  body: string,
+): Promise<ProviderResult> {
+  const baseUrl = Deno.env.get("EVOLUTION_API_URL")?.replace(/\/+$/, "");
+  const apiKey = Deno.env.get("EVOLUTION_API_KEY");
+  const instance = creds.instance || Deno.env.get("EVOLUTION_INSTANCE");
+  if (!baseUrl || !apiKey || !instance) {
+    return { ok: false, error: "evolution_credentials_missing" };
+  }
+
+  const response = await fetchWithTimeout(
+    `${baseUrl}/message/sendText/${encodeURIComponent(instance)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: apiKey,
+      },
+      body: JSON.stringify({ number: to, text: body }),
+    },
+  );
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) return { ok: false, error: `evolution_${response.status}` };
+  return { ok: true, providerMessageId: result?.key?.id ?? result?.messageId };
+}
+
 async function sendZapi(
   creds: Record<string, string>,
   to: string,
@@ -293,6 +324,17 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
           payload.to,
           payload.body,
           payload.templateId,
+        );
+        break;
+      case "evolution":
+        if (payload.channel !== "whatsapp") {
+          result = { ok: false, error: "provider_not_supported" };
+          break;
+        }
+        result = await sendEvolution(
+          credentials as Record<string, string>,
+          payload.to,
+          payload.body,
         );
         break;
       case "zapi":

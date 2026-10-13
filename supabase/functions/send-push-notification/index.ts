@@ -12,18 +12,123 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
+// ── VAPID (RFC 8292) ─────────────────────────────────────────────────────
+// Push services exigem identificação voluntária do servidor: sem o header
+// `Authorization: vapid t=<jwt ES256>, k=<chave pública>` o envio é rejeitado
+// silenciosamente. As chaves vêm dos secrets da function (VAPID_PUBLIC_KEY /
+// VAPID_PRIVATE_KEY, formato base64url do `web-push generate-vapid-keys`).
+
+const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;
+
+function base64UrlDecode(value: string): Uint8Array | null {
+  try {
+    const padded = value.replace(/-/g, "+").replace(/_/g, "/");
+    const binary = atob(padded + "=".repeat((4 - (padded.length % 4)) % 4));
+    return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  } catch {
+    return null;
+  }
+}
+
+function base64UrlEncode(bytes: Uint8Array): string {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+let cachedVapidKey: Promise<CryptoKey> | null = null;
+
+async function importVapidPrivateKey(
+  publicKeyB64: string,
+  privateKeyB64: string,
+): Promise<CryptoKey | null> {
+  if (!cachedVapidKey) {
+    cachedVapidKey = (async () => {
+      const publicBytes = base64UrlDecode(publicKeyB64);
+      const privateBytes = base64UrlDecode(privateKeyB64);
+      if (!publicBytes || publicBytes.length !== 65 || publicBytes[0] !== 0x04) {
+        throw new Error("vapid_public_key_invalid");
+      }
+      if (!privateBytes || privateBytes.length !== 32) {
+        throw new Error("vapid_private_key_invalid");
+      }
+      const jwk: JsonWebKey = {
+        kty: "EC",
+        crv: "P-256",
+        x: base64UrlEncode(publicBytes.slice(1, 33)),
+        y: base64UrlEncode(publicBytes.slice(33, 65)),
+        d: base64UrlEncode(privateBytes),
+      };
+      return await crypto.subtle.importKey(
+        "jwk",
+        jwk,
+        { name: "ECDSA", namedCurve: "P-256" },
+        false,
+        ["sign"],
+      );
+    })();
+    cachedVapidKey.catch(() => { cachedVapidKey = null; });
+  }
+  try {
+    return await cachedVapidKey;
+  } catch {
+    return null;
+  }
+}
+
+async function buildVapidAuthorization(
+  endpoint: string,
+  publicKeyB64: string,
+  privateKeyB64: string,
+): Promise<string | null> {
+  const key = await importVapidPrivateKey(publicKeyB64, privateKeyB64);
+  if (!key) return null;
+
+  const subject = Deno.env.get("VAPID_SUBJECT") ??
+    "mailto:admin@promobrindes.com.br";
+  const header = base64UrlEncode(
+    new TextEncoder().encode(JSON.stringify({ typ: "JWT", alg: "ES256" })),
+  );
+  const claims = base64UrlEncode(
+    new TextEncoder().encode(JSON.stringify({
+      aud: new URL(endpoint).origin,
+      exp: Math.floor(Date.now() / 1000) + VAPID_EXPIRATION_SECONDS,
+      sub: subject,
+    })),
+  );
+  const signature = new Uint8Array(
+    await crypto.subtle.sign(
+      { name: "ECDSA", hash: { name: "SHA-256" } },
+      key,
+      new TextEncoder().encode(`${header}.${claims}`) as unknown as ArrayBuffer,
+    ),
+  );
+  return `vapid t=${header}.${claims}.${base64UrlEncode(signature)}, k=${publicKeyB64}`;
+}
+
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
   payload: string,
   requestId: string,
+  vapid: { publicKey: string; privateKey: string },
 ): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
+    const authorization = await buildVapidAuthorization(
+      subscription.endpoint,
+      vapid.publicKey,
+      vapid.privateKey,
+    );
+    if (!authorization) {
+      return { success: false, error: 'vapid_signing_failed' };
+    }
+
     const response = await fetchWithTrace(subscription.endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'TTL': '86400',
-        'Urgency': 'high'
+        'Urgency': 'high',
+        'Authorization': authorization
       },
       body: payload
     }, {
@@ -87,6 +192,18 @@ Deno.serve(withRequestId('send-push-notification', async (req, ctx) => {
       );
     }
     callerUserId = user.id;
+  }
+
+  // VAPID obrigatório: antes do fix o envio seguia sem assinatura e o push
+  // service descartava cada mensagem — hoje falha explicitamente até o
+  // usuário cadastrar os secrets.
+  const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY');
+  const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY');
+  if (!vapidPublicKey || !vapidPrivateKey) {
+    return new Response(
+      JSON.stringify({ error: 'vapid_not_configured', message: 'Cadastre VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY nos secrets da function' }),
+      { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 
   try {
@@ -160,6 +277,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, ctx) => {
           { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
           payload,
           ctx.requestId,
+          { publicKey: vapidPublicKey, privateKey: vapidPrivateKey },
         );
 
         if (!result.success && (result.status === 404 || result.status === 410)) {
