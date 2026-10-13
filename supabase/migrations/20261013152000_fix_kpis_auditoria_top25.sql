@@ -9,11 +9,17 @@
 --    20260224142333). Resultado: vendas ganhas não entravam no somatório,
 --    todos empatavam em 0 e o RANK() devolvia 1º para todo mundo.
 --    Correção: filtro canônico de status ganho/perdido e janela pelo
---    COALESCE(closed_at, created_at) — venda criada em mês anterior e ganha
---    neste mês conta no mês do fechamento.
+--    COALESCE(closed_at, updated_at) — venda criada em mês anterior e ganha
+--    neste mês conta no mês do fechamento (a transição bumpa updated_at;
+--    created_at omitiria vendas ganhas agora sem closed_at).
 --    A MV é dropada e recriada (não existe CREATE OR REPLACE MATERIALIZED
 --    VIEW); a view wrapper public.competitive_ranking e os grants vigentes
 --    (20260831130000) são reproduzidos na sequência.
+--
+--    Complemento: trigger BEFORE que estampa closed_at quando status passa a
+--    ganho por qualquer caminho (RPC de transição, PostgREST, syncs) —
+--    transition_sale_status não o preenchia, e o backfill de closed_at de
+--    20260814072502 só cobriu o passado.
 --
 -- 2) revenue_forecast_view (recriada por último em 20260513194107):
 --    open_deals excluía só ('completed','lost','abandoned'), então 'won',
@@ -48,6 +54,31 @@
 -- 1) mv_competitive_ranking — status ganho real + janela pelo fechamento
 -- ════════════════════════════════════════════════════════════════════════
 
+-- Carimbo de fechamento: qualquer transição para status ganho grava
+-- closed_at na própria linha (BEFORE — persiste junto com o UPDATE, em
+-- qualquer writer). Só preenche quando ainda NULL e quando o status mudou,
+-- para não regravar edições posteriores da mesma venda ganha.
+CREATE OR REPLACE FUNCTION public.trg_sales_stamp_closed_at()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  IF NEW.status IN ('completed', 'won', 'closed')
+     AND NEW.closed_at IS NULL
+     AND (TG_OP = 'INSERT' OR OLD.status IS DISTINCT FROM NEW.status) THEN
+    NEW.closed_at := now();
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_sales_stamp_closed_at ON public.sales;
+CREATE TRIGGER trg_sales_stamp_closed_at
+  BEFORE INSERT OR UPDATE OF status ON public.sales
+  FOR EACH ROW
+  EXECUTE FUNCTION public.trg_sales_stamp_closed_at();
+
 DROP MATERIALIZED VIEW IF EXISTS public.mv_competitive_ranking CASCADE;
 
 CREATE MATERIALIZED VIEW public.mv_competitive_ranking AS
@@ -58,8 +89,8 @@ WITH monthly_sales AS (
         COUNT(*) as deals_count
     FROM public.sales
     WHERE status IN ('completed', 'won', 'closed')
-      AND COALESCE(closed_at, created_at) >= date_trunc('month', now())
-      AND COALESCE(closed_at, created_at) < date_trunc('month', now()) + interval '1 month'
+      AND COALESCE(closed_at, updated_at) >= date_trunc('month', now())
+      AND COALESCE(closed_at, updated_at) < date_trunc('month', now()) + interval '1 month'
     GROUP BY salesperson_id
 ),
 monthly_leads AS (
@@ -138,11 +169,11 @@ closed_recent AS (
   SELECT
     salesperson_id,
     count(*) AS won_count,
-    avg(EXTRACT(EPOCH FROM (updated_at - created_at)) / 86400.0) AS avg_cycle_days,
+    avg(EXTRACT(EPOCH FROM (COALESCE(closed_at, updated_at) - created_at)) / 86400.0) AS avg_cycle_days,
     sum(amount) AS won_amount_90d
   FROM public.sales
   WHERE status IN ('completed', 'won', 'closed')
-    AND updated_at >= (now() - interval '90 days')
+    AND COALESCE(closed_at, updated_at) >= (now() - interval '90 days')
   GROUP BY salesperson_id
 ),
 goals_current AS (
@@ -284,9 +315,12 @@ WHERE NOT EXISTS (
 );
 
 -- (b) Vendas sem histórico nenhum (criadas antes dos triggers): semeia a
--- linha inicial com o status atual no created_at — sem inventar transições.
+-- linha inicial com o status atual em COALESCE(updated_at, created_at) —
+-- último instante de mudança verificável. Usar created_at afirmaria que o
+-- estágio vigente existe desde a criação e inflaria tempo-no-estágio/SLA
+-- para vendas que mudaram de status antes do trigger existir.
 INSERT INTO public.deal_stage_history (sale_id, stage, entered_at)
-SELECT s.id, s.status, COALESCE(s.created_at, now())
+SELECT s.id, s.status, COALESCE(s.updated_at, s.created_at, now())
 FROM public.sales s
 WHERE s.status IS NOT NULL
   AND NOT EXISTS (
