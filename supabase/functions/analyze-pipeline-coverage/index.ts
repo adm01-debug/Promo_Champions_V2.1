@@ -1,11 +1,12 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
-import { toBusinessDate } from "../_shared/business-date.ts";
+import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
+import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
 
 function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "strong" {
   if (ratio < 1.5) return "critical";
@@ -18,17 +19,74 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-    // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
+    // Rate limit por IP — endpoint de IA consome créditos
     const rl = enforceRateLimit(req, { name: "analyze-pipeline-coverage", limit: 20, windowSeconds: 60 });
     if (rl) return rl;
 
   try {
-    const authHeader = req.headers.get("Authorization") ?? "";
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
+    // Bypass de RLS necessário: job agrega pipeline/metas de toda a equipe;
+    // anon key não lê sales/sales_goals e o insert de snapshots exigiria RLS.
+    const supabase = getServiceClient(
+      "agrega pipeline e metas de toda a equipe para snapshots de cobertura",
     );
+
+    // Autoriza job interno (service_role ou X-Cron-Secret do pg_cron) ou,
+    // no disparo manual pelo app, usuário com papel admin/manager — chamador
+    // anônimo não pode gravar snapshots gerenciais nem gastar créditos de IA.
+    let authorizedByCron = false;
+    try {
+      authorizedByCron = await isAuthorizedCronRequest(req, async () => {
+        const { data, error } = await supabase
+          .from("_internal_secrets")
+          .select("value")
+          .eq("key", "coaching_cron_secret")
+          .maybeSingle();
+        if (error) throw error;
+        return (data as { value?: string | null } | null)?.value;
+      });
+    } catch (error) {
+      console.error("analyze-pipeline-coverage cron authorization unavailable:", error);
+      return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!authorizedByCron) {
+      let caller;
+      try {
+        caller = await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: "unauthorized" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        console.error("analyze-pipeline-coverage auth client failed:", error);
+        return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: isPrivileged, error: roleError } = await caller.client.rpc(
+        "is_admin_or_manager" as never,
+        { _user_id: caller.userId } as never,
+      );
+      if (roleError) {
+        console.error("analyze-pipeline-coverage role check failed:", roleError);
+        return new Response(JSON.stringify({ error: "authorization_unavailable" }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!isPrivileged) {
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     // Probabilidade base por estágio — fonte única stage_probabilities
     const stageProbabilities = await getStageProbabilities(supabase);
@@ -52,23 +110,31 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const { data: deals, error: dealsErr } = await dealsQuery.limit(10000);
     if (dealsErr) throw dealsErr;
 
-    // Pull closed_won for quota proxy (last period)
-    const histStart = new Date();
-    histStart.setDate(histStart.getDate() - periodDays);
-    let wonQuery = supabase
-      .from("sales")
-      .select("value, salesperson_id")
-      .eq("stage", "closed_won")
-      .gte("created_at", histStart.toISOString());
-    if (ownerFilter) wonQuery = wonQuery.eq("salesperson_id", ownerFilter);
-    const { data: won } = await wonQuery.limit(10000);
+    // Metas reais por dono = goal_amount mais recente de sales_goals
+    // (mês ≤ corrente — cobre dono sem meta lançada no mês corrente).
+    // Fallback = média das metas configuradas do time. Sem constante inventada.
+    let goalsQuery = supabase
+      .from("sales_goals")
+      .select("salesperson_id, goal_amount, month")
+      .lte("month", toBusinessMonthStart())
+      .order("month", { ascending: false })
+      .limit(5000);
+    if (ownerFilter) goalsQuery = goalsQuery.eq("salesperson_id", ownerFilter);
+    const { data: goals, error: goalsErr } = await goalsQuery;
+    if (goalsErr) throw goalsErr;
 
-    // Quota = 1.2x last period closed_won, min 50000 per owner
-    const quotaByOwner = new Map<string, number>();
-    (won ?? []).forEach((w: { salesperson_id: string | null; value: number }) => {
-      const k = w.salesperson_id ?? "global";
-      quotaByOwner.set(k, (quotaByOwner.get(k) ?? 0) + Number(w.value || 0));
-    });
+    const goalByOwner = new Map<string, number>();
+    for (const g of goals ?? []) {
+      if (!goalByOwner.has(g.salesperson_id)) {
+        goalByOwner.set(g.salesperson_id, Number(g.goal_amount ?? 0));
+      }
+    }
+    const configuredGoals = Array.from(goalByOwner.values()).filter((v) => v > 0);
+    const avgTeamGoal = configuredGoals.length > 0
+      ? configuredGoals.reduce((s, v) => s + v, 0) / configuredGoals.length
+      : 0;
+    const quotaFor = (owner: string | null): number =>
+      (owner ? goalByOwner.get(owner) : undefined) ?? avgTeamGoal;
 
     // Aggregate by owner × stage
     type Bucket = { owner: string | null; stage: string; pipeline: number; weighted: number; count: number };
@@ -88,7 +154,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const snapshots: Array<Record<string, unknown>> = [];
 
     buckets.forEach((b) => {
-      const quota = Math.max((quotaByOwner.get(b.owner ?? "global") ?? 0) * 1.2, 50000);
+      const quota = quotaFor(b.owner);
       const ratio = quota > 0 ? b.weighted / quota : 0;
       const gap = Math.max(quota * targetRatio - b.weighted, 0);
       snapshots.push({
