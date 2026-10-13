@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -110,25 +111,20 @@ async function executeReport(
           if (page.length < PAGE) break;
         }
 
-        // .in() com milhares de IDs estoura a URL do PostgREST — consulta em
-        // lotes e une as linhas (dedupe por id), respeitando o limit do cfg.
-        const ids = [...idSet];
-        const CHUNK = 200;
+        // .in() com milhares de IDs estoura a URL do PostgREST — chunkedIn
+        // divide em lotes; depois dedupe por id e o limit do cfg no merge.
+        const rows = await chunkedIn<Record<string, unknown>>(
+          [...idSet],
+          (chunk) => admin.from(entity).select(cols).in("id", chunk).limit(limit),
+          { label: "report-clients" },
+        );
         const seen = new Set<string>();
         const merged: Record<string, unknown>[] = [];
-        for (let i = 0; i < ids.length && merged.length < limit; i += CHUNK) {
-          const { data: rows, error: cErr } = await admin
-            .from(entity)
-            .select(cols)
-            .in("id", ids.slice(i, i + CHUNK))
-            .limit(limit);
-          if (cErr) throw new Error(cErr.message);
-          for (const r of (rows ?? []) as unknown as Record<string, unknown>[]) {
-            const rid = String(r.id);
-            if (!seen.has(rid)) {
-              seen.add(rid);
-              merged.push(r);
-            }
+        for (const r of rows) {
+          const rid = String(r.id);
+          if (!seen.has(rid)) {
+            seen.add(rid);
+            merged.push(r);
           }
         }
         return merged.slice(0, limit);
