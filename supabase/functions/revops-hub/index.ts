@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
+import { toBusinessMonthStart } from "../_shared/business-date.ts";
 
 Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -46,15 +47,19 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     const horizonDays = Number(url.searchParams.get("horizon") ?? "90");
     const since = new Date(Date.now() - horizonDays * 86400000).toISOString();
 
-    const [salesRes, activitiesRes, commissionsRes] = await Promise.all([
+    const [salesRes, activitiesRes, commissionsRes, goalsRes, salespeopleRes] = await Promise.all([
       supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id").limit(10000),
       supabase.from("activities").select("id,outcome,created_at").gte("created_at", since).limit(50000),
       supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since).limit(10000),
+      supabase.from("sales_goals").select("goal_amount").eq("month", toBusinessMonthStart()).limit(500),
+      supabase.from("salespeople").select("monthly_goal").eq("is_active", true).limit(500),
     ]);
 
     const sales = salesRes.data ?? [];
     const activities = activitiesRes.data ?? [];
     const commissions = commissionsRes.data ?? [];
+    const salesGoals = goalsRes.data ?? [];
+    const salespeople = salespeopleRes.data ?? [];
 
     // Pipeline ativo
     const openDeals = sales.filter((s) => !["completed", "lost", "cancelled"].includes(s.status));
@@ -109,8 +114,15 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
       .filter((c) => c.status === "pending")
       .reduce((sum, c) => sum + Number(c.commission_amount || 0), 0);
 
-    // Health: pipeline coverage ratio (3x cota geralmente saudável)
-    const monthlyTarget = closedRevenue * 1.2 || 100000;
+    // Health: pipeline coverage ratio (3x cota geralmente saudável).
+    // Meta real = soma de sales_goals do mês corrente; fallback = soma de
+    // salespeople.monthly_goal. Escalada pelo horizonte (meta mensal × horizon/30).
+    // Sem meta configurada → target 0 e ratio 0 (sem constante inventada).
+    const salesGoalsSum = salesGoals.reduce((sum, g) => sum + Number(g.goal_amount ?? 0), 0);
+    const monthlyGoalsSum = salespeople.reduce((sum, sp) => sum + Number(sp.monthly_goal ?? 0), 0);
+    const monthlyBase = salesGoalsSum > 0 ? salesGoalsSum : monthlyGoalsSum;
+    const goalSource = salesGoalsSum > 0 ? "sales_goals" : monthlyGoalsSum > 0 ? "monthly_goal" : "none";
+    const monthlyTarget = monthlyBase * (horizonDays / 30);
     const coverageRatio = monthlyTarget > 0 ? totalPipeline / monthlyTarget : 0;
 
     let healthLabel = "critical";
@@ -137,6 +149,8 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
         health: {
           label: healthLabel,
           coverage_ratio: coverageRatio,
+          monthly_target: monthlyTarget,
+          goal_source: goalSource,
           recommendation:
             healthLabel === "critical"
               ? "Pipeline insuficiente. Acelere prospecção urgentemente."

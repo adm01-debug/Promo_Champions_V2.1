@@ -1,11 +1,11 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
-import { toBusinessDate } from "../_shared/business-date.ts";
+import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
+import { getServiceClient } from "../_shared/auth-client.ts";
 
 function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "strong" {
   if (ratio < 1.5) return "critical";
@@ -23,11 +23,10 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     if (rl) return rl;
 
   try {
-    const authHeader = req.headers.get("Authorization") ?? "";
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
+    // Bypass de RLS necessário: job agrega pipeline/metas de toda a equipe e
+    // roda sem JWT de usuário (cron/manual); anon key não lê sales/sales_goals.
+    const supabase = getServiceClient(
+      "agrega pipeline e metas de toda a equipe para snapshots de cobertura",
     );
 
     // Probabilidade base por estágio — fonte única stage_probabilities
@@ -52,23 +51,40 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const { data: deals, error: dealsErr } = await dealsQuery.limit(10000);
     if (dealsErr) throw dealsErr;
 
-    // Pull closed_won for quota proxy (last period)
-    const histStart = new Date();
-    histStart.setDate(histStart.getDate() - periodDays);
-    let wonQuery = supabase
-      .from("sales")
-      .select("value, salesperson_id")
-      .eq("stage", "closed_won")
-      .gte("created_at", histStart.toISOString());
-    if (ownerFilter) wonQuery = wonQuery.eq("salesperson_id", ownerFilter);
-    const { data: won } = await wonQuery.limit(10000);
+    // Metas reais por dono: sales_goals do mês corrente; fallback =
+    // salespeople.monthly_goal; fallback final = média das metas configuradas
+    // do time (dono sem meta nenhuma usa a média). Sem constante inventada.
+    const currentMonth = toBusinessMonthStart();
+    let goalsQuery = supabase
+      .from("sales_goals")
+      .select("salesperson_id, goal_amount")
+      .eq("month", currentMonth)
+      .limit(1000);
+    if (ownerFilter) goalsQuery = goalsQuery.eq("salesperson_id", ownerFilter);
+    const { data: goals } = await goalsQuery;
 
-    // Quota = 1.2x last period closed_won, min 50000 per owner
-    const quotaByOwner = new Map<string, number>();
-    (won ?? []).forEach((w: { salesperson_id: string | null; value: number }) => {
-      const k = w.salesperson_id ?? "global";
-      quotaByOwner.set(k, (quotaByOwner.get(k) ?? 0) + Number(w.value || 0));
+    let spQuery = supabase
+      .from("salespeople")
+      .select("id, monthly_goal")
+      .eq("is_active", true)
+      .limit(500);
+    if (ownerFilter) spQuery = spQuery.eq("id", ownerFilter);
+    const { data: salespeople } = await spQuery;
+
+    const goalByOwner = new Map<string, number>();
+    (goals ?? []).forEach((g: { salesperson_id: string; goal_amount: number }) => {
+      goalByOwner.set(g.salesperson_id, Number(g.goal_amount ?? 0));
     });
+    (salespeople ?? []).forEach((sp: { id: string; monthly_goal: number | null }) => {
+      const mg = Number(sp.monthly_goal ?? 0);
+      if (mg > 0 && !goalByOwner.has(sp.id)) goalByOwner.set(sp.id, mg);
+    });
+    const configuredGoals = Array.from(goalByOwner.values()).filter((v) => v > 0);
+    const avgTeamGoal = configuredGoals.length > 0
+      ? configuredGoals.reduce((s, v) => s + v, 0) / configuredGoals.length
+      : 0;
+    const quotaFor = (owner: string | null): number =>
+      (owner ? goalByOwner.get(owner) : undefined) ?? avgTeamGoal;
 
     // Aggregate by owner × stage
     type Bucket = { owner: string | null; stage: string; pipeline: number; weighted: number; count: number };
@@ -88,7 +104,7 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const snapshots: Array<Record<string, unknown>> = [];
 
     buckets.forEach((b) => {
-      const quota = Math.max((quotaByOwner.get(b.owner ?? "global") ?? 0) * 1.2, 50000);
+      const quota = quotaFor(b.owner);
       const ratio = quota > 0 ? b.weighted / quota : 0;
       const gap = Math.max(quota * targetRatio - b.weighted, 0);
       snapshots.push({

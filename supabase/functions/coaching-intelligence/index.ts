@@ -1,6 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { toBusinessMonthStart } from "../_shared/business-date.ts";
 
 interface CoachingTarget {
   salesperson_id: string;
@@ -41,11 +42,26 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
 
     const since30 = new Date(Date.now() - 30 * 86400000).toISOString();
 
-    const [{ data: salespeople }, { data: sales }, { data: activities }] = await Promise.all([
-      supabase.from("salespeople").select("id, name, avatar_url, role, is_active").eq("is_active", true).limit(500),
+    const [{ data: salespeople }, { data: sales }, { data: activities }, { data: goals }] = await Promise.all([
+      supabase.from("salespeople").select("id, name, avatar_url, role, is_active, monthly_goal").eq("is_active", true).limit(500),
       supabase.from("sales").select("id, salesperson_id, status, amount, created_at").gte("created_at", since30).limit(10000),
       supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since30).limit(50000),
+      supabase.from("sales_goals").select("salesperson_id, goal_amount").eq("month", toBusinessMonthStart()).limit(1000),
     ]);
+
+    // Meta real por vendedor: sales_goals do mês corrente; fallback =
+    // salespeople.monthly_goal; fallback final = média das metas configuradas
+    // do time (vendedor sem meta nenhuma usa a média). Sem constante inventada.
+    const goalBySp = new Map<string, number>();
+    (goals ?? []).forEach((g) => goalBySp.set(g.salesperson_id, Number(g.goal_amount ?? 0)));
+    (salespeople ?? []).forEach((sp) => {
+      const mg = Number(sp.monthly_goal ?? 0);
+      if (mg > 0 && !goalBySp.has(sp.id)) goalBySp.set(sp.id, mg);
+    });
+    const configuredGoals = Array.from(goalBySp.values()).filter((v) => v > 0);
+    const avgTeamGoal = configuredGoals.length > 0
+      ? configuredGoals.reduce((s, v) => s + v, 0) / configuredGoals.length
+      : 0;
 
     const targets: CoachingTarget[] = (salespeople ?? []).map((sp) => {
       const myDeals = (sales ?? []).filter((s) => s.salesperson_id === sp.id);
@@ -58,7 +74,8 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
 
       // Health score = win rate weight + activity weight + revenue
       const activityScore = Math.min(100, (myActs / 30) * 100); // 30+ activities = max
-      const revenueScore = Math.min(100, (revenue / 50000) * 100); // 50k = max
+      const sellerGoal = goalBySp.get(sp.id) ?? avgTeamGoal;
+      const revenueScore = sellerGoal > 0 ? Math.min(100, (revenue / sellerGoal) * 100) : 0;
       const healthScore = Math.round(winRate * 0.5 + activityScore * 0.3 + revenueScore * 0.2);
 
       let priority: CoachingTarget["priority"] = "healthy";

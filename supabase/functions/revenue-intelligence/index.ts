@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { toBusinessMonthStart } from "../_shared/business-date.ts";
 
 
 
@@ -31,7 +32,7 @@ Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
     const horizon = Number(url.searchParams.get("horizon") ?? "90");
     const dimension = url.searchParams.get("dimension") ?? "category";
 
-    const [rollupRes, breakdownRes, inspectionRes, prevRollupRes] = await Promise.all([
+    const [rollupRes, breakdownRes, inspectionRes, prevRollupRes, goalsRes, salespeopleRes] = await Promise.all([
       supabase.rpc("compute_forecast_rollup", { _horizon_days: horizon }),
       supabase.rpc("win_rate_breakdown", { _dimension: dimension, _days: 180 }),
       supabase
@@ -40,6 +41,8 @@ Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
         .order("inspected_at", { ascending: false })
         .limit(200),
       supabase.rpc("compute_forecast_rollup", { _horizon_days: horizon * 2 }),
+      supabase.from("sales_goals").select("goal_amount").eq("month", toBusinessMonthStart()).limit(500),
+      supabase.from("salespeople").select("monthly_goal").eq("is_active", true).limit(500),
     ]);
 
     if (rollupRes.error) throw rollupRes.error;
@@ -47,15 +50,26 @@ Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
     const breakdown = breakdownRes.data ?? [];
     const inspection = inspectionRes.data ?? [];
 
-    // Coverage ratio: weighted pipeline / target (1.2x closed as proxy)
-    const closed =
-      rollup.find((r: { category: string }) => r.category === "closed")?.weighted_amount ?? 0;
+    // Coverage ratio: weighted pipeline / meta real da equipe.
+    // Meta = soma de sales_goals do mês corrente; fallback = soma de
+    // salespeople.monthly_goal. Escalada pelo horizonte (meta mensal × horizon/30).
+    // Sem meta configurada → target 0 e ratio 0 (sem constante inventada).
     const totalWeighted = rollup.reduce(
       (s: number, r: { weighted_amount: number; category: string }) =>
         r.category !== "closed" && r.category !== "omitted" ? s + Number(r.weighted_amount) : s,
       0,
     );
-    const target = Math.max(Number(closed) * 1.2, 50000);
+    const salesGoalsSum = (goalsRes.data ?? []).reduce(
+      (s: number, g: { goal_amount: number }) => s + Number(g.goal_amount ?? 0),
+      0,
+    );
+    const monthlyGoalsSum = (salespeopleRes.data ?? []).reduce(
+      (s: number, sp: { monthly_goal: number | null }) => s + Number(sp.monthly_goal ?? 0),
+      0,
+    );
+    const monthlyBase = salesGoalsSum > 0 ? salesGoalsSum : monthlyGoalsSum;
+    const goalSource = salesGoalsSum > 0 ? "sales_goals" : monthlyGoalsSum > 0 ? "monthly_goal" : "none";
+    const target = monthlyBase * (horizon / 30);
     const coverageRatio = target > 0 ? totalWeighted / target : 0;
 
     // Variance vs previous period
@@ -95,6 +109,7 @@ Deno.serve(withRequestId("revenue-intelligence", async (req, _ctx) => {
         coverage: {
           ratio: Math.round(coverageRatio * 100) / 100,
           target,
+          goal_source: goalSource,
           weighted_pipeline: totalWeighted,
           health_label: healthLabel,
         },
