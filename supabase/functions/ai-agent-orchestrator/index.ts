@@ -238,6 +238,10 @@ Deno.serve(
       let finished = false;
       let finalResult: Record<string, unknown> = {};
       let stepCount = 0;
+      // Passos com status pending_approval precisam chegar a awaiting_approval
+      // no status final — caso contrário ficam órfãos (UI e approve_agent_run
+      // só agem em runs awaiting_approval).
+      let hasPendingProposals = false;
 
       while (!finished && stepCount < MAX_STEPS) {
         stepCount++;
@@ -330,6 +334,8 @@ Deno.serve(
             toolOutput = { error: e instanceof Error ? e.message : 'Unknown' };
           }
 
+          if (status === 'pending_approval') hasPendingProposals = true;
+
           await admin.rpc('append_agent_step', {
             _run_id: runId,
             _tool_name: name,
@@ -348,7 +354,7 @@ Deno.serve(
       }
 
       const finalStatus =
-        requires_approval && !finished
+        (requires_approval && !finished) || hasPendingProposals
           ? 'awaiting_approval'
           : finished
             ? 'completed'
