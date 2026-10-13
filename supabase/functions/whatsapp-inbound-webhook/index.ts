@@ -313,29 +313,57 @@ Deno.serve(
           ? new Date(inbound.messageTimestamp * 1000).toISOString()
           : new Date().toISOString();
 
-        // Casa a resposta com a mensagem outbound mais recente para o número
-        // (o `to` enviado à Evolution vai sem formatação; tenta também com "+").
+        // Escopo por instância: a resposta só pode pausar a cadência de quem
+        // enviou pela instância Evolution que a recebeu — dois vendedores com
+        // instâncias diferentes para o mesmo número não se atropelam. Se a
+        // instância não for credencial cadastrada, cai no último outbound
+        // Evolution do número (fallback).
+        const eventInstance = asString(event.instance);
+        let instanceOwnerIds = new Set<string>();
+        if (eventInstance) {
+          const { data: credRows } = await supabase
+            .from("channel_credentials")
+            .select("owner_id")
+            .eq("provider", "evolution")
+            .eq("enabled", true)
+            .filter("credentials->>instance", "eq", eventInstance);
+          instanceOwnerIds = new Set(
+            (credRows ?? []).map((r: { owner_id: string }) => r.owner_id),
+          );
+        }
+
+        // Casa a resposta com a mensagem outbound da Evolution mais recente
+        // para o número (o `to` enviado vai sem formatação; tenta com "+").
         const phoneVariants = [inbound.fromPhone, `+${inbound.fromPhone}`];
-        const lastOutbound = (await chunkedIn<{
+        const lastOutbounds = await chunkedIn<{
           id: string;
           enrollment_id: string | null;
+          owner_id: string;
         }>(
           phoneVariants,
           (chunk) =>
             supabase
               .from("outbound_messages")
-              .select("id, enrollment_id")
+              .select("id, enrollment_id, owner_id")
               .eq("channel", "whatsapp")
+              .eq("provider", "evolution")
               .in("to_number", chunk)
               .order("created_at", { ascending: false })
-              .limit(1),
+              .limit(25),
           { label: "whatsapp-inbound-webhook.last_outbound" },
-        ))[0] ?? null;
+        );
+        const lastOutbound =
+          (instanceOwnerIds.size
+            ? lastOutbounds.find((o) => instanceOwnerIds.has(o.owner_id))
+            : null) ?? lastOutbounds[0] ?? null;
 
         const matchedEnrollmentId = lastOutbound?.enrollment_id ?? null;
 
-        // Idempotência gratuita: retry do webhook cai no UNIQUE
-        // (provider, message_id) e não repete os efeitos colaterais.
+        // Idempotência de ingestão: retry do webhook cai no UNIQUE
+        // (provider, message_id) — mas os efeitos rodam mesmo no caminho de
+        // duplicado porque são idempotentes (auto_pause é no-op se já pausado;
+        // replied_at filtra `.is(null)`). Isso cobre retry após falha entre o
+        // insert e a pausa, que antes perdia a resposta definitivamente.
         const { data: inserted, error: insertError } = await supabase
           .from("inbound_reply_events")
           .upsert(
@@ -355,9 +383,7 @@ Deno.serve(
           )
           .select("id");
         if (insertError) throw insertError;
-        if (!inserted?.length) {
-          return json({ ok: true, ignored: true, reason: "duplicate_ignored" });
-        }
+        const isDuplicate = !inserted?.length;
 
         if (matchedEnrollmentId) {
           const { error: pauseError } = await supabase.rpc(
@@ -386,6 +412,10 @@ Deno.serve(
               .update({ replied_at: receivedAt })
               .eq("id", latestExec.id);
           }
+        }
+
+        if (isDuplicate) {
+          return json({ ok: true, ignored: true, reason: "duplicate_ignored" });
         }
 
         return json({

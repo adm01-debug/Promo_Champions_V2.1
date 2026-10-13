@@ -106,6 +106,146 @@ async function buildVapidAuthorization(
   return `vapid t=${header}.${claims}.${base64UrlEncode(signature)}, k=${publicKeyB64}`;
 }
 
+// ── Criptografia do payload (RFC 8291, content-coding aes128gcm) ──────────
+// Assinatura VAPID só identifica o servidor — o push service também exige o
+// corpo cifrado com as chaves da inscrição: ECDH efêmero com `p256dh`, IKM
+// derivado do `auth` secret, CEK+nonce via HKDF-SHA256 e AES-128-GCM. Sem
+// isso o service descarta a mensagem mesmo com Authorization válido.
+
+function concatBytes(...parts: Uint8Array[]): Uint8Array {
+  const total = parts.reduce((acc, p) => acc + p.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    out.set(part, offset);
+    offset += part.length;
+  }
+  return out;
+}
+
+async function hmacSha256(
+  keyBytes: Uint8Array,
+  data: Uint8Array,
+): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    keyBytes as unknown as ArrayBuffer,
+    { name: "HMAC", hash: { name: "SHA-256" } },
+    false,
+    ["sign"],
+  );
+  return new Uint8Array(
+    await crypto.subtle.sign("HMAC", key, data as unknown as ArrayBuffer),
+  );
+}
+
+// HKDF-SHA256 com um único bloco de expand (saídas ≤ 32 bytes).
+async function hkdfBlock(
+  salt: Uint8Array,
+  ikm: Uint8Array,
+  info: Uint8Array,
+  length: number,
+): Promise<Uint8Array> {
+  const prk = await hmacSha256(salt, ikm);
+  const expanded = await hmacSha256(prk, concatBytes(info, Uint8Array.of(0x01)));
+  return expanded.slice(0, length);
+}
+
+async function encryptPushPayload(
+  subscription: { p256dh: string; auth: string },
+  payload: string,
+): Promise<Uint8Array | null> {
+  try {
+    const uaPublic = base64UrlDecode(subscription.p256dh);
+    const authSecret = base64UrlDecode(subscription.auth);
+    if (!uaPublic || uaPublic.length !== 65 || uaPublic[0] !== 0x04) return null;
+    if (!authSecret || authSecret.length !== 16) return null;
+
+    const uaKey = await crypto.subtle.importKey(
+      "jwk",
+      {
+        kty: "EC",
+        crv: "P-256",
+        x: base64UrlEncode(uaPublic.slice(1, 33)),
+        y: base64UrlEncode(uaPublic.slice(33, 65)),
+      },
+      { name: "ECDH", namedCurve: "P-256" },
+      false,
+      [],
+    );
+    const asKeys = await crypto.subtle.generateKey(
+      { name: "ECDH", namedCurve: "P-256" },
+      true,
+      ["deriveBits"],
+    );
+    const asPublic = new Uint8Array(
+      await crypto.subtle.exportKey("raw", asKeys.publicKey),
+    );
+    const ecdhSecret = new Uint8Array(
+      await crypto.subtle.deriveBits(
+        { name: "ECDH", public: uaKey },
+        asKeys.privateKey,
+        256,
+      ),
+    );
+
+    // RFC 8291 §3.4: o auth_secret do subscriber é o salt do extract que
+    // produz o PRK; o info leva as duas chaves públicas não-comprimidas.
+    const keyInfo = concatBytes(
+      new TextEncoder().encode("WebPush: info"),
+      Uint8Array.of(0x00),
+      uaPublic,
+      asPublic,
+    );
+    const ikm = await hkdfBlock(authSecret, ecdhSecret, keyInfo, 32);
+
+    // CEK e nonce do registro único: salt aleatório + HKDF sobre o IKM.
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const cek = await hkdfBlock(
+      salt,
+      ikm,
+      new TextEncoder().encode("Content-Encoding: aes128gcm\0"),
+      16,
+    );
+    const nonce = await hkdfBlock(
+      salt,
+      ikm,
+      new TextEncoder().encode("Content-Encoding: nonce\0"),
+      12,
+    );
+
+    // aes128gcm: plaintext + delimitador 0x02 (registro final) antes do GCM.
+    const plainBytes = concatBytes(
+      new TextEncoder().encode(payload),
+      Uint8Array.of(0x02),
+    );
+    const aesKey = await crypto.subtle.importKey(
+      "raw",
+      cek as unknown as ArrayBuffer,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"],
+    );
+    const ciphertext = new Uint8Array(
+      await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: nonce as unknown as ArrayBuffer },
+        aesKey,
+        plainBytes as unknown as ArrayBuffer,
+      ),
+    );
+
+    // Corpo ECE: salt(16) | rs uint32 | idlen(1) | pubkey efêmera(65) | ct.
+    const header = new Uint8Array(16 + 4 + 1 + 65);
+    header.set(salt, 0);
+    new DataView(header.buffer).setUint32(16, 4096, false);
+    header[20] = 65;
+    header.set(asPublic, 21);
+    return concatBytes(header, ciphertext);
+  } catch {
+    return null;
+  }
+}
+
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
   payload: string,
@@ -122,15 +262,21 @@ async function sendWebPushNotification(
       return { success: false, error: 'vapid_signing_failed' };
     }
 
+    const body = await encryptPushPayload(subscription, payload);
+    if (!body) {
+      return { success: false, error: 'push_payload_encryption_failed' };
+    }
+
     const response = await fetchWithTrace(subscription.endpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/octet-stream',
+        'Content-Encoding': 'aes128gcm',
         'TTL': '86400',
         'Urgency': 'high',
         'Authorization': authorization
       },
-      body: payload
+      body: body as unknown as BodyInit
     }, {
       requestId,
       fnName: 'send-push-notification',

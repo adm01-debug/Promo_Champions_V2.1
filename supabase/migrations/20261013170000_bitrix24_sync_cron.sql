@@ -17,11 +17,31 @@ DECLARE
 BEGIN
   IF p_function_name IS NULL OR NOT (
     p_function_name = ANY (ARRAY[
+      -- operacionais pré-existentes
       'notify-v4-quote-status',
       'check-v4-callback-alerts',
       'cron-failure-alerter',
       'process-call-recording-ingest',
       'edge-retry-threshold-alert',
+      'deal-risk-digest',
+      'email-bulk-retry',
+      'wal-health-alert',
+      'winloss-webhook-health-monitor',
+      'webvitals-regression-alert',
+      -- máquina de vendas (Onda 1)
+      'sequence-runner',
+      'process-cadence-tasks',
+      'process-scheduled-sends',
+      'check-quote-expiration',
+      'check-lead-sla',
+      'sdr-consecutive-alerts',
+      'activity-goal-alerts',
+      'challenge-expiration-alerts',
+      'send-alert-notifications',
+      'auto-reassign-inactive',
+      'access-denied-alerts',
+      'scheduled-reports-runner',
+      -- integração Bitrix24 (esta migration)
       'bitrix24-sync'
     ]::text[])
   ) THEN
