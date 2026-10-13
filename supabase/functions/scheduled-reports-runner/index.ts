@@ -123,7 +123,9 @@ async function executeReport(
             admin.from(entity).select(selectCols).in("id", chunk).limit(limit) as unknown as PostgrestLike<
               Record<string, unknown>
             >,
-          { parallel: true, label: "report-clients" },
+          // Pool limitado: processSchedule dispara até 50 agendamentos em
+          // paralelo — Promise.all ilimitado aqui saturaria o banco.
+          { maxConcurrency: 4, label: "report-clients" },
         );
         const seen = new Set<string>();
         const merged: Record<string, unknown>[] = [];
