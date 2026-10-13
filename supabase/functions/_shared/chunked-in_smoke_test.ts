@@ -65,6 +65,52 @@ Deno.test("chunkedIn: paralelo dispara N calls concorrentes", async () => {
   if (peak < 2) throw new Error(`expected concurrency > 1, got peak=${peak}`);
 });
 
+Deno.test("chunkedIn: maxConcurrency limita calls simultâneas e preserva ordem", async () => {
+  const ids = Array.from({ length: 300 }, (_, i) => fakeUuid(i));
+  let inflight = 0;
+  let peak = 0;
+  const rows = await chunkedIn<{ id: string }>(
+    ids,
+    async (chunk) => {
+      inflight++;
+      peak = Math.max(peak, inflight);
+      await new Promise((r) => setTimeout(r, 5));
+      inflight--;
+      return { data: chunk.map((id) => ({ id })), error: null };
+    },
+    { chunkSize: 100, maxConcurrency: 2 },
+  );
+  assertEquals(rows.length, 300);
+  assertEquals(rows[0].id, ids[0]);
+  assertEquals(rows[299].id, ids[299]);
+  if (peak > 2) throw new Error(`pool vazou o limite: peak=${peak}`);
+  if (peak < 2) throw new Error(`pool não paralelizou: peak=${peak}`);
+});
+
+Deno.test("chunkedIn: maxConcurrency fracionário executa ao menos 1 worker", async () => {
+  const rows = await chunkedIn<{ id: string }>(
+    ["a", "b"],
+    (chunk) => Promise.resolve({ data: chunk.map((id) => ({ id })), error: null }),
+    { chunkSize: 1, maxConcurrency: 0.5 },
+  );
+  assertEquals(rows.length, 2);
+});
+
+Deno.test("chunkedIn: maxConcurrency propaga erro com label", async () => {
+  try {
+    await chunkedIn<{ id: string }>(
+      ["a", "b", "c"],
+      () => Promise.resolve({ data: null, error: { message: "boom" } }),
+      { chunkSize: 1, maxConcurrency: 2, label: "pool" },
+    );
+    throw new Error("should have thrown");
+  } catch (e) {
+    if (!(e instanceof Error) || !e.message.includes("pool: boom")) {
+      throw new Error(`expected pool: boom, got: ${e}`);
+    }
+  }
+});
+
 Deno.test("chunkedIn: short-circuit em array vazio (0 calls)", async () => {
   let called = 0;
   const rows = await chunkedIn<{ id: string }>(
