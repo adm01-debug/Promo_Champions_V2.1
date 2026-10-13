@@ -14,8 +14,8 @@ export const SDRConversationInsights = () => {
           Sem análises de conversa ainda
         </p>
         <p className="text-xs text-muted-foreground max-w-sm">
-          Quando as ligações forem transcritas e analisadas, a distribuição de
-          sentimento e as objeções mais comuns aparecem aqui.
+          Quando as ligações forem transcritas e analisadas, a distribuição de sentimento
+          e as objeções mais comuns aparecem aqui.
         </p>
       </div>
     );

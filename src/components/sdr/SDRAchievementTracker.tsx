@@ -28,8 +28,8 @@ export const SDRAchievementTracker = () => {
               Sem dados de gamificação ainda
             </p>
             <p className="text-xs text-muted-foreground max-w-sm">
-              Quando o time de SDR acumular XP em `salesperson_xp`, o destaque do
-              período aparece aqui com nível, progresso e streak reais.
+              Quando o time de SDR acumular XP em `salesperson_xp`, o destaque do período
+              aparece aqui com nível, progresso e streak reais.
             </p>
           </div>
         </CardContent>
@@ -37,12 +37,8 @@ export const SDRAchievementTracker = () => {
     );
   }
 
-  const salesperson = (
-    topSdr as { salespeople?: { name?: string } }
-  ).salespeople;
-  const { level, xpInLevel, xpToNext, progress } = calculateLevelFromXP(
-    topSdr.total_xp
-  );
+  const salesperson = (topSdr as { salespeople?: { name?: string } }).salespeople;
+  const { level, xpInLevel, xpToNext, progress } = calculateLevelFromXP(topSdr.total_xp);
   const xpRemaining = Math.max(0, xpToNext - xpInLevel);
   const levelInfo = getLevelInfo(level);
 
@@ -65,9 +61,7 @@ export const SDRAchievementTracker = () => {
                 <p className="text-[10px] font-bold text-muted-foreground uppercase">
                   Nível
                 </p>
-                <p className="text-3xl font-black text-primary leading-none">
-                  {level}
-                </p>
+                <p className="text-3xl font-black text-primary leading-none">{level}</p>
               </div>
             </div>
             <motion.div
@@ -85,8 +79,7 @@ export const SDRAchievementTracker = () => {
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Faltam {xpRemaining.toLocaleString('pt-BR')} XP para o Nível{' '}
-                  {level + 1}
+                  Faltam {xpRemaining.toLocaleString('pt-BR')} XP para o Nível {level + 1}
                 </p>
               </div>
               <div className="text-right">

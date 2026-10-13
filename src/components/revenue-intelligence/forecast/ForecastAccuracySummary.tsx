@@ -62,8 +62,8 @@ export const ForecastAccuracySummary: FC = () => {
               Nenhuma amostra de precisão ainda
             </p>
             <p className="text-xs text-muted-foreground max-w-sm">
-              Gere um snapshot do forecast e rode "Calcular" para comparar o
-              previsto com o realizado e popular estas métricas.
+              Gere um snapshot do forecast e rode "Calcular" para comparar o previsto com
+              o realizado e popular estas métricas.
             </p>
           </div>
         </CardContent>
@@ -76,37 +76,37 @@ export const ForecastAccuracySummary: FC = () => {
             </p>
             <p className="text-xs text-muted-foreground">{health.label}</p>
           </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Viés dominante</p>
-          <Badge variant="outline" className={biasColor[summary.bias]}>
-            {biasLabel[summary.bias]}
-          </Badge>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <Activity className="h-3 w-3" /> tendência geral
-          </p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Accuracy trend</p>
-          <p className="text-2xl font-semibold flex items-center gap-1">
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
-            {summary.accuracy_trend.toFixed(1)}%
-          </p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Melhor source</p>
-          {summary.best_source ? (
-            <>
-              <p className="text-lg font-semibold">
-                {sourceLabel[summary.best_source.source] ?? summary.best_source.source}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Confiança {Number(summary.best_source.confidence_score).toFixed(0)}/100
-              </p>
-            </>
-          ) : (
-            <p className="text-sm text-muted-foreground">Sem dados ainda</p>
-          )}
-        </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Viés dominante</p>
+            <Badge variant="outline" className={biasColor[summary.bias]}>
+              {biasLabel[summary.bias]}
+            </Badge>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <Activity className="h-3 w-3" /> tendência geral
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Accuracy trend</p>
+            <p className="text-2xl font-semibold flex items-center gap-1">
+              <TrendingUp className="h-5 w-5 text-emerald-600" />
+              {summary.accuracy_trend.toFixed(1)}%
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Melhor source</p>
+            {summary.best_source ? (
+              <>
+                <p className="text-lg font-semibold">
+                  {sourceLabel[summary.best_source.source] ?? summary.best_source.source}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Confiança {Number(summary.best_source.confidence_score).toFixed(0)}/100
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">Sem dados ainda</p>
+            )}
+          </div>
         </CardContent>
       )}
     </Card>

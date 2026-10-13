@@ -240,10 +240,7 @@ const fetchData = async (
     ).length;
 
     const groupByMonth = differenceInDays(end, start) > 62;
-    const dayMap = new Map<
-      string,
-      { name: string; revenue: number; sales: number }
-    >();
+    const dayMap = new Map<string, { name: string; revenue: number; sales: number }>();
     completed.forEach(s => {
       const d = parseISO(s.created_at);
       const key = groupByMonth ? format(d, 'yyyy-MM') : format(d, 'yyyy-MM-dd');
@@ -266,13 +263,19 @@ const fetchData = async (
       channelTotals.set(label, (channelTotals.get(label) ?? 0) + Number(s.amount));
     });
     const channelTotal = [...channelTotals.values()].reduce((a, b) => a + b, 0);
-    const channels = [...channelTotals.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([label, v]) => ({
-        label,
-        pct: channelTotal > 0 ? Math.round((v / channelTotal) * 100) : 0,
-      }));
+    const sortedChannels = [...channelTotals.entries()].sort((a, b) => b[1] - a[1]);
+    const topChannels = sortedChannels.slice(0, 3);
+    const restTotal = sortedChannels.slice(3).reduce((acc, [, v]) => acc + v, 0);
+    const channels = topChannels.map(([label, v]) => ({
+      label,
+      pct: channelTotal > 0 ? Math.round((v / channelTotal) * 100) : 0,
+    }));
+    if (restTotal > 0) {
+      channels.push({
+        label: 'Outros',
+        pct: channelTotal > 0 ? Math.round((restTotal / channelTotal) * 100) : 0,
+      });
+    }
 
     return {
       totalRevenue,

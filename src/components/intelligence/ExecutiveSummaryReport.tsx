@@ -118,8 +118,8 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
                       Nenhum briefing executivo gerado
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">
-                      Gere o briefing executivo para popular este relatório com
-                      números reais de pulso, vitórias, riscos e ações recomendadas.
+                      Gere o briefing executivo para popular este relatório com números
+                      reais de pulso, vitórias, riscos e ações recomendadas.
                     </p>
                     <Button
                       size="sm"
@@ -160,7 +160,12 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
               </h4>
               <div className="space-y-3">
                 {wins.slice(0, 2).map((w, i) => (
-                  <InsightRow key={`w-${i}`} icon={TrendingUp} text={w.title} tone="good" />
+                  <InsightRow
+                    key={`w-${i}`}
+                    icon={TrendingUp}
+                    text={w.title}
+                    tone="good"
+                  />
                 ))}
                 {risks.slice(0, 2).map((r, i) => (
                   <InsightRow
@@ -171,7 +176,11 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
                   />
                 ))}
                 {actions.slice(0, 1).map((a, i) => (
-                  <InsightRow key={`a-${i}`} icon={Zap} text={`Ação Prioritária: ${a.title}`} />
+                  <InsightRow
+                    key={`a-${i}`}
+                    icon={Zap}
+                    text={`Ação Prioritária: ${a.title}`}
+                  />
                 ))}
                 {wins.length === 0 && risks.length === 0 && actions.length === 0 && (
                   <InsightRow
@@ -196,7 +205,10 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
                     <span>Taxa de Conversão no Trimestre</span>
                     <span className="font-bold">{conversion.toFixed(1)}%</span>
                   </div>
-                  <Progress value={Math.min(100, conversion)} className="h-2 bg-emerald-500/10" />
+                  <Progress
+                    value={Math.min(100, conversion)}
+                    className="h-2 bg-emerald-500/10"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 rounded-lg bg-secondary/30">
@@ -261,8 +273,8 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
             </h4>
             {actions.length === 0 ? (
               <p className="text-xs text-muted-foreground">
-                Nenhuma ação recomendada — gere o briefing executivo para receber
-                o plano de ação priorizado por IA.
+                Nenhuma ação recomendada — gere o briefing executivo para receber o plano
+                de ação priorizado por IA.
               </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -377,7 +389,6 @@ function ActionCard({
         </div>
         <p className="text-[10px] text-muted-foreground leading-relaxed">{desc}</p>
       </div>
-
     </div>
   );
 }

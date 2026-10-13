@@ -2,14 +2,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import {
-  Zap,
-  ArrowRight,
-  Target,
-  Brain,
-  Globe,
-  Search,
-} from 'lucide-react';
+import { Zap, ArrowRight, Target, Brain, Globe, Search } from 'lucide-react';
 import { useLatestBriefing } from '@/hooks/executive-briefing/useLatestBriefing';
 
 const intelligenceFeatures = [
@@ -86,8 +79,8 @@ export const StrategicRecommendations = () => {
         {recommendations.length === 0 ? (
           <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center">
             <p className="text-xs text-muted-foreground">
-              Nenhuma recomendação estratégica disponível — gere o briefing
-              executivo para receber ações priorizadas por IA.
+              Nenhuma recomendação estratégica disponível — gere o briefing executivo para
+              receber ações priorizadas por IA.
             </p>
           </div>
         ) : (

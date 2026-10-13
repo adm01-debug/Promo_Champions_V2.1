@@ -690,50 +690,50 @@ export const Speedometer = memo(
                     ) : (
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={displayData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          vertical={false}
-                          stroke="hsl(var(--muted)/0.2)"
-                        />
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{
-                            fontSize: 9,
-                            fontFamily: 'var(--font-mono)',
-                            fill: 'hsl(var(--muted-foreground))',
-                          }}
-                        />
-                        <YAxis
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{
-                            fontSize: 9,
-                            fontFamily: 'var(--font-mono)',
-                            fill: 'hsl(var(--muted-foreground))',
-                          }}
-                        />
-                        <RechartsTooltip
-                          cursor={{ fill: 'hsl(var(--muted)/0.1)' }}
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              return (
-                                <div className="bg-background/95 backdrop-blur-xl border border-border/40 p-3 rounded-xl shadow-2xl">
-                                  <p className="text-[10px] font-mono uppercase text-muted-foreground mb-1">
-                                    {payload[0].payload.name}
-                                  </p>
-                                  <p className="text-sm font-black font-mono text-primary">
-                                    {formatValue
-                                      ? formatValue(Number(payload[0].value))
-                                      : payload[0].value}
-                                  </p>
-                                </div>
-                              );
-                            }
-                            return null;
-                          }}
-                        />
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="hsl(var(--muted)/0.2)"
+                          />
+                          <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{
+                              fontSize: 9,
+                              fontFamily: 'var(--font-mono)',
+                              fill: 'hsl(var(--muted-foreground))',
+                            }}
+                          />
+                          <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{
+                              fontSize: 9,
+                              fontFamily: 'var(--font-mono)',
+                              fill: 'hsl(var(--muted-foreground))',
+                            }}
+                          />
+                          <RechartsTooltip
+                            cursor={{ fill: 'hsl(var(--muted)/0.1)' }}
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="bg-background/95 backdrop-blur-xl border border-border/40 p-3 rounded-xl shadow-2xl">
+                                    <p className="text-[10px] font-mono uppercase text-muted-foreground mb-1">
+                                      {payload[0].payload.name}
+                                    </p>
+                                    <p className="text-sm font-black font-mono text-primary">
+                                      {formatValue
+                                        ? formatValue(Number(payload[0].value))
+                                        : payload[0].value}
+                                    </p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
                           <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={24}>
                             {displayData.map((_, index) => (
                               <Cell

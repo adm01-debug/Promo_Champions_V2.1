@@ -1,28 +1,52 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Info, UserCheck, Activity, Target } from 'lucide-react';
+import { Info, UserCheck, Activity, Target, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { LucideIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 
 const FACTOR_META = [
-  { keys: ['fit', 'icp', 'perfil'], label: 'Fit do Perfil (ICP)', icon: UserCheck, color: 'bg-primary' },
-  { keys: ['engagement', 'engajamento'], label: 'Engajamento Recente', icon: Activity, color: 'bg-success' },
-  { keys: ['intent', 'intencao', 'intenção'], label: 'Intenção de Compra', icon: Target, color: 'bg-warning' },
+  { key: 'dealValue', max: 25, label: 'Valor do Deal', icon: UserCheck },
+  { key: 'stageProgress', max: 25, label: 'Progresso no Funil', icon: Target },
+  { key: 'timeInPipeline', max: 20, label: 'Tempo no Pipeline', icon: Activity },
+  { key: 'category', max: 15, label: 'Categoria', icon: Info },
+  { key: 'recentActivity', max: 15, label: 'Atividade Recente', icon: Zap },
 ] as const;
 
-function extractFactors(factors: unknown): { label: string; value: number }[] {
+interface ScoreFactor {
+  key: string;
+  label: string;
+  detail: string | null;
+  value: number;
+  max: number;
+  icon: LucideIcon;
+}
+
+function extractFactors(factors: unknown): ScoreFactor[] {
   if (!factors || typeof factors !== 'object' || Array.isArray(factors)) return [];
-  const entries = Object.entries(factors as Record<string, unknown>)
-    .filter(([, v]) => typeof v === 'number' && Number.isFinite(v))
-    .map(([key, v]) => ({ key: key.toLowerCase(), value: v as number }));
-  const out: { label: string; value: number }[] = [];
+  const rec = factors as Record<string, unknown>;
+  const labels =
+    rec.labels && typeof rec.labels === 'object' && !Array.isArray(rec.labels)
+      ? (rec.labels as Record<string, unknown>)
+      : {};
+  const out: ScoreFactor[] = [];
   for (const meta of FACTOR_META) {
-    const hit = entries.find(e => meta.keys.some(k => e.key.includes(k)));
-    if (hit) out.push({ label: meta.label, value: Math.round(hit.value) });
+    const v = rec[meta.key];
+    if (typeof v === 'number' && Number.isFinite(v)) {
+      const detail = labels[meta.key];
+      out.push({
+        key: meta.key,
+        label: meta.label,
+        detail: typeof detail === 'string' ? detail : null,
+        value: Math.round(v),
+        max: meta.max,
+        icon: meta.icon,
+      });
+    }
   }
   return out;
 }
@@ -38,13 +62,14 @@ export function LeadScoreBreakdown({ leadName, score }: LeadScoreBreakdownProps 
     queryFn: async () => {
       const { data, error } = await supabase
         .from('lead_scores')
-        .select('sale_id, score, factors, calculated_at, sales!inner(client_name, status)')
+        .select(
+          'sale_id, score, factors, calculated_at, sales!inner(client_name, status)'
+        )
+        .in('sales.status', ['lead', 'qualified', 'pending'])
         .order('score', { ascending: false })
-        .limit(30);
+        .limit(1);
       if (error) throw error;
-      const row = (data ?? []).find(r =>
-        ['lead', 'qualified', 'pending'].includes(r.sales.status)
-      );
+      const row = data?.[0];
       if (!row) return null;
       return {
         leadName: row.sales.client_name ?? 'Lead',
@@ -72,8 +97,8 @@ export function LeadScoreBreakdown({ leadName, score }: LeadScoreBreakdownProps 
               Nenhum lead com score disponível
             </p>
             <p className="text-xs text-muted-foreground max-w-xs">
-              Assim que o lead-scoring pontuar uma venda ativa, a análise do
-              líder aparece aqui.
+              Assim que o lead-scoring pontuar uma venda ativa, a análise do líder aparece
+              aqui.
             </p>
           </div>
         </CardContent>
@@ -100,13 +125,13 @@ export function LeadScoreBreakdown({ leadName, score }: LeadScoreBreakdownProps 
       <CardContent className="pt-5 space-y-5">
         {top.factors.length === 0 && (
           <p className="text-xs text-muted-foreground">
-            Detalhamento de fatores não disponível para este score — exibindo
-            apenas o consolidado calculado pelo lead-scoring.
+            Detalhamento de fatores não disponível para este score — exibindo apenas o
+            consolidado calculado pelo lead-scoring.
           </p>
         )}
         {top.factors.map((factor, i) => (
           <motion.div
-            key={factor.label}
+            key={factor.key}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
@@ -114,20 +139,19 @@ export function LeadScoreBreakdown({ leadName, score }: LeadScoreBreakdownProps 
           >
             <div className="flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
               <div className="flex items-center gap-1.5">
-                {factor.label === 'Fit do Perfil (ICP)' && (
-                  <UserCheck className="h-3 w-3" />
-                )}
-                {factor.label === 'Engajamento Recente' && (
-                  <Activity className="h-3 w-3" />
-                )}
-                {factor.label === 'Intenção de Compra' && (
-                  <Target className="h-3 w-3" />
-                )}
+                <factor.icon className="h-3 w-3" />
                 {factor.label}
+                {factor.detail && (
+                  <span className="normal-case font-normal opacity-70">
+                    — {factor.detail}
+                  </span>
+                )}
               </div>
-              <span>{factor.value}%</span>
+              <span>
+                {factor.value}/{factor.max} pts
+              </span>
             </div>
-            <Progress value={factor.value} className="h-1.5" />
+            <Progress value={(factor.value / factor.max) * 100} className="h-1.5" />
           </motion.div>
         ))}
 

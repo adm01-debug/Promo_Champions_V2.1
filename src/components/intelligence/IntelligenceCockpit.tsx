@@ -168,7 +168,6 @@ const IntelligenceCockpit = () => {
             <p className="text-xs text-muted-foreground mb-4 line-clamp-2">
               {hub.description}
             </p>
-
           </Card>
         ))}
       </motion.div>
@@ -277,14 +276,13 @@ const IntelligenceCockpit = () => {
                 </h4>
                 {briefing ? (
                   <p className="text-sm text-card-foreground leading-relaxed font-medium">
-                    <span className="font-black text-primary">{briefing.headline}</span>{' '}
-                    — {briefing.narrative}
+                    <span className="font-black text-primary">{briefing.headline}</span> —{' '}
+                    {briefing.narrative}
                   </p>
                 ) : (
                   <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                    Nenhum insight estratégico disponível. Gere o briefing
-                    executivo para consolidar vitórias, riscos e ações
-                    recomendadas com dados reais.
+                    Nenhum insight estratégico disponível. Gere o briefing executivo para
+                    consolidar vitórias, riscos e ações recomendadas com dados reais.
                   </p>
                 )}
                 <div className="mt-4 flex gap-4">

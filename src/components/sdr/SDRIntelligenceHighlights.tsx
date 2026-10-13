@@ -30,22 +30,18 @@ export function SDRIntelligenceHighlights() {
     queryFn: async (): Promise<TopLead[]> => {
       const { data, error } = await supabase
         .from('lead_scores')
-        .select(
-          'sale_id, score, calculated_at, sales!inner(id, client_name, status)'
-        )
+        .select('sale_id, score, calculated_at, sales!inner(id, client_name, status)')
+        .in('sales.status', ['lead', 'qualified', 'pending'])
         .order('score', { ascending: false })
-        .limit(30);
+        .limit(3);
       if (error) throw error;
-      return (data ?? [])
-        .map(r => ({
-          sale_id: r.sale_id,
-          score: Number(r.score),
-          calculated_at: r.calculated_at,
-          client_name: r.sales.client_name ?? 'Lead',
-          status: r.sales.status ?? 'lead',
-        }))
-        .filter(r => ['lead', 'qualified', 'pending'].includes(r.status))
-        .slice(0, 3);
+      return (data ?? []).map(r => ({
+        sale_id: r.sale_id,
+        score: Number(r.score),
+        calculated_at: r.calculated_at,
+        client_name: r.sales.client_name ?? 'Lead',
+        status: r.sales.status ?? 'lead',
+      }));
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -80,8 +76,8 @@ export function SDRIntelligenceHighlights() {
               Nenhum lead pontuado ainda
             </p>
             <p className="text-xs text-muted-foreground">
-              Quando o lead-scoring processar as vendas ativas, os 3 leads mais
-              quentes aparecem aqui.
+              Quando o lead-scoring processar as vendas ativas, os 3 leads mais quentes
+              aparecem aqui.
             </p>
           </div>
         )}

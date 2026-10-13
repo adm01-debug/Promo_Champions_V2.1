@@ -171,8 +171,19 @@ export default function SDRDashboard() {
   const qualifiedLeads = metrics?.current.qualifiedLeads || 0;
   const rejectionRate =
     totalLeads > 0 ? ((totalLeads - qualifiedLeads) / totalLeads) * 100 : 0;
-  const rejectionThreshold =
-    Number(localStorage.getItem('sdr_rejection_threshold')) || 40;
+  const [rejectionThreshold, setRejectionThreshold] = useState(
+    () => Number(localStorage.getItem('sdr_rejection_threshold')) || 40
+  );
+
+  useEffect(() => {
+    const syncThreshold = () =>
+      setRejectionThreshold(
+        Number(localStorage.getItem('sdr_rejection_threshold')) || 40
+      );
+    window.addEventListener('sdr_rejection_threshold_change', syncThreshold);
+    return () =>
+      window.removeEventListener('sdr_rejection_threshold_change', syncThreshold);
+  }, []);
 
   useEffect(() => {
     if (rejectionRate > rejectionThreshold) {

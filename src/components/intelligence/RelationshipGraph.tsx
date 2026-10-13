@@ -30,8 +30,8 @@ export const RelationshipGraph = () => {
             Nenhum grafo de relacionamento disponível
           </p>
           <p className="text-[10px] text-muted-foreground/70 leading-snug">
-            As conexões entre contas, stakeholders e deals serão exibidas aqui
-            quando o módulo de deal intelligence mapear os relacionamentos.
+            As conexões entre contas, stakeholders e deals serão exibidas aqui quando o
+            módulo de deal intelligence mapear os relacionamentos.
           </p>
         </div>
       </CardContent>

@@ -20,8 +20,7 @@ interface EnrollmentRow {
 
 function channelIcon(channels: string[] | null | undefined) {
   const mix = (channels ?? []).map(c => c.toLowerCase());
-  if (mix.some(c => c.includes('linkedin') || c.includes('social')))
-    return Linkedin;
+  if (mix.some(c => c.includes('linkedin') || c.includes('social'))) return Linkedin;
   if (mix.some(c => c.includes('email') || c.includes('mail'))) return Mail;
   return Phone;
 }
@@ -61,8 +60,7 @@ export const SDRSequenceOrchestrator = () => {
     .filter(e => e.status === 'active' && e.next_action_at)
     .sort(
       (a, b) =>
-        new Date(a.next_action_at!).getTime() -
-        new Date(b.next_action_at!).getTime()
+        new Date(a.next_action_at!).getTime() - new Date(b.next_action_at!).getTime()
     )
     .slice(0, 3)
     .map(e => ({
@@ -117,8 +115,7 @@ export const SDRSequenceOrchestrator = () => {
                     <div>
                       <p className="text-sm font-semibold">{seq.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {active} ativos • {completed} concluídos de {total}{' '}
-                        enrollments
+                        {active} ativos • {completed} concluídos de {total} enrollments
                       </p>
                     </div>
                   </div>
@@ -157,8 +154,7 @@ export const SDRSequenceOrchestrator = () => {
                 Nenhuma ação agendada
               </p>
               <p className="text-[11px] text-muted-foreground">
-                Quando houver enrollments ativos, os próximos passos aparecem
-                aqui.
+                Quando houver enrollments ativos, os próximos passos aparecem aqui.
               </p>
             </div>
           )}
