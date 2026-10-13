@@ -7,6 +7,7 @@ import {
   CircuitBreakerOpenError,
 } from '../_shared/circuit-breaker.ts';
 import { enforceRateLimit } from '../_shared/rate-limit.ts';
+import { resolveChannelCredentials } from '../_shared/secret-refs.ts';
 import { collectErrors, validateUUID, validationErrorResponse } from '../_shared/validation.ts';
 
 interface Payload {
@@ -139,7 +140,7 @@ Deno.serve(
       // Load Twilio credentials for owner
       const { data: cred } = await admin
         .from('channel_credentials')
-        .select('credentials, from_number')
+        .select('id, credentials, from_number')
         .eq('owner_id', ownerId)
         .eq('provider', 'twilio')
         .eq('enabled', true)
@@ -154,7 +155,8 @@ Deno.serve(
         );
       }
 
-      const creds = cred.credentials as Record<string, string>;
+      // integration_secret_refs tem precedência sobre o jsonb em texto puro.
+      const creds = await resolveChannelCredentials(admin, cred);
       const accountSid = creds.account_sid;
       const authToken = creds.auth_token;
       if (!accountSid || !authToken) {

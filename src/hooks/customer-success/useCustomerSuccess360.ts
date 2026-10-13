@@ -36,8 +36,11 @@ export interface CS360AccountRow {
 
 export interface CS360Order {
   id: string;
-  user_id: string;
-  account_id: string; // Mapping user_id to account_id for consistency in UI
+  user_id: string | null;
+  client_id: string | null;
+  quote_id: string | null;
+  account_id: string | null; // Resolvido via quote→sale→account ou cliente→account.name
+  client_name: string | null;
   order_number: string;
   status: string;
   total: number;

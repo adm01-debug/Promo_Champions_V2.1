@@ -92,6 +92,19 @@ const ALLOWED_TABLES = new Set([
   'notifications',
 ]);
 
+// Allowlist de RPCs executáveis via `operation: 'rpc'`. Vazia por padrão:
+// nenhum consumidor conhecido chama rpc hoje e rpc livre num banco externo
+// equivale a SQL arbitrário. Habilite nomes pontuais via secret
+// EXTERNAL_BRIDGE_ALLOWED_RPCS (lista separada por vírgula) quando uma
+// integração precisar.
+const ALLOWED_RPCS = new Set(
+  (Deno.env.get('EXTERNAL_BRIDGE_ALLOWED_RPCS') ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
+const RPC_NAME_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
 Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
@@ -123,6 +136,27 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
   }
   const userId = user.id;
 
+  // Este bridge executa queries arbitrárias num banco externo com a anon key
+  // dele — restrito a admin/manager, na mesma linha das outras superfícies
+  // administrativas (customer-success-360, admin-conversion-trail).
+  const { data: isAdminOrManager, error: roleError } = await authClient.rpc(
+    'is_admin_or_manager' as never,
+    { _user_id: userId } as never,
+  );
+  if (roleError) {
+    console.error('external-db-bridge role check failed:', roleError.message);
+    return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+      status: 503,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  if (!isAdminOrManager) {
+    return new Response(JSON.stringify({ error: 'forbidden' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     const {
       operation,
@@ -141,6 +175,18 @@ Deno.serve(withRequestId("external-db-bridge", async (req, _ctx) => {
       return new Response(
         JSON.stringify({
           error: `Table '${table}' is not accessible through this bridge`,
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate rpcName against allowlist — rpc livre equivale a SQL arbitrário
+    // no banco externo. A lista vem de EXTERNAL_BRIDGE_ALLOWED_RPCS (vazia por
+    // padrão: nenhum RPC é permitido até ser habilitado explicitamente).
+    if (operation === 'rpc' && (!rpcName || !RPC_NAME_RE.test(rpcName) || !ALLOWED_RPCS.has(rpcName))) {
+      return new Response(
+        JSON.stringify({
+          error: `RPC '${rpcName ?? ''}' is not accessible through this bridge`,
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
