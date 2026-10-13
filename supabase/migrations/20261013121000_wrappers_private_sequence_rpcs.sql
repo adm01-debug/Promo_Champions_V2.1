@@ -61,11 +61,13 @@ GRANT EXECUTE ON FUNCTION public.auto_pause_enrollment(uuid, text)
 
 -- O contrato da função privada é TABLE(step_id, promoted_label) e o corpo
 -- exige papel admin/manager via has_role(auth.uid()) — o EXECUTE a
--- authenticated é seguro porque a checagem de papel é interna.
+-- authenticated é seguro porque a checagem de papel é interna. Precisa ser
+-- SECURITY DEFINER: authenticated não tem USAGE no schema private (hardening
+-- 20260619), então o wrapper INVOKER falhava com permission denied.
 CREATE OR REPLACE FUNCTION public.auto_promote_sequence_winners(_sequence_id uuid)
 RETURNS TABLE(step_id uuid, promoted_label text)
 LANGUAGE plpgsql
-SECURITY INVOKER
+SECURITY DEFINER
 SET search_path = public, private
 AS $$
 BEGIN
