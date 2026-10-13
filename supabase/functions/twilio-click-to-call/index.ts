@@ -140,7 +140,7 @@ Deno.serve(
       // Load Twilio credentials for owner
       const { data: cred } = await admin
         .from('channel_credentials')
-        .select('id, credentials, from_number')
+        .select('id, owner_id, credentials, from_number')
         .eq('owner_id', ownerId)
         .eq('provider', 'twilio')
         .eq('enabled', true)

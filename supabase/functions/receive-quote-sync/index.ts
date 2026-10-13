@@ -17,7 +17,7 @@
 // Ambos compartilham public.webhook_inbound_dedupe e public.quote_sync_inbound_log.
 
 import { createClient, SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
@@ -53,10 +53,10 @@ function timingSafeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
-function json(body: unknown, status = 200): Response {
+function json(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 
@@ -126,6 +126,7 @@ async function handleV4(
   supabase: SupabaseClient,
   rawBody: string,
   signatureHeader: string,
+  req: Request,
 ): Promise<Response> {
   const secret = Deno.env.get("QUOTE_SYNC_WEBHOOK_SECRET");
   if (!secret) {
@@ -134,7 +135,7 @@ async function handleV4(
       status: "server_misconfigured", http_status: 500,
       error_message: "QUOTE_SYNC_WEBHOOK_SECRET missing", source: "v4",
     });
-    return json({ error: "server_misconfigured" }, 500);
+    return json(req, { error: "server_misconfigured" }, 500);
   }
 
   const expected = await hmacSha256Hex(secret, rawBody);
@@ -146,28 +147,28 @@ async function handleV4(
       status: "invalid_signature", http_status: 401,
       error_message: "assinatura HMAC não confere", source: "v4",
     });
-    return json({ error: "invalid_signature" }, 401);
+    return json(req, { error: "invalid_signature" }, 401);
   }
 
   let parsed: { event?: string; data?: Record<string, unknown>; correlation_key?: string };
   try { parsed = JSON.parse(rawBody); }
   catch {
     await logInbound(supabase, { status: "invalid_json", http_status: 400, source: "v4" });
-    return json({ error: "invalid_json" }, 400);
+    return json(req, { error: "invalid_json" }, 400);
   }
 
   const { event, data, correlation_key } = parsed;
   if (!isBoundedText(event, MAX_EVENT_LENGTH)) {
     await logInbound(supabase, { status: "event_required", http_status: 400, correlation_key, payload: parsed, source: "v4" });
-    return json({ error: "event_required" }, 400);
+    return json(req, { error: "event_required" }, 400);
   }
   if (!isBoundedText(correlation_key, MAX_CORRELATION_KEY_LENGTH)) {
     await logInbound(supabase, { status: "correlation_key_required", http_status: 400, event, payload: parsed, source: "v4" });
-    return json({ error: "correlation_key_required" }, 400);
+    return json(req, { error: "correlation_key_required" }, 400);
   }
   if (!data || typeof data !== "object" || Array.isArray(data)) {
     await logInbound(supabase, { status: "data_required", http_status: 400, event, correlation_key, payload: parsed, source: "v4" });
-    return json({ error: "data_required" }, 400);
+    return json(req, { error: "data_required" }, 400);
   }
 
   const externalQuoteId = (data as Record<string, unknown>).external_quote_id
@@ -175,7 +176,7 @@ async function handleV4(
     ?? (data as Record<string, unknown>).id;
   if (!isBoundedText(externalQuoteId, MAX_EXTERNAL_QUOTE_ID_LENGTH)) {
     await logInbound(supabase, { status: "external_quote_id_required", http_status: 400, event, correlation_key, payload: parsed, source: "v4" });
-    return json({ error: "external_quote_id_required" }, 400);
+    return json(req, { error: "external_quote_id_required" }, 400);
   }
 
   const { data: dedupeReservation, error: dedupeErr } = await supabase
@@ -187,16 +188,16 @@ async function handleV4(
   if (dedupeErr) {
     if ((dedupeErr as { code?: string }).code === "23505") {
       await logInbound(supabase, { status: "duplicate_ignored", http_status: 200, event, correlation_key, external_quote_id: externalQuoteId, payload: parsed, source: "v4" });
-      return json({ status: "duplicate_ignored", correlation_key }, 200);
+      return json(req, { status: "duplicate_ignored", correlation_key }, 200);
     }
     await logInbound(supabase, { status: "dedupe_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: dedupeErr.message, payload: parsed, source: "v4" });
-    return json({ error: "dedupe_failed", details: dedupeErr.message }, 500);
+    return json(req, { error: "dedupe_failed", details: dedupeErr.message }, 500);
   }
 
   const dedupeReservationId = (dedupeReservation as { id?: string } | null)?.id;
   if (!dedupeReservationId) {
     await logInbound(supabase, { status: "dedupe_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: "dedupe reservation sem id", payload: parsed, source: "v4" });
-    return json({ error: "dedupe_failed" }, 500);
+    return json(req, { error: "dedupe_failed" }, 500);
   }
 
   const quoteRow: Record<string, unknown> = {
@@ -219,7 +220,7 @@ async function handleV4(
   if (selErr) {
     await releaseDedupeReservation(supabase, dedupeReservationId);
     await logInbound(supabase, { status: "lookup_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: selErr.message, payload: parsed, source: "v4" });
-    return json({ error: "lookup_failed", details: selErr.message }, 500);
+    return json(req, { error: "lookup_failed", details: selErr.message }, 500);
   }
 
   type SyncedQuote = { id: string; external_quote_id: string; status: string };
@@ -231,7 +232,7 @@ async function handleV4(
     if (updErr) {
       await releaseDedupeReservation(supabase, dedupeReservationId);
       await logInbound(supabase, { status: "upsert_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: updErr.message, payload: parsed, source: "v4" });
-      return json({ error: "upsert_failed", details: updErr.message }, 500);
+      return json(req, { error: "upsert_failed", details: updErr.message }, 500);
     }
     upserted = updated as SyncedQuote;
   } else {
@@ -241,7 +242,7 @@ async function handleV4(
     if (insErr) {
       await releaseDedupeReservation(supabase, dedupeReservationId);
       await logInbound(supabase, { status: "upsert_failed", http_status: 500, event, correlation_key, external_quote_id: externalQuoteId, error_message: insErr.message, payload: parsed, source: "v4" });
-      return json({ error: "upsert_failed", details: insErr.message }, 500);
+      return json(req, { error: "upsert_failed", details: insErr.message }, 500);
     }
     upserted = inserted as SyncedQuote;
   }
@@ -253,7 +254,7 @@ async function handleV4(
     payload: parsed, source: "v4",
   });
 
-  return json({ status: "ok", event, correlation_key, quote: upserted }, 200);
+  return json(req, { status: "ok", event, correlation_key, quote: upserted }, 200);
 }
 
 // ─── Fluxo PromoGifts ───────────────────────────────────────────────────────
@@ -269,6 +270,7 @@ async function handlePromoGifts(
   headerEvent: string | null,
   headerCorrelation: string | null,
   requestId: string,
+  req: Request,
 ): Promise<Response> {
   const secret = Deno.env.get("PROMOGIFTS_WEBHOOK_SECRET");
   if (!secret) {
@@ -277,12 +279,12 @@ async function handlePromoGifts(
       status: "secret_not_configured", http_status: 401,
       error_message: "PROMOGIFTS_WEBHOOK_SECRET missing", source: "promogifts",
     });
-    return json({ ok: false, error: "secret_not_configured", hint: "Configure PROMOGIFTS_WEBHOOK_SECRET no Promo Champions" }, 401);
+    return json(req, { ok: false, error: "secret_not_configured", hint: "Configure PROMOGIFTS_WEBHOOK_SECRET no Promo Champions" }, 401);
   }
 
   if (!signatureHeader) {
     await logInbound(supabase, { status: "hmac_missing", http_status: 401, source: "promogifts" });
-    return json({ ok: false, error: "hmac_missing", hint: "Envie o header x-webhook-signature" }, 401);
+    return json(req, { ok: false, error: "hmac_missing", hint: "Envie o header x-webhook-signature" }, 401);
   }
 
   const expected = await hmacSha256Hex(secret, rawBody);
@@ -294,7 +296,7 @@ async function handlePromoGifts(
       status: "hmac_mismatch", http_status: 401,
       error_message: "HMAC divergente", source: "promogifts",
     });
-    return json({ ok: false, error: "hmac_mismatch", hint: "Verifique o segredo compartilhado" }, 401);
+    return json(req, { ok: false, error: "hmac_mismatch", hint: "Verifique o segredo compartilhado" }, 401);
   }
 
   let parsed: {
@@ -305,7 +307,7 @@ async function handlePromoGifts(
   try { parsed = JSON.parse(rawBody); }
   catch {
     await logInbound(supabase, { status: "invalid_payload", http_status: 400, source: "promogifts", error_message: "JSON inválido" });
-    return json({ ok: false, error: "invalid_payload", details: "invalid_json" }, 400);
+    return json(req, { ok: false, error: "invalid_payload", details: "invalid_json" }, 400);
   }
 
   const event = parsed.event ?? headerEvent ?? undefined;
@@ -321,7 +323,7 @@ async function handlePromoGifts(
       status: "invalid_payload", http_status: 400, event, correlation_key: correlationKey,
       payload: parsed, error_message: `missing:${missing.join(",")}`, source: "promogifts",
     });
-    return json({ ok: false, error: "invalid_payload", details: { missing } }, 400);
+    return json(req, { ok: false, error: "invalid_payload", details: { missing } }, 400);
   }
 
   const p = payload as Record<string, unknown>;
@@ -331,7 +333,7 @@ async function handlePromoGifts(
       status: "invalid_payload", http_status: 400, event, correlation_key: correlationKey,
       payload: parsed, error_message: "payload.quote_id não é UUID", source: "promogifts",
     });
-    return json({ ok: false, error: "invalid_payload", details: { field: "payload.quote_id", reason: "expected_uuid" } }, 400);
+    return json(req, { ok: false, error: "invalid_payload", details: { field: "payload.quote_id", reason: "expected_uuid" } }, 400);
   }
 
   // Dedupe
@@ -347,14 +349,14 @@ async function handlePromoGifts(
         status: "duplicate_ignored", http_status: 200, event, correlation_key: correlationKey,
         external_quote_id: quoteId, payload: parsed, source: "promogifts",
       });
-      return json({ ok: true, status: "duplicate_ignored", correlation_key: correlationKey }, 200);
+      return json(req, { ok: true, status: "duplicate_ignored", correlation_key: correlationKey }, 200);
     }
     console.error("[receive-quote-sync/promogifts] dedupe failed", dedupeErr);
     await logInbound(supabase, {
       status: "dedupe_failed", http_status: 500, event, correlation_key: correlationKey,
       external_quote_id: quoteId, error_message: dedupeErr.message, payload: parsed, source: "promogifts",
     });
-    return json({ ok: false, error: "internal", request_id: requestId }, 500);
+    return json(req, { ok: false, error: "internal", request_id: requestId }, 500);
   }
 
   const dedupeReservationId = (dedupeReservation as { id?: string } | null)?.id;
@@ -363,7 +365,7 @@ async function handlePromoGifts(
       status: "dedupe_failed", http_status: 500, event, correlation_key: correlationKey,
       external_quote_id: quoteId, error_message: "dedupe reservation sem id", payload: parsed, source: "promogifts",
     });
-    return json({ ok: false, error: "internal", request_id: requestId }, 500);
+    return json(req, { ok: false, error: "internal", request_id: requestId }, 500);
   }
 
   // Upsert em quotes_inbound
@@ -394,7 +396,7 @@ async function handlePromoGifts(
       status: "upsert_failed", http_status: 500, event, correlation_key: correlationKey,
       external_quote_id: quoteId, error_message: upErr.message, payload: parsed, source: "promogifts",
     });
-    return json({ ok: false, error: "internal", request_id: requestId }, 500);
+    return json(req, { ok: false, error: "internal", request_id: requestId }, 500);
   }
 
   await logInbound(supabase, {
@@ -402,12 +404,12 @@ async function handlePromoGifts(
     external_quote_id: quoteId, payload: parsed, source: "promogifts",
   });
 
-  return json({ ok: true, status: "processed", quote_id: quoteId }, 200);
+  return json(req, { ok: true, status: "processed", quote_id: quoteId }, 200);
 }
 
 // ─── Handler principal ─────────────────────────────────────────────────────
 Deno.serve(withRequestId('receive-quote-sync', async (req, ctx) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   // S1: rate-limit por IP — 300 req / 60s (webhook legítimo raramente ultrapassa; HMAC valida acima)
   const rl = enforceRateLimit(req, { name: "receive-quote-sync", limit: 300, windowSeconds: 60, bypassAuthenticated: false });
@@ -419,15 +421,15 @@ Deno.serve(withRequestId('receive-quote-sync', async (req, ctx) => {
 
   if (req.method !== "POST") {
     await logInbound(supabase, { status: "method_not_allowed", http_status: 405, error_message: `method=${req.method}` });
-    return json({ error: "method_not_allowed" }, 405);
+    return json(req, { error: "method_not_allowed" }, 405);
   }
 
   if (!supabase) {
-    return json({ error: "server_misconfigured" }, 500);
+    return json(req, { error: "server_misconfigured" }, 500);
   }
 
   const rawBody = await readUtf8BodyWithinLimit(req, MAX_WEBHOOK_BODY_BYTES);
-  if (rawBody === null) return json({ error: "payload_too_large" }, 413);
+  if (rawBody === null) return json(req, { error: "payload_too_large" }, 413);
   const signatureHeader =
     req.headers.get("x-webhook-signature") ??
     req.headers.get("X-Webhook-Signature") ?? "";
@@ -438,7 +440,7 @@ Deno.serve(withRequestId('receive-quote-sync', async (req, ctx) => {
 
   // Roteamento: presença de x-webhook-event ⇒ fluxo PromoGifts.
   if (headerEvent) {
-    return handlePromoGifts(supabase, rawBody, signatureHeader, headerEvent, headerCorrelation, ctx.requestId);
+    return handlePromoGifts(supabase, rawBody, signatureHeader, headerEvent, headerCorrelation, ctx.requestId, req);
   }
 
   // Caso contrário, fluxo V4 legado.
@@ -447,7 +449,7 @@ Deno.serve(withRequestId('receive-quote-sync', async (req, ctx) => {
       status: "missing_signature", http_status: 401,
       error_message: "x-webhook-signature header ausente", source: "v4",
     });
-    return json({ error: "missing_signature" }, 401);
+    return json(req, { error: "missing_signature" }, 401);
   }
-  return handleV4(supabase, rawBody, signatureHeader);
+  return handleV4(supabase, rawBody, signatureHeader, req);
 }));

@@ -75,7 +75,7 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
     // a verificação usaria o token da linha errada e derrubaria a chamada.
     const { data, error } = await admin
       .from("channel_credentials")
-      .select("id, credentials, from_number")
+      .select("id, owner_id, credentials, from_number")
       .eq("owner_id", ownerId)
       .eq("provider", "twilio")
       .eq("enabled", true)

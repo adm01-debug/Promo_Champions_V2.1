@@ -256,7 +256,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
   try {
     const { data: credential, error: credentialError } = await supabase
       .from("channel_credentials")
-      .select("id, provider, credentials, from_number")
+      .select("id, owner_id, provider, credentials, from_number")
       .eq("owner_id", payload.ownerId)
       .eq("channel", payload.channel)
       .eq("enabled", true)

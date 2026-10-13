@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { Resend } from 'npm:resend@2';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { toBusinessDate } from '../_shared/business-date.ts';
 import { alertFromEmail } from '../_shared/alert-escalation.ts';
@@ -322,7 +322,7 @@ async function sendNotificationToSDR(
 const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> => {
   const log = ctx.log;
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -367,7 +367,7 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
         if (!allowed) {
           return new Response(JSON.stringify({ error: 'forbidden' }), {
             status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
           });
         }
       }
@@ -375,13 +375,13 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
       if (error instanceof UnauthorizedError) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
           status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       log('error', 'authorization_unavailable', { error: String(error) });
       return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
         status: 503,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -418,7 +418,7 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
 
       return new Response(
         JSON.stringify({ success: true, message: 'No alerts needed', count: 0 }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
       );
     }
 
@@ -513,14 +513,14 @@ const handler = async (req: Request, ctx: RequestIdContext): Promise<Response> =
         count: underperformingSDRs.length,
         sdrs: underperformingSDRs.map(s => s.name),
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
     );
   } catch (error: unknown) {
     log('error', 'sdr_consecutive_alerts_failed');
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
     });
   }
 };

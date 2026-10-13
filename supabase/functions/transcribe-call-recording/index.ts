@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { checkAudioSignature } from '../_shared/file-signature.ts';
@@ -13,7 +13,7 @@ import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
 Deno.serve(
   withRequestId('transcribe-call-recording', async (req, _ctx) => {
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+    if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
     // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
     const rl = enforceRateLimit(req, {
@@ -30,17 +30,17 @@ Deno.serve(
         caller = await getUserClient(req);
       } catch (error) {
         if (error instanceof UnauthorizedError) {
-          return json({ error: 'Unauthorized' }, 401);
+          return json(req, { error: 'Unauthorized' }, 401);
         }
         throw error;
       }
 
       const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-      if (!LOVABLE_API_KEY) return json({ error: 'LOVABLE_API_KEY not configured' }, 500);
+      if (!LOVABLE_API_KEY) return json(req, { error: 'LOVABLE_API_KEY not configured' }, 500);
 
       const body = await req.json().catch(() => ({}));
       const recording_id = body?.recording_id as string | undefined;
-      if (!recording_id) return json({ error: 'recording_id is required' }, 400);
+      if (!recording_id) return json(req, { error: 'recording_id is required' }, 400);
 
       // Bypass de RLS necessário: atualiza status da gravação e gera signed
       // URL do storage; posse da gravação é validada abaixo.
@@ -54,8 +54,8 @@ Deno.serve(
         .select('id, salesperson_id, audio_url, status')
         .eq('id', recording_id)
         .maybeSingle();
-      if (recErr || !rec) return json({ error: 'Recording not found' }, 404);
-      if (!rec.audio_url) return json({ error: 'Recording has no audio file' }, 400);
+      if (recErr || !rec) return json(req, { error: 'Recording not found' }, 404);
+      if (!rec.audio_url) return json(req, { error: 'Recording has no audio file' }, 400);
 
       // Só o dono da gravação (ou admin/manager) pode transcrevê-la — o
       // áudio pode conter dados sensíveis do cliente.
@@ -70,7 +70,7 @@ Deno.serve(
           { _user_id: caller.userId } as never
         );
         if (roleError) throw roleError;
-        if (!isPrivileged) return json({ error: 'Forbidden' }, 403);
+        if (!isPrivileged) return json(req, { error: 'Forbidden' }, 403);
       }
 
       // Marca transcribing
@@ -94,7 +94,7 @@ Deno.serve(
           _language: 'pt',
           _error: `Failed to create signed URL: ${signErr?.message ?? 'unknown'}`,
         });
-        return json({ error: 'Failed to access audio file' }, 500);
+        return json(req, { error: 'Failed to access audio file' }, 500);
       }
 
       // Baixa áudio e converte para base64
@@ -107,7 +107,7 @@ Deno.serve(
           _language: 'pt',
           _error: msg,
         });
-        return json({ error: msg }, 500);
+        return json(req, { error: msg }, 500);
       }
       const audioBuf = await audioResp.arrayBuffer();
       const audioBytes = new Uint8Array(audioBuf);
@@ -124,7 +124,7 @@ Deno.serve(
           _language: 'pt',
           _error: msg,
         });
-        return json({ error: msg }, 422);
+        return json(req, { error: msg }, 422);
       }
 
       // Base64 em chunks (evita stack overflow com arquivos grandes)
@@ -186,7 +186,7 @@ Deno.serve(
           _language: 'pt',
           _error: userMsg,
         });
-        return json(
+        return json(req, 
           { error: userMsg },
           aiResp.status === 429 || aiResp.status === 402 ? aiResp.status : 500
         );
@@ -201,7 +201,7 @@ Deno.serve(
           _language: 'pt',
           _error: 'Transcrição vazia retornada pela IA',
         });
-        return json({ error: 'Empty transcript' }, 500);
+        return json(req, { error: 'Empty transcript' }, 500);
       }
 
       await admin.rpc('update_call_recording_transcript', {
@@ -211,21 +211,21 @@ Deno.serve(
         _error: null,
       });
 
-      return json({
+      return json(req, {
         recording_id,
         transcript_length: transcript.length,
         status: 'transcribed',
       });
     } catch (e) {
       console.error('transcribe-call-recording fatal:', e);
-      return json({ error: e instanceof Error ? e.message : 'Unknown error' }, 500);
+      return json(req, { error: e instanceof Error ? e.message : 'Unknown error' }, 500);
     }
   })
 );
 
-function json(body: unknown, status = 200) {
+function json(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }

@@ -1,5 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import {
   createValidationErrorResponse,
@@ -17,25 +17,25 @@ import {
 
 const MAX_INBOUND_EMAIL_BODY_BYTES = 256 * 1024;
 
-function json(body: unknown, status = 200): Response {
+function json(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
 Deno.serve(
   withRequestId('inbound-email-webhook', async (req, ctx) => {
     if (req.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: getCorsHeaders(req) });
     }
     if (req.method !== 'POST') {
-      return json({ error: 'method_not_allowed' }, 405);
+      return json(req, { error: 'method_not_allowed' }, 405);
     }
 
     const rawBody = await readUtf8BodyWithinLimit(req, MAX_INBOUND_EMAIL_BODY_BYTES);
     if (rawBody === null) {
-      return json({ ok: false, error: 'payload_too_large' }, 413);
+      return json(req, { ok: false, error: 'payload_too_large' }, 413);
     }
     const authentication = await authenticateInboundEmailWebhook(
       req.headers,
@@ -43,7 +43,7 @@ Deno.serve(
       name => Deno.env.get(name)
     );
     if (!authentication.ok) {
-      return json({ ok: false, error: authentication.code }, authentication.status);
+      return json(req, { ok: false, error: authentication.code }, authentication.status);
     }
 
     let payload: InboundEmailPayload;
@@ -54,12 +54,12 @@ Deno.serve(
       }
       payload = parsed as InboundEmailPayload;
     } catch {
-      return json({ ok: false, error: 'invalid_json' }, 400);
+      return json(req, { ok: false, error: 'invalid_json' }, 400);
     }
 
     const events = parseInboundEmailEvents(payload, authentication.provider);
     if (events.length === 0) {
-      return json({ ok: false, error: 'invalid_payload' }, 422);
+      return json(req, { ok: false, error: 'invalid_payload' }, 422);
     }
 
     // Valida o lote inteiro antes de qualquer escrita. Isso impede que um item
@@ -75,7 +75,7 @@ Deno.serve(
           validation.error ?? 'Payload inválido',
           validation.details ?? [],
           validation.contract_version,
-          corsHeaders
+          getCorsHeaders(req)
         );
       }
     }
@@ -83,7 +83,7 @@ Deno.serve(
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     if (!supabaseUrl || !serviceRoleKey) {
-      return json({ ok: false, error: 'server_misconfigured' }, 503);
+      return json(req, { ok: false, error: 'server_misconfigured' }, 503);
     }
 
     const admin = createClient(supabaseUrl, serviceRoleKey);
@@ -185,7 +185,7 @@ Deno.serve(
         }
       }
 
-      return json({
+      return json(req, {
         ok: true,
         processed: events.length,
         matched: matchedEnrollmentIds.length,
@@ -195,7 +195,7 @@ Deno.serve(
       ctx.log('error', 'inbound_email_processing_failed', {
         error: e instanceof Error ? e.message : String(e),
       });
-      return json({ ok: false, error: 'processing_failed' }, 500);
+      return json(req, { ok: false, error: 'processing_failed' }, 500);
     }
   })
 );

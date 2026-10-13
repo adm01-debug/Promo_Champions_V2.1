@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -98,7 +98,7 @@ const SUMMARY_TOOL = {
 };
 
 Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
     // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
     const rl = enforceRateLimit(req, { name: "summarize-call-recording", limit: 10, windowSeconds: 60 });
@@ -112,7 +112,7 @@ Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
 
     const { recording_id } = await req.json();
     if (!recording_id) {
-      return json({ error: "recording_id obrigatório" }, 400);
+      return json(req, { error: "recording_id obrigatório" }, 400);
     }
 
     const { data: rec, error: recErr } = await supabase
@@ -121,9 +121,9 @@ Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
       .eq("id", recording_id)
       .maybeSingle();
 
-    if (recErr || !rec) return json({ error: "Gravação não encontrada" }, 404);
+    if (recErr || !rec) return json(req, { error: "Gravação não encontrada" }, 404);
     if (!rec.transcript || rec.transcript.length < 50) {
-      return json({ error: "Transcrição ausente ou muito curta" }, 400);
+      return json(req, { error: "Transcrição ausente ou muito curta" }, 400);
     }
 
     // Optional context
@@ -173,24 +173,24 @@ Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
       }),
     });
 
-    if (aiRes.status === 429) return json({ error: "Rate limit. Tente novamente em instantes." }, 429);
-    if (aiRes.status === 402) return json({ error: "Créditos de IA esgotados. Adicione créditos no workspace." }, 402);
+    if (aiRes.status === 429) return json(req, { error: "Rate limit. Tente novamente em instantes." }, 429);
+    if (aiRes.status === 402) return json(req, { error: "Créditos de IA esgotados. Adicione créditos no workspace." }, 402);
     if (!aiRes.ok) {
       const t = await aiRes.text();
-      return json({ error: `Falha na IA: ${t.slice(0, 200)}` }, 502);
+      return json(req, { error: `Falha na IA: ${t.slice(0, 200)}` }, 502);
     }
 
     const data = await aiRes.json();
     const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
     if (!toolCall?.function?.arguments) {
-      return json({ error: "IA não retornou tool_call estruturada" }, 502);
+      return json(req, { error: "IA não retornou tool_call estruturada" }, 502);
     }
 
     let payload: Record<string, unknown>;
     try {
       payload = JSON.parse(toolCall.function.arguments);
     } catch {
-      return json({ error: "Argumentos da tool inválidos" }, 502);
+      return json(req, { error: "Argumentos da tool inválidos" }, 502);
     }
 
     const { error: rpcErr } = await supabase.rpc("update_call_recording_summary", {
@@ -204,22 +204,22 @@ Deno.serve(withRequestId("summarize-call-recording", async (req, _ctx) => {
       _sentiment: payload.sentiment ?? "neutral",
     });
 
-    if (rpcErr) return json({ error: `RPC: ${rpcErr.message}` }, 500);
+    if (rpcErr) return json(req, { error: `RPC: ${rpcErr.message}` }, 500);
 
-    return json({
+    return json(req, {
       recording_id,
       ...payload,
       ok: true,
     });
   } catch (e) {
     console.error("summarize-call-recording error:", e);
-    return json({ error: e instanceof Error ? e.message : "Erro interno" }, 500);
+    return json(req, { error: e instanceof Error ? e.message : "Erro interno" }, 500);
   }
 }));
 
-function json(body: unknown, status = 200) {
+function json(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }

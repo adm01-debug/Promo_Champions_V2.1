@@ -13,8 +13,11 @@
 -- _shared/secret-refs.ts e caem no jsonb quando não há ref (retrocompatível:
 -- credenciais antigas continuam funcionando até serem migradas).
 --
--- RLS espelha channel_credentials: o ref é metadado (nome do segredo), não o
--- segredo — owner/admin veem as refs, mas só service_role resolve o valor.
+-- RLS: owner/admin LEEM as refs (são metadados — nome do segredo, nunca o
+-- valor). Escrita é APENAS admin/manager: um owner não pode apontar refs para
+-- env vars ou chaves internas de outros serviços, nem injetar refs na
+-- credencial de outro owner. O resolver (_shared/secret-refs.ts) ainda
+-- filtra owner_id = credential.owner_id como defesa em profundidade.
 CREATE TABLE IF NOT EXISTS public.integration_secret_refs (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   credential_id uuid NOT NULL REFERENCES public.channel_credentials(id) ON DELETE CASCADE,
@@ -37,18 +40,18 @@ CREATE POLICY "Owners can view their secret refs"
   ON public.integration_secret_refs FOR SELECT TO authenticated
   USING (owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()));
 
-CREATE POLICY "Owners can insert their secret refs"
+CREATE POLICY "Admins can insert secret refs"
   ON public.integration_secret_refs FOR INSERT TO authenticated
-  WITH CHECK (owner_id = auth.uid());
+  WITH CHECK (public.is_admin_or_manager(auth.uid()));
 
-CREATE POLICY "Owners can update their secret refs"
+CREATE POLICY "Admins can update secret refs"
   ON public.integration_secret_refs FOR UPDATE TO authenticated
-  USING (owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()))
-  WITH CHECK (owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()));
+  USING (public.is_admin_or_manager(auth.uid()))
+  WITH CHECK (public.is_admin_or_manager(auth.uid()));
 
-CREATE POLICY "Owners can delete their secret refs"
+CREATE POLICY "Admins can delete secret refs"
   ON public.integration_secret_refs FOR DELETE TO authenticated
-  USING (owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()));
+  USING (public.is_admin_or_manager(auth.uid()));
 
 CREATE TRIGGER trg_integration_secret_refs_updated_at
   BEFORE UPDATE ON public.integration_secret_refs

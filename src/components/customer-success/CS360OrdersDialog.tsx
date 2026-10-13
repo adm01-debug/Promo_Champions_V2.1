@@ -162,7 +162,9 @@ export function CS360OrdersDialog({
                         {o.order_number}
                       </TableCell>
                       <TableCell className="font-medium text-xs">
-                        {accountById.get(o.account_id ?? '')?.name || o.client_name || '—'}
+                        {accountById.get(o.account_id ?? '')?.name ||
+                          o.client_name ||
+                          '—'}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {format(new Date(o.created_at), 'dd/MM/yy HH:mm', {

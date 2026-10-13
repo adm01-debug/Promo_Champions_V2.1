@@ -111,8 +111,17 @@ Deno.serve(withRequestId("customer-success-360", async (req, _ctx) => {
       { maxConcurrency: 4, label: "cs360-clients" },
     );
     const clientById = new Map(orderClients.map((c) => [c.id, c]));
+    // O mapa de fallback por nome NÃO usa a lista `accounts` (limitada ao
+    // top-100 por receita): uma conta fora do top-100 com nome correspondente
+    // continuaria resolvendo para null. Busca separada, sem limite.
+    const { data: allAccountNames } = await supabase
+      .from("accounts")
+      .select("id, name");
     const accountIdByName = new Map(
-      accounts.map((a) => [a.name.trim().toLowerCase(), a.id] as const),
+      (allAccountNames ?? []).map(
+        (a: { id: string; name: string }) =>
+          [a.name.trim().toLowerCase(), a.id] as const,
+      ),
     );
     const orders = rawOrders.map((o) => {
       const quote = o.quote_id ? quoteById.get(o.quote_id) : undefined;

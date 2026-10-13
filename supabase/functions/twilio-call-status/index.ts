@@ -84,7 +84,7 @@ Deno.serve(
       if (session?.owner_id) {
         const { data: cred, error: credErr } = await admin
           .from("channel_credentials")
-          .select("id, credentials")
+          .select("id, owner_id, credentials")
           .eq("owner_id", session.owner_id)
           .eq("provider", "twilio")
           .eq("enabled", true)

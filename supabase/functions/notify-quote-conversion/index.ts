@@ -28,7 +28,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
 import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 interface Payload {
   quote_id: string;
@@ -45,11 +45,11 @@ interface Payload {
   latency_ms?: number | null;
 }
 
-function json(status: number, body: unknown, requestId: string) {
+function json(req: Request, status: number, body: unknown, requestId: string) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      ...corsHeaders,
+      ...getCorsHeaders(req),
       "Content-Type": "application/json",
       "X-Request-Id": requestId,
     },
@@ -201,11 +201,11 @@ Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
     req.headers.get("x-request-id") ?? crypto.randomUUID();
 
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: { ...corsHeaders, "X-Request-Id": requestId } });
+    return new Response("ok", { headers: { ...getCorsHeaders(req), "X-Request-Id": requestId } });
   }
 
   if (req.method !== "POST") {
-    return json(405, { error: "method_not_allowed" }, requestId);
+    return json(req, 405, { error: "method_not_allowed" }, requestId);
   }
 
   // Requer JWT do usuário; usamos para gravar auditoria com actor_user_id correto.
@@ -215,19 +215,19 @@ Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
     authHeader = ctx.authHeader;
   } catch (authErr) {
     const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : "unauthorized";
-    return json(401, { error: msg }, requestId);
+    return json(req, 401, { error: msg }, requestId);
   }
 
   let payload: Payload;
   try {
     payload = (await req.json()) as Payload;
   } catch {
-    return json(400, { error: "invalid_json" }, requestId);
+    return json(req, 400, { error: "invalid_json" }, requestId);
   }
   const errs = collectErrors([validateUUID(payload?.quote_id, "quote_id", true)]);
-  if (errs.length) return validationErrorResponse(errs, corsHeaders);
+  if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
   if (typeof payload.success !== "boolean") {
-    return json(400, { error: "invalid_payload", detail: "success é obrigatório" }, requestId);
+    return json(req, 400, { error: "invalid_payload", detail: "success é obrigatório" }, requestId);
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -269,7 +269,7 @@ Deno.serve(withRequestId("notify-quote-conversion", async (req, _ctx) => {
   if (genericUrl) dispatches.push(postGenericWebhook(genericUrl, payload, requestId));
   await Promise.allSettled(dispatches);
 
-  return json(
+  return json(req, 
     200,
     {
       ok: true,
