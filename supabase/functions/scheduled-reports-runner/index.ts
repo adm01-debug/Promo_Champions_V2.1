@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
+import { chunkedIn, type PostgrestLike } from "../_shared/chunked-in.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -81,16 +82,60 @@ async function executeReport(
         throw new Error("Dono do relatório sem vínculo de vendedor — escopo não resolvido");
       }
       if (scope.idSpace === "portfolio") {
-        // Carteira de clientes via client_portfolio (mesma leitura da RLS).
-        const { data: portfolio } = await admin
-          .from("client_portfolio")
-          .select("client_id")
-          .eq("salesperson_id", sp.id)
-          .limit(5000);
-        const ids = (portfolio ?? []).map((p) => p.client_id);
-        query = ids.length
-          ? query.in(scope.column, ids)
-          : query.eq(scope.column, "00000000-0000-0000-0000-000000000000");
+        // Carteira de clientes via client_portfolio (mesma leitura da RLS):
+        // paginada — carteira >1.000 vínculos estoura a página do PostgREST.
+        // A policy também lê clients.user_id = auth.uid(): esses IDs entram
+        // na união para o relatório refletir o que a UI mostra.
+        const idSet = new Set<string>();
+        const PAGE = 1000;
+        for (let from = 0; ; from += PAGE) {
+          const { data: page, error: pErr } = await admin
+            .from("client_portfolio")
+            .select("client_id")
+            .eq("salesperson_id", sp.id)
+            .range(from, from + PAGE - 1);
+          if (pErr) throw new Error(`client_portfolio: ${pErr.message}`);
+          if (!page?.length) break;
+          for (const p of page as { client_id: string }[]) idSet.add(p.client_id);
+          if (page.length < PAGE) break;
+        }
+        for (let from = 0; ; from += PAGE) {
+          const { data: page, error: oErr } = await admin
+            .from("clients")
+            .select("id")
+            .eq("user_id", ownerAuthId)
+            .range(from, from + PAGE - 1);
+          if (oErr) throw new Error(`clients próprios: ${oErr.message}`);
+          if (!page?.length) break;
+          for (const c of page as { id: string }[]) idSet.add(c.id);
+          if (page.length < PAGE) break;
+        }
+
+        // .in() com milhares de IDs estoura a URL do PostgREST — chunkedIn
+        // divide em lotes; depois dedupe por id e o limit do cfg no merge.
+        // O dedupe precisa do id na projeção: se cfg.columns o omitir, o id
+        // entra só internamente e é removido das linhas finais.
+        const requested = cols === "*" ? null : new Set(cols.split(",").map((c) => c.trim()));
+        const selectCols = requested === null || requested.has("id") ? cols : `${cols},id`;
+        const rows = await chunkedIn<Record<string, unknown>>(
+          [...idSet],
+          (chunk) =>
+            admin.from(entity).select(selectCols).in("id", chunk).limit(limit) as unknown as PostgrestLike<
+              Record<string, unknown>
+            >,
+          { label: "report-clients" },
+        );
+        const seen = new Set<string>();
+        const merged: Record<string, unknown>[] = [];
+        for (const r of rows) {
+          const rid = String(r.id);
+          if (!seen.has(rid)) {
+            seen.add(rid);
+            if (requested !== null && !requested.has("id")) delete r.id;
+            merged.push(r);
+          }
+        }
+        return merged.slice(0, limit);
       } else {
         query = query.eq(scope.column, sp.id);
       }
