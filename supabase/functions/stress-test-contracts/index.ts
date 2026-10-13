@@ -13,16 +13,36 @@ Deno.serve(withRequestId('stress-test-contracts', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  // Chamada vem do painel admin via supabase.functions.invoke — requer JWT
-  // de usuário válido (fuzzing consome CPU; não deve ser anônimo).
+  // Chamada vem do painel /webhooks (gate <Manager> na UI) via
+  // supabase.functions.invoke — requer JWT de usuário válido com papel
+  // admin/manager (fuzzing consome CPU; não deve ser anônimo nem vendedor).
+  let caller;
   try {
-    await getUserClient(req);
+    caller = await getUserClient(req);
   } catch (authErr) {
     const isUnauth = authErr instanceof UnauthorizedError;
     return new Response(
       JSON.stringify({ error: isUnauth ? authErr.message : 'unauthorized' }),
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
+  }
+
+  const { data: isPriv, error: roleError } = await caller.client.rpc(
+    'is_admin_or_manager' as never,
+    { _user_id: caller.userId } as never
+  );
+  if (roleError) {
+    console.error('stress-test-contracts role check failed:', roleError);
+    return new Response(JSON.stringify({ error: 'authorization_unavailable' }), {
+      status: 503,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  if (!isPriv) {
+    return new Response(JSON.stringify({ error: 'forbidden' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   try {
