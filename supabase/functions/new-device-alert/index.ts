@@ -1,7 +1,7 @@
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { fetchWithTrace } from "../_shared/fetch-with-timeout.ts";
 import { escapeHtml } from "../_shared/html-escape.ts";
 import { alertFromEmail } from "../_shared/alert-escalation.ts";
@@ -103,7 +103,7 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
 
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -116,17 +116,17 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
     // Input validation
     if (!data.user_id || typeof data.user_id !== 'string') {
       return new Response(JSON.stringify({ error: 'user_id is required' }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (!data.user_email || !data.user_email.includes('@')) {
       return new Response(JSON.stringify({ error: 'Valid user_email is required' }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
     if (!data.device_fingerprint) {
       return new Response(JSON.stringify({ error: 'device_fingerprint is required' }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -148,7 +148,7 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
       log('info', 'known_device_last_seen_updated', { user_id: data.user_id });
       return new Response(
         JSON.stringify({ message: "Known device", is_new: false }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        { status: 200, headers: { "Content-Type": "application/json", ...getCorsHeaders(req) } }
       );
     }
 
@@ -285,7 +285,7 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
         is_new: true,
         alert_id: alert?.id 
       }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      { status: 200, headers: { "Content-Type": "application/json", ...getCorsHeaders(req) } }
     );
 
   } catch (error: unknown) {
@@ -293,7 +293,7 @@ const handler = withRequestId('new-device-alert', async (req, ctx): Promise<Resp
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: message }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      { status: 500, headers: { "Content-Type": "application/json", ...getCorsHeaders(req) } }
     );
   }
 });

@@ -138,6 +138,7 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
 
     orders.forEach(o => {
       const accId = o.account_id || o.user_id;
+      if (!accId) return;
       const currentFirst = firstOrderMap.get(accId);
       if (!currentFirst || isAfter(parseISO(currentFirst), parseISO(o.created_at))) {
         firstOrderMap.set(accId, o.created_at);
@@ -224,7 +225,11 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       if (!orderSearch) return true;
       const search = orderSearch.toLowerCase();
       const orderNum = o.order_number?.toString().toLowerCase() || '';
-      const accountName = accountById.get(o.account_id)?.name.toLowerCase() || '';
+      const accountName = (
+        accountById.get(o.account_id ?? '')?.name ||
+        o.client_name ||
+        ''
+      ).toLowerCase();
       return orderNum.includes(search) || accountName.includes(search);
     });
   }, [filteredData?.orders, orderModalStatus, orderSearch, accountById]);
@@ -235,8 +240,8 @@ export const CustomerSuccess360Hub = memo(function CustomerSuccess360Hub() {
       let valB: string | number = b[orderSortField as keyof typeof b] as string | number;
 
       if (orderSortField === 'account_name') {
-        valA = accountById.get(a.account_id)?.name || '';
-        valB = accountById.get(b.account_id)?.name || '';
+        valA = accountById.get(a.account_id ?? '')?.name || a.client_name || '';
+        valB = accountById.get(b.account_id ?? '')?.name || b.client_name || '';
       }
 
       if (valA < valB) return orderSortOrder === 'asc' ? -1 : 1;

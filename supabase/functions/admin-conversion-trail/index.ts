@@ -10,34 +10,34 @@
 
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
-function json(status: number, body: unknown) {
+function json(req: Request, status: number, body: unknown) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 
 Deno.serve(
   withRequestId("admin-conversion-trail", async (req, ctx) => {
     if (req.method === "OPTIONS") {
-      return new Response("ok", { headers: corsHeaders });
+      return new Response("ok", { headers: getCorsHeaders(req) });
     }
     if (req.method !== "GET") {
-      return json(405, { error: "method_not_allowed" });
+      return json(req, 405, { error: "method_not_allowed" });
     }
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return json(401, { error: "unauthorized" });
+      return json(req, 401, { error: "unauthorized" });
     }
 
     const url = new URL(req.url);
     const quoteId = url.searchParams.get("quote_id");
     const saleId = url.searchParams.get("sale_id");
     if (!quoteId && !saleId) {
-      return json(400, { error: "invalid_input", detail: "informe quote_id ou sale_id" });
+      return json(req, 400, { error: "invalid_input", detail: "informe quote_id ou sale_id" });
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -56,10 +56,10 @@ Deno.serve(
     if (error) {
       ctx.log("error", "trail_rpc_failed", { error: error.message, latency_ms: latency });
       const isForbidden = /FORBIDDEN|NOT_AUTHENTICATED/.test(error.message);
-      return json(isForbidden ? 403 : 500, { error: error.message, request_id: ctx.requestId });
+      return json(req, isForbidden ? 403 : 500, { error: error.message, request_id: ctx.requestId });
     }
 
     ctx.log("info", "trail_ok", { latency_ms: latency });
-    return json(200, { request_id: ctx.requestId, latency_ms: latency, trail: data });
+    return json(req, 200, { request_id: ctx.requestId, latency_ms: latency, trail: data });
   }),
 );

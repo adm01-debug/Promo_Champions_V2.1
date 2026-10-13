@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 // Endpoint: GET/POST winloss-webhook-timeline
 // Returns a unified, chronologically sorted timeline of webhook events
 // correlated by `requestId` and/or `subscriptionId`.
@@ -29,8 +29,8 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   else console.info(line);
 }
 
-function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
-  const headers: Record<string, string> = { ...corsHeaders, "Content-Type": "application/json" };
+function jsonResponse(req: Request, body: unknown, status = 200, requestId?: string): Response {
+  const headers: Record<string, string> = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   if (requestId) headers["X-Request-Id"] = requestId;
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -65,7 +65,7 @@ type TimelineItem = {
   details: Record<string, unknown>;
 };
 
-async function assertAdmin(supabase: SupabaseClient, userId: string, requestId: string): Promise<Response | null> {
+async function assertAdmin(supabase: SupabaseClient, userId: string, requestId: string, req: Request): Promise<Response | null> {
   const { data, error } = await supabase
     .from("user_roles")
     .select("role")
@@ -74,11 +74,11 @@ async function assertAdmin(supabase: SupabaseClient, userId: string, requestId: 
     .maybeSingle();
   if (error) {
     jlog("error", { msg: "auth_role_lookup_failed", requestId, userId, ...describeError(error) });
-    return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
+    return jsonResponse(req, { error: "Forbidden", requestId }, 403, requestId);
   }
   if (!data) {
     jlog("warn", { msg: "auth_forbidden", requestId, userId });
-    return jsonResponse({ error: "Forbidden", requestId }, 403, requestId);
+    return jsonResponse(req, { error: "Forbidden", requestId }, 403, requestId);
   }
   return null;
 }
@@ -104,13 +104,13 @@ async function readInput(req: Request): Promise<unknown> {
 }
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   const requestId = crypto.randomUUID();
 
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
-      return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
+      return jsonResponse(req, { error: "Unauthorized", requestId }, 401, requestId);
     }
     const token = authHeader.replace("Bearer ", "");
 
@@ -122,7 +122,7 @@ export const handler = async (req: Request): Promise<Response> => {
     const { data: claims, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
     if (claimsErr || !claims?.claims?.sub) {
       jlog("warn", { msg: "auth_invalid_token", requestId });
-      return jsonResponse({ error: "Unauthorized", requestId }, 401, requestId);
+      return jsonResponse(req, { error: "Unauthorized", requestId }, 401, requestId);
     }
     const userId = claims.claims.sub as string;
 
@@ -130,13 +130,13 @@ export const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-    const denied = await assertAdmin(supabase, userId, requestId);
+    const denied = await assertAdmin(supabase, userId, requestId, req);
     if (denied) return denied;
 
     const raw = await readInput(req);
     const parsed = InputSchema.safeParse(raw);
     if (!parsed.success) {
-      return jsonResponse(
+      return jsonResponse(req, 
         {
           error: "invalid_input",
           message: "Provide requestId and/or subscriptionId (uuid). Optional: since (ISO), limit (1-500).",
@@ -270,7 +270,7 @@ export const handler = async (req: Request): Promise<Response> => {
       },
     });
 
-    return jsonResponse(
+    return jsonResponse(req, 
       {
         requestId,
         filters: {
@@ -287,7 +287,7 @@ export const handler = async (req: Request): Promise<Response> => {
     );
   } catch (e) {
     jlog("error", { msg: "timeline_fatal", requestId, ...describeError(e) });
-    return jsonResponse(
+    return jsonResponse(req, 
       { error: e instanceof Error ? e.message : "unknown", requestId },
       500,
       requestId,

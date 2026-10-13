@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { chunkedIn } from "../_shared/chunked-in.ts";
 
 Deno.serve(withRequestId("customer-success-360", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -59,7 +60,7 @@ Deno.serve(withRequestId("customer-success-360", async (req, _ctx) => {
       supabase.from("expansion_opportunities").select("id, account_id, type, estimated_value, status, confidence_score, owner_salesperson_id, created_at").order("estimated_value", { ascending: false }).limit(200),
       supabase.from("csat_ces_surveys").select("id, account_id, survey_type, score, comment, sent_at, responded_at").order("sent_at", { ascending: false }).limit(500),
       supabase.from("qbr_schedule").select("id, account_id, frequency, next_qbr_at, last_qbr_at, owner_salesperson_id, is_active").eq("is_active", true).order("next_qbr_at", { ascending: true }).limit(200),
-      supabase.from("orders").select("id, user_id, order_number, status, total, created_at, cancellation_reason").order("created_at", { ascending: false }).limit(500),
+      supabase.from("orders").select("id, user_id, client_id, quote_id, order_number, status, total, created_at, cancellation_reason").order("created_at", { ascending: false }).limit(500),
     ]);
 
     const accounts = accountsRes.data ?? [];
@@ -70,11 +71,70 @@ Deno.serve(withRequestId("customer-success-360", async (req, _ctx) => {
     const expansion = expansionRes.data ?? [];
     const surveys = surveysRes.data ?? [];
     const qbrs = qbrRes.data ?? [];
-    // Inject account_id into orders using user_id if needed, or just map it for UI consistency
-    const orders = (ordersRes.data ?? []).map(o => ({
-      ...o,
-      account_id: o.user_id // Assuming user_id maps to an account for now, or use as lookup key
-    }));
+    // Resolve o account_id real de cada pedido. A cadeia de chaves do schema
+    // é orders.quote_id → quotes.sale_id → sales.account_id; quando o pedido
+    // não veio de cotação, cai no fallback orders.client_id → clients cujo
+    // name/company casa com accounts.name (mesma regra do trigger
+    // auto_link_sale_to_account). user_id NÃO é chave de conta — é o
+    // comprador autenticado — e mapeá-lo como conta exibia o cliente errado.
+    const rawOrders = ordersRes.data ?? [];
+    const quoteIds = [
+      ...new Set(rawOrders.map((o) => o.quote_id).filter((v): v is string => !!v)),
+    ];
+    const orderQuotes = await chunkedIn<{ id: string; sale_id: string | null; client_id: string | null }>(
+      quoteIds,
+      (chunk) =>
+        supabase.from("quotes").select("id, sale_id, client_id").in("id", chunk),
+      { maxConcurrency: 4, label: "cs360-quotes" },
+    );
+    const quoteById = new Map(orderQuotes.map((q) => [q.id, q]));
+    const saleIds = [
+      ...new Set(orderQuotes.map((q) => q.sale_id).filter((v): v is string => !!v)),
+    ];
+    const orderSales = await chunkedIn<{ id: string; account_id: string | null }>(
+      saleIds,
+      (chunk) => supabase.from("sales").select("id, account_id").in("id", chunk),
+      { maxConcurrency: 4, label: "cs360-sales" },
+    );
+    const accountIdBySaleId = new Map(
+      orderSales.map((s) => [s.id, s.account_id] as const),
+    );
+    const clientIds = [
+      ...new Set(
+        [...rawOrders.map((o) => o.client_id), ...orderQuotes.map((q) => q.client_id)]
+          .filter((v): v is string => !!v),
+      ),
+    ];
+    const orderClients = await chunkedIn<{ id: string; name: string; company: string | null }>(
+      clientIds,
+      (chunk) => supabase.from("clients").select("id, name, company").in("id", chunk),
+      { maxConcurrency: 4, label: "cs360-clients" },
+    );
+    const clientById = new Map(orderClients.map((c) => [c.id, c]));
+    // O mapa de fallback por nome NÃO usa a lista `accounts` (limitada ao
+    // top-100 por receita): uma conta fora do top-100 com nome correspondente
+    // continuaria resolvendo para null. Busca separada, sem limite.
+    const { data: allAccountNames } = await supabase
+      .from("accounts")
+      .select("id, name");
+    const accountIdByName = new Map(
+      (allAccountNames ?? []).map(
+        (a: { id: string; name: string }) =>
+          [a.name.trim().toLowerCase(), a.id] as const,
+      ),
+    );
+    const orders = rawOrders.map((o) => {
+      const quote = o.quote_id ? quoteById.get(o.quote_id) : undefined;
+      const client = clientById.get(o.client_id ?? quote?.client_id ?? "");
+      const accountId =
+        (quote?.sale_id ? accountIdBySaleId.get(quote.sale_id) : undefined) ??
+        (client
+          ? accountIdByName.get(client.company?.trim().toLowerCase() ?? "") ??
+            accountIdByName.get(client.name.trim().toLowerCase())
+          : undefined) ??
+        null;
+      return { ...o, account_id: accountId, client_name: client?.name ?? null };
+    });
 
     const now = Date.now();
     const openTickets = tickets.filter((t) => t.status === "open" || t.status === "pending");

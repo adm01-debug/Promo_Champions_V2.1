@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { describeError, dispatchOne, type DeadLetterEntry, type LogLevel, type Subscription } from "./retry.ts";
 import { DispatcherPayloadSchema } from "./schema.ts";
@@ -85,6 +85,7 @@ function buildDeps(
  * but the four canonical keys are always present.
  */
 function envelope(
+  req: Request,
   requestId: string,
   status: number,
   fields: { error?: string | null; dispatched?: number; results?: unknown[]; extra?: Record<string, unknown> } = {},
@@ -98,14 +99,14 @@ function envelope(
   };
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json", "X-Request-Id": requestId },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json", "X-Request-Id": requestId },
   });
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   // Honor an inbound X-Request-Id header (or payload.__request_id) so internal
   // callers — like winloss-webhook-replay — can stitch the entire flow under
@@ -124,7 +125,7 @@ export const handler = async (req: Request): Promise<Response> => {
     // ou X-Cron-Secret) ou usuário com papel admin/manager.
     // Chamada sem nenhuma credencial é 401 antes de tocar env/banco.
     if (!req.headers.get("Authorization") && !req.headers.get("X-Cron-Secret")) {
-      return envelope(requestId, 401, { error: "unauthorized" });
+      return envelope(req, requestId, 401, { error: "unauthorized" });
     }
 
     const supabase = createClient(
@@ -145,7 +146,7 @@ export const handler = async (req: Request): Promise<Response> => {
       });
     } catch (authError) {
       structuredLog("error", { msg: "cron_authorization_unavailable", ...describeError(authError) }, requestId);
-      return envelope(requestId, 503, { error: "authorization_unavailable" });
+      return envelope(req, requestId, 503, { error: "authorization_unavailable" });
     }
 
     if (!authorizedByCron) {
@@ -158,22 +159,22 @@ export const handler = async (req: Request): Promise<Response> => {
         if (roleError) throw roleError;
         if (!allowed) {
           structuredLog("warn", { msg: "auth_forbidden", userId: caller.userId }, requestId);
-          return envelope(requestId, 403, { error: "forbidden" });
+          return envelope(req, requestId, 403, { error: "forbidden" });
         }
       } catch (authError) {
         if (authError instanceof UnauthorizedError) {
           structuredLog("warn", { msg: "auth_unauthorized" }, requestId);
-          return envelope(requestId, 401, { error: "unauthorized" });
+          return envelope(req, requestId, 401, { error: "unauthorized" });
         }
         structuredLog("error", { msg: "authorization_failed", ...describeError(authError) }, requestId);
-        return envelope(requestId, 503, { error: "authorization_unavailable" });
+        return envelope(req, requestId, 503, { error: "authorization_unavailable" });
       }
     }
 
     const rawPayload = await req.json().catch(() => null);
     if (!rawPayload || typeof rawPayload !== "object" || Array.isArray(rawPayload)) {
       structuredLog("warn", { msg: "invalid_payload", reason: "not_an_object" }, requestId);
-      return envelope(requestId, 400, { error: "invalid payload (object required)" });
+      return envelope(req, requestId, 400, { error: "invalid payload (object required)" });
     }
 
     // Zod-validate the dispatcher contract BEFORE any DB lookup or fan-out.
@@ -182,7 +183,7 @@ export const handler = async (req: Request): Promise<Response> => {
       const flat = parsed.error.flatten();
       structuredLog("warn", { msg: "invalid_payload", reason: "schema", details: flat }, requestId);
       const firstFieldErr = Object.values(flat.fieldErrors).flat()[0];
-      return envelope(requestId, 400, {
+      return envelope(req, requestId, 400, {
         error: firstFieldErr ?? flat.formErrors[0] ?? "invalid payload",
         extra: { details: flat },
       });
@@ -206,7 +207,7 @@ export const handler = async (req: Request): Promise<Response> => {
         .maybeSingle();
       if (error || !sub) {
         structuredLog("error", { msg: "replay_subscription_missing", subscriptionId: targetSubId, error: error?.message }, requestId);
-        return envelope(requestId, 404, { error: "subscription not found" });
+        return envelope(req, requestId, 404, { error: "subscription not found" });
       }
       if (!sub.active) {
         structuredLog("warn", {
@@ -215,7 +216,7 @@ export const handler = async (req: Request): Promise<Response> => {
           event,
           replay_of: replayOf,
         }, requestId);
-        return envelope(requestId, 409, {
+        return envelope(req, requestId, 409, {
           error: "subscription is inactive",
           extra: { subscriptionId: targetSubId, reason: "inactive_subscription" },
         });
@@ -350,7 +351,7 @@ export const handler = async (req: Request): Promise<Response> => {
       results,
     }, requestId);
 
-    return envelope(requestId, 200, {
+    return envelope(req, requestId, 200, {
       dispatched: results.length,
       results,
       extra: { succeeded: succeededCount, failed: failedCount },
@@ -361,7 +362,7 @@ export const handler = async (req: Request): Promise<Response> => {
       ...describeError(e),
       latency_ms: Date.now() - requestStart,
     }, requestId);
-    return envelope(requestId, 500, { error: e instanceof Error ? e.message : "unknown" });
+    return envelope(req, requestId, 500, { error: e instanceof Error ? e.message : "unknown" });
   }
 };
 

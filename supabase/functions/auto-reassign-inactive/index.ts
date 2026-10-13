@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
 
@@ -28,10 +28,10 @@ interface SalespersonPerformance {
 
 const REASSIGNMENT_BATCH_SIZE = 20;
 
-function json(body: Record<string, unknown>, status = 200): Response {
+function json(req: Request, body: Record<string, unknown>, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 
@@ -52,11 +52,11 @@ function parseBoundedPositiveInteger(
 
 Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   if (req.method !== "POST") {
-    return json({ error: "method_not_allowed" }, 405);
+    return json(req, { error: "method_not_allowed" }, 405);
   }
 
   // Este job usa service_role para alterar carteira; um JWT de usuário não é
@@ -71,14 +71,14 @@ Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
       ),
     ))
   ) {
-    return json({ error: "unauthorized" }, 401);
+    return json(req, { error: "unauthorized" }, 401);
   }
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl || !supabaseServiceKey) {
-      return json({ error: "service_not_configured" }, 503);
+      return json(req, { error: "service_not_configured" }, 503);
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -112,7 +112,7 @@ Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
       console.info(
         "[auto-reassign-inactive] Auto-reassignment is disabled. Exiting.",
       );
-      return json({
+      return json(req, {
         message: "Auto-reassignment is disabled",
         reassigned: 0,
       });
@@ -182,7 +182,7 @@ Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
     );
 
     if (eligibleClients.length === 0) {
-      return json({
+      return json(req, {
         message: "No clients eligible for reassignment",
         reassigned: 0,
       });
@@ -344,7 +344,7 @@ Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
       `[auto-reassign-inactive] Completed. Reassigned ${reassignedCount} clients.`,
     );
 
-    return json({
+    return json(req, {
       message: "Auto-reassignment completed",
       reassigned: reassignedCount,
       strategy: rotationStrategy,
@@ -353,6 +353,6 @@ Deno.serve(withRequestId("auto-reassign-inactive", async (req, _ctx) => {
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
     console.error("[auto-reassign-inactive] Error:", message);
-    return json({ error: message }, 500);
+    return json(req, { error: message }, 500);
   }
 }));

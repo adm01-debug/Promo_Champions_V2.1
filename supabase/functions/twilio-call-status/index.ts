@@ -3,6 +3,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { verifyTwilioSignatureAny } from "../_shared/webhook-auth.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
+import { resolveChannelCredentials } from "../_shared/secret-refs.ts";
 
 const dispositionMap: Record<string, string> = {
   completed: "connected",
@@ -83,7 +84,7 @@ Deno.serve(
       if (session?.owner_id) {
         const { data: cred, error: credErr } = await admin
           .from("channel_credentials")
-          .select("credentials")
+          .select("id, owner_id, credentials")
           .eq("owner_id", session.owner_id)
           .eq("provider", "twilio")
           .eq("enabled", true)
@@ -99,9 +100,11 @@ Deno.serve(
             headers: { "Content-Type": "application/json" },
           });
         }
-        tenantToken =
-          (cred?.credentials as Record<string, string> | null)?.auth_token ??
-            null;
+        // integration_secret_refs tem precedência sobre o jsonb em texto puro.
+        const creds: Record<string, string> = cred
+          ? await resolveChannelCredentials(admin, cred)
+          : {};
+        tenantToken = creds.auth_token ?? null;
       }
 
       // Tenant tem precedência; global é só fallback (nunca em paralelo — senão

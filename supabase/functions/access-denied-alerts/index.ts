@@ -1,6 +1,6 @@
 import { Resend } from 'npm:resend@2';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId, type RequestIdContext } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { alertFromEmail, escalateCriticalAlert } from '../_shared/alert-escalation.ts';
@@ -151,7 +151,7 @@ const handler = withRequestId(
   async (req, ctx): Promise<Response> => {
     const log = ctx.log;
     if (req.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: getCorsHeaders(req) });
     }
 
     try {
@@ -176,7 +176,7 @@ const handler = withRequestId(
       if (!isAdmin) {
         return new Response(JSON.stringify({ error: 'forbidden' }), {
           status: 403,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
         });
       }
 
@@ -214,7 +214,7 @@ const handler = withRequestId(
             message: 'No access denied attempts found',
             spikesDetected: [],
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
 
@@ -256,7 +256,7 @@ const handler = withRequestId(
             spikesDetected: [],
             settings,
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
 
@@ -287,7 +287,7 @@ const handler = withRequestId(
             message: 'Spikes detected but no admins to notify',
             spikesDetected: spikes.length,
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
 
@@ -325,7 +325,7 @@ const handler = withRequestId(
             message: 'Spikes detected but no admin emails configured',
             spikesDetected: spikes.length,
           }),
-          { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
         );
       }
 
@@ -419,13 +419,13 @@ const handler = withRequestId(
           emailStatus,
           settings,
         }),
-        { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { status: 200, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
       );
     } catch (error: unknown) {
       if (error instanceof UnauthorizedError) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
           status: 401,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
         });
       }
       log('error', 'access_denied_alerts_failed', {
@@ -433,7 +433,7 @@ const handler = withRequestId(
       });
       return new Response(
         JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
-        { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        { status: 500, headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) } }
       );
     }
   }

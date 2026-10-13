@@ -5,7 +5,7 @@
 // - Marca sucesso; em falha, agenda retry com backoff exponencial (via RPC).
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 
 interface JobPayload {
@@ -35,16 +35,16 @@ const WORKER_ID = `edge-${crypto.randomUUID().slice(0, 8)}`;
 const BATCH_SIZE = 20;
 
 Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   if (req.method !== "POST") {
-    return json({ error: "Method not allowed" }, 405);
+    return json(req, { error: "Method not allowed" }, 405);
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceKey  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!supabaseUrl || !serviceKey) {
     console.error("[process-call-recording-ingest] missing Supabase service credentials");
-    return json({ error: "service_not_configured" }, 503);
+    return json(req, { error: "service_not_configured" }, 503);
   }
 
   const admin = createClient(supabaseUrl, serviceKey, {
@@ -60,13 +60,13 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
       if (error) throw error;
       return (data as { value?: string | null } | null)?.value;
     });
-    if (!authorized) return json({ error: "unauthorized" }, 401);
+    if (!authorized) return json(req, { error: "unauthorized" }, 401);
   } catch (error) {
     console.error(
       "[process-call-recording-ingest] cron authorization unavailable:",
       error instanceof Error ? error.message : String(error),
     );
-    return json({ error: "authorization_unavailable" }, 503);
+    return json(req, { error: "authorization_unavailable" }, 503);
   }
 
   const startedAt = Date.now();
@@ -78,7 +78,7 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
   );
   if (dqErr) {
     console.error("[process-call-recording-ingest] dequeue error", dqErr);
-    return json({ error: "dequeue_failed", detail: dqErr.message }, 500);
+    return json(req, { error: "dequeue_failed", detail: dqErr.message }, 500);
   }
 
   const rows = (jobs ?? []) as JobRow[];
@@ -158,12 +158,12 @@ Deno.serve(withRequestId("process-call-recording-ingest", async (req, _ctx) => {
     duration_ms: Date.now() - startedAt,
   };
   console.log("[process-call-recording-ingest] batch done", summary);
-  return json(summary, 200);
+  return json(req, summary, 200);
 }));
 
-function json(body: unknown, status: number): Response {
+function json(req: Request, body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }

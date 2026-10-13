@@ -7,6 +7,7 @@ import {
   UnauthorizedError,
 } from "../_shared/auth-client.ts";
 import { isInternalServiceRequest } from "../_shared/internal-service-auth.ts";
+import { resolveChannelCredentials } from "../_shared/secret-refs.ts";
 
 interface Payload {
   ownerId: string;
@@ -255,7 +256,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
   try {
     const { data: credential, error: credentialError } = await supabase
       .from("channel_credentials")
-      .select("id, provider, credentials, from_number")
+      .select("id, owner_id, provider, credentials, from_number")
       .eq("owner_id", payload.ownerId)
       .eq("channel", payload.channel)
       .eq("enabled", true)
@@ -268,19 +269,21 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
       return json({ ok: false, error: "no_credentials", skipped: true });
     }
 
-    const credentials = credential.credentials;
     if (
-      !credentials || typeof credentials !== "object" ||
-      Array.isArray(credentials)
+      !credential.credentials || typeof credential.credentials !== "object" ||
+      Array.isArray(credential.credentials)
     ) {
       return json({ ok: false, error: "invalid_provider_credentials" }, 502);
     }
+    // Campos sensíveis podem viver fora do jsonb, via integration_secret_refs
+    // (env/internal) — ref resolvido tem precedência sobre o texto puro.
+    const credentials = await resolveChannelCredentials(supabase, credential);
 
     let result: ProviderResult;
     switch (credential.provider) {
       case "twilio":
         result = await sendTwilio(
-          credentials as Record<string, string>,
+          credentials,
           credential.from_number ?? "",
           payload.to,
           payload.body,
@@ -289,7 +292,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
         break;
       case "meta_cloud":
         result = await sendMetaCloud(
-          credentials as Record<string, string>,
+          credentials,
           payload.to,
           payload.body,
           payload.templateId,
@@ -297,7 +300,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
         break;
       case "zapi":
         result = await sendZapi(
-          credentials as Record<string, string>,
+          credentials,
           payload.to,
           payload.body,
         );
