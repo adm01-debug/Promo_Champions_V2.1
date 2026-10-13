@@ -27,11 +27,32 @@ CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
 -- ---------------------------------------------------------------------------
 -- 2) Posse só no servidor: o cliente lê (SELECT), mas não escreve.
+--    As policies de INSERT foram substituídas em 20260418104152 — os drops
+--    precisam cobrir os nomes atuais (own_or_admin / admin) além dos antigos.
+--    Nenhuma tela do app insere nessas tabelas (hooks só fazem SELECT); quem
+--    escreve é edge function com service_role, que bypassa RLS.
 -- ---------------------------------------------------------------------------
 DROP POLICY IF EXISTS "insert_own_powerups" ON public.race_powerups;
 DROP POLICY IF EXISTS "update_own_powerups" ON public.race_powerups;
 DROP POLICY IF EXISTS "insert_race_events" ON public.race_events;
+DROP POLICY IF EXISTS "insert_race_events_own_or_admin" ON public.race_events;
 DROP POLICY IF EXISTS "insert_race_badges" ON public.race_badges;
+DROP POLICY IF EXISTS "insert_race_badges_admin" ON public.race_badges;
+
+-- ---------------------------------------------------------------------------
+-- 2b) Dedupe atômico: a idempotência por sale_id não pode depender só de
+--     read-before-insert — chamadas concorrentes (UI + trigger de sales)
+--     passariam juntas pelo check. Índices únicos parciais fazem o banco
+--     impor unicidade; a função trata 23505 como "já processado".
+--     Linhas antigas (metadata/effect_data sem sale_id) ficam fora do índice.
+-- ---------------------------------------------------------------------------
+CREATE UNIQUE INDEX IF NOT EXISTS race_events_sale_dedup_idx
+  ON public.race_events (season_id, salesperson_id, event_type, ((metadata->>'sale_id')))
+  WHERE metadata->>'sale_id' IS NOT NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS race_powerups_source_sale_dedup_idx
+  ON public.race_powerups (season_id, salesperson_id, powerup_type, ((effect_data->>'source_sale_id')))
+  WHERE effect_data->>'source_sale_id' IS NOT NULL;
 
 -- ---------------------------------------------------------------------------
 -- 3) CHECKs alinhados aos tipos emitidos pelo servidor.
