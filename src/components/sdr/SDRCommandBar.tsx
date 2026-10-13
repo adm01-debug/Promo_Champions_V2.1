@@ -2,8 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Plus, Phone, Mail, Sparkles, LayoutGrid } from 'lucide-react';
 import { Linkedin } from '@/components/icons/Linkedin';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export const SDRCommandBar = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-wrap items-center gap-2 p-2 rounded-xl glass border-primary/20 bg-primary/5 shadow-lg mb-6">
       <div className="flex items-center gap-2 pr-4 border-r border-primary/10">
@@ -17,6 +19,7 @@ export const SDRCommandBar = () => {
         <Button
           size="sm"
           className="h-8 gap-2 bg-primary hover:bg-primary/90 text-[10px] font-bold uppercase tracking-wider"
+          onClick={() => navigate('/vendas')}
         >
           <Plus className="h-3.5 w-3.5" />
           Novo Lead
@@ -28,6 +31,7 @@ export const SDRCommandBar = () => {
           variant="outline"
           size="sm"
           className="h-8 gap-2 border-primary/20 hover:bg-primary/5 text-[10px] font-bold uppercase tracking-wider"
+          onClick={() => navigate('/atividades')}
         >
           <Phone className="h-3.5 w-3.5 text-green-500" />
           Log Call
@@ -37,6 +41,7 @@ export const SDRCommandBar = () => {
           variant="outline"
           size="sm"
           className="h-8 gap-2 border-primary/20 hover:bg-primary/5 text-[10px] font-bold uppercase tracking-wider"
+          onClick={() => navigate('/atividades')}
         >
           <Mail className="h-3.5 w-3.5 text-blue-500" />
           Log Email
@@ -46,6 +51,7 @@ export const SDRCommandBar = () => {
           variant="outline"
           size="sm"
           className="h-8 gap-2 border-primary/20 hover:bg-primary/5 text-[10px] font-bold uppercase tracking-wider"
+          onClick={() => navigate('/atividades')}
         >
           <Linkedin className="h-3.5 w-3.5 text-[#0077b5]" />
           Log Social
@@ -61,6 +67,7 @@ export const SDRCommandBar = () => {
             variant="ghost"
             size="sm"
             className="h-8 gap-2 text-primary hover:bg-primary/10 text-[10px] font-bold uppercase tracking-wider"
+            onClick={() => navigate('/assistente')}
           >
             <Sparkles className="h-3.5 w-3.5" />
             SDR Copilot

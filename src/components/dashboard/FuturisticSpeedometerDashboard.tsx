@@ -278,21 +278,16 @@ export const FuturisticSpeedometerDashboard = () => {
         ? 'Meus Dados'
         : salespeople.find(s => s.id === salespersonFilter)?.name || 'Vendedor';
 
-  const mockRevenueHistory = [
-    { name: 'Lun', value: Math.floor(revenue * 0.1) },
-    { name: 'Mar', value: Math.floor(revenue * 0.2) },
-    { name: 'Mie', value: Math.floor(revenue * 0.15) },
-    { name: 'Jue', value: Math.floor(revenue * 0.25) },
-    { name: 'Vie', value: Math.floor(revenue * 0.3) },
-  ];
-
-  const mockSalesHistory = [
-    { name: 'Lun', value: Math.floor(sales * 0.15) },
-    { name: 'Mar', value: Math.floor(sales * 0.25) },
-    { name: 'Mie', value: Math.floor(sales * 0.2) },
-    { name: 'Jue', value: Math.floor(sales * 0.1) },
-    { name: 'Vie', value: Math.floor(sales * 0.3) },
-  ];
+  const revenueHistory = (kpis?.current.daily ?? []).map(d => ({
+    name: d.name,
+    value: d.revenue,
+  }));
+  const salesHistory = (kpis?.current.daily ?? []).map(d => ({
+    name: d.name,
+    value: d.sales,
+  }));
+  const channelBreakdown = kpis?.current.channels ?? [];
+  const periodLabel = PERIOD_LABELS[period].label;
 
   const fmtBRL = (v: number) => {
     if (gaugeMode === 'compact') return `${formatBRLCompact(v)}`;
@@ -437,7 +432,9 @@ export const FuturisticSpeedometerDashboard = () => {
             delta={kpis?.changes.revenue}
             ticksCount={ticksCount}
             unit={customUnit || 'BRL'}
-            drilldownData={mockRevenueHistory}
+            drilldownData={revenueHistory}
+            drilldownPeriodLabel={periodLabel}
+            channelBreakdown={channelBreakdown}
           />
           <Speedometer
             label="Vendas"
@@ -449,7 +446,9 @@ export const FuturisticSpeedometerDashboard = () => {
             delta={kpis?.changes.sales}
             ticksCount={ticksCount}
             unit={customUnit || 'vendas'}
-            drilldownData={mockSalesHistory}
+            drilldownData={salesHistory}
+            drilldownPeriodLabel={periodLabel}
+            channelBreakdown={channelBreakdown}
           />
           <Speedometer
             label="Conversão"
