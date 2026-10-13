@@ -2,7 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
-import { chunkedIn } from "../_shared/chunked-in.ts";
+import { chunkedIn, type PostgrestLike } from "../_shared/chunked-in.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -113,9 +113,16 @@ async function executeReport(
 
         // .in() com milhares de IDs estoura a URL do PostgREST — chunkedIn
         // divide em lotes; depois dedupe por id e o limit do cfg no merge.
+        // O dedupe precisa do id na projeção: se cfg.columns o omitir, o id
+        // entra só internamente e é removido das linhas finais.
+        const requested = cols === "*" ? null : new Set(cols.split(",").map((c) => c.trim()));
+        const selectCols = requested === null || requested.has("id") ? cols : `${cols},id`;
         const rows = await chunkedIn<Record<string, unknown>>(
           [...idSet],
-          (chunk) => admin.from(entity).select(cols).in("id", chunk).limit(limit),
+          (chunk) =>
+            admin.from(entity).select(selectCols).in("id", chunk).limit(limit) as unknown as PostgrestLike<
+              Record<string, unknown>
+            >,
           { label: "report-clients" },
         );
         const seen = new Set<string>();
@@ -124,6 +131,7 @@ async function executeReport(
           const rid = String(r.id);
           if (!seen.has(rid)) {
             seen.add(rid);
+            if (requested !== null && !requested.has("id")) delete r.id;
             merged.push(r);
           }
         }
