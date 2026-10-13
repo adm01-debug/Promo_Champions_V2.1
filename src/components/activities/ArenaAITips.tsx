@@ -151,7 +151,10 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
                 <Button
                   size="sm"
                   className="h-7 text-[9px] font-black uppercase tracking-widest gap-2 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30"
-                  onClick={() => navigate('/atividades')}
+                  onClick={e => {
+                    e.stopPropagation();
+                    navigate('/atividades');
+                  }}
                 >
                   <ArrowRight className="h-3 w-3" /> {tip.action || 'Executar Protocolo'}
                 </Button>
@@ -159,7 +162,10 @@ export const ArenaAITips: React.FC<ArenaAITipsProps> = ({ data }) => {
                   variant="ghost"
                   size="sm"
                   className="h-7 text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground"
-                  onClick={() => setDismissed(prev => [...prev, tip.key])}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDismissed(prev => [...prev, tip.key]);
+                  }}
                 >
                   Arquivar
                 </Button>
