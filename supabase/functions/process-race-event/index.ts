@@ -2,36 +2,42 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { isAuthorizedCronJob } from '../_shared/cron-job-auth.ts';
 import { collectErrors, validateUUID, validationErrorResponse } from '../_shared/validation.ts';
 
 interface LeaderboardRow {
   car_id: string;
   salesperson_id: string;
   progress: number;
+  total_sales?: number | null;
   total_overtakes?: number | null;
 }
 
 const CHECKPOINTS = [0.25, 0.5, 0.75];
+const DERIVED_EVENT_TYPES = ['overtake', 'checkpoint', 'victory'];
 
 Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    try {
-      await getUserClient(req);
-    } catch (authErr) {
-      const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
-      return new Response(JSON.stringify({ error: msg }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
+
+    // Job interno (trigger de sales via pg_net / pg_cron) OU usuário autenticado.
+    if (!(await isAuthorizedCronJob(req, supabase))) {
+      try {
+        await getUserClient(req);
+      } catch (authErr) {
+        const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
+        return new Response(JSON.stringify({ error: msg }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
 
     const body = await req.json().catch(() => ({}));
 
@@ -42,10 +48,10 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
 
     const sale_id: string | undefined = body.sale_id;
 
-    // 1. season ativa
+    // 1. season ativa (goal e datas alimentam o cálculo do diff)
     const { data: season } = await supabase
       .from('race_seasons')
-      .select('id, winner_id')
+      .select('id, winner_id, goal_amount, start_date, end_date')
       .eq('status', 'active')
       .order('start_date', { ascending: false })
       .limit(1)
@@ -57,37 +63,83 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       });
     }
 
-    // 2. snapshot leaderboard (antes)
-    const { data: prevBoard } = await supabase
-      .from('race_leaderboard_view')
-      .select('car_id, salesperson_id, progress')
-      .eq('season_id', season.id);
-
-    // 3. detectar venda → salesperson
+    // 2. venda → salesperson (antes dos snapshots; a venda já está gravada)
     let salespersonId: string | null = null;
+    let saleAmount = 0;
+    let saleCounted = false;
     if (sale_id) {
       const { data: sale } = await supabase
         .from('sales')
-        .select('salesperson_id, amount, created_at')
+        .select('salesperson_id, amount, status, created_at')
         .eq('id', sale_id)
         .maybeSingle();
       salespersonId = sale?.salesperson_id ?? null;
+      saleAmount = Number(sale?.amount ?? 0);
 
-      if (salespersonId) {
+      // A view só soma vendas 'completed' dentro do período da season.
+      const saleDay = String(sale?.created_at ?? '').slice(0, 10);
+      saleCounted = !!sale && sale.status === 'completed'
+        && saleDay >= String(season.start_date) && saleDay <= String(season.end_date);
+    }
+
+    // 3. evento 'boost' da venda — idempotente por sale_id (o trigger de
+    //    sales e a UI podem disparar a mesma venda mais de uma vez).
+    let boostInserted = false;
+    if (sale_id && salespersonId) {
+      const { data: priorBoost } = await supabase
+        .from('race_events')
+        .select('id')
+        .eq('season_id', season.id)
+        .eq('salesperson_id', salespersonId)
+        .eq('event_type', 'boost')
+        .eq('metadata->>sale_id', sale_id)
+        .limit(1);
+
+      if (!priorBoost?.length) {
         await supabase.from('race_events').insert({
           season_id: season.id,
           salesperson_id: salespersonId,
           event_type: 'boost',
-          metadata: { sale_id, amount: sale?.amount },
+          metadata: { sale_id, amount: saleAmount },
         });
+        boostInserted = true;
       }
     }
 
-    // 4. snapshot atual (vendas já estão computadas pela view)
+    // 4. snapshot atual (a venda já está computada pela view)
     const { data: currBoard } = await supabase
       .from('race_leaderboard_view')
-      .select('car_id, salesperson_id, progress, total_overtakes')
+      .select('car_id, salesperson_id, progress, total_sales, total_overtakes')
       .eq('season_id', season.id);
+
+    // 5. placar anterior = placar atual menos a contribuição desta venda.
+    //    Ler a view duas vezes gerava prev == curr e o diff nunca disparava.
+    const goalAmount = Number(season.goal_amount ?? 0);
+    const prevBoard: LeaderboardRow[] = ((currBoard ?? []) as LeaderboardRow[]).map(row =>
+      saleCounted && goalAmount > 0 && row.salesperson_id === salespersonId
+        ? {
+            ...row,
+            progress: Math.min(
+              1,
+              Math.max(0, Number(row.total_sales ?? 0) - saleAmount) / goalAmount
+            ),
+          }
+        : row
+    );
+
+    // 6. eventos derivados (overtake/checkpoint/victory) emitem no máximo uma
+    //    vez por venda: carregam metadata.sale_id para dedupe nas re-chamadas.
+    let derivedDone = false;
+    if (sale_id) {
+      const { data: priorDerived } = await supabase
+        .from('race_events')
+        .select('id')
+        .eq('season_id', season.id)
+        .eq('metadata->>sale_id', sale_id)
+        .in('event_type', DERIVED_EVENT_TYPES)
+        .limit(1);
+      derivedDone = (priorDerived?.length ?? 0) > 0;
+    }
 
     const events: Array<{
       type: string;
@@ -95,13 +147,14 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       metadata?: Record<string, unknown>;
     }> = [];
 
-    if (prevBoard && currBoard) {
-      const prevSorted = [...(prevBoard as LeaderboardRow[])].sort(
-        (a, b) => Number(b.progress) - Number(a.progress)
-      );
-      const currSorted = [...(currBoard as LeaderboardRow[])].sort(
-        (a, b) => Number(b.progress) - Number(a.progress)
-      );
+    const prevSorted = [...prevBoard].sort(
+      (a, b) => Number(b.progress) - Number(a.progress)
+    );
+    const currSorted = [...((currBoard ?? []) as LeaderboardRow[])].sort(
+      (a, b) => Number(b.progress) - Number(a.progress)
+    );
+
+    if (!derivedDone && currBoard) {
       const prevRank = new Map(prevSorted.map((r, i) => [r.salesperson_id, i]));
       const currRank = new Map(currSorted.map((r, i) => [r.salesperson_id, i]));
       const prevProg = new Map(
@@ -156,14 +209,14 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       }
     }
 
-    // inserir eventos derivados
+    // inserir eventos derivados (marcados com a venda que os originou)
     if (events.length > 0) {
       await supabase.from('race_events').insert(
         events.map(e => ({
           season_id: season.id,
           salesperson_id: e.salesperson_id,
           event_type: e.type,
-          metadata: e.metadata ?? {},
+          metadata: { ...(e.metadata ?? {}), sale_id: sale_id ?? null },
         }))
       );
     }
@@ -193,11 +246,24 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       type: string,
       effect: Record<string, unknown> = {}
     ) => {
+      // idempotente por venda: a mesma venda não concede o power-up duas vezes
+      if (sale_id) {
+        const { data: priorGrant } = await supabase
+          .from('race_powerups')
+          .select('id')
+          .eq('season_id', season.id)
+          .eq('salesperson_id', sp)
+          .eq('powerup_type', type)
+          .eq('effect_data->>source_sale_id', sale_id)
+          .limit(1);
+        if (priorGrant?.length) return;
+      }
+
       await supabase.from('race_powerups').insert({
         salesperson_id: sp,
         season_id: season.id,
         powerup_type: type,
-        effect_data: effect,
+        effect_data: { ...effect, source_sale_id: sale_id ?? null },
         collected_at: new Date().toISOString(),
       });
 
@@ -206,7 +272,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
         season_id: season.id,
         salesperson_id: sp,
         event_type: 'powerup_unlocked',
-        metadata: { powerup_type: type, ...effect },
+        metadata: { powerup_type: type, sale_id: sale_id ?? null, ...effect },
       });
     };
 
@@ -240,13 +306,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       }
 
       // 3. Mega Boost (Power-up): Venda única > $10k
-      const { data: latestSale } = await supabase
-        .from('sales')
-        .select('amount')
-        .eq('id', sale_id)
-        .maybeSingle();
-
-      if (latestSale && (latestSale.amount ?? 0) >= 10000) {
+      if (saleCounted && saleAmount >= 10000) {
         await grantPowerUp(salespersonId, 'mega_boost', {
           multiplier: 3,
           duration_hours: 1,
@@ -255,13 +315,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
     }
 
     // 4. Comeback King (Badge)
-    if (salespersonId && prevBoard && currBoard) {
-      const prevSorted = [...(prevBoard as LeaderboardRow[])].sort(
-        (a, b) => Number(b.progress) - Number(a.progress)
-      );
-      const currSorted = [...(currBoard as LeaderboardRow[])].sort(
-        (a, b) => Number(b.progress) - Number(a.progress)
-      );
+    if (salespersonId && currBoard) {
       const wasLast =
         prevSorted[prevSorted.length - 1]?.salesperson_id === salespersonId &&
         prevSorted.length >= 4;
@@ -283,7 +337,10 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       }
     }
 
-    return new Response(JSON.stringify({ ok: true, events_emitted: 1 + events.length }), {
+    return new Response(JSON.stringify({
+      ok: true,
+      events_emitted: (boostInserted ? 1 : 0) + events.length,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
