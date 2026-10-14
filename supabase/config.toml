@@ -60,6 +60,17 @@ verify_jwt = false
 [functions.inbound-email-webhook]
 verify_jwt = false
 
+# Callback OAuth do Bitrix24: chega como redirect do browser sem JWT; o handler
+# valida o state assinado (HMAC com TTL curto) e revalida o papel admin/manager
+# do autorizador antes de gravar tokens.
+[functions.bitrix24-oauth]
+verify_jwt = false
+
+# Respostas inbound do WhatsApp (Evolution): sem JWT; segredo/assinatura HMAC
+# verificado no handler (WHATSAPP_INBOUND_WEBHOOK_SECRET).
+[functions.whatsapp-inbound-webhook]
+verify_jwt = false
+
 [functions.multichannel-status-webhook]
 verify_jwt = false
 
