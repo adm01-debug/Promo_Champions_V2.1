@@ -31,27 +31,39 @@ export function isValidCPF(value: string): boolean {
   return secondDigit === Number(cpf[10]);
 }
 
+// CNPJ alfanumérico (Receita Federal, emissão a partir de 2026): as 12 primeiras
+// posições aceitam dígitos e letras; os 2 dígitos verificadores seguem numéricos.
+// Valor de cada caractere = código ASCII − 48 ('0'-'9' → 0-9, 'A'-'Z' → 17-42),
+// com os mesmos pesos do módulo 11 usados no CNPJ numérico.
+const CNPJ_ALNUM = /^[0-9A-Z]{12}\d{2}$/;
+const CNPJ_WEIGHTS_FIRST = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+const CNPJ_WEIGHTS_SECOND = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+function normalizeCnpj(value: string): string {
+  if (typeof value !== 'string') return '';
+  return value.toUpperCase().replace(/[^0-9A-Z]/g, '');
+}
+
+function calculateCnpjCheckDigit(values: number[], weights: number[]): number {
+  const sum = values.reduce((acc, v, i) => acc + v * Number(weights[i]), 0);
+  const remainder = sum % 11;
+  return remainder < 2 ? 0 : 11 - remainder;
+}
+
 export function isValidCNPJ(value: string): boolean {
-  const cnpj = onlyDigits(value);
-  if (cnpj.length !== 14 || hasAllSameDigits(cnpj)) return false;
+  const cnpj = normalizeCnpj(value);
+  if (!CNPJ_ALNUM.test(cnpj) || /^(.)\1+$/.test(cnpj)) return false;
 
-  const firstDigit = calculateCheckDigit(
-    cnpj.slice(0, 12),
-    [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-  );
-  if (firstDigit !== Number(cnpj[12])) return false;
-
-  const secondDigit = calculateCheckDigit(
-    cnpj.slice(0, 13),
-    [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-  );
-  return secondDigit === Number(cnpj[13]);
+  const values = cnpj.split('').map(c => c.charCodeAt(0) - 48);
+  if (calculateCnpjCheckDigit(values.slice(0, 12), CNPJ_WEIGHTS_FIRST) !== values[12])
+    return false;
+  return calculateCnpjCheckDigit(values.slice(0, 13), CNPJ_WEIGHTS_SECOND) === values[13];
 }
 
 export function isValidCpfOrCnpj(value: string): boolean {
   const digits = onlyDigits(value);
   if (digits.length === 11) return isValidCPF(digits);
-  if (digits.length === 14) return isValidCNPJ(digits);
+  if (normalizeCnpj(value).length === 14) return isValidCNPJ(value);
   return false;
 }
 
@@ -106,14 +118,3 @@ export function isValidPhoneBR(value: string): boolean {
   // Fixo: 8 dígitos, primeiro dígito nunca é 0 nem 1 (reservados).
   return subscriber[0] !== '0' && subscriber[0] !== '1';
 }
-
-// Pendência conhecida, não implementada: CNPJ alfanumérico (Receita Federal
-// passou a emitir CNPJs com letras a partir de 2026 para determinados
-// regimes). O algoritmo de dígito verificador publicado converte cada
-// caractere para (código ASCII - 48) antes de aplicar o mesmo módulo 11
-// usado acima, mas este módulo não tem como validar essa conversão contra
-// vetores de teste oficiais neste ambiente — fabricar a implementação sem
-// confirmação seria pior do que não ter suporte. isValidCNPJ() de propósito
-// rejeita CNPJs alfanuméricos (14 dígitos numéricos é uma pré-condição).
-// Ver etapa 46 do plano de 50 etapas para retomar isso com vetores de teste
-// reais da Receita Federal.

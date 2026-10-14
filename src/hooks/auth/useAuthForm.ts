@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLoginRateLimiter } from '@/hooks/useLoginRateLimiter';
+import { useWebAuthn } from '@/hooks/useWebAuthn';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,6 +41,12 @@ export function useAuthForm() {
     MAX_ATTEMPTS,
   } = useLoginRateLimiter();
   const [countdown, setCountdown] = useState(0);
+  const {
+    loginWithPasskey,
+    isSupported: passkeySupported,
+    isAvailable: passkeyAvailable,
+    isLoading: isPasskeyLoading,
+  } = useWebAuthn();
 
   useEffect(() => {
     if (user) navigate(redirectTo, { replace: true });
@@ -184,6 +191,10 @@ export function useAuthForm() {
     }
   };
 
+  const handlePasskeySignIn = async () => {
+    await loginWithPasskey(loginEmail || undefined);
+  };
+
   return {
     showPwd,
     setShowPwd,
@@ -209,5 +220,8 @@ export function useAuthForm() {
     setMfaCode,
     isMfaLoading,
     handleMfaVerify,
+    passkeyEnabled: passkeySupported && passkeyAvailable,
+    isPasskeyLoading,
+    handlePasskeySignIn,
   };
 }

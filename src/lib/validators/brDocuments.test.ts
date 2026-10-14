@@ -15,7 +15,7 @@ describe('isValidCPF', () => {
     }
   );
 
-  it.each(['111.444.777-34', '52998224724'])(
+  it.each(['111.444.777-34', '52998224724', '111.444.777-45'])(
     'rejeita CPF com dígito verificador errado: %s',
     value => {
       expect(isValidCPF(value)).toBe(false);
@@ -53,7 +53,7 @@ describe('isValidCNPJ', () => {
     }
   );
 
-  it.each(['11.222.333/0001-80', '04252011000111'])(
+  it.each(['11.222.333/0001-80', '04252011000111', '11.222.333/0001-91'])(
     'rejeita CNPJ com dígito verificador errado: %s',
     value => {
       expect(isValidCNPJ(value)).toBe(false);
@@ -81,6 +81,30 @@ describe('isValidCNPJ', () => {
       expect(isValidCNPJ(value)).toBe(false);
     }
   );
+
+  // CNPJ alfanumérico (Receita, 2026): '12ABC34501DE' com DVs calculados
+  // pelo módulo 11 sobre (ASCII − 48) resulta em "35".
+  it.each(['12.ABC.345/01DE-35', '12ABC34501DE35', '12.abc.345/01de-35'])(
+    'aceita CNPJ alfanumérico válido: %s',
+    value => {
+      expect(isValidCNPJ(value)).toBe(true);
+    }
+  );
+
+  it.each([
+    '12.ABC.345/01DE-45', // DV1 errado
+    '12.ABC.345/01DE-34', // DV2 errado
+    '12.ABC.345/01DE-36', // DV2 errado
+    '12.ABC.345/01DE-E5', // letra na posição de dígito verificador
+    'AA.AAA.AAA/AAAA-AA', // só letras, tamanho total errado
+    '12.ABC.345/01DE-35A', // 15 caracteres
+  ])('rejeita CNPJ alfanumérico inválido: %s', value => {
+    expect(isValidCNPJ(value)).toBe(false);
+  });
+
+  it('rejeita CNPJ alfanumérico com todos os caracteres iguais', () => {
+    expect(isValidCNPJ('AAAAAAAAAAAAAA')).toBe(false);
+  });
 });
 
 describe('isValidCpfOrCnpj', () => {
@@ -92,6 +116,11 @@ describe('isValidCpfOrCnpj', () => {
   it('roteia por tamanho: 14 dígitos como CNPJ', () => {
     expect(isValidCpfOrCnpj('11.222.333/0001-81')).toBe(true);
     expect(isValidCpfOrCnpj('11.222.333/0001-80')).toBe(false);
+  });
+
+  it('roteia CNPJ alfanumérico para isValidCNPJ', () => {
+    expect(isValidCpfOrCnpj('12.ABC.345/01DE-35')).toBe(true);
+    expect(isValidCpfOrCnpj('12.ABC.345/01DE-36')).toBe(false);
   });
 
   it.each(['', '123456789012'])(
