@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import { screen, fireEvent } from '@testing-library/dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { ComponentProps } from 'react';
 import { SaleHUDCard } from './SaleHUDCard';
 import { describe, it, expect } from 'vitest';
 
@@ -20,7 +21,9 @@ const mockSale = {
   client_id: 'client-uuid-123',
 };
 
-function renderCard(sale: typeof mockSale) {
+type SaleProp = ComponentProps<typeof SaleHUDCard>['sale'];
+
+function renderCard(sale: SaleProp) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });

@@ -25,14 +25,23 @@ if (outIdx !== -1) {
   const outFile = args[outIdx + 1];
   const text = existsSync(outFile) ? readFileSync(outFile, 'utf8') : '';
   const errors = text.match(/^\S+\(\d+,\d+\): error TS\d+:.*$/gm) ?? [];
-  const otherErrors = text.match(/error TS\d+:/g) ?? [];
+  // TS5058 "caminho não existe": o runner compartilhado checa tsconfig.e2e.json
+  // (layout do Zapp); aqui não existe — é drift de ferramenta, não erro de código.
+  // Ignorado somente quando o arquivo citado realmente não existe no repo.
+  const missingConfig = text.match(/error TS\d+: The specified path does not exist: '([^']+)'/g) ?? [];
+  const ignorable = missingConfig.filter(line => {
+    const cfg = line.match(/'([^']+)'/)?.[1];
+    return cfg && !existsSync(cfg);
+  });
+  const otherErrors =
+    (text.match(/error TS\d+:/g) ?? []).length - ignorable.length;
   if (errors.length > 0) {
     console.error(`typecheck: ${errors.length} erro(s) de tipo na saída fornecida:`);
     for (const line of errors.slice(0, 50)) console.error(`  ${line}`);
     process.exit(1);
   }
-  if (otherErrors.length > 0) {
-    console.error(`typecheck: ${otherErrors.length} erro(s) TS sem localização na saída fornecida:`);
+  if (otherErrors > 0) {
+    console.error(`typecheck: ${otherErrors} erro(s) TS sem localização na saída fornecida:`);
     console.error(text.slice(0, 2000));
     process.exit(1);
   }
