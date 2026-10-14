@@ -15,7 +15,7 @@ describe('isValidCPF', () => {
     }
   );
 
-  it.each(['111.444.777-34', '52998224724'])(
+  it.each(['111.444.777-34', '52998224724', '111.444.777-45'])(
     'rejeita CPF com dígito verificador errado: %s',
     value => {
       expect(isValidCPF(value)).toBe(false);
@@ -53,7 +53,7 @@ describe('isValidCNPJ', () => {
     }
   );
 
-  it.each(['11.222.333/0001-80', '04252011000111'])(
+  it.each(['11.222.333/0001-80', '04252011000111', '11.222.333/0001-91'])(
     'rejeita CNPJ com dígito verificador errado: %s',
     value => {
       expect(isValidCNPJ(value)).toBe(false);
@@ -92,7 +92,8 @@ describe('isValidCNPJ', () => {
   );
 
   it.each([
-    '12.ABC.345/01DE-34', // DV1 errado
+    '12.ABC.345/01DE-45', // DV1 errado
+    '12.ABC.345/01DE-34', // DV2 errado
     '12.ABC.345/01DE-36', // DV2 errado
     '12.ABC.345/01DE-E5', // letra na posição de dígito verificador
     'AA.AAA.AAA/AAAA-AA', // só letras, tamanho total errado

@@ -45,7 +45,7 @@ function normalizeCnpj(value: string): string {
 }
 
 function calculateCnpjCheckDigit(values: number[], weights: number[]): number {
-  const sum = values.reduce((acc, v, i) => acc + v * (weights[i] ?? 0), 0);
+  const sum = values.reduce((acc, v, i) => acc + v * Number(weights[i]), 0);
   const remainder = sum % 11;
   return remainder < 2 ? 0 : 11 - remainder;
 }
