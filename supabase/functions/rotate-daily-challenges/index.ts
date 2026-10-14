@@ -6,6 +6,7 @@ import {
   getUserClient,
   UnauthorizedError,
 } from "../_shared/auth-client.ts";
+import { isAuthorizedCronJob } from "../_shared/cron-job-auth.ts";
 
 
 // Pool of daily challenge templates with smaller targets
@@ -29,24 +30,27 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
   }
 
   try {
-    // Qualquer usuário autenticado pode disparar a rotação (idempotente —
-    // o card do frontend a invoca para garantir os desafios do dia).
-    try {
-      await getUserClient(req);
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        return new Response(JSON.stringify({ error: 'unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      throw error;
-    }
-
     // Bypass de RLS necessário: escreve daily_challenges globais.
     const supabase = getServiceClient(
       "rotacao diaria escreve desafios globais que usuarios nao escrevem",
     )
+
+    // Job interno (cron diário via trigger_internal_edge_job) OU qualquer
+    // usuário autenticado (idempotente — o card do frontend também invoca
+    // para garantir os desafios do dia).
+    if (!(await isAuthorizedCronJob(req, supabase))) {
+      try {
+        await getUserClient(req);
+      } catch (error) {
+        if (error instanceof UnauthorizedError) {
+          return new Response(JSON.stringify({ error: 'unauthorized' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        throw error;
+      }
+    }
 
     const today = toBusinessDate()
 

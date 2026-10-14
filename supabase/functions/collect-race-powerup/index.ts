@@ -105,18 +105,30 @@ Deno.serve(
         );
       }
 
-      // marca como coletado
-      await admin
+      // marca como coletado — claim atômico: WHERE used_at IS NULL faz com
+      // que só a primeira chamada concorrente altere a linha; as demais
+      // recebem 409 em vez de coletar duas vezes o mesmo power-up.
+      const { data: claimed } = await admin
         .from("race_powerups")
         .update({ used_at: new Date().toISOString() })
-        .eq("id", powerup_id);
+        .eq("id", powerup_id)
+        .eq("salesperson_id", sp.id)
+        .is("used_at", null)
+        .select("id")
+        .maybeSingle();
+      if (!claimed) {
+        return new Response(JSON.stringify({ error: "Already collected" }), {
+          status: 409,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
 
-      // insere evento
+      // insere evento (a coluna do envelope é metadata, não payload)
       await admin.from("race_events").insert({
         season_id: pu.season_id,
         salesperson_id: sp.id,
         event_type: "powerup",
-        payload: { powerup_type: pu.powerup_type, position_pct: positionPct },
+        metadata: { powerup_type: pu.powerup_type, position_pct: positionPct },
       });
 
       // badge: 3 power-ups coletados na season → "powerup_collector"
