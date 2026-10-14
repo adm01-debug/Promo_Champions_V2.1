@@ -1,6 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Zap, Loader2, Eye, EyeOff, ArrowRight, Lock } from 'lucide-react';
+import {
+  Crown,
+  Zap,
+  Loader2,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Lock,
+  Fingerprint,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,6 +46,9 @@ interface AuthFormCardProps {
   setMfaCode: (v: string) => void;
   isMfaLoading: boolean;
   handleMfaVerify: (e: React.FormEvent) => void;
+  passkeyEnabled: boolean;
+  isPasskeyLoading: boolean;
+  handlePasskeySignIn: () => void;
 }
 
 export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCardProps) {
@@ -65,6 +77,9 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
     setMfaCode,
     isMfaLoading,
     handleMfaVerify,
+    passkeyEnabled,
+    isPasskeyLoading,
+    handlePasskeySignIn,
   } = props;
 
   return (
@@ -193,6 +208,25 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                   </>
                 )}
               </Button>
+
+              {passkeyEnabled && (
+                <Button
+                  type="button"
+                  onClick={handlePasskeySignIn}
+                  disabled={isPasskeyLoading}
+                  className="w-full h-11 -mt-2 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400/50 text-white font-semibold transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+                  variant="outline"
+                >
+                  {isPasskeyLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Fingerprint className="h-4 w-4 mr-2 text-cyan-400" />
+                      Entrar com passkey
+                    </>
+                  )}
+                </Button>
+              )}
 
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">

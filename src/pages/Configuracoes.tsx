@@ -11,6 +11,8 @@ import { IPWhitelistManager } from '@/components/security/IPWhitelistManager';
 import { GeoBlockingManager } from '@/components/security/GeoBlockingManager';
 import { PasswordResetApproval } from '@/components/security/PasswordResetApproval';
 import { PasskeySettings } from '@/components/security/PasskeySettings';
+import { KnownDevices } from '@/components/security/KnownDevices';
+import { PushNotificationSettings } from '@/components/security/PushNotificationSettings';
 import { AIAssistantSettings } from '@/components/settings/AIAssistantSettings';
 import { ThemeCustomizer } from '@/components/settings/ThemeCustomizer';
 import { ApiIntegrationSettings } from '@/components/settings/ApiIntegrationSettings';
@@ -35,6 +37,7 @@ import {
   Fingerprint,
   Flag,
   RefreshCw,
+  Smartphone,
 } from 'lucide-react';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { useUserRoles } from '@/hooks/useUserRoles';
@@ -124,6 +127,13 @@ export default function Configuracoes() {
                   >
                     <Fingerprint className="h-3.5 w-3.5 mr-2" />
                     Passkeys
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="devices"
+                    className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[10px] font-black uppercase tracking-widest px-6 h-full transition-all duration-300"
+                  >
+                    <Smartphone className="h-3.5 w-3.5 mr-2" />
+                    Dispositivos
                   </TabsTrigger>
 
                   {isAdmin && (
@@ -258,6 +268,11 @@ export default function Configuracoes() {
               {/* MFA é per-user (auth.uid nas RPCs) — precisa viver numa rota
               acessível a todos, não só no /seguranca admin-only. */}
               <MFASetup />
+            </TabsContent>
+
+            <TabsContent value="devices" className="mt-6 space-y-6">
+              <KnownDevices />
+              <PushNotificationSettings />
             </TabsContent>
 
             {isAdmin && (

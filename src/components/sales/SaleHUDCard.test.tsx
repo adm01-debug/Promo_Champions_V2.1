@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { screen, fireEvent } from '@testing-library/dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SaleHUDCard } from './SaleHUDCard';
 import { describe, it, expect } from 'vitest';
 
@@ -19,9 +20,20 @@ const mockSale = {
   client_id: 'client-uuid-123',
 };
 
+function renderCard(sale: typeof mockSale) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <SaleHUDCard sale={sale} index={0} />
+    </QueryClientProvider>
+  );
+}
+
 describe('SaleHUDCard', () => {
   it('renders sale information correctly', () => {
-    render(<SaleHUDCard sale={mockSale} index={0} />);
+    renderCard(mockSale);
 
     expect(screen.getByText('Logística Alpha')).toBeDefined();
     expect(screen.getByText(/SALE-001/)).toBeDefined();
@@ -30,7 +42,7 @@ describe('SaleHUDCard', () => {
   });
 
   it('shows AI insights when brain icon is clicked', () => {
-    render(<SaleHUDCard sale={mockSale} index={0} />);
+    renderCard(mockSale);
 
     const aiButton = screen.getByTitle('Predição de IA');
     fireEvent.click(aiButton);
@@ -41,7 +53,7 @@ describe('SaleHUDCard', () => {
   });
 
   it('applies correct color for high prediction scores', () => {
-    render(<SaleHUDCard sale={mockSale} index={0} />);
+    renderCard(mockSale);
 
     const aiButton = screen.getByTitle('Predição de IA');
     fireEvent.click(aiButton);
@@ -56,7 +68,7 @@ describe('SaleHUDCard', () => {
       ai_prediction_score: undefined,
       ai_prediction_reasoning: undefined,
     };
-    render(<SaleHUDCard sale={saleNoAI} index={0} />);
+    renderCard(saleNoAI);
 
     const aiButton = screen.getByTitle('Predição de IA');
     fireEvent.click(aiButton);
