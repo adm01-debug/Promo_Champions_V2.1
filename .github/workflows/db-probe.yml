@@ -43,5 +43,5 @@ jobs:
       - name: Rodar sondagem (read-only)
         run: >
           docker run --rm -v "$PWD/probe.sql:/probe.sql:ro"
-          postgres:16
+          postgres:17
           psql "$SUPABASE_DB_URL" -At -f /probe.sql
