@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { winRate } from '@/lib/winRate';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 export interface SeasonStats {
@@ -37,7 +38,7 @@ const computeStats = (rows: WLAnalysisRow[], label: string): SeasonStats => {
     label,
     total,
     wins,
-    winRate: total ? (wins / total) * 100 : 0,
+    winRate: winRate(wins, total - wins),
     totalAmount,
     avgCycle,
   };

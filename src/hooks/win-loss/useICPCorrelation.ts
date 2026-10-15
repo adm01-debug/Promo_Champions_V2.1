@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { winRate } from '@/lib/winRate';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 export interface ICPCell {
@@ -32,7 +33,7 @@ export const useICPCorrelation = (rows: WLAnalysisRow[]) => {
     });
     const cells = Array.from(map.values()).map(c => ({
       ...c,
-      winRate: c.total ? (c.wins / c.total) * 100 : 0,
+      winRate: winRate(c.wins, c.total - c.wins),
     }));
     const segments = Array.from(new Set(cells.map(c => c.segment))).sort();
     const buckets = ['< R$5k', 'R$5–20k', 'R$20–50k', 'R$50–100k', '> R$100k'];

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus } from '@/constants';
+import { winRate } from '@/lib/winRate';
 
 export interface HourCell {
   dow: number; // 0=Sun .. 6=Sat
@@ -56,7 +57,7 @@ export function useWinByHourMatrix() {
         if (isWonSaleStatus(r.status)) cell.wins++;
         else cell.losses++;
         cell.total = cell.wins + cell.losses;
-        cell.winRate = cell.total ? (cell.wins / cell.total) * 100 : 0;
+        cell.winRate = winRate(cell.wins, cell.losses);
       });
 
       return Array.from(grid.values());

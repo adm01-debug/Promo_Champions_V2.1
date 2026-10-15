@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
+import { winRate as computeWinRate } from '@/lib/winRate';
 
 export interface CoachingInsight {
   area: string;
@@ -84,16 +85,14 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
 
       const wins = allOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
       const losses = allOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.LOST).length;
-      const totalOutcomes = allOutcomes.length;
-      const winRate = totalOutcomes > 0 ? (wins / totalOutcomes) * 100 : 0;
+      const winRate = computeWinRate(wins, losses);
 
       // Team average win rate
       const teamOutcomes = allTeamOutcomes || [];
       const teamWins = teamOutcomes.filter(
         o => o.outcome === WIN_LOSS_OUTCOME.WON
       ).length;
-      const teamWinRate =
-        teamOutcomes.length > 0 ? (teamWins / teamOutcomes.length) * 100 : 0;
+      const teamWinRate = computeWinRate(teamWins, teamOutcomes.length - teamWins);
       const comparisonToTeam = teamWinRate > 0 ? winRate - teamWinRate : 0;
 
       // Average deal value
@@ -138,7 +137,7 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
           title: 'Boa taxa de conversão',
           description: `Taxa de ${winRate.toFixed(1)}% está acima da média. Continue mantendo a qualidade no processo.`,
         });
-      } else if (totalOutcomes > 0) {
+      } else if (wins + losses > 0) {
         improvements.push({
           title: 'Taxa de conversão abaixo do esperado',
           description: `Taxa de ${winRate.toFixed(1)}% pode ser melhorada com melhor qualificação de leads.`,

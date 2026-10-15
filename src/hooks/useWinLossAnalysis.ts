@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WIN_LOSS_OUTCOME } from '@/constants';
+import { winRate } from '@/lib/winRate';
 
 export interface WinLossDetail {
   id: string;
@@ -50,7 +51,6 @@ export const useWinLossAnalysis = () => {
       const typedOutcomes = (outcomes || []) as WinLossDetail[];
       const wins = typedOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON);
       const losses = typedOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.LOST);
-      const total = wins.length + losses.length;
 
       // Count reasons
       const countReasons = (items: WinLossDetail[]) => {
@@ -79,10 +79,7 @@ export const useWinLossAnalysis = () => {
         .map(([name, data]) => ({
           name,
           ...data,
-          winRate:
-            data.wins + data.losses > 0
-              ? Math.round((data.wins / (data.wins + data.losses)) * 100)
-              : 0,
+          winRate: Math.round(winRate(data.wins, data.losses)),
         }))
         .sort((a, b) => b.wins - a.wins);
 
@@ -100,10 +97,7 @@ export const useWinLossAnalysis = () => {
         .map(([name, data]) => ({
           name,
           ...data,
-          winRate:
-            data.wins + data.losses > 0
-              ? Math.round((data.wins / (data.wins + data.losses)) * 100)
-              : 0,
+          winRate: Math.round(winRate(data.wins, data.losses)),
         }))
         .sort((a, b) => b.wins - a.wins);
 
@@ -126,7 +120,7 @@ export const useWinLossAnalysis = () => {
       return {
         totalWins: wins.length,
         totalLosses: losses.length,
-        winRate: total > 0 ? Math.round((wins.length / total) * 100) : 0,
+        winRate: Math.round(winRate(wins.length, losses.length)),
         topWinReasons: countReasons(wins),
         topLossReasons: countReasons(losses),
         monthlyTrend,

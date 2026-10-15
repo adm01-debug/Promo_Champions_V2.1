@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { winRate } from '@/lib/winRate';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 export interface WLKpis {
@@ -21,20 +22,21 @@ export const useWLKpis = (rows: WLAnalysisRow[] | undefined): WLKpis => {
     const wins = list.filter(r => r.outcome === 'won');
     const losses = list.filter(r => r.outcome === 'lost');
     const total = wins.length + losses.length;
-    const winRate = total ? (wins.length / total) * 100 : 0;
+    const winRatePct = winRate(wins.length, losses.length);
     // Forecast: weight last 14d analyses 2x
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 14);
     const recent = list.filter(r => new Date(r.analyzed_at) >= cutoff);
+    const recentWins = recent.filter(r => r.outcome === 'won').length;
     const recentWinRate = recent.length
-      ? (recent.filter(r => r.outcome === 'won').length / recent.length) * 100
-      : winRate;
-    const forecastWinRate = winRate * 0.4 + recentWinRate * 0.6;
+      ? winRate(recentWins, recent.length - recentWins)
+      : winRatePct;
+    const forecastWinRate = winRatePct * 0.4 + recentWinRate * 0.6;
     return {
       total,
       wins: wins.length,
       losses: losses.length,
-      winRate,
+      winRate: winRatePct,
       avgCycleWon: avg(wins.map(r => Number(r.cycle_days) || 0).filter(n => n > 0)),
       avgCycleLost: avg(losses.map(r => Number(r.cycle_days) || 0).filter(n => n > 0)),
       avgAmountWon: avg(wins.map(r => Number(r.amount) || 0).filter(n => n > 0)),
@@ -78,7 +80,7 @@ export const useWLTrend = (
         period,
         wins: v.wins,
         losses: v.losses,
-        winRate: v.wins + v.losses ? (v.wins / (v.wins + v.losses)) * 100 : 0,
+        winRate: winRate(v.wins, v.losses),
       }))
       .sort((a, b) => a.period.localeCompare(b.period));
   }, [rows, granularity]);
@@ -126,7 +128,7 @@ export const aggregateBySalesperson = (
         salespersonId: sp,
         name: spNames.get(sp) ?? '—',
         total,
-        winRate: total ? (wins.length / total) * 100 : 0,
+        winRate: winRate(wins.length, losses.length),
         avgCycle: avg(list.map(r => Number(r.cycle_days) || 0).filter(n => n > 0)),
         avgAmountWon: avg(wins.map(r => Number(r.amount) || 0).filter(n => n > 0)),
         topWinReason: top(wins.map(r => r.primary_reason)),
@@ -164,7 +166,7 @@ export const aggregateByCompetitor = (rows: WLAnalysisRow[]): CompetitorStat[] =
         encounters: list.length,
         losses: losses.length,
         wins: wins.length,
-        winRateVs: list.length ? (wins.length / list.length) * 100 : 0,
+        winRateVs: winRate(wins.length, list.length - wins.length),
         avgLostAmount: avg(losses.map(r => Number(r.amount) || 0).filter(n => n > 0)),
         topReason: top(losses.map(r => r.primary_reason)),
       };

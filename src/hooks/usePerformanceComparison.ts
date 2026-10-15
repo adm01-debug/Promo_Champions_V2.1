@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
+import { winRate } from '@/lib/winRate';
 
 export interface SalespersonPerformance {
   id: string;
@@ -95,7 +96,7 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
             totalRevenue,
             avgDealSize:
               completedSales.length > 0 ? totalRevenue / completedSales.length : 0,
-            winRate: totalOutcomes > 0 ? Math.round((wins / totalOutcomes) * 100) : 0,
+            winRate: Math.round(winRate(wins, totalOutcomes - wins)),
             activitiesCount: spActivities.length,
             totalActivities: spActivities.length,
             conversionRate:

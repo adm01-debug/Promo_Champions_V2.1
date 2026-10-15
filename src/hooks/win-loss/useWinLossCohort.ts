@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
+import { winRate } from '@/lib/winRate';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
 export interface CohortCell {
@@ -64,7 +65,7 @@ export const useWinLossCohort = (rows: WLAnalysisRow[]) => {
         closedMonth,
         total: v.total,
         wins: v.wins,
-        winRate: v.total ? (v.wins / v.total) * 100 : 0,
+        winRate: winRate(v.wins, v.total - v.wins),
       };
     });
     const createdMonths = Array.from(new Set(cells.map(c => c.createdMonth))).sort();
