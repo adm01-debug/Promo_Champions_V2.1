@@ -44,7 +44,10 @@ export const KnownDevices = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchDevices = async () => {
-    if (!user) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const data = await knownDeviceService.listForUser(user.id);
