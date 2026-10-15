@@ -29,6 +29,9 @@ concurrency:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    # pg_dump exige major do cliente >= major do servidor. O Supabase roda
+    # Postgres 17; manter esta tag alinhada com a versão do projeto.
+    container: postgres:17
     timeout-minutes: 30
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -45,11 +48,11 @@ jobs:
           fi
           echo "run=true" >> "$GITHUB_OUTPUT"
 
-      - name: Instalar cliente Postgres
+      - name: Conferir versão do servidor
         if: steps.gate.outputs.run == 'true'
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client-16
+          psql "$SUPABASE_DB_URL" -tAc 'SHOW server_version' || true
+          pg_dump --version
 
       - name: pg_dump → artifact
         if: steps.gate.outputs.run == 'true'
