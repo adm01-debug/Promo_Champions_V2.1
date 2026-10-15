@@ -7,6 +7,7 @@ import {
 } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { winRate } from '@/lib/winRate';
 import {
   DateRange,
   getPreviousPeriodRange,
@@ -306,8 +307,7 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
       // Win/Loss
       const wonDeals = currentSales.filter(s => isWonSaleStatus(s.status)).length;
       const lostDeals = currentSales.filter(s => isLostSaleStatus(s.status)).length;
-      const winRate =
-        wonDeals + lostDeals > 0 ? (wonDeals / (wonDeals + lostDeals)) * 100 : 0;
+      const closerWinRate = winRate(wonDeals, lostDeals);
       const lostReasonCounts: Record<string, number> = {};
       dealOutcomes
         .filter(d => d.outcome === WIN_LOSS_OUTCOME.LOST)
@@ -351,7 +351,7 @@ export function useBICloser({ dateRange, salespersonId }: UseBICloserOptions) {
         highestTicketClients,
         wonDeals,
         lostDeals,
-        winRate,
+        winRate: closerWinRate,
         lostReasons,
         revenueByDay,
         dealsByCategory,

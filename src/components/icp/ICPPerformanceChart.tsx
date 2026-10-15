@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Percent, DollarSign } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { WIN_LOSS_OUTCOME } from '@/constants';
+import { winRate } from '@/lib/winRate';
 
 import { formatBRL } from '@/lib/money';
 export function ICPPerformanceChart() {
@@ -61,20 +62,20 @@ export function ICPPerformanceChart() {
       return [
         {
           name: 'ICP',
-          winRate:
-            performance.icp.total > 0
-              ? (performance.icp.wins / performance.icp.total) * 100
-              : 0,
+          winRate: winRate(
+            performance.icp.wins,
+            performance.icp.total - performance.icp.wins
+          ),
           avgTicket:
             performance.icp.wins > 0 ? performance.icp.amount / performance.icp.wins : 0,
           color: '#8b5cf6',
         },
         {
           name: 'Non-ICP',
-          winRate:
-            performance.nonIcp.total > 0
-              ? (performance.nonIcp.wins / performance.nonIcp.total) * 100
-              : 0,
+          winRate: winRate(
+            performance.nonIcp.wins,
+            performance.nonIcp.total - performance.nonIcp.wins
+          ),
           avgTicket:
             performance.nonIcp.wins > 0
               ? performance.nonIcp.amount / performance.nonIcp.wins

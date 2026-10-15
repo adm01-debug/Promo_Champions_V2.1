@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
+import { winRate } from '@/lib/winRate';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 export interface SelfBenchmarkMetric {
@@ -67,7 +68,7 @@ export function useSelfBenchmark(salespersonId?: string) {
         const revenue = mSales.reduce((sum, s) => sum + Number(s.amount), 0);
         const avgTicket = mSales.length > 0 ? revenue / mSales.length : 0;
         const wins = mOutcomes.filter(o => o.outcome === WIN_LOSS_OUTCOME.WON).length;
-        const winRate = mOutcomes.length > 0 ? (wins / mOutcomes.length) * 100 : 0;
+        const winRatePct = winRate(wins, mOutcomes.length - wins);
         const conversion =
           mAllSales.length > 0 ? (mSales.length / mAllSales.length) * 100 : 0;
 
@@ -76,7 +77,7 @@ export function useSelfBenchmark(salespersonId?: string) {
           deals: mSales.length,
           avgTicket,
           activities: mActivities.length,
-          winRate,
+          winRate: winRatePct,
           conversion,
           isCurrent: m.isCurrent,
         };

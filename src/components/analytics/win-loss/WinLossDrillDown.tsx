@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, Package, Clock, Trophy, XCircle } from 'lucide-react';
 import { formatBRL } from '@/lib/money';
+import { winRate } from '@/lib/winRate';
 import { WIN_LOSS_OUTCOME } from '@/constants';
 
 interface SP {
@@ -39,33 +40,30 @@ const SalespersonList: FC<{ items: SP[] }> = memo(({ items }) => (
     <CardContent className="p-0">
       <ScrollArea className="h-[400px]">
         <div className="divide-y divide-border/30">
-          {items.map((sp, i) => {
-            const total = sp.wins + sp.losses || 1;
-            return (
-              <div key={i} className="p-4 hover:bg-primary/5 transition-colors">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">{sp.name}</span>
-                  <Badge variant="outline" className="text-[10px]">
-                    {sp.winRate}% WR
-                  </Badge>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <div
-                    className="h-1.5 bg-success/40 rounded-full"
-                    style={{ width: `${(sp.wins / total) * 100}%` }}
-                  />
-                  <div
-                    className="h-1.5 bg-destructive/40 rounded-full"
-                    style={{ width: `${(sp.losses / total) * 100}%` }}
-                  />
-                </div>
-                <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-                  <span>{sp.wins} vitórias</span>
-                  <span>{sp.losses} perdas</span>
-                </div>
+          {items.map((sp, i) => (
+            <div key={i} className="p-4 hover:bg-primary/5 transition-colors">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium">{sp.name}</span>
+                <Badge variant="outline" className="text-[10px]">
+                  {sp.winRate}% WR
+                </Badge>
               </div>
-            );
-          })}
+              <div className="flex gap-1 items-center">
+                <div
+                  className="h-1.5 bg-success/40 rounded-full"
+                  style={{ width: `${winRate(sp.wins, sp.losses)}%` }}
+                />
+                <div
+                  className="h-1.5 bg-destructive/40 rounded-full"
+                  style={{ width: `${winRate(sp.losses, sp.wins)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                <span>{sp.wins} vitórias</span>
+                <span>{sp.losses} perdas</span>
+              </div>
+            </div>
+          ))}
         </div>
       </ScrollArea>
     </CardContent>

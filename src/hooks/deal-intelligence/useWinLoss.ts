@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { winRate } from '@/lib/winRate';
 
 export interface WinLossAnalysis {
   id: string;
@@ -89,7 +90,6 @@ export const useWinLossSummary = () =>
       }>;
       const wins = rows.filter(r => r.outcome === 'won');
       const losses = rows.filter(r => r.outcome === 'lost');
-      const total = rows.length || 1;
       const avg = (arr: Array<number | null>) => {
         const v = arr.filter((x): x is number => x != null);
         return v.length ? v.reduce((a, b) => a + b, 0) / v.length : 0;
@@ -102,7 +102,7 @@ export const useWinLossSummary = () =>
         return Array.from(m.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—';
       };
       return {
-        winRate: (wins.length / total) * 100,
+        winRate: winRate(wins.length, losses.length),
         totalAnalyzed: rows.length,
         avgCycleWon: avg(wins.map(w => w.cycle_days)),
         avgCycleLost: avg(losses.map(l => l.cycle_days)),
