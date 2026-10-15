@@ -167,15 +167,13 @@ Página (Page) → Componentes (UI) → Hooks (Lógica) → Supabase Client / Ed
 | Funcionalidade          | Componente(s)                                     | Descrição                              |
 | ----------------------- | ------------------------------------------------- | -------------------------------------- |
 | MFA Setup (2FA)         | `MFASetup.tsx`                                    | Configuração de autenticação 2 fatores |
-| MFA Verificação         | `MFAVerification.tsx`                             | Verificação de código MFA              |
+| MFA Verificação         | fluxo em `useAuthForm.ts`                         | Verificação de código MFA no login     |
 | Passkeys/WebAuthn       | `PasskeySettings.tsx`                             | Gerenciar chaves de segurança          |
-| IP Whitelist            | `IPWhitelistManager.tsx` / `IPWhitelistPanel.tsx` | Whitelist de IPs permitidos            |
+| IP Whitelist            | `IPWhitelistManager.tsx` / `IPWhitelistTable.tsx` | Whitelist de IPs permitidos            |
 | IPs Bloqueados          | `BlockedIPsPanel.tsx`                             | Gerenciar IPs bloqueados               |
 | Geoblocking             | `GeoBlockingManager.tsx`                          | Restrição por região geográfica        |
 | Dispositivos Conhecidos | `KnownDevices.tsx`                                | Gerenciar dispositivos confiáveis      |
-| Gerenciador de Sessões  | `SessionManager.tsx`                              | Monitorar sessões ativas               |
-| Gerenciador de Roles    | `RoleManager.tsx`                                 | Administração de papéis                |
-| Reautenticação          | `ReauthDialog.tsx`                                | Dialog para ações sensíveis            |
+| Gerenciador de Roles    | `settings/RoleManagement.tsx`                     | Administração de papéis                |
 | Aprovação Reset Senha   | `PasswordResetApproval.tsx`                       | Admin aprova resets de senha           |
 | Push Notifications      | `PushNotificationSettings.tsx`                    | Configurar notificações push           |
 | Rate Limit Dashboard    | `RateLimitDashboard.tsx`                          | Monitoramento de rate limiting         |
