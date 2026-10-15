@@ -43,7 +43,7 @@ export const KnownDevices = () => {
   const [devices, setDevices] = useState<KnownDevice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchDevices = async () => {
+  const fetchDevices = async (isCancelled?: () => boolean) => {
     if (!user) {
       setIsLoading(false);
       return;
@@ -51,18 +51,22 @@ export const KnownDevices = () => {
 
     try {
       const data = await knownDeviceService.listForUser(user.id);
-      setDevices(data);
+      if (!isCancelled?.()) setDevices(data);
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching devices:', error);
       }
     } finally {
-      setIsLoading(false);
+      if (!isCancelled?.()) setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDevices();
+    let cancelled = false;
+    fetchDevices(() => cancelled);
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [user]);
 
