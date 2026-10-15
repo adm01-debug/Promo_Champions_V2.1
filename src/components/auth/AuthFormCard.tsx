@@ -167,7 +167,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 className="relative w-full h-12 mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.4)]"
               >
                 {isMfaLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-5 w-5 motion-safe:animate-spin" />
                 ) : (
                   'VERIFICAR CÓDIGO'
                 )}
@@ -183,7 +183,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 variant="outline"
               >
                 {isGoogleLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 motion-safe:animate-spin" />
                 ) : (
                   <>
                     <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
@@ -295,7 +295,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                             className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest"
                           >
                             {isResetLoading ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="h-4 w-4 motion-safe:animate-spin" />
                             ) : (
                               'Enviar Resgate'
                             )}
@@ -341,7 +341,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                   />
                   <div className="relative flex items-center justify-center gap-2">
                     {isLoading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-5 w-5 motion-safe:animate-spin" />
                     ) : (
                       <>
                         ACESSAR CIRCUITO
