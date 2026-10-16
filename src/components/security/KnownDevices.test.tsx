@@ -55,4 +55,24 @@ describe('KnownDevices', () => {
       expect(screen.getByText('Meu Notebook')).toBeInTheDocument();
     });
   });
+
+  it('não atualiza estado quando o componente desmonta durante o fetch', async () => {
+    vi.mocked(useAuth).mockReturnValue({ user: { id: 'u1' } } as never);
+    let resolveFetch: (v: unknown[]) => void = () => {};
+    vi.mocked(knownDeviceService.listForUser).mockImplementation(
+      () =>
+        new Promise(resolve => {
+          resolveFetch = resolve;
+        })
+    );
+
+    const { unmount } = render(<KnownDevices />);
+    unmount();
+
+    await expect(async () => {
+      resolveFetch([{ id: 'd1', device_fingerprint: 'fp', device_name: 'X' } as never]);
+      await Promise.resolve();
+    }).not.toThrow();
+    expect(knownDeviceService.listForUser).toHaveBeenCalledWith('u1');
+  });
 });

@@ -66,6 +66,13 @@ jobs:
           awk -F'|' '{v=$2; gsub(/[^0-9]/,"",v); if(v ~ /^[0-9]{8,}$/) print v}' \
             /tmp/migration_list.txt | sort -u > /tmp/remote_versions.txt
 
+          # Gate cego = falso negativo garantido: se o parser extraiu zero
+          # versões (CLI mudou formato ou falhou), o check não pode passar.
+          if [ ! -s /tmp/remote_versions.txt ]; then
+            echo "::error::Nenhuma versão remota extraída de 'supabase migration list' — formato do CLI pode ter mudado ou a consulta falhou. Drift check cego não pode aprovar."
+            exit 1
+          fi
+
           # Versões do repo (prefixo antes do primeiro "_").
           ls supabase/migrations | sed 's/_.*\.sql$//' | sort -u > /tmp/repo_versions.txt
 

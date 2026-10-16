@@ -21,7 +21,7 @@ const PATTERNS = [
   ['table',    new RegExp(String.raw`create\s+table\s+(?:if\s+not\s+exists\s+)?${SCH}(${ID})`, 'gi'), 'tbl'],
   ['view',     new RegExp(String.raw`create\s+(?:or\s+replace\s+)?view\s+${SCH}(${ID})`, 'gi'), 'view'],
   ['matview',  new RegExp(String.raw`create\s+materialized\s+view\s+(?:if\s+not\s+exists\s+)?${SCH}(${ID})`, 'gi'), 'mv'],
-  ['trigger',  new RegExp(String.raw`create\s+(?:constraint\s+)?trigger\s+(${ID})`, 'gi'), 'trg'],
+  ['trigger',  new RegExp(String.raw`create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+(${ID})`, 'gi'), 'trg'],
   ['cron',     /cron\.schedule\s*\(\s*'([^']+)'/gi, 'cron'],
   ['policy',   new RegExp(String.raw`create\s+policy\s+(${ID})\s+on\s+${SCH}(${ID})`, 'gi'), 'pol'],
   ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'idx'],
@@ -33,6 +33,20 @@ const PATTERNS = [
 
 const strip = (s) => s?.replace(/^"|"$/g, '');
 
+// Remove comentários SQL antes dos regex — senão DDL comentada
+// (`-- CREATE TABLE x`, `/* CREATE FUNCTION y */`) gera probes falsas.
+// Limitação aceita: `--` dentro de string literal também é removido
+// (raríssimo em DDL de migrations).
+const stripComments = (sql) =>
+  sql
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .split('\n')
+    .map((line) => {
+      const i = line.indexOf('--');
+      return i === -1 ? line : line.slice(0, i);
+    })
+    .join('\n');
+
 const files = readdirSync(MIG_DIR)
   .filter((f) => /^\d{8,14}_.*\.sql$/.test(f) && f.split('_')[0] >= since)
   .sort();
@@ -42,7 +56,7 @@ const unprobeable = [];
 
 for (const f of files) {
   const version = f.split('_')[0];
-  const sql = readFileSync(join(MIG_DIR, f), 'utf8');
+  const sql = stripComments(readFileSync(join(MIG_DIR, f), 'utf8'));
   let found = 0;
   for (const [kind, re] of PATTERNS) {
     re.lastIndex = 0;
