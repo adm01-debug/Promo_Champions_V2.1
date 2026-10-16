@@ -63,7 +63,7 @@ jobs:
           supabase migration list > /tmp/migration_list.txt
           cat /tmp/migration_list.txt
 
-          awk -F'|' '{gsub(/[[:space:]]/,"",$2); if($2 ~ /^[0-9]+$/) print $2}' \
+          awk -F'|' '{v=$2; gsub(/[^0-9]/,"",v); if(v ~ /^[0-9]{8,}$/) print v}' \
             /tmp/migration_list.txt | sort -u > /tmp/remote_versions.txt
 
           # Versões do repo (prefixo antes do primeiro "_").
