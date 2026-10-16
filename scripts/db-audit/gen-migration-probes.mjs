@@ -21,11 +21,16 @@ const PATTERNS = [
   ['table',    new RegExp(String.raw`create\s+table\s+(?:if\s+not\s+exists\s+)?${SCH}(${ID})`, 'gi'), 'tbl'],
   ['view',     new RegExp(String.raw`create\s+(?:or\s+replace\s+)?view\s+${SCH}(${ID})`, 'gi'), 'view'],
   ['matview',  new RegExp(String.raw`create\s+materialized\s+view\s+(?:if\s+not\s+exists\s+)?${SCH}(${ID})`, 'gi'), 'mv'],
-  ['trigger',  new RegExp(String.raw`create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+(${ID})`, 'gi'), 'trg'],
+  // Trigger: captura também a tabela do ON — o mesmo tgname pode existir em
+  // tabelas diferentes, então sondar só o nome produziria falso-positivo.
+  ['trigger',  new RegExp(String.raw`create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+(${ID})[^;]*?\bon\s+${SCH}(${ID})`, 'gi'), 'trg'],
   ['cron',     /cron\.schedule\s*\(\s*'([^']+)'/gi, 'cron'],
   ['policy',   new RegExp(String.raw`create\s+policy\s+(${ID})\s+on\s+${SCH}(${ID})`, 'gi'), 'pol'],
   ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'idx'],
   ['constraint', new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+constraint\s+(${ID})`, 'gi'), 'con'],
+  // Forma `ALTER TABLE t DROP CONSTRAINT a, ADD CONSTRAINT b` — o ADD não vem
+  // colado no nome da tabela, então o pattern acima não o vê.
+  ['constraint', new RegExp(String.raw`,\s*add\s+constraint\s+(${ID})`, 'gi'), 'con'],
   ['column',   new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
   ['extension', /create\s+extension\s+(?:if\s+not\s+exists\s+)?"([^"]+)"|create\s+extension\s+(?:if\s+not\s+exists\s+)?([a-zA-Z_][a-zA-Z0-9_]*)/gi, 'ext'],
   ['type',     new RegExp(String.raw`create\s+type\s+${SCH}(${ID})\s+as`, 'gi'), 'type'],
@@ -52,6 +57,7 @@ const files = readdirSync(MIG_DIR)
   .sort();
 
 const rows = [];
+const seen = new Set();
 const unprobeable = [];
 
 for (const f of files) {
@@ -67,17 +73,28 @@ for (const f of files) {
       if (kind === 'policy') {
         obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
       } else if (kind === 'constraint' || kind === 'column') {
-        schema = groups[0] ?? 'public'; extra = groups[1]; obj = groups[2];
+        // Dois shapes: ALTER TABLE t ADD CONSTRAINT c → (schema, tabela, obj)
+        // e ", ADD CONSTRAINT c" → (obj) sem tabela.
+        if (groups[2] !== undefined) {
+          schema = groups[0] ?? 'public'; extra = groups[1]; obj = groups[2];
+        } else {
+          schema = 'public'; extra = ''; obj = groups[0];
+        }
+      } else if (kind === 'trigger') {
+        obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
       } else if (kind === 'extension') {
         schema = ''; obj = groups[0] ?? groups[1];
       } else if (kind === 'cron') {
         schema = ''; obj = groups[0];
-      } else if (kind === 'trigger' || kind === 'index') {
+      } else if (kind === 'index') {
         schema = ''; obj = groups[0];
       } else {
         schema = groups[0] ?? 'public'; obj = groups[1];
       }
       if (!obj) continue;
+      const key = `${version}|${kind}|${schema}|${obj}|${extra ?? ''}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
       rows.push({ version, kind, schema, obj, extra, file: f });
       found++;
     }
@@ -105,7 +122,7 @@ SELECT version || '|' || kind || '|' ||
          WHEN 'table'      THEN EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema=probes.schema AND table_name=probes.obj)::text
          WHEN 'view'       THEN EXISTS(SELECT 1 FROM information_schema.views WHERE table_schema=probes.schema AND table_name=probes.obj)::text
          WHEN 'matview'    THEN EXISTS(SELECT 1 FROM pg_matviews WHERE schemaname=probes.schema AND matviewname=probes.obj)::text
-         WHEN 'trigger'    THEN EXISTS(SELECT 1 FROM pg_trigger WHERE tgname=probes.obj)::text
+         WHEN 'trigger'    THEN EXISTS(SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE t.tgname=probes.obj AND c.relname=probes.aux AND n.nspname=probes.schema AND NOT t.tgisinternal)::text
          WHEN 'cron'       THEN EXISTS(SELECT 1 FROM cron.job WHERE jobname=probes.obj)::text
          WHEN 'policy'     THEN EXISTS(SELECT 1 FROM pg_policies WHERE schemaname=probes.schema AND policyname=probes.obj AND tablename=probes.aux)::text
          WHEN 'index'      THEN EXISTS(SELECT 1 FROM pg_indexes WHERE indexname=probes.obj)::text
