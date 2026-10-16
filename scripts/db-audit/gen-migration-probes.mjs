@@ -44,12 +44,24 @@ function listMigrations(filter) {
     .filter((f) => f.endsWith('.sql'))
     .sort();
   if (!filter) return files;
-  const re = new RegExp(filter.replace(/\*/g, '.*'), 'i');
+  // Escape regex metacharacters, then translate glob wildcards
+  const escaped = filter.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(escaped.replace(/\*/g, '.*').replace(/\?/g, '.'), 'i');
   return files.filter((f) => re.test(f));
 }
 
+/** Remove SQL comments before running regex patterns to avoid false positives. */
+function stripComments(sql) {
+  // Block comments /* ... */ (non-greedy)
+  let s = sql.replace(/\/\*[\s\S]*?\*\//g, ' ');
+  // Single-line comments --...
+  s = s.replace(/--[^\n]*/g, '');
+  return s;
+}
+
 // Extrai nomes de objetos de statements DDL relevantes
-function parseStatements(sql) {
+function parseStatements(rawSql) {
+  const sql = stripComments(rawSql);
   const probes = [];
 
   // CREATE TABLE [IF NOT EXISTS] schema.table
@@ -91,13 +103,13 @@ function parseStatements(sql) {
     });
   }
 
-  // CREATE POLICY name ON table
+  // CREATE POLICY name ON table — handles quoted names with spaces
   for (const m of sql.matchAll(
-    /CREATE\s+POLICY\s+"?(\w+)"?\s+ON\s+(?:(\w+)\.)?(\w+)/gi,
+    /CREATE\s+POLICY\s+(?:"([^"]+)"|(\w+))\s+ON\s+(?:(\w+)\.)?(\w+)/gi,
   )) {
-    const policy = m[1];
-    const schema = m[2] || 'public';
-    const table = m[3];
+    const policy = m[1] ?? m[2]; // quoted name (m[1]) or bare identifier (m[2])
+    const schema = m[3] || 'public';
+    const table = m[4];
     probes.push({
       type: 'policy',
       sql: `SELECT COUNT(*) AS found FROM pg_policies WHERE schemaname = '${schema}' AND tablename = '${table}' AND policyname = '${policy}'; -- expect 1`,
@@ -105,18 +117,24 @@ function parseStatements(sql) {
     });
   }
 
-  // ALTER TABLE [schema.]table ADD COLUMN [IF NOT EXISTS] colname
-  for (const m of sql.matchAll(
-    /ALTER\s+TABLE\s+(?:(?:IF\s+EXISTS)\s+)?(?:(\w+)\.)?(\w+)\s+ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)/gi,
+  // ALTER TABLE [schema.]table ... ADD COLUMN [IF NOT EXISTS] col
+  // Two-phase: capture entire statement, then iterate all ADD COLUMN within it
+  for (const stmt of sql.matchAll(
+    /ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:(\w+)\.)?(\w+)(\s[^;]+;)/gi,
   )) {
-    const schema = m[1] || 'public';
-    const table = m[2];
-    const col = m[3];
-    probes.push({
-      type: 'column',
-      sql: `SELECT COUNT(*) AS found FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}' AND column_name = '${col}'; -- expect 1`,
-      label: `column ${schema}.${table}.${col}`,
-    });
+    const body = stmt[3];
+    if (!/ADD\s+COLUMN/i.test(body)) continue;
+    const schema = stmt[1] || 'public';
+    const table = stmt[2];
+    for (const c of body.matchAll(
+      /ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)/gi,
+    )) {
+      probes.push({
+        type: 'column',
+        sql: `SELECT COUNT(*) AS found FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}' AND column_name = '${c[1]}'; -- expect 1`,
+        label: `column ${schema}.${table}.${c[1]}`,
+      });
+    }
   }
 
   // CREATE TYPE [schema.]name AS ENUM
