@@ -38,10 +38,14 @@ jobs:
             echo "::error::since_version inválido: $SINCE"; exit 1; }
 
       - name: Gerar probes
-        run: node scripts/db-audit/gen-migration-probes.mjs "$SINCE" > probe.sql
+        run: |
+          node scripts/db-audit/gen-migration-probes.mjs "$SINCE" > probe.sql
+          grep -q 'EXISTS' probe.sql || {
+            echo "::error::Zero probes geradas para since=$SINCE — sondagem seria inócua."
+            exit 1; }
 
       - name: Rodar sondagem (read-only)
         run: >
           docker run --rm -v "$PWD/probe.sql:/probe.sql:ro"
           postgres:17
-          psql "$SUPABASE_DB_URL" -At -f /probe.sql
+          psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1 -f /probe.sql

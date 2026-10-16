@@ -30,8 +30,9 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     # pg_dump exige major do cliente >= major do servidor. O Supabase roda
-    # Postgres 17; manter esta tag alinhada com a versão do projeto.
-    container: postgres:17
+    # Postgres 17 — a tag do `docker run` abaixo precisa acompanhar essa major.
+    # (O job NÃO pode usar `container: postgres:17`: upload-artifact precisa do
+    # Node do runner, que a imagem postgres não tem.)
     timeout-minutes: 30
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -51,8 +52,8 @@ jobs:
       - name: Conferir versão do servidor
         if: steps.gate.outputs.run == 'true'
         run: |
-          psql "$SUPABASE_DB_URL" -tAc 'SHOW server_version' || true
-          pg_dump --version
+          docker run --rm postgres:17 psql "$SUPABASE_DB_URL" -tAc 'SHOW server_version' || true
+          docker run --rm postgres:17 pg_dump --version
 
       - name: pg_dump → artifact
         if: steps.gate.outputs.run == 'true'
@@ -60,9 +61,10 @@ jobs:
           set -euo pipefail
           STAMP=$(date -u +%Y%m%dT%H%M%SZ)
           FILE="promo-champions-db-${STAMP}.dump"
-          pg_dump "$SUPABASE_DB_URL" \
+          docker run --rm -v "$GITHUB_WORKSPACE:/out" postgres:17 \
+            pg_dump "$SUPABASE_DB_URL" \
             --format=custom --compress=9 --no-owner --no-privileges \
-            --file="$FILE"
+            --file="/out/$FILE"
           echo "BACKUP_FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh "$FILE"
 
