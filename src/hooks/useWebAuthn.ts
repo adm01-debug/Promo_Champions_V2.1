@@ -189,8 +189,10 @@ export function useWebAuthn() {
             token_hash: token,
             type: type as EmailOtpType,
           });
-          if (signInError && import.meta.env.DEV)
-            console.error('Sign in error:', signInError);
+          if (signInError) {
+            toast.error('Falha na autenticação com passkey. Tente outro método.');
+            return false;
+          }
         }
       }
 
