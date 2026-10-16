@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -42,30 +42,42 @@ export const KnownDevices = () => {
   const { user } = useAuth();
   const [devices, setDevices] = useState<KnownDevice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const fetchGen = useRef(0);
 
-  const fetchDevices = async (isCancelled?: () => boolean) => {
+  const fetchDevices = async () => {
+    const gen = ++fetchGen.current;
+    const isCurrent = () => gen === fetchGen.current;
+
     if (!user) {
+      setDevices([]);
+      setLoadError(false);
       setIsLoading(false);
       return;
     }
 
     try {
       const data = await knownDeviceService.listForUser(user.id);
-      if (!isCancelled?.()) setDevices(data);
+      if (isCurrent()) {
+        setDevices(data);
+        setLoadError(false);
+      }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching devices:', error);
       }
+      if (isCurrent()) setLoadError(true);
     } finally {
-      if (!isCancelled?.()) setIsLoading(false);
+      if (isCurrent()) setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    let cancelled = false;
-    fetchDevices(() => cancelled);
+    fetchGen.current++;
+    fetchDevices();
     return () => {
-      cancelled = true;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- incrementar o ref no cleanup é justamente o mecanismo de invalidação
+      fetchGen.current++;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
   }, [user]);
@@ -230,7 +242,17 @@ export const KnownDevices = () => {
         ))}
       </div>
 
-      {devices.length === 0 && (
+      {loadError && (
+        <Alert variant="destructive">
+          <Shield className="h-4 w-4" />
+          <AlertTitle>Erro ao carregar dispositivos</AlertTitle>
+          <AlertDescription>
+            Não foi possível buscar seus dispositivos. Tente novamente.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {!loadError && devices.length === 0 && (
         <Alert>
           <Monitor className="h-4 w-4" />
           <AlertTitle>Nenhum dispositivo registrado</AlertTitle>
