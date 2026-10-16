@@ -363,7 +363,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
 
               {lockoutStatus.isLocked && (
                 <motion.div
-                  initial={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
+                  initial={reducedMotion ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold text-center uppercase tracking-widest"
                 >

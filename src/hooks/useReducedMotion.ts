@@ -5,7 +5,14 @@ import { useEffect, useState } from 'react';
  * Componentes podem trocar springs por tweens curtos para acessibilidade.
  */
 export function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
+  // Lazy init: lê a preferência já na primeira render — evita animar
+  // uma única vez antes do effect rodar.
+  const [reduced, setReduced] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
