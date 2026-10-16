@@ -8,8 +8,12 @@
  * divergente que incluía vendas abertas no denominador.
  *
  * Retorna percentual 0–100 (float); o arredondamento é decisão do consumidor.
+ * Entradas inválidas (NaN, Infinity, negativas) são normalizadas para 0 —
+ * contagens de deals nunca são negativas.
  */
 export const winRate = (wins: number, losses: number): number => {
-  const decided = wins + losses;
-  return decided > 0 ? (wins / decided) * 100 : 0;
+  const w = Number.isFinite(wins) && wins > 0 ? wins : 0;
+  const l = Number.isFinite(losses) && losses > 0 ? losses : 0;
+  const decided = w + l;
+  return decided > 0 ? (w / decided) * 100 : 0;
 };

@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus, isLostSaleStatus } from '@/constants';
+import {
+  isWonSaleStatus,
+  isLostSaleStatus,
+  WON_SALE_STATUSES,
+  LOST_SALE_STATUSES,
+} from '@/constants';
 import { winRate } from '@/lib/winRate';
 
 export interface ScriptVariantStats {
@@ -56,7 +61,7 @@ export function useScriptABTest() {
         .from('sales')
         .select('status, script_variant')
         .not('script_variant', 'is', null)
-        .in('status', ['won', 'lost'])
+        .in('status', [...WON_SALE_STATUSES, ...LOST_SALE_STATUSES])
         .limit(2000);
 
       if (error) throw error;

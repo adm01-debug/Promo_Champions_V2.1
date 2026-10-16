@@ -22,4 +22,17 @@ describe('winRate — fonte única da fórmula', () => {
   it('retorna float sem arredondamento implícito', () => {
     expect(winRate(1, 2)).toBeCloseTo(33.333, 3);
   });
+
+  it('normaliza entradas inválidas para 0 (contrato 0–100)', () => {
+    expect(winRate(-1, 2)).toBe(0);
+    expect(winRate(2, -1)).toBe(100);
+    expect(winRate(NaN, 2)).toBe(0);
+    expect(winRate(Infinity, 1)).toBe(0);
+    expect(winRate(-3, -4)).toBe(0);
+  });
+
+  it('aceita decimais de entrada (pesos/ponderações)', () => {
+    expect(winRate(2.5, 2.5)).toBe(50);
+    expect(winRate(0.5, 0.5)).toBe(50);
+  });
 });

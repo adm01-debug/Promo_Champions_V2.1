@@ -93,7 +93,7 @@ export const useSalespersonCoaching = (salespersonId: string | null) => {
         o => o.outcome === WIN_LOSS_OUTCOME.WON
       ).length;
       const teamWinRate = computeWinRate(teamWins, teamOutcomes.length - teamWins);
-      const comparisonToTeam = teamWinRate > 0 ? winRate - teamWinRate : 0;
+      const comparisonToTeam = winRate - teamWinRate;
 
       // Average deal value
       const completedSales = allSales.filter(s => isWonSaleStatus(s.status));

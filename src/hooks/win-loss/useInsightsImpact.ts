@@ -31,11 +31,12 @@ export function useInsightsImpact() {
   return useQuery({
     queryKey: ['wl-insights-impact'],
     queryFn: async (): Promise<InsightImpact[]> => {
-      const { data: insightsRaw } = await supabase
+      const { data: insightsRaw, error: insightsError } = await supabase
         .from('win_loss_insights')
         .select('id, title, applied_at')
         .order('applied_at', { ascending: false })
         .limit(100);
+      if (insightsError) throw insightsError;
 
       const insights = ((insightsRaw ?? []) as InsightRow[]).filter(i => i.applied_at);
       if (!insights.length) return [];
@@ -49,11 +50,12 @@ export function useInsightsImpact() {
       const lower = new Date(oldest);
       lower.setDate(lower.getDate() - WINDOW_DAYS);
 
-      const { data: analyses } = await supabase
+      const { data: analyses, error: analysesError } = await supabase
         .from('win_loss_analyses')
         .select('outcome, analyzed_at')
         .gte('analyzed_at', lower.toISOString())
         .order('analyzed_at', { ascending: true });
+      if (analysesError) throw analysesError;
 
       const list = (analyses ?? []) as AnalysisRow[];
       const winRateIn = (rows: AnalysisRow[]) => {

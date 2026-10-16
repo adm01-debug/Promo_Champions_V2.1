@@ -211,7 +211,7 @@ const HistoricalBenchmark = () => {
                   change={kpis.dealChange}
                 />
                 <KPICard
-                  label="Win Rate"
+                  label="Taxa de Ganho"
                   value={`${kpis.winRate.toFixed(1)}%`}
                   change={kpis.wrChange}
                 />

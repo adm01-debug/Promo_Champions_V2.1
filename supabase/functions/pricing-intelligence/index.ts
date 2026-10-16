@@ -149,8 +149,18 @@ Deno.serve(
         productRefPrice.set(name, sorted[idx] ?? sorted[0] ?? 0);
       });
 
-      const wonRows = rows.filter(
-        r => r.status === 'won' || r.status === 'completed' || r.status === 'Fechado'
+      const WON_STATUSES = new Set(['won', 'completed', 'closed', 'Fechado']);
+      const LOST_STATUSES = new Set(['lost', 'cancelled']);
+      const wonRows = rows.filter(r => WON_STATUSES.has(r.status));
+      const decidedRows = rows.filter(
+        r => WON_STATUSES.has(r.status) || LOST_STATUSES.has(r.status)
+      );
+      const decidedCountByProduct = new Map<string, number>();
+      decidedRows.forEach(r =>
+        decidedCountByProduct.set(
+          r.product_name,
+          (decidedCountByProduct.get(r.product_name) ?? 0) + 1
+        )
       );
       const consideredRows = wonRows.length > 0 ? wonRows : rows;
 
@@ -232,7 +242,8 @@ Deno.serve(
           const med = median(arr);
           const avg = arr.reduce((s, n) => s + n, 0) / arr.length;
           const won = wonProducts.get(name) ?? 0;
-          const winRate = won / arr.length;
+          const decided = decidedCountByProduct.get(name) ?? 0;
+          const winRate = decided > 0 ? won / decided : 0;
           // Recommend price = midpoint between current median and reference (if win-rate is healthy)
           const recommended = winRate >= 0.5 ? (med + ref) / 2 : med * 1.05;
           const uplift = med > 0 ? (recommended - med) / med : 0;
@@ -325,7 +336,7 @@ Deno.serve(
 
       // Win-rate por faixa de desconto → slope linear (elasticidade medida).
       const discWinBuckets = [0, 0.1, 0.2, 0.3].map(min => ({ min, n: 0, won: 0 }));
-      rows.forEach(s => {
+      decidedRows.forEach(s => {
         const ref = productRefPrice.get(s.product_name) ?? Number(s.amount);
         const d = ref > 0 ? Math.max(0, (ref - Number(s.amount)) / ref) : 0;
         let b = discWinBuckets[0];
@@ -352,8 +363,8 @@ Deno.serve(
       const baseWinRate =
         discWinBuckets[0].n > 0
           ? discWinBuckets[0].won / discWinBuckets[0].n
-          : rows.length
-            ? wonRows.length / rows.length
+          : decidedRows.length
+            ? wonRows.length / decidedRows.length
             : 0;
 
       // Curva real preço × win-rate do produto com mais deals (≥10).
@@ -365,7 +376,7 @@ Deno.serve(
       )[0];
       if (topProduct && topProduct[1].length >= 10) {
         elasticityProduct = topProduct[0];
-        const productRows = rows
+        const productRows = decidedRows
           .filter(r => r.product_name === topProduct[0])
           .sort((a, b) => Number(a.amount) - Number(b.amount));
         const BUCKETS = 8;

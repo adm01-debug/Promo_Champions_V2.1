@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, WON_SALE_STATUSES, LOST_SALE_STATUSES } from '@/constants';
 import { winRate } from '@/lib/winRate';
 
 export interface HourCell {
@@ -27,7 +27,7 @@ export function useWinByHourMatrix() {
       const { data, error } = await supabase
         .from('sales')
         .select('status, updated_at')
-        .in('status', ['won', 'lost'])
+        .in('status', [...WON_SALE_STATUSES, ...LOST_SALE_STATUSES])
         .gte('updated_at', ninetyDaysAgo.toISOString())
         .limit(2000);
 
