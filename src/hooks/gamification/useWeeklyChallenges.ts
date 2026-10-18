@@ -149,8 +149,7 @@ export function useClaimChallengeReward() {
 
       if (error) throw error;
 
-      const granted =
-        (data as { xp_reward?: number } | null)?.xp_reward ?? xpReward;
+      const granted = (data as { xp_reward?: number } | null)?.xp_reward ?? xpReward;
       return { xpReward: granted };
     },
     onSuccess: data => {

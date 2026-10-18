@@ -132,12 +132,10 @@ export function useCheckAndAwardStreakMilestone() {
       if (claimError) throw claimError;
 
       const claimed = (
-        (claimResult as { claimed?: Array<{ streak_type: string }> } | null)
-          ?.claimed ?? []
+        (claimResult as { claimed?: Array<{ streak_type: string }> } | null)?.claimed ??
+        []
       ).map(c => c.streak_type);
-      const awardedMilestones = newMilestones.filter(m =>
-        claimed.includes(m.type)
-      );
+      const awardedMilestones = newMilestones.filter(m => claimed.includes(m.type));
 
       return { newMilestones: awardedMilestones, currentStreak };
     },
