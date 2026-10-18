@@ -63,7 +63,17 @@ jobs:
           supabase migration list > /tmp/migration_list.txt
           cat /tmp/migration_list.txt
 
-          awk -F'|' '{v=$2; gsub(/[^0-9]/,"",v); if(v ~ /^[0-9]{8,}$/) print v}' \
+          # A posição da coluna Remote é detectada pelo cabeçalho — se o CLI
+          # inverter/reordenar colunas, ler $2 fixo compararia o lado errado
+          # e o drift real passaria batido (falso negativo).
+          HEADER=$(grep -im1 'remote' /tmp/migration_list.txt || true)
+          REMOTE_COL=$(printf '%s' "$HEADER" | awk -F'[|│]' '{for(i=1;i<=NF;i++){gsub(/[ \t]/,"",$i); if(tolower($i) ~ /^remote/) {print i; exit}}}')
+          if [ -z "$REMOTE_COL" ]; then
+            echo "::error::Cabeçalho de 'supabase migration list' não tem coluna 'Remote' identificável — formato do CLI mudou. Drift check cego não pode aprovar."
+            exit 1
+          fi
+
+          awk -F'[|│]' -v col="$REMOTE_COL" '{v=$col; gsub(/[^0-9]/,"",v); if(v ~ /^[0-9]{8,}$/) print v}' \
             /tmp/migration_list.txt | sort -u > /tmp/remote_versions.txt
 
           # Gate cego = falso negativo garantido: se o parser extraiu zero

@@ -2,9 +2,12 @@
 -- Rollback: DROP FUNCTION public.get_monthly_sales_benchmark(integer);
 --           ALTER TABLE public.monthly_sales_summary DROP COLUMN lost_deals;
 --           recriar private.refresh_monthly_sales_summary (sem lost_deals)
---           conforme 20260512175631 (corpo original) + 20260619145322 (schema
---           private), recriar get_monthly_sales_benchmark de 4 colunas conforme
---           20260512175631 e reaplicar REVOKE/GRANT EXECUTE de 20260619192803.
+--           conforme 20260513192406 (corpo + SET search_path TO 'public') +
+--           20260619145322 (schema private), recriar
+--           private.trigger_refresh_monthly_summary conforme 20260619145322
+--           (sem o refresh do mês OLD), recriar
+--           get_monthly_sales_benchmark de 4 colunas conforme 20260512175631
+--           com GRANT EXECUTE para authenticated e service_role.
 --
 -- Motivo: HistoricalBenchmark exibia won_deals/deals como "Win Rate", mas
 -- deals = COUNT(*) inclui vendas ABERTAS. Win rate decidido é
@@ -13,7 +16,7 @@
 -- e 'cancelled' como perda (lost|cancelled), conforme src/constants/index.ts.
 
 ALTER TABLE public.monthly_sales_summary
-    ADD COLUMN IF NOT EXISTS lost_deals INTEGER;
+    ADD COLUMN IF NOT EXISTS lost_deals INTEGER DEFAULT 0;
 
 -- A função de refresh efetiva vive em private desde 20260619145322 — o
 -- trigger private.trigger_refresh_monthly_summary chama
@@ -22,6 +25,17 @@ ALTER TABLE public.monthly_sales_summary
 CREATE OR REPLACE FUNCTION private.refresh_monthly_sales_summary(p_month TEXT)
 RETURNS VOID AS $$
 BEGIN
+    -- Bug pré-existente: o INSERT...SELECT abaixo retorna zero linhas quando
+    -- o mês ficou sem vendas (DELETE da última venda ou UPDATE cross-month),
+    -- então o resumo velho nunca era limpo — linha fantasma permanente.
+    IF NOT EXISTS (
+        SELECT 1 FROM public.sales
+        WHERE to_char(created_at, 'YYYY-MM') = p_month
+    ) THEN
+        DELETE FROM public.monthly_sales_summary WHERE month = p_month;
+        RETURN;
+    END IF;
+
     INSERT INTO public.monthly_sales_summary (month, revenue, deals, won_deals, lost_deals, updated_at)
     SELECT
         to_char(created_at, 'YYYY-MM') as month,
@@ -40,12 +54,39 @@ BEGIN
         lost_deals = EXCLUDED.lost_deals,
         updated_at = EXCLUDED.updated_at;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path TO 'public';
 
 -- Reafirma a restrição de privilégio do helper privado (mesma política de
 -- 20260619145322 — CREATE OR REPLACE preserva grants, mas o REVOKE é
 -- idempotente e protege contra drift).
 REVOKE ALL ON FUNCTION private.refresh_monthly_sales_summary(text) FROM PUBLIC, anon, authenticated;
+
+-- Bug pré-existente no trigger: em UPDATE que movia created_at para outro
+-- mês, só o mês NOVO era recalculado — o mês de origem mantinha a venda
+-- fantasma (contagem dupla em dois meses). Agora recalcula ambos quando
+-- o bucket muda. Mesma assinatura/SECURITY DEFINER de 20260619145322.
+CREATE OR REPLACE FUNCTION private.trigger_refresh_monthly_summary()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+BEGIN
+    IF (TG_OP = 'DELETE') THEN
+        PERFORM private.refresh_monthly_sales_summary(to_char(OLD.created_at, 'YYYY-MM'));
+        RETURN OLD;
+    ELSIF (TG_OP = 'UPDATE'
+           AND to_char(OLD.created_at, 'YYYY-MM') IS DISTINCT FROM to_char(NEW.created_at, 'YYYY-MM')) THEN
+        PERFORM private.refresh_monthly_sales_summary(to_char(OLD.created_at, 'YYYY-MM'));
+        PERFORM private.refresh_monthly_sales_summary(to_char(NEW.created_at, 'YYYY-MM'));
+        RETURN NEW;
+    ELSE
+        PERFORM private.refresh_monthly_sales_summary(to_char(NEW.created_at, 'YYYY-MM'));
+        RETURN NEW;
+    END IF;
+END;
+$function$;
 
 -- RPC expõe lost_deals — o front calcula wins/(wins+losses) de verdade.
 -- DROP obrigatório: o RETURNS TABLE ganha uma coluna e CREATE OR REPLACE
@@ -79,8 +120,21 @@ REVOKE EXECUTE ON FUNCTION public.get_monthly_sales_benchmark(integer) FROM anon
 GRANT EXECUTE ON FUNCTION public.get_monthly_sales_benchmark(integer) TO service_role;
 GRANT EXECUTE ON FUNCTION public.get_monthly_sales_benchmark(integer) TO authenticated;
 
--- Backfill: recalcula todos os meses presentes em sales (inclui lost_deals
--- e o novo conjunto de ganhos com 'closed').
+-- Backfill: itera os meses DO RESUMO (não de sales) — meses residuais sem
+-- vendas são removidos pelo guard da refresh (eram stale por definição:
+-- a venda que os alimentava foi deletada/movida) e meses com vendas são
+-- recalculados com o novo conjunto de ganhos/perdas.
+DO $$
+DECLARE m TEXT;
+BEGIN
+    FOR m IN SELECT month FROM public.monthly_sales_summary
+    LOOP
+        PERFORM private.refresh_monthly_sales_summary(m);
+    END LOOP;
+END;
+$$;
+
+-- Meses que só existem em sales (resumo nunca gerado) — cobertura extra.
 DO $$
 DECLARE m TEXT;
 BEGIN
@@ -91,8 +145,6 @@ BEGIN
 END;
 $$;
 
--- Linhas residuais de meses sem vendas (DELETE deixou o resumo) ficariam
--- com lost_deals NULL e o front cairia no fallback antigo — zera explicito.
 UPDATE public.monthly_sales_summary SET lost_deals = 0 WHERE lost_deals IS NULL;
 
 ALTER TABLE public.monthly_sales_summary

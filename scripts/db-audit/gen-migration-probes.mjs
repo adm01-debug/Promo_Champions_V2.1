@@ -13,13 +13,17 @@ import { join } from 'node:path';
 const MIG_DIR = 'supabase/migrations';
 const since = process.argv[2] ?? '20260901000000';
 
-const ID = String.raw`[a-zA-Z_][a-zA-Z0-9_]*|"[^"]+"`;
+// Identificador com aspas duplas pode conter "" (escape SQL) — "[^"]+"
+// truncava no primeiro fecha-aspas interno e sondava o nome errado.
+const ID = String.raw`[a-zA-Z_][a-zA-Z0-9_]*|"(?:[^"]|"")*"`;
 // Qualquer schema — whitelist anterior perdia objetos reais (ex.: ON realtime.messages
 // casava "realtime" como nome da tabela e a probe sondava a combinação errada).
 const SCH = String.raw`(?:(${ID})\.)?`;
 
 const PATTERNS = [
-  ['function', new RegExp(String.raw`create\s+(?:or\s+replace\s+)?function\s+${SCH}(${ID})`, 'gi'), 'fn'],
+  // Captura a lista de argumentos: duas sobrecargas com nomes iguais e
+  // assinaturas diferentes não devem validar uma à outra (pronargs).
+  ['function', new RegExp(String.raw`create\s+(?:or\s+replace\s+)?function\s+${SCH}(${ID})\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)`, 'gi'), 'fn'],
   ['table',    new RegExp(String.raw`create\s+table\s+(?:if\s+not\s+exists\s+)?${SCH}(${ID})`, 'gi'), 'tbl'],
   ['view',     new RegExp(String.raw`create\s+(?:or\s+replace\s+)?view\s+${SCH}(${ID})`, 'gi'), 'view'],
   ['matview',  new RegExp(String.raw`create\s+materialized\s+view\s+(?:if\s+not\s+exists\s+)?${SCH}(${ID})`, 'gi'), 'mv'],
@@ -36,11 +40,35 @@ const PATTERNS = [
   // colado no nome da tabela, então o pattern acima não o vê.
   ['constraint', new RegExp(String.raw`,\s*add\s+constraint\s+(${ID})`, 'gi'), 'con'],
   ['column',   new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
+  // Forma `ALTER TABLE t ADD COLUMN a ..., ADD COLUMN b ...` — a segunda
+  // coluna não vem colada no ALTER e era perdida.
+  ['column',   new RegExp(String.raw`,\s*add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
   ['extension', /create\s+extension\s+(?:if\s+not\s+exists\s+)?"([^"]+)"|create\s+extension\s+(?:if\s+not\s+exists\s+)?([a-zA-Z_][a-zA-Z0-9_]*)/gi, 'ext'],
   ['type',     new RegExp(String.raw`create\s+type\s+${SCH}(${ID})\s+as`, 'gi'), 'type'],
 ];
 
-const strip = (s) => s?.replace(/^"|"$/g, '');
+// Desfaz aspas de borda e o escape "" → " dentro de identificadores
+// double-quoted (sem isso, "a""b" sondaria o nome errado).
+const strip = (s) =>
+  s == null ? s : s.replace(/^"|"$/g, '').replace(/""/g, '"');
+
+// Conta argumentos top-level de uma lista de parâmetros (vírgulas fora de
+// parênteses). Se o parse não for confiável retorna null e a probe não
+// compara aridade — falso-positivo é melhor que falso-negativo aqui.
+const countArgs = (args) => {
+  if (args == null) return null;
+  const trimmed = args.trim();
+  if (trimmed === '') return 0;
+  let depth = 0;
+  let count = 1;
+  for (const ch of trimmed) {
+    if (ch === '(') depth++;
+    else if (ch === ')') depth--;
+    else if (ch === ',' && depth === 0) count++;
+    if (depth < 0) return null;
+  }
+  return depth === 0 ? count : null;
+};
 
 // Remove comentários SQL antes dos regex — senão DDL comentada
 // (`-- CREATE TABLE x`, `/* CREATE FUNCTION y */`) gera probes falsas.
@@ -92,6 +120,11 @@ for (const f of files) {
         schema = ''; obj = groups[0];
       } else if (kind === 'index') {
         obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
+      } else if (kind === 'function') {
+        // groups[2] = lista de args — vira contagem para comparar pronargs.
+        schema = groups[0] ?? 'public'; obj = groups[1];
+        const argc = countArgs(groups[2]);
+        extra = argc === null ? '' : String(argc);
       } else {
         schema = groups[0] ?? 'public'; obj = groups[1];
       }
@@ -113,6 +146,19 @@ const values = rows
   .join(',\n');
 
 const out = `\\pset footer off
+-- cron.job só existe com pg_cron instalado — referência estática a ela
+-- quebra o parse do SELECT inteiro (CASE não ajuda, o parser resolve a
+-- relação em todos os ramos). pg_temp + EXECUTE dinâmico avalia em runtime.
+CREATE OR REPLACE FUNCTION pg_temp.probe_cron(job text) RETURNS text AS $probe$
+DECLARE r boolean;
+BEGIN
+  IF to_regclass('cron.job') IS NULL THEN RETURN 'n/a(no pg_cron)'; END IF;
+  EXECUTE 'SELECT EXISTS(SELECT 1 FROM cron.job WHERE jobname=$1)'
+    INTO r USING job;
+  RETURN r::text;
+END;
+$probe$ LANGUAGE plpgsql;
+
 WITH probes(version, kind, schema, obj, aux) AS (VALUES
 ${values || '  (NULL, NULL, NULL, NULL, NULL)'}
 )
@@ -122,16 +168,16 @@ SELECT version || '|' || kind || '|' ||
             ELSE coalesce(nullif(schema,'') || '.', '') || obj END ||
        '|' ||
        CASE kind
-         WHEN 'function'   THEN EXISTS(SELECT 1 FROM pg_proc pr JOIN pg_namespace n ON n.oid=pr.pronamespace WHERE n.nspname=probes.schema AND pr.proname=probes.obj)::text
+         WHEN 'function'   THEN EXISTS(SELECT 1 FROM pg_proc pr JOIN pg_namespace n ON n.oid=pr.pronamespace WHERE n.nspname=probes.schema AND pr.proname=probes.obj AND (probes.aux='' OR pr.pronargs=probes.aux::int))::text
          WHEN 'table'      THEN EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema=probes.schema AND table_name=probes.obj)::text
          WHEN 'view'       THEN EXISTS(SELECT 1 FROM information_schema.views WHERE table_schema=probes.schema AND table_name=probes.obj)::text
          WHEN 'matview'    THEN EXISTS(SELECT 1 FROM pg_matviews WHERE schemaname=probes.schema AND matviewname=probes.obj)::text
          WHEN 'trigger'    THEN EXISTS(SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE t.tgname=probes.obj AND c.relname=probes.aux AND n.nspname=probes.schema AND NOT t.tgisinternal)::text
-         WHEN 'cron'       THEN EXISTS(SELECT 1 FROM cron.job WHERE jobname=probes.obj)::text
+         WHEN 'cron'       THEN pg_temp.probe_cron(probes.obj)
          WHEN 'policy'     THEN EXISTS(SELECT 1 FROM pg_policies WHERE schemaname=probes.schema AND policyname=probes.obj AND tablename=probes.aux)::text
          WHEN 'index'      THEN EXISTS(SELECT 1 FROM pg_indexes WHERE indexname=probes.obj AND schemaname=probes.schema AND tablename=probes.aux)::text
-         WHEN 'constraint' THEN EXISTS(SELECT 1 FROM pg_constraint WHERE conname=probes.obj)::text
-         WHEN 'column'     THEN EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema=probes.schema AND table_name=probes.aux AND column_name=probes.obj)::text
+         WHEN 'constraint' THEN EXISTS(SELECT 1 FROM pg_constraint c JOIN pg_class r ON r.oid=c.conrelid JOIN pg_namespace n ON n.oid=r.relnamespace WHERE c.conname=probes.obj AND (probes.aux='' OR (r.relname=probes.aux AND n.nspname=probes.schema)))::text
+         WHEN 'column'     THEN EXISTS(SELECT 1 FROM information_schema.columns WHERE (probes.aux='' OR (table_schema=probes.schema AND table_name=probes.aux)) AND column_name=probes.obj)::text
          WHEN 'extension'  THEN EXISTS(SELECT 1 FROM pg_extension WHERE extname=probes.obj)::text
          WHEN 'type'       THEN EXISTS(SELECT 1 FROM pg_type t JOIN pg_namespace n ON n.oid=t.typnamespace WHERE n.nspname=probes.schema AND t.typname=probes.obj)::text
          ELSE 'unknown'
