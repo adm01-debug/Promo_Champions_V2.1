@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useMonthlySalesBenchmark } from '@/hooks/reports/useMonthlySalesBenchmark';
+import { winRate } from '@/lib/winRate';
 import {
   Select,
   SelectContent,
@@ -55,6 +56,9 @@ interface BenchmarkRow {
   deals: number;
   won_deals: number;
   revenue: number;
+  // Presente só após a migration 20261018152917 — sem ela a RPC antiga não
+  // expõe perdas e o front cai na métrica honesta "ganhas/criadas".
+  lost_deals?: number;
 }
 
 const HistoricalBenchmark = () => {
@@ -67,7 +71,15 @@ const HistoricalBenchmark = () => {
     return (salesData as BenchmarkRow[]).map(v => ({
       ...v,
       label: format(new Date(v.month + '-01T12:00:00Z'), 'MMM yy', { locale: ptBR }),
-      winRate: v.deals > 0 ? (v.won_deals / v.deals) * 100 : 0,
+      winRate:
+        typeof v.lost_deals === 'number'
+          ? winRate(v.won_deals, v.lost_deals)
+          : v.deals > 0
+            ? (v.won_deals / v.deals) * 100
+            : 0,
+      // True quando lost_deals veio da RPC — o KPI pode se chamar "Win Rate"
+      // de fato; senão exibe "Taxa de Ganho" (ganhas/criadas, inclui abertas).
+      hasDecidedDenominator: typeof v.lost_deals === 'number',
     }));
   }, [salesData]);
 
@@ -211,7 +223,7 @@ const HistoricalBenchmark = () => {
                   change={kpis.dealChange}
                 />
                 <KPICard
-                  label="Taxa de Ganho"
+                  label={kpis.hasDecidedDenominator ? 'Win Rate' : 'Taxa de Ganho'}
                   value={`${kpis.winRate.toFixed(1)}%`}
                   change={kpis.wrChange}
                 />
