@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 
 
@@ -52,7 +53,7 @@ Deno.serve(withRequestId("compute-forecast-accuracy", async (req, _ctx) => {
       const { data: salesData } = await supabase
         .from("sales")
         .select("amount, salesperson_id, created_at")
-        .eq("status", "completed")
+        .in("status", [...WON_SALE_STATUSES])
         .gte("created_at", minPeriod)
         .lte("created_at", maxPeriod + "T23:59:59")
         .limit(50000);

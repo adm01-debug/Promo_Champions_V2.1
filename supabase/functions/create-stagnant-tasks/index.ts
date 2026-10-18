@@ -7,6 +7,7 @@ import {
   getUserClient,
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
+import { OPEN_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 
 Deno.serve(
   withRequestId('create-stagnant-tasks', async (req, _ctx) => {
@@ -62,14 +63,15 @@ Deno.serve(
         `Checking for deals stagnant for more than ${stagnantDays} days (since ${stagnantDate.toISOString()})`
       );
 
-      // Get all deals that haven't been updated in X days and are not completed
+      // Deals parados = status ABERTO apenas — .neq('completed') marcava
+      // também vendas ganhas (won/closed) e perdidas como estagnadas.
       const { data: stagnantDeals, error: dealsError } = await supabase
         .from('sales')
         .select(
           'id, client_name, product_name, amount, status, salesperson_id, updated_at'
         )
         .lt('updated_at', stagnantDate.toISOString())
-        .neq('status', 'completed')
+        .in('status', [...OPEN_SALE_STATUSES])
         .order('updated_at', { ascending: true })
         .limit(5000);
 
