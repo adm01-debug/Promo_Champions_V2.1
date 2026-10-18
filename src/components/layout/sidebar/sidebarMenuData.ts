@@ -147,7 +147,11 @@ export const sdrGroupedItems: MenuGroup[] = [
     icon: Gauge,
     items: [
       { title: 'Competências', url: '/competencias', icon: Brain },
-      { title: 'Inteligência de Chamadas', url: '/conversational-intelligence', icon: Phone },
+      {
+        title: 'Inteligência de Chamadas',
+        url: '/conversational-intelligence',
+        icon: Phone,
+      },
       { title: 'BI SDR (Neural)', url: '/bi-sdr', icon: Sparkles },
       { title: 'Lead Scoring', url: '/lead-scoring', icon: Target },
       { title: 'Meu Dashboard', url: '/dashboard-custom', icon: LayoutGrid },
@@ -216,7 +220,11 @@ export const closerGroupedItems: MenuGroup[] = [
     icon: Gauge,
     items: [
       { title: 'Competências', url: '/competencias', icon: Brain },
-      { title: 'Inteligência de Chamadas', url: '/conversational-intelligence', icon: Phone },
+      {
+        title: 'Inteligência de Chamadas',
+        url: '/conversational-intelligence',
+        icon: Phone,
+      },
       { title: 'BI Closer (Neural)', url: '/bi-closer', icon: Sparkles },
       { title: 'Lead Scoring', url: '/lead-scoring', icon: Target },
       { title: 'Meu Dashboard', url: '/dashboard-custom', icon: LayoutGrid },
@@ -248,7 +256,11 @@ export const gestaoGroupedItems: MenuGroup[] = [
     icon: Gauge,
     items: [
       { title: 'Competências', url: '/competencias', icon: Brain },
-      { title: 'Inteligência de Chamadas', url: '/conversational-intelligence', icon: Phone },
+      {
+        title: 'Inteligência de Chamadas',
+        url: '/conversational-intelligence',
+        icon: Phone,
+      },
       { title: 'BI Gestão (Neural)', url: '/bi-gestor', icon: Sparkles },
       { title: 'Perguntar à IA', url: '/perguntar', icon: Sparkles },
       { title: 'Busca Semântica', url: '/busca', icon: Sparkles },
