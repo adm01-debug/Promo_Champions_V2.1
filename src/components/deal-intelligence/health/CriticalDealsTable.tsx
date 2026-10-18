@@ -12,10 +12,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, Search, ArrowUpDown } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useAuth } from '@/contexts/AuthContext';
 import type { HealthTier } from '@/hooks/deal-intelligence/useDealHealth';
 import { DealHealthScoreBadge } from '../DealHealthScoreBadge';
 import { DealHealthCard } from '../DealHealthCard';
 import { DealVelocityCard } from '../DealVelocityCard';
+import { StageVelocityCard } from '../velocity/StageVelocityCard';
+import { BuyingCommitteeCard } from '../BuyingCommitteeCard';
 
 import { formatBRL } from '@/lib/money';
 interface Row {
@@ -45,6 +48,7 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
   const [sortBy, setSortBy] = useState<SortKey>('health_score');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<Row | null>(null);
+  const { user } = useAuth();
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -192,6 +196,14 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <DealHealthCard saleId={selected.sale_id} />
               <DealVelocityCard saleId={selected.sale_id} />
+              <div className="md:col-span-2">
+                <StageVelocityCard saleId={selected.sale_id} />
+              </div>
+              {user && (
+                <div className="md:col-span-2">
+                  <BuyingCommitteeCard saleId={selected.sale_id} ownerId={user.id} />
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

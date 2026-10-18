@@ -284,6 +284,26 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
     if (!isAdminOrManager) return json({ ok: false, error: "forbidden" }, 403);
   }
 
+  // LGPD: quem está na lista de supressão não pode ser contactado por
+  // nenhum canal. O destinatário é resolvido pelo telefone (match de
+  // dígitos em clients) via is_recipient_opted_out -> is_email_opted_out;
+  // falha na checagem fecha o envio, como no filterOptedOut do e-mail.
+  const { data: optedOut, error: optOutError } = await supabase.rpc(
+    "is_recipient_opted_out",
+    { p_phone: payload.to },
+  );
+  if (optOutError) {
+    ctx.log("error", "opt_out_check_failed", { error: optOutError.message });
+    return json({ ok: false, error: "send_failed" }, 500);
+  }
+  if (optedOut === true) {
+    ctx.log("info", "recipient_opted_out", { channel: payload.channel });
+    return json(
+      { ok: false, error: "recipient_opted_out", skipped: true },
+      409,
+    );
+  }
+
   try {
     const { data: credential, error: credentialError } = await supabase
       .from("channel_credentials")
@@ -358,7 +378,10 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
         _enrollment_id: payload.enrollmentId ?? null,
         _step_id: payload.stepId ?? null,
         _channel: payload.channel,
-        _to: payload.to,
+        // to_number sempre em dígitos: o match de replies no
+        // whatsapp-inbound-webhook compara dígitos/'+'+dígitos e telefone
+        // mascarado ('+55 (11) 9xxxx-xxxx') nunca casaria, travando a cadência.
+        _to: payload.to.replace(/\D/g, ""),
         _body: payload.body,
         _provider: credential.provider,
         _provider_msg_id: result.providerMessageId ?? null,

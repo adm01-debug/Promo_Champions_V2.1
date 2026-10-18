@@ -31,7 +31,6 @@ interface AlertHistoryDialogProps {
   alertHistory: Alert[];
   clearAlertHistory: () => void;
   alertFrequency: string;
-  testAlert: () => void;
 }
 
 export const AlertHistoryDialog = ({
@@ -40,7 +39,6 @@ export const AlertHistoryDialog = ({
   alertHistory,
   clearAlertHistory,
   alertFrequency,
-  testAlert,
 }: AlertHistoryDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -147,14 +145,6 @@ export const AlertHistoryDialog = ({
           <span className="text-[8px] font-mono uppercase text-muted-foreground">
             Config: {alertFrequency}
           </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 text-[8px] uppercase font-bold text-primary hover:bg-primary/10"
-            onClick={testAlert}
-          >
-            Forçar Check
-          </Button>
         </div>
       </DialogContent>
     </Dialog>

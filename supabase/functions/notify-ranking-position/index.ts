@@ -6,6 +6,7 @@ import {
   getUserClient,
   UnauthorizedError,
 } from "../_shared/auth-client.ts";
+import { WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 
 
@@ -75,7 +76,7 @@ Deno.serve(withRequestId("notify-ranking-position", async (req, _ctx) => {
       supabase
         .from("sales")
         .select("salesperson_id, amount")
-        .eq("status", "completed")
+        .in("status", [...WON_SALE_STATUSES])
         .gte("created_at", monthStart.toISOString())
         .lte("created_at", monthEnd.toISOString())
         .limit(50000),

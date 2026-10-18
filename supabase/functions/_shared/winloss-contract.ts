@@ -66,7 +66,9 @@ export const SEVERITY_CRITICAL_MIN = 80;
 export const SEVERITY_HIGH_MIN = 65;
 export const SEVERITY_MEDIUM_MIN = 50;
 export const CRITICAL_CONFIDENCE_MIN = 0.7;
-/** Score mínimo para um deal entrar na lista de at-risk. */
+/** Score mínimo para um deal entrar na lista de at-risk (lente win-loss
+ * patterns). Definição canônica de "em risco": health_score < 50 —
+ * docs/DEAL_RISK_CRITERIA.md */
 export const DEAL_RISK_THRESHOLD = 40;
 
 /** Status de deal "traváveis" (estágios intermediários do funil). */

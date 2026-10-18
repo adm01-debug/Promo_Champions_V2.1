@@ -1,7 +1,7 @@
 # LGPD — Conformidade no Promo Champions V2.1
 
 > Status: implementação de infraestrutura entregue na migration
-> `supabase/migrations/20261001150000_lgpd_consent_and_anonymization.sql`.
+> `supabase/migrations/20261001150100_lgpd_consent_and_anonymization.sql`.
 > **Pendente:** aplicação em produção (passo manual — ver §6).
 
 Este documento é a fonte de verdade para consentimento, retenção e
@@ -36,13 +36,19 @@ direitos do titular (Lei 13.709/2018).
   lê, registra e revoga o próprio consentimento.
 - `public.has_active_consent(email, purpose)` — checagem reutilizável para
   edge functions e guards.
+- `public.has_phone_consent(phone, purpose)` — resolve o titular pelo
+  telefone (match de dígitos em `clients`) e delega a `has_active_consent`.
+- `public.is_recipient_opted_out(phone)` — resolve o destinatário pelo
+  telefone e delega a `is_email_opted_out`: quem está na lista de
+  supressão não é contactado por nenhum canal (e-mail, WhatsApp, SMS).
 
 ## 3. Solicitações do titular (`data_subject_requests`)
 
 Fila de pedidos do titular (art. 18): `access`, `rectification`, `erasure`,
 `portability`, `consent_revocation`, `information`. SLA legal de 15 dias
 (`due_at` default). O titular abre e acompanha a própria solicitação via RLS;
-admin/manager processam.
+admin/manager processam em `/admin/solicitacoes-titular` (inclusive o
+acionamento da anonimização para `erasure`, com confirmação).
 
 ## 4. Fluxo de esquecimento (erasure)
 
@@ -100,8 +106,10 @@ Limitações conhecidas (verdade acima de validação):
 - **Logs de segurança e auditoria**: obrigação legal/boa-fé — retenção
   maior, mas PII (IP/UA) é anonimizado por titular sob pedido.
 - **Gravação de chamadas**: exige `consent_records` com
-  `purpose='voice_recording'` antes da coleta (TODO de produto — pendente
-  de UI, fora do escopo desta migration).
+  `purpose='voice_recording'` antes da coleta — verificado em tempo de
+  execução por `has_phone_consent` em `twilio-click-to-call` (param `Record`)
+  e `twilio-call-twiml` (`record="do-not-record"` sem consentimento).
+  A UI para colher o consentimento do titular ainda é pendência de produto.
 
 ## 6. Passo manual de aplicação e verificação (produção)
 
@@ -111,8 +119,9 @@ Supabase SQL Editor, na ordem:
 
 ```sql
 -- 1) aplicar o conteúdo de:
---    supabase/migrations/20261001150000_lgpd_consent_and_anonymization.sql
+--    supabase/migrations/20261001150100_lgpd_consent_and_anonymization.sql
 --    supabase/migrations/20261001151000_log_retention_indexes_and_purge.sql
+--    supabase/migrations/20261013163000_lgpd_consent_e_optout_por_telefone.sql
 
 -- 2) verificação pós-aplicação (literais):
 

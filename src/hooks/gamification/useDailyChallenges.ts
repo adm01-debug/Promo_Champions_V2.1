@@ -86,15 +86,17 @@ export const useClaimDailyChallengeReward = () => {
     }) => {
       if (!salespersonId) throw new Error('User not found');
 
-      const { error } = await supabase
-        .from('daily_challenge_progress')
-        .update({ xp_claimed: true })
-        .eq('challenge_id', challengeId)
-        .eq('salesperson_id', salespersonId);
+      // Claim no servidor: lê xp_reward do catálogo, marca o progresso e
+      // credita o XP em xp_history (o cliente não escreve mais XP).
+      const { data, error } = await supabase.rpc(
+        'claim_daily_challenge_reward' as never,
+        { p_challenge_id: challengeId } as never
+      );
 
       if (error) throw error;
 
-      return { challengeId, salespersonId, xpReward };
+      const granted = (data as { xp_reward?: number } | null)?.xp_reward ?? xpReward;
+      return { challengeId, salespersonId, xpReward: granted };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['daily-challenges'] });

@@ -54,18 +54,30 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
 
     const today = toBusinessDate()
 
-    // Check if today's challenges already exist
-    const { data: existingChallenges } = await supabase
-      .from('daily_challenges')
-      .select('id')
-      .eq('challenge_date', today)
-      .eq('is_active', true)
-      .limit(100)
+    // Claim atômico da rotação: a marca em daily_challenge_rotations fecha
+    // a janela check-then-insert — chamadas concorrentes (cron + card do
+    // frontend) não duplicam mais os desafios do dia.
+    const { data: rotationClaim, error: rotationError } = await supabase
+      .from('daily_challenge_rotations')
+      .upsert(
+        { challenge_date: today },
+        { onConflict: 'challenge_date', ignoreDuplicates: true },
+      )
+      .select('challenge_date')
 
-    if (existingChallenges && existingChallenges.length > 0) {
+    if (rotationError) throw rotationError
+
+    if (!rotationClaim || rotationClaim.length === 0) {
+      const { data: existingChallenges } = await supabase
+        .from('daily_challenges')
+        .select('id')
+        .eq('challenge_date', today)
+        .eq('is_active', true)
+        .limit(100)
+
       console.info('Daily challenges already exist for today:', today)
       return new Response(
-        JSON.stringify({ message: 'Daily challenges already created for today', count: existingChallenges.length }),
+        JSON.stringify({ message: 'Daily challenges already created for today', count: existingChallenges?.length ?? 0 }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -98,6 +110,11 @@ Deno.serve(withRequestId('rotate-daily-challenges', async (req, _ctx) => {
 
     if (error) {
       console.error('Error creating daily challenges:', error)
+      // Libera a marca para que uma nova tentativa possa gerar os desafios.
+      await supabase
+        .from('daily_challenge_rotations')
+        .delete()
+        .eq('challenge_date', today)
       throw error
     }
 

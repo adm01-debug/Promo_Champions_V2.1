@@ -36,9 +36,14 @@ export const useRefreshStageBaselines = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('refresh-stage-baselines', {
-        body: {},
-      });
+      // Função canônica: recompute-stage-baselines (refresh-stage-baselines foi
+      // removida — seu upsert falhava silenciosamente por falta de constraint).
+      const { data, error } = await supabase.functions.invoke(
+        'recompute-stage-baselines',
+        {
+          body: {},
+        }
+      );
       if (error) throw error;
       return data;
     },

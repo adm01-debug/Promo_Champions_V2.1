@@ -25,6 +25,7 @@ jobs:
       - name: POST alerta para o webhook do N8N
         env:
           N8N_ALERT_WEBHOOK_URL: ${{ secrets.N8N_ALERT_WEBHOOK_URL }}
+          N8N_ALERT_WEBHOOK_SECRET: ${{ secrets.N8N_ALERT_WEBHOOK_SECRET }}
           GH_REPO: ${{ github.repository }}
           GH_WORKFLOW: ${{ github.event.workflow_run.name }}
           GH_BRANCH: ${{ github.event.workflow_run.head_branch }}
@@ -36,6 +37,21 @@ jobs:
             echo "N8N_ALERT_WEBHOOK_URL não configurado — pulando alerta."
             exit 0
           fi
-          curl -fsS -X POST -H 'Content-Type: application/json' \
-            -d "{\"event\":\"ci_failure\",\"repo\":\"$GH_REPO\",\"workflow\":\"$GH_WORKFLOW\",\"branch\":\"$GH_BRANCH\",\"sha\":\"$GH_SHA\",\"actor\":\"$GH_ACTOR\",\"run_url\":\"$GH_RUN_URL\"}" \
-            "$N8N_ALERT_WEBHOOK_URL"
+          # jq -n monta o JSON com escaping correto — interpolação de shell
+          # quebrava o payload quando workflow/actor continham aspas.
+          payload="$(jq -n \
+            --arg event ci_failure \
+            --arg repo "$GH_REPO" \
+            --arg workflow "$GH_WORKFLOW" \
+            --arg branch "$GH_BRANCH" \
+            --arg sha "$GH_SHA" \
+            --arg actor "$GH_ACTOR" \
+            --arg run_url "$GH_RUN_URL" \
+            '{event: $event, repo: $repo, workflow: $workflow, branch: $branch, sha: $sha, actor: $actor, run_url: $run_url}')"
+          args=(-fsS -X POST -H 'Content-Type: application/json')
+          # Segredo compartilhado opcional: o N8N valida o header quando o
+          # secret N8N_ALERT_WEBHOOK_SECRET existir no repo.
+          if [ -n "$N8N_ALERT_WEBHOOK_SECRET" ]; then
+            args+=(-H "x-webhook-secret: $N8N_ALERT_WEBHOOK_SECRET")
+          fi
+          curl "${args[@]}" -d "$payload" "$N8N_ALERT_WEBHOOK_URL"

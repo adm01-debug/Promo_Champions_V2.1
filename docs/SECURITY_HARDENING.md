@@ -2,6 +2,12 @@
 
 > Aplicado nas Etapas SEC-01, SEC-02, SEC-03 e PERF-01 (2026-07-11).
 > Fonte de verdade: migração `20260711134320_*.sql` + views `v_security_definer_exposure` e `v_platform_wal_health`.
+>
+> **Revisão 2026-10-18:** este documento é um _snapshot_ de 2026-07-11. As
+> concessões documentadas em §10 precisam ser lidas junto — a matriz de
+> grants abaixo **não é mais** o estado atual (hoje há 251 arquivos de
+> migration com `SECURITY DEFINER`, e várias migrations posteriores a
+> 2026-07-11 regranted EXECUTE a `authenticated`/`anon`).
 
 ---
 
@@ -21,11 +27,11 @@
 
 Após a migração de hardening, todas as funções `SECURITY DEFINER` do schema `public` têm `EXECUTE` **revogado de PUBLIC / anon / authenticated** e regrantado seletivamente:
 
-| Categoria    | Qtd | EXECUTE granted para                        | Exemplos                                                    |
-| ------------ | --- | ------------------------------------------- | ----------------------------------------------------------- |
-| **Internal** | 29  | `service_role` (+ postgres, sandbox)        | `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `enqueue_v4_callback`, `backfill_orders_conversion_seq` |
-| **User**     | 113 | `authenticated` + `service_role`            | `fn_convert_quote_to_sale`, `award_salesperson_xp`, `get_detailed_kpis`, `fn_admin_wal_health` |
-| **Public**   | 11  | `anon` + `authenticated` + `service_role`   | `check_rate_limit`, `count_failed_login_attempts`, `count_reset_requests_24h`, `generate_device_fingerprint` |
+| Categoria    | Qtd | EXECUTE granted para                      | Exemplos                                                                                                           |
+| ------------ | --- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Internal** | 29  | `service_role` (+ postgres, sandbox)      | `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `enqueue_v4_callback`, `backfill_orders_conversion_seq` |
+| **User**     | 113 | `authenticated` + `service_role`          | `fn_convert_quote_to_sale`, `award_salesperson_xp`, `get_detailed_kpis`, `fn_admin_wal_health`                     |
+| **Public**   | 11  | `anon` + `authenticated` + `service_role` | `check_rate_limit`, `count_failed_login_attempts`, `count_reset_requests_24h`, `generate_device_fingerprint`       |
 
 > Funções `fn_admin_*` são **granted para `authenticated`** mas verificam `has_role(auth.uid(),'admin')` internamente. O fallback in-function evita depender de grant granular por role de aplicação.
 
@@ -43,6 +49,7 @@ const { data } = await supabase.rpc('fn_admin_security_definer_exposure');
 ```
 
 Colunas úteis:
+
 - `function_name` — nome da função
 - `category` — `internal` | `user` | `public`
 - `granted_roles` — array com roles Postgres que possuem EXECUTE
@@ -53,18 +60,18 @@ Colunas úteis:
 
 ## 3. Autorização esperada por role de aplicação
 
-| Ação                                                | admin | manager | salesperson | anon |
-| --------------------------------------------------- | :---: | :-----: | :---------: | :--: |
-| `fn_convert_quote_to_sale(quote_id)`                |  ✅   |   ✅    |     ✅      |  ❌  |
-| `fn_admin_security_definer_exposure()`              |  ✅   |   ❌    |     ❌      |  ❌  |
-| `fn_admin_wal_health()`                             |  ✅   |   ❌    |     ❌      |  ❌  |
-| `fn_backfill_orders_conversion_seq()` (internal)    |  ❌*  |   ❌    |     ❌      |  ❌  |
-| `fn_cleanup_webhook_dedupe()` (internal)            |  ❌*  |   ❌    |     ❌      |  ❌  |
-| `check_rate_limit(key, limit, window)`              |  ✅   |   ✅    |     ✅      |  ✅  |
-| `count_failed_login_attempts(email)`                |  ✅   |   ✅    |     ✅      |  ✅  |
-| `award_salesperson_xp(...)`                         |  ✅   |   ✅    |     ✅      |  ❌  |
-| SELECT em `user_roles`                              |  ✅   |   ❌    |     ❌      |  ❌  |
-| INSERT/UPDATE em `user_roles`                       |  ✅   |   ❌    |     ❌      |  ❌  |
+| Ação                                             | admin | manager | salesperson | anon |
+| ------------------------------------------------ | :---: | :-----: | :---------: | :--: |
+| `fn_convert_quote_to_sale(quote_id)`             |  ✅   |   ✅    |     ✅      |  ❌  |
+| `fn_admin_security_definer_exposure()`           |  ✅   |   ❌    |     ❌      |  ❌  |
+| `fn_admin_wal_health()`                          |  ✅   |   ❌    |     ❌      |  ❌  |
+| `fn_backfill_orders_conversion_seq()` (internal) |  ❌*  |   ❌    |     ❌      |  ❌  |
+| `fn_cleanup_webhook_dedupe()` (internal)         |  ❌*  |   ❌    |     ❌      |  ❌  |
+| `check_rate_limit(key, limit, window)`           |  ✅   |   ✅    |     ✅      |  ✅  |
+| `count_failed_login_attempts(email)`             |  ✅   |   ✅    |     ✅      |  ✅  |
+| `award_salesperson_xp(...)`                      |  ✅   |   ✅    |     ✅      |  ❌  |
+| SELECT em `user_roles`                           |  ✅   |   ❌    |     ❌      |  ❌  |
+| INSERT/UPDATE em `user_roles`                    |  ✅   |   ❌    |     ❌      |  ❌  |
 
 `❌*` = admin da aplicação **não** executa funções `internal` via Data API. Essas funções só rodam via `service_role` (edge functions, cron jobs). Isso é intencional — reduz superfície e evita que credenciais de admin comprometidas apaguem dados operacionais.
 
@@ -74,14 +81,15 @@ Colunas úteis:
 
 ### `receive-quote-sync` — dois fluxos, um endpoint
 
-| Fluxo         | Autenticação                         | Validação                                        |
-| ------------- | ------------------------------------ | ------------------------------------------------ |
-| **V4 legado** | `QUOTE_SYNC_WEBHOOK_SECRET` no body  | `correlation_key` obrigatório, dedupe idempotente |
+| Fluxo          | Autenticação                          | Validação                                              |
+| -------------- | ------------------------------------- | ------------------------------------------------------ |
+| **V4 legado**  | `QUOTE_SYNC_WEBHOOK_SECRET` no body   | `correlation_key` obrigatório, dedupe idempotente      |
 | **PromoGifts** | HMAC-SHA256 via `x-webhook-signature` | Header + body verificados; `PROMOGIFTS_WEBHOOK_SECRET` |
 
 **Dedup:** ambos fluxos consultam `public.webhook_inbound_dedupe` por `correlation_key`. Reentrada com mesma chave → status `duplicate_ignored` (HTTP 200).
 
 **Testes** — `supabase/functions/receive-quote-sync/index.test.ts`:
+
 - GET não permitido
 - Body inválido → 400
 - Sem `x-webhook-signature` (fluxo PromoGifts) → 401
@@ -89,12 +97,16 @@ Colunas úteis:
 - V4 sem `correlation_key` → 400
 
 ### `log-web-vitals`
+
 `verify_jwt = false`. Recebe métricas anônimas. Validação:
+
 - Body deve ser JSON `{ metric, value, id, ...}` (schema Zod)
 - Rate limiting via `check_rate_limit(ip, 60, 60)` (60 req/min por IP)
 
 ### Convenção geral
+
 Todas as edges (exceto webhooks públicos) validam JWT via `getClaims()` conforme padrão descrito em `_shared/`. Endpoints públicos:
+
 - Validam assinatura ou usam rate limit
 - Não retornam dados sensíveis
 - Usam Zod para input
@@ -112,6 +124,7 @@ Todas as edges (exceto webhooks públicos) validam JWT via `getClaims()` conform
 5. Filtro `IN (<uuids fabricados>)` em `salespeople` → **0 linhas**.
 
 Rodar:
+
 ```bash
 npx playwright test tests/e2e/rls-authorization-edge-cases.spec.ts
 npx playwright test tests/e2e/security-definer-rpc-access.spec.ts
@@ -124,7 +137,9 @@ O segundo spec enumera **todas** as 149 funções via `pg_proc`, classifica e fa
 ## 6. PERF-01 — Alertas de WAL / replicação
 
 ### View `v_platform_wal_health`
+
 Colunas:
+
 - `active_slots` — número de replication slots ativos
 - `max_slot_lag_bytes` — maior lag entre slots (bytes)
 - `wal_size_bytes` — tamanho total do WAL em disco
@@ -133,23 +148,26 @@ Colunas:
 - `checked_at`
 
 ### Endpoint admin
+
 ```ts
 const { data } = await supabase.rpc('fn_admin_wal_health');
 // { active_slots: 2, max_slot_lag_bytes: 139264, ... }
 ```
 
 ### Edge function `wal-health-alert`
+
 Dispara Slack quando qualquer gatilho é atingido:
 
-| Métrica              | Default | Env override                 |
-| -------------------- | ------- | ---------------------------- |
-| `max_slot_lag_bytes` | 64 MiB  | `WAL_MAX_SLOT_LAG_BYTES`     |
-| `wal_size_bytes`     | 500 MiB | `WAL_SIZE_ALERT_BYTES`       |
-| `long_running_tx`    | > 0     | — (sempre alerta)            |
+| Métrica              | Default | Env override             |
+| -------------------- | ------- | ------------------------ |
+| `max_slot_lag_bytes` | 64 MiB  | `WAL_MAX_SLOT_LAG_BYTES` |
+| `wal_size_bytes`     | 500 MiB | `WAL_SIZE_ALERT_BYTES`   |
+| `long_running_tx`    | > 0     | — (sempre alerta)        |
 
 Requer secret `SLACK_WEBHOOK_URL`. Se ausente, a função retorna 503 com dica de setup em vez de silenciar.
 
 **Agendamento sugerido** (a cada 5 min):
+
 ```sql
 select cron.schedule(
   'wal-health-alert',
@@ -167,12 +185,12 @@ Alternativa: hooking em Grafana / Datadog / PagerDuty — basta trocar `postSlac
 
 ## 7. Como interpretar `v_security_definer_exposure`
 
-| Sinal                              | Ação                                                             |
-| ---------------------------------- | ---------------------------------------------------------------- |
-| `category='internal'` e `granted_roles && ARRAY['anon','authenticated']` | **BUG** — abrir migração de correção imediatamente. |
-| `has_search_path=false`            | Adicionar `SET search_path = public` no `CREATE OR REPLACE`.     |
-| `is_defined_admin_only=true` mas `category='public'` | Revogar `anon`/`authenticated`; a checagem interna existe mas o grant amplia superfície. |
-| Nova função aparece sem categoria clara | Rodar `SELECT * FROM v_security_definer_exposure WHERE function_name='...'` e ajustar grants na próxima migração. |
+| Sinal                                                                    | Ação                                                                                                              |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `category='internal'` e `granted_roles && ARRAY['anon','authenticated']` | **BUG** — abrir migração de correção imediatamente.                                                               |
+| `has_search_path=false`                                                  | Adicionar `SET search_path = public` no `CREATE OR REPLACE`.                                                      |
+| `is_defined_admin_only=true` mas `category='public'`                     | Revogar `anon`/`authenticated`; a checagem interna existe mas o grant amplia superfície.                          |
+| Nova função aparece sem categoria clara                                  | Rodar `SELECT * FROM v_security_definer_exposure WHERE function_name='...'` e ajustar grants na próxima migração. |
 
 **Regra de ouro:** `EXECUTE ON FUNCTION public.<x> TO authenticated` só é aceitável se a função **valida `auth.uid()`** ou se o efeito colateral é seguro para qualquer usuário logado.
 
@@ -197,3 +215,25 @@ Alternativa: hooking em Grafana / Datadog / PagerDuty — basta trocar `postSlac
 - Testes: `tests/e2e/security-definer-rpc-access.spec.ts`, `tests/e2e/rls-authorization-edge-cases.spec.ts`, `supabase/functions/receive-quote-sync/index.test.ts`
 - Edge alerta: `supabase/functions/wal-health-alert/index.ts`
 - ADR relacionado: `docs/decisions/ADR-003-supabase-rls-security.md`
+
+---
+
+## 10. Concessões aplicadas APÓS 2026-07-11 (revisão 2026-10-18)
+
+A matriz da §2 reflete o snapshot original. As migrations posteriores abriram
+exceções deliberadas — documentadas aqui para não serem lidas como regressão:
+
+1. **Re-grant de `EXECUTE` para `authenticated`/`anon`** em helpers de RLS e
+   funções públicas (migrations ≥ 2026-10-05). Helpers usados dentro de
+   policies precisam de grant para o role que executa a policy; sem isso o
+   RLS falha silenciosamente.
+2. **Wrappers `public.*` → `private.*` são `SECURITY DEFINER` por
+   necessidade**: `authenticated` não tem `USAGE` no schema `private`; o
+   wrapper DEFINER continua vendo o JWT do chamador via `auth.uid()`.
+3. **Volume atual**: 251 arquivos de migration contêm `SECURITY DEFINER`
+   (vs. as 149 funções catalogadas em 2026-07-11) — novas funções seguem o
+   checklist da §8, mas a contagem nominal da matriz não é mais válida.
+4. **`fn_admin_*`** continuam granted para `authenticated` com checagem de
+   `has_role(auth.uid(),'admin')` interna — padrão mantido.
+5. Pendente: re-auditoria da `v_security_definer_exposure` contra os grants
+   efetivos atuais (não há evidência de rodada de validação após 2026-10-05).

@@ -71,6 +71,9 @@ export const Automacoes = lazyWithPrefetch(() => import('@/pages/Automacoes'));
 export const ConversationalIntelligence = lazyWithPrefetch(
   () => import('@/pages/ConversationalIntelligenceHub')
 );
+export const ConversationalIntelligenceRecordings = lazyWithPrefetch(
+  () => import('@/pages/ConversationalIntelligence')
+);
 export const RevenueIntelligence = lazyWithPrefetch(
   () => import('@/pages/RevenueIntelligence')
 );
@@ -126,6 +129,9 @@ export const AdminHistoricoAlertasChurn = lazyWithPrefetch(
 );
 export const AdminSupressaoEmails = lazyWithPrefetch(
   () => import('@/pages/AdminSupressaoEmails')
+);
+export const AdminSolicitacoesTitular = lazyWithPrefetch(
+  () => import('@/pages/AdminSolicitacoesTitular')
 );
 export const MinhasPremiacoes = lazyWithPrefetch(
   () => import('@/pages/MinhasPremiacoes')

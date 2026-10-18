@@ -26,8 +26,9 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
     if (rl) return rl;
 
   try {
+    let caller;
     try {
-      await getUserClient(req);
+      caller = await getUserClient(req);
     } catch (authErr) {
       const msg = authErr instanceof UnauthorizedError ? (authErr as UnauthorizedError).message : 'Unauthorized';
       return new Response(JSON.stringify({ error: msg }), {
@@ -60,24 +61,49 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       return validationErrorResponse(errors, corsHeaders);
     }
 
-    // Use custom AI name if provided, otherwise default
-    const assistantName = aiAssistantName || 'Coach IA';
-    const userName = salespersonName || 'Vendedor';
+    // Nomes interpolados no system prompt: strip de quebras de linha e
+    // caracteres que quebram a estrutura do prompt (anti prompt-injection).
+    const sanitizePromptName = (s: string) =>
+      s.replace(/[\r\n"'`<>{}]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100);
+    const assistantName = sanitizePromptName(aiAssistantName || 'Coach IA');
+    const userName = sanitizePromptName(salespersonName || 'Vendedor');
 
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // IDOR: o salesperson efetivo vem do JWT do chamador, não do body. Um id
+    // diferente só é honrado para admin/manager.
+    const { data: callerSp } = await supabase
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', caller.userId)
+      .maybeSingle();
+    if (salespersonId && salespersonId !== callerSp?.id) {
+      const { data: isManager, error: roleErr } = await caller.client.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: caller.userId } as never
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    const effectiveSalespersonId = salespersonId ?? callerSp?.id;
 
     // Fetch salesperson context if provided
     let salespersonContext = '';
     let dealContextStr = '';
     let performanceSuggestions = '';
 
-    if (salespersonId) {
+    if (effectiveSalespersonId) {
       // Get salesperson info
       const { data: salesperson } = await supabase
         .from('salespeople')
         .select('id, name, role, commission_rate')
-        .eq('id', salespersonId)
+        .eq('id', effectiveSalespersonId)
         .single();
 
       // Get current month goals
@@ -85,7 +111,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const { data: goals } = await supabase
         .from('sales_goals')
         .select('salesperson_id, goal_amount')
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .eq('month', currentMonth)
         .single();
 
@@ -99,7 +125,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
         .select(
           'id, amount, status, client_name, product_name, category, source, created_at, updated_at'
         )
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .gte('created_at', startOfMonth.toISOString())
         .limit(10000);
 
@@ -118,7 +144,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const { data: outcomes } = await supabase
         .from('deal_outcomes')
         .select('outcome, reason')
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -131,14 +157,14 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const { data: activities } = await supabase
         .from('activities')
         .select('activity_type, outcome')
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .gte('created_at', today)
         .limit(500);
 
       const { data: activityGoals } = await supabase
         .from('activity_goals')
         .select('calls_goal, emails_goal, meetings_goal, linkedin_goal, whatsapp_goal')
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .single();
 
       const activityCounts = {
@@ -269,10 +295,12 @@ ${performanceSuggestions}
 
       // If a specific deal context is provided, fetch detailed info
       if (dealContext?.dealId) {
+        // Deal escopado ao salesperson efetivo — impede leitura de deal alheio.
         const { data: deal } = await supabase
           .from('sales')
           .select('id, client_name, product_name, amount, status, category, source, created_at')
           .eq('id', dealContext.dealId)
+          .eq('salesperson_id', effectiveSalespersonId)
           .single();
 
         if (deal) {

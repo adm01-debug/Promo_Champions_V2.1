@@ -86,7 +86,7 @@ export const useRecomputeBaselines = () => {
     },
     onSuccess: () => {
       toast.success('Baselines recalculadas');
-      qc.invalidateQueries({ queryKey: ['stage-baselines-all'] });
+      qc.invalidateQueries({ queryKey: ['stage-baselines'] });
       qc.invalidateQueries({ queryKey: ['stage-bottlenecks'] });
     },
     onError: () => toast.error('Erro ao recalcular baselines'),

@@ -7,6 +7,10 @@
 > (tipos gerados citam todas as tabelas e mascaram uso real). Resultado:
 > 333 vivas, 54 sem referência em código de aplicação.
 >
+> Revisão 2026-10-18: `webauthn_credentials` e `webauthn_challenges` foram
+> retiradas da lista A — passkeys estão ativas (edge `webauthn` + UI
+> `PasskeySettings.tsx`). As demais candidatas seguem sob observação.
+>
 > **Critério de drop:** candidata só pode ser dropada após **30 dias** de
 > observação em produção (`SELECT count(*), max(created_at)` mensal) +
 > confirmação de que nenhum job externo (n8n, Bitrix sync, ferramenta de
@@ -16,32 +20,32 @@
 
 Nenhuma function/trigger/cron definida nas migrations alimenta estas tabelas:
 
-| Tabela                       | Provável origem            | Nota                                                                                  |
-| ---------------------------- | -------------------------- | ------------------------------------------------------------------------------------- |
-| `ab_tests`                   | experimentos A/B legado    | app usa `cadence_ab_tests`                                                            |
-| `ai_sales_insights`          | insights de IA             | sem produtor no repo                                                                  |
-| `buying_committee`           | comitê de compra (v1)      | substituída por `buying_committee_members`                                            |
-| `cadence_ab_assignments`     | A/B de cadências           | sem produtor/leitor                                                                   |
-| `cadence_advanced_stats`     | stats de cadência          | sem produtor                                                                          |
-| `call_intelligence_triggers` | gatilhos de CI de chamadas | sem produtor                                                                          |
-| `call_tracking`              | tracking de ligações       | Twilio usa `twilio_call_sessions`                                                     |
-| `cohort_analyses`            | cohort de BI               | sem produtor                                                                          |
-| `competitors_pricing`        | pricing de concorrentes    | sem produtor                                                                          |
-| `experiment_assignments`     | framework de experimentos  | app usa `cadence_ab_tests`                                                            |
-| `mql_qualifications`         | qualificação MQL           | sem produtor                                                                          |
-| `password_history`           | histórico de senhas        | Auth gerencia senhas                                                                  |
-| `pipeline_inspections`       | inspeção de pipeline       | sem produtor                                                                          |
-| `price_protection_rules`     | precificação               | verificar redundância vs. regras CPQ                                                  |
-| `pricing_rules`              | precificação               | idem                                                                                  |
-| `product_stock_log`          | estoque                    | verificar redundância vs. `stock_movements`                                           |
-| `product_usage_events`       | product analytics          | sem produtor                                                                          |
-| `race_user_preferences`      | prefs de gamificação       | sem leitor                                                                            |
-| `sdr_performance_settings`   | settings SDR               | sem leitor                                                                            |
-| `webhook_inbound_log`        | log de ingresso webhook    | sem produtor SQL no repo (escritor pode ser externo/gateway)                          |
-| `webhook_logs`               | log de webhook             | idem                                                                                  |
-| `website_visitor_logs`       | de-anon de visitantes      | **populada por ferramenta externa — NÃO dropar**; retenção LGPD aplicada neste pacote |
-| `webauthn_credentials`       | passkeys                   | feature desabilitada (edge `webauthn` retorna 503)                                    |
-| `webauthn_challenges`        | passkeys                   | idem — par mais seguro para drop após 30d                                             |
+| Tabela                       | Provável origem            | Nota                                                                                                                                                |
+| ---------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ab_tests`                   | experimentos A/B legado    | app usa `cadence_ab_tests`                                                                                                                          |
+| `ai_sales_insights`          | insights de IA             | sem produtor no repo                                                                                                                                |
+| `buying_committee`           | comitê de compra (v1)      | substituída por `buying_committee_members`                                                                                                          |
+| `cadence_ab_assignments`     | A/B de cadências           | sem produtor/leitor                                                                                                                                 |
+| `cadence_advanced_stats`     | stats de cadência          | sem produtor                                                                                                                                        |
+| `call_intelligence_triggers` | gatilhos de CI de chamadas | sem produtor                                                                                                                                        |
+| `call_tracking`              | tracking de ligações       | Twilio usa `twilio_call_sessions`                                                                                                                   |
+| `cohort_analyses`            | cohort de BI               | sem produtor                                                                                                                                        |
+| `competitors_pricing`        | pricing de concorrentes    | sem produtor                                                                                                                                        |
+| `experiment_assignments`     | framework de experimentos  | app usa `cadence_ab_tests`                                                                                                                          |
+| `mql_qualifications`         | qualificação MQL           | sem produtor                                                                                                                                        |
+| `password_history`           | histórico de senhas        | Auth gerencia senhas                                                                                                                                |
+| `pipeline_inspections`       | inspeção de pipeline       | sem produtor                                                                                                                                        |
+| `price_protection_rules`     | precificação               | verificar redundância vs. regras CPQ                                                                                                                |
+| `pricing_rules`              | precificação               | idem                                                                                                                                                |
+| `product_stock_log`          | estoque                    | verificar redundância vs. `stock_movements`                                                                                                         |
+| `product_usage_events`       | product analytics          | sem produtor                                                                                                                                        |
+| `race_user_preferences`      | prefs de gamificação       | sem leitor                                                                                                                                          |
+| `sdr_performance_settings`   | settings SDR               | sem leitor                                                                                                                                          |
+| `webhook_inbound_log`        | log de ingresso webhook    | sem produtor SQL no repo (escritor pode ser externo/gateway)                                                                                        |
+| `webhook_logs`               | log de webhook             | idem                                                                                                                                                |
+| `website_visitor_logs`       | de-anon de visitantes      | **populada por ferramenta externa — NÃO dropar**; retenção LGPD aplicada neste pacote                                                               |
+| `webauthn_credentials`       | passkeys                   | **VIVA — remover da lista de candidatas** (2026-10-18): a edge `webauthn` está ativa e `PasskeySettings.tsx`/`useWebAuthn.ts` gerenciam credenciais |
+| `webauthn_challenges`        | passkeys                   | idem — **VIVA** (desafios transitórios do fluxo de passkeys)                                                                                        |
 
 ## B. Sem leitor no app, mas escritas por SQL interno do banco
 

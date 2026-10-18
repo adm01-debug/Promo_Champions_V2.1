@@ -48,7 +48,7 @@ export const useDealVelocityPrediction = (saleId: string | undefined) => {
   useEffect(() => {
     if (!saleId) return;
     const ch = supabase
-      .channel(`deal-velocity-${saleId}`)
+      .channel(`deal-velocity-${saleId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

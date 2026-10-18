@@ -13,6 +13,7 @@ import {
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
+import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY is not configured');
@@ -89,7 +90,7 @@ const generateAlerts = async (
     const { data: pendingDeals } = await supabase
       .from('sales')
       .select('updated_at, client_name, product_name, amount')
-      .in('status', ['pending', 'in_progress', 'negotiation', 'proposal'])
+      .in('status', [...OPEN_SALE_STATUSES])
       .limit(500);
 
     pendingDeals?.forEach(
@@ -120,7 +121,7 @@ const generateAlerts = async (
     const { data: allSales } = await supabase
       .from('sales')
       .select('client_name, created_at')
-      .eq('status', 'completed')
+      .in('status', [...WON_SALE_STATUSES])
       .order('created_at', { ascending: false })
       .limit(2000);
 
@@ -173,7 +174,7 @@ const generateAlerts = async (
               .from('sales')
               .select('salesperson_id, amount')
               .in('salesperson_id', chunk)
-              .eq('status', 'completed')
+              .in('status', [...WON_SALE_STATUSES])
               .gte('created_at', currentMonth)
               .limit(50000),
           { parallel: true, label: 'send-alert-notifications.month-sales' }

@@ -1,6 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useCallback, useMemo } from 'react';
-import { useIsMobile } from '@/hooks/useMediaQuery';
+import { useLocation } from 'react-router-dom';
+import { useMemo } from 'react';
 
 interface PageInfo {
   title: string;
@@ -48,9 +47,7 @@ const routeInfoMap: Record<string, PageInfo> = {
 };
 
 export function useMobileNavigation() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useIsMobile();
 
   const currentPageInfo = useMemo((): PageInfo => {
     const path = location.pathname;
@@ -76,28 +73,5 @@ export function useMobileNavigation() {
     return { title: 'PROMO CHAMPIONS' };
   }, [location.pathname]);
 
-  const goBack = useCallback(() => {
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
-      navigate('/', { replace: true });
-    }
-  }, [navigate]);
-
-  const goHome = useCallback(() => {
-    navigate('/');
-  }, [navigate]);
-
-  const isHomePage = location.pathname === '/';
-  const canGoBack = !isHomePage && window.history.length > 1;
-
-  return {
-    currentPageInfo,
-    goBack,
-    goHome,
-    isHomePage,
-    canGoBack,
-    isMobile,
-    currentPath: location.pathname,
-  };
+  return { currentPageInfo };
 }

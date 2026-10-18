@@ -18,7 +18,13 @@ import { ThemeCustomizer } from '@/components/settings/ThemeCustomizer';
 import { ApiIntegrationSettings } from '@/components/settings/ApiIntegrationSettings';
 import { CustomFieldsManager } from '@/components/settings/CustomFieldsManager';
 import { FeatureFlagsAdmin } from '@/components/settings/FeatureFlagsAdmin';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ReauthDialog } from '@/components/security/ReauthDialog';
+import { MFAVerification } from '@/components/security/MFAVerification';
+import { useMFA } from '@/hooks/useMFA';
 import {
   Settings,
   Shield,
@@ -38,6 +44,7 @@ import {
   Flag,
   RefreshCw,
   Smartphone,
+  Lock,
 } from 'lucide-react';
 import { PageTransition } from '@/components/transitions/PageTransition';
 import { useUserRoles } from '@/hooks/useUserRoles';
@@ -48,6 +55,10 @@ import { FollowUpTerritoryRules } from '@/components/settings/FollowUpTerritoryR
 
 export default function Configuracoes() {
   const { isAdmin } = useUserRoles();
+  const { isMFAEnabled, isLoading: mfaLoading } = useMFA();
+  const [mfaVerified, setMfaVerified] = useState(false);
+  const [reauthOpen, setReauthOpen] = useState(false);
+  const [adminReauthVerified, setAdminReauthVerified] = useState(false);
 
   return (
     <>
@@ -266,8 +277,13 @@ export default function Configuracoes() {
             <TabsContent value="passkeys" className="mt-6 space-y-6">
               <PasskeySettings />
               {/* MFA é per-user (auth.uid nas RPCs) — precisa viver numa rota
-              acessível a todos, não só no /seguranca admin-only. */}
-              <MFASetup />
+              acessível a todos, não só no /seguranca admin-only. Quem já tem
+              MFA habilitado confirma o segundo fator antes de alterar. */}
+              {isMFAEnabled && !mfaVerified && !mfaLoading ? (
+                <MFAVerification onSuccess={() => setMfaVerified(true)} />
+              ) : (
+                <MFASetup />
+              )}
             </TabsContent>
 
             <TabsContent value="devices" className="mt-6 space-y-6">
@@ -298,7 +314,30 @@ export default function Configuracoes() {
                 </TabsContent>
 
                 <TabsContent value="password-reset" className="mt-6">
-                  <PasswordResetApproval />
+                  {adminReauthVerified ? (
+                    <PasswordResetApproval />
+                  ) : (
+                    <Card className="glass border-border/40">
+                      <CardContent className="flex flex-col items-center gap-4 py-10">
+                        <div className="p-3 rounded-full bg-primary/10">
+                          <Lock className="h-6 w-6 text-primary" />
+                        </div>
+                        <p className="text-sm text-muted-foreground text-center max-w-md">
+                          A aprovação de resets de senha é uma ação administrativa
+                          sensível. Confirme sua identidade para continuar.
+                        </p>
+                        <Button onClick={() => setReauthOpen(true)}>
+                          Confirmar identidade
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                  <ReauthDialog
+                    open={reauthOpen}
+                    onOpenChange={setReauthOpen}
+                    onSuccess={() => setAdminReauthVerified(true)}
+                    action="admin_action"
+                  />
                 </TabsContent>
 
                 <TabsContent value="audit" className="mt-6 space-y-6">

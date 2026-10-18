@@ -332,8 +332,6 @@ export const useDashboardKPIsPeriod = (
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!salespersonId && salespersonId !== null) return;
-
     const channelId =
       typeof crypto !== 'undefined' && 'randomUUID' in crypto
         ? crypto.randomUUID()

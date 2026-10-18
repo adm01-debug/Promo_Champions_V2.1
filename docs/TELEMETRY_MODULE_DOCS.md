@@ -1,10 +1,14 @@
 # 📊 Módulo de Telemetria de Queries — Documentação Completa
 
-> Guia exaustivo para implementação do sistema de monitoramento de performance de banco de dados em projetos Lovable/Supabase.
+> Guia exaustivo para implementação do sistema de monitoramento de performance de banco de dados em projetos Supabase.
 
 **Versão:** 1.0  
-**Atualizado em:** 2026-03-23  
-**Cobertura de testes:** 229 testes automatizados (100% passando)
+**Atualizado em:** 2026-03-23 · **Revisado contra o HEAD em 2026-10-18**  
+**Cobertura de testes:** **sem specs dedicados** — os arquivos de teste citados
+na seção 9 (`tests/lib/telemetry-logic.test.ts`, `tests/components/TelemetryCharts.test.tsx`,
+`tests/pages/AdminTelemetria.test.tsx`, `tests/lib/external-db-bridge-telemetry.test.ts`)
+**não existem** no repo (verificado 2026-10-18); a alegação anterior de
+"229 testes (100% passando)" era incorreta.
 
 ---
 
@@ -63,17 +67,17 @@ O módulo de telemetria monitora automaticamente **todas as queries** executadas
 
 ### Componentes
 
-| Componente            | Localização                                          | Responsabilidade                   |
-| --------------------- | ---------------------------------------------------- | ---------------------------------- |
-| `emitTelemetry()`     | `supabase/functions/external-db-bridge/index.ts`     | Classificação + log + persistência |
-| `query_telemetry`     | Tabela Supabase (local)                              | Armazenamento de dados             |
-| `AdminTelemetriaPage` | `src/pages/admin/AdminTelemetriaPage.tsx`            | Dashboard principal                |
-| `TelemetryCharts`     | `src/components/admin/telemetry/TelemetryCharts.tsx` | Gráficos de tendência              |
+| Componente        | Localização                                                | Responsabilidade                   |
+| ----------------- | ---------------------------------------------------------- | ---------------------------------- |
+| `emitTelemetry()` | `supabase/functions/external-db-bridge/index.ts`           | Classificação + log + persistência |
+| `query_telemetry` | Tabela Supabase (local)                                    | Armazenamento de dados             |
+| `AdminTelemetria` | `src/pages/AdminTelemetria.tsx` (rota `/admin/telemetria`) | Dashboard principal                |
+| `TelemetryCharts` | `src/components/admin/telemetry/TelemetryCharts.tsx`       | Gráficos de tendência              |
 
 ### Diagrama de Dependências
 
 ```
-AdminTelemetriaPage
+AdminTelemetria
 ├── TelemetryCharts (recharts)
 ├── @tanstack/react-query (data fetching + auto-refresh)
 ├── supabase client (query da tabela query_telemetry)
@@ -359,7 +363,7 @@ emitTelemetry({
 
 ### Arquivo Principal
 
-`src/pages/admin/AdminTelemetriaPage.tsx`
+`src/pages/AdminTelemetria.tsx` (rota `/admin/telemetria`)
 
 ### Dependências
 
@@ -677,13 +681,19 @@ CREATE POLICY "Authenticated users can insert own telemetry"
 
 ## 9. Suíte de Testes
 
-### Visão Geral: 229 Testes
+### Visão Geral
+
+> **2026-10-18: nenhum desses arquivos de teste existe no repo** — a contagem
+> abaixo descreve a suíte recomendada/original, não o estado atual. Tratar
+> como backlog de cobertura, não como fato.
+
+| Arquivo | Testes | Escopo |
 
 | Arquivo                                          | Testes | Escopo                                                                       |
 | ------------------------------------------------ | ------ | ---------------------------------------------------------------------------- |
 | `tests/lib/telemetry-logic.test.ts`              | 77     | Lógica pura: thresholds, severidade, offenders, formatação, CSV/PDF, buckets |
 | `tests/components/TelemetryCharts.test.tsx`      | 38     | Componente de gráficos: rendering, dados, responsividade                     |
-| `tests/pages/AdminTelemetriaPage.test.tsx`       | 47     | Página completa: UI, filtros, exportação, interações                         |
+| `tests/pages/AdminTelemetria.test.tsx`           | 47     | Página completa: UI, filtros, exportação, interações                         |
 | `tests/lib/external-db-bridge-telemetry.test.ts` | 67     | Edge function: emitTelemetry, classificação, cache, mapeamento               |
 
 ### Padrão de Teste: Lógica Pura
@@ -742,7 +752,7 @@ it('renders charts when data is provided', () => {
 ```bash
 npm test -- tests/lib/telemetry-logic.test.ts \
   tests/components/TelemetryCharts.test.tsx \
-  tests/pages/AdminTelemetriaPage.test.tsx \
+  tests/pages/AdminTelemetria.test.tsx \
   tests/lib/external-db-bridge-telemetry.test.ts
 ```
 
@@ -796,12 +806,12 @@ npm install recharts jspdf jspdf-autotable date-fns
 
 ### Passo 5: Criar a página do dashboard
 
-1. Copie `AdminTelemetriaPage.tsx` para `src/pages/admin/`
+1. Copie `AdminTelemetria.tsx` para `src/pages/admin/`
 2. Copie `TelemetryCharts.tsx` para `src/components/admin/telemetry/`
 3. Adicione a rota no router:
 
 ```typescript
-<Route path="/admin/telemetria" element={<AdminTelemetriaPage />} />
+<Route path="/admin/telemetria" element={<AdminTelemetria />} />
 ```
 
 ### Passo 6: Configurar secrets na Edge Function

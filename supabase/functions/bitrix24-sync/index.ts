@@ -45,6 +45,7 @@ interface BitrixDeal {
 }
 
 interface IcpData {
+  client_id: string | null;
   bitrix_id: string | null;
   capital_social: number | null;
   num_colaboradores: number | null;
@@ -271,7 +272,7 @@ async function syncCompaniesToCRM(supabase: SupabaseClient, requestId = '-'): Pr
 
     // Process existing companies: parallel client updates + batch icp_data upsert
     const icpUpdates: Array<Record<string, unknown>> = [];
-    const clientUpdateOps: Array<Promise<unknown>> = [];
+    const clientUpdateOps: Array<PromiseLike<unknown>> = [];
     for (const company of companies.filter(c => icpByBitrixId.has(c.ID))) {
       const clientId = icpByBitrixId.get(company.ID)!;
       clientUpdateOps.push(
@@ -392,7 +393,12 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
     const companyIds = deals.map(d => d.COMPANY_ID).filter(Boolean) as string[];
     const clientNameByBitrixId = new Map<string, string>();
     if (companyIds.length > 0) {
-      type IcpJoinRow = { bitrix_id: string | null; clients: { name: string } | null };
+      // PostgREST embute o join many-to-one como objeto, mas a tipagem do
+      // supabase-js infere array — aceita os dois shapes.
+      type IcpJoinRow = {
+        bitrix_id: string | null;
+        clients: { name: string } | { name: string }[] | null;
+      };
       const icpRows = await chunkedIn<IcpJoinRow>(
         companyIds,
         chunk =>
@@ -403,15 +409,20 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
         { parallel: true, label: 'bitrix24-sync.deals_client_names' }
       );
       icpRows.forEach(row => {
-        if (row.bitrix_id && row.clients?.name) {
-          clientNameByBitrixId.set(row.bitrix_id, row.clients.name);
+        const client = Array.isArray(row.clients)
+          ? row.clients[0]
+          : row.clients;
+        if (row.bitrix_id && client?.name) {
+          clientNameByBitrixId.set(row.bitrix_id, client.name);
         }
       });
     }
 
     // Dedupe primário por deal.ID (sales.external_deal_id, migration
     // 20261001190000). Se a coluna ainda não existir em produção, cai no
-    // dedupe legado por client_name::product_name.
+    // dedupe legado por client_name::product_name. Sem filtro de source:
+    // vendas empurradas pelo syncDealsToBitrix recebem external_deal_id no
+    // write-back e precisam casar aqui para não virar sale nova no pull.
     const dealIds = [...new Set(deals.map(d => d.ID))];
     const existingByDealId = new Map<string, string>();
     let hasExternalDealId = true;
@@ -425,7 +436,6 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
           supabase
             .from('sales')
             .select('id, external_deal_id')
-            .eq('source', 'bitrix24')
             .in('external_deal_id', chunk),
         { parallel: true, label: 'bitrix24-sync.existing_deals_by_deal_id' }
       );
@@ -468,7 +478,7 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
     });
 
     const insertRows: Array<Record<string, unknown>> = [];
-    const updateOps: Array<Promise<unknown>> = [];
+    const updateOps: Array<PromiseLike<unknown>> = [];
     const syncNow = new Date().toISOString();
     const seenDealIds = new Set<string>();
 
@@ -562,7 +572,7 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient, requestId = '-'):
 
     const icpMap = new Map<string, IcpData>();
     icpDataList.forEach(icp => {
-      icpMap.set(icp.client_id, icp);
+      if (icp.client_id) icpMap.set(icp.client_id, icp);
     });
 
     const clientsToSync = clientsWithoutBitrix.filter(client => {
@@ -633,13 +643,26 @@ async function syncDealsToBitrix(supabase: SupabaseClient, requestId = '-'): Pro
       lost: 'LOSE',
     };
 
-    const { data: sales } = await supabase
+    // Só vendas ainda não sincronizadas: external_deal_id é o write-back do
+    // deal.ID no Bitrix (mesmo padrão do icp_data.bitrix_id nas empresas).
+    // Sem esse filtro o lote de 50 reempurrava as mesmas vendas a cada run
+    // e duplicava deals no CRM.
+    const { data: sales, error: salesError } = await supabase
       .from('sales')
       .select('id, client_name, product_name, amount, status')
       .neq('source', 'bitrix24')
+      .is('external_deal_id', null)
       .order('updated_at', { ascending: false })
       .limit(50);
 
+    if (salesError) {
+      // Coluna ausente em produção (migration 20261001190000 pendente): falha
+      // fechada — sem write-back cada run duplicaria deals no Bitrix.
+      logWithRequestId('warn', 'bitrix24-sync', requestId, 'sync_deals_external_id_unavailable', {
+        error: salesError.message,
+      });
+      return 0;
+    }
     if (!sales) return 0;
 
     // Batch lookup: all client names → IDs → bitrix_ids in two queries
@@ -686,16 +709,26 @@ async function syncDealsToBitrix(supabase: SupabaseClient, requestId = '-'): Pro
           ? bitrixIdByClientName.get(sale.client_name)
           : undefined;
 
-        await bitrixApiCall('crm.deal.add', {
+        const result = (await bitrixApiCall('crm.deal.add', {
           fields: {
             TITLE: sale.product_name,
             OPPORTUNITY: sale.amount,
             STAGE_ID: statusMapping[sale.status] || 'NEW',
             COMPANY_ID: companyId,
           },
-        }, requestId);
+        }, requestId)) as string | number | undefined;
 
-        syncedCount++;
+        const dealId = result != null ? String(result) : null;
+        if (dealId) {
+          // Write-back do deal.ID: a próxima execução filtra a venda e o pull
+          // a reconhece pelo dedupe de deal.ID em vez de reimportá-la.
+          const { error: writeBackError } = await supabase
+            .from('sales')
+            .update({ external_deal_id: dealId })
+            .eq('id', sale.id);
+          if (writeBackError) throw writeBackError;
+          syncedCount++;
+        }
       } catch (error) {
         if (error instanceof CircuitBreakerOpenError) throw error;
         logWithRequestId('error', 'bitrix24-sync', requestId, 'sync_sale_to_bitrix_failed', {

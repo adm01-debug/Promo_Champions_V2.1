@@ -13,6 +13,7 @@ export const PROVIDER_LABEL: Record<ProviderKind, string> = {
   meta_cloud: 'Meta Cloud API',
   zapi: 'Z-API',
   messagebird: 'MessageBird',
+  evolution: 'Evolution API',
 };
 
 export const STATUS_LABEL: Record<string, string> = {
@@ -70,4 +71,11 @@ export const PROVIDER_FIELDS: Record<
     { key: 'client_token', label: 'Client Token (opcional)', secret: true },
   ],
   messagebird: [{ key: 'api_key', label: 'API Key', secret: true }],
+  evolution: [
+    {
+      key: 'instance',
+      label: 'Instância (opcional)',
+      help: 'Nome da instância na Evolution API — vazio usa a padrão do servidor',
+    },
+  ],
 };
