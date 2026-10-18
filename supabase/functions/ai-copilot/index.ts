@@ -125,14 +125,36 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // IDOR: o salesperson efetivo vem do JWT do chamador, não do body. Um id
+    // diferente só é honrado para admin/manager.
+    const { data: callerSp } = await supabase
+      .from('salespeople')
+      .select('id')
+      .eq('auth_user_id', authData.user.id)
+      .maybeSingle();
+    if (salespersonId && salespersonId !== callerSp?.id) {
+      const { data: isManager, error: roleErr } = await authClient.rpc(
+        'is_admin_or_manager' as never,
+        { _user_id: authData.user.id } as never
+      );
+      if (roleErr) throw roleErr;
+      if (!isManager) {
+        return new Response(JSON.stringify({ error: 'forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    const effectiveSalespersonId = salespersonId ?? callerSp?.id;
+
     let contextData = '';
 
     // Fetch relevant data based on current page context
-    if (salespersonId) {
+    if (effectiveSalespersonId) {
       const { data: salesperson } = await supabase
         .from('salespeople')
         .select('name, role, xp, level, commission_rate')
-        .eq('id', salespersonId)
+        .eq('id', effectiveSalespersonId)
         .single();
 
       if (salesperson) {
@@ -143,7 +165,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       const { data: tasks, count: taskCount } = await supabase
         .from('tasks')
         .select('title, priority, due_date', { count: 'exact' })
-        .eq('assigned_to', salespersonId)
+        .eq('assigned_to', effectiveSalespersonId)
         .eq('is_completed', false)
         .order('due_date', { ascending: true })
         .limit(5);
@@ -157,7 +179,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       const { count: activityCount } = await supabase
         .from('activities')
         .select('id', { count: 'exact', head: true })
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .gte('created_at', weekAgo);
 
       contextData += `Atividades na semana: ${activityCount || 0}\n`;
@@ -166,7 +188,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       const { data: deals, count: dealCount } = await supabase
         .from('sales')
         .select('title, value, status', { count: 'exact' })
-        .eq('salesperson_id', salespersonId)
+        .eq('salesperson_id', effectiveSalespersonId)
         .in('status', ['open', 'lead', 'qualified', 'proposal', 'negotiation'])
         .order('value', { ascending: false })
         .limit(3);
