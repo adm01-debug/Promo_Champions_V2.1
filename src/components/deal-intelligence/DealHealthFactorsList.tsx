@@ -6,7 +6,7 @@ interface Props {
 }
 
 export function DealHealthFactorsList({ factors }: Props) {
-  if (!factors || factors.length === 0) {
+  if (!Array.isArray(factors) || factors.length === 0) {
     return <p className="text-xs text-muted-foreground">Sem fatores identificados</p>;
   }
 

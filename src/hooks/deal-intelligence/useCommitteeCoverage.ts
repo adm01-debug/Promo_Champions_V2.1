@@ -22,7 +22,7 @@ export const useCommitteeCoverage = (saleId: string | null | undefined) => {
   useEffect(() => {
     if (!saleId) return;
     const ch = supabase
-      .channel(`coverage-${saleId}`)
+      .channel(`coverage-${saleId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
