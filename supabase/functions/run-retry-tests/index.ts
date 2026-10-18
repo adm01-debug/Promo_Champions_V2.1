@@ -1,5 +1,6 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { getUserClient, UnauthorizedError, requireAdmin } from '../_shared/auth-client.ts';
 // Executes the test cases declared in supabase/functions/winloss-webhook-dispatcher/retry_test.ts
 // in-process, by overriding the global Deno.test API to capture (instead of run) the registered
 // tests, then awaiting each one with timing. Returns a structured JSON suitable for a dashboard.
@@ -7,7 +8,8 @@ import { withRequestId } from '../_shared/request-id.ts';
 // Returns: { ran_at, total_duration_ms, passed, failed, total, file, tests: [...] }
 // Each test entry: { name, status: "passed" | "failed", duration_ms, error?: string }
 //
-// CORS enabled. No auth required at the function layer (route is admin-gated in the UI).
+// CORS enabled. Auth: papel admin exigido server-side (rota /admin/* na UI);
+// antes era apenas gate visual — qualquer chamada direta executava a suíte.
 
 type CapturedTest = {
   name: string;
@@ -141,6 +143,33 @@ async function captureAndRun(): Promise<{
 Deno.serve(withRequestId('run-retry-tests', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+
+  // Executar a suíte de testes consome CPU em produção: restrito a admin.
+  try {
+    const caller = await getUserClient(req);
+    await requireAdmin(caller);
+  } catch (authErr) {
+    const msg = authErr instanceof UnauthorizedError ? authErr.message : '';
+    const status =
+      msg === 'admin_role_required'
+        ? 403
+        : msg.startsWith('role_check_failed')
+          ? 503
+          : authErr instanceof UnauthorizedError
+            ? 401
+            : 500;
+    const error =
+      status === 401
+        ? 'unauthorized'
+        : status === 403
+          ? 'forbidden'
+          : 'authorization_unavailable';
+    if (status === 500) console.error('run-retry-tests auth check failed:', authErr);
+    return new Response(JSON.stringify({ error }), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
     const { tests, totalDurationMs } = await captureAndRun();

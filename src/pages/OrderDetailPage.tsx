@@ -32,7 +32,10 @@ export default function OrderDetailPage() {
         />
       </Helmet>
 
-      <BackButton label="Voltar para Meus Pedidos" fallbackPath="/meus-pedidos" />
+      <BackButton
+        label="Voltar para Meus Pedidos"
+        fallbackPath="/acompanhamento-pedidos"
+      />
 
       {isLoading && <OrderDetailSkeleton />}
 
@@ -46,7 +49,7 @@ export default function OrderDetailPage() {
               Este pedido não existe ou você não tem permissão para visualizá-lo.
             </p>
             <Button asChild>
-              <Link to="/meus-pedidos">Ver meus pedidos</Link>
+              <Link to="/acompanhamento-pedidos">Ver meus pedidos</Link>
             </Button>
           </CardContent>
         </Card>

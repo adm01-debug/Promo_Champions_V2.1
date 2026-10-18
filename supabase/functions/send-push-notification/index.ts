@@ -12,20 +12,271 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0;
 }
 
+// ── VAPID (RFC 8292) ─────────────────────────────────────────────────────
+// Push services exigem identificação voluntária do servidor: sem o header
+// `Authorization: vapid t=<jwt ES256>, k=<chave pública>` o envio é rejeitado
+// silenciosamente. As chaves vêm dos secrets da function (VAPID_PUBLIC_KEY /
+// VAPID_PRIVATE_KEY, formato base64url do `web-push generate-vapid-keys`).
+
+const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;
+
+function base64UrlDecode(value: string): Uint8Array | null {
+  try {
+    const padded = value.replace(/-/g, "+").replace(/_/g, "/");
+    const binary = atob(padded + "=".repeat((4 - (padded.length % 4)) % 4));
+    return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  } catch {
+    return null;
+  }
+}
+
+function base64UrlEncode(bytes: Uint8Array): string {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+let cachedVapidKey: Promise<CryptoKey> | null = null;
+
+async function importVapidPrivateKey(
+  publicKeyB64: string,
+  privateKeyB64: string,
+): Promise<CryptoKey | null> {
+  if (!cachedVapidKey) {
+    cachedVapidKey = (async () => {
+      const publicBytes = base64UrlDecode(publicKeyB64);
+      const privateBytes = base64UrlDecode(privateKeyB64);
+      if (!publicBytes || publicBytes.length !== 65 || publicBytes[0] !== 0x04) {
+        throw new Error("vapid_public_key_invalid");
+      }
+      if (!privateBytes || privateBytes.length !== 32) {
+        throw new Error("vapid_private_key_invalid");
+      }
+      const jwk: JsonWebKey = {
+        kty: "EC",
+        crv: "P-256",
+        x: base64UrlEncode(publicBytes.slice(1, 33)),
+        y: base64UrlEncode(publicBytes.slice(33, 65)),
+        d: base64UrlEncode(privateBytes),
+      };
+      return await crypto.subtle.importKey(
+        "jwk",
+        jwk,
+        { name: "ECDSA", namedCurve: "P-256" },
+        false,
+        ["sign"],
+      );
+    })();
+    cachedVapidKey.catch(() => { cachedVapidKey = null; });
+  }
+  try {
+    return await cachedVapidKey;
+  } catch {
+    return null;
+  }
+}
+
+async function buildVapidAuthorization(
+  endpoint: string,
+  publicKeyB64: string,
+  privateKeyB64: string,
+): Promise<string | null> {
+  const key = await importVapidPrivateKey(publicKeyB64, privateKeyB64);
+  if (!key) return null;
+
+  const subject = Deno.env.get("VAPID_SUBJECT") ??
+    "mailto:admin@promobrindes.com.br";
+  const header = base64UrlEncode(
+    new TextEncoder().encode(JSON.stringify({ typ: "JWT", alg: "ES256" })),
+  );
+  const claims = base64UrlEncode(
+    new TextEncoder().encode(JSON.stringify({
+      aud: new URL(endpoint).origin,
+      exp: Math.floor(Date.now() / 1000) + VAPID_EXPIRATION_SECONDS,
+      sub: subject,
+    })),
+  );
+  const signature = new Uint8Array(
+    await crypto.subtle.sign(
+      { name: "ECDSA", hash: { name: "SHA-256" } },
+      key,
+      new TextEncoder().encode(`${header}.${claims}`) as unknown as ArrayBuffer,
+    ),
+  );
+  return `vapid t=${header}.${claims}.${base64UrlEncode(signature)}, k=${publicKeyB64}`;
+}
+
+// ── Criptografia do payload (RFC 8291, content-coding aes128gcm) ──────────
+// Assinatura VAPID só identifica o servidor — o push service também exige o
+// corpo cifrado com as chaves da inscrição: ECDH efêmero com `p256dh`, IKM
+// derivado do `auth` secret, CEK+nonce via HKDF-SHA256 e AES-128-GCM. Sem
+// isso o service descarta a mensagem mesmo com Authorization válido.
+
+function concatBytes(...parts: Uint8Array[]): Uint8Array {
+  const total = parts.reduce((acc, p) => acc + p.length, 0);
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const part of parts) {
+    out.set(part, offset);
+    offset += part.length;
+  }
+  return out;
+}
+
+async function hmacSha256(
+  keyBytes: Uint8Array,
+  data: Uint8Array,
+): Promise<Uint8Array> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    keyBytes as unknown as ArrayBuffer,
+    { name: "HMAC", hash: { name: "SHA-256" } },
+    false,
+    ["sign"],
+  );
+  return new Uint8Array(
+    await crypto.subtle.sign("HMAC", key, data as unknown as ArrayBuffer),
+  );
+}
+
+// HKDF-SHA256 com um único bloco de expand (saídas ≤ 32 bytes).
+async function hkdfBlock(
+  salt: Uint8Array,
+  ikm: Uint8Array,
+  info: Uint8Array,
+  length: number,
+): Promise<Uint8Array> {
+  const prk = await hmacSha256(salt, ikm);
+  const expanded = await hmacSha256(prk, concatBytes(info, Uint8Array.of(0x01)));
+  return expanded.slice(0, length);
+}
+
+async function encryptPushPayload(
+  subscription: { p256dh: string; auth: string },
+  payload: string,
+): Promise<Uint8Array | null> {
+  try {
+    const uaPublic = base64UrlDecode(subscription.p256dh);
+    const authSecret = base64UrlDecode(subscription.auth);
+    if (!uaPublic || uaPublic.length !== 65 || uaPublic[0] !== 0x04) return null;
+    if (!authSecret || authSecret.length !== 16) return null;
+
+    const uaKey = await crypto.subtle.importKey(
+      "jwk",
+      {
+        kty: "EC",
+        crv: "P-256",
+        x: base64UrlEncode(uaPublic.slice(1, 33)),
+        y: base64UrlEncode(uaPublic.slice(33, 65)),
+      },
+      { name: "ECDH", namedCurve: "P-256" },
+      false,
+      [],
+    );
+    const asKeys = await crypto.subtle.generateKey(
+      { name: "ECDH", namedCurve: "P-256" },
+      true,
+      ["deriveBits"],
+    );
+    const asPublic = new Uint8Array(
+      await crypto.subtle.exportKey("raw", asKeys.publicKey),
+    );
+    const ecdhSecret = new Uint8Array(
+      await crypto.subtle.deriveBits(
+        { name: "ECDH", public: uaKey },
+        asKeys.privateKey,
+        256,
+      ),
+    );
+
+    // RFC 8291 §3.4: o auth_secret do subscriber é o salt do extract que
+    // produz o PRK; o info leva as duas chaves públicas não-comprimidas.
+    const keyInfo = concatBytes(
+      new TextEncoder().encode("WebPush: info"),
+      Uint8Array.of(0x00),
+      uaPublic,
+      asPublic,
+    );
+    const ikm = await hkdfBlock(authSecret, ecdhSecret, keyInfo, 32);
+
+    // CEK e nonce do registro único: salt aleatório + HKDF sobre o IKM.
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const cek = await hkdfBlock(
+      salt,
+      ikm,
+      new TextEncoder().encode("Content-Encoding: aes128gcm\0"),
+      16,
+    );
+    const nonce = await hkdfBlock(
+      salt,
+      ikm,
+      new TextEncoder().encode("Content-Encoding: nonce\0"),
+      12,
+    );
+
+    // aes128gcm: plaintext + delimitador 0x02 (registro final) antes do GCM.
+    const plainBytes = concatBytes(
+      new TextEncoder().encode(payload),
+      Uint8Array.of(0x02),
+    );
+    const aesKey = await crypto.subtle.importKey(
+      "raw",
+      cek as unknown as ArrayBuffer,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"],
+    );
+    const ciphertext = new Uint8Array(
+      await crypto.subtle.encrypt(
+        { name: "AES-GCM", iv: nonce as unknown as ArrayBuffer },
+        aesKey,
+        plainBytes as unknown as ArrayBuffer,
+      ),
+    );
+
+    // Corpo ECE: salt(16) | rs uint32 | idlen(1) | pubkey efêmera(65) | ct.
+    const header = new Uint8Array(16 + 4 + 1 + 65);
+    header.set(salt, 0);
+    new DataView(header.buffer).setUint32(16, 4096, false);
+    header[20] = 65;
+    header.set(asPublic, 21);
+    return concatBytes(header, ciphertext);
+  } catch {
+    return null;
+  }
+}
+
 async function sendWebPushNotification(
   subscription: { endpoint: string; p256dh: string; auth: string },
   payload: string,
   requestId: string,
+  vapid: { publicKey: string; privateKey: string },
 ): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
+    const authorization = await buildVapidAuthorization(
+      subscription.endpoint,
+      vapid.publicKey,
+      vapid.privateKey,
+    );
+    if (!authorization) {
+      return { success: false, error: 'vapid_signing_failed' };
+    }
+
+    const body = await encryptPushPayload(subscription, payload);
+    if (!body) {
+      return { success: false, error: 'push_payload_encryption_failed' };
+    }
+
     const response = await fetchWithTrace(subscription.endpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/octet-stream',
+        'Content-Encoding': 'aes128gcm',
         'TTL': '86400',
-        'Urgency': 'high'
+        'Urgency': 'high',
+        'Authorization': authorization
       },
-      body: payload
+      body: body as unknown as BodyInit
     }, {
       requestId,
       fnName: 'send-push-notification',
@@ -87,6 +338,18 @@ Deno.serve(withRequestId('send-push-notification', async (req, ctx) => {
       );
     }
     callerUserId = user.id;
+  }
+
+  // VAPID obrigatório: antes do fix o envio seguia sem assinatura e o push
+  // service descartava cada mensagem — hoje falha explicitamente até o
+  // usuário cadastrar os secrets.
+  const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY');
+  const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY');
+  if (!vapidPublicKey || !vapidPrivateKey) {
+    return new Response(
+      JSON.stringify({ error: 'vapid_not_configured', message: 'Cadastre VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY nos secrets da function' }),
+      { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 
   try {
@@ -160,6 +423,7 @@ Deno.serve(withRequestId('send-push-notification', async (req, ctx) => {
           { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
           payload,
           ctx.requestId,
+          { publicKey: vapidPublicKey, privateKey: vapidPrivateKey },
         );
 
         if (!result.success && (result.status === 404 || result.status === 410)) {

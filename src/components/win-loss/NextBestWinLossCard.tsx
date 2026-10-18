@@ -41,7 +41,7 @@ export function NextBestWinLossCard() {
           </div>
           {data.accountId ? (
             <Button asChild size="sm" className="shrink-0">
-              <Link to={`/contas/${data.accountId}`}>
+              <Link to={`/engagement/abm/${data.accountId}`}>
                 Abrir <ArrowUpRight className="h-3 w-3 ml-1" />
               </Link>
             </Button>

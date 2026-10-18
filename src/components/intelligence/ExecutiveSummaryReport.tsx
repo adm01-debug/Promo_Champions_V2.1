@@ -18,6 +18,10 @@ import * as React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { useLatestBriefing } from '@/hooks/executive-briefing/useLatestBriefing';
+import { useGenerateBriefing } from '@/hooks/executive-briefing/useGenerateBriefing';
+import { useDashboardKPIsPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
+import { formatBRL } from '@/lib/money';
 
 interface Props {
   isOpen: boolean;
@@ -25,7 +29,18 @@ interface Props {
 }
 
 export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
+  const { data: briefing, isLoading } = useLatestBriefing();
+  const generate = useGenerateBriefing();
+  const { data: kpis } = useDashboardKPIsPeriod('quarter');
+
   if (!isOpen) return null;
+
+  const revenue = kpis?.current.totalRevenue ?? 0;
+  const revenueChange = kpis?.changes.revenue ?? 0;
+  const conversion = kpis?.current.conversionRate ?? 0;
+  const wins = briefing?.key_wins ?? [];
+  const risks = briefing?.key_risks ?? [];
+  const actions = briefing?.recommended_actions ?? [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">
@@ -53,11 +68,22 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-9 gap-2 text-xs">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 gap-2 text-xs"
+              onClick={() => window.print()}
+            >
               <Download className="h-3.5 w-3.5" /> PDF
             </Button>
-            <Button variant="outline" size="sm" className="h-9 gap-2 text-xs">
-              <Share2 className="h-3.5 w-3.5" /> Compartilhar
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 gap-2 text-xs"
+              onClick={() => generate.mutate({ force: true })}
+              disabled={generate.isPending}
+            >
+              <Share2 className="h-3.5 w-3.5" /> Atualizar Briefing
             </Button>
             <Button variant="ghost" size="sm" onClick={onClose} className="h-9 w-9 p-0">
               <ChevronRight className="h-5 w-5 rotate-90" />
@@ -77,32 +103,54 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
                 >
                   Resumo de Alto Nível
                 </Badge>
-                <h3 className="text-3xl font-display font-black tracking-tight leading-tight">
-                  Crescimento Acelerado com{' '}
-                  <span className="text-primary italic">Foco em Blindagem de Contas</span>
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  O trimestre atual apresenta uma performance superior em 15% comparado ao
-                  período anterior. A tração é impulsionada pela vertical de Tecnologia e
-                  Varejo. Identificamos uma oportunidade de expansão de R$ 1.2M nas contas
-                  Tier 1 através de cross-selling.
-                </p>
+                {isLoading || briefing ? (
+                  <>
+                    <h3 className="text-3xl font-display font-black tracking-tight leading-tight">
+                      {briefing?.headline ?? 'Carregando briefing executivo...'}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {briefing?.narrative}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-2xl font-display font-black tracking-tight leading-tight">
+                      Nenhum briefing executivo gerado
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Gere o briefing executivo para popular este relatório com números
+                      reais de pulso, vitórias, riscos e ações recomendadas.
+                    </p>
+                    <Button
+                      size="sm"
+                      onClick={() => generate.mutate({ force: false })}
+                      disabled={generate.isPending}
+                    >
+                      Gerar Briefing Executivo
+                    </Button>
+                  </>
+                )}
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <SummaryStat
-                  label="Pipeline Total"
-                  value="R$ 12.4M"
-                  trend="+8%"
-                  tone="good"
+                  label="Receita no Trimestre"
+                  value={formatBRL(revenue)}
+                  trend={`${revenueChange >= 0 ? '+' : ''}${revenueChange.toFixed(1)}%`}
+                  tone={revenueChange >= 0 ? 'good' : 'bad'}
                 />
                 <SummaryStat
-                  label="Win Rate Médio"
-                  value="34.2%"
-                  trend="+2.1%"
-                  tone="good"
+                  label="Taxa de Conversão"
+                  value={`${conversion.toFixed(1)}%`}
+                  trend={`${(kpis?.changes.conversion ?? 0) >= 0 ? '+' : ''}${(kpis?.changes.conversion ?? 0).toFixed(1)}%`}
+                  tone={(kpis?.changes.conversion ?? 0) >= 0 ? 'good' : 'bad'}
                 />
-                <SummaryStat label="LTV/CAC" value="4.8x" trend="-0.2" tone="neutral" />
+                <SummaryStat
+                  label="Pulse Score"
+                  value={briefing ? String(briefing.pulse_score) : '—'}
+                  trend={briefing ? 'IA' : '—'}
+                  tone="neutral"
+                />
               </div>
             </div>
 
@@ -111,24 +159,35 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
                 <Sparkles className="h-3.5 w-3.5 text-primary" /> IA Strategic Pulse
               </h4>
               <div className="space-y-3">
-                <InsightRow
-                  icon={Target}
-                  text="Projeção de fechamento: R$ 2.8M (102% da meta)"
-                />
-                <InsightRow
-                  icon={AlertTriangle}
-                  text="3 deals de alto valor com risco de estagnação"
-                  tone="warn"
-                />
-                <InsightRow
-                  icon={TrendingUp}
-                  text="Sentimento médio dos leads subiu de 68 para 74"
-                  tone="good"
-                />
-                <InsightRow
-                  icon={Zap}
-                  text="Ação Prioritária: Blindagem da conta Acme Corp"
-                />
+                {wins.slice(0, 2).map((w, i) => (
+                  <InsightRow
+                    key={`w-${i}`}
+                    icon={TrendingUp}
+                    text={w.title}
+                    tone="good"
+                  />
+                ))}
+                {risks.slice(0, 2).map((r, i) => (
+                  <InsightRow
+                    key={`r-${i}`}
+                    icon={AlertTriangle}
+                    text={r.title}
+                    tone="warn"
+                  />
+                ))}
+                {actions.slice(0, 1).map((a, i) => (
+                  <InsightRow
+                    key={`a-${i}`}
+                    icon={Zap}
+                    text={`Ação Prioritária: ${a.title}`}
+                  />
+                ))}
+                {wins.length === 0 && risks.length === 0 && actions.length === 0 && (
+                  <InsightRow
+                    icon={Target}
+                    text="Sem sinais consolidados — gere o briefing executivo."
+                  />
+                )}
               </div>
             </div>
           </section>
@@ -143,23 +202,28 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
               <div className="space-y-4 p-5 rounded-xl border border-border/30 bg-card">
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-medium">
-                    <span>Atingimento da Meta</span>
-                    <span className="font-bold">84%</span>
+                    <span>Taxa de Conversão no Trimestre</span>
+                    <span className="font-bold">{conversion.toFixed(1)}%</span>
                   </div>
-                  <Progress value={84} className="h-2 bg-emerald-500/10" />
+                  <Progress
+                    value={Math.min(100, conversion)}
+                    className="h-2 bg-emerald-500/10"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 rounded-lg bg-secondary/30">
                     <p className="text-[10px] text-muted-foreground uppercase">
-                      Receita Recorrente
+                      Vendas Fechadas
                     </p>
-                    <p className="text-lg font-bold">R$ 840k</p>
+                    <p className="text-lg font-bold">{kpis?.current.totalSales ?? 0}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-secondary/30">
                     <p className="text-[10px] text-muted-foreground uppercase">
-                      Expansão
+                      Ticket Médio
                     </p>
-                    <p className="text-lg font-bold">R$ 120k</p>
+                    <p className="text-lg font-bold">
+                      {formatBRL(kpis?.current.avgTicket ?? 0)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -168,38 +232,35 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
             {/* Competitive Landscape */}
             <div className="space-y-4">
               <h4 className="font-bold text-sm flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-blue-500" /> Paisagem Competitiva
+                <ShieldCheck className="h-4 w-4 text-blue-500" /> Principais Riscos
               </h4>
               <div className="space-y-4 p-5 rounded-xl border border-border/30 bg-card">
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs">Win-Rate vs. NexGen</span>
-                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
-                      Superior (62%)
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs">Presença em Deals</span>
-                    <span className="text-xs font-bold text-muted-foreground">
-                      32% dos deals
-                    </span>
-                  </div>
-                  <div className="pt-2">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-2">
-                      Principais motivos de perda
+                  {risks.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Nenhum risco identificado pelo briefing executivo.
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary" className="text-[9px]">
-                        Preço (42%)
-                      </Badge>
-                      <Badge variant="secondary" className="text-[9px]">
-                        Feature Gap (28%)
-                      </Badge>
-                      <Badge variant="secondary" className="text-[9px]">
-                        Timing (15%)
+                  )}
+                  {risks.map((r, i) => (
+                    <div key={i} className="flex items-center justify-between gap-2">
+                      <span className="text-xs">{r.title}</span>
+                      <Badge
+                        className={
+                          r.severity === 'critical'
+                            ? 'bg-destructive/10 text-destructive border-destructive/20'
+                            : r.severity === 'warning'
+                              ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                              : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                        }
+                      >
+                        {r.severity === 'critical'
+                          ? 'Crítico'
+                          : r.severity === 'warning'
+                            ? 'Atenção'
+                            : 'Info'}
                       </Badge>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -210,23 +271,23 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
             <h4 className="font-bold text-sm flex items-center gap-2 mb-4">
               <CheckCircle2 className="h-4 w-4 text-primary" /> Plano de Ação Estratégico
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <ActionCard
-                title="Blindagem de Q2"
-                desc="Focar nas 5 maiores renovações para garantir o baseline da receita."
-                priority="Alta"
-              />
-              <ActionCard
-                title="Otimização de Funil"
-                desc="Reduzir o tempo médio de 'Discovery' para 'Proposta' em 15%."
-                priority="Média"
-              />
-              <ActionCard
-                title="Capacitação Técnica"
-                desc="Treinar time de vendas na nova feature de Integração Multi-Cloud."
-                priority="Baixa"
-              />
-            </div>
+            {actions.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                Nenhuma ação recomendada — gere o briefing executivo para receber o plano
+                de ação priorizado por IA.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {actions.slice(0, 3).map((a, i) => (
+                  <ActionCard
+                    key={i}
+                    title={a.title}
+                    desc={a.rationale}
+                    priority={i === 0 ? 'Alta' : i === 1 ? 'Média' : 'Baixa'}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -328,12 +389,6 @@ function ActionCard({
         </div>
         <p className="text-[10px] text-muted-foreground leading-relaxed">{desc}</p>
       </div>
-      <Button
-        variant="link"
-        className="p-0 h-auto text-[10px] font-bold text-primary justify-start mt-3"
-      >
-        Detalhes <ChevronRight className="h-3 w-3" />
-      </Button>
     </div>
   );
 }

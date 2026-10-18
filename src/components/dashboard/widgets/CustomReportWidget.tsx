@@ -34,7 +34,7 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
             Selecione um relatório customizado
           </p>
           <Button asChild variant="outline" size="sm" className="mt-2">
-            <Link to="/relatorios/builder">Abrir builder</Link>
+            <Link to="/relatorios-custom">Abrir builder</Link>
           </Button>
         </CardContent>
       </Card>
@@ -77,7 +77,7 @@ export const CustomReportWidget = memo(({ reportId, height = 360 }: Props) => {
           <span className="truncate">{report.name}</span>
         </CardTitle>
         <Button asChild variant="ghost" size="icon" className="h-7 w-7 shrink-0">
-          <Link to={`/relatorios/builder?id=${report.id}`} title="Abrir no builder">
+          <Link to={`/relatorios-custom/${report.id}`} title="Abrir no builder">
             <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </Button>

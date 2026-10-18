@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import {
@@ -19,10 +19,10 @@ interface ParsedStatusEvent {
 
 const MAX_MULTICHANNEL_STATUS_BODY_BYTES = 256 * 1024;
 
-function json(body: unknown, status = 200): Response {
+function json(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
 
@@ -87,7 +87,7 @@ export function normalizeMessageStatus(
 Deno.serve(
   withRequestId("multichannel-status-webhook", async (req, _ctx) => {
     if (req.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: getCorsHeaders(req) });
     }
     if (req.method === "GET") {
       const url = new URL(req.url);
@@ -96,17 +96,17 @@ Deno.serve(
         (name) => Deno.env.get(name),
       );
       if (!handshake.ok) {
-        return json({ ok: false, error: handshake.code }, handshake.status);
+        return json(req, { ok: false, error: handshake.code }, handshake.status);
       }
       return new Response(url.searchParams.get("hub.challenge")!, {
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(req),
           "Content-Type": "text/plain; charset=utf-8",
         },
       });
     }
     if (req.method !== "POST") {
-      return json({ ok: false, error: "method_not_allowed" }, 405);
+      return json(req, { ok: false, error: "method_not_allowed" }, 405);
     }
 
     // Proteção de volume antes do trabalho de HMAC/parse (assinatura já barra
@@ -123,7 +123,7 @@ Deno.serve(
       MAX_MULTICHANNEL_STATUS_BODY_BYTES,
     );
     if (rawBody === null) {
-      return json({ ok: false, error: "payload_too_large" }, 413);
+      return json(req, { ok: false, error: "payload_too_large" }, 413);
     }
     const authentication = await authenticateMultichannelStatusWebhook(
       req.headers,
@@ -132,7 +132,7 @@ Deno.serve(
       (name) => Deno.env.get(name),
     );
     if (!authentication.ok) {
-      return json(
+      return json(req, 
         { ok: false, error: authentication.code },
         authentication.status,
       );
@@ -145,18 +145,18 @@ Deno.serve(
         req.headers.get("content-type") ?? "",
       );
     } catch {
-      return json({ ok: false, error: "invalid_payload" }, 400);
+      return json(req, { ok: false, error: "invalid_payload" }, 400);
     }
 
     const normalized = normalizeMessageStatus(event.status);
     if (!event.providerMessageId || !normalized) {
-      return json({ ok: true, ignored: true });
+      return json(req, { ok: true, ignored: true });
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl || !serviceRoleKey) {
-      return json({ ok: false, error: "server_misconfigured" }, 503);
+      return json(req, { ok: false, error: "server_misconfigured" }, 503);
     }
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
@@ -194,7 +194,7 @@ Deno.serve(
         .single();
       if (dedupeError) {
         if ((dedupeError as { code?: string }).code === "23505") {
-          return json({ ok: true, ignored: true, reason: "duplicate_ignored" });
+          return json(req, { ok: true, ignored: true, reason: "duplicate_ignored" });
         }
         throw dedupeError;
       }
@@ -212,7 +212,7 @@ Deno.serve(
         // Mensagem pode ainda não existir; libera a reserva para que um
         // reenvio legítimo possa processar depois.
         await releaseDedupeReservation();
-        return json({ ok: true, ignored: true, reason: "message_not_found" });
+        return json(req, { ok: true, ignored: true, reason: "message_not_found" });
       }
 
       const occurredAt = new Date().toISOString();
@@ -233,7 +233,7 @@ Deno.serve(
       const advancedMessage = advanced?.[0];
       if (!advancedMessage) {
         await releaseDedupeReservation();
-        return json({ ok: true, ignored: true, reason: "stale_or_replayed" });
+        return json(req, { ok: true, ignored: true, reason: "stale_or_replayed" });
       }
 
       // Só quem ganhou o compare-and-swap de read registra a abertura.
@@ -258,11 +258,11 @@ Deno.serve(
         }
       }
 
-      return json({ ok: true });
+      return json(req, { ok: true });
     } catch (error) {
       await releaseDedupeReservation();
       console.error("multichannel-status-webhook error", error);
-      return json({ ok: false, error: "processing_failed" }, 500);
+      return json(req, { ok: false, error: "processing_failed" }, 500);
     }
   }),
 );

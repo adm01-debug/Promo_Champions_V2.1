@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { corsHeaders, getCorsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { escapeHtml } from "../_shared/html-escape.ts";
 import { normalizeEmail, verifyUnsubscribeToken } from "../_shared/unsubscribe.ts";
@@ -9,7 +9,7 @@ import { htmlSecurityHeaders } from "../_shared/security-headers.ts";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-function layout(title: string, content: string, status = 200): Response {
+function layout(req: Request, title: string, content: string, status = 200): Response {
   const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>${escapeHtml(title)}</title></head>
@@ -21,23 +21,25 @@ ${content}
   return new Response(html, {
     status,
     headers: {
-      ...corsHeaders,
+      ...getCorsHeaders(req),
       "Content-Type": "text/html; charset=utf-8",
       ...htmlSecurityHeaders,
     },
   });
 }
 
-function page(title: string, message: string, status = 200): Response {
+function page(req: Request, title: string, message: string, status = 200): Response {
   return layout(
+    req,
     title,
     `<p style="font-size:14px;color:#9ca3af;margin:0">${escapeHtml(message)}</p>`,
     status,
   );
 }
 
-function confirmationPage(email: string, action: string): Response {
+function confirmationPage(req: Request, email: string, action: string): Response {
   return layout(
+    req,
     "Confirmar descadastro",
     `<p style="font-size:14px;color:#9ca3af;margin:0 0 20px">` +
       `Confirma que ${escapeHtml(email)} não deve mais receber e-mails de prospecção?</p>` +
@@ -52,7 +54,7 @@ Deno.serve(withRequestId("email-unsubscribe", async (req, _ctx) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   if (req.method !== "GET" && req.method !== "POST") {
-    return page("Método não suportado", "Use o link recebido no e-mail.", 405);
+    return page(req, "Método não suportado", "Use o link recebido no e-mail.", 405);
   }
 
   // O token limita o efeito, mas a rota ainda é pública e não deve permitir
@@ -70,21 +72,21 @@ Deno.serve(withRequestId("email-unsubscribe", async (req, _ctx) => {
   const token = (url.searchParams.get("t") ?? "").trim();
 
   if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+$/.test(email)) {
-    return page("Link inválido", "O endereço de e-mail não foi informado corretamente.", 400);
+    return page(req, "Link inválido", "O endereço de e-mail não foi informado corretamente.", 400);
   }
   if (!(await verifyUnsubscribeToken(email, token))) {
-    return page("Link inválido ou expirado", "Não foi possível validar este pedido de descadastro.", 403);
+    return page(req, "Link inválido ou expirado", "Não foi possível validar este pedido de descadastro.", 403);
   }
 
   // Scanners de e-mail frequentemente fazem GET preventivo em links. Ação só
   // ocorre por POST (RFC 8058 ou confirmação explícita da pessoa destinatária).
   if (req.method === "GET") {
-    return confirmationPage(email, `${url.pathname}${url.search}`);
+    return confirmationPage(req, email, `${url.pathname}${url.search}`);
   }
 
   if (!SUPABASE_URL || !SERVICE_ROLE) {
     console.error("email-unsubscribe misconfigured: missing Supabase service credentials");
-    return page("Erro ao processar", "Tente novamente em alguns instantes.", 500);
+    return page(req, "Erro ao processar", "Tente novamente em alguns instantes.", 500);
   }
 
   try {
@@ -99,10 +101,10 @@ Deno.serve(withRequestId("email-unsubscribe", async (req, _ctx) => {
     if (error) throw new Error(error.message);
   } catch (e) {
     console.error("email-unsubscribe error:", e);
-    return page("Erro ao processar", "Tente novamente em alguns instantes.", 500);
+    return page(req, "Erro ao processar", "Tente novamente em alguns instantes.", 500);
   }
 
-  return page(
+  return page(req, 
     "Descadastro confirmado",
     `${email} não receberá mais nossos e-mails de prospecção.`,
   );

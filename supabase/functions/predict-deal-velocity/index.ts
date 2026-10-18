@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from '../_shared/request-id.ts';
 import {
   validateUUID,
@@ -300,7 +300,7 @@ type BaselineRow = {
   sample_size: number;
 };
 
-async function batchPredict(limit: number): Promise<Response> {
+async function batchPredict(limit: number, req: Request): Promise<Response> {
   const { data: salesData } = await admin
     .from('sales')
     .select('id, status, stage, amount, salesperson_id, created_at, updated_at')
@@ -310,7 +310,7 @@ async function batchPredict(limit: number): Promise<Response> {
 
   if (!salesData?.length) {
     return new Response(JSON.stringify({ count: 0, results: [] }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -527,13 +527,13 @@ async function batchPredict(limit: number): Promise<Response> {
   }
 
   return new Response(JSON.stringify({ count: results.length, results }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
 Deno.serve(
   withRequestId('predict-deal-velocity', async (req, _ctx) => {
-    if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+    if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
     // Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador)
     const rl = enforceRateLimit(req, {
@@ -562,14 +562,14 @@ Deno.serve(
         if (!(await isAdminOrManager())) {
           return new Response(JSON.stringify({ error: 'forbidden' }), {
             status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
           });
         }
         const limit = Math.min(body.limit ?? 25, 50);
-        return await batchPredict(limit);
+        return await batchPredict(limit, req);
       }
       const errs = collectErrors([validateUUID(body.sale_id, 'sale_id', true)]);
-      if (errs.length) return validationErrorResponse(errs, corsHeaders);
+      if (errs.length) return validationErrorResponse(errs, getCorsHeaders(req));
 
       // No modo single, só o dono do deal (ou admin/manager) pode disparar a previsão.
       const { data: saleRow } = await admin
@@ -586,26 +586,26 @@ Deno.serve(
         if (callerSp?.id !== saleRow.salesperson_id && !(await isAdminOrManager())) {
           return new Response(JSON.stringify({ error: 'forbidden' }), {
             status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
           });
         }
       }
 
       const result = await predictForSale(body.sale_id!);
       return new Response(JSON.stringify(result), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     } catch (e) {
       if (e instanceof UnauthorizedError) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), {
           status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
       console.error('predict-deal-velocity error', e);
       return new Response(JSON.stringify({ error: String(e) }), {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
   })

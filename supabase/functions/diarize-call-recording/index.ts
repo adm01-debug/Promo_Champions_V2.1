@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
@@ -169,7 +169,7 @@ async function aiReclassify(transcript: string, apiKey: string): Promise<Turn[] 
 }
 
 Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
 
     // Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos
     const rl = enforceRateLimit(req, { name: "diarize-call-recording", limit: 10, windowSeconds: 60, key: rateLimitUserKey(req) });
@@ -182,7 +182,7 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
 
     const body = await req.json().catch(() => ({}));
     const recording_id = body?.recording_id as string | undefined;
-    if (!recording_id) return json({ error: 'recording_id is required' }, 400);
+    if (!recording_id) return json(req, { error: 'recording_id is required' }, 400);
 
     // A RPC update_call_recording_diarization exige bypass de RLS; a leitura do
     // recording usa o client do usuário para garantir que o chamador só diarize
@@ -193,8 +193,8 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
       .select('id, transcript, duration_seconds, status')
       .eq('id', recording_id)
       .maybeSingle();
-    if (recErr || !rec) return json({ error: 'Recording not found' }, 404);
-    if (!rec.transcript) return json({ error: 'Recording has no transcript' }, 400);
+    if (recErr || !rec) return json(req, { error: 'Recording not found' }, 404);
+    if (!rec.transcript) return json(req, { error: 'Recording has no transcript' }, 400);
 
     const totalDur = Number(rec.duration_seconds) || 0;
     const { turns: parsedTurns, hasLabels } = parseTranscript(rec.transcript, totalDur);
@@ -234,19 +234,19 @@ Deno.serve(withRequestId("diarize-call-recording", async (req, _ctx) => {
       _interruptions_count: stats.interruptions_count,
       _turns_count: stats.turns_count,
     });
-    if (rpcErr) return json({ error: rpcErr.message }, 500);
+    if (rpcErr) return json(req, { error: rpcErr.message }, 500);
 
-    return json({ recording_id, ...stats, turns_count: turns.length });
+    return json(req, { recording_id, ...stats, turns_count: turns.length });
   } catch (e) {
-    if (e instanceof UnauthorizedError) return json({ error: 'unauthorized' }, 401);
+    if (e instanceof UnauthorizedError) return json(req, { error: 'unauthorized' }, 401);
     console.error('diarize-call-recording fatal:', e);
-    return json({ error: e instanceof Error ? e.message : 'Unknown error' }, 500);
+    return json(req, { error: e instanceof Error ? e.message : 'Unknown error' }, 500);
   }
 }));
 
-function json(body: unknown, status = 200) {
+function json(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }

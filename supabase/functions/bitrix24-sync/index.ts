@@ -75,28 +75,95 @@ async function logSyncResult(supabase: SupabaseClient, logData: SyncLogData, req
   }
 }
 
-async function getAccessToken(requestId = '-'): Promise<string | null> {
+// Margem de segurança: o access token do Bitrix24 expira em ~1h; renovamos
+// um pouco antes para não morrer no meio de um lote de chamadas.
+const TOKEN_REFRESH_MARGIN_MS = 5 * 60 * 1000;
+
+async function readStoredToken(requestId = '-'): Promise<{
+  accessToken: string | null;
+  expiresAt: string | null;
+}> {
   try {
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
-    const { data: tokenData } = await supabase
+    const { data: rows } = await supabase
       .from('portfolio_settings')
-      .select('setting_value')
-      .eq('setting_key', 'bitrix24_access_token')
-      .single();
+      .select('setting_key, setting_value')
+      .in('setting_key', ['bitrix24_access_token', 'bitrix24_token_expires']);
 
-    if (tokenData?.setting_value) {
-      return tokenData.setting_value;
-    }
-
-    logWithRequestId('warn', 'bitrix24-sync', requestId, 'bitrix24_no_access_token');
-    return null;
+    const values = new Map(
+      (rows ?? []).map(r => [r.setting_key as string, r.setting_value as string])
+    );
+    return {
+      accessToken: values.get('bitrix24_access_token') ?? null,
+      expiresAt: values.get('bitrix24_token_expires') ?? null,
+    };
   } catch (error) {
     logWithRequestId('error', 'bitrix24-sync', requestId, 'bitrix24_token_fetch_failed', {
       error: error instanceof Error ? error.message : String(error),
     });
+    return { accessToken: null, expiresAt: null };
+  }
+}
+
+// Delega o refresh ao bitrix24-oauth (?action=refresh), que só aceita chamadas
+// internas assinadas com a service_role e já persiste os novos tokens.
+async function refreshAccessToken(requestId = '-'): Promise<string | null> {
+  try {
+    const response = await fetchWithTrace(
+      `${SUPABASE_URL}/functions/v1/bitrix24-oauth?action=refresh`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+        body: '{}',
+      },
+      {
+        requestId,
+        fnName: 'bitrix24-sync',
+        operation: 'bitrix24_token_refresh',
+      }
+    );
+
+    if (!response.ok) {
+      logWithRequestId('warn', 'bitrix24-sync', requestId, 'bitrix24_token_refresh_failed', {
+        status: response.status,
+      });
+      return null;
+    }
+
+    const { accessToken } = await readStoredToken(requestId);
+    return accessToken;
+  } catch (error) {
+    logWithRequestId('error', 'bitrix24-sync', requestId, 'bitrix24_token_refresh_error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
+}
+
+async function getAccessToken(requestId = '-'): Promise<string | null> {
+  const { accessToken, expiresAt } = await readStoredToken(requestId);
+
+  const expiresInMs = expiresAt
+    ? new Date(expiresAt).getTime() - Date.now()
+    : 0;
+  if (accessToken && expiresInMs > TOKEN_REFRESH_MARGIN_MS) {
+    return accessToken;
+  }
+
+  // Token expirado/expirando (ou sem registro de expiração): renova antes de usar.
+  const refreshed = await refreshAccessToken(requestId);
+  if (refreshed) return refreshed;
+
+  if (accessToken && expiresInMs > 0) {
+    return accessToken;
+  }
+
+  logWithRequestId('warn', 'bitrix24-sync', requestId, 'bitrix24_no_access_token');
+  return null;
 }
 
 async function bitrixApiCall(
@@ -104,13 +171,42 @@ async function bitrixApiCall(
   params: Record<string, unknown> = {},
   requestId = '-'
 ): Promise<unknown> {
-  const accessToken = await getAccessToken(requestId);
+  let accessToken = await getAccessToken(requestId);
   if (!accessToken) {
     throw new Error('No valid access token available');
   }
 
   const url = `https://${BITRIX24_DOMAIN}/rest/${method}`;
-  const response = await withEdgeCircuitBreaker(
+  let response = await callBitrixApi(url, accessToken, params, method, requestId);
+
+  // Token pode ter expirado entre a leitura e a chamada (ou estar revogado):
+  // renova uma única vez e reenvia.
+  if (response.status === 401) {
+    const refreshed = await refreshAccessToken(requestId);
+    if (!refreshed) {
+      throw new Error('Bitrix24 API error: 401 - token refresh failed');
+    }
+    accessToken = refreshed;
+    response = await callBitrixApi(url, accessToken, params, method, requestId);
+  }
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Bitrix24 API error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  return data.result;
+}
+
+async function callBitrixApi(
+  url: string,
+  accessToken: string,
+  params: Record<string, unknown>,
+  method: string,
+  requestId: string
+): Promise<Response> {
+  return withEdgeCircuitBreaker(
     'bitrix24:api',
     async () => {
       const r = await fetchWithTrace(url, {
@@ -130,14 +226,6 @@ async function bitrixApiCall(
     },
     { failureThreshold: 5, resetTimeout: 30_000, timeoutMs: 35_000 }
   );
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Bitrix24 API error: ${response.status} - ${errorText}`);
-  }
-
-  const data = await response.json();
-  return data.result;
 }
 
 async function syncCompaniesToCRM(supabase: SupabaseClient, requestId = '-'): Promise<number> {

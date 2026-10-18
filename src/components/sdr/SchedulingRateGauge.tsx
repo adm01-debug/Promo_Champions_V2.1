@@ -135,7 +135,7 @@ export function SchedulingRateGauge({
               CORE_METRIC
             </Badge>
             <span className="text-[8px] font-mono text-muted-foreground/40">
-              SYS_ID: {Math.random().toString(16).slice(2, 8).toUpperCase()}
+              METRIC: SCHEDULING_RATE
             </span>
           </div>
         </div>

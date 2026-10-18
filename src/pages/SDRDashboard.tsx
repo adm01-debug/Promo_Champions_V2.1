@@ -143,7 +143,10 @@ export default function SDRDashboard() {
       },
       { Métrica: 'Leads Quentes', Valor: metrics.current.hotLeads },
       { Métrica: 'Leads Frios', Valor: metrics.current.coldLeads },
-      { Métrica: 'Tempo Médio Conversão', Valor: '3.2 dias' },
+      {
+        Métrica: 'Taxa de Qualificação',
+        Valor: `${(metrics.current.totalLeads > 0 ? (metrics.current.qualifiedLeads / metrics.current.totalLeads) * 100 : 0).toFixed(1)}%`,
+      },
     ];
 
     try {
@@ -168,7 +171,19 @@ export default function SDRDashboard() {
   const qualifiedLeads = metrics?.current.qualifiedLeads || 0;
   const rejectionRate =
     totalLeads > 0 ? ((totalLeads - qualifiedLeads) / totalLeads) * 100 : 0;
-  const rejectionThreshold = 40; // Example threshold
+  const [rejectionThreshold, setRejectionThreshold] = useState(
+    () => Number(localStorage.getItem('sdr_rejection_threshold')) || 40
+  );
+
+  useEffect(() => {
+    const syncThreshold = () =>
+      setRejectionThreshold(
+        Number(localStorage.getItem('sdr_rejection_threshold')) || 40
+      );
+    window.addEventListener('sdr_rejection_threshold_change', syncThreshold);
+    return () =>
+      window.removeEventListener('sdr_rejection_threshold_change', syncThreshold);
+  }, []);
 
   useEffect(() => {
     if (rejectionRate > rejectionThreshold) {
@@ -177,7 +192,7 @@ export default function SDRDashboard() {
         duration: 10000,
       });
     }
-  }, [rejectionRate]);
+  }, [rejectionRate, rejectionThreshold]);
 
   const periodLabel =
     period === 'week'
@@ -442,14 +457,14 @@ export default function SDRDashboard() {
                       variant="success"
                     />
                     <CompactStatCard
-                      title="Tempo Médio"
-                      value="3.2d"
+                      title="Taxa de Qualificação"
+                      value={`${(metrics?.current.totalLeads ?? 0) > 0 ? (((metrics?.current.qualifiedLeads ?? 0) / (metrics?.current.totalLeads ?? 1)) * 100).toFixed(1) : '0.0'}%`}
                       icon={Clock}
                       variant="primary"
                       subtitle="Lead → Qualificado"
                     />
                     <CompactStatCard
-                      title="Atividades Hoje"
+                      title="Prospects Ativos"
                       value={metrics?.current.activeProspects ?? 0}
                       icon={Target}
                       variant="primary"

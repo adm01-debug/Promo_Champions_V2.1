@@ -54,46 +54,61 @@ export const ForecastAccuracySummary: FC = () => {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="grid gap-4 md:grid-cols-4">
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">MAPE médio</p>
-          <p className={`text-2xl font-semibold ${health.color}`}>
-            {formatMape(summary.avg_mape)}
-          </p>
-          <p className="text-xs text-muted-foreground">{health.label}</p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Viés dominante</p>
-          <Badge variant="outline" className={biasColor[summary.bias]}>
-            {biasLabel[summary.bias]}
-          </Badge>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <Activity className="h-3 w-3" /> tendência geral
-          </p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Accuracy trend</p>
-          <p className="text-2xl font-semibold flex items-center gap-1">
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
-            {summary.accuracy_trend.toFixed(1)}%
-          </p>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Melhor source</p>
-          {summary.best_source ? (
-            <>
-              <p className="text-lg font-semibold">
-                {sourceLabel[summary.best_source.source] ?? summary.best_source.source}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Confiança {Number(summary.best_source.confidence_score).toFixed(0)}/100
-              </p>
-            </>
-          ) : (
-            <p className="text-sm text-muted-foreground">Sem dados ainda</p>
-          )}
-        </div>
-      </CardContent>
+      {summary.sample_size === 0 ? (
+        <CardContent>
+          <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
+            <Target className="h-8 w-8 text-muted-foreground/50" />
+            <p className="text-sm font-medium text-muted-foreground">
+              Nenhuma amostra de precisão ainda
+            </p>
+            <p className="text-xs text-muted-foreground max-w-sm">
+              Gere um snapshot do forecast e rode "Calcular" para comparar o previsto com
+              o realizado e popular estas métricas.
+            </p>
+          </div>
+        </CardContent>
+      ) : (
+        <CardContent className="grid gap-4 md:grid-cols-4">
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">MAPE médio</p>
+            <p className={`text-2xl font-semibold ${health.color}`}>
+              {formatMape(summary.avg_mape)}
+            </p>
+            <p className="text-xs text-muted-foreground">{health.label}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Viés dominante</p>
+            <Badge variant="outline" className={biasColor[summary.bias]}>
+              {biasLabel[summary.bias]}
+            </Badge>
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <Activity className="h-3 w-3" /> tendência geral
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Accuracy trend</p>
+            <p className="text-2xl font-semibold flex items-center gap-1">
+              <TrendingUp className="h-5 w-5 text-emerald-600" />
+              {summary.accuracy_trend.toFixed(1)}%
+            </p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">Melhor source</p>
+            {summary.best_source ? (
+              <>
+                <p className="text-lg font-semibold">
+                  {sourceLabel[summary.best_source.source] ?? summary.best_source.source}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Confiança {Number(summary.best_source.confidence_score).toFixed(0)}/100
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">Sem dados ainda</p>
+            )}
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 };

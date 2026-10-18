@@ -86,7 +86,7 @@ export default defineConfig({
         telemetry: false,
         sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
       }),
-  ].filter(Boolean),
+  ].filter((p): p is Exclude<typeof p, false | '' | null | undefined> => Boolean(p)),
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

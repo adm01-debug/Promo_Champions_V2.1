@@ -25,6 +25,9 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { GeoBlockingMap } from '@/components/security/GeoBlockingMap';
 import { MFASetup } from '@/components/security/MFASetup';
+import { BlockedIPsPanel } from '@/components/security/BlockedIPsPanel';
+import { RateLimitDashboard } from '@/components/security/RateLimitDashboard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const SecurityDashboard = () => {
   const { data: stats, isLoading: statsLoading } = useSecurityStats();
@@ -263,6 +266,19 @@ const SecurityDashboard = () => {
           <motion.div variants={itemVariants} className="mt-6">
             <MFASetup />
           </motion.div>
+
+          <Tabs defaultValue="blocked-ips" className="space-y-4">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsTrigger value="blocked-ips">IPs Bloqueados</TabsTrigger>
+              <TabsTrigger value="rate-limiting">Rate Limiting</TabsTrigger>
+            </TabsList>
+            <TabsContent value="blocked-ips">
+              <BlockedIPsPanel />
+            </TabsContent>
+            <TabsContent value="rate-limiting">
+              <RateLimitDashboard />
+            </TabsContent>
+          </Tabs>
         </div>
       </PageTransition>
     </>

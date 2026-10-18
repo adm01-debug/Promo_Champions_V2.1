@@ -11,15 +11,17 @@ const sb = createClient(url, key, {
 const log = (...a) => console.log('•', ...a);
 
 // Names -> role. Admin stays untouched.
+// Dados anonimizados (LGPD): nomes fictícios e e-mails no domínio reservado
+// de teste — substitua pelo roster real apenas em ambiente autorizado.
 const SEED: { name: string; email: string; role: 'closer' | 'sdr' | 'hybrid' }[] = [
-  { name: 'Leticia',    email: 'leticia@promobrindes.com.br',    role: 'closer' },
-  { name: 'Danyelle',   email: 'danyelle@promobrindes.com.br',   role: 'closer' },
-  { name: 'Gabryelly',  email: 'gabryelly@promobrindes.com.br',  role: 'closer' },
-  { name: 'Andriele',   email: 'andriele@promobrindes.com.br',   role: 'sdr' },
-  { name: 'Vanessa',    email: 'vanessa@promobrindes.com.br',    role: 'sdr' },
-  { name: 'Guilherme',  email: 'guilherme@promobrindes.com.br',  role: 'sdr' },
-  { name: 'Henrique',   email: 'henrique@promobrindes.com.br',   role: 'hybrid' },
-  { name: 'Sirlei',     email: 'sirlei@promobrindes.com.br',     role: 'hybrid' },
+  { name: 'Closer Um',    email: 'closer1@example.test',    role: 'closer' },
+  { name: 'Closer Dois',  email: 'closer2@example.test',    role: 'closer' },
+  { name: 'Closer Três',  email: 'closer3@example.test',    role: 'closer' },
+  { name: 'SDR Um',       email: 'sdr1@example.test',       role: 'sdr' },
+  { name: 'SDR Dois',     email: 'sdr2@example.test',       role: 'sdr' },
+  { name: 'SDR Três',     email: 'sdr3@example.test',       role: 'sdr' },
+  { name: 'Híbrido Um',   email: 'hibrido1@example.test',   role: 'hybrid' },
+  { name: 'Híbrido Dois', email: 'hibrido2@example.test',   role: 'hybrid' },
 ];
 
 const { data: existing, error: loadErr } = await sb.from('salespeople').select('*');

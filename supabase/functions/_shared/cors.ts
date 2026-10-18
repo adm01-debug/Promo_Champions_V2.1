@@ -4,17 +4,36 @@
 //  • `ALLOWED_ORIGINS` (env, opcional): lista separada por vírgula com origens
 //     permitidas. Aceita curingas de subdomínio (`*.lovable.app`,
 //     `https://*.example.com`).
-//  • Sem `ALLOWED_ORIGINS` → fallback `*` (mantém compat. com dev / server-to-
-//     server / integrações externas que hoje dependem do wildcard).
+//  • Sem `ALLOWED_ORIGINS` → `DEFAULT_ALLOWED_ORIGINS` abaixo (produção Vercel
+//     + domínio customizado + previews Lovable + localhost de dev). Nunca
+//     mais `*`: ambiente sem o secret configurado já nascia wildcard, o que
+//     anulava o endurecimento — ver docs/RUNBOOK.md para o valor de produção.
 //  • Se o request enviar `Origin` que casa com a allowlist → devolve aquela
 //     origem exata e `Vary: Origin` (correto para caches).
 //  • Se enviar `Origin` fora da allowlist → responde com a primeira origem
-//     configurada (ou `*` quando fallback). Isso NÃO abre a porta: o browser
-//     rejeita o preflight se o Origin recebido não bate com o enviado.
+//     configurada. Isso NÃO abre a porta: o browser rejeita o preflight se o
+//     Origin recebido não bate com o enviado.
 //
 // Todas as edge functions devem importar `getCorsHeaders(req)` para o CORS
 // dinâmico. `corsHeaders` continua exportado como valor estático para calls
 // server-to-server (webhooks pg_cron, health probes, testes Deno).
+
+// Origens permitidas quando `ALLOWED_ORIGINS` não está configurado: os
+// domínios reais do app (docs/RUNBOOK.md, IDENTIDADE_BANCO) e os endereços
+// de dev local do Vite.
+const DEFAULT_ALLOWED_ORIGINS = [
+  "https://promochampions.com.br",
+  "https://www.promochampions.com.br",
+  "https://*.promobrindes.com.br",
+  "https://promo-champions-v2-1.vercel.app",
+  "https://promo-champions-v2-1*.vercel.app",
+  "https://championgifts.lovable.app",
+  "https://pixels-with-personality-09.lovable.app",
+  "http://localhost:*",
+  "http://127.0.0.1:*",
+  "http://localhost",
+  "http://127.0.0.1",
+];
 
 const STATIC_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Headers":
@@ -40,6 +59,11 @@ function parseAllowlist(): string[] {
     .filter(Boolean);
 }
 
+function resolveAllowlist(): string[] {
+  const configured = parseAllowlist();
+  return configured.length > 0 ? configured : DEFAULT_ALLOWED_ORIGINS;
+}
+
 export function matchOrigin(origin: string, pattern: string): boolean {
   if (pattern === "*") return true;
   if (pattern === origin) return true;
@@ -63,12 +87,10 @@ export function matchOrigin(origin: string, pattern: string): boolean {
 /** Compute CORS headers scoped to the incoming request. */
 export function getCorsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin") ?? "";
-  const allowlist = parseAllowlist();
+  const allowlist = resolveAllowlist();
 
   let allowOrigin: string;
-  if (allowlist.length === 0) {
-    allowOrigin = "*";
-  } else if (origin && allowlist.some((p) => matchOrigin(origin, p))) {
+  if (origin && allowlist.some((p) => matchOrigin(origin, p))) {
     allowOrigin = origin;
   } else {
     // Server-to-server (no Origin) or unlisted origin → fall back to the first
@@ -81,9 +103,7 @@ export function getCorsHeaders(req: Request): Record<string, string> {
     ...STATIC_HEADERS,
     "Access-Control-Allow-Origin": allowOrigin,
   };
-  if (allowOrigin !== "*") {
-    headers["Vary"] = "Origin";
-  }
+  headers["Vary"] = "Origin";
   return headers;
 }
 

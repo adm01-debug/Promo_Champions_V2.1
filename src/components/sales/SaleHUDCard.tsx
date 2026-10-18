@@ -7,6 +7,7 @@ import {
   Mail,
   TrendingUp,
   DollarSign,
+  GitBranch,
 } from 'lucide-react';
 import { Sale } from '@/types/sales';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import {
 import { ActivityLogForm } from '@/components/activities/ActivityLogForm';
 import { AIEmailDialog } from '@/components/sales/AIEmailDialog';
 import { WhatsAppDialog } from '@/components/sales/WhatsAppDialog';
+import { EnrollCadenceDialog } from '@/components/cadences/EnrollCadenceDialog';
 import {
   classifyMarkup,
   formatMarkupPct,
@@ -175,6 +177,21 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
             >
               <DollarSign className="h-4 w-4 text-amber-500" />
             </Button>
+            <EnrollCadenceDialog
+              saleId={sale.fullId ?? sale.id}
+              clientName={sale.cliente || ''}
+              trigger={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 group-hover:scale-110 transition-all"
+                  title="Inscrever em cadência"
+                  aria-label="Inscrever em cadência"
+                >
+                  <GitBranch className="h-4 w-4 text-indigo-500" />
+                </Button>
+              }
+            />
             <Button
               variant="ghost"
               size="icon"

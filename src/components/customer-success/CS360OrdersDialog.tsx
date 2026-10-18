@@ -27,7 +27,8 @@ interface Order {
   created_at: string;
   total: number;
   status: string;
-  account_id: string;
+  account_id: string | null;
+  client_name?: string | null;
 }
 
 interface CS360OrdersDialogProps {
@@ -161,7 +162,9 @@ export function CS360OrdersDialog({
                         {o.order_number}
                       </TableCell>
                       <TableCell className="font-medium text-xs">
-                        {accountById.get(o.account_id)?.name || '—'}
+                        {accountById.get(o.account_id ?? '')?.name ||
+                          o.client_name ||
+                          '—'}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {format(new Date(o.created_at), 'dd/MM/yy HH:mm', {

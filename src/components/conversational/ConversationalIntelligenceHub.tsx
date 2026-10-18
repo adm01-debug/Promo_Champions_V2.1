@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import {
   Headphones,
   Search,
@@ -383,13 +382,6 @@ export const ConversationalIntelligenceHub = () => {
                           concorrente mencionado. O custo de oportunidade da demora supera
                           o desconto oferecido por eles.
                         </p>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-6 text-[9px] font-black uppercase tracking-widest border-warning/20 text-warning hover:bg-warning/10"
-                        >
-                          Ver Talking Points
-                        </Button>
                       </motion.div>
                     </div>
                   </div>

@@ -43,7 +43,9 @@ export function SDRAlertHistory() {
   const [isEditingThreshold, setIsEditingThreshold] = useState(false);
   const [isEditingRejection, setIsEditingRejection] = useState(false);
   const [thresholdValue, setThresholdValue] = useState('3');
-  const [rejectionThreshold, setRejectionThreshold] = useState('30');
+  const [rejectionThreshold, setRejectionThreshold] = useState(
+    () => localStorage.getItem('sdr_rejection_threshold') ?? '40'
+  );
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('30d');
   const queryClient = useQueryClient();
 
@@ -186,6 +188,8 @@ export function SDRAlertHistory() {
                   aria-label="Salvar limite de rejeição"
                   className="h-6 w-6"
                   onClick={() => {
+                    localStorage.setItem('sdr_rejection_threshold', rejectionThreshold);
+                    window.dispatchEvent(new Event('sdr_rejection_threshold_change'));
                     toast.success('Limite de rejeição atualizado');
                     setIsEditingRejection(false);
                   }}

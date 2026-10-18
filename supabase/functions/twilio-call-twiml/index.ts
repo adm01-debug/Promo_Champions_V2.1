@@ -4,6 +4,7 @@ import { verifyTwilioSignatureAny } from "../_shared/webhook-auth.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { collectErrors, validateUUID, validationErrorResponse } from "../_shared/validation.ts";
+import { resolveChannelCredentials } from "../_shared/secret-refs.ts";
 
 // Antes deste hardening a function era um oráculo público: qualquer GET com
 // ?owner_id=<uuid> devolvia o telefone do agente daquele owner no TwiML.
@@ -78,7 +79,7 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
     // a verificação usaria o token da linha errada e derrubaria a chamada.
     const { data, error } = await admin
       .from("channel_credentials")
-      .select("credentials, from_number")
+      .select("id, owner_id, credentials, from_number")
       .eq("owner_id", ownerId)
       .eq("provider", "twilio")
       .eq("enabled", true)
@@ -93,7 +94,10 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-    const creds = (data?.credentials ?? {}) as Record<string, string>;
+    // integration_secret_refs tem precedência sobre o jsonb em texto puro.
+    const creds: Record<string, string> = data
+      ? await resolveChannelCredentials(admin, data)
+      : {};
     agentPhone = creds.agent_phone || null;
     tenantToken = creds.auth_token || null;
     fromNumber = typeof data?.from_number === "string" ? data.from_number : null;

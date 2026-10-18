@@ -15,6 +15,8 @@ import {
   endOfYear,
   subYears,
   format,
+  parseISO,
+  differenceInDays,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { isWonSaleStatus } from '@/constants';
@@ -32,6 +34,8 @@ interface KPIData {
   qualifiedLeads?: number;
   firstSaleRevenue?: number;
   recurringRevenue?: number;
+  daily?: { name: string; revenue: number; sales: number }[];
+  channels?: { label: string; pct: number }[];
 }
 
 export interface KPIPeriodResult {
@@ -117,7 +121,7 @@ const fetchData = async (
   let salesQuery = supabase
     .from('sales')
     .select(
-      'amount, status, created_at, salesperson_id, sdr_id, closer_id, is_first_sale, client_name'
+      'amount, status, created_at, salesperson_id, sdr_id, closer_id, is_first_sale, client_name, source'
     )
     .gte('created_at', allStart)
     .lte('created_at', allEnd);
@@ -235,6 +239,44 @@ const fetchData = async (
         ['qualified', 'proposal', 'negotiation'].includes(s.status)
     ).length;
 
+    const groupByMonth = differenceInDays(end, start) > 62;
+    const dayMap = new Map<string, { name: string; revenue: number; sales: number }>();
+    completed.forEach(s => {
+      const d = parseISO(s.created_at);
+      const key = groupByMonth ? format(d, 'yyyy-MM') : format(d, 'yyyy-MM-dd');
+      const name = groupByMonth
+        ? format(d, 'MMM/yy', { locale: ptBR })
+        : format(d, 'dd/MM');
+      const entry = dayMap.get(key) ?? { name, revenue: 0, sales: 0 };
+      entry.revenue += Number(s.amount);
+      entry.sales += 1;
+      dayMap.set(key, entry);
+    });
+    const daily = [...dayMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, v]) => v);
+
+    const channelTotals = new Map<string, number>();
+    completed.forEach(s => {
+      const src = ((s as { source?: string | null }).source || 'outros').trim();
+      const label = src || 'outros';
+      channelTotals.set(label, (channelTotals.get(label) ?? 0) + Number(s.amount));
+    });
+    const channelTotal = [...channelTotals.values()].reduce((a, b) => a + b, 0);
+    const sortedChannels = [...channelTotals.entries()].sort((a, b) => b[1] - a[1]);
+    const topChannels = sortedChannels.slice(0, 3);
+    const restTotal = sortedChannels.slice(3).reduce((acc, [, v]) => acc + v, 0);
+    const channels = topChannels.map(([label, v]) => ({
+      label,
+      pct: channelTotal > 0 ? Math.round((v / channelTotal) * 100) : 0,
+    }));
+    if (restTotal > 0) {
+      channels.push({
+        label: 'Outros',
+        pct: channelTotal > 0 ? Math.round((restTotal / channelTotal) * 100) : 0,
+      });
+    }
+
     return {
       totalRevenue,
       totalSales,
@@ -245,6 +287,8 @@ const fetchData = async (
       qualifiedLeads,
       firstSaleRevenue,
       recurringRevenue,
+      daily,
+      channels,
     };
   };
 

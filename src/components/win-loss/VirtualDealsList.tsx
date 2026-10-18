@@ -105,7 +105,7 @@ function DealRow({
             </Button>
             {meta?.account_id && (
               <Link
-                to={`/contas/${meta.account_id}`}
+                to={`/engagement/abm/${meta.account_id}`}
                 className="text-[11px] text-primary hover:underline inline-flex items-center gap-0.5"
               >
                 Conta <ExternalLink className="h-2.5 w-2.5" />

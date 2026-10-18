@@ -48,6 +48,9 @@ export interface ProspectCadence {
     client_name: string;
     [key: string]: unknown;
   };
+  cadence?: {
+    name: string;
+  } | null;
   client_name?: string;
 }
 
@@ -104,7 +107,8 @@ export function useProspectCadences(saleId?: string) {
         .select(
           `
           *,
-          sale:sales(client_name)
+          sale:sales(client_name),
+          cadence:cadences(name)
         `
         )
         .order('created_at', { ascending: false });

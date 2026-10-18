@@ -45,15 +45,15 @@
     <link rel="dns-prefetch" href="https://usyxfpqlsspldubptrdl.supabase.co" />
     <link rel="preconnect" href="https://usyxfpqlsspldubptrdl.supabase.co" crossorigin />
     
-    <!-- Security: apenas diretivas válidas via <meta>. Headers reais (X-Frame-Options, HSTS, Permissions-Policy, frame-ancestors) são aplicados pelo hosting via HTTP.
-         Etapa 22 do plano de 50 etapas: script-src perdeu 'unsafe-inline' (o
-         único <script> inline que existia — registro do SW — foi extraído
-         para register-sw.js). 'unsafe-eval' permanece: exceljs e jspdf usam
-         `new Function`/`eval` internamente para exports de Excel/PDF
-         (verificado em node_modules/{exceljs,jspdf}/dist — ver ADR-009).
-         Removê-lo quebraria essas duas features sem um teste de navegador
-         para confirmar, o que este ambiente não tem como fazer. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com; base-uri 'self'; form-action 'self';" />
+    <!-- Security: apenas diretivas válidas via <meta>. Headers reais (X-Frame-Options, HSTS, Permissions-Policy, frame-ancestors) são aplicados pelo hosting via HTTP (vercel.json).
+         script-src sem 'unsafe-inline' (o único <script> inline que existia —
+         registro do SW — foi extraído para register-sw.js) e sem 'unsafe-eval':
+         os únicos `new Function` de exceljs/jspdf são polyfills de ambiente
+         (setImmediate com string; File quando a File API não existe) que nunca
+         executam em browsers modernos — verificado estaticamente em
+         node_modules/{exceljs,jspdf}/dist (ver ADR-009). Se um export de
+         Excel/PDF falhar por CSP, revisitar esta diretiva. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://fonts.googleapis.com; base-uri 'self'; form-action 'self';" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     
     <!-- Fonts - use display=swap and preconnect -->

@@ -3,35 +3,51 @@ import { Sparkles, ArrowRight, TrendingUp, AlertCircle, Clock } from 'lucide-rea
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
-const recommendations = [
-  {
-    id: 1,
-    lead: 'Acme Corp',
-    reason: 'Engajamento alto (3 aberturas de email)',
-    priority: 'high',
-    action: 'Ligar agora',
-    score: 92,
-  },
-  {
-    id: 2,
-    lead: 'TechFlow Solutions',
-    reason: 'Lead qualificado sem contato há 48h',
-    priority: 'medium',
-    action: 'Enviar WhatsApp',
-    score: 78,
-  },
-  {
-    id: 3,
-    lead: 'Global Logistics',
-    reason: 'Visita repetida à página de preços',
-    priority: 'high',
-    action: 'Enviar Case de Sucesso',
-    score: 85,
-  },
-];
+interface TopLead {
+  sale_id: string;
+  score: number;
+  calculated_at: string;
+  client_name: string;
+  status: string;
+}
+
+const reasonForStatus = (status: string) =>
+  status === 'qualified'
+    ? 'Lead qualificado aguardando follow-up'
+    : 'Lead em prospecção com score alto';
+
+const actionForScore = (score: number) =>
+  score >= 80 ? 'Ligar agora' : 'Enviar follow-up';
 
 export function SDRIntelligenceHighlights() {
+  const navigate = useNavigate();
+  const { data: recommendations } = useQuery({
+    queryKey: ['sdr-intelligence-highlights'],
+    queryFn: async (): Promise<TopLead[]> => {
+      const { data, error } = await supabase
+        .from('lead_scores')
+        .select('sale_id, score, calculated_at, sales!inner(id, client_name, status)')
+        .in('sales.status', ['lead', 'qualified', 'pending'])
+        .order('score', { ascending: false })
+        .limit(3);
+      if (error) throw error;
+      return (data ?? []).map(r => ({
+        sale_id: r.sale_id,
+        score: Number(r.score),
+        calculated_at: r.calculated_at,
+        client_name: r.sales.client_name ?? 'Lead',
+        status: r.sales.status ?? 'lead',
+      }));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const items = recommendations ?? [];
+
   return (
     <Card className="border-primary/20 bg-primary/5 overflow-hidden relative">
       <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
@@ -54,21 +70,34 @@ export function SDRIntelligenceHighlights() {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {recommendations.map((rec, index) => (
+        {items.length === 0 && (
+          <div className="py-6 text-center space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">
+              Nenhum lead pontuado ainda
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Quando o lead-scoring processar as vendas ativas, os 3 leads mais quentes
+              aparecem aqui.
+            </p>
+          </div>
+        )}
+
+        {items.map((rec, index) => (
           <motion.div
-            key={rec.id}
+            key={rec.sale_id}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
             className="group relative p-3 rounded-lg bg-background/50 border border-border/50 hover:border-primary/30 transition-all cursor-pointer"
+            onClick={() => navigate('/vendas')}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm">{rec.lead}</span>
+                  <span className="font-semibold text-sm">{rec.client_name}</span>
                   <Badge
                     className={`text-[10px] h-4 px-1 ${
-                      rec.priority === 'high'
+                      rec.score >= 80
                         ? 'bg-red-500/10 text-red-500 border-red-500/20'
                         : 'bg-orange-500/10 text-orange-500 border-orange-500/20'
                     }`}
@@ -78,14 +107,18 @@ export function SDRIntelligenceHighlights() {
                 </div>
                 <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <AlertCircle className="h-3 w-3" />
-                  {rec.reason}
+                  {reasonForStatus(rec.status)}
                 </p>
               </div>
               <Button
                 size="icon"
                 variant="ghost"
-                aria-label={`Ver lead ${rec.lead}`}
+                aria-label={`Ver lead ${rec.client_name}`}
                 className="h-8 w-8 rounded-full group-hover:bg-primary group-hover:text-primary-foreground"
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('/vendas');
+                }}
               >
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -93,7 +126,7 @@ export function SDRIntelligenceHighlights() {
 
             <div className="mt-2 flex items-center gap-3">
               <span className="text-[10px] font-medium text-primary uppercase tracking-wider bg-primary/10 px-1.5 py-0.5 rounded">
-                Ação Sugerida: {rec.action}
+                Ação Sugerida: {actionForScore(rec.score)}
               </span>
               <div className="flex items-center gap-1 text-[10px] text-muted-foreground ml-auto">
                 <Clock className="h-3 w-3" />
@@ -108,6 +141,7 @@ export function SDRIntelligenceHighlights() {
             variant="ghost"
             size="sm"
             className="w-full text-xs text-primary hover:bg-primary/5 gap-2"
+            onClick={() => navigate('/lead-scoring')}
           >
             Ver todas recomendações
             <TrendingUp className="h-3 w-3" />

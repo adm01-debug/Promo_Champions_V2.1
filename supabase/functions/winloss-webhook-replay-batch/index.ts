@@ -1,4 +1,4 @@
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import {
@@ -22,9 +22,9 @@ function jlog(level: "info" | "warn" | "error", data: Record<string, unknown>) {
   else console.info(line);
 }
 
-function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
+function jsonResponse(req: Request, body: unknown, status = 200, requestId?: string): Response {
   const headers: Record<string, string> = {
-    ...corsHeaders,
+    ...getCorsHeaders(req),
     "Content-Type": "application/json",
   };
   if (requestId) headers["X-Request-Id"] = requestId;
@@ -55,13 +55,13 @@ interface BatchSummary {
 }
 
 Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   const inboundReqId =
     req.headers.get("x-request-id") ?? req.headers.get("X-Request-Id") ?? crypto.randomUUID();
 
   if (req.method !== "POST") {
-    return jsonResponse({ error: "method_not_allowed", requestId: inboundReqId }, 405, inboundReqId);
+    return jsonResponse(req, { error: "method_not_allowed", requestId: inboundReqId }, 405, inboundReqId);
   }
 
   // Parse body
@@ -69,7 +69,7 @@ Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
   try {
     raw = await req.json();
   } catch {
-    return jsonResponse(
+    return jsonResponse(req, 
       { error: "invalid_json", requestId: inboundReqId },
       400,
       inboundReqId,
@@ -78,7 +78,7 @@ Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
 
   const parsed = BatchBodySchema.safeParse(raw);
   if (!parsed.success) {
-    return jsonResponse(
+    return jsonResponse(req, 
       {
         error: "invalid_body",
         details: parsed.error.flatten(),
@@ -102,7 +102,7 @@ Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
   // existing admin check (assertAdmin) continues to enforce RBAC.
   const authHeader = req.headers.get("Authorization");
   if (!authHeader) {
-    return jsonResponse(
+    return jsonResponse(req, 
       { error: "missing_authorization", requestId: inboundReqId },
       401,
       inboundReqId,
@@ -113,7 +113,7 @@ Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
   const ANON = Deno.env.get("SUPABASE_ANON_KEY");
   if (!SUPABASE_URL || !ANON) {
     jlog("error", { msg: "missing_env", requestId: inboundReqId });
-    return jsonResponse(
+    return jsonResponse(req, 
       { error: "server_misconfigured", requestId: inboundReqId },
       500,
       inboundReqId,
@@ -279,7 +279,7 @@ Deno.serve(withRequestId("winloss-webhook-replay-batch", async (req, _ctx) => {
     aborted,
   });
 
-  return jsonResponse(
+  return jsonResponse(req, 
     {
       requestId: inboundReqId,
       source: sourceKey,

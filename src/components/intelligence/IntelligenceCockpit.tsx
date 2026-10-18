@@ -25,11 +25,16 @@ import { ActivityPulse } from './ActivityPulse';
 import { HealthGauge } from './HealthGauge';
 import { PerformanceTrends } from './PerformanceTrends';
 import { StrategicRecommendations } from './StrategicRecommendations';
+import { useLatestBriefing } from '@/hooks/executive-briefing/useLatestBriefing';
+import { useDashboardKPIsPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
 import { motion } from 'framer-motion';
 
 const IntelligenceCockpit = () => {
   const navigate = useNavigate();
   const [reportOpen, setReportOpen] = useState(false);
+  const { data: briefing } = useLatestBriefing();
+  const { data: kpis } = useDashboardKPIsPeriod('quarter');
+  const revenueChange = kpis?.changes.revenue ?? 0;
 
   const hubs = [
     {
@@ -37,7 +42,6 @@ const IntelligenceCockpit = () => {
       description: 'Análise preditiva de receita e performance de vendas.',
       icon: TrendingUp,
       route: '/revenue-intelligence',
-      stats: { label: 'Forecast Accuracy', value: '94%', trend: '+2.4%' },
       color: 'text-emerald-500',
       bg: 'bg-emerald-500/10',
     },
@@ -46,7 +50,6 @@ const IntelligenceCockpit = () => {
       description: 'Insights extraídos de reuniões e interações com clientes.',
       icon: MessageSquare,
       route: '/conversational-intelligence',
-      stats: { label: 'Positive Sentiment', value: '78%', trend: '+5.1%' },
       color: 'text-blue-500',
       bg: 'bg-blue-500/10',
     },
@@ -55,7 +58,6 @@ const IntelligenceCockpit = () => {
       description: 'Saúde do pipeline e identificação de riscos em deals.',
       icon: Briefcase,
       route: '/deal-intelligence',
-      stats: { label: 'Win Rate Prob.', value: '62%', trend: '-1.2%' },
       color: 'text-amber-500',
       bg: 'bg-amber-500/10',
     },
@@ -64,7 +66,6 @@ const IntelligenceCockpit = () => {
       description: 'Modelos avançados para prospecção e fechamento.',
       icon: Brain,
       route: '/inteligencia-preditiva',
-      stats: { label: 'Next Best Action', value: '89', trend: '+12' },
       color: 'text-purple-500',
       bg: 'bg-purple-500/10',
     },
@@ -87,7 +88,11 @@ const IntelligenceCockpit = () => {
               <div className="flex items-center gap-2">
                 <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                  May 2026 • Quarter 2
+                  {new Date().toLocaleDateString('pt-BR', {
+                    month: 'long',
+                    year: 'numeric',
+                  })}{' '}
+                  • Quarter {Math.floor(new Date().getMonth() / 3) + 1}
                 </span>
               </div>
             </div>
@@ -107,10 +112,26 @@ const IntelligenceCockpit = () => {
 
           <Card className="p-6 border-white/5 bg-white/5 backdrop-blur-xl flex flex-col items-center justify-center gap-4 relative group/health min-h-[180px]">
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/health:opacity-100 transition-opacity rounded-xl" />
-            <HealthGauge value={88} />
-            <div className="flex items-center gap-1 text-emerald-500 font-bold text-[10px] uppercase tracking-widest">
-              <ArrowUpRight className="size-3" /> +4.2% Growth
-            </div>
+            {briefing ? (
+              <HealthGauge value={briefing.pulse_score} />
+            ) : (
+              <div className="text-center space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Pulse score indisponível
+                </p>
+                <p className="text-[10px] text-muted-foreground/70">
+                  Gere o briefing executivo para calcular o score
+                </p>
+              </div>
+            )}
+            {revenueChange !== 0 && (
+              <div
+                className={`flex items-center gap-1 font-bold text-[10px] uppercase tracking-widest ${revenueChange >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}
+              >
+                <ArrowUpRight className="size-3" /> {revenueChange >= 0 ? '+' : ''}
+                {revenueChange.toFixed(1)}% Receita vs Tri. anterior
+              </div>
+            )}
           </Card>
         </div>
       </div>
@@ -147,22 +168,6 @@ const IntelligenceCockpit = () => {
             <p className="text-xs text-muted-foreground mb-4 line-clamp-2">
               {hub.description}
             </p>
-
-            <div className="pt-4 border-t border-border/40 flex justify-between items-end">
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                  {hub.stats.label}
-                </p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold font-mono">{hub.stats.value}</span>
-                  <span
-                    className={`text-[10px] font-bold ${hub.stats.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}
-                  >
-                    {hub.stats.trend}
-                  </span>
-                </div>
-              </div>
-            </div>
           </Card>
         ))}
       </motion.div>
@@ -201,41 +206,62 @@ const IntelligenceCockpit = () => {
                 <div className="space-y-3">
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                     <span className="text-muted-foreground flex items-center gap-1">
-                      <Target className="w-3.5 h-3.5 text-primary" /> Meta Quarter
+                      <Target className="w-3.5 h-3.5 text-primary" /> Pulse Score
                     </span>
-                    <span className="text-foreground">82%</span>
+                    <span className="text-foreground">
+                      {briefing ? `${briefing.pulse_score}/100` : '—'}
+                    </span>
                   </div>
-                  <Progress value={82} className="h-1.5 bg-primary/10" />
+                  <Progress
+                    value={briefing?.pulse_score ?? 0}
+                    className="h-1.5 bg-primary/10"
+                  />
                   <p className="text-[9px] text-muted-foreground font-medium">
-                    Gap: R$ 420k
+                    {briefing
+                      ? `Briefing de ${briefing.briefing_date}`
+                      : 'Briefing executivo não gerado'}
                   </p>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                     <span className="text-muted-foreground flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-blue-500" /> Market Sent.
+                      <Users className="w-3.5 h-3.5 text-blue-500" /> Vitórias-Chave
                     </span>
-                    <span className="text-foreground">74/100</span>
+                    <span className="text-foreground">
+                      {briefing ? briefing.key_wins.length : '—'}
+                    </span>
                   </div>
-                  <Progress value={74} className="h-1.5 bg-blue-500/10" />
+                  <Progress
+                    value={Math.min(100, (briefing?.key_wins.length ?? 0) * 25)}
+                    className="h-1.5 bg-blue-500/10"
+                  />
                   <p className="text-[9px] text-muted-foreground font-medium">
-                    142 Sources AI Analyzed
+                    Registradas no último briefing
                   </p>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                     <span className="text-muted-foreground flex items-center gap-1">
-                      <Timer className="w-3.5 h-3.5 text-amber-500" /> Sales Velocity
+                      <Timer className="w-3.5 h-3.5 text-amber-500" /> Riscos Ativos
                     </span>
-                    <span className="text-foreground">18.4d</span>
+                    <span className="text-foreground">
+                      {briefing ? briefing.key_risks.length : '—'}
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-amber-500/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-500 w-[65%]" />
+                    <div
+                      className="h-full bg-amber-500"
+                      style={{
+                        width: `${Math.min(100, (briefing?.key_risks.length ?? 0) * 25)}%`,
+                      }}
+                    />
                   </div>
                   <p className="text-[9px] text-muted-foreground font-medium">
-                    -2.1d vs Last Month
+                    {briefing && briefing.key_risks[0]
+                      ? briefing.key_risks[0].title
+                      : 'Nenhum risco reportado'}
                   </p>
                 </div>
               </div>
@@ -248,20 +274,22 @@ const IntelligenceCockpit = () => {
                   <Sparkles className="w-4 h-4" />
                   AI Strategic Insight
                 </h4>
-                <p className="text-sm text-card-foreground leading-relaxed font-medium">
-                  Forecast atual projeta{' '}
-                  <span className="font-black text-primary underline decoration-2 underline-offset-4">
-                    R$ 2.48M
-                  </span>
-                  . O <span className="font-bold">Deal Intelligence</span> identificou
-                  concentração crítica (42%) em 3 contas. Módulo{' '}
-                  <span className="font-bold">Conversational</span> alerta para aumento de
-                  22% em menções competitivas.
-                </p>
+                {briefing ? (
+                  <p className="text-sm text-card-foreground leading-relaxed font-medium">
+                    <span className="font-black text-primary">{briefing.headline}</span> —{' '}
+                    {briefing.narrative}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                    Nenhum insight estratégico disponível. Gere o briefing executivo para
+                    consolidar vitórias, riscos e ações recomendadas com dados reais.
+                  </p>
+                )}
                 <div className="mt-4 flex gap-4">
                   <Button
                     variant="link"
                     className="p-0 h-auto text-[10px] font-bold text-primary group/link uppercase tracking-widest"
+                    onClick={() => navigate('/revenue-intelligence')}
                   >
                     Explorar Forecast Detalhado{' '}
                     <ChevronRight className="size-3 ml-1 group-hover/link:translate-x-1 transition-transform" />
@@ -278,6 +306,7 @@ const IntelligenceCockpit = () => {
             <Button
               variant="outline"
               className="w-full mt-6 text-[10px] font-bold uppercase tracking-widest h-9 border-white/5 bg-white/5 hover:bg-white/10"
+              onClick={() => navigate('/atividades')}
             >
               Ver Histórico Completo
             </Button>
@@ -303,6 +332,7 @@ const IntelligenceCockpit = () => {
             <Button
               size="sm"
               className="w-full h-8 text-[10px] font-bold uppercase tracking-widest bg-white text-primary hover:bg-white/90 border-none relative z-10"
+              onClick={() => navigate('/assistente')}
             >
               Consultar Analista
             </Button>

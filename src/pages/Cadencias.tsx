@@ -55,6 +55,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useProspectCadences } from '@/hooks/cadences/useCadenceQueries';
 import { EliteCadenceAnalytics } from '@/components/sales/cadence/EliteCadenceAnalytics';
+import { CadenceMetricsPanel } from '@/components/cadences/CadenceMetricsPanel';
+import { ProspectCadenceControls } from '@/components/cadences/ProspectCadenceControls';
 
 export default function Cadencias() {
   const { data: cadences, isLoading } = useCadences();
@@ -258,6 +260,7 @@ export default function Cadencias() {
                     </Card>
                   </div>
 
+                  <CadenceMetricsPanel />
                   <CadenceFunnel />
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -387,23 +390,33 @@ export default function Cadencias() {
                         <ScrollArea className="h-[500px]">
                           <div className="p-2 space-y-1">
                             {allProspects?.map(p => (
-                              <Button
+                              <div
                                 key={p.id}
-                                variant={
-                                  selectedLeadId === p.sale_id ? 'secondary' : 'ghost'
-                                }
-                                className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
-                                onClick={() => setSelectedLeadId(p.sale_id)}
+                                className="space-y-2 rounded-lg p-2 hover:bg-muted/20"
                               >
-                                <span className="font-bold">
-                                  {p.sale?.client_name ||
-                                    p.client_name ||
-                                    'Lead sem nome'}
-                                </span>
-                                <span className="text-[10px] text-muted-foreground">
-                                  Status: {p.status} | Etapa: {p.funnel_stage}
-                                </span>
-                              </Button>
+                                <Button
+                                  variant={
+                                    selectedLeadId === p.sale_id ? 'secondary' : 'ghost'
+                                  }
+                                  className="w-full justify-start text-xs h-auto py-3 px-4 flex flex-col items-start gap-1 text-left"
+                                  onClick={() => setSelectedLeadId(p.sale_id)}
+                                >
+                                  <span className="font-bold">
+                                    {p.sale?.client_name ||
+                                      p.client_name ||
+                                      'Lead sem nome'}
+                                  </span>
+                                  <span className="text-[10px] text-muted-foreground">
+                                    Status: {p.status} | Etapa: {p.funnel_stage}
+                                  </span>
+                                </Button>
+                                <ProspectCadenceControls
+                                  saleId={p.sale_id}
+                                  status={p.status}
+                                  cadenceName={p.cadence?.name}
+                                  className="px-2"
+                                />
+                              </div>
                             ))}
                             {(!allProspects || allProspects.length === 0) && (
                               <div className="p-8 text-center text-muted-foreground text-xs">

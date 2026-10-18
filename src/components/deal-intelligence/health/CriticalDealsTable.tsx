@@ -11,9 +11,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, Search, ArrowUpDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { HealthTier } from '@/hooks/deal-intelligence/useDealHealth';
 import { DealHealthScoreBadge } from '../DealHealthScoreBadge';
+import { DealHealthCard } from '../DealHealthCard';
+import { DealVelocityCard } from '../DealVelocityCard';
 
 import { formatBRL } from '@/lib/money';
 interface Row {
@@ -42,6 +44,7 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<SortKey>('health_score');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [selected, setSelected] = useState<Row | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -146,12 +149,13 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
                 {filtered.map(r => (
                   <TableRow key={r.id}>
                     <TableCell>
-                      <Link
-                        to={`/vendas/${r.sale_id}`}
-                        className="text-sm font-medium hover:underline"
+                      <button
+                        type="button"
+                        onClick={() => setSelected(r)}
+                        className="text-sm font-medium hover:underline text-left"
                       >
                         {r.sales?.client_name || '—'}
-                      </Link>
+                      </button>
                       <p className="text-xs text-muted-foreground truncate max-w-[200px]">
                         {r.sales?.product_name || ''}
                       </p>
@@ -175,6 +179,23 @@ export const CriticalDealsTable: FC<Props> = ({ rows }) => {
           </div>
         )}
       </CardContent>
+
+      <Dialog open={!!selected} onOpenChange={open => !open && setSelected(null)}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {selected?.sales?.client_name || 'Deal'}
+              {selected?.sales?.product_name ? ` — ${selected.sales.product_name}` : ''}
+            </DialogTitle>
+          </DialogHeader>
+          {selected && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DealHealthCard saleId={selected.sale_id} />
+              <DealVelocityCard saleId={selected.sale_id} />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

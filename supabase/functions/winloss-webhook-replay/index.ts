@@ -1,4 +1,4 @@
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient, SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { BodySchema } from './schema.ts';
@@ -32,9 +32,9 @@ function jlog(level: 'info' | 'warn' | 'error', data: Record<string, unknown>) {
   else console.info(line);
 }
 
-function jsonResponse(body: unknown, status = 200, requestId?: string): Response {
+function jsonResponse(req: Request, body: unknown, status = 200, requestId?: string): Response {
   const headers: Record<string, string> = {
-    ...corsHeaders,
+    ...getCorsHeaders(req),
     'Content-Type': 'application/json',
   };
   if (requestId) headers['X-Request-Id'] = requestId;
@@ -68,7 +68,8 @@ interface ReplayResult {
 async function assertAdmin(
   supabase: SupabaseClient,
   userId: string,
-  requestId: string
+  requestId: string,
+  req: Request
 ): Promise<Response | null> {
   const { data, error } = await supabase
     .from('user_roles')
@@ -83,11 +84,11 @@ async function assertAdmin(
       userId,
       ...describeError(error),
     });
-    return jsonResponse({ error: 'Forbidden', requestId }, 403, requestId);
+    return jsonResponse(req, { error: 'Forbidden', requestId }, 403, requestId);
   }
   if (!data) {
     jlog('warn', { msg: 'auth_forbidden', requestId, userId });
-    return jsonResponse({ error: 'Forbidden', requestId }, 403, requestId);
+    return jsonResponse(req, { error: 'Forbidden', requestId }, 403, requestId);
   }
   return null;
 }
@@ -168,7 +169,7 @@ async function persistInvocationAudit(
 }
 
 export const handler = async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { headers: getCorsHeaders(req) });
   const requestId = crypto.randomUUID();
   const startedAt = Date.now();
 
@@ -176,7 +177,7 @@ export const handler = async (req: Request): Promise<Response> => {
     // --- Auth ---
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return jsonResponse({ error: 'Unauthorized', requestId }, 401, requestId);
+      return jsonResponse(req, { error: 'Unauthorized', requestId }, 401, requestId);
     }
     const token = authHeader.replace('Bearer ', '');
 
@@ -193,7 +194,7 @@ export const handler = async (req: Request): Promise<Response> => {
         requestId,
         ...(claimsErr ? describeError(claimsErr) : {}),
       });
-      return jsonResponse({ error: 'Unauthorized', requestId }, 401, requestId);
+      return jsonResponse(req, { error: 'Unauthorized', requestId }, 401, requestId);
     }
     const userId = claimsData.claims.sub as string;
     const userEmail = (claimsData.claims.email ?? null) as string | null;
@@ -204,7 +205,7 @@ export const handler = async (req: Request): Promise<Response> => {
     );
 
     // --- Admin check ---
-    const denied = await assertAdmin(supabase, userId, requestId);
+    const denied = await assertAdmin(supabase, userId, requestId, req);
     if (denied) return denied;
 
     // --- Zod input validation ---
@@ -212,7 +213,7 @@ export const handler = async (req: Request): Promise<Response> => {
     const parsed = BodySchema.safeParse(rawBody);
     if (!parsed.success) {
       jlog('warn', { msg: 'invalid_input', requestId, details: parsed.error.flatten() });
-      return jsonResponse(
+      return jsonResponse(req, 
         {
           error: 'invalid_input',
           message:
@@ -428,10 +429,10 @@ export const handler = async (req: Request): Promise<Response> => {
       durationMs: Date.now() - startedAt,
     });
 
-    return jsonResponse({ requestId, source, summary, results }, 200, requestId);
+    return jsonResponse(req, { requestId, source, summary, results }, 200, requestId);
   } catch (e) {
     jlog('error', { msg: 'replay_fatal', requestId, ...describeError(e) });
-    return jsonResponse(
+    return jsonResponse(req, 
       {
         error: e instanceof Error ? e.message : 'unknown',
         requestId,
