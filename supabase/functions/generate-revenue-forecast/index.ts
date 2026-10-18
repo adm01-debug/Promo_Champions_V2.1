@@ -7,7 +7,15 @@ import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
 
-
+// [FORECAST-SSOT] Fonte canônica por superfície:
+// - Tempo real (dashboards, Pipeline Pulse): revenue-forecast-ai lê a view
+//   revenue_forecast_view direto.
+// - Persistido (aba AI Forecast, revenue_forecasts/forecast_deal_contributions):
+//   esta função, usando as MESMAS definições da view — pipeline aberto =
+//   stage_probabilities.probability estritamente entre 0 e 1 (join em
+//   sales.status) e classificação = sales.forecast_category (trigger
+//   auto_set_forecast_category). Assim commit/best_case/pipeline aqui são
+//   idênticos aos da view e dos dashboards; não existe segunda conta.
 
 type PeriodType = "week" | "month" | "quarter";
 
@@ -28,27 +36,19 @@ interface DealRow {
   id: string;
   product_name: string | null;
   client_name: string | null;
-  total_amount: number | null;
-  stage: string | null;
+  amount: number | null;
   status: string | null;
-  expected_close_date: string | null;
+  forecast_category: string | null;
   salesperson_id: string | null;
-  probability: number | null;
 }
 
-function classifyDeal(d: DealRow, health?: number, velocityStatus?: string, coverage?: string) {
-  const prob = Number(d.probability ?? 0);
-  const h = health ?? 50;
-  const v = velocityStatus ?? "unknown";
-  const c = coverage ?? "weak";
-
-  // Commit: high health + on track + strong coverage + high prob
-  if (h >= 75 && (v === "on_track" || v === "ahead") && (c === "strong" || c === "excellent") && prob >= 0.7) {
-    return { category: "commit" as const, weight: 0.9 };
-  }
-  if (h >= 60 && prob >= 0.5) return { category: "best" as const, weight: 0.6 };
-  if (prob >= 0.2) return { category: "upside" as const, weight: 0.3 };
-  return { category: "omitted" as const, weight: 0 };
+// Mapeia a categoria canônica (sales.forecast_category) para o bucket do
+// forecast persistido — mesma semântica de revenue_forecast_view.
+function categoryBucket(cat: string | null): "commit" | "best" | "upside" | "omitted" {
+  if (cat === "commit") return "commit";
+  if (cat === "best_case") return "best";
+  if (cat === "pipeline") return "upside";
+  return "omitted";
 }
 
 Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
@@ -78,46 +78,35 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const owner_id: string | null = body.owner_id ?? null;
     const period_end_str = periodEnd(period_start, period_type);
 
-    // Fetch open deals in period
-    let dealsQ = supabase
-      .from("sales")
-      .select("id, product_name, client_name, total_amount, stage, status, expected_close_date, salesperson_id, probability")
-      .in("status", ["open", "in_progress", "qualified", "proposal", "negotiation"])
-      .is("deleted_at", null)
-      .gte("expected_close_date", period_start)
-      .lte("expected_close_date", period_end_str);
-    if (owner_id) dealsQ = dealsQ.eq("salesperson_id", owner_id);
-    const { data: deals, error: dealsErr } = await dealsQ.limit(10000);
-    if (dealsErr) throw dealsErr;
+    // Pipeline aberto = definição canônica de revenue_forecast_view:
+    // stage_probabilities.probability estritamente entre 0 e 1, join em
+    // sales.status. O período delimita a janela de meta (sales_goals) e o
+    // rótulo do forecast; o pipeline é o snapshot aberto no momento.
+    const { data: probRows, error: probErr } = await supabase
+      .from("stage_probabilities")
+      .select("stage, probability");
+    if (probErr) throw probErr;
+    const openStatuses: string[] = [];
+    const probByStatus = new Map<string, number>();
+    for (const p of probRows ?? []) {
+      const prob = Number(p.probability);
+      probByStatus.set(p.stage, prob);
+      if (prob > 0 && prob < 1) openStatuses.push(p.stage);
+    }
 
-    const dealList = (deals ?? []) as DealRow[];
-
-    // Fetch enrichment signals
-    const dealIds = dealList.map((d) => d.id);
-    const [healthRows, velocityRows] = await Promise.all([
-      dealIds.length
-        ? chunkedIn<{ sale_id: string; health_score: number }>(
-            dealIds,
-            (chunk) =>
-              supabase.from("deal_health_scores").select("sale_id, health_score").in("sale_id", chunk),
-            { parallel: true, label: "generate-revenue-forecast.health" }
-          )
-        : Promise.resolve([] as { sale_id: string; health_score: number }[]),
-      dealIds.length
-        ? chunkedIn<{ sale_id: string; status: string }>(
-            dealIds,
-            (chunk) =>
-              supabase.from("deal_velocity_predictions").select("sale_id, status").in("sale_id", chunk),
-            { parallel: true, label: "generate-revenue-forecast.velocity" }
-          )
-        : Promise.resolve([] as { sale_id: string; status: string }[]),
-    ]);
-
-    const healthMap = new Map<string, number>(
-      healthRows.map((h) => [h.sale_id, Number(h.health_score)]),
-    );
-    const velocityMap = new Map<string, string>(
-      velocityRows.map((v) => [v.sale_id, v.status]),
+    const dealList = await chunkedIn<DealRow>(
+      openStatuses,
+      (chunk) => {
+        let q = supabase
+          .from("sales")
+          .select("id, product_name, client_name, amount, status, forecast_category, salesperson_id")
+          .in("status", chunk)
+          .is("deleted_at", null)
+          .limit(10000);
+        if (owner_id) q = q.eq("salesperson_id", owner_id);
+        return q;
+      },
+      { maxConcurrency: 4, label: "generate-revenue-forecast.deals" },
     );
 
     // Fetch goal
@@ -130,7 +119,9 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     const { data: goals } = await goalQ.limit(5000);
     const goal_amount = (goals ?? []).reduce((s, g: { goal_amount: number }) => s + Number(g.goal_amount ?? 0), 0);
 
-    // Classify and aggregate
+    // Agrega com as mesmas contas de revenue_forecast_view: commit/best/upside
+    // são somas brutas por forecast_category; weighted_pipeline =
+    // sum(amount * stage_probability) — igual a weighted_forecast da view.
     let commit = 0, best = 0, upside = 0, weighted = 0;
     const contributions: Array<{
       sale_id: string;
@@ -141,21 +132,20 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     }> = [];
 
     for (const d of dealList) {
-      const amount = Number(d.total_amount ?? 0);
-      const health = healthMap.get(d.id);
-      const velocity = velocityMap.get(d.id);
-      const cls = classifyDeal(d, health, velocity);
-      const w = amount * cls.weight;
+      const amount = Number(d.amount ?? 0);
+      const prob = probByStatus.get(d.status ?? "") ?? 0;
+      const bucket = categoryBucket(d.forecast_category);
+      const w = amount * prob;
       weighted += w;
-      if (cls.category === "commit") commit += w;
-      else if (cls.category === "best") best += w;
-      else if (cls.category === "upside") upside += w;
+      if (bucket === "commit") commit += amount;
+      else if (bucket === "best") best += amount;
+      else if (bucket === "upside") upside += amount;
       contributions.push({
         sale_id: d.id,
-        category: cls.category,
+        category: bucket,
         weighted_amount: w,
-        probability: cls.weight,
-        reasoning: `health=${health ?? "?"}, velocity=${velocity ?? "?"}, prob=${d.probability ?? 0}`,
+        probability: prob,
+        reasoning: `forecast_category=${d.forecast_category ?? "?"}, status=${d.status ?? "?"}, prob=${prob}`,
       });
     }
 

@@ -31,11 +31,6 @@ const WinProbabilityCalibrationPanel = lazy(() =>
     default: m.WinProbabilityCalibrationPanel,
   }))
 );
-const WinProbabilityCalibratorPanel = lazy(() =>
-  import('./calibration/WinProbabilityCalibratorPanel').then(m => ({
-    default: m.WinProbabilityCalibratorPanel,
-  }))
-);
 const QuotaAttainmentPredictor = lazy(() =>
   import('./quota/QuotaAttainmentPredictor').then(m => ({
     default: m.QuotaAttainmentPredictor,
@@ -172,7 +167,6 @@ export const RevenueIntelligenceHub: FC = () => {
           <TabsTrigger value="coverage">Cobertura do Pipeline</TabsTrigger>
           <TabsTrigger value="winrate">Win Rate Drill-down</TabsTrigger>
           <TabsTrigger value="calibration">Win Calibration</TabsTrigger>
-          <TabsTrigger value="calibrator">Calibrador (Bucket)</TabsTrigger>
           <TabsTrigger value="inspection">Pipeline Inspection</TabsTrigger>
           <TabsTrigger value="quota">Quota Predictor</TabsTrigger>
           <TabsTrigger value="quota-advanced">Quota Avançado</TabsTrigger>
@@ -233,9 +227,6 @@ export const RevenueIntelligenceHub: FC = () => {
           </TabsContent>
           <TabsContent value="calibration" className="mt-4">
             <WinProbabilityCalibrationPanel />
-          </TabsContent>
-          <TabsContent value="calibrator" className="mt-4">
-            <WinProbabilityCalibratorPanel />
           </TabsContent>
           <TabsContent value="inspection" className="mt-4">
             <PipelineInspectionTable

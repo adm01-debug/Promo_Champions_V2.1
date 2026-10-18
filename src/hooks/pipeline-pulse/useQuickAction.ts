@@ -22,8 +22,10 @@ const ACTION_META: Record<
     label: 'Leads pendentes roteados',
   },
   'refresh-forecast': {
-    fn: 'revenue-forecast-ai',
-    body: { horizon_days: 30, include_ai: true },
+    // Escritor canônico do forecast persistido (revenue_forecasts) —
+    // revenue-forecast-ai é somente leitura e não "atualiza" nada.
+    fn: 'generate-revenue-forecast',
+    body: { period_type: 'month' },
     label: 'Forecast atualizado',
   },
   'analyze-recent-calls': {
@@ -62,6 +64,9 @@ export function useQuickAction() {
     onSuccess: res => {
       toast.success(res.label);
       qc.invalidateQueries({ queryKey: ['pipeline-pulse'] });
+      if (res.id === 'refresh-forecast') {
+        qc.invalidateQueries({ queryKey: ['revenue-forecast'] });
+      }
     },
     onError: (e: Error) => toast.error(e.message),
   });

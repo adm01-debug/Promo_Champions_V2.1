@@ -16,6 +16,8 @@ const RECOMMENDATIONS: Record<string, string> = {
 
 const DEFAULT_RECOMMENDATION = "Reengaje o stakeholder principal e defina próxima etapa concreta com data.";
 
+// Lente desta superfície ("Deals Presos"): tempo no estágio vs baseline p75/p90.
+// Não é a definição canônica de risco (health < 50) — docs/DEAL_RISK_CRITERIA.md
 function classify(hours: number, p75: number, p90: number): "watch" | "stuck" | "critical" {
   if (p90 > 0 && hours >= p90 * 1.25) return "critical";
   if (p75 > 0 && hours >= p75) return "stuck";
