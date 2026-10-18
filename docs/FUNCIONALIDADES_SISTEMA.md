@@ -1,7 +1,8 @@
 # 📋 Levantamento Completo de Funcionalidades — Sales Arena
 
 > Documento gerado a partir de toda a conversa e memórias do projeto.  
-> Atualizado em: 2026-03-15
+> Atualizado em: 2026-03-15 · **Revisado contra o HEAD em 2026-10-18**
+> (contagens, roles e status de produção corrigidos).
 
 ---
 
@@ -422,16 +423,16 @@
 
 ## 📊 Resumo Quantitativo
 
-| Categoria             | Quantidade                                         |
-| --------------------- | -------------------------------------------------- |
-| Páginas/Rotas         | 44+                                                |
-| Hooks customizados    | 130+                                               |
-| Edge Functions        | 26                                                 |
-| Tabelas no banco      | 55+                                                |
-| Tipos de atividade    | 6 (call, email, meeting, linkedin, whatsapp, note) |
-| Outcomes rastreados   | 8                                                  |
-| Modos de visualização | 3 (SDR, Closer, Gestão)                            |
-| Roles de usuário      | 4 (admin, manager, sales_rep, sales_ops)           |
+| Categoria             | Quantidade (2026-10-18)                                                                                                                                              |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Páginas/Rotas         | 163 páginas / 175 rotas declaradas                                                                                                                                   |
+| Hooks customizados    | 511 arquivos                                                                                                                                                         |
+| Edge Functions        | 173 no repo (plano limita a 100 deployadas)                                                                                                                          |
+| Tabelas no banco      | ~414                                                                                                                                                                 |
+| Tipos de atividade    | 6 (call, email, meeting, linkedin, whatsapp, note)                                                                                                                   |
+| Outcomes rastreados   | 8                                                                                                                                                                    |
+| Modos de visualização | 3 (SDR, Closer, Gestão)                                                                                                                                              |
+| Roles de usuário      | 3 reais no enum `app_role` (admin, manager, salesperson) — `sales_rep`/`sales_ops` só existem num type TS legado de `src/types/index.ts`, não são papéis atribuíveis |
 
 ---
 
@@ -441,7 +442,7 @@
 - **Resend** — envio de emails transacionais e alertas
 - **OpenAI** — assistente IA de vendas
 - **ElevenLabs** — síntese de voz para assistente
-- **Lovable AI** — modelos suportados para funcionalidades de IA
+- **AI Gateway** — endpoint compatível com OpenAI (`_shared/ai-gateway.ts`, default `ai.gateway.lovable.dev`) usado pelas funções de IA
 
 ---
 
@@ -450,10 +451,11 @@
 - **Frontend**: React + Vite + TypeScript + Tailwind CSS
 - **UI Components**: shadcn/ui
 - **State Management**: TanStack React Query
-- **Backend**: Lovable Cloud (Supabase)
-- **Auth**: Supabase Auth com MFA e Passkeys
+- **Backend**: Supabase Cloud (projeto `usyxfpqlsspldubptrdl`)
+- **Deploy frontend**: Vercel + GitHub (verificado 2026-10-18)
+- **Auth**: Supabase Auth com MFA (TOTP nativo) e Passkeys
 - **Realtime**: Supabase Realtime para atualizações em tempo real
-- **Edge Functions**: Deno runtime para lógica de servidor (26 funções)
+- **Edge Functions**: Deno runtime para lógica de servidor (173 no repo)
 - **Animações**: Framer Motion + hooks customizados (useCountUp)
 - **Design System**: Tokens semânticos HSL em CSS variables + Tailwind config
 - **Export**: ExcelJS, jsPDF, CSV nativo
@@ -546,11 +548,14 @@ Todos os hooks em `src/hooks/` estão conectados a dados reais do Supabase — n
 
 ---
 
-### 🏆 RESULTADO FINAL DA AUDITORIA
+### 🏆 RESULTADO FINAL DA AUDITORIA (2026-03-15)
 
-> **100% das funcionalidades documentadas estão implementadas e conectadas ao backend.**  
-> Nenhuma funcionalidade fantasma, nenhum mock residual, nenhuma rota órfã.  
-> Sistema pronto para produção.
+> As funcionalidades descritas neste documento foram verificadas implementadas
+> e conectadas ao backend na data da auditoria.
+>
+> **Revisão 2026-10-18:** as rotas citadas seguem existindo; ressalvas do
+> estado atual: SMS MFA sem envio real (parcial), `ai-copilot` sem chamador
+> (órfã) e só 100 das 173 edge functions deployáveis no plano atual.
 
 ---
 

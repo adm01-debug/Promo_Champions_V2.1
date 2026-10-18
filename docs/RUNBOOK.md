@@ -19,12 +19,12 @@
 
 ## Deploy
 
-### Deploy Padrão (via Lovable)
+### Deploy Padrão (via Vercel — atualizado 2026-10-18)
 
-1. Commit na branch principal via Lovable
+1. Merge do PR na `main` via GitHub
 2. Build automático é disparado
 3. Preview disponível imediatamente
-4. Publicar via botão "Publish" no Lovable
+4. A Vercel builda e publica a `main` automaticamente (sem botão "Publish" — o deploy saiu do Lovable em out/2026)
 
 ### Validação Pré-Deploy
 
@@ -37,7 +37,7 @@ npm run build      # build de produção
 
 ### Deploy de Edge Functions
 
-- O deploy padrão é a integração Lovable→Supabase ao publicar; **não é
+- O deploy padrão do frontend é o build automático da Vercel na `main` — **não é
   garantido** — confirme cada function alterada com `curl` no endpoint
   (`docs/DEPLOYMENT.md` §4) e faça deploy manual via CLI se necessário
 - Existem functions no repo não publicadas (ex.: `elevenlabs-stt` responde 404)
@@ -45,7 +45,7 @@ npm run build      # build de produção
 #### Secrets obrigatórios (Supabase Dashboard → Edge Functions → Secrets)
 
 - `ALLOWED_ORIGINS` — allowlist de CORS de produção:
-  `https://promochampions.com.br,https://championgifts.lovable.app,https://pixels-with-personality-09.lovable.app`.
+  `https://promochampions.com.br,https://promo-champions-v2-1.vercel.app` (2026-10-18: o domínio `championgifts.lovable.app` é legado).
   Sem ele o CORS cai no fallback `*` (só aceitável em dev).
 - `BITRIX24_STATE_SECRET` — chave HMAC do `state` OAuth do Bitrix24
   (string aleatória ≥32 chars; `openssl rand -hex 32`). Sem ele,
@@ -61,7 +61,7 @@ npm run build      # build de produção
 
 ### Rollback Rápido (< 2 min)
 
-1. Acessar **Lovable** → histórico de versões
+1. Acessar **Vercel** → Deployments do projeto `promo-champions-v2-1`
 2. Selecionar versão anterior estável
 3. Restaurar
 
@@ -104,11 +104,11 @@ total. Usar tier gratuito de UptimeRobot, BetterStack ou Checkly.
 
 ### Monitores a cadastrar (intervalo 60s)
 
-| Nome               | URL                                                            | Espera                                                                                                 |
-| ------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Frontend (Lovable) | `https://championgifts.lovable.app/`                           | HTTP 200                                                                                               |
-| Supabase Auth      | `https://usyxfpqlsspldubptrdl.supabase.co/auth/v1/health`      | HTTP 200                                                                                               |
-| Edge Functions     | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 com `{"status":"ok","version":...,"timestamp":...}` (function `health`, `verify_jwt = false`) |
+| Nome              | URL                                                            | Espera                                                                                                 |
+| ----------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Frontend (Vercel) | `https://promo-champions-v2-1.vercel.app/`                     | HTTP 200                                                                                               |
+| Supabase Auth     | `https://usyxfpqlsspldubptrdl.supabase.co/auth/v1/health`      | HTTP 200                                                                                               |
+| Edge Functions    | `https://usyxfpqlsspldubptrdl.supabase.co/functions/v1/health` | HTTP 200 com `{"status":"ok","version":...,"timestamp":...}` (function `health`, `verify_jwt = false`) |
 
 ### Alertas
 
@@ -120,12 +120,12 @@ total. Usar tier gratuito de UptimeRobot, BetterStack ou Checkly.
 
 ### Verificação do monitor
 
-Teste trimestral: pausar o deploy no Lovable ou bloquear o domínio no monitor
+Teste trimestral: pausar o deploy na Vercel ou bloquear o domínio no monitor
 e confirmar que o alerta externo chega em <5 min.
 
 ### Runbook quando o externo dispara
 
-1. Frontend DOWN + Auth UP → problema no Lovable → rollback (seção acima).
+1. Frontend DOWN + Auth UP → problema na Vercel → rollback (seção acima).
 2. Auth/Functions DOWN → incidente Supabase → status.supabase.com + abrir
    ticket no dashboard.
 3. Tudo DOWN → indisponibilidade de DNS/região → acionar DR_PLAN §2.2.
@@ -170,11 +170,11 @@ npm run test        # Testes quebrados
 
 ## Contatos
 
-| Papel      | Responsável                |
-| ---------- | -------------------------- |
-| Lead Dev   | Configurar no README       |
-| DevOps     | Lovable Cloud (automático) |
-| Suporte DB | Lovable Cloud Dashboard    |
+| Papel      | Responsável                          |
+| ---------- | ------------------------------------ |
+| Lead Dev   | Configurar no README                 |
+| DevOps     | Vercel (automático) + Supabase Cloud |
+| Suporte DB | Supabase Cloud Dashboard             |
 
 ## Callback V4 (Promo Gifts V4)
 

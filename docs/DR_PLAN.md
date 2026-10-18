@@ -1,9 +1,18 @@
 # Plano de Recuperação de Desastres (DR Plan)
 
-## 1. Estratégia de Backup
+## 1. Estratégia de Backup (estado real — verificado 2026-10-18)
 
-- **Banco de Dados:** Backups diários automáticos via Supabase (retenção de 7 a 30 dias conforme o plano).
-- **Point-in-Time Recovery (PITR):** Habilitado para permitir restauração em qualquer segundo nos últimos 7 dias.
+- **Banco de Dados:** Backups diários automáticos via Supabase conforme o plano
+  do projeto (Free = sem backup gerenciado; Pro = retenção 7d). **Confirmar o
+  tier vigente no dashboard** antes de assumir cobertura.
+- **Backup off-site próprio:** o workflow `.github/workflows/db-backup.yml`
+  existe, mas está **inoperante** — o secret `SUPABASE_DB_URL` aponta para
+  outro projeto e a conexão falha. O backup efetivo do canônico **não roda**
+  até o secret ser corrigido (precisa da senha do Postgres).
+- **Point-in-Time Recovery (PITR):** **não contratado/evidenciado**
+  (2026-10-18) — PITR exige plano Pro+ no Supabase; não há prova de que esteja
+  ativo no projeto `usyxfpqlsspldubptrdl`. Tratar como indisponível até
+  confirmação no dashboard.
 - **Código:** Repositório Git hospedado no GitHub com redundância geográfica.
 
 ## 2. Procedimentos de Recuperação
@@ -12,9 +21,13 @@
 
 1. Notificar a equipe de SRE/DevOps.
 2. Avaliar a extensão dos danos.
-3. Se houver corrupção de dados massiva, iniciar restauração via PITR:
-   - Dashboard Supabase -> Database -> Backups -> PITR.
-   - Selecionar o timestamp imediatamente anterior ao incidente.
+3. Se houver corrupção de dados massiva, restaurar pelo último backup
+   disponível:
+   - Dashboard Supabase -> Database -> Backups (se o plano tiver backup
+     gerenciado) ou o artifact mais recente de `db-backup.yml` (quando o
+     workflow estiver operante).
+   - **PITR não está disponível** (ver §1) — não prometer granularidade
+     por segundo até contratar plano com PITR.
 
 ### 2.2 Indisponibilidade Regional (Cloud Provider)
 
@@ -35,8 +48,10 @@ vivem no cofre de senhas da empresa (Bitwarden/1Password), na pasta
 - **Supabase** (projeto `usyxfpqlsspldubptrdl`): recovery codes do 2FA da conta
   dona + `service_role` key atual e anterior + credencial do cofre para reset
   de senha via e-mail `adm01@promobrindes.com.br`. Mesmos detentores.
-- **Lovable Cloud**: recovery codes do 2FA + credencial da conta que publica o
-  frontend. Mesmos detentores.
+- **Vercel** (deploy do frontend): recovery codes do 2FA + credencial da
+  conta dona do projeto `promo-champions-v2-1`. Mesmos detentores.
+  (2026-10-18: o deploy saiu da Lovable — recovery codes da conta Lovable
+  mantidos apenas para o domínio legado `championgifts.lovable.app`.)
 
 **Procedimento de acesso emergencial:**
 

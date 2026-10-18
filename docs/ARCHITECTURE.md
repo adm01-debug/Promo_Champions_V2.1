@@ -1,7 +1,7 @@
 # Arquitetura — Promo Champions V2.1
 
 CRM de vendas com IA, coaching e gamificação para a equipe comercial da
-Promo Brindes. SPA React servida pela Lovable Cloud, backend inteiro no
+Promo Brindes. SPA React servida pela Vercel, backend inteiro no
 Supabase (Postgres + RLS + Auth + Edge Functions Deno).
 
 ## Stack real
@@ -10,11 +10,11 @@ Supabase (Postgres + RLS + Auth + Edge Functions Deno).
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Frontend        | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, framer-motion                                                                |
 | Estado/dados    | TanStack Query 5 (server state), React Router 7 (rotas lazy), Context API (auth/session) — **não há Redux nem Zustand**           |
-| Backend         | Supabase Cloud `usyxfpqlsspldubptrdl` — Postgres, RLS, Auth, ~170 Edge Functions (Deno), 612 migrations                           |
+| Backend         | Supabase Cloud `usyxfpqlsspldubptrdl` — Postgres, RLS, Auth, 173 Edge Functions (Deno), 656 migrations (2026-10-18)               |
 | Testes          | Vitest + Testing Library, Playwright (E2E), axe (`a11y:sweep`)                                                                    |
 | Mapas/flows     | Leaflet + react-leaflet, @xyflow/react                                                                                            |
-| Export          | xlsx, pdf-lib                                                                                                                     |
-| Deploy          | **Lovable Cloud** (não Vercel) — build Vite, SPA estática                                                                         |
+| Export          | exceljs, jspdf + jspdf-autotable, papaparse                                                                                       |
+| Deploy          | **Vercel** (projeto `promo-champions-v2-1`) — build Vite, SPA estática; domínio Lovable legado não é produção (2026-10-18)        |
 | Observabilidade | `log-web-vitals` (edge function) + painéis admin (`AdminWebVitalsPage`, `AdminPlatformSLOPage`), trilhas de auditoria em Postgres |
 
 ## Layout do `src/`
@@ -26,14 +26,14 @@ src/
                           # revenue-intelligence, win-loss, customer-success...
   components/ui/          # primitivas shadcn (único diretório compartilhado)
   hooks/<dominio>/        # hooks TanStack Query por domínio
-  pages/                  # 170+ páginas/rotas (lazy)
+  pages/                  # 163 páginas, 175 rotas (lazy)
   routes/                 # pagePrefetchMap: mapa rota→import dinâmico
   integrations/supabase/  # client.ts singleton + tipos gerados
   services/               # lógica não-React (import/export, merge, ações)
   lib/                    # utilitários puros (money, usageAnalytics, markup...)
 supabase/
-  functions/              # ~170 edge functions Deno + _shared/
-  migrations/             # 612+ migrations (timestamp crescente)
+  functions/              # 173 edge functions Deno + _shared/
+  migrations/             # 656 migrations (timestamp crescente)
 ```
 
 ## Camadas funcionais
@@ -93,7 +93,7 @@ MainLayout↔lazyPages.
 - WebAuthn/passkeys via edge function `webauthn`.
 - Idempotência de negócio: quote→sale (ADR-005), request-id (ADR-006).
 
-## Edge Functions (~170)
+## Edge Functions (173 — verificado 2026-10-18)
 
 Agrupadas por domínio: CRM/pipeline, leads/roteamento, cadências, email,
 voz/dialer (Twilio + ElevenLabs), IA/forecast, coaching, gamificação,
@@ -109,18 +109,19 @@ webhooks), reports/export e ops. Cron jobs monitorados pelos painéis de
 | ElevenLabs         | elevenlabs-stt/tts/voice                                                                                                                                                     |
 | Bitrix24           | bitrix24-oauth, bitrix24-sync                                                                                                                                                |
 | Email transacional | send-transactional-email, email-bulk-send                                                                                                                                    |
-| WhatsApp           | send-multichannel-message (Evolution)                                                                                                                                        |
+| WhatsApp           | send-multichannel-message (Twilio, Meta Cloud, Z-API ou Evolution) + whatsapp-inbound-webhook (Evolution)                                                                    |
 | Gateway MCP        | `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "LOVABLE CLOUD" — aponta para `usyxfpqlsspldubptrdl`; o conector `SUPABASE_PROMO_CHAMPIONS_-_V2_MCP` está morto) |
 
 ## Deploy
 
-- **Frontend**: build Vite → Lovable Cloud. `index.html` carrega CSP via
+- **Frontend**: build Vite → Vercel. `index.html` carrega CSP via
   `<meta>` (ver ADR-009 — o `<meta>` só endurece, não pode ser o único
   mecanismo em edge/CDN).
 - **Edge functions**: `supabase functions deploy` (Deno). Migrations:
   `db_query` via gateway MCP com DDL direto; arquivos em
   `supabase/migrations/` com timestamp estritamente crescente.
-- **Não há** Vercel, Cloudflare ou Sentry configurados no repositório —
+- **Não há** Cloudflare ou Sentry configurados no repositório; o deploy do
+  frontend **é** Vercel (2026-10-18) —
   versões anteriores deste doc citavam essa stack por engano.
 
 ## Verificação local
