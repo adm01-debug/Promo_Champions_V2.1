@@ -73,6 +73,9 @@ export const Automacoes = lazyWithPrefetch(() => import('@/pages/Automacoes'));
 export const ConversationalIntelligence = lazyWithPrefetch(
   () => import('@/pages/ConversationalIntelligenceHub')
 );
+export const ConversationalIntelligenceRecordings = lazyWithPrefetch(
+  () => import('@/pages/ConversationalIntelligence')
+);
 export const RevenueIntelligence = lazyWithPrefetch(
   () => import('@/pages/RevenueIntelligence')
 );

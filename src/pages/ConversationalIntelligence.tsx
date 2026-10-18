@@ -35,6 +35,7 @@ import { DiarizationTimeline } from '@/components/conversational/DiarizationTime
 import { CallStatsPanel } from '@/components/conversational/CallStatsPanel';
 import { DiarizeButton } from '@/components/conversational/DiarizeButton';
 import type { DiarizationTurn } from '@/components/conversational/diarizationHelpers';
+import { BackButton } from '@/components/navigation/BackButton';
 import { Helmet } from 'react-helmet-async';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -98,6 +99,10 @@ export default function ConversationalIntelligence() {
       </Helmet>
 
       <div className="container max-w-7xl py-6 space-y-6">
+        <BackButton
+          label="Voltar para Inteligência de Chamadas"
+          fallbackPath="/conversational-intelligence"
+        />
         <header className="flex items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold flex items-center gap-2">

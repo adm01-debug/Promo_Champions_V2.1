@@ -65,7 +65,7 @@ export const useDealHealth = (saleId: string | undefined) => {
   useEffect(() => {
     if (!saleId) return;
     const channel = supabase
-      .channel(`deal-health-${saleId}`)
+      .channel(`deal-health-${saleId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

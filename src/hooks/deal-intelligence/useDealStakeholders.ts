@@ -37,7 +37,7 @@ export const useDealStakeholders = (saleId: string | null | undefined) => {
   useEffect(() => {
     if (!saleId) return;
     const ch = supabase
-      .channel(`stakeholders-${saleId}`)
+      .channel(`stakeholders-${saleId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
