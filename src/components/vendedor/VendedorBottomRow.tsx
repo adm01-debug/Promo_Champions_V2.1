@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { isWonSaleStatus } from '@/constants';
+import { isLostSaleStatus, isWonSaleStatus } from '@/constants';
 import { Clock, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { differenceInDays, parseISO } from 'date-fns';
@@ -48,14 +48,15 @@ export const VendedorBottomRow = memo(function VendedorBottomRow({
                       'text-xs px-2 py-0.5 rounded-full',
                       isWonSaleStatus(deal.status) && 'bg-success/20 text-success',
                       deal.status === 'pending' && 'bg-warning/20 text-warning',
-                      deal.status === 'cancelled' && 'bg-destructive/20 text-destructive'
+                      isLostSaleStatus(deal.status) &&
+                        'bg-destructive/20 text-destructive'
                     )}
                   >
                     {isWonSaleStatus(deal.status)
                       ? 'Fechado'
-                      : deal.status === 'pending'
-                        ? 'Pendente'
-                        : 'Cancelado'}
+                      : isLostSaleStatus(deal.status)
+                        ? 'Perdido'
+                        : 'Pendente'}
                   </span>
                 </div>
               </div>

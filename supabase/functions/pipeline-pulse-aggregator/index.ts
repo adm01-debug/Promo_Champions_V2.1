@@ -1,4 +1,5 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { LOST_SALE_STATUSES, OPEN_SALE_STATUSES, WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 import {
   getServiceClient,
   getUserClient,
@@ -99,20 +100,14 @@ Deno.serve(withRequestId("pipeline-pulse-aggregator", async (req, _ctx) => {
     ] = await Promise.all([
       supabase.from("sales").select(
         "id, amount, status, salesperson_id, created_at",
-      ).in("status", [
-        "lead",
-        "qualified",
-        "pending",
-        "proposal",
-        "negotiation",
-      ]).limit(1000),
-      supabase.from("sales").select("id, amount, updated_at").eq(
+      ).in("status", [...OPEN_SALE_STATUSES]).limit(1000),
+      supabase.from("sales").select("id, amount, updated_at").in(
         "status",
-        "won",
+        [...WON_SALE_STATUSES],
       ).gte("updated_at", since30).limit(1000),
-      supabase.from("sales").select("id, amount, updated_at").eq(
+      supabase.from("sales").select("id, amount, updated_at").in(
         "status",
-        "lost",
+        [...LOST_SALE_STATUSES],
       ).gte("updated_at", since30).limit(1000),
       supabase.from("deal_health_scores").select(
         "sale_id, health_score, factors",

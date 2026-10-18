@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchStageProbabilities } from '@/lib/stageProbabilities';
+import { OPEN_SALE_STATUSES } from '@/constants';
 
 export const useDealProbability = (saleId: string) => {
   return useQuery<{ probability: number; factors: string[] }>({
@@ -65,7 +66,7 @@ export const useDealProbabilities = () => {
       const { data: sales } = await supabase
         .from('sales')
         .select('id, status, amount, created_at')
-        .in('status', ['pending', 'completed']);
+        .in('status', [...OPEN_SALE_STATUSES]);
 
       if (!sales || sales.length === 0) return {};
 

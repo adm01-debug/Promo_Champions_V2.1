@@ -8,8 +8,9 @@ import {
   isInternalServiceRequest,
 } from '../_shared/internal-service-auth.ts';
 import { withRequestId } from '../_shared/request-id.ts';
+import { WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
-const WON_STATUSES = ['won', 'closed_won', 'closed', 'paid', 'delivered', 'completed'];
+const WON_STATUSES = [...WON_SALE_STATUSES];
 
 type Urgency = 'critical' | 'high' | 'medium' | 'low';
 

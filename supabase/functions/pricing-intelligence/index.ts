@@ -2,6 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
+import { LOST_SALE_STATUSES as LOST_SALE_STATUSES_, WON_SALE_STATUSES as WON_SALE_STATUSES_ } from "../_shared/sale-statuses.ts";
 
 interface SaleRow {
   id: string;
@@ -149,8 +150,8 @@ Deno.serve(
         productRefPrice.set(name, sorted[idx] ?? sorted[0] ?? 0);
       });
 
-      const WON_STATUSES = new Set(['won', 'completed', 'closed', 'Fechado']);
-      const LOST_STATUSES = new Set(['lost', 'cancelled']);
+      const WON_STATUSES = new Set<string>(WON_SALE_STATUSES_);
+      const LOST_STATUSES = new Set<string>(LOST_SALE_STATUSES_);
       const wonRows = rows.filter(r => WON_STATUSES.has(r.status));
       const decidedRows = rows.filter(
         r => WON_STATUSES.has(r.status) || LOST_STATUSES.has(r.status)

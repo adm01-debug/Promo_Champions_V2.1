@@ -1,5 +1,5 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
@@ -8,6 +8,7 @@ import { chunkedIn } from "../_shared/chunked-in.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { DECIDED_SALE_STATUSES, WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 
 interface OpenDeal {
@@ -40,7 +41,7 @@ function classifyRisk(prob: number): "safe" | "on_track" | "at_risk" | "critical
   return "critical";
 }
 
-async function generateAdvancedActions(supabase: ReturnType<typeof createClient>, params: {
+async function generateAdvancedActions(supabase: SupabaseClient, params: {
   forecastId: string;
   salespersonName: string;
   quota: number;
@@ -172,7 +173,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
           .from("sales")
           .select("id, amount, salesperson_id")
           .in("salesperson_id", chunk)
-          .eq("status", "closed_won")
+          .in("status", [...WON_SALE_STATUSES])
           .gte("created_at", periodStart.toISOString())
           .lte("created_at", periodEnd.toISOString())
           .limit(10000),
@@ -184,7 +185,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
           .from("sales")
           .select("id, amount, stage, salesperson_id")
           .in("salesperson_id", chunk)
-          .not("status", "in", "(closed_won,closed_lost)")
+          .not("status", "in", `(${DECIDED_SALE_STATUSES.join(",")})`)
           .limit(10000),
         { parallel: true, label: "predict-quota-attainment.open" },
       ),

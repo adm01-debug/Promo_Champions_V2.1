@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
+import { DECIDED_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 interface PrepRequest {
   salesperson_id: string;
@@ -71,7 +72,7 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
         .from("sales")
         .select("id, client_name, amount, status, created_at")
         .eq("salesperson_id", salesperson_id)
-        .not("status", "in", "(closed_won,closed_lost)")
+        .not("status", "in", `(${DECIDED_SALE_STATUSES.join(",")})`)
         .order("amount", { ascending: false })
         .limit(10),
       supabase

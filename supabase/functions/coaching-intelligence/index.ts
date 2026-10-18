@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { toBusinessMonthStart } from "../_shared/business-date.ts";
+import { isLostSaleStatus, isWonSaleStatus } from "../_shared/sale-statuses.ts";
 
 interface CoachingTarget {
   salesperson_id: string;
@@ -73,8 +74,8 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
 
     const targets: CoachingTarget[] = (salespeople ?? []).map((sp) => {
       const myDeals = (sales ?? []).filter((s) => s.salesperson_id === sp.id);
-      const won = myDeals.filter((d) => d.status === "completed");
-      const lost = myDeals.filter((d) => d.status === "lost");
+      const won = myDeals.filter((d) => isWonSaleStatus(d.status));
+      const lost = myDeals.filter((d) => isLostSaleStatus(d.status));
       const revenue = won.reduce((sum, d) => sum + Number(d.amount ?? 0), 0);
       const winRate = (won.length + lost.length) > 0 ? (won.length / (won.length + lost.length)) * 100 : 0;
       const myActs = (activities ?? []).filter((a) => a.salesperson_id === sp.id).length;

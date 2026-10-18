@@ -2,6 +2,7 @@
 import { SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { chunkedIn } from '../_shared/chunked-in.ts';
 import { toBusinessDate, toBusinessMonth } from "../_shared/business-date.ts";
+import { DECIDED_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 export type ResolverResult = {
   rows: Record<string, unknown>[];
@@ -251,7 +252,7 @@ export async function queryPipelineSnapshot(
   let q = supabase
     .from('sales')
     .select('status, amount')
-    .not('status', 'in', '(won,lost,completed,cancelled)')
+    .not('status', 'in', `(${DECIDED_SALE_STATUSES.join(',')})`)
     .limit(5000);
   if (stage) q = q.eq('status', stage);
   const { data, error } = await q;

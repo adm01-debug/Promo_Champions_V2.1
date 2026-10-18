@@ -14,6 +14,7 @@ import { chunkedIn } from '../_shared/chunked-in.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
+import { isOpenSaleStatus } from "../_shared/sale-statuses.ts";
 
 Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -108,7 +109,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
           ?.filter(s => s.status === 'completed')
           .reduce((sum, s) => sum + Number(s.amount), 0) || 0;
       const pendingDeals =
-        sales?.filter(s => s.status !== 'completed' && s.status !== 'cancelled') || [];
+        sales?.filter(s => isOpenSaleStatus(s.status)) || [];
       const goalAmount = goals?.goal_amount || 0;
       const progressPercent = goalAmount
         ? Math.round((totalSales / goalAmount) * 100)

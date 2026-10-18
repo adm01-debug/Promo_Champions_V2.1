@@ -6,6 +6,7 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { OPEN_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 
 
@@ -82,7 +83,7 @@ Deno.serve(withRequestId("generate-revenue-forecast", async (req, _ctx) => {
     let dealsQ = supabase
       .from("sales")
       .select("id, product_name, client_name, total_amount, stage, status, expected_close_date, salesperson_id, probability")
-      .in("status", ["open", "in_progress", "qualified", "proposal", "negotiation"])
+      .in("status", [...OPEN_SALE_STATUSES])
       .is("deleted_at", null)
       .gte("expected_close_date", period_start)
       .lte("expected_close_date", period_end_str);

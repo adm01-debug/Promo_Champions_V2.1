@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { toBusinessMonthStart, toBusinessMonthEnd } from "../_shared/business-date.ts";
+import { OPEN_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -38,7 +39,7 @@ Deno.serve(withRequestId("snapshot-forecast", async (req, _ctx) => {
     const { data: sales, error: salesErr } = await supabase
       .from("sales")
       .select("id, amount, stage, salesperson_id, status")
-      .in("status", ["pending", "in_progress", "negotiation"])
+      .in("status", [...OPEN_SALE_STATUSES])
       .limit(10000);
     if (salesErr) throw salesErr;
 

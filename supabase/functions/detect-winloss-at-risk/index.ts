@@ -1,9 +1,10 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { DECIDED_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 import { computeAtRiskDeals, type LossPattern, type OpenDeal } from "./scoring.ts";
 
-const EXCLUDED_STATUSES = ["won", "lost", "completed"];
+const EXCLUDED_STATUSES = [...DECIDED_SALE_STATUSES];
 
 interface RequestBody {
   force?: boolean;

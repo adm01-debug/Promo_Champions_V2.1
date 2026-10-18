@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { DECIDED_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 import {
   getServiceClient,
   getUserClient,
@@ -68,7 +69,7 @@ Deno.serve(withRequestId('auto-enroll-cadence', async (req, _ctx) => {
       const { data: recentSales } = await supabase
         .from("sales")
         .select("id")
-        .not("status", "in", "(completed,lost,cancelled)")
+        .not("status", "in", `(${DECIDED_SALE_STATUSES.join(",")})`)
         .gte("updated_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
         .limit(200);
       saleIds = (recentSales ?? []).map((s) => s.id);
