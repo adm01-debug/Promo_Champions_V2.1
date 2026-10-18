@@ -257,7 +257,7 @@ export const useSalesAssistant = (
           }
         }
 
-        if (convId && assistantContent) {
+        if (assistantContent) {
           await saveMessage(convId, 'assistant', assistantContent);
         }
       } catch (error) {
