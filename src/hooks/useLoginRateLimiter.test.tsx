@@ -128,4 +128,134 @@ describe('useLoginRateLimiter', () => {
       attempts: 0,
     });
   });
+
+  it('descarta resposta atrasada de um e-mail anterior', async () => {
+    // Resposta do e-mail A chega DEPOIS da do e-mail B: o lockout mostrado
+    // deve ser o de B — sem a guarda, a resposta tardia de A sobrescreve.
+    const resolvers = new Map<string, (v: { data: unknown; error: null }) => void>();
+    rpc.mockImplementation(
+      (_fn: string, args: { p_email: string }) =>
+        new Promise(resolve => {
+          resolvers.set(args.p_email, resolve);
+        })
+    );
+
+    const { result } = renderHook(() => useLoginRateLimiter());
+
+    act(() => {
+      void result.current.checkLoginAttempts('a@example.com');
+      void result.current.checkLoginAttempts('b@example.com');
+    });
+
+    await act(async () => {
+      resolvers.get('b@example.com')?.({
+        data: [
+          { attempts: 5, lockout_until: new Date(Date.now() + 60_000).toISOString() },
+        ],
+        error: null,
+      });
+      resolvers.get('a@example.com')?.({
+        data: [{ attempts: 0, lockout_until: null }],
+        error: null,
+      });
+    });
+
+    // O status na tela é o de B (bloqueado), não o de A (livre, chegou depois).
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+    expect(result.current.lockoutStatus.attempts).toBe(5);
+  });
+
+  it('recordLoginAttempt atrasado nao desloca o marcador do e-mail atual', async () => {
+    // Cenario: falha de login com A dispara recordLoginAttempt; antes de
+    // terminar, o usuario digita B (checkLoginAttempts(B)). O refresh de A
+    // que viria depois nao pode voltar o marcador nem limpar o status de B.
+    const resolvers = new Map<string, (v: { data: unknown; error: null }) => void>();
+    rpc.mockImplementation(
+      (fn: string, args: Record<string, unknown>) =>
+        new Promise(resolve => {
+          if (fn === 'get_login_lockout_status') {
+            resolvers.set(String(args.p_email), resolve);
+          } else {
+            resolve({ data: null, error: null });
+          }
+        })
+    );
+
+    const { result } = renderHook(() => useLoginRateLimiter());
+
+    // Usuario falha com A e depois consulta B antes da resposta de A.
+    act(() => {
+      void result.current.recordLoginAttempt('a@example.com', false);
+      void result.current.checkLoginAttempts('b@example.com');
+    });
+
+    // B responde bloqueado.
+    await act(async () => {
+      resolvers.get('b@example.com')?.({
+        data: [
+          { attempts: 5, lockout_until: new Date(Date.now() + 60_000).toISOString() },
+        ],
+        error: null,
+      });
+    });
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+
+    // A resposta tardia do refresh de A nao pode sobrescrever o status de B.
+    // Sem a guarda, checkLoginAttempts(A) rodaria e setaria o status de A.
+    await act(async () => {
+      // recordLoginAttempt ainda nao chamou checkLoginAttempts(A) porque a
+      // guarda de lastQueriedEmail o bloqueou — mas a RPC pode ter sido
+      // emitida antes; resolvemos para garantir.
+      resolvers.get('a@example.com')?.({
+        data: [{ attempts: 0, lockout_until: null }],
+        error: null,
+      });
+    });
+
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+    expect(result.current.lockoutStatus.attempts).toBe(5);
+  });
+
+  it('descarta resposta atrasada do MESMO e-mail consultado duas vezes (A→B→A)', async () => {
+    // Cenário: consulta A1; o campo muda para B e volta para A, disparando
+    // A2. A1 responde depois de A2 — sem o seq counter, a resposta antiga
+    // (livre) sobrescreveria o lockout real de A2.
+    const resolvers: Array<(v: { data: unknown; error: null }) => void> = [];
+    rpc.mockImplementation(
+      (_fn: string, _args: { p_email: string }) =>
+        new Promise(resolve => {
+          resolvers.push(resolve);
+        })
+    );
+
+    const { result } = renderHook(() => useLoginRateLimiter());
+
+    act(() => {
+      void result.current.checkLoginAttempts('a@example.com'); // A1 = resolvers[0]
+      void result.current.checkLoginAttempts('b@example.com'); // B  = resolvers[1]
+      void result.current.checkLoginAttempts('a@example.com'); // A2 = resolvers[2]
+    });
+
+    // A2 responde bloqueado — este é o estado correto da tela.
+    await act(async () => {
+      resolvers[2]?.({
+        data: [
+          { attempts: 5, lockout_until: new Date(Date.now() + 60_000).toISOString() },
+        ],
+        error: null,
+      });
+    });
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+
+    // A1 chega por último com estado livre — não pode sobrescrever.
+    await act(async () => {
+      resolvers[0]?.({
+        data: [{ attempts: 0, lockout_until: null }],
+        error: null,
+      });
+    });
+
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+    expect(result.current.lockoutStatus.attempts).toBe(5);
+  });
 });
