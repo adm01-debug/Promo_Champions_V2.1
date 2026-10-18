@@ -65,6 +65,7 @@ export const useMFA = () => {
         supabase.auth.mfa.listFactors(),
       ]);
       if (statusRes.error) throw statusRes.error;
+      if (factorsRes.error) throw factorsRes.error;
 
       const row = Array.isArray(statusRes.data) ? statusRes.data[0] : statusRes.data;
       if (isCurrent()) {
@@ -92,10 +93,12 @@ export const useMFA = () => {
   const initializeTOTP = useCallback(async (): Promise<{ qrUrl: string } | null> => {
     const uid = user?.id;
     if (!uid) return null;
+    const isCurrentUser = () => userRef.current?.id === uid;
 
     try {
       // Limpa enrolls abandonados para não acumular fatores não verificados.
       const { data: factors } = await supabase.auth.mfa.listFactors();
+      if (!isCurrentUser()) return null;
       for (const factor of factors?.totp ?? []) {
         if (factor.status !== 'verified') {
           await supabase.auth.mfa.unenroll({ factorId: factor.id });
@@ -111,7 +114,7 @@ export const useMFA = () => {
       if (data.type !== 'totp') throw new Error('Tipo de fator inesperado');
       // Usuário trocou no meio do enroll: o fator pertence a outra sessão,
       // não publica QR/fator na tela atual.
-      if (userRef.current?.id !== uid) return null;
+      if (!isCurrentUser()) return null;
 
       setTotpFactorId(data.id);
       setQrCodeUrl(data.totp.uri);
@@ -130,6 +133,7 @@ export const useMFA = () => {
     async (token: string): Promise<boolean> => {
       const uid = user?.id;
       if (!uid) return false;
+      const isCurrentUser = () => userRef.current?.id === uid;
 
       if (!totpFactorId) {
         toast.error('Inicie a configuração novamente');
@@ -143,19 +147,21 @@ export const useMFA = () => {
         });
 
         if (error) throw error;
-        if (userRef.current?.id !== uid) return false;
+        if (!isCurrentUser()) return false;
 
         setTotpFactorId(null);
         setQrCodeUrl(null);
         // Marca a migração do fluxo legado para apagar o banner de re-enroll.
-        await supabase
+        const { error: upsertError } = await supabase
           .from('user_mfa_settings')
           .upsert(
             { user_id: uid, migrated_to_native_mfa: true },
             { onConflict: 'user_id' }
           );
+        if (upsertError) throw upsertError;
 
         await fetchStatus();
+        if (!isCurrentUser()) return false;
         toast.success('TOTP ativado com sucesso!');
         return true;
       } catch (error) {
@@ -172,10 +178,13 @@ export const useMFA = () => {
   // Desativa TOTP: remove os fatores nativos verificados e limpa o registro
   // legado (totp_enabled/secret) via RPC.
   const disableTOTP = useCallback(async (): Promise<boolean> => {
-    if (!user) return false;
+    const uid = user?.id;
+    if (!uid) return false;
+    const isCurrentUser = () => userRef.current?.id === uid;
 
     try {
       const { data: factors } = await supabase.auth.mfa.listFactors();
+      if (!isCurrentUser()) return false;
       for (const factor of factors?.totp ?? []) {
         const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
         if (error) throw error;
@@ -184,6 +193,7 @@ export const useMFA = () => {
       const { data, error } = await supabase.rpc('disable_totp');
       if (error) throw error;
       await fetchStatus();
+      if (!isCurrentUser()) return false;
       toast.success('TOTP desativado');
       return !!data || hasNativeTotp;
     } catch (error) {
@@ -198,7 +208,8 @@ export const useMFA = () => {
   // Setup SMS via server-side RPC (code generated server-side)
   const setupSMS = useCallback(
     async (phoneNumber: string): Promise<boolean> => {
-      if (!user) return false;
+      const uid = user?.id;
+      if (!uid) return false;
 
       try {
         const { data, error } = await supabase.rpc('setup_sms_mfa', {
@@ -206,6 +217,7 @@ export const useMFA = () => {
         });
 
         if (error) throw error;
+        if (userRef.current?.id !== uid) return false;
         toast.info(`Código enviado para ${phoneNumber}`);
         return !!data;
       } catch (error) {
@@ -222,7 +234,8 @@ export const useMFA = () => {
   // Verify SMS code via server-side RPC
   const verifySMSCode = useCallback(
     async (code: string): Promise<boolean> => {
-      if (!user) return false;
+      const uid = user?.id;
+      if (!uid) return false;
 
       try {
         const { data, error } = await supabase.rpc('verify_and_enable_sms', {
@@ -233,6 +246,7 @@ export const useMFA = () => {
 
         if (data) {
           await fetchStatus();
+          if (userRef.current?.id !== uid) return false;
           toast.success('SMS verificado e ativado!');
           return true;
         } else {
@@ -252,12 +266,14 @@ export const useMFA = () => {
 
   // Disable SMS via server-side RPC
   const disableSMS = useCallback(async (): Promise<boolean> => {
-    if (!user) return false;
+    const uid = user?.id;
+    if (!uid) return false;
 
     try {
       const { data, error } = await supabase.rpc('disable_sms');
       if (error) throw error;
       await fetchStatus();
+      if (userRef.current?.id !== uid) return false;
       toast.success('SMS desativado');
       return !!data;
     } catch (error) {
@@ -272,7 +288,8 @@ export const useMFA = () => {
   // Verify MFA code (for login) via server-side RPC
   const verifyMFA = useCallback(
     async (code: string, method?: 'totp' | 'sms' | 'backup_code'): Promise<boolean> => {
-      if (!user) return false;
+      const uid = user?.id;
+      if (!uid) return false;
 
       try {
         const { data, error } = await supabase.rpc('verify_mfa_code', {
@@ -283,6 +300,7 @@ export const useMFA = () => {
         if (error) throw error;
 
         if (data) {
+          if (userRef.current?.id !== uid) return false;
           if (method === 'backup_code') {
             toast.success('Código de backup usado');
           }
@@ -329,7 +347,8 @@ export const useMFA = () => {
   // Set preferred method via server-side RPC
   const setPreferredMethod = useCallback(
     async (method: 'totp' | 'sms'): Promise<boolean> => {
-      if (!user) return false;
+      const uid = user?.id;
+      if (!uid) return false;
 
       try {
         const { data, error } = await supabase.rpc('set_mfa_preferred_method', {
@@ -338,6 +357,7 @@ export const useMFA = () => {
 
         if (error) throw error;
         await fetchStatus();
+        if (userRef.current?.id !== uid) return false;
         toast.success(`Método preferido: ${method.toUpperCase()}`);
         return !!data;
       } catch (error) {

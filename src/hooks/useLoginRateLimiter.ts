@@ -37,6 +37,11 @@ export function useLoginRateLimiter() {
         if (import.meta.env.DEV) {
           console.error('Erro ao verificar tentativas de login:', error);
         }
+        // Falha aberta (canAttempt) e estado limpo na tela — manter o
+        // lockout do e-mail anterior seria enganoso.
+        if (lastQueriedEmail.current === normalizedEmail) {
+          setLockoutStatus({ isLocked: false, remainingSeconds: 0, attempts: 0 });
+        }
         return {
           canAttempt: true,
           lockoutStatus: { isLocked: false, remainingSeconds: 0, attempts: 0 },
@@ -79,6 +84,15 @@ export function useLoginRateLimiter() {
       if (error && import.meta.env.DEV) {
         console.error('Erro ao registrar tentativa de login:', error);
       }
+
+      // Se o usuario ja trocou o e-mail no campo, esta resposta tardia nao
+      // pode deslocar o marcador nem limpar o lockout do e-mail atual.
+      // lastQueriedEmail null = nenhuma consulta ainda — pode refrescar.
+      if (
+        lastQueriedEmail.current !== null &&
+        lastQueriedEmail.current !== normalizedEmail
+      )
+        return;
 
       if (!success) {
         await checkLoginAttempts(normalizedEmail);

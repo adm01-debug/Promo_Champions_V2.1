@@ -52,7 +52,6 @@ export const KnownDevices = () => {
 
   const fetchDevices = async () => {
     const gen = ++fetchGen.current;
-    const isCurrent = () => gen === fetchGen.current;
     const currentUser = userRef.current;
 
     if (!currentUser) {
@@ -62,8 +61,13 @@ export const KnownDevices = () => {
       return;
     }
 
+    const uid = currentUser.id;
+    // Geracao + identidade do sujeito: uma resposta tardia so escreve se
+    // ainda for o fetch mais recente E do mesmo usuario.
+    const isCurrent = () => gen === fetchGen.current && userRef.current?.id === uid;
+
     try {
-      const data = await knownDeviceService.listForUser(currentUser.id);
+      const data = await knownDeviceService.listForUser(uid);
       if (isCurrent()) {
         setDevices(data);
         setLoadError(false);
@@ -90,7 +94,6 @@ export const KnownDevices = () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps -- incrementar o ref no cleanup é justamente o mecanismo de invalidação
       fetchGen.current++;
     };
-     
   }, [user]);
 
   const toggleTrust = async (deviceId: string, currentTrust: boolean) => {

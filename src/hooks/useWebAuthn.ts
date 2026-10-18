@@ -33,8 +33,10 @@ export function useWebAuthn() {
   userRef.current = user;
 
   useEffect(() => {
-    // Troca de usuário/logout: descarta a lista do usuário anterior.
+    // Troca de usuário/logout: descarta a lista do usuário anterior e
+    // destrava o loading — operação pendente pertencia à sessão antiga.
     setCredentials([]);
+    setIsLoading(false);
   }, [user?.id]);
 
   const loadCredentials = useCallback(async () => {
@@ -63,10 +65,13 @@ export function useWebAuthn() {
         toast.error('WebAuthn não é suportado neste navegador');
         return false;
       }
-      if (!user?.id || !user?.email) {
+      const uid = user?.id;
+      const email = user?.email;
+      if (!uid || !email) {
         toast.error('Você precisa estar logado para registrar uma passkey');
         return false;
       }
+      const isCurrentUser = () => userRef.current?.id === uid;
       setIsLoading(true);
       try {
         const { data: options, error: optionsError } = await supabase.functions.invoke(
@@ -74,13 +79,14 @@ export function useWebAuthn() {
           {
             body: {
               action: 'register-options',
-              userId: user.id,
-              userEmail: user.email,
+              userId: uid,
+              userEmail: email,
               rpId: getRpId(),
             },
           }
         );
         if (optionsError) throw optionsError;
+        if (!isCurrentUser()) return false;
 
         const credential = (await navigator.credentials.create({
           publicKey: {
@@ -93,12 +99,13 @@ export function useWebAuthn() {
           },
         })) as PublicKeyCredential;
         if (!credential) throw new Error('Falha ao criar credencial');
+        if (!isCurrentUser()) return false;
 
         const response = credential.response as AuthenticatorAttestationResponse;
         const { error: verifyError } = await supabase.functions.invoke('webauthn', {
           body: {
             action: 'register-verify',
-            userId: user.id,
+            userId: uid,
             credential: {
               id: credential.id,
               rawId: bufferToBase64url(credential.rawId),
@@ -115,6 +122,7 @@ export function useWebAuthn() {
           },
         });
         if (verifyError) throw verifyError;
+        if (!isCurrentUser()) return false;
 
         toast.success('Passkey registrada com sucesso!');
         await loadCredentials();
@@ -226,16 +234,19 @@ export function useWebAuthn() {
         );
         return false;
       }
-      if (!user?.id) {
+      const uid = user?.id;
+      if (!uid) {
         toast.error('Você precisa estar logado');
         return false;
       }
+      const isCurrentUser = () => userRef.current?.id === uid;
       setIsLoading(true);
       try {
         const { error } = await supabase.functions.invoke('webauthn', {
-          body: { action: 'delete-credential', userId: user.id, credentialId },
+          body: { action: 'delete-credential', userId: uid, credentialId },
         });
         if (error) throw error;
+        if (!isCurrentUser()) return false;
         toast.success('Passkey removida com sucesso');
         await loadCredentials();
         return true;

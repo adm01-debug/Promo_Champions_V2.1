@@ -164,4 +164,55 @@ describe('useLoginRateLimiter', () => {
     expect(result.current.lockoutStatus.isLocked).toBe(true);
     expect(result.current.lockoutStatus.attempts).toBe(5);
   });
+
+  it('recordLoginAttempt atrasado nao desloca o marcador do e-mail atual', async () => {
+    // Cenario: falha de login com A dispara recordLoginAttempt; antes de
+    // terminar, o usuario digita B (checkLoginAttempts(B)). O refresh de A
+    // que viria depois nao pode voltar o marcador nem limpar o status de B.
+    const resolvers = new Map<string, (v: { data: unknown; error: null }) => void>();
+    rpc.mockImplementation(
+      (fn: string, args: Record<string, unknown>) =>
+        new Promise(resolve => {
+          if (fn === 'get_login_lockout_status') {
+            resolvers.set(String(args.p_email), resolve);
+          } else {
+            resolve({ data: null, error: null });
+          }
+        })
+    );
+
+    const { result } = renderHook(() => useLoginRateLimiter());
+
+    // Usuario falha com A e depois consulta B antes da resposta de A.
+    act(() => {
+      void result.current.recordLoginAttempt('a@example.com', false);
+      void result.current.checkLoginAttempts('b@example.com');
+    });
+
+    // B responde bloqueado.
+    await act(async () => {
+      resolvers.get('b@example.com')?.({
+        data: [
+          { attempts: 5, lockout_until: new Date(Date.now() + 60_000).toISOString() },
+        ],
+        error: null,
+      });
+    });
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+
+    // A resposta tardia do refresh de A nao pode sobrescrever o status de B.
+    // Sem a guarda, checkLoginAttempts(A) rodaria e setaria o status de A.
+    await act(async () => {
+      // recordLoginAttempt ainda nao chamou checkLoginAttempts(A) porque a
+      // guarda de lastQueriedEmail o bloqueou — mas a RPC pode ter sido
+      // emitida antes; resolvemos para garantir.
+      resolvers.get('a@example.com')?.({
+        data: [{ attempts: 0, lockout_until: null }],
+        error: null,
+      });
+    });
+
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+    expect(result.current.lockoutStatus.attempts).toBe(5);
+  });
 });
