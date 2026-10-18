@@ -38,9 +38,12 @@ export const useRefreshStageBaselines = () => {
     mutationFn: async () => {
       // Função canônica: recompute-stage-baselines (refresh-stage-baselines foi
       // removida — seu upsert falhava silenciosamente por falta de constraint).
-      const { data, error } = await supabase.functions.invoke('recompute-stage-baselines', {
-        body: {},
-      });
+      const { data, error } = await supabase.functions.invoke(
+        'recompute-stage-baselines',
+        {
+          body: {},
+        }
+      );
       if (error) throw error;
       return data;
     },
