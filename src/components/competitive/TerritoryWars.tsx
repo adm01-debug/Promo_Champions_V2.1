@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Crown, Swords, Shield, Flag } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 
 const TERRITORY_COLORS = [
   'hsl(var(--primary))',
@@ -25,7 +26,7 @@ function TerritoryWarsComponent() {
       const { data } = await supabase
         .from('sales')
         .select('id, client_name, product_name, amount, status, salesperson_id, category')
-        .eq('status', 'won');
+        .in('status', [...WON_SALE_STATUSES]);
       return data || [];
     },
   });

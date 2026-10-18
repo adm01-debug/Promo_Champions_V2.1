@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { WON_SALE_STATUSES } from '@/constants';
 import {
   Trophy,
   Flame,
@@ -73,7 +74,7 @@ function EnhancedTVModeComponent() {
         .select(
           'id, client_name, product_name, amount, status, created_at, salesperson_id'
         )
-        .eq('status', 'won')
+        .in('status', [...WON_SALE_STATUSES])
         .order('created_at', { ascending: false })
         .limit(10);
       return data || [];

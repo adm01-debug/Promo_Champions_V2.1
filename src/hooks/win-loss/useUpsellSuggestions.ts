@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 
 export interface UpsellSuggestion {
   product: string;
@@ -31,7 +32,7 @@ export function useUpsellSuggestions(saleId: string | undefined) {
         .from('sales')
         .select('id, category, product_name, status')
         .eq('category', seed.category)
-        .eq('status', 'won')
+        .in('status', [...WON_SALE_STATUSES])
         .neq('product_name', seed.product_name)
         .limit(200);
       const list = (peers as SaleRow[] | null) ?? [];

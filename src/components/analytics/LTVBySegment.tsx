@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -38,11 +39,11 @@ export const LTVBySegment: FC<{
   const { data, isLoading } = useQuery<SegmentLTV[]>({
     queryKey: ['ltv-by-segment'],
     queryFn: async () => {
-      // Fetch all completed sales with client names
+      // Todas as vendas ganhas (won/completed/closed) entram no LTV.
       const { data: sales, error } = await supabase
         .from('sales')
         .select('client_name, amount, status, product_name, created_at')
-        .eq('status', 'completed');
+        .in('status', [...WON_SALE_STATUSES]);
 
       if (error) throw error;
 

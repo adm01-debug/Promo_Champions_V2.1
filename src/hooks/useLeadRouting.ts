@@ -5,6 +5,7 @@ import {
   type QueryClient,
 } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 
 type RoutingStrategy = 'round-robin' | 'load-based' | 'territory' | 'expertise';
 type ServerRoutingStrategy = 'manual' | 'round_robin' | 'least_loaded' | 'top_performer';
@@ -121,7 +122,7 @@ export const useSalespersonPerformance = () => {
             .from('sales')
             .select('amount')
             .eq('salesperson_id', sp.id)
-            .in('status', ['won', 'completed'])
+            .in('status', [...WON_SALE_STATUSES])
             .gte('created_at', startOfMonth);
 
           const { count } = await supabase
