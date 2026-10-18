@@ -179,7 +179,10 @@ function AdminSolicitacoesTitular() {
           name="description"
           content="Fila de solicitações do titular (LGPD art. 18): acesso, retificação, eliminação, portabilidade e revogação."
         />
-        <link rel="canonical" href={`${window.location.origin}/admin/solicitacoes-titular`} />
+        <link
+          rel="canonical"
+          href={`${window.location.origin}/admin/solicitacoes-titular`}
+        />
       </Helmet>
 
       <div className="p-6 lg:p-8 space-y-6 max-w-6xl mx-auto">
@@ -190,8 +193,7 @@ function AdminSolicitacoesTitular() {
               Solicitações do titular
             </h1>
             <p className="text-sm text-muted-foreground">
-              Direitos do titular (LGPD art. 18) com SLA legal de 15 dias por
-              solicitação.
+              Direitos do titular (LGPD art. 18) com SLA legal de 15 dias por solicitação.
             </p>
           </div>
           <Button
@@ -209,8 +211,8 @@ function AdminSolicitacoesTitular() {
           <CardHeader>
             <CardTitle className="text-base">Registrar solicitação</CardTitle>
             <CardDescription>
-              Use para pedidos recebidos por outros canais (telefone, WhatsApp,
-              e-mail direto). O titular também pode abrir a própria solicitação.
+              Use para pedidos recebidos por outros canais (telefone, WhatsApp, e-mail
+              direto). O titular também pode abrir a própria solicitação.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-[2fr_2fr_2fr_auto] gap-3 items-end">
@@ -463,17 +465,19 @@ function AdminSolicitacoesTitular() {
         </Card>
       </div>
 
-      <AlertDialog open={!!erasureTarget} onOpenChange={open => !open && setErasureTarget(null)}>
+      <AlertDialog
+        open={!!erasureTarget}
+        onOpenChange={open => !open && setErasureTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Anonimizar dados do titular?</AlertDialogTitle>
             <AlertDialogDescription>
               Esta ação é irreversível: os dados pessoais de{' '}
-              <strong>{erasureTarget?.subject_email}</strong> (nome, e-mail,
-              telefone, IP e user-agent) serão substituídos por um tombstone
-              hash em todas as tabelas, e os consentimentos ativos serão
-              revogados. A solicitação será marcada como concluída com o
-              resultado da anonimização.
+              <strong>{erasureTarget?.subject_email}</strong> (nome, e-mail, telefone, IP
+              e user-agent) serão substituídos por um tombstone hash em todas as tabelas,
+              e os consentimentos ativos serão revogados. A solicitação será marcada como
+              concluída com o resultado da anonimização.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

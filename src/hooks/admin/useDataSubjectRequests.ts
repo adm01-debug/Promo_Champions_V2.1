@@ -92,8 +92,7 @@ export function useCreateDataSubjectRequest() {
       });
       if (error) throw new Error(error.message);
     },
-    onSuccess: () =>
-      void qc.invalidateQueries({ queryKey: ['data-subject-requests'] }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['data-subject-requests'] }),
   });
 }
 
@@ -106,15 +105,13 @@ export function useUpdateDataSubjectRequest() {
         .from('data_subject_requests')
         .update({
           status: input.status,
-          processed_at:
-            input.status === 'in_progress' ? null : new Date().toISOString(),
+          processed_at: input.status === 'in_progress' ? null : new Date().toISOString(),
           ...(input.notes !== undefined ? { notes: input.notes } : {}),
         })
         .eq('id', input.id);
       if (error) throw new Error(error.message);
     },
-    onSuccess: () =>
-      void qc.invalidateQueries({ queryKey: ['data-subject-requests'] }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['data-subject-requests'] }),
   });
 }
 
@@ -126,13 +123,12 @@ export function useAnonymizeDataSubject() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (
-      request: Pick<
-        DataSubjectRequest,
-        'id' | 'subject_email' | 'subject_id' | 'payload'
-      >
+      request: Pick<DataSubjectRequest, 'id' | 'subject_email' | 'subject_id' | 'payload'>
     ) => {
       const phone =
-        request.payload && typeof request.payload === 'object' && !Array.isArray(request.payload)
+        request.payload &&
+        typeof request.payload === 'object' &&
+        !Array.isArray(request.payload)
           ? (request.payload as { phone?: unknown }).phone
           : null;
       const { data, error } = await supabase.rpc('anonymize_data_subject', {
@@ -144,7 +140,6 @@ export function useAnonymizeDataSubject() {
       if (error) throw new Error(error.message);
       return data;
     },
-    onSuccess: () =>
-      void qc.invalidateQueries({ queryKey: ['data-subject-requests'] }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['data-subject-requests'] }),
   });
 }
