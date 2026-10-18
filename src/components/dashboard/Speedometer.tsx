@@ -7,8 +7,9 @@ import {
   Target,
   FileText as FileTextIcon,
   Download,
-  RefreshCw,
   Hash,
+  Zap,
+  Activity,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
@@ -39,7 +40,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
 
@@ -60,6 +60,9 @@ export interface SpeedometerProps {
   channelBreakdown?: { label: string; pct: number }[];
   explanation?: string;
 }
+
+const EMPTY_DRILLDOWN_DATA: NonNullable<SpeedometerProps['drilldownData']> = [];
+const EMPTY_CHANNEL_BREAKDOWN: NonNullable<SpeedometerProps['channelBreakdown']> = [];
 
 const accentMap = {
   primary: {
@@ -97,9 +100,9 @@ export const Speedometer = memo(
     delta,
     size = 280,
     ticksCount = 33,
-    drilldownData = [],
+    drilldownData = EMPTY_DRILLDOWN_DATA,
     drilldownPeriodLabel = 'Período Atual',
-    channelBreakdown = [],
+    channelBreakdown = EMPTY_CHANNEL_BREAKDOWN,
     explanation = '',
   }: SpeedometerProps) => {
     const { theme } = useDashboardTheme();
@@ -132,12 +135,10 @@ export const Speedometer = memo(
             ? 'text-warning'
             : 'text-destructive';
 
-    const [displayData, setDisplayData] = useState(drilldownData);
-
     const handleExportCSV = () => {
-      if (!displayData.length) return;
+      if (!drilldownData.length) return;
       const headers = ['Period', 'Value'];
-      const rows = displayData.map(d => [sanitizeCsvCell(String(d.name)), d.value]);
+      const rows = drilldownData.map(d => [sanitizeCsvCell(String(d.name)), d.value]);
       const csvContent = [headers, ...rows].map(e => e.join(',')).join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -154,7 +155,7 @@ export const Speedometer = memo(
     };
 
     const handleExportPDF = async () => {
-      if (!displayData.length) return;
+      if (!drilldownData.length) return;
       const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
         import('jspdf'),
         import('jspdf-autotable'),
@@ -174,7 +175,7 @@ export const Speedometer = memo(
       doc.setTextColor(50);
       doc.text('Resumo de Performance', 14, 50);
       doc.setFontSize(11);
-      const summaryVal = displayData.reduce((acc, curr) => acc + curr.value, 0);
+      const summaryVal = drilldownData.reduce((acc, curr) => acc + curr.value, 0);
       doc.text(
         `Valor Acumulado no Período: ${formatValue ? formatValue(summaryVal) : summaryVal}`,
         14,
@@ -186,7 +187,7 @@ export const Speedometer = memo(
       autoTable(doc, {
         startY: 80,
         head: [['Período', 'Valor']],
-        body: displayData.map(d => [d.name, d.value]),
+        body: drilldownData.map(d => [d.name, d.value]),
         theme: 'grid',
         headStyles: { fillColor: accentMap[accent].stroke },
       });
@@ -253,10 +254,6 @@ export const Speedometer = memo(
         active: t.tickPct <= animatedPct,
       }));
     }, [tickStructure, animatedPct]);
-
-    useEffect(() => {
-      setDisplayData(drilldownData);
-    }, [drilldownData]);
 
     useEffect(() => {
       const startValue = animatedValue;
@@ -681,7 +678,7 @@ export const Speedometer = memo(
                     Tendência Temporal
                   </h4>
                   <div className="h-[300px] w-full">
-                    {displayData.length === 0 ? (
+                    {drilldownData.length === 0 ? (
                       <div className="h-full flex items-center justify-center">
                         <p className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground">
                           Sem dados no período selecionado
@@ -689,7 +686,7 @@ export const Speedometer = memo(
                       </div>
                     ) : (
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={displayData}>
+                        <BarChart data={drilldownData}>
                           <CartesianGrid
                             strokeDasharray="3 3"
                             vertical={false}
@@ -735,7 +732,7 @@ export const Speedometer = memo(
                             }}
                           />
                           <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={24}>
-                            {displayData.map((_, index) => (
+                            {drilldownData.map((_, index) => (
                               <Cell
                                 key={`cell-${index}`}
                                 fill={colors.stroke}
@@ -782,45 +779,11 @@ export const Speedometer = memo(
                       ))}
                     </div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-background/40 border border-border/40">
-                    <h4 className="text-[11px] font-black font-mono uppercase tracking-[0.2em] text-muted-foreground mb-4">
-                      Ações Recomendadas
-                    </h4>
-                    <div className="space-y-3">
-                      {[
-                        'Otimizar tempo de resposta em canais digitais',
-                        'Revisar metas do próximo trimestre baseado no histórico',
-                        'Aumentar frequência de follow-up em deals qualificados',
-                      ].map((action, i) => (
-                        <div
-                          key={i}
-                          className="flex items-start gap-3 p-3 rounded-xl bg-background/40 border border-border/20 hover:border-primary/30 transition-colors group cursor-pointer"
-                        >
-                          <div className="mt-0.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0 group-hover:scale-150 transition-transform" />
-                          <span className="text-[10px] font-medium leading-relaxed">
-                            {action}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </div>
             </ScrollArea>
 
-            <div className="p-4 border-t border-border/40 flex justify-between items-center bg-background/60">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <RefreshCw className="h-3 w-3 text-muted-foreground animate-spin-slow" />
-                  <span className="text-[9px] font-mono text-muted-foreground uppercase">
-                    Live Data Stream: Active
-                  </span>
-                </div>
-                <Separator orientation="vertical" className="h-4" />
-                <div className="text-[9px] font-mono text-muted-foreground">
-                  ÚLTIMA ATUALIZAÇÃO: {format(new Date(), 'HH:mm:ss')}
-                </div>
-              </div>
+            <div className="p-4 border-t border-border/40 flex justify-end items-center bg-background/60">
               <Button
                 variant="ghost"
                 size="sm"
@@ -838,6 +801,3 @@ export const Speedometer = memo(
 );
 
 Speedometer.displayName = 'Speedometer';
-
-// Re-add these constants as they are needed by the component
-import { Zap, Activity } from 'lucide-react';
