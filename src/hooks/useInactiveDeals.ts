@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMemo } from 'react';
 import { differenceInDays, parseISO } from 'date-fns';
-import { CACHE_TIMES } from '@/constants';
+import { CACHE_TIMES, OPEN_SALE_STATUSES } from '@/constants';
 
 export interface InactivityRule {
   stage: string;
@@ -63,6 +63,22 @@ export const INACTIVITY_RULES: InactivityRule[] = [
     criticalDays: 60,
     enabled: true,
   },
+  {
+    stage: 'pending',
+    label: 'Pendente',
+    mildDays: 2,
+    moderateDays: 3,
+    criticalDays: 4,
+    enabled: true,
+  },
+  {
+    stage: 'prospecting',
+    label: 'Prospecção',
+    mildDays: 2,
+    moderateDays: 3,
+    criticalDays: 4,
+    enabled: true,
+  },
 ];
 
 // Back-compat: some callers still read `.maxDaysInactive` (= mild threshold).
@@ -118,7 +134,7 @@ export const useInactiveDeals = () => {
       const { data, error } = await supabase
         .from('sales')
         .select('id, client_name, status, updated_at, created_at')
-        .not('status', 'in', '("closed")')
+        .in('status', [...OPEN_SALE_STATUSES])
         .order('updated_at', { ascending: true });
       if (error) throw error;
       return data || [];

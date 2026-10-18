@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { OPEN_SALE_STATUSES } from '@/constants';
 
 export interface NextBestWLDeal {
   saleId: string;
@@ -36,7 +37,7 @@ export function useNextBestWinLossDeal() {
         .select(
           'id, account_id, client_name, amount, status, category, updated_at, salesperson_id'
         )
-        .not('status', 'in', '(won,lost)')
+        .in('status', [...OPEN_SALE_STATUSES])
         .lte('updated_at', sevenDaysAgo.toISOString())
         .order('amount', { ascending: false, nullsFirst: false })
         .limit(1);

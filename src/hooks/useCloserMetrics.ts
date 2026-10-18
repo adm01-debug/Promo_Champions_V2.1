@@ -167,7 +167,7 @@ export function useCloserPipeline() {
           // chunked-in-safe: closerIds do time ativo (~30)
           .in('salesperson_id', closerIds)
           .gte('created_at', sixtyDaysAgo.toISOString())
-          .in('status', ['proposal', 'negotiation', 'completed', 'pending']);
+          .in('status', ['proposal', 'negotiation', 'pending', ...WON_SALE_STATUSES]);
 
         if (error) throw error;
 
@@ -179,7 +179,11 @@ export function useCloserPipeline() {
         };
 
         sales?.forEach(sale => {
-          const status = sale.status as keyof typeof pipeline;
+          // 'won' e 'closed' tambem sao fechados (WON_SALE_STATUSES) —
+          // antes so 'completed' entrava no bucket Fechados.
+          const status = isWonSaleStatus(sale.status)
+            ? 'completed'
+            : (sale.status as keyof typeof pipeline);
           if (status in pipeline) {
             pipeline[status].count++;
             pipeline[status].value += Number(sale.amount || 0);

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { WON_SALE_STATUSES } from '@/constants';
+import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from '@/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Info, Radio, Zap } from 'lucide-react';
 import {
@@ -46,7 +46,7 @@ export const SalesForecast = React.memo(() => {
       const { data: openDeals, error } = await supabase
         .from('sales')
         .select('amount, status')
-        .not('status', 'in', '(completed,lost)');
+        .in('status', [...OPEN_SALE_STATUSES]);
       if (error) throw error;
 
       const { data: closedDeals } = await supabase

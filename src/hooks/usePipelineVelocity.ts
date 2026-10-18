@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { WON_SALE_STATUSES, LOST_SALE_STATUSES } from '@/constants';
 import { winRate } from '@/lib/winRate';
 import { startOfMonth, endOfMonth, differenceInHours } from 'date-fns';
@@ -17,8 +18,12 @@ export interface VelocityData {
 }
 
 export function usePipelineVelocity() {
+  // A chave inclui o usuario: RLS muda a visibilidade por sessao e o
+  // QueryClient global (staleTime 10min) nao pode servir dados da sessao
+  // anterior.
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ['pipeline-velocity'],
+    queryKey: ['pipeline-velocity', user?.id],
     queryFn: async (): Promise<VelocityData[]> => {
       const now = new Date();
       const monthStart = startOfMonth(now);
@@ -46,6 +51,9 @@ export function usePipelineVelocity() {
       ]);
 
       if (spResult.error) throw spResult.error;
+      if (stageResult.error) throw stageResult.error;
+      if (salesResult.error) throw salesResult.error;
+      if (lostSalesResult.error) throw lostSalesResult.error;
 
       const salespeople = spResult.data || [];
       const stageHistory = stageResult.data || [];

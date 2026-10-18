@@ -56,7 +56,7 @@ export const PIPELINE_STAGES: PipelineStageConfig[] = [
     probability: 100,
   },
   { id: 'lost', label: 'Perdido', color: 'bg-red-500', order: 6, probability: 0 },
-  { id: 'closed', label: 'Arquivado', color: 'bg-gray-500', order: 7, probability: 0 },
+  { id: 'closed', label: 'Fechada', color: 'bg-gray-500', order: 7, probability: 0 },
 ];
 
 // Deal type for pipeline board
@@ -109,7 +109,11 @@ export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
       };
 
       (data || []).forEach(sale => {
-        const status = sale.status as PipelineStageId;
+        // Aliases canonicos: 'completed' e 'closed' sao vendas ganhas —
+        // completed ia parar em 'lead' pelo fallback (deal fechado no topo
+        // do funil). Mapeia para a coluna de ganho.
+        const raw = sale.status as string;
+        const status = (raw === 'completed' ? 'won' : raw) as PipelineStageId;
         if (dealsByStage[status]) {
           dealsByStage[status].push(sale as Deal);
         } else {

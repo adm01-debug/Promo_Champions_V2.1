@@ -87,7 +87,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
             style={{ borderColor: `${s.color}40` }}
           >
             <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 motion-safe:transition-opacity"
               style={{
                 background: `radial-gradient(circle at top, ${s.color}20, transparent 70%)`,
               }}

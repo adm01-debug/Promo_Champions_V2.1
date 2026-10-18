@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { CACHE_TIMES } from '@/constants';
+import { CACHE_TIMES, OPEN_SALE_STATUSES } from '@/constants';
 import { differenceInHours, parseISO } from 'date-fns';
 
 export interface SLAConfig {
@@ -18,6 +18,8 @@ export const DEFAULT_SLA_CONFIGS: SLAConfig[] = [
   { stage: 'negotiation', maxHours: 96, escalationHours: 48, label: 'Negociação' },
   { stage: 'won', maxHours: 168, escalationHours: 120, label: 'Ganho' },
   { stage: 'lost', maxHours: 240, escalationHours: 168, label: 'Perdido' },
+  { stage: 'pending', maxHours: 24, escalationHours: 12, label: 'Pendente' },
+  { stage: 'prospecting', maxHours: 24, escalationHours: 12, label: 'Prospecção' },
 ];
 
 export interface DealSLAStatus {
@@ -52,7 +54,7 @@ export const useDealSLAs = () => {
       const { data, error } = await supabase
         .from('sales')
         .select('id, client_name, status, updated_at')
-        .not('status', 'in', '("closed")');
+        .in('status', [...OPEN_SALE_STATUSES]);
       if (error) throw error;
       return data || [];
     },

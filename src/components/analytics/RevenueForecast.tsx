@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { WON_SALE_STATUSES } from '@/constants';
+import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -73,7 +73,7 @@ function useRevenueForecastData() {
         supabase
           .from('sales')
           .select('id, amount, status, created_at, salesperson_id')
-          .not('status', 'in', '("completed","lost","cancelled")'),
+          .in('status', [...OPEN_SALE_STATUSES]),
         supabase.from('sales_goals').select('salesperson_id, goal_amount'),
         supabase
           .from('sales')

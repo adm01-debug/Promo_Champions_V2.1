@@ -49,12 +49,16 @@ export const useFunnelData = (timeframe: number = 30) => {
       // Define funnel stages in order
       const stageOrder = [
         'lead',
+        'pending',
+        'prospecting',
         'qualified',
         'proposal',
         'negotiation',
         'won',
-        'lost',
+        'completed',
         'closed',
+        'lost',
+        'cancelled',
       ];
 
       // Count unique sales per stage from history

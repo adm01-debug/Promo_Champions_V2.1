@@ -354,7 +354,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                     ) : (
                       <>
                         ACESSAR CIRCUITO
-                        <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 motion-safe:transition-transform" />
+                        <ArrowRight className="h-4 w-4 motion-safe:group-hover/btn:translate-x-1 motion-safe:transition-transform" />
                       </>
                     )}
                   </div>

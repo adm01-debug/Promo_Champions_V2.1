@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { OPEN_SALE_STATUSES } from '@/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -48,7 +49,7 @@ export const PipelineFunnelWidget = React.memo(function PipelineFunnelWidget() {
       const { data, error } = await supabase
         .from('sales')
         .select('status, amount')
-        .not('status', 'in', '(completed,lost)');
+        .in('status', [...OPEN_SALE_STATUSES]);
       if (error) throw error;
 
       const stages: Record<string, { count: number; value: number }> = {};
