@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { verifyTwilioSignatureAny } from "../_shared/webhook-auth.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
@@ -68,7 +68,10 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
   let fromNumber: string | null = null;
   // O service client fica fora do bloco porque também atende à checagem de
   // consentimento de gravação (LGPD) depois da verificação de assinatura.
-  let admin: ReturnType<typeof createClient> | null = null;
+  // A anotação precisa ser SupabaseClient (e não ReturnType<typeof createClient>):
+  // o ReturnType do overload sobrecarregado muda a inferência do .select() e
+  // resolveChannelCredentials recebe campos `unknown` (TS2345 no gate deno).
+  let admin: SupabaseClient | null = null;
   if (ownerId) {
     admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
