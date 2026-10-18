@@ -378,7 +378,10 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
         _enrollment_id: payload.enrollmentId ?? null,
         _step_id: payload.stepId ?? null,
         _channel: payload.channel,
-        _to: payload.to,
+        // to_number sempre em dígitos: o match de replies no
+        // whatsapp-inbound-webhook compara dígitos/'+'+dígitos e telefone
+        // mascarado ('+55 (11) 9xxxx-xxxx') nunca casaria, travando a cadência.
+        _to: payload.to.replace(/\D/g, ""),
         _body: payload.body,
         _provider: credential.provider,
         _provider_msg_id: result.providerMessageId ?? null,

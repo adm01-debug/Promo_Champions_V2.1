@@ -94,6 +94,8 @@ export function ProviderConnectionDialog({ open, onOpenChange }: Props) {
                 onValueChange={v => {
                   setProvider(v as ProviderKind);
                   setCreds({});
+                  // Evolution API só opera WhatsApp (send-multichannel-message).
+                  if (v === 'evolution') setChannel('whatsapp');
                 }}
               >
                 <SelectTrigger>
