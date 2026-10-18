@@ -9,7 +9,7 @@ import {
 } from '../_shared/internal-service-auth.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 
-const WON_STATUSES = ['won', 'closed_won', 'paid', 'delivered', 'completed'];
+const WON_STATUSES = ['won', 'closed_won', 'closed', 'paid', 'delivered', 'completed'];
 
 type Urgency = 'critical' | 'high' | 'medium' | 'low';
 

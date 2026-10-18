@@ -101,7 +101,7 @@ Deno.serve(withRequestId('calibrate-win-probabilities', async (req, _ctx) => {
       .select(
         'id, status, stage, probability, salesperson_id, segment, category, source, created_at, updated_at'
       )
-      .in('status', ['completed', 'lost', 'won', 'cancelled'])
+      .in('status', ['completed', 'lost', 'won', 'closed', 'cancelled'])
       .gte('updated_at', since)
       .limit(5000);
     if (e1) throw e1;
@@ -126,7 +126,7 @@ Deno.serve(withRequestId('calibrate-win-probabilities', async (req, _ctx) => {
         });
         if (inBucket.length === 0) continue;
         const wins = inBucket.filter(d =>
-          ['completed', 'won'].includes(String(d.status).toLowerCase())
+          ['completed', 'won', 'closed'].includes(String(d.status).toLowerCase())
         ).length;
         const winRate = wins / inBucket.length;
         bucketRows.push({
@@ -151,7 +151,7 @@ Deno.serve(withRequestId('calibrate-win-probabilities', async (req, _ctx) => {
     const { data: open, error: e2 } = await supabase
       .from('sales')
       .select('id, status, stage, probability, salesperson_id, segment, category, source')
-      .not('status', 'in', '(completed,lost,won,cancelled)')
+      .not('status', 'in', '(completed,lost,won,closed,cancelled)')
       .limit(5000);
     if (e2) throw e2;
 

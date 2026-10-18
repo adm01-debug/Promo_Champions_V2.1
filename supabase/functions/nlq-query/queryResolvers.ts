@@ -135,7 +135,7 @@ export async function querySalesMetric(
   ) {
     q = q.in('status', ['completed', 'won', 'closed']);
   }
-  if (!filters?.status && metric === 'lost_count') q = q.eq('status', 'lost');
+  if (!filters?.status && metric === 'lost_count') q = q.in('status', ['lost', 'cancelled']);
 
   const { data, error } = await q;
   if (error) throw new Error(`sales query failed: ${error.message}`);

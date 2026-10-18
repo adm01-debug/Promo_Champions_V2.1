@@ -66,9 +66,9 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     const salesGoals = goalsRes.data ?? [];
 
     // Pipeline ativo
-    const openDeals = sales.filter((s) => !["completed", "lost", "cancelled"].includes(s.status));
-    const wonDeals = sales.filter((s) => s.status === "completed" && s.created_at >= since);
-    const lostDeals = sales.filter((s) => s.status === "lost" && s.created_at >= since);
+    const openDeals = sales.filter((s) => !["completed", "won", "closed", "lost", "cancelled"].includes(s.status));
+    const wonDeals = sales.filter((s) => ["completed", "won", "closed"].includes(s.status) && s.created_at >= since);
+    const lostDeals = sales.filter((s) => ["lost", "cancelled"].includes(s.status) && s.created_at >= since);
 
     // Pipeline coverage e weighted forecast — pesos vêm de public.stage_probabilities
     const stageProbs = await getStageProbabilities(supabase);

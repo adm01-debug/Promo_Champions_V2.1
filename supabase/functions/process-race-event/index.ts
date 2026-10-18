@@ -31,7 +31,7 @@ interface ScoringRule {
 
 const CHECKPOINTS = [0.25, 0.5, 0.75];
 const DERIVED_EVENT_TYPES = ['overtake', 'checkpoint', 'victory'];
-const COUNTED_SALE_STATUSES = ['won', 'completed'];
+const COUNTED_SALE_STATUSES = ['won', 'completed', 'closed'];
 
 // Mesmo CASE da race_leaderboard_view (20260830000000): cada metric_code
 // aponta para a métrica bruta que ele pondera.

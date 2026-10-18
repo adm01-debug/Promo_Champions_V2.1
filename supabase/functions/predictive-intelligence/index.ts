@@ -93,12 +93,12 @@ Deno.serve(
         supabase
           .from('sales')
           .select('id, amount, status, created_at, client_name, salesperson_id')
-          .not('status', 'in', '(completed,won,cancelled,lost)')
+          .not('status', 'in', '(completed,won,closed,cancelled,lost)')
           .limit(500),
         supabase
           .from('sales')
           .select('id, amount, status, created_at, updated_at')
-          .in('status', ['completed', 'won', 'cancelled', 'lost'])
+          .in('status', ['completed', 'won', 'closed', 'cancelled', 'lost'])
           .gte('created_at', past90.toISOString())
           .limit(1000),
         supabase.from('clients').select('id, name, total_value, updated_at').limit(500),
@@ -188,17 +188,17 @@ Deno.serve(
 
       // TRENDS
       const won30 = closedDeals.filter(
-        d => ['completed', 'won'].includes(d.status) && new Date(d.created_at) >= past30
+        d => ['completed', 'won', 'closed'].includes(d.status) && new Date(d.created_at) >= past30
       ).length;
       const total30 = closedDeals.filter(d => new Date(d.created_at) >= past30).length;
       const won90 = closedDeals.filter(d =>
-        ['completed', 'won'].includes(d.status)
+        ['completed', 'won', 'closed'].includes(d.status)
       ).length;
       const total90 = closedDeals.length;
       const winRate30 = total30 ? (won30 / total30) * 100 : 0;
       const winRate90 = total90 ? (won90 / total90) * 100 : 0;
       const cycles = closedDeals
-        .filter(d => ['completed', 'won'].includes(d.status))
+        .filter(d => ['completed', 'won', 'closed'].includes(d.status))
         .map(
           d =>
             (new Date(d.updated_at).getTime() - new Date(d.created_at).getTime()) /

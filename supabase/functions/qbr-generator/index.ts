@@ -41,7 +41,7 @@ Deno.serve(withRequestId("qbr-generator", async (req, _ctx) => {
     if (sErr) throw sErr;
 
     const total = sales?.length ?? 0;
-    const won = sales?.filter((s) => s.status === "completed") ?? [];
+    const won = sales?.filter((s) => ["completed", "won", "closed"].includes(s.status)) ?? [];
     const lost = sales?.filter((s) => ["lost", "cancelled"].includes(s.status)) ?? [];
     const revenue = won.reduce((sum, s) => sum + Number(s.amount), 0);
     const closedCount = won.length + lost.length;
