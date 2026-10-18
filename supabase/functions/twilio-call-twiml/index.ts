@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { verifyTwilioSignatureAny } from "../_shared/webhook-auth.ts";
 import { readUtf8BodyWithinLimit } from "../_shared/request-body.ts";
@@ -65,8 +65,15 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
 
   let agentPhone: string | null = null;
   let tenantToken: string | null = null;
+  let fromNumber: string | null = null;
+  // O service client fica fora do bloco porque também atende à checagem de
+  // consentimento de gravação (LGPD) depois da verificação de assinatura.
+  // A anotação precisa ser SupabaseClient (e não ReturnType<typeof createClient>):
+  // o ReturnType do overload sobrecarregado muda a inferência do .select() e
+  // resolveChannelCredentials recebe campos `unknown` (TS2345 no gate deno).
+  let admin: SupabaseClient | null = null;
   if (ownerId) {
-    const admin = createClient(
+    admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
@@ -96,6 +103,7 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
       : {};
     agentPhone = creds.agent_phone || null;
     tenantToken = creds.auth_token || null;
+    fromNumber = typeof data?.from_number === "string" ? data.from_number : null;
   }
 
   // Token do tenant tem precedência; o global é só fallback (nunca em paralelo
@@ -122,8 +130,32 @@ Deno.serve(withRequestId("twilio-call-twiml", async (req, ctx) => {
     });
   }
 
+  // LGPD: a gravação só é ligada com consentimento ativo do titular
+  // (consent_records, purpose='voice_recording'), resolvido pelo telefone da
+  // parte remota — 'To'/'Called' na perna de saída (click-to-call) e
+  // 'Caller'/'From' na de entrada; o from_number da empresa é ignorado.
+  // Sem consentimento (ou sem como prová-lo) o Dial segue do-not-record.
+  const callParams = new URLSearchParams(rawBody);
+  const subjectPhone = ["Called", "To", "Caller", "From"]
+    .map((key) => callParams.get(key) ?? url.searchParams.get(key))
+    .find((p): p is string => !!p && p !== fromNumber);
+  let recordAttr = "do-not-record";
+  if (agentPhone && admin && subjectPhone) {
+    const { data: consented, error: consentError } = await admin.rpc(
+      "has_phone_consent",
+      { p_phone: subjectPhone, p_purpose: "voice_recording" },
+    );
+    if (consentError) {
+      ctx.log("error", "recording_consent_check_failed", {
+        detail: consentError.message,
+      });
+    } else if (consented === true) {
+      recordAttr = "record-from-answer";
+    }
+  }
+
   const twiml = agentPhone
-    ? `<?xml version="1.0" encoding="UTF-8"?><Response><Dial record="record-from-answer" timeout="30">${escapeXml(agentPhone)}</Dial></Response>`
+    ? `<?xml version="1.0" encoding="UTF-8"?><Response><Dial record="${recordAttr}" timeout="30">${escapeXml(agentPhone)}</Dial></Response>`
     : `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice" language="pt-BR">Conectando você ao vendedor.</Say><Pause length="60"/></Response>`;
 
   return new Response(twiml, {

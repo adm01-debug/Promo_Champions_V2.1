@@ -190,6 +190,17 @@ Deno.serve(
         });
       }
 
+      // LGPD: Record=true só com consentimento ativo de gravação do titular
+      // (purpose 'voice_recording'), resolvido pelo telefone de destino.
+      // Falha na checagem fecha a gravação — a chamada segue sem gravar.
+      const { data: hasRecordingConsent, error: consentError } = await admin.rpc(
+        'has_phone_consent',
+        { p_phone: toNumber, p_purpose: 'voice_recording' },
+      );
+      if (consentError) {
+        ctx.log('warn', 'recording_consent_check_failed', { detail: consentError.message });
+      }
+
       const twimlUrl = `${supabaseUrl}/functions/v1/twilio-call-twiml?owner_id=${ownerId}`;
       const statusUrl = `${supabaseUrl}/functions/v1/twilio-call-status`;
 
@@ -203,7 +214,7 @@ Deno.serve(
         // sessão existir → 401/404 espúrio no twilio-call-status).
         StatusCallbackEvent: 'ringing answered completed',
         StatusCallbackMethod: 'POST',
-        Record: 'true',
+        Record: hasRecordingConsent === true ? 'true' : 'false',
       });
 
       let twilioRes: Response;
