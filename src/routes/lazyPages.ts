@@ -129,6 +129,9 @@ export const AdminHistoricoAlertasChurn = lazyWithPrefetch(
 export const AdminSupressaoEmails = lazyWithPrefetch(
   () => import('@/pages/AdminSupressaoEmails')
 );
+export const AdminSolicitacoesTitular = lazyWithPrefetch(
+  () => import('@/pages/AdminSolicitacoesTitular')
+);
 export const MinhasPremiacoes = lazyWithPrefetch(
   () => import('@/pages/MinhasPremiacoes')
 );
