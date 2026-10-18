@@ -2,8 +2,11 @@
 
 > **Versão:** 1.0  
 > **Atualizado em:** 2026-02-24  
-> **Stack:** React 18 · Vite · TypeScript · Tailwind CSS · Lovable Cloud (Supabase)  
-> **Banco:** Lovable Cloud (PostgreSQL — CRM, pipeline, gamificação, segurança)
+> **Stack:** React 18 · Vite · TypeScript · Tailwind CSS · Supabase Cloud (deploy frontend: Vercel)  
+> **Banco:** Supabase Cloud `usyxfpqlsspldubptrdl` (PostgreSQL — CRM, pipeline, gamificação, segurança)
+>
+> **Revisado contra o HEAD em 2026-10-18** — stack/roles/componentes corrigidos
+> onde divergiam do código.
 
 ---
 
@@ -75,7 +78,10 @@ Fornecer uma plataforma unificada para equipes de vendas gerenciarem leads, deal
 | **Admin**                | Acesso total: configurações, relatórios, gestão de equipes, segurança |
 | **Manager (Gestor)**     | Gestão de equipe, relatórios, metas, pipeline, playbooks              |
 | **Sales Rep (Vendedor)** | Dashboard individual, pipeline, atividades, metas pessoais            |
-| **Sales Ops**            | Operações de vendas, dados, configurações                             |
+
+> Papéis reais (enum `app_role`, verificado 2026-10-18): `admin`, `manager`,
+> `salesperson`. `sales_rep`/`sales_ops` existem apenas num type TS legado
+> (`src/types/index.ts`) — não são atribuíveis no banco.
 
 ### Evolução do Projeto
 
@@ -112,7 +118,7 @@ Fornecer uma plataforma unificada para equipes de vendas gerenciarem leads, deal
            │             │
            ▼             ▼
     ┌──────────────────────────┐
-    │  Lovable Cloud           │
+    │  Supabase Cloud          │
     │  (PostgreSQL + Auth +    │
     │   Storage + Realtime)    │
     └──────────────────────────┘
@@ -141,9 +147,9 @@ Página (Page) → Componentes (UI) → Hooks (Lógica) → Supabase Client / Ed
 | Gráficos      | Recharts                             |
 | Data          | date-fns                             |
 | PDF           | jsPDF + jspdf-autotable              |
-| Excel         | xlsx + PapaParse                     |
+| Excel         | exceljs + PapaParse                  |
 | Busca Fuzzy   | Fuse.js                              |
-| Backend       | Lovable Cloud (Supabase)             |
+| Backend       | Supabase Cloud + Vercel (frontend)   |
 | SEO           | react-helmet-async                   |
 | Testes        | Vitest + Testing Library             |
 | Confetti      | canvas-confetti                      |
@@ -164,21 +170,21 @@ Página (Page) → Componentes (UI) → Hooks (Lógica) → Supabase Client / Ed
 
 ### 3.2 Segurança
 
-| Funcionalidade          | Componente(s)                                     | Descrição                              |
-| ----------------------- | ------------------------------------------------- | -------------------------------------- |
-| MFA Setup (2FA)         | `MFASetup.tsx`                                    | Configuração de autenticação 2 fatores |
-| MFA Verificação         | `MFAVerification.tsx`                             | Verificação de código MFA              |
-| Passkeys/WebAuthn       | `PasskeySettings.tsx`                             | Gerenciar chaves de segurança          |
-| IP Whitelist            | `IPWhitelistManager.tsx` / `IPWhitelistPanel.tsx` | Whitelist de IPs permitidos            |
-| IPs Bloqueados          | `BlockedIPsPanel.tsx`                             | Gerenciar IPs bloqueados               |
-| Geoblocking             | `GeoBlockingManager.tsx`                          | Restrição por região geográfica        |
-| Dispositivos Conhecidos | `KnownDevices.tsx`                                | Gerenciar dispositivos confiáveis      |
-| Gerenciador de Sessões  | `SessionManager.tsx`                              | Monitorar sessões ativas               |
-| Gerenciador de Roles    | `RoleManager.tsx`                                 | Administração de papéis                |
-| Reautenticação          | `ReauthDialog.tsx`                                | Dialog para ações sensíveis            |
-| Aprovação Reset Senha   | `PasswordResetApproval.tsx`                       | Admin aprova resets de senha           |
-| Push Notifications      | `PushNotificationSettings.tsx`                    | Configurar notificações push           |
-| Rate Limit Dashboard    | `RateLimitDashboard.tsx`                          | Monitoramento de rate limiting         |
+| Funcionalidade          | Componente(s)                                     | Descrição                                                                          |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| MFA Setup (2FA)         | `MFASetup.tsx`                                    | Configuração de autenticação 2 fatores                                             |
+| MFA Verificação         | `MFAVerification.tsx`                             | Verificação de código MFA                                                          |
+| Passkeys/WebAuthn       | `PasskeySettings.tsx`                             | Gerenciar chaves de segurança                                                      |
+| IP Whitelist            | `IPWhitelistManager.tsx` / `IPWhitelistPanel.tsx` | Whitelist de IPs permitidos                                                        |
+| IPs Bloqueados          | `BlockedIPsPanel.tsx`                             | Gerenciar IPs bloqueados                                                           |
+| Geoblocking             | `GeoBlockingManager.tsx`                          | Restrição por região geográfica                                                    |
+| Dispositivos Conhecidos | `KnownDevices.tsx`                                | Gerenciar dispositivos confiáveis                                                  |
+| Gerenciador de Sessões  | `active_sessions` (tabela + RLS)                  | Sessões ativas — **sem UI dedicada** (2026-10-18: `SessionManager.tsx` não existe) |
+| Gerenciador de Roles    | `RoleManager.tsx`                                 | Administração de papéis                                                            |
+| Reautenticação          | `ReauthDialog.tsx`                                | Dialog para ações sensíveis                                                        |
+| Aprovação Reset Senha   | `PasswordResetApproval.tsx`                       | Admin aprova resets de senha                                                       |
+| Push Notifications      | `PushNotificationSettings.tsx`                    | Configurar notificações push                                                       |
+| Rate Limit Dashboard    | `RateLimitDashboard.tsx`                          | Monitoramento de rate limiting                                                     |
 
 ### 3.3 RBAC (Controle de Acesso)
 
@@ -187,10 +193,12 @@ Página (Page) → Componentes (UI) → Hooks (Lógica) → Supabase Client / Ed
 | **Admin**     | Acesso total: painel admin, roles, configurações, relatórios, segurança |
 | **Manager**   | Vendedor + gestão de equipe, relatórios avançados, metas, playbooks     |
 | **Sales Rep** | Dashboard individual, pipeline, atividades, metas pessoais              |
-| **Sales Ops** | Operações de vendas, configurações operacionais                         |
+
+> Papéis reais: 3 (admin, manager, salesperson) — ver nota em §1.
 
 - **Hooks:** `useUserRoles.ts`, `usePermissions.ts`, `useMFA.ts`, `useWebAuthn.ts`
-- **Hooks de segurança:** `useIPBlocking.ts`, `useSessionManagement.ts`, `useLoginRateLimiter.ts`, `useReauthentication.ts`
+- **Hooks de segurança:** `useIPBlocking.ts`, `useLoginRateLimiter.ts`, `useReauthentication.ts`
+  (2026-10-18: `useSessionManagement.ts` não existe — removido desta lista)
 - **Funções DB:** `has_role()`, `is_admin_or_manager()`, `get_current_salesperson_id()`, `is_authenticated()`
 
 ---
@@ -1228,18 +1236,17 @@ daily_challenge_progress
 
 ### 33.14 Segurança
 
-| Hook                               | Descrição                |
-| ---------------------------------- | ------------------------ |
-| `useMFA.ts`                        | Multi-Factor Auth        |
-| `useWebAuthn.ts`                   | Passkeys/WebAuthn        |
-| `useIPBlocking.ts`                 | Bloqueio de IPs          |
-| `useSessionManagement.ts`          | Gerenciamento de sessões |
-| `useLoginRateLimiter.ts`           | Rate limiting de login   |
-| `useReauthentication.ts`           | Reautenticação           |
-| `useUserRoles.ts`                  | Papéis de usuário        |
-| `usePermissions.ts`                | Permissões               |
-| `useSecurityAlertNotifications.ts` | Alertas de segurança     |
-| `useSecurityAlertSoundSettings.ts` | Sons de segurança        |
+| Hook                               | Descrição              |
+| ---------------------------------- | ---------------------- |
+| `useMFA.ts`                        | Multi-Factor Auth      |
+| `useWebAuthn.ts`                   | Passkeys/WebAuthn      |
+| `useIPBlocking.ts`                 | Bloqueio de IPs        |
+| `useLoginRateLimiter.ts`           | Rate limiting de login |
+| `useReauthentication.ts`           | Reautenticação         |
+| `useUserRoles.ts`                  | Papéis de usuário      |
+| `usePermissions.ts`                | Permissões             |
+| `useSecurityAlertNotifications.ts` | Alertas de segurança   |
+| `useSecurityAlertSoundSettings.ts` | Sons de segurança      |
 
 ### 33.15 Assistente IA & Voz
 
@@ -1421,17 +1428,17 @@ toggle, toggle-group, tooltip, touch-carousel
 
 ## 38. Performance & Otimização
 
-| Componente / Técnica      | Descrição                           |
-| ------------------------- | ----------------------------------- |
-| `LazyImage.tsx`           | Carregamento preguiçoso de imagens  |
-| `VirtualizedList.tsx`     | Lista virtualizada                  |
-| `PageLoadingSkeleton.tsx` | Skeleton de carregamento de página  |
-| `SkeletonTransition.tsx`  | Transição suave de skeleton         |
-| Lazy loading de páginas   | Todas as 44 páginas são lazy-loaded |
-| React Query cache         | `staleTime: 2min`, `gcTime: 10min`  |
-| Code splitting            | Vite com dynamic imports            |
-| `usePrefetch.ts`          | Prefetch de dados                   |
-| `useQueryPerformance.ts`  | Monitor de performance              |
+| Componente / Técnica      | Descrição                          |
+| ------------------------- | ---------------------------------- |
+| `LazyImage.tsx`           | Carregamento preguiçoso de imagens |
+| `VirtualizedList.tsx`     | Lista virtualizada                 |
+| `PageLoadingSkeleton.tsx` | Skeleton de carregamento de página |
+| `SkeletonTransition.tsx`  | Transição suave de skeleton        |
+| Lazy loading de páginas   | Todas as páginas são lazy-loaded   |
+| React Query cache         | `staleTime: 2min`, `gcTime: 10min` |
+| Code splitting            | Vite com dynamic imports           |
+| `usePrefetch.ts`          | Prefetch de dados                  |
+| `useQueryPerformance.ts`  | Monitor de performance             |
 
 ---
 
@@ -1443,7 +1450,8 @@ toggle, toggle-group, tooltip, touch-carousel
 | `AnimateOnScroll.tsx` | Animação ao scroll                      |
 | `AnimacoesDemo.tsx`   | Página de demonstração de animações     |
 
-**Rota demo:** `/animacoes`
+> 2026-10-18: `AnimacoesDemo.tsx` e a rota `/animacoes` **não existem** mais
+> no codebase.
 
 ---
 
@@ -1530,7 +1538,7 @@ toggle, toggle-group, tooltip, touch-carousel
 | `utils.ts`         | Utilitários gerais (`cn()` para class merging) |
 | `gamification.ts`  | Lógica de gamificação (XP, níveis, cálculos)   |
 | `csvExporter.ts`   | Exportador CSV                                 |
-| `excelExporter.ts` | Exportador Excel (xlsx)                        |
+| `excelExporter.ts` | Exportador Excel (exceljs)                     |
 | `pdfExporter.ts`   | Exportador PDF (jsPDF)                         |
 
 ---
@@ -1627,50 +1635,50 @@ toggle, toggle-group, tooltip, touch-carousel
 
 ### 46.2 Rotas Protegidas (Todas)
 
-| Rota                    | Página                         | Acesso        |
-| ----------------------- | ------------------------------ | ------------- |
-| `/`                     | `Index.tsx`                    | Todos         |
-| `/vendas`               | `Vendas.tsx`                   | Todos         |
-| `/clientes`             | `Clientes.tsx`                 | Todos         |
-| `/produtos`             | `Produtos.tsx`                 | Todos         |
-| `/pipeline`             | `Pipeline.tsx`                 | Todos         |
-| `/tarefas`              | `Tarefas.tsx`                  | Todos         |
-| `/atividades`           | `Atividades.tsx`               | Todos         |
-| `/cadencias`            | `Cadencias.tsx`                | Todos         |
-| `/metas-atividades`     | `MetasAtividades.tsx`          | Todos         |
-| `/ranking`              | `RankingCompetitivo.tsx`       | Todos         |
-| `/configuracoes`        | `Configuracoes.tsx`            | Todos         |
-| `/notificacoes`         | `Notificacoes.tsx`             | Todos         |
-| `/sdr`                  | `SDRDashboard.tsx`             | Todos         |
-| `/closer`               | `CloserDashboard.tsx`          | Todos         |
-| `/bi-vendedor`          | `BIVendedor.tsx`               | Todos         |
-| `/bi-sdr`               | `BISDR.tsx`                    | Todos         |
-| `/bi-closer`            | `BICloser.tsx`                 | Todos         |
-| `/desafios`             | `DesafiosSemanais.tsx`         | Todos         |
-| `/desafios-diarios`     | `HistoricoDesafiosDiarios.tsx` | Todos         |
-| `/assistente`           | `Assistente.tsx`               | Todos         |
-| `/orcamentos`           | `Orcamentos.tsx`               | Todos         |
-| `/admin`                | `AdminDashboard.tsx`           | Todos         |
-| `/animacoes`            | `AnimacoesDemo.tsx`            | Todos         |
-| `/vendedor/:id`         | `VendedorDashboard.tsx`        | Todos         |
-| `/relatorios`           | `Relatorios.tsx`               | Admin/Manager |
-| `/vendedores`           | `Vendedores.tsx`               | Admin/Manager |
-| `/analytics`            | `Analytics.tsx`                | Admin/Manager |
-| `/playbooks`            | `Playbooks.tsx`                | Admin/Manager |
-| `/metas`                | `Metas.tsx`                    | Admin/Manager |
-| `/fonte-leads`          | `FonteLeads.tsx`               | Admin/Manager |
-| `/relatorio-atividades` | `RelatorioAtividades.tsx`      | Admin/Manager |
-| `/times`                | `Times.tsx`                    | Admin/Manager |
-| `/bitrix24`             | `Bitrix24.tsx`                 | Admin/Manager |
-| `/portfolio`            | `Portfolio.tsx`                | Admin/Manager |
-| `/icp`                  | `ICP.tsx`                      | Admin/Manager |
-| `/bi-gestor`            | `BIGestor.tsx`                 | Admin/Manager |
-| `/previsao-demanda`     | `PrevisaoDemanda.tsx`          | Admin/Manager |
-| `/fornecedores`         | `Fornecedores.tsx`             | Admin/Manager |
-| `/comparador-precos`    | `ComparadorPrecos.tsx`         | Admin/Manager |
-| `/assinatura-digital`   | `AssinaturaDigital.tsx`        | Admin/Manager |
-| `/acesso-negado`        | `AccessDenied.tsx`             | Todos         |
-| `*`                     | `NotFound.tsx`                 | Todos         |
+| Rota                | Página                         | Acesso |
+| ------------------- | ------------------------------ | ------ |
+| `/`                 | `Index.tsx`                    | Todos  |
+| `/vendas`           | `Vendas.tsx`                   | Todos  |
+| `/clientes`         | `Clientes.tsx`                 | Todos  |
+| `/produtos`         | `Produtos.tsx`                 | Todos  |
+| `/pipeline`         | `Pipeline.tsx`                 | Todos  |
+| `/tarefas`          | `Tarefas.tsx`                  | Todos  |
+| `/atividades`       | `Atividades.tsx`               | Todos  |
+| `/cadencias`        | `Cadencias.tsx`                | Todos  |
+| `/metas-atividades` | `MetasAtividades.tsx`          | Todos  |
+| `/ranking`          | `RankingCompetitivo.tsx`       | Todos  |
+| `/configuracoes`    | `Configuracoes.tsx`            | Todos  |
+| `/notificacoes`     | `Notificacoes.tsx`             | Todos  |
+| `/sdr`              | `SDRDashboard.tsx`             | Todos  |
+| `/closer`           | `CloserDashboard.tsx`          | Todos  |
+| `/bi-vendedor`      | `BIVendedor.tsx`               | Todos  |
+| `/bi-sdr`           | `BISDR.tsx`                    | Todos  |
+| `/bi-closer`        | `BICloser.tsx`                 | Todos  |
+| `/desafios`         | `DesafiosSemanais.tsx`         | Todos  |
+| `/desafios-diarios` | `HistoricoDesafiosDiarios.tsx` | Todos  |
+| `/assistente`       | `Assistente.tsx`               | Todos  |
+| `/orcamentos`       | `Orcamentos.tsx`               | Todos  |
+| `/admin`            | `AdminDashboard.tsx`           | Todos  |
+
+| `/vendedor/:id` | `VendedorDashboard.tsx` | Todos |
+| `/relatorios` | `Relatorios.tsx` | Admin/Manager |
+| `/vendedores` | `Vendedores.tsx` | Admin/Manager |
+| `/analytics` | `Analytics.tsx` | Admin/Manager |
+| `/playbooks` | `Playbooks.tsx` | Admin/Manager |
+| `/metas` | `Metas.tsx` | Admin/Manager |
+| `/fonte-leads` | `FonteLeads.tsx` | Admin/Manager |
+| `/relatorio-atividades` | `RelatorioAtividades.tsx` | Admin/Manager |
+| `/times` | `Times.tsx` | Admin/Manager |
+| `/bitrix24` | `Bitrix24.tsx` | Admin/Manager |
+| `/portfolio` | `Portfolio.tsx` | Admin/Manager |
+| `/icp` | `ICP.tsx` | Admin/Manager |
+| `/bi-gestor` | `BIGestor.tsx` | Admin/Manager |
+| `/previsao-demanda` | `PrevisaoDemanda.tsx` | Admin/Manager |
+| `/fornecedores` | `Fornecedores.tsx` | Admin/Manager |
+| `/comparador-precos` | `ComparadorPrecos.tsx` | Admin/Manager |
+| `/assinatura-digital` | `AssinaturaDigital.tsx` | Admin/Manager |
+| `/acesso-negado` | `AccessDenied.tsx` | Todos |
+| `*` | `NotFound.tsx` | Todos |
 
 ---
 
@@ -1684,7 +1692,7 @@ toggle, toggle-group, tooltip, touch-carousel
 | `BITRIX24_CLIENT_SECRET` | Client Secret do Bitrix24       |
 | `BITRIX24_DOMAIN`        | Domínio do Bitrix24             |
 | `ELEVENLABS_API_KEY`     | API Key do ElevenLabs (TTS/STT) |
-| `LOVABLE_API_KEY`        | API Key do Lovable (IA)         |
+| `LOVABLE_API_KEY`        | API Key do AI Gateway (IA)      |
 | `RESEND_API_KEY`         | API Key do Resend (emails)      |
 | `VAPID_PRIVATE_KEY`      | Chave privada VAPID (push)      |
 | `VAPID_PUBLIC_KEY`       | Chave pública VAPID (push)      |
@@ -1703,12 +1711,12 @@ toggle, toggle-group, tooltip, touch-carousel
 
 | Métrica                    | Quantidade                                                     |
 | -------------------------- | -------------------------------------------------------------- |
-| 📄 Páginas                 | **44**                                                         |
-| ⚡ Edge Functions          | **25**                                                         |
+| 📄 Páginas                 | **44** (2026-02 → **163** em 2026-10-18)                       |
+| ⚡ Edge Functions          | **25** (2026-02 → **173** em 2026-10-18)                       |
 | 🧩 Componentes (total)     | **~250+**                                                      |
 | 🪝 Hooks customizados      | **~130+**                                                      |
 | 🌐 Contextos globais       | **1** (AuthContext)                                            |
-| 📊 Tabelas no banco        | **55+**                                                        |
+| 📊 Tabelas no banco        | **55+** (2026-02 → **~414** em 2026-10-18)                     |
 | 🔧 Funções no banco (DB)   | **5+**                                                         |
 | 🧪 Testes automatizados    | **17**                                                         |
 | 🎨 Componentes UI (Shadcn) | **60+**                                                        |
@@ -1716,7 +1724,7 @@ toggle, toggle-group, tooltip, touch-carousel
 | 🛠️ Utilitários             | **4**                                                          |
 | 📦 Bibliotecas de negócio  | **5**                                                          |
 | 🔐 Secrets configurados    | **8**                                                          |
-| 🛣️ Rotas da aplicação      | **44** (2 públicas + 42 protegidas)                            |
+| 🛣️ Rotas da aplicação      | **44** (2026-02 → **175** em 2026-10-18)                       |
 | 🎮 Sistema de Gamificação  | XP, Níveis, Conquistas, Streaks, Desafios, Rankings            |
 | 🤖 IA Integrada            | Assistente de vendas, Coaching, Next Best Action, Lead Scoring |
 | 📱 Mobile                  | Componentes responsivos, navegação mobile, PWA                 |
@@ -1727,4 +1735,6 @@ toggle, toggle-group, tooltip, touch-carousel
 
 > **Documento gerado em 24/02/2026**  
 > **Total de funcionalidades mapeadas: ~400+**  
-> **Nenhuma funcionalidade foi omitida.** ✅
+> Revisado contra o HEAD em 2026-10-18 — os números de "Resumo Quantitativo"
+> refletem a contagem de 2026-02 (44 páginas); valores atuais: 163 páginas,
+> 175 rotas, 173 edge functions, ~414 tabelas.

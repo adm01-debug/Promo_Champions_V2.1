@@ -1,20 +1,20 @@
 # 📋 PROMO CHAMPIONS — Mapeamento Completo de Funcionalidades
 
 > Análise exaustiva do código-fonte (`src/pages`, `src/hooks`, `src/components`, `supabase/functions`) e do banco de dados.
-> Atualizado em: 2026-04-16
+> Atualizado em: 2026-04-16 · **Revisado contra o HEAD em 2026-10-18** (rotas corrigidas para os paths reais de `src/routes/AppRoutes.tsx`, contagens e status atualizados).
 
 ---
 
 ## 🧮 Resumo Quantitativo
 
-| Métrica                 | Quantidade                      |
-| ----------------------- | ------------------------------- |
-| Páginas/Rotas           | **88**                          |
-| Edge Functions (Deno)   | **35**                          |
-| Hooks customizados      | **182**                         |
-| Domínios de componentes | **70+**                         |
-| Tabelas no banco        | **150+**                        |
-| Roles RBAC              | 3 (Admin, Manager, Salesperson) |
+| Métrica                 | Quantidade (2026-10-18)                         |
+| ----------------------- | ----------------------------------------------- |
+| Rotas declaradas        | **175** (163 páginas em `src/pages`)            |
+| Edge Functions (Deno)   | **173** no repo (plano limita a 100 deployadas) |
+| Hooks customizados      | **511 arquivos**                                |
+| Domínios de componentes | **103**                                         |
+| Tabelas no banco        | **~414** (CREATE TABLE únicos nas migrations)   |
+| Roles RBAC              | 3 (Admin, Manager, Salesperson)                 |
 
 ---
 
@@ -67,7 +67,7 @@
 - Evolução de pipeline
 - Orçamentos pendentes
 
-### 1.4 Dashboard Vendedor (`/vendedor` — `VendedorDashboard.tsx`)
+### 1.4 Dashboard Vendedor (`/vendedor/:id` — `VendedorDashboard.tsx`)
 
 - Métricas individuais e progresso pessoal
 
@@ -79,9 +79,9 @@
 
 - **NPS Dashboard** (`/nps`) — Net Promoter Score
 - **ROI Dashboard** (`/roi`) — Retorno sobre investimento
-- **Security Dashboard** (`/security`) — Painel de segurança
+- **Security Dashboard** (`/seguranca`) — Painel de segurança
 - **Admin Dashboard** (`/admin`) — Centro de controle administrativo
-- **Client Health Score** (`/client-health`) — Saúde da carteira
+- **Client Health Score** (`/health-score`) — Saúde da carteira
 
 ---
 
@@ -125,7 +125,7 @@
 - Catálogo com SKU, categoria, preços
 - Estoque vinculado
 
-### 2.8 Smart Search (`/smart-search` — `SmartSearch.tsx`)
+### 2.8 Smart Search (`/busca-inteligente` — `SmartSearch.tsx`)
 
 - Busca semântica (Edge Function `semantic-search`)
 - Busca visual (`visual-search`)
@@ -159,7 +159,7 @@
 - Monitoramento de tempo de resposta
 - Edge Function `check-lead-sla`
 
-### 3.5 Funnel Analysis (`/funnel-analysis`)
+### 3.5 Funnel Analysis (`/funil`)
 
 - Análise de conversão entre estágios
 
@@ -223,7 +223,7 @@
 
 - Rastreamento de aberturas e cliques
 
-### 4.10 Inactivity Triggers (`/inactivity-triggers`)
+### 4.10 Inactivity Triggers (`/gatilhos-inatividade`)
 
 - Auto-reassign de leads inativos via `auto-reassign-inactive`
 
@@ -249,7 +249,7 @@
 
 - Análise comparativa entre fornecedores
 
-### 5.4 Approval Workflows (`/approval-workflows`)
+### 5.4 Approval Workflows (`/aprovacoes`)
 
 - Workflows de aprovação multinível
 - Thresholds por valor/desconto
@@ -270,7 +270,7 @@
 
 - Dashboards por papel com KPIs específicos
 
-### 6.3 Forecast Ponderado (`/forecast-ponderado`)
+### 6.3 Forecast Ponderado (`/forecast`)
 
 - Pipeline ponderado por probabilidade
 
@@ -279,13 +279,13 @@
 - Edge Function `demand-forecast`
 - Projeções manuais
 
-### 6.5 Top Products (`/top-products`)
+### 6.5 Top Products (`/top-produtos`)
 
-### 6.6 Price Evolution (`/price-evolution`)
+### 6.6 Price Evolution (`/evolucao-precos`)
 
-### 6.7 Category Metrics (`/category-metrics`)
+### 6.7 Category Metrics (`/metricas-categoria`)
 
-### 6.8 Historical Benchmark (`/historical-benchmark`)
+### 6.8 Historical Benchmark (`/benchmarking`)
 
 ---
 
@@ -295,7 +295,7 @@
 - **Relatório de Atividades** (`/relatorio-atividades`)
 - **Relatórios de E-mail** (`/relatorios-email`)
 - **Relatórios Executivos** (`/relatorios-executivos`)
-- **Scheduled Reports** (`/scheduled-reports`) — entrega agendada por e-mail
+- **Scheduled Reports** (`/relatorios-agendados`) — entrega agendada por e-mail
 
 ---
 
@@ -318,7 +318,7 @@
 
 - **Diários** — auto-gerados via `rotate-daily-challenges`
 - **Semanais** (`/desafios`) — claim de XP
-- **Histórico** (`/historico-desafios`)
+- **Histórico** (`/desafios-diarios`)
 
 ### 8.4 Sales Battles
 
@@ -456,7 +456,7 @@
 - Cálculo automático por regra
 - Status: pending, approved, paid
 
-### 12.2 Admin Comissões (`/admin-comissoes`)
+### 12.2 Admin Comissões (`/admin/comissoes`)
 
 - Aprovação e pagamento (admin)
 - Notas de pagamento
@@ -511,11 +511,11 @@
 
 - Alertas críticos transacionais
 
-### 14.6 Import/Export (`/import-export`)
+### 14.6 Import/Export (`/importar-exportar`)
 
 - CSV, XLSX, JSON
 
-### 14.7 Deduplication (`/deduplication`)
+### 14.7 Deduplication (`/deduplicacao`)
 
 - Detecção e merge de duplicatas
 
@@ -531,12 +531,14 @@
 
 ### 15.2 MFA & Passkeys
 
-- TOTP (RFC 4226/6238)
-- SMS MFA
+- TOTP (RFC 4226/6238) — via MFA nativo do Supabase
+- SMS MFA — **parcial** (2026-10-18): RPCs `setup_sms_mfa`/`verify_and_enable_sms`
+  geram e validam o código, mas nenhum envio de SMS está ligado (sem provider
+  configurado — o código nunca sai do banco)
 - Backup codes
-- WebAuthn/Passkeys (`webauthn` Edge Function)
+- WebAuthn/Passkeys (`webauthn` Edge Function + `PasskeySettings.tsx`)
 
-### 15.3 Security Dashboard (`/security`)
+### 15.3 Security Dashboard (`/seguranca`)
 
 - IP Blocking & Whitelisting
 - Geo-blocking (`geo_blocked_regions`)
@@ -579,7 +581,7 @@
 - External DB Bridge tester
 - Quote Sync audit panel
 
-### 16.2 Telemetria (`/admin-telemetria`)
+### 16.2 Telemetria (`/admin/telemetria`)
 
 - Slow queries (GIFT STORE DB externa)
 - Performance monitoring
@@ -647,6 +649,11 @@
 
 ## 18. Edge Functions (Backend Serverless)
 
+> Amostra de 35 funções levantada em 2026-04-16. O repo tem **173 functions**
+> em `supabase/functions/` (verificado 2026-10-18) — a lista completa por
+> domínio está em `CLAUDE.md` §4. `ai-copilot` existe mas não tem chamador
+> (órfã). O plano Supabase limita a 100 functions deployadas.
+
 | #   | Function                      | Propósito                           |
 | --- | ----------------------------- | ----------------------------------- |
 | 1   | `_shared`                     | Utilitários (CORS, validation Zod)  |
@@ -695,8 +702,9 @@
 - **Mapas**: React-Leaflet + CARTO
 - **Workflows visuais**: @xyflow/react
 - **Drag & Drop**: @dnd-kit/core
-- **Backend**: Lovable Cloud (Supabase) — PostgreSQL, Auth, Storage, Realtime, Edge Functions (Deno)
-- **IA**: Lovable AI Gateway (Gemini, GPT-5) + ElevenLabs
+- **Backend**: Supabase Cloud — PostgreSQL, Auth, Storage, Realtime, Edge Functions (Deno)
+- **Deploy frontend**: Vercel + GitHub (não Lovable — verificado 2026-10-18)
+- **IA**: AI Gateway compatível com OpenAI (`_shared/ai-gateway.ts`, default `ai.gateway.lovable.dev`, configurável via `LOVABLE_AI_GATEWAY_URL`) + ElevenLabs
 - **Export**: ExcelJS, jsPDF, CSV nativo
 - **Testes**: Vitest (unit) + Playwright (E2E)
 - **CI/CD**: GitHub Actions + Husky + Commitlint
@@ -704,6 +712,15 @@
 
 ---
 
-## ✅ Status de Implementação
+## ✅ Status de Implementação (revisão 2026-10-18)
 
-Todos os módulos listados acima foram **verificados no código-fonte** e estão **operacionais em produção**. Cobertura: **88 páginas, 35 Edge Functions, 182 hooks, 150+ tabelas**.
+Todos os módulos listados existem no código-fonte e suas **rotas** foram
+revalidadas contra `src/routes/AppRoutes.tsx` em 2026-10-18 (as rotas citadas
+acima usam os paths reais). Ressalvas conhecidas:
+
+- **Parcial**: MFA por SMS (sem envio real — ver §15.2); functions de IA
+  dependem de secrets (`LOVABLE_API_KEY`, `ELEVENLABS_API_KEY`, `TWILIO_*`)
+  configurados no projeto — sem eles respondem erro/503.
+- **Não iniciado/limitado**: só 100 das 173 edge functions podem estar
+  deployadas (limite do plano) — as demais existem no repo mas respondem 404
+  até upgrade ou remoção de outra function.

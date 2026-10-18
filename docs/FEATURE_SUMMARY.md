@@ -1,5 +1,9 @@
 # 📊 Promo Champions - Complete Feature Summary
 
+> **Revisado contra o HEAD em 2026-10-18** — status marcado por item
+> (✅ pronto / ⚠️ parcial / ❌ não iniciado). Versão anterior marcava
+> itens incompletos como prontos; correções abaixo.
+
 ## Implementation Status
 
 ### ✅ Fully Implemented (100%)
@@ -52,7 +56,9 @@
 #### Security
 
 - ✅ 2FA with TOTP (HMAC-SHA1 RFC 4226/6238)
-- ✅ SMS MFA
+- ⚠️ SMS MFA — **parcial**: RPCs `setup_sms_mfa`/`verify_and_enable_sms`
+  geram/validam códigos, mas nenhum envio de SMS está ligado (sem provider
+  configurado — 2026-10-18)
 - ✅ Backup codes
 - ✅ Audit trail (access denied logs)
 - ✅ RLS policies on all tables
@@ -60,7 +66,9 @@
 - ✅ IP blocking & whitelisting
 - ✅ Geo-blocking
 - ✅ Known devices tracking
-- ✅ Session management
+- ⚠️ Session management — tabelas `user_sessions`/`active_sessions` e
+  tracking existem; **não há** `SessionManager.tsx`/hook de gestão de
+  sessões no frontend (2026-10-18)
 - ✅ RBAC with admin/manager/salesperson roles
 - ✅ Real IP tracking via Edge Function
 
@@ -79,16 +87,21 @@
 - ❌ i18n — UI is hardcoded in pt-BR. No multi-language framework.
 - ❌ Feature flags — No runtime feature flag system.
 - ❌ A/B testing — No framework in place.
-- ❌ WhatsApp integration — Activity type exists for manual logging only; no API/webhook integration.
+- ⚠️ WhatsApp integration — **implementada** via `send-multichannel-message`
+  (Twilio, Meta Cloud, Z-API ou Evolution por credencial) + `whatsapp-inbound-webhook`
+  (Evolution); requer secrets/credenciais configurados no projeto.
 - ❌ Email integration — Email tracking exists but no automatic log from email providers.
-- ❌ E2E tests — No end-to-end test files.
+- ✅ E2E tests — suite Playwright existe em `tests/e2e/` (2026-10-18).
 
 ### 📈 Coverage Metrics
 
 ```
-Type Safety:          100% (TypeScript strict)
-Unit Tests:           Minimal (rate limiter tests only)
-Security Audit:       Passed (10/10 hardening)
+Type Safety:          strict flags ligados, mas 882 erros congelados no
+                      baseline (scripts/typecheck-baseline.json) — novo
+                      código deve ter zero erro (gate typecheck:baseline)
+Unit Tests:           suite Vitest em crescimento; cobertura por módulo
+                      travada por coverage:ladder (não "minimal")
+Security Audit:       hardening aplicado em etapas (ver docs/SECURITY_HARDENING.md)
 Performance Score:    95+ (Lighthouse target)
 ```
 
