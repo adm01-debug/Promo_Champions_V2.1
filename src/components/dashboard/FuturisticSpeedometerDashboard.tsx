@@ -37,7 +37,6 @@ import { DashboardSection } from './DashboardSection';
 import { Speedometer } from './Speedometer';
 import { DashboardSettings } from './DashboardSettings';
 import { AlertHistoryDialog } from './AlertHistoryDialog';
-import { HudAlert } from './HudAlert';
 
 import { formatBRL, formatBRLCompact } from '@/lib/money';
 const PERIOD_STORAGE_KEY = 'dashboard.speedometer.period';
@@ -111,7 +110,6 @@ export const FuturisticSpeedometerDashboard = () => {
   );
   const [alertHistory, setAlertHistory] = useState<AlertHistoryEntry[]>([]);
   const [isAlertHistoryOpen, setIsAlertHistoryOpen] = useState(false);
-  const [activeHudAlert, setActiveHudAlert] = useState<AlertHistoryEntry | null>(null);
   const [_notifiedEvents, _setNotifiedEvents] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -227,22 +225,6 @@ export const FuturisticSpeedometerDashboard = () => {
 
     loadSettings();
   }, [user?.id]);
-
-  const testAlert = useCallback(() => {
-    const alert: AlertHistoryEntry = {
-      id: Math.random().toString(36).substr(2, 9),
-      title: 'Telemetria :: Alerta de Meta',
-      message: 'Faturamento atingiu 92% da meta projetada para o período atual.',
-      priority: 'medium',
-      type: 'threshold_reached',
-      created_at: new Date().toISOString(),
-      metadata: { threshold: 92 },
-    };
-
-    setActiveHudAlert(alert);
-    setAlertHistory(prev => [alert, ...prev].slice(0, 20));
-    setTimeout(() => setActiveHudAlert(null), 8000);
-  }, []);
 
   const clearAlertHistory = useCallback(async () => {
     if (!user?.id) return;
@@ -582,10 +564,7 @@ export const FuturisticSpeedometerDashboard = () => {
         alertHistory={alertHistory}
         clearAlertHistory={clearAlertHistory}
         alertFrequency={alertFrequency}
-        testAlert={testAlert}
       />
-
-      <HudAlert activeHudAlert={activeHudAlert} />
 
       <DashboardSection
         title="Infraestrutura de Comunicação"

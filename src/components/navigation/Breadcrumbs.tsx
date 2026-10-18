@@ -98,6 +98,20 @@ const routeLabels: Record<string, string> = {
   'territory-optimization': 'Territórios',
 };
 
+// Chaves de routeLabels que não são rotas próprias: seções do dashboard
+// resolvem em /dashboard/<slug> e 'desafios-semanais' é a rota /desafios.
+const siblingRouteOverrides: Record<string, string> = {
+  'visao-geral': '/dashboard/visao-geral',
+  performance: '/dashboard/performance',
+  analises: '/dashboard/analises',
+  competicao: '/dashboard/competicao',
+  engajamento: '/dashboard/engajamento',
+  'desafios-semanais': '/desafios',
+};
+
+// Chaves sem rota navegável ('/vendedor' exige :id) — fora do dropdown.
+const siblingExcluded = new Set(['historico-desafios', 'vendedor']);
+
 export const Breadcrumbs = memo(
   forwardRef<HTMLElement>(function Breadcrumbs(_props, ref) {
     const location = useLocation();
@@ -116,9 +130,9 @@ export const Breadcrumbs = memo(
     });
 
     const getSiblings = (path: string) => {
-      // In a real app, this would be a lookup of the route tree
+      const current = path.split('/').pop();
       return Object.entries(routeLabels)
-        .filter(([key]) => key !== '' && key !== path.split('/').pop())
+        .filter(([key]) => key !== '' && key !== current && !siblingExcluded.has(key))
         .slice(0, 8);
     };
 
@@ -198,7 +212,7 @@ export const Breadcrumbs = memo(
                                 key={slug}
                                 onClick={() => {
                                   triggerHaptic('light');
-                                  navigate(`/${slug}`);
+                                  navigate(siblingRouteOverrides[slug] ?? `/${slug}`);
                                 }}
                                 className="text-xs gap-2 cursor-pointer"
                               >
