@@ -3,7 +3,7 @@ import type { Database } from '@/integrations/supabase/types';
 /**
  * Names of tables in the public schema (typed from the generated Database type).
  */
-export type PublicTable = keyof Database['public']['Tables'];
+type PublicTable = keyof Database['public']['Tables'];
 
 /**
  * Row type for a given public table — what `select()` returns.

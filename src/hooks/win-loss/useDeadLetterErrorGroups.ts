@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { classifyDeadLetterError } from './classifyDeadLetterError';
 
-export interface DeadLetterErrorGroupOption {
+interface DeadLetterErrorGroupOption {
   key: string;
   label: string;
   count: number;

@@ -21,7 +21,7 @@ import {
 import { ptBR } from 'date-fns/locale';
 import type { KPIPeriod } from '@/hooks/dashboard/useDashboardKPIsPeriod';
 
-export interface TrendBucket {
+interface TrendBucket {
   label: string;
   fullLabel: string;
   revenue: number;

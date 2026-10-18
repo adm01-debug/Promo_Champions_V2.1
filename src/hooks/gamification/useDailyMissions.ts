@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
-export interface DailyMission {
+interface DailyMission {
   id: string;
   title: string;
   description: string | null;

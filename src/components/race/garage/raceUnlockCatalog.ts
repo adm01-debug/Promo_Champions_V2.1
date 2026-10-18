@@ -1,6 +1,6 @@
 // Catálogo de itens desbloqueáveis da Garagem
-export type UnlockCategory = 'decal' | 'neon' | 'skin';
-export type RaceLeague = 'bronze' | 'prata' | 'ouro' | 'platina' | 'diamante';
+type UnlockCategory = 'decal' | 'neon' | 'skin';
+type RaceLeague = 'bronze' | 'prata' | 'ouro' | 'platina' | 'diamante';
 
 export interface RaceUnlockItem {
   key: string;
@@ -113,7 +113,3 @@ export const LEAGUE_ORDER: Record<RaceLeague, number> = {
   platina: 4,
   diamante: 5,
 };
-
-export function canUnlock(userLeague: RaceLeague, required: RaceLeague): boolean {
-  return LEAGUE_ORDER[userLeague] >= LEAGUE_ORDER[required];
-}

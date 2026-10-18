@@ -15,7 +15,6 @@ import {
 } from 'date-fns';
 import { captureException } from '@/lib/errorTracking';
 
-export type SalesRole = 'sdr' | 'closer' | 'hybrid';
 export type PeriodFilter = 'week' | 'month' | 'quarter';
 
 interface RoleMetrics {

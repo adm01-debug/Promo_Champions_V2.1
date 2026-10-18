@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WIN_LOSS_OUTCOME } from '@/constants';
 
-export interface InsightImpact {
+interface InsightImpact {
   id: string;
   title: string;
   applied_at: string;

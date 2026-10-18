@@ -12,14 +12,14 @@ export interface OptOutRecordLite {
   source: string;
 }
 
-export interface SourceBreakdownItem {
+interface SourceBreakdownItem {
   source: string;
   count: number;
   /** Percentual sobre o total da janela (0-100, 1 casa decimal). */
   pct: number;
 }
 
-export interface OptOutDailyPoint {
+interface OptOutDailyPoint {
   /** Data no formato YYYY-MM-DD. */
   date: string;
   count: number;

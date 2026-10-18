@@ -5,7 +5,7 @@ import type { RaceSeason } from '@/hooks/race/useRaceSeason';
 
 export type RoleType = 'closer' | 'sdr';
 
-export interface RaceSeasonWithRole extends RaceSeason {
+interface RaceSeasonWithRole extends RaceSeason {
   role_type: RoleType;
 }
 

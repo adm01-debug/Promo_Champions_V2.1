@@ -79,9 +79,3 @@ export function formatCurrencyForExport(value: number): string {
 /**
  * Format number for export
  */
-export function formatNumberForExport(value: number, decimals = 0): string {
-  return new Intl.NumberFormat('pt-BR', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(value);
-}

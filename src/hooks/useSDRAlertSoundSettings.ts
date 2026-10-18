@@ -3,13 +3,13 @@ import { useAudio } from '@/contexts/AudioContext';
 
 export type SDRAlertSoundType = 'warning' | 'notification' | 'gentle' | 'chime' | 'none';
 
-export interface SDRAlertSoundOption {
+interface SDRAlertSoundOption {
   id: SDRAlertSoundType;
   label: string;
   description: string;
 }
 
-export const sdrAlertSoundOptions: SDRAlertSoundOption[] = [
+const sdrAlertSoundOptions: SDRAlertSoundOption[] = [
   { id: 'warning', label: 'Aviso', description: 'Tom de atenção moderado' },
   { id: 'notification', label: 'Notificação', description: 'Som suave de alerta' },
   { id: 'gentle', label: 'Suave', description: 'Tom discreto e profissional' },

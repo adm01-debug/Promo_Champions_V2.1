@@ -19,7 +19,7 @@ export type PostgrestLike<T> = PromiseLike<{
   error: { message?: string } | null;
 }>;
 
-export interface ChunkedInOptions {
+interface ChunkedInOptions {
   chunkSize?: number;
   parallel?: boolean;
   label?: string;

@@ -30,8 +30,6 @@ const CHANNEL_CONFIG: Record<
   phone: { label: 'Telefone', icon: Phone, color: 'text-status-info' },
 };
 
-export { CHANNEL_CONFIG };
-
 export function MultichannelDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [channelFilter, setChannelFilter] = useState<Channel | undefined>();

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus, isLostSaleStatus } from '@/constants';
 
-export interface ScriptVariantStats {
+interface ScriptVariantStats {
   variant: string;
   total: number;
   wins: number;
@@ -10,7 +10,7 @@ export interface ScriptVariantStats {
   winRate: number;
 }
 
-export interface ScriptABResult {
+interface ScriptABResult {
   variants: ScriptVariantStats[];
   winnerVariant: string | null;
   chiSquare: number | null;

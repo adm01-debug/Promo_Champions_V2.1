@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface SalespersonAchievements {
+interface SalespersonAchievements {
   salesperson_id: string;
   name: string;
   avatar_url: string | null;

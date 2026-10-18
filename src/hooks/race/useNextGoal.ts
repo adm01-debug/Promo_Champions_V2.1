@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
-export type NextGoalMode = 'hunting' | 'defending' | 'leader-only' | 'idle';
+type NextGoalMode = 'hunting' | 'defending' | 'leader-only' | 'idle';
 
-export interface NextGoalResult {
+interface NextGoalResult {
   mode: NextGoalMode;
   me?: RaceLeaderboardEntry;
   target?: RaceLeaderboardEntry;

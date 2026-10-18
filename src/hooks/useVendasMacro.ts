@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus } from '@/constants';
 import { subDays, format, parseISO } from 'date-fns';
 
-export interface MacroSellerData {
+interface MacroSellerData {
   id: string;
   name: string;
   avatar_url: string | null;
@@ -14,14 +14,14 @@ export interface MacroSellerData {
   ordersCount: number;
 }
 
-export interface MacroDailyData {
+interface MacroDailyData {
   day: string;
   quoted: number;
   sold: number;
   revenue: number;
 }
 
-export interface VendasMacroData {
+interface VendasMacroData {
   totalQuoted: number;
   totalSold: number;
   totalQuotedValue: number;

@@ -12,7 +12,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
 // Session id estável por aba do navegador
-const SESSION_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+const SESSION_ID = `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
 
 interface PageSession {
   route: string;
@@ -68,7 +68,7 @@ export function trackInteraction() {
  * Grava a página corrente com duração + interações em UMA linha só.
  * Idempotente: chamadas repetidas não duplicam.
  */
-export async function flushCurrentPage() {
+async function flushCurrentPage() {
   const page = currentPage;
   if (!page || page.flushed || !salespersonId) {
     currentPage = null;

@@ -2,24 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { getExpertRecommendations } from '@/lib/bi/industryRecommendations';
 
-export interface SeasonalityPoint {
-  year: number;
-  month: number;
-  quotes_count: number;
-  total_revenue: number;
-  avg_ticket: number;
-  intensity: number; // 0-100 normalized
-}
-
-export interface IndustrySeasonalityPoint {
-  year: number;
-  month: number;
-  avg_quotes_per_company: number;
-  avg_revenue_per_company: number;
-  companies_active: number;
-  intensity: number; // 0-100 normalized
-}
-
 interface SeasonalityRow {
   month?: number | string;
   quotes_count?: number | string;

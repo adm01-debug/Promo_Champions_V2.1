@@ -24,7 +24,7 @@ export interface CoachingSession {
   salesperson?: { name: string; avatar_url: string | null };
 }
 
-export interface SessionPrep {
+interface SessionPrep {
   salesperson: { id: string; name: string; avatar_url: string | null } | null;
   top_gaps: Array<{ skill: string; score: number; label: string }>;
   at_risk_deals: Array<{ id: string; name: string; amount: number; stage: string }>;

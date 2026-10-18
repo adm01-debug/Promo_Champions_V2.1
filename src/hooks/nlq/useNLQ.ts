@@ -6,7 +6,7 @@ import type { NLQResponse } from '@/components/nlq/nlqHelpers';
 const HISTORY_KEY = 'nlq:history';
 const MAX_HISTORY = 10;
 
-export interface NLQHistoryItem {
+interface NLQHistoryItem {
   question: string;
   response: NLQResponse;
   at: number;

@@ -3,17 +3,9 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { MainLayout } from '@/components/templates/MainLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ErrorBoundary } from '@/components/errors/ErrorBoundary';
-import {
-  PageTransition,
-  StaggeredContainer,
-} from '@/components/transitions/PageTransition';
+import { PageTransition } from '@/components/transitions/PageTransition';
 import { SmartSkeleton } from '@/components/skeletons/SmartSkeleton';
-import {
-  Shimmer,
-  KPICardSkeleton,
-  ChartCardSkeleton,
-  SkeletonCard,
-} from '@/components/skeletons/SkeletonPrimitives';
+
 import { RaceTransitionWrapper } from '@/components/race';
 import {
   // Auth & System
@@ -200,31 +192,6 @@ import {
   AcompanhamentoPedidos,
   AcompanhamentoPedidoDetalhe,
 } from './lazyPages';
-
-const PageLoadingFallback = () => (
-  <StaggeredContainer className="min-h-[400px] w-full bg-background/50">
-    <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
-      <div className="space-y-2">
-        <Shimmer className="h-8 w-64 rounded-lg" />
-        <Shimmer className="h-4 w-96 rounded-md" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <KPICardSkeleton />
-        <KPICardSkeleton />
-        <KPICardSkeleton />
-      </div>
-      <div className="space-y-4">
-        <ChartCardSkeleton className="w-full" />
-        <div className="grid grid-cols-2 gap-4">
-          <SkeletonCard className="w-full" />
-          <SkeletonCard className="w-full" />
-        </div>
-      </div>
-    </div>
-  </StaggeredContainer>
-);
-
-export { PageLoadingFallback };
 
 // Helper to wrap admin-only routes
 const Admin = React.memo(({ children }: { children: React.ReactNode }) => (

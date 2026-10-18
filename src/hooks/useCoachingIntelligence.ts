@@ -16,7 +16,7 @@ export interface CoachingTarget {
   recommended_action: string;
 }
 
-export interface CoachingSummary {
+interface CoachingSummary {
   total: number;
   critical: number;
   warning: number;

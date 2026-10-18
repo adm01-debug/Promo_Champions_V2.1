@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { insertPayload } from '@/lib/supabase/typed-payloads';
 
 export type AccountTier = 'strategic' | 'enterprise' | 'mid_market' | 'smb';
-export type HealthStatus = 'healthy' | 'at_risk' | 'critical' | 'unknown';
+type HealthStatus = 'healthy' | 'at_risk' | 'critical' | 'unknown';
 export type BuyingRole =
   'decision_maker' | 'champion' | 'influencer' | 'blocker' | 'user' | 'technical';
 
@@ -27,7 +27,7 @@ export interface Account {
   updated_at: string;
 }
 
-export interface AccountContact {
+interface AccountContact {
   id: string;
   account_id: string;
   name: string;

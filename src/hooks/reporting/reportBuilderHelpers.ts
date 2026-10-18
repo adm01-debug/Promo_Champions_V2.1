@@ -14,7 +14,7 @@ export interface ReportFilter {
   value: unknown;
 }
 
-export interface ReportOrderBy {
+interface ReportOrderBy {
   field: string;
   direction: 'asc' | 'desc';
 }
@@ -37,7 +37,7 @@ export interface ReportConfig {
   joins?: ReportJoin[];
 }
 
-export interface EntityFieldDef {
+interface EntityFieldDef {
   key: string;
   label: string;
   type: 'text' | 'number' | 'date' | 'bool' | 'enum';
@@ -163,7 +163,7 @@ export const FILTER_OP_LABELS: Record<FilterOp, string> = {
 export type CrossBaseEntity = 'sales' | 'activities' | 'leads';
 export type CrossJoinableEntity = 'accounts' | 'salespeople' | 'clients' | 'sales';
 
-export interface JoinDef {
+interface JoinDef {
   entity: CrossJoinableEntity;
   /** Coluna FK na tabela base */
   fk: string;
@@ -235,42 +235,6 @@ export function buildCrossEntityFields(
  * Ex: ["id","amount","accounts.name","accounts.tier"] →
  *     "id,amount,accounts(name,tier)"
  */
-export function serializeCrossSelect(
-  columns: string[],
-  joins: ReportJoin[],
-  base: CrossBaseEntity
-): string {
-  const baseCols: string[] = [];
-  const joinedCols = new Map<string, string[]>(); // target → [fields]
-
-  const targets = new Set(
-    joins
-      .map(j => JOIN_MAP[base]?.find(d => d.entity === j.entity)?.target)
-      .filter(Boolean) as string[]
-  );
-
-  for (const col of columns) {
-    const dot = col.indexOf('.');
-    if (dot > 0) {
-      const target = col.slice(0, dot);
-      const field = col.slice(dot + 1);
-      if (targets.has(target)) {
-        const arr = joinedCols.get(target) ?? [];
-        arr.push(field);
-        joinedCols.set(target, arr);
-        continue;
-      }
-    }
-    baseCols.push(col);
-  }
-
-  const parts = [...baseCols];
-  for (const [target, fields] of joinedCols.entries()) {
-    parts.push(`${target}(${fields.join(',')})`);
-  }
-  // Sempre inclui PK das tabelas joined para evitar nulos silenciosos
-  return parts.join(',') || '*';
-}
 
 export function defaultConfigForEntity(entity: ReportEntity): ReportConfig {
   if (entity === 'cross') {
@@ -292,11 +256,4 @@ export function defaultConfigForEntity(entity: ReportEntity): ReportConfig {
       : [],
     viz_type: 'table',
   };
-}
-
-export function validateConfig(config: ReportConfig): { ok: boolean; error?: string } {
-  if (!Array.isArray(config.columns) || config.columns.length === 0) {
-    return { ok: false, error: 'Selecione ao menos uma coluna' };
-  }
-  return { ok: true };
 }

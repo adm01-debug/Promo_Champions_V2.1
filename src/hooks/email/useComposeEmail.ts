@@ -56,7 +56,7 @@ export function useComposeEmail() {
   });
 }
 
-export interface SendEmailInput {
+interface SendEmailInput {
   to: string;
   subject: string;
   body_html: string;

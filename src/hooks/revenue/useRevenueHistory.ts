@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, subMonths, format } from 'date-fns';
 import { isWonSaleStatus } from '@/constants';
 
-export interface RevenueHistoryPoint {
+interface RevenueHistoryPoint {
   period: string;
   revenue: number;
 }

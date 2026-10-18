@@ -4,9 +4,9 @@
  * - UTF-8 BOM para acentuação
  * - Escapa aspas duplicando-as e envolve campos com vírgula/quebra em aspas
  */
-export type CsvCell = string | number | boolean | null | undefined | Date;
+type CsvCell = string | number | boolean | null | undefined | Date;
 
-export interface CsvColumn<T> {
+interface CsvColumn<T> {
   header: string;
   value: (row: T) => CsvCell;
 }

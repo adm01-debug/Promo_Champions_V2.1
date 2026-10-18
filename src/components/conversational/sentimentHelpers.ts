@@ -1,4 +1,4 @@
-export type SentimentLabel =
+type SentimentLabel =
   'very_negative' | 'negative' | 'neutral' | 'positive' | 'very_positive';
 
 export interface SentimentSegment {
@@ -13,22 +13,6 @@ export interface SentimentSegment {
   confidence: number;
   excerpt: string | null;
 }
-
-export const SENTIMENT_COLORS: Record<SentimentLabel, string> = {
-  very_negative: 'hsl(var(--destructive))',
-  negative: 'hsl(var(--status-warning))',
-  neutral: 'hsl(var(--muted-foreground))',
-  positive: 'hsl(var(--status-success))',
-  very_positive: 'hsl(var(--primary))',
-};
-
-export const SENTIMENT_LABELS: Record<SentimentLabel, string> = {
-  very_negative: 'Muito negativo',
-  negative: 'Negativo',
-  neutral: 'Neutro',
-  positive: 'Positivo',
-  very_positive: 'Muito positivo',
-};
 
 export function detectShifts(timeline: SentimentSegment[], threshold = 0.5) {
   const shifts: Array<{

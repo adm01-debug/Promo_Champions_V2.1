@@ -7,7 +7,7 @@ export const ASYNC_REPLAY_CHUNK_SIZE = 25;
 
 export type ChunkStatus = 'pending' | 'running' | 'succeeded' | 'failed' | 'cancelled';
 
-export interface ChunkResult {
+interface ChunkResult {
   index: number;
   ids: string[];
   status: ChunkStatus;
@@ -18,7 +18,7 @@ export interface ChunkResult {
   durationMs?: number;
 }
 
-export interface AsyncReplayState {
+interface AsyncReplayState {
   isRunning: boolean;
   isCancelling: boolean;
   totalIds: number;

@@ -6,7 +6,7 @@ import { VoiceId, VOICE_OPTIONS } from '@/hooks/useElevenLabsVoice';
 
 export type ResponseMode = 'text' | 'audio' | 'both';
 
-export interface SalespersonPreferences {
+interface SalespersonPreferences {
   id: string;
   salesperson_id: string;
   ai_assistant_name: string;

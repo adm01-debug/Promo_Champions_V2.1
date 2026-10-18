@@ -17,9 +17,7 @@ export interface CommissionRule {
   salespeople?: { name: string } | null;
 }
 
-export type CommissionRuleUpsert = Partial<
-  Omit<CommissionRule, 'salespeople' | 'created_at'>
->;
+type CommissionRuleUpsert = Partial<Omit<CommissionRule, 'salespeople' | 'created_at'>>;
 
 export const useCommissionRules = () => {
   return useQuery({

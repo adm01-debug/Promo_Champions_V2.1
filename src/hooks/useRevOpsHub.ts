@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
 
-export interface RevOpsKPIs {
+interface RevOpsKPIs {
   total_pipeline: number;
   weighted_forecast: number;
   closed_revenue: number;
@@ -16,7 +16,7 @@ export interface RevOpsKPIs {
   pending_commissions: number;
 }
 
-export interface RevOpsData {
+interface RevOpsData {
   horizon_days: number;
   kpis: RevOpsKPIs;
   health: {

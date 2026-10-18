@@ -245,9 +245,9 @@ export function useV4CallbackActions() {
 
 // ── Alertas automáticos ─────────────────────────────────────────────
 
-export type V4AlertKind = 'high_failure_rate' | 'exhausted_spike' | 'pending_backlog';
+type V4AlertKind = 'high_failure_rate' | 'exhausted_spike' | 'pending_backlog';
 
-export interface V4Alert {
+interface V4Alert {
   id: string;
   kind: V4AlertKind;
   details: Record<string, unknown>;
@@ -255,7 +255,7 @@ export interface V4Alert {
   acknowledged_at: string | null;
 }
 
-export interface V4AlertSettings {
+interface V4AlertSettings {
   id: string;
   is_active: boolean;
   failure_rate_threshold: number;
@@ -266,7 +266,7 @@ export interface V4AlertSettings {
   suppress_minutes: number;
 }
 
-export type V4AlertSettingsInput = Omit<V4AlertSettings, 'id'>;
+type V4AlertSettingsInput = Omit<V4AlertSettings, 'id'>;
 
 export function useV4Alerts() {
   return useQuery({

@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface AttemptBucket {
+interface AttemptBucket {
   attempt: number;
   failures: number;
   total: number;
 }
 
-export interface FailureReasonBucket {
+interface FailureReasonBucket {
   /** Stable key used for chart dataKey + react keys. Format: `status:<code>` or `network`. */
   key: string;
   /** Human-friendly label, e.g. "HTTP 500", "Timeout/Rede". */
@@ -20,7 +20,7 @@ export interface FailureReasonBucket {
   sampleMessage: string | null;
 }
 
-export interface WebhookDeliveryStats {
+interface WebhookDeliveryStats {
   total: number;
   succeeded: number;
   failed: number;

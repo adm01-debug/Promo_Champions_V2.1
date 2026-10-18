@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { CommissionBonus, BonusType } from './useCommissionBonuses';
+import type { CommissionBonus } from './useCommissionBonuses';
 
 import { formatBRL } from '@/lib/money';
 export interface EligibleBonus extends CommissionBonus {
@@ -162,14 +162,3 @@ export function useEligibleBonuses(salespersonId: string | undefined) {
 }
 
 /** Agrupa por tipo p/ UI. Função pura — memoize no call-site via useMemo se necessário. */
-export function groupBonusesByType(
-  bonuses: EligibleBonus[]
-): Map<BonusType, EligibleBonus[]> {
-  const map = new Map<BonusType, EligibleBonus[]>();
-  for (const b of bonuses) {
-    const arr = map.get(b.bonus_type) ?? [];
-    arr.push(b);
-    map.set(b.bonus_type, arr);
-  }
-  return map;
-}

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface OutboundMessage {
+interface OutboundMessage {
   id: string;
   enrollment_id: string | null;
   step_id: string | null;

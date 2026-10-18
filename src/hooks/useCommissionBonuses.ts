@@ -21,7 +21,7 @@ export interface CommissionBonus {
   salespeople?: { name: string } | null;
 }
 
-export type CommissionBonusUpsert = Partial<
+type CommissionBonusUpsert = Partial<
   Omit<CommissionBonus, 'salespeople' | 'created_at' | 'updated_at'>
 >;
 

@@ -21,7 +21,7 @@ export interface AttemptDeliveryRow {
   created_at: string;
 }
 
-export interface AttemptSliceData {
+interface AttemptSliceData {
   rows: AttemptDeliveryRow[];
   /** Aggregated by subscription, sorted desc by failure count. */
   subscriptions: Array<{

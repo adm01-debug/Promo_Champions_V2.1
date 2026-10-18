@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface PredictiveSnapshot {
+interface PredictiveSnapshot {
   forecast: {
     weighted_revenue: number;
     best_case: number;

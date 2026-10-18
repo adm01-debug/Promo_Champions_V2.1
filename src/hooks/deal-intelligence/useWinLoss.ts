@@ -16,7 +16,7 @@ export interface WinLossAnalysis {
   analyzed_at: string;
 }
 
-export interface WinLossPattern {
+interface WinLossPattern {
   id: string;
   pattern_type: 'win_factor' | 'loss_factor' | 'stuck_stage' | 'competitor' | 'icp_match';
   label: string;
@@ -29,7 +29,7 @@ export interface WinLossPattern {
   computed_at: string;
 }
 
-export interface WinLossInsight {
+interface WinLossInsight {
   id: string;
   insight_type: string;
   title: string;

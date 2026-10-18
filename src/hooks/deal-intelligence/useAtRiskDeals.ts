@@ -19,7 +19,7 @@ export interface AtRiskDeal {
   suggestedAction?: string;
 }
 
-export interface AtRiskAnalysis {
+interface AtRiskAnalysis {
   deals: AtRiskDeal[];
   summary: {
     critical: number;

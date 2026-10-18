@@ -1,6 +1,6 @@
 // Mapeamento de event → rótulo amigável (PT-BR).
 // Eventos não mapeados (ou ausentes) caem no fallback "Evento desconhecido".
-export const EVENT_LABELS: Record<string, string> = {
+const EVENT_LABELS: Record<string, string> = {
   'winloss.deal.won': 'Negócio ganho',
   'winloss.deal.lost': 'Negócio perdido',
   'winloss.deal.updated': 'Negócio atualizado',

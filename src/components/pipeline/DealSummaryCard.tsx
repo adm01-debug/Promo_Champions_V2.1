@@ -1,23 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { chunkedIn, type PostgrestLike } from '@/lib/supabase/chunkedIn';
-import { CACHE_TIMES } from '@/constants';
 import { Button } from '@/components/ui/button';
 import { Sparkles, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { formatBRL } from '@/lib/money';
-interface DealSummary {
-  deal_id: string;
-  client_name: string;
-  amount: number;
-  status: string;
-  summary: string;
-  next_steps: string[];
-  risks: string[];
-  days_in_stage: number;
-}
 
 function generateLocalSummary(deal: {
   client_name: string;
@@ -59,54 +45,6 @@ function generateLocalSummary(deal: {
 
   return { summary, next_steps, risks };
 }
-
-export const useDealSummaries = (dealIds: string[]) => {
-  return useQuery<DealSummary[]>({
-    queryKey: ['deal-summaries', dealIds],
-    queryFn: async () => {
-      if (!dealIds.length) return [];
-      type SaleRow = {
-        id: string;
-        client_name: string;
-        amount: number | null;
-        status: string;
-        created_at: string;
-        updated_at: string;
-      };
-      const data = await chunkedIn<SaleRow>(
-        dealIds,
-        chunk =>
-          supabase // eslint-disable-line no-restricted-syntax
-            .from('sales')
-            .select('id, client_name, amount, status, created_at, updated_at')
-            .in('id', chunk as string[]) as unknown as PostgrestLike<SaleRow>,
-        { parallel: true, label: 'deal-summaries' }
-      );
-
-      return data.map(d => {
-        const { summary, next_steps, risks } = generateLocalSummary({
-          ...d,
-          amount: d.amount ?? 0,
-        });
-        const daysSince = Math.floor(
-          (Date.now() - new Date(d.updated_at).getTime()) / 86400000
-        );
-        return {
-          deal_id: d.id,
-          client_name: d.client_name,
-          amount: d.amount ?? 0,
-          status: d.status,
-          summary,
-          next_steps,
-          risks,
-          days_in_stage: daysSince,
-        };
-      });
-    },
-    enabled: dealIds.length > 0,
-    staleTime: CACHE_TIMES.STALE_TIME,
-  });
-};
 
 interface DealSummaryCardProps {
   dealId: string;

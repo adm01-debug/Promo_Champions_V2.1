@@ -16,18 +16,6 @@ export const scenarioLabel: Record<ScenarioKey, string> = {
   optimistic: 'Otimista',
 };
 
-export const scenarioColor: Record<ScenarioKey, string> = {
-  pessimistic: 'text-destructive border-destructive/30 bg-destructive/5',
-  realistic: 'text-primary border-primary/30 bg-primary/5',
-  optimistic: 'text-emerald-500 border-emerald-500/30 bg-emerald-500/5',
-};
-
-export const scenarioChartColor: Record<ScenarioKey, string> = {
-  pessimistic: 'hsl(var(--destructive))',
-  realistic: 'hsl(var(--primary))',
-  optimistic: 'hsl(160 84% 39%)',
-};
-
 export const horizonOptions: { value: ForecastHorizon; label: string }[] = [
   { value: 30, label: '30 dias' },
   { value: 60, label: '60 dias' },

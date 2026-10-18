@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { differenceInDays, parseISO } from 'date-fns';
 import { CACHE_TIMES } from '@/constants';
 
-export interface InactivityRule {
+interface InactivityRule {
   stage: string;
   label: string;
   mildDays: number;
@@ -66,13 +66,13 @@ export const INACTIVITY_RULES: InactivityRule[] = [
 ];
 
 // Back-compat: some callers still read `.maxDaysInactive` (= mild threshold).
-export type LegacyInactivityRule = InactivityRule & { maxDaysInactive: number };
+type LegacyInactivityRule = InactivityRule & { maxDaysInactive: number };
 const withLegacy = (r: InactivityRule): LegacyInactivityRule => ({
   ...r,
   maxDaysInactive: r.mildDays,
 });
 
-export interface InactiveDeal {
+interface InactiveDeal {
   id: string;
   clientName: string;
   stage: string;
@@ -84,7 +84,7 @@ export interface InactiveDeal {
   lastActivityDate: string;
 }
 
-export const useStageInactivityRules = () =>
+const useStageInactivityRules = () =>
   useQuery<LegacyInactivityRule[]>({
     queryKey: ['stage-inactivity-rules'],
     staleTime: CACHE_TIMES.STALE_TIME,

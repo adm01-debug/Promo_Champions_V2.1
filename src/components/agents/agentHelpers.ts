@@ -1,5 +1,4 @@
 import {
-  Sparkles,
   Target,
   FileText,
   CalendarClock,
@@ -15,7 +14,7 @@ export type AgentType =
   | 'enrich_client'
   | 'recover_cold_lead';
 
-export type AgentStatus =
+type AgentStatus =
   'pending' | 'running' | 'awaiting_approval' | 'completed' | 'failed' | 'cancelled';
 
 export type AgentTargetType = 'lead' | 'client' | 'deal' | 'activity';
@@ -95,5 +94,3 @@ export const STATUS_META: Record<
   failed: { label: 'Falhou', variant: 'destructive' },
   cancelled: { label: 'Cancelado', variant: 'secondary' },
 };
-
-export const AGENT_ICON = Sparkles;

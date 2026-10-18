@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 
-export interface ChurnPredictionItem {
+interface ChurnPredictionItem {
   clientId: string;
   clientName: string;
   riskScore: number;

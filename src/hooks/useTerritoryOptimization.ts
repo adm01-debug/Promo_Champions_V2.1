@@ -5,11 +5,10 @@ import { SUPABASE_URL } from '@/integrations/supabase/env';
 export type TerritoryHealth = 'excellent' | 'healthy' | 'warning' | 'critical';
 export type TerritoryStatus =
   'healthy' | 'underserved' | 'overloaded' | 'stagnant' | 'unowned';
-export type RecommendationType =
-  'reassign' | 'split' | 'merge' | 'assign_owner' | 'rebalance';
+type RecommendationType = 'reassign' | 'split' | 'merge' | 'assign_owner' | 'rebalance';
 export type RecommendationPriority = 'high' | 'medium' | 'low';
 
-export interface TerritoryKPIs {
+interface TerritoryKPIs {
   total_territories: number;
   healthy_count: number;
   underserved_count: number;
@@ -20,7 +19,7 @@ export interface TerritoryKPIs {
   potential_revenue_lost: number;
 }
 
-export interface TerritoryAnalysis {
+interface TerritoryAnalysis {
   id: string;
   territory_name: string;
   territory_type: string;
@@ -36,7 +35,7 @@ export interface TerritoryAnalysis {
   status: TerritoryStatus;
 }
 
-export interface SalespersonLoad {
+interface SalespersonLoad {
   salesperson_id: string;
   salesperson_name: string;
   territories_count: number;
@@ -45,7 +44,7 @@ export interface SalespersonLoad {
   load_score: number;
 }
 
-export interface TerritoryRecommendation {
+interface TerritoryRecommendation {
   type: RecommendationType;
   priority: RecommendationPriority;
   territory_id: string | null;
@@ -54,7 +53,7 @@ export interface TerritoryRecommendation {
   expected_impact: string;
 }
 
-export interface TerritoryOptimizationResponse {
+interface TerritoryOptimizationResponse {
   days: number;
   health: TerritoryHealth;
   kpis: TerritoryKPIs;

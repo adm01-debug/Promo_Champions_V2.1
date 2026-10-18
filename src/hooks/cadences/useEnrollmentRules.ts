@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export interface EnrollmentRule {
+interface EnrollmentRule {
   id: string;
   cadence_id: string;
   name: string;
@@ -18,10 +18,7 @@ export interface EnrollmentRule {
   updated_at: string;
 }
 
-export type EnrollmentRuleInput = Omit<
-  EnrollmentRule,
-  'id' | 'created_at' | 'updated_at'
->;
+type EnrollmentRuleInput = Omit<EnrollmentRule, 'id' | 'created_at' | 'updated_at'>;
 
 export function useEnrollmentRules() {
   return useQuery({

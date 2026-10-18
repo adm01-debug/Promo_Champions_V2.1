@@ -32,7 +32,7 @@ export interface OrderEventRow {
   created_at: string;
 }
 
-export interface OrderDetail {
+interface OrderDetail {
   order: OrderRow;
   items: OrderItemRow[];
   events: OrderEventRow[];

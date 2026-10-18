@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInDays, addDays } from 'date-fns';
 
-export interface ClientPrediction {
+interface ClientPrediction {
   clientId: string;
   nextPurchaseDate: Date | null;
   confidence: number;

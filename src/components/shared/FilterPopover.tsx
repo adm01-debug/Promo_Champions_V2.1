@@ -11,7 +11,7 @@ export interface SortOption {
   direction: 'asc' | 'desc';
 }
 
-export interface FilterOption {
+interface FilterOption {
   label: string;
   value: string;
 }

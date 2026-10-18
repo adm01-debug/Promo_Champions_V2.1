@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 
-export interface LtvChartPoint {
+interface LtvChartPoint {
   date: string;
   amount: number;
   cumulativeLtv: number;

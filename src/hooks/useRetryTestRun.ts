@@ -8,7 +8,7 @@ export interface RetryTestResult {
   error?: string;
 }
 
-export interface RetryTestRunReport {
+interface RetryTestRunReport {
   file: string;
   ran_at: string;
   total_duration_ms: number;

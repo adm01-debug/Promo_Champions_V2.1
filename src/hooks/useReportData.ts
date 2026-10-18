@@ -64,7 +64,7 @@ export function useSales(dateRange: DateRange) {
   });
 }
 
-export function useDailyMetrics(dateRange: DateRange) {
+function useDailyMetrics(dateRange: DateRange) {
   return useQuery({
     queryKey: [
       'daily_metrics',
@@ -93,7 +93,7 @@ export function useDailyMetrics(dateRange: DateRange) {
   });
 }
 
-export function useCategoryMetrics(dateRange: DateRange) {
+function useCategoryMetrics(dateRange: DateRange) {
   return useQuery({
     queryKey: [
       'category_metrics',

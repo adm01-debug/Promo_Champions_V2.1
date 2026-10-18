@@ -1,5 +1,3 @@
-import { cn } from '@/lib/utils';
-
 export const SpeedometerSkeleton = () => (
   <div className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 p-5 overflow-hidden animate-pulse">
     <div className="flex items-center justify-between mb-3">
@@ -20,30 +18,6 @@ export const SpeedometerSkeleton = () => (
           <div className="h-2 w-14 rounded bg-muted/30" />
         </div>
       </div>
-    </div>
-  </div>
-);
-
-export const ComparativeStripSkeleton = ({ className }: { className?: string }) => (
-  <div
-    className={cn(
-      'rounded-xl border border-border/50 bg-gradient-to-r from-card/80 via-card to-card/80 p-4 animate-pulse',
-      className
-    )}
-  >
-    <div className="flex items-center gap-2 mb-3">
-      <div className="h-px flex-1 bg-border/40" />
-      <div className="h-3 w-40 rounded bg-muted/40" />
-      <div className="h-px flex-1 bg-border/40" />
-    </div>
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="space-y-2">
-          <div className="h-2.5 w-16 rounded bg-muted/40" />
-          <div className="h-4 w-24 rounded bg-muted/50" />
-          <div className="h-2.5 w-12 rounded bg-muted/30" />
-        </div>
-      ))}
     </div>
   </div>
 );

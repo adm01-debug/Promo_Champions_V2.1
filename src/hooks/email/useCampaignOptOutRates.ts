@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 /** Linha agregada de taxa de descadastro por campanha de e-mail em massa. */
-export interface CampaignOptOutRate {
+interface CampaignOptOutRate {
   job_id: string;
   prompt: string;
   created_at: string;

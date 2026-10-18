@@ -32,7 +32,7 @@ export function extractCategories(orders: Client360Data['orders'] | undefined): 
   return Array.from(cats);
 }
 
-export interface FilterArgs {
+interface FilterArgs {
   searchTerm: string;
   statusFilter: string;
   categoryFilter: string;

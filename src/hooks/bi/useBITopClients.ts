@@ -23,7 +23,7 @@ export interface TopCompanyData {
   ordersCount: number;
 }
 
-export interface BITopClientsData {
+interface BITopClientsData {
   topClients: TopClientData[];
   supplierSales: SupplierSalesData[];
   topCompanies: TopCompanyData[];

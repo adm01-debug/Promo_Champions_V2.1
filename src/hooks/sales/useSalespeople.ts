@@ -29,7 +29,7 @@ export interface Salesperson {
   notify_sales_email?: boolean;
 }
 
-export interface SalespersonWithStats extends Salesperson {
+interface SalespersonWithStats extends Salesperson {
   totalSales: number;
   completedSales: number;
   goalAmount: number;
@@ -38,7 +38,7 @@ export interface SalespersonWithStats extends Salesperson {
   rank: number;
 }
 
-export function getDateRange(period: PeriodFilter): { start: Date; end: Date } {
+function getDateRange(period: PeriodFilter): { start: Date; end: Date } {
   const now = new Date();
   switch (period) {
     case 'week':

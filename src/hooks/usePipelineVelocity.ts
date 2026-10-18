@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { WON_SALE_STATUSES } from '@/constants';
 import { startOfMonth, endOfMonth, differenceInHours } from 'date-fns';
 
-export interface VelocityData {
+interface VelocityData {
   salespersonId: string;
   salespersonName: string;
   avgCycleDays: number;

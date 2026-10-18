@@ -25,7 +25,7 @@ export interface CampaignDeliveryStatRow {
 export type DeliveryHealth = 'ok' | 'lento' | 'travado' | 'falhando';
 
 /** Limiares de classificação (segundos / percentuais). */
-export const DELIVERY_THRESHOLDS = {
+const DELIVERY_THRESHOLDS = {
   /** p95 acima disso indica fila lenta. */
   slowP95Seconds: 900,
   /** Sem envio há mais tempo que isso, com pendentes, indica campanha travada. */
@@ -114,7 +114,7 @@ export function formatDuration(seconds: number): string {
 }
 
 /** Resumo agregado exibido no topo do card. */
-export interface DeliverySummary {
+interface DeliverySummary {
   campaigns: number;
   sent: number;
   failed: number;

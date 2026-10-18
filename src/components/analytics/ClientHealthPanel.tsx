@@ -78,7 +78,7 @@ function computeHealthScore(client: {
   return { score, category, factors };
 }
 
-export const useClientHealthScores = () => {
+const useClientHealthScores = () => {
   return useQuery<ClientHealth[]>({
     queryKey: ['client-health-scores'],
     queryFn: async () => {

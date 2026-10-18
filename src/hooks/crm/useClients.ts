@@ -9,7 +9,7 @@ import type { TableInsert, TableUpdate } from '@/lib/supabase/typed-payloads';
 
 export type { Client } from '@/types';
 
-export interface UseClientsOptions {
+interface UseClientsOptions {
   segment?: string;
 }
 

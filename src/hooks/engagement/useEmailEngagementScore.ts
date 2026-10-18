@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { EngagementTier } from '@/components/engagement/EmailScore/engagementScoreHelpers';
 
-export interface EmailEngagementScore {
+interface EmailEngagementScore {
   id: string;
   sale_id: string;
   score: number;
@@ -51,26 +51,6 @@ export function useEmailEngagementScore(saleId?: string) {
         .maybeSingle();
       if (error) throw error;
       return data as EmailEngagementScore | null;
-    },
-    enabled: Boolean(saleId),
-    staleTime: 60_000,
-  });
-}
-
-export function useEngagementScoreHistory(saleId?: string, days = 30) {
-  return useQuery({
-    queryKey: ['email-engagement-history', saleId, days],
-    queryFn: async () => {
-      if (!saleId) return [];
-      const since = new Date(Date.now() - days * 86400000).toISOString();
-      const { data, error } = await supabase
-        .from('email_engagement_score_history')
-        .select('captured_at, score, tier')
-        .eq('sale_id', saleId)
-        .gte('captured_at', since)
-        .order('captured_at', { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as EngagementHistoryPoint[];
     },
     enabled: Boolean(saleId),
     staleTime: 60_000,

@@ -65,7 +65,7 @@ async function streamRequest(opts: StreamOptions): Promise<void> {
   }
 }
 
-export interface UsePersonalAssistantResult {
+interface UsePersonalAssistantResult {
   briefing: string;
   messages: AssistantChatMessage[];
   isStreaming: boolean;

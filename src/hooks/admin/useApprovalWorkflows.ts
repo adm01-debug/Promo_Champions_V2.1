@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import type { TableInsert } from '@/lib/supabase/typed-payloads';
 
-export interface ApprovalWorkflow {
+interface ApprovalWorkflow {
   id: string;
   name: string;
   workflow_type: string;
@@ -32,16 +32,6 @@ export interface ApprovalRequest {
   expires_at: string | null;
   resolved_at: string | null;
   created_at: string;
-}
-
-export interface ApprovalDecision {
-  id: string;
-  request_id: string;
-  approver_id: string;
-  decision: string;
-  comments: string | null;
-  level: number;
-  decided_at: string;
 }
 
 export function useApprovalWorkflows() {

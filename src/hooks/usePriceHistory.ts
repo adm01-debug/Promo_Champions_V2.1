@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface PriceHistory {
+interface PriceHistory {
   id: string;
   supplier_product_id: string;
   product_id: string;

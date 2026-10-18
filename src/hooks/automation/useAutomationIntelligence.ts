@@ -19,7 +19,7 @@ export interface AutomationSuggestion {
   };
 }
 
-export interface AutomationROI {
+interface AutomationROI {
   total_runs_30d: number;
   success_rate_pct: number;
   avg_duration_ms: number;

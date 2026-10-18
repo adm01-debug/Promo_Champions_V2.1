@@ -1,4 +1,4 @@
-export const AUTO_PAUSE_REASON_LABEL: Record<string, string> = {
+const AUTO_PAUSE_REASON_LABEL: Record<string, string> = {
   reply_detected: 'Resposta detectada',
   bounce: 'E-mail retornou (bounce)',
   unsubscribe: 'Descadastro',

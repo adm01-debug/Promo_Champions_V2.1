@@ -12,10 +12,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-export type AlertFrequency = 'daily' | 'weekly' | 'realtime';
-export type GaugeMode = 'standard' | 'compact' | 'kilo';
+type AlertFrequency = 'daily' | 'weekly' | 'realtime';
+type GaugeMode = 'standard' | 'compact' | 'kilo';
 
-export interface DashboardSettingsPatch {
+interface DashboardSettingsPatch {
   minVal?: number;
   customMax?: number | null;
   oppThreshold?: number;

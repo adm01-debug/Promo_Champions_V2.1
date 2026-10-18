@@ -4,7 +4,6 @@ import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import { captureException } from '@/lib/errorTracking';
 
-import { formatBRL } from '@/lib/money';
 interface KPIData {
   totalRevenue: number;
   totalSales: number;
@@ -113,92 +112,5 @@ export const useDashboardKPIs = () => {
     gcTime: 30 * 60 * 1000,
     retry: 2,
     retryDelay: attempt => Math.min(attempt * 1000, 5000),
-  });
-};
-
-export interface DetailedKPI {
-  title: string;
-  value: string;
-  change: number;
-  previousValue: string;
-  icon: string;
-}
-
-export const useDetailedKPIs = () => {
-  return useQuery({
-    queryKey: ['detailed-kpis'],
-    queryFn: async (): Promise<DetailedKPI[]> => {
-      try {
-        const { data, error } = await supabase.rpc('get_detailed_kpis');
-        if (error) throw error;
-
-        const {
-          current_avg_ticket,
-          prev_avg_ticket,
-          current_conversion,
-          prev_conversion,
-          avg_closing_days,
-          return_rate,
-          // eslint-disable-next-line no-restricted-syntax
-        } = data as unknown as {
-          current_avg_ticket: number;
-          prev_avg_ticket: number;
-          current_conversion: number;
-          prev_conversion: number;
-          avg_closing_days: number;
-          return_rate: number;
-        };
-
-        return [
-          {
-            title: 'Ticket Médio',
-            value: `${formatBRL(current_avg_ticket)}`,
-            previousValue: `${formatBRL(prev_avg_ticket)}`,
-            change: calculateChange(current_avg_ticket, prev_avg_ticket),
-            icon: 'Receipt',
-          },
-          {
-            title: 'Taxa de Conversão',
-            value: `${current_conversion.toFixed(1)}%`,
-            previousValue: `${prev_conversion.toFixed(1)}%`,
-            change: calculateChange(current_conversion, prev_conversion),
-            icon: 'Percent',
-          },
-          {
-            title: 'Tempo Médio',
-            value: `${Math.round(avg_closing_days)} dias`,
-            previousValue: 'N/A',
-            change: 0,
-            icon: 'Clock',
-          },
-          {
-            title: 'Taxa de Retorno',
-            value: `${return_rate.toFixed(1)}%`,
-            previousValue: 'N/A',
-            change: 0,
-            icon: 'RotateCcw',
-          },
-          {
-            title: 'Ticket Recorrente',
-            value: `${formatBRL(current_avg_ticket * 0.7)}`,
-            previousValue: `${formatBRL(prev_avg_ticket * 0.7)}`,
-            change: calculateChange(current_avg_ticket * 0.7, prev_avg_ticket * 0.7),
-            icon: 'CreditCard',
-          },
-          {
-            title: 'LTV Médio',
-            value: `${formatBRL(current_avg_ticket * 3)}`,
-            previousValue: `${formatBRL(prev_avg_ticket * 3)}`,
-            change: calculateChange(current_avg_ticket * 3, prev_avg_ticket * 3),
-            icon: 'Wallet',
-          },
-        ];
-      } catch (error) {
-        captureException(error, 'useDetailedKPIs');
-        throw error;
-      }
-    },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
   });
 };

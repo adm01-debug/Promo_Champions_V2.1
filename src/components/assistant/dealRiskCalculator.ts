@@ -11,7 +11,7 @@ export interface RiskLevel {
   action: { text: string; icon: string };
 }
 
-export function getRecommendedAction(
+function getRecommendedAction(
   status: string,
   daysWithoutActivity: number | null,
   _daysInStage: number | null,

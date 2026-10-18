@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export interface ABTest {
+interface ABTest {
   id: string;
   name: string;
   description: string | null;
@@ -17,7 +17,7 @@ export interface ABTest {
   created_at: string;
 }
 
-export interface ABTestResult {
+interface ABTestResult {
   variant: 'a' | 'b';
   cadence_name: string;
   enrolled: number;

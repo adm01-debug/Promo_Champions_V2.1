@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 import { CACHE_TIMES } from '@/constants';
 
-export interface TeamMember {
+interface TeamMember {
   id: string;
   name: string;
   email: string | null;
@@ -11,7 +11,7 @@ export interface TeamMember {
   avatar_url: string | null;
 }
 
-export interface TeamCloser {
+interface TeamCloser {
   id: string;
   closer_id: string;
   salesperson: TeamMember;

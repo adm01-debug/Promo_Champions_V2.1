@@ -1,19 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { OrderStatus } from '@/components/orders/orderHelpers';
-import type { StageState, TrackingStageKey } from '@/lib/orderTracking/stages';
 
 /**
  * Contrato legado do componente de timeline granular. A listagem atual não o
  * preenche porque o banco só registra o status real de pedido e seus eventos.
  */
-export interface TrackingStageProgress {
-  key: TrackingStageKey;
-  state: StageState;
-  startedAt: string | null;
-  completedAt: string | null;
-  note?: string | null;
-}
 
 export interface TrackingOrder {
   id: string;

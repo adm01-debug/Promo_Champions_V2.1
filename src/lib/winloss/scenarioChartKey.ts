@@ -24,7 +24,7 @@ export interface ScenarioChartKeyPoint {
   isForecast: boolean;
 }
 
-export interface ScenarioChartKeyInput {
+interface ScenarioChartKeyInput {
   data: ScenarioChartKeyPoint[];
   fitN: number;
   bandMode: BandMode;

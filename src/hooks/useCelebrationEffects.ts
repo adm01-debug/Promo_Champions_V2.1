@@ -6,7 +6,7 @@ type ConfettiFunction =
 const COLORS_LEVEL_UP = ['#FFD700', '#FFA500', '#FF6347', '#9400D3', '#00CED1'];
 const COLORS_STREAK = ['#FFD700', '#FFEC8B', '#FFC125', '#DAA520', '#F0E68C'];
 
-export type CelebrationType = 'meta' | 'levelup' | 'record';
+type CelebrationType = 'meta' | 'levelup' | 'record';
 
 export function useCelebrationEffects(playSound: () => void) {
   const [activeCelebration, setActiveCelebration] = useState<CelebrationType | null>(

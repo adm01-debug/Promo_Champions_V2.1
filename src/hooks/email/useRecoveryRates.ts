@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 /** Recuperação agregada por campanha de e-mail em massa. */
-export interface CampaignRecoveryRate {
+interface CampaignRecoveryRate {
   job_id: string;
   prompt: string | null;
   created_at: string;
@@ -14,7 +14,7 @@ export interface CampaignRecoveryRate {
 }
 
 /** Recuperação agregada por tipo de falha. */
-export interface FailureTypeRecoveryRate {
+interface FailureTypeRecoveryRate {
   failure_type: string;
   failed_total: number;
   recovered_count: number;

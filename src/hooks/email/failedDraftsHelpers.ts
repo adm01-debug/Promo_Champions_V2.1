@@ -95,7 +95,7 @@ export function humanizeError(error: string | null): string {
   return error.length > 140 ? `${error.slice(0, 140)}…` : error;
 }
 
-export interface FailureSummary {
+interface FailureSummary {
   total: number;
   permanent: number;
   exhausted: number;

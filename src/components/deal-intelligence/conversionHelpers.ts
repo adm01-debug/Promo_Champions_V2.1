@@ -41,4 +41,3 @@ export const impactLabel: Record<'low' | 'medium' | 'high', string> = {
 };
 
 export const formatPct = (n: number) => `${(Number(n) || 0).toFixed(1)}%`;
-export const formatDays = (n: number) => `${(Number(n) || 0).toFixed(1)}d`;

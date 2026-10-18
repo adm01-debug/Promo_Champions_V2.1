@@ -7,11 +7,9 @@ import { logger } from '@/lib/log/logger';
 const log = logger.for('useNextBestAction');
 
 import { formatBRL } from '@/lib/money';
-export type NextActionPriority = 'high' | 'medium' | 'low';
-export type NextActionCategory =
-  'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
-export type NextActionChannel =
-  'phone' | 'email' | 'linkedin' | 'whatsapp' | 'in_person' | null;
+type NextActionPriority = 'high' | 'medium' | 'low';
+type NextActionCategory = 'urgent' | 'growth' | 'retention' | 'prospecting' | 'admin';
+type NextActionChannel = 'phone' | 'email' | 'linkedin' | 'whatsapp' | 'in_person' | null;
 
 export interface NextBestAction {
   title: string;
@@ -30,7 +28,7 @@ export interface NextBestAction {
   dealName?: string;
 }
 
-export interface NextBestActionResult {
+interface NextBestActionResult {
   insight: string;
   summary?: { totalDeals: number; atRisk: number; goalProgress: number };
   suggestions: NextBestAction[];

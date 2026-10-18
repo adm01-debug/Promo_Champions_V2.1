@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { startOfDay, endOfDay } from 'date-fns';
 
-export interface ActivityGoal {
+interface ActivityGoal {
   id: string;
   salesperson_id: string;
   calls_goal: number;

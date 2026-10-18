@@ -39,7 +39,7 @@ const alertedQueries = new Map<string, number>();
 const ALERT_COOLDOWN_MS = 30000; // 30 seconds cooldown per query
 
 // Configure alerts
-export function configureQueryAlerts(config: Partial<AlertConfig>) {
+function configureQueryAlerts(config: Partial<AlertConfig>) {
   alertConfig = { ...alertConfig, ...config };
 }
 
@@ -157,7 +157,7 @@ export function getQueryMetrics() {
 }
 
 // Clear metrics
-export function clearQueryMetrics() {
+function clearQueryMetrics() {
   queryMetricsStore.length = 0;
 }
 
@@ -195,7 +195,7 @@ export function useQueryPerformance<T>(
 }
 
 // Console logger for metrics (call manually or on interval)
-export function logQueryMetrics() {
+function logQueryMetrics() {
   const metrics = getQueryMetrics();
 
   log.info('query_metrics', {
@@ -216,7 +216,7 @@ export function logQueryMetrics() {
 }
 
 // Get current alert config
-export function getAlertConfig() {
+function getAlertConfig() {
   return { ...alertConfig };
 }
 

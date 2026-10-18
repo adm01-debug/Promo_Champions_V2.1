@@ -17,7 +17,7 @@ export interface AdminFeatureFlag {
   updated_at: string;
 }
 
-export interface FeatureFlagInput {
+interface FeatureFlagInput {
   key: string;
   description?: string | null;
   is_enabled?: boolean;

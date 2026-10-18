@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
-export interface RaceStreak {
+interface RaceStreak {
   streakDays: number;
   salesCount: number;
   lastSaleAt: string | null;

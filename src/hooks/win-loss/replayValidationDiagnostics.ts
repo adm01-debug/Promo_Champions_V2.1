@@ -11,9 +11,9 @@ import { MAX_REPLAY_IDS } from './validateReplayIds';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export type ReplayValidationReason = 'empty' | 'over_limit' | 'invalid_uuid' | 'unknown';
+type ReplayValidationReason = 'empty' | 'over_limit' | 'invalid_uuid' | 'unknown';
 
-export interface ReplayValidationDiagnostic {
+interface ReplayValidationDiagnostic {
   reason: ReplayValidationReason;
   message: string;
   totalRequested: number;
@@ -31,7 +31,7 @@ const truncate = (id: unknown): string => {
   return id.length > 8 ? `${id.slice(0, 8)}…` : id;
 };
 
-export function buildReplayValidationDiagnostic(
+function buildReplayValidationDiagnostic(
   ids: readonly unknown[],
   message: string,
   context?: Record<string, unknown>

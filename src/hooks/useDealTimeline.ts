@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export type TimelineEventType =
+type TimelineEventType =
   'activity' | 'stage_change' | 'task_completed' | 'outcome' | 'chat';
 
-export interface DealTimelineEvent {
+interface DealTimelineEvent {
   id: string;
   type: TimelineEventType;
   timestamp: string;

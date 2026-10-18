@@ -5,8 +5,8 @@ import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { differenceInDays, parseISO } from 'date-fns';
 import { toBusinessMonthStart } from '@/lib/date';
 
-export type AlertType = 'stagnant_deal' | 'inactive_client' | 'at_risk_goal';
-export type AlertSeverity = 'warning' | 'critical';
+type AlertType = 'stagnant_deal' | 'inactive_client' | 'at_risk_goal';
+type AlertSeverity = 'warning' | 'critical';
 
 export interface Alert {
   id: string;

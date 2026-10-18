@@ -1,12 +1,12 @@
-export type ConvSentiment = 'positive' | 'neutral' | 'negative' | 'mixed';
+type ConvSentiment = 'positive' | 'neutral' | 'negative' | 'mixed';
 export type ConvSource = 'call' | 'email' | 'meeting' | 'whatsapp';
 
-export interface ConvObjection {
+interface ConvObjection {
   text: string;
   category: 'preço' | 'timing' | 'autoridade' | 'necessidade' | 'concorrência' | 'outro';
 }
 
-export interface ConvNextStep {
+interface ConvNextStep {
   text: string;
   deadline_hint?: string;
 }

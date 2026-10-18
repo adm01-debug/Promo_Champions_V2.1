@@ -14,7 +14,7 @@ import { formatBRL as __formatBRL } from '@/lib/money';
 
 export type MarkupTier = 'excellent' | 'healthy' | 'critical' | 'unknown';
 
-export interface MarkupInfo {
+interface MarkupInfo {
   tier: MarkupTier;
   label: string;
   className: string;

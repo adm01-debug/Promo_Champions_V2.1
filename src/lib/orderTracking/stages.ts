@@ -18,9 +18,9 @@ import {
 } from 'lucide-react';
 
 import { formatBRL as __formatBRL } from '@/lib/money';
-export type TrackKey = 'operational' | 'financial' | 'post_sale';
+type TrackKey = 'operational' | 'financial' | 'post_sale';
 
-export type OperationalStage =
+type OperationalStage =
   | 'compras'
   | 'logistica_entrada'
   | 'triagem'
@@ -30,15 +30,15 @@ export type OperationalStage =
   | 'logistica_final'
   | 'entregue';
 
-export type FinancialStage = 'nf_emitida' | 'parcela_paga' | 'em_dia' | 'quitado';
+type FinancialStage = 'nf_emitida' | 'parcela_paga' | 'em_dia' | 'quitado';
 
-export type PostSaleStage = 'pos_venda' | 'suporte' | 'nps';
+type PostSaleStage = 'pos_venda' | 'suporte' | 'nps';
 
 export type TrackingStageKey = OperationalStage | FinancialStage | PostSaleStage;
 
 export type StageState = 'done' | 'current' | 'pending' | 'blocked';
 
-export interface StageDef {
+interface StageDef {
   key: TrackingStageKey;
   label: string;
   description: string;
@@ -47,7 +47,7 @@ export interface StageDef {
   order: number;
 }
 
-export interface TrackDef {
+interface TrackDef {
   key: TrackKey;
   label: string;
   icon: LucideIcon;

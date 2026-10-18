@@ -164,7 +164,7 @@ export function useDeleteNotification() {
   });
 }
 
-export interface SendNotificationInput {
+interface SendNotificationInput {
   user_id: string;
   type: string;
   title: string;

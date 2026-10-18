@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-export interface RankingNotification {
+interface RankingNotification {
   id: string;
   salesperson_id: string;
   rank: number;

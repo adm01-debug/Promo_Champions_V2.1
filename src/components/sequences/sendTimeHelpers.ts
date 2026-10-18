@@ -11,8 +11,3 @@ export function formatOptimizedFor(iso: string | null | undefined): string | nul
   const d = new Date(iso);
   return formatWindow(d.getDay(), d.getHours());
 }
-
-export function normalizeScore(score: number, max: number): number {
-  if (!max || max <= 0) return 0;
-  return Math.min(100, Math.round((score / max) * 100));
-}

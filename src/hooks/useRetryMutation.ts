@@ -24,7 +24,7 @@ interface CircuitBreakerConfig {
 
 // Exported as the single source of truth for default retry behavior.
 // Tests must reference these instead of duplicating literals.
-export const RETRY_DEFAULTS: Required<Omit<RetryConfig, 'onRetry' | 'retryCondition'>> = {
+const RETRY_DEFAULTS: Required<Omit<RetryConfig, 'onRetry' | 'retryCondition'>> = {
   maxRetries: 3,
   baseDelay: 1000,
   maxDelay: 30000,
@@ -34,12 +34,12 @@ const DEFAULT_RETRY_CONFIG = RETRY_DEFAULTS;
 
 // Maximum jitter as a fraction of the exponential delay (0.3 = up to +30%).
 // Exported so tests and callers can reference the single source of truth.
-export const JITTER_FACTOR = 0.3;
+const JITTER_FACTOR = 0.3;
 
 // Calculate delay with exponential backoff and jitter.
 // `rand` is injectable to allow deterministic testing of the jitter range.
 // Default uses Math.random for production behavior (fully backwards compatible).
-export function calculateBackoffDelay(
+function calculateBackoffDelay(
   attemptNumber: number,
   baseDelay: number,
   maxDelay: number,
@@ -52,7 +52,7 @@ export function calculateBackoffDelay(
 }
 
 // Check if error is retryable (network errors, 5xx server errors)
-export function isRetryableError(error: Error): boolean {
+function isRetryableError(error: Error): boolean {
   // Circuit breaker errors should not be retried
   if (error instanceof CircuitBreakerError) {
     return false;
@@ -93,10 +93,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 // Retry wrapper for async functions
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  config: RetryConfig = {}
-): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig = {}): Promise<T> {
   const {
     maxRetries = DEFAULT_RETRY_CONFIG.maxRetries,
     baseDelay = DEFAULT_RETRY_CONFIG.baseDelay,
@@ -196,24 +193,15 @@ export function useRetryMutation<TData, TError extends Error, TVariables, TConte
 }
 
 // Create retry-enabled mutation options
-export function createRetryMutationOptions<TData, _TError extends Error, TVariables>(
-  mutationFn: (variables: TVariables) => Promise<TData>,
-  retryConfig?: RetryConfig
-): { mutationFn: (variables: TVariables) => Promise<TData> } {
-  return {
-    mutationFn: (variables: TVariables) =>
-      withRetry(() => mutationFn(variables), retryConfig),
-  };
-}
 
 // Global retry configuration
 let globalRetryConfig: RetryConfig = { ...DEFAULT_RETRY_CONFIG };
 
-export function configureGlobalRetry(config: Partial<RetryConfig>): void {
+function configureGlobalRetry(config: Partial<RetryConfig>): void {
   globalRetryConfig = { ...globalRetryConfig, ...config };
 }
 
-export function getGlobalRetryConfig(): RetryConfig {
+function getGlobalRetryConfig(): RetryConfig {
   return { ...globalRetryConfig };
 }
 

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export interface DocumentSigner {
+interface DocumentSigner {
   id: string;
   document_id: string;
   name: string;
@@ -27,7 +27,7 @@ export interface DigitalSignature {
   document_signers?: DocumentSigner[];
 }
 
-export interface CreateDocumentInput {
+interface CreateDocumentInput {
   title: string;
   description?: string;
   signers?: { name: string; email: string }[];

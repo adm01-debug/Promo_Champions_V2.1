@@ -13,7 +13,7 @@ export interface RateLimitSetting {
   updated_at: string;
 }
 
-export interface RateLimitLog {
+interface RateLimitLog {
   id: string;
   identifier: string;
   identifier_type: string;
@@ -21,12 +21,6 @@ export interface RateLimitLog {
   request_count: number;
   blocked: boolean;
   created_at: string;
-}
-
-export interface RateLimitCheckResult {
-  allowed: boolean;
-  remaining: number;
-  reset_at: string;
 }
 
 // Hook para gerenciar configurações de rate limit

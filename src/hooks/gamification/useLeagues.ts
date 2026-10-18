@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'diamond' | 'legendary';
 
-export interface LeagueMember {
+interface LeagueMember {
   id: string;
   salesperson_id: string;
   name: string;

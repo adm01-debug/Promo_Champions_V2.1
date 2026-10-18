@@ -104,7 +104,6 @@ export {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  BreadcrumbEllipsis,
 };
 
 // Inline SVG components to avoid extra imports

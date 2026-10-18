@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { subDays } from 'date-fns';
 
-export interface ChurnOverdueBySellerRow {
+interface ChurnOverdueBySellerRow {
   salesperson_id: string;
   name: string;
   overdue: number;

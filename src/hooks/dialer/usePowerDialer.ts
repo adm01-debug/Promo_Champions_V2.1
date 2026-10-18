@@ -14,19 +14,7 @@ export type DialerQueue = {
   updated_at: string;
 };
 
-export type DialerQueueItem = {
-  id: string;
-  queue_id: string;
-  sale_id: string;
-  score: number;
-  queue_position: number;
-  status: 'pending' | 'calling' | 'done' | 'skipped' | 'snoozed';
-  snooze_until: string | null;
-  added_at: string;
-  completed_at: string | null;
-};
-
-export type CallLog = {
+type CallLog = {
   id: string;
   owner_id: string;
   sale_id: string | null;

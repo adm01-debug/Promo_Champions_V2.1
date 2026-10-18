@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 import type { RaceSeason } from '@/hooks/race/useRaceSeason';
 
-export type GhostStatus = 'ahead' | 'behind' | 'tied' | 'no-data';
+type GhostStatus = 'ahead' | 'behind' | 'tied' | 'no-data';
 
 export interface GhostCarResult {
   status: GhostStatus;

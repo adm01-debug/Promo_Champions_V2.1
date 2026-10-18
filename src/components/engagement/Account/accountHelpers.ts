@@ -2,7 +2,7 @@ import { Building2, Crown, Trophy, Star } from 'lucide-react';
 
 export type AccountTier = 'tier1' | 'tier2' | 'tier3' | string;
 
-export const ACCOUNT_TIER_META: Record<
+const ACCOUNT_TIER_META: Record<
   string,
   {
     label: string;

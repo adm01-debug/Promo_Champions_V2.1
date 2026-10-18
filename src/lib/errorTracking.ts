@@ -26,7 +26,6 @@ const BREADCRUMBS: {
   category?: string;
   data?: unknown;
 }[] = [];
-const MAX_BREADCRUMBS = 20;
 const FLUSH_INTERVAL = 30_000; // 30s
 const MAX_BUFFER = 50;
 let flushTimer: ReturnType<typeof setInterval> | null = null;
@@ -60,22 +59,6 @@ async function initSentry(): Promise<void> {
     }
   } catch {
     sentry = null;
-  }
-}
-
-export function addBreadcrumb(message: string, category?: string, data?: unknown): void {
-  BREADCRUMBS.push({ message, timestamp: Date.now(), category, data });
-  if (BREADCRUMBS.length > MAX_BREADCRUMBS) {
-    BREADCRUMBS.shift();
-  }
-  try {
-    sentry?.addBreadcrumb({
-      message,
-      category,
-      data: (data ?? {}) as Record<string, unknown>,
-    });
-  } catch {
-    /* nunca quebrar o caller por causa do SDK */
   }
 }
 

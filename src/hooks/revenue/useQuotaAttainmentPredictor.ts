@@ -6,7 +6,7 @@ export type QuotaRiskLevel = 'safe' | 'on_track' | 'at_risk' | 'critical';
 export type QuotaActionType =
   'close_deal' | 'generate_pipeline' | 'increase_ticket' | 'accelerate_stage';
 
-export interface QuotaForecast {
+interface QuotaForecast {
   id: string;
   salesperson_id: string;
   period_start: string;
@@ -26,7 +26,7 @@ export interface QuotaForecast {
   salesperson?: { name: string } | null;
 }
 
-export interface QuotaAction {
+interface QuotaAction {
   id: string;
   forecast_id: string;
   action_type: QuotaActionType;

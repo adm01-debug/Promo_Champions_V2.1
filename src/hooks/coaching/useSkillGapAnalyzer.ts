@@ -7,7 +7,7 @@ import type {
   SkillTrend,
 } from '@/components/coaching/skills/skillGapHelpers';
 
-export interface SkillAssessment {
+interface SkillAssessment {
   id: string;
   salesperson_id: string;
   salesperson_name?: string;
@@ -21,7 +21,7 @@ export interface SkillAssessment {
   factors: Record<string, number>;
 }
 
-export interface SkillTrack {
+interface SkillTrack {
   id: string;
   salesperson_id: string;
   salesperson_name?: string;

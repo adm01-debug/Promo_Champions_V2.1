@@ -12,18 +12,8 @@ interface SalespersonXP {
   updated_at: string;
 }
 
-interface XPHistory {
-  id: string;
-  salesperson_id: string;
-  xp_amount: number;
-  source_type: string;
-  source_id: string | null;
-  description: string | null;
-  created_at: string;
-}
-
 // XP thresholds per level (exponential growth)
-export const LEVEL_THRESHOLDS = [
+const LEVEL_THRESHOLDS = [
   0, // Level 1: 0 XP
   100, // Level 2: 100 XP
   250, // Level 3: 250 XP
@@ -47,29 +37,28 @@ export const LEVEL_THRESHOLDS = [
 ];
 
 // Level titles and colors
-export const LEVEL_INFO: Record<number, { title: string; color: string; emoji: string }> =
-  {
-    1: { title: 'Iniciante', color: 'from-gray-400 to-gray-500', emoji: '🌱' },
-    2: { title: 'Aprendiz', color: 'from-gray-500 to-gray-600', emoji: '📚' },
-    3: { title: 'Promissor', color: 'from-green-400 to-green-500', emoji: '⭐' },
-    4: { title: 'Competente', color: 'from-green-500 to-green-600', emoji: '💪' },
-    5: { title: 'Habilidoso', color: 'from-blue-400 to-blue-500', emoji: '🎯' },
-    6: { title: 'Experiente', color: 'from-blue-500 to-blue-600', emoji: '🔥' },
-    7: { title: 'Avançado', color: 'from-purple-400 to-purple-500', emoji: '⚡' },
-    8: { title: 'Expert', color: 'from-purple-500 to-purple-600', emoji: '🏅' },
-    9: { title: 'Mestre', color: 'from-amber-400 to-amber-500', emoji: '👑' },
-    10: { title: 'Grão-Mestre', color: 'from-amber-500 to-amber-600', emoji: '🎖️' },
-    11: { title: 'Campeão', color: 'from-orange-400 to-orange-500', emoji: '🏆' },
-    12: { title: 'Lendário', color: 'from-orange-500 to-red-500', emoji: '🌟' },
-    13: { title: 'Épico', color: 'from-red-400 to-red-500', emoji: '💎' },
-    14: { title: 'Mítico', color: 'from-red-500 to-pink-500', emoji: '🔮' },
-    15: { title: 'Imortal', color: 'from-pink-400 to-purple-500', emoji: '⚔️' },
-    16: { title: 'Divino', color: 'from-purple-500 to-indigo-500', emoji: '👼' },
-    17: { title: 'Celestial', color: 'from-indigo-400 to-blue-500', emoji: '✨' },
-    18: { title: 'Supremo', color: 'from-blue-500 to-cyan-500', emoji: '🌈' },
-    19: { title: 'Transcendente', color: 'from-cyan-400 to-teal-500', emoji: '🚀' },
-    20: { title: 'O Vendedor', color: 'from-yellow-400 to-amber-500', emoji: '👑' },
-  };
+const LEVEL_INFO: Record<number, { title: string; color: string; emoji: string }> = {
+  1: { title: 'Iniciante', color: 'from-gray-400 to-gray-500', emoji: '🌱' },
+  2: { title: 'Aprendiz', color: 'from-gray-500 to-gray-600', emoji: '📚' },
+  3: { title: 'Promissor', color: 'from-green-400 to-green-500', emoji: '⭐' },
+  4: { title: 'Competente', color: 'from-green-500 to-green-600', emoji: '💪' },
+  5: { title: 'Habilidoso', color: 'from-blue-400 to-blue-500', emoji: '🎯' },
+  6: { title: 'Experiente', color: 'from-blue-500 to-blue-600', emoji: '🔥' },
+  7: { title: 'Avançado', color: 'from-purple-400 to-purple-500', emoji: '⚡' },
+  8: { title: 'Expert', color: 'from-purple-500 to-purple-600', emoji: '🏅' },
+  9: { title: 'Mestre', color: 'from-amber-400 to-amber-500', emoji: '👑' },
+  10: { title: 'Grão-Mestre', color: 'from-amber-500 to-amber-600', emoji: '🎖️' },
+  11: { title: 'Campeão', color: 'from-orange-400 to-orange-500', emoji: '🏆' },
+  12: { title: 'Lendário', color: 'from-orange-500 to-red-500', emoji: '🌟' },
+  13: { title: 'Épico', color: 'from-red-400 to-red-500', emoji: '💎' },
+  14: { title: 'Mítico', color: 'from-red-500 to-pink-500', emoji: '🔮' },
+  15: { title: 'Imortal', color: 'from-pink-400 to-purple-500', emoji: '⚔️' },
+  16: { title: 'Divino', color: 'from-purple-500 to-indigo-500', emoji: '👼' },
+  17: { title: 'Celestial', color: 'from-indigo-400 to-blue-500', emoji: '✨' },
+  18: { title: 'Supremo', color: 'from-blue-500 to-cyan-500', emoji: '🌈' },
+  19: { title: 'Transcendente', color: 'from-cyan-400 to-teal-500', emoji: '🚀' },
+  20: { title: 'O Vendedor', color: 'from-yellow-400 to-amber-500', emoji: '👑' },
+};
 
 // XP rewards configuration
 export const XP_REWARDS = {
@@ -174,7 +163,7 @@ function applyXpConfig(rows: AppConfigRow[]) {
   }
 }
 
-export function useXpConfig() {
+function useXpConfig() {
   return useQuery({
     queryKey: ['app-config', 'xp'],
     queryFn: async () => {
@@ -232,28 +221,6 @@ export function useAllSalespeopleXP() {
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
-  });
-}
-
-export function useXPHistory(salespersonId?: string) {
-  return useQuery({
-    queryKey: ['xp-history', salespersonId],
-    queryFn: async () => {
-      if (!salespersonId) return [];
-
-      const { data, error } = await supabase
-        .from('xp_history')
-        .select('*')
-        .eq('salesperson_id', salespersonId)
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (error) throw error;
-      return data as XPHistory[];
-    },
-    enabled: !!salespersonId,
-    staleTime: 30 * 1000,
-    gcTime: 5 * 60 * 1000,
   });
 }
 

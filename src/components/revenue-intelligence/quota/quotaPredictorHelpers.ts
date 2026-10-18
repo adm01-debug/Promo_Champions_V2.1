@@ -1,12 +1,6 @@
 import type { RiskLevel } from '@/hooks/revenue/useQuotaAttainment';
 
 import { formatBRL } from '@/lib/money';
-export const RISK_COLOR: Record<RiskLevel, string> = {
-  safe: 'hsl(var(--success))',
-  on_track: 'hsl(var(--primary))',
-  at_risk: 'hsl(var(--warning))',
-  critical: 'hsl(var(--destructive))',
-};
 
 export const RISK_LABEL: Record<RiskLevel, string> = {
   safe: 'Seguro',
@@ -24,13 +18,6 @@ export const RISK_BADGE: Record<
   at_risk: 'outline',
   critical: 'destructive',
 };
-
-export function classifyRisk(prob: number): RiskLevel {
-  if (prob >= 0.8) return 'safe';
-  if (prob >= 0.5) return 'on_track';
-  if (prob >= 0.25) return 'at_risk';
-  return 'critical';
-}
 
 export function formatCurrency(v: number): string {
   return formatBRL(v);

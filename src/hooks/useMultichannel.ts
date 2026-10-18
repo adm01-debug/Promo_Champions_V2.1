@@ -5,9 +5,9 @@ import { toast } from 'sonner';
 import { toBusinessDate } from '@/lib/date';
 
 export type Channel = 'whatsapp' | 'email' | 'linkedin' | 'sms' | 'phone';
-export type InteractionStatus =
+type InteractionStatus =
   'sent' | 'delivered' | 'read' | 'replied' | 'failed' | 'scheduled';
-export type Direction = 'inbound' | 'outbound';
+type Direction = 'inbound' | 'outbound';
 
 export interface MessageTemplate {
   id: string;

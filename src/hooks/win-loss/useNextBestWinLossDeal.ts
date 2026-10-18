@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface NextBestWLDeal {
+interface NextBestWLDeal {
   saleId: string;
   accountId: string | null;
   clientName: string;

@@ -1,6 +1,6 @@
 import type { VariantPerformance } from '@/hooks/sequences/useStepVariants';
 
-export interface WinnerAnalysis {
+interface WinnerAnalysis {
   winnerLabel: 'A' | 'B' | null;
   confidence: number; // 0..100
   significant: boolean;

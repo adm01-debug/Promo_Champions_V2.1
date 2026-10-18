@@ -43,7 +43,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
 
-export interface SpeedometerProps {
+interface SpeedometerProps {
   value: number;
   min?: number;
   max: number;

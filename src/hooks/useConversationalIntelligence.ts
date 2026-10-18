@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
 
-export interface CIRecording {
+interface CIRecording {
   id: string;
   title: string;
   duration_seconds: number;
@@ -21,7 +21,7 @@ export interface CIRecording {
   key_topics?: string[];
 }
 
-export interface CIData {
+interface CIData {
   horizon_days: number;
   kpis: {
     total_calls: number;

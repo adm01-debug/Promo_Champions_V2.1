@@ -13,12 +13,12 @@ export interface DealHealthFactor {
   weight: number;
 }
 
-export interface DealHealthAction {
+interface DealHealthAction {
   title: string;
   priority: 'low' | 'medium' | 'high';
 }
 
-export interface DealHealthScore {
+interface DealHealthScore {
   id: string;
   sale_id: string;
   owner_id: string | null;

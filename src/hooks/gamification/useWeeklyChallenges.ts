@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toBusinessDate } from '@/lib/date';
 
-export interface WeeklyChallenge {
+interface WeeklyChallenge {
   id: string;
   title: string;
   description: string | null;
@@ -16,7 +16,7 @@ export interface WeeklyChallenge {
   created_at: string;
 }
 
-export interface ChallengeProgress {
+interface ChallengeProgress {
   id: string;
   challenge_id: string;
   salesperson_id: string;
@@ -73,7 +73,7 @@ export function useWeeklyChallenges() {
   });
 }
 
-export function useChallengeProgress(salespersonId?: string) {
+function useChallengeProgress(salespersonId?: string) {
   return useQuery({
     queryKey: ['challenge-progress', salespersonId],
     queryFn: async () => {

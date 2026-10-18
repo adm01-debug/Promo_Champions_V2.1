@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface SequenceEnrollment {
+interface SequenceEnrollment {
   id: string;
   sequence_id: string;
   contact_id: string;
@@ -16,17 +16,6 @@ export interface SequenceEnrollment {
   optimized_for_at: string | null;
   auto_paused_at: string | null;
   auto_pause_reason: string | null;
-}
-
-export interface SequenceStepExecution {
-  id: string;
-  enrollment_id: string;
-  step_id: string;
-  executed_at: string;
-  status: string;
-  channel: string | null;
-  error_message: string | null;
-  engagement: Record<string, unknown>;
 }
 
 export function useSequenceEnrollments(sequenceId: string | undefined) {

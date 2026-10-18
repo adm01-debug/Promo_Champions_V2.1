@@ -2,13 +2,13 @@ import { useState, useCallback, useEffect } from 'react';
 
 export type SecurityAlertSoundType = 'alarm' | 'siren' | 'beep' | 'urgent' | 'none';
 
-export interface SecurityAlertSoundOption {
+interface SecurityAlertSoundOption {
   id: SecurityAlertSoundType;
   label: string;
   description: string;
 }
 
-export const securityAlertSoundOptions: SecurityAlertSoundOption[] = [
+const securityAlertSoundOptions: SecurityAlertSoundOption[] = [
   { id: 'alarm', label: 'Alarme', description: 'Tom descendente de alerta' },
   { id: 'siren', label: 'Sirene', description: 'Som de sirene alternado' },
   { id: 'beep', label: 'Bipe', description: 'Bipes curtos repetidos' },

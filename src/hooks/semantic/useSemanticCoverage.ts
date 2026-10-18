@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface SemanticCoverageRow {
+interface SemanticCoverageRow {
   entity_type: string;
   total_rows: number;
   indexed_rows: number;

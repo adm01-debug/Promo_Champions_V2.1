@@ -3,7 +3,7 @@
  * Returns a stable key (used for grouping/filter) and a human label.
  */
 
-export interface ErrorGroup {
+interface ErrorGroup {
   key: string;
   label: string;
 }

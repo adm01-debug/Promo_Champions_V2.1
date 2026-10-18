@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { TaskAssignmentStatus } from '@/components/admin/task-console/taskConsoleHelpers';
 
-export interface TaskAssignmentRecord {
+interface TaskAssignmentRecord {
   id: string;
   catalog_id: string;
   assigned_to: string;

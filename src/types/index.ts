@@ -71,7 +71,7 @@ export interface User {
   timezone?: string;
 }
 
-export interface PipelineStage {
+interface PipelineStage {
   id: string;
   name: string;
   label?: string;
@@ -106,7 +106,7 @@ export interface Product {
 /**
  * Representa uma oportunidade de negócio no pipeline de vendas
  */
-export interface DealProduct {
+interface DealProduct {
   id: string;
   deal_id: string;
   product_id: string;
@@ -189,60 +189,14 @@ export interface DateRange {
   end: Date;
 }
 
-export interface MetricData {
-  label: string;
-  value: number;
-  change?: number;
-  trend?: 'up' | 'down' | 'stable';
-}
-
 // ===== FILTERS & PAGINATION =====
-
-export interface FilterOptions {
-  dateRange?: DateRange;
-  userId?: string;
-  teamId?: string;
-  stageId?: string;
-  status?: Deal['status'];
-  search?: string;
-}
-
-export interface PaginationParams {
-  page: number;
-  pageSize: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-}
 
 /**
  * Response padrão para queries paginadas
  * @template T - Tipo dos dados retornados
  */
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
 
 // ===== API RESPONSES =====
-
-export interface ApiResponse<T> {
-  data: T;
-  error?: string;
-  metadata?: {
-    total?: number;
-    page?: number;
-    pageSize?: number;
-  };
-}
-
-export interface ApiError {
-  code: string;
-  message: string;
-  details?: Record<string, unknown>;
-}
 
 export type DealStatus = Deal['status'];
 export type ActivityType = Activity['type'];

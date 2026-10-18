@@ -38,8 +38,6 @@ export const STREAK_MILESTONES = [
   },
 ] as const;
 
-export type StreakMilestoneType = (typeof STREAK_MILESTONES)[number]['type'];
-
 interface StreakAchievement {
   id: string;
   salesperson_id: string;
@@ -160,10 +158,6 @@ export function useCheckAndAwardStreakMilestone() {
       }
     },
   });
-}
-
-export function getStreakMilestoneInfo(streakType: string) {
-  return STREAK_MILESTONES.find(m => m.type === streakType);
 }
 
 export function getNextMilestone(currentStreak: number, achievedTypes: string[]) {

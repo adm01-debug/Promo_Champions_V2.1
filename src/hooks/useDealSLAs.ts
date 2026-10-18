@@ -4,14 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { differenceInHours, parseISO } from 'date-fns';
 
-export interface SLAConfig {
+interface SLAConfig {
   stage: string;
   maxHours: number;
   escalationHours: number;
   label: string;
 }
 
-export const DEFAULT_SLA_CONFIGS: SLAConfig[] = [
+const DEFAULT_SLA_CONFIGS: SLAConfig[] = [
   { stage: 'lead', maxHours: 24, escalationHours: 12, label: 'Lead' },
   { stage: 'qualified', maxHours: 48, escalationHours: 24, label: 'Qualificado' },
   { stage: 'proposal', maxHours: 72, escalationHours: 36, label: 'Proposta' },

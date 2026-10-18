@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { subDays } from 'date-fns';
 
-export interface StockForecast {
+interface StockForecast {
   productId: string;
   productName: string;
   currentStock: number;

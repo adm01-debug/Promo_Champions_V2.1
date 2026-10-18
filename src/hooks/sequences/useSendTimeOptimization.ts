@@ -2,39 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export interface BestSendWindow {
-  contact_id: string;
-  contact_type: string;
-  hour_of_day: number;
-  day_of_week: number;
-  opens: number;
-  clicks: number;
-  replies: number;
-  score: number;
-  rank: number;
-}
-
-export function useContactSendProfile(
-  contactId: string | undefined,
-  contactType: 'lead' | 'client' | undefined
-) {
-  return useQuery({
-    queryKey: ['contact-best-send-window', contactId, contactType],
-    queryFn: async () => {
-      if (!contactId || !contactType) return [];
-      const { data, error } = await supabase
-        .from('contact_best_send_window')
-        .select('*')
-        .eq('contact_id', contactId)
-        .eq('contact_type', contactType)
-        .order('rank', { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as BestSendWindow[];
-    },
-    enabled: !!contactId && !!contactType,
-  });
-}
-
 export function useToggleSendTimeOptimization() {
   const qc = useQueryClient();
   return useMutation({
@@ -85,28 +52,6 @@ export interface ScheduledSend {
   sent_at: string | null;
   error: string | null;
   created_at: string;
-}
-
-export function useSendTimeProfile(saleId: string | undefined) {
-  return useQuery({
-    queryKey: ['send-time-profile', saleId],
-    enabled: !!saleId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('send_time_profiles')
-        .select('*')
-        .eq('sale_id', saleId!)
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) return null;
-
-      return {
-        ...data,
-        hour_distribution: (data.hour_distribution as number[]) || [],
-        dow_distribution: (data.dow_distribution as number[]) || [],
-      } as SendTimeProfile;
-    },
-  });
 }
 
 export function useScheduleOptimalSend() {

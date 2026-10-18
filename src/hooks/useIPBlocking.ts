@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
-export interface BlockedIP {
+interface BlockedIP {
   id: string;
   ip_address: string;
   reason: string;
@@ -114,76 +114,6 @@ export function useBlockedIPs() {
 }
 
 // Hook para whitelist de IPs
-export function useIPWhitelist() {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-
-  const { data: whitelist, isLoading } = useQuery({
-    queryKey: ['ip-whitelist'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('ip_whitelist')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data as WhitelistedIP[];
-    },
-  });
-
-  const addToWhitelist = useMutation({
-    mutationFn: async ({
-      ip_address,
-      description,
-    }: {
-      ip_address: string;
-      description?: string;
-    }) => {
-      const { data, error } = await supabase
-        .from('ip_whitelist')
-        .insert({
-          ip_address,
-          description,
-          added_by: user?.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ip-whitelist'] });
-      toast.success('IP adicionado à whitelist');
-    },
-    onError: () => {
-      toast.error('Erro ao adicionar IP');
-    },
-  });
-
-  const removeFromWhitelist = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('ip_whitelist').delete().eq('id', id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ip-whitelist'] });
-      toast.success('IP removido da whitelist');
-    },
-    onError: () => {
-      toast.error('Erro ao remover IP');
-    },
-  });
-
-  return {
-    whitelist,
-    isLoading,
-    addToWhitelist: addToWhitelist.mutate,
-    removeFromWhitelist: removeFromWhitelist.mutate,
-    isAdding: addToWhitelist.isPending,
-    isRemoving: removeFromWhitelist.isPending,
-  };
-}
 
 // Re-export from security monitoring for backward compatibility
 export {

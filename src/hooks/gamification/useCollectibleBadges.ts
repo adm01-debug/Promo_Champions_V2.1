@@ -14,7 +14,7 @@ export interface CollectibleBadge {
   xp_reward: number;
 }
 
-export interface EarnedBadge {
+interface EarnedBadge {
   id: string;
   salesperson_id: string;
   badge_id: string;

@@ -24,7 +24,7 @@ export interface ConversationWithMatches extends Conversation {
   matchedMessages?: string[];
 }
 
-export interface DealContext {
+interface DealContext {
   dealId: string;
   clientName: string;
   productName: string;
@@ -257,7 +257,7 @@ export const useSalesAssistant = (
           }
         }
 
-        if (convId && assistantContent) {
+        if (assistantContent) {
           await saveMessage(convId, 'assistant', assistantContent);
         }
       } catch (error) {

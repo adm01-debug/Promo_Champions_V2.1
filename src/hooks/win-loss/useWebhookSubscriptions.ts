@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { updatePayload, insertPayload } from '@/lib/supabase/typed-payloads';
 
-export interface WebhookSubscription {
+interface WebhookSubscription {
   id: string;
   url: string;
   events: string[];

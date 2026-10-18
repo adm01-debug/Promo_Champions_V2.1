@@ -3,7 +3,7 @@ import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfWeek, endOfWeek } from 'date-fns';
 
-export interface WeeklyRankedPerson {
+interface WeeklyRankedPerson {
   id: string;
   name: string;
   avatar_url: string | null;

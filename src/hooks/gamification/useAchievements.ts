@@ -7,7 +7,7 @@ import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 
 // Extended achievement type matching database schema
-export interface AchievementRecord {
+interface AchievementRecord {
   id: string;
   salesperson_id: string;
   achievement_type: string;
@@ -37,13 +37,13 @@ export interface StreakRanking {
   totalGoalsAchieved?: number;
 }
 
-export interface SalespersonStreak {
+interface SalespersonStreak {
   current: number;
   best: number;
   lastAchievementDate: string | null;
 }
 
-export interface RecordAchievementResult {
+interface RecordAchievementResult {
   success: boolean;
   levelUpInfo?: {
     leveledUp: boolean;

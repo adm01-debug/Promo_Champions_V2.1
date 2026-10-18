@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface HealthFactor {
+interface HealthFactor {
   label: string;
   status: 'good' | 'warning' | 'bad';
   value: string;
@@ -27,7 +27,7 @@ export interface AccountHealth {
   };
 }
 
-export interface CustomerSuccessSummary {
+interface CustomerSuccessSummary {
   total_accounts: number;
   at_risk: number;
   critical: number;

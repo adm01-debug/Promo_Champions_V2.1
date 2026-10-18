@@ -17,7 +17,7 @@ export interface RaceCar {
   total_overtakes: number;
 }
 
-export type RaceCarInput = Omit<
+type RaceCarInput = Omit<
   Partial<RaceCar>,
   'id' | 'salesperson_id' | 'total_races' | 'total_wins' | 'total_overtakes'
 >;
