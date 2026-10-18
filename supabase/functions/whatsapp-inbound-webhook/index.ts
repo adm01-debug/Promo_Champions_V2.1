@@ -138,10 +138,15 @@ function parseStatusAck(event: EvolutionEvent): StatusAck[] {
       key?: EvolutionKey;
       update?: { status?: unknown };
       status?: unknown;
+      // Evolution v2 envia messages.update FLAT: {keyId, remoteJid, fromMe,
+      // status} — sem o envelope `key`/`update` do formato aninhado.
+      keyId?: unknown;
+      fromMe?: unknown;
     } | null;
     const key = data?.key;
-    if (!key || key.fromMe !== true) continue;
-    const providerMessageId = asString(key.id);
+    const providerMessageId = asString(key?.id) ?? asString(data?.keyId);
+    const fromMe = key?.fromMe === true || data?.fromMe === true;
+    if (!fromMe) continue;
     const status = asString(data?.update?.status) ?? asString(data?.status);
     if (providerMessageId && status) {
       acks.push({ providerMessageId, status });
@@ -152,11 +157,11 @@ function parseStatusAck(event: EvolutionEvent): StatusAck[] {
 
 function normalizeAckStatus(status: string): NormalizedMessageStatus | null {
   switch (status.toUpperCase()) {
-    case "DELIVERY_ACK":
-      return "delivered";
     case "READ":
-    case "PLAYED":
       return "read";
+    case "DELIVERY_ACK":
+    case "PLAYED":
+      return "delivered";
     case "ERROR":
       return "failed";
     case "SERVER_ACK":

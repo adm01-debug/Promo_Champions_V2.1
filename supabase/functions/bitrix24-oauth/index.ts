@@ -306,7 +306,13 @@ Deno.serve(
         );
       }
 
-      // Check connection status
+      // Check connection status — a function roda com verify_jwt=false (o
+      // callback OAuth chega do browser sem JWT), então o status exige um
+      // chamador autenticado/interno para não expor o estado da integração.
+      if (!isInternalServiceRequest(req)) {
+        await getUserClient(req);
+      }
+
       const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
       const { data: tokenData } = await supabase
