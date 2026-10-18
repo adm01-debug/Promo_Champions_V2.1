@@ -128,4 +128,40 @@ describe('useLoginRateLimiter', () => {
       attempts: 0,
     });
   });
+
+  it('descarta resposta atrasada de um e-mail anterior', async () => {
+    // Resposta do e-mail A chega DEPOIS da do e-mail B: o lockout mostrado
+    // deve ser o de B — sem a guarda, a resposta tardia de A sobrescreve.
+    const resolvers = new Map<string, (v: { data: unknown; error: null }) => void>();
+    rpc.mockImplementation(
+      (_fn: string, args: { p_email: string }) =>
+        new Promise(resolve => {
+          resolvers.set(args.p_email, resolve);
+        })
+    );
+
+    const { result } = renderHook(() => useLoginRateLimiter());
+
+    act(() => {
+      void result.current.checkLoginAttempts('a@example.com');
+      void result.current.checkLoginAttempts('b@example.com');
+    });
+
+    await act(async () => {
+      resolvers.get('b@example.com')?.({
+        data: [
+          { attempts: 5, lockout_until: new Date(Date.now() + 60_000).toISOString() },
+        ],
+        error: null,
+      });
+      resolvers.get('a@example.com')?.({
+        data: [{ attempts: 0, lockout_until: null }],
+        error: null,
+      });
+    });
+
+    // O status na tela é o de B (bloqueado), não o de A (livre, chegou depois).
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+    expect(result.current.lockoutStatus.attempts).toBe(5);
+  });
 });

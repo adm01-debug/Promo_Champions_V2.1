@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 const MAX_ATTEMPTS = 5;
@@ -20,10 +20,14 @@ export function useLoginRateLimiter() {
     remainingSeconds: 0,
     attempts: 0,
   });
+  // A consulta é disparada a cada mudança de e-mail; uma resposta atrasada
+  // do e-mail anterior não pode sobrescrever o status do e-mail atual.
+  const lastQueriedEmail = useRef<string | null>(null);
 
   const checkLoginAttempts = useCallback(
     async (email: string): Promise<LoginAttemptResult> => {
       const normalizedEmail = email.toLowerCase().trim();
+      lastQueriedEmail.current = normalizedEmail;
 
       const { data, error } = await supabase.rpc('get_login_lockout_status', {
         p_email: normalizedEmail,
@@ -50,7 +54,9 @@ export function useLoginRateLimiter() {
         remainingSeconds,
         attempts,
       };
-      setLockoutStatus(status);
+      if (lastQueriedEmail.current === normalizedEmail) {
+        setLockoutStatus(status);
+      }
       return { canAttempt: !status.isLocked, lockoutStatus: status };
     },
     []

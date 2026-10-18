@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,19 +27,29 @@ export function useWebAuthn() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState<WebAuthnCredential[]>([]);
+  // Credenciais são dados do usuário: resposta atrasada ou callback de
+  // closure antiga jamais escreve na sessão de outro usuário.
+  const userRef = useRef(user);
+  userRef.current = user;
+
+  useEffect(() => {
+    // Troca de usuário/logout: descarta a lista do usuário anterior.
+    setCredentials([]);
+  }, [user?.id]);
 
   const loadCredentials = useCallback(async () => {
-    if (!PASSKEYS_AVAILABLE || !user?.id) return;
+    const uid = userRef.current?.id;
+    if (!PASSKEYS_AVAILABLE || !uid) return;
     try {
       const { data, error } = await supabase.functions.invoke('webauthn', {
-        body: { action: 'list-credentials', userId: user.id },
+        body: { action: 'list-credentials', userId: uid },
       });
       if (error) throw error;
-      setCredentials(data.credentials || []);
+      if (userRef.current?.id === uid) setCredentials(data.credentials || []);
     } catch (error) {
       console.error('Error loading credentials:', error);
     }
-  }, [user?.id]);
+  }, []);
 
   const registerPasskey = useCallback(
     async (_friendlyName?: string): Promise<boolean> => {

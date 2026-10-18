@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -23,13 +23,40 @@ export const useMFA = () => {
   // Códigos de recuperação retornados pela RPC regenerate_backup_codes — só
   // existem em memória, nesta sessão, para o usuário copiar.
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
+  // Identidade atual via ref: respostas atrasadas e callbacks de closures
+  // antigas nunca escrevem estado de outro usuário nesta sessão.
+  const userRef = useRef(user);
+  userRef.current = user;
+  const fetchedForUser = useRef<string | null>(null);
 
   // Fetch MFA status via secure RPC (no secrets exposed)
   const fetchStatus = useCallback(async () => {
-    if (!user) {
-      // Sem usuário resolvido não há o que carregar — não deixar o skeleton preso.
+    const currentUser = userRef.current;
+    if (!currentUser) {
+      // Sem usuário: limpa TODO estado sensível — códigos de recuperação e
+      // status não podem sobreviver a logout/troca de sessão.
+      fetchedForUser.current = null;
+      setStatus(null);
+      setHasNativeTotp(false);
+      setBackupCodes(null);
+      setQrCodeUrl(null);
+      setTotpFactorId(null);
       setIsLoading(false);
       return;
+    }
+
+    const uid = currentUser.id;
+    const isCurrent = () => userRef.current?.id === uid;
+
+    if (fetchedForUser.current !== uid) {
+      // Troca de usuário: zera o estado do usuário anterior antes de buscar.
+      fetchedForUser.current = uid;
+      setStatus(null);
+      setHasNativeTotp(false);
+      setBackupCodes(null);
+      setQrCodeUrl(null);
+      setTotpFactorId(null);
+      setIsLoading(true);
     }
 
     try {
@@ -40,28 +67,31 @@ export const useMFA = () => {
       if (statusRes.error) throw statusRes.error;
 
       const row = Array.isArray(statusRes.data) ? statusRes.data[0] : statusRes.data;
-      setStatus(row as MFAStatus | null);
-      setHasNativeTotp(
-        factorsRes.data?.totp?.some(f => f.status === 'verified') ?? false
-      );
+      if (isCurrent()) {
+        setStatus(row as MFAStatus | null);
+        setHasNativeTotp(
+          factorsRes.data?.totp?.some(f => f.status === 'verified') ?? false
+        );
+      }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching MFA status:', error);
       }
     } finally {
-      setIsLoading(false);
+      if (isCurrent()) setIsLoading(false);
     }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     fetchStatus();
-  }, [fetchStatus]);
+  }, [user?.id, fetchStatus]);
 
   // Enroll TOTP no MFA nativo do Supabase (auth.mfa). O segredo é gerado pelo
   // GoTrue e nunca é gravado em plaintext em tabela pública. Retorna a URI
   // otpauth:// para o QR ser gerado localmente pelo componente.
   const initializeTOTP = useCallback(async (): Promise<{ qrUrl: string } | null> => {
-    if (!user) return null;
+    const uid = user?.id;
+    if (!uid) return null;
 
     try {
       // Limpa enrolls abandonados para não acumular fatores não verificados.
@@ -79,6 +109,9 @@ export const useMFA = () => {
 
       if (error) throw error;
       if (data.type !== 'totp') throw new Error('Tipo de fator inesperado');
+      // Usuário trocou no meio do enroll: o fator pertence a outra sessão,
+      // não publica QR/fator na tela atual.
+      if (userRef.current?.id !== uid) return null;
 
       setTotpFactorId(data.id);
       setQrCodeUrl(data.totp.uri);
@@ -95,7 +128,8 @@ export const useMFA = () => {
   // Verifica o código e conclui o enroll nativo (challengeAndVerify).
   const verifyAndEnableTOTP = useCallback(
     async (token: string): Promise<boolean> => {
-      if (!user) return false;
+      const uid = user?.id;
+      if (!uid) return false;
 
       if (!totpFactorId) {
         toast.error('Inicie a configuração novamente');
@@ -109,6 +143,7 @@ export const useMFA = () => {
         });
 
         if (error) throw error;
+        if (userRef.current?.id !== uid) return false;
 
         setTotpFactorId(null);
         setQrCodeUrl(null);
@@ -116,7 +151,7 @@ export const useMFA = () => {
         await supabase
           .from('user_mfa_settings')
           .upsert(
-            { user_id: user.id, migrated_to_native_mfa: true },
+            { user_id: uid, migrated_to_native_mfa: true },
             { onConflict: 'user_id' }
           );
 
@@ -269,11 +304,15 @@ export const useMFA = () => {
 
   // Regenerate backup codes via server-side RPC
   const regenerateBackupCodes = useCallback(async (): Promise<string[] | null> => {
-    if (!user) return null;
+    const uid = user?.id;
+    if (!uid) return null;
 
     try {
       const { data, error } = await supabase.rpc('regenerate_backup_codes');
       if (error) throw error;
+      // Códigos de recuperação do usuário anterior não podem ser exibidos
+      // na sessão nova.
+      if (userRef.current?.id !== uid) return null;
       setBackupCodes((data as string[] | null) ?? null);
       await fetchStatus();
       toast.success('Códigos de backup regenerados');
