@@ -9,11 +9,15 @@
 -- match dígito-a-dígito de upsert_client_from_quote
 -- (regexp_replace(phone, '\D', '', 'g')) e delegam às RPCs existentes.
 --
--- 1. public.has_phone_consent(p_phone, p_purpose): TRUE quando algum
---    cliente com esse telefone tem consentimento ativo para a finalidade
---    (por subject_email ou por subject_client_id).
--- 2. public.is_recipient_opted_out(p_phone): TRUE quando algum cliente com
---    esse telefone tem e-mail na lista de supressão (email_opt_outs).
+-- 1. public.has_phone_consent(p_phone, p_purpose): TRUE quando o telefone
+--    resolve para UM ÚNICO titular identificável (cliente com e-mail ou
+--    consent_records por subject_client_id) e esse titular tem consentimento
+--    ativo. Telefone compartilhado entre clientes distintos NÃO consente —
+--    consentir por proxy gravaria a chamada de um titular que nunca aceitou.
+-- 2. public.is_recipient_opted_out(p_phone): TRUE quando algum titular com
+--    esse telefone (em clients OU account_contacts) tem e-mail na lista de
+--    supressão (email_opt_outs). Cobrir só clients deixaria contatos de
+--    comitê (account_contacts) suprimidos recebendo WhatsApp/SMS.
 --
 -- Padrão hardening: SECURITY INVOKER (o chamador service_role enxerga
 -- todas as linhas; usuário autenticado fica limitado pelo RLS) +
@@ -44,6 +48,9 @@ AS $$
             AND c.revoked_at IS NULL
         )
       )
+    -- Telefone compartilhado entre clientes distintos não consente: o
+    -- consentimento de A não autoriza gravar a chamada de B.
+    HAVING count(DISTINCT cl.id) = 1
   );
 $$;
 
@@ -66,6 +73,14 @@ AS $$
       AND cl.deleted_at IS NULL
       AND regexp_replace(cl.phone, '\D', '', 'g') = regexp_replace(p_phone, '\D', '', 'g')
       AND public.is_email_opted_out(cl.email)
+  )
+  OR EXISTS (
+    SELECT 1
+    FROM public.account_contacts ac
+    WHERE ac.phone IS NOT NULL
+      AND ac.email IS NOT NULL
+      AND regexp_replace(ac.phone, '\D', '', 'g') = regexp_replace(p_phone, '\D', '', 'g')
+      AND public.is_email_opted_out(ac.email)
   );
 $$;
 

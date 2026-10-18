@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -112,7 +112,8 @@ function AdminSolicitacoesTitular() {
     [search, status, requestType, page]
   );
 
-  const { data, isLoading, isFetching, refetch } = useDataSubjectRequests(filters);
+  const { data, isLoading, isFetching, isError, error, refetch } =
+    useDataSubjectRequests(filters);
   const createMutation = useCreateDataSubjectRequest();
   const updateMutation = useUpdateDataSubjectRequest();
   const anonymizeMutation = useAnonymizeDataSubject();
@@ -120,6 +121,13 @@ function AdminSolicitacoesTitular() {
   const rows = data?.rows ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  // Mutações e filtros podem esvaziar a última página — volta para a última válida.
+  useEffect(() => {
+    if (page > totalPages - 1) {
+      setPage(Math.max(0, totalPages - 1));
+    }
+  }, [page, totalPages]);
 
   const handleCreate = async () => {
     try {
@@ -312,6 +320,24 @@ function AdminSolicitacoesTitular() {
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={`sk-${i}`} className="h-14 w-full rounded-lg" />
                 ))}
+              </div>
+            ) : isError ? (
+              <div className="py-10 text-center space-y-3">
+                <p className="text-sm text-destructive">
+                  Falha ao carregar a fila do titular
+                  {error ? `: ${error.message}` : '.'}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void refetch()}
+                  disabled={isFetching}
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 mr-2 ${isFetching ? 'animate-spin' : ''}`}
+                  />
+                  Tentar novamente
+                </Button>
               </div>
             ) : rows.length === 0 ? (
               <p className="py-10 text-center text-sm text-muted-foreground">
