@@ -80,6 +80,7 @@ import {
   AdminAlertasChurn,
   AdminHistoricoAlertasChurn,
   AdminSupressaoEmails,
+  AdminSolicitacoesTitular,
   MinhasPremiacoes,
   ApprovalWorkflows,
   Webhooks,
@@ -520,6 +521,14 @@ export function AppRoutes() {
                           element={
                             <Manager>
                               <AdminSupressaoEmails />
+                            </Manager>
+                          }
+                        />
+                        <Route
+                          path="/admin/solicitacoes-titular"
+                          element={
+                            <Manager>
+                              <AdminSolicitacoesTitular />
                             </Manager>
                           }
                         />

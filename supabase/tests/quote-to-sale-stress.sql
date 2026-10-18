@@ -76,12 +76,15 @@ BEGIN
   END LOOP;
 
   -- 50 conversões approved → PED-* (trigger cria order; RPC reusa)
+  -- O gatilho exige quote_items presentes ao disparar (guard de 20260718000005):
+  -- insere como 'pending', semeia os itens e só então transiciona p/ 'approved'.
   FOR i IN 1..50 LOOP
     INSERT INTO public.quotes (client_name, title, total_value, subtotal, status, source, created_by)
-    VALUES ('stress-app-' || i, 'stress-app-' || i, 200, 200, 'approved', 'manual', v_sp)
+    VALUES ('stress-app-' || i, 'stress-app-' || i, 200, 200, 'pending', 'manual', v_sp)
     RETURNING id INTO v_quote_id;
     INSERT INTO public.quote_items (quote_id, product_name, quantity, unit_price, total_price)
     VALUES (v_quote_id, 'item', 1, 200, 200);
+    UPDATE public.quotes SET status = 'approved' WHERE id = v_quote_id;
     PERFORM public.fn_convert_quote_to_sale(v_quote_id);
   END LOOP;
 
