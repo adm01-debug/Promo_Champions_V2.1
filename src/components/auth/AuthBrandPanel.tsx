@@ -1,11 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Trophy, Target, Flame, Sparkles } from 'lucide-react';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
+  const reducedMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: -40 }}
+      initial={reducedMotion ? false : { opacity: 0, x: -40 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className="hidden lg:flex flex-col gap-8 p-8"
@@ -13,8 +16,16 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
       <div className="flex items-center gap-3">
         <motion.div
           className="relative p-3 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600"
-          animate={{ boxShadow: ['0 0 20px #22d3ee', '0 0 40px #a855f7'] }}
-          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
+          animate={
+            reducedMotion
+              ? undefined
+              : { boxShadow: ['0 0 20px #22d3ee', '0 0 40px #a855f7'] }
+          }
+          transition={
+            reducedMotion
+              ? undefined
+              : { duration: 3, repeat: Infinity, repeatType: 'reverse' }
+          }
         >
           <Crown className="h-7 w-7 text-white" />
         </motion.div>
@@ -33,7 +44,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
 
       <div className="space-y-6">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
           className="text-5xl xl:text-6xl font-black leading-[1.05]"
@@ -68,10 +79,10 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
         ].map((s, i) => (
           <motion.div
             key={s.label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 + i * 0.1 }}
-            whileHover={{ y: -4, scale: 1.03 }}
+            whileHover={reducedMotion ? undefined : { y: -4, scale: 1.03 }}
             className="relative p-4 rounded-xl border bg-white/[0.02] backdrop-blur-sm overflow-hidden group"
             style={{ borderColor: `${s.color}40` }}
           >
@@ -106,7 +117,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
         ].map((t, i) => (
           <motion.div
             key={t.label}
-            initial={{ opacity: 0, scale: 0.5 }}
+            initial={reducedMotion ? false : { opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.8 + i * 0.1, type: 'spring' }}
             className="flex items-center gap-2"

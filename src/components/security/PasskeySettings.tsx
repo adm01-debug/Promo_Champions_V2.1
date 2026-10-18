@@ -136,7 +136,7 @@ export const PasskeySettings: React.FC = () => {
         {/* Register Button */}
         <Button onClick={handleRegister} disabled={isLoading} className="w-full">
           {isLoading ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            <Loader2 className="h-4 w-4 mr-2 motion-safe:animate-spin" />
           ) : (
             <Plus className="h-4 w-4 mr-2" />
           )}
@@ -194,7 +194,7 @@ export const PasskeySettings: React.FC = () => {
                           disabled={deletingId === cred.id}
                         >
                           {deletingId === cred.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Loader2 className="h-4 w-4 motion-safe:animate-spin" />
                           ) : (
                             <Trash2 className="h-4 w-4" />
                           )}
