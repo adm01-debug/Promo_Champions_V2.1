@@ -52,7 +52,8 @@ jobs:
       - name: Conferir versão do servidor
         if: steps.gate.outputs.run == 'true'
         run: |
-          docker run --rm postgres:17 psql "$SUPABASE_DB_URL" -tAc 'SHOW server_version' || true
+          docker run --rm -e SUPABASE_DB_URL postgres:17 \
+            sh -c 'psql "$SUPABASE_DB_URL" -tAc "SHOW server_version"' || true
           docker run --rm postgres:17 pg_dump --version
 
       - name: pg_dump → artifact
@@ -61,10 +62,12 @@ jobs:
           set -euo pipefail
           STAMP=$(date -u +%Y%m%dT%H%M%SZ)
           FILE="promo-champions-db-${STAMP}.dump"
-          docker run --rm -v "$GITHUB_WORKSPACE:/out" postgres:17 \
-            pg_dump "$SUPABASE_DB_URL" \
-            --format=custom --compress=9 --no-owner --no-privileges \
-            --file="/out/$FILE"
+          # A URL (com senha) entra por env, não por argv do pg_dump.
+          docker run --rm -e SUPABASE_DB_URL -e FILE="$FILE" \
+            -v "$GITHUB_WORKSPACE:/out" postgres:17 \
+            sh -c 'pg_dump "$SUPABASE_DB_URL" \
+              --format=custom --compress=9 --no-owner --no-privileges \
+              --file="/out/$FILE"'
           echo "BACKUP_FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh "$FILE"
 

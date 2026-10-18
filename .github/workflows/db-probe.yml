@@ -40,12 +40,20 @@ jobs:
       - name: Gerar probes
         run: |
           node scripts/db-audit/gen-migration-probes.mjs "$SINCE" > probe.sql
-          grep -q 'EXISTS' probe.sql || {
-            echo "::error::Zero probes geradas para since=$SINCE — sondagem seria inócua."
+          # Cada probe é uma linha ('versão', ...) na cláusula VALUES — a
+          # palavra EXISTS aparece no template mesmo sem probes, então
+          # grep 'EXISTS' não serve de guarda.
+          PROBES=$(grep -cE "^\s*\('[0-9]+'," probe.sql || true)
+          echo "probes geradas: $PROBES"
+          [ "$PROBES" -gt 0 ] || {
+            echo "::error::Zero probes para since=$SINCE — sondagem seria inócua."
             exit 1; }
 
       - name: Rodar sondagem (read-only)
+        # -e propaga a URL por env (não por argv do processo) e sh -c expande
+        # dentro do container — a credencial não aparece em metadata/argv.
         run: >
-          docker run --rm -v "$PWD/probe.sql:/probe.sql:ro"
+          docker run --rm -e SUPABASE_DB_URL
+          -v "$PWD/probe.sql:/probe.sql:ro"
           postgres:17
-          psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1 -f /probe.sql
+          sh -c 'psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1 -f /probe.sql'

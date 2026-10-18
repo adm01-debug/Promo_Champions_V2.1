@@ -14,7 +14,9 @@ const MIG_DIR = 'supabase/migrations';
 const since = process.argv[2] ?? '20260901000000';
 
 const ID = String.raw`[a-zA-Z_][a-zA-Z0-9_]*|"[^"]+"`;
-const SCH = String.raw`(?:(public|extensions|cron|auth|storage)\.)?`;
+// Qualquer schema — whitelist anterior perdia objetos reais (ex.: ON realtime.messages
+// casava "realtime" como nome da tabela e a probe sondava a combinação errada).
+const SCH = String.raw`(?:(${ID})\.)?`;
 
 const PATTERNS = [
   ['function', new RegExp(String.raw`create\s+(?:or\s+replace\s+)?function\s+${SCH}(${ID})`, 'gi'), 'fn'],
@@ -26,7 +28,9 @@ const PATTERNS = [
   ['trigger',  new RegExp(String.raw`create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+(${ID})[^;]*?\bon\s+${SCH}(${ID})`, 'gi'), 'trg'],
   ['cron',     /cron\.schedule\s*\(\s*'([^']+)'/gi, 'cron'],
   ['policy',   new RegExp(String.raw`create\s+policy\s+(${ID})\s+on\s+${SCH}(${ID})`, 'gi'), 'pol'],
-  ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'idx'],
+  // Índice: captura a tabela do ON para a probe casar schemaname+tablename
+  // (índices de mesmo nome em tabelas/schemas diferentes não colidem).
+  ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})[^;]*?\bon\s+(?:only\s+)?(?:(${ID})\.)?(${ID})`, 'gi'), 'idx'],
   ['constraint', new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+constraint\s+(${ID})`, 'gi'), 'con'],
   // Forma `ALTER TABLE t DROP CONSTRAINT a, ADD CONSTRAINT b` — o ADD não vem
   // colado no nome da tabela, então o pattern acima não o vê.
@@ -87,7 +91,7 @@ for (const f of files) {
       } else if (kind === 'cron') {
         schema = ''; obj = groups[0];
       } else if (kind === 'index') {
-        schema = ''; obj = groups[0];
+        obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
       } else {
         schema = groups[0] ?? 'public'; obj = groups[1];
       }
@@ -125,7 +129,7 @@ SELECT version || '|' || kind || '|' ||
          WHEN 'trigger'    THEN EXISTS(SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE t.tgname=probes.obj AND c.relname=probes.aux AND n.nspname=probes.schema AND NOT t.tgisinternal)::text
          WHEN 'cron'       THEN EXISTS(SELECT 1 FROM cron.job WHERE jobname=probes.obj)::text
          WHEN 'policy'     THEN EXISTS(SELECT 1 FROM pg_policies WHERE schemaname=probes.schema AND policyname=probes.obj AND tablename=probes.aux)::text
-         WHEN 'index'      THEN EXISTS(SELECT 1 FROM pg_indexes WHERE indexname=probes.obj)::text
+         WHEN 'index'      THEN EXISTS(SELECT 1 FROM pg_indexes WHERE indexname=probes.obj AND schemaname=probes.schema AND tablename=probes.aux)::text
          WHEN 'constraint' THEN EXISTS(SELECT 1 FROM pg_constraint WHERE conname=probes.obj)::text
          WHEN 'column'     THEN EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema=probes.schema AND table_name=probes.aux AND column_name=probes.obj)::text
          WHEN 'extension'  THEN EXISTS(SELECT 1 FROM pg_extension WHERE extname=probes.obj)::text
