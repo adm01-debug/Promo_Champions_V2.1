@@ -23,11 +23,28 @@ export const useMFA = () => {
   // Códigos de recuperação retornados pela RPC regenerate_backup_codes — só
   // existem em memória, nesta sessão, para o usuário copiar.
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
+  const [statusError, setStatusError] = useState<Error | null>(null);
   // Identidade atual via ref: respostas atrasadas e callbacks de closures
   // antigas nunca escrevem estado de outro usuário nesta sessão.
   const userRef = useRef(user);
   userRef.current = user;
   const fetchedForUser = useRef<string | null>(null);
+
+  // Ajuste DURANTE o render (padrão oficial do React): a troca de usuário não
+  // pode renderizar nem uma vez com dados sensíveis da sessão anterior —
+  // useEffect só limpa DEPOIS do commit, tarde demais para backup codes/QR.
+  const [ownerId, setOwnerId] = useState<string | null>(user?.id ?? null);
+  const currentId = user?.id ?? null;
+  if (ownerId !== currentId) {
+    setOwnerId(currentId);
+    setStatus(null);
+    setHasNativeTotp(false);
+    setBackupCodes(null);
+    setQrCodeUrl(null);
+    setTotpFactorId(null);
+    setStatusError(null);
+    setIsLoading(!!currentId);
+  }
 
   // Fetch MFA status via secure RPC (no secrets exposed)
   const fetchStatus = useCallback(async () => {
@@ -73,11 +90,14 @@ export const useMFA = () => {
         setHasNativeTotp(
           factorsRes.data?.totp?.some(f => f.status === 'verified') ?? false
         );
+        setStatusError(null);
       }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching MFA status:', error);
       }
+      // Falha de fetch não pode parecer "MFA inativo" — expõe o erro.
+      if (isCurrent()) setStatusError(error as Error);
     } finally {
       if (isCurrent()) setIsLoading(false);
     }
@@ -100,11 +120,16 @@ export const useMFA = () => {
       const { data: factors } = await supabase.auth.mfa.listFactors();
       if (!isCurrentUser()) return null;
       for (const factor of factors?.totp ?? []) {
+        // Cada chamada encadeada roda com o token da sessão ATUAL — se o
+        // usuário trocou no meio do loop, unenroll/enroll operariam na conta
+        // nova sem ela ter pedido. Revalida antes de cada mutação.
+        if (!isCurrentUser()) return null;
         if (factor.status !== 'verified') {
           await supabase.auth.mfa.unenroll({ factorId: factor.id });
         }
       }
 
+      if (!isCurrentUser()) return null;
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
         friendlyName: 'App autenticador',
@@ -186,10 +211,14 @@ export const useMFA = () => {
       const { data: factors } = await supabase.auth.mfa.listFactors();
       if (!isCurrentUser()) return false;
       for (const factor of factors?.totp ?? []) {
+        // Mesmo motivo do initializeTOTP: unenroll usa a sessão do momento —
+        // revalida antes de cada mutação para não mexer na conta nova.
+        if (!isCurrentUser()) return false;
         const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
         if (error) throw error;
       }
 
+      if (!isCurrentUser()) return false;
       const { data, error } = await supabase.rpc('disable_totp');
       if (error) throw error;
       await fetchStatus();
@@ -224,7 +253,7 @@ export const useMFA = () => {
         if (import.meta.env.DEV) {
           console.error('Error setting up SMS:', error);
         }
-        toast.error('Erro ao configurar SMS');
+        if (userRef.current?.id === uid) toast.error('Erro ao configurar SMS');
         return false;
       }
     },
@@ -243,6 +272,7 @@ export const useMFA = () => {
         });
 
         if (error) throw error;
+        if (userRef.current?.id !== uid) return false;
 
         if (data) {
           await fetchStatus();
@@ -257,7 +287,7 @@ export const useMFA = () => {
         if (import.meta.env.DEV) {
           console.error('Error verifying SMS:', error);
         }
-        toast.error('Erro ao verificar SMS');
+        if (userRef.current?.id === uid) toast.error('Erro ao verificar SMS');
         return false;
       }
     },
@@ -272,6 +302,7 @@ export const useMFA = () => {
     try {
       const { data, error } = await supabase.rpc('disable_sms');
       if (error) throw error;
+      if (userRef.current?.id !== uid) return false;
       await fetchStatus();
       if (userRef.current?.id !== uid) return false;
       toast.success('SMS desativado');
@@ -280,7 +311,7 @@ export const useMFA = () => {
       if (import.meta.env.DEV) {
         console.error('Error disabling SMS:', error);
       }
-      toast.error('Erro ao desativar SMS');
+      if (userRef.current?.id === uid) toast.error('Erro ao desativar SMS');
       return false;
     }
   }, [user, fetchStatus]);
@@ -298,9 +329,9 @@ export const useMFA = () => {
         });
 
         if (error) throw error;
+        if (userRef.current?.id !== uid) return false;
 
         if (data) {
-          if (userRef.current?.id !== uid) return false;
           if (method === 'backup_code') {
             toast.success('Código de backup usado');
           }
@@ -313,7 +344,7 @@ export const useMFA = () => {
         if (import.meta.env.DEV) {
           console.error('Error verifying MFA:', error);
         }
-        toast.error('Erro na verificação MFA');
+        if (userRef.current?.id === uid) toast.error('Erro na verificação MFA');
         return false;
       }
     },
@@ -333,13 +364,16 @@ export const useMFA = () => {
       if (userRef.current?.id !== uid) return null;
       setBackupCodes((data as string[] | null) ?? null);
       await fetchStatus();
+      // O refresh pode demorar — se a sessão trocou nesse intervalo, não
+      // exibe toast nem devolve os códigos de A para a tela de B.
+      if (userRef.current?.id !== uid) return null;
       toast.success('Códigos de backup regenerados');
       return data as string[];
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error regenerating backup codes:', error);
       }
-      toast.error('Erro ao regenerar códigos');
+      if (userRef.current?.id === uid) toast.error('Erro ao regenerar códigos');
       return null;
     }
   }, [user, fetchStatus]);
@@ -356,6 +390,7 @@ export const useMFA = () => {
         });
 
         if (error) throw error;
+        if (userRef.current?.id !== uid) return false;
         await fetchStatus();
         if (userRef.current?.id !== uid) return false;
         toast.success(`Método preferido: ${method.toUpperCase()}`);
@@ -386,6 +421,7 @@ export const useMFA = () => {
       : null,
     attempts: [] as string[],
     isLoading,
+    statusError,
     totpSecret: null as string | null,
     qrCodeUrl,
     isMFAEnabled: hasNativeTotp || status?.sms_enabled || false,

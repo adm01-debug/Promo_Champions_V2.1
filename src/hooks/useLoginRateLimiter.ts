@@ -20,14 +20,23 @@ export function useLoginRateLimiter() {
     remainingSeconds: 0,
     attempts: 0,
   });
+  // Erro da consulta de lockout — o fluxo é fail-open (canAttempt: true),
+  // mas a UI pode avisar que a proteção está degradada.
+  const [queryError, setQueryError] = useState<unknown>(null);
   // A consulta é disparada a cada mudança de e-mail; uma resposta atrasada
   // do e-mail anterior não pode sobrescrever o status do e-mail atual.
   const lastQueriedEmail = useRef<string | null>(null);
+  // Contador de geração: cobre também A→B→A (duas consultas do MESMO
+  // e-mail — a resposta tardia da primeira não pode sobrescrever a segunda).
+  const querySeq = useRef(0);
 
   const checkLoginAttempts = useCallback(
     async (email: string): Promise<LoginAttemptResult> => {
       const normalizedEmail = email.toLowerCase().trim();
       lastQueriedEmail.current = normalizedEmail;
+      const seq = ++querySeq.current;
+      const isLatest = () =>
+        seq === querySeq.current && lastQueriedEmail.current === normalizedEmail;
 
       const { data, error } = await supabase.rpc('get_login_lockout_status', {
         p_email: normalizedEmail,
@@ -38,8 +47,11 @@ export function useLoginRateLimiter() {
           console.error('Erro ao verificar tentativas de login:', error);
         }
         // Falha aberta (canAttempt) e estado limpo na tela — manter o
-        // lockout do e-mail anterior seria enganoso.
-        if (lastQueriedEmail.current === normalizedEmail) {
+        // lockout do e-mail anterior seria enganoso. Falha aberta é
+        // decisão deliberada: fail-closed bloquearia todo login quando a
+        // RPC cai. O chamador pode ler queryError para avisar a UI.
+        if (isLatest()) {
+          setQueryError(error);
           setLockoutStatus({ isLocked: false, remainingSeconds: 0, attempts: 0 });
         }
         return {
@@ -59,7 +71,8 @@ export function useLoginRateLimiter() {
         remainingSeconds,
         attempts,
       };
-      if (lastQueriedEmail.current === normalizedEmail) {
+      if (isLatest()) {
+        setQueryError(null);
         setLockoutStatus(status);
       }
       return { canAttempt: !status.isLocked, lockoutStatus: status };
@@ -117,6 +130,7 @@ export function useLoginRateLimiter() {
 
   return {
     lockoutStatus,
+    queryError,
     checkLoginAttempts,
     recordLoginAttempt,
     formatRemainingTime,

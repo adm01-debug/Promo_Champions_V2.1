@@ -22,7 +22,7 @@ const VELOCITY_COLORS = [
 ];
 
 export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
-  const { data, isLoading } = usePipelineVelocity();
+  const { data, isLoading, isError } = usePipelineVelocity();
 
   if (isLoading) return <Skeleton className="h-full w-full rounded-xl" />;
 
@@ -85,7 +85,7 @@ export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
           </div>
         ) : (
           <p className="text-xs text-muted-foreground text-center py-4">
-            Sem dados de velocidade
+            {isError ? 'Erro ao carregar dados de velocidade' : 'Sem dados de velocidade'}
           </p>
         )}
       </CardContent>

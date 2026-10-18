@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { WON_SALE_STATUSES, LOST_SALE_STATUSES } from '@/constants';
@@ -19,12 +20,17 @@ export interface VelocityData {
 
 export function usePipelineVelocity() {
   // A chave inclui o usuario: RLS muda a visibilidade por sessao e o
-  // QueryClient global (staleTime 10min) nao pode servir dados da sessao
-  // anterior.
+  // QueryClient global nao pode servir dados da sessao anterior.
   const { user } = useAuth();
+  const userRef = useRef(user);
+  userRef.current = user;
   return useQuery({
     queryKey: ['pipeline-velocity', user?.id],
     queryFn: async (): Promise<VelocityData[]> => {
+      // Identidade capturada no disparo: se a sessão trocar enquanto as
+      // queries estão pendentes, o resultado é descartado antes de entrar
+      // no cache da chave antiga.
+      const uid = userRef.current?.id;
       const now = new Date();
       const monthStart = startOfMonth(now);
       const monthEnd = endOfMonth(now);
@@ -132,6 +138,11 @@ export function usePipelineVelocity() {
       results.sort((a, b) => b.velocityScore - a.velocityScore);
       results.forEach((r, i) => (r.rank = i + 1));
 
+      // Descarta se a sessão mudou no meio do fetch — dados de B não podem
+      // ser cacheados na chave de A (o consumidor leria o cache por user.id).
+      if (userRef.current?.id !== uid) {
+        throw new Error('session changed during fetch');
+      }
       return results;
     },
     staleTime: 60000,

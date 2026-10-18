@@ -27,16 +27,32 @@ export function useWebAuthn() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState<WebAuthnCredential[]>([]);
+  const [loadError, setLoadError] = useState<Error | null>(null);
   // Credenciais são dados do usuário: resposta atrasada ou callback de
   // closure antiga jamais escreve na sessão de outro usuário.
   const userRef = useRef(user);
   userRef.current = user;
+  // Contador de operação: o finally de uma operação da sessão antiga não
+  // pode liberar o loading de uma operação nova da sessão atual.
+  const opRef = useRef(0);
+
+  // Ajuste durante o render: credenciais de A não podem aparecer nem uma
+  // vez na tela de B — useEffect limpa só depois do commit.
+  const [ownerId, setOwnerId] = useState<string | null>(user?.id ?? null);
+  const currentId = user?.id ?? null;
+  if (ownerId !== currentId) {
+    setOwnerId(currentId);
+    setCredentials([]);
+    setLoadError(null);
+  }
 
   useEffect(() => {
     // Troca de usuário/logout: descarta a lista do usuário anterior e
     // destrava o loading — operação pendente pertencia à sessão antiga.
     setCredentials([]);
+    setLoadError(null);
     setIsLoading(false);
+    opRef.current++;
   }, [user?.id]);
 
   const loadCredentials = useCallback(async () => {
@@ -47,9 +63,14 @@ export function useWebAuthn() {
         body: { action: 'list-credentials', userId: uid },
       });
       if (error) throw error;
-      if (userRef.current?.id === uid) setCredentials(data.credentials || []);
+      if (userRef.current?.id === uid) {
+        setCredentials(data.credentials || []);
+        setLoadError(null);
+      }
     } catch (error) {
       console.error('Error loading credentials:', error);
+      // Falha de listagem não pode parecer "nenhuma passkey" — expõe erro.
+      if (userRef.current?.id === uid) setLoadError(error as Error);
     }
   }, []);
 
@@ -72,6 +93,7 @@ export function useWebAuthn() {
         return false;
       }
       const isCurrentUser = () => userRef.current?.id === uid;
+      const myOp = ++opRef.current;
       setIsLoading(true);
       try {
         const { data: options, error: optionsError } = await supabase.functions.invoke(
@@ -130,14 +152,16 @@ export function useWebAuthn() {
       } catch (error: unknown) {
         console.error('Passkey registration error:', error);
         const err = error instanceof Error ? error : new Error('Unknown error');
-        if (err.name === 'NotAllowedError')
-          toast.error('Registro cancelado pelo usuário');
-        else if (err.name === 'InvalidStateError')
-          toast.error('Esta passkey já está registrada');
-        else toast.error(err.message || 'Erro ao registrar passkey');
+        if (isCurrentUser()) {
+          if (err.name === 'NotAllowedError')
+            toast.error('Registro cancelado pelo usuário');
+          else if (err.name === 'InvalidStateError')
+            toast.error('Esta passkey já está registrada');
+          else toast.error(err.message || 'Erro ao registrar passkey');
+        }
         return false;
       } finally {
-        setIsLoading(false);
+        if (opRef.current === myOp) setIsLoading(false);
       }
     },
     [user, loadCredentials]
@@ -203,12 +227,20 @@ export function useWebAuthn() {
         const token = url.searchParams.get('token');
         const type = url.searchParams.get('type');
         if (token && type) {
+          // Se outra sessão autenticou enquanto o fluxo de passkey estava
+          // pendente, verifyOtp sobrescreveria a sessão nova pela antiga.
+          const { data: sessionNow } = await supabase.auth.getSession();
+          if (sessionNow.session) {
+            // Já existe sessão ativa (outro login ganhou a corrida) — não
+            // sobrescreve; retorna sucesso silencioso para não confundir.
+            return true;
+          }
           const { error: signInError } = await supabase.auth.verifyOtp({
             token_hash: token,
             type: type as EmailOtpType,
           });
-          if (signInError && import.meta.env.DEV)
-            console.error('Sign in error:', signInError);
+          // verifyOtp falhando não pode ser tratado como login bem-sucedido.
+          if (signInError) throw signInError;
         }
       }
 
@@ -240,6 +272,7 @@ export function useWebAuthn() {
         return false;
       }
       const isCurrentUser = () => userRef.current?.id === uid;
+      const myOp = ++opRef.current;
       setIsLoading(true);
       try {
         const { error } = await supabase.functions.invoke('webauthn', {
@@ -252,10 +285,11 @@ export function useWebAuthn() {
         return true;
       } catch (error: unknown) {
         console.error('Error deleting passkey:', error);
-        toast.error(error instanceof Error ? error.message : 'Erro ao remover passkey');
+        if (isCurrentUser())
+          toast.error(error instanceof Error ? error.message : 'Erro ao remover passkey');
         return false;
       } finally {
-        setIsLoading(false);
+        if (opRef.current === myOp) setIsLoading(false);
       }
     },
     [user?.id, loadCredentials]
@@ -265,6 +299,7 @@ export function useWebAuthn() {
     isSupported: isWebAuthnSupported,
     isAvailable: PASSKEYS_AVAILABLE,
     isLoading,
+    loadError,
     credentials,
     registerPasskey,
     loginWithPasskey,

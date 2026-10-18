@@ -215,4 +215,47 @@ describe('useLoginRateLimiter', () => {
     expect(result.current.lockoutStatus.isLocked).toBe(true);
     expect(result.current.lockoutStatus.attempts).toBe(5);
   });
+
+  it('descarta resposta atrasada do MESMO e-mail consultado duas vezes (A-B-A)', async () => {
+    // Cenario: consulta A1; o campo muda para B e volta para A, disparando
+    // A2. A1 responde depois de A2 — sem o seq counter, a resposta antiga
+    // (livre) sobrescreveria o lockout real de A2.
+    const resolvers: Array<(v: { data: unknown; error: null }) => void> = [];
+    rpc.mockImplementation(
+      (_fn: string, _args: { p_email: string }) =>
+        new Promise(resolve => {
+          resolvers.push(resolve);
+        })
+    );
+
+    const { result } = renderHook(() => useLoginRateLimiter());
+
+    act(() => {
+      void result.current.checkLoginAttempts('a@example.com'); // A1 = resolvers[0]
+      void result.current.checkLoginAttempts('b@example.com'); // B  = resolvers[1]
+      void result.current.checkLoginAttempts('a@example.com'); // A2 = resolvers[2]
+    });
+
+    // A2 responde bloqueado — este e o estado correto da tela.
+    await act(async () => {
+      resolvers[2]?.({
+        data: [
+          { attempts: 5, lockout_until: new Date(Date.now() + 60_000).toISOString() },
+        ],
+        error: null,
+      });
+    });
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+
+    // A1 chega por ultimo com estado livre — nao pode sobrescrever.
+    await act(async () => {
+      resolvers[0]?.({
+        data: [{ attempts: 0, lockout_until: null }],
+        error: null,
+      });
+    });
+
+    expect(result.current.lockoutStatus.isLocked).toBe(true);
+    expect(result.current.lockoutStatus.attempts).toBe(5);
+  });
 });
