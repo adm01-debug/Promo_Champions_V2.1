@@ -46,7 +46,7 @@ import type { TrendPoint } from '@/hooks/win-loss/useWinLossAggregations';
 
 export type BandMode = 'see' | 'pi95';
 
-export interface ScenarioPoint {
+interface ScenarioPoint {
   period: string;
   realistic: number;
   optimistic: number;
@@ -55,9 +55,8 @@ export interface ScenarioPoint {
 }
 
 export type ConfidenceLevel = 0.9 | 0.95 | 0.99;
-export const CONFIDENCE_LEVELS: ReadonlyArray<ConfidenceLevel> = [0.9, 0.95, 0.99];
 
-export interface ScenarioForecast {
+interface ScenarioForecast {
   series: ScenarioPoint[];
   /** Standard error of the regression estimate (residual σ), in winRate percentage points. */
   stdDev: number;
@@ -91,7 +90,7 @@ export interface ScenarioForecast {
   confidenceLevel: ConfidenceLevel;
 }
 
-export interface ScenarioOptions {
+interface ScenarioOptions {
   forecastSteps?: number;
   bandMode?: BandMode;
   /**
@@ -239,9 +238,6 @@ export function tCritical(dof: number, level: ConfidenceLevel = 0.95): number {
 }
 
 /** @deprecated Use `tCritical(dof, 0.95)` instead. Mantido para compat. */
-export function tCritical975(dof: number): number {
-  return tCritical(dof, 0.95);
-}
 
 /**
  * Projects 3 scenarios (optimistic / realistic / pessimistic) using OLS linear

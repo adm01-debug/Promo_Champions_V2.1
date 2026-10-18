@@ -6,7 +6,7 @@ import { differenceInDays, parseISO } from 'date-fns';
 
 export type ContactUrgency = 'critical' | 'high' | 'medium' | 'low';
 
-export interface ClientContactAlert {
+interface ClientContactAlert {
   clientId: string | null;
   clientName: string;
   phone: string | null;

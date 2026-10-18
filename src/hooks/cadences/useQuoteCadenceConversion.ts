@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { subDays, format, eachDayOfInterval } from 'date-fns';
 
-export interface ConversionPoint {
+interface ConversionPoint {
   date: string;
   label: string;
   enrolled: number;

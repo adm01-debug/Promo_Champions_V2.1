@@ -10,13 +10,6 @@ export function deltaToneClass(value: number): string {
   return value > 0 ? 'text-success' : 'text-destructive';
 }
 
-export function deltaBgClass(value: number): string {
-  if (!Number.isFinite(value) || Math.abs(value) < 0.5) return 'bg-muted/40';
-  return value > 0
-    ? 'bg-success/10 border-success/30'
-    : 'bg-destructive/10 border-destructive/30';
-}
-
 export function heatmapShade(value: number): string {
   // Map -50..+50 to opacity scale
   const clamped = Math.max(-50, Math.min(50, value));
@@ -27,9 +20,4 @@ export function heatmapShade(value: number): string {
 
 export function formatCurrency(v: number): string {
   return formatBRL(v || 0);
-}
-
-export function estimateMonthlyROI(roi: number, sessions: number): number {
-  if (!sessions) return 0;
-  return roi / Math.max(1, sessions / 4); // approx weekly to monthly
 }

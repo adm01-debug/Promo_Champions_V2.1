@@ -15,7 +15,7 @@ export type ViewMode = 'activity' | 'comparison';
 export type ActivityTypeFilter =
   'all' | 'call' | 'email' | 'meeting' | 'linkedin' | 'whatsapp';
 
-export interface ActivityChartDataPoint {
+interface ActivityChartDataPoint {
   date: string;
   label: string;
   calls: number;
@@ -27,7 +27,7 @@ export interface ActivityChartDataPoint {
   [key: string]: number | string;
 }
 
-export interface ComparisonChartDataPoint {
+interface ComparisonChartDataPoint {
   date: string;
   label: string;
   [key: string]: number | string;

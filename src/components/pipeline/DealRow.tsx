@@ -201,4 +201,4 @@ export const DealRow = React.memo(function DealRow({
 });
 
 export const formatCurrency = (value: number) => formatBRL(value, { decimals: 2 });
-export { RISK_COLORS, RISK_LABELS };
+export { RISK_LABELS };

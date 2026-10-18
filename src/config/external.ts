@@ -14,7 +14,5 @@ export const CANONICAL_URL =
 export const WA_ME_URL = 'https://wa.me';
 export const DICEBEAR_AVATARS_URL = 'https://api.dicebear.com/7.x/avataaars/svg';
 export const PRAVATAR_URL = 'https://i.pravatar.cc/150';
-export const NOMINATIM_SEARCH_URL = 'https://nominatim.openstreetmap.org/search';
-export const PWNED_PASSWORDS_RANGE_URL = 'https://api.pwnedpasswords.com/range';
 export const CARBON_FIBRE_TEXTURE_URL =
   'https://www.transparenttextures.com/patterns/carbon-fibre.png';

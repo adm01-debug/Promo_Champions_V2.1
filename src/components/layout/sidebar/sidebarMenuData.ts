@@ -72,7 +72,7 @@ export interface MenuGroup {
 
 export type ViewMode = 'sdr' | 'closer' | 'gestao';
 
-export const sdrMainItems: MenuItem[] = [
+const sdrMainItems: MenuItem[] = [
   { title: 'Neural Dashboard', url: '/sdr', icon: Star },
   { title: 'Pipeline', url: '/pipeline', icon: Kanban },
   { title: 'Atividades', url: '/atividades', icon: Activity },
@@ -83,7 +83,7 @@ export const sdrMainItems: MenuItem[] = [
   { title: 'Race Circuito 🏎️', url: '/race-arena', icon: Flag },
 ];
 
-export const closerMainItems: MenuItem[] = [
+const closerMainItems: MenuItem[] = [
   { title: 'Neural Dashboard', url: '/closer', icon: Star },
   { title: 'Pipeline', url: '/pipeline', icon: Kanban },
   { title: 'Orçamentos', url: '/orcamentos', icon: FileText },
@@ -97,7 +97,7 @@ export const closerMainItems: MenuItem[] = [
   { title: 'Race Circuito 🏎️', url: '/race-arena', icon: Flag },
 ];
 
-export const gestaoMainItems: MenuItem[] = [
+const gestaoMainItems: MenuItem[] = [
   { title: 'Vendedores', url: '/vendedores', icon: Users },
   { title: 'Metas', url: '/metas', icon: Target },
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
@@ -105,7 +105,7 @@ export const gestaoMainItems: MenuItem[] = [
   { title: 'Race Circuito 🏎️', url: '/race-arena', icon: Flag },
 ];
 
-export const sdrGroupedItems: MenuGroup[] = [
+const sdrGroupedItems: MenuGroup[] = [
   {
     label: 'Prospecção',
     icon: Search,
@@ -163,7 +163,7 @@ export const sdrGroupedItems: MenuGroup[] = [
   },
 ];
 
-export const closerGroupedItems: MenuGroup[] = [
+const closerGroupedItems: MenuGroup[] = [
   {
     label: 'Vendas',
     icon: DollarSign,
@@ -228,7 +228,7 @@ export const closerGroupedItems: MenuGroup[] = [
   },
 ];
 
-export const gestaoGroupedItems: MenuGroup[] = [
+const gestaoGroupedItems: MenuGroup[] = [
   {
     label: 'Gestão HUD',
     icon: LayoutDashboard,

@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
  * Escala: fração 0-1 (igual à coluna probability).
  */
 
-export interface StageProbabilityRow {
+interface StageProbabilityRow {
   stage: string;
   probability: number;
 }

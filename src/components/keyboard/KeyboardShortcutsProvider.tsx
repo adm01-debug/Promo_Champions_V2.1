@@ -1,6 +1,5 @@
 import {
   createContext,
-  useContext,
   useState,
   useCallback,
   useMemo,
@@ -31,16 +30,6 @@ interface KeyboardShortcutsContextType {
 }
 
 const KeyboardShortcutsContext = createContext<KeyboardShortcutsContextType | null>(null);
-
-export function useKeyboardShortcutsContext() {
-  const context = useContext(KeyboardShortcutsContext);
-  if (!context) {
-    throw new Error(
-      'useKeyboardShortcutsContext must be used within KeyboardShortcutsProvider'
-    );
-  }
-  return context;
-}
 
 interface KeyboardShortcutsProviderProps {
   children: ReactNode;

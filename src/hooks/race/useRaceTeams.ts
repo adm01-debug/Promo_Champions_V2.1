@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface RaceTeam {
+interface RaceTeam {
   id: string;
   season_id: string;
   name: string;

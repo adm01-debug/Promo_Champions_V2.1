@@ -49,7 +49,7 @@ export function formatPeriodLabel(period: NLQResponse['period']): string | null 
   }
 }
 
-export type ChartKind = 'bar' | 'line' | 'none';
+type ChartKind = 'bar' | 'line' | 'none';
 
 export function decideChartKind(dataset?: NLQToolDataset): ChartKind {
   if (!dataset || dataset.rows.length < 2) return 'none';

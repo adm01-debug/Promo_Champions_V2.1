@@ -13,9 +13,3 @@ export interface RechartsTooltipProps {
   payload?: RechartsTooltipPayloadEntry[];
   label?: string;
 }
-
-export interface RechartsFormatterProps {
-  payload: Record<string, unknown>;
-  name: string;
-  value: number;
-}

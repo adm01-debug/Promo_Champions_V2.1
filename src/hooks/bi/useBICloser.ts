@@ -26,7 +26,7 @@ import {
 } from '@/hooks/bi/useBICloserTransformers';
 import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
-export interface BICloserData {
+interface BICloserData {
   totalRevenue: number;
   avgTicket: number;
   totalDeals: number;

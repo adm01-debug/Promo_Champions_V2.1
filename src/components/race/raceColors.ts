@@ -1,4 +1,4 @@
-export type CarStyle = 'f1' | 'stock' | 'kart';
+type CarStyle = 'f1' | 'stock' | 'kart';
 
 export type LiveryPattern =
   | 'solid'
@@ -335,14 +335,3 @@ export function inferPresetFromColors(
 }
 
 // ===== Legado (mantido p/ compat com componentes ainda não migrados) =====
-export const RACE_CAR_COLORS = RACE_CAR_PRESETS.slice(0, 12).map(p => ({
-  name: p.name,
-  primary: p.primary,
-  secondary: p.secondary,
-}));
-
-export const CAR_STYLES = [
-  { value: 'f1', label: 'Fórmula 1' },
-  { value: 'stock', label: 'Stock Car' },
-  { value: 'kart', label: 'Kart' },
-] as const;

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export type DashboardRole = 'sdr' | 'closer' | 'gestao' | 'hybrid';
+type DashboardRole = 'sdr' | 'closer' | 'gestao' | 'hybrid';
 
 interface DashboardPriorities {
   role: DashboardRole;

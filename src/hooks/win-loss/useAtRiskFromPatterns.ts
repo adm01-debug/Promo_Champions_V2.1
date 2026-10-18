@@ -54,7 +54,7 @@ export interface AtRiskDealFromPattern {
   breakdown?: RiskBreakdown;
 }
 
-export interface UseAtRiskParams {
+interface UseAtRiskParams {
   threshold?: number;
   limit?: number;
 }

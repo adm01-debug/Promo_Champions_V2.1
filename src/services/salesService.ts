@@ -56,7 +56,7 @@ export interface SalesPageQuery {
   pageSize?: number;
 }
 
-export interface SalesPage {
+interface SalesPage {
   rows: Sale[];
   total: number;
 }

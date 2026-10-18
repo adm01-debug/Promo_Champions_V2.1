@@ -14,7 +14,7 @@ export interface HistoricalPoint {
   revenue: number;
 }
 
-export interface ForecastPoint {
+interface ForecastPoint {
   period: string;
   p10: number;
   p50: number;
@@ -144,7 +144,7 @@ function monteCarloForecast(
 
 // ---------- ensemble ----------
 
-export interface EnsembleOptions {
+interface EnsembleOptions {
   horizon?: number;
   simulations?: number;
   rng?: () => number;
@@ -249,7 +249,7 @@ export function incrementPeriod(period: string): string {
 
 // ---------- what-if simulator ----------
 
-export interface WhatIfInputs {
+interface WhatIfInputs {
   winRateDelta?: number; // ex.: +0.1 = +10pp
   avgTicketDelta?: number; // ex.: +0.15 = +15%
   velocityDelta?: number; // ex.: -0.2 = -20% (mais lento reduz receita no horizonte)

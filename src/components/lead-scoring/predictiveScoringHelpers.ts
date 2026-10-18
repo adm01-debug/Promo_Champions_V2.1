@@ -8,7 +8,7 @@ export interface ScoreDriver {
   direction: 'positive' | 'negative';
 }
 
-export interface ScoreRecommendation {
+interface ScoreRecommendation {
   action: string;
   expected_lift: number;
   priority: 'high' | 'medium' | 'low';

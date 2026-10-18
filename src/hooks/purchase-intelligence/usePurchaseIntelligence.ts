@@ -89,7 +89,7 @@ export function usePurchaseIntelligence(clientId?: string, withAI = true) {
   });
 }
 
-export interface SeasonalityCell {
+interface SeasonalityCell {
   client_id: string;
   client_name: string;
   month_of_year: number;

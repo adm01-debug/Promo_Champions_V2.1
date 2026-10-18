@@ -1,4 +1,4 @@
-export type MetricsHealth = 'poor' | 'fair' | 'good' | 'excellent';
+type MetricsHealth = 'poor' | 'fair' | 'good' | 'excellent';
 
 export interface ConversationMetrics {
   id: string;

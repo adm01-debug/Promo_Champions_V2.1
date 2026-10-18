@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-export interface BulkJob {
+interface BulkJob {
   id: string;
   owner_id: string;
   prompt: string;
@@ -32,7 +32,7 @@ export interface BulkDraft {
   created_at: string;
 }
 
-export interface CreateBulkJobInput {
+interface CreateBulkJobInput {
   prompt: string;
   tone: string;
   language: string;

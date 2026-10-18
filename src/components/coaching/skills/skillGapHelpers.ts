@@ -50,12 +50,6 @@ export const LEVEL_BG_CLASS: Record<SkillLevel, string> = {
   expert: 'bg-success/15 text-success border-success/30',
 };
 
-export const TREND_LABEL: Record<SkillTrend, string> = {
-  improving: 'Melhorando',
-  stable: 'Estável',
-  declining: 'Caindo',
-};
-
 export const TREND_ICON: Record<SkillTrend, string> = {
   improving: '↑',
   stable: '→',
@@ -67,13 +61,6 @@ export const TREND_COLOR: Record<SkillTrend, string> = {
   stable: 'text-muted-foreground',
   declining: 'text-destructive',
 };
-
-export function levelFromScore(score: number): SkillLevel {
-  if (score >= 85) return 'expert';
-  if (score >= 65) return 'advanced';
-  if (score >= 40) return 'intermediate';
-  return 'beginner';
-}
 
 export function formatScore(s: number): string {
   return `${Math.round(s)}/100`;

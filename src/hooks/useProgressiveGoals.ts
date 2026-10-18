@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface ProgressiveGoal {
+interface ProgressiveGoal {
   id: string;
   salesperson_id: string;
   goal_type: string;

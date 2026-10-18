@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSendNotification } from '@/hooks/useNotifications';
 
-export interface AssetEfficiency {
+interface AssetEfficiency {
   total_views: number;
   deals_influenced: number;
   win_rate_influenced: number;

@@ -27,15 +27,6 @@ export interface CoachingOpportunity {
   detected_at: string;
 }
 
-export interface CoachingBenchmark {
-  id: string;
-  metric_key: string;
-  team_avg: number;
-  top_quartile: number;
-  sample_size: number;
-  computed_at: string;
-}
-
 export const useCoachingOpportunities = (filters?: {
   severity?: CoachingSeverity;
   skillFocus?: CoachingSkillFocus;

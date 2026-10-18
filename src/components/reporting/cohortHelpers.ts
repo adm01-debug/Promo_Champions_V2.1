@@ -10,11 +10,11 @@ export interface CohortRow {
   absolute: number[]; // raw counts/values per period
 }
 
-export interface ClientLite {
+interface ClientLite {
   id: string;
   created_at: string;
 }
-export interface SaleLite {
+interface SaleLite {
   client_name: string;
   created_at: string;
   final_value?: number | null;
@@ -121,10 +121,6 @@ export function getHeatmapColor(
   const opacity = 0.08 + ratio * 0.85;
   const text = ratio > 0.55 ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))';
   return { background: `hsl(var(--primary) / ${opacity.toFixed(2)})`, text };
-}
-
-export function formatCohortLabel(date: Date): string {
-  return format(date, 'MMM/yy', { locale: ptBR });
 }
 
 /** Average retention across cohorts at a given relative month index, ignoring nulls. */

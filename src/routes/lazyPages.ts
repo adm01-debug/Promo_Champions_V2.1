@@ -9,9 +9,7 @@ type PrefetchableComponent = LazyExoticComponent<ComponentType<unknown>> & {
 /**
  * Enhanced Lazy Utility with Prefetch capabilities
  */
-export const lazyWithPrefetch = (
-  importStatement: PrefetchImport
-): PrefetchableComponent => {
+const lazyWithPrefetch = (importStatement: PrefetchImport): PrefetchableComponent => {
   const Component = lazy(importStatement) as PrefetchableComponent;
   Component.prefetch = importStatement;
   return Component;

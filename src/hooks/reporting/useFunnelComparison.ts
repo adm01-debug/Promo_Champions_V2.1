@@ -92,7 +92,7 @@ const fetchFunnelSnapshot = async (
   };
 };
 
-export interface FunnelComparison {
+interface FunnelComparison {
   current: FunnelSnapshot;
   previous: FunnelSnapshot;
   deltas: StageDelta[];

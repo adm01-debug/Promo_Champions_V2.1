@@ -28,7 +28,7 @@ export interface SalespersonRow {
   name: string;
 }
 
-export interface ReportKpis {
+interface ReportKpis {
   revenue: number;
   salesCount: number;
   avgTicket: number;

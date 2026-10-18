@@ -1,9 +1,8 @@
 export type ObjectionType =
   'price' | 'timing' | 'authority' | 'need' | 'competition' | 'trust' | 'other';
-export type ResponseQuality =
-  'acknowledged' | 'reframed' | 'resolved' | 'deflected' | 'ignored';
-export type ResolutionStatus = 'resolved' | 'partial' | 'unresolved';
-export type ObjectionHealth = 'poor' | 'fair' | 'good' | 'excellent';
+type ResponseQuality = 'acknowledged' | 'reframed' | 'resolved' | 'deflected' | 'ignored';
+type ResolutionStatus = 'resolved' | 'partial' | 'unresolved';
+type ObjectionHealth = 'poor' | 'fair' | 'good' | 'excellent';
 
 export interface ObjectionAnalysis {
   id: string;

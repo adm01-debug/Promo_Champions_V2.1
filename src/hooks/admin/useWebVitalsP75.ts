@@ -5,7 +5,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface WebVitalRow {
+interface WebVitalRow {
   day: string;
   route: string;
   device_type: 'mobile' | 'tablet' | 'desktop' | 'unknown';

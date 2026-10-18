@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface PrizeWheelSpin {
+interface PrizeWheelSpin {
   id: string;
   prize_type: string;
   prize_value: number;
@@ -11,7 +11,7 @@ export interface PrizeWheelSpin {
   spun_at: string;
 }
 
-export interface PrizeSlice {
+interface PrizeSlice {
   label: string;
   type: string;
   value: number;

@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
-export interface SelfBenchmarkMetric {
+interface SelfBenchmarkMetric {
   label: string;
   current: number;
   avg3Months: number;

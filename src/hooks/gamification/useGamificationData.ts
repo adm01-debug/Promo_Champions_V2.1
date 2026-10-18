@@ -6,7 +6,7 @@ import {
   getLevelInfo,
 } from '@/hooks/gamification/useSalespersonXP';
 
-export interface SalespersonGamificationData {
+interface SalespersonGamificationData {
   salesperson_id: string;
   name: string;
   avatar_url: string | null;

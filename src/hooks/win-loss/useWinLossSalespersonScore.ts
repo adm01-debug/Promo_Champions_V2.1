@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { SalespersonStat } from '@/hooks/win-loss/useWinLossAggregations';
 
-export type ScoreTier = 'diamante' | 'ouro' | 'prata' | 'bronze';
+type ScoreTier = 'diamante' | 'ouro' | 'prata' | 'bronze';
 
 export interface SalespersonScore {
   salespersonId: string;

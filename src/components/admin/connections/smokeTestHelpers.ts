@@ -1,4 +1,4 @@
-export type SmokeItemStatus = 'idle' | 'running' | 'ok' | 'fail';
+type SmokeItemStatus = 'idle' | 'running' | 'ok' | 'fail';
 
 export interface SmokeItemResult {
   status: SmokeItemStatus;
@@ -7,7 +7,7 @@ export interface SmokeItemResult {
   ran_at?: string;
 }
 
-export interface SmokeRunSnapshot {
+interface SmokeRunSnapshot {
   ts: string;
   results: Record<string, SmokeItemResult>;
 }
@@ -35,7 +35,7 @@ export function saveSnapshot(results: Record<string, SmokeItemResult>): void {
   }
 }
 
-export interface SmokeReportItem {
+interface SmokeReportItem {
   id: string;
   label: string;
   result: SmokeItemResult | undefined;

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 
-export interface CareerSeasonEntry {
+interface CareerSeasonEntry {
   season_id: string;
   season_name: string;
   start_date: string;
@@ -13,7 +13,7 @@ export interface CareerSeasonEntry {
   was_champion: boolean;
 }
 
-export interface CareerSummary {
+interface CareerSummary {
   total_seasons: number;
   total_titles: number;
   total_podiums: number;

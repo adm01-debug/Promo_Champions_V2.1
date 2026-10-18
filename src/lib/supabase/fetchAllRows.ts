@@ -13,7 +13,7 @@
 
 import type { PostgrestLike } from './chunkedIn';
 
-export interface FetchAllRowsOptions {
+interface FetchAllRowsOptions {
   pageSize?: number;
   label?: string;
 }

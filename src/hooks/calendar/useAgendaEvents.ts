@@ -23,7 +23,7 @@ export interface AgendaEvent {
   updated_at: string;
 }
 
-export interface CreateAgendaEventInput {
+interface CreateAgendaEventInput {
   title: string;
   description?: string;
   event_type?: AgendaEventType;

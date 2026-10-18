@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export type ChannelKind = 'whatsapp' | 'sms';
 export type ProviderKind = 'twilio' | 'meta_cloud' | 'zapi' | 'messagebird';
 
-export interface ChannelCredential {
+interface ChannelCredential {
   id: string;
   owner_id: string;
   channel: ChannelKind;

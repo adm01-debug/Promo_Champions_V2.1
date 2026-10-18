@@ -11,16 +11,6 @@
  */
 
 /** Códigos de tipo de falha retornados pelo banco. */
-export type FailureTypeCode =
-  | 'supressao'
-  | 'destinatario_ausente'
-  | 'endereco_invalido'
-  | 'hard_bounce'
-  | 'infra_remetente'
-  | 'limite_de_vazao'
-  | 'rede_indisponivel'
-  | 'outro'
-  | 'sem_erro';
 
 const FAILURE_TYPE_LABELS: Record<string, string> = {
   supressao: 'Supressão / descadastro',
@@ -54,7 +44,7 @@ export function isPermanentFailureType(code: string): boolean {
 /** Limite (%) abaixo do qual uma falha transitória indica problema operacional. */
 export const RECOVERY_RISK_THRESHOLD = 70;
 
-export type RecoveryHealth = 'ok' | 'atencao' | 'critico' | 'esperado';
+type RecoveryHealth = 'ok' | 'atencao' | 'critico' | 'esperado';
 
 /**
  * Leitura de saúde da recuperação.
@@ -86,13 +76,13 @@ export function formatRecoveryDuration(minutes: number): string {
   return `${(hours / 24).toFixed(1)} d`;
 }
 
-export interface RecoveryTotalsLike {
+interface RecoveryTotalsLike {
   failed_total: number;
   recovered_count: number;
   still_failing: number;
 }
 
-export interface RecoveryTotals {
+interface RecoveryTotals {
   failedTotal: number;
   recoveredCount: number;
   stillFailing: number;

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Json } from '@/integrations/supabase/types';
 import type { TableUpdate } from '@/lib/supabase/typed-payloads';
 
-export interface SavedFilter {
+interface SavedFilter {
   id: string;
   name: string;
   entity_type: string;

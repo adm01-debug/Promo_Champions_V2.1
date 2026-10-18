@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export interface ForecastSnapshot {
+interface ForecastSnapshot {
   id: string;
   period_start: string;
   period_end: string;
@@ -17,7 +17,7 @@ export interface ForecastSnapshot {
   snapshot_at: string;
 }
 
-export interface ForecastAccuracyRow {
+interface ForecastAccuracyRow {
   id: string;
   snapshot_id: string;
   actual_amount: number;
@@ -28,7 +28,7 @@ export interface ForecastAccuracyRow {
   computed_at: string;
 }
 
-export interface ConfidenceScore {
+interface ConfidenceScore {
   id: string;
   owner_id: string | null;
   source: string;

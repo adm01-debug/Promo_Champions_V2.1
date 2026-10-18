@@ -2,7 +2,7 @@ import type { RiskSeverity } from '@/lib/winloss/severityFromScore';
 
 export type AtRiskPresetId = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
-export interface AtRiskPreset {
+interface AtRiskPreset {
   id: AtRiskPresetId;
   label: string;
   threshold: number;
@@ -71,7 +71,7 @@ export function getPresetById(id: AtRiskPresetId): AtRiskPreset | undefined {
 // Drives the `severityFilter` field in `useAtRiskSettings`.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface AtRiskSeverityPreset {
+interface AtRiskSeverityPreset {
   id: RiskSeverity;
   label: string;
   description: string;

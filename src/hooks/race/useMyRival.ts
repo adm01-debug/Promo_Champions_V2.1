@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { RaceLeaderboardEntry } from '@/hooks/race/useRaceLeaderboard';
 
-export interface MyRival {
+interface MyRival {
   rival_car_id: string;
   rival_name: string;
   rival_avatar: string | null;

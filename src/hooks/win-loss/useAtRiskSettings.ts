@@ -18,7 +18,7 @@ function isRiskSeverity(v: unknown): v is RiskSeverity {
   return typeof v === 'string' && (VALID_SEVERITIES as readonly string[]).includes(v);
 }
 
-export type AtRiskSortBy = 'score' | 'recency';
+type AtRiskSortBy = 'score' | 'recency';
 
 const VALID_SORTS: readonly AtRiskSortBy[] = ['score', 'recency'] as const;
 
@@ -38,7 +38,7 @@ export interface AtRiskSettings {
   sortBy: AtRiskSortBy;
 }
 
-export const AT_RISK_DEFAULTS: AtRiskSettings = {
+const AT_RISK_DEFAULTS: AtRiskSettings = {
   threshold: 40,
   limit: 20,
   maxVisible: 8,
@@ -77,7 +77,7 @@ function sanitizeReasonCodes(input: unknown): RiskReasonCode[] {
   return Array.from(new Set(cleaned)).slice(0, RISK_REASON_CODES.length);
 }
 
-export function sanitizeSeverities(input: unknown): RiskSeverity[] {
+function sanitizeSeverities(input: unknown): RiskSeverity[] {
   if (!Array.isArray(input)) return [];
   const cleaned = input.filter(isRiskSeverity);
   return Array.from(new Set(cleaned)).slice(0, VALID_SEVERITIES.length);

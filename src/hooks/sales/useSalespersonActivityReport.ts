@@ -36,7 +36,7 @@ export interface ActivityTrendData {
   total: number;
 }
 
-export interface TeamActivitySummary {
+interface TeamActivitySummary {
   total_activities: number;
   total_calls: number;
   total_emails: number;

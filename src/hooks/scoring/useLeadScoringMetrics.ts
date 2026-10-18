@@ -1,11 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface ScoreDistribution {
-  range: string;
-  count: number;
-}
-
 export function useLeadScoringMetrics() {
   return useQuery({
     queryKey: ['lead-scoring-metrics'],

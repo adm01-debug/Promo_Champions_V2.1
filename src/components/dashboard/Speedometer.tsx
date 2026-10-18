@@ -43,7 +43,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useDashboardTheme } from '@/contexts/DashboardThemeContext';
 
-export interface SpeedometerProps {
+interface SpeedometerProps {
   value: number;
   min?: number;
   max: number;

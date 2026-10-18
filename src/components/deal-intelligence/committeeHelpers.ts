@@ -1,14 +1,3 @@
-import {
-  Crown,
-  Star,
-  Users,
-  ShieldOff,
-  UserX,
-  DollarSign,
-  HelpCircle,
-  type LucideIcon,
-} from 'lucide-react';
-
 export type DMURole =
   | 'decision_maker'
   | 'economic_buyer'
@@ -32,47 +21,11 @@ export const dmuRoleLabel = (role: DMURole): string =>
     unknown: 'Indefinido',
   })[role];
 
-export const dmuRoleIcon = (role: DMURole): LucideIcon =>
-  ({
-    decision_maker: Star,
-    economic_buyer: DollarSign,
-    champion: Crown,
-    influencer: Users,
-    user: UserX,
-    blocker: ShieldOff,
-    unknown: HelpCircle,
-  })[role];
-
-export const dmuRoleColor = (role: DMURole): string =>
-  ({
-    decision_maker: 'text-primary',
-    economic_buyer: 'text-amber-500',
-    champion: 'text-emerald-500',
-    influencer: 'text-blue-500',
-    user: 'text-muted-foreground',
-    blocker: 'text-destructive',
-    unknown: 'text-muted-foreground',
-  })[role];
-
-export const influenceLabel = (lvl: InfluenceLevel): string =>
-  ({
-    low: 'Baixa',
-    medium: 'Média',
-    high: 'Alta',
-  })[lvl];
-
 export const sentimentColor = (s: Sentiment): string =>
   ({
     positive: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
     neutral: 'bg-muted text-muted-foreground border-border',
     negative: 'bg-destructive/10 text-destructive border-destructive/30',
-  })[s];
-
-export const sentimentLabel = (s: Sentiment): string =>
-  ({
-    positive: 'Positivo',
-    neutral: 'Neutro',
-    negative: 'Negativo',
   })[s];
 
 export const tierLabel = (t: CoverageTier): string =>
@@ -89,14 +42,6 @@ export const tierColor = (t: CoverageTier): string =>
     partial: 'text-amber-500',
     strong: 'text-blue-500',
     complete: 'text-emerald-500',
-  })[t];
-
-export const tierRingClass = (t: CoverageTier): string =>
-  ({
-    weak: 'stroke-destructive',
-    partial: 'stroke-amber-500',
-    strong: 'stroke-blue-500',
-    complete: 'stroke-emerald-500',
   })[t];
 
 export const tierBadgeClass = (t: CoverageTier): string =>

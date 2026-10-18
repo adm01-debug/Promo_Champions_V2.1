@@ -24,7 +24,7 @@ export interface ConversationWithMatches extends Conversation {
   matchedMessages?: string[];
 }
 
-export interface DealContext {
+interface DealContext {
   dealId: string;
   clientName: string;
   productName: string;

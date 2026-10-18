@@ -23,10 +23,10 @@ import { cn } from '@/lib/utils';
 /*  Tipos públicos                                                            */
 /* -------------------------------------------------------------------------- */
 
-export type TransitionVariant =
+type TransitionVariant =
   'fade' | 'slide-x' | 'slide-y' | 'zoom' | 'flip-x' | 'flip-y' | 'parallax' | 'blur';
 
-export interface PageTransitionConfig {
+interface PageTransitionConfig {
   variant?: TransitionVariant;
   duration?: number; // segundos
   /** cubic-bezier [x1,y1,x2,y2] ou keyword do Framer (ex.: 'easeOut') */
@@ -48,16 +48,7 @@ const DEFAULTS: Required<PageTransitionConfig> = {
 
 const PageTransitionContext = createContext<PageTransitionConfig>({});
 
-export const PageTransitionProvider: FC<{
-  children: ReactNode;
-  config?: PageTransitionConfig;
-}> = ({ children, config }) => (
-  <PageTransitionContext.Provider value={config ?? {}}>
-    {children}
-  </PageTransitionContext.Provider>
-);
-
-export const usePageTransitionConfig = (): PageTransitionConfig =>
+const usePageTransitionConfig = (): PageTransitionConfig =>
   useContext(PageTransitionContext);
 
 /* -------------------------------------------------------------------------- */

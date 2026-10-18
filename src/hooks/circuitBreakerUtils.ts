@@ -28,7 +28,7 @@ export const DEFAULT_CONFIG = {
 } as const;
 
 // Global circuit breaker registry
-export const circuitBreakers = new Map<string, CircuitBreakerState>();
+const circuitBreakers = new Map<string, CircuitBreakerState>();
 
 export function getOrCreateCircuit(name: string): CircuitBreakerState {
   if (!circuitBreakers.has(name)) {
@@ -50,7 +50,7 @@ export class CircuitBreakerError extends Error {
 }
 
 // Log event to database (fire-and-forget)
-export async function logCircuitEvent(
+async function logCircuitEvent(
   circuitName: string,
   eventType: string,
   previousState?: string,

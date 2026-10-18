@@ -169,16 +169,3 @@ export function ICPBadge({
 }
 
 // Simple inline version for compact spaces
-export function ICPIndicator({ isMatch }: { isMatch: boolean | undefined }) {
-  if (isMatch === undefined) return null;
-
-  return (
-    <div
-      className={cn(
-        'h-2 w-2 rounded-full',
-        isMatch ? 'bg-status-success' : 'bg-muted-foreground/30'
-      )}
-      title={isMatch ? 'ICP Match' : 'Fora do ICP'}
-    />
-  );
-}

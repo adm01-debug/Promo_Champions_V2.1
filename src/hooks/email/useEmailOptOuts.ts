@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 /** Registro da lista de supressão (descadastro) de e-mails. */
-export interface EmailOptOut {
+interface EmailOptOut {
   id: string;
   email: string;
   reason: string | null;
@@ -11,7 +11,7 @@ export interface EmailOptOut {
   metadata: Record<string, unknown>;
 }
 
-export interface EmailOptOutFilters {
+interface EmailOptOutFilters {
   /** Busca parcial por endereço (case-insensitive). */
   search: string;
   /** Origem do descadastro ou "all". */
@@ -21,7 +21,7 @@ export interface EmailOptOutFilters {
   pageSize: number;
 }
 
-export interface EmailOptOutsResult {
+interface EmailOptOutsResult {
   rows: EmailOptOut[];
   total: number;
 }

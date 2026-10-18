@@ -1,9 +1,9 @@
-export interface IndustryRecommendation {
+interface IndustryRecommendation {
   name: string;
   reason: string;
 }
 
-export const INDUSTRY_RECOMMENDATIONS: Record<string, IndustryRecommendation[]> = {
+const INDUSTRY_RECOMMENDATIONS: Record<string, IndustryRecommendation[]> = {
   tecnologia: [
     {
       name: 'Infraestrutura Serverless',

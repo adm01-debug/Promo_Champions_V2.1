@@ -4,16 +4,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CommissionBonusAward, AwardStatus } from './useCommissionBonusAwards';
 
-export interface MyAwardRow extends CommissionBonusAward {
+interface MyAwardRow extends CommissionBonusAward {
   bonus_name: string | null;
 }
 
-export interface MyAwardsPage {
+interface MyAwardsPage {
   rows: MyAwardRow[];
   total: number;
 }
 
-export interface UseMyBonusAwardsOptions {
+interface UseMyBonusAwardsOptions {
   status?: AwardStatus | 'all';
   /** YYYY-MM ou 'all' */
   period?: string;

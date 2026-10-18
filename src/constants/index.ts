@@ -13,26 +13,7 @@ export const CACHE_TIMES = {
 
 // ===== RATE LIMITING =====
 
-export const RATE_LIMITS = {
-  REQUESTS_PER_HOUR: 100,
-  WINDOW_MS: 60 * 60 * 1000,
-} as const;
-
 // ===== VALIDAÇÃO =====
-
-export const VALIDATION = {
-  MAX_STRING_LENGTH: 1000,
-  MAX_ARRAY_SIZE: 100,
-  ALLOWED_FILTER_KEYS: [
-    'userId',
-    'clientId',
-    'status',
-    'segment',
-    'dateRange',
-    'teamId',
-    'stageId',
-  ],
-} as const;
 
 // ===== PAGINAÇÃO =====
 
@@ -116,7 +97,6 @@ export const WIN_LOSS_OUTCOME = {
   WON: 'won',
   LOST: 'lost',
 } as const;
-export type WinLossOutcome = (typeof WIN_LOSS_OUTCOME)[keyof typeof WIN_LOSS_OUTCOME];
 
 export const ACTIVITY_TYPE = {
   CALL: 'call',
@@ -127,12 +107,6 @@ export const ACTIVITY_TYPE = {
 } as const;
 
 // ===== TIMEOUTS =====
-
-export const TIMEOUTS = {
-  API_TIMEOUT: 30000, // 30 segundos
-  DEBOUNCE: 300, // 300ms
-  THROTTLE: 1000, // 1 segundo
-} as const;
 
 // ===== MENSAGENS =====
 

@@ -566,16 +566,3 @@ export function CommandPalette() {
     </CommandDialog>
   );
 }
-
-export function useCommandPalette() {
-  const openCommandPalette = useCallback(() => {
-    const event = new KeyboardEvent('keydown', {
-      key: 'k',
-      metaKey: true,
-      bubbles: true,
-    });
-    document.dispatchEvent(event);
-  }, []);
-
-  return { openCommandPalette };
-}

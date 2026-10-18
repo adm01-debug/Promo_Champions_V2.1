@@ -6,7 +6,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface CronRun {
+interface CronRun {
   jobid: number;
   jobname: string | null;
   status: string;
@@ -16,7 +16,7 @@ export interface CronRun {
   duration_ms: number | null;
 }
 
-export interface CronAlertMetrics {
+interface CronAlertMetrics {
   last_alert_at: string | null;
   window_24h: {
     alerts_total: number;
@@ -34,14 +34,14 @@ export interface CronAlertMetrics {
   generated_at: string;
 }
 
-export interface CronAlertBreakdownRow {
+interface CronAlertBreakdownRow {
   jobname: string;
   alerts: number;
   stalled: number;
   failed: number;
 }
 
-export interface RollbackPoint {
+interface RollbackPoint {
   captured_at: string;
   xact_commit: number;
   xact_rollback: number;

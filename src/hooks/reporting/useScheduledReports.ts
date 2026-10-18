@@ -26,7 +26,7 @@ export function useScheduledReports() {
   });
 }
 
-export interface CreateScheduledReportInput {
+interface CreateScheduledReportInput {
   report_id: string;
   name: string;
   frequency: ScheduleFrequency;

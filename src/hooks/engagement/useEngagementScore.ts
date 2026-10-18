@@ -1,12 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 export type EngagementTier = 'cold' | 'warm' | 'hot' | 'on_fire';
 export type ContactType = 'lead' | 'client';
 
-export interface EngagementScore {
+interface EngagementScore {
   id: string;
   contact_id: string;
   contact_type: ContactType;
@@ -84,35 +83,5 @@ export function useEngagementLeaderboard(limit = 10) {
       return (data ?? []) as EngagementLeaderboardEntry[];
     },
     staleTime: 120_000,
-  });
-}
-
-export function useRecomputeEngagement() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (params?: { contactId?: string; contactType?: ContactType }) => {
-      if (params?.contactId && params?.contactType) {
-        const { data, error } = await supabase.rpc('recompute_engagement_score', {
-          _contact_id: params.contactId,
-          _contact_type: params.contactType,
-        });
-        if (error) throw error;
-        return { score: data as number };
-      }
-      const { data, error } = await supabase.functions.invoke(
-        'engagement-score-recompute',
-        {
-          body: {},
-        }
-      );
-      if (error) throw error;
-      return data as { ok: boolean; updated: number };
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['engagement-score'] });
-      qc.invalidateQueries({ queryKey: ['engagement-leaderboard'] });
-      toast.success('Engajamento recalculado');
-    },
-    onError: (e: Error) => toast.error(`Falha ao recalcular: ${e.message}`),
   });
 }

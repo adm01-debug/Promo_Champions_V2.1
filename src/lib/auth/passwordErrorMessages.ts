@@ -9,16 +9,16 @@
  *   - "New password should be different from the old password"
  *   - code: "weak_password"
  */
-export interface AuthPasswordError {
+interface AuthPasswordError {
   message?: string | null;
   code?: string | null;
   status?: number | null;
 }
 
-export type PasswordRiskKind =
+type PasswordRiskKind =
   'leaked' | 'too_short' | 'same_as_old' | 'rate_limited' | 'unknown';
 
-export interface PasswordErrorResult {
+interface PasswordErrorResult {
   kind: PasswordRiskKind;
   message: string;
 }

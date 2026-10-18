@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface RaceBadge {
+interface RaceBadge {
   id: string;
   salesperson_id: string;
   badge_code: string;

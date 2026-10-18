@@ -8,7 +8,7 @@ import type {
   ConfidenceTier,
 } from '@/components/deal-intelligence/velocityHelpers';
 
-export interface DealVelocityPrediction {
+interface DealVelocityPrediction {
   id: string;
   sale_id: string;
   owner_id: string | null;

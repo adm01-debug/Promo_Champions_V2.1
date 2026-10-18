@@ -1,6 +1,6 @@
 export type QuestionCategory =
   'open' | 'closed' | 'discovery' | 'impact' | 'leading' | 'other';
-export type QuestionHealth = 'poor' | 'fair' | 'good' | 'excellent';
+type QuestionHealth = 'poor' | 'fair' | 'good' | 'excellent';
 
 export interface QuestionAnalysis {
   id: string;

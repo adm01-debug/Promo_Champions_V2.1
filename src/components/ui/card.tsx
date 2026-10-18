@@ -40,7 +40,7 @@ const cardVariants = cva(
   }
 );
 
-export interface CardProps
+interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
   hover?: boolean;
 }
@@ -132,12 +132,4 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardFooter.displayName = 'CardFooter';
 
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  cardVariants,
-};
+export { Card, CardHeader, CardTitle, CardDescription, CardContent };

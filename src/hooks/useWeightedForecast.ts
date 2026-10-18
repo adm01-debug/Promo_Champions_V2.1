@@ -25,7 +25,7 @@ interface StageBreakdown {
   color: string;
 }
 
-export interface WeightedForecastData {
+interface WeightedForecastData {
   deals: ForecastDeal[];
   stages: StageBreakdown[];
   totalPipeline: number;

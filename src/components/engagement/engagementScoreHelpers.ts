@@ -40,13 +40,6 @@ export const TIER_META: Record<EngagementTier, TierMeta> = {
   },
 };
 
-export function tierFromScore(score: number): EngagementTier {
-  if (score >= 81) return 'on_fire';
-  if (score >= 51) return 'hot';
-  if (score >= 21) return 'warm';
-  return 'cold';
-}
-
 export function formatScore(score: number | null | undefined): string {
   if (score === null || score === undefined) return '—';
   return Math.round(score).toString();

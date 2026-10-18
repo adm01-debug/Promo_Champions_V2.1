@@ -13,7 +13,7 @@ const QUALITY_WEIGHTS: Record<string, Record<string, number>> = {
   task: { positive: 5, neutral: 2, negative: 1 },
 };
 
-export interface ActivityQualityData {
+interface ActivityQualityData {
   salespersonId: string;
   salespersonName: string;
   avatarUrl: string | null;

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 export type ForecastPeriodType = 'week' | 'month' | 'quarter';
 export type ForecastCategory = 'commit' | 'best' | 'upside' | 'omitted';
 
-export interface RevenueForecastRow {
+interface RevenueForecastRow {
   id: string;
   owner_id: string | null;
   period_type: ForecastPeriodType;
@@ -29,7 +29,7 @@ export interface RevenueForecastRow {
   calculated_at: string;
 }
 
-export interface ForecastContribution {
+interface ForecastContribution {
   id: string;
   forecast_id: string;
   sale_id: string;

@@ -4,7 +4,7 @@ import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
 import { useMemo } from 'react';
 
-export interface NPSSurvey {
+interface NPSSurvey {
   id: string;
   sale_id: string | null;
   client_name: string;

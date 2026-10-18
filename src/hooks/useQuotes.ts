@@ -75,7 +75,7 @@ export function parseQuoteItems(
   return items as QuoteItem[];
 }
 
-export type QuoteStatus = 'draft' | 'sent' | 'approved' | 'rejected' | 'expired';
+type QuoteStatus = 'draft' | 'sent' | 'approved' | 'rejected' | 'expired';
 
 export const QUOTE_STATUSES: { value: QuoteStatus; label: string; color: string }[] = [
   { value: 'draft', label: 'Rascunho', color: 'bg-muted text-muted-foreground' },
@@ -293,7 +293,7 @@ export function useDealsForQuotes() {
   });
 }
 
-export interface ConvertQuoteResult {
+interface ConvertQuoteResult {
   sale_id: string;
   order_id: string | null;
   order_number?: string;

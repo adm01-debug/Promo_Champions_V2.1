@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { isWonSaleStatus } from '@/constants';
 
-export interface SentimentTrendPoint {
+interface SentimentTrendPoint {
   quarter: string;
   avgSentiment: number;
   winRate: number;

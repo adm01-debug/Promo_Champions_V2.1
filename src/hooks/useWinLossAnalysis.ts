@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { WIN_LOSS_OUTCOME } from '@/constants';
 
-export interface WinLossDetail {
+interface WinLossDetail {
   id: string;
   outcome: 'won' | 'lost';
   reason: string;

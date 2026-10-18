@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { toast } from 'sonner';
 
-export interface InsightComment {
+interface InsightComment {
   id: string;
   insight_id: string;
   author_id: string;

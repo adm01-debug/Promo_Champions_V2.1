@@ -14,7 +14,7 @@ export interface Territory {
   owner?: { id: string; name: string; avatar_url: string | null } | null;
 }
 
-export interface TerritoryHistory {
+interface TerritoryHistory {
   id: string;
   territory_id: string;
   salesperson_id: string;

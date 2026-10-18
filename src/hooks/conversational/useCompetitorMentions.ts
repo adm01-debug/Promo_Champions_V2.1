@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export interface CompetitorMention {
+interface CompetitorMention {
   id: string;
   recording_id: string;
   competitor_id: string | null;

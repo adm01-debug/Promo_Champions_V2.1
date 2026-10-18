@@ -26,7 +26,7 @@ export interface MergeTagContext {
   custom?: Record<string, string | number | null | undefined>;
 }
 
-export interface MergeTagDefinition {
+interface MergeTagDefinition {
   key: string;
   label: string;
   example: string;

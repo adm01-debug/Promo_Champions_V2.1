@@ -10,7 +10,7 @@ import {
   Repeat,
 } from 'lucide-react';
 
-export type IntentType =
+type IntentType =
   'buying_signal' | 'objection' | 'comparison' | 'technical' | 'closing' | 'followup';
 
 export interface Intent {

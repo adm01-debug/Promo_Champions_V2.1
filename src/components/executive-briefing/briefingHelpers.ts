@@ -1,9 +1,9 @@
-export interface BriefingWin {
+interface BriefingWin {
   title: string;
   detail: string;
 }
 
-export interface BriefingRisk {
+interface BriefingRisk {
   title: string;
   detail: string;
   severity: 'critical' | 'warning' | 'info';
@@ -84,7 +84,7 @@ export const severityToken = (sev: BriefingRisk['severity']) => {
  * Sanitiza markdown removendo HTML inline para evitar XSS.
  * Renderização ainda é texto+quebras (sem injeção de tags).
  */
-export const sanitizeMarkdown = (md: string): string => {
+const sanitizeMarkdown = (md: string): string => {
   return md.replace(/<[^>]*>/g, '').replace(/\r\n/g, '\n');
 };
 

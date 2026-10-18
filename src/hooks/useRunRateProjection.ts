@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { WON_SALE_STATUSES } from '@/constants';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 
-export type ProjectionConfidence = 'low' | 'medium' | 'high';
+type ProjectionConfidence = 'low' | 'medium' | 'high';
 
 export interface RunRateProjection {
   mtdRevenue: number;

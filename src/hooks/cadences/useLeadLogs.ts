@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 
-export interface LeadDetailedLog {
+interface LeadDetailedLog {
   id: string;
   client_id: string;
   event_type: 'interaction' | 'trigger' | 'transition' | 'task_created' | 'alert';

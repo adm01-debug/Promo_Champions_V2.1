@@ -2,17 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 import { toast } from 'sonner';
-import type { StageSeverity } from '@/components/deal-intelligence/velocity/velocityHelpers';
-
-export interface StageTransition {
-  id: string;
-  sale_id: string;
-  from_stage: string | null;
-  to_stage: string;
-  entered_at: string;
-  exited_at: string | null;
-  duration_hours: number | null;
-}
 
 export interface StageBaseline {
   id: string;
@@ -24,46 +13,6 @@ export interface StageBaseline {
   sample_size: number;
   computed_at: string;
 }
-
-export interface VelocityAlert {
-  id: string;
-  sale_id: string;
-  current_stage: string;
-  hours_in_stage: number;
-  baseline_p75: number;
-  baseline_p90: number;
-  severity: StageSeverity;
-  recommendation: string | null;
-  detected_at: string;
-}
-
-export const useDealStageVelocity = (saleId: string | undefined) =>
-  useQuery({
-    queryKey: ['deal-stage-velocity', saleId],
-    queryFn: async () => {
-      if (!saleId) return null;
-      const [alertRes, transRes] = await Promise.all([
-        supabase
-          .from('deal_velocity_alerts')
-          .select('*')
-          .eq('sale_id', saleId)
-          .maybeSingle(),
-        supabase
-          .from('deal_stage_transitions')
-          .select('*')
-          .eq('sale_id', saleId)
-          .order('entered_at', { ascending: true }),
-      ]);
-      if (alertRes.error) throw alertRes.error;
-      if (transRes.error) throw transRes.error;
-      return {
-        alert: alertRes.data as VelocityAlert | null,
-        transitions: (transRes.data || []) as StageTransition[],
-      };
-    },
-    enabled: !!saleId,
-    staleTime: CACHE_TIMES.STALE_TIME,
-  });
 
 export const useStuckDeals = (limit = 20) =>
   useQuery({

@@ -15,7 +15,7 @@ import { useMemo } from 'react';
 import type { DeadLetter } from '@/hooks/win-loss/useWebhookDeadLetters';
 
 export const BULK_REPLAY_HARD_CAP = 200;
-export const BULK_REPLAY_CHUNK_SIZE = 50;
+const BULK_REPLAY_CHUNK_SIZE = 50;
 
 interface BulkReplayConfirmDialogProps {
   open: boolean;

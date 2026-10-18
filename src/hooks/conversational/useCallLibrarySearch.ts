@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
-export interface CallLibraryResult {
+interface CallLibraryResult {
   id: string;
   title: string;
   recorded_at: string;

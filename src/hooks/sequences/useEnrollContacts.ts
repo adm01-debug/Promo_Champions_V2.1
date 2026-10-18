@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-export interface EnrollPayload {
+interface EnrollPayload {
   sequence_id: string;
   contacts: Array<{ contact_id: string; contact_type: 'lead' | 'client' | 'contact' }>;
 }

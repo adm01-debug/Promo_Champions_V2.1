@@ -16,7 +16,7 @@ export interface InventoryLevel {
   products?: { name: string } | null;
 }
 
-export interface StockMovement {
+interface StockMovement {
   id: string;
   product_id: string | null;
   movement_type: string;

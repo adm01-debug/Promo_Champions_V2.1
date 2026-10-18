@@ -1,4 +1,4 @@
-export const STRATEGY_LABELS: Record<string, string> = {
+const STRATEGY_LABELS: Record<string, string> = {
   best_match: 'Melhor Match (IA)',
   round_robin: 'Round-Robin',
   weighted: 'Ponderado',
@@ -6,7 +6,7 @@ export const STRATEGY_LABELS: Record<string, string> = {
   specific_user: 'Vendedor Específico',
 };
 
-export const STRATEGY_TONES: Record<string, string> = {
+const STRATEGY_TONES: Record<string, string> = {
   best_match: 'bg-primary/15 text-primary border-primary/30',
   round_robin: 'bg-status-info/15 text-status-info border-status-info/30',
   weighted: 'bg-status-warning/15 text-status-warning border-status-warning/30',

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 
-export interface RankNotification {
+interface RankNotification {
   id: string;
   salesperson_id: string;
   overtaken_by_id: string;

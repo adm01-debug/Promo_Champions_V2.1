@@ -88,7 +88,7 @@ const killAppServiceWorkers = async (): Promise<void> => {
   }
 };
 
-export interface RefreshSwOptions {
+interface RefreshSwOptions {
   /** Recarrega a página automaticamente após ativar o novo SW. */
   reload?: boolean;
   /** Limpa todos os caches (Cache Storage) além de atualizar o SW. */
@@ -100,9 +100,7 @@ export interface RefreshSwOptions {
  * via SKIP_WAITING e opcionalmente limpa caches/recarrega a página.
  * Retorna true se algum SW foi atualizado ou cache limpo.
  */
-export const refreshServiceWorker = async (
-  options: RefreshSwOptions = {}
-): Promise<boolean> => {
+const refreshServiceWorker = async (options: RefreshSwOptions = {}): Promise<boolean> => {
   const { reload = false, clearCaches = true } = options;
 
   if (typeof window === 'undefined') return false;

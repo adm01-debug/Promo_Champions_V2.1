@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { startOfWeek } from 'date-fns';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
-export interface WeeklyMatchup {
+interface WeeklyMatchup {
   id: string;
   salesperson_a: { id: string; name: string; avatar_url: string | null };
   salesperson_b: { id: string; name: string; avatar_url: string | null };

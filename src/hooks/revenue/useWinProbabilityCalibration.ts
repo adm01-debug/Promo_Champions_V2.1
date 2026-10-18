@@ -16,7 +16,7 @@ export interface WinCalibrationRow {
   calculated_at: string;
 }
 
-export interface DealProbabilityScoreRow {
+interface DealProbabilityScoreRow {
   id: string;
   sale_id: string;
   raw_probability: number;

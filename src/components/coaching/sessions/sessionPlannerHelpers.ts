@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import type { CoachingSessionStatus } from '@/hooks/coaching/useCoachingSessions';
 
 export const SKILL_LABELS: Record<string, string> = {
@@ -17,12 +17,6 @@ export const STATUS_LABELS: Record<CoachingSessionStatus, string> = {
   completed: 'Concluída',
   canceled: 'Cancelada',
 };
-
-export const STATUS_ICONS = {
-  scheduled: Clock,
-  completed: CheckCircle2,
-  canceled: XCircle,
-} as const;
 
 export const STATUS_BADGE: Record<CoachingSessionStatus, 'info' | 'success' | 'error'> = {
   scheduled: 'info',

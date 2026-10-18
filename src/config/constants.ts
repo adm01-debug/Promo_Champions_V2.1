@@ -4,16 +4,6 @@
  */
 
 // ── Gamificação ──
-export const GAMIFICATION = {
-  XP_PER_SALE: 100,
-  XP_PER_ACTIVITY: 25,
-  XP_PER_TASK_COMPLETE: 50,
-  XP_STREAK_BONUS: 150,
-  XP_LEVEL_BASE: 1000,
-  XP_LEVEL_MULTIPLIER: 1.5,
-  MAX_COMBO_TIER: 5,
-  COMBO_DECAY_HOURS: 2,
-} as const;
 
 // ── Mapa de Clientes ──
 export const CLIENT_MAP = {
@@ -33,18 +23,6 @@ export const CLIENT_MAP = {
 } as const;
 
 // ── Pipeline & Deals ──
-export const PIPELINE = {
-  STAGES: [
-    'lead',
-    'qualified',
-    'proposal',
-    'negotiation',
-    'closed_won',
-    'closed_lost',
-  ] as const,
-  SLA_HOURS_DEFAULT: 48,
-  STAGNANT_DAYS: 14,
-} as const;
 
 // ── Sessão & Segurança ──
 export const SECURITY = {
@@ -68,9 +46,3 @@ export const UI = {
 } as const;
 
 // ── Churn & Analytics ──
-export const ANALYTICS = {
-  CHURN_RISK_DAYS: 30,
-  CHURN_HIGH_RISK_DAYS: 60,
-  COHORT_MONTHS: 6,
-  LTV_SEGMENTS: ['Premium', 'Regular', 'Basic'] as const,
-} as const;

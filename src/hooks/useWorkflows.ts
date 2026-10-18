@@ -18,7 +18,7 @@ export interface Workflow {
   updated_at: string;
 }
 
-export interface WorkflowExecution {
+interface WorkflowExecution {
   id: string;
   workflow_id: string;
   status: string;

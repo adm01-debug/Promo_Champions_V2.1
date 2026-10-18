@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface CadenceTaskRow {
+interface CadenceTaskRow {
   id: string;
   prospect_cadence_id: string;
   cadence_step_id: string;

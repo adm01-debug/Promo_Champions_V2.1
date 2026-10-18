@@ -1,8 +1,6 @@
 import type { jsPDF } from 'jspdf';
 import type { UserOptions } from 'jspdf-autotable';
 
-export type ExportDataValue = string | number | boolean | null;
-
 export async function exportToPDF<T extends Record<string, unknown>>(
   data: T[],
   filename: string,

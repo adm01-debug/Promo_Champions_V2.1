@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 
-export interface SeasonStats {
+interface SeasonStats {
   label: string;
   total: number;
   wins: number;
@@ -10,7 +10,7 @@ export interface SeasonStats {
   avgCycle: number;
 }
 
-export interface SeasonComparison {
+interface SeasonComparison {
   current: SeasonStats;
   previous: SeasonStats;
   deltas: {

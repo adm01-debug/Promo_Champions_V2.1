@@ -12,7 +12,7 @@ import { formatBRL as __formatBRL } from '@/lib/money';
 export type OrderStatus =
   'pending' | 'confirmed' | 'preparing' | 'shipped' | 'delivered' | 'cancelled';
 
-export interface StatusStep {
+interface StatusStep {
   key: OrderStatus;
   label: string;
   icon: LucideIcon;
@@ -37,7 +37,7 @@ export function statusLabel(status: OrderStatus): string {
   return STATUS_STEPS.find(s => s.key === status)?.label ?? status;
 }
 
-export type StatusTone = 'warning' | 'info' | 'success' | 'destructive' | 'default';
+type StatusTone = 'warning' | 'info' | 'success' | 'destructive' | 'default';
 
 export function statusTone(status: OrderStatus): StatusTone {
   switch (status) {

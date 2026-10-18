@@ -34,7 +34,7 @@ C 95 145, 145 95, 220 95
 Z
 `.trim();
 
-export interface TrackPosition {
+interface TrackPosition {
   x: number;
   y: number;
   rotation: number; // graus, tangente
@@ -170,7 +170,7 @@ export function getPositionOnTrack(progress: number, laneOffset = 0): TrackPosit
 export const CHECKPOINTS = [0.25, 0.5, 0.75];
 
 /** Curvas nomeadas do circuito, ordenadas por progresso. */
-export const CORNERS: Array<{ progress: number; name: string; isChicane?: boolean }> = [
+const CORNERS: Array<{ progress: number; name: string; isChicane?: boolean }> = [
   { progress: 0.05, name: 'Curva 1' },
   { progress: 0.25, name: 'Curva 2' },
   { progress: 0.5, name: 'Chicane', isChicane: true },
@@ -202,11 +202,6 @@ export function getNextCornerInfo(progress: number): NextCornerInfo {
 }
 
 /** Setores cronometrados estilo F1 (S1, S2, S3). Fronteiras em progress 0..1. */
-export const SECTORS: Array<{ name: string; start: number; end: number }> = [
-  { name: 'S1', start: 0, end: 1 / 3 },
-  { name: 'S2', start: 1 / 3, end: 2 / 3 },
-  { name: 'S3', start: 2 / 3, end: 1 },
-];
 export const SECTOR_BOUNDARIES = [1 / 3, 2 / 3, 0.999];
 
 /** Zonas DRS — trechos retos verticais para ultrapassagem. */

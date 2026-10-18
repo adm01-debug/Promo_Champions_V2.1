@@ -27,10 +27,6 @@ const compactFormatter = new Intl.NumberFormat('pt-BR', {
   maximumFractionDigits: 1,
 });
 
-const numberFormatter = new Intl.NumberFormat('pt-BR', {
-  maximumFractionDigits: 0,
-});
-
 const toNumber = (value: number | string | null | undefined): number | null => {
   if (value === null || value === undefined) return null;
   const n = Number(value);
@@ -59,11 +55,3 @@ export function formatBRLCompact(
 }
 
 /** Número pt-BR sem prefixo de moeda (para `R$ {x}` custom). */
-export function formatNumberBR(
-  value: number | string | null | undefined,
-  fallback = '0'
-): string {
-  const n = toNumber(value);
-  if (n === null) return fallback;
-  return numberFormatter.format(n);
-}

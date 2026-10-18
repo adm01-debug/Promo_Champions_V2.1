@@ -16,7 +16,7 @@
 import { captureError } from '../errorTracking';
 import { maskFreeText } from './pii';
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface LogEntry {
   ts: string;
@@ -26,7 +26,7 @@ export interface LogEntry {
   [key: string]: unknown;
 }
 
-export interface ScopedLogger {
+interface ScopedLogger {
   debug: (msg: string, extra?: Record<string, unknown>) => void;
   info: (msg: string, extra?: Record<string, unknown>) => void;
   warn: (msg: string, extra?: Record<string, unknown>) => void;

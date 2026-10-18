@@ -36,7 +36,7 @@ export interface DateRange {
   end: Date;
 }
 
-export interface BIFilterState {
+interface BIFilterState {
   period: PeriodType;
   dateRange: DateRange;
   salespersonId?: string;

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface WebhookAlertSettings {
+interface WebhookAlertSettings {
   id: string;
   consecutive_failures: number;
   retry_rate_threshold: number;

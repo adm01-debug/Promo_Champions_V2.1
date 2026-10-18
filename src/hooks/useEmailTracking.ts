@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-export type EmailEventType = 'sent' | 'opened' | 'clicked' | 'bounced' | 'replied';
+type EmailEventType = 'sent' | 'opened' | 'clicked' | 'bounced' | 'replied';
 
-export interface EmailTrackingEvent {
+interface EmailTrackingEvent {
   id: string;
   sale_id: string | null;
   salesperson_id: string | null;
@@ -16,7 +16,7 @@ export interface EmailTrackingEvent {
   created_at: string;
 }
 
-export interface EmailTrackingStats {
+interface EmailTrackingStats {
   total_sent: number;
   total_opened: number;
   total_clicked: number;

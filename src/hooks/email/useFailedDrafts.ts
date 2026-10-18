@@ -42,7 +42,7 @@ export function useFailedDrafts() {
   });
 }
 
-export interface ManualRetryResult {
+interface ManualRetryResult {
   requested: number;
   scanned: number;
   retried: number;

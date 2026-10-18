@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface Client360Order {
+interface Client360Order {
   id: string;
   created_at: string;
   total_amount?: number | null;

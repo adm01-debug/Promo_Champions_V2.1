@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { CoverageTier } from '@/components/deal-intelligence/committeeHelpers';
 
-export interface CommitteeCoverage {
+interface CommitteeCoverage {
   id: string;
   sale_id: string;
   owner_id: string;
@@ -71,33 +71,7 @@ export const useWeakCoverageDeals = () => {
   });
 };
 
-export interface CoverageHistoryPoint {
-  snapshot_at: string;
-  coverage_score: number;
-  tier: CoverageTier;
-  stakeholder_count: number;
-}
-
-export const useCommitteeCoverageHistory = (saleId: string | null | undefined) => {
-  return useQuery({
-    queryKey: ['committee-coverage-history', saleId],
-    queryFn: async (): Promise<CoverageHistoryPoint[]> => {
-      if (!saleId) return [];
-      const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      const { data, error } = await supabase
-        .from('committee_coverage_history')
-        .select('snapshot_at, coverage_score, tier, stakeholder_count')
-        .eq('sale_id', saleId)
-        .gte('snapshot_at', since)
-        .order('snapshot_at', { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as CoverageHistoryPoint[];
-    },
-    enabled: !!saleId,
-  });
-};
-
-export interface CommitteeInsights {
+interface CommitteeInsights {
   total: number;
   withChampionPct: number;
   withEconomicBuyerPct: number;
@@ -182,25 +156,5 @@ export const useExtractCommitteeFromCall = () => {
       );
     },
     onError: (e: Error) => toast.error(`Erro ao extrair comitê: ${e.message}`),
-  });
-};
-
-export const useRecalculateCoverage = () => {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (sale_id: string) => {
-      const { data, error } = await supabase.functions.invoke(
-        'calculate-committee-coverage',
-        { body: { sale_id } }
-      );
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: (_, sale_id) => {
-      qc.invalidateQueries({ queryKey: ['committee-coverage', sale_id] });
-      qc.invalidateQueries({ queryKey: ['weak-coverage-deals'] });
-      toast.success('Cobertura recalculada');
-    },
-    onError: (e: Error) => toast.error(`Erro: ${e.message}`),
   });
 };

@@ -1,6 +1,6 @@
 import { Brain } from 'lucide-react';
 
-export interface InsightBannerData {
+interface InsightBannerData {
   preferredTimeOfDay: string;
   preferredDayOfWeek: string;
   priceSensitivity: string;

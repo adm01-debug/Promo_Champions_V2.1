@@ -1,6 +1,6 @@
 import { forwardRef, type SVGProps } from 'react';
 
-export interface LinkedinIconProps extends SVGProps<SVGSVGElement> {
+interface LinkedinIconProps extends SVGProps<SVGSVGElement> {
   /** Tamanho em px (equivalente ao prop `size` do lucide-react). */
   size?: number | string;
   /** Espessura do traço (compatibilidade com a API do lucide-react). */

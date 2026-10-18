@@ -1,6 +1,6 @@
 import { Flame, ThermometerSun, Snowflake } from 'lucide-react';
 
-export type LeadTemperature = 'hot' | 'warm' | 'cold' | 'frozen';
+type LeadTemperature = 'hot' | 'warm' | 'cold' | 'frozen';
 
 export interface ColdLead {
   id: string;

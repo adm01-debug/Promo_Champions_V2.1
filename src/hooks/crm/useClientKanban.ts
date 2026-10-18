@@ -5,7 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface KanbanClient {
+interface KanbanClient {
   id: string;
   name: string;
   company: string | null;

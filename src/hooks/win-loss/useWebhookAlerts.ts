@@ -78,7 +78,7 @@ export function useWebhookAlerts(subscriptionId?: string | null) {
   });
 }
 
-export function isAlertActive(alert: WebhookAlert): boolean {
+function isAlertActive(alert: WebhookAlert): boolean {
   return Date.now() - new Date(alert.fired_at).getTime() < ACTIVE_MINUTES * 60 * 1000;
 }
 

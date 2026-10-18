@@ -34,7 +34,7 @@ export interface CS360AccountRow {
   created_at: string;
 }
 
-export interface CS360Order {
+interface CS360Order {
   id: string;
   user_id: string | null;
   client_id: string | null;

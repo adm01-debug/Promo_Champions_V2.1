@@ -27,10 +27,6 @@ export interface AwardWithRefs extends CommissionBonusAward {
 const AWARDS_KEY = ['commission-bonus-awards'] as const;
 
 /** Retorna o primeiro dia do mês corrente em ISO (YYYY-MM-01). */
-export function currentPeriodMonth(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
-}
 
 export function useCommissionBonusAwards(opts?: {
   status?: AwardStatus;

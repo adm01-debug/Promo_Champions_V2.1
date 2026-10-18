@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export type WLGranularity = 'week' | 'month';
-export type WLForecastHorizon = 3 | 6 | 12;
+type WLForecastHorizon = 3 | 6 | 12;
 
-export interface WinLossViewPrefs {
+interface WinLossViewPrefs {
   granularity: WLGranularity;
   forecastHorizon: WLForecastHorizon;
 }

@@ -3,12 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CACHE_TIMES } from '@/constants';
 
-export interface LeadAssignmentRule {
-  method: 'round_robin' | 'weighted' | 'territory';
-  salespeople: { id: string; name: string; weight: number; territory?: string }[];
-}
-
-export interface AssignmentResult {
+interface AssignmentResult {
   salesperson_id: string;
   salesperson_name: string;
 }

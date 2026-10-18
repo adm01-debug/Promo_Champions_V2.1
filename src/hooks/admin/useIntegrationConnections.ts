@@ -8,9 +8,8 @@ import {
   type TableUpdate,
 } from '@/lib/supabase/typed-payloads';
 
-export type IntegrationKind =
-  'database' | 'bitrix24' | 'n8n' | 'mcp' | 'webhook' | 'other';
-export type IntegrationSource = 'db' | 'env' | 'secret';
+type IntegrationKind = 'database' | 'bitrix24' | 'n8n' | 'mcp' | 'webhook' | 'other';
+type IntegrationSource = 'db' | 'env' | 'secret';
 
 export interface IntegrationConnection {
   id: string;
@@ -150,7 +149,7 @@ export function useTestConnection() {
   });
 }
 
-export interface IntegrationHealthCheck {
+interface IntegrationHealthCheck {
   id: string;
   connection_id: string;
   status: string;

@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import type { Json } from '@/integrations/supabase/types';
 
 /**
@@ -29,19 +28,6 @@ export function parseRow<T>(data: unknown): T | null {
  * rowsWith — variante validada por schema zod para formas dinâmicas.
  * Lança erro quando a resposta não bate com o contrato esperado.
  */
-export function rowsWith<S extends z.ZodType>(schema: S, data: unknown): z.output<S>[] {
-  const parsed = z.array(schema).safeParse(data ?? []);
-  if (!parsed.success) {
-    const first = parsed.error.issues[0];
-    const where = first ? first.path.join('.') : '';
-    throw new Error(
-      `rowsWith: resposta fora do schema esperado` +
-        (where ? ` em '${where}'` : '') +
-        ` (${parsed.error.issues.length} problema(s))`
-    );
-  }
-  return parsed.data;
-}
 
 /**
  * toJson — adapta um valor de domínio para uma coluna `Json` do PostgREST.

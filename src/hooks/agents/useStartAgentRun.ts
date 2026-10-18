@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { AgentTargetType, AgentType } from '@/components/agents/agentHelpers';
 
-export interface StartAgentInput {
+interface StartAgentInput {
   agent_type: AgentType;
   target_entity_type?: AgentTargetType;
   target_entity_id?: string;

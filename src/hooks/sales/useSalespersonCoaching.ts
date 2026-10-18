@@ -2,18 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { isWonSaleStatus, WIN_LOSS_OUTCOME } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface CoachingInsight {
-  area: string;
-  score: number;
-  benchmark: number;
-  recommendation: string;
-}
-
 /**
  * Full coaching data structure used by SalespersonCoaching and CoachingComparison components.
  * Combines metrics analysis with actionable coaching recommendations.
  */
-export interface EdgeFunctionCoachingData {
+interface EdgeFunctionCoachingData {
   salesperson: { id: string; name: string; avatar_url: string | null };
   metrics: {
     totalDeals: number;

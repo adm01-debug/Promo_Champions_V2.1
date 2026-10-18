@@ -19,7 +19,7 @@ export interface TimelineItem {
   details: Record<string, unknown>;
 }
 
-export interface TimelineResponse {
+interface TimelineResponse {
   requestId: string;
   filters: {
     requestId: string | null;
@@ -31,7 +31,7 @@ export interface TimelineResponse {
   items: TimelineItem[];
 }
 
-export interface TimelineFilters {
+interface TimelineFilters {
   requestId?: string | null;
   subscriptionId?: string | null;
   /** ISO timestamp lower bound. Defaults to now-7d server-side. */

@@ -1,17 +1,4 @@
 import { formatBRL } from '@/lib/money';
-export function calcConfidence(sampleSize: number, target = 30): number {
-  return Math.min(sampleSize / target, 1);
-}
-
-export function blendProbability(
-  baseline: number,
-  winRate: number,
-  confidence: number
-): number {
-  const w =
-    baseline * 0.3 + winRate * 0.7 * confidence + baseline * (1 - confidence) * 0.7;
-  return Math.max(0, Math.min(100, Math.round(w * 100) / 100));
-}
 
 export function colorByDelta(delta: number): string {
   if (delta >= 10) return 'text-emerald-500';

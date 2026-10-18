@@ -26,7 +26,7 @@ export interface QuotaPrediction {
   salesperson?: { name: string } | null;
 }
 
-export interface QuotaAlert {
+interface QuotaAlert {
   id: string;
   prediction_id: string;
   salesperson_id: string;

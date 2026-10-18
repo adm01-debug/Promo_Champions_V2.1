@@ -19,7 +19,7 @@ export interface ImpactRow {
   delta_ticket: number;
 }
 
-export interface CoachingImpactResponse {
+interface CoachingImpactResponse {
   summary: {
     total_sessions: number;
     avg_delta_overall: number;

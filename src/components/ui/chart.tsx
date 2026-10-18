@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const;
 
-export type ChartConfig = {
+type ChartConfig = {
   [_k in string]: {
     label?: React.ReactNode;
     icon?: React.ComponentType;
@@ -263,8 +263,6 @@ const ChartTooltipContent = React.forwardRef<
 );
 ChartTooltipContent.displayName = 'ChartTooltip';
 
-const ChartLegend = RechartsPrimitive.Legend;
-
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & {
@@ -354,11 +352,4 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
     : config[key as keyof typeof config];
 }
 
-export {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-  ChartStyle,
-};
+export { ChartContainer, ChartTooltip, ChartTooltipContent };

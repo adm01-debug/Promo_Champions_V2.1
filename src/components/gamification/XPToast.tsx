@@ -1,13 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap } from 'lucide-react';
-import {
-  useState,
-  createContext,
-  useContext,
-  useCallback,
-  useMemo,
-  ReactNode,
-} from 'react';
+import { useState, createContext, useCallback, useMemo, ReactNode } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery';
 
 interface XPNotification {
@@ -22,14 +15,6 @@ interface XPToastContextType {
 }
 
 const XPToastContext = createContext<XPToastContextType | undefined>(undefined);
-
-export function useXPToast() {
-  const context = useContext(XPToastContext);
-  if (!context) {
-    throw new Error('useXPToast must be used within XPToastProvider');
-  }
-  return context;
-}
 
 export function XPToastProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<XPNotification[]>([]);

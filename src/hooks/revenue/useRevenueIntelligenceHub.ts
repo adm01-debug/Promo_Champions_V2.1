@@ -33,7 +33,7 @@ export interface InspectionDeal {
   inspected_at: string;
 }
 
-export interface RevenueIntelligenceData {
+interface RevenueIntelligenceData {
   horizon_days: number;
   forecast_rollup: ForecastRollupRow[];
   variance: Record<string, number>;

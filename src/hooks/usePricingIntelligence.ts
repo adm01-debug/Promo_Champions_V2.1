@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchWithUserToken } from '@/lib/edgeFetch';
 import { SUPABASE_URL } from '@/integrations/supabase/env';
 
-export interface PricingKPIs {
+interface PricingKPIs {
   total_revenue: number;
   deals_count: number;
   avg_ticket: number;

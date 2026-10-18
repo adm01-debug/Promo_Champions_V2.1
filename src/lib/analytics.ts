@@ -68,7 +68,7 @@ export function trackInteraction() {
  * Grava a página corrente com duração + interações em UMA linha só.
  * Idempotente: chamadas repetidas não duplicam.
  */
-export async function flushCurrentPage() {
+async function flushCurrentPage() {
   const page = currentPage;
   if (!page || page.flushed || !salespersonId) {
     currentPage = null;

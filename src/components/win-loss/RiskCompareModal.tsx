@@ -98,7 +98,7 @@ function ConfBadge({ original, applied }: { original: number; applied: number })
   );
 }
 
-export function diffKeywords(a: string[], b: string[]) {
+function diffKeywords(a: string[], b: string[]) {
   const setA = new Set(a.map(k => k.toLowerCase()));
   const setB = new Set(b.map(k => k.toLowerCase()));
   const onlyA = a.filter(k => !setB.has(k.toLowerCase()));
@@ -107,10 +107,7 @@ export function diffKeywords(a: string[], b: string[]) {
   return { onlyA, onlyB, common };
 }
 
-export function buildCompareSummary(
-  a: AtRiskDealFromPattern,
-  b: AtRiskDealFromPattern
-): string {
+function buildCompareSummary(a: AtRiskDealFromPattern, b: AtRiskDealFromPattern): string {
   if (!a.breakdown || !b.breakdown) return '';
   const finalDelta =
     (a.breakdown.final_score ?? a.risk_score) - (b.breakdown.final_score ?? b.risk_score);

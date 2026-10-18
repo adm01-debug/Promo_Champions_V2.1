@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CRITICAL_MARKUP_THRESHOLD } from '@/lib/bi/markupOverviewHelpers';
 
-export interface CriticalMarkupSale {
+interface CriticalMarkupSale {
   id: string;
   clientName: string;
   productName: string;

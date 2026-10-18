@@ -6,12 +6,12 @@ import {
   Tooltip as RechartsTooltip,
 } from 'recharts';
 
-export interface CategoryPieDatum {
+interface CategoryPieDatum {
   name: string;
   value: number;
 }
 
-export interface CategoryPieProps {
+interface CategoryPieProps {
   data: CategoryPieDatum[];
 }
 

@@ -3,7 +3,7 @@ import { WON_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
-export interface ClientInsight {
+interface ClientInsight {
   name: string;
   company: string | null;
   avgTicket: number;
@@ -11,7 +11,7 @@ export interface ClientInsight {
   totalValue: number;
 }
 
-export interface RepurchaseInsight {
+interface RepurchaseInsight {
   name: string;
   company: string | null;
   purchaseCount: number;
@@ -19,7 +19,7 @@ export interface RepurchaseInsight {
   repurchaseRate: number;
 }
 
-export interface SalesInsightsData {
+interface SalesInsightsData {
   avgTicketGlobal: number;
   avgTicketPrevMonth: number;
   avgTicketChange: number;

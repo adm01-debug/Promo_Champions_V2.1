@@ -46,11 +46,3 @@ export function setHistoryOpenPersisted(connectionId: string, open: boolean): vo
   }
   writeSet(set);
 }
-
-export function getLastOpenedConnectionId(): string | null {
-  try {
-    return localStorage.getItem(LAST_KEY);
-  } catch {
-    return null;
-  }
-}

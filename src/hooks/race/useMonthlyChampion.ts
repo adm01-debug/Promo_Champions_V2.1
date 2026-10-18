@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { RoleType } from '@/hooks/race/useRaceSeasonByRole';
 
-export interface MonthlyChampionData {
+interface MonthlyChampionData {
   season_id: string;
   season_name: string;
   winner_id: string;

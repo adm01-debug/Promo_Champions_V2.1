@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 export type SystemSoundType = 'ding' | 'pop' | 'chime' | 'swoosh' | 'none';
 
-export interface SystemSoundOption {
+interface SystemSoundOption {
   id: SystemSoundType;
   label: string;
   description: string;

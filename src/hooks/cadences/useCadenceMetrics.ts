@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-export interface CadenceMetrics {
+interface CadenceMetrics {
   cadence_id: string;
   cadence_name: string;
   total_enrolled: number;

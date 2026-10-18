@@ -8,8 +8,7 @@ export const MAX_REPLAY_IDS = 50;
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export type ValidateReplayResult =
-  { ok: true; ids: string[] } | { ok: false; message: string };
+type ValidateReplayResult = { ok: true; ids: string[] } | { ok: false; message: string };
 
 export function validateReplayIds(ids: readonly string[]): ValidateReplayResult {
   const deduped = Array.from(new Set(ids ?? []));

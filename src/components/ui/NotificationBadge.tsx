@@ -78,7 +78,7 @@ const dotSizeStyles = {
   lg: 'h-3 w-3',
 };
 
-export const NotificationDot = memo(function NotificationDot({
+const NotificationDot = memo(function NotificationDot({
   visible = true,
   variant = 'destructive',
   size = 'md',
