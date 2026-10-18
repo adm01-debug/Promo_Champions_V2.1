@@ -1,5 +1,5 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
-import { createClient } from "npm:@supabase/supabase-js@2.49.4";
+import { type SupabaseClient } from "npm:@supabase/supabase-js@2.49.4";
 import { withRequestId } from "../_shared/request-id.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { validateUUID, validateEnum, collectErrors, validationErrorResponse } from "../_shared/validation.ts";
@@ -7,7 +7,8 @@ import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { chunkedIn } from "../_shared/chunked-in.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
-import { toBusinessDate } from "../_shared/business-date.ts";
+import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
+import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 
 interface OpenDeal {
@@ -40,7 +41,7 @@ function classifyRisk(prob: number): "safe" | "on_track" | "at_risk" | "critical
   return "critical";
 }
 
-async function generateAdvancedActions(supabase: ReturnType<typeof createClient>, params: {
+async function generateAdvancedActions(supabase: SupabaseClient, params: {
   forecastId: string;
   salespersonName: string;
   quota: number;
@@ -152,31 +153,45 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     const elapsedDays = Math.max(1, Math.ceil((now.getTime() - periodStart.getTime()) / 86400000));
     const remainingDays = Math.max(1, totalDays - elapsedDays);
 
-    let spQuery = supabase.from("salespeople").select("id, name, monthly_goal").limit(500);
+    let spQuery = supabase.from("salespeople").select("id, name").limit(500);
     if (filterSp) spQuery = spQuery.eq("id", filterSp);
     const { data: salespeople, error: spErr } = await spQuery;
     if (spErr) throw spErr;
 
     const spIds = (salespeople ?? []).map((sp) => sp.id);
 
-    // Batch-fetch probability scores + closed/open sales in parallel (was N+N queries)
-    const [scoresRes, closedData, openData] = await Promise.all([
+    // Batch-fetch probability scores + metas + closed/open sales in parallel
+    // (was N+N queries). Metas vivem em sales_goals — salespeople NÃO tem
+    // monthly_goal: a meta vigente é a linha mais recente com month ≤ mês
+    // corrente (mesmo fallback de analyze-pipeline-coverage/revops-hub).
+    const [scoresRes, goalsData, closedData, openData] = await Promise.all([
       supabase
         .from("deal_probability_scores")
         .select("sale_id, calibrated_probability")
         .order("calculated_at", { ascending: false })
         .limit(10000),
+      chunkedIn<{ salesperson_id: string; goal_amount: number; month: string }>(
+        spIds,
+        (chunk) => supabase
+          .from("sales_goals")
+          .select("salesperson_id, goal_amount, month")
+          .in("salesperson_id", chunk)
+          .lte("month", toBusinessMonthStart())
+          .order("month", { ascending: false })
+          .limit(5000),
+        { maxConcurrency: 4, label: "predict-quota-attainment.goals" },
+      ),
       chunkedIn<{ id: string; amount: number; salesperson_id: string }>(
         spIds,
         (chunk) => supabase
           .from("sales")
           .select("id, amount, salesperson_id")
           .in("salesperson_id", chunk)
-          .eq("status", "closed_won")
+          .in("status", [...WON_SALE_STATUSES])
           .gte("created_at", periodStart.toISOString())
           .lte("created_at", periodEnd.toISOString())
           .limit(10000),
-        { parallel: true, label: "predict-quota-attainment.closed" },
+        { maxConcurrency: 4, label: "predict-quota-attainment.closed" },
       ),
       chunkedIn<{ id: string; amount: number; stage: string; salesperson_id: string }>(
         spIds,
@@ -184,9 +199,9 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
           .from("sales")
           .select("id, amount, stage, salesperson_id")
           .in("salesperson_id", chunk)
-          .not("status", "in", "(closed_won,closed_lost)")
+          .in("status", [...OPEN_SALE_STATUSES])
           .limit(10000),
-        { parallel: true, label: "predict-quota-attainment.open" },
+        { maxConcurrency: 4, label: "predict-quota-attainment.open" },
       ),
     ]);
 
@@ -194,6 +209,14 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     const latestScore = new Map<string, number>();
     for (const s of scoresRes.data ?? []) {
       if (!latestScore.has(s.sale_id)) latestScore.set(s.sale_id, Number(s.calibrated_probability));
+    }
+
+    // Meta vigente por vendedor = linha mais recente (lista já vem desc).
+    const goalBySp = new Map<string, number>();
+    for (const g of goalsData) {
+      if (!goalBySp.has(g.salesperson_id)) {
+        goalBySp.set(g.salesperson_id, Number(g.goal_amount ?? 0));
+      }
     }
 
     const closedBySp = new Map<string, Array<{ id: string; amount: number }>>();
@@ -212,7 +235,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
 
     // Compute all metrics in memory — zero DB calls inside this loop
     type SpMetrics = {
-      sp: { id: string; name: string; monthly_goal: number | null };
+      sp: { id: string; name: string };
       quotaAmount: number;
       closedAmount: number;
       weightedPipeline: number;
@@ -228,7 +251,7 @@ Deno.serve(withRequestId("predict-quota-attainment", async (req, _ctx) => {
     const metricsPerSp: SpMetrics[] = [];
 
     for (const sp of salespeople ?? []) {
-      const quotaMonthly = Number(sp.monthly_goal ?? 0);
+      const quotaMonthly = goalBySp.get(sp.id) ?? 0;
       const quotaAmount = period === "quarter" ? quotaMonthly * 3 : quotaMonthly;
 
       const closedAmount = (closedBySp.get(sp.id) ?? []).reduce((sum, s) => sum + Number(s.amount ?? 0), 0);
