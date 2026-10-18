@@ -216,8 +216,8 @@ describe('useLoginRateLimiter', () => {
     expect(result.current.lockoutStatus.attempts).toBe(5);
   });
 
-  it('descarta resposta atrasada do MESMO e-mail consultado duas vezes (A-B-A)', async () => {
-    // Cenario: consulta A1; o campo muda para B e volta para A, disparando
+  it('descarta resposta atrasada do MESMO e-mail consultado duas vezes (A→B→A)', async () => {
+    // Cenário: consulta A1; o campo muda para B e volta para A, disparando
     // A2. A1 responde depois de A2 — sem o seq counter, a resposta antiga
     // (livre) sobrescreveria o lockout real de A2.
     const resolvers: Array<(v: { data: unknown; error: null }) => void> = [];
@@ -236,7 +236,7 @@ describe('useLoginRateLimiter', () => {
       void result.current.checkLoginAttempts('a@example.com'); // A2 = resolvers[2]
     });
 
-    // A2 responde bloqueado — este e o estado correto da tela.
+    // A2 responde bloqueado — este é o estado correto da tela.
     await act(async () => {
       resolvers[2]?.({
         data: [
@@ -247,7 +247,7 @@ describe('useLoginRateLimiter', () => {
     });
     expect(result.current.lockoutStatus.isLocked).toBe(true);
 
-    // A1 chega por ultimo com estado livre — nao pode sobrescrever.
+    // A1 chega por último com estado livre — não pode sobrescrever.
     await act(async () => {
       resolvers[0]?.({
         data: [{ attempts: 0, lockout_until: null }],
