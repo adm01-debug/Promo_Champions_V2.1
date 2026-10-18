@@ -11,6 +11,13 @@ import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 
+// [FORECAST-SSOT] Fonte canônica por superfície:
+// - Tempo real (dashboards, Pipeline Pulse): ESTA função — lê
+//   revenue_forecast_view (SSOT: sales + stage_probabilities +
+//   forecast_category) e projeta cenários 30/60/90d.
+// - Persistido (aba AI Forecast, revenue_forecasts): generate-revenue-forecast,
+//   que usa as mesmas definições da view. Não existe segunda conta de
+//   commit/best_case/pipeline.
 
 interface ForecastRow {
   salesperson_id: string | null;

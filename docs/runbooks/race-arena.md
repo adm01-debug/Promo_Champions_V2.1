@@ -1,7 +1,11 @@
 # Race Arena — Runbook Operacional
 
 > **Versão**: Hardening Round 3 · **Última revisão**: 2026-04-19
-> **Status do módulo**: 10/10 (production-ready)
+> **Status do módulo** (revisado 2026-10-18): **operacional com ressalvas**
+> — implementado e em produção (temporadas, power-ups, commentary); não é
+> "10/10": `edge-retry-threshold-alert`/`simulate-load` não estão deployadas
+> no plano atual (limite de 100 functions) e o ref de projeto citado abaixo
+> foi corrigido para `usyxfpqlsspldubptrdl`.
 
 Este runbook cobre as operações mais comuns sobre o módulo **Race Arena**
 (rotas `/race-arena`, `/race-arena/closer`, `/race-arena/sdr`,
@@ -70,6 +74,7 @@ SELECT e.id, e.season_id, s.name, s.status
 ```
 
 Para limpeza:
+
 ```sql
 DELETE FROM public.race_events e
 USING public.race_seasons s
@@ -89,14 +94,15 @@ O cache é **per-instance** — invalida automaticamente em:
 - TTL natural (60s)
 
 Se precisar **forçar** invalidação imediata:
-1. Redeploy via UI: `Connectors → Lovable Cloud → Edge Functions → race-commentary → Redeploy`
-2. Ou via CLI: `supabase functions deploy race-commentary --project-ref saejqkojleeaxzrslzfg`
+Redeploy via CLI: `supabase functions deploy race-commentary --project-ref usyxfpqlsspldubptrdl`
+(a antiga integração Lovable Cloud não é mais o caminho de deploy — 2026-10-18)
 
 ---
 
 ## 4. Troubleshooting
 
 ### Realtime não atualiza o leaderboard
+
 - Verifique se `sales` e `race_cars` estão na publicação `supabase_realtime`:
   ```sql
   SELECT schemaname, tablename FROM pg_publication_tables
@@ -107,11 +113,14 @@ Se precisar **forçar** invalidação imediata:
   por `seasonId` — múltiplas instâncias do hook compartilham 1 canal.
 
 ### "Carro não encontrado" ao tentar coletar power-up
+
 - O usuário precisa ter um registro em `race_cars` (uma única linha,
   unique em `salesperson_id`). Crie via `/race-arena/<role>` → "Meu Carro".
 
 ### Trigger rejeita inserção de evento
+
 Mensagens possíveis:
+
 - `season % is not active` → o front tentou registrar evento em temporada
   encerrada. Verifique se o `seasonId` em uso vem do hook
   `useRaceSeasonByRole` (que filtra `status = 'active'`).
@@ -119,6 +128,7 @@ Mensagens possíveis:
   ainda. Force o onboarding via `RaceOnboardingChecklist`.
 
 ### Performance do leaderboard degradada
+
 - Round 3 adicionou índice composto `race_events_season_salesperson_idx`.
 - Confirme uso: `EXPLAIN ANALYZE SELECT ... FROM race_events WHERE season_id = $1`.
 
@@ -145,6 +155,7 @@ SELECT route,
 ---
 
 ## Referências cruzadas
+
 - Migration Round 3: `supabase/migrations/20260419145449_*.sql`
 - Relatório de testes: `docs/reports/race-arena-test-report.md`
 - ADR: `docs/decisions/` (Race Arena gamification)

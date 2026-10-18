@@ -87,7 +87,28 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
   const reqOrigin = req.headers.get("origin");
 
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: { ...baseCors, "Access-Control-Allow-Origin": reqOrigin ?? "*" } });
+    // Preflight: sem token não há como conhecer a allowlist do embed — mas o
+    // GET revalida token + allowed_origins antes de devolver ACAO, então "*"
+    // aqui não libera leitura. Quando o token é resolvível (header ou query),
+    // o Origin só é ecoado se estiver em allowed_origins.
+    const optUrl = new URL(req.url);
+    const optToken = req.headers.get("x-embed-token") ?? optUrl.searchParams.get("token");
+    let optOrigin = "*";
+    if (optToken && optToken.length >= 20) {
+      const optAdmin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      );
+      const { data: optRow } = await optAdmin
+        .from("report_embed_tokens")
+        .select("allowed_origins")
+        .eq("token", optToken)
+        .maybeSingle();
+      if (optRow) {
+        optOrigin = pickCorsOrigin(reqOrigin, (optRow.allowed_origins ?? []) as string[]);
+      }
+    }
+    return new Response(null, { headers: { ...baseCors, "Access-Control-Allow-Origin": optOrigin } });
   }
 
   try {

@@ -274,7 +274,7 @@ export function CommandPalette() {
         id: 'desafios',
         label: 'Desafios Semanais',
         icon: Flame,
-        action: () => guardedNavigate('/desafios-semanais'),
+        action: () => guardedNavigate('/desafios'),
         group: 'navigation',
         keywords: ['challenges', 'weekly'],
       },

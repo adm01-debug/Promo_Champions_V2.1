@@ -33,7 +33,6 @@ bitrix24-sync
 broadcast-sale-notification
 calculate-committee-coverage
 calculate-deal-health
-calibrate-win-probabilities
 calibrate-win-probability
 campaign-health-alert
 challenge-expiration-alerts
@@ -95,7 +94,6 @@ race-commentary
 ranking-api
 receive-quote-sync
 recompute-stage-baselines
-refresh-stage-baselines
 renewal-automation
 report-embed-public
 revenue-intelligence

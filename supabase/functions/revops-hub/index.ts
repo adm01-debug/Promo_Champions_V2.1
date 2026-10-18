@@ -4,6 +4,7 @@ import { withRequestId } from "../_shared/request-id.ts";
 import { getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { getStageProbabilities } from "../_shared/stage-probabilities.ts";
 import { toBusinessMonthStart } from "../_shared/business-date.ts";
+import { isLostSaleStatus, isOpenSaleStatus, isWonSaleStatus } from "../_shared/sale-statuses.ts";
 
 Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
   const corsHeaders = getCorsHeaders(req);
@@ -65,10 +66,11 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
     if (goalsRes.error) throw goalsRes.error;
     const salesGoals = goalsRes.data ?? [];
 
-    // Pipeline ativo
-    const openDeals = sales.filter((s) => !["completed", "lost", "cancelled"].includes(s.status));
-    const wonDeals = sales.filter((s) => s.status === "completed" && s.created_at >= since);
-    const lostDeals = sales.filter((s) => s.status === "lost" && s.created_at >= since);
+    // Pipeline ativo — conjuntos canônicos: ganhas = completed/won/closed
+    // (won/closed inflavam o pipeline), perdidas = lost/cancelled.
+    const openDeals = sales.filter((s) => isOpenSaleStatus(s.status));
+    const wonDeals = sales.filter((s) => isWonSaleStatus(s.status) && s.created_at >= since);
+    const lostDeals = sales.filter((s) => isLostSaleStatus(s.status) && s.created_at >= since);
 
     // Pipeline coverage e weighted forecast — pesos vêm de public.stage_probabilities
     const stageProbs = await getStageProbabilities(supabase);

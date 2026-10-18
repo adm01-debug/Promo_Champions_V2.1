@@ -195,6 +195,61 @@ Deno.serve(
       if (roleErr) throw roleErr;
       const requires_approval = !(auto_execute && canAutoExecute);
 
+      // IDOR: resolve o salespeople.id do chamador (JWT) — nunca confia em ids
+      // vindos do body. canAutoExecute já é is_admin_or_manager, reusado como
+      // "pode ver a carteira toda".
+      const { data: callerSp } = await admin
+        .from('salespeople')
+        .select('id')
+        .eq('auth_user_id', caller.userId)
+        .maybeSingle();
+      const callerSpId = callerSp?.id ?? null;
+
+      // Lê a entidade via service_role mas só devolve se o chamador tiver
+      // ownership (salesperson_id/sdr_id/closer_id em sales, user_id em
+      // clients, carteira em client_portfolio) ou for admin/manager.
+      // Sem coluna de ownership reconhecida no registro → negado (fail closed).
+      const loadEntityForCaller = async (
+        entityType: string,
+        entityId: string
+      ): Promise<Record<string, unknown> | null> => {
+        const table =
+          entityType === 'lead'
+            ? 'leads'
+            : entityType === 'client'
+              ? 'clients'
+              : entityType === 'deal'
+                ? 'sales'
+                : null;
+        if (!table) return null;
+        const { data } = await admin
+          .from(table)
+          .select('*')
+          .eq('id', entityId)
+          .maybeSingle();
+        if (!data) return null;
+        if (canAutoExecute) return data;
+        const row = data as Record<string, unknown>;
+        if (row.user_id === caller.userId) return data;
+        if (
+          callerSpId &&
+          (row.salesperson_id === callerSpId ||
+            row.sdr_id === callerSpId ||
+            row.closer_id === callerSpId)
+        )
+          return data;
+        if (entityType === 'client' && callerSpId) {
+          const { data: portfolio } = await admin
+            .from('client_portfolio')
+            .select('client_id')
+            .eq('client_id', entityId)
+            .eq('salesperson_id', callerSpId)
+            .maybeSingle();
+          if (portfolio) return data;
+        }
+        return null;
+      };
+
       // Create run via user client (so RLS context applies via SECURITY DEFINER RPC)
       const { data: runId, error: createErr } = await userClient.rpc('create_agent_run', {
         _agent_type: agent_type,
@@ -209,22 +264,7 @@ Deno.serve(
       // Fetch initial context
       let context: Record<string, unknown> = {};
       if (target_entity_type && target_entity_id) {
-        const table =
-          target_entity_type === 'lead'
-            ? 'leads'
-            : target_entity_type === 'client'
-              ? 'clients'
-              : target_entity_type === 'deal'
-                ? 'sales'
-                : null;
-        if (table) {
-          const { data } = await admin
-            .from(table)
-            .select('*')
-            .eq('id', target_entity_id)
-            .maybeSingle();
-          context = data ?? {};
-        }
+        context = (await loadEntityForCaller(target_entity_type, target_entity_id)) ?? {};
       }
 
       const messages: unknown[] = [
@@ -271,18 +311,11 @@ Deno.serve(
 
           try {
             if (name === 'get_entity_details') {
-              const tbl =
-                args.entity_type === 'lead'
-                  ? 'leads'
-                  : args.entity_type === 'client'
-                    ? 'clients'
-                    : 'sales';
-              const { data } = await admin
-                .from(tbl)
-                .select('*')
-                .eq('id', args.entity_id)
-                .maybeSingle();
-              toolOutput = { entity: data };
+              const data = await loadEntityForCaller(
+                String(args.entity_type ?? ''),
+                String(args.entity_id ?? '')
+              );
+              toolOutput = data ? { entity: data } : { error: 'entity_not_found_or_forbidden' };
             } else if (name === 'finish') {
               finalResult = args;
               finished = true;
@@ -294,20 +327,28 @@ Deno.serve(
                 toolOutput = { proposed: args, note: 'Aguardando aprovação humana.' };
               } else {
                 if (name === 'add_note' && target_entity_id) {
+                  // FK salesperson_id → salespeople.id (não auth.users.id);
+                  // outcome é enum NOT NULL — 'connected' é o default do form.
+                  if (!callerSpId) throw new Error('salesperson_not_found');
                   await admin.from('activities').insert({
                     activity_type: 'note',
-                    outcome: 'neutral',
+                    outcome: 'connected',
                     notes: args.note,
-                    salesperson_id: caller.userId,
+                    salesperson_id: callerSpId,
+                    ...(target_entity_type === 'deal' ? { sale_id: target_entity_id } : {}),
+                    ...(target_entity_type === 'client' ? { client_id: target_entity_id } : {}),
                   });
                   toolOutput = { executed: true };
                 } else if (name === 'schedule_followup') {
+                  if (!callerSpId) throw new Error('salesperson_not_found');
                   await admin.from('agenda_events').insert({
-                    salesperson_id: caller.userId,
+                    salesperson_id: callerSpId,
                     title: args.title,
                     scheduled_at: args.scheduled_at,
                     description: args.description ?? null,
-                    event_type: 'followup',
+                    event_type: 'follow_up',
+                    ...(target_entity_type === 'deal' ? { sale_id: target_entity_id } : {}),
+                    ...(target_entity_type === 'client' ? { client_id: target_entity_id } : {}),
                   });
                   toolOutput = { executed: true };
                 } else if (

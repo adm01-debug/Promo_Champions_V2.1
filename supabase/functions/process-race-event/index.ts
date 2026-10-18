@@ -240,6 +240,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       type: string;
       salesperson_id: string;
       metadata?: Record<string, unknown>;
+      dedup_key?: string;
     }> = [];
 
     const prevSorted = [...prevBoard].sort(
@@ -268,6 +269,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
               type: 'overtake',
               salesperson_id: id,
               metadata: { overtaken: otherId },
+              dedup_key: `overtake:${otherId}`,
             });
           }
         }
@@ -283,46 +285,63 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
               type: 'checkpoint',
               salesperson_id: row.salesperson_id,
               metadata: { checkpoint: cp },
+              dedup_key: `checkpoint:${cp}`,
             });
           }
         }
         if (oldP < 1 && newP >= 1 && !season.winner_id) {
-          events.push({
-            type: 'victory',
-            salesperson_id: row.salesperson_id,
-            metadata: { season_id: season.id },
-          });
-          await supabase
+          // Guarda atômica: só a primeira chamada vence a corrida — a
+          // concorrente recebe RETURNING vazio e não emite 'victory' nem
+          // incrementa wins.
+          const { data: wonSeason } = await supabase
             .from('race_seasons')
             .update({ winner_id: row.salesperson_id, status: 'finished' })
-            .eq('id', season.id);
-          await supabase
-            .rpc('increment_race_car_wins', { _salesperson_id: row.salesperson_id })
-            .then(() => null, () => null);
-          break;
+            .eq('id', season.id)
+            .is('winner_id', null)
+            .select('id');
+          if (wonSeason?.length) {
+            events.push({
+              type: 'victory',
+              salesperson_id: row.salesperson_id,
+              metadata: { season_id: season.id },
+              dedup_key: 'victory',
+            });
+            await supabase
+              .rpc('increment_race_car_wins', { _salesperson_id: row.salesperson_id })
+              .then(() => null, () => null);
+            break;
+          }
         }
       }
     }
 
-    // inserir eventos derivados (marcados com a venda que os originou)
+    // inserir eventos derivados (marcados com a venda que os originou),
+    // um a um: 23505 numa linha não aborta as demais (mesmo padrão do
+    // boost) — o índice inclui dedup_key como discriminador por ocorrência.
     let derivedInserted = 0;
-    if (events.length > 0) {
-      const { error: derivedErr } = await supabase.from('race_events').insert(
-        events.map(e => ({
-          season_id: season.id,
-          salesperson_id: e.salesperson_id,
-          event_type: e.type,
-          metadata: { ...(e.metadata ?? {}), sale_id: sale_id ?? null },
-        }))
-      );
-      if (!derivedErr) derivedInserted = events.length;
+    const insertedOvertakers: string[] = [];
+    for (const e of events) {
+      const { error: eventErr } = await supabase.from('race_events').insert({
+        season_id: season.id,
+        salesperson_id: e.salesperson_id,
+        event_type: e.type,
+        metadata: {
+          ...(e.metadata ?? {}),
+          sale_id: sale_id ?? null,
+          dedup_key: e.dedup_key ?? null,
+        },
+      });
+      if (!eventErr) {
+        derivedInserted++;
+        if (e.type === 'overtake') insertedOvertakers.push(e.salesperson_id);
+      } else if (eventErr.code !== '23505') {
+        console.error('race_events insert failed', eventErr);
+      }
     }
 
-    // contagem de overtakes por carro (incremento)
-    const overtakers = events
-      .filter(e => e.type === 'overtake')
-      .map(e => e.salesperson_id);
-    for (const id of overtakers) {
+    // contagem de overtakes por carro: só para eventos realmente gravados —
+    // incrementar sem o insert inflaria total_overtakes.
+    for (const id of insertedOvertakers) {
       await supabase
         .rpc('increment_race_car_overtakes', { _salesperson_id: id })
         .then(() => null, () => null);
@@ -366,12 +385,18 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
       });
       if (grantErr) return;
 
-      // Emit event for real-time notification
+      // Emit event for real-time notification (dedup_key por powerup_type:
+      // xp_boost e mega_boost da mesma venda coexistem no índice único).
       await supabase.from('race_events').insert({
         season_id: season.id,
         salesperson_id: sp,
         event_type: 'powerup_unlocked',
-        metadata: { powerup_type: type, sale_id: sale_id ?? null, ...effect },
+        metadata: {
+          powerup_type: type,
+          sale_id: sale_id ?? null,
+          dedup_key: `powerup:${type}`,
+          ...effect,
+        },
       });
     };
 
@@ -382,6 +407,7 @@ Deno.serve(withRequestId('process-race-event', async (req, _ctx) => {
         .from('sales')
         .select('id', { count: 'exact', head: true })
         .eq('salesperson_id', salespersonId)
+        .in('status', COUNTED_SALE_STATUSES)
         .gte('created_at', oneHourAgo);
 
       if ((recentSalesCount ?? 0) >= 3) await grantBadge(salespersonId, 'velocista');

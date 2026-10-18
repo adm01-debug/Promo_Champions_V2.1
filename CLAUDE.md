@@ -1,7 +1,8 @@
 # CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)
 
 > CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes.
-> Maior sistema do lote: 175 rotas, 172 edge functions, 644 migrations.
+> Maior sistema do lote: 175 rotas, 173 edge functions (plano Supabase limita a 100 deployadas), 656 migrations.
+> Contagens verificadas no HEAD em 2026-10-18.
 
 ---
 
@@ -13,7 +14,7 @@
 | URL              | `https://usyxfpqlsspldubptrdl.supabase.co`                                             |
 | Dashboard        | https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl                            |
 | MCP para SQL     | gateway `supabase-promo-champions-v2-mcp.adm01.workers.dev` (rótulo "…LOVABLE CLOUD…") |
-| Migrations       | **644** (timestamp YYYYMMDDHHmmss)                                                     |
+| Migrations       | **656** (timestamp YYYYMMDDHHmmss)                                                     |
 
 > Corrigido em 2026-09-02 (ref antigo `rapjswienfhkobhlamxb`) e **reprovado em
 > 2026-09-13**: a "prova" anterior citava `_internal_secrets.functions_base_url`,
@@ -46,15 +47,15 @@
 
 ## 2. Stack
 
-| Camada            | Tech                                                                              |
-| ----------------- | --------------------------------------------------------------------------------- |
-| Frontend          | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, React Router |
-| Backend           | Supabase Cloud (Postgres + RLS + Auth + Edge Functions Deno)                      |
-| Testes            | Vitest + Testing Library, Playwright E2E                                          |
-| Mapas             | Leaflet + react-leaflet (clusters de clientes)                                    |
-| Workflows visuais | @xyflow/react                                                                     |
-| Export            | Excel/PDF (xlsx, pdf-lib)                                                         |
-| Deploy            | Vercel + GitHub (frontend repontado em código para `usyxfpqlsspldubptrdl` via `src/integrations/supabase/env.ts`)                                                                     |
+| Camada            | Tech                                                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Frontend          | Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, React Router                                 |
+| Backend           | Supabase Cloud (Postgres + RLS + Auth + Edge Functions Deno)                                                      |
+| Testes            | Vitest + Testing Library, Playwright E2E                                                                          |
+| Mapas             | Leaflet + react-leaflet (clusters de clientes)                                                                    |
+| Workflows visuais | @xyflow/react                                                                                                     |
+| Export            | Excel/PDF (exceljs, jspdf)                                                                                        |
+| Deploy            | Vercel + GitHub (frontend repontado em código para `usyxfpqlsspldubptrdl` via `src/integrations/supabase/env.ts`) |
 
 ---
 
@@ -76,7 +77,8 @@
 - Análise de chamadas: `analyze-call`, `diarize-call-recording`, `transcribe-call-recording`
 - Qualidade de vendas: `analyze-objection-handling`, `analyze-question-quality`, `analyze-sentiment-timeline`, `analyze-skill-gaps`, `analyze-win-loss`
 - Coaching: `coaching-intelligence`, `coaching-session-prep`, `coaching-impact-summary`, `salesperson-coaching`, `generate-loss-coaching`, `extract-coaching-actions`, `detect-coaching-opportunities`
-- Copilot/assistente: `ai-copilot`, `ai-agent-orchestrator`, `personal-assistant-stream`, `sales-assistant-chat`, `next-best-action`, `automation-suggestions`
+- Copilot/assistente: `ai-agent-orchestrator`, `personal-assistant-stream`, `sales-assistant-chat`, `next-best-action`, `automation-suggestions`
+- `ai-copilot` existe no repo mas **não tem chamador** (órfã — verificado 2026-10-18)
 - Email IA: `ai-email-composer`, `email-composer-bulk`, `schedule-optimal-send`, `send-time-optimizer`
 - Forecast/revenue: `revenue-forecast-ai`, `predict-quota-attainment`, `predict-deal-velocity`, `snapshot-forecast`, `compute-forecast-accuracy`, `calibrate-win-probabilities`, `generate-revenue-forecast`, `demand-forecast`, `purchase-intelligence-forecast`, `forecast-narrative`
 - BI por papel: **BISDR** (prospecção), **BICloser** (carteira), **BIVendedor** (individual), **BIGestor** (equipe)
@@ -92,7 +94,7 @@
 
 ---
 
-## 4. Edge Functions (172 funções Deno; plano Supabase limita a 100 deployadas)
+## 4. Edge Functions (173 funções Deno; plano Supabase limita a 100 deployadas)
 
 Grupos por domínio:
 
@@ -128,15 +130,15 @@ Grupos por domínio:
 
 ## 5. Integracoes externas
 
-| Serviço                        | Edge function(s)                                            |
-| ------------------------------ | ----------------------------------------------------------- |
-| **Twilio** (voz, dialer)       | twilio-call-status, twilio-call-twiml, twilio-click-to-call |
-| **ElevenLabs** (STT/TTS/voice) | elevenlabs-stt, elevenlabs-tts, elevenlabs-voice            |
-| **Bitrix24**                   | bitrix24-oauth, bitrix24-sync                               |
-| **Email transacional**         | send-transactional-email, email-bulk-send                   |
-| **WhatsApp multichannel**      | send-multichannel-message (via Evolution)                   |
-| **Semantic/NLQ**               | semantic-search, nlq-query                                  |
-| **WebAuthn** (passkeys)        | webauthn                                                    |
+| Serviço                        | Edge function(s)                                                                                                                              |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Twilio** (voz, dialer)       | twilio-call-status, twilio-call-twiml, twilio-click-to-call                                                                                   |
+| **ElevenLabs** (STT/TTS/voice) | elevenlabs-stt, elevenlabs-tts, elevenlabs-voice                                                                                              |
+| **Bitrix24**                   | bitrix24-oauth, bitrix24-sync                                                                                                                 |
+| **Email transacional**         | send-transactional-email, email-bulk-send                                                                                                     |
+| **WhatsApp multichannel**      | send-multichannel-message (Twilio, Meta Cloud, Z-API ou Evolution — provider resolvido por credencial) + whatsapp-inbound-webhook (Evolution) |
+| **Semantic/NLQ**               | semantic-search, nlq-query                                                                                                                    |
+| **WebAuthn** (passkeys)        | webauthn                                                                                                                                      |
 
 ---
 
@@ -145,17 +147,21 @@ Grupos por domínio:
 ```
 src/
   components/
-    ai/, analytics/, arena/, bi/, cadences/, coaching/, competitive/
-    conversation-intelligence/, copilot/, crm/, deal-intelligence/
-    dialer/, email/, forecast/, gamification/, pipeline-pulse/
-    playbooks/, race/, revenue-intelligence/, scoring/, sequences/
-    win-loss/, customer-success/, multichannel/
+    ai/, analytics/, arena/, assistant/, bi/, cadences/, coaching/, competitive/
+    conversation-intelligence/, customer-success/, deal-intelligence/
+    dialer/, email/, forecast/, gamification/, lead-scoring/, multichannel/
+    pipeline-pulse/, playbooks/, quotes/, race/, revenue-intelligence/
+    sequences/, win-loss/, ... (103 domínios)
   hooks/        # TanStack Query hooks por dominio
-  pages/        # 175 rotas
+  pages/        # 163 páginas (175 rotas declaradas em routes/AppRoutes.tsx)
   integrations/supabase/  # client.ts + tipos gerados
   services/     # logica nao-React
   lib/          # race, winloss, revenueForecast, bi, reports
 ```
+
+> Nota (2026-10-18): versões anteriores citavam `copilot/`, `crm/` e `scoring/`
+> como domínios — esses diretórios não existem; os equivalentes reais são
+> `assistant/`, `quotes/`/`pipeline/` e `lead-scoring/`/`predictive/`.
 
 ---
 

@@ -15,6 +15,7 @@ import { partitionNotificationBatch } from "../_shared/notification-categories.t
 import { toBusinessDate } from "../_shared/business-date.ts";
 
 const DIGEST_TYPE = 'deal_risk_digest';
+// Definição canônica de "deal em risco" — docs/DEAL_RISK_CRITERIA.md
 const HEALTH_THRESHOLD = 50;
 const TOP_N = 5;
 const SLACK_CIRCUIT = 'slack:deal-risk-digest';

@@ -15,7 +15,9 @@ BEGIN
       'authenticated',
       'authenticated',
       'adm01@promobrindes.com.br',
-      crypt('Juca301225@', gen_salt('bf')),
+      -- Senha real removida do repositório (scrub). A migration já rodou; a senha
+      -- da conta deve ser rotacionada no dashboard do Supabase.
+      crypt('__ROTACIONADA__VER_NOTA__', gen_salt('bf')),
       now(), now(), now(),
       '{"provider":"email","providers":["email"]}',
       '{"full_name":"Administrador"}',

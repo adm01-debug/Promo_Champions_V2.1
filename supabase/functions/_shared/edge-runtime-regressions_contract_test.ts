@@ -7,7 +7,6 @@ import {
 
 const names = [
   "calculate-committee-coverage",
-  "calibrate-win-probabilities",
   "calibrate-win-probability",
   "coaching-impact-summary",
   "nlq-query",
@@ -39,7 +38,7 @@ Deno.test("funções globais provam autorização antes do service_role", async 
     "comitê deve provar acesso RLS antes de criar client admin",
   );
 
-  for (const name of ["calibrate-win-probabilities", "calibrate-win-probability"]) {
+  for (const name of ["calibrate-win-probability"]) {
     const source = await readFunction(name);
     const roleGate = source.indexOf("is_admin_or_manager");
     const adminClient = source.indexOf("const supabase = createClient");

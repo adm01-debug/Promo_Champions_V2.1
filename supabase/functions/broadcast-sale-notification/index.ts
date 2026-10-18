@@ -3,6 +3,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import { getUserClient, getServiceClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { isAuthorizedCronRequest } from '../_shared/cron-request-auth.ts';
+import { WON_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 
 import { alertFromEmail } from '../_shared/alert-escalation.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
@@ -103,7 +104,7 @@ Deno.serve(withRequestId('broadcast-sale-notification', async (req, ctx) => {
     const { data: salesStats, error: statsError } = await supabase
       .from('sales')
       .select('salesperson_id, amount')
-      .eq('status', 'completed')
+      .in('status', [...WON_SALE_STATUSES])
       .gte('created_at', startOfMonth.toISOString())
       .limit(50000);
 

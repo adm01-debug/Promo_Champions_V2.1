@@ -7,6 +7,7 @@ import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
 import { toBusinessDate, toBusinessMonthStart } from "../_shared/business-date.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 import { isAuthorizedCronRequest } from "../_shared/cron-request-auth.ts";
+import { OPEN_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 
 function classifyHealth(ratio: number): "critical" | "weak" | "healthy" | "strong" {
   if (ratio < 1.5) return "critical";
@@ -100,11 +101,14 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     const periodStart = new Date();
     periodStart.setDate(periodStart.getDate() + periodDays);
 
-    // Pull open deals
+    // Pull open deals — `value`/`expected_close_date` NÃO existem em sales
+    // (a coluna monetária é `amount`) e `closed_won`/`closed_lost` não fazem
+    // parte do CHECK de status: filtro por status canônico ABERTO (também
+    // exclui NULL de forma explícita — NOT IN excluía por avaliação NULL).
     let dealsQuery = supabase
       .from("sales")
-      .select("id, value, stage, salesperson_id, expected_close_date, source")
-      .not("stage", "in", "(closed_won,closed_lost)");
+      .select("id, amount, status, salesperson_id")
+      .in("status", [...OPEN_SALE_STATUSES]);
     if (ownerFilter) dealsQuery = dealsQuery.eq("salesperson_id", ownerFilter);
 
     const { data: deals, error: dealsErr } = await dealsQuery.limit(10000);
@@ -139,13 +143,15 @@ Deno.serve(withRequestId("analyze-pipeline-coverage", async (req, _ctx) => {
     // Aggregate by owner × stage
     type Bucket = { owner: string | null; stage: string; pipeline: number; weighted: number; count: number };
     const buckets = new Map<string, Bucket>();
-    (deals ?? []).forEach((d: { salesperson_id: string | null; stage: string; value: number }) => {
-      const stage = (d.stage || "lead").toLowerCase();
+    (deals ?? []).forEach((d: { salesperson_id: string | null; status: string | null; amount: number }) => {
+      // Chave de estágio/probabilidade = status canônico (stage é label pt-BR
+      // e frequentemente NULL — não casa com stage_probabilities).
+      const stage = (d.status || "lead").toLowerCase();
       const key = `${d.salesperson_id ?? "global"}::${stage}`;
       const prob = stageProbabilities[stage] ?? 0.1;
       const b = buckets.get(key) ?? { owner: d.salesperson_id, stage, pipeline: 0, weighted: 0, count: 0 };
-      b.pipeline += Number(d.value || 0);
-      b.weighted += Number(d.value || 0) * prob;
+      b.pipeline += Number(d.amount || 0);
+      b.weighted += Number(d.amount || 0) * prob;
       b.count += 1;
       buckets.set(key, b);
     });

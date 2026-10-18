@@ -72,6 +72,9 @@ export function useAtRiskDeals() {
 
         const daysSinceLastUpdate = differenceInDays(now, lastUpdateDate);
 
+        // Lente desta tela (Pipeline → "Deals em Risco — inatividade"):
+        // heurística local de inatividade/estagnação. A definição canônica de
+        // risco é deal_health_scores.health_score < 50 — docs/DEAL_RISK_CRITERIA.md
         // Calculate risk factors
         const riskFactors: string[] = [];
         let riskScore = 0;

@@ -13,18 +13,17 @@ crítico tem seu próprio piso em `coverage-ladder-baseline.json` e o check
 `src/lib/financeiro` **não existe** — a lógica financeira deste projeto vive
 em `markupHelpers`, `bi/`, `revenueForecast/` e `services/`. A lista real:
 
-| Prefixo                    | Domínio                                      |
-| -------------------------- | -------------------------------------------- |
-| `src/lib/validators/`      | Validadores BR (CPF/CNPJ, brSchemas)         |
-| `src/lib/schemas/`         | Schemas comerciais (comissão, metas, regras) |
-| `src/lib/markupHelpers`    | Markup e preço de venda                      |
-| `src/lib/gamification.ts`  | XP e progressão de nível                     |
-| `src/lib/race/`            | Gamificação de arena (celebrações, tiers)    |
-| `src/lib/orderTracking/`   | State machine de status de pedido            |
-| `src/lib/bi/`              | Agregações de BI                             |
-| `src/lib/revenueForecast/` | Forecast de receita                          |
-| `src/services/`            | Camada de serviços (sales, combo, goals)     |
-| `src/hooks/reports/`       | Helpers de relatórios                        |
+| Prefixo                    | Domínio                                   |
+| -------------------------- | ----------------------------------------- |
+| `src/lib/validators/`      | Validadores BR (CPF/CNPJ, brSchemas)      |
+| `src/lib/markupHelpers`    | Markup e preço de venda                   |
+| `src/lib/gamification.ts`  | XP e progressão de nível                  |
+| `src/lib/race/`            | Gamificação de arena (celebrações, tiers) |
+| `src/lib/orderTracking/`   | State machine de status de pedido         |
+| `src/lib/bi/`              | Agregações de BI                          |
+| `src/lib/revenueForecast/` | Forecast de receita                       |
+| `src/services/`            | Camada de serviços (sales, combo, goals)  |
+| `src/hooks/reports/`       | Helpers de relatórios                     |
 
 Novos módulos entram na lista editando `LADDER_MODULES` em
 `scripts/update-coverage-baseline.mjs` e regenerando o baseline.
@@ -46,7 +45,7 @@ Novos módulos entram na lista editando `LADDER_MODULES` em
    baseline novo na mesma PR — o ganho fica visível no diff.
 3. **Metas por degrau** (sugestão de sequência, revisar a cada ciclo):
    - `src/lib/markupHelpers` → 80% de linhas
-   - `src/lib/schemas/` → 90% (schemas declarativos são baratos de testar)
+   - ~~`src/lib/schemas/`~~ — módulo **removido** pela PR #209 (2026-10-02); sem meta
    - `src/services/` → 40% → 60% (extrair lógica pura para `src/lib/` ajuda)
    - `src/hooks/reports/` → 50%
 4. Nunca baixar um piso. Se uma remoção legítima de código reduz a cobertura,
@@ -54,11 +53,11 @@ Novos módulos entram na lista editando `LADDER_MODULES` em
 
 ## Histórico de redefinições de piso
 
-| Data       | Módulo               | De    | Para  | Motivo                                                                                                                                                                                                                            |
-| ---------- | -------------------- | ----- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-10-02 | `src/services/`      | 18,7% | 16,5% | PR #209 adicionou `callFeedbackService.ts`, `knownDeviceService.ts` e novas funções em `clientService.ts` sem testes (+91 linhas no denominador). O `job test` foi _skipped_ na main, então a queda caiu na primeira PR seguinte. |
-| 2026-10-02 | `src/hooks/reports/` | 67,1% | 65,4% | PR #209 adicionou `useMonthlySalesBenchmark.ts` sem teste (+19 linhas no denominador), mesma origem.                                                                                                                              |
-| 2026-10-02 | `src/lib/schemas/`   | 90%   | —     | `src/lib/schemas/commercial.ts` foi removido pela PR #209 (módulo órfão); prefixo saiu do baseline por não ter mais arquivos.                                                                                                     |
+| Data       | Módulo                        | De    | Para  | Motivo                                                                                                                                                                                                                            |
+| ---------- | ----------------------------- | ----- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-10-02 | `src/services/`               | 18,7% | 16,5% | PR #209 adicionou `callFeedbackService.ts`, `knownDeviceService.ts` e novas funções em `clientService.ts` sem testes (+91 linhas no denominador). O `job test` foi _skipped_ na main, então a queda caiu na primeira PR seguinte. |
+| 2026-10-02 | `src/hooks/reports/`          | 67,1% | 65,4% | PR #209 adicionou `useMonthlySalesBenchmark.ts` sem teste (+19 linhas no denominador), mesma origem.                                                                                                                              |
+| 2026-10-02 | `src/lib/schemas/` (removido) | 90%   | —     | `src/lib/schemas/commercial.ts` foi removido pela PR #209 (módulo órfão); prefixo saiu do baseline por não ter mais arquivos.                                                                                                     |
 
 Dívida resultante: subir `src/services/` de volta a ≥18,7% cobrindo os três
 serviços novos, e `src/hooks/reports/` cobrindo `useMonthlySalesBenchmark`.
