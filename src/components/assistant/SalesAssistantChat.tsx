@@ -24,6 +24,8 @@ import { ConversationHistory } from './ConversationHistory';
 import { ChatInputArea } from './ChatInputArea';
 import { QUICK_PROMPTS, DEAL_CONTEXT_PROMPTS, detectQuestionType } from './constants';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 export function SalesAssistantChat() {
   const [selectedSalesperson, setSelectedSalesperson] = useState<string | null>(null);
@@ -37,6 +39,13 @@ export function SalesAssistantChat() {
   const { toast } = useToast();
 
   const { data: salespeople } = useSalespeople();
+  // A edge sales-assistant-chat só honra salespersonId do próprio JWT (ou
+  // admin/manager) — o seletor espelha a mesma regra para não oferecer 403.
+  const { salesperson: authSalesperson } = useAuth();
+  const { isAdminOrManager } = useUserRoles();
+  const selectableSalespeople = isAdminOrManager
+    ? salespeople
+    : salespeople?.filter(s => s.id === authSalesperson?.id);
   const {
     aiAssistantName,
     responseMode,
@@ -196,7 +205,7 @@ export function SalesAssistantChat() {
                 <SelectValue placeholder="Selecionar vendedor" />
               </SelectTrigger>
               <SelectContent>
-                {salespeople?.map(person => (
+                {selectableSalespeople?.map(person => (
                   <SelectItem key={person.id} value={person.id}>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-5 w-5">

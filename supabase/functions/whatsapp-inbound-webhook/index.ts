@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
 import { chunkedIn } from "../_shared/chunked-in.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import {
@@ -56,10 +56,14 @@ interface StatusAck {
   status: string;
 }
 
-function json(body: unknown, status = 200): Response {
+function json(
+  body: unknown,
+  status: number,
+  cors: Record<string, string>,
+): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...cors, "Content-Type": "application/json" },
   });
 }
 
@@ -199,11 +203,14 @@ async function authenticate(
 
 Deno.serve(
   withRequestId("whatsapp-inbound-webhook", async (req, ctx) => {
+    // Webhook server-to-server: chamador sem Origin recebe a 1ª origem da
+    // allowlist; um Origin só é ecoado se estiver na allowlist (nunca "*").
+    const cors = getCorsHeaders(req);
     if (req.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { headers: cors });
     }
     if (req.method !== "POST") {
-      return json({ ok: false, error: "method_not_allowed" }, 405);
+      return json({ ok: false, error: "method_not_allowed" }, 405, cors);
     }
 
     const limited = enforceRateLimit(req, {
@@ -215,7 +222,7 @@ Deno.serve(
 
     const rawBody = await readUtf8BodyWithinLimit(req, MAX_BODY_BYTES);
     if (rawBody === null) {
-      return json({ ok: false, error: "payload_too_large" }, 413);
+      return json({ ok: false, error: "payload_too_large" }, 413, cors);
     }
 
     const authentication = await authenticate(req, rawBody);
@@ -223,6 +230,7 @@ Deno.serve(
       return json(
         { ok: false, error: authentication.code },
         authentication.status,
+        cors,
       );
     }
 
@@ -234,7 +242,7 @@ Deno.serve(
       }
       event = parsed as EvolutionEvent;
     } catch {
-      return json({ ok: false, error: "invalid_json" }, 400);
+      return json({ ok: false, error: "invalid_json" }, 400, cors);
     }
 
     const payloadErrors = collectErrors([
@@ -242,13 +250,13 @@ Deno.serve(
       validateString(event.instance, "instance", { maxLength: 200 }),
     ]);
     if (payloadErrors.length) {
-      return validationErrorResponse(payloadErrors, corsHeaders);
+      return validationErrorResponse(payloadErrors, cors);
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl || !serviceRoleKey) {
-      return json({ ok: false, error: "server_misconfigured" }, 503);
+      return json({ ok: false, error: "server_misconfigured" }, 503, cors);
     }
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
@@ -286,14 +294,14 @@ Deno.serve(
           if (updateError) throw updateError;
           if (advanced?.length) updated++;
         }
-        return json({ ok: true, type: "status", processed: acks.length, updated });
+        return json({ ok: true, type: "status", processed: acks.length, updated }, 200, cors);
       }
 
       // Resposta recebida de um contato.
       if (eventName === "messages.upsert") {
         const inbound = parseInboundMessage(event);
         if (!inbound) {
-          return json({ ok: true, ignored: true, reason: "not_inbound_reply" });
+          return json({ ok: true, ignored: true, reason: "not_inbound_reply" }, 200, cors);
         }
 
         const messageErrors = collectErrors([
@@ -311,7 +319,7 @@ Deno.serve(
           }),
         ]);
         if (messageErrors.length) {
-          return validationErrorResponse(messageErrors, corsHeaders);
+          return validationErrorResponse(messageErrors, cors);
         }
 
         const receivedAt = inbound.messageTimestamp
@@ -420,22 +428,26 @@ Deno.serve(
         }
 
         if (isDuplicate) {
-          return json({ ok: true, ignored: true, reason: "duplicate_ignored" });
+          return json({ ok: true, ignored: true, reason: "duplicate_ignored" }, 200, cors);
         }
 
-        return json({
-          ok: true,
-          type: "reply",
-          matched: Boolean(matchedEnrollmentId),
-        });
+        return json(
+          {
+            ok: true,
+            type: "reply",
+            matched: Boolean(matchedEnrollmentId),
+          },
+          200,
+          cors,
+        );
       }
 
-      return json({ ok: true, ignored: true, reason: "event_not_handled" });
+      return json({ ok: true, ignored: true, reason: "event_not_handled" }, 200, cors);
     } catch (error) {
       ctx.log("error", "whatsapp_inbound_processing_failed", {
         error: error instanceof Error ? error.message : String(error),
       });
-      return json({ ok: false, error: "processing_failed" }, 500);
+      return json({ ok: false, error: "processing_failed" }, 500, cors);
     }
   }),
 );

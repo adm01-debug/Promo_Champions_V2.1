@@ -27,8 +27,6 @@ const DEFAULT_ALLOWED_ORIGINS = [
   "https://*.promobrindes.com.br",
   "https://promo-champions-v2-1.vercel.app",
   "https://promo-champions-v2-1*.vercel.app",
-  "https://championgifts.lovable.app",
-  "https://pixels-with-personality-09.lovable.app",
   "http://localhost:*",
   "http://127.0.0.1:*",
   "http://localhost",
