@@ -38,7 +38,6 @@
     "supabase/functions/predictive-scoring-explain/index.ts | TS2769 | No overload matches this call.",
     "supabase/functions/process-race-event/index.ts | TS2551 | Property 'catch' does not exist on type 'PostgrestFilterBuilder<any, any, any, \"increment_race_car_overtakes\", null>'. Did you mean 'match'?",
     "supabase/functions/process-race-event/index.ts | TS2551 | Property 'catch' does not exist on type 'PostgrestFilterBuilder<any, any, any, \"increment_race_car_wins\", null>'. Did you mean 'match'?",
-    "supabase/functions/refresh-stage-baselines/index.ts | TS2322 | Type 'PostgrestFilterBuilder<any, any, { id: any; salesperson_id: any; salespeople: { auth_user_id: any; }[]; }[], \"sales\", unknown>' is not assignable to type 'PostgrestLike<SaleRow>'.",
     "supabase/functions/report-builder-execute/index.ts | TS2352 | Conversion of type 'GenericStringError[]' to type 'Record<string, unknown>[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
     "supabase/functions/report-embed-public/index.ts | TS2352 | Conversion of type 'GenericStringError[]' to type 'Record<string, unknown>[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.",
     "supabase/functions/run-retry-tests/fuzz_test.ts | TS2578 | Unused '@ts-expect-error' directive.",

@@ -62,7 +62,7 @@ export function AtRiskDealsPanel() {
             <div className="p-2 rounded-lg bg-gradient-to-br from-status-success/30 to-status-success/10 shadow-md transition-all duration-200 group-hover:scale-110">
               <AlertTriangle className="h-4 w-4 text-status-success" />
             </div>
-            <span className="gradient-text">Deals em Risco</span>
+            <span className="gradient-text">Deals em Risco — inatividade</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -91,7 +91,7 @@ export function AtRiskDealsPanel() {
             <div className="p-2 rounded-lg bg-gradient-to-br from-status-warning/30 to-status-warning/10 shadow-md transition-all duration-200 group-hover:scale-110">
               <AlertTriangle className="h-4 w-4 text-status-warning" />
             </div>
-            <span className="gradient-text">Deals em Risco</span>
+            <span className="gradient-text">Deals em Risco — inatividade</span>
           </CardTitle>
           <Button
             variant="ghost"
