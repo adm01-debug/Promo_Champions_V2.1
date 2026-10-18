@@ -1,6 +1,0 @@
--- Reconciliação de ledger: esta versão consta como aplicada em produção
--- (supabase_migrations.schema_migrations) mas nunca teve arquivo no repo —
--- DDL histórica aplicada manualmente/Lovable antes da disciplina de
--- migrations versionadas (faixa 2026-05 a 2026-07).
--- Arquivo stub intencionalmente sem DDL: o banco já reflete a aplicação;
--- ele existe para que repo e ledger fiquem consistentes (drift gate).

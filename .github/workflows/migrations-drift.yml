@@ -88,12 +88,19 @@ jobs:
 
           echo "--- Versões na base sem arquivo no repo (DRIFT — gate falha) ---"
           DRIFT=$(comm -13 /tmp/repo_versions.txt /tmp/remote_versions.txt)
+          # Versões legadas aplicadas antes da disciplina de migrations
+          # versionadas (faixa 2026-05 a 2026-07, era Lovable/dashboard) são
+          # reconciliadas em scripts/db-audit/legacy-ledger-versions.txt —
+          # não contam como drift. Drift NOVO (fora da lista) segue falhando.
+          if [ -f scripts/db-audit/legacy-ledger-versions.txt ]; then
+            DRIFT=$(printf '%s\n' "$DRIFT" | grep -vxF -f scripts/db-audit/legacy-ledger-versions.txt || true)
+          fi
           echo "$DRIFT"
 
           echo "--- Versões no repo ainda não aplicadas (pendência de deploy — só aviso) ---"
           comm -23 /tmp/repo_versions.txt /tmp/remote_versions.txt
 
           if [ -n "$DRIFT" ]; then
-            echo "::error::A base tem migrations aplicadas sem arquivo no repo. Reconcilie gerando arquivos de migração ou revertendo a DDL manual."
+            echo "::error::A base tem migrations aplicadas sem arquivo no repo. Reconcilie gerando arquivos de migração, revertendo a DDL manual ou documentando versão legada em scripts/db-audit/legacy-ledger-versions.txt."
             exit 1
           fi
