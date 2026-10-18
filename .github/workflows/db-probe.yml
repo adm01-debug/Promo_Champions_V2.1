@@ -1,0 +1,64 @@
+name: DB Probe (read-only)
+
+# Sonda quais objetos criados pelas migrations recentes realmente existem na
+# base oficial — a ponte entre "está no repo" e "foi aplicada de verdade".
+#
+# Read-only por construção: só roda SELECT de existência (pg_proc, cron.job,
+# pg_policies, information_schema...). Não escreve nada.
+#
+# Uso: Actions → DB Probe → Run workflow → since_version (ex.: 20261001000000)
+# Saída: linhas "versao|tipo|objeto|true|false" no log do job.
+
+on:
+  workflow_dispatch:
+    inputs:
+      since_version:
+        description: 'Sonda migrations com versão >= este valor'
+        required: true
+        type: string
+        default: '20261001000000'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Sondar objetos das migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SINCE: ${{ inputs.since_version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Validar input e projeto alvo
+        run: |
+          echo "$SINCE" | grep -qE '^[0-9]{8,14}$' || {
+            echo "::error::since_version inválido: $SINCE"; exit 1; }
+          # Sondar o banco errado reporta probes falsos contra outro projeto.
+          case "$SUPABASE_DB_URL" in
+            *usyxfpqlsspldubptrdl*) ;;
+            *) echo "::error::SUPABASE_DB_URL não aponta para usyxfpqlsspldubptrdl."; exit 1 ;;
+          esac
+
+      - name: Gerar probes
+        run: |
+          node scripts/db-audit/gen-migration-probes.mjs "$SINCE" > probe.sql
+          # Cada probe é uma linha ('versão', ...) na cláusula VALUES — a
+          # palavra EXISTS aparece no template mesmo sem probes, então
+          # grep 'EXISTS' não serve de guarda.
+          PROBES=$(grep -cE "^\s*\('[0-9]+'," probe.sql || true)
+          echo "probes geradas: $PROBES"
+          [ "$PROBES" -gt 0 ] || {
+            echo "::error::Zero probes para since=$SINCE — sondagem seria inócua."
+            exit 1; }
+
+      - name: Rodar sondagem (read-only)
+        # -e propaga a URL por env (não por argv do processo) e sh -c expande
+        # dentro do container — a credencial não aparece em metadata/argv.
+        run: >
+          docker run --rm -e SUPABASE_DB_URL
+          -v "$PWD/probe.sql:/probe.sql:ro"
+          postgres:17.6
+          sh -c 'psql "$SUPABASE_DB_URL" -At -v ON_ERROR_STOP=1 -f /probe.sql'

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -42,25 +42,58 @@ export const KnownDevices = () => {
   const { user } = useAuth();
   const [devices, setDevices] = useState<KnownDevice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const fetchGen = useRef(0);
+  // Ref com o usuário ATUAL: um fetchDevices tardio (ex.: disparado por
+  // toggleTrust iniciado antes da troca de usuário) lê daqui, não do
+  // closure do render antigo — senão buscaria devices do usuário anterior.
+  const userRef = useRef(user);
+  userRef.current = user;
 
   const fetchDevices = async () => {
-    if (!user) return;
+    const gen = ++fetchGen.current;
+    const currentUser = userRef.current;
+
+    if (!currentUser) {
+      setDevices([]);
+      setLoadError(false);
+      setIsLoading(false);
+      return;
+    }
+
+    const uid = currentUser.id;
+    // Geracao + identidade do sujeito: uma resposta tardia so escreve se
+    // ainda for o fetch mais recente E do mesmo usuario.
+    const isCurrent = () => gen === fetchGen.current && userRef.current?.id === uid;
 
     try {
-      const data = await knownDeviceService.listForUser(user.id);
-      setDevices(data);
+      const data = await knownDeviceService.listForUser(uid);
+      if (isCurrent()) {
+        setDevices(data);
+        setLoadError(false);
+      }
     } catch (error) {
       if (import.meta.env.DEV) {
         console.error('Error fetching devices:', error);
       }
+      if (isCurrent()) setLoadError(true);
     } finally {
-      setIsLoading(false);
+      if (isCurrent()) setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    // Troca de usuário: esvazia a lista e volta ao skeleton — jamais exibe
+    // devices do usuário anterior durante o fetch do novo.
+    setDevices([]);
+    setLoadError(false);
+    setIsLoading(true);
+    fetchGen.current++;
     fetchDevices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- incrementar o ref no cleanup é justamente o mecanismo de invalidação
+      fetchGen.current++;
+    };
   }, [user]);
 
   const toggleTrust = async (deviceId: string, currentTrust: boolean) => {
@@ -223,7 +256,17 @@ export const KnownDevices = () => {
         ))}
       </div>
 
-      {devices.length === 0 && (
+      {loadError && (
+        <Alert variant="destructive">
+          <Shield className="h-4 w-4" />
+          <AlertTitle>Erro ao carregar dispositivos</AlertTitle>
+          <AlertDescription>
+            Não foi possível buscar seus dispositivos. Tente novamente.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {!loadError && devices.length === 0 && (
         <Alert>
           <Monitor className="h-4 w-4" />
           <AlertTitle>Nenhum dispositivo registrado</AlertTitle>
