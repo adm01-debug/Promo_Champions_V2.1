@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { KnownDevices } from './KnownDevices';
 
@@ -94,18 +94,22 @@ describe('KnownDevices', () => {
     );
 
     const { rerender } = render(<KnownDevices />);
-    userRef.user = { id: 'u2' };
-    rerender(<KnownDevices />);
+    await act(async () => {
+      userRef.user = { id: 'u2' };
+      rerender(<KnownDevices />);
+    });
 
     // Ordem invertida de propósito: a resposta de u2 chega primeiro e a de u1
     // (usuário antigo) chega POR ÚLTIMO. Sem a guarda de geração, o setState
     // tardio de u1 sobrescreveria a tela com dados do usuário anterior.
-    resolvers.get('u2')?.([
-      { id: 'd-new', device_fingerprint: 'fp2', device_name: 'Device Novo' },
-    ] as never);
-    resolvers.get('u1')?.([
-      { id: 'd-old', device_fingerprint: 'fp', device_name: 'Device Antigo' },
-    ] as never);
+    await act(async () => {
+      resolvers.get('u2')?.([
+        { id: 'd-new', device_fingerprint: 'fp2', device_name: 'Device Novo' },
+      ] as never);
+      resolvers.get('u1')?.([
+        { id: 'd-old', device_fingerprint: 'fp', device_name: 'Device Antigo' },
+      ] as never);
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Device Novo')).toBeInTheDocument();

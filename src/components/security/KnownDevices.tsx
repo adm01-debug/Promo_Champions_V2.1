@@ -44,12 +44,18 @@ export const KnownDevices = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const fetchGen = useRef(0);
+  // Ref com o usuário ATUAL: um fetchDevices tardio (ex.: disparado por
+  // toggleTrust iniciado antes da troca de usuário) lê daqui, não do
+  // closure do render antigo — senão buscaria devices do usuário anterior.
+  const userRef = useRef(user);
+  userRef.current = user;
 
   const fetchDevices = async () => {
     const gen = ++fetchGen.current;
     const isCurrent = () => gen === fetchGen.current;
+    const currentUser = userRef.current;
 
-    if (!user) {
+    if (!currentUser) {
       setDevices([]);
       setLoadError(false);
       setIsLoading(false);
@@ -57,7 +63,7 @@ export const KnownDevices = () => {
     }
 
     try {
-      const data = await knownDeviceService.listForUser(user.id);
+      const data = await knownDeviceService.listForUser(currentUser.id);
       if (isCurrent()) {
         setDevices(data);
         setLoadError(false);
@@ -73,13 +79,18 @@ export const KnownDevices = () => {
   };
 
   useEffect(() => {
+    // Troca de usuário: esvazia a lista e volta ao skeleton — jamais exibe
+    // devices do usuário anterior durante o fetch do novo.
+    setDevices([]);
+    setLoadError(false);
+    setIsLoading(true);
     fetchGen.current++;
     fetchDevices();
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps -- incrementar o ref no cleanup é justamente o mecanismo de invalidação
       fetchGen.current++;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- dependencias intencionais (comportamento pre-existente verificado)
+     
   }, [user]);
 
   const toggleTrust = async (deviceId: string, currentTrust: boolean) => {
