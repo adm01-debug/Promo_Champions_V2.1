@@ -86,14 +86,40 @@ jobs:
           # Versões do repo (prefixo antes do primeiro "_").
           ls supabase/migrations | sed 's/_.*\.sql$//' | sort -u > /tmp/repo_versions.txt
 
-          echo "--- Versões na base sem arquivo no repo (DRIFT — gate falha) ---"
-          DRIFT=$(comm -13 /tmp/repo_versions.txt /tmp/remote_versions.txt)
-          echo "$DRIFT"
+          # Baseline ratchet: a base tem ~241 versões históricas (mai–jul/2026)
+          # registradas sem arquivo no repo — aplicadas por DDL direto com
+          # timestamp próprio, antes deste gate existir (o parser antigo era
+          # cego: exigia $2 sem backticks e sempre produzia lista vazia).
+          # O gate falha em qualquer versão remote-only NOVA; as históricas
+          # listadas na baseline só avisam, e a baseline só desce —
+          # cada reconciliação remove a versão do arquivo até zerar.
+          BASELINE="scripts/ci/migrations-drift-baseline.txt"
+          if [ -f "$BASELINE" ]; then
+            sort -u "$BASELINE" > /tmp/drift_baseline.txt
+          else
+            : > /tmp/drift_baseline.txt
+          fi
+
+          echo "--- Versões na base sem arquivo no repo ---"
+          comm -13 /tmp/repo_versions.txt /tmp/remote_versions.txt > /tmp/drift_all.txt
+          cat /tmp/drift_all.txt
+
+          # Drift novo = remote-only fora da baseline → falha.
+          NEW_DRIFT=$(comm -13 /tmp/drift_baseline.txt /tmp/drift_all.txt)
+          # Baselines que saíram do remote (reconciliadas) → só aviso.
+          comm -23 /tmp/drift_baseline.txt /tmp/remote_versions.txt > /tmp/baseline_stale.txt
+
+          if [ -n "$NEW_DRIFT" ]; then
+            echo "::error::A base tem migrations NOVAS aplicadas sem arquivo no repo. Reconcilie gerando arquivos de migração ou revertendo a DDL manual."
+            echo "$NEW_DRIFT"
+            exit 1
+          fi
+          if [ -s /tmp/drift_all.txt ]; then
+            echo "::warning::$(wc -l < /tmp/drift_all.txt) versões remote-only históricas em baseline (legado pré-gate) — reconciliar em cartão dedicado até a baseline zerar."
+          fi
+          if [ -s /tmp/baseline_stale.txt ]; then
+            echo "::warning::$(wc -l < /tmp/baseline_stale.txt) versões da baseline não estão mais no remote — remova-as de $BASELINE (a baseline só desce)."
+          fi
 
           echo "--- Versões no repo ainda não aplicadas (pendência de deploy — só aviso) ---"
           comm -23 /tmp/repo_versions.txt /tmp/remote_versions.txt
-
-          if [ -n "$DRIFT" ]; then
-            echo "::error::A base tem migrations aplicadas sem arquivo no repo. Reconcilie gerando arquivos de migração ou revertendo a DDL manual."
-            exit 1
-          fi

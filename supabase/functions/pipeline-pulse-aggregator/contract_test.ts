@@ -34,12 +34,29 @@ Deno.test("pipeline-pulse-aggregator usa contrato canônico e protege agregados 
     "usa amount, coluna real de sales",
   );
   assert(!source.includes("total_amount"), "não consulta coluna inexistente");
+  // O funil aberto vive no contrato compartilhado _shared/sale-statuses.ts —
+  // o teste cobre TODOS os seis status abertos do enum (inclusive prospecting,
+  // que a lista literal anterior omitia).
+  assert(
+    source.includes("OPEN_SALE_STATUSES"),
+    "usa o contrato canônico de status abertos",
+  );
+  const shared = await Deno.readTextFile(
+    new URL("../_shared/sale-statuses.ts", import.meta.url),
+  );
   for (
-    const status of ["lead", "qualified", "pending", "proposal", "negotiation"]
+    const status of [
+      "lead",
+      "prospecting",
+      "qualified",
+      "pending",
+      "proposal",
+      "negotiation",
+    ]
   ) {
     assert(
-      source.includes(`"${status}"`),
-      `status canônico ausente: ${status}`,
+      shared.includes(`"${status}"`) || shared.includes(`'${status}'`),
+      `status canônico ausente no contrato compartilhado: ${status}`,
     );
   }
   assert(
