@@ -240,7 +240,10 @@ export function useWebAuthn() {
             type: type as EmailOtpType,
           });
           // verifyOtp falhando não pode ser tratado como login bem-sucedido.
-          if (signInError) throw signInError;
+          if (signInError) {
+            toast.error('Falha na autenticação com passkey. Tente outro método.');
+            return false;
+          }
         }
       }
 

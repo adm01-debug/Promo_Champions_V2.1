@@ -192,7 +192,8 @@ export function useAuthForm() {
   };
 
   const handlePasskeySignIn = async () => {
-    await loginWithPasskey(loginEmail || undefined);
+    const ok = await loginWithPasskey(loginEmail || undefined);
+    if (ok) navigate(redirectTo, { replace: true });
   };
 
   return {
