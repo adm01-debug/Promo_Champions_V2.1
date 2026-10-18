@@ -133,57 +133,25 @@ export function useClaimChallengeReward() {
   return useMutation({
     mutationFn: async ({
       challengeId,
-      salespersonId,
       xpReward,
-      challengeTitle,
     }: {
       challengeId: string;
       salespersonId: string;
       xpReward: number;
       challengeTitle: string;
     }) => {
-      // Mark as claimed
-      const { error: updateError } = await supabase
-        .from('challenge_progress')
-        .update({
-          xp_claimed: true,
-          completed_at: new Date().toISOString(),
-        })
-        .eq('challenge_id', challengeId)
-        .eq('salesperson_id', salespersonId);
+      // Claim no servidor: lê xp_reward do catálogo, marca o progresso e
+      // credita o XP em xp_history (o cliente não escreve mais XP).
+      const { data, error } = await supabase.rpc(
+        'claim_weekly_challenge_reward' as never,
+        { p_challenge_id: challengeId } as never
+      );
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
-      // Add XP to salesperson
-      const { data: existingXP } = await supabase
-        .from('salesperson_xp')
-        .select('*')
-        .eq('salesperson_id', salespersonId)
-        .single();
-
-      if (existingXP) {
-        const newTotalXP = existingXP.total_xp + xpReward;
-        await supabase
-          .from('salesperson_xp')
-          .update({ total_xp: newTotalXP })
-          .eq('salesperson_id', salespersonId);
-      } else {
-        await supabase.from('salesperson_xp').insert({
-          salesperson_id: salespersonId,
-          total_xp: xpReward,
-        });
-      }
-
-      // Log XP history
-      await supabase.from('xp_history').insert({
-        salesperson_id: salespersonId,
-        xp_amount: xpReward,
-        source_type: 'weekly_challenge',
-        source_id: challengeId,
-        description: `Desafio completado: ${challengeTitle}`,
-      });
-
-      return { xpReward };
+      const granted =
+        (data as { xp_reward?: number } | null)?.xp_reward ?? xpReward;
+      return { xpReward: granted };
     },
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['challenge-progress'] });

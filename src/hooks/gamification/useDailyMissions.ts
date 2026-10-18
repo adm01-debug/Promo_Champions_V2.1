@@ -74,11 +74,12 @@ export function useDailyMissions(salespersonId?: string) {
   const claimXP = useMutation({
     mutationFn: async (challengeId: string) => {
       if (!salespersonId) throw new Error('No salesperson');
-      const { error } = await supabase
-        .from('daily_challenge_progress')
-        .update({ xp_claimed: true })
-        .eq('challenge_id', challengeId)
-        .eq('salesperson_id', salespersonId);
+      // Claim no servidor: credita o XP via xp_history e marca o progresso
+      // (o cliente não escreve mais XP nem progresso de desafio).
+      const { error } = await supabase.rpc(
+        'claim_daily_challenge_reward' as never,
+        { p_challenge_id: challengeId } as never
+      );
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['daily-missions'] }),
