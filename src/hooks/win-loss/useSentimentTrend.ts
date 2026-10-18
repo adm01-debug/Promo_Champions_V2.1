@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
-import { isWonSaleStatus } from '@/constants';
+import { isLostSaleStatus, isWonSaleStatus } from '@/constants';
+import { winRate } from '@/lib/winRate';
 
 interface SentimentTrendPoint {
   quarter: string;
@@ -75,24 +76,23 @@ export function useSentimentTrend() {
 
       const buckets = new Map<
         string,
-        { sum: number; count: number; wins: number; deals: number }
+        { sum: number; count: number; wins: number; losses: number }
       >();
       rows.forEach(r => {
         const q = quarterKey(new Date(r.recorded_at));
-        const b = buckets.get(q) ?? { sum: 0, count: 0, wins: 0, deals: 0 };
+        const b = buckets.get(q) ?? { sum: 0, count: 0, wins: 0, losses: 0 };
         b.sum += Number(r.sentiment_score) || 0;
         b.count += 1;
-        if (r.sale_id) {
-          b.deals += 1;
-          if (isWonSaleStatus(saleStatus.get(r.sale_id))) b.wins += 1;
-        }
+        const status = r.sale_id ? saleStatus.get(r.sale_id) : undefined;
+        if (isWonSaleStatus(status)) b.wins += 1;
+        else if (isLostSaleStatus(status)) b.losses += 1;
         buckets.set(q, b);
       });
       return Array.from(buckets.entries())
         .map(([quarter, b]) => ({
           quarter,
           avgSentiment: b.count ? b.sum / b.count : 0,
-          winRate: b.deals ? (b.wins / b.deals) * 100 : 0,
+          winRate: winRate(b.wins, b.losses),
           count: b.count,
         }))
         .sort((a, b) => a.quarter.localeCompare(b.quarter));

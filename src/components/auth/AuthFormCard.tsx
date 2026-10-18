@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import {
   Crown,
   Zap,
@@ -82,9 +83,11 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
     handlePasskeySignIn,
   } = props;
 
+  const reducedMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: 40 }}
+      initial={reducedMotion ? false : { opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
       className="relative w-full lg:max-w-[74%] lg:ml-auto"
@@ -104,13 +107,19 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
             background: 'linear-gradient(135deg, #22d3ee, #a855f7, #ec4899, #22d3ee)',
             backgroundSize: '300% 300%',
           }}
-          animate={{ backgroundPosition: ['0% 50%', '100% 50%'] }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            repeatType: 'reverse',
-            ease: 'linear',
-          }}
+          animate={
+            reducedMotion ? undefined : { backgroundPosition: ['0% 50%', '100% 50%'] }
+          }
+          transition={
+            reducedMotion
+              ? undefined
+              : {
+                  duration: 6,
+                  repeat: Infinity,
+                  repeatType: 'reverse',
+                  ease: 'linear',
+                }
+          }
         />
 
         <div className="relative rounded-2xl bg-[#0a0b1a]/95 backdrop-blur-xl p-7 sm:p-9 border border-white/5">
@@ -157,7 +166,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                   value={mfaCode}
                   onChange={e => setMfaCode(e.target.value)}
                   autoFocus
-                  className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl text-center text-xl tracking-[0.4em] font-mono"
+                  className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 motion-safe:transition-all rounded-xl text-center text-xl tracking-[0.4em] font-mono"
                   required
                 />
               </div>
@@ -167,7 +176,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 className="relative w-full h-12 mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.4)]"
               >
                 {isMfaLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-5 w-5 motion-safe:animate-spin" />
                 ) : (
                   'VERIFICAR CÓDIGO'
                 )}
@@ -179,11 +188,11 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={isGoogleLoading}
-                className="w-full h-11 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400/50 text-white font-semibold transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+                className="w-full h-11 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400/50 text-white font-semibold motion-safe:transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
                 variant="outline"
               >
                 {isGoogleLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 motion-safe:animate-spin" />
                 ) : (
                   <>
                     <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
@@ -214,7 +223,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                   type="button"
                   onClick={handlePasskeySignIn}
                   disabled={isPasskeyLoading}
-                  className="w-full h-11 -mt-2 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400/50 text-white font-semibold transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
+                  className="w-full h-11 -mt-2 mb-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-400/50 text-white font-semibold motion-safe:transition-all hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
                   variant="outline"
                 >
                   {isPasskeyLoading ? (
@@ -253,7 +262,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                     placeholder="seu@email.com"
                     value={loginEmail}
                     onChange={e => setLoginEmail(e.target.value)}
-                    className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl"
+                    className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 motion-safe:transition-all rounded-xl"
                     required
                   />
                 </div>
@@ -270,7 +279,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                       <DialogTrigger asChild>
                         <button
                           type="button"
-                          className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors uppercase tracking-widest"
+                          className="text-[10px] font-bold text-cyan-400/60 hover:text-cyan-400 motion-safe:transition-colors uppercase tracking-widest"
                         >
                           Esqueci a chave
                         </button>
@@ -295,7 +304,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                             className="w-full bg-cyan-500 hover:bg-cyan-400 text-[#05060f] font-black uppercase tracking-widest"
                           >
                             {isResetLoading ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="h-4 w-4 motion-safe:animate-spin" />
                             ) : (
                               'Enviar Resgate'
                             )}
@@ -311,14 +320,14 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                       placeholder="••••••••"
                       value={loginPassword}
                       onChange={e => setLoginPassword(e.target.value)}
-                      className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 transition-all rounded-xl pr-10"
+                      className="bg-white/5 border-white/10 focus:border-cyan-400/50 focus:ring-cyan-400/20 h-11 motion-safe:transition-all rounded-xl pr-10"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPwd(!showPwd)}
                       aria-label={showPwd ? 'Ocultar senha' : 'Mostrar senha'}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40 motion-safe:transition-colors"
                     >
                       {showPwd ? (
                         <EyeOff className="h-4 w-4" />
@@ -336,16 +345,16 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 >
                   <motion.div
                     className="absolute inset-0 bg-white/10 translate-x-[-100%]"
-                    whileHover={{ translateX: '100%' }}
+                    whileHover={reducedMotion ? undefined : { translateX: '100%' }}
                     transition={{ duration: 0.6 }}
                   />
                   <div className="relative flex items-center justify-center gap-2">
                     {isLoading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
+                      <Loader2 className="h-5 w-5 motion-safe:animate-spin" />
                     ) : (
                       <>
                         ACESSAR CIRCUITO
-                        <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                        <ArrowRight className="h-4 w-4 motion-safe:group-hover/btn:translate-x-1 motion-safe:transition-transform" />
                       </>
                     )}
                   </div>
@@ -354,7 +363,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
 
               {lockoutStatus.isLocked && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={reducedMotion ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-bold text-center uppercase tracking-widest"
                 >
