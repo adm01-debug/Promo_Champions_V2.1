@@ -62,9 +62,7 @@ export interface SpeedometerProps {
 }
 
 const EMPTY_DRILLDOWN_DATA: NonNullable<SpeedometerProps['drilldownData']> = [];
-const EMPTY_CHANNEL_BREAKDOWN: NonNullable<
-  SpeedometerProps['channelBreakdown']
-> = [];
+const EMPTY_CHANNEL_BREAKDOWN: NonNullable<SpeedometerProps['channelBreakdown']> = [];
 
 const accentMap = {
   primary: {
