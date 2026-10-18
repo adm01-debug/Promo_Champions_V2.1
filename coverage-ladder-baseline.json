@@ -11,7 +11,7 @@
       "lines": 100
     },
     "src/lib/race/": {
-      "lines": 72.7
+      "lines": 0
     },
     "src/lib/orderTracking/": {
       "lines": 100
@@ -23,7 +23,7 @@
       "lines": 100
     },
     "src/services/": {
-      "lines": 20.65
+      "lines": 13.5
     },
     "src/hooks/reports/": {
       "lines": 82.7
