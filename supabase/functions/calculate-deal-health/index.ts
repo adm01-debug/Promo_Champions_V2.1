@@ -444,8 +444,7 @@ Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
             .from('sales')
             .select('id')
             .eq('salesperson_id', sp.id)
-            .neq('status', 'closed')
-            .neq('status', 'lost')
+            .in('status', ['lead', 'pending', 'qualified', 'proposal', 'negotiation', 'prospecting'])
             .limit(50)
         : { data: [] };
 

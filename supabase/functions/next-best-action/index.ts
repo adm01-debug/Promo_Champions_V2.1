@@ -131,8 +131,7 @@ Deno.serve(
           .from('sales')
           .select('id, client_name, product_name, amount, status, created_at, updated_at')
           .eq('salesperson_id', salespersonId)
-          .neq('status', 'completed')
-          .neq('status', 'lost')
+          .in('status', ['lead', 'pending', 'qualified', 'proposal', 'negotiation', 'prospecting'])
           .order('updated_at', { ascending: true })
           .limit(25),
         supabase

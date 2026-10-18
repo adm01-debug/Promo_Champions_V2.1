@@ -165,7 +165,7 @@ async function predictForSale(saleId: string) {
     .eq('id', saleId)
     .maybeSingle();
   if (error || !sale) throw new Error('Sale not found');
-  if (sale.status === 'completed' || sale.status === 'lost') {
+  if (['completed', 'won', 'closed', 'lost', 'cancelled'].includes(sale.status)) {
     return { skipped: true, reason: 'deal closed' };
   }
 
@@ -304,7 +304,7 @@ async function batchPredict(limit: number, req: Request): Promise<Response> {
   const { data: salesData } = await admin
     .from('sales')
     .select('id, status, stage, amount, salesperson_id, created_at, updated_at')
-    .not('status', 'in', '("completed","lost")')
+    .not('status', 'in', '("completed","won","closed","lost","cancelled")')
     .order('updated_at', { ascending: false })
     .limit(limit);
 
@@ -414,7 +414,7 @@ async function batchPredict(limit: number, req: Request): Promise<Response> {
   const payloads: Record<string, unknown>[] = [];
 
   for (const sale of sales) {
-    if (sale.status === 'completed' || sale.status === 'lost') {
+    if (['completed', 'won', 'closed', 'lost', 'cancelled'].includes(sale.status)) {
       results.push({ skipped: true, reason: 'deal closed' });
       continue;
     }
