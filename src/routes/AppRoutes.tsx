@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { MainLayout } from '@/components/templates/MainLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ErrorBoundary } from '@/components/errors/ErrorBoundary';
@@ -58,6 +58,7 @@ import {
   EmailTracking,
   Automacoes,
   ConversationalIntelligence,
+  ConversationalIntelligenceRecordings,
   RevenueIntelligence,
   RevenueForecast,
   RevenueForecastV2,
@@ -235,6 +236,12 @@ const Manager = React.memo(({ children }: { children: React.ReactNode }) => (
 ));
 Manager.displayName = 'ManagerWrapper';
 
+// Redireciona links legados /contas/:id para o detalhe de conta canônico.
+const LegacyAccountRedirect = () => {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={id ? `/engagement/abm/${id}` : '/engagement/abm'} replace />;
+};
+
 export function AppRoutes() {
   return (
     <Suspense fallback={<SmartSkeleton />}>
@@ -372,6 +379,10 @@ export function AppRoutes() {
                         <Route
                           path="/conversational-intelligence"
                           element={<ConversationalIntelligence />}
+                        />
+                        <Route
+                          path="/conversational-intelligence/gravacoes"
+                          element={<ConversationalIntelligenceRecordings />}
                         />
                         <Route
                           path="/revenue-intelligence"
@@ -1112,6 +1123,11 @@ export function AppRoutes() {
                         />
 
                         {/* ─── Meus Pedidos ──────────────────────────── */}
+                        {/* Lista canônica é Acompanhamento de Pedidos */}
+                        <Route
+                          path="/meus-pedidos"
+                          element={<Navigate to="/acompanhamento-pedidos" replace />}
+                        />
                         <Route
                           path="/meus-pedidos/:id"
                           element={
@@ -1120,6 +1136,13 @@ export function AppRoutes() {
                             </ProtectedRoute>
                           }
                         />
+
+                        {/* ─── Links legados (detalhe por id) ────────── */}
+                        <Route
+                          path="/vendas/:id"
+                          element={<Navigate to="/vendas" replace />}
+                        />
+                        <Route path="/contas/:id" element={<LegacyAccountRedirect />} />
 
                         {/* ─── Acompanhamento de Pedidos (full lifecycle) ─ */}
                         <Route

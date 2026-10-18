@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { useConversationalIntelligence } from '@/hooks/useConversationalIntelligence';
 import {
   Card,
@@ -113,6 +115,17 @@ export const ConversationalIntelligenceHub = () => {
         </div>
 
         <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl">
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="gap-2 text-xs font-black uppercase tracking-wider"
+          >
+            <Link to="/conversational-intelligence/gravacoes">
+              <Mic className="h-3.5 w-3.5" />
+              Gravações
+            </Link>
+          </Button>
           <CompetitorsAdminDialog />
           <div className="w-px h-8 bg-white/10 mx-1" />
           <Tabs
