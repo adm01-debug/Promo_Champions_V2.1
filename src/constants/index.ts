@@ -88,6 +88,26 @@ export const SALE_STATUS_LABELS: Record<string, string> = {
 export const WON_SALE_STATUSES = ['completed', 'won', 'closed'] as const;
 export const LOST_SALE_STATUSES = ['lost', 'cancelled'] as const;
 
+// Estagios abertos do funil (sales_status_check tem 11 valores; os 5
+// decididos estao acima). Listas literais divergiam entre telas e
+// omitiam prospecting/pending — usar esta constante.
+export const OPEN_SALE_STATUSES = [
+  'lead',
+  'pending',
+  'qualified',
+  'proposal',
+  'negotiation',
+  'prospecting',
+] as const;
+
+// Prospeccao inicial — usado por telas SDR de "prospects".
+export const PROSPECT_SALE_STATUSES = [
+  'lead',
+  'pending',
+  'qualified',
+  'prospecting',
+] as const;
+
 export const isWonSaleStatus = (status?: string | null): boolean =>
   !!status && (WON_SALE_STATUSES as readonly string[]).includes(status);
 

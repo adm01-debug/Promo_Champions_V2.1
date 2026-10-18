@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, LOST_SALE_STATUSES } from '@/constants';
 import { subDays, format, parseISO } from 'date-fns';
 
 export interface MacroSellerData {
@@ -46,7 +46,7 @@ export function useVendasMacro(days: number = 30) {
           .from('sales')
           .select('id, salesperson_id, amount, status, created_at')
           .gte('created_at', startDate.toISOString())
-          .not('status', 'eq', 'lost'),
+          .not('status', 'in', `(${LOST_SALE_STATUSES.join(',')})`),
         supabase.from('salespeople').select('id, name, avatar_url').eq('is_active', true),
       ]);
 

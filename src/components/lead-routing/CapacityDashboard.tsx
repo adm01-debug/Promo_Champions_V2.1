@@ -5,6 +5,7 @@ import { useLeadAssignment } from '@/hooks/useLeadAssignment';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { capacityHealth } from './routingHelpers';
+import { OPEN_SALE_STATUSES } from '@/constants';
 
 export function CapacityDashboard() {
   const { salespeople } = useLeadAssignment();
@@ -15,7 +16,7 @@ export function CapacityDashboard() {
       const { data, error } = await supabase
         .from('sales')
         .select('salesperson_id')
-        .in('status', ['lead', 'qualified', 'proposal', 'negotiation']);
+        .in('status', [...OPEN_SALE_STATUSES]);
       if (error) throw error;
       const map = new Map<string, number>();
       data?.forEach(r => {

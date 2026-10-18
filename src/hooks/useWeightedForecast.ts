@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { WON_SALE_STATUSES } from '@/constants';
+import { WON_SALE_STATUSES, OPEN_SALE_STATUSES } from '@/constants';
 import { fetchStageProbabilities } from '@/lib/stageProbabilities';
 
 interface ForecastDeal {
@@ -62,7 +62,7 @@ export function useWeightedForecast() {
         supabase
           .from('sales')
           .select('id, client_name, product_name, amount, status, created_at')
-          .in('status', ['pending', 'qualified', 'proposal', 'negotiation']),
+          .in('status', [...OPEN_SALE_STATUSES]),
         supabase.from('lead_scores').select('sale_id, score'),
         supabase
           .from('deal_stage_history')

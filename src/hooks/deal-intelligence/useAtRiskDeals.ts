@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { OPEN_SALE_STATUSES } from '@/constants';
 import { differenceInHours, differenceInDays } from 'date-fns';
 
 export interface AtRiskDeal {
@@ -44,8 +45,7 @@ export function useAtRiskDeals() {
           products (price, category)
         `
         )
-        .not('status', 'eq', 'completed')
-        .not('status', 'eq', 'lost');
+        .in('status', [...OPEN_SALE_STATUSES]);
 
       if (salesError) throw salesError;
 

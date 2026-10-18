@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { formatBRL } from '@/lib/money';
+import { OPEN_SALE_STATUSES } from '@/constants';
 const STATUS_LABELS: Record<string, string> = {
   lead: 'Lead',
   pending: 'Lead',
@@ -22,7 +23,7 @@ export const TopDealsWidget = React.memo(function TopDealsWidget() {
       const { data, error } = await supabase
         .from('sales')
         .select('id, client_name, amount, status, product_name')
-        .in('status', ['lead', 'pending', 'qualified', 'proposal', 'negotiation'])
+        .in('status', [...OPEN_SALE_STATUSES])
         .order('amount', { ascending: false })
         .limit(5);
       if (error) throw error;

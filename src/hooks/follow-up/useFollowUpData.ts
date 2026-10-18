@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInHours } from 'date-fns';
+import { OPEN_SALE_STATUSES } from '@/constants';
 import {
   getTemperature,
   getSuggestedAction,
@@ -32,7 +33,7 @@ export function useFollowUpLeads(minDaysInactive: number) {
            lead_scores (score),
            deal_probability_scores (calibrated_probability)`
         )
-        .in('status', ['lead', 'qualified', 'proposal', 'negotiation', 'open'])
+        .in('status', [...OPEN_SALE_STATUSES])
         .order('updated_at', { ascending: true });
       if (dealsError) throw dealsError;
 

@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { isWonSaleStatus } from '@/constants';
+import { isWonSaleStatus, OPEN_SALE_STATUSES } from '@/constants';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { generateSalesReport } from '@/lib/salesReportPdf';
@@ -32,7 +32,7 @@ export async function generateCurrentMonthReport() {
       supabase
         .from('sales')
         .select('client_name, product_name, amount, status')
-        .in('status', ['pending', 'qualified', 'proposal', 'negotiation'])
+        .in('status', [...OPEN_SALE_STATUSES])
         .order('amount', { ascending: false })
         .limit(10),
       supabase.rpc('get_active_salespeople'),

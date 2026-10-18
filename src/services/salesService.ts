@@ -2,7 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Sale, CreateSaleInput } from '@/types/sales';
-import { SALE_STATUS_LABELS } from '@/constants';
+import { LOST_SALE_STATUSES, SALE_STATUS_LABELS } from '@/constants';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import type { PostgrestLike } from '@/lib/supabase/chunkedIn';
 import {
@@ -78,7 +78,7 @@ const buildSalesListQuery = (select: string, filters: SalesListFilters) => {
     query = query.eq('status', filters.status);
   } else {
     // Comportamento da página: perdidas só aparecem quando filtradas.
-    query = query.neq('status', 'lost');
+    query = query.not('status', 'in', `(${LOST_SALE_STATUSES.join(',')})`);
   }
 
   switch (filters.markupTier) {

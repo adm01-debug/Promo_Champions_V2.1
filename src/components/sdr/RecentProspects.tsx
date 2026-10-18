@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
 import { LeadScoreBreakdown } from './LeadScoreBreakdown';
+import { PROSPECT_SALE_STATUSES } from '@/constants';
 
 export function RecentProspects({
   onSelectLead,
@@ -54,7 +55,10 @@ export function RecentProspects({
   const { data: prospects, refetch } = useQuery({
     queryKey: ['recent-prospects', searchTerm, filters],
     queryFn: async () => {
-      let query = supabase.from('sales').select('*').in('status', ['lead', 'qualified']);
+      let query = supabase
+        .from('sales')
+        .select('*')
+        .in('status', [...PROSPECT_SALE_STATUSES]);
 
       if (searchTerm) {
         query = query.ilike('client_name', `%${searchTerm}%`);

@@ -10,7 +10,7 @@ import {
 import { BIGestorData, BIVendedorData } from '@/types/bi';
 import * as helpers from '@/utils/bi-helpers';
 import { fetchStageProbabilities } from '@/lib/stageProbabilities';
-import { WON_SALE_STATUSES, isWonSaleStatus } from '@/constants';
+import { WON_SALE_STATUSES, isWonSaleStatus, OPEN_SALE_STATUSES } from '@/constants';
 import {
   sentimentDistribution,
   topObjectionsAcross,
@@ -57,7 +57,7 @@ export const biService = {
       supabase
         .from('sales')
         .select('id, salesperson_id, amount, status, created_at')
-        .in('status', ['pending', 'qualified', 'proposal', 'negotiation']),
+        .in('status', [...OPEN_SALE_STATUSES]),
       supabase
         .from('activities')
         .select('salesperson_id, activity_type')
@@ -233,7 +233,7 @@ export const biService = {
         .from('sales')
         .select('id, amount, status, created_at')
         .eq('salesperson_id', salesperson.id)
-        .in('status', ['pending', 'qualified', 'proposal', 'negotiation']),
+        .in('status', [...OPEN_SALE_STATUSES]),
       supabase
         .from('conversation_analyses')
         .select('*')

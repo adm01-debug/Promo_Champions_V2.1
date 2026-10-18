@@ -284,7 +284,7 @@ export function useDealsForQuotes() {
         .from('sales')
         .select('id, client_name, product_name, status')
         .is('deleted_at', null)
-        .in('status', ['lead', 'qualified', 'proposal', 'negotiation'])
+        .in('status', [...OPEN_SALE_STATUSES])
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -302,6 +302,7 @@ export interface ConvertQuoteResult {
   reused_order?: boolean;
 }
 
+import { OPEN_SALE_STATUSES } from '@/constants';
 import {
   CONVERT_QUOTE_ERROR_MESSAGES,
   parseConvertQuoteError,
