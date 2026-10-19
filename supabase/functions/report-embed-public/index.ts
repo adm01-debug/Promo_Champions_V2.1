@@ -80,7 +80,7 @@ function buildSelect(columns: string[], targets: Set<string>): string {
   for (const [target, fields] of joinedCols.entries()) {
     parts.push(`${target}(${fields.join(",")})`);
   }
-  return parts.join(",") || "*";
+  return parts.join(",");
 }
 
 Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
@@ -210,8 +210,17 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
 
     const columns = (cfg.columns ?? []).filter((c) => !HIDDEN_FIELDS.has(c));
     const selectStr = columns.length
-      ? (isCross ? buildSelect(columns, joinTargets) : columns.filter((c) => SAFE_FIELD.test(c)).join(",") || "*")
-      : "*";
+      ? (isCross ? buildSelect(columns, joinTargets) : columns.filter((c) => SAFE_FIELD.test(c)).join(","))
+      : "";
+
+    // Nunca "*": embed sem colunas explícitas vazaria todas as colunas da
+    // tabela via service_role — exige lista explícita de colunas visíveis.
+    if (!selectStr) {
+      return new Response(JSON.stringify({ error: "columns_required" }), {
+        status: 400,
+        headers: { ...baseCors, "Access-Control-Allow-Origin": corsOrigin, "Content-Type": "application/json" },
+      });
+    }
 
     let q = admin.from(entity).select(selectStr).limit(500);
 

@@ -90,12 +90,21 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
       return json(400, { error: "invalid_request" });
     }
 
+    // Origem real do app para o link de recovery — APP_URL pode sobrescrever
+    // por ambiente; o fallback é o domínio de produção (mesmo do allowlist
+    // de CORS em _shared/cors.ts). O replace anterior produzia um host
+    // ".lovable.app" inexistente e o reset nunca concluía.
+    const appUrl = (Deno.env.get("APP_URL") ?? "https://promochampions.com.br").replace(
+      /\/+$/,
+      "",
+    );
+
     // Generate password reset link using Supabase Auth Admin API
     const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
       type: "recovery",
       email: email,
       options: {
-        redirectTo: `${supabaseUrl.replace('.supabase.co', '.lovable.app')}/reset-password`,
+        redirectTo: `${appUrl}/reset-password`,
       },
     });
 
