@@ -79,21 +79,26 @@ jobs:
           STAMP=$(date -u +%Y%m%dT%H%M%SZ)
           FILE="promo-champions-db-${STAMP}.dump"
           # A URL (com senha) entra por env, não por argv do pg_dump.
-          docker run --rm -e SUPABASE_DB_URL -e FILE="$FILE" \
+          # --user: sem ele o dump sai root-owned no workspace e o runner
+          # falha ao sobrescrever/remover o arquivo nos passos seguintes.
+          docker run --rm --user "$(id -u):$(id -g)" \
+            -e SUPABASE_DB_URL -e FILE="$FILE" \
             -v "$GITHUB_WORKSPACE:/out" postgres:17.6 \
             sh -c 'pg_dump "$SUPABASE_DB_URL" \
               --format=custom --compress=9 --no-owner --no-privileges \
               --file="/out/$FILE"'
-          # Dump de produção expõe dados reais em artifact — criptografa
-          # quando o secret BACKUP_ENCRYPTION_KEY existir.
-          if [ -n "$BACKUP_ENCRYPTION_KEY" ]; then
-            openssl enc -aes-256-cbc -pbkdf2 -in "$FILE" -out "$FILE.enc" \
-              -pass env:BACKUP_ENCRYPTION_KEY
-            shred -u "$FILE"
-            FILE="$FILE.enc"
-          else
-            echo "::warning::BACKUP_ENCRYPTION_KEY ausente — dump sobe sem criptografia. Configure o secret para proteger o artifact."
+          # Dump de produção expõe dados reais em artifact — criptografia
+          # obrigatória: sem BACKUP_ENCRYPTION_KEY o job falha em vez de
+          # subir o banco inteiro em claro (mesma regra do gate de secret).
+          if [ -z "$BACKUP_ENCRYPTION_KEY" ]; then
+            shred -u "$FILE" 2>/dev/null || rm -f "$FILE"
+            echo "::error::BACKUP_ENCRYPTION_KEY não configurado — backup abortado em vez de subir dump sem criptografia. Configure o secret em Settings → Secrets."
+            exit 1
           fi
+          openssl enc -aes-256-cbc -pbkdf2 -in "$FILE" -out "$FILE.enc" \
+            -pass env:BACKUP_ENCRYPTION_KEY
+          shred -u "$FILE"
+          FILE="$FILE.enc"
           echo "BACKUP_FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh "$FILE"
 
