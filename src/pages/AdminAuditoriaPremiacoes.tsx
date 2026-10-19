@@ -111,7 +111,7 @@ export default function AdminAuditoriaPremiacoes() {
   // Realtime — mantém a lista sincronizada e notifica novas conquistas
   useEffect(() => {
     const channel = supabase
-      .channel('commission_bonus_awards_admin')
+      .channel(`commission_bonus_awards_admin-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'commission_bonus_awards' },

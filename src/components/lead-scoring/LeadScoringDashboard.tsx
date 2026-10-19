@@ -27,7 +27,7 @@ export function LeadScoringDashboard() {
 
   useEffect(() => {
     const channel = supabase
-      .channel('lead-scoring-realtime')
+      .channel(`lead-scoring-realtime-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'lead_score_trends' },

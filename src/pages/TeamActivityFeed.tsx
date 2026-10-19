@@ -55,7 +55,7 @@ const TeamActivityFeed = () => {
   // Real-time subscription
   useEffect(() => {
     const channel = supabase
-      .channel('team-activities')
+      .channel(`team-activities-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'activities' },

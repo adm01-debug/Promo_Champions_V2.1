@@ -8,7 +8,7 @@ export function useAgentRuns(limit = 50) {
 
   useEffect(() => {
     const ch = supabase
-      .channel('ai_agent_runs_feed')
+      .channel(`ai_agent_runs_feed-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'ai_agent_runs' },

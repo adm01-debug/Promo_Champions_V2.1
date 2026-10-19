@@ -41,11 +41,13 @@ export function NextBestActionPanel({ saleId }: Props) {
     );
   }
 
-  const actions = health?.recommended_actions || [
-    { title: 'Mapear Economic Buyer no deal', priority: 'high' },
-    { title: 'Agendar call de acompanhamento', priority: 'medium' },
-    { title: 'Enviar case de sucesso do mesmo setor', priority: 'low' },
-  ];
+  const actions = Array.isArray(health?.recommended_actions)
+    ? health.recommended_actions
+    : [
+        { title: 'Mapear Economic Buyer no deal', priority: 'high' },
+        { title: 'Agendar call de acompanhamento', priority: 'medium' },
+        { title: 'Enviar case de sucesso do mesmo setor', priority: 'low' },
+      ];
 
   return (
     <Card className="glass border-border/40 overflow-hidden card-elevated">

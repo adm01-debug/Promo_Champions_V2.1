@@ -10,6 +10,7 @@ interface Props {
 }
 
 export function BriefingActionsList({ actions }: Props) {
+  const safeActions = Array.isArray(actions) ? actions : [];
   const [done, setDone] = useState<Set<number>>(new Set());
   const toggle = (i: number) => {
     setDone(prev => {
@@ -26,11 +27,11 @@ export function BriefingActionsList({ actions }: Props) {
         <Target className="h-4 w-4 text-primary" />
         <h3 className="text-section-title text-foreground font-sora">Ações para Hoje</h3>
       </div>
-      {actions.length === 0 && (
+      {safeActions.length === 0 && (
         <p className="text-sm text-muted-foreground">Nenhuma ação recomendada.</p>
       )}
       <ul className="space-y-3">
-        {actions.map((a, i) => {
+        {safeActions.map((a, i) => {
           const isDone = done.has(i);
           return (
             <li

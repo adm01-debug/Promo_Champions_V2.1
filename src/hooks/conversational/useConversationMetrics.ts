@@ -62,7 +62,7 @@ export function useConversationMetricsFeed(healthFilter?: string) {
 
   useEffect(() => {
     const ch = supabase
-      .channel('ccm-feed')
+      .channel(`ccm-feed-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'call_conversation_metrics' },

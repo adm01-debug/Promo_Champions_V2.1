@@ -29,7 +29,9 @@ const intelligenceFeatures = [
 export const StrategicRecommendations = () => {
   const navigate = useNavigate();
   const { data: briefing } = useLatestBriefing();
-  const recommendations = (briefing?.recommended_actions ?? []).slice(0, 3);
+  const recommendations = (
+    Array.isArray(briefing?.recommended_actions) ? briefing.recommended_actions : []
+  ).slice(0, 3);
 
   return (
     <div className="space-y-12">

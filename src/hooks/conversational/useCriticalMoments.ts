@@ -99,7 +99,7 @@ export function useMyCriticalMomentsFeed(limit = 30) {
 
   useEffect(() => {
     const channel = supabase
-      .channel('critical-moments-feed')
+      .channel(`critical-moments-feed-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'call_critical_moments' },

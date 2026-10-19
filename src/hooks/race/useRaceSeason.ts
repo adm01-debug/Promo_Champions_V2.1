@@ -34,7 +34,7 @@ export function useRaceSeason() {
 
   useEffect(() => {
     const channel = supabase
-      .channel('race-seasons-rt')
+      .channel(`race-seasons-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'race_seasons' },

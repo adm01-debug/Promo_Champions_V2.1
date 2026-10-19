@@ -31,7 +31,7 @@ export function useWinProbabilityCalibration() {
 
   useEffect(() => {
     const channel = supabase
-      .channel('win-calibrations-rt')
+      .channel(`win-calibrations-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'win_probability_calibrations' },
@@ -65,7 +65,7 @@ export function useDealProbabilityScores(limit = 200) {
 
   useEffect(() => {
     const channel = supabase
-      .channel('deal-prob-scores-rt')
+      .channel(`deal-prob-scores-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'deal_probability_scores' },

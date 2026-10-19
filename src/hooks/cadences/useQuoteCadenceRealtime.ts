@@ -13,7 +13,7 @@ export function useQuoteCadenceRealtime() {
 
   useEffect(() => {
     const channel = supabase
-      .channel('quote-cadences-realtime')
+      .channel(`quote-cadences-realtime-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'prospect_cadences' },
