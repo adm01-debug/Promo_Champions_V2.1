@@ -1,17 +1,22 @@
 #!/usr/bin/env node
-// Gera SQL de sondagem (read-only) que verifica, para cada migration em um
-// intervalo de versões, se os objetos que ela cria existem em produção.
+// Gera SQL de sondagem que verifica, para cada migration em um intervalo
+// de versões, se os objetos que ela cria existem em produção. Escopo =
+// existência de objetos apenas: a reconciliação de versões do ledger
+// (schema_migrations × arquivos do repo) é responsabilidade do drift
+// check em migrations-drift.yml, não desta sonda — um objeto existente
+// não prova que a migration foi registrada, e vice-versa.
 // Cobre: function, table, view, matview, trigger, cron, policy, index,
 // constraint, column, extension, type.
 //
 // Uso: node scripts/db-audit/gen-migration-probes.mjs [since_version]
 // Saída: SQL em stdout — alimentar em psql -At (pipe-separated).
+// Teste de regressão: node --test scripts/db-audit/gen-migration-probes.test.mjs
 
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const MIG_DIR = 'supabase/migrations';
-const since = process.argv[2] ?? '20260901000000';
 
 // Identificador com aspas duplas pode conter "" (escape SQL) — "[^"]+"
 // truncava no primeiro fecha-aspas interno e sondava o nome errado.
@@ -84,18 +89,29 @@ const stripComments = (sql) =>
     })
     .join('\n');
 
-const files = readdirSync(MIG_DIR)
-  .filter((f) => /^\d{8,14}_.*\.sql$/.test(f) && f.split('_')[0] >= since)
-  .sort();
+// Tabela do ALTER TABLE que envolve um match da forma `, ADD ...` — sem
+// isso a probe sondava só o nome do objeto e uma constraint/coluna
+// homônima em outra tabela produzia falso-positivo. Retorna null quando o
+// match não está dentro de um ALTER TABLE (mesmo statement: sem `;`
+// entre o ALTER e o match) — a probe fica com aux vazio, como antes.
+const ALTER_TBL = new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})`, 'gi');
+const enclosingAlterTable = (sql, index) => {
+  ALTER_TBL.lastIndex = 0;
+  let last = null;
+  let m;
+  while ((m = ALTER_TBL.exec(sql)) && m.index < index) last = m;
+  if (!last) return null;
+  if (sql.slice(last.index, index).includes(';')) return null;
+  return { schema: strip(last[1]) ?? 'public', table: strip(last[2]) };
+};
 
-const rows = [];
-const seen = new Set();
-const unprobeable = [];
-
-for (const f of files) {
-  const version = f.split('_')[0];
-  const sql = stripComments(readFileSync(join(MIG_DIR, f), 'utf8'));
-  let found = 0;
+// Extrai as probes de um SQL de migration (comentários removidos aqui
+// mesmo — o caller não precisa tratar). Exportado para o teste de
+// regressão.
+export const collectProbes = (rawSql, version, file = '') => {
+  const sql = stripComments(rawSql);
+  const rows = [];
+  const seen = new Set();
   for (const [kind, re] of PATTERNS) {
     re.lastIndex = 0;
     let m;
@@ -105,12 +121,13 @@ for (const f of files) {
       if (kind === 'policy') {
         obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
       } else if (kind === 'constraint' || kind === 'column') {
-        // Dois shapes: ALTER TABLE t ADD CONSTRAINT c → (schema, tabela, obj)
-        // e ", ADD CONSTRAINT c" → (obj) sem tabela.
+        // Dois shapes: ALTER TABLE t ADD X → (schema, tabela, obj) e
+        // ", ADD X" → (obj) — a tabela vem do ALTER TABLE que envolve.
         if (groups[2] !== undefined) {
           schema = groups[0] ?? 'public'; extra = groups[1]; obj = groups[2];
         } else {
-          schema = 'public'; extra = ''; obj = groups[0];
+          const enc = enclosingAlterTable(sql, m.index);
+          schema = enc?.schema ?? 'public'; extra = enc?.table ?? ''; obj = groups[0];
         }
       } else if (kind === 'trigger') {
         obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
@@ -132,20 +149,38 @@ for (const f of files) {
       const key = `${version}|${kind}|${schema}|${obj}|${extra ?? ''}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      rows.push({ version, kind, schema, obj, extra, file: f });
-      found++;
+      rows.push({ version, kind, schema, obj, extra, file });
     }
   }
-  if (!found) unprobeable.push(f);
-}
+  return rows;
+};
 
 const lit = (s) => `'${String(s).replaceAll("'", "''")}'`;
 
-const values = rows
-  .map((r) => `  (${lit(r.version)}, ${lit(r.kind)}, ${lit(r.schema)}, ${lit(r.obj)}, ${lit(r.extra ?? '')})`)
-  .join(',\n');
+const main = () => {
+  const since = process.argv[2] ?? '20260901000000';
+  const files = readdirSync(MIG_DIR)
+    .filter((f) => /^\d{8,14}_.*\.sql$/.test(f) && f.split('_')[0] >= since)
+    .sort();
 
-const out = `\\pset footer off
+  const rows = [];
+  const unprobeable = [];
+  for (const f of files) {
+    const version = f.split('_')[0];
+    const fileRows = collectProbes(
+      readFileSync(join(MIG_DIR, f), 'utf8'),
+      version,
+      f,
+    );
+    rows.push(...fileRows);
+    if (!fileRows.length) unprobeable.push(f);
+  }
+
+  const values = rows
+    .map((r) => `  (${lit(r.version)}, ${lit(r.kind)}, ${lit(r.schema)}, ${lit(r.obj)}, ${lit(r.extra ?? '')})`)
+    .join(',\n');
+
+const renderSql = (values) => `\\pset footer off
 -- cron.job só existe com pg_cron instalado — referência estática a ela
 -- quebra o parse do SELECT inteiro (CASE não ajuda, o parser resolve a
 -- relação em todos os ramos). pg_temp + EXECUTE dinâmico avalia em runtime.
@@ -187,11 +222,18 @@ WHERE version IS NOT NULL
 ORDER BY version, kind, obj;
 `;
 
-console.log(out);
+  console.log(renderSql(values));
 
-console.error(`\n-- ${files.length} migrations no intervalo (>= ${since})`);
-console.error(`-- ${rows.length} probes geradas`);
-if (unprobeable.length) {
-  console.error(`-- ${unprobeable.length} migrations SEM objeto sondável (revisão manual):`);
-  for (const f of unprobeable) console.error(`--   ${f}`);
+  console.error(`\n-- ${files.length} migrations no intervalo (>= ${since})`);
+  console.error(`-- ${rows.length} probes geradas`);
+  if (unprobeable.length) {
+    console.error(`-- ${unprobeable.length} migrations SEM objeto sondável (revisão manual):`);
+    for (const f of unprobeable) console.error(`--   ${f}`);
+  }
+};
+
+// Só gera saída quando executado diretamente — o import pelo teste de
+// regressão não deve varrer supabase/migrations nem imprimir.
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main();
 }
