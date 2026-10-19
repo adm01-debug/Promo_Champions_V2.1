@@ -53,6 +53,20 @@ export const useDailyChallengesWithProgress = (salespersonId?: string) => {
 
       if (!challenges) return [];
 
+      // Melhor esforço: recalcula o progresso no servidor antes de ler
+      // (o RPC falha silenciosamente se o usuário não for o próprio vendedor).
+      await supabase
+        .rpc(
+          'sync_challenge_progress' as never,
+          {
+            p_salesperson_id: salespersonId,
+          } as never
+        )
+        .then(
+          () => undefined,
+          () => undefined
+        );
+
       const { data: progress } = await supabase
         .from('daily_challenge_progress')
         .select('*')
