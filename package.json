@@ -138,17 +138,17 @@
     "@axe-core/playwright": "^4.12.1",
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.2.2",
-    "@playwright/test": "^1.64.0",
+    "@playwright/test": "^1.64.1",
     "@sentry/vite-plugin": "^5.4.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.7",
+    "@testing-library/user-event": "^14.6.8",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^4.3.2",
-    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/coverage-v8": "^5.0.5",
     "autoprefixer": "^10.4.17",
     "dependency-cruiser": "^18.5.0",
     "eslint": "^9.39.5",
@@ -167,7 +167,7 @@
     "typescript-eslint": "^8.70.0",
     "vite": "^8.3.0",
     "vite-plugin-pwa": "^1.0.0",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   },
   "engines": {
     "node": ">=22.0.0"
