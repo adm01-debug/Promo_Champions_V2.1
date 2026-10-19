@@ -14,6 +14,10 @@ import {
   UnauthorizedError,
 } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import {
+  OPEN_SALE_STATUSES,
+  WON_SALE_STATUSES,
+} from '../_shared/sale-statuses.ts';
 
 const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
 
@@ -131,8 +135,7 @@ Deno.serve(
           .from('sales')
           .select('id, client_name, product_name, amount, status, created_at, updated_at')
           .eq('salesperson_id', salespersonId)
-          .neq('status', 'completed')
-          .neq('status', 'lost')
+          .in('status', [...OPEN_SALE_STATUSES])
           .order('updated_at', { ascending: true })
           .limit(25),
         supabase
@@ -166,7 +169,7 @@ Deno.serve(
           .from('sales')
           .select('amount, updated_at')
           .eq('salesperson_id', salespersonId)
-          .eq('status', 'completed')
+          .in('status', [...WON_SALE_STATUSES])
           .gte('updated_at', new Date(new Date().setDate(1)).toISOString()),
         supabase
           .from('sequence_enrollments')

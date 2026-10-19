@@ -40,11 +40,14 @@ const PATTERNS = [
   // Índice: captura a tabela do ON para a probe casar schemaname+tablename
   // (índices de mesmo nome em tabelas/schemas diferentes não colidem).
   ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})[^;]*?\bon\s+(?:only\s+)?(?:(${ID})\.)?(${ID})`, 'gi'), 'idx'],
-  ['constraint', new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+constraint\s+(${ID})`, 'gi'), 'con'],
+  // `ALTER TABLE IF EXISTS` — sem o salto de `if exists`, 'if' casaria como
+  // nome de tabela e a probe sondaria a tabela errada (mesmo fix do
+  // enclosingAlterTable abaixo).
+  ['constraint', new RegExp(String.raw`alter\s+table\s+(?:only\s+)?(?:if\s+exists\s+)?${SCH}(${ID})\s+add\s+constraint\s+(${ID})`, 'gi'), 'con'],
   // Forma `ALTER TABLE t DROP CONSTRAINT a, ADD CONSTRAINT b` — o ADD não vem
   // colado no nome da tabela, então o pattern acima não o vê.
   ['constraint', new RegExp(String.raw`,\s*add\s+constraint\s+(${ID})`, 'gi'), 'con'],
-  ['column',   new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
+  ['column',   new RegExp(String.raw`alter\s+table\s+(?:only\s+)?(?:if\s+exists\s+)?${SCH}(${ID})\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
   // Forma `ALTER TABLE t ADD COLUMN a ..., ADD COLUMN b ...` — a segunda
   // coluna não vem colada no ALTER e era perdida.
   ['column',   new RegExp(String.raw`,\s*add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
@@ -94,7 +97,7 @@ const stripComments = (sql) =>
 // homônima em outra tabela produzia falso-positivo. Retorna null quando o
 // match não está dentro de um ALTER TABLE (mesmo statement: sem `;`
 // entre o ALTER e o match) — a probe fica com aux vazio, como antes.
-const ALTER_TBL = new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})`, 'gi');
+const ALTER_TBL = new RegExp(String.raw`alter\s+table\s+(?:only\s+)?(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi');
 const enclosingAlterTable = (sql, index) => {
   ALTER_TBL.lastIndex = 0;
   let last = null;
