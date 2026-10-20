@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,7 +12,7 @@ import {
 import { Sparkles, Flame, Trophy, Zap, Loader2, Database } from 'lucide-react';
 import { useLevelUpCelebration } from '@/hooks/gamification/useLevelUpCelebration';
 import { LevelUpOverlay, StreakMilestoneOverlay } from './LevelUpOverlay';
-import { getLevelInfo, useAddXP } from '@/hooks/gamification/useSalespersonXP';
+import { getLevelInfo } from '@/hooks/gamification/useSalespersonXP';
 import { useGamificationData } from '@/hooks/gamification/useGamificationData';
 import {
   Select,
@@ -32,7 +34,11 @@ export function CelebrationTestButtons() {
   const [xpAmount, setXpAmount] = useState(50);
 
   const { data: salespeople, isLoading: loadingSalespeople } = useGamificationData();
-  const addXPMutation = useAddXP();
+  // Economia de XP é server-side desde 20261018190100: escrita direta do
+  // cliente em salesperson_xp/xp_history foi revogada. O crédito de teste
+  // usa a RPC pública award_salesperson_xp e aparece só para admin.
+  const { isAdmin } = useUserRoles();
+  const [isAddingRealXp, setIsAddingRealXp] = useState(false);
 
   const levelInfo = getLevelInfo(testLevel);
 
@@ -69,16 +75,34 @@ export function CelebrationTestButtons() {
     const salesperson = salespeople?.find(s => s.salesperson_id === selectedSalesperson);
     if (!salesperson) return;
 
+    setIsAddingRealXp(true);
     try {
-      await addXPMutation.mutateAsync({
-        salespersonId: selectedSalesperson,
-        xpAmount: xpAmount,
-        sourceType: 'test',
-        description: 'XP de teste para celebração',
+      const { data, error } = await supabase.rpc('award_salesperson_xp', {
+        p_salesperson_id: selectedSalesperson,
+        p_xp_amount: xpAmount,
+        p_description: 'XP de teste para celebração',
+        p_source_type: 'manual_test',
+        p_source_id: crypto.randomUUID(),
       });
-      toast.success(`+${xpAmount} XP adicionado para ${salesperson.name}!`);
+      if (error) throw error;
+      const result = data as {
+        leveled_up: boolean;
+        new_level: number;
+        total_xp: number;
+      } | null;
+      if (result?.leveled_up) {
+        const newLevelInfo = getLevelInfo(result.new_level);
+        toast.success(
+          `${newLevelInfo.emoji} ${salesperson.name} subiu para o nível ${result.new_level}!`,
+          { description: `Total: ${result.total_xp} XP`, duration: 5000 }
+        );
+      } else {
+        toast.success(`+${xpAmount} XP adicionado para ${salesperson.name}!`);
+      }
     } catch (_error) {
       toast.error('Erro ao adicionar XP');
+    } finally {
+      setIsAddingRealXp(false);
     }
   };
 
@@ -159,7 +183,8 @@ export function CelebrationTestButtons() {
             </div>
           </div>
 
-          {/* Teste Real-time (com banco) */}
+          {/* Teste Real-time (com banco) — só admin, via RPC server-side */}
+          {isAdmin && (
           <div className="space-y-2 pt-2 border-t border-border/40">
             <p className="text-xs text-muted-foreground font-medium flex items-center gap-1">
               <Database className="h-3 w-3" />
@@ -207,10 +232,10 @@ export function CelebrationTestButtons() {
               <Button
                 size="sm"
                 onClick={handleAddRealXP}
-                disabled={!selectedSalesperson || addXPMutation.isPending}
+                disabled={!selectedSalesperson || isAddingRealXp}
                 className="flex items-center gap-2 bg-gradient-primary hover:opacity-90"
               >
-                {addXPMutation.isPending ? (
+                {isAddingRealXp ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Zap className="h-4 w-4" />
@@ -224,6 +249,7 @@ export function CelebrationTestButtons() {
               level-up
             </p>
           </div>
+          )}
         </CardContent>
       </Card>
 
