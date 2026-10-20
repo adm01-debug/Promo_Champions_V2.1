@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Runtime isolado para a extração local do Graphify"
 requires-python = ">=3.10,<3.13"
 dependencies = [
-  "graphifyy==0.9.48",
+  "graphifyy==0.9.70",
 ]
 
 [tool.uv]
