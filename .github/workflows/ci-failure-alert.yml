@@ -7,7 +7,18 @@ name: CI Failure Alert
 
 on:
   workflow_run:
-    workflows: ["PR Checks"]
+    workflows:
+      - "PR Checks"
+      - "CodeQL"
+      - "Release Please"
+      - "Migrations Drift"
+      - "DB Backup (off-site)"
+      - "PR Review SLA"
+      - "Dependabot Auto-merge"
+      - "Apply Migration"
+      - "Edge Functions Bundle Check"
+      - "Edge Functions Input Validation Lint"
+      - "Edge Functions X-Request-Id Lint"
     types: [completed]
   workflow_dispatch:
 
@@ -29,6 +40,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GH_WORKFLOW: ${{ github.event.workflow_run.name }}
           GH_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WF_HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
           GH_SHA: ${{ github.event.workflow_run.head_sha }}
           GH_RUN_URL: ${{ github.event.workflow_run.html_url }}
           GH_ACTOR: ${{ github.event.workflow_run.actor.login }}
@@ -38,7 +50,8 @@ jobs:
           # não requer alerta, evitando falha por "todos os jobs skipped".
           if [[ "$WF_CONCLUSION" != "failure" ]] || \
              [[ "$GH_BRANCH" != "main" ]] || \
-             [[ "$GH_WORKFLOW" == "CI Failure Alert" ]]; then
+             [[ "$GH_WORKFLOW" == "CI Failure Alert" ]] || \
+             [[ -n "$WF_HEAD_REPO" && "$WF_HEAD_REPO" != "$GH_REPO" ]]; then
             echo "Sem alerta necessário (conclusão=$WF_CONCLUSION, branch=$GH_BRANCH, workflow=$GH_WORKFLOW)."
             exit 0
           fi
