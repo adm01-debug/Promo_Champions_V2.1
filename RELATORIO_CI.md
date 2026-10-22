@@ -860,22 +860,24 @@ Os 3 workflows restantes dependem exclusivamente de ação do usuário (configur
 **SHA de referência:** `2dfddca138980fa4acc02e5067d8d7a99066cf16`  
 **Evento:** squash-merge do PR #323 em main, 2026-10-22T23:08Z
 
-| Workflow                    | Run ID      | Conclusão        | Link                                                                                                  |
-| --------------------------- | ----------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| **PR Checks**               | 39869773740 | ⏳ `in_progress` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773740 (suíte completa ~40 min) |
-| **CI/CD — Post-merge Main** | 39869773821 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773821                          |
-| **CodeQL**                  | 39869773766 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773766                          |
-| **Release Please**          | 39869773794 | ❌ `failure`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773794 (PENDENCIAS §3)          |
-| **CI Failure Alert**        | 39869697161 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869697161                          |
-| **Apply Migration**         | 39867429819 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867429819                          |
-| **Migrations Drift**        | 39867421119 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867421119                          |
-| **Cron Monitoring**         | 39851033561 | ❌ `failure`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851033561 (PENDENCIAS §1)          |
+| Workflow                    | Run ID      | Conclusão    | Link                                                                                         |
+| --------------------------- | ----------- | ------------ | -------------------------------------------------------------------------------------------- |
+| **PR Checks**               | 39869773740 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773740                 |
+| **CI/CD — Post-merge Main** | 39869773821 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773821                 |
+| **CodeQL**                  | 39869773766 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773766                 |
+| **Release Please**          | 39869773794 | ❌ `failure` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773794 (PENDENCIAS §3) |
+| **CI Failure Alert**        | 39869697161 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869697161                 |
+| **Apply Migration**         | 39867429819 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867429819                 |
+| **Migrations Drift**        | 39867421119 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867421119                 |
+| **Cron Monitoring**         | 39851033561 | ❌ `failure` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851033561 (PENDENCIAS §1) |
 
-> PR Checks inclui a suíte Vitest completa (~40 min). CodeQL e CI/CD Main concluíram com `success`. Release Please e Cron Monitoring são bloqueios externos documentados em PENDENCIAS.md.
+> PR Checks concluiu `success` (649 testes Vitest). CodeQL e CI/CD Main: `success`. Release Please
+> e Cron Monitoring são bloqueios externos documentados em PENDENCIAS.md.
 
 ### Resumo pós-merge PR #323
 
-- **Corrigidos (success):** CI/CD Main, CI Failure Alert, Apply Migration, Migrations Drift, PR Checks, CodeQL
+- **Corrigidos (success):** CI/CD Main, CI Failure Alert, Apply Migration, Migrations Drift,
+  PR Checks, CodeQL
 - **Bloqueados por ação externa:** Release Please (PAT), Cron Monitoring (service_role key)
 - **Sem novos failures introduzidos pelo merge**
 
@@ -894,3 +896,22 @@ Executado em main, SHA `2dfddca138980fa4acc02e5067d8d7a99066cf16`, 2026-10-22.
 | `npm run test`      | 649 passed, 2 skipped (651)      | **0** ✅  |
 
 **Zero regressão confirmada:** nenhum teste novo falhou, nenhum erro de lint ou tipo introduzido pelas correções desta sessão.
+
+---
+
+## §20 — Inventário pós-merge PR #324 (SHA ebeccc956)
+
+**SHA de referência:** `ebeccc956` (squash-merge do PR #324 em main, 2026-10-22T23:17Z)  
+**Conteúdo do PR #324:** docs-only — correção §17, adição §18-§19 do RELATORIO_CI.md
+
+| Workflow                    | Run ID      | Conclusão           | Link                                                                                         |
+| --------------------------- | ----------- | ------------------- | -------------------------------------------------------------------------------------------- |
+| **PR Checks**               | 39870699153 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699153                 |
+| **CI/CD — Post-merge Main** | 39870699139 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699139                 |
+| **CodeQL**                  | 39870699166 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699166                 |
+| **Release Please**          | 39870699239 | ❌ esperado failure | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699239 (PENDENCIAS §3) |
+| **CI Failure Alert**        | 39870766466 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870766466                 |
+
+> PR #324 foi docs-only; `detect-changes` não detecta `.sql` alterados → `has_code=false`
+> → suíte Vitest não roda → PR Checks conclui rapidamente como `success`.
+> Release Please falhará como esperado (PENDENCIAS §3 — requer PAT `RELEASE_PLEASE_TOKEN`).
