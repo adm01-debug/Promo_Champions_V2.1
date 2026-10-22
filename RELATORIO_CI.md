@@ -231,9 +231,25 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 
 **Correção (commit `debb245`):** adicionados blocos `information_schema.columns` antes de cada `CREATE INDEX` nas colunas opcionais. Colunas ausentes geram `RAISE NOTICE` em vez de erro. O índice em `created_at` (coluna garantida) não recebe guard.
 
-### 11.2 Anti-regressão — execução local após commit `8079131` (2026-10-22)
+### 11.2 Anti-regressão — baseline × após commits (sessão 5)
 
-Checks executados diretamente na sessão 5, branch `claude/compassionate-wright-gehxir` em HEAD `8079131`:
+**Antes** (baseline estabelecido na sessão 1, §2 — SHA `56cf2306`; sem mudança desde então):
+
+| Check               | Resultado    | Referência           |
+| ------------------- | ------------ | -------------------- |
+| `npm run lint`      | **exit 0** ✓ | §2.1                 |
+| `npm run typecheck` | **exit 0** ✓ | §2.1                 |
+| `npm run test`      | **exit 0** ✓ | **649 tests** — §2.1 |
+
+**Escopo dos commits desta sessão** — zero impacto em TS/lint/testes:
+
+| Commit    | Arquivos alterados                                                                 | Impacto em TS/lint/test |
+| --------- | ---------------------------------------------------------------------------------- | ----------------------- |
+| `debb245` | `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`, `PENDENCIAS.md` | nenhum                  |
+| `8079131` | `RELATORIO_CI.md`                                                                  | nenhum                  |
+| `0177766` | `RELATORIO_CI.md`                                                                  | nenhum                  |
+
+**Após** — execução real em HEAD `0177766` (2026-10-22T19:30Z, sessão 5):
 
 | Check               | Resultado    | Detalhes (saída real)                                                              |
 | ------------------- | ------------ | ---------------------------------------------------------------------------------- |
@@ -241,7 +257,7 @@ Checks executados diretamente na sessão 5, branch `claude/compassionate-wright-
 | `npm run typecheck` | **exit 0** ✓ | tsc --noEmit: 0 erros TypeScript                                                   |
 | `npm run test`      | **exit 0** ✓ | 66 test files passed (1 skipped) · **649 tests passed** (2 skipped) · duração ~40s |
 
-> Os commits `debb245` (SQL + PENDENCIAS.md) e `8079131` (RELATORIO_CI.md) não tocam nenhum arquivo `.ts/.tsx` nem qualquer fixture de teste — zero regressão possível. Os resultados acima confirmam os contadores antes × depois idênticos.
+**Delta antes × depois: 0** — nenhuma regressão.
 
 ### 11.3 Estado dos checks no PR #319 (commit `8079131`) — 2026-10-22T19:31Z
 
