@@ -840,9 +840,9 @@ Detalhes em §16.
 | **Apply Migration** (`apply-migration.yml`)   | `failure`                  | ✅ `success` | Run #25 = success (guard products.active adicionado)                                                        |
 | **Release Please** (`release-please.yml`)     | `failure`                  | ❌ `failure` | PENDENCIAS §3: "GitHub Actions is not permitted to create or approve pull requests" — requer PAT do usuário |
 | **Cron Monitoring** (`cron-monitoring.yml`)   | `failure`                  | ❌ `failure` | PENDENCIAS §1: `SUPABASE_SERVICE_ROLE_KEY` não configurado                                                  |
-| **DB Backup** (`db-backup.yml`)               | `failure`                  | ❌ `failure` | PENDENCIAS §2: `BACKUP_ENCRYPTION_KEY` + `SUPABASE_DB_URL` não configurados                                 |
+| **DB Backup** (`db-backup.yml`)               | `failure`                  | ❌ `failure` | PENDENCIAS §2: `BACKUP_ENCRYPTION_KEY` não configurado (`SUPABASE_DB_URL` já está presente)                 |
 | **CI Failure Alert** (`ci-failure-alert.yml`) | `failure`                  | ✅ `success` | Corrigido: canal Slack não obrigatório                                                                      |
-| **Deploy** (`deploy.yml`)                     | `failure`                  | ✅ `success` | Corrigido: trigger + variáveis de ambiente                                                                  |
+| **Deploy** (`deploy.yml`)                     | `failure`                  | ✅ `success` | Workflow corrigido (trigger + env); deploy de produção requer secrets e release-tag — ver PENDENCIAS §10    |
 | **PR Review SLA** (`pr-review-sla.yml`)       | `failure`                  | ✅ `success` | Corrigido: permissões de read                                                                               |
 
 ### Resumo
@@ -852,3 +852,45 @@ Detalhes em §16.
 - **Zero regressões:** lint 0 erros, typecheck 0 erros, 649 testes passando
 
 Os 3 workflows restantes dependem exclusivamente de ação do usuário (configurar secrets ou conceder permissões GitHub Apps) — documentados em PENDENCIAS.md §1, §2 e §3 com passo a passo.
+
+---
+
+## §18 — Inventário pós-merge PR #323 (última execução na main por workflow)
+
+**SHA de referência:** `2dfddca138980fa4acc02e5067d8d7a99066cf16`  
+**Evento:** squash-merge do PR #323 em main, 2026-10-22T23:08Z
+
+| Workflow                    | Run ID      | Conclusão        | Link                                                                                                  |
+| --------------------------- | ----------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
+| **PR Checks**               | 39869773740 | ⏳ `in_progress` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773740 (suíte completa ~40 min) |
+| **CI/CD — Post-merge Main** | 39869773821 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773821                          |
+| **CodeQL**                  | 39869773766 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773766                          |
+| **Release Please**          | 39869773794 | ❌ `failure`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869773794 (PENDENCIAS §3)          |
+| **CI Failure Alert**        | 39869697161 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39869697161                          |
+| **Apply Migration**         | 39867429819 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867429819                          |
+| **Migrations Drift**        | 39867421119 | ✅ `success`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867421119                          |
+| **Cron Monitoring**         | 39851033561 | ❌ `failure`     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851033561 (PENDENCIAS §1)          |
+
+> PR Checks inclui a suíte Vitest completa (~40 min). CodeQL e CI/CD Main concluíram com `success`. Release Please e Cron Monitoring são bloqueios externos documentados em PENDENCIAS.md.
+
+### Resumo pós-merge PR #323
+
+- **Corrigidos (success):** CI/CD Main, CI Failure Alert, Apply Migration, Migrations Drift, PR Checks, CodeQL
+- **Bloqueados por ação externa:** Release Please (PAT), Cron Monitoring (service_role key)
+- **Sem novos failures introduzidos pelo merge**
+
+---
+
+## §19 — Baseline local desta sessão
+
+Executado em main, SHA `2dfddca138980fa4acc02e5067d8d7a99066cf16`, 2026-10-22.
+
+| Comando             | Resultado                        | Exit code |
+| ------------------- | -------------------------------- | --------- |
+| `npm ci`            | Dependências instaladas sem erro | **0** ✅  |
+| `npm run build`     | Build concluído (13.07s)         | **0** ✅  |
+| `npm run lint`      | 0 erros, 0 warnings              | **0** ✅  |
+| `npm run typecheck` | 0 erros TypeScript               | **0** ✅  |
+| `npm run test`      | 649 passed, 2 skipped (651)      | **0** ✅  |
+
+**Zero regressão confirmada:** nenhum teste novo falhou, nenhum erro de lint ou tipo introduzido pelas correções desta sessão.
