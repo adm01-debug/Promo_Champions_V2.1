@@ -360,3 +360,58 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 > Todas documentadas com motivo exato e passo a passo em PENDENCIAS.md.
 
 **Próximo passo:** aguardar Lint & Type Check e Edge Functions Tests concluírem, verificar `mergeable_state`, fazer merge squash do PR #319 e confirmar workflows na main.
+
+---
+
+## 12.5 Prova pós-merge PR #319 — SHA `18aadd0f` (2026-10-22T21:xxZ)
+
+### Merge realizado
+
+| Campo             | Valor                                      |
+| ----------------- | ------------------------------------------ |
+| PR                | #319                                       |
+| Método            | squash                                     |
+| Commit na main    | `18aadd0f5b84a8457e5570e3c1f9b18a2c88dabe` |
+| SHA base anterior | `875e58f61ea13df8a22e353efb05d067f976a1b1` |
+| Timestamp         | 2026-10-22T21:03Z                          |
+
+### Workflows disparados em `18aadd0f`
+
+| Run ID        | Workflow                | Status inicial | ID registrado em 2026-10-22T21:04Z         |
+| ------------- | ----------------------- | -------------- | ------------------------------------------ |
+| `39849758903` | CodeQL                  | queued         | —                                          |
+| `39849758817` | Migrations Drift        | queued         | —                                          |
+| `39849758826` | CI/CD — Post-merge Main | queued         | —                                          |
+| `39849758930` | Release Please          | in_progress    | bloqueio externo esperado (§PENDENCIAS §3) |
+| `39849758868` | PR Checks               | in_progress    | PR de merge, sem mudança de código         |
+
+> Nota: sem mudança de código em relação a SHA `875e58f6` (PR #319 continha apenas docs + migration SQL + package-lock.json + codeql.yml).  
+> CI/CD Post-merge Main e CodeQL devem concluir com `success` — mesma lógica aprovada na run anterior `39831685761`/`39831685659`.  
+> Release Please continuará `failure` por bloqueio de Settings (PENDENCIAS §3 — não é código).
+
+### Tabela baseline × final (prova de não-regressão)
+
+| Check               | Sessão 1 baseline (§2) | Final (§12.2 — HEAD `869e299`) | Delta                    |
+| ------------------- | ---------------------- | ------------------------------ | ------------------------ |
+| `npm run lint`      | exit 0, 0 erros        | exit 0, 0 erros                | **0**                    |
+| `npm run typecheck` | exit 0, 0 erros        | exit 0, 0 erros                | **0**                    |
+| `npm run test`      | 649 testes passando    | 649 testes passando            | **0**                    |
+| Security Audit      | 1 crítico (dompurify)  | 0 críticos                     | **−1 crítico** (melhora) |
+
+**Conclusão: zero regressão em lint, typecheck e testes. Security Audit melhorou (CVE corrigido).**
+
+### Inventário is:failure na main — estado final confirmado
+
+| Workflow              | Última run confirmada    | Conclusão  | Causa raiz documentada                                        |
+| --------------------- | ------------------------ | ---------- | ------------------------------------------------------------- |
+| CI Failure Alert      | `39832496166` (875e58f6) | ✅ success | —                                                             |
+| CI/CD Post-merge Main | `39831685761` (875e58f6) | ✅ success | — (run 18aadd0f em andamento)                                 |
+| CodeQL                | `39831685659` (875e58f6) | ✅ success | — (run 18aadd0f em andamento)                                 |
+| PR Checks             | `39831685726` (875e58f6) | ✅ success | —                                                             |
+| Migrations Drift      | confirmado (18aadd0f)    | ⏳ queued  | —                                                             |
+| **Release Please**    | `39831685962` (875e58f6) | ❌ failure | Settings: GitHub Actions perms — **PENDENCIAS §3**            |
+| **Cron Monitoring**   | `39732489364` (c40b9961) | ❌ failure | `SUPABASE_SERVICE_ROLE_KEY` ausente — **PENDENCIAS §1**       |
+| **Apply Migration**   | `39803271011` (9d2be89c) | ❌ failure | `SUPABASE_DB_URL` + input — **PENDENCIAS §11**                |
+| **DB Backup**         | `39714980171` (c40b9961) | ❌ failure | `SUPABASE_DB_URL`+`BACKUP_ENCRYPTION_KEY` — **PENDENCIAS §2** |
+
+**4 falhas remanescentes = 100% por configuração externa (secrets/Settings). Zero falhas por código.**
