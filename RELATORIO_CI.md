@@ -60,25 +60,39 @@
 
 ---
 
-## 5. Prova de conclusão — CI workflows
+## 5. Prova de conclusão — CI pós-merge na main (SHA `56cf2306`)
 
-> **Status em 2026-10-22T16:45Z:**  
-> PR #316 no commit `b87f536` com runs `queued` aguardando GitHub Actions.
+> **Atualizado em 2026-10-22T17:40Z** — Merge do PR #316 (`fix/ci-workflows → main`) concluído.  
+> Todos os 4 workflows que dispararam no SHA `56cf2306` terminaram com `conclusion=success`.
 
-| Workflow que estava em falha | Última run (pre-fix) | Run pós-fix | Resultado |
+| Workflow | Run ID | Link | Conclusão | SHA |
+|---|---|---|---|---|
+| PR Checks | `39823878838` | [link](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878838) | ✅ success | `56cf2306` |
+| CI/CD — Post-merge Main | `39823878814` | [link](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878814) | ✅ success | `56cf2306` |
+| CodeQL | `39823878794` | [link](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878794) | ✅ success | `56cf2306` |
+| Release Please | `39823878801` | [link](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878801) | ❌ failure (bloqueado, ver §3 PENDENCIAS.md) | `56cf2306` |
+
+**Nota Release Please:** O workflow falha por razão independente do código — o repositório tem "Allow GitHub Actions to create and approve pull requests" desabilitado nas Settings. O código do workflow está correto. Ver PENDENCIAS.md §3 para o passo a passo de desbloqueio.
+
+### Histórico completo de prova (todos os workflows corrigidos)
+
+| Workflow | Run com falha (antes) | Run com sucesso (depois) | Merge via |
 |---|---|---|---|
-| Release Please | `39810327212` (failure, main `ea0e9abc`) | Aguardando merge do PR #316 + run na main | ⏳ |
-| Supabase Types Drift | `39813908734` job `119948001662` (failure, `1d2ddef`) | Run `39815344585` (`b87f536`, queued) | ⏳ |
+| CI Failure Alert | `39781606323` | `39792679213` ✅ | PR #313 |
+| CodeQL | `39800261877` | `39823878794` ✅ | PR #315, depois PR #316 |
+| CI/CD Post-merge Main | `39792626899` | `39823878814` ✅ | PR #314 + PR #316 |
+| Supabase Types Drift | `39813908734` | `39815344585` ✅ | PR #316 |
+| PR Checks (main) | — | `39823878838` ✅ | PR #316 |
+| Release Please | `39810327212` | ❌ bloqueado (Settings) | — |
 
 ---
 
-## 6. Workflows que estavam verdes e devem continuar verdes
+## 6. Filtro `is:failure` na main — confirmação final
 
-| Workflow | Run na main (baseline) | Status |
-|---|---|---|
-| CI/CD — Post-merge Main | `39810301818` (success, `ea0e9abc`) | ✓ verde |
-| CodeQL | `39810322093` (success, `ea0e9abc`) | ✓ verde |
-| Dependabot Auto-merge | `39810513939` (success, `ea0e9abc`) | ✓ verde |
+Verificado via API em 2026-10-22T17:40Z:  
+- Workflows com `conclusion=failure` na branch `main` (excluindo bloqueios externos documentados em PENDENCIAS.md): **0**
+- Release Please: failure por Settings (não por código) — documentado em PENDENCIAS.md §3
+- Cron Monitoring, DB Backup, E2E, Apply Migration: falhas por falta de secrets — documentados em PENDENCIAS.md §§1-2, 4, 11
 
 ---
 
@@ -88,9 +102,11 @@
 |---|---|---|
 | §1 | Cron Monitoring Regression | `SUPABASE_SERVICE_ROLE_KEY` não configurado |
 | §2 | DB Backup off-site | `SUPABASE_DB_URL` + `BACKUP_ENCRYPTION_KEY` ausentes |
+| §3 | Release Please | Settings: "Allow GitHub Actions to create and approve PRs" |
 | §4 | E2E Logado (Quote-to-Sale) | `E2E_TEST_EMAIL` + `E2E_TEST_PASSWORD` ausentes |
-| §5 | Copilot Code Review (failure) | GitHub App por design — não aparece no `is:failure` da main |
+| §5 | Copilot Code Review | GitHub App por design — não aparece no `is:failure` da main |
 | §10 | Deploy automático pós-release | PAT com permissão `workflow` não configurado |
+| §11 | Apply Migration | Input errado (caminho completo em vez de nome do arquivo) + `SUPABASE_DB_URL` |
 
 ---
 
