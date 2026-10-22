@@ -239,41 +239,40 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 
 ---
 
-## 11. Apply Migration — input incorreto (caminho completo em vez de só o nome do arquivo)
+## 11. Apply Migration — guard de coluna `products.active` ausente (SQL)
 
 **Workflow:** `.github/workflows/apply-migration.yml`  
-**Run com falha:** [#39803271011](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39803271011) — `conclusion=failure`
+**Run original com falha (input errado):** [#39803271011](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39803271011) — `conclusion=failure`  
+**Run com input válido confirmado:** [#39855957652](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39855957652) — `conclusion=failure` (SQL, não input)
 
-**Causa raiz:** O input `migration_file` foi fornecido como caminho completo:
+**Histórico:**
 
-```
-supabase/migrations/20261014000002_fix_concurrently_indexes.sql
-```
+- Run #22 (39803271011): falhou em "Validar input" — input continha path completo (`supabase/migrations/...`).
+- Run #24 (39855957652, 2026-10-22T21:17Z): input `20261014000002_fix_concurrently_indexes.sql` → **"Validar input" = success**, mas "Aplicar migration" falhou.
 
-O workflow rejeita qualquer input contendo `/` (proteção contra shell injection) e falha com:
-
-```
-##[error]nome de arquivo inválido
-```
-
-**Uso correto:**  
-Fornecer **apenas o nome do arquivo** (sem o prefixo de diretório):
+**Erro exato do run #24 (input válido, SQL falhou):**
 
 ```
-20261014000002_fix_concurrently_indexes.sql
+psql:supabase/migrations/20261014000002_fix_concurrently_indexes.sql:71: ERROR:  column "active" does not exist
+CONTEXT:  SQL statement "CREATE INDEX IF NOT EXISTS idx_products_active ON products(active)"
+PL/pgSQL function inline_code_block line 5 at SQL statement
+##[error]Process completed with exit code 3.
 ```
 
-**O que fazer (passo a passo):**
+**Causa raiz:** O bloco `products` da migration verificava existência da _tabela_ mas não da _coluna_ `active`. A tabela `products` existe no banco, mas a coluna `active` não.
+
+**Correção aplicada (esta sessão):** Adicionado guard `information_schema.columns` para `products.active` no arquivo `supabase/migrations/20261014000002_fix_concurrently_indexes.sql` — mesmo padrão já usado para `activities.user_id/client_id/deal_id` e `clients.active/deleted_at`.
+
+**`SUPABASE_DB_URL`:** já configurado (log mostra `***` nas runs de sucesso e no run #24).
+
+**O que fazer após o PR com a correção SQL ser mergeado:**
 
 1. Acesse: **Actions → Apply Migration → Run workflow**
-2. No campo `migration_file`, informe **apenas o nome do arquivo**:
+2. No campo `migration_file`, informe **apenas o nome do arquivo** (sem path):
    - ✅ Correto: `20261014000002_fix_concurrently_indexes.sql`
    - ❌ Errado: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
 
-**Bloqueio de schema — CORRIGIDO (versionado em PR #319):**  
-A migration `20261014000002_fix_concurrently_indexes.sql` foi corrigida para adicionar guards de existência de coluna (`information_schema.columns`) antes de criar cada índice nas colunas `user_id`, `client_id` e `deal_id` da tabela `activities`. Se a coluna não existir, o índice é pulado com `RAISE NOTICE` em vez de falhar. A migration agora é idempotente e segura em qualquer schema.
-
-**Status:** Bloqueio de schema resolvido. `SUPABASE_DB_URL` já está configurado (confirmado por `***` nos logs). Pendência restante: usar apenas o nome do arquivo sem path no campo `migration_file`.
+**Status:** Correção SQL versionada nesta sessão (branch `claude/compassionate-wright-gehxir`). Pendente: PR mergeado em main e re-dispatch para confirmar success.
 
 ---
 
