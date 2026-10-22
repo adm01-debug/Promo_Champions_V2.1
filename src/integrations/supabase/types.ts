@@ -23823,10 +23823,6 @@ export type Database = {
         }[]
       }
       canonical_phone_key: { Args: { p_phone: string }; Returns: string }
-      claim_daily_challenge_reward: {
-        Args: { p_challenge_id: string }
-        Returns: Json
-      }
       check_2fa_failed_attempts: {
         Args: { p_user_id: string }
         Returns: number
@@ -23855,11 +23851,20 @@ export type Database = {
           processed: number
         }[]
       }
+      claim_daily_challenge_reward: {
+        Args: { p_challenge_id: string }
+        Returns: Json
+      }
       claim_pending_cadence_tasks: {
         Args: { p_limit?: number; p_today: string }
         Returns: {
           task_id: string
         }[]
+      }
+      claim_streak_achievements: { Args: never; Returns: Json }
+      claim_weekly_challenge_reward: {
+        Args: { p_challenge_id: string }
+        Returns: Json
       }
       cleanup_deleted_records: { Args: never; Returns: undefined }
       cleanup_expired_narrative_cache: { Args: never; Returns: number }
@@ -24616,6 +24621,10 @@ export type Database = {
         Args: { check_email: string }
         Returns: boolean
       }
+      has_phone_consent: {
+        Args: { p_phone: string; p_purpose: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -24666,6 +24675,7 @@ export type Database = {
         Returns: boolean
       }
       is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
+      is_recipient_opted_out: { Args: { p_phone: string }; Returns: boolean }
       is_valid_status_transition: {
         Args: { p_destino: string; p_entity: string; p_origem: string }
         Returns: boolean
@@ -24864,6 +24874,7 @@ export type Database = {
       }
       reindex_tables: { Args: never; Returns: undefined }
       reset_pg_stat_statements_weekly: { Args: never; Returns: undefined }
+      resolve_weekly_matchups: { Args: never; Returns: number }
       restore_deleted_record: {
         Args: { p_record_id: string; p_table_name: string; p_user_id: string }
         Returns: boolean
