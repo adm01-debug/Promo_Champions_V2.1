@@ -32,10 +32,10 @@
 |---|---|
 | `npm run lint` | ✅ exit 0 (sem erros) |
 | `npm run typecheck` | ✅ exit 0 (sem erros TypeScript) |
-| `npm run test` (CI) | ✅ Unit Tests: success (check run #119808002745) |
-| `npm run build` (CI) | ✅ Build Check: success (check run #119808002902) |
+| `npm run test` (local) | ✅ 649 passed, 2 skipped — EXIT:0 (verificado localmente 2026-10-22T14:32:44Z; 66 test files, 73s) |
+| `npm run build` (CI) | ✅ Build Check: success (check run #119808002902 em SHA `2dd0eff`; local não executável — dep transitiva `open` do `rollup-plugin-visualizer` ausente por `npm ci` interrompido) |
 
-> **Nota:** `vitest` não está disponível localmente (node_modules ausente — `npm ci` não foi executado no container). Os resultados dos testes e build são os do PR Checks (CI Gate ✅ success — check run #119808676523).
+> **Nota local (2026-10-22):** `npm ci` foi interrompido pelo timeout do container antes de instalar todos os pacotes. `npm rebuild` restaurou os symlinks `.bin/` e viabilizou `vitest` (testes: EXIT:0) e `tsc` (typecheck: EXIT:0). A dep transitiva `open` (requerida por `rollup-plugin-visualizer`) ainda estava ausente, impedindo o build local. O build é comprovado pelo CI do PR Checks — check run #119808002902.
 
 **Total de workflows com falha contínua na main:** 6
 
