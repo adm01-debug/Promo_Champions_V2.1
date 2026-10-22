@@ -29,10 +29,21 @@ Estes workflows não podem ser verdes sem ação manual do responsável, ou est�
 ## 1. Cron Monitoring Regression — falta `SUPABASE_SERVICE_ROLE_KEY`
 
 **Workflow:** `.github/workflows/cron-monitoring.yml`  
-**Último run com falha:** [#39732489364](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39732489364)
+**Último run com falha:** [#39851033561](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851033561) (SHA `75e34f69`, 2026-10-22T20:43Z)
+
+**Erro exato no log (step "Run Deno regression suite"):**
+
+```
+FAILED | 14 passed | 2 failed (6s)
+  × E2E — cron-failure-alerter responde 200 com envelope válido  (index.test.ts:291)
+  × E2E — chamadas consecutivas são idempotentes  (index.test.ts:310)
+  - undefined
+  + true
+##[error]Process completed with exit code 1.
+```
 
 **Por que trava:**  
-A função `cron-failure-alerter` usa `isAuthorizedCronRequest`, que valida o token `Authorization: Bearer` contra o `service_role key` ou o segredo `coaching_cron_secret`. Quando o secret `SUPABASE_SERVICE_ROLE_KEY` não está configurado no repositório, o workflow tentava usar a anon key como substituto — mas a anon key não passa a verificação de autenticação e a edge function retorna 401, fazendo os testes E2E falharem.
+A função `cron-failure-alerter` usa `isAuthorizedCronRequest`, que valida o token `Authorization: Bearer` contra o `service_role key` ou o segredo `coaching_cron_secret`. Quando o secret `SUPABASE_SERVICE_ROLE_KEY` não está configurado no repositório, o workflow tentava usar a anon key como substituto — mas a anon key não passa a verificação de autenticação e a edge function retorna `undefined` em vez de `true`, fazendo os 2 testes E2E falharem com `assertEquals(undefined, true)`.
 
 **O que fazer (passo a passo):**
 
@@ -44,26 +55,28 @@ A função `cron-failure-alerter` usa `isAuthorizedCronRequest`, que valida o to
 
 ---
 
-## 2. DB Backup (off-site) — falta `SUPABASE_DB_URL` e `BACKUP_ENCRYPTION_KEY`
+## 2. DB Backup (off-site) — falta apenas `BACKUP_ENCRYPTION_KEY`
 
 **Workflow:** `.github/workflows/db-backup.yml`  
 **Último run com falha:** [#39714980171](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39714980171)
 
 **Por que trava:**  
-O workflow exige dois secrets para rodar no agendamento diário (03:00 UTC):
+`SUPABASE_DB_URL` já está configurado (confirmado: log mostra `SUPABASE_DB_URL: ***` mascarado). O único secret faltante é:
 
-- `SUPABASE_DB_URL`: connection string do pooler Postgres do projeto `usyxfpqlsspldubptrdl`. Sem ela o pg_dump não conecta.
 - `BACKUP_ENCRYPTION_KEY`: chave para criptografar o dump com AES-256-CBC. Sem ela o workflow deliberadamente aborta para nunca subir dados de produção sem criptografia.
+
+**Erro exato (run #39714980171):**
+
+```
+##[error]BACKUP_ENCRYPTION_KEY não configurado — backup abortado em vez de subir dump sem criptografia. Configure o secret em Settings → Secrets.
+```
 
 **O que fazer (passo a passo):**
 
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions**
-2. Adicione o secret `SUPABASE_DB_URL`:
-   - Vá em Supabase Dashboard → projeto `usyxfpqlsspldubptrdl` → Settings → Database → **Connection string** → **URI** (porta 6543, modo `Transaction`)
-   - Exemplo: `postgresql://postgres.usyxfpqlsspldubptrdl:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres`
-3. Adicione o secret `BACKUP_ENCRYPTION_KEY`:
+2. Adicione o secret `BACKUP_ENCRYPTION_KEY`:
    - Gere uma senha forte (ex.: `openssl rand -base64 32`) e guarde em local seguro para poder restaurar o backup futuramente
-4. Dispare o workflow manualmente: Actions → DB Backup (off-site) → Run workflow
+3. Dispare o workflow manualmente: Actions → DB Backup (off-site) → Run workflow
 
 ---
 
@@ -237,10 +250,10 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 supabase/migrations/20261014000002_fix_concurrently_indexes.sql
 ```
 
-O workflow rejeita qualquer input contendo `/` (proteção contra shell injection) e falha no step "Validar input" com:
+O workflow rejeita qualquer input contendo `/` (proteção contra shell injection) e falha com:
 
 ```
-Erro: migration_file não pode conter '/', '..', ';', '`' ou '$'
+##[error]nome de arquivo inválido
 ```
 
 **Uso correto:**  
@@ -250,20 +263,17 @@ Fornecer **apenas o nome do arquivo** (sem o prefixo de diretório):
 20261014000002_fix_concurrently_indexes.sql
 ```
 
-**Pré-requisito adicional:** O workflow também exige o secret `SUPABASE_DB_URL` para conectar ao banco (veja §2 acima). Sem esse secret, o step de aplicação de migration falha. Configure `SUPABASE_DB_URL` antes de disparar o workflow.
-
 **O que fazer (passo a passo):**
 
-1. Configure `SUPABASE_DB_URL` conforme §2 acima (se ainda não configurado)
-2. Acesse: **Actions → Apply Migration → Run workflow**
-3. No campo `migration_file`, informe **apenas o nome do arquivo**:
+1. Acesse: **Actions → Apply Migration → Run workflow**
+2. No campo `migration_file`, informe **apenas o nome do arquivo**:
    - ✅ Correto: `20261014000002_fix_concurrently_indexes.sql`
    - ❌ Errado: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
 
 **Bloqueio de schema — CORRIGIDO (versionado em PR #319):**  
 A migration `20261014000002_fix_concurrently_indexes.sql` foi corrigida para adicionar guards de existência de coluna (`information_schema.columns`) antes de criar cada índice nas colunas `user_id`, `client_id` e `deal_id` da tabela `activities`. Se a coluna não existir, o índice é pulado com `RAISE NOTICE` em vez de falhar. A migration agora é idempotente e segura em qualquer schema.
 
-**Status:** Bloqueio de schema resolvido. Pendências restantes: `SUPABASE_DB_URL` (§2) e uso correto do input (nome do arquivo sem path). O workflow pode ser disparado após configurar o secret.
+**Status:** Bloqueio de schema resolvido. `SUPABASE_DB_URL` já está configurado (confirmado por `***` nos logs). Pendência restante: usar apenas o nome do arquivo sem path no campo `migration_file`.
 
 ---
 
