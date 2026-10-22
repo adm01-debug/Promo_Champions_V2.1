@@ -6919,6 +6919,7 @@ export type Database = {
           entered_at: string
           exited_at: string | null
           id: string
+          is_backfilled: boolean
           sale_id: string | null
           stage: string
         }
@@ -6926,6 +6927,7 @@ export type Database = {
           entered_at?: string
           exited_at?: string | null
           id?: string
+          is_backfilled?: boolean
           sale_id?: string | null
           stage: string
         }
@@ -6933,6 +6935,7 @@ export type Database = {
           entered_at?: string
           exited_at?: string | null
           id?: string
+          is_backfilled?: boolean
           sale_id?: string | null
           stage?: string
         }
@@ -9512,6 +9515,44 @@ export type Database = {
           timestamp?: string | null
         }
         Relationships: []
+      }
+      integration_secret_refs: {
+        Row: {
+          created_at: string
+          credential_id: string
+          id: string
+          key: string
+          owner_id: string
+          secret_ref: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credential_id: string
+          id?: string
+          key: string
+          owner_id: string
+          secret_ref: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credential_id?: string
+          id?: string
+          key?: string
+          owner_id?: string
+          secret_ref?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_secret_refs_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "channel_credentials"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       intent_audit_logs: {
         Row: {
