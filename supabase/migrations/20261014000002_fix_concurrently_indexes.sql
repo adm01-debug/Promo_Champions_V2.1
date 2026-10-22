@@ -64,7 +64,11 @@ DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE c.relname = 'products' AND n.nspname = 'public' AND c.relkind = 'r') THEN
     CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
     CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
-    CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'products' AND column_name = 'active') THEN
+      CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);
+    ELSE
+      RAISE NOTICE 'Coluna products.active não encontrada — índice pulado.';
+    END IF;
   ELSE
     RAISE NOTICE 'Tabela products não encontrada — índices pulados.';
   END IF;
