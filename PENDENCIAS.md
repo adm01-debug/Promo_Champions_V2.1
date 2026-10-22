@@ -137,6 +137,27 @@ Os alertas CodeQL precisam ser triados e corrigidos por um desenvolvedor com con
 
 ---
 
+## 8. CI/CD — Post-merge Main — CORRIGIDO no PR #314 (aguardando merge)
+
+**Workflow:** `.github/workflows/main.yml`  
+**Último run com falha (main):** [#39792626899](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626899) — SHA `8092e31`, `conclusion=failure`
+
+**Causa raiz:** O job `deploy-edge-functions` executava `supabase functions deploy --all`. O projeto tem 173 edge functions Deno; o plano Supabase limita a 100 deployadas simultaneamente. O secret `SUPABASE_ACCESS_TOKEN` estava configurado, então o deploy executava e falhava com HTTP 402 `Max number of functions reached for project`.
+
+**Correção aplicada (PR #314):** Job `deploy-edge-functions` removido inteiramente do `main.yml`. O workflow agora executa apenas o job `validate` (lint + typecheck + build). Deploy controlado de edge functions permanece em `deploy.yml` (workflow_dispatch / tag `v*`).
+
+**Status:** Aguardando merge do PR #314 e run de validação no novo SHA da main.
+
+---
+
+## 9. Supabase Types Drift — workflow não existe no repositório
+
+**Investigação (2026-10-22):** O workflow `.github/workflows/supabase-types-drift.yml` **não existe** no repositório. A API retorna 404 para esse arquivo e a listagem completa de 23 workflows não contém nenhum "Supabase Types Drift". Nenhum run desse workflow aparece no filtro `is:failure` da main. Não há arquivo para corrigir.
+
+**Status:** ✅ Sem ação necessária — workflow não existe.
+
+---
+
 ## 7b. main.yml — deploy pode iniciar antes de PR Checks completar (Qodo Medium, pós-merge)
 
 **Workflow:** `.github/workflows/main.yml`  
@@ -161,11 +182,12 @@ Antes de ativar o deploy automático, refatorar `main.yml` para incluir o teste 
 2. Se `SUPABASE_ACCESS_TOKEN` estiver configurado: faz deploy automático de todas as edge functions para produção
 3. Se o secret não estiver configurado: exibe instruções no GitHub Actions Summary e termina **verde**
 
-**Para ativar o deploy automático de edge functions:**
+**Para ativar o deploy de edge functions:**
+O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 funções do projeto excedem o limite de 100 do plano Supabase (HTTP 402). O deploy controlado permanece em `deploy.yml` (workflow_dispatch / tag `v*`).
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
 2. Nome: `SUPABASE_ACCESS_TOKEN`
 3. Valor: token de serviço da conta Supabase (disponível em supabase.com/dashboard/account/tokens)
-4. O próximo push na `main` fará deploy automático de todas as 173 edge functions
+4. Use o workflow **Deploy Pipeline** (Actions → Deploy Pipeline → Run workflow) para deploy manual; selecione as funções explicitamente para não exceder o limite de 100
 
 ---
 

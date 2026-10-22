@@ -22,6 +22,8 @@ on:
       - "Cron Monitoring Regression"
       - "QA Exhaustive (Weekly)"
       - "CI/CD — Post-merge Main"
+      - "Graphify Foundation"
+      - "Deploy Pipeline"
     types: [completed]
   workflow_dispatch:
 
