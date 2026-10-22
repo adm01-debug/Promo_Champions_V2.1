@@ -781,9 +781,74 @@ Lint e typecheck confirmados nesta sessão após commit `5a19201`.
 
 ---
 
-### 15.5 Próximos passos para Apply Migration
+### 15.5 Resultado final (pós-merge + re-dispatch)
 
-1. Push do commit `5a19201` para `claude/compassionate-wright-gehxir`
-2. PR para main → merge (checks verdes)
-3. Re-dispatch de `apply-migration.yml` com `migration_file: 20261014000002_fix_concurrently_indexes.sql`
-4. Confirmar `conclusion=success` → atualizar §15 e PENDENCIAS §11
+PR #322 mergeado em main (SHA `8999bdec`, 2026-10-22T22:47Z) com squash. Checks que passaram antes do merge:
+
+| Check                                  | Resultado                      |
+| -------------------------------------- | ------------------------------ |
+| Lint & Type Check                      | ✅ success                     |
+| Análise CodeQL (JavaScript/TypeScript) | ✅ neutral (sem alertas novos) |
+| Build Check                            | ✅ success                     |
+| SQL Suites (static + remote)           | ✅ success                     |
+| Migrations Gate                        | ✅ success                     |
+| Supabase Types Drift                   | ✅ success                     |
+| Edge Functions Lint/Tests              | ✅ success                     |
+
+Detalhes em §16.
+
+---
+
+## §16 — Sessão final: Apply Migration run #25 `conclusion=success`
+
+**Data:** 2026-10-22T22:47Z  
+**Objetivo:** Confirmar que a correção do guard `products.active` resolve definitivamente a falha do Apply Migration.
+
+### 16.1 Merge do PR #322
+
+- **PR:** [#322](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/322) — `fix(db): guarda products.active na migration 20261014000002`
+- **Merge SHA:** `8999bdec99e0c9d5b78929379b8e85be834f4855`
+- **Método:** squash merge em main
+- **Checks obrigatórios:** todos verdes
+
+### 16.2 Apply Migration run #25
+
+| Campo                  | Valor                                         |
+| ---------------------- | --------------------------------------------- |
+| Run ID                 | `39867429819`                                 |
+| Run nº                 | 25                                            |
+| Input `migration_file` | `20261014000002_fix_concurrently_indexes.sql` |
+| Head SHA               | `8999bdec`                                    |
+| Branch                 | `main`                                        |
+| Disparado em           | 2026-10-22T22:47:10Z                          |
+| Concluído em           | 2026-10-22T22:47:40Z                          |
+| **`status`**           | `completed`                                   |
+| **`conclusion`**       | **`success`** ✅                              |
+
+**PENDENCIAS §11 encerrada.**
+
+---
+
+## §17 — Tabela comparativa final (baseline × estado final)
+
+| Workflow                                      | Baseline (início sessão 1) | Estado final | Causa / Evidência                                                                                           |
+| --------------------------------------------- | -------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------- |
+| **PR Checks** (`pr-checks.yml`)               | `failure`                  | ✅ `success` | Corrigido via PRs #314–#322; lint, typecheck, 649 testes verdes                                             |
+| **CodeQL** (`codeql.yml`)                     | `failure`                  | ✅ `neutral` | SHA de action corrigido; zero alertas novos                                                                 |
+| **CI/CD Main** (`main.yml`)                   | ausente                    | ✅ `success` | Criado nesta sessão com todos os jobs verdes                                                                |
+| **Migrations Drift** (`migrations-drift.yml`) | `failure`                  | ✅ `success` | Drift eliminado via correções de schema                                                                     |
+| **Apply Migration** (`apply-migration.yml`)   | `failure`                  | ✅ `success` | Run #25 = success (guard products.active adicionado)                                                        |
+| **Release Please** (`release-please.yml`)     | `failure`                  | ❌ `failure` | PENDENCIAS §3: "GitHub Actions is not permitted to create or approve pull requests" — requer PAT do usuário |
+| **Cron Monitoring** (`cron-monitoring.yml`)   | `failure`                  | ❌ `failure` | PENDENCIAS §1: `SUPABASE_SERVICE_ROLE_KEY` não configurado                                                  |
+| **DB Backup** (`db-backup.yml`)               | `failure`                  | ❌ `failure` | PENDENCIAS §2: `BACKUP_ENCRYPTION_KEY` + `SUPABASE_DB_URL` não configurados                                 |
+| **CI Failure Alert** (`ci-failure-alert.yml`) | `failure`                  | ✅ `success` | Corrigido: canal Slack não obrigatório                                                                      |
+| **Deploy** (`deploy.yml`)                     | `failure`                  | ✅ `success` | Corrigido: trigger + variáveis de ambiente                                                                  |
+| **PR Review SLA** (`pr-review-sla.yml`)       | `failure`                  | ✅ `success` | Corrigido: permissões de read                                                                               |
+
+### Resumo
+
+- **Corrigidos:** 8 workflows
+- **Bloqueados por secret/permissão externa (registrados em PENDENCIAS):** 3 (Release Please, Cron Monitoring, DB Backup)
+- **Zero regressões:** lint 0 erros, typecheck 0 erros, 649 testes passando
+
+Os 3 workflows restantes dependem exclusivamente de ação do usuário (configurar secrets ou conceder permissões GitHub Apps) — documentados em PENDENCIAS.md §1, §2 e §3 com passo a passo.
