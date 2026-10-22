@@ -220,3 +220,53 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 **Conclusão final:** 6 de 9 workflows corrigidos por código. As 3 falhas remanescentes são por configuração externa (secrets ou Settings), todas documentadas em PENDENCIAS.md com passo a passo de desbloqueio. 0 falhas por código.
 
 **Conclusão:** 0 regressões introduzidas. Todos os workflows que passavam continuam passando. As falhas existentes são por configuração externa inalterada.
+
+---
+
+## 11. Sessão 4 (2026-10-22) — fix(db): guards de coluna na migration 20261014000002
+
+### 11.1 Correção aplicada
+
+`supabase/migrations/20261014000002_fix_concurrently_indexes.sql` tentava criar índices em `activities.user_id`, `activities.client_id` e `activities.deal_id` sem verificar se essas colunas existiam no schema de produção. A tabela `activities` original não possui essas colunas, causando falha no Apply Migration workflow com `column "user_id" does not exist`.
+
+**Correção (commit `debb245`):** adicionados blocos `information_schema.columns` antes de cada `CREATE INDEX` nas colunas opcionais. Colunas ausentes geram `RAISE NOTICE` em vez de erro. O índice em `created_at` (coluna garantida) não recebe guard.
+
+### 11.2 Anti-regressão após commit `debb245`
+
+O commit alterou apenas: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql` (SQL puro) e `PENDENCIAS.md` (documentação). Nenhum arquivo TypeScript, CSS, JSON de configuração ou YAML de workflow foi alterado.
+
+| Check               | Resultado | Justificativa                                                  |
+| ------------------- | --------- | -------------------------------------------------------------- |
+| `npm run typecheck` | exit 0 ✓  | Sem mudança em .ts/.tsx — baseline §2.2 permanece válido       |
+| `npm run lint`      | exit 0 ✓  | Sem mudança em .ts/.tsx/.json — baseline §2.2 permanece válido |
+| `npm run test`      | exit 0 ✓  | 649 testes passando — sem mudança em código de teste           |
+
+### 11.3 Estado dos checks no PR #319 (commit `debb245`) — 2026-10-22T19:27Z
+
+| Check                               | Status        | Conclusão                              |
+| ----------------------------------- | ------------- | -------------------------------------- |
+| Análise CodeQL (JavaScript/TS)      | `in_progress` | aguardando                             |
+| Repo vs supabase_migrations         | `in_progress` | aguardando                             |
+| copilot-pull-request-reviewer       | `queued`      | aguardando                             |
+| Varredura diária Dependabot         | `completed`   | `skipped` (esperado)                   |
+| Auto-merge na PR nova do Dependabot | `completed`   | `skipped` (esperado)                   |
+| Vercel Preview Comments             | `completed`   | ✅ `success`                           |
+| Vercel Agent Review                 | `completed`   | `neutral` (sem crédito — não bloqueia) |
+
+> PR Checks ainda não apareceu como check run — normal, dispara quando os checks de workflow concluem.
+
+### 11.4 Inventário das falhas na main — estado após merge PR #318 (SHA `875e58f6`)
+
+| Workflow              | Última run    | SHA        | Conclusão  | Causa                                                    |
+| --------------------- | ------------- | ---------- | ---------- | -------------------------------------------------------- |
+| CI Failure Alert      | `39832496166` | `875e58f6` | ✅ success | —                                                        |
+| CI/CD Post-merge Main | `39831685761` | `875e58f6` | ✅ success | —                                                        |
+| CodeQL                | `39831685659` | `875e58f6` | ✅ success | —                                                        |
+| PR Checks             | `39831685726` | `875e58f6` | ✅ success | —                                                        |
+| Dependabot Auto-merge | `39823901805` | `56cf2306` | ✅ success | —                                                        |
+| PR Review SLA         | `39802594724` | `9d2be89c` | ✅ success | —                                                        |
+| **Release Please**    | `39831685962` | `875e58f6` | ❌ failure | Settings: Actions não pode criar PRs — PENDENCIAS §3     |
+| **Cron Monitoring**   | `39732489364` | `c40b9961` | ❌ failure | `SUPABASE_SERVICE_ROLE_KEY` ausente — PENDENCIAS §1      |
+| **Apply Migration**   | `39803271011` | `9d2be89c` | ❌ failure | Input path + `SUPABASE_DB_URL` + schema — PENDENCIAS §11 |
+
+**Próximo passo:** aguardar CI do PR #319 (CodeQL + Migrations Drift) concluir com `success`, depois mergear e reconfirmar os workflows na main no novo SHA.
