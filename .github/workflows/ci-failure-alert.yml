@@ -19,6 +19,8 @@ on:
       - "Edge Functions Bundle Check"
       - "Edge Functions Input Validation Lint"
       - "Edge Functions X-Request-Id Lint"
+      - "Cron Monitoring Regression"
+      - "QA Exhaustive (Weekly)"
     types: [completed]
   workflow_dispatch:
 
