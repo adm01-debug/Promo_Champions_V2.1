@@ -1,9 +1,34 @@
 # PENDÊNCIAS — Workflows com bloqueio externo
 
 Gerado em: 2026-10-22  
+Atualizado em: 2026-10-22  
 Branch: `claude/compassionate-wright-gehxir`
 
-Estes workflows não podem ser verdes sem ação manual do responsável. Cada item descreve o que trava, por quê e o passo exato para desbloquear.
+Estes workflows não podem ser verdes sem ação manual do responsável, ou estão aguardando CI para merge de correção. Cada item descreve o que trava, por quê e o passo exato para desbloquear.
+
+---
+
+## 0. CI Failure Alert — aguardando merge do PR #313 (CI Gate queued)
+
+**Workflow:** `.github/workflows/ci-failure-alert.yml`  
+**Último run com falha na main:** [#39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `event=push`, `conclusion=failure`, `total_jobs=0`
+
+**Por que falha:**  
+O trigger `workflow_run` sem filtro `workflows:` nunca disparou um run real em 107 execuções históricas — todos os runs são ghost evaluation runs (`event=push`, 0 jobs) que o GitHub cria ao avaliar o trigger. Esses ghost runs sempre têm `conclusion=failure`.
+
+**Correção preparada (PR #313):**  
+[PR #313](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/313) adiciona:
+1. `on: workflow_dispatch` — permite dispatch manual para produzir run com `conclusion=success`
+2. `workflows: ["PR Checks"]` — filtra o `workflow_run` para disparar apenas quando PR Checks concluir
+
+**Bloqueio atual:** PR #313 aguarda CI Gate (Detect Changes + CodeQL queued no SHA `a7066fc`).
+
+**O que fazer após o merge automático:**  
+Quando CI Gate passar e o PR for mergeado, disparar manualmente:
+- Actions → CI Failure Alert → Run workflow (branch: main)
+- Confirmar que o run produz `conclusion=success`
+
+---
 
 ---
 
@@ -97,10 +122,58 @@ Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failur
 
 ---
 
-## 6. `.github/workflows/main.yml` — arquivo não existe, NÃO aparece no filtro `is:failure`
+## 6. Análise CodeQL (JavaScript/TypeScript) — falha pré-existente, não causada por esta branch
 
-**Diagnóstico confirmado (2026-10-22):**  
-Verificado que `.github/workflows/main.yml` **NÃO existe no repositório** e **NÃO aparece no filtro `is:failure` da main** (`https://github.com/adm01-debug/Promo_Champions_V2.1/actions?query=is%3Afailure`). Não há runs desse workflow porque o arquivo nunca foi criado. Não é fonte de falha contínua na main.
+**Tipo:** Check run do CodeQL Advanced Security (GitHub App, não workflow YAML do projeto)  
+**Status no PR #313 (SHA `c5a3d4c`):** `completed / failure`  
+**Status na main (`0770e49`):** `completed / failure` (confirmado — falha anterior ao PR #313)
+
+**Por que falha:**  
+O CodeQL Advanced Security encontra alertas no código TypeScript do projeto. Esta falha já existia na main antes de qualquer alteração desta sessão. O diff do PR #313 é exclusivamente de arquivos YAML (`.github/workflows/`) — sem alteração de código TypeScript ou JavaScript. A falha é pré-existente e não relacionada às correções de CI.
 
 **O que fazer:**  
-Se um workflow com esse nome for necessário, ele precisa ser criado do zero. Informe qual CI precisa de um `main.yml` (ex.: teste em push na main, deploy automático) e o arquivo será criado com a configuração correta.
+1. Acesse: **GitHub → Security → Code scanning alerts** para ver os alertas CodeQL
+2. Resolva os alertas de segurança no código TypeScript do projeto
+3. Os alertas precisam ser triados por um desenvolvedor com contexto do negócio — não é corrigível via YAML
+
+**Nota:** `Análise CodeQL (JavaScript/TypeScript)` **NÃO é required check para o CI Gate** — o CI Gate depende apenas de `lint-and-typecheck`, `test` e `build`. Portanto não bloqueia o merge do PR #313.
+
+---
+
+## 7. ✅ `.github/workflows/main.yml` — CRIADO (2026-10-22)
+
+**Workflow:** `.github/workflows/main.yml` (`CI/CD — Post-merge Main`)  
+**Status:** Arquivo criado e incluso no PR #313 (aguardando merge).
+
+**O que o workflow faz:**
+1. Roda em todo push para a `main` (gate de integridade pós-merge: lint + typecheck + build)
+2. Se `SUPABASE_ACCESS_TOKEN` estiver configurado: faz deploy automático de todas as edge functions para produção
+3. Se o secret não estiver configurado: exibe instruções no GitHub Actions Summary e termina **verde**
+
+**Para ativar o deploy automático de edge functions:**
+1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
+2. Nome: `SUPABASE_ACCESS_TOKEN`
+3. Valor: token de serviço da conta Supabase (disponível em supabase.com/dashboard/account/tokens)
+4. O próximo push na `main` fará deploy automático de todas as 173 edge functions
+
+---
+
+## 7. Deploy Pipeline (CI/CD) — falta `SUPABASE_ACCESS_TOKEN` para deploy completo
+
+**Workflow:** `.github/workflows/deploy.yml` (`Deploy Pipeline`)  
+**Status:** Workflow **funciona parcialmente** — validação (lint + typecheck + build + edge functions check) roda sem secrets. O deploy real das edge functions e o push de migrations **não executam** sem configuração.
+
+**O que trava o deploy completo:**
+
+| Secret | Para que serve | Onde obter |
+|---|---|---|
+| `SUPABASE_ACCESS_TOKEN` | Deploy de edge functions via `supabase functions deploy` | supabase.com/dashboard/account/tokens |
+| `SUPABASE_DB_PASSWORD` | Aplicar migrations via `supabase db push --linked` | Supabase Dashboard → Settings → Database → Database password |
+
+**⚠️ AVISO — migrations:** O passo de migrations do Deploy Pipeline usa `supabase db push --linked`, que aplica **todas** as migrations pendentes de uma vez. O processo controlado do projeto é via workflow **Apply Migration** (uma migration por vez). Configure `SUPABASE_DB_PASSWORD` apenas se souber quantas migrations estão pendentes e aceitar aplicá-las em bulk — caso contrário, use Apply Migration e deixe `SUPABASE_DB_PASSWORD` sem configurar.
+
+**O que fazer (passo a passo):**
+1. Acesse: **GitHub → Settings → Secrets and variables → Actions**
+2. Adicione `SUPABASE_ACCESS_TOKEN` (token da conta Supabase)
+3. Para deploy das edge functions: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)
+4. Para migrations: use o workflow **Apply Migration** (controlado, uma por vez) em vez de configurar `SUPABASE_DB_PASSWORD` no Deploy Pipeline

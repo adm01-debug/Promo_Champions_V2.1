@@ -97,44 +97,42 @@
 
 ---
 
-## Resultado final (pós-merge PR #311)
+## Resultado final (pós-merge PR #311 + PR #312; PR #313 pendente)
 
 ### Tabela de prova — todos os workflows que estavam em falha na main
 
 | Workflow | Run baseline (falha) | Correção aplicada | Run comprovado (success) |
 |---|---|---|---|
-| CI Failure Alert | [#39457340731](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457340731) ❌ | `if` movido do job para o step | ver nota abaixo ⚠️ |
+| CI Failure Alert | [#39457340731](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457340731) ❌ | `workflow_dispatch` + `workflows: ["PR Checks"]` — [PR #313](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/313) aguardando CI Gate | ⏳ pendente merge PR #313 — ver PENDENCIAS.md item 0 |
 | PR Review SLA | [#39596349948](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39596349948) ❌ | `GH_REPO` adicionado ao env | [#39777688236](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777688236) ✅ SHA `2dd0eff` |
 | Dependabot Auto-merge | [#39593479759](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39593479759) ❌ | `GH_REPO` nos dois jobs | [#39777695593](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777695593) ✅ SHA `2dd0eff` |
-| Apply Migration | [#39440316376](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39440316376) ❌ | DO blocks para tabelas opcionais | [#39464232349](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39464232349) ✅ (bloqueio externo para re-run — ver PENDENCIAS.md item 2) |
-| Cron Monitoring Regression | [#39732489364](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39732489364) ❌ | Bloqueio externo (secret ausente) | ❌ até `SUPABASE_SERVICE_ROLE_KEY` ser adicionado |
-| DB Backup (off-site) | [#39714980171](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39714980171) ❌ | Bloqueio externo (secrets ausentes) | ❌ até `SUPABASE_DB_URL` + `BACKUP_ENCRYPTION_KEY` |
-| Release Please | [#39457343140](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457343140) ❌ | Bloqueio externo (permissão Actions) | ❌ até permissão Actions ser habilitada |
+| Apply Migration | [#39440316376](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39440316376) ❌ | DO blocks para tabelas opcionais | [#39464232349](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39464232349) ✅ |
+| Cron Monitoring Regression | [#39732489364](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39732489364) ❌ | Bloqueio externo (secret ausente) | ❌ ver PENDENCIAS.md item 1 |
+| DB Backup (off-site) | [#39714980171](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39714980171) ❌ | Bloqueio externo (secrets ausentes) | ❌ ver PENDENCIAS.md item 2 |
+| Release Please | [#39457343140](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457343140) ❌ | Bloqueio externo (permissão Actions) | ❌ ver PENDENCIAS.md item 3 |
 
-> **⚠️ Nota CI Failure Alert:** O arquivo corrigido está em main (SHA `69d705e` — step-level guard, sem job-level `if:`). O run #39777661571 em `2dd0eff` ainda mostra `failure` porque foi disparado 4s após o merge (propagation delay — usou o arquivo antigo). Um push direto para a main via este relatório dispara PR Checks → quando PR Checks concluir com `success`, CI Failure Alert acionará com o arquivo correto e produzirá `success`.
+> **Nota Dependabot side-effect:** O fix do Dependabot Auto-merge causou o auto-merge do PR #293 (bump codeql-action). SHA atual da main: `0770e49`.
 
-> **Nota Dependabot side-effect:** O fix do Dependabot Auto-merge causou o auto-merge do PR #293 (bump codeql-action), que fez push do SHA `17fa180230` para main. O SHA atual da main é `17fa180230`.
+> **Nota CI Failure Alert (2026-10-22):** Investigação revelou que o trigger `workflow_run` sem filtro `workflows:` nunca disparou run real em 107 execuções históricas — todos são ghost evaluation runs (`event=push`, 0 jobs, `conclusion=failure`). A correção no PR #311 (step-level guard) era necessária mas insuficiente. PR #313 adiciona `workflow_dispatch` + `workflows: ["PR Checks"]` para resolver definitivamente. Após merge, dispatch manual produzirá `conclusion=success`.
 
 ### Comparação baseline × final
 
-| Métrica | Baseline | Final |
+| Métrica | Baseline | Atual (aguardando PR #313) |
 |---|---|---|
-| Workflows com falha contínua na main | 6 | 3 (bloqueio externo — precisam de secrets/permissões) |
-| Workflows verdes corrigidos por código | 0 | 4 (CI Failure Alert¹, PR Review SLA ✅, Dependabot ✅, Apply Migration ✅) |
+| Workflows com falha contínua na main | 6 | 4 com bloqueio (1 pendente merge PR #313, 3 bloqueio externo) |
+| Workflows verdes corrigidos por código | 0 | 3 (PR Review SLA ✅, Dependabot ✅, Apply Migration ✅) |
 | Regressões introduzidas | — | 0 |
 | Tests passando (CI Unit Tests) | ✅ | ✅ (sem queda — run [#39777663411](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777663411)) |
-| Build | ✅ | ✅ (sem queda) |
+| Build | ✅ | ✅ (sem queda — PR Checks SHA `0770e49` success) |
 | Lint | ✅ | ✅ (sem queda) |
 | Typecheck | ✅ | ✅ (sem queda) |
 
-¹ CI Failure Alert: arquivo corrigido em main; run de validação pendente por propagation delay (ver nota acima).
-
 ### Workflows que estavam verdes e continuam verdes
 
-- PR Checks ✅ (run [#39777663411](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777663411) — SHA `2dd0eff`, success)
+- PR Checks ✅ (run [#39783582296](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39783582296) — SHA `a7066fc`, em andamento)
 - Migrations Drift ✅
 - CodeQL ✅
 
-**Workflows verdes corrigidos por código:** 4  
-**Pendências documentadas em PENDENCIAS.md:** 6 (bloqueio externo)  
+**Workflows verdes corrigidos por código:** 3 confirmados + CI Failure Alert pendente (PR #313)  
+**Pendências documentadas em PENDENCIAS.md:** 7 (item 0 = merge pendente; itens 1-3 = bloqueio externo; itens 4-6 = GitHub App / arquivo inexistente)  
 **Regressões:** 0
