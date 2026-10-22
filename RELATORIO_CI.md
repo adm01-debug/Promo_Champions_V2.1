@@ -831,19 +831,19 @@ Detalhes em §16.
 
 ## §17 — Tabela comparativa final (baseline × estado final)
 
-| Workflow                                      | Baseline (início sessão 1) | Estado final | Causa / Evidência                                                                                           |
-| --------------------------------------------- | -------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------- |
-| **PR Checks** (`pr-checks.yml`)               | `failure`                  | ✅ `success` | Corrigido via PRs #314–#322; lint, typecheck, 649 testes verdes                                             |
-| **CodeQL** (`codeql.yml`)                     | `failure`                  | ✅ `neutral` | SHA de action corrigido; zero alertas novos                                                                 |
-| **CI/CD Main** (`main.yml`)                   | ausente                    | ✅ `success` | Criado nesta sessão com todos os jobs verdes                                                                |
-| **Migrations Drift** (`migrations-drift.yml`) | `failure`                  | ✅ `success` | Drift eliminado via correções de schema                                                                     |
-| **Apply Migration** (`apply-migration.yml`)   | `failure`                  | ✅ `success` | Run #25 = success (guard products.active adicionado)                                                        |
-| **Release Please** (`release-please.yml`)     | `failure`                  | ❌ `failure` | PENDENCIAS §3: "GitHub Actions is not permitted to create or approve pull requests" — requer PAT do usuário |
-| **Cron Monitoring** (`cron-monitoring.yml`)   | `failure`                  | ❌ `failure` | PENDENCIAS §1: `SUPABASE_SERVICE_ROLE_KEY` não configurado                                                  |
-| **DB Backup** (`db-backup.yml`)               | `failure`                  | ❌ `failure` | PENDENCIAS §2: `BACKUP_ENCRYPTION_KEY` não configurado (`SUPABASE_DB_URL` já está presente)                 |
-| **CI Failure Alert** (`ci-failure-alert.yml`) | `failure`                  | ✅ `success` | Corrigido: canal Slack não obrigatório                                                                      |
-| **Deploy** (`deploy.yml`)                     | `failure`                  | ✅ `success` | Workflow corrigido (trigger + env); deploy de produção requer secrets e release-tag — ver PENDENCIAS §10    |
-| **PR Review SLA** (`pr-review-sla.yml`)       | `failure`                  | ✅ `success` | Corrigido: permissões de read                                                                               |
+| Workflow                                      | Run de baseline (última falha pré-correção)                                                                                                        | Estado final | Causa / Evidência                                                                                           |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------- |
+| **PR Checks** (`pr-checks.yml`)               | N/A — workflow novo criado nesta sessão; primeiro run: [39823878838](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878838) | ✅ `success` | Corrigido via PRs #314–#322; lint, typecheck, 649 testes verdes                                             |
+| **CodeQL** (`codeql.yml`)                     | [39800261877](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800261877) — `failure`                                            | ✅ `neutral` | SHA de action corrigido; zero alertas novos                                                                 |
+| **CI/CD Main** (`main.yml`)                   | [39792626899](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626899) — `failure`                                            | ✅ `success` | Criado nesta sessão com todos os jobs verdes                                                                |
+| **Migrations Drift** (`migrations-drift.yml`) | `failure` (run anterior a esta sessão; sem run ID rastreado)                                                                                       | ✅ `success` | Drift eliminado via correções de schema                                                                     |
+| **Apply Migration** (`apply-migration.yml`)   | [39803271011](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39803271011) — `failure`                                            | ✅ `success` | Run #25 = success (guard products.active adicionado)                                                        |
+| **Release Please** (`release-please.yml`)     | [39810327212](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39810327212) — `failure`                                            | ❌ `failure` | PENDENCIAS §3: "GitHub Actions is not permitted to create or approve pull requests" — requer PAT do usuário |
+| **Cron Monitoring** (`cron-monitoring.yml`)   | [39732489364](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39732489364) — `failure`                                            | ❌ `failure` | PENDENCIAS §1: `SUPABASE_SERVICE_ROLE_KEY` não configurado                                                  |
+| **DB Backup** (`db-backup.yml`)               | [39714980171](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39714980171) — `failure`                                            | ❌ `failure` | PENDENCIAS §2: `BACKUP_ENCRYPTION_KEY` não configurado (`SUPABASE_DB_URL` já está presente)                 |
+| **CI Failure Alert** (`ci-failure-alert.yml`) | [39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `failure`                                            | ✅ `success` | Corrigido: canal Slack não obrigatório                                                                      |
+| **Deploy** (`deploy.yml`)                     | N/A — workflow novo criado nesta sessão                                                                                                            | ✅ `success` | Workflow corrigido (trigger + env); deploy de produção requer secrets e release-tag — ver PENDENCIAS §10    |
+| **PR Review SLA** (`pr-review-sla.yml`)       | N/A (sem run ID rastreado pré-correção)                                                                                                            | ✅ `success` | Corrigido: permissões de read                                                                               |
 
 ### Resumo
 
@@ -870,9 +870,10 @@ Os 3 workflows restantes dependem exclusivamente de ação do usuário (configur
 | **Apply Migration**         | 39867429819 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867429819                 |
 | **Migrations Drift**        | 39867421119 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39867421119                 |
 | **Cron Monitoring**         | 39851033561 | ❌ `failure` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851033561 (PENDENCIAS §1) |
+| **DB Backup (off-site)**    | 39714980171 | ❌ `failure` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39714980171 (PENDENCIAS §2) |
 
-> PR Checks concluiu `success` (649 testes Vitest). CodeQL e CI/CD Main: `success`. Release Please
-> e Cron Monitoring são bloqueios externos documentados em PENDENCIAS.md.
+> PR Checks concluiu `success` (649 testes Vitest). CodeQL e CI/CD Main: `success`. Release Please,
+> Cron Monitoring e DB Backup são bloqueios externos documentados em PENDENCIAS.md.
 
 ### Resumo pós-merge PR #323
 
@@ -904,14 +905,28 @@ Executado em main, SHA `2dfddca138980fa4acc02e5067d8d7a99066cf16`, 2026-10-22.
 **SHA de referência:** `ebeccc956` (squash-merge do PR #324 em main, 2026-10-22T23:17Z)  
 **Conteúdo do PR #324:** docs-only — correção §17, adição §18-§19 do RELATORIO_CI.md
 
-| Workflow                    | Run ID      | Conclusão           | Link                                                                                         |
-| --------------------------- | ----------- | ------------------- | -------------------------------------------------------------------------------------------- |
-| **PR Checks**               | 39870699153 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699153                 |
-| **CI/CD — Post-merge Main** | 39870699139 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699139                 |
-| **CodeQL**                  | 39870699166 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699166                 |
-| **Release Please**          | 39870699239 | ❌ esperado failure | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699239 (PENDENCIAS §3) |
-| **CI Failure Alert**        | 39870766466 | ⏳ em andamento     | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870766466                 |
+| Workflow                    | Run ID      | Conclusão          | Link                                                                                         |
+| --------------------------- | ----------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| **PR Checks**               | 39870699153 | ⏳ queued (runner) | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699153                 |
+| **CI/CD — Post-merge Main** | 39870699139 | ✅ `success`       | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699139                 |
+| **CodeQL**                  | 39870699166 | ✅ `success`       | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699166                 |
+| **Release Please**          | 39870699239 | ❌ `failure`       | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870699239 (PENDENCIAS §3) |
+| **CI Failure Alert**        | 39870766466 | ✅ `success`       | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39870766466                 |
 
-> PR #324 foi docs-only; `detect-changes` não detecta `.sql` alterados → `has_code=false`
-> → suíte Vitest não roda → PR Checks conclui rapidamente como `success`.
-> Release Please falhará como esperado (PENDENCIAS §3 — requer PAT `RELEASE_PLEASE_TOKEN`).
+> PR #324 foi docs-only; CI/CD Main e CodeQL concluíram `success`. PR Checks (39870699153)
+> ficou preso em fila do runner (docs-only, `has_code=false`, sem jobs Vitest — não bloqueia).
+> Release Please falhou como esperado (PENDENCIAS §3 — requer PAT `RELEASE_PLEASE_TOKEN`).
+
+## §21 — Inventário pós-merge PR #325 (SHA pós-merge pendente)
+
+**SHA de referência:** SHA de merge do PR #325 (após merge desta seção)  
+**Conteúdo do PR #325:** docs-only — §17 com run IDs de baseline + §18 com DB Backup + §20 atualizado
+
+| Workflow                     | Run ID      | Conclusão    | Link                                                                         |
+| ---------------------------- | ----------- | ------------ | ---------------------------------------------------------------------------- |
+| **PR Checks** (no PR branch) | 39871036733 | ✅ `success` | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39871036733 |
+
+> PR Checks no branch do PR #325 (SHA `b30b17e51`) concluiu `success`.
+> Runs pós-merge da main serão adicionados quando disponíveis.
+
+---
