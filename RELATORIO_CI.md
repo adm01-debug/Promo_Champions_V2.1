@@ -89,19 +89,19 @@
 
 ## 6. Filtro `is:failure` na main — confirmação final
 
-**Verificado via `list_workflow_runs` (branch=main, status=failure) em 2026-10-22T17:58Z:**
+**Verificado via `list_workflow_runs` (branch=main) — última verificação em 2026-10-22T18:30Z (após merge PR #318, SHA `875e58f6`):**
 
 | Workflow | Última run na main | SHA | Conclusão | Causa raiz |
 |---|---|---|---|---|
-| CI Failure Alert | 39825634406 | 56cf2306 | ✅ success | — |
-| CI/CD Post-merge Main | 39823878814 | 56cf2306 | ✅ success | — |
-| CodeQL | 39823878794 | 56cf2306 | ✅ success | — |
-| PR Checks | 39823878838 | 56cf2306 | ✅ success | — |
+| CI Failure Alert | 39832496166 | 875e58f6 | ✅ success | — |
+| CI/CD Post-merge Main | 39831685761 | 875e58f6 | ✅ success | — |
+| CodeQL | 39831685659 | 875e58f6 | ✅ success | — |
+| PR Checks | 39831685726 | 875e58f6 | ✅ success | — |
 | Dependabot Auto-merge | 39823901805 | 56cf2306 | ✅ success | — |
 | PR Review SLA | 39802594724 | 9d2be89c | ✅ success | — |
-| **Release Please** | 39823900351 | 56cf2306 | ❌ failure | Settings: "Allow GitHub Actions to create and approve PRs" — documentado PENDENCIAS §3 |
+| **Release Please** | 39831685962 | 875e58f6 | ❌ failure | Settings: "Allow GitHub Actions to create and approve PRs" — documentado PENDENCIAS §3 |
 | **Cron Monitoring** | 39732489364 | c40b9961 | ❌ failure | `SUPABASE_SERVICE_ROLE_KEY` ausente — documentado PENDENCIAS §1 |
-| **Apply Migration** | 39803271011 | 9d2be89c | ❌ failure | Input path completo + `SUPABASE_DB_URL` ausente — documentado PENDENCIAS §11 |
+| **Apply Migration** | 39803271011 | 9d2be89c | ❌ failure | Input path completo + `SUPABASE_DB_URL` ausente + schema — documentado PENDENCIAS §11 |
 
 **Conclusão:** 0 workflows com falha por código. As 3 falhas remanescentes são por configuração externa (bloqueio de Settings ou secrets ausentes), todas documentadas em PENDENCIAS.md.
 
@@ -126,3 +126,44 @@
 1. **Supabase Types Drift**: gerar `types.ts` no próprio job de CI via `supabase gen types typescript` ao invés de comparar diff. Requer `SUPABASE_ACCESS_TOKEN` como secret.
 2. **Testes em cloud**: configurar `pool: 'vmThreads'` no vitest para reduzir crashes de worker no ambiente remoto.
 3. **Release Please**: adicionar PAT para permitir que tags disparem o deploy automaticamente (§10 PENDENCIAS.md).
+
+---
+
+## 9. Sessão 2 (2026-10-22) — PR #318: correções documentais pós-Codex Review
+
+**Escopo:** PR #318 (squash SHA `875e58f6`) continha apenas alterações documentais — nenhuma mudança em `src/`, `supabase/`, `.github/workflows/` ou código de aplicação.
+
+### 9.1 Por que o baseline local não pôde ser reexecutado nesta sessão
+
+O ambiente cloud bloqueia `europe-west1-npm.pkg.dev:443` (31 pacotes no `package-lock.json` referenciam essa URL). O `npm ci` e `npm install --prefer-offline` são encerrados antes de concluir:
+
+- Tentativa 1 (`npm ci --prefer-offline --no-audit`): encerrado por timeout (>30 min)
+- Tentativa 2 (`npm install --prefer-offline --no-audit --legacy-peer-deps`): idem
+
+O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de código foi alterado nesta sessão.
+
+### 9.2 CI pós-merge do PR #318 (SHA `875e58f6`) — confirmado via API GitHub em 2026-10-22
+
+| Workflow | Run ID | Conclusão | Observação |
+|---|---|---|---|
+| PR Checks | `39831685726` | ✅ success | — |
+| CI/CD — Post-merge Main | `39831685761` | ✅ success | — |
+| CodeQL | `39831685659` | ✅ success | — |
+| CI Failure Alert | `39832496166` | ✅ success | — |
+| **Release Please** | `39831685962` | ❌ failure | Mesmo bloqueio §3 PENDENCIAS.md (Settings: Actions não pode criar PRs) |
+
+### 9.3 Prova de não-regressão — Sessão 1 × Sessão 2
+
+| Check | SHA `56cf2306` (sessão 1) | SHA `875e58f6` (sessão 2) | Delta |
+|---|---|---|---|
+| typecheck | exit 0, 0 erros | N/A — sem mudança de código | 0 |
+| lint | exit 0, 0 erros | N/A — sem mudança de código | 0 |
+| testes | exit 0, 91 testes | N/A — sem mudança de código | 0 |
+| PR Checks | ✅ `39823878838` | ✅ `39831685726` | 0 |
+| CI/CD Post-merge Main | ✅ `39823878814` | ✅ `39831685761` | 0 |
+| CodeQL | ✅ `39823878794` | ✅ `39831685659` | 0 |
+| Release Please | ❌ bloqueio externo (Settings) | ❌ bloqueio externo (Settings) | 0 — mesmo motivo |
+| Cron Monitoring | ❌ bloqueio externo (secret) | ❌ bloqueio externo (secret) | 0 — mesmo motivo |
+| Apply Migration | ❌ bloqueio externo (input+secret) | ❌ bloqueio externo (input+secret) | 0 — mesmo motivo |
+
+**Conclusão:** 0 regressões introduzidas. Todos os workflows que passavam continuam passando. As falhas existentes são por configuração externa inalterada.
