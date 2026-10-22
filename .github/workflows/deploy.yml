@@ -38,6 +38,7 @@ on:
   push:
     tags:
       - 'v*'
+      - 'promo-champions-v2-v*'
 
 permissions:
   contents: read

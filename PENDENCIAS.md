@@ -201,3 +201,31 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 2. Adicione `SUPABASE_ACCESS_TOKEN` (token da conta Supabase)
 3. Para deploy das edge functions: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)
 4. Para migrations: use o workflow **Apply Migration** (controlado, uma por vez) em vez de configurar `SUPABASE_DB_PASSWORD` no Deploy Pipeline
+
+---
+
+## 10. Deploy Pipeline — tags do release-please não disparam o workflow (GITHUB_TOKEN)
+
+**Workflow:** `.github/workflows/deploy.yml`  
+**Finding:** Qodo Code Review no PR #316 (comment 4350879340, finding `1ce80b78`)  
+**Status:** **Requer ação do usuário** (adicionar PAT como secret)
+
+**Causa raiz:** O GitHub suprime workflows disparados por pushes feitos com o `GITHUB_TOKEN` padrão da action. O `release-please-action` cria tags (`promo-champions-v2-v*`) usando esse token — então o `deploy.yml` nunca é acionado automaticamente pela tag, mesmo com o padrão correto no trigger.
+
+**O que é afetado:** Deploy automático pós-release. O workflow continua funcionando corretamente quando acionado via `workflow_dispatch` (manualmente) ou via tag criada por um humano ou PAT.
+
+**O que fazer (passo a passo):**
+1. Crie um Personal Access Token (PAT) classic com permissão `workflow` (leia-se também `contents: write`) em: **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**
+2. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
+3. Nome: `GH_PAT` (ou qualquer nome que preferir)
+4. Em `.github/workflows/release-please.yml`, adicione:
+   ```yaml
+   - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5
+     with:
+       token: ${{ secrets.GH_PAT }}
+       config-file: release-please-config.json
+       manifest-file: .release-please-manifest.json
+   ```
+5. Com o PAT, a tag criada pelo release-please aciona o `deploy.yml` normalmente.
+
+**Alternativa sem PAT:** Disparar o deploy manualmente via **Actions → Deploy Pipeline → Run workflow** após cada release (comportamento atual).

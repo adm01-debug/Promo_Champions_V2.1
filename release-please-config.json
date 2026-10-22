@@ -1,10 +1,10 @@
 {
+  "bootstrap-sha": "9d2be89c5835e23135acab48013ab778817a224f",
+  "commit-search-depth": 50,
   "packages": {
     ".": {
       "release-type": "node",
       "package-name": "promo-champions-v2",
-      "bootstrap-sha": "9d2be89c5835e23135acab48013ab778817a224f",
-      "commit-search-depth": 50,
       "include-v-in-tag": true,
       "pull-request-title-pattern": "chore(main): release ${version}",
       "changelog-sections": [
