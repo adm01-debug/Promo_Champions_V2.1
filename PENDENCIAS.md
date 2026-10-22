@@ -272,7 +272,7 @@ PL/pgSQL function inline_code_block line 5 at SQL statement
    - ✅ Correto: `20261014000002_fix_concurrently_indexes.sql`
    - ❌ Errado: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
 
-**Status:** Correção SQL versionada nesta sessão (branch `claude/compassionate-wright-gehxir`). Pendente: PR mergeado em main e re-dispatch para confirmar success.
+**Status:** ✅ **RESOLVIDO** — PR #322 mergeado em main (SHA `8999bdec`, 2026-10-22T22:47Z). Re-dispatch do workflow **Apply Migration run #25** (`39867429819`) com input `20261014000002_fix_concurrently_indexes.sql` completou com `conclusion=success` em 30 s (2026-10-22T22:47:10Z → 22:47:40Z). Evidência em RELATORIO_CI.md §16.
 
 ---
 
