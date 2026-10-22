@@ -1,5 +1,6 @@
 {
   "bootstrap-sha": "9d2be89c5835e23135acab48013ab778817a224f",
+  "commit-search-depth": 50,
   "packages": {
     ".": {
       "release-type": "node",
