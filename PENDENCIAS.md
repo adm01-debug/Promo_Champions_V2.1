@@ -64,23 +64,20 @@ O workflow exige dois secrets para rodar no agendamento diário (03:00 UTC):
 
 ---
 
-## 3. Release Please — Actions sem permissão para criar PRs
+## 3. ✅ Release Please — CORRIGIDO (2026-10-22, branch fix/ci-workflows)
 
 **Workflow:** `.github/workflows/release-please.yml`  
-**Último run com falha:** [#39457343140](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457343140)
+**Último run com falha:** [#39800262568](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800262568) — SHA `9d2be89`, `conclusion=failure`
 
-**Por que trava:**  
-A action `googleapis/release-please-action` precisa abrir/atualizar PRs de release automaticamente. O `GITHUB_TOKEN` padrão não tem essa permissão habilitada no repositório.
+**Causa raiz real (confirmada em 2026-10-22):**  
+Sem nenhuma GitHub Release com a tag `promo-champions-v2-v1.0.0` existente, o `release-please` tentava varrer todos os commits do branch main via GraphQL com `commit-search-depth: 500` (padrão). Isso causava `Something went wrong while executing your query` na API do GitHub (timeout/sobrecarga). O erro aparecia em `Fetching merge commits on branch main with cursor: undefined`. O `GITHUB_TOKEN` já tinha `PullRequests: write` — a causa apontada em versões anteriores desta PENDENCIAS.md estava incorreta.
 
-**O que fazer (opção mais simples — sem PAT):**
-1. Acesse: **GitHub → Settings → Actions → General → Workflow permissions**
-2. Em **"Workflow permissions"**, selecione **"Read and write permissions"** (se ainda não estiver)
-3. Marque a caixa **"Allow GitHub Actions to create and approve pull requests"**
-4. Clique em **Save**
-5. O próximo push na branch `main` vai disparar o release-please automaticamente
+**Correção aplicada (branch fix/ci-workflows, commit `9816411`):**  
+- `bootstrap-sha: "9d2be89c5835e23135acab48013ab778817a224f"` — ponto de partida para busca de commits  
+- `commit-search-depth: 50` — limita a busca a 50 commits, evitando sobrecarga do GraphQL  
+- Arquivo alterado: `release-please-config.json`
 
-**Alternativa (com PAT, mais controle):**  
-Crie um Personal Access Token com permissões `contents: write` e `pull-requests: write`, adicione como secret `RELEASE_PLEASE_TOKEN`, e atualize o workflow para usar `token: ${{ secrets.RELEASE_PLEASE_TOKEN }}`.
+**Status:** ✅ CORRIGIDO — fix incluído no PR `fix/ci-workflows → main`. Após merge, o próximo push na `main` vai disparar o release-please com a busca limitada.
 
 ---
 
@@ -115,25 +112,19 @@ Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failur
 
 ---
 
-## 6. Análise CodeQL (JavaScript/TypeScript) — falha pré-existente, não causada pelas correções de CI
+## 6. ✅ Análise CodeQL (JavaScript/TypeScript) — CORRIGIDO (2026-10-22, branch fix/ci-workflows)
 
 **Workflow:** `.github/workflows/codeql.yml` (`CodeQL`)  
-**Último run com falha confirmado na main:** [#39781608156](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781608156) — SHA `0770e49`, `completed / failure`  
-**Run em andamento na main (SHA `8092e31`):** [#39792626935](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626935) — `queued` (esperado: falha pré-existente)
+**Último run com falha confirmado na main:** [#39800261877](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800261877) — SHA `9d2be89`, `conclusion=failure`
 
-**Por que falha:**  
-O CodeQL Advanced Security (`codeql.yml`) encontra alertas de segurança no código TypeScript do projeto. Esta falha já existia na main **antes** de qualquer alteração desta sessão — confirmado no SHA `0770e49` (run `39781608156`, anterior ao PR #313). O diff do PR #313 é exclusivamente de arquivos YAML (`.github/workflows/`) — sem alteração de código TypeScript ou JavaScript. A falha é 100% pré-existente.
+**Causa raiz real (confirmada em 2026-10-22):**  
+O step `Inicializar CodeQL` usava o SHA `24c54180a607b1449ed407dd24f251e4e9147c8d` (codeql-action **v4.38.3**) enquanto o step `Analisar` usava o SHA `6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee` (codeql-action **v4.39.0**). O `github/codeql-action` exige que todos os steps no mesmo workflow usem exatamente a mesma versão. A divergência causava `configuration error: Loaded a configuration file for version '4.38.3', but running version '4.39.0'`.
 
-**O que trava:**  
-Os alertas CodeQL precisam ser triados e corrigidos por um desenvolvedor com contexto do negócio — não é corrigível via YAML de workflow.
+**Correção aplicada (branch fix/ci-workflows, commit `3504157`):**  
+- SHA do step `init` atualizado de `24c54180...` para `6f2ac81f...` (ambos agora em v4.39.0)  
+- Arquivo alterado: `.github/workflows/codeql.yml`
 
-**O que fazer (passo a passo):**
-1. Acesse: **GitHub → Security → Code scanning alerts**
-2. Revise cada alerta listado para o branch `main`
-3. Corrija os alertas de alta severidade no código TypeScript do projeto
-4. Marque como `Won't fix` os falsos positivos com justificativa
-
-**Nota:** `Análise CodeQL (JavaScript/TypeScript)` **NÃO é required check para o CI Gate** — o CI Gate depende apenas de `lint-and-typecheck`, `test` e `build`. Esta falha não bloqueou o merge do PR #313.
+**Status:** ✅ CORRIGIDO — fix incluído no PR `fix/ci-workflows → main`. Após merge, um `workflow_dispatch` manual confirma `conclusion=success`.
 
 ---
 

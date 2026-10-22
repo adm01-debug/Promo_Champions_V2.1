@@ -139,3 +139,64 @@
 **Análise CodeQL:** pré-existente, não causada pelas correções de CI — run [#39792626935](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626935) em andamento (SHA `8092e31`); NÃO é required check para CI Gate  
 **Release Please:** confirmado ❌ bloqueio externo — run [#39792626932](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626932) (SHA `8092e31`); ver PENDENCIAS.md item 3  
 **Regressões:** 0
+
+---
+
+## Branch fix/ci-workflows — Correções adicionais (2026-10-22)
+
+**Branch:** `fix/ci-workflows` (a partir do SHA `9d2be89` = HEAD da main em 2026-10-22)
+
+### Baseline local (fix/ci-workflows, SHA 9d2be89)
+
+| Verificação | Resultado |
+|---|---|
+| `npm run lint` | ✅ exit 0 — verificado em 2026-10-22 (task b37fta96h) |
+| `npm run typecheck` | ✅ exit 0 — verificado em 2026-10-22 (task b3qlnq0pg) |
+| `npm run test --run` | ✅ 649 passed, 2 skipped — exit 0 (task bysr3bcb0) |
+
+### Correções aplicadas
+
+#### ✅ CodeQL — SHA mismatch entre init e analyze — commit 3504157
+
+**Causa raiz:** `.github/workflows/codeql.yml` — step `Inicializar CodeQL` usava SHA `24c54180...` (v4.38.3) e step `Analisar` usava SHA `6f2ac81f...` (v4.39.0). Erro exato nos logs do run [#39800261877](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800261877): `Loaded a configuration file for version '4.38.3', but running version '4.39.0'. All steps in a workflow that use 'github/codeql-action' must use the same version`.
+
+**Correção:** SHA do step `init` atualizado para `6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee` (v4.39.0). Ambos os steps agora idênticos.
+
+**Anti-regressão após commit 3504157:**
+
+| Verificação | Resultado |
+|---|---|
+| `npm run lint` | ✅ exit 0 |
+| `npm run typecheck` | ✅ exit 0 (task buofhh77l) |
+
+#### ✅ Release Please — GraphQL depth failure — commit 9816411
+
+**Causa raiz:** Sem tag de release `promo-champions-v2-v1.0.0` existente, o `release-please` buscava todos os commits do main via GraphQL (`commit-search-depth: 500` padrão). Erro exato no run [#39800262568](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800262568): `Something went wrong while executing your query on 2026-10-22T14:57:28Z`. O `GITHUB_TOKEN` já tinha `PullRequests: write` — a causa documentada em PENDENCIAS.md item 3 estava incorreta.
+
+**Correção:** `release-please-config.json` atualizado com `"bootstrap-sha": "9d2be89c5835e23135acab48013ab778817a224f"` e `"commit-search-depth": 50`.
+
+**Anti-regressão após commit 9816411:**
+
+| Verificação | Resultado |
+|---|---|
+| `npm run lint` | ✅ exit 0 |
+| `npm run typecheck` | ✅ exit 0 |
+| `npm run test --run` | ✅ 649 passed, 2 skipped — exit 0 |
+
+### Workflows "sempre verdes" reconfirmados
+
+| Workflow | Run mais recente na main | Conclusão |
+|---|---|---|
+| Graphify Foundation (graphify.yml) | [#39168750099](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39168750099) — SHA `89aacaff`, 2026-10-18 | ✅ success |
+| Edge Functions Bundle Check (edge-functions-bundle.yml) | [#39167150398](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39167150398) — SHA `9717a513`, 2026-10-18 | ✅ success |
+| QA Exhaustive | [#39193125974](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39193125974) — SHA `539c956`, 2026-10-19 | ✅ success |
+
+### Tabela de prova atualizada — fix/ci-workflows
+
+| Workflow | Run baseline (falha) | Correção | Status |
+|---|---|---|---|
+| CodeQL | [#39800261877](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800261877) ❌ SHA mismatch v4.38.3/v4.39.0 | commit `3504157` — ambos os steps em v4.39.0 | ✅ Fix aplicado — comprovação após merge (workflow_dispatch) |
+| Release Please | [#39800262568](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800262568) ❌ GraphQL depth failure | commit `9816411` — bootstrap-sha + commit-search-depth 50 | ✅ Fix aplicado — comprovação após merge (próximo push na main) |
+| Cron Monitoring | [#39732489364](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39732489364) ❌ | Bloqueio externo (secret ausente) | ❌ ver PENDENCIAS.md item 1 |
+| DB Backup | [#39714980171](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39714980171) ❌ | Bloqueio externo (secrets ausentes) | ❌ ver PENDENCIAS.md item 2 |
+| Quote-to-Sale E2E | [#33802372393](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/33802372393) ❌ | Bloqueio externo (secrets ausentes) | ❌ ver PENDENCIAS.md item 4 |
