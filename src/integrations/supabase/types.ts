@@ -5128,14 +5128,14 @@ export type Database = {
           {
             foreignKeyName: "commissions_sale_id_fkey"
             columns: ["sale_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "commissions_sale_id_fkey"
             columns: ["sale_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
@@ -6075,6 +6075,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      daily_challenge_rotations: {
+        Row: {
+          challenge_date: string
+          rotated_at: string
+        }
+        Insert: {
+          challenge_date: string
+          rotated_at?: string
+        }
+        Update: {
+          challenge_date?: string
+          rotated_at?: string
+        }
+        Relationships: []
       }
       daily_challenges: {
         Row: {
@@ -9551,7 +9566,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "channel_credentials"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       intent_audit_logs: {
@@ -23596,6 +23611,20 @@ export type Database = {
         Returns: boolean
       }
       admin_capture_rollback_snapshot: { Args: never; Returns: string }
+      admin_edge_cron_status: {
+        Args: never
+        Returns: {
+          active: boolean
+          function_name: string
+          jobid: number
+          jobname: string
+          last_return_code: number
+          last_run_at: string
+          last_status: string
+          run_count: number
+          schedule: string
+        }[]
+      }
       admin_get_cron_job_stats: {
         Args: { _limit?: number }
         Returns: {
@@ -23683,6 +23712,17 @@ export type Database = {
           assigned_to: string
           rule_id: string
           strategy: string
+        }[]
+      }
+      auto_pause_enrollment: {
+        Args: { _enrollment_id: string; _reason: string }
+        Returns: undefined
+      }
+      auto_promote_sequence_winners: {
+        Args: { _sequence_id: string }
+        Returns: {
+          promoted_label: string
+          step_id: string
         }[]
       }
       award_bonus_if_eligible: {
@@ -23781,6 +23821,11 @@ export type Database = {
           user_id: string
           win_rate: number
         }[]
+      }
+      canonical_phone_key: { Args: { p_phone: string }; Returns: string }
+      claim_daily_challenge_reward: {
+        Args: { p_challenge_id: string }
+        Returns: Json
       }
       check_2fa_failed_attempts: {
         Args: { p_user_id: string }
