@@ -330,13 +330,18 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
     // (env/internal) — ref resolvido tem precedência sobre o texto puro.
     const credentials = await resolveChannelCredentials(supabase, credential);
 
+    // `to` pode chegar mascarado ('+55 (11) 9xxxx-xxxx') e ia cru ao provedor.
+    // Twilio espera E.164 ('+dígitos'); Meta Cloud, Evolution e Z-API
+    // esperam só dígitos — o to_number gravado já usa o mesmo padrão.
+    const toDigits = payload.to.replace(/\D/g, "");
+
     let result: ProviderResult;
     switch (credential.provider) {
       case "twilio":
         result = await sendTwilio(
           credentials,
           credential.from_number ?? "",
-          payload.to,
+          `+${toDigits}`,
           payload.body,
           payload.channel,
         );
@@ -344,7 +349,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
       case "meta_cloud":
         result = await sendMetaCloud(
           credentials,
-          payload.to,
+          toDigits,
           payload.body,
           payload.templateId,
         );
@@ -356,14 +361,14 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
         }
         result = await sendEvolution(
           credentials as Record<string, string>,
-          payload.to,
+          toDigits,
           payload.body,
         );
         break;
       case "zapi":
         result = await sendZapi(
           credentials,
-          payload.to,
+          toDigits,
           payload.body,
         );
         break;

@@ -20,6 +20,8 @@ DECLARE
   v_distributed_lockout timestamptz;
   v_rate_limited boolean := false;
   v_index integer;
+  v_distributed_email text;
+  v_subnet integer;
 BEGIN
   SELECT s.attempts
     INTO v_before
@@ -91,29 +93,39 @@ BEGIN
 
   -- Dez origens diferentes contra o mesmo e-mail acionam o limitador
   -- agregado; uma 11ª origem deve receber lockout e não apenas erro de log.
+  -- E-mail e sub-rede aleatórios por execução: runs concorrentes desta
+  -- suite (PRs em paralelo) podem commitar attempts no banco compartilhado
+  -- e o limitador de 1 minuto contaria linhas de outra run como próprias.
+  v_distributed_email := 'distributed-simulation-' ||
+    floor(random() * 1000000)::bigint || '@example.invalid';
+  v_subnet := 100 + floor(random() * 100)::int;
   FOR v_index IN 1..10 LOOP
     PERFORM set_config(
       'request.headers',
-      format('{"cf-connecting-ip":"198.51.100.%s"}', v_index),
+      format('{"cf-connecting-ip":"198.51.%s.%s"}', v_subnet, v_index),
       true
     );
     PERFORM public.record_failed_login_attempt(
-      'distributed-simulation@example.invalid',
+      v_distributed_email,
       'invalid_credentials',
       'canonical-simulation'
     );
   END LOOP;
 
-  PERFORM set_config('request.headers', '{"cf-connecting-ip":"198.51.100.250"}', true);
+  PERFORM set_config(
+    'request.headers',
+    format('{"cf-connecting-ip":"198.51.%s.250"}', v_subnet),
+    true
+  );
   SELECT s.lockout_until INTO v_distributed_lockout
-    FROM public.get_login_lockout_status('distributed-simulation@example.invalid') AS s;
+    FROM public.get_login_lockout_status(v_distributed_email) AS s;
   IF v_distributed_lockout IS NULL OR v_distributed_lockout <= now() THEN
     RAISE EXCEPTION 'distributed_email_attack_did_not_lock_new_source';
   END IF;
 
   BEGIN
     PERFORM public.record_failed_login_attempt(
-      'distributed-simulation@example.invalid',
+      v_distributed_email,
       'invalid_credentials',
       'canonical-simulation'
     );
@@ -180,3 +192,8 @@ END;
 $$;
 
 RESET ROLE;
+
+-- A suite escreve login_attempts/login_lockouts de e-mails fictícios; sem
+-- este ROLLBACK explícito, `psql --single-transaction` commita as linhas de
+-- simulação no banco compartilhado e a próxima run enxerga as anteriores.
+ROLLBACK;
