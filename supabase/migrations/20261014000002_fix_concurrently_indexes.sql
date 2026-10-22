@@ -75,8 +75,18 @@ END $$;
 -- Os índices parciais (WHERE deleted_at IS NULL) recebem sufixo _active
 -- para evitar conflito de nome com os não-parciais criados acima.
 -- ------------------------------------------------------------------
-CREATE INDEX IF NOT EXISTS idx_clients_user_active
-  ON clients(user_id) WHERE deleted_at IS NULL AND active = true;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'clients' AND column_name = 'active')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'clients' AND column_name = 'deleted_at') THEN
+    CREATE INDEX IF NOT EXISTS idx_clients_user_active
+      ON clients(user_id) WHERE deleted_at IS NULL AND active = true;
+  ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'clients' AND column_name = 'active') THEN
+    CREATE INDEX IF NOT EXISTS idx_clients_user_active
+      ON clients(user_id) WHERE active = true;
+  ELSE
+    RAISE NOTICE 'Coluna clients.active não encontrada — índice user_active pulado.';
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_clients_name_search
   ON clients USING gin(to_tsvector('portuguese', name));
