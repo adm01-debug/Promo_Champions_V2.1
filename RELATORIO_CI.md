@@ -231,29 +231,39 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 
 **Correção (commit `debb245`):** adicionados blocos `information_schema.columns` antes de cada `CREATE INDEX` nas colunas opcionais. Colunas ausentes geram `RAISE NOTICE` em vez de erro. O índice em `created_at` (coluna garantida) não recebe guard.
 
-### 11.2 Anti-regressão após commit `debb245`
+### 11.2 Anti-regressão — execução local após commit `8079131` (2026-10-22)
 
-O commit alterou apenas: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql` (SQL puro) e `PENDENCIAS.md` (documentação). Nenhum arquivo TypeScript, CSS, JSON de configuração ou YAML de workflow foi alterado.
+Checks executados diretamente na sessão 5, branch `claude/compassionate-wright-gehxir` em HEAD `8079131`:
 
-| Check               | Resultado | Justificativa                                                  |
-| ------------------- | --------- | -------------------------------------------------------------- |
-| `npm run typecheck` | exit 0 ✓  | Sem mudança em .ts/.tsx — baseline §2.2 permanece válido       |
-| `npm run lint`      | exit 0 ✓  | Sem mudança em .ts/.tsx/.json — baseline §2.2 permanece válido |
-| `npm run test`      | exit 0 ✓  | 649 testes passando — sem mudança em código de teste           |
+| Check               | Resultado    | Detalhes (saída real)                                                              |
+| ------------------- | ------------ | ---------------------------------------------------------------------------------- |
+| `npm run lint`      | **exit 0** ✓ | ESLint: 0 erros, 0 warnings                                                        |
+| `npm run typecheck` | **exit 0** ✓ | tsc --noEmit: 0 erros TypeScript                                                   |
+| `npm run test`      | **exit 0** ✓ | 66 test files passed (1 skipped) · **649 tests passed** (2 skipped) · duração ~40s |
 
-### 11.3 Estado dos checks no PR #319 (commit `debb245`) — 2026-10-22T19:27Z
+> Os commits `debb245` (SQL + PENDENCIAS.md) e `8079131` (RELATORIO_CI.md) não tocam nenhum arquivo `.ts/.tsx` nem qualquer fixture de teste — zero regressão possível. Os resultados acima confirmam os contadores antes × depois idênticos.
 
-| Check                               | Status        | Conclusão                              |
-| ----------------------------------- | ------------- | -------------------------------------- |
-| Análise CodeQL (JavaScript/TS)      | `in_progress` | aguardando                             |
-| Repo vs supabase_migrations         | `in_progress` | aguardando                             |
-| copilot-pull-request-reviewer       | `queued`      | aguardando                             |
-| Varredura diária Dependabot         | `completed`   | `skipped` (esperado)                   |
-| Auto-merge na PR nova do Dependabot | `completed`   | `skipped` (esperado)                   |
-| Vercel Preview Comments             | `completed`   | ✅ `success`                           |
-| Vercel Agent Review                 | `completed`   | `neutral` (sem crédito — não bloqueia) |
+### 11.3 Estado dos checks no PR #319 (commit `8079131`) — 2026-10-22T19:31Z
 
-> PR Checks ainda não apareceu como check run — normal, dispara quando os checks de workflow concluem.
+| Check                               | Status      | Conclusão                              |
+| ----------------------------------- | ----------- | -------------------------------------- |
+| Migrations Gate                     | `queued`    | aguardando                             |
+| Lint & Type Check                   | `queued`    | aguardando                             |
+| SQL Suites (static + remote)        | `queued`    | aguardando                             |
+| Supabase Types Drift                | `queued`    | aguardando                             |
+| Edge Functions Tests (deno)         | `queued`    | aguardando                             |
+| k6 Load Smoke                       | `queued`    | aguardando                             |
+| Security Audit (production deps)    | `queued`    | aguardando                             |
+| Edge Functions Lint (deno)          | `queued`    | aguardando                             |
+| Análise CodeQL (JavaScript/TS)      | `queued`    | aguardando                             |
+| Detect Changes                      | `completed` | ✅ `success`                           |
+| Vercel Preview Comments             | `completed` | ✅ `success`                           |
+| Repo vs supabase_migrations         | `completed` | ✅ `success`                           |
+| Varredura diária Dependabot         | `completed` | `skipped` (esperado)                   |
+| Auto-merge na PR nova do Dependabot | `completed` | `skipped` (esperado)                   |
+| Vercel Agent Review                 | `completed` | `neutral` (sem crédito — não bloqueia) |
+
+> Checks em `queued` aguardam runner disponível. `Repo vs supabase_migrations` já passou com `success` — confirma que a migration corrigida está válida.
 
 ### 11.4 Inventário das falhas na main — estado após merge PR #318 (SHA `875e58f6`)
 
