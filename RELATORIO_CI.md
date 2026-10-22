@@ -235,11 +235,11 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 
 **Antes** (baseline estabelecido na sessão 1, §2 — SHA `56cf2306`; sem mudança desde então):
 
-| Check               | Resultado    | Referência           |
-| ------------------- | ------------ | -------------------- |
-| `npm run lint`      | **exit 0** ✓ | §2.1                 |
-| `npm run typecheck` | **exit 0** ✓ | §2.1                 |
-| `npm run test`      | **exit 0** ✓ | **649 tests** — §2.1 |
+| Check               | Resultado    | Referência                                                                    |
+| ------------------- | ------------ | ----------------------------------------------------------------------------- |
+| `npm run lint`      | **exit 0** ✓ | §2.1                                                                          |
+| `npm run typecheck` | **exit 0** ✓ | §2.1                                                                          |
+| `npm run test`      | **exit 0** ✓ | **649 tests** — confirmado na sessão 3 (§2.1 usou `test:coverage` → 91 tests) |
 
 **Escopo dos commits desta sessão** — zero impacto em TS/lint/testes:
 
@@ -282,6 +282,8 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 > Checks em `queued` aguardam runner disponível.
 >
 > **Nota:** `Repo vs supabase_migrations` confirma apenas que não há divergência de versões entre o repositório e o banco — **não valida o SQL em si**. O job compara versões locais vs. remotas e trata migrations pendentes como aviso; pode concluir com sucesso sem executar o SQL. A validação sintática/semântica da migration depende do resultado do check `SQL Suites (static + remote)`, ainda `queued` no momento deste registro. Enquanto esse check não concluir, o status da migration é "sem drift detectado, validação SQL pendente".
+>
+> **Atenção adicional:** quando o secret `SUPABASE_ACCESS_TOKEN` está ausente, o workflow `Repo vs supabase_migrations` pode sair com `success` sem nem chegar a comparar versões locais vs. remotas — um exit 0 sem o token **não comprova ausência de drift**.
 
 ### 11.4 Inventário das falhas na main — estado após merge PR #318 (SHA `875e58f6`)
 
@@ -323,23 +325,23 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 
 ### 12.3 Checks CI no PR #319 HEAD `869e299` — conclusão confirmada 2026-10-22T19:55Z
 
-| Check                               | Conclusão    | Observação                               |
-| ----------------------------------- | ------------ | ---------------------------------------- |
-| Security Audit (production deps)    | ✅ `success` | dompurify 3.4.17 corrige CVE crítico     |
-| Análise CodeQL (JavaScript/TS)      | ✅ `success` | —                                        |
-| Repo vs supabase_migrations         | ✅ `success` | sem drift detectado                      |
-| Migrations Gate                     | ✅ `success` | —                                        |
-| Supabase Types Drift                | ✅ `success` | —                                        |
-| SQL Suites (static + remote)        | ✅ `success` | valida SQL da migration corrigida        |
-| Edge Functions Lint (deno)          | ✅ `success` | —                                        |
-| k6 Load Smoke                       | ✅ `success` | —                                        |
-| Detect Changes                      | ✅ `success` | —                                        |
-| Lint & Type Check                   | ✅ `success` | confirmado via API (check run concluído) |
-| Edge Functions Tests (deno)         | ✅ `success` | confirmado via API (check run concluído) |
-| Varredura diária Dependabot         | `skipped`    | esperado                                 |
-| Auto-merge na PR nova do Dependabot | `skipped`    | esperado                                 |
-| Vercel Agent Review                 | `neutral`    | sem crédito — não bloqueia               |
-| CodeQL (check suite separado)       | `neutral`    | não bloqueia                             |
+| Check                               | Conclusão    | Observação                                                                           |
+| ----------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| Security Audit (production deps)    | ✅ `success` | dompurify 3.4.17 corrige CVE crítico                                                 |
+| Análise CodeQL (JavaScript/TS)      | ✅ `success` | —                                                                                    |
+| Repo vs supabase_migrations         | ✅ `success` | sem drift detectado                                                                  |
+| Migrations Gate                     | ✅ `success` | —                                                                                    |
+| Supabase Types Drift                | ✅ `success` | —                                                                                    |
+| SQL Suites (static + remote)        | ✅ `success` | executa suítes estáticas/remotas — **não aplica nem valida a migration diretamente** |
+| Edge Functions Lint (deno)          | ✅ `success` | —                                                                                    |
+| k6 Load Smoke                       | ✅ `success` | —                                                                                    |
+| Detect Changes                      | ✅ `success` | —                                                                                    |
+| Lint & Type Check                   | ✅ `success` | confirmado via API (check run concluído)                                             |
+| Edge Functions Tests (deno)         | ✅ `success` | confirmado via API (check run concluído)                                             |
+| Varredura diária Dependabot         | `skipped`    | esperado                                                                             |
+| Auto-merge na PR nova do Dependabot | `skipped`    | esperado                                                                             |
+| Vercel Agent Review                 | `neutral`    | sem crédito — não bloqueia                                                           |
+| CodeQL (check suite separado)       | `neutral`    | não bloqueia                                                                         |
 
 ### 12.4 Inventário completo da main — estado esperado pós-merge PR #319
 
