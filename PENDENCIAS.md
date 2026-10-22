@@ -170,8 +170,10 @@ O CodeQL Advanced Security encontra alertas no código TypeScript do projeto. Es
 | `SUPABASE_ACCESS_TOKEN` | Deploy de edge functions via `supabase functions deploy` | supabase.com/dashboard/account/tokens |
 | `SUPABASE_DB_PASSWORD` | Aplicar migrations via `supabase db push --linked` | Supabase Dashboard → Settings → Database → Database password |
 
+**⚠️ AVISO — migrations:** O passo de migrations do Deploy Pipeline usa `supabase db push --linked`, que aplica **todas** as migrations pendentes de uma vez. O processo controlado do projeto é via workflow **Apply Migration** (uma migration por vez). Configure `SUPABASE_DB_PASSWORD` apenas se souber quantas migrations estão pendentes e aceitar aplicá-las em bulk — caso contrário, use Apply Migration e deixe `SUPABASE_DB_PASSWORD` sem configurar.
+
 **O que fazer (passo a passo):**
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions**
 2. Adicione `SUPABASE_ACCESS_TOKEN` (token da conta Supabase)
-3. Adicione `SUPABASE_DB_PASSWORD` (senha do banco do projeto `usyxfpqlsspldubptrdl`)
-4. Para disparar um deploy: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)
+3. Para deploy das edge functions: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)
+4. Para migrations: use o workflow **Apply Migration** (controlado, uma por vez) em vez de configurar `SUPABASE_DB_PASSWORD` no Deploy Pipeline
