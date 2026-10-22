@@ -187,7 +187,7 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
 2. Nome: `SUPABASE_ACCESS_TOKEN`
 3. Valor: token de serviço da conta Supabase (disponível em supabase.com/dashboard/account/tokens)
-4. Use o workflow **Deploy Pipeline** (Actions → Deploy Pipeline → Run workflow) para deploy manual; selecione as funções explicitamente para não exceder o limite de 100
+4. ⚠️ **Atenção:** o workflow `deploy.yml` (Deploy Pipeline) também executa `supabase functions deploy --project-ref ...` sem seleção de funções — ele implantará todas as 173 funções e atingirá o mesmo limite HTTP 402. **Não use Deploy Pipeline para deploy completo de funções** até que uma seleção explícita por nome seja implementada no workflow. Use o workflow **Apply Migration** para migrations, e implante funções individualmente via Supabase CLI (`supabase functions deploy <nome>`).
 
 ---
 
