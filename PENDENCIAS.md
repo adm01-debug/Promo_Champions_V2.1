@@ -64,20 +64,29 @@ O workflow exige dois secrets para rodar no agendamento diário (03:00 UTC):
 
 ---
 
-## 3. ✅ Release Please — CORRIGIDO (2026-10-22, branch fix/ci-workflows)
+## 3. Release Please — BLOQUEADO: Actions proibidas de criar PRs
 
 **Workflow:** `.github/workflows/release-please.yml`  
-**Último run com falha:** [#39800262568](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39800262568) — SHA `9d2be89`, `conclusion=failure`
+**Último run com falha (pós-merge):** [#39823878801](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878801) — SHA `56cf2306`, `conclusion=failure`
 
-**Causa raiz real (confirmada em 2026-10-22):**  
-Sem nenhuma GitHub Release com a tag `promo-champions-v2-v1.0.0` existente, o `release-please` tentava varrer todos os commits do branch main via GraphQL com `commit-search-depth: 500` (padrão). Isso causava `Something went wrong while executing your query` na API do GitHub (timeout/sobrecarga). O erro aparecia em `Fetching merge commits on branch main with cursor: undefined`. O `GITHUB_TOKEN` já tinha `PullRequests: write` — a causa apontada em versões anteriores desta PENDENCIAS.md estava incorreta.
+**Histórico de correções aplicadas (branch fix/ci-workflows, PR #316 mergeado 2026-10-22):**  
+- `bootstrap-sha: "9d2be89c5835e23135acab48013ab778817a224f"` e `commit-search-depth: 50` em `release-please-config.json` — corrigiu o timeout GraphQL original.  
+- O release-please agora localiza corretamente a versão de bootstrap (`promo-champions-v2-v1.0.0`) e calcula a próxima versão (`1.0.1`) com busca limitada de commits. Commit search e build de estratégia estão funcionando corretamente.
 
-**Correção aplicada (branch fix/ci-workflows, commit `9816411`):**  
-- `bootstrap-sha: "9d2be89c5835e23135acab48013ab778817a224f"` — ponto de partida para busca de commits  
-- `commit-search-depth: 50` — limita a busca a 50 commits, evitando sobrecarga do GraphQL  
-- Arquivo alterado: `release-please-config.json`
+**Nova causa raiz (confirmada em 2026-10-22, run `39823878801`):**  
+```
+release-please failed: GitHub Actions is not permitted to create or approve pull requests.
+```
+O repositório tem a configuração **"Allow GitHub Actions to create and approve pull requests"** desabilitada. O `release-please` precisa criar um PR de release (`chore(main): release 1.0.1`), mas o `GITHUB_TOKEN` não tem permissão para isso na configuração atual do repositório.
 
-**Status:** ✅ CORRIGIDO — fix incluído no PR `fix/ci-workflows → main`. Após merge, o próximo push na `main` vai disparar o release-please com a busca limitada.
+**O que fazer (passo a passo):**
+1. Acesse: **GitHub → repositório `Promo_Champions_V2.1` → Settings → Actions → General**
+2. Role até a seção **"Workflow permissions"**
+3. Marque a opção **"Allow GitHub Actions to create and approve pull requests"**
+4. Clique em **Save**
+5. Dispare manualmente: **Actions → Release Please → Run workflow** (branch: main)
+
+**Status:** ⏳ BLOQUEADO — requer ação do usuário nas Settings do repositório.
 
 ---
 
@@ -201,6 +210,44 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 2. Adicione `SUPABASE_ACCESS_TOKEN` (token da conta Supabase)
 3. Para deploy das edge functions: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)
 4. Para migrations: use o workflow **Apply Migration** (controlado, uma por vez) em vez de configurar `SUPABASE_DB_PASSWORD` no Deploy Pipeline
+
+---
+
+## 11. Apply Migration — input incorreto (caminho completo em vez de só o nome do arquivo)
+
+**Workflow:** `.github/workflows/apply-migration.yml`  
+**Run com falha:** [#39803271011](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39803271011) — `conclusion=failure`
+
+**Causa raiz:** O input `migration_file` foi fornecido como caminho completo:
+```
+supabase/migrations/20261014000002_fix_concurrently_indexes.sql
+```
+O workflow rejeita qualquer input contendo `/` (proteção contra shell injection) e falha no step "Validar input" com:
+```
+Erro: migration_file não pode conter '/', '..', ';', '`' ou '$'
+```
+
+**Uso correto:**  
+Fornecer **apenas o nome do arquivo** (sem o prefixo de diretório):
+```
+20261014000002_fix_concurrently_indexes.sql
+```
+
+**Pré-requisito adicional:** O workflow também exige o secret `SUPABASE_DB_URL` para conectar ao banco (veja §2 acima). Sem esse secret, o step de aplicação de migration falha. Configure `SUPABASE_DB_URL` antes de disparar o workflow.
+
+**O que fazer (passo a passo):**
+1. Configure `SUPABASE_DB_URL` conforme §2 acima (se ainda não configurado)
+2. Acesse: **Actions → Apply Migration → Run workflow**
+3. No campo `migration_file`, informe **apenas o nome do arquivo**:
+   - ✅ Correto: `20261014000002_fix_concurrently_indexes.sql`
+   - ❌ Errado: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
+
+**Bloqueio adicional de schema (deve ser resolvido antes de reaplicar):**  
+A migration `20261014000002_fix_concurrently_indexes.sql` (linhas 34-39) cria índices nas colunas `user_id` e `deal_id` da tabela `activities`. Essas colunas **não existem** na tabela `activities` em produção. Com `ON_ERROR_STOP=1` (padrão do workflow), a execução falhará com `column "user_id" does not exist` mesmo que o input e o secret estejam corretos.
+
+**Pré-requisito de schema:** antes de executar o workflow, verifique se as colunas `user_id` e `deal_id` já foram adicionadas à tabela `activities` (via migration anterior ou manualmente). Se não existirem, crie uma migration adicionando-as antes de executar este workflow.
+
+**Status:** Requer verificação/correção de schema antes de reaplicar — o workflow em si funciona, mas a migration falhará por incompatibilidade de schema.
 
 ---
 
