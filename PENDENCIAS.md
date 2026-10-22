@@ -83,23 +83,24 @@ Os testes Playwright de ponta a ponta precisam de credenciais de uma conta real 
 
 ---
 
-## 5. Running Copilot Code Review — é um GitHub App, não um workflow editável
+## 5. Running Copilot Code Review — é GitHub App, NÃO aparece no filtro `is:failure` da main
 
 **Tipo:** GitHub App dinâmica (não há arquivo `.github/workflows/` correspondente)
 
-**Por que não é editável:**  
-O "Copilot Code Review" é uma feature do GitHub Copilot Enterprise/Business que roda como App e não como workflow YAML. Não existe arquivo de workflow a corrigir no repositório.
+**Diagnóstico confirmado (2026-10-22):**  
+Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failure` da main** (`https://github.com/adm01-debug/Promo_Champions_V2.1/actions?query=is%3Afailure`). O motivo: o Copilot Code Review é uma feature do GitHub Copilot Enterprise/Business que roda como App e **só é acionada em Pull Requests** — nunca em pushes para a main. Logo, não gera runs no contexto `branch:main is:failure`. O App aparece nos check runs de PRs como `copilot-pull-request-reviewer`, mas isso é independente de workflows YAML. Não há arquivo `.github/workflows/` a corrigir.
 
-**O que fazer (se o review estiver falhando):**
+**O que fazer (se o review estiver falhando em PRs):**
 1. Acesse: **GitHub → Settings → GitHub Apps** ou **Settings → Integrations**
 2. Verifique se o Copilot for Pull Requests está ativado para o repositório
 3. Se o App não aparecer nos checks da PR, solicite ao dono da organização que habilite "Copilot code review" em **Organization Settings → Copilot → Policies**
 
 ---
 
-## 6. `.github/workflows/main.yml` — arquivo não existe no repositório
+## 6. `.github/workflows/main.yml` — arquivo não existe, NÃO aparece no filtro `is:failure`
 
-**Situação:** O arquivo `.github/workflows/main.yml` não existe no repositório (verificado em 2026-10-22).
+**Diagnóstico confirmado (2026-10-22):**  
+Verificado que `.github/workflows/main.yml` **NÃO existe no repositório** e **NÃO aparece no filtro `is:failure` da main** (`https://github.com/adm01-debug/Promo_Champions_V2.1/actions?query=is%3Afailure`). Não há runs desse workflow porque o arquivo nunca foi criado. Não é fonte de falha contínua na main.
 
 **O que fazer:**  
 Se um workflow com esse nome for necessário, ele precisa ser criado do zero. Informe qual CI precisa de um `main.yml` (ex.: teste em push na main, deploy automático) e o arquivo será criado com a configuração correta.
