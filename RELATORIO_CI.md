@@ -711,3 +711,79 @@ Agrupando pelo run mais recente por workflow: **10 workflows únicos com pelo me
 | Dependabot Auto-merge | ✅ success (anterior ao projeto) | ✅ success   | `39849952715` |
 
 > CI Failure Alert, CodeQL, CI/CD Post-merge Main e PR Checks **não estavam verdes antes** — foram corrigidos. Os únicos que estavam verdes antes das correções (PR Review SLA, Dependabot Auto-merge) continuam verdes.
+
+---
+
+## §15 — Sessão 8 (2026-10-22) · Fix SQL na migration 20261014000002
+
+> Esta seção registra os achados e correções da sessão 8, continuação direta da sessão 7.
+> Baseline do código permanece o mesmo (§14.1, HEAD `c4b3d49`, 649 testes, lint/typecheck exit 0).
+
+---
+
+### 15.1 Confirmações da sessão anterior (Sessão 7)
+
+| Item                                            | Confirmação                                                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Migrations Drift run `39849758817`              | ✅ `conclusion=success` no SHA `18aadd0f` (merge commit PR #319, 2026-10-22T20:32Z)              |
+| Apply Migration run #24 — etapa "Validar input" | ✅ step 4 = **success** para `20261014000002_fix_concurrently_indexes.sql` (sem barra no início) |
+| Apply Migration run #24 — SQL executado         | ❌ `psql:...sql:71: ERROR: column "active" does not exist` · exit code 3                         |
+
+**Conclusão:** o input era válido (slash removido em sessão anterior). O erro era na SQL — coluna `products.active` acessada sem guard de `information_schema.columns`.
+
+---
+
+### 15.2 Root cause identificada — `products.active` sem guard
+
+- **Arquivo:** `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
+- **Linha:** 67 (antes do fix) — `CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);`
+- **Erro:** `psql:...sql:71: ERROR: column "active" does not exist` / `CONTEXT: SQL statement "CREATE INDEX IF NOT EXISTS idx_products_active ON products(active)"`
+- **Causa raiz:** a migration criava o índice sem verificar se `products.active` existe no schema; tabelas de staging/fresh-DB podem não ter essa coluna.
+- **Precedente:** mesma guarda já aplicada em sessões anteriores para `activities.user_id/client_id/deal_id` e `clients.active/deleted_at` — faltava apenas `products.active`.
+
+---
+
+### 15.3 Correção aplicada
+
+```sql
+-- products: mesma guarda
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n
+             ON n.oid = c.relnamespace
+             WHERE c.relname = 'products' AND n.nspname = 'public' AND c.relkind = 'r') THEN
+    CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
+    CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+    IF EXISTS (SELECT 1 FROM information_schema.columns
+               WHERE table_schema = 'public' AND table_name = 'products' AND column_name = 'active') THEN
+      CREATE INDEX IF NOT EXISTS idx_products_active ON products(active);
+    ELSE
+      RAISE NOTICE 'Coluna products.active não encontrada — índice pulado.';
+    END IF;
+  ELSE
+    RAISE NOTICE 'Tabela products não encontrada — índices pulados.';
+  END IF;
+END $$;
+```
+
+**Commit:** `5a19201` — `fix(db): adiciona guarda para coluna products.active na migration 20261014000002`
+
+---
+
+### 15.4 Anti-regressão pós-commit (SHA `5a19201`)
+
+| Check                   | Resultado                                                      | Exit code    |
+| ----------------------- | -------------------------------------------------------------- | ------------ |
+| `npm run lint`          | 0 erros                                                        | **0** ✅     |
+| `npm run typecheck`     | 0 erros TypeScript                                             | **0** ✅     |
+| `npm run test -- --run` | 649 testes passando (aguardando confirmação do background job) | **pendente** |
+
+Lint e typecheck confirmados nesta sessão após commit `5a19201`.
+
+---
+
+### 15.5 Próximos passos para Apply Migration
+
+1. Push do commit `5a19201` para `claude/compassionate-wright-gehxir`
+2. PR para main → merge (checks verdes)
+3. Re-dispatch de `apply-migration.yml` com `migration_file: 20261014000002_fix_concurrently_indexes.sql`
+4. Confirmar `conclusion=success` → atualizar §15 e PENDENCIAS §11
