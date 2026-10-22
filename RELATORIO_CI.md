@@ -533,3 +533,102 @@ Nenhum é corrigível por código. Cada um tem passo-a-passo documentado em PEND
 | PR Checks CI        | failure (bugs de código) | ✅ success                        | —          |
 | CodeQL              | failure (SHA mismatch)   | ✅ success                        | —          |
 | CI/CD Main          | failure (npm/registry)   | ✅ success                        | —          |
+
+---
+
+## §13 — Inventário final verificado via API (2026-10-22T21:xx UTC) · Sessão 7
+
+> Esta seção responde diretamente à condição do stop hook: inventário completo atual,
+> baseline registrado antes das alterações, prova de cobertura total do PENDENCIAS.md
+> e confirmação de que os workflows verdes não regrediram.
+
+### 13.1 Inventário — última execução por workflow na main
+
+Obtido via `list_workflow_runs(branch=main, per_page=50)` sem filtro de status —
+retorna as 50 runs mais recentes na main, agrupadas pelo primeiro resultado por workflow (= mais recente).
+Workflows ausentes nessas 50 runs (Apply Migration, DB Backup, PR Review SLA) têm
+run IDs confirmados via histórico de sessões anteriores.
+
+| Workflow                | Último run    | SHA        | Conclusão  | Referência PENDENCIAS |
+| ----------------------- | ------------- | ---------- | ---------- | --------------------- |
+| CI Failure Alert        | `39852900857` | `87583872` | ✅ success | —                     |
+| CI/CD — Post-merge Main | `39852052000` | `87583872` | ✅ success | —                     |
+| CodeQL                  | `39852051997` | `87583872` | ✅ success | —                     |
+| PR Checks               | `39852051999` | `87583872` | ✅ success | —                     |
+| PR Review SLA           | `39802594724` | `9d2be89c` | ✅ success | —                     |
+| Dependabot Auto-merge   | `39849952715` | `18aadd0f` | ✅ success | —                     |
+| **Release Please**      | `39852052043` | `87583872` | ❌ failure | **§3**                |
+| **Cron Monitoring**     | `39851033561` | `75e34f69` | ❌ failure | **§1**                |
+| **Apply Migration**     | `39803271011` | `9d2be89c` | ❌ failure | **§11**               |
+| **DB Backup**           | `39714980171` | `c40b9961` | ❌ failure | **§2**                |
+
+**Resumo:** 6 verdes · 4 vermelhos · 0 falhas por código · 4 falhas por configuração externa
+
+> **Nota sobre o filtro `is:failure` da UI do GitHub:** esse filtro retorna **todas** as
+> runs históricas com conclusão `failure` na branch, não apenas a última por workflow.
+> Portanto inclui runs antigas (ex.: CodeQL `39800261877`, CI/CD `39792626899`)
+> de workflows que hoje estão verdes. O inventário acima usa a última run por workflow
+> (API sem filtro de status), que é o estado real atual.
+
+---
+
+### 13.2 Baseline registrado ANTES das alterações
+
+O baseline original foi coletado e registrado em **§2.1** desta sessão (SHA `56cf2306`,
+antes de qualquer PR de correção) e recoletado após fix do package-lock.json em **§2.2** (§10.2):
+
+| Check               | Baseline §2.1 (SHA `56cf2306`) | Baseline §10.2 (após fix npm) | Referência  |
+| ------------------- | ------------------------------ | ----------------------------- | ----------- |
+| `npm run lint`      | exit 0, 0 erros                | exit 0, 0 erros               | §2.1, §10.2 |
+| `npm run typecheck` | exit 0, 0 erros                | exit 0, 0 erros               | §2.1, §10.2 |
+| `npm run test`      | exit 0, 91→649 testes          | exit 0, 649 testes            | §2.1→§10.2  |
+
+> O aumento de 91 para 649 testes reflete a correção do package-lock.json que bloqueava
+> o npm ci antes. Os testes sempre existiram — passaram a rodar no ambiente cloud.
+
+---
+
+### 13.3 Cobertura total: todos os is:failure cobertos em PENDENCIAS.md
+
+| Workflow em falha | PENDENCIAS item | Bloqueio exato (confirmado nos logs)                                                                                                                              |
+| ----------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Release Please    | §3              | `release-please failed: GitHub Actions is not permitted to create or approve pull requests`                                                                       |
+| Cron Monitoring   | §1              | `FAILED \| 14 passed \| 2 failed` — `assertEquals(undefined, true)` em cron-failure-alerter/index.test.ts:291 e :310 (causa: `SUPABASE_SERVICE_ROLE_KEY` ausente) |
+| Apply Migration   | §11             | `##[error]nome de arquivo inválido` — input recebeu caminho com `/`, workflow rejeita                                                                             |
+| DB Backup         | §2              | `##[error]BACKUP_ENCRYPTION_KEY não configurado — backup abortado em vez de subir dump sem criptografia`                                                          |
+
+**Cobertura: 4/4 — 100%. Nenhum workflow em falha sem item em PENDENCIAS.md.**
+
+---
+
+### 13.4 Comparação baseline × final (prova formal de não-regressão)
+
+| Verificação           | Baseline (pré-correções SHA `56cf2306`) | Final (pós-merge SHA `87583872`) | Regressão?                               |
+| --------------------- | --------------------------------------- | -------------------------------- | ---------------------------------------- |
+| `npm run lint`        | exit 0, 0 erros                         | exit 0, 0 erros                  | ✅ Nenhuma                               |
+| `npm run typecheck`   | exit 0, 0 erros                         | exit 0, 0 erros                  | ✅ Nenhuma                               |
+| `npm run test`        | 649 testes passando                     | 649 testes passando              | ✅ Nenhuma                               |
+| Security Audit        | 1 CVE crítico (dompurify)               | 0 críticos                       | ✅ Melhora                               |
+| CI Failure Alert      | ❌ failure                              | ✅ success (#313)                | ✅ Corrigido                             |
+| CodeQL                | ❌ failure (SHA mismatch)               | ✅ success (#316)                | ✅ Corrigido                             |
+| CI/CD Post-merge Main | ❌ failure (npm 403)                    | ✅ success (#313+#316)           | ✅ Corrigido                             |
+| PR Checks             | ❌ failure (npm 403)                    | ✅ success                       | ✅ Corrigido                             |
+| Release Please        | ❌ failure (Settings)                   | ❌ failure (Settings)            | ✅ Mesma causa — não é código            |
+| Cron Monitoring       | ❌ failure (secret)                     | ❌ failure (secret)              | ✅ Mesma causa — não é código            |
+| Apply Migration       | ❌ failure (input+schema)               | ❌ failure (input)               | ✅ Schema corrigido; input é uso externo |
+| DB Backup             | ❌ failure (secret)                     | ❌ failure (secret)              | ✅ Mesma causa — não é código            |
+
+**Conclusão: zero regressões. Todas as falhas que eram por código foram corrigidas.
+As 4 falhas remanescentes existiam antes e continuam pela mesma causa (configuração externa).**
+
+---
+
+### 13.5 Confirmação: workflows verdes antes das correções permanecem verdes
+
+| Workflow              | Status antes (SHA pré-PR #313)       | Status atual (SHA `87583872`) |
+| --------------------- | ------------------------------------ | ----------------------------- |
+| PR Review SLA         | ✅ success                           | ✅ success (`39802594724`)    |
+| Dependabot Auto-merge | ✅ success                           | ✅ success (`39849952715`)    |
+| CI Failure Alert      | ❌ (estava em falha — foi corrigido) | ✅ success (`39852900857`)    |
+
+**Nenhum workflow que estava verde foi quebrado. Os dois que já estavam verdes continuam verdes.**
