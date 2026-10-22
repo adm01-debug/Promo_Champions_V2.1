@@ -68,6 +68,32 @@ test('trigger carrega tabela do ON; índice carrega tabela do ON', () => {
   });
 });
 
+test('ALTER TABLE IF EXISTS não captura "if" como tabela', () => {
+  const sql = `ALTER TABLE IF EXISTS public.sales
+    ADD CONSTRAINT sales_chk CHECK (amount > 0),
+    ADD CONSTRAINT sales_uq UNIQUE (code);`;
+  const cons = collectProbes(sql, V).filter((r) => r.kind === 'constraint');
+  assert.deepEqual(
+    cons.map((r) => [r.obj, r.schema, r.extra]),
+    [
+      ['sales_chk', 'public', 'sales'],
+      ['sales_uq', 'public', 'sales'],
+    ],
+  );
+  // coluna encadeada sob IF EXISTS também resolve a tabela
+  const cols = collectProbes(
+    'ALTER TABLE IF EXISTS s.t ADD COLUMN c1 text, ADD COLUMN c2 int;',
+    V,
+  ).filter((r) => r.kind === 'column');
+  assert.deepEqual(
+    cols.map((r) => [r.obj, r.schema, r.extra]),
+    [
+      ['c1', 's', 't'],
+      ['c2', 's', 't'],
+    ],
+  );
+});
+
 test('comentários não geram probes falsas', () => {
   const sql = `-- CREATE TABLE ghost (id int);
     /* CREATE TABLE ghost2 (id int); */
