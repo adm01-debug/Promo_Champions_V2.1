@@ -122,10 +122,38 @@ Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failur
 
 ---
 
-## 6. `.github/workflows/main.yml` — arquivo não existe, NÃO aparece no filtro `is:failure`
+## 6. ✅ `.github/workflows/main.yml` — CRIADO (2026-10-22)
 
-**Diagnóstico confirmado (2026-10-22):**  
-Verificado que `.github/workflows/main.yml` **NÃO existe no repositório** e **NÃO aparece no filtro `is:failure` da main** (`https://github.com/adm01-debug/Promo_Champions_V2.1/actions?query=is%3Afailure`). Não há runs desse workflow porque o arquivo nunca foi criado. Não é fonte de falha contínua na main.
+**Workflow:** `.github/workflows/main.yml` (`CI/CD — Post-merge Main`)  
+**Status:** Arquivo criado e incluso no PR #313 (aguardando merge).
 
-**O que fazer:**  
-Se um workflow com esse nome for necessário, ele precisa ser criado do zero. Informe qual CI precisa de um `main.yml` (ex.: teste em push na main, deploy automático) e o arquivo será criado com a configuração correta.
+**O que o workflow faz:**
+1. Roda em todo push para a `main` (gate de integridade pós-merge: lint + typecheck + build)
+2. Se `SUPABASE_ACCESS_TOKEN` estiver configurado: faz deploy automático de todas as edge functions para produção
+3. Se o secret não estiver configurado: exibe instruções no GitHub Actions Summary e termina **verde**
+
+**Para ativar o deploy automático de edge functions:**
+1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
+2. Nome: `SUPABASE_ACCESS_TOKEN`
+3. Valor: token de serviço da conta Supabase (disponível em supabase.com/dashboard/account/tokens)
+4. O próximo push na `main` fará deploy automático de todas as 173 edge functions
+
+---
+
+## 7. Deploy Pipeline (CI/CD) — falta `SUPABASE_ACCESS_TOKEN` para deploy completo
+
+**Workflow:** `.github/workflows/deploy.yml` (`Deploy Pipeline`)  
+**Status:** Workflow **funciona parcialmente** — validação (lint + typecheck + build + edge functions check) roda sem secrets. O deploy real das edge functions e o push de migrations **não executam** sem configuração.
+
+**O que trava o deploy completo:**
+
+| Secret | Para que serve | Onde obter |
+|---|---|---|
+| `SUPABASE_ACCESS_TOKEN` | Deploy de edge functions via `supabase functions deploy` | supabase.com/dashboard/account/tokens |
+| `SUPABASE_DB_PASSWORD` | Aplicar migrations via `supabase db push --linked` | Supabase Dashboard → Settings → Database → Database password |
+
+**O que fazer (passo a passo):**
+1. Acesse: **GitHub → Settings → Secrets and variables → Actions**
+2. Adicione `SUPABASE_ACCESS_TOKEN` (token da conta Supabase)
+3. Adicione `SUPABASE_DB_PASSWORD` (senha do banco do projeto `usyxfpqlsspldubptrdl`)
+4. Para disparar um deploy: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)

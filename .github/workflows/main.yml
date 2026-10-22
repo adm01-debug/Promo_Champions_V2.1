@@ -1,0 +1,119 @@
+name: CI/CD — Post-merge Main
+
+# Roda automaticamente em todo push direto para main (incluindo squash merge de PRs).
+#
+# O que este workflow FAZ:
+#   1. Valida que o HEAD da main ainda compila (lint + typecheck + build) —
+#      defesa contra squash merges que passaram no PR Checks mas quebraram
+#      no merge com a base atual.
+#   2. Se SUPABASE_ACCESS_TOKEN estiver configurado: faz deploy de todas as
+#      edge functions para produção (supabase functions deploy --all).
+#   3. Publica um resumo no GitHub Actions com status de cada etapa.
+#
+# O que este workflow NÃO FAZ sem configuração:
+#   - Deploy das edge functions: exige secret SUPABASE_ACCESS_TOKEN
+#     (Settings → Secrets → Actions → New repository secret).
+#     Sem ele o step é pulado e o workflow termina verde.
+#
+# Relação com outros workflows:
+#   - PR Checks: roda em PRs e em push para main (gate de qualidade).
+#   - Deploy Pipeline: roda em workflow_dispatch ou push de tag v*.
+#   - Este workflow: post-merge em main → gate de integridade + auto-deploy.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-main-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate Main HEAD
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HUSKY: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+  deploy-edge-functions:
+    name: Deploy Edge Functions
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: validate
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - name: Verificar secret de deploy
+        id: gate
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "SUPABASE_ACCESS_TOKEN não configurado — pulando deploy de edge functions."
+            echo "Para ativar: Settings → Secrets → Actions → New repository secret → SUPABASE_ACCESS_TOKEN"
+            echo "Valor: token de serviço Supabase (supabase.com/dashboard/account/tokens)"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.gate.outputs.skip == 'false'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Supabase CLI
+        if: steps.gate.outputs.skip == 'false'
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy edge functions para produção
+        if: steps.gate.outputs.skip == 'false'
+        run: |
+          supabase functions deploy --project-ref usyxfpqlsspldubptrdl --no-verify-jwt
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Resumo do deploy
+        if: always()
+        run: |
+          if [ "${{ steps.gate.outputs.skip }}" = "true" ]; then
+            echo "## Deploy de Edge Functions — Pulado" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Motivo:** Secret \`SUPABASE_ACCESS_TOKEN\` não configurado." >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Para ativar o deploy automático:**" >> "$GITHUB_STEP_SUMMARY"
+            echo "1. Acesse: Settings → Secrets and variables → Actions" >> "$GITHUB_STEP_SUMMARY"
+            echo "2. Adicione \`SUPABASE_ACCESS_TOKEN\` (token da conta em supabase.com/dashboard/account/tokens)" >> "$GITHUB_STEP_SUMMARY"
+            echo "3. O próximo push na main fará deploy automático de todas as edge functions" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Deploy de Edge Functions — Concluído" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Projeto:** usyxfpqlsspldubptrdl" >> "$GITHUB_STEP_SUMMARY"
+            echo "**SHA:** ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Dashboard:** https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl/functions" >> "$GITHUB_STEP_SUMMARY"
+          fi
