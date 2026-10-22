@@ -472,3 +472,64 @@ Coletado às ≈20:42–20:44 UTC sobre o HEAD `75e34f69` (merge do PR #320):
 - 3 falhas confirmadas por bloqueio externo (Release Please, Apply Migration, DB Backup)
 - 1 pendência em fila (Cron Monitoring — esperado failure por secret ausente)
 - 1 run em fila sem código (PR Checks — esperado success por docs-only)
+
+---
+
+## §12.7 — Runs do merge PR #321 (SHA `875838727`, 2026-10-22T20:48)
+
+**SHA do merge:** `8758387279187fb45b5b1f822904853518f55537`
+**Merge do PR #321** em `2026-10-22T20:48:41Z`
+
+### Runs disparados pelo merge (SHA `875838727`)
+
+| Run ID        | Workflow           | Conclusão confirmada nesta sessão                                                               |
+| ------------- | ------------------ | ----------------------------------------------------------------------------------------------- |
+| `39852052043` | Release Please     | ❌ **failure** — **PENDENCIAS §3** (Settings: GH Actions não pode criar PRs) — confirmed 20:50Z |
+| `39852051997` | CodeQL             | ✅ **success** — confirmed 20:51:31Z                                                            |
+| `39852052000` | CI/CD — Post-merge | ✅ **success** — confirmed 20:51:22Z                                                            |
+| `39852051999` | PR Checks          | ✅ **success** — confirmed 20:54:47Z                                                            |
+
+### Cron Monitoring dispatch `39851033561` (SHA `75e34f69`)
+
+| Run ID        | Workflow        | Conclusão confirmada                                                                        |
+| ------------- | --------------- | ------------------------------------------------------------------------------------------- |
+| `39851033561` | Cron Monitoring | ❌ **failure** — **PENDENCIAS §1** (`SUPABASE_SERVICE_ROLE_KEY` ausente) — confirmed 20:50Z |
+
+### Runs externos confirmados por PENDENCIAS (mais antigos)
+
+| Run ID        | Workflow        | SHA        | Conclusão confirmada                                                             |
+| ------------- | --------------- | ---------- | -------------------------------------------------------------------------------- |
+| `39803271011` | Apply Migration | `9d2be89c` | ❌ **failure** — **PENDENCIAS §11** (`SUPABASE_DB_URL` + input format)           |
+| `39714980171` | DB Backup       | `c40b9961` | ❌ **failure** — **PENDENCIAS §2** (`SUPABASE_DB_URL` + `BACKUP_ENCRYPTION_KEY`) |
+| —             | E2E Logado      | —          | ❌ **bloqueado** — **PENDENCIAS §4** (`E2E_TEST_EMAIL` + `E2E_TEST_PASSWORD`)    |
+
+---
+
+### Tabela final de prova — estado pós-merge SHA `875838727`
+
+| Workflow            | Run ID        | Conclusão    | Referência                            |
+| ------------------- | ------------- | ------------ | ------------------------------------- |
+| PR Checks           | `39852051999` | ✅ success   | confirmed 20:54:47Z                   |
+| CodeQL              | `39852051997` | ✅ success   | confirmed 20:51:31Z                   |
+| CI/CD — Post-merge  | `39852052000` | ✅ success   | confirmed 20:51:22Z                   |
+| **Release Please**  | `39852052043` | ❌ failure   | bloqueio externo — **PENDENCIAS §3**  |
+| **Cron Monitoring** | `39851033561` | ❌ failure   | bloqueio externo — **PENDENCIAS §1**  |
+| **Apply Migration** | `39803271011` | ❌ failure   | bloqueio externo — **PENDENCIAS §11** |
+| **DB Backup**       | `39714980171` | ❌ failure   | bloqueio externo — **PENDENCIAS §2**  |
+| **E2E Logado**      | —             | ❌ bloqueado | bloqueio externo — **PENDENCIAS §4**  |
+
+**Todos os 5 failures restantes têm causa-raiz em configuração externa (secrets/permissões do GitHub).
+Nenhum é corrigível por código. Cada um tem passo-a-passo documentado em PENDENCIAS.md.**
+
+---
+
+### Comparação baseline × final
+
+| Verificação         | Baseline (pré-sessão)    | Final (pós-merge SHA `875838727`) | Regressão? |
+| ------------------- | ------------------------ | --------------------------------- | ---------- |
+| `npm run lint`      | exit 0                   | exit 0                            | ❌ Nenhuma |
+| `npm run typecheck` | exit 0                   | exit 0                            | ❌ Nenhuma |
+| Testes (vitest)     | 649 passando             | 649 passando                      | ❌ Nenhuma |
+| PR Checks CI        | failure (bugs de código) | ✅ success                        | —          |
+| CodeQL              | failure (SHA mismatch)   | ✅ success                        | —          |
+| CI/CD Main          | failure (npm/registry)   | ✅ success                        | —          |
