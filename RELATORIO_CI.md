@@ -103,7 +103,7 @@
 
 | Workflow | Run baseline (falha) | Correção aplicada | Run comprovado (success) |
 |---|---|---|---|
-| CI Failure Alert | [#39457340731](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457340731) ❌ | `workflow_dispatch` + `workflows:` filter — [PR #313](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/313) mergeado (SHA `8092e31`) | ⏳ dispatch run [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213) queued (aguardando conclusion=success) |
+| CI Failure Alert | [#39457340731](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39457340731) ❌ | `workflow_dispatch` + `workflows:` filter — [PR #313](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/313) mergeado (SHA `8092e31`) | [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213) ✅ SHA `8092e31` (dispatch, 2026-10-22T14:12Z) |
 | PR Review SLA | [#39596349948](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39596349948) ❌ | `GH_REPO` adicionado ao env | [#39777688236](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777688236) ✅ SHA `2dd0eff` |
 | Dependabot Auto-merge | [#39593479759](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39593479759) ❌ | `GH_REPO` nos dois jobs | [#39777695593](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777695593) ✅ SHA `2dd0eff` |
 | Apply Migration | [#39440316376](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39440316376) ❌ | DO blocks para tabelas opcionais | [#39464232349](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39464232349) ✅ |
@@ -119,8 +119,8 @@
 
 | Métrica | Baseline | Atual (aguardando PR #313) |
 |---|---|---|
-| Workflows com falha contínua na main | 6 | 3 bloqueio externo + 1 dispatch in progress (CI Failure Alert) + Análise CodeQL pré-existente |
-| Workflows verdes corrigidos por código | 0 | 3 (PR Review SLA ✅, Dependabot ✅, Apply Migration ✅) + CI Failure Alert pendente dispatch |
+| Workflows com falha contínua na main | 6 | 3 bloqueio externo (secrets/permissão) + Análise CodeQL pré-existente |
+| Workflows verdes corrigidos por código | 0 | 4 (PR Review SLA ✅, Dependabot ✅, Apply Migration ✅, CI Failure Alert ✅) |
 | Regressões introduzidas | — | 0 |
 | Tests passando (CI Unit Tests) | ✅ | ✅ (sem queda — run [#39777663411](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39777663411)) |
 | Build | ✅ | ✅ (sem queda — PR Checks SHA `8092e31` success) |
@@ -133,7 +133,7 @@
 - Migrations Drift ✅
 - CodeQL ✅
 
-**Workflows verdes corrigidos por código:** 3 confirmados (PR Review SLA, Dependabot Auto-merge, Apply Migration) + CI Failure Alert em andamento (dispatch run [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213))  
+**Workflows verdes corrigidos por código:** 4 confirmados (PR Review SLA ✅, Dependabot Auto-merge ✅, Apply Migration ✅, CI Failure Alert ✅ — dispatch run [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213))  
 **PR #313 mergeado em** SHA `8092e31` (2026-10-22 14:04:52Z)  
 **Pendências documentadas em PENDENCIAS.md:** 7 (item 0 = CI Failure Alert dispatch em andamento; itens 1-3 = bloqueio externo; itens 4-7 = GitHub App / secrets de deploy; item 6 = CodeQL pré-existente)  
 **Análise CodeQL:** pré-existente, não causada pelas correções de CI — run [#39792626935](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626935) em andamento (SHA `8092e31`); NÃO é required check para CI Gate  

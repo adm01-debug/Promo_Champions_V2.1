@@ -8,22 +8,18 @@ Estes workflows não podem ser verdes sem ação manual do responsável, ou est�
 
 ---
 
-## 0. CI Failure Alert — dispatch run em andamento (PR #313 mergeado em SHA `8092e31`)
+## 0. ✅ CI Failure Alert — CONCLUÍDO (2026-10-22)
 
 **Workflow:** `.github/workflows/ci-failure-alert.yml`  
 **Último run com falha (ghost run):** [#39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `event=push`, `conclusion=failure`, `total_jobs=0`  
-**Dispatch run em andamento:** [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213) — `event=workflow_dispatch`, `status=queued` (SHA `8092e31`)
+**Run de comprovação:** [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213) — `event=workflow_dispatch`, `conclusion=success` ✅ (SHA `8092e31`)
 
 **Correção aplicada (PR #313, mergeado 2026-10-22):**  
 1. `on: workflow_dispatch` — permite dispatch manual para produzir run com `conclusion=success`
 2. `workflows: [14 nomes]` — filtra o `workflow_run` para evitar ghost runs
 3. Guard movido de job-level para step-level — evita all-jobs-skipped → failure
 
-**Status:** Run `#39792679213` está queued. Quando concluir com `conclusion=success`, este item pode ser removido de PENDENCIAS.md.
-
-**Se o run falhar:**  
-- Acesse: [Actions → CI Failure Alert → Run workflow](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/workflows/ci-failure-alert.yml) (branch: main)
-- Verificar logs para causa raiz
+**Status:** ✅ CONCLUÍDO — run `#39792679213` concluiu com `conclusion=success` em 2026-10-22T14:12:34Z.
 
 ---
 
@@ -138,6 +134,20 @@ Os alertas CodeQL precisam ser triados e corrigidos por um desenvolvedor com con
 4. Marque como `Won't fix` os falsos positivos com justificativa
 
 **Nota:** `Análise CodeQL (JavaScript/TypeScript)` **NÃO é required check para o CI Gate** — o CI Gate depende apenas de `lint-and-typecheck`, `test` e `build`. Esta falha não bloqueou o merge do PR #313.
+
+---
+
+## 7b. main.yml — deploy pode iniciar antes de PR Checks completar (Qodo Medium, pós-merge)
+
+**Workflow:** `.github/workflows/main.yml`  
+**Contexto:** Finding Medium do Qodo Code Review (PR #313, pós-merge, não corrigível retroativamente).
+
+**O que é:** O job `deploy-edge-functions` depende só de `validate` (lint + typecheck + build). Como `PR Checks` (que inclui testes) roda independentemente em pushes para main, um deploy poderia tecnicamente iniciar antes dos testes terminarem.
+
+**Por que não bloqueou o merge:** (1) O deploy exige `SUPABASE_ACCESS_TOKEN` — sem o secret configurado, o job é 100% skipped; (2) O finding foi classificado como Medium (não Critical); (3) A solução mais robusta requer refactor do `main.yml` para aguardar `PR Checks` via `workflow_run`.
+
+**O que fazer quando `SUPABASE_ACCESS_TOKEN` for configurado:**  
+Antes de ativar o deploy automático, refatorar `main.yml` para incluir o teste como prerequisite, ou usar o `workflow_run` do `PR Checks` como trigger do deploy em vez de `push: branches: [main]`.
 
 ---
 
