@@ -14,7 +14,8 @@ Estes workflows não podem ser verdes sem ação manual do responsável, ou est�
 **Último run com falha (ghost run):** [#39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `event=push`, `conclusion=failure`, `total_jobs=0`  
 **Run de comprovação:** [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213) — `event=workflow_dispatch`, `conclusion=success` ✅ (SHA `8092e31`)
 
-**Correção aplicada (PR #313, mergeado 2026-10-22):**  
+**Correção aplicada (PR #313, mergeado 2026-10-22):**
+
 1. `on: workflow_dispatch` — permite dispatch manual para produzir run com `conclusion=success`
 2. `workflows: [14 nomes]` — filtra o `workflow_run` para evitar ghost runs
 3. Guard movido de job-level para step-level — evita all-jobs-skipped → failure
@@ -34,6 +35,7 @@ Estes workflows não podem ser verdes sem ação manual do responsável, ou est�
 A função `cron-failure-alerter` usa `isAuthorizedCronRequest`, que valida o token `Authorization: Bearer` contra o `service_role key` ou o segredo `coaching_cron_secret`. Quando o secret `SUPABASE_SERVICE_ROLE_KEY` não está configurado no repositório, o workflow tentava usar a anon key como substituto — mas a anon key não passa a verificação de autenticação e a edge function retorna 401, fazendo os testes E2E falharem.
 
 **O que fazer (passo a passo):**
+
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
 2. Nome: `SUPABASE_SERVICE_ROLE_KEY`
 3. Valor: chave de service_role do projeto `usyxfpqlsspldubptrdl` (disponível em Supabase Dashboard → Settings → API → `service_role` secret key)
@@ -54,6 +56,7 @@ O workflow exige dois secrets para rodar no agendamento diário (03:00 UTC):
 - `BACKUP_ENCRYPTION_KEY`: chave para criptografar o dump com AES-256-CBC. Sem ela o workflow deliberadamente aborta para nunca subir dados de produção sem criptografia.
 
 **O que fazer (passo a passo):**
+
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions**
 2. Adicione o secret `SUPABASE_DB_URL`:
    - Vá em Supabase Dashboard → projeto `usyxfpqlsspldubptrdl` → Settings → Database → **Connection string** → **URI** (porta 6543, modo `Transaction`)
@@ -69,17 +72,21 @@ O workflow exige dois secrets para rodar no agendamento diário (03:00 UTC):
 **Workflow:** `.github/workflows/release-please.yml`  
 **Último run com falha (pós-merge):** [#39823878801](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39823878801) — SHA `56cf2306`, `conclusion=failure`
 
-**Histórico de correções aplicadas (branch fix/ci-workflows, PR #316 mergeado 2026-10-22):**  
-- `bootstrap-sha: "9d2be89c5835e23135acab48013ab778817a224f"` e `commit-search-depth: 50` em `release-please-config.json` — corrigiu o timeout GraphQL original.  
+**Histórico de correções aplicadas (branch fix/ci-workflows, PR #316 mergeado 2026-10-22):**
+
+- `bootstrap-sha: "9d2be89c5835e23135acab48013ab778817a224f"` e `commit-search-depth: 50` em `release-please-config.json` — corrigiu o timeout GraphQL original.
 - O release-please agora localiza corretamente a versão de bootstrap (`promo-champions-v2-v1.0.0`) e calcula a próxima versão (`1.0.1`) com busca limitada de commits. Commit search e build de estratégia estão funcionando corretamente.
 
-**Nova causa raiz (confirmada em 2026-10-22, run `39823878801`):**  
+**Nova causa raiz (confirmada em 2026-10-22, run `39823878801`):**
+
 ```
 release-please failed: GitHub Actions is not permitted to create or approve pull requests.
 ```
+
 O repositório tem a configuração **"Allow GitHub Actions to create and approve pull requests"** desabilitada. O `release-please` precisa criar um PR de release (`chore(main): release 1.0.1`), mas o `GITHUB_TOKEN` não tem permissão para isso na configuração atual do repositório.
 
 **O que fazer (passo a passo):**
+
 1. Acesse: **GitHub → repositório `Promo_Champions_V2.1` → Settings → Actions → General**
 2. Role até a seção **"Workflow permissions"**
 3. Marque a opção **"Allow GitHub Actions to create and approve pull requests"**
@@ -99,6 +106,7 @@ O repositório tem a configuração **"Allow GitHub Actions to create and approv
 Os testes Playwright de ponta a ponta precisam de credenciais de uma conta real no Supabase para simular o fluxo de cotação → venda logado. Sem `E2E_TEST_EMAIL` e `E2E_TEST_PASSWORD` o login falha e todos os specs dependentes são abortados.
 
 **O que fazer:**
+
 1. Crie uma conta de teste dedicada no Supabase Dashboard → projeto `usyxfpqlsspldubptrdl` → Authentication → Users → **Add user**
 2. Acesse: **GitHub → Settings → Secrets and variables → Actions**
 3. Adicione `E2E_TEST_EMAIL` com o e-mail da conta de teste
@@ -115,6 +123,7 @@ Os testes Playwright de ponta a ponta precisam de credenciais de uma conta real 
 Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failure` da main** (`https://github.com/adm01-debug/Promo_Champions_V2.1/actions?query=is%3Afailure`). O motivo: o Copilot Code Review é uma feature do GitHub Copilot Enterprise/Business que roda como App e **só é acionada em Pull Requests** — nunca em pushes para a main. Logo, não gera runs no contexto `branch:main is:failure`. O App aparece nos check runs de PRs como `copilot-pull-request-reviewer`, mas isso é independente de workflows YAML. Não há arquivo `.github/workflows/` a corrigir.
 
 **O que fazer (se o review estiver falhando em PRs):**
+
 1. Acesse: **GitHub → Settings → GitHub Apps** ou **Settings → Integrations**
 2. Verifique se o Copilot for Pull Requests está ativado para o repositório
 3. Se o App não aparecer nos checks da PR, solicite ao dono da organização que habilite "Copilot code review" em **Organization Settings → Copilot → Policies**
@@ -129,8 +138,9 @@ Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failur
 **Causa raiz real (confirmada em 2026-10-22):**  
 O step `Inicializar CodeQL` usava o SHA `24c54180a607b1449ed407dd24f251e4e9147c8d` (codeql-action **v4.38.3**) enquanto o step `Analisar` usava o SHA `6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee` (codeql-action **v4.39.0**). O `github/codeql-action` exige que todos os steps no mesmo workflow usem exatamente a mesma versão. A divergência causava `configuration error: Loaded a configuration file for version '4.38.3', but running version '4.39.0'`.
 
-**Correção aplicada (branch fix/ci-workflows, commit `3504157`):**  
-- SHA do step `init` atualizado de `24c54180...` para `6f2ac81f...` (ambos agora em v4.39.0)  
+**Correção aplicada (branch fix/ci-workflows, commit `3504157`):**
+
+- SHA do step `init` atualizado de `24c54180...` para `6f2ac81f...` (ambos agora em v4.39.0)
 - Arquivo alterado: `.github/workflows/codeql.yml`
 
 **Status:** ✅ CORRIGIDO — fix incluído no PR `fix/ci-workflows → main`. Após merge, um `workflow_dispatch` manual confirma `conclusion=success`.
@@ -178,12 +188,14 @@ Antes de ativar o deploy automático, refatorar `main.yml` para incluir o teste 
 **Status:** Arquivo criado e incluso no PR #313 (aguardando merge).
 
 **O que o workflow faz:**
+
 1. Roda em todo push para a `main` (gate de integridade pós-merge: lint + typecheck + build)
 2. Se `SUPABASE_ACCESS_TOKEN` estiver configurado: faz deploy automático de todas as edge functions para produção
 3. Se o secret não estiver configurado: exibe instruções no GitHub Actions Summary e termina **verde**
 
 **Para ativar o deploy de edge functions:**
 O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 funções do projeto excedem o limite de 100 do plano Supabase (HTTP 402). O deploy controlado permanece em `deploy.yml` (workflow_dispatch / tag `v*`).
+
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
 2. Nome: `SUPABASE_ACCESS_TOKEN`
 3. Valor: token de serviço da conta Supabase (disponível em supabase.com/dashboard/account/tokens)
@@ -198,14 +210,15 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 
 **O que trava o deploy completo:**
 
-| Secret | Para que serve | Onde obter |
-|---|---|---|
-| `SUPABASE_ACCESS_TOKEN` | Deploy de edge functions via `supabase functions deploy` | supabase.com/dashboard/account/tokens |
-| `SUPABASE_DB_PASSWORD` | Aplicar migrations via `supabase db push --linked` | Supabase Dashboard → Settings → Database → Database password |
+| Secret                  | Para que serve                                           | Onde obter                                                   |
+| ----------------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
+| `SUPABASE_ACCESS_TOKEN` | Deploy de edge functions via `supabase functions deploy` | supabase.com/dashboard/account/tokens                        |
+| `SUPABASE_DB_PASSWORD`  | Aplicar migrations via `supabase db push --linked`       | Supabase Dashboard → Settings → Database → Database password |
 
 **⚠️ AVISO — migrations:** O passo de migrations do Deploy Pipeline usa `supabase db push --linked`, que aplica **todas** as migrations pendentes de uma vez. O processo controlado do projeto é via workflow **Apply Migration** (uma migration por vez). Configure `SUPABASE_DB_PASSWORD` apenas se souber quantas migrations estão pendentes e aceitar aplicá-las em bulk — caso contrário, use Apply Migration e deixe `SUPABASE_DB_PASSWORD` sem configurar.
 
 **O que fazer (passo a passo):**
+
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions**
 2. Adicione `SUPABASE_ACCESS_TOKEN` (token da conta Supabase)
 3. Para deploy das edge functions: **Actions → Deploy Pipeline → Run workflow** (ou criar uma tag `v*`)
@@ -219,16 +232,20 @@ O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 f
 **Run com falha:** [#39803271011](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39803271011) — `conclusion=failure`
 
 **Causa raiz:** O input `migration_file` foi fornecido como caminho completo:
+
 ```
 supabase/migrations/20261014000002_fix_concurrently_indexes.sql
 ```
+
 O workflow rejeita qualquer input contendo `/` (proteção contra shell injection) e falha no step "Validar input" com:
+
 ```
 Erro: migration_file não pode conter '/', '..', ';', '`' ou '$'
 ```
 
 **Uso correto:**  
 Fornecer **apenas o nome do arquivo** (sem o prefixo de diretório):
+
 ```
 20261014000002_fix_concurrently_indexes.sql
 ```
@@ -236,18 +253,17 @@ Fornecer **apenas o nome do arquivo** (sem o prefixo de diretório):
 **Pré-requisito adicional:** O workflow também exige o secret `SUPABASE_DB_URL` para conectar ao banco (veja §2 acima). Sem esse secret, o step de aplicação de migration falha. Configure `SUPABASE_DB_URL` antes de disparar o workflow.
 
 **O que fazer (passo a passo):**
+
 1. Configure `SUPABASE_DB_URL` conforme §2 acima (se ainda não configurado)
 2. Acesse: **Actions → Apply Migration → Run workflow**
 3. No campo `migration_file`, informe **apenas o nome do arquivo**:
    - ✅ Correto: `20261014000002_fix_concurrently_indexes.sql`
    - ❌ Errado: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
 
-**Bloqueio adicional de schema (deve ser resolvido antes de reaplicar):**  
-A migration `20261014000002_fix_concurrently_indexes.sql` (linhas 34-39) cria índices nas colunas `user_id` e `deal_id` da tabela `activities`. Essas colunas **não existem** na tabela `activities` em produção. Com `ON_ERROR_STOP=1` (padrão do workflow), a execução falhará com `column "user_id" does not exist` mesmo que o input e o secret estejam corretos.
+**Bloqueio de schema — CORRIGIDO (versionado em PR #319):**  
+A migration `20261014000002_fix_concurrently_indexes.sql` foi corrigida para adicionar guards de existência de coluna (`information_schema.columns`) antes de criar cada índice nas colunas `user_id`, `client_id` e `deal_id` da tabela `activities`. Se a coluna não existir, o índice é pulado com `RAISE NOTICE` em vez de falhar. A migration agora é idempotente e segura em qualquer schema.
 
-**Pré-requisito de schema:** antes de executar o workflow, verifique se as colunas `user_id` e `deal_id` já foram adicionadas à tabela `activities` (via migration anterior ou manualmente). Se não existirem, crie uma migration adicionando-as antes de executar este workflow.
-
-**Status:** Requer verificação/correção de schema antes de reaplicar — o workflow em si funciona, mas a migration falhará por incompatibilidade de schema.
+**Status:** Bloqueio de schema resolvido. Pendências restantes: `SUPABASE_DB_URL` (§2) e uso correto do input (nome do arquivo sem path). O workflow pode ser disparado após configurar o secret.
 
 ---
 
@@ -262,6 +278,7 @@ A migration `20261014000002_fix_concurrently_indexes.sql` (linhas 34-39) cria í
 **O que é afetado:** Deploy automático pós-release. O workflow continua funcionando corretamente quando acionado via `workflow_dispatch` (manualmente) ou via tag criada por um humano ou PAT.
 
 **O que fazer (passo a passo):**
+
 1. Crie um Personal Access Token (PAT) classic com permissão `workflow` (leia-se também `contents: write`) em: **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**
 2. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
 3. Nome: `GH_PAT` (ou qualquer nome que preferir)
