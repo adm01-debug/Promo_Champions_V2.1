@@ -63,3 +63,43 @@ A action `googleapis/release-please-action` precisa abrir/atualizar PRs de relea
 
 **Alternativa (com PAT, mais controle):**  
 Crie um Personal Access Token com permissões `contents: write` e `pull-requests: write`, adicione como secret `RELEASE_PLEASE_TOKEN`, e atualize o workflow para usar `token: ${{ secrets.RELEASE_PLEASE_TOKEN }}`.
+
+---
+
+## 4. E2E Logado (Quote-to-Sale Guard Rails) — falta `E2E_TEST_EMAIL` e `E2E_TEST_PASSWORD`
+
+**Workflow:** `.github/workflows/quote-to-sale-e2e.yml`  
+**Último run com falha:** branch `fix/hermes-420605-integracoes-r2`
+
+**Por que trava:**  
+Os testes Playwright de ponta a ponta precisam de credenciais de uma conta real no Supabase para simular o fluxo de cotação → venda logado. Sem `E2E_TEST_EMAIL` e `E2E_TEST_PASSWORD` o login falha e todos os specs dependentes são abortados.
+
+**O que fazer:**
+1. Crie uma conta de teste dedicada no Supabase Dashboard → projeto `usyxfpqlsspldubptrdl` → Authentication → Users → **Add user**
+2. Acesse: **GitHub → Settings → Secrets and variables → Actions**
+3. Adicione `E2E_TEST_EMAIL` com o e-mail da conta de teste
+4. Adicione `E2E_TEST_PASSWORD` com a senha da conta de teste
+5. O workflow dispara automaticamente em PRs que tocam nos arquivos de E2E
+
+---
+
+## 5. Running Copilot Code Review — é um GitHub App, não um workflow editável
+
+**Tipo:** GitHub App dinâmica (não há arquivo `.github/workflows/` correspondente)
+
+**Por que não é editável:**  
+O "Copilot Code Review" é uma feature do GitHub Copilot Enterprise/Business que roda como App e não como workflow YAML. Não existe arquivo de workflow a corrigir no repositório.
+
+**O que fazer (se o review estiver falhando):**
+1. Acesse: **GitHub → Settings → GitHub Apps** ou **Settings → Integrations**
+2. Verifique se o Copilot for Pull Requests está ativado para o repositório
+3. Se o App não aparecer nos checks da PR, solicite ao dono da organização que habilite "Copilot code review" em **Organization Settings → Copilot → Policies**
+
+---
+
+## 6. `.github/workflows/main.yml` — arquivo não existe no repositório
+
+**Situação:** O arquivo `.github/workflows/main.yml` não existe no repositório (verificado em 2026-10-22).
+
+**O que fazer:**  
+Se um workflow com esse nome for necessário, ele precisa ser criado do zero. Informe qual CI precisa de um `main.yml` (ex.: teste em push na main, deploy automático) e o arquivo será criado com a configuração correta.
