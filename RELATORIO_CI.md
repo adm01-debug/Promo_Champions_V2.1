@@ -415,3 +415,60 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 | **DB Backup**         | `39714980171` (c40b9961) | ❌ failure | `SUPABASE_DB_URL`+`BACKUP_ENCRYPTION_KEY` — **PENDENCIAS §2** |
 
 **4 falhas remanescentes = 100% por configuração externa (secrets/Settings). Zero falhas por código.**
+
+---
+
+## §12.6 — Sessão 6: baseline local + despachos confirmando bloqueios externos (2026-10-22)
+
+### Baseline local no HEAD `75e34f69` (sessão 6)
+
+Coletado às ≈20:42–20:44 UTC sobre o HEAD `75e34f69` (merge do PR #320):
+
+| Check               | Resultado                            |
+| ------------------- | ------------------------------------ |
+| `npm run lint`      | exit 0, 0 erros ✅                   |
+| `npm run typecheck` | exit 0, 0 erros ✅                   |
+| `npm run test`      | 649 testes passando (66 arquivos) ✅ |
+
+**Conclusão: zero regressão em relação ao baseline das sessões anteriores.**
+
+### Runs disparados pelo push do PR #320 (SHA `75e34f69`)
+
+| Run ID        | Workflow                | Conclusão  | Link                                                                                                                      |
+| ------------- | ----------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `39850551688` | CI/CD — Post-merge Main | ✅ success | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39850551688                                              |
+| `39850551657` | CodeQL                  | ✅ success | https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39850551657                                              |
+| `39850551689` | Release Please          | ❌ failure | PENDENCIAS §3 (Settings) — https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39850551689                   |
+| `39850551786` | PR Checks               | ⏳ queued  | Commit docs-only; sem código; runner em fila https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39850551786 |
+
+> CodeQL run `39849758903` em SHA `18aadd0f` (PR #319): confirmado **completed/success** nesta sessão.  
+> PR Checks run `39849758868` em SHA `18aadd0f` (PR #319): confirmado **completed/success** nesta sessão.
+
+### Despachos manuais (prova de bloqueio externo)
+
+| Run ID        | Workflow        | Conclusão  | Confirmação                                                                                                                                       |
+| ------------- | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `39851029499` | Release Please  | ❌ failure | **PROVA DIRETA**: dispatch → failure → confirma PENDENCIAS §3 https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851029499        |
+| `39851033561` | Cron Monitoring | ⏳ queued  | Aguarda runner; bloqueio `SUPABASE_SERVICE_ROLE_KEY` — PENDENCIAS §1 https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39851033561 |
+
+### Inventário is:failure atualizado — SHA `75e34f69`
+
+| Workflow              | Última run confirmada    | Conclusão  | Causa raiz documentada                                        |
+| --------------------- | ------------------------ | ---------- | ------------------------------------------------------------- |
+| CI Failure Alert      | `39851140099` (75e34f69) | ✅ success | — (múltiplos success em 75e34f69)                             |
+| CI/CD Post-merge Main | `39850551688` (75e34f69) | ✅ success | —                                                             |
+| CodeQL                | `39850551657` (75e34f69) | ✅ success | —                                                             |
+| PR Checks             | `39850551786` (75e34f69) | ⏳ queued  | Docs-only; sem mudança de código; runner em fila              |
+| **Release Please**    | `39851029499` (75e34f69) | ❌ failure | Settings: GH Actions perms — **PENDENCIAS §3** (CONFIRMADO)   |
+| **Cron Monitoring**   | `39851033561` (75e34f69) | ⏳ queued  | `SUPABASE_SERVICE_ROLE_KEY` ausente — **PENDENCIAS §1**       |
+| **Apply Migration**   | `39803271011` (9d2be89c) | ❌ failure | `SUPABASE_DB_URL` + input — **PENDENCIAS §11**                |
+| **DB Backup**         | `39714980171` (c40b9961) | ❌ failure | `SUPABASE_DB_URL`+`BACKUP_ENCRYPTION_KEY` — **PENDENCIAS §2** |
+
+**Resultado sessão 6:**
+
+- Baseline local HEAD `75e34f69`: lint/typecheck/649 testes — **zero regressão** ✅
+- Runs de código na main: CI/CD Main + CodeQL — **success** ✅
+- Release Please dispatch `39851029499`: **failure confirmada** = prova direta do bloqueio PENDENCIAS §3 ✅
+- 3 falhas confirmadas por bloqueio externo (Release Please, Apply Migration, DB Backup)
+- 1 pendência em fila (Cron Monitoring — esperado failure por secret ausente)
+- 1 run em fila sem código (PR Checks — esperado success por docs-only)
