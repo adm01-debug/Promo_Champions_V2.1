@@ -298,3 +298,63 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 | **Apply Migration**   | `39803271011` | `9d2be89c` | ❌ failure | Input path + `SUPABASE_DB_URL` + schema — PENDENCIAS §11 |
 
 **Próximo passo:** aguardar CI do PR #319 (CodeQL + Migrations Drift) concluir com `success`, depois mergear e reconfirmar os workflows na main no novo SHA.
+
+---
+
+## 12. Sessão 5 (2026-10-22) — fix(db) clients.active + fix(deps) dompurify + docs §11.3
+
+### 12.1 Correções aplicadas
+
+| Commit    | Causa raiz                                                                                                                                                              |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ce67eb1` | `idx_clients_user_active` criava índice parcial `WHERE active = true` sem verificar se `clients.active` existe — envolto em bloco `DO` com `information_schema.columns` |
+| `9fb945c` | `dompurify <=3.4.16` tinha 1 CVE crítico (GHSA-cg2g-xh64-v4q7) + 2 altos — atualizado para 3.4.17 via `npm audit fix`; Security Audit agora passa                       |
+| `869e299` | Nota §11.3 corrigia drift check como validação de SQL — texto atualizado conforme finding P2 Codex: drift ≠ validação semântica                                         |
+
+### 12.2 Baseline local — executado em HEAD `869e299` (2026-10-22T19:50Z)
+
+| Check               | Resultado    | Detalhes                                                                           |
+| ------------------- | ------------ | ---------------------------------------------------------------------------------- |
+| `npm run lint`      | **exit 0** ✓ | ESLint: 0 erros, 0 warnings                                                        |
+| `npm run typecheck` | **exit 0** ✓ | tsc --noEmit: 0 erros TypeScript                                                   |
+| `npm run test`      | **exit 0** ✓ | 66 test files passed (1 skipped) · **649 tests passed** (2 skipped) · duração ~40s |
+
+**Delta vs baseline sessão 1 (§2): 0** — nenhuma regressão introduzida.
+
+### 12.3 Checks CI no PR #319 HEAD `869e299` — 2026-10-22T19:52Z
+
+| Check                               | Conclusão     | Observação                                   |
+| ----------------------------------- | ------------- | -------------------------------------------- |
+| Security Audit (production deps)    | ✅ `success`  | dompurify 3.4.17 corrige CVE crítico         |
+| Análise CodeQL (JavaScript/TS)      | ✅ `success`  | —                                            |
+| Repo vs supabase_migrations         | ✅ `success`  | sem drift detectado                          |
+| Migrations Gate                     | ✅ `success`  | —                                            |
+| Supabase Types Drift                | ✅ `success`  | —                                            |
+| SQL Suites (static + remote)        | ✅ `success`  | valida SQL da migration corrigida            |
+| Edge Functions Lint (deno)          | ✅ `success`  | —                                            |
+| k6 Load Smoke                       | ✅ `success`  | —                                            |
+| Detect Changes                      | ✅ `success`  | —                                            |
+| Lint & Type Check                   | `in_progress` | aguardando (esperado success — exit 0 local) |
+| Edge Functions Tests (deno)         | `in_progress` | aguardando                                   |
+| Varredura diária Dependabot         | `skipped`     | esperado                                     |
+| Auto-merge na PR nova do Dependabot | `skipped`     | esperado                                     |
+| Vercel Agent Review                 | `neutral`     | sem crédito — não bloqueia                   |
+| CodeQL (check suite separado)       | `neutral`     | não bloqueia                                 |
+
+### 12.4 Inventário completo da main — estado esperado pós-merge PR #319
+
+| Workflow              | Última run antes do merge | Conclusão  | Causa / Status                                                |
+| --------------------- | ------------------------- | ---------- | ------------------------------------------------------------- |
+| CI Failure Alert      | `39832496166` (875e58f6)  | ✅ success | —                                                             |
+| CI/CD Post-merge Main | `39831685761` (875e58f6)  | ✅ success | —                                                             |
+| CodeQL                | `39831685659` (875e58f6)  | ✅ success | —                                                             |
+| PR Checks             | `39831685726` (875e58f6)  | ✅ success | —                                                             |
+| **Release Please**    | `39831685962` (875e58f6)  | ❌ failure | Bloqueio externo — **PENDENCIAS §3**                          |
+| **Cron Monitoring**   | `39732489364` (c40b9961)  | ❌ failure | `SUPABASE_SERVICE_ROLE_KEY` — **PENDENCIAS §1**               |
+| **Apply Migration**   | `39803271011` (9d2be89c)  | ❌ failure | `SUPABASE_DB_URL` + input — **PENDENCIAS §11**                |
+| **DB Backup**         | `39714980171`             | ❌ failure | `SUPABASE_DB_URL`+`BACKUP_ENCRYPTION_KEY` — **PENDENCIAS §2** |
+
+> As 4 falhas remanescentes são por configuração externa (secrets/Settings), não por código.
+> Todas documentadas com motivo exato e passo a passo em PENDENCIAS.md.
+
+**Próximo passo:** aguardar Lint & Type Check e Edge Functions Tests concluírem, verificar `mergeable_state`, fazer merge squash do PR #319 e confirmar workflows na main.
