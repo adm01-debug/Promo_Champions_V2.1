@@ -80,7 +80,13 @@ Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
     ];
     const ownerBySale = new Map<string, string | null>();
     if (saleIds.length) {
-      type SaleRow = { id: string; salespeople?: { auth_user_id?: string | null }[] | null };
+      type SaleRow = {
+        id: string;
+        salespeople?:
+          | { auth_user_id?: string | null }
+          | { auth_user_id?: string | null }[]
+          | null;
+      };
       const sales = await chunkedIn<SaleRow>(
         saleIds,
         (chunk) =>
@@ -91,7 +97,9 @@ Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
         { maxConcurrency: 4, label: "recompute-stage-baselines.sales" },
       );
       for (const s of sales) {
-        ownerBySale.set(s.id, s.salespeople?.[0]?.auth_user_id ?? null);
+        // Embed many-to-one devolve objeto em runtime; o tipo gerado o declara array.
+        const sp = Array.isArray(s.salespeople) ? s.salespeople[0] : s.salespeople;
+        ownerBySale.set(s.id, sp?.auth_user_id ?? null);
       }
     }
 

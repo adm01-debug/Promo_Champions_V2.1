@@ -76,7 +76,7 @@ export function DeadLetterIngestPanel() {
     void load();
     // Realtime subscription — recarrega em qualquer mudança de status dead_letter.
     const channel = supabase
-      .channel('dead-letter-ingest-jobs')
+      .channel(`dead-letter-ingest-jobs-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'call_recording_ingest_jobs' },

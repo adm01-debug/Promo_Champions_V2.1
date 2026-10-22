@@ -61,7 +61,7 @@ export function useQuotaAttainmentPredictions() {
 
   useEffect(() => {
     const ch = supabase
-      .channel('quota-predictions-rt')
+      .channel(`quota-predictions-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'quota_attainment_predictions' },
@@ -96,7 +96,7 @@ export function useQuotaAttainmentAlerts() {
 
   useEffect(() => {
     const ch = supabase
-      .channel('quota-alerts-rt')
+      .channel(`quota-alerts-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'quota_attainment_alerts' },

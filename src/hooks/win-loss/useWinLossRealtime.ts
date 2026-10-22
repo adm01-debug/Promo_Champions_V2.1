@@ -10,7 +10,7 @@ export function useWinLossRealtime(opts?: { onNewPattern?: () => void }) {
 
   useEffect(() => {
     const channel = supabase
-      .channel('win-loss-rt')
+      .channel(`win-loss-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'win_loss_analyses' },

@@ -28,7 +28,7 @@ export function useV4DeadLetters(status: V4DeadLetterStatus, search = '') {
 
   useEffect(() => {
     const ch = supabase
-      .channel('v4-dead-letters')
+      .channel(`v4-dead-letters-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'v4_callback_dead_letters' },
