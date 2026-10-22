@@ -321,25 +321,25 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 
 **Delta vs baseline sessão 1 (§2): 0** — nenhuma regressão introduzida.
 
-### 12.3 Checks CI no PR #319 HEAD `869e299` — 2026-10-22T19:52Z
+### 12.3 Checks CI no PR #319 HEAD `869e299` — conclusão confirmada 2026-10-22T19:55Z
 
-| Check                               | Conclusão     | Observação                                   |
-| ----------------------------------- | ------------- | -------------------------------------------- |
-| Security Audit (production deps)    | ✅ `success`  | dompurify 3.4.17 corrige CVE crítico         |
-| Análise CodeQL (JavaScript/TS)      | ✅ `success`  | —                                            |
-| Repo vs supabase_migrations         | ✅ `success`  | sem drift detectado                          |
-| Migrations Gate                     | ✅ `success`  | —                                            |
-| Supabase Types Drift                | ✅ `success`  | —                                            |
-| SQL Suites (static + remote)        | ✅ `success`  | valida SQL da migration corrigida            |
-| Edge Functions Lint (deno)          | ✅ `success`  | —                                            |
-| k6 Load Smoke                       | ✅ `success`  | —                                            |
-| Detect Changes                      | ✅ `success`  | —                                            |
-| Lint & Type Check                   | `in_progress` | aguardando (esperado success — exit 0 local) |
-| Edge Functions Tests (deno)         | `in_progress` | aguardando                                   |
-| Varredura diária Dependabot         | `skipped`     | esperado                                     |
-| Auto-merge na PR nova do Dependabot | `skipped`     | esperado                                     |
-| Vercel Agent Review                 | `neutral`     | sem crédito — não bloqueia                   |
-| CodeQL (check suite separado)       | `neutral`     | não bloqueia                                 |
+| Check                               | Conclusão    | Observação                               |
+| ----------------------------------- | ------------ | ---------------------------------------- |
+| Security Audit (production deps)    | ✅ `success` | dompurify 3.4.17 corrige CVE crítico     |
+| Análise CodeQL (JavaScript/TS)      | ✅ `success` | —                                        |
+| Repo vs supabase_migrations         | ✅ `success` | sem drift detectado                      |
+| Migrations Gate                     | ✅ `success` | —                                        |
+| Supabase Types Drift                | ✅ `success` | —                                        |
+| SQL Suites (static + remote)        | ✅ `success` | valida SQL da migration corrigida        |
+| Edge Functions Lint (deno)          | ✅ `success` | —                                        |
+| k6 Load Smoke                       | ✅ `success` | —                                        |
+| Detect Changes                      | ✅ `success` | —                                        |
+| Lint & Type Check                   | ✅ `success` | confirmado via API (check run concluído) |
+| Edge Functions Tests (deno)         | ✅ `success` | confirmado via API (check run concluído) |
+| Varredura diária Dependabot         | `skipped`    | esperado                                 |
+| Auto-merge na PR nova do Dependabot | `skipped`    | esperado                                 |
+| Vercel Agent Review                 | `neutral`    | sem crédito — não bloqueia               |
+| CodeQL (check suite separado)       | `neutral`    | não bloqueia                             |
 
 ### 12.4 Inventário completo da main — estado esperado pós-merge PR #319
 
