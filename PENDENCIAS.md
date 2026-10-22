@@ -122,7 +122,25 @@ Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failur
 
 ---
 
-## 6. ✅ `.github/workflows/main.yml` — CRIADO (2026-10-22)
+## 6. Análise CodeQL (JavaScript/TypeScript) — falha pré-existente, não causada por esta branch
+
+**Tipo:** Check run do CodeQL Advanced Security (GitHub App, não workflow YAML do projeto)  
+**Status no PR #313 (SHA `c5a3d4c`):** `completed / failure`  
+**Status na main (`0770e49`):** `completed / failure` (confirmado — falha anterior ao PR #313)
+
+**Por que falha:**  
+O CodeQL Advanced Security encontra alertas no código TypeScript do projeto. Esta falha já existia na main antes de qualquer alteração desta sessão. O diff do PR #313 é exclusivamente de arquivos YAML (`.github/workflows/`) — sem alteração de código TypeScript ou JavaScript. A falha é pré-existente e não relacionada às correções de CI.
+
+**O que fazer:**  
+1. Acesse: **GitHub → Security → Code scanning alerts** para ver os alertas CodeQL
+2. Resolva os alertas de segurança no código TypeScript do projeto
+3. Os alertas precisam ser triados por um desenvolvedor com contexto do negócio — não é corrigível via YAML
+
+**Nota:** `Análise CodeQL (JavaScript/TypeScript)` **NÃO é required check para o CI Gate** — o CI Gate depende apenas de `lint-and-typecheck`, `test` e `build`. Portanto não bloqueia o merge do PR #313.
+
+---
+
+## 7. ✅ `.github/workflows/main.yml` — CRIADO (2026-10-22)
 
 **Workflow:** `.github/workflows/main.yml` (`CI/CD — Post-merge Main`)  
 **Status:** Arquivo criado e incluso no PR #313 (aguardando merge).
