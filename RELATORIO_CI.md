@@ -279,7 +279,9 @@ O baseline da sessão anterior (§2) permanece válido: nenhum arquivo de códig
 | Auto-merge na PR nova do Dependabot | `completed` | `skipped` (esperado)                   |
 | Vercel Agent Review                 | `completed` | `neutral` (sem crédito — não bloqueia) |
 
-> Checks em `queued` aguardam runner disponível. `Repo vs supabase_migrations` já passou com `success` — confirma que a migration corrigida está válida.
+> Checks em `queued` aguardam runner disponível.
+>
+> **Nota:** `Repo vs supabase_migrations` confirma apenas que não há divergência de versões entre o repositório e o banco — **não valida o SQL em si**. O job compara versões locais vs. remotas e trata migrations pendentes como aviso; pode concluir com sucesso sem executar o SQL. A validação sintática/semântica da migration depende do resultado do check `SQL Suites (static + remote)`, ainda `queued` no momento deste registro. Enquanto esse check não concluir, o status da migration é "sem drift detectado, validação SQL pendente".
 
 ### 11.4 Inventário das falhas na main — estado após merge PR #318 (SHA `875e58f6`)
 
