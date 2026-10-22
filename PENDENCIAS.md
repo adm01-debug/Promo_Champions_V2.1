@@ -1,9 +1,34 @@
 # PENDÊNCIAS — Workflows com bloqueio externo
 
 Gerado em: 2026-10-22  
+Atualizado em: 2026-10-22  
 Branch: `claude/compassionate-wright-gehxir`
 
-Estes workflows não podem ser verdes sem ação manual do responsável. Cada item descreve o que trava, por quê e o passo exato para desbloquear.
+Estes workflows não podem ser verdes sem ação manual do responsável, ou estão aguardando CI para merge de correção. Cada item descreve o que trava, por quê e o passo exato para desbloquear.
+
+---
+
+## 0. CI Failure Alert — aguardando merge do PR #313 (CI Gate queued)
+
+**Workflow:** `.github/workflows/ci-failure-alert.yml`  
+**Último run com falha na main:** [#39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `event=push`, `conclusion=failure`, `total_jobs=0`
+
+**Por que falha:**  
+O trigger `workflow_run` sem filtro `workflows:` nunca disparou um run real em 107 execuções históricas — todos os runs são ghost evaluation runs (`event=push`, 0 jobs) que o GitHub cria ao avaliar o trigger. Esses ghost runs sempre têm `conclusion=failure`.
+
+**Correção preparada (PR #313):**  
+[PR #313](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/313) adiciona:
+1. `on: workflow_dispatch` — permite dispatch manual para produzir run com `conclusion=success`
+2. `workflows: ["PR Checks"]` — filtra o `workflow_run` para disparar apenas quando PR Checks concluir
+
+**Bloqueio atual:** PR #313 aguarda CI Gate (Detect Changes + CodeQL queued no SHA `a7066fc`).
+
+**O que fazer após o merge automático:**  
+Quando CI Gate passar e o PR for mergeado, disparar manualmente:
+- Actions → CI Failure Alert → Run workflow (branch: main)
+- Confirmar que o run produz `conclusion=success`
+
+---
 
 ---
 
