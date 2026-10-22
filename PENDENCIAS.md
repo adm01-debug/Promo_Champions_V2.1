@@ -8,25 +8,18 @@ Estes workflows não podem ser verdes sem ação manual do responsável, ou est�
 
 ---
 
-## 0. CI Failure Alert — aguardando merge do PR #313 (CI Gate queued)
+## 0. ✅ CI Failure Alert — CONCLUÍDO (2026-10-22)
 
 **Workflow:** `.github/workflows/ci-failure-alert.yml`  
-**Último run com falha na main:** [#39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `event=push`, `conclusion=failure`, `total_jobs=0`
+**Último run com falha (ghost run):** [#39781606323](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781606323) — `event=push`, `conclusion=failure`, `total_jobs=0`  
+**Run de comprovação:** [#39792679213](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792679213) — `event=workflow_dispatch`, `conclusion=success` ✅ (SHA `8092e31`)
 
-**Por que falha:**  
-O trigger `workflow_run` sem filtro `workflows:` nunca disparou um run real em 107 execuções históricas — todos os runs são ghost evaluation runs (`event=push`, 0 jobs) que o GitHub cria ao avaliar o trigger. Esses ghost runs sempre têm `conclusion=failure`.
-
-**Correção preparada (PR #313):**  
-[PR #313](https://github.com/adm01-debug/Promo_Champions_V2.1/pull/313) adiciona:
+**Correção aplicada (PR #313, mergeado 2026-10-22):**  
 1. `on: workflow_dispatch` — permite dispatch manual para produzir run com `conclusion=success`
-2. `workflows: ["PR Checks"]` — filtra o `workflow_run` para disparar apenas quando PR Checks concluir
+2. `workflows: [14 nomes]` — filtra o `workflow_run` para evitar ghost runs
+3. Guard movido de job-level para step-level — evita all-jobs-skipped → failure
 
-**Bloqueio atual:** PR #313 aguarda CI Gate (Detect Changes + CodeQL queued no SHA `a7066fc`).
-
-**O que fazer após o merge automático:**  
-Quando CI Gate passar e o PR for mergeado, disparar manualmente:
-- Actions → CI Failure Alert → Run workflow (branch: main)
-- Confirmar que o run produz `conclusion=success`
+**Status:** ✅ CONCLUÍDO — run `#39792679213` concluiu com `conclusion=success` em 2026-10-22T14:12:34Z.
 
 ---
 
@@ -122,21 +115,60 @@ Verificado que "Running Copilot Code Review" **NÃO aparece no filtro `is:failur
 
 ---
 
-## 6. Análise CodeQL (JavaScript/TypeScript) — falha pré-existente, não causada por esta branch
+## 6. Análise CodeQL (JavaScript/TypeScript) — falha pré-existente, não causada pelas correções de CI
 
-**Tipo:** Check run do CodeQL Advanced Security (GitHub App, não workflow YAML do projeto)  
-**Status no PR #313 (SHA `c5a3d4c`):** `completed / failure`  
-**Status na main (`0770e49`):** `completed / failure` (confirmado — falha anterior ao PR #313)
+**Workflow:** `.github/workflows/codeql.yml` (`CodeQL`)  
+**Último run com falha confirmado na main:** [#39781608156](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39781608156) — SHA `0770e49`, `completed / failure`  
+**Run em andamento na main (SHA `8092e31`):** [#39792626935](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626935) — `queued` (esperado: falha pré-existente)
 
 **Por que falha:**  
-O CodeQL Advanced Security encontra alertas no código TypeScript do projeto. Esta falha já existia na main antes de qualquer alteração desta sessão. O diff do PR #313 é exclusivamente de arquivos YAML (`.github/workflows/`) — sem alteração de código TypeScript ou JavaScript. A falha é pré-existente e não relacionada às correções de CI.
+O CodeQL Advanced Security (`codeql.yml`) encontra alertas de segurança no código TypeScript do projeto. Esta falha já existia na main **antes** de qualquer alteração desta sessão — confirmado no SHA `0770e49` (run `39781608156`, anterior ao PR #313). O diff do PR #313 é exclusivamente de arquivos YAML (`.github/workflows/`) — sem alteração de código TypeScript ou JavaScript. A falha é 100% pré-existente.
 
-**O que fazer:**  
-1. Acesse: **GitHub → Security → Code scanning alerts** para ver os alertas CodeQL
-2. Resolva os alertas de segurança no código TypeScript do projeto
-3. Os alertas precisam ser triados por um desenvolvedor com contexto do negócio — não é corrigível via YAML
+**O que trava:**  
+Os alertas CodeQL precisam ser triados e corrigidos por um desenvolvedor com contexto do negócio — não é corrigível via YAML de workflow.
 
-**Nota:** `Análise CodeQL (JavaScript/TypeScript)` **NÃO é required check para o CI Gate** — o CI Gate depende apenas de `lint-and-typecheck`, `test` e `build`. Portanto não bloqueia o merge do PR #313.
+**O que fazer (passo a passo):**
+1. Acesse: **GitHub → Security → Code scanning alerts**
+2. Revise cada alerta listado para o branch `main`
+3. Corrija os alertas de alta severidade no código TypeScript do projeto
+4. Marque como `Won't fix` os falsos positivos com justificativa
+
+**Nota:** `Análise CodeQL (JavaScript/TypeScript)` **NÃO é required check para o CI Gate** — o CI Gate depende apenas de `lint-and-typecheck`, `test` e `build`. Esta falha não bloqueou o merge do PR #313.
+
+---
+
+## 8. CI/CD — Post-merge Main — CORRIGIDO no PR #314 (aguardando merge)
+
+**Workflow:** `.github/workflows/main.yml`  
+**Último run com falha (main):** [#39792626899](https://github.com/adm01-debug/Promo_Champions_V2.1/actions/runs/39792626899) — SHA `8092e31`, `conclusion=failure`
+
+**Causa raiz:** O job `deploy-edge-functions` executava `supabase functions deploy --all`. O projeto tem 173 edge functions Deno; o plano Supabase limita a 100 deployadas simultaneamente. O secret `SUPABASE_ACCESS_TOKEN` estava configurado, então o deploy executava e falhava com HTTP 402 `Max number of functions reached for project`.
+
+**Correção aplicada (PR #314):** Job `deploy-edge-functions` removido inteiramente do `main.yml`. O workflow agora executa apenas o job `validate` (lint + typecheck + build). Deploy controlado de edge functions permanece em `deploy.yml` (workflow_dispatch / tag `v*`).
+
+**Status:** Aguardando merge do PR #314 e run de validação no novo SHA da main.
+
+---
+
+## 9. Supabase Types Drift — workflow não existe no repositório
+
+**Investigação (2026-10-22):** O workflow `.github/workflows/supabase-types-drift.yml` **não existe** no repositório. A API retorna 404 para esse arquivo e a listagem completa de 23 workflows não contém nenhum "Supabase Types Drift". Nenhum run desse workflow aparece no filtro `is:failure` da main. Não há arquivo para corrigir.
+
+**Status:** ✅ Sem ação necessária — workflow não existe.
+
+---
+
+## 7b. main.yml — deploy pode iniciar antes de PR Checks completar (Qodo Medium, pós-merge)
+
+**Workflow:** `.github/workflows/main.yml`  
+**Contexto:** Finding Medium do Qodo Code Review (PR #313, pós-merge, não corrigível retroativamente).
+
+**O que é:** O job `deploy-edge-functions` depende só de `validate` (lint + typecheck + build). Como `PR Checks` (que inclui testes) roda independentemente em pushes para main, um deploy poderia tecnicamente iniciar antes dos testes terminarem.
+
+**Por que não bloqueou o merge:** (1) O deploy exige `SUPABASE_ACCESS_TOKEN` — sem o secret configurado, o job é 100% skipped; (2) O finding foi classificado como Medium (não Critical); (3) A solução mais robusta requer refactor do `main.yml` para aguardar `PR Checks` via `workflow_run`.
+
+**O que fazer quando `SUPABASE_ACCESS_TOKEN` for configurado:**  
+Antes de ativar o deploy automático, refatorar `main.yml` para incluir o teste como prerequisite, ou usar o `workflow_run` do `PR Checks` como trigger do deploy em vez de `push: branches: [main]`.
 
 ---
 
@@ -150,11 +182,12 @@ O CodeQL Advanced Security encontra alertas no código TypeScript do projeto. Es
 2. Se `SUPABASE_ACCESS_TOKEN` estiver configurado: faz deploy automático de todas as edge functions para produção
 3. Se o secret não estiver configurado: exibe instruções no GitHub Actions Summary e termina **verde**
 
-**Para ativar o deploy automático de edge functions:**
+**Para ativar o deploy de edge functions:**
+O job `deploy-edge-functions` foi removido de `main.yml` (PR #314) pois as 173 funções do projeto excedem o limite de 100 do plano Supabase (HTTP 402). O deploy controlado permanece em `deploy.yml` (workflow_dispatch / tag `v*`).
 1. Acesse: **GitHub → Settings → Secrets and variables → Actions → New repository secret**
 2. Nome: `SUPABASE_ACCESS_TOKEN`
 3. Valor: token de serviço da conta Supabase (disponível em supabase.com/dashboard/account/tokens)
-4. O próximo push na `main` fará deploy automático de todas as 173 edge functions
+4. ⚠️ **Atenção:** o workflow `deploy.yml` (Deploy Pipeline) também executa `supabase functions deploy --project-ref ...` sem seleção de funções — ele implantará todas as 173 funções e atingirá o mesmo limite HTTP 402. **Não use Deploy Pipeline para deploy completo de funções** até que uma seleção explícita por nome seja implementada no workflow. Use o workflow **Apply Migration** para migrations, e implante funções individualmente via Supabase CLI (`supabase functions deploy <nome>`).
 
 ---
 
