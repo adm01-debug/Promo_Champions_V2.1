@@ -242,7 +242,12 @@ Fornecer **apenas o nome do arquivo** (sem o prefixo de diretório):
    - ✅ Correto: `20261014000002_fix_concurrently_indexes.sql`
    - ❌ Errado: `supabase/migrations/20261014000002_fix_concurrently_indexes.sql`
 
-**Status:** Sem correção de código necessária — o workflow funciona corretamente. O erro foi de input do usuário.
+**Bloqueio adicional de schema (deve ser resolvido antes de reaplicar):**  
+A migration `20261014000002_fix_concurrently_indexes.sql` (linhas 34-39) cria índices nas colunas `user_id` e `deal_id` da tabela `activities`. Essas colunas **não existem** na tabela `activities` em produção. Com `ON_ERROR_STOP=1` (padrão do workflow), a execução falhará com `column "user_id" does not exist` mesmo que o input e o secret estejam corretos.
+
+**Pré-requisito de schema:** antes de executar o workflow, verifique se as colunas `user_id` e `deal_id` já foram adicionadas à tabela `activities` (via migration anterior ou manualmente). Se não existirem, crie uma migration adicionando-as antes de executar este workflow.
+
+**Status:** Requer verificação/correção de schema antes de reaplicar — o workflow em si funciona, mas a migration falhará por incompatibilidade de schema.
 
 ---
 

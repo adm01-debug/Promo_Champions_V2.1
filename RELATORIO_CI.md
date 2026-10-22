@@ -63,7 +63,7 @@
 ## 5. Prova de conclusão — CI pós-merge na main (SHA `56cf2306`)
 
 > **Atualizado em 2026-10-22T17:40Z** — Merge do PR #316 (`fix/ci-workflows → main`) concluído.  
-> Todos os 4 workflows que dispararam no SHA `56cf2306` terminaram com `conclusion=success`.
+> Dos 4 workflows disparados no SHA `56cf2306`: **3 terminaram com `conclusion=success`** e **1 (Release Please) falhou por bloqueio de Settings** — não por código. Ver §3 PENDENCIAS.md.
 
 | Workflow | Run ID | Link | Conclusão | SHA |
 |---|---|---|---|---|
@@ -89,10 +89,21 @@
 
 ## 6. Filtro `is:failure` na main — confirmação final
 
-Verificado via API em 2026-10-22T17:40Z:  
-- Workflows com `conclusion=failure` na branch `main` (excluindo bloqueios externos documentados em PENDENCIAS.md): **0**
-- Release Please: failure por Settings (não por código) — documentado em PENDENCIAS.md §3
-- Cron Monitoring, DB Backup, E2E, Apply Migration: falhas por falta de secrets — documentados em PENDENCIAS.md §§1-2, 4, 11
+**Verificado via `list_workflow_runs` (branch=main, status=failure) em 2026-10-22T17:58Z:**
+
+| Workflow | Última run na main | SHA | Conclusão | Causa raiz |
+|---|---|---|---|---|
+| CI Failure Alert | 39825634406 | 56cf2306 | ✅ success | — |
+| CI/CD Post-merge Main | 39823878814 | 56cf2306 | ✅ success | — |
+| CodeQL | 39823878794 | 56cf2306 | ✅ success | — |
+| PR Checks | 39823878838 | 56cf2306 | ✅ success | — |
+| Dependabot Auto-merge | 39823901805 | 56cf2306 | ✅ success | — |
+| PR Review SLA | 39802594724 | 9d2be89c | ✅ success | — |
+| **Release Please** | 39823900351 | 56cf2306 | ❌ failure | Settings: "Allow GitHub Actions to create and approve PRs" — documentado PENDENCIAS §3 |
+| **Cron Monitoring** | 39732489364 | c40b9961 | ❌ failure | `SUPABASE_SERVICE_ROLE_KEY` ausente — documentado PENDENCIAS §1 |
+| **Apply Migration** | 39803271011 | 9d2be89c | ❌ failure | Input path completo + `SUPABASE_DB_URL` ausente — documentado PENDENCIAS §11 |
+
+**Conclusão:** 0 workflows com falha por código. As 3 falhas remanescentes são por configuração externa (bloqueio de Settings ou secrets ausentes), todas documentadas em PENDENCIAS.md.
 
 ---
 
