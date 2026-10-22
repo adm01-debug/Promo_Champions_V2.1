@@ -66,6 +66,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: validate
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    environment: production
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
     steps:
@@ -92,6 +96,7 @@ jobs:
           version: latest
 
       - name: Deploy edge functions para produção
+        id: deploy
         if: steps.gate.outputs.skip == 'false'
         run: |
           supabase functions deploy --project-ref usyxfpqlsspldubptrdl --no-verify-jwt
@@ -110,10 +115,15 @@ jobs:
             echo "1. Acesse: Settings → Secrets and variables → Actions" >> "$GITHUB_STEP_SUMMARY"
             echo "2. Adicione \`SUPABASE_ACCESS_TOKEN\` (token da conta em supabase.com/dashboard/account/tokens)" >> "$GITHUB_STEP_SUMMARY"
             echo "3. O próximo push na main fará deploy automático de todas as edge functions" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "## Deploy de Edge Functions — Concluído" >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.deploy.outcome }}" = "success" ]; then
+            echo "## Deploy de Edge Functions — Concluído ✅" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "**Projeto:** usyxfpqlsspldubptrdl" >> "$GITHUB_STEP_SUMMARY"
             echo "**SHA:** ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
             echo "**Dashboard:** https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl/functions" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Deploy de Edge Functions — Falhou ❌" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Resultado do step:** ${{ steps.deploy.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Verifique os logs acima para detalhes do erro." >> "$GITHUB_STEP_SUMMARY"
           fi
