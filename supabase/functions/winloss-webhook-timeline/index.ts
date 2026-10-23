@@ -119,12 +119,13 @@ export const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
     );
-    const { data: claims, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
-    if (claimsErr || !claims?.claims?.sub) {
+    // getUser valida a assinatura server-side; getClaims só decodificava o payload.
+    const { data: authData, error: claimsErr } = await supabaseAuth.auth.getUser(token);
+    if (claimsErr || !authData?.user) {
       jlog("warn", { msg: "auth_invalid_token", requestId });
       return jsonResponse(req, { error: "Unauthorized", requestId }, 401, requestId);
     }
-    const userId = claims.claims.sub as string;
+    const userId = authData.user.id;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,

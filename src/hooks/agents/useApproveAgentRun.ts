@@ -8,12 +8,23 @@ export function useApproveAgentRun() {
     mutationFn: async (runId: string) => {
       const { error } = await supabase.rpc('approve_agent_run', { _run_id: runId });
       if (error) throw error;
-      return runId;
+      // approve_agent_run só marca status='running' — a retomada real é feita
+      // pelo orchestrator com run_id, que executa os passos pending_approval.
+      const { data, error: execError } = await supabase.functions.invoke<{
+        run_id: string;
+        status: string;
+        result: Record<string, unknown>;
+      }>('ai-agent-orchestrator', { body: { run_id: runId } });
+      if (execError) throw execError;
+      return data;
     },
-    onSuccess: runId => {
-      toast.success('Plano aprovado', { description: 'O agente continuará a execução.' });
+    onSuccess: data => {
+      toast.success('Plano aprovado', {
+        description: 'As ações aprovadas foram executadas.',
+      });
       qc.invalidateQueries({ queryKey: ['agent-runs'] });
-      qc.invalidateQueries({ queryKey: ['agent-run-details', runId] });
+      if (data?.run_id)
+        qc.invalidateQueries({ queryKey: ['agent-run-details', data.run_id] });
     },
     onError: (e: Error) => toast.error('Falha ao aprovar', { description: e.message }),
   });

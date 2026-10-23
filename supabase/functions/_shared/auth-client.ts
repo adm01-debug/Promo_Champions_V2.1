@@ -47,15 +47,18 @@ export async function getUserClient(req: Request): Promise<AuthenticatedContext>
   });
 
   const token = authHeader.replace("Bearer ", "");
-  const { data, error } = await client.auth.getClaims(token);
-  if (error || !data?.claims?.sub) {
+  // auth.getClaims apenas decodifica o payload localmente: para JWT HS256 a
+  // assinatura NÃO é verificada, então um token forjado passaria. getUser
+  // valida server-side no GoTrue (assinatura, expiração e revogação).
+  const { data, error } = await client.auth.getUser(token);
+  if (error || !data?.user) {
     throw new UnauthorizedError("invalid_or_expired_token");
   }
 
   return {
     client,
-    userId: data.claims.sub,
-    email: (data.claims.email as string) ?? null,
+    userId: data.user.id,
+    email: data.user.email ?? null,
     authHeader,
   };
 }
