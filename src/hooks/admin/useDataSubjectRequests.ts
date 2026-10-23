@@ -85,8 +85,16 @@ export function useCreateDataSubjectRequest() {
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         throw new Error('E-mail do titular inválido');
       }
+      // A policy "Titular abre própria solicitação" exige subject_id = auth.uid()
+      // junto do e-mail do titular; quando o e-mail é de outra pessoa (registro
+      // manual por admin), subject_id fica nulo e vale a policy de admin.
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const subjectId = user?.email?.toLowerCase() === email ? user.id : null;
       const { error } = await supabase.from('data_subject_requests').insert({
         subject_email: email,
+        subject_id: subjectId,
         request_type: input.request_type,
         notes: input.notes?.trim() || null,
       });

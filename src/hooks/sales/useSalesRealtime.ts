@@ -111,13 +111,7 @@ export function useSalesRealtime(
 
           const xpFromSale = Math.floor(newSale.amount / 1000) * XP_REWARDS.SALE_PER_1000;
           if (xpFromSale > 0) {
-            const levelUpResult = await awardSaleXP(
-              newSale.salesperson_id!,
-              xpFromSale,
-              newSale.id,
-              newSale.amount,
-              salesperson.name
-            );
+            const levelUpResult = await awardSaleXP(newSale.id, salesperson.name);
             if (levelUpResult?.leveledUp) {
               const newLevelInfo = getLevelInfo(levelUpResult.newLevel);
               setTimeout(
