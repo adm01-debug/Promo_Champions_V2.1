@@ -180,3 +180,8 @@ END;
 $$;
 
 RESET ROLE;
+
+-- Roda sob `psql --single-transaction`: sem ROLLBACK explicito a suite
+-- COMMITa os inserts de login_attempts em producao e o proximo run em <1min
+-- falha em rate_limit_exceeded dentro do loop de 10 tentativas.
+ROLLBACK;
