@@ -24,7 +24,9 @@ Re-inventário completo por workflow após o merge da rodada anterior (#336) + r
 | PR Checks | 40502268347 | success |
 | PR Review SLA | 40500591914 | success |
 | QA Exhaustive (Weekly) | 40262593767 | success |
-| Running Copilot Code Review | 33686852597 | success |
+| Running Copilot Code Review | 33686852597 | success — run de 02/09, `event=dynamic` na main (check de GitHub App; fora do filtro `is:failure`) |
+| A11y Sweep (UI PRs) | — | sem run na main (só dispara em PRs de UI) |
+| Deploy Pipeline | — | sem run na main (só dispatch/tag) |
 | Dependabot PR runs | — | success |
 
 **Resultado da passada:** 0 falhas novas introduzidas pelos merges; as 3 únicas falhas são os bloqueios externos já documentados (mesmas causas-raiz reconfirmadas nos logs).
