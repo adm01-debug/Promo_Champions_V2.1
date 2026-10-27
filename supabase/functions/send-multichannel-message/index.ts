@@ -83,7 +83,8 @@ async function sendTwilio(
   if (!sid || !token) return { ok: false, error: "twilio_credentials_missing" };
 
   const fromAddr = channel === "whatsapp" ? `whatsapp:${from}` : from;
-  const toAddr = channel === "whatsapp" ? `whatsapp:${to}` : to;
+  // `to` chega já normalizado em dígitos; Twilio exige E.164 com '+'.
+  const toAddr = channel === "whatsapp" ? `whatsapp:+${to}` : `+${to}`;
   const form = new URLSearchParams({ From: fromAddr, To: toAddr, Body: body });
   const auth = btoa(`${sid}:${token}`);
   const response = await fetchWithTimeout(
@@ -330,13 +331,18 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
     // (env/internal) — ref resolvido tem precedência sobre o texto puro.
     const credentials = await resolveChannelCredentials(supabase, credential);
 
+    // Destino sempre em dígitos para o provedor: payload.to pode vir com
+    // máscara ('+55 (11) 9xxxx-xxxx') e cada API normaliza diferente — o
+    // mesmo valor gravado em to_number no record_outbound_message.
+    const toDigits = payload.to.replace(/\D/g, "");
+
     let result: ProviderResult;
     switch (credential.provider) {
       case "twilio":
         result = await sendTwilio(
           credentials,
           credential.from_number ?? "",
-          payload.to,
+          toDigits,
           payload.body,
           payload.channel,
         );
@@ -344,7 +350,7 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
       case "meta_cloud":
         result = await sendMetaCloud(
           credentials,
-          payload.to,
+          toDigits,
           payload.body,
           payload.templateId,
         );
@@ -356,14 +362,14 @@ Deno.serve(withRequestId("send-multichannel-message", async (req, ctx) => {
         }
         result = await sendEvolution(
           credentials as Record<string, string>,
-          payload.to,
+          toDigits,
           payload.body,
         );
         break;
       case "zapi":
         result = await sendZapi(
           credentials,
-          payload.to,
+          toDigits,
           payload.body,
         );
         break;

@@ -71,7 +71,7 @@ function asString(value: unknown): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
-/** `55119...@s.whatsapp.net` / `...@lid` / `...@g.us` → domínio + dígitos. */
+/** `55119...@s.whatsapp.net` / `user:device@...` / `...@lid` / `...@g.us` → domínio + dígitos. */
 function jidToPhone(remoteJid: string | null): {
   phone: string;
   isGroup: boolean;
@@ -80,7 +80,9 @@ function jidToPhone(remoteJid: string | null): {
   const at = remoteJid.indexOf("@");
   if (at <= 0) return null;
   const domain = remoteJid.slice(at + 1);
-  const phone = remoteJid.slice(0, at).replace(/\D/g, "");
+  // Baileys/Evolution traz sufixo de device no localpart ('user:device@...'):
+  // sem o split no ':', o dígito do device fundia no telefone.
+  const phone = remoteJid.slice(0, at).split(":")[0].replace(/\D/g, "");
   if (!phone) return null;
   return { phone, isGroup: domain === "g.us" };
 }
@@ -101,6 +103,37 @@ function extractText(message: Record<string, unknown>): {
     return { text: extendedText, messageType: "extendedTextMessage" };
   }
 
+  // Reação (emoji) não é resposta textual: o tipo é preservado para o
+  // chamador gravar event_type='reaction' em vez de 'reply'.
+  const reaction = message.reactionMessage as { text?: unknown } | undefined;
+  if (reaction) {
+    return {
+      text: asString(reaction.text) ?? "[reactionMessage]",
+      messageType: "reactionMessage",
+    };
+  }
+
+  // Wrappers que aninham a mensagem real (ephemeral, view-once, documento
+  // com legenda): extrai o conteúdo de dentro em vez de registrar o tipo.
+  for (const wrapper of [
+    "ephemeralMessage",
+    "viewOnceMessage",
+    "viewOnceMessageV2",
+    "viewOnceMessageV2Extension",
+    "documentWithCaptionMessage",
+  ]) {
+    const inner = (message[wrapper] as { message?: unknown } | undefined)
+      ?.message;
+    if (inner && typeof inner === "object" && !Array.isArray(inner)) {
+      return extractText(inner as Record<string, unknown>);
+    }
+  }
+
+  // Mídia com legenda usa a legenda como texto.
+  const media = message[type] as { caption?: unknown } | undefined;
+  const caption = asString(media?.caption);
+  if (caption) return { text: caption, messageType: type };
+
   // Mídia e outros tipos chegam sem texto legível — registra o tipo no lugar.
   return { text: `[${type}]`, messageType: type };
 }
@@ -117,6 +150,16 @@ function parseInboundMessage(event: EvolutionEvent): InboundMessage | null {
   if (!providerMessageId || !jid || jid.isGroup) return null;
 
   const message = data?.message;
+  // Eventos de protocolo ("apagar para todos", revogações, efêmeros) chegam
+  // com fromMe=false mas não são resposta do contato: ignorar para não
+  // fabricar reply em inbound_reply_events nem pausar cadência.
+  if (
+    message && typeof message === "object" && !Array.isArray(message) &&
+    "protocolMessage" in (message as Record<string, unknown>)
+  ) {
+    return null;
+  }
+
   const { text, messageType } =
     message && typeof message === "object" && !Array.isArray(message)
       ? extractText(message as Record<string, unknown>)
@@ -372,6 +415,12 @@ Deno.serve(
 
         const matchedEnrollmentId = lastOutbound?.enrollment_id ?? null;
 
+        // Reação (emoji) é registrada para visibilidade, mas não conta como
+        // resposta: não pausa cadência nem preenche replied_at — confirmação
+        // feita contra os consumidores de inbound_reply_events (listagem sem
+        // filtro de tipo; nenhum exige 'reply').
+        const isReaction = inbound.messageType === "reactionMessage";
+
         // Idempotência de ingestão: retry do webhook cai no UNIQUE
         // (provider, message_id) — mas os efeitos rodam mesmo no caminho de
         // duplicado porque são idempotentes (auto_pause é no-op se já pausado;
@@ -388,7 +437,7 @@ Deno.serve(
                 ? `${inbound.pushName}: ${inbound.text.slice(0, 120)}`
                 : inbound.text.slice(0, 140),
               received_at: receivedAt,
-              event_type: "reply",
+              event_type: isReaction ? "reaction" : "reply",
               matched_enrollment_id: matchedEnrollmentId,
               payload: inbound.raw as never,
             },
@@ -398,7 +447,7 @@ Deno.serve(
         if (insertError) throw insertError;
         const isDuplicate = !inserted?.length;
 
-        if (matchedEnrollmentId) {
+        if (matchedEnrollmentId && !isReaction) {
           const { error: pauseError } = await supabase.rpc(
             "auto_pause_enrollment",
             {
