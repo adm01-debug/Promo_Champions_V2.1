@@ -25,7 +25,7 @@ Re-inventário completo por workflow após o merge da rodada anterior (#336) + r
 | PR Review SLA | 40500591914 | success |
 | QA Exhaustive (Weekly) | 40262593767 | success |
 | Running Copilot Code Review | 33686852597 | success — run de 02/09, `event=dynamic` na main (check de GitHub App; fora do filtro `is:failure`) |
-| A11y Sweep (UI PRs) | — | sem run na main (só dispara em PRs de UI) |
+| A11y Sweep (UI PRs) | — | sem run na main até agora (dispara em PRs de UI ou `workflow_dispatch`) |
 | Deploy Pipeline | — | sem run na main (só dispatch/tag) |
 | Dependabot PR runs | — | success |
 
