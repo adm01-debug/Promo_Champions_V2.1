@@ -44,6 +44,19 @@ export function useDailyMissions(salespersonId?: string) {
         }));
       }
 
+      // Melhor esforço: recalcula o progresso no servidor antes de ler.
+      await supabase
+        .rpc(
+          'sync_challenge_progress' as never,
+          {
+            p_salesperson_id: salespersonId,
+          } as never
+        )
+        .then(
+          () => undefined,
+          () => undefined
+        );
+
       const { data: progress } = await supabase
         .from('daily_challenge_progress')
         .select('*')
