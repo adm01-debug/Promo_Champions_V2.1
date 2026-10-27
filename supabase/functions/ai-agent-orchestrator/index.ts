@@ -257,26 +257,29 @@ Deno.serve(
         name: string,
         args: Record<string, unknown>,
         targetType: string | null,
-        targetId: string | null
+        targetId: string | null,
+        spId: string | null
       ): Promise<Record<string, unknown> | null> => {
         if (name === 'add_note' && targetId) {
           // FK salesperson_id → salespeople.id (não auth.users.id);
           // outcome é enum NOT NULL — 'connected' é o default do form.
-          if (!callerSpId) throw new Error('salesperson_not_found');
+          // spId é o DONO da run: na retomada o chamador é o aprovador, que
+          // pode nem ter linha em salespeople — gravar nele quebrava a FK.
+          if (!spId) throw new Error('salesperson_not_found');
           await admin.from('activities').insert({
             activity_type: 'note',
             outcome: 'connected',
             notes: args.note,
-            salesperson_id: callerSpId,
+            salesperson_id: spId,
             ...(targetType === 'deal' ? { sale_id: targetId } : {}),
             ...(targetType === 'client' ? { client_id: targetId } : {}),
           });
           return { executed: true };
         }
         if (name === 'schedule_followup') {
-          if (!callerSpId) throw new Error('salesperson_not_found');
+          if (!spId) throw new Error('salesperson_not_found');
           await admin.from('agenda_events').insert({
-            salesperson_id: callerSpId,
+            salesperson_id: spId,
             title: args.title,
             scheduled_at: args.scheduled_at,
             description: args.description ?? null,
@@ -340,7 +343,21 @@ Deno.serve(
         let executed = 0;
         let failed = 0;
 
+        let claimedCount = 0;
         for (const step of pendingSteps ?? []) {
+          // Claim atômico do step: só a invocação que virar o status para
+          // 'executing' prossegue — duas chamadas concorrentes do mesmo
+          // run_id não executam as mutações em duplicata.
+          const { data: claimed } = await admin
+            .from('ai_agent_actions')
+            .update({ status: 'executing' })
+            .eq('id', step.id)
+            .eq('status', 'pending_approval')
+            .select('id')
+            .maybeSingle();
+          if (!claimed) continue;
+          claimedCount++;
+
           let newStatus = 'success';
           let toolOutput: Record<string, unknown>;
           try {
@@ -348,7 +365,8 @@ Deno.serve(
               step.tool_name,
               (step.tool_input ?? {}) as Record<string, unknown>,
               run.target_entity_type,
-              run.target_entity_id
+              run.target_entity_id,
+              run.salesperson_id
             );
             if (out) {
               toolOutput = out;
@@ -384,6 +402,15 @@ Deno.serve(
 
           const idx = stepsArr.findIndex(s => s?.index === step.step_index);
           if (idx >= 0) stepsArr[idx] = { ...stepsArr[idx], status: newStatus };
+        }
+
+        if ((pendingSteps?.length ?? 0) > 0 && claimedCount === 0) {
+          // Outra invocação já está processando esta run — não completar por
+          // cima (idempotência do fluxo de aprovação).
+          return new Response(JSON.stringify({ error: 'run_already_resuming' }), {
+            status: 409,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
         }
 
         const finalStatus = executed === 0 && failed > 0 ? 'failed' : 'completed';
@@ -491,7 +518,8 @@ Deno.serve(
                   name,
                   args,
                   target_entity_type ?? null,
-                  target_entity_id ?? null
+                  target_entity_id ?? null,
+                  callerSpId
                 );
                 if (out) {
                   toolOutput = out;
