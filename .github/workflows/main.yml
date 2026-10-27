@@ -1,0 +1,59 @@
+name: CI/CD — Post-merge Main
+
+# Roda automaticamente em todo push direto para main (incluindo squash merge de PRs).
+#
+# O que este workflow FAZ:
+#   Valida que o HEAD da main ainda compila (lint + typecheck + build) —
+#   defesa contra squash merges que passaram no PR Checks mas quebraram
+#   no merge com a base atual.
+#
+# Deploy de edge functions:
+#   NÃO feito aqui. O projeto tem 173 edge functions e o plano Supabase
+#   limita a 100 deployadas simultaneamente. Deploys controlados vão via
+#   Deploy Pipeline (workflow_dispatch ou tag v*) — veja deploy.yml.
+#
+# Relação com outros workflows:
+#   - PR Checks: roda em PRs e em push para main (gate de qualidade).
+#   - Deploy Pipeline: roda em workflow_dispatch ou push de tag v*.
+#   - Este workflow: post-merge em main → gate de integridade (validate only).
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-main-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate Main HEAD
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HUSKY: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build

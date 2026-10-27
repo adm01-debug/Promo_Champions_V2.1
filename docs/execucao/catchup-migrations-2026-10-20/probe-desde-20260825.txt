@@ -1,0 +1,296 @@
+-- 294 probes geradas
+probes geradas: 294
+20260827000001|column|public.campaign_health_alerts.dedupe_bucket|true
+20260827000001|function|public.update_client_portfolio_status@3|true
+20260827000001|index|public.uq_campaign_health_alerts_dedupe_bucket@campaign_health_alerts|true
+20260827000001|index|public.uq_inbound_reply_events_provider_message_id@inbound_reply_events|true
+20260830000000|view|public.race_leaderboard_view|true
+20260830000000|view|public.race_spectator_view|true
+20260830000001|column|public.prize_wheel_spins.request_id|true
+20260830000001|function|public.spin_prize_wheel@1|true
+20260830000001|index|public.prize_wheel_spins_salesperson_request_id_key@prize_wheel_spins|true
+20260830000002|function|public.auto_assign_lead@1|true
+20260830000002|function|public.reassign_inactive_client_portfolio@6|true
+20260830000002|function|public.route_unassigned_client_portfolio@4|true
+20260831130000|function|public.check_2fa_failed_attempts@1|true
+20260831130000|function|public.get_deleted_records@2|true
+20260831130000|function|public.get_login_lockout_status@1|true
+20260831130000|function|public.hard_delete_record@3|true
+20260831130000|function|public.log_security_event@4|true
+20260831130000|function|public.record_failed_login_attempt@3|true
+20260831130000|function|public.record_successful_login_attempt@1|true
+20260831130000|function|public.restore_deleted_record@3|true
+20260831130000|function|public.restore_record@2|true
+20260831130000|function|public.soft_delete_record@4|true
+20260831130000|policy|public.Admins can view login_attempts@login_attempts|true
+20260831130000|policy|public.Authenticated read for alert templates@cadence_alert_templates|true
+20260831130000|policy|public.Authenticated read for outcome rules@cadence_outcome_rules|true
+20260831130000|policy|public.Authenticated users can read follow_up_settings@follow_up_settings|true
+20260831130000|policy|public.Authenticated users can view active templates@follow_up_templates|true
+20260831130000|policy|public.Authenticated users can view expansion playbooks@expansion_playbooks|true
+20260831130000|policy|public.Authenticated users can view funnel rules@cadence_funnel_rules|true
+20260831130000|policy|public.Authenticated users can view versions@entity_versions|true
+20260831130000|policy|public.Authenticated users can view XP@salesperson_xp|true
+20260831130001|function|public.detect_slow_queries@2|true
+20260831130001|function|public.detect_stalled_cron_jobs@0|true
+20260831130001|function|public.match_weekly_players@0|true
+20260831130001|function|public.purge_telemetry_retention@0|true
+20260831130001|function|public.reset_pg_stat_statements_weekly@0|true
+20260831130001|index|public.cron_failure_alerts_unique@cron_failure_alerts|true
+20260831130001|index|public.idx_activities_deleted_by_fk@activities|true
+20260831130001|index|public.idx_cadence_enrollments_cadence_id_fk@cadence_enrollments|false
+20260831130001|index|public.idx_cadence_enrollments_client_id_fk@cadence_enrollments|false
+20260831130001|index|public.idx_client_churn_alerts_state_last_task_id_fk@client_churn_alerts_state|true
+20260831130001|index|public.idx_experiment_assignments_experiment_id_fk@experiment_assignments|true
+20260831130001|index|public.idx_experiment_assignments_variant_id_fk@experiment_assignments|true
+20260831130001|index|public.idx_experiment_variants_experiment_id_fk@experiment_variants|true
+20260831130001|index|public.idx_products_deleted_by_fk@products|true
+20260831130001|index|public.idx_slow_query_alerts_acknowledged_by_fk@slow_query_alerts|true
+20260831130001|index|public.idx_suppliers_deleted_by_fk@suppliers|true
+20260831130001|index|public.idx_teams_deleted_by_fk@teams|true
+20260831130001|index|public.slow_query_alerts_active_uk@slow_query_alerts|true
+20260831130002|policy|storage.owner can read own report snapshots@objects|true
+20260831130002|policy|storage.report_owners_can_write_exports@objects|true
+20260831130002|policy|storage.Salespeople delete own call audio@objects|true
+20260831130002|policy|storage.Salespeople read own call audio@objects|true
+20260831130002|policy|storage.Salespeople upload own call audio@objects|true
+20260831130003|function|public.trigger_campaign_health_alert@0|true
+20260831163000|cron|auto-task-queue-hourly|true
+20260831163000|cron|detect-client-churn-alerts-hourly|true
+20260831163000|function|public.trigger_detect_client_churn_alerts@0|true
+20260831163000|function|public.trigger_generate_urgent_client_tasks@0|true
+20260831170000|cron|check-v4-callback-alerts-every-5min|true
+20260831170000|cron|cron-failure-alerter-10min|true
+20260831170000|cron|edge-retry-threshold-alert-15min|true
+20260831170000|cron|notify-v4-quote-status-every-5min|true
+20260831170000|cron|process-call-recording-ingest-1min|true
+20260831170000|function|public.trigger_internal_edge_job@1|true
+20260902120000|function|public.sync_battle_score@0|true
+20260902180000|function|public.sync_battle_score@0|true
+20260902221500|policy|public.security_events_admin_select@security_events|false
+20260903000001|policy|public.leads_authenticated_all@leads|false
+20260904190000|function|public.unlock_race_item@2|true
+20260910153000|cron|check-v4-callback-alerts-every-5min|true
+20260910153000|cron|cron-failure-alerter-10min|true
+20260910153000|cron|deal-risk-digest-daily|true
+20260910153000|cron|email-bulk-retry-15min|true
+20260910153000|cron|notify-v4-quote-status-every-5min|true
+20260910153000|cron|process-call-recording-ingest-1min|true
+20260910153000|function|public.trigger_internal_edge_job@1|true
+20261001144000|cron|wal-health-alert-5min|true
+20261001144000|cron|winloss-webhook-health-monitor-15min|true
+20261001144000|function|public.trigger_internal_edge_job@1|true
+20261001150100|column|public.website_visitor_logs.consent_record_id|true
+20261001150100|column|public.website_visitor_logs.legal_basis|true
+20261001150100|column|public.website_visitor_logs.retention_expires_at|true
+20261001150100|function|public.anonymize_data_subject@5|true
+20261001150100|function|public.fn_website_visitor_log_consent@0|true
+20261001150100|function|public.has_active_consent@2|true
+20261001150100|index|public.idx_consent_records_purpose@consent_records|true
+20261001150100|index|public.idx_consent_records_subject_email@consent_records|true
+20261001150100|index|public.idx_consent_records_subject_id@consent_records|true
+20261001150100|index|public.idx_dsr_status_due@data_subject_requests|true
+20261001150100|index|public.idx_dsr_subject_email@data_subject_requests|true
+20261001150100|index|public.idx_website_visitor_logs_retention@website_visitor_logs|true
+20261001150100|policy|public.Admins gerenciam consent_records@consent_records|true
+20261001150100|policy|public.Admins gerenciam data_subject_requests@data_subject_requests|true
+20261001150100|policy|public.Titular abre própria solicitação@data_subject_requests|true
+20261001150100|policy|public.Titular lê própria solicitação@data_subject_requests|true
+20261001150100|policy|public.Titular lê próprio consentimento@consent_records|true
+20261001150100|policy|public.Titular registra próprio consentimento@consent_records|true
+20261001150100|policy|public.Titular revoga próprio consentimento@consent_records|true
+20261001150100|table|public.consent_records|true
+20261001150100|table|public.data_subject_requests|true
+20261001150100|trigger|public.trg_website_visitor_log_consent@website_visitor_logs|true
+20261001150100|trigger|public.update_consent_records_updated_at@consent_records|true
+20261001150100|trigger|public.update_data_subject_requests_updated_at@data_subject_requests|true
+20261001151000|cron|data-retention-purge-daily|true
+20261001151000|function|public.fn_apply_data_retention@0|true
+20261001151000|index|public.idx_audit_logs_changed_by_changed@audit_logs|true
+20261001151000|index|public.idx_audit_logs_table_changed@audit_logs|true
+20261001151000|index|public.idx_data_access_log_created@data_access_log|true
+20261001151000|index|public.idx_error_logs_created@error_logs|true
+20261001151000|index|public.idx_error_logs_user_created@error_logs|true
+20261001151000|index|public.idx_integration_logs_type_ts@integration_logs|true
+20261001151000|index|public.idx_login_attempts_created@login_attempts|true
+20261001151000|index|public.idx_login_attempts_email_created@login_attempts|true
+20261001151000|index|public.idx_query_telemetry_table_created@query_telemetry|true
+20261001151000|index|public.idx_query_telemetry_user_created@query_telemetry|true
+20261001151000|index|public.idx_security_events_type_created@security_events|true
+20261001151000|index|public.idx_security_events_user_created@security_events|true
+20261001151000|index|public.idx_session_activity_user_created@session_activity|true
+20261001151000|index|public.idx_web_vitals_user_created@web_vitals_samples|true
+20261001151000|index|public.idx_webhook_dedupe_source_received@webhook_inbound_dedupe|true
+20261001151000|index|public.idx_webhook_inbound_log_source_received@webhook_inbound_log|true
+20261001151000|index|public.idx_website_visitor_logs_domain_identified@website_visitor_logs|true
+20261001151000|policy|public.Admins leem data_retention_policies@data_retention_policies|true
+20261001151000|table|public.data_retention_policies|true
+20261001160000|extension|pg_net|true
+20261001160000|function|public.broadcast_sale_completed@0|true
+20261001160000|function|public.trigger_campaign_health_alert@0|true
+20261001160000|index|public.idx_edge_call_failures_created_at@edge_call_failures|true
+20261001160000|policy|public.Admins can view edge call failures@edge_call_failures|true
+20261001160000|table|public.edge_call_failures|true
+20261001160000|trigger|public.trg_broadcast_sale_completed@sales|true
+20261001190000|column|public.sales.external_deal_id|true
+20261001190000|function|public.upsert_client_from_quote@4|true
+20261001190000|index|public.ux_clients_email@clients|true
+20261001190000|index|public.ux_icp_data_bitrix_id@icp_data|true
+20261001190000|index|public.ux_sales_source_external_deal@sales|true
+20261001193000|column|public.public.delete_reason|false
+20261001193000|column|public.public.deleted_by|false
+20261001193000|index|public.idx_@public|false
+20261001193000|view|public.sales_with_markup|true
+20261001193100|column|public.audit_logs.new_data|true
+20261001193100|column|public.audit_logs.old_data|true
+20261001193100|column|public.audit_logs.record_id|true
+20261001193100|column|public.audit_logs.request_id|true
+20261001193100|column|public.audit_logs.table_name|true
+20261001193100|function|public.audit_log_row_change@0|true
+20261001193100|function|public.audit_scrub@1|true
+20261001193100|function|public.log_audit_event@5|true
+20261001193100|index|public.idx_audit_logs_record_id@audit_logs|true
+20261001193100|index|public.idx_audit_logs_table_name@audit_logs|true
+20261001193100|trigger|public.audit_business_changes@public|false
+20261001193200|function|public.bump_row_version@0|true
+20261001193200|trigger|public.bump_version@public|false
+20261001200000|function|public.sync_quote_from_webhook@23|true
+20261001203000|function|public.audit_user_roles_change@0|true
+20261001203000|trigger|public.trg_audit_user_roles@user_roles|true
+20261001203200|policy|public.Users can view own role@user_roles|true
+20261001203400|function|public.verify_reauth_request@2|true
+20261001203400|policy|public.Users can delete own reauth requests@reauthentication_requests|true
+20261001203500|column|public.user_mfa_settings.migrated_to_native_mfa|true
+20261001203500|function|public.get_mfa_status@0|true
+20261001210000|index|public.geocode_cache_created_at_idx@geocode_cache|true
+20261001210000|table|public.geocode_cache|true
+20261001213000|function|public.enforce_status_transition@0|true
+20261001213000|function|public.is_valid_status_transition@3|true
+20261001213000|function|public.transition_commission_status@4|true
+20261001213000|function|public.transition_sale_status@3|false
+20261001213000|policy|public.admin manager write status transitions@status_transitions|true
+20261001213000|policy|public.authenticated read status transitions@status_transitions|true
+20261001213000|table|public.status_transitions|true
+20261001213000|trigger|public.trg_enforce_status_transition@sales|true
+20261001213000|trigger|public.trg_enforce_status_transition@commissions|true
+20261001214000|function|private.add_salesperson_xp@3|true
+20261001214000|function|public.add_salesperson_xp@3|true
+20261001214000|function|public.get_app_config_number@2|true
+20261001214000|policy|public.admin manager write app_config@app_config|true
+20261001214000|policy|public.authenticated read app_config@app_config|true
+20261001214000|table|public.app_config|true
+20261001220000|function|public.get_stage_probability@1|true
+20261001220000|policy|public.stage_probabilities_select@stage_probabilities|true
+20261001220000|table|public.stage_probabilities|true
+20261001220100|column|public.sales.deal_status|true
+20261001220100|trigger|public.tr_notify_sale_victory@sales|true
+20261001220100|trigger|public.tr_victory_sale@sales|true
+20261001220100|trigger|public.trg_broadcast_sale_completed@sales|true
+20261002000100|function|public.fn_check_slo_burn_rate@0|true
+20261002000100|function|public.fn_slo_burn_rate@1|true
+20261002000100|policy|public.admin manager write app_config@app_config|true
+20261002000100|policy|public.authenticated read app_config@app_config|true
+20261002000100|table|public.app_config|true
+20261002010000|cron|webvitals-regression-alert-daily|true
+20261002010000|function|public.trigger_internal_edge_job@1|true
+20261002010100|function|public.transition_sale_status@4|true
+20261002020100|function|public.transition_sale_status@4|true
+20261005140000|function|public.get_user_role@1|true
+20261005140000|function|public.is_admin_or_manager@1|true
+20261005150000|function|public.fn_admin_cron_alert_breakdown@0|true
+20261005160000|function|public.get_user_role@1|true
+20261005160000|function|public.has_role@2|true
+20261005160000|function|public.is_admin_or_manager@1|true
+20261005170000|policy|public.Admins delete quote items@quote_items|true
+20261005170000|policy|public.Closers insert own quote items@quote_items|true
+20261005170000|policy|public.Closers update own quote items@quote_items|true
+20261005180000|function|private.update_territory_conquests@0|true
+20261005190000|function|private.auto_link_sale_to_account@0|true
+20261005200000|function|public.trg_refresh_ranking_on_sale@0|true
+20261005210000|constraint|public.territory_history_territory_id_fkey@territory_history|true
+20261005210000|function|private.update_territory_conquests@0|true
+20261005220000|view|public.v_quote_to_sale_invariants|true
+20261013120000|function|public.trigger_internal_edge_job@1|true
+20261013121000|function|public.auto_pause_enrollment@2|false
+20261013121000|function|public.auto_promote_sequence_winners@1|false
+20261013122000|function|public.admin_edge_cron_status@0|false
+20261013130000|constraint|public.commissions_sale_salesperson_key@commissions|false
+20261013130000|function|private.handle_sale_commissions@0|true
+20261013152000|column|public.deal_stage_history.is_backfilled|false
+20261013152000|function|public.get_industry_top_products@3|true
+20261013152000|function|public.trg_deal_stage_history@0|false
+20261013152000|function|public.trg_sales_stamp_closed_at@0|false
+20261013152000|index|public.mv_competitive_ranking_id_idx@mv_competitive_ranking|true
+20261013152000|matview|public.mv_competitive_ranking|true
+20261013152000|trigger|public.trg_deal_stage_history@sales|false
+20261013152000|trigger|public.trg_sales_stamp_closed_at@sales|false
+20261013152000|view|public.competitive_ranking|true
+20261013152000|view|public.revenue_forecast_view|true
+20261013153000|index|public.idx_integration_secret_refs_credential@integration_secret_refs|false
+20261013153000|index|public.idx_integration_secret_refs_owner@integration_secret_refs|false
+20261013153000|policy|public.Admins can delete secret refs@integration_secret_refs|false
+20261013153000|policy|public.Admins can insert secret refs@integration_secret_refs|false
+20261013153000|policy|public.Admins can update secret refs@integration_secret_refs|false
+20261013153000|policy|public.Owners can view their secret refs@integration_secret_refs|false
+20261013153000|table|public.integration_secret_refs|false
+20261013153000|trigger|public.trg_integration_secret_refs_updated_at@integration_secret_refs|false
+20261013170000|cron|bitrix24-sync-hourly|false
+20261013170000|function|public.trigger_internal_edge_job@1|true
+20261013171000|constraint|public.channel_credentials_provider_check@channel_credentials|true
+20261013172000|index|public.uq_inbound_reply_events_provider_message_id@inbound_reply_events|true
+20261014000000|constraint|public.race_events_event_type_check@race_events|true
+20261014000000|constraint|public.race_powerups_powerup_type_check@race_powerups|true
+20261014000000|cron|rotate-daily-challenges-daily|true
+20261014000000|cron|weekly-matchmaking|true
+20261014000000|extension|pg_net|true
+20261014000000|function|public.process_race_event_on_sale@0|true
+20261014000000|function|public.spin_prize_wheel@1|true
+20261014000000|function|public.trigger_internal_edge_job@1|true
+20261014000000|index|public.race_events_sale_dedup_idx@race_events|true
+20261014000000|index|public.race_powerups_source_sale_dedup_idx@race_powerups|true
+20261014000000|trigger|public.trg_process_race_event_on_sale@sales|true
+20261014000001|function|public.trigger_internal_edge_job@1|true
+20261014000002|index|public.idx_activities_client_id@activities|true
+20261014000002|index|public.idx_activities_created_at@activities|true
+20261014000002|index|public.idx_activities_deal_id@activities|false
+20261014000002|index|public.idx_activities_user_date@activities|false
+20261014000002|index|public.idx_activities_user_date_active@activities|false
+20261014000002|index|public.idx_activities_user_id@activities|false
+20261014000002|index|public.idx_clients_created_at@clients|true
+20261014000002|index|public.idx_clients_email@clients|true
+20261014000002|index|public.idx_clients_name_search@clients|true
+20261014000002|index|public.idx_clients_phone@clients|true
+20261014000002|index|public.idx_clients_user_active@clients|false
+20261014000002|index|public.idx_clients_user_id@clients|true
+20261014000002|index|public.idx_deals_client_id@deals|false
+20261014000002|index|public.idx_deals_created_at@deals|false
+20261014000002|index|public.idx_deals_created_status_active@deals|false
+20261014000002|index|public.idx_deals_status@deals|false
+20261014000002|index|public.idx_deals_title_search@deals|false
+20261014000002|index|public.idx_deals_user_id@deals|false
+20261014000002|index|public.idx_deals_user_status@deals|false
+20261014000002|index|public.idx_deals_user_status_active@deals|false
+20261014000002|index|public.idx_deals_value@deals|false
+20261014000002|index|public.idx_products_active@products|true
+20261014000002|index|public.idx_products_category@products|true
+20261014000002|index|public.idx_products_name@products|true
+20261018120000|function|public.has_phone_consent@2|false
+20261018120000|function|public.is_recipient_opted_out@1|false
+20261018190000|function|public.anonymize_data_subject@5|true
+20261018190000|function|public.canonical_phone_key@1|false
+20261018190000|function|public.has_phone_consent@2|false
+20261018190000|function|public.is_recipient_opted_out@1|false
+20261018190000|policy|public.Titular abre própria solicitação@data_subject_requests|true
+20261018190100|cron|weekly-matchups-resolution|false
+20261018190100|function|public.claim_daily_challenge_reward@1|false
+20261018190100|function|public.claim_streak_achievements@0|false
+20261018190100|function|public.claim_weekly_challenge_reward@1|false
+20261018190100|function|public.resolve_weekly_matchups@0|false
+20261018190100|index|public.race_events_sale_dedup_idx@race_events|true
+20261018190100|table|public.daily_challenge_rotations|false
+20261018200000|function|private.auto_set_forecast_category@0|true
+20261018200000|function|public.trg_deal_stage_history@0|false
+20261018200000|index|public.mv_competitive_ranking_id_idx@mv_competitive_ranking|true
+20261018200000|matview|public.mv_competitive_ranking|true
+20261018200000|view|public.competitive_ranking|true
+20261018200000|view|public.revenue_forecast_view|true

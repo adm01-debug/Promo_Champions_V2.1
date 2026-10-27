@@ -5128,14 +5128,14 @@ export type Database = {
           {
             foreignKeyName: "commissions_sale_id_fkey"
             columns: ["sale_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "sales"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "commissions_sale_id_fkey"
             columns: ["sale_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "sales_with_markup"
             referencedColumns: ["id"]
           },
@@ -6076,6 +6076,21 @@ export type Database = {
           },
         ]
       }
+      daily_challenge_rotations: {
+        Row: {
+          challenge_date: string
+          rotated_at: string
+        }
+        Insert: {
+          challenge_date: string
+          rotated_at?: string
+        }
+        Update: {
+          challenge_date?: string
+          rotated_at?: string
+        }
+        Relationships: []
+      }
       daily_challenges: {
         Row: {
           challenge_date: string
@@ -6919,6 +6934,7 @@ export type Database = {
           entered_at: string
           exited_at: string | null
           id: string
+          is_backfilled: boolean
           sale_id: string | null
           stage: string
         }
@@ -6926,6 +6942,7 @@ export type Database = {
           entered_at?: string
           exited_at?: string | null
           id?: string
+          is_backfilled?: boolean
           sale_id?: string | null
           stage: string
         }
@@ -6933,6 +6950,7 @@ export type Database = {
           entered_at?: string
           exited_at?: string | null
           id?: string
+          is_backfilled?: boolean
           sale_id?: string | null
           stage?: string
         }
@@ -9512,6 +9530,44 @@ export type Database = {
           timestamp?: string | null
         }
         Relationships: []
+      }
+      integration_secret_refs: {
+        Row: {
+          created_at: string
+          credential_id: string
+          id: string
+          key: string
+          owner_id: string
+          secret_ref: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credential_id: string
+          id?: string
+          key: string
+          owner_id: string
+          secret_ref: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credential_id?: string
+          id?: string
+          key?: string
+          owner_id?: string
+          secret_ref?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_secret_refs_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "channel_credentials"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       intent_audit_logs: {
         Row: {
@@ -23555,6 +23611,20 @@ export type Database = {
         Returns: boolean
       }
       admin_capture_rollback_snapshot: { Args: never; Returns: string }
+      admin_edge_cron_status: {
+        Args: never
+        Returns: {
+          active: boolean
+          function_name: string
+          jobid: number
+          jobname: string
+          last_return_code: number
+          last_run_at: string
+          last_status: string
+          run_count: number
+          schedule: string
+        }[]
+      }
       admin_get_cron_job_stats: {
         Args: { _limit?: number }
         Returns: {
@@ -23642,6 +23712,17 @@ export type Database = {
           assigned_to: string
           rule_id: string
           strategy: string
+        }[]
+      }
+      auto_pause_enrollment: {
+        Args: { _enrollment_id: string; _reason: string }
+        Returns: undefined
+      }
+      auto_promote_sequence_winners: {
+        Args: { _sequence_id: string }
+        Returns: {
+          promoted_label: string
+          step_id: string
         }[]
       }
       award_bonus_if_eligible: {
@@ -23741,6 +23822,7 @@ export type Database = {
           win_rate: number
         }[]
       }
+      canonical_phone_key: { Args: { p_phone: string }; Returns: string }
       check_2fa_failed_attempts: {
         Args: { p_user_id: string }
         Returns: number
@@ -23769,11 +23851,20 @@ export type Database = {
           processed: number
         }[]
       }
+      claim_daily_challenge_reward: {
+        Args: { p_challenge_id: string }
+        Returns: Json
+      }
       claim_pending_cadence_tasks: {
         Args: { p_limit?: number; p_today: string }
         Returns: {
           task_id: string
         }[]
+      }
+      claim_streak_achievements: { Args: never; Returns: Json }
+      claim_weekly_challenge_reward: {
+        Args: { p_challenge_id: string }
+        Returns: Json
       }
       cleanup_deleted_records: { Args: never; Returns: undefined }
       cleanup_expired_narrative_cache: { Args: never; Returns: number }
@@ -24530,6 +24621,10 @@ export type Database = {
         Args: { check_email: string }
         Returns: boolean
       }
+      has_phone_consent: {
+        Args: { p_phone: string; p_purpose: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -24580,6 +24675,7 @@ export type Database = {
         Returns: boolean
       }
       is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
+      is_recipient_opted_out: { Args: { p_phone: string }; Returns: boolean }
       is_valid_status_transition: {
         Args: { p_destino: string; p_entity: string; p_origem: string }
         Returns: boolean
@@ -24778,6 +24874,7 @@ export type Database = {
       }
       reindex_tables: { Args: never; Returns: undefined }
       reset_pg_stat_statements_weekly: { Args: never; Returns: undefined }
+      resolve_weekly_matchups: { Args: never; Returns: number }
       restore_deleted_record: {
         Args: { p_record_id: string; p_table_name: string; p_user_id: string }
         Returns: boolean

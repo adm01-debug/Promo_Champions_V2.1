@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
       SLA_HOURS: '48'
     steps:
       - name: Comentar em PRs sem review há >48h
