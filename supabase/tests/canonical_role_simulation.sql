@@ -20,6 +20,8 @@ DECLARE
   v_distributed_lockout timestamptz;
   v_rate_limited boolean := false;
   v_index integer;
+  v_dist_tag text;
+  v_dist_email text;
 BEGIN
   SELECT s.attempts
     INTO v_before
@@ -91,31 +93,49 @@ BEGIN
 
   -- Dez origens diferentes contra o mesmo e-mail acionam o limitador
   -- agregado; uma 11ª origem deve receber lockout e não apenas erro de log.
+  -- Identificadores únicos por execução: a suíte roda contra o banco real e
+  -- em paralelo com outras runs — e-mail/IPs fixos deixavam tentativas de
+  -- execuções concorrentes (ou restos commitados de rodadas manuais)
+  -- inflarem o contador agregado e reprovarem o teste sem regressão real.
+  v_dist_tag := lpad((((extract(epoch from clock_timestamp()) * 1000)::bigint) % 100000)::text, 5, '0');
+  v_dist_email := format('distributed-simulation-%s@example.invalid', v_dist_tag);
   FOR v_index IN 1..10 LOOP
     PERFORM set_config(
       'request.headers',
-      format('{"cf-connecting-ip":"198.51.100.%s"}', v_index),
+      format(
+        '{"cf-connecting-ip":"10.243.%s.%s","user-agent":"canonical-simulation-%s"}',
+        1 + ((extract(epoch from clock_timestamp()) * 1000)::bigint % 200),
+        v_index,
+        v_dist_tag
+      ),
       true
     );
     PERFORM public.record_failed_login_attempt(
-      'distributed-simulation@example.invalid',
+      v_dist_email,
       'invalid_credentials',
-      'canonical-simulation'
+      format('canonical-simulation-%s', v_dist_tag)
     );
   END LOOP;
 
-  PERFORM set_config('request.headers', '{"cf-connecting-ip":"198.51.100.250"}', true);
+  PERFORM set_config(
+    'request.headers',
+    format(
+      '{"cf-connecting-ip":"10.243.%s.250"}',
+      1 + ((extract(epoch from clock_timestamp()) * 1000)::bigint % 200)
+    ),
+    true
+  );
   SELECT s.lockout_until INTO v_distributed_lockout
-    FROM public.get_login_lockout_status('distributed-simulation@example.invalid') AS s;
+    FROM public.get_login_lockout_status(v_dist_email) AS s;
   IF v_distributed_lockout IS NULL OR v_distributed_lockout <= now() THEN
     RAISE EXCEPTION 'distributed_email_attack_did_not_lock_new_source';
   END IF;
 
   BEGIN
     PERFORM public.record_failed_login_attempt(
-      'distributed-simulation@example.invalid',
+      v_dist_email,
       'invalid_credentials',
-      'canonical-simulation'
+      format('canonical-simulation-%s', v_dist_tag)
     );
   EXCEPTION WHEN SQLSTATE 'P0001' THEN
     IF SQLERRM = 'rate_limit_exceeded' THEN
