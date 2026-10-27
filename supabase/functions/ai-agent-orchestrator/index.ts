@@ -298,7 +298,7 @@ Deno.serve(
         const failed: string[] = [];
         const stepStatus = new Map<number, string>();
         for (const step of pendingSteps ?? []) {
-          let nextStatus = 'skipped';
+          let nextStatus: string;
           let out: Record<string, unknown>;
           try {
             out = await executeMutatingTool(
