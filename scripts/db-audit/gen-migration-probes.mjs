@@ -24,6 +24,11 @@ const ID = String.raw`[a-zA-Z_][a-zA-Z0-9_]*|"(?:[^"]|"")*"`;
 // Qualquer schema — whitelist anterior perdia objetos reais (ex.: ON realtime.messages
 // casava "realtime" como nome da tabela e a probe sondava a combinação errada).
 const SCH = String.raw`(?:(${ID})\.)?`;
+// Cabeça comum de ALTER TABLE: `ALTER TABLE [IF EXISTS] [ONLY] nome` — os
+// tokens opcionais podem vir em qualquer ordem. Sem isso, "IF" era capturado
+// como nome da tabela (probe com a combinação errada) e a forma anexa
+// `ALTER TABLE IF EXISTS t ADD CONSTRAINT ...` não gerava probe nenhuma.
+const ALTER_TBL_HEAD = String.raw`alter\s+table\s+(?:(?:if\s+exists|only)\s+)*`;
 
 const PATTERNS = [
   // Captura a lista de argumentos: duas sobrecargas com nomes iguais e
@@ -40,11 +45,11 @@ const PATTERNS = [
   // Índice: captura a tabela do ON para a probe casar schemaname+tablename
   // (índices de mesmo nome em tabelas/schemas diferentes não colidem).
   ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})[^;]*?\bon\s+(?:only\s+)?(?:(${ID})\.)?(${ID})`, 'gi'), 'idx'],
-  ['constraint', new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+constraint\s+(${ID})`, 'gi'), 'con'],
+  ['constraint', new RegExp(String.raw`${ALTER_TBL_HEAD}${SCH}(${ID})\s+add\s+constraint\s+(${ID})`, 'gi'), 'con'],
   // Forma `ALTER TABLE t DROP CONSTRAINT a, ADD CONSTRAINT b` — o ADD não vem
   // colado no nome da tabela, então o pattern acima não o vê.
   ['constraint', new RegExp(String.raw`,\s*add\s+constraint\s+(${ID})`, 'gi'), 'con'],
-  ['column',   new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
+  ['column',   new RegExp(String.raw`${ALTER_TBL_HEAD}${SCH}(${ID})\s+add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
   // Forma `ALTER TABLE t ADD COLUMN a ..., ADD COLUMN b ...` — a segunda
   // coluna não vem colada no ALTER e era perdida.
   ['column',   new RegExp(String.raw`,\s*add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
@@ -94,7 +99,7 @@ const stripComments = (sql) =>
 // homônima em outra tabela produzia falso-positivo. Retorna null quando o
 // match não está dentro de um ALTER TABLE (mesmo statement: sem `;`
 // entre o ALTER e o match) — a probe fica com aux vazio, como antes.
-const ALTER_TBL = new RegExp(String.raw`alter\s+table\s+(?:only\s+)?${SCH}(${ID})`, 'gi');
+const ALTER_TBL = new RegExp(String.raw`${ALTER_TBL_HEAD}${SCH}(${ID})`, 'gi');
 const enclosingAlterTable = (sql, index) => {
   ALTER_TBL.lastIndex = 0;
   let last = null;

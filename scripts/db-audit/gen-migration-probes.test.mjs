@@ -21,6 +21,18 @@ test('ALTER TABLE com vários ADD em uma linha carrega a tabela em todos', () =>
   );
 });
 
+test('ALTER TABLE IF EXISTS não captura "if" como tabela', () => {
+  const sql = 'ALTER TABLE IF EXISTS public.sales ADD CONSTRAINT sales_chk CHECK (amount > 0);';
+  const cons = collectProbes(sql, V).filter((r) => r.kind === 'constraint');
+  assert.deepEqual(cons.map((r) => [r.obj, r.schema, r.extra]), [['sales_chk', 'public', 'sales']]);
+});
+
+test('ALTER TABLE IF EXISTS com , ADD encadeado resolve a tabela certa', () => {
+  const sql = 'ALTER TABLE IF EXISTS sales ADD CONSTRAINT a_chk CHECK (x > 0), ADD CONSTRAINT b_chk CHECK (y > 0);';
+  const cons = collectProbes(sql, V).filter((r) => r.kind === 'constraint');
+  assert.deepEqual(cons.map((r) => [r.obj, r.extra]), [['a_chk', 'sales'], ['b_chk', 'sales']]);
+});
+
 test('DROP CONSTRAINT + ADD CONSTRAINT na mesma statement resolve a tabela', () => {
   const sql = 'ALTER TABLE t DROP CONSTRAINT IF EXISTS old_chk, ADD CONSTRAINT new_chk CHECK (x > 0);';
   const cons = collectProbes(sql, V).filter((r) => r.kind === 'constraint');
