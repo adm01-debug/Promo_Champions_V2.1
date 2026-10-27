@@ -1,5 +1,55 @@
 # RELATORIO_CI.md — Promo Champions V2.1
 
+## Rodada 2026-10-27 — 2ª passada (pós-merge das PRs de remediação, HEAD `1e3a191b2`)
+
+Re-inventário completo por workflow após o merge da rodada anterior (#336) + remediação R2 (#306, #332, #333, #334, #335) + docs (#337). Fonte: última run de cada workflow na main via API.
+
+### Inventário — última run na main (27/10 ~12:15 UTC)
+
+| Workflow | Última run | Conclusão |
+|---|---|---|
+| Cron Monitoring Regression | 40497786675 | **failure** — edge 401, `SUPABASE_SERVICE_ROLE_KEY` errado → PENDENCIAS #1 |
+| DB Backup (off-site) | 40442312909 | **failure** — `BACKUP_ENCRYPTION_KEY` ausente + `SUPABASE_DB_URL` errada → PENDENCIAS #2 |
+| Release Please | 40502268413 | **failure** — "Actions not permitted to create or approve pull requests" → PENDENCIAS #3 (API de settings tentada: 403, só o dono resolve) |
+| Quote-to-Sale Guard Rails | 40497798028 | success (dispatch pós-merge) |
+| CI Failure Alert | 40503463308 | success — só runs com `head_branch=main` pós-fix; 0 runs fantasma de PR |
+| Apply Migration | 39867429819 | success |
+| CI/CD — Post-merge Main | 40502268382 | success |
+| CodeQL | 40502268242 | success |
+| DB Probe (read-only) | 39440941191 | success |
+| Dependabot Auto-merge | 40497726264 | success |
+| Edge Functions Bundle/Input-Validation/X-Request-Id (3) | 40502268xxx | success |
+| Graphify Foundation | 40497786577 | success |
+| Migrations Drift | 40502268381 | success |
+| PR Checks | 40502268347 | success |
+| PR Review SLA | 40500591914 | success |
+| QA Exhaustive (Weekly) | 40262593767 | success |
+| Running Copilot Code Review | 33686852597 | success — run de 02/09, `event=dynamic` na main (check de GitHub App; fora do filtro `is:failure`) |
+| A11y Sweep (UI PRs) | — | sem run na main até agora (dispara em PRs de UI ou `workflow_dispatch`) |
+| Deploy Pipeline | — | sem run na main (só dispatch/tag) |
+| Dependabot PR runs | — | success |
+
+**Resultado da passada:** 0 falhas novas introduzidas pelos merges; as 3 únicas falhas são os bloqueios externos já documentados (mesmas causas-raiz reconfirmadas nos logs).
+
+### Baseline local (HEAD `1e3a191b2`)
+
+| Etapa | Resultado |
+|---|---|
+| `npm run typecheck` | 0 erros |
+| `npx eslint src --quiet` | 0 warnings |
+
+Mudança desta passada: docs-only (atualização de run IDs e nota da tentativa de API) — sem código, sem risco de regressão.
+
+### Merges desta rodada
+
+- #336 CI-workflows (trigger filter, codeql 4.39.1, zod 4.6.7, graphify 0.9.70)
+- #306 LGPD/gamificação R2, #332 frontend R2, #333 integrações R2, #334 sec-agent-runs R2, #335 sales.status R2
+- #337 dedupe RELATORIO_CI (achados do review #336 — ambos reais)
+- Colisões resolvidas: migrations renomeadas `20261027120100` (#333) e `20261027130000` (#334) após #335 ocupar `20261027120000`.
+- Fechadas supersedidas: #302–#305, #310, #327.
+
+---
+
 ## Rodada 2026-10-27 (branch `fix/ci-workflows`, HEAD base `cdfc74122`)
 
 ### Inventário — última run na main

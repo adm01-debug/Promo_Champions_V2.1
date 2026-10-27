@@ -4,7 +4,7 @@
 
 ### 1. Cron Monitoring Regression — secret `SUPABASE_SERVICE_ROLE_KEY` errado
 
-- **Erro:** `edge status inesperado: 401 body={"error":"unauthorized"}` (run 40459784297, 27/10).
+- **Erro:** `edge status inesperado: 401 body={"error":"unauthorized"}` (runs 40459784297 e 40497786675, 27/10 — reconfirmado na 2ª passada).
 - **Causa:** a `cron-failure-alerter` compara o `Authorization` byte a byte com a service_role key real do projeto `usyxfpqlsspldubptrdl`. O secret do repo não bate — provável chave de outro projeto.
 - **Resolver:** https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl/settings/api → copiar `service_role` → https://github.com/adm01-debug/Promo_Champions_V2.1/settings/secrets/actions → editar `SUPABASE_SERVICE_ROLE_KEY` → Actions → Cron Monitoring Regression → Run workflow.
 
@@ -17,8 +17,9 @@
 
 ### 3. Release Please — permissão do GitHub Actions
 
-- **Erro:** `release-please failed: GitHub Actions is not permitted to create or approve pull requests` (run 39871923505, 22/10).
+- **Erro:** `release-please failed: GitHub Actions is not permitted to create or approve pull requests` (runs 39871923505, 22/10 e 40502268413, 27/10 — reconfirmado na 2ª passada).
 - **Resolver:** https://github.com/adm01-debug/Promo_Champions_V2.1/settings/actions → "Workflow permissions" → marcar **"Allow GitHub Actions to create and approve pull requests"** → Actions → Release Please → Run workflow na main.
+- **Nota:** tentativa de aplicar via API (`PUT actions/permissions/workflow`) retornou 403 — o token da automação não tem permissão de admin nas configurações do repo; só o dono resolve.
 
 ### 4. Pendências de longa data (fora desta rodada)
 
