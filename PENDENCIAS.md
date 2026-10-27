@@ -1,8 +1,35 @@
 # PENDÊNCIAS — Workflows com bloqueio externo
 
-Gerado em: 2026-10-22  
-Atualizado em: 2026-10-22  
-Branch: `claude/compassionate-wright-gehxir`
+## Rodada 2026-10-27 — itens que dependem de você (Joaquim)
+
+### 1. Cron Monitoring Regression — secret `SUPABASE_SERVICE_ROLE_KEY` errado
+
+- **Erro:** `edge status inesperado: 401 body={"error":"unauthorized"}` (run 40459784297, 27/10).
+- **Causa:** a `cron-failure-alerter` compara o `Authorization` byte a byte com a service_role key real do projeto `usyxfpqlsspldubptrdl`. O secret do repo não bate — provável chave de outro projeto.
+- **Resolver:** https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl/settings/api → copiar `service_role` → https://github.com/adm01-debug/Promo_Champions_V2.1/settings/secrets/actions → editar `SUPABASE_SERVICE_ROLE_KEY` → Actions → Cron Monitoring Regression → Run workflow.
+
+### 2. DB Backup (off-site) — 2 secrets
+
+- **Erro:** `BACKUP_ENCRYPTION_KEY não configurado — backup abortado em vez de subir dump sem criptografia` (run 40442312909, 27/10). `SUPABASE_DB_URL` também aponta para o projeto errado (Brindes).
+- **Resolver** em https://github.com/adm01-debug/Promo_Champions_V2.1/settings/secrets/actions:
+  1. `SUPABASE_DB_URL` = connection string Postgres do projeto `usyxfpqlsspldubptrdl` (Dashboard → Settings → Database).
+  2. `BACKUP_ENCRYPTION_KEY` = senha forte criada por você (anote fora do GitHub — sem ela não dá para descriptografar o backup).
+
+### 3. Release Please — permissão do GitHub Actions
+
+- **Erro:** `release-please failed: GitHub Actions is not permitted to create or approve pull requests` (run 39871923505, 22/10).
+- **Resolver:** https://github.com/adm01-debug/Promo_Champions_V2.1/settings/actions → "Workflow permissions" → marcar **"Allow GitHub Actions to create and approve pull requests"** → Actions → Release Please → Run workflow na main.
+
+### 4. Pendências de longa data (fora desta rodada)
+
+- **PAT do Supabase (`SUPABASE_ACCESS_TOKEN`):** salvo está revogado (401) — 4 migrations da Onda 1 aguardam aplicação. Gerar em https://supabase.com/dashboard/account/tokens e salvar como secret do repo.
+- **Upgrade do plano Supabase:** 72 edge functions acima do limite sem deploy.
+- **Function secrets:** `LOVABLE_API_KEY`, `RESEND_API_KEY`, `TWILIO_*`, `ELEVENLABS_*`, `BITRIX24_*`, `SLACK_*` — envios reais respondem 503 sem eles.
+- **Rotação de senha do admin** exposta anteriormente (Dashboard → Authentication → Users).
+
+---
+
+## Histórico — rodada 2026-10-22
 
 Estes workflows não podem ser verdes sem ação manual do responsável, ou estão aguardando CI para merge de correção. Cada item descreve o que trava, por quê e o passo exato para desbloquear.
 

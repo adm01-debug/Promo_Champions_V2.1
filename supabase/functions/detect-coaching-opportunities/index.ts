@@ -6,6 +6,7 @@ import { enforceRateLimit } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { isWonSaleStatus, isLostSaleStatus } from '../_shared/sale-statuses.ts';
 
 interface MetricRow {
   salesperson_id: string;
@@ -136,8 +137,8 @@ Deno.serve(
       const repMetrics: Record<string, Record<string, number>> = {};
       for (const sp of reps) {
         const myDeals = allSales.filter(d => d.salesperson_id === sp.id);
-        const won = myDeals.filter(d => d.status === 'completed');
-        const lost = myDeals.filter(d => d.status === 'lost');
+        const won = myDeals.filter(d => isWonSaleStatus(d.status));
+        const lost = myDeals.filter(d => isLostSaleStatus(d.status));
         const myActs = allActs.filter(a => a.salesperson_id === sp.id).length;
 
         const conversion_rate =

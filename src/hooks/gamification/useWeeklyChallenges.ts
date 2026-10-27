@@ -79,6 +79,19 @@ function useChallengeProgress(salespersonId?: string) {
     queryFn: async () => {
       if (!salespersonId) return [];
 
+      // Melhor esforço: recalcula o progresso no servidor antes de ler.
+      await supabase
+        .rpc(
+          'sync_challenge_progress' as never,
+          {
+            p_salesperson_id: salespersonId,
+          } as never
+        )
+        .then(
+          () => undefined,
+          () => undefined
+        );
+
       const { data, error } = await supabase
         .from('challenge_progress')
         .select('*')

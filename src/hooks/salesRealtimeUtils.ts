@@ -2,7 +2,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { getLevelInfo } from '@/hooks/gamification/useSalespersonXP';
 import { toast } from 'sonner';
 
-import { formatBRL } from '@/lib/money';
 export const RANK_TITLES = {
   1: { title: 'Lenda', emoji: '👑', color: 'text-rank-gold' },
   2: { title: 'Elite', emoji: '⚔️', color: 'text-rank-silver' },
@@ -85,33 +84,34 @@ export async function triggerConfetti(saleAmount: number) {
 }
 
 export async function awardSaleXP(
-  salespersonId: string,
-  xpAmount: number,
   saleId: string,
-  saleAmount: number,
   salespersonName: string
 ): Promise<{ leveledUp: boolean; newLevel: number; previousLevel: number } | null> {
-  const formattedAmount = formatBRL(saleAmount);
-
   try {
-    const { data, error } = await supabase.rpc('award_salesperson_xp', {
-      p_salesperson_id: salespersonId,
-      p_xp_amount: xpAmount,
-      p_description: `Venda de ${formattedAmount}`,
-      p_source_type: 'sale',
-      p_source_id: saleId,
-    });
+    // O XP é derivado no servidor (amount da venda + xp.rewards do app_config)
+    // e creditado uma única vez por sale_id — o cliente não envia valores.
+    const { data, error } = await supabase.rpc(
+      'award_sale_xp' as never,
+      {
+        p_sale_id: saleId,
+      } as never
+    );
 
     if (error) throw error;
 
     const result = data as {
-      leveled_up: boolean;
-      new_level: number;
+      awarded: boolean;
+      leveled_up?: boolean;
+      new_level?: number;
       previous_level?: number;
     };
 
+    if (!result.awarded) return null;
+
+    const newLevel = result.new_level ?? 1;
+
     if (result.leveled_up) {
-      const newLevelInfo = getLevelInfo(result.new_level);
+      const newLevelInfo = getLevelInfo(newLevel);
       toast.success(
         `${newLevelInfo.emoji} ${salespersonName} subiu para o nível ${result.new_level}!`,
         {
@@ -122,10 +122,9 @@ export async function awardSaleXP(
     }
 
     return {
-      leveledUp: result.leveled_up,
-      newLevel: result.new_level,
-      previousLevel:
-        result.previous_level || result.new_level - (result.leveled_up ? 1 : 0),
+      leveledUp: result.leveled_up ?? false,
+      newLevel,
+      previousLevel: result.previous_level ?? newLevel - (result.leveled_up ? 1 : 0),
     };
   } catch (error) {
     console.error('Failed to award XP via RPC:', error);
