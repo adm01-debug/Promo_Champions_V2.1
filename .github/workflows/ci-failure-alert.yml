@@ -25,6 +25,11 @@ on:
       - "Graphify Foundation"
       - "Deploy Pipeline"
     types: [completed]
+    # Sem este filtro, toda run concluída dos workflows acima — em qualquer
+    # branch (inclusive PRs) — enfileirava um run do alerta, que só depois era
+    # descartado pelo guard no step. Com dezenas de PRs ativos isso lotava a
+    # fila de Actions com centenas de runs que nunca alertavam nada.
+    branches: [main]
   workflow_dispatch:
 
 permissions:
