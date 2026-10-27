@@ -69,7 +69,7 @@ export function useRaceScoringRules(seasonId?: string) {
   useEffect(() => {
     if (!seasonId) return;
     const ch = supabase
-      .channel(`race-rules-${seasonId}`)
+      .channel(`race-rules-${seasonId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

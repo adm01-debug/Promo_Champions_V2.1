@@ -29,7 +29,7 @@ export function useObjectionAnalysis(recordingId: string | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`objection-analysis-${recordingId}`)
+      .channel(`objection-analysis-${recordingId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
@@ -68,7 +68,7 @@ export function useCallObjections(recordingId: string | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`call-objections-${recordingId}`)
+      .channel(`call-objections-${recordingId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

@@ -97,7 +97,7 @@ export function useBulkJob(jobId: string | undefined) {
   useEffect(() => {
     if (!jobId) return;
     const channel = supabase
-      .channel(`bulk-drafts-${jobId}`)
+      .channel(`bulk-drafts-${jobId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

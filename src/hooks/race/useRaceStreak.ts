@@ -65,7 +65,7 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
   useEffect(() => {
     if (!salespersonId) return;
     const ch = supabase
-      .channel(`race-streak-${salespersonId}`)
+      .channel(`race-streak-${salespersonId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

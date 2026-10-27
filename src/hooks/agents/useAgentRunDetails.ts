@@ -9,7 +9,7 @@ export function useAgentRunDetails(runId: string | null) {
   useEffect(() => {
     if (!runId) return;
     const ch = supabase
-      .channel(`agent_run_${runId}`)
+      .channel(`agent_run_${runId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

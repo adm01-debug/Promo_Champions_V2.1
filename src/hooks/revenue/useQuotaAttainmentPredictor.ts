@@ -61,7 +61,7 @@ export function useQuotaForecasts() {
 
   useEffect(() => {
     const ch = supabase
-      .channel('quota-forecasts-rt')
+      .channel(`quota-forecasts-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'quota_attainment_forecasts' },

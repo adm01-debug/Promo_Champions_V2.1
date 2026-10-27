@@ -14,7 +14,7 @@ export function useSecurityAlertNotifications() {
     if (!isAdmin && !isManager) return;
 
     const channel = supabase
-      .channel('security-alerts-realtime')
+      .channel(`security-alerts-realtime-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

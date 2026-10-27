@@ -48,7 +48,7 @@ export function SeasonsManagerTable() {
 
   useEffect(() => {
     const ch = supabase
-      .channel('admin-seasons')
+      .channel(`admin-seasons-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'race_seasons' },

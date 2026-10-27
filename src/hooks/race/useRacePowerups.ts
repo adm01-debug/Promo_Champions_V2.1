@@ -42,7 +42,7 @@ export function useRacePowerups(seasonId?: string, salespersonId?: string) {
   useEffect(() => {
     if (!seasonId) return;
     const channel = supabase
-      .channel(`race-powerups-${seasonId}`)
+      .channel(`race-powerups-${seasonId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

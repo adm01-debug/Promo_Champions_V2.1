@@ -34,7 +34,7 @@ export function RaceAuditFeed() {
 
   useEffect(() => {
     const ch = supabase
-      .channel('admin-race-audit')
+      .channel(`admin-race-audit-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'race_events' },

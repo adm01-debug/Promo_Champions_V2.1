@@ -26,7 +26,7 @@ export function useCoachingScorecard(recordingId: string | undefined | null) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`ccs-${recordingId}`)
+      .channel(`ccs-${recordingId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

@@ -57,7 +57,7 @@ export function useCompetitiveChat(squadId?: string | null) {
   // Realtime
   useEffect(() => {
     const channel = supabase
-      .channel(`competitive-chat-rt-${squadId || 'global'}`)
+      .channel(`competitive-chat-rt-${squadId || 'global'}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

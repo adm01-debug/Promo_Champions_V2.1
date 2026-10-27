@@ -57,7 +57,7 @@ export function useKudos() {
 
   useEffect(() => {
     const channel = supabase
-      .channel('kudos-rt')
+      .channel(`kudos-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'kudos' },

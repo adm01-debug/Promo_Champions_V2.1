@@ -26,7 +26,7 @@ export function useQuestionAnalysis(recordingId: string | null | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`question-analysis-${recordingId}`)
+      .channel(`question-analysis-${recordingId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
@@ -65,7 +65,7 @@ export function useCallQuestions(recordingId: string | null | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`call-questions-${recordingId}`)
+      .channel(`call-questions-${recordingId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
