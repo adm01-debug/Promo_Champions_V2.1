@@ -64,6 +64,12 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
     // service_role só depois de autenticar + autorizar: generateLink e a
     // leitura/escrita em password_reset_requests exigem bypass de RLS.
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    // Origem real do app para o redirect pós-reset: APP_URL (env) com fallback
+    // para o domínio Vercel de produção (mesmo do DEFAULT_ALLOWED_ORIGINS em
+    // _shared/cors.ts). Antes derivava `<ref>.lovable.app` do SUPABASE_URL —
+    // domínio inexistente, o link de recovery nunca concluía.
+    const appUrl = (Deno.env.get("APP_URL") ?? "https://promo-champions-v2-1.vercel.app")
+      .replace(/\/+$/, "");
     const supabaseAdmin = createClient(
       supabaseUrl,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -95,7 +101,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
       type: "recovery",
       email: email,
       options: {
-        redirectTo: `${supabaseUrl.replace('.supabase.co', '.lovable.app')}/reset-password`,
+        redirectTo: `${appUrl}/reset-password`,
       },
     });
 

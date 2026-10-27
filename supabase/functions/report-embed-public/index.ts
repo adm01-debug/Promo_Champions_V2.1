@@ -34,6 +34,19 @@ const JOIN_MAP: Record<string, Record<string, { fk: string; target: string }>> =
 // Hide sensitive columns from public embeds
 const HIDDEN_FIELDS = new Set(["email", "commission", "commission_rate", "phone", "personal_email"]);
 
+// Colunas visíveis padrão por entidade — espelha o ENTITY_FIELDS do report
+// builder (src/hooks/reporting/reportBuilderHelpers.ts) menos HIDDEN_FIELDS.
+// Usadas quando cfg.columns vem vazio: nunca `select('*')`, que devolveria
+// todas as colunas da tabela (inclusive as de HIDDEN_FIELDS) via service_role.
+const DEFAULT_VISIBLE_FIELDS: Record<string, string[]> = {
+  sales: ["id", "client_name", "product_name", "amount", "status", "category", "source", "stage", "created_at", "updated_at"],
+  accounts: ["id", "name", "tier", "industry", "country", "annual_revenue", "employee_count", "account_score", "health_status", "created_at"],
+  activities: ["id", "activity_type", "outcome", "duration_minutes", "contact_name", "created_at"],
+  leads: ["id", "client_name", "source", "amount", "created_at"],
+  salespeople_public: ["id", "name", "role", "is_active", "created_at"],
+  clients: ["id", "name", "company", "total_value", "created_at"],
+};
+
 interface RateLimitEntry { count: number; resetAt: number; }
 const rateLimit = new Map<string, RateLimitEntry>();
 const RATE_LIMIT_MAX = 60;
@@ -80,7 +93,7 @@ function buildSelect(columns: string[], targets: Set<string>): string {
   for (const [target, fields] of joinedCols.entries()) {
     parts.push(`${target}(${fields.join(",")})`);
   }
-  return parts.join(",") || "*";
+  return parts.join(",");
 }
 
 Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
@@ -208,10 +221,23 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
       });
     }
 
-    const columns = (cfg.columns ?? []).filter((c) => !HIDDEN_FIELDS.has(c));
-    const selectStr = columns.length
-      ? (isCross ? buildSelect(columns, joinTargets) : columns.filter((c) => SAFE_FIELD.test(c)).join(",") || "*")
-      : "*";
+    // cfg.columns vazio (ou só com campos ocultos) → colunas visíveis padrão
+    // da entidade. `*` jamais é usado: vazaria colunas fora do allowlist do
+    // builder e as de HIDDEN_FIELDS via service_role.
+    const requested = (cfg.columns ?? []).filter((c) => !HIDDEN_FIELDS.has(c));
+    const columns = requested.length
+      ? requested
+      : (DEFAULT_VISIBLE_FIELDS[entity] ?? []).filter((c) => !HIDDEN_FIELDS.has(c));
+    const selectStr = isCross
+      ? buildSelect(columns, joinTargets)
+      : columns.filter((c) => SAFE_FIELD.test(c)).join(",");
+
+    if (!selectStr) {
+      return new Response(JSON.stringify({ error: "Nenhuma coluna selecionável" }), {
+        status: 400,
+        headers: { ...baseCors, "Access-Control-Allow-Origin": corsOrigin, "Content-Type": "application/json" },
+      });
+    }
 
     let q = admin.from(entity).select(selectStr).limit(500);
 
@@ -248,7 +274,7 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
       });
     }
 
-    let rows = (data ?? []) as Record<string, unknown>[];
+    let rows = (data ?? []) as unknown as Record<string, unknown>[];
     if (isCross) {
       rows = rows.map((row) => {
         const flat: Record<string, unknown> = {};

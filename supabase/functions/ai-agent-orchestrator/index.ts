@@ -181,6 +181,7 @@ Deno.serve(
         target_entity_id,
         goal,
         auto_execute = false,
+        run_id,
       } = await req.json();
 
       const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
@@ -249,6 +250,166 @@ Deno.serve(
         }
         return null;
       };
+
+      // Único caminho real de escrita das ferramentas mutáveis — usado no
+      // loop de criação (auto_execute) e na retomada pós-aprovação (run_id).
+      const executeMutatingTool = async (
+        name: string,
+        args: Record<string, unknown>,
+        targetType: string | null,
+        targetId: string | null
+      ): Promise<Record<string, unknown> | null> => {
+        if (name === 'add_note' && targetId) {
+          // FK salesperson_id → salespeople.id (não auth.users.id);
+          // outcome é enum NOT NULL — 'connected' é o default do form.
+          if (!callerSpId) throw new Error('salesperson_not_found');
+          await admin.from('activities').insert({
+            activity_type: 'note',
+            outcome: 'connected',
+            notes: args.note,
+            salesperson_id: callerSpId,
+            ...(targetType === 'deal' ? { sale_id: targetId } : {}),
+            ...(targetType === 'client' ? { client_id: targetId } : {}),
+          });
+          return { executed: true };
+        }
+        if (name === 'schedule_followup') {
+          if (!callerSpId) throw new Error('salesperson_not_found');
+          await admin.from('agenda_events').insert({
+            salesperson_id: callerSpId,
+            title: args.title,
+            scheduled_at: args.scheduled_at,
+            description: args.description ?? null,
+            event_type: 'follow_up',
+            ...(targetType === 'deal' ? { sale_id: targetId } : {}),
+            ...(targetType === 'client' ? { client_id: targetId } : {}),
+          });
+          return { executed: true };
+        }
+        if (name === 'update_lead_score' && targetType === 'lead' && targetId) {
+          await admin
+            .from('leads')
+            .update({ score: args.score })
+            .eq('id', targetId);
+          return { executed: true };
+        }
+        return null;
+      };
+
+      // Retomada pós-aprovação: approve_agent_run marca a run como 'running';
+      // aqui os passos pending_approval são executados de fato.
+      if (run_id) {
+        const { data: run } = await admin
+          .from('ai_agent_runs')
+          .select(
+            'id, salesperson_id, agent_type, target_entity_type, target_entity_id, status, steps, approved_by'
+          )
+          .eq('id', run_id)
+          .maybeSingle();
+        if (!run) {
+          return new Response(JSON.stringify({ error: 'run_not_found' }), {
+            status: 404,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        const isApprover = run.approved_by === caller.userId;
+        const isOwner = callerSpId !== null && run.salesperson_id === callerSpId;
+        if (!isApprover && !isOwner && !canAutoExecute) {
+          return new Response(JSON.stringify({ error: 'forbidden' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        if (run.status !== 'running' || !run.approved_by) {
+          return new Response(JSON.stringify({ error: 'run_not_resumable' }), {
+            status: 409,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        const { data: pendingSteps } = await admin
+          .from('ai_agent_actions')
+          .select('id, step_index, tool_name, tool_input')
+          .eq('run_id', run_id)
+          .eq('status', 'pending_approval')
+          .order('step_index', { ascending: true });
+
+        const stepsArr: Record<string, unknown>[] = Array.isArray(run.steps)
+          ? [...(run.steps as Record<string, unknown>[])]
+          : [];
+        let executed = 0;
+        let failed = 0;
+
+        for (const step of pendingSteps ?? []) {
+          let newStatus = 'success';
+          let toolOutput: Record<string, unknown>;
+          try {
+            const out = await executeMutatingTool(
+              step.tool_name,
+              (step.tool_input ?? {}) as Record<string, unknown>,
+              run.target_entity_type,
+              run.target_entity_id
+            );
+            if (out) {
+              toolOutput = out;
+            } else if (step.tool_name === 'compose_email_draft') {
+              // Não há destino de persistência para o rascunho além da própria
+              // run: a aprovação humana É a execução — o conteúdo aprovado
+              // permanece em tool_input e no result da run.
+              toolOutput = { executed: true, approved: true };
+            } else {
+              newStatus = 'skipped';
+              toolOutput = {
+                executed: false,
+                reason: 'Tool not directly executable, skipped after approval.',
+              };
+            }
+          } catch (e) {
+            newStatus = 'error';
+            toolOutput = { error: e instanceof Error ? e.message : 'Unknown' };
+          }
+
+          if (newStatus === 'error') failed++;
+          else executed++;
+
+          await admin
+            .from('ai_agent_actions')
+            .update({
+              status: newStatus,
+              tool_output: toolOutput,
+              executed_by: 'user',
+              executed_at: new Date().toISOString(),
+            })
+            .eq('id', step.id);
+
+          const idx = stepsArr.findIndex(s => s?.index === step.step_index);
+          if (idx >= 0) stepsArr[idx] = { ...stepsArr[idx], status: newStatus };
+        }
+
+        const finalStatus = executed === 0 && failed > 0 ? 'failed' : 'completed';
+        const finalResult = {
+          summary: `${executed} ação(ões) aprovada(s) processada(s)${failed ? `, ${failed} com erro` : ''}.`,
+          executed,
+          failed,
+        };
+        await admin
+          .from('ai_agent_runs')
+          .update({ steps: stepsArr })
+          .eq('id', run_id);
+        await admin.rpc('complete_agent_run', {
+          _run_id: run_id,
+          _result: finalResult,
+          _status: finalStatus,
+          _error: null,
+        });
+
+        return new Response(
+          JSON.stringify({ run_id, status: finalStatus, result: finalResult }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
 
       // Create run via user client (so RLS context applies via SECURITY DEFINER RPC)
       const { data: runId, error: createErr } = await userClient.rpc('create_agent_run', {
@@ -326,41 +487,14 @@ Deno.serve(
                 status = 'pending_approval';
                 toolOutput = { proposed: args, note: 'Aguardando aprovação humana.' };
               } else {
-                if (name === 'add_note' && target_entity_id) {
-                  // FK salesperson_id → salespeople.id (não auth.users.id);
-                  // outcome é enum NOT NULL — 'connected' é o default do form.
-                  if (!callerSpId) throw new Error('salesperson_not_found');
-                  await admin.from('activities').insert({
-                    activity_type: 'note',
-                    outcome: 'connected',
-                    notes: args.note,
-                    salesperson_id: callerSpId,
-                    ...(target_entity_type === 'deal' ? { sale_id: target_entity_id } : {}),
-                    ...(target_entity_type === 'client' ? { client_id: target_entity_id } : {}),
-                  });
-                  toolOutput = { executed: true };
-                } else if (name === 'schedule_followup') {
-                  if (!callerSpId) throw new Error('salesperson_not_found');
-                  await admin.from('agenda_events').insert({
-                    salesperson_id: callerSpId,
-                    title: args.title,
-                    scheduled_at: args.scheduled_at,
-                    description: args.description ?? null,
-                    event_type: 'follow_up',
-                    ...(target_entity_type === 'deal' ? { sale_id: target_entity_id } : {}),
-                    ...(target_entity_type === 'client' ? { client_id: target_entity_id } : {}),
-                  });
-                  toolOutput = { executed: true };
-                } else if (
-                  name === 'update_lead_score' &&
-                  target_entity_type === 'lead' &&
-                  target_entity_id
-                ) {
-                  await admin
-                    .from('leads')
-                    .update({ score: args.score })
-                    .eq('id', target_entity_id);
-                  toolOutput = { executed: true };
+                const out = await executeMutatingTool(
+                  name,
+                  args,
+                  target_entity_type ?? null,
+                  target_entity_id ?? null
+                );
+                if (out) {
+                  toolOutput = out;
                 } else {
                   toolOutput = {
                     executed: false,

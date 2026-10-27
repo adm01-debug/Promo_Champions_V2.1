@@ -47,15 +47,21 @@ export async function getUserClient(req: Request): Promise<AuthenticatedContext>
   });
 
   const token = authHeader.replace("Bearer ", "");
-  const { data, error } = await client.auth.getClaims(token);
-  if (error || !data?.claims?.sub) {
+  // getUser() valida a assinatura no servidor de auth — getClaims só decodifica
+  // JWT HS256 localmente (segredo simétrico indisponível), então um token
+  // forjado passaria como válido. Bearer de service_role/anon (cron,
+  // service-to-service) também é rejeitado por não ter user.id autenticado —
+  // fluxos desses usam cron-request-auth/internal-service-auth.
+  const { data, error } = await client.auth.getUser(token);
+  const user = data?.user;
+  if (error || !user?.id || user.role !== "authenticated") {
     throw new UnauthorizedError("invalid_or_expired_token");
   }
 
   return {
     client,
-    userId: data.claims.sub,
-    email: (data.claims.email as string) ?? null,
+    userId: user.id,
+    email: user.email ?? null,
     authHeader,
   };
 }

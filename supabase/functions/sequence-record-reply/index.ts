@@ -21,8 +21,8 @@ Deno.serve(withRequestId('sequence-record-reply', async (req, _ctx) => {
   );
 
   const token = authHeader.replace("Bearer ", "");
-  const { data: claims, error: claimsErr } = await supabase.auth.getClaims(token);
-  if (claimsErr || !claims?.claims) {
+  const { data: authData, error: claimsErr } = await supabase.auth.getUser(token);
+  if (claimsErr || !authData?.user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
