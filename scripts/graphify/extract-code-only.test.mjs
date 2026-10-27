@@ -25,7 +25,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 const args = process.argv.slice(2);
 if (args.includes('--version')) {
-  console.log('graphify ' + (process.env.GRAPHIFY_FIXTURE_VERSION || '0.9.48'));
+  console.log('graphify ' + (process.env.GRAPHIFY_FIXTURE_VERSION || '0.9.70'));
   process.exit(0);
 }
 if (process.env.GRAPHIFY_FIXTURE_ERROR === '1') {
@@ -64,7 +64,7 @@ test('publica somente snapshot validado com metadados de origem', () => {
   assert.equal(fs.existsSync(path.join(destination, 'graphify-out', 'graph.json')), true);
   assert.equal(fs.existsSync(path.join(destination, 'multigraph.json')), true);
   const snapshot = JSON.parse(fs.readFileSync(path.join(destination, 'snapshot.json'), 'utf8'));
-  assert.equal(snapshot.extractor.version, '0.9.48');
+  assert.equal(snapshot.extractor.version, '0.9.70');
   assert.equal(snapshot.source.scope, 'src');
   assert.equal(snapshot.source.totalBytes, Buffer.byteLength('export const exemplo = 1;\n'));
   assert.match(snapshot.source.digest, /^[a-f0-9]{64}$/);
