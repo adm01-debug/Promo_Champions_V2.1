@@ -15,6 +15,7 @@ import {
 } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
 import { OPEN_SALE_STATUSES, WON_SALE_STATUSES } from '../_shared/sale-statuses.ts';
+import { businessMonthStartInstant } from '../_shared/business-date.ts';
 
 const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')!;
 
@@ -167,7 +168,7 @@ Deno.serve(
           .select('amount, updated_at')
           .eq('salesperson_id', salespersonId)
           .in('status', [...WON_SALE_STATUSES])
-          .gte('updated_at', new Date(new Date().setDate(1)).toISOString()),
+          .gte('updated_at', businessMonthStartInstant().toISOString()),
         supabase
           .from('sequence_enrollments')
           .select('id, status, current_step, sequence_id, contact_id, next_action_at')

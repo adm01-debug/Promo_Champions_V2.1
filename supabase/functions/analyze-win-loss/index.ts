@@ -5,6 +5,11 @@ import { fetchWithTimeout } from '../_shared/fetch-with-timeout.ts';
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { getUserClient, UnauthorizedError } from '../_shared/auth-client.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from '../_shared/ai-gateway.ts';
+import {
+  isLostSaleStatus,
+  LOST_SALE_STATUSES,
+  WON_SALE_STATUSES,
+} from '../_shared/sale-statuses.ts';
 
 
 interface SaleRow {
@@ -216,7 +221,7 @@ Deno.serve(
         .select(
           'id,status,amount,stage,segment,notes,loss_reason,competitor_name,created_at,updated_at,closed_at'
         )
-        .in('status', ['completed', 'won', 'lost'])
+        .in('status', [...WON_SALE_STATUSES, ...LOST_SALE_STATUSES])
         .gte('updated_at', since)
         .limit(500);
       if (error) throw error;
@@ -226,7 +231,7 @@ Deno.serve(
 
       // AI calls are inherently sequential per-sale; DB writes are collected and batched after
       for (const s of (sales as SaleRow[] | null) ?? []) {
-        const outcome = s.status === 'lost' ? 'lost' : 'won';
+        const outcome = isLostSaleStatus(s.status) ? 'lost' : 'won';
         const closedAt = s.closed_at ?? s.updated_at;
         const cycleDays = closedAt
           ? (new Date(closedAt).getTime() - new Date(s.created_at).getTime()) / 86400000

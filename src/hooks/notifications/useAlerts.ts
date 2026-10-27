@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { WON_SALE_STATUSES } from '@/constants';
+import { WON_SALE_STATUSES, OPEN_SALE_STATUSES } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAllRows } from '@/lib/supabase/fetchAllRows';
 import { differenceInDays, parseISO } from 'date-fns';
@@ -35,7 +35,7 @@ export const useAlerts = () => {
       const { data: pendingDeals } = await supabase
         .from('sales')
         .select('*')
-        .in('status', ['pending', 'in_progress', 'negotiation', 'proposal']);
+        .in('status', [...OPEN_SALE_STATUSES]);
 
       // Check for stagnant deals
       pendingDeals?.forEach(deal => {

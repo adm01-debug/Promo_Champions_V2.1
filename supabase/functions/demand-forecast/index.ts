@@ -1,6 +1,7 @@
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from "../_shared/request-id.ts";
 import { toBusinessDate } from "../_shared/business-date.ts";
+import { WON_SALE_STATUSES } from "../_shared/sale-statuses.ts";
 import { getServiceClient, getUserClient, UnauthorizedError } from "../_shared/auth-client.ts";
 
 interface InventoryLevel {
@@ -61,7 +62,7 @@ Deno.serve(withRequestId("demand-forecast", async (req, _ctx) => {
         { data: inventory, error: inventoryError },
       ] = await Promise.all([
         supabase.from('products').select('id, name, price, sales_count').eq('status', 'active').limit(2000),
-        supabase.from('sales').select('product_name, amount, created_at, status').gte('created_at', sixMonthsAgo.toISOString()).eq('status', 'fechado').limit(50000),
+        supabase.from('sales').select('product_name, amount, created_at, status').gte('created_at', sixMonthsAgo.toISOString()).in('status', [...WON_SALE_STATUSES]).limit(50000),
         supabase.from('inventory_levels').select('product_id, current_stock, reorder_point').limit(2000),
       ]);
 

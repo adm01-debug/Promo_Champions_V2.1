@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { CACHE_TIMES } from '@/constants';
+import { CACHE_TIMES, isWonSaleStatus } from '@/constants';
 import { useEffect } from 'react';
 
 export interface TeamActivity {
@@ -112,11 +112,10 @@ export const useTeamActivityFeed = (limit = 20) => {
         const sp = resolve(s.salesperson_id);
         feed.push({
           id: `sale-${s.id}`,
-          type: s.status === 'won' ? 'sale' : 'deal_move',
-          description:
-            s.status === 'won'
-              ? `Fechou venda com ${s.client_name}`
-              : `Moveu ${s.client_name} para ${s.status}`,
+          type: isWonSaleStatus(s.status) ? 'sale' : 'deal_move',
+          description: isWonSaleStatus(s.status)
+            ? `Fechou venda com ${s.client_name}`
+            : `Moveu ${s.client_name} para ${s.status}`,
           salesperson_name: sp.name,
           avatar_url: sp.avatar_url,
           amount: s.amount,

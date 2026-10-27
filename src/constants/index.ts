@@ -68,6 +68,17 @@ export const SALE_STATUS_LABELS: Record<string, string> = {
 // uniformly. Single source of truth — see isWonSaleStatus / isOpenSaleStatus.
 export const WON_SALE_STATUSES = ['completed', 'won', 'closed'] as const;
 export const LOST_SALE_STATUSES = ['lost', 'cancelled'] as const;
+// Pipeline aberto = domínio do CHECK menos WON/LOST (espelha
+// _shared/sale-statuses.ts das edge functions). 'open' é legado fora do
+// CHECK — isOpenSaleStatus o trata como aberto, mas a lista segue o CHECK.
+export const OPEN_SALE_STATUSES = [
+  'lead',
+  'prospecting',
+  'qualified',
+  'proposal',
+  'negotiation',
+  'pending',
+] as const;
 
 export const isWonSaleStatus = (status?: string | null): boolean =>
   !!status && (WON_SALE_STATUSES as readonly string[]).includes(status);
