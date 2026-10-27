@@ -1,4 +1,10 @@
 -- Simulação por role. Deve rodar após as migrations e antes do rollback sentinela.
+-- Limpa resíduo de login_attempts de runs concorrentes: branches sem o
+-- ROLLBACK final COMMITam linhas e este arquivo falha em rate_limit_exceeded
+-- (contagem por email OU ip). Roda como postgres antes do SET LOCAL ROLE e
+-- dentro da transação — o ROLLBACK no fim desfaz o delete (efeito zero fora).
+DELETE FROM public.login_attempts
+ WHERE created_at >= now() - interval '5 minutes';
 SET LOCAL ROLE anon;
 SELECT set_config('request.jwt.claims', '{"role":"anon"}', true);
 SELECT set_config(
