@@ -186,9 +186,9 @@ export const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_ANON_KEY')!,
       { global: { headers: { Authorization: authHeader } } }
     );
-    const { data: claimsData, error: claimsErr } =
-      await supabaseAuth.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: authData, error: claimsErr } =
+      await supabaseAuth.auth.getUser(token);
+    if (claimsErr || !authData?.user) {
       jlog('warn', {
         msg: 'auth_invalid_token',
         requestId,
@@ -196,8 +196,8 @@ export const handler = async (req: Request): Promise<Response> => {
       });
       return jsonResponse(req, { error: 'Unauthorized', requestId }, 401, requestId);
     }
-    const userId = claimsData.claims.sub as string;
-    const userEmail = (claimsData.claims.email ?? null) as string | null;
+    const userId = authData.user.id;
+    const userEmail = authData.user.email ?? null;
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,

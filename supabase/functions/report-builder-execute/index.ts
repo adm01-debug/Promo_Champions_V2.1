@@ -95,8 +95,8 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
     );
 
     const token = authHeader.replace('Bearer ', '');
-    const { data: claims, error: authErr } = await supabase.auth.getClaims(token);
-    if (authErr || !claims?.claims) {
+    const { data: authData, error: authErr } = await supabase.auth.getUser(token);
+    if (authErr || !authData?.user) {
       return new Response(JSON.stringify({ error: 'Token inválido' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -215,7 +215,7 @@ Deno.serve(withRequestId('report-builder-execute', async (req, _ctx) => {
     }
 
     // Flatten joined records for table viz
-    let result: Record<string, unknown>[] = (data ?? []) as Record<string, unknown>[];
+    let result: Record<string, unknown>[] = (data ?? []) as unknown as Record<string, unknown>[];
     if (isCross) {
       result = result.map(row => {
         const flat: Record<string, unknown> = {};
