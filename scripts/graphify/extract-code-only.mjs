@@ -20,7 +20,7 @@ import {
 } from './graphify-utils.mjs';
 import { createMultiGraphDocument, validateMultiGraphDocument } from './multigraph.mjs';
 
-const DEFAULT_VERSION = '0.9.48';
+const DEFAULT_VERSION = '0.9.70';
 const LARGE_SCOPE_LIMIT = 500;
 const MAX_WORKERS = 8;
 const COMMAND_TIMEOUT_MS = 120_000;
