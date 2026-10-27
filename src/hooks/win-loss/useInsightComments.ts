@@ -72,7 +72,7 @@ export function useInsightComments(insightId: string | null) {
   useEffect(() => {
     if (!insightId) return;
     const channel = supabase
-      .channel(`insight-comments-${insightId}`)
+      .channel(`insight-comments-${insightId}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

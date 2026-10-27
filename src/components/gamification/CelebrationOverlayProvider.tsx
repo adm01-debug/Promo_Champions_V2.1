@@ -130,7 +130,7 @@ export function CelebrationOverlayProvider() {
     let victoryChannel: RealtimeChannel | undefined;
     if (salesperson?.id) {
       victoryChannel = supabase
-        .channel('victory-celebrations')
+        .channel(`victory-celebrations-${crypto.randomUUID()}`)
         .on(
           'postgres_changes',
           {
@@ -160,7 +160,7 @@ export function CelebrationOverlayProvider() {
 
     // Subscribe to XP changes
     const xpChannel = supabase
-      .channel('xp-celebrations-overlay')
+      .channel(`xp-celebrations-overlay-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'salesperson_xp' },

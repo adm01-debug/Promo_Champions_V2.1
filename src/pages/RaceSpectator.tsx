@@ -41,7 +41,7 @@ export default function RaceSpectator() {
     }
     load();
     const channel = supabase
-      .channel(`spectator-${seasonId}`)
+      .channel(`spectator-${seasonId}-${crypto.randomUUID()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, load)
       .subscribe();
     const interval = window.setInterval(load, 30_000);

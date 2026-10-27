@@ -155,29 +155,30 @@ export function DealHealthCard({ saleId }: Props) {
         </div>
 
         {/* Recommended Actions */}
-        {data.recommended_actions && data.recommended_actions.length > 0 && (
-          <div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">
-              Ações recomendadas
-            </p>
-            <div className="space-y-1.5">
-              {data.recommended_actions.map((a, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 p-2 rounded-lg glass border border-border/30"
-                >
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] ${priorityColor(a.priority)}`}
+        {Array.isArray(data.recommended_actions) &&
+          data.recommended_actions.length > 0 && (
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Ações recomendadas
+              </p>
+              <div className="space-y-1.5">
+                {data.recommended_actions.map((a, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 p-2 rounded-lg glass border border-border/30"
                   >
-                    {priorityLabel(a.priority)}
-                  </Badge>
-                  <span className="text-xs flex-1">{a.title}</span>
-                </div>
-              ))}
+                    <Badge
+                      variant="outline"
+                      className={`text-[10px] ${priorityColor(a.priority)}`}
+                    >
+                      {priorityLabel(a.priority)}
+                    </Badge>
+                    <span className="text-xs flex-1">{a.title}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </CardContent>
     </Card>
   );

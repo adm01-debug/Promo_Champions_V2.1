@@ -39,7 +39,7 @@ export function RuleAuditLogs() {
 
     // Setup real-time subscription
     const channel = supabase
-      .channel('schema-db-changes')
+      .channel(`schema-db-changes-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

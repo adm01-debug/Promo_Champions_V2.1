@@ -49,7 +49,7 @@ export function useRevenueForecast(
 
   useEffect(() => {
     const channel = supabase
-      .channel(`forecast-${periodType}-${periodStart}`)
+      .channel(`forecast-${periodType}-${periodStart}-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'revenue_forecasts' },

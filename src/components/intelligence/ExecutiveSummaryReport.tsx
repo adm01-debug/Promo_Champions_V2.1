@@ -40,7 +40,9 @@ export function ExecutiveSummaryReport({ isOpen, onClose }: Props) {
   const conversion = kpis?.current.conversionRate ?? 0;
   const wins = briefing?.key_wins ?? [];
   const risks = briefing?.key_risks ?? [];
-  const actions = briefing?.recommended_actions ?? [];
+  const actions = Array.isArray(briefing?.recommended_actions)
+    ? briefing.recommended_actions
+    : [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300">

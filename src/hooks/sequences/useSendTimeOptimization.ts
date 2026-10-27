@@ -97,7 +97,7 @@ export function useScheduledSends(status: ScheduledSend['status'] | 'all' = 'pen
 
   useEffect(() => {
     const channel = supabase
-      .channel('scheduled-sends-realtime')
+      .channel(`scheduled-sends-realtime-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'scheduled_sends' },

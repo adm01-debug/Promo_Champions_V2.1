@@ -32,7 +32,7 @@ export function useSDRAlertNotifications() {
     }
 
     const channel = supabase
-      .channel('sdr-alerts-realtime')
+      .channel(`sdr-alerts-realtime-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {

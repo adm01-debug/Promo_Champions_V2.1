@@ -46,7 +46,7 @@ export function useRankNotifications(salespersonId?: string) {
   useEffect(() => {
     if (!salespersonId) return;
     const channel = supabase
-      .channel('rank-changes-rt')
+      .channel(`rank-changes-rt-${crypto.randomUUID()}`)
       .on(
         'postgres_changes',
         {
