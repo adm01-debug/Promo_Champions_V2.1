@@ -5,6 +5,7 @@ import { Flag, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { fmtCompact } from '@/components/race/raceFormatters';
 
 interface SpectatorRow {
@@ -41,7 +42,7 @@ export default function RaceSpectator() {
     }
     load();
     const channel = supabase
-      .channel(`spectator-${seasonId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`spectator-${seasonId}`))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, load)
       .subscribe();
     const interval = window.setInterval(load, 30_000);

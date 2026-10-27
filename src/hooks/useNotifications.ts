@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -70,12 +71,8 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   // Realtime subscription
   useEffect(() => {
     if (!user?.id) return;
-    const channelId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`notifications:${user.id}:${channelId}`)
+      .channel(uniqueChannelTopic(`notifications:${user.id}`))
       .on(
         'postgres_changes',
         {

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useEffect } from 'react';
 
 export interface Kudos {
@@ -57,7 +58,7 @@ export function useKudos() {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`kudos-rt-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('kudos-rt'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'kudos' },

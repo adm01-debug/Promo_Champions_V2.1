@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import { captureException } from '@/lib/errorTracking';
@@ -55,12 +56,8 @@ export const useDashboardKPIs = () => {
 
   useEffect(() => {
     // Optimized realtime invalidation: only invalidates if relevant tables change
-    const channelId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`dashboard-kpis-realtime-${channelId}`)
+      .channel(uniqueChannelTopic('dashboard-kpis-realtime'))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-kpis'] });
       })

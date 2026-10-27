@@ -24,12 +24,18 @@ on:
       - "CI/CD — Post-merge Main"
       - "Graphify Foundation"
       - "Deploy Pipeline"
+      - "A11y Sweep (UI PRs)"
+      - "DB Probe (read-only)"
+      - "Quote-to-Sale Guard Rails"
     types: [completed]
     # Sem este filtro, toda run concluída dos workflows acima — em qualquer
     # branch (inclusive PRs) — enfileirava um run do alerta, que só depois era
     # descartado pelo guard no step. Com dezenas de PRs ativos isso lotava a
     # fila de Actions com centenas de runs que nunca alertavam nada.
-    branches: [main]
+    # As tags v*/promo-champions-v2-v* entram porque o Deploy Pipeline dispara
+    # por push de tag — head_branch é o nome da tag, e a falha de um deploy de
+    # release precisa alertar igual (o step restringe tag ao Deploy Pipeline).
+    branches: [main, 'v*', 'promo-champions-v2-v*']
   workflow_dispatch:
 
 permissions:
@@ -59,11 +65,20 @@ jobs:
           # Guarda equivalente ao antigo job-level if — sai 0 quando o evento
           # não requer alerta, evitando falha por "todos os jobs skipped".
           if [[ "$WF_CONCLUSION" != "failure" ]] || \
-             [[ "$GH_BRANCH" != "main" ]] || \
              [[ "$GH_WORKFLOW" == "CI Failure Alert" ]] || \
              [[ -n "$WF_HEAD_REPO" && "$WF_HEAD_REPO" != "$GH_REPO" ]]; then
             echo "Sem alerta necessário (conclusão=$WF_CONCLUSION, branch=$GH_BRANCH, workflow=$GH_WORKFLOW)."
             exit 0
+          fi
+          # Branch elegível: main para qualquer workflow; fora da main só o
+          # Deploy Pipeline em tag de release — ele dispara por push de tag e
+          # head_branch é o nome da tag, não "main".
+          if [[ "$GH_BRANCH" != "main" ]]; then
+            if [[ "$GH_WORKFLOW" != "Deploy Pipeline" ]] || \
+               [[ "$GH_BRANCH" != v* && "$GH_BRANCH" != promo-champions-v2-v* ]]; then
+              echo "Sem alerta necessário (branch=$GH_BRANCH, workflow=$GH_WORKFLOW)."
+              exit 0
+            fi
           fi
           if [ -z "$N8N_ALERT_WEBHOOK_URL" ]; then
             echo "N8N_ALERT_WEBHOOK_URL não configurado — pulando alerta."

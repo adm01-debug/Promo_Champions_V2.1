@@ -11,12 +11,20 @@ export interface RaceEvent {
   created_at: string;
 }
 
-// Round 3 — dedupe de canais por seasonId para evitar leaks quando múltiplos
-// componentes (HUD + sidebar + TV) montam o mesmo hook simultaneamente.
-const channelRefs = new Map<
-  string,
-  { count: number; channel: ReturnType<typeof supabase.channel> }
->();
+type Channel = ReturnType<typeof supabase.channel>;
+
+// Cache de módulo: um canal por seasonId, mantido pela vida do app — dedupe
+// para os múltiplos componentes (HUD + sidebar + TV) que montam o hook juntos,
+// sem o removeChannel+delete síncrono que reutilizava canal morto no remount
+// do Strict-Mode. Limpo no Vite HMR via import.meta.hot.
+const channelCache = new Map<string, Channel>();
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    channelCache.forEach(ch => supabase.removeChannel(ch));
+    channelCache.clear();
+  });
+}
 
 export function useRaceEvents(seasonId?: string) {
   const queryClient = useQueryClient();
@@ -41,11 +49,9 @@ export function useRaceEvents(seasonId?: string) {
   useEffect(() => {
     if (!seasonId) return;
     const key = `race-events-${seasonId}`;
-    const existing = channelRefs.get(key);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      const channel = supabase
+    let channel = channelCache.get(key);
+    if (!channel) {
+      channel = supabase
         .channel(key)
         .on(
           'postgres_changes',
@@ -58,17 +64,8 @@ export function useRaceEvents(seasonId?: string) {
           () => queryClient.invalidateQueries({ queryKey: ['race-events', seasonId] })
         )
         .subscribe();
-      channelRefs.set(key, { count: 1, channel });
+      channelCache.set(key, channel);
     }
-    return () => {
-      const ref = channelRefs.get(key);
-      if (!ref) return;
-      ref.count -= 1;
-      if (ref.count <= 0) {
-        supabase.removeChannel(ref.channel);
-        channelRefs.delete(key);
-      }
-    };
   }, [seasonId, queryClient]);
 
   return query;

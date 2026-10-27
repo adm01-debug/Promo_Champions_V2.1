@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 
 export interface WinCalibrationRow {
@@ -31,7 +32,7 @@ export function useWinProbabilityCalibration() {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`win-calibrations-rt-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('win-calibrations-rt'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'win_probability_calibrations' },
@@ -65,7 +66,7 @@ export function useDealProbabilityScores(limit = 200) {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`deal-prob-scores-rt-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('deal-prob-scores-rt'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'deal_probability_scores' },

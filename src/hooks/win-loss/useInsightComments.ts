@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { toast } from 'sonner';
 
@@ -72,7 +73,7 @@ export function useInsightComments(insightId: string | null) {
   useEffect(() => {
     if (!insightId) return;
     const channel = supabase
-      .channel(`insight-comments-${insightId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`insight-comments-${insightId}`))
       .on(
         'postgres_changes',
         {

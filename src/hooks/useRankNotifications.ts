@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useEffect } from 'react';
 
 interface RankNotification {
@@ -46,7 +47,7 @@ export function useRankNotifications(salespersonId?: string) {
   useEffect(() => {
     if (!salespersonId) return;
     const channel = supabase
-      .channel(`rank-changes-rt-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('rank-changes-rt'))
       .on(
         'postgres_changes',
         {

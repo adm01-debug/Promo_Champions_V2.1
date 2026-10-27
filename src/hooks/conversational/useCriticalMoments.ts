@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import {
   sortMoments,
@@ -14,7 +15,7 @@ export function useCriticalMoments(recordingId?: string) {
   useEffect(() => {
     if (!recordingId) return;
     const channel = supabase
-      .channel(`critical-moments-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`critical-moments-${recordingId}`))
       .on(
         'postgres_changes',
         {
@@ -99,7 +100,7 @@ export function useMyCriticalMomentsFeed(limit = 30) {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`critical-moments-feed-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('critical-moments-feed'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'call_critical_moments' },

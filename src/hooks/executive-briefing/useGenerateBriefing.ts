@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import type { ExecutiveBriefing } from '@/components/executive-briefing/briefingHelpers';
+import {
+  normalizeBriefing,
+  type ExecutiveBriefing,
+} from '@/components/executive-briefing/briefingHelpers';
 
 export function useGenerateBriefing() {
   const qc = useQueryClient();
@@ -14,7 +17,7 @@ export function useGenerateBriefing() {
         }
       );
       if (error) throw error;
-      return data as ExecutiveBriefing;
+      return normalizeBriefing(data);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['executive-briefing'] });

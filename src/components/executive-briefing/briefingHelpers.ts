@@ -28,6 +28,56 @@ export interface ExecutiveBriefing {
   created_at: string;
 }
 
+/**
+ * Coage uma linha de executive_briefings para o contrato de render — as
+ * colunas jsonb (key_wins/key_risks/recommended_actions/narrative) podem vir
+ * gravadas fora do schema (objeto/string), e consumidores fazem .map/.length
+ * direto, o que quebrava a página inteira com TypeError.
+ */
+export function normalizeBriefing(raw: unknown): ExecutiveBriefing {
+  const r = asRecord(raw);
+  const score = Number(r.pulse_score);
+  return {
+    id: asStr(r.id),
+    briefing_date: asStr(r.briefing_date),
+    pulse_score: Number.isFinite(score) ? score : 0,
+    headline: asStr(r.headline),
+    narrative: asStr(r.narrative),
+    key_wins: asList(r.key_wins).map(w => {
+      const o = asRecord(w);
+      return { title: asStr(o.title), detail: asStr(o.detail) };
+    }),
+    key_risks: asList(r.key_risks).map(risk => {
+      const o = asRecord(risk);
+      return {
+        title: asStr(o.title),
+        detail: asStr(o.detail),
+        severity:
+          o.severity === 'critical' || o.severity === 'warning' ? o.severity : 'info',
+      };
+    }),
+    recommended_actions: asList(r.recommended_actions).map(a => {
+      const o = asRecord(a);
+      return {
+        title: asStr(o.title),
+        rationale: asStr(o.rationale),
+        module: typeof o.module === 'string' ? o.module : undefined,
+      };
+    }),
+    generated_by: r.generated_by === 'manual' ? 'manual' : 'auto',
+    created_at: asStr(r.created_at),
+  };
+}
+
+const asRecord = (v: unknown): Record<string, unknown> =>
+  v !== null && typeof v === 'object' && !Array.isArray(v)
+    ? (v as Record<string, unknown>)
+    : {};
+
+const asStr = (v: unknown): string => (typeof v === 'string' ? v : '');
+
+const asList = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
+
 export const formatBriefingDate = (iso: string): string => {
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('pt-BR', {

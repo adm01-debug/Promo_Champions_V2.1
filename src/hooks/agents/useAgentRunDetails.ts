@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import type { AgentAction, AgentRun } from '@/components/agents/agentHelpers';
 
 export function useAgentRunDetails(runId: string | null) {
@@ -9,7 +10,7 @@ export function useAgentRunDetails(runId: string | null) {
   useEffect(() => {
     if (!runId) return;
     const ch = supabase
-      .channel(`agent_run_${runId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`agent_run_${runId}`))
       .on(
         'postgres_changes',
         {

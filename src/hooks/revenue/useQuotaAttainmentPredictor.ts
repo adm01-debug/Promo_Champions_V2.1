@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 
 export type QuotaRiskLevel = 'safe' | 'on_track' | 'at_risk' | 'critical';
 export type QuotaActionType =
@@ -61,7 +62,7 @@ export function useQuotaForecasts() {
 
   useEffect(() => {
     const ch = supabase
-      .channel(`quota-forecasts-rt-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('quota-forecasts-rt'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'quota_attainment_forecasts' },

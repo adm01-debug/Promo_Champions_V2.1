@@ -23,9 +23,20 @@ export function useUnreadNotificationsCount() {
   const channelRef = useRef<Channel | null>(null);
 
   useEffect(() => {
-    if (!user?.id) return;
+    const userId = user?.id ?? null;
+    const topic = userId ? `notifications-count:${userId}` : null;
 
-    const topic = `notifications-count:${user.id}`;
+    // O cache de módulo não expira sozinho: no logout/troca de conta a
+    // subscription do usuário anterior ficava viva. Remove canais de qualquer
+    // tópico que não seja o do usuário atual (null = deslogado limpa tudo).
+    for (const [cachedTopic, ch] of channelCache) {
+      if (cachedTopic !== topic) {
+        void supabase.removeChannel(ch);
+        channelCache.delete(cachedTopic);
+      }
+    }
+    if (!userId || !topic) return;
+
     let channel = channelCache.get(topic);
 
     if (!channel) {
@@ -37,7 +48,7 @@ export function useUnreadNotificationsCount() {
             event: '*',
             schema: 'public',
             table: 'notifications',
-            filter: `user_id=eq.${user.id}`,
+            filter: `user_id=eq.${userId}`,
           },
           () => {
             queryClient.invalidateQueries({ queryKey: ['unread-notifications-count'] });
