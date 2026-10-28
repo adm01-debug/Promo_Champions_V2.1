@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { WON_SALE_STATUSES } from '@/constants';
 
 interface OnboardingStep {
   id: string;
@@ -28,7 +29,7 @@ export function useOnboardingChecklist() {
           .from('sales')
           .select('id')
           .eq('salesperson_id', spId)
-          .eq('status', 'won')
+          .in('status', [...WON_SALE_STATUSES])
           .limit(1),
         supabase.from('sales_goals').select('id').eq('salesperson_id', spId).limit(1),
       ]);

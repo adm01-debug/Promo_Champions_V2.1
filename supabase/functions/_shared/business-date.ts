@@ -58,6 +58,31 @@ export function toBusinessMonthStart(d: Date | string | number = new Date()): st
   return `${toBusinessMonth(d)}-01`;
 }
 
+/**
+ * Instante (Date) da virada do mês corrente no fuso de negócio —
+ * equivalente ao SQL `date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo')
+ * AT TIME ZONE 'America/Sao_Paulo'`. Usar em filtros `.gte('updated_at', ...)`
+ * sobre colunas timestamptz (`.setDate(1)` solto erra a fronteira em UTC).
+ */
+export function businessMonthStartInstant(d: Date | string | number = new Date()): Date {
+  const ref = asDate(d);
+  // Relógio de parede de America/Sao_Paulo via Intl: a diferença entre os
+  // campos de parede (lidos como UTC) e o instante real é o offset vigente
+  // (SP não adota DST desde 2019).
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: BUSINESS_TZ,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(ref);
+  const f = (t: string) => Number(parts.find((p) => p.type === t)?.value ?? 0);
+  const wallAsUtcMs = Date.UTC(
+    f("year"), f("month") - 1, f("day"), f("hour"), f("minute"), f("second")
+  );
+  const offsetMs = Math.round((ref.getTime() - wallAsUtcMs) / 1000) * 1000;
+  return new Date(Date.UTC(f("year"), f("month") - 1, 1) + offsetMs);
+}
+
 /** Último dia do mês de negócio ("YYYY-MM-DD"). */
 export function toBusinessMonthEnd(d: Date | string | number = new Date()): string {
   const [y, m] = toBusinessMonth(d).split("-").map(Number) as [number, number];

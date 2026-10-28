@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { WON_SALE_STATUSES } from '@/constants';
 
 interface ABCItem {
   name: string;
@@ -78,7 +79,7 @@ export const useABCAnalysis = () => {
       const { data: sales, error } = await supabase
         .from('sales')
         .select('amount, product_name, client_name, status')
-        .in('status', ['won', 'completed']);
+        .in('status', [...WON_SALE_STATUSES]);
 
       if (error) throw error;
 

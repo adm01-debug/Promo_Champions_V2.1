@@ -2,6 +2,7 @@ import { getCorsHeaders } from '../_shared/cors.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.49.4';
 import { withRequestId } from '../_shared/request-id.ts';
 import { chunkedIn } from '../_shared/chunked-in.ts';
+import { OPEN_SALE_STATUSES } from '../_shared/sale-statuses.ts';
 import { fetchWithTimeout } from "../_shared/fetch-with-timeout.ts";
 import { enforceRateLimit, rateLimitUserKey } from '../_shared/rate-limit.ts';
 import { LOVABLE_AI_CHAT_COMPLETIONS_URL } from "../_shared/ai-gateway.ts";
@@ -444,8 +445,7 @@ Deno.serve(withRequestId('calculate-deal-health', async (req, ctx) => {
             .from('sales')
             .select('id')
             .eq('salesperson_id', sp.id)
-            .neq('status', 'closed')
-            .neq('status', 'lost')
+            .in('status', [...OPEN_SALE_STATUSES])
             .limit(50)
         : { data: [] };
 
