@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 
 export function useToggleSendTimeOptimization() {
@@ -97,7 +98,7 @@ export function useScheduledSends(status: ScheduledSend['status'] | 'all' = 'pen
 
   useEffect(() => {
     const channel = supabase
-      .channel(`scheduled-sends-realtime-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('scheduled-sends-realtime'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'scheduled_sends' },

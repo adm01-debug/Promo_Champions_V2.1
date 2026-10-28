@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { ExecutiveBriefing } from '@/components/executive-briefing/briefingHelpers';
+import {
+  normalizeBriefing,
+  type ExecutiveBriefing,
+} from '@/components/executive-briefing/briefingHelpers';
 
 export function useLatestBriefing() {
   return useQuery({
@@ -13,8 +16,7 @@ export function useLatestBriefing() {
         .limit(1)
         .maybeSingle();
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as ExecutiveBriefing) ?? null;
+      return data ? normalizeBriefing(data) : null;
     },
     staleTime: 2 * 60_000,
   });

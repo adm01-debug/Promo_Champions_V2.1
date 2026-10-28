@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import {
   calculateLevelFromXP,
@@ -130,7 +131,7 @@ export function CelebrationOverlayProvider() {
     let victoryChannel: RealtimeChannel | undefined;
     if (salesperson?.id) {
       victoryChannel = supabase
-        .channel(`victory-celebrations-${crypto.randomUUID()}`)
+        .channel(uniqueChannelTopic('victory-celebrations'))
         .on(
           'postgres_changes',
           {
@@ -160,7 +161,7 @@ export function CelebrationOverlayProvider() {
 
     // Subscribe to XP changes
     const xpChannel = supabase
-      .channel(`xp-celebrations-overlay-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('xp-celebrations-overlay'))
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'salesperson_xp' },

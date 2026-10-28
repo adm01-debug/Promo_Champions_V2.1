@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
@@ -28,7 +29,7 @@ export function useV4DeadLetters(status: V4DeadLetterStatus, search = '') {
 
   useEffect(() => {
     const ch = supabase
-      .channel(`v4-dead-letters-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('v4-dead-letters'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'v4_callback_dead_letters' },

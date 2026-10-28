@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import type {
   CoachingScorecard,
@@ -26,7 +27,7 @@ export function useCoachingScorecard(recordingId: string | undefined | null) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`ccs-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`ccs-${recordingId}`))
       .on(
         'postgres_changes',
         {

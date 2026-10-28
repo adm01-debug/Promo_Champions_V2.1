@@ -65,11 +65,15 @@ Deno.serve(withRequestId("recompute-stage-baselines", async (req, _ctx) => {
     );
 
     const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    // ORDER antes do LIMIT: sem order o Postgres devolve linhas arbitrárias —
+    // o corte em 50k precisa ser determinístico (as transições mais recentes
+    // da janela de 90d, que são as relevantes para o baseline).
     const { data: transitions, error } = await supabase
       .from("deal_stage_transitions")
       .select("sale_id, to_stage, duration_hours")
       .not("duration_hours", "is", null)
       .gte("entered_at", since)
+      .order("entered_at", { ascending: false })
       .limit(50000);
 
     if (error) throw error;

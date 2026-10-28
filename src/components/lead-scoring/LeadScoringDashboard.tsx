@@ -11,6 +11,7 @@ import { LeadRankingCard } from './LeadRankingCard';
 import type { LeadConnectionStatus } from './scoring-ui';
 import { useExplainBatch } from '@/hooks/scoring/useExplainBatch';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import { getLocalISODate } from '@/utils/dateHelpers';
 import { sanitizeCsvCell } from '@/utils/csvExport';
@@ -27,7 +28,7 @@ export function LeadScoringDashboard() {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`lead-scoring-realtime-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('lead-scoring-realtime'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'lead_score_trends' },

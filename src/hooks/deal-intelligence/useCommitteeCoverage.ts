@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import type { CoverageTier } from '@/components/deal-intelligence/committeeHelpers';
 
@@ -22,7 +23,7 @@ export const useCommitteeCoverage = (saleId: string | null | undefined) => {
   useEffect(() => {
     if (!saleId) return;
     const ch = supabase
-      .channel(`coverage-${saleId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`coverage-${saleId}`))
       .on(
         'postgres_changes',
         {

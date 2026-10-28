@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 
 /**
@@ -13,7 +14,7 @@ export function useQuoteCadenceRealtime() {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`quote-cadences-realtime-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('quote-cadences-realtime'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'prospect_cadences' },

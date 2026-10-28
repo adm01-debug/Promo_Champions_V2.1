@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useEffect } from 'react';
 
 export interface ChatMessage {
@@ -57,7 +58,7 @@ export function useCompetitiveChat(squadId?: string | null) {
   // Realtime
   useEffect(() => {
     const channel = supabase
-      .channel(`competitive-chat-rt-${squadId || 'global'}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`competitive-chat-rt-${squadId || 'global'}`))
       .on(
         'postgres_changes',
         {

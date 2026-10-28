@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { WON_SALE_STATUSES } from '@/constants';
 import { useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
 interface RaceStreak {
@@ -65,7 +66,7 @@ export function useRaceStreak({ salespersonId, seasonStart, seasonEnd }: Params)
   useEffect(() => {
     if (!salespersonId) return;
     const ch = supabase
-      .channel(`race-streak-${salespersonId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`race-streak-${salespersonId}`))
       .on(
         'postgres_changes',
         {

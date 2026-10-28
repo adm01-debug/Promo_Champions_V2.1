@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from '@/hooks/use-toast';
 
 interface BulkJob {
@@ -97,7 +98,7 @@ export function useBulkJob(jobId: string | undefined) {
   useEffect(() => {
     if (!jobId) return;
     const channel = supabase
-      .channel(`bulk-drafts-${jobId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`bulk-drafts-${jobId}`))
       .on(
         'postgres_changes',
         {

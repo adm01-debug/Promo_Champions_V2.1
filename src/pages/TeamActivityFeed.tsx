@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { Phone, Mail, Calendar, FileText, CheckCircle, Activity } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -55,7 +56,7 @@ const TeamActivityFeed = () => {
   // Real-time subscription
   useEffect(() => {
     const channel = supabase
-      .channel(`team-activities-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('team-activities'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'activities' },

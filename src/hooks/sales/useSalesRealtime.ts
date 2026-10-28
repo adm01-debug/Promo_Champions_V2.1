@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { isWonSaleStatus } from '@/constants';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -66,14 +67,8 @@ export function useSalesRealtime(
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
-
-    const channelId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
     const channel = supabase
-      .channel(`sales-realtime-${channelId}`)
+      .channel(uniqueChannelTopic('sales-realtime'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'sales' },

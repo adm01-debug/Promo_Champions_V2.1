@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import type { ConversationMetrics } from '@/components/conversational/metrics/metricsHelpers';
 
@@ -23,7 +24,7 @@ export function useConversationMetrics(recordingId: string | null | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`ccm-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`ccm-${recordingId}`))
       .on(
         'postgres_changes',
         {
@@ -62,7 +63,7 @@ export function useConversationMetricsFeed(healthFilter?: string) {
 
   useEffect(() => {
     const ch = supabase
-      .channel(`ccm-feed-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('ccm-feed'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'call_conversation_metrics' },

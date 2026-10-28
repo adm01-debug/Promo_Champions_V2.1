@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 
 export function useWinLossRealtime(opts?: { onNewPattern?: () => void }) {
@@ -10,7 +11,7 @@ export function useWinLossRealtime(opts?: { onNewPattern?: () => void }) {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`win-loss-rt-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('win-loss-rt'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'win_loss_analyses' },

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AlertOctagon, RefreshCw, RotateCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -76,7 +77,7 @@ export function DeadLetterIngestPanel() {
     void load();
     // Realtime subscription — recarrega em qualquer mudança de status dead_letter.
     const channel = supabase
-      .channel(`dead-letter-ingest-jobs-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('dead-letter-ingest-jobs'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'call_recording_ingest_jobs' },

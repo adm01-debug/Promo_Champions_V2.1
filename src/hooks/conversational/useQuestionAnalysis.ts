@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import type {
   QuestionAnalysis,
@@ -26,7 +27,7 @@ export function useQuestionAnalysis(recordingId: string | null | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`question-analysis-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`question-analysis-${recordingId}`))
       .on(
         'postgres_changes',
         {
@@ -65,7 +66,7 @@ export function useCallQuestions(recordingId: string | null | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`call-questions-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`call-questions-${recordingId}`))
       .on(
         'postgres_changes',
         {

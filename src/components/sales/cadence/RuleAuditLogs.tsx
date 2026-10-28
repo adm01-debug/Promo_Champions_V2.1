@@ -7,6 +7,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { GitBranch, Zap, Clock, Info, Search } from 'lucide-react';
@@ -39,7 +40,7 @@ export function RuleAuditLogs() {
 
     // Setup real-time subscription
     const channel = supabase
-      .channel(`schema-db-changes-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('schema-db-changes'))
       .on(
         'postgres_changes',
         {

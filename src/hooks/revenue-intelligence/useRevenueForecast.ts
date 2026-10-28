@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 
 export type ForecastPeriodType = 'week' | 'month' | 'quarter';
@@ -49,7 +50,7 @@ export function useRevenueForecast(
 
   useEffect(() => {
     const channel = supabase
-      .channel(`forecast-${periodType}-${periodStart}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`forecast-${periodType}-${periodStart}`))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'revenue_forecasts' },

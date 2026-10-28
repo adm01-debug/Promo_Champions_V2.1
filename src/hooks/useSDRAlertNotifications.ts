@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useToast } from '@/hooks/use-toast';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useSDRAlertSoundSettings } from '@/hooks/useSDRAlertSoundSettings';
@@ -32,7 +33,7 @@ export function useSDRAlertNotifications() {
     }
 
     const channel = supabase
-      .channel(`sdr-alerts-realtime-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('sdr-alerts-realtime'))
       .on(
         'postgres_changes',
         {

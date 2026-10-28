@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import type { AgentRun } from '@/components/agents/agentHelpers';
 
 export function useAgentRuns(limit = 50) {
@@ -8,7 +9,7 @@ export function useAgentRuns(limit = 50) {
 
   useEffect(() => {
     const ch = supabase
-      .channel(`ai_agent_runs_feed-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('ai_agent_runs_feed'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'ai_agent_runs' },

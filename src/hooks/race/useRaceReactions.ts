@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 
 export interface RaceReaction {
   id: string;
@@ -19,7 +20,7 @@ export function useRaceReactions(carIds: string[], seasonId?: string | null) {
   const [recent, setRecent] = useState<RaceReaction[]>([]);
 
   const query = useQuery({
-    queryKey: ['race-reactions', seasonId ?? 'none', carIds.sort().join(',')],
+    queryKey: ['race-reactions', seasonId ?? 'none', [...carIds].sort().join(',')],
     enabled: carIds.length > 0,
     queryFn: async (): Promise<RaceReaction[]> => {
       const sinceIso = new Date(Date.now() - 60_000).toISOString();
@@ -41,7 +42,9 @@ export function useRaceReactions(carIds: string[], seasonId?: string | null) {
   // Realtime subscription
   useEffect(() => {
     if (carIds.length === 0) return;
-    const channelName = `race-reactions-${seasonId ?? 'global'}`;
+    // Tópico único por mount: canal removido no cleanup pode ser recriado pelo
+    // Strict-Mode antes do removeChannel terminar — tópico fixo colidia.
+    const channelName = uniqueChannelTopic(`race-reactions-${seasonId ?? 'global'}`);
     const channel = supabase
       .channel(channelName)
       .on(

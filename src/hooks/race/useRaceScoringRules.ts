@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 
 export type MetricCode =
   | 'sales_value'
@@ -69,7 +70,7 @@ export function useRaceScoringRules(seasonId?: string) {
   useEffect(() => {
     if (!seasonId) return;
     const ch = supabase
-      .channel(`race-rules-${seasonId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`race-rules-${seasonId}`))
       .on(
         'postgres_changes',
         {
