@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.0.1](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.0.1) (2026-10-28)
+
+
+### Correções
+
+* **ci:** add commit-search-depth to release-please action input ([2cb51aa](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2cb51aa04532f34243a37b3e4548b78229ffa078))
+* **ci:** adiciona padrão de tag promo-champions-v2-v* ao deploy trigger ([f93222c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f93222c7f748e12879544089b5e259576702bd62))
+* **ci:** correções de CI — migration CONCURRENTLY, dompurify CVE, codeql SHA, RELATORIO §9-12 ([18aadd0](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/18aadd0f5b84a8457e5570e3c1f9b18a2c88dabe))
+* **ci:** corrige CodeQL — SHA de init e analyze devem ser idênticos (v4.39.0) ([3504157](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/350415713e1afaabb0008a70371d8577deec59d9))
+* **ci:** corrige CodeQL (SHA mismatch v4.39.0) e Release Please (bootstrap-sha + commit-search-depth) ([ea0e9ab](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/ea0e9abcbb0af5ff22ab6413fafc535983058b7e))
+* **ci:** move bootstrap-sha to root of release-please-config.json ([e3e2131](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e3e2131622eac17d69906425f001ddba925920d7))
+* **ci:** move commit-search-depth para raiz do release-please-config.json ([337bbc5](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/337bbc5abd4955d55dc682b45bf382afef1e04ac))
+* **ci:** Release Please commit-search-depth + Supabase Types Drift ([56cf230](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/56cf2306782c975d0417f45beb2f46d83155357d))
+* **ci:** Release Please config + Supabase Types Drift ([#316](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/316)) ([56cf230](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/56cf2306782c975d0417f45beb2f46d83155357d))
+* **ci:** release-please — bootstrap-sha e commit-search-depth para evitar falha GraphQL ([9816411](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/98164119e126606e56d0bab6fc7737f5df013a68))
+* **config:** CI Failure Alert só dispara em conclusões na main + RELATORIO_CI/PENDENCIAS ([#336](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/336)) ([e461580](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e46158001dc72c167613e139fd6e08d586208d10))
+* **crm:** remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) ([#343](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/343)) ([2d9f938](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2d9f9384ef7917ef6882f8e5a5ace7c18508e987))
+* **db:** canonizar vocabulário de sales.status em RPCs e edge functions ([#335](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/335)) ([5d22ecd](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5d22ecd3b7cb62671172b69afa046090784f801e))
+* **db:** corrigir achados R3 da canonização de sales.status ([#341](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/341)) ([4b7905f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/4b7905f9619796b69ef2e3d7f361d2fe25e3bea9))
+* **db:** guarda products.active na migration 20261014000002 ([8999bde](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8999bdec99e0c9d5b78929379b8e85be834f4855))
+* **db:** remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse ([#342](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/342)) ([8d6274f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8d6274f42869e6cd1a46d5b5de87566f5a2ecd82))
+* **db:** restringe RPCs de agent_runs, retoma aprovações e valida JWT/embed ([#334](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/334)) ([1e3a191](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1e3a191b26504af202a587703385466c16611108))
+* **db:** trava escrita direta em agent_runs/actions e idempotencia da retomada ([#340](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/340)) ([839645f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/839645f2409495213588d8174d9f3c5534eaa0b0))
+* **gamification:** endurecer RPCs de XP/corrida, sync de desafios e anonimizacao LGPD ([#306](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/306)) ([d8fcd7b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d8fcd7bddd9634ef7154dff6a9d9b6b92e1f5e2d))
+* r3 — briefing jsonb coagido na borda, realtime sem remount morto, alerta de deploy por tag ([#339](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/339)) ([2aa90b9](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2aa90b96fec954d1bb1ab3d04bd563964a8b164d))
+* **services:** integrações — JID com device, reply de protocolo/reação e lease+paginação no bitrix24-sync ([#333](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/333)) ([afb1f35](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/afb1f35e2bfbd7ab15b46d850acabdc136d6e446))
+* **types:** corrige drift do schema Supabase — tabela daily_challenge_rotations, funções admin_edge_cron_status/auto_pause_enrollment/auto_promote_sequence_winners/canonical_phone_key/claim_daily_challenge_reward, FK commissions isOneToOne false ([1d2ddef](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1d2ddefcf8d0d37db4957711e65007a4c29d5fc6))
+* **types:** corrige posição de claim_daily_challenge_reward e adiciona funções ausentes ([1bad373](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1bad37362c744016f8ab60ffbee52c7d1eb82a1a))
+* **ui:** tópicos realtime únicos por mount, embed salespeople e guard recommended_actions ([#332](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/332)) ([98ce4dd](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/98ce4dd183ce2c1dcb2bc0241fb1fd1211133678))
+
 ## 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ### 🔒 Segurança
