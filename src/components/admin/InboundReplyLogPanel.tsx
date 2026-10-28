@@ -23,7 +23,7 @@ export function InboundReplyLogPanel() {
       <CardHeader>
         <CardTitle className="text-section-title flex items-center gap-2">
           <MailWarning className="h-4 w-4 text-primary" />
-          Eventos de e-mail recebidos
+          Respostas recebidas (e-mail/WhatsApp)
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -65,7 +65,12 @@ export function InboundReplyLogPanel() {
                   <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
                     <span className="truncate">{e.subject ?? '(sem assunto)'}</span>
                     <span className="whitespace-nowrap">
-                      {e.matched_enrollment_id ? '✓ pausado' : 'sem match'} • {e.provider}
+                      {e.matched_enrollment_id
+                        ? e.event_type === 'reply'
+                          ? '✓ pausado'
+                          : '✓ match'
+                        : 'sem match'}{' '}
+                      • {e.provider}
                     </span>
                   </div>
                 </div>
