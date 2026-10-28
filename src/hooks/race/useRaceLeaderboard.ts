@@ -24,11 +24,20 @@ export interface RaceLeaderboardEntry {
   rank?: number;
 }
 
-// Round 3 — dedupe de canais por seasonId.
-const channelRefs = new Map<
-  string,
-  { count: number; channel: ReturnType<typeof supabase.channel> }
->();
+type Channel = ReturnType<typeof supabase.channel>;
+
+// Cache de módulo: um canal por seasonId, mantido pela vida do app. O refcount
+// anterior fazia removeChannel+delete síncrono no cleanup — no remount do
+// Strict-Mode o canal morto era reutilizado antes do unsubscribe terminar.
+// Limpo no Vite HMR via import.meta.hot.
+const channelCache = new Map<string, Channel>();
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    channelCache.forEach(ch => supabase.removeChannel(ch));
+    channelCache.clear();
+  });
+}
 
 export function useRaceLeaderboard(seasonId?: string) {
   const queryClient = useQueryClient();
@@ -53,11 +62,9 @@ export function useRaceLeaderboard(seasonId?: string) {
   useEffect(() => {
     if (!seasonId) return;
     const key = `race-lb-${seasonId}`;
-    const existing = channelRefs.get(key);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      const channel = supabase
+    let channel = channelCache.get(key);
+    if (!channel) {
+      channel = supabase
         .channel(key)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
           queryClient.invalidateQueries({ queryKey: ['race-leaderboard', seasonId] });
@@ -70,17 +77,8 @@ export function useRaceLeaderboard(seasonId?: string) {
           }
         )
         .subscribe();
-      channelRefs.set(key, { count: 1, channel });
+      channelCache.set(key, channel);
     }
-    return () => {
-      const ref = channelRefs.get(key);
-      if (!ref) return;
-      ref.count -= 1;
-      if (ref.count <= 0) {
-        supabase.removeChannel(ref.channel);
-        channelRefs.delete(key);
-      }
-    };
   }, [seasonId, queryClient]);
 
   return query;

@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { ExecutiveBriefing } from '@/components/executive-briefing/briefingHelpers';
+import {
+  normalizeBriefing,
+  type ExecutiveBriefing,
+} from '@/components/executive-briefing/briefingHelpers';
 
 export function useBriefingHistory(limit = 14) {
   return useQuery({
@@ -12,8 +15,7 @@ export function useBriefingHistory(limit = 14) {
         .order('briefing_date', { ascending: false })
         .limit(limit);
       if (error) throw error;
-      // eslint-disable-next-line no-restricted-syntax
-      return (data as unknown as ExecutiveBriefing[]) ?? [];
+      return (data ?? []).map(normalizeBriefing);
     },
     staleTime: 5 * 60_000,
   });

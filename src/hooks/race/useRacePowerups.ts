@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 
 interface RacePowerup {
   id: string;
@@ -42,7 +43,7 @@ export function useRacePowerups(seasonId?: string, salespersonId?: string) {
   useEffect(() => {
     if (!seasonId) return;
     const channel = supabase
-      .channel(`race-powerups-${seasonId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`race-powerups-${seasonId}`))
       .on(
         'postgres_changes',
         {

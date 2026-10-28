@@ -30,6 +30,22 @@ const SYNC_LOCK_TTL_SECONDS = 15 * 60;
 // claim atômico do push; velho demais = run anterior morreu → reclama.
 const PENDING_CLAIM_STALE_MS = 60 * 60 * 1000;
 
+// epoch_ms tem 13 dígitos até ~2286, então a ordem lexicográfica do marcador
+// coincide com a numérica: dá para comparar no predicado SQL (PostgREST `lt`
+// compara texto) em vez de filtrar só em memória.
+function pendingStaleMarker(staleBeforeMs: number): string {
+  return `pending:${String(Math.trunc(staleBeforeMs)).padStart(13, '0')}`;
+}
+
+function isStalePendingMarker(
+  marker: string | null | undefined,
+  staleBeforeMs: number
+): boolean {
+  if (!marker || !marker.startsWith('pending:')) return false;
+  const ts = Number(marker.split(':')[1]);
+  return Number.isFinite(ts) && ts < staleBeforeMs;
+}
+
 interface BitrixCompany {
   ID: string;
   TITLE: string;
@@ -223,7 +239,8 @@ const BITRIX_LIST_MAX_PAGES = 40; // 40 × 50 = 2000 itens por sync
 async function bitrixApiListAll(
   method: string,
   params: Record<string, unknown> = {},
-  requestId = '-'
+  requestId = '-',
+  truncatedOut?: string[]
 ): Promise<unknown[]> {
   const items: unknown[] = [];
   let start: number | undefined;
@@ -233,12 +250,20 @@ async function bitrixApiListAll(
       start === undefined ? params : { ...params, start },
       requestId
     );
-    if (!Array.isArray(data.result) || data.result.length === 0) break;
+    if (!Array.isArray(data.result) || data.result.length === 0) return items;
     items.push(...data.result);
     const next = data.next;
-    if (typeof next !== 'number') break;
+    if (typeof next !== 'number') return items;
     start = next;
   }
+  // Cap atingido havendo `next`: o resultado é amostra — sinaliza em vez de
+  // truncar em silêncio (vai para o log e para o `warnings` da resposta).
+  logWithRequestId('warn', 'bitrix24-sync', requestId, 'bitrix24_list_cap_reached', {
+    method,
+    items: items.length,
+    max_pages: BITRIX_LIST_MAX_PAGES,
+  });
+  truncatedOut?.push(method);
   return items;
 }
 
@@ -271,7 +296,11 @@ async function callBitrixApi(
   );
 }
 
-async function syncCompaniesToCRM(supabase: SupabaseClient, requestId = '-'): Promise<number> {
+async function syncCompaniesToCRM(
+  supabase: SupabaseClient,
+  requestId = '-',
+  truncatedOut?: string[]
+): Promise<number> {
   logWithRequestId('info', 'bitrix24-sync', requestId, 'sync_companies_from_bitrix_started');
 
   try {
@@ -286,7 +315,7 @@ async function syncCompaniesToCRM(supabase: SupabaseClient, requestId = '-'): Pr
         BITRIX_FIELD_RAMO_ATIVIDADE,
         BITRIX_FIELD_NICHO_SEGMENTO,
       ],
-    }, requestId)) as BitrixCompany[];
+    }, requestId, truncatedOut)) as BitrixCompany[];
 
     if (!companies || !Array.isArray(companies)) {
       logWithRequestId('info', 'bitrix24-sync', requestId, 'sync_companies_empty');
@@ -356,22 +385,28 @@ async function syncCompaniesToCRM(supabase: SupabaseClient, requestId = '-'): Pr
     // Process new companies: bulk insert clients, then bulk insert icp_data
     const newCompanies = companies.filter(c => !icpByBitrixId.has(c.ID));
     if (newCompanies.length > 0) {
+      // IDs gerados aqui (clients.id tem default gen_random_uuid(), mas
+      // assumir a ordem do INSERT RETURNING para casar insertedClients[i]
+      // com newCompanies[i] era frágil): o pareamento company↔client_id fica
+      // estável independente da ordem devolvida.
       const newClientRows = newCompanies.map(company => ({
+        id: crypto.randomUUID(),
         name: company.TITLE,
         phone: company.PHONE?.[0]?.VALUE || null,
         email: company.EMAIL?.[0]?.VALUE || null,
         company: company.TITLE,
       }));
 
-      const { data: insertedClients } = await supabase
+      const { data: insertedClients, error: insertClientsError } = await supabase
         .from('clients')
         .insert(newClientRows)
         .select('id');
+      if (insertClientsError) throw insertClientsError;
 
       if (insertedClients?.length) {
         const icpInserts = newCompanies
           .map((company, i) => {
-            const clientId = insertedClients[i]?.id;
+            const clientId = newClientRows[i]?.id;
             if (!clientId) return null;
             const ramoAtividade =
               (company[BITRIX_FIELD_RAMO_ATIVIDADE] as string) || null;
@@ -414,13 +449,17 @@ async function syncCompaniesToCRM(supabase: SupabaseClient, requestId = '-'): Pr
   }
 }
 
-async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): Promise<number> {
+async function syncDealsFromBitrix(
+  supabase: SupabaseClient,
+  requestId = '-',
+  truncatedOut?: string[]
+): Promise<number> {
   logWithRequestId('info', 'bitrix24-sync', requestId, 'sync_deals_from_bitrix_started');
 
   try {
     const deals = (await bitrixApiListAll('crm.deal.list', {
       select: ['ID', 'TITLE', 'COMPANY_ID', 'CONTACT_ID', 'OPPORTUNITY', 'STAGE_ID'],
-    }, requestId)) as BitrixDeal[];
+    }, requestId, truncatedOut)) as BitrixDeal[];
 
     if (!deals || !Array.isArray(deals)) {
       logWithRequestId('info', 'bitrix24-sync', requestId, 'sync_deals_empty');
@@ -593,18 +632,35 @@ async function syncDealsFromBitrix(supabase: SupabaseClient, requestId = '-'): P
   }
 }
 
-async function syncCompaniesToBitrix(supabase: SupabaseClient, requestId = '-'): Promise<number> {
+async function syncCompaniesToBitrix(
+  supabase: SupabaseClient,
+  requestId = '-'
+): Promise<number> {
   logWithRequestId('info', 'bitrix24-sync', requestId, 'sync_companies_to_bitrix_started');
 
   try {
-    const { data: clientsWithoutBitrix } = await supabase
-      .from('clients')
-      .select('id, name, email, phone, company')
-      .limit(1000);
+    // Paginação completa com ORDER estável: `.limit(1000)` solto lia só a
+    // primeira página e em ordem indefinida.
+    const allClients: Array<{
+      id: string;
+      name: string;
+      email: string | null;
+      phone: string | null;
+      company: string | null;
+    }> = [];
+    for (let offset = 0; ; offset += 1000) {
+      const { data: pageRows, error: clientsError } = await supabase
+        .from('clients')
+        .select('id, name, email, phone, company')
+        .order('id')
+        .range(offset, offset + 999);
+      if (clientsError) throw clientsError;
+      if (!pageRows?.length) break;
+      allClients.push(...(pageRows as typeof allClients));
+      if (pageRows.length < 1000) break;
+    }
 
-    if (!clientsWithoutBitrix) return 0;
-
-    const clientIds = clientsWithoutBitrix.map(c => c.id);
+    const clientIds = allClients.map(c => c.id);
 
     const icpDataList = await chunkedIn<IcpData>(
       clientIds,
@@ -623,15 +679,54 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient, requestId = '-'):
       if (icp.client_id) icpMap.set(icp.client_id, icp);
     });
 
-    const clientsToSync = clientsWithoutBitrix.filter(client => {
-      const icp = icpMap.get(client.id);
-      return !icp?.bitrix_id;
+    // Marcador 'pending' recente indica outro run em voo → pula; velho é
+    // resíduo de run morto → reclama (mesmo critério do push de deals).
+    const pendingStaleBefore = Date.now() - PENDING_CLAIM_STALE_MS;
+    const staleMarker = pendingStaleMarker(pendingStaleBefore);
+    const clientsToSync = allClients.filter(client => {
+      const bitrixId = icpMap.get(client.id)?.bitrix_id;
+      return !bitrixId || isStalePendingMarker(bitrixId, pendingStaleBefore);
     });
 
     let syncedCount = 0;
     for (const client of clientsToSync) {
       try {
         const icp = icpMap.get(client.id);
+
+        // Claim atômico antes do crm.company.add (mesmo padrão do push de
+        // deals): sem ele, runs sobrepostos (lease expirado ou reinvocação
+        // manual) criavam a empresa duas vezes no Bitrix. O write-back
+        // abaixo substitui o marcador pelo ID real; se a run morrer entre
+        // os dois, o marcador expira e o próximo run reclama.
+        const claimId = `pending:${Date.now()}:${crypto.randomUUID()}`;
+        let claimed = false;
+        if (icp) {
+          // Linha icp_data existe: UPDATE condicional — só casa se
+          // bitrix_id estiver NULL ou com marcador pending mais velho que o
+          // limiar (o pending fresco de outro run não casa).
+          const { data: claimRows, error: claimError } = await supabase
+            .from('icp_data')
+            .update({ bitrix_id: claimId })
+            .eq('client_id', client.id)
+            .or(
+              `bitrix_id.is.null,and(bitrix_id.like."pending:%",bitrix_id.lt."${staleMarker}")`
+            )
+            .select('client_id');
+          if (claimError) throw claimError;
+          claimed = (claimRows?.length ?? 0) > 0;
+        } else {
+          // Sem linha icp_data: o INSERT disputa pelo UNIQUE(client_id) —
+          // quem perder a corrida recebe 23505 e pula o cliente.
+          const { error: claimInsertError } = await supabase
+            .from('icp_data')
+            .insert({ client_id: client.id, bitrix_id: claimId });
+          if (claimInsertError) {
+            if (claimInsertError.code === '23505') continue;
+            throw claimInsertError;
+          }
+          claimed = true;
+        }
+        if (!claimed) continue;
 
         const result = (await bitrixApiCall('crm.company.add', {
           fields: {
@@ -646,17 +741,13 @@ async function syncCompaniesToBitrix(supabase: SupabaseClient, requestId = '-'):
         }, requestId)) as string;
 
         if (result) {
-          if (icp) {
-            await supabase
-              .from('icp_data')
-              .update({ bitrix_id: result })
-              .eq('client_id', client.id);
-          } else {
-            await supabase.from('icp_data').insert({
-              client_id: client.id,
-              bitrix_id: result,
-            });
-          }
+          // Write-back do ID real — só se ainda detivermos o marcador.
+          const { error: writeBackError } = await supabase
+            .from('icp_data')
+            .update({ bitrix_id: result })
+            .eq('client_id', client.id)
+            .eq('bitrix_id', claimId);
+          if (writeBackError) throw writeBackError;
           syncedCount++;
         }
       } catch (error) {
@@ -718,12 +809,10 @@ async function syncDealsToBitrix(supabase: SupabaseClient, requestId = '-'): Pro
     // Marcador 'pending' recente indica outro run em voo → pula; velho
     // (>PENDING_CLAIM_STALE_MS) é resíduo de run morto → reclama.
     const pendingStaleBefore = Date.now() - PENDING_CLAIM_STALE_MS;
-    const claimableSales = sales.filter(s => {
-      if (!s.external_deal_id) return true;
-      if (!s.external_deal_id.startsWith('pending:')) return false;
-      const claimedAt = Number(s.external_deal_id.split(':')[1]);
-      return Number.isFinite(claimedAt) && claimedAt < pendingStaleBefore;
-    });
+    const staleMarker = pendingStaleMarker(pendingStaleBefore);
+    const claimableSales = sales.filter(
+      s => !s.external_deal_id || isStalePendingMarker(s.external_deal_id, pendingStaleBefore)
+    );
 
     // Batch lookup: all client names → IDs → bitrix_ids in two queries
     const clientNames = [...new Set(claimableSales.map(s => s.client_name).filter(Boolean))];
@@ -772,15 +861,21 @@ async function syncDealsToBitrix(supabase: SupabaseClient, requestId = '-'): Pro
         // Claim atômico antes do crm.deal.add: o WHERE condicional marca a
         // venda numa única operação — um run sobreposto (lease expirado ou
         // reinvocação manual) não casa e pula a venda em vez de criar um
-        // segundo deal no Bitrix. O write-back abaixo substitui o marcador
-        // pelo deal.ID real; se a run morrer entre os dois, o pull casa o
-        // deal por client_name::product_name e repara o vínculo.
+        // segundo deal no Bitrix. O filtro de staleness está no predicado:
+        // marcador 'pending' só é reclamado se mais velho que o limiar —
+        // o pending FRESCO de outro run em voo não casa (epoch_ms tem 13
+        // dígitos, então `lt` lexicográfico equivale à comparação numérica).
+        // O write-back abaixo substitui o marcador pelo deal.ID real; se a
+        // run morrer entre os dois, o pull casa o deal por
+        // client_name::product_name e repara o vínculo.
         const claimId = `pending:${Date.now()}:${crypto.randomUUID()}`;
         const { data: claimed, error: claimError } = await supabase
           .from('sales')
           .update({ external_deal_id: claimId })
           .eq('id', sale.id)
-          .or('external_deal_id.is.null,external_deal_id.like.pending:%')
+          .or(
+            `external_deal_id.is.null,and(external_deal_id.like."pending:%",external_deal_id.lt."${staleMarker}")`
+          )
           .select('id');
         if (claimError) throw claimError;
         if (!claimed?.length) continue;
@@ -902,7 +997,7 @@ Deno.serve(
       const triggeredBy = body.triggered_by || 'manual';
 
       // Mutex entre execuções (cron + manual + retries): lease em tabela
-      // via RPC (migration 20261027120000). Sem ele, dois runs sobrepostos
+      // via RPC (migration 20261027120100). Sem ele, dois runs sobrepostos
       // liam o mesmo lote `external_deal_id IS NULL` e duplicavam deals no
       // Bitrix; o pull de companies também podia estourar
       // ux_icp_data_bitrix_id. O lease expira por TTL — um run morto não
@@ -943,6 +1038,11 @@ Deno.serve(
       }
       syncLockHeld = true;
 
+      // Listas do Bitrix truncadas no cap de páginas são sinalizadas aqui
+      // (log warn dentro de bitrixApiListAll + warnings na resposta e nota
+      // no bitrix24_sync_logs.error_message).
+      const truncatedLists: string[] = [];
+
       let result: Record<string, number> = {
         companiesFromBitrix: 0,
         dealsFromBitrix: 0,
@@ -952,13 +1052,13 @@ Deno.serve(
 
       switch (action) {
         case 'sync-companies-from-bitrix':
-          result.companiesFromBitrix = await syncCompaniesToCRM(supabase, ctx.requestId);
+          result.companiesFromBitrix = await syncCompaniesToCRM(supabase, ctx.requestId, truncatedLists);
           break;
         case 'sync-companies-to-bitrix':
           result.companiesToBitrix = await syncCompaniesToBitrix(supabase, ctx.requestId);
           break;
         case 'sync-deals-from-bitrix':
-          result.dealsFromBitrix = await syncDealsFromBitrix(supabase, ctx.requestId);
+          result.dealsFromBitrix = await syncDealsFromBitrix(supabase, ctx.requestId, truncatedLists);
           break;
         case 'sync-deals-to-bitrix':
           result.dealsToBitrix = await syncDealsToBitrix(supabase, ctx.requestId);
@@ -966,8 +1066,8 @@ Deno.serve(
         case 'sync-all':
         default:
           result = {
-            companiesFromBitrix: await syncCompaniesToCRM(supabase, ctx.requestId),
-            dealsFromBitrix: await syncDealsFromBitrix(supabase, ctx.requestId),
+            companiesFromBitrix: await syncCompaniesToCRM(supabase, ctx.requestId, truncatedLists),
+            dealsFromBitrix: await syncDealsFromBitrix(supabase, ctx.requestId, truncatedLists),
             companiesToBitrix: await syncCompaniesToBitrix(supabase, ctx.requestId),
             dealsToBitrix: await syncDealsToBitrix(supabase, ctx.requestId),
           };
@@ -975,6 +1075,9 @@ Deno.serve(
       }
 
       const durationMs = Date.now() - startTime;
+      const truncationNote = truncatedLists.length
+        ? `bitrix24_list_cap_reached: ${[...new Set(truncatedLists)].join(',')}`
+        : undefined;
 
       // Log successful sync
       await logSyncResult(supabase, {
@@ -984,6 +1087,7 @@ Deno.serve(
         companies_to_bitrix: result.companiesToBitrix,
         deals_from_bitrix: result.dealsFromBitrix,
         deals_to_bitrix: result.dealsToBitrix,
+        error_message: truncationNote,
         duration_ms: durationMs,
         triggered_by: triggeredBy,
       }, ctx.requestId);
@@ -995,6 +1099,7 @@ Deno.serve(
           result,
           duration_ms: durationMs,
           timestamp: new Date().toISOString(),
+          ...(truncationNote ? { warnings: [truncationNote] } : {}),
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -1061,7 +1166,12 @@ Deno.serve(
       if (syncLockHeld) {
         try {
           const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-          await supabase.rpc('release_edge_job_lock', { _job_name: 'bitrix24-sync' });
+          // Só o detentor libera: um run morto que perdeu o lease por TTL
+          // não pode apagar o lock do run que o herdou.
+          await supabase.rpc('release_edge_job_lock', {
+            _job_name: 'bitrix24-sync',
+            _request_id: ctx.requestId,
+          });
         } catch (unlockError) {
           ctx.log('warn', 'bitrix24_sync_lock_release_failed', {
             error: unlockError instanceof Error ? unlockError.message : String(unlockError),

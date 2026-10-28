@@ -418,15 +418,19 @@ Deno.test(
     assertMatch(sql, /unique_violation/i);
     assertMatch(sql, /FOR UPDATE/i);
 
-    // Webhook delega à RPC; única escrita direta restante em quotes é pdf_url
+    // Webhook delega à RPC; as únicas leituras/escritas diretas restantes em
+    // quotes são o SELECT de created_by (resolve a pasta do PDF) e o update
+    // de pdf_url.
     assertMatch(webhook, /\.rpc\(\s*"sync_quote_from_webhook"/);
     assertMatch(webhook, /from\("quote_sync_logs"\)/);
     assertNotMatch(webhook, /from\("quote_items"\)/);
     assertNotMatch(webhook, /from\("sales"\)/);
     assertNotMatch(webhook, /from\("external_seller_map"\)/);
     const quotesCalls = webhook.match(/from\("quotes"\)[\s\S]*?;/g) ?? [];
-    assertEquals(quotesCalls.length, 1, 'esperado apenas o update de pdf_url');
-    assertMatch(quotesCalls.join(' '), /pdf_url/);
+    assertEquals(quotesCalls.length, 2, 'esperado select de created_by + update de pdf_url');
+    const quotesWrites = quotesCalls.filter((c) => /\.update\(/.test(c));
+    assertEquals(quotesWrites.length, 1, 'esperado apenas o update de pdf_url');
+    assertMatch(quotesWrites.join(' '), /pdf_url/);
 
     // Sem drops destrutivos nem segredos literais
     assertNotMatch(sql, /\bDROP\s+(TABLE|COLUMN|FUNCTION)\b/i);

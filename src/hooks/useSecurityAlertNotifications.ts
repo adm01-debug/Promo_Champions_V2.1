@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useToast } from '@/hooks/use-toast';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useSecurityAlertSoundSettings } from '@/hooks/useSecurityAlertSoundSettings';
@@ -14,7 +15,7 @@ export function useSecurityAlertNotifications() {
     if (!isAdmin && !isManager) return;
 
     const channel = supabase
-      .channel(`security-alerts-realtime-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('security-alerts-realtime'))
       .on(
         'postgres_changes',
         {

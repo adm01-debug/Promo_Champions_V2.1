@@ -13,6 +13,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlayCircle, Pause, Flag, Plus, Trash2, Trophy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -48,7 +49,7 @@ export function SeasonsManagerTable() {
 
   useEffect(() => {
     const ch = supabase
-      .channel(`admin-seasons-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('admin-seasons'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'race_seasons' },

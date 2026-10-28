@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { parseRow, parseRows } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
 import type {
@@ -29,7 +30,7 @@ export function useObjectionAnalysis(recordingId: string | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`objection-analysis-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`objection-analysis-${recordingId}`))
       .on(
         'postgres_changes',
         {
@@ -68,7 +69,7 @@ export function useCallObjections(recordingId: string | undefined) {
   useEffect(() => {
     if (!recordingId) return;
     const ch = supabase
-      .channel(`call-objections-${recordingId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`call-objections-${recordingId}`))
       .on(
         'postgres_changes',
         {

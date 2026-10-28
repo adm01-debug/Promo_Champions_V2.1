@@ -23,6 +23,52 @@ interface BriefingPayload {
   recommended_actions: Array<{ title: string; rationale: string; module?: string }>;
 }
 
+const asRecord = (v: unknown): Record<string, unknown> | null =>
+  v !== null && typeof v === 'object' && !Array.isArray(v)
+    ? (v as Record<string, unknown>)
+    : null;
+
+const asStr = (v: unknown): string => (typeof v === 'string' ? v : '');
+
+// A LLM pode sair do schema do tool call (jsonb gravado direto quebrava o
+// frontend inteiro em .map/.length). Coage cada campo antes de persistir;
+// headline/narrative ausentes = resposta inútil, erro limpo em vez de dado
+// corrompido na tabela.
+function parseBriefingPayload(raw: unknown): BriefingPayload {
+  const p = asRecord(raw);
+  if (!p) throw new Error('Tool call com payload inválido');
+  const headline = asStr(p.headline);
+  const narrative = asStr(p.narrative);
+  if (!headline && !narrative) {
+    throw new Error('Tool call sem headline/narrative');
+  }
+  const items = (v: unknown): Record<string, unknown>[] =>
+    (Array.isArray(v) ? v : [])
+      .map(asRecord)
+      .filter((i): i is Record<string, unknown> => i !== null);
+  return {
+    headline,
+    narrative,
+    key_wins: items(p.key_wins).map(w => ({
+      title: asStr(w.title),
+      detail: asStr(w.detail),
+    })),
+    key_risks: items(p.key_risks).map(r => ({
+      title: asStr(r.title),
+      detail: asStr(r.detail),
+      severity:
+        r.severity === 'critical' || r.severity === 'warning'
+          ? r.severity
+          : 'info',
+    })),
+    recommended_actions: items(p.recommended_actions).map(a => ({
+      title: asStr(a.title),
+      rationale: asStr(a.rationale),
+      ...(typeof a.module === 'string' ? { module: a.module } : {}),
+    })),
+  };
+}
+
 const SYSTEM_PROMPT = `Você é um Chief Revenue Officer experiente. Receberá um snapshot do pipeline de vendas (Pulse Score, KPIs, alertas).
 Gere um briefing executivo diário, em português do Brasil, conciso e acionável.
 
@@ -229,7 +275,9 @@ Deno.serve(
       const aiJson = await aiRes.json();
       const toolCall = aiJson.choices?.[0]?.message?.tool_calls?.[0];
       if (!toolCall?.function?.arguments) throw new Error('Resposta sem tool call');
-      const payload: BriefingPayload = JSON.parse(toolCall.function.arguments);
+      const payload = parseBriefingPayload(
+        JSON.parse(toolCall.function.arguments)
+      );
 
       const row = {
         briefing_date: today,

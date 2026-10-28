@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useEffect } from 'react';
 
 export function useVictoryFeed(limit = 20) {
@@ -27,12 +28,8 @@ export function useVictoryFeed(limit = 20) {
 
   // Realtime subscription
   useEffect(() => {
-    const channelId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`victory-feed-realtime-${channelId}`)
+      .channel(uniqueChannelTopic('victory-feed-realtime'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'victory_feed' },

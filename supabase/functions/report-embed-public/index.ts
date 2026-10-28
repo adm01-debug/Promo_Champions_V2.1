@@ -34,6 +34,11 @@ const JOIN_MAP: Record<string, Record<string, { fk: string; target: string }>> =
 // Hide sensitive columns from public embeds
 const HIDDEN_FIELDS = new Set(["email", "commission", "commission_rate", "phone", "personal_email"]);
 
+// Campos podem vir prefixados pelo alvo do join ("clients.email") — o check
+// de campo oculto é feito sempre no nome da coluna, sem o prefixo.
+const hiddenField = (field: string) =>
+  HIDDEN_FIELDS.has(field.slice(field.lastIndexOf(".") + 1));
+
 // Colunas visíveis padrão por entidade — espelha o ENTITY_FIELDS do report
 // builder (src/hooks/reporting/reportBuilderHelpers.ts) menos HIDDEN_FIELDS.
 // Usadas quando cfg.columns vem vazio: nunca `select('*')`, que devolveria
@@ -43,7 +48,7 @@ const DEFAULT_VISIBLE_FIELDS: Record<string, string[]> = {
   accounts: ["id", "name", "tier", "industry", "country", "annual_revenue", "employee_count", "account_score", "health_status", "created_at"],
   activities: ["id", "activity_type", "outcome", "duration_minutes", "contact_name", "created_at"],
   leads: ["id", "client_name", "source", "amount", "created_at"],
-  salespeople_public: ["id", "name", "role", "is_active", "created_at"],
+  salespeople_public: ["id", "name", "role", "is_active"],
   clients: ["id", "name", "company", "total_value", "created_at"],
 };
 
@@ -224,10 +229,10 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
     // cfg.columns vazio (ou só com campos ocultos) → colunas visíveis padrão
     // da entidade. `*` jamais é usado: vazaria colunas fora do allowlist do
     // builder e as de HIDDEN_FIELDS via service_role.
-    const requested = (cfg.columns ?? []).filter((c) => !HIDDEN_FIELDS.has(c));
+    const requested = (cfg.columns ?? []).filter((c) => !hiddenField(c));
     const columns = requested.length
       ? requested
-      : (DEFAULT_VISIBLE_FIELDS[entity] ?? []).filter((c) => !HIDDEN_FIELDS.has(c));
+      : (DEFAULT_VISIBLE_FIELDS[entity] ?? []).filter((c) => !hiddenField(c));
     const selectStr = isCross
       ? buildSelect(columns, joinTargets)
       : columns.filter((c) => SAFE_FIELD.test(c)).join(",");
@@ -243,7 +248,7 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
 
     for (const f of cfg.filters ?? []) {
       if (!ALLOWED_OPS.includes(f.op)) continue;
-      if (HIDDEN_FIELDS.has(f.field)) continue;
+      if (hiddenField(f.field)) continue;
       if (!SAFE_FIELD.test(f.field) && !SAFE_PREFIXED.test(f.field)) continue;
       if (f.field.includes(".")) {
         const [target] = f.field.split(".");
@@ -254,6 +259,7 @@ Deno.serve(withRequestId('report-embed-public', async (req, ctx) => {
     }
 
     for (const o of cfg.order_by ?? []) {
+      if (hiddenField(o.field)) continue;
       if (!SAFE_FIELD.test(o.field) && !SAFE_PREFIXED.test(o.field)) continue;
       if (o.field.includes(".")) {
         const [target, field] = o.field.split(".");

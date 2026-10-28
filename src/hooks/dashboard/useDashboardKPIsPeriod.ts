@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useEffect } from 'react';
 import {
   startOfWeek,
@@ -332,13 +333,8 @@ export const useDashboardKPIsPeriod = (
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const channelId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const channelName = `dashboard-kpis-${salespersonId ?? 'all'}-${channelId}`;
     const channel = supabase
-      .channel(channelName)
+      .channel(uniqueChannelTopic(`dashboard-kpis-${salespersonId ?? 'all'}`))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sales' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-kpis-period'] });
       })

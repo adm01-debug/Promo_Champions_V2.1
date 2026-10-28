@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { CACHE_TIMES, isWonSaleStatus } from '@/constants';
 import { useEffect } from 'react';
 
@@ -48,12 +49,8 @@ export const useTeamActivityFeed = (limit = 20) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const channelId =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`team-activity-realtime-${channelId}`)
+      .channel(uniqueChannelTopic('team-activity-realtime'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'sales' },

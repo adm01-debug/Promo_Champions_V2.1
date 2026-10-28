@@ -1,5 +1,4 @@
 import { createClient } from "npm:@supabase/supabase-js@2.49.4";
-import { chunkedIn } from "../_shared/chunked-in.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
@@ -31,6 +30,8 @@ const MAX_INBOUND_TEXT = 4_096;
 
 interface EvolutionKey {
   remoteJid?: unknown;
+  remoteJidAlt?: unknown;
+  participant?: unknown;
   fromMe?: unknown;
   id?: unknown;
 }
@@ -75,6 +76,7 @@ function asString(value: unknown): string | null {
 function jidToPhone(remoteJid: string | null): {
   phone: string;
   isGroup: boolean;
+  isLid: boolean;
 } | null {
   if (!remoteJid) return null;
   const at = remoteJid.indexOf("@");
@@ -84,8 +86,21 @@ function jidToPhone(remoteJid: string | null): {
   // sem o split no ':', o dígito do device fundia no telefone.
   const phone = remoteJid.slice(0, at).split(":")[0].replace(/\D/g, "");
   if (!phone) return null;
-  return { phone, isGroup: domain === "g.us" };
+  // JIDs @lid são identidade interna de linked device: os dígitos NÃO são
+  // número de telefone — o chamador resolve via remoteJidAlt/participant ou
+  // ignora a mensagem em vez de fabricar um fromPhone falso.
+  return { phone, isGroup: domain === "g.us", isLid: domain === "lid" };
 }
+
+// Tipos de protocolo/controle que não são conteúdo enviado pelo usuário:
+// distribuição de chave, mensagens de protocolo (revogação, config efêmera)
+// etc. Também detectados dentro de wrappers (ephemeralMessage...) porque o
+// extractText devolve o tipo interno.
+const NON_CONTENT_MESSAGE_TYPES = new Set([
+  "protocolMessage",
+  "senderKeyDistributionMessage",
+  "ephemeralSettingMessage",
+]);
 
 function extractText(message: Record<string, unknown>): {
   text: string;
@@ -140,30 +155,56 @@ function extractText(message: Record<string, unknown>): {
 
 function parseInboundMessage(event: EvolutionEvent): InboundMessage | null {
   const data = event.data as
-    | { key?: EvolutionKey; pushName?: unknown; message?: unknown; messageTimestamp?: unknown }
+    | {
+        key?: EvolutionKey;
+        pushName?: unknown;
+        message?: unknown;
+        messageTimestamp?: unknown;
+        messageStubType?: unknown;
+        remoteJidAlt?: unknown;
+        participant?: unknown;
+      }
     | undefined;
   const key = data?.key;
   if (!key || key.fromMe !== false) return null;
 
   const providerMessageId = asString(key.id);
-  const jid = jidToPhone(asString(key.remoteJid));
+  let jid = jidToPhone(asString(key.remoteJid));
+  if (jid?.isLid) {
+    // @lid não carrega telefone: o JID real pode vir em remoteJidAlt
+    // (Baileys/Evolution v2) ou participant; sem ele, ignorar em vez de
+    // fabricar um fromPhone falso.
+    const alt =
+      asString(key.remoteJidAlt) ??
+      asString(data?.remoteJidAlt) ??
+      asString(key.participant) ??
+      asString(data?.participant);
+    jid = jidToPhone(alt);
+    if (jid?.isLid) jid = null;
+  }
   if (!providerMessageId || !jid || jid.isGroup) return null;
 
+  // Stubs sem corpo (ligação perdida, metadados) ou só com campos de
+  // protocolo/controle não são resposta do contato: ignorar para não
+  // fabricar reply com texto vazio nem pausar cadência à toa.
+  if (data?.messageStubType != null) return null;
   const message = data?.message;
-  // Eventos de protocolo ("apagar para todos", revogações, efêmeros) chegam
-  // com fromMe=false mas não são resposta do contato: ignorar para não
-  // fabricar reply em inbound_reply_events nem pausar cadência.
+  if (!message || typeof message !== "object" || Array.isArray(message)) {
+    return null;
+  }
+  const messageRecord = message as Record<string, unknown>;
+  const contentKeys = Object.keys(messageRecord).filter(
+    (k) => k !== "messageContextInfo",
+  );
   if (
-    message && typeof message === "object" && !Array.isArray(message) &&
-    "protocolMessage" in (message as Record<string, unknown>)
+    contentKeys.length === 0 ||
+    contentKeys.every((k) => NON_CONTENT_MESSAGE_TYPES.has(k))
   ) {
     return null;
   }
 
-  const { text, messageType } =
-    message && typeof message === "object" && !Array.isArray(message)
-      ? extractText(message as Record<string, unknown>)
-      : { text: "", messageType: "unknown" };
+  const { text, messageType } = extractText(messageRecord);
+  if (NON_CONTENT_MESSAGE_TYPES.has(messageType)) return null;
 
   const ts = data?.messageTimestamp;
   return {
@@ -375,7 +416,7 @@ Deno.serve(
         // instância não for credencial cadastrada, cai no último outbound
         // Evolution do número (fallback).
         const eventInstance = asString(event.instance);
-        let instanceOwnerIds = new Set<string>();
+        let instanceOwnerIds: string[] | null = null;
         if (eventInstance) {
           const { data: credRows } = await supabase
             .from("channel_credentials")
@@ -383,37 +424,29 @@ Deno.serve(
             .eq("provider", "evolution")
             .eq("enabled", true)
             .filter("credentials->>instance", "eq", eventInstance);
-          instanceOwnerIds = new Set(
-            (credRows ?? []).map((r: { owner_id: string }) => r.owner_id),
+          const ids = (credRows ?? []).map(
+            (r: { owner_id: string }) => r.owner_id,
           );
+          if (ids.length) instanceOwnerIds = ids;
         }
 
-        // Casa a resposta com a mensagem outbound da Evolution mais recente
-        // para o número (o `to` enviado vai sem formatação; tenta com "+").
-        const phoneVariants = [inbound.fromPhone, `+${inbound.fromPhone}`];
-        const lastOutbounds = await chunkedIn<{
-          id: string;
-          enrollment_id: string | null;
-          owner_id: string;
-        }>(
-          phoneVariants,
-          (chunk) =>
-            supabase
-              .from("outbound_messages")
-              .select("id, enrollment_id, owner_id")
-              .eq("channel", "whatsapp")
-              .eq("provider", "evolution")
-              .in("to_number", chunk)
-              .order("created_at", { ascending: false })
-              .limit(25),
-          { label: "whatsapp-inbound-webhook.last_outbound" },
-        );
-        const lastOutbound =
-          (instanceOwnerIds.size
-            ? lastOutbounds.find((o) => instanceOwnerIds.has(o.owner_id))
-            : null) ?? lastOutbounds[0] ?? null;
-
-        const matchedEnrollmentId = lastOutbound?.enrollment_id ?? null;
+        // Casa a resposta com a inscrição pausável via RPC — mesmo critério
+        // do match_reply_to_enrollment do caminho de e-mail: enrollment
+        // 'active'/'scheduled', não auto-pausada e iniciada antes da
+        // resposta. Uma resposta tardia para enrollment já
+        // completed/exited/failed NÃO a reverte para 'paused'. O match de
+        // número normaliza to_number para dígitos em SQL (regexp_replace):
+        // linhas antigas de outbound_messages podem guardar máscara e não
+        // casariam com [dígitos, '+'+dígitos].
+        const { data: matchedEnrollment, error: matchError } =
+          await supabase.rpc("match_whatsapp_reply_to_enrollment", {
+            _from_digits: inbound.fromPhone,
+            _owner_ids: instanceOwnerIds,
+            _received_at: receivedAt,
+          });
+        if (matchError) throw matchError;
+        const matchedEnrollmentId =
+          (matchedEnrollment as string | null) ?? null;
 
         // Reação (emoji) é registrada para visibilidade, mas não conta como
         // resposta: não pausa cadência nem preenche replied_at — confirmação

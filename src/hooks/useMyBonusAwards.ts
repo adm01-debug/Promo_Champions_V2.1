@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CommissionBonusAward, AwardStatus } from './useCommissionBonusAwards';
 
@@ -123,7 +124,7 @@ export function useMyBonusAwardsRealtime() {
   const qc = useQueryClient();
   useEffect(() => {
     const channel = supabase
-      .channel(`my-bonus-awards:${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('my-bonus-awards'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'commission_bonus_awards' },

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { toast } from 'sonner';
 import type {
   DMURole,
@@ -37,7 +38,7 @@ export const useDealStakeholders = (saleId: string | null | undefined) => {
   useEffect(() => {
     if (!saleId) return;
     const ch = supabase
-      .channel(`stakeholders-${saleId}-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic(`stakeholders-${saleId}`))
       .on(
         'postgres_changes',
         {

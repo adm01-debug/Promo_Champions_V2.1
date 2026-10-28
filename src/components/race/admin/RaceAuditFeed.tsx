@@ -4,6 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { ScrollText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -34,7 +35,7 @@ export function RaceAuditFeed() {
 
   useEffect(() => {
     const ch = supabase
-      .channel(`admin-race-audit-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('admin-race-audit'))
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'race_events' },

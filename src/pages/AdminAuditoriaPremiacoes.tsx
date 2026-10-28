@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -111,7 +112,7 @@ export default function AdminAuditoriaPremiacoes() {
   // Realtime — mantém a lista sincronizada e notifica novas conquistas
   useEffect(() => {
     const channel = supabase
-      .channel(`commission_bonus_awards_admin-${crypto.randomUUID()}`)
+      .channel(uniqueChannelTopic('commission_bonus_awards_admin'))
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'commission_bonus_awards' },
