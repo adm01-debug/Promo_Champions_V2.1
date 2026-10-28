@@ -84,10 +84,12 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
 
     log('info', 'password_reset_processing', { to: maskEmail(email) });
 
-    // Verify the request exists and is approved
+    // Verify the request exists, is approved, não expirou e pertence ao
+    // e-mail informado — sem esse vínculo um requestId aprovado mandava link
+    // de recovery para qualquer e-mail.
     const { data: resetRequest, error: requestError } = await supabaseAdmin
       .from("password_reset_requests")
-      .select("id")
+      .select("id, user_email, expires_at")
       .eq("id", requestId)
       .eq("status", "approved")
       .single();
@@ -96,10 +98,28 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
       return json(400, { error: "invalid_request" });
     }
 
+    if (
+      typeof resetRequest.user_email !== "string" ||
+      resetRequest.user_email.toLowerCase() !== email.toLowerCase()
+    ) {
+      return json(400, { error: "invalid_request" });
+    }
+
+    if (
+      resetRequest.expires_at &&
+      new Date(resetRequest.expires_at).getTime() < Date.now()
+    ) {
+      await supabaseAdmin
+        .from("password_reset_requests")
+        .update({ status: "expired", updated_at: new Date().toISOString() })
+        .eq("id", requestId);
+      return json(400, { error: "invalid_request" });
+    }
+
     // Generate password reset link using Supabase Auth Admin API
     const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
       type: "recovery",
-      email: email,
+      email: resetRequest.user_email,
       options: {
         redirectTo: `${appUrl}/reset-password`,
       },
@@ -119,7 +139,7 @@ Deno.serve(withRequestId("send-password-reset", async (req: Request, ctx): Promi
 
       const { error: emailError } = await resend.emails.send({
         from: alertFromEmail(),
-        to: [email],
+        to: [resetRequest.user_email],
         subject: "Redefinição de Senha Aprovada",
         html: `
           <!DOCTYPE html>
