@@ -1,0 +1,15 @@
+{
+  "analise_iniciada": "2026-10-31",
+  "total_prs": 14,
+  "mergeadas": 1,
+  "superadas": 8,
+  "decisao_humana": 5,
+  "bloqueadas_por_draft": 1,
+  "bloqueadas_por_conflito": 1,
+  "bloqueadas_major_bump": 3,
+  "pr_mergeada": {
+    "number": 344,
+    "sha": "c23e4e8b42aa1c9ccda6f710285766ab2dd7ed1a"
+  },
+  "decisoes_humanas": [252, 254, 280, 281, 298]
+}
