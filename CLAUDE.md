@@ -1,5 +1,9 @@
 # CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)
 
+> Regras de trabalho do dono (como trabalhar, Git, PR, comunicação): `AGENTS.md`, importado abaixo.
+
+@AGENTS.md
+
 > CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes.
 > Maior sistema do lote: 175 rotas, 173 edge functions (plano Supabase limita a 100 deployadas), 656 migrations.
 > Contagens verificadas no HEAD em 2026-10-18.
