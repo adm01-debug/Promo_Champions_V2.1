@@ -105,6 +105,35 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+
+  notifica-falha-geracao:
+    name: Notificar falha na geração do schema
+    needs: ler-banco
+    if: failure() && needs.ler-banco.result == 'failure'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Registrar falha em issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const titulo = '[types-sync] falha na geração do schema';
+            const run = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const corpo = [
+              'O job `ler-banco` falhou antes de gerar o candidato de `types.ts`.',
+              'Causas prováveis: `SUPABASE_ACCESS_TOKEN` ausente, `supabase gen types` falhou, ou candidato rejeitado pelo validador.',
+              'Nada foi aplicado ao banco ou ao código.',
+              '', `Run: ${run}`,
+            ].join('\n');
+            try { await github.rest.issues.createLabel({ owner, repo, name: 'types-sync', color: 'e11d48', description: 'Alerta do types-sync' }); } catch {}
+            const { data: abertas } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'types-sync', per_page: 20 });
+            const existente = abertas.find((i) => !i.pull_request && i.title === titulo);
+            if (existente) await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
+            else await github.rest.issues.create({ owner, repo, title: titulo, body: corpo, labels: ['types-sync'] });
+
   gates-e-pr:
     name: Gates e PR de sincronização (sem credencial do banco)
     needs: ler-banco
