@@ -947,7 +947,10 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
         if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f, 2_000_000) and "Row:" in read_text(f, 2_000_000):
             txt = read_text(f, 2_000_000)
             schema["types_file"] = rel(f, root)
-            _tables_start = txt.find("    Tables:")
+            _public_start = txt.find("\n  public: {")
+            if _public_start < 0:
+                _public_start = txt.find("\n  public:{")
+            _tables_start = txt.find("    Tables:", _public_start) if _public_start >= 0 else txt.find("    Tables:")
             _tables_end = txt.find("\n    Views:", _tables_start) if _tables_start >= 0 else -1
             _tables_txt = txt[_tables_start:_tables_end] if _tables_start >= 0 and _tables_end > 0 else txt
             for name, row in re.findall(r"\n\s+(\w+):\s*\{\s*\n\s*Row:\s*\{([^}]*)\}", _tables_txt):
