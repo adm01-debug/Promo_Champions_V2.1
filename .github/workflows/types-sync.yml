@@ -128,7 +128,7 @@ jobs:
               'Nada foi aplicado ao banco ou ao código.',
               '', `Run: ${run}`,
             ].join('\n');
-            try { await github.rest.issues.createLabel({ owner, repo, name: 'types-sync', color: 'e11d48', description: 'Alerta do types-sync' }); } catch {}
+            try { await github.rest.issues.createLabel({ owner, repo, name: 'types-sync', color: 'e11d48', description: 'Alerta do types-sync' }); } catch (error) { console.log('Falha ao criar label types-sync:', error.message); }
             const { data: abertas } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'types-sync', per_page: 20 });
             const existente = abertas.find((i) => !i.pull_request && i.title === titulo);
             if (existente) await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });
@@ -200,7 +200,7 @@ jobs:
               'Nada foi aplicado. Ajuste o código ao schema novo e rode o types-sync de novo (dispatch).',
               '', `Run: ${run}`, '', resumo,
             ].join('\n');
-            try { await github.rest.issues.createLabel({ owner, repo, name: 'types-sync', color: 'e11d48', description: 'Alerta do types-sync' }); } catch {}
+            try { await github.rest.issues.createLabel({ owner, repo, name: 'types-sync', color: 'e11d48', description: 'Alerta do types-sync' }); } catch (error) { console.log('Falha ao criar label types-sync:', error.message); }
             const { data: abertas } = await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'types-sync', per_page: 20 });
             const existente = abertas.find((i) => !i.pull_request && i.title === titulo);
             if (existente) await github.rest.issues.createComment({ owner, repo, issue_number: existente.number, body: corpo });

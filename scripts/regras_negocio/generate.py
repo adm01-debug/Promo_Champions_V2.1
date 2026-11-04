@@ -944,8 +944,8 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
             schema["sources"].append(rel(f, root))
     # database.types.ts (Supabase gen types) — fonte quando migrations não têm a tabela
     for f in files:
-        if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f) and "Row:" in read_text(f):
-            txt = read_text(f)
+        if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f, 2_000_000) and "Row:" in read_text(f, 2_000_000):
+            txt = read_text(f, 2_000_000)
             schema["types_file"] = rel(f, root)
             for name, row in re.findall(r"\n\s+(\w+):\s*\{\s*\n\s*Row:\s*\{([^}]*)\}", txt):
                 cols = []

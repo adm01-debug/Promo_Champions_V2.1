@@ -250,7 +250,7 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   if (integracaoRuim.length) alertas.push({ tipo: 'integracao_sem_sucesso', detalhe: integracaoRuim });
   // Dead letters: entrega que falhou de vez e espera replay manual (winloss, callbacks V4, forecast...).
   const deadLetters = tabelas
-    .filter((t) => /dead_letter/.test(t.nome) && t.linhas > 0)
+    .filter((t) => /dead_letter/.test(t.nome) && !/_audit$|_history$|_log$/.test(t.nome) && t.linhas > 0)
     .map((t) => `${t.nome}: ${t.linhas} linhas`);
   if (deadLetters.length) alertas.push({ tipo: 'dead_letters_pendentes', detalhe: deadLetters });
   if (edges.no_repo_sem_deploy?.length) alertas.push({ tipo: 'edge_sem_deploy', detalhe: edges.no_repo_sem_deploy });

@@ -891,9 +891,10 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
         return {k: d.get(k) for k in keys} if isinstance(d, dict) else d
 
     out["project"] = api_section("project", f"/projects/{ref}", lambda p: keep(p, ("id", "name", "region", "status", "created_at", "organization_id")))
-    out["edge_functions"] = api_section("edge_functions", f"/projects/{ref}/functions", lambda fs: sorted(
+    _api_edge_functions = api_section("edge_functions", f"/projects/{ref}/functions", lambda fs: sorted(
         [keep(f, ("slug", "name", "status", "version", "verify_jwt", "import_map", "entrypoint_path", "import_map_path", "created_at", "updated_at")) for f in fs],
-        key=lambda f: f["slug"] or "")) or []
+        key=lambda f: f["slug"] or ""))
+    out["edge_functions"] = _api_edge_functions or []
     out["secrets_names"] = api_section("secrets", f"/projects/{ref}/secrets", lambda s: sorted(x.get("name") for x in s if isinstance(x, dict)))
     out["auth_config"] = api_section("auth_config", f"/projects/{ref}/config/auth", redact)
     out["postgrest_config"] = api_section("postgrest_config", f"/projects/{ref}/postgrest", redact)
@@ -922,7 +923,7 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
             ["verify_jwt", f.get("verify_jwt")], ["entrypoint", f.get("entrypoint_path")], ["import_map", f.get("import_map_path")],
             ["URL", f"https://{ref}.supabase.co/functions/v1/{s}"], ["fonte no repo", f"`supabase/functions/{s}/`"]])]
         write(fn_dir / slug(s) / "README.md", "\n".join(md))
-    if fn_dir.exists():
+    if fn_dir.exists() and _api_edge_functions is not None:
         for d in fn_dir.iterdir():
             if d.is_dir() and d.name not in {slug(s) for s in current}:
                 shutil.rmtree(d)

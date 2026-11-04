@@ -330,7 +330,7 @@ jobs:
           git worktree remove --force "$PUB" 2>/dev/null || true
           rm -rf "$PUB"; git worktree prune
           REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          if git fetch --quiet --depth 1 origin "$CONTEXTO_BRANCH" 2>/dev/null; then
+          if git fetch --quiet --depth 1 "$REMOTE" "$CONTEXTO_BRANCH" 2>/dev/null; then
             git worktree add --quiet --detach "$PUB" FETCH_HEAD
             ( cd "$PUB" && git checkout --quiet -B "$CONTEXTO_BRANCH" )
           else
