@@ -194,7 +194,7 @@ export function compararEdges(publicadasApi, noRepo) {
 /** Ordena chaves recursivamente: o diff entre execucoes fica so no que mudou. */
 function ordenar(valor) {
   if (Array.isArray(valor)) return valor.map(ordenar);
-  if (valor && typeof valor ===(object') {
+  if (valor && typeof valor === 'object') {
     return Object.fromEntries(Object.keys(valor).sort().map((k) => [k, ordenar(valor[k])]));
   }
   return valor;
@@ -212,7 +212,7 @@ export function rodaTodoDia(agenda) {
   return campos.length === 5 && CAMPO_TODO.every((re, i) => re.test(campos[i + 2]));
 }
 
-/** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/*). */
+/** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/). */
 export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   const tabelas = dado.tabelas.map((t) => ({ ...t, uso_no_codigo: uso[t.nome] ?? { src: 0, edges: 0 } }));
   const orfas = tabelas
