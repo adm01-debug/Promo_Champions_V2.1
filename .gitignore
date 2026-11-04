@@ -65,3 +65,15 @@ graphify-out/.graphify_root
 graphify-out/.graphify_python
 graphify-out/.graphify_labels.json*
 graphify-out/[0-9][0-9][0-9][0-9]-*/
+
+# gerado pelo contexto.yml na branch contexto (nunca em main); manual/ e texto humano e fica em main
+docs/contexto/*
+!docs/contexto/regras/
+docs/contexto/regras/*
+!docs/contexto/regras/manual/
+
+# saída opcional do gerar-repo.mjs com lista de tabelas no stdin (não versionada)
+inventario/estado/tabelas-uso.json
+
+# bytecode Python dos geradores de contexto
+__pycache__/

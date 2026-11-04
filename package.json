@@ -49,6 +49,8 @@
     "graphify:catalog": "node scripts/graphify/catalog-adapter.mjs",
     "graphify:reconcile": "node scripts/graphify/reconcile-catalog.mjs",
     "graphify:docs": "node scripts/graphify/docs-index.mjs",
+    "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
+    "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
     "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs",
     "debt:report": "node scripts/debt-report.mjs"
   },

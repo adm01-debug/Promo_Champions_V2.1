@@ -1,0 +1,77 @@
+# docs:
+#   gatilho: pull_request e push em main que toquem as automações de contexto/inventário/types-sync; dispatch
+#   prova: os geradores (codigo/, supabase/, regras/, índice, inventario/estado, types-sync) passam nas suítes offline — nenhum teste acessa banco, rede ou credencial
+#   falha: o PR fica vermelho (não é required check); o contexto.yml também roda o teste do gerador antes de publicar
+#   avisa: autor do PR, via checks do GitHub
+name: Testes das automações de contexto
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/ai-context/**'
+      - 'scripts/supabase_snapshot/**'
+      - 'scripts/regras_negocio/**'
+      - 'scripts/inventario/**'
+      - 'scripts/types-sync/**'
+      - 'scripts/ci/*.unit.mjs'
+      - 'inventario/estado/**'
+      - 'ai-context.config.json'
+      - '.github/workflows/contexto.yml'
+      - '.github/workflows/contexto-testes.yml'
+      - '.github/workflows/inventario-estado-semanal.yml'
+      - '.github/workflows/types-sync.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ai-context/**'
+      - 'scripts/supabase_snapshot/**'
+      - 'scripts/regras_negocio/**'
+      - 'scripts/inventario/**'
+      - 'scripts/types-sync/**'
+      - 'scripts/ci/*.unit.mjs'
+      - '.github/workflows/contexto.yml'
+      - '.github/workflows/contexto-testes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contexto-testes-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  testes:
+    name: Suítes offline (Node + Python)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: '.nvmrc'
+
+      # Os adaptadores supabase-snapshot/regras-negocio executam as suítes Python (stdlib; o
+      # psycopg é simulado) com o python3 do runner.
+      - name: Rodar as suítes
+        run: |
+          node --test \
+            scripts/ci/ai-context-generator.unit.mjs \
+            scripts/ci/contexto-indice.unit.mjs \
+            scripts/ci/contexto-publicacao.unit.mjs \
+            scripts/ci/regras-negocio.unit.mjs \
+            scripts/ci/supabase-snapshot.unit.mjs \
+            scripts/ci/inventario-banco.unit.mjs \
+            scripts/ci/inventario-mudou.unit.mjs \
+            scripts/ci/inventario-rotas.unit.mjs \
+            scripts/ci/types-sync.unit.mjs
