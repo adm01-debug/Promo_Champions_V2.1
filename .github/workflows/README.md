@@ -49,6 +49,28 @@ CodeQL (JavaScript/TypeScript) — análise estática de vulnerabilidades.
 
 Gatilhos: `push:main`, `schedule` (semanal), `workflow_dispatch`
 
+### `contexto.yml` — Contexto para agentes de IA (10 min)
+Três produtores (código, banco real, regras de negócio) + índice único, publicados na branch
+gerada `contexto` (`docs/contexto/00-INDEX.md`). Só faz commit quando algo mudou.
+
+Gatilhos: `push:main` (paths), `schedule` (a cada 10 min), `workflow_dispatch`
+
+### `contexto-testes.yml` — Testes das automações de contexto
+Suítes offline (Node + Python) dos geradores de contexto, inventário e types-sync.
+
+Gatilhos: `pull_request` e `push:main` (paths), `workflow_dispatch`
+
+### `inventario-estado-semanal.yml` — Inventário do estado real
+Refaz `inventario/estado/` (banco, rotas, edges) e abre PR `automation/inventario-estado` com auto-merge.
+
+Gatilhos: `schedule` (segunda 10:23 UTC), `workflow_dispatch`
+
+### `types-sync.yml` — Auto-correção do types.ts
+Regenera `src/integrations/supabase/types.ts` do banco oficial; com typecheck verde abre PR
+`automation/types-sync` com auto-merge, senão abre issue `[types-sync]`.
+
+Gatilhos: `push:main` (supabase/migrations), `schedule` (segunda 05:49 UTC), `workflow_dispatch`
+
 ---
 
 ## Rodar CI localmente

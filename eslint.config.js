@@ -18,6 +18,10 @@ export default tseslint.config(
       'package-lock.json',
       'supabase/functions/**',
       '**/*.config.{ts,js,cjs,mjs}',
+      // Gerador de contexto e teste do publicador portados sem alteração do Zapp_Web_V2 (cobertos por
+      // contexto-testes.yml); ficam fora do ratchet de complexidade, que mede o código do app.
+      'scripts/ai-context/**',
+      'scripts/ci/contexto-publicacao.unit.mjs',
     ],
   },
   {
