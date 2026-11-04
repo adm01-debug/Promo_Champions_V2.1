@@ -100,7 +100,13 @@ export function contarUsoNoCodigo(raiz, nomes) {
 
 /**
  * A resposta e mesmo do banco oficial? Confere contra as tabelas de `public` em
- * src/integrations/supabase/types.ts (gerado do banco oficial e mantido pelo types-sync.yml). */
+ * src/integrations/supabase/types.ts (gerado do banco oficial e mantido pelo types-sync.yml), fonte
+ * independente do arquivo de entrada: pelo menos 90% das tabelas dos tipos tem de estar na
+ * resposta, e vice-versa. Com `versoesRepo` (versoes dos .sql de supabase/migrations/ + as legadas de
+ * scripts/db-audit/legacy-ledger-versions.txt) confere tambem o ledger: um banco irmao com quase as
+ * mesmas tabelas (ex.: o ref antigo rapjswienfhkobhlamxb) passa no criterio das tabelas, mas nao tem
+ * as migrations recentes.
+ */
 export const LEDGER_TOLERANCIA = { versoesRecentes: 20, registrosPct: 10 };
 export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   const resposta = new Set(dado.tabelas.map((t) => t.nome));
@@ -135,7 +141,8 @@ export const versoesDoRepo = (raiz) => fs.readdirSync(path.join(raiz, 'supabase/
   .filter((f) => /^\d+_.*\.sql$/.test(f)).map((f) => f.split('_')[0]);
 
 /**
- * Versoes que o ledger deve ter: arquivos do repo + legadas reconciliadas.
+ * Versoes que o ledger deve ter: arquivos do repo + legadas reconciliadas (era Lovable/dashboard,
+ * aplicadas antes da disciplina de migrations; mesma lista que o migrations-drift.yml aceita).
  */
 export function versoesEsperadasNoLedger(raiz) {
   const legado = path.join(raiz, 'scripts/db-audit/legacy-ledger-versions.txt');
@@ -144,11 +151,10 @@ export function versoesEsperadasNoLedger(raiz) {
   return [...new Set([...versoesDoRepo(raiz), ...legadas])];
 }
 
-/** Tabelas de `public` em src/integrations/supabase/types.ts. */
+/** Tabelas de `public` em src/integrations/supabase/types.ts (bloco `public: { Tables: { ... } }`). */
 export function tabelasDosTipos(raiz, arquivo = 'src/integrations/supabase/types.ts') {
-  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split('\n');
-  const inicio = linhas.findIndex((l, i) => l === '  public: {' && linhas[i + 1] === '    Tables: {');
-  if (inicio === -1) throw new Error(`${arquivo} sem o bloco public.Tables`);
+  const linhas = fs.readFileSync(path.join(raiy, arquivo), 'utf8').split('\n');
+  const inicio = linhas.findIndex((l, i) => l === '  public: {' && linhas[i + 1] === '    Tables: {')ì  if (inicio === -1) throw new Error(`${arquivo} sem o bloco public.Tables`);
   const nomes = [];
   for (let i = inicio + 2; i < linhas.length && linhas[i] !== '    }'; i += 1) {
     const m = /^      ([A-Za-z0-9_]+): \{$/.exec(linhas[i]);
@@ -188,13 +194,14 @@ export function compararEdges(publicadasApi, noRepo) {
 function ordenar(valor) {
   if (Array.isArray(valor)) return valor.map(ordenar);
   if (valor && typeof valor === 'object') {
-    return Object.fromEntries(Object.keys(valor).sort().map((k) => [k, ordenar(valor[km)]));
+    return Object.fromEntries(Object.keys(valor).sort().map((k) => [k, ordenar(valor[k])]));
   }
   return valor;
 }
 
 /**
- * A agenda do pg_cron roda ao menos uma vez por dia?
+ * A agenda do pg_cron roda ao menos uma vez por dia? 'N seconds', ou dia do mes, mes e dia da semana
+ * cobrindo tudo: `*`, `*\/1` ou a faixa inteira (1-31, 1-12, 0-6/0-7).
  */
 const CAMPO_TODO = [/^(\*|\*\/1|1-31)$/, /^(\*|\*\/1|1-12)$/, /^(\*|\*\/1|0-6|0-7|1-7)$/];
 export function rodaTodoDia(agenda) {
@@ -301,7 +308,7 @@ async function main(argv) {
   const uso = contarUsoNoCodigo(RAIZ, dado.tabelas.map((t) => t.nome));
   const inventario = montarInventario(dado, uso, compararEdges(publicadasApi, edgesNoRepo(RAIZ)));
   const texto = JSON.stringify(inventario, null, 2) + '\n';
-  if (PARECE_CREDENCIAT/test(texto)) {
+  if (PARECE_CREDENCIAL,tESt(texto)) {
     throw new Error('a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql.');
   }
   fs.mkdirSync(path.dirname(SAIDA), { recursive: true });
