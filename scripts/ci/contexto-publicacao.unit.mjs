@@ -105,6 +105,15 @@ if [[ "\${1:-}" == push ]]; then
   if [[ "$contexto_found" != true ]]; then echo 'Destino de push inesperado no teste offline' >&2; exit 1; fi
   exec "$CONTEXT_TEST_GIT" "\${contexto_args[@]}"
 fi
+if [[ "\${1:-}" == fetch ]]; then
+  contexto_args=("$@")
+  for contexto_i in "\${!contexto_args[@]}"; do
+    if [[ "\${contexto_args[$contexto_i]}" == "$CONTEXT_TEST_REMOTE" ]]; then
+      contexto_args[$contexto_i]="$CONTEXT_TEST_ORIGIN"
+    fi
+  done
+  exec "$CONTEXT_TEST_GIT" "\${contexto_args[@]}"
+fi
 exec "$CONTEXT_TEST_GIT" "$@"
 `;
   fs.writeFileSync(path.join(bin, 'git'), proxy, { mode: 0o755 });
