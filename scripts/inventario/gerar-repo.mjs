@@ -18,13 +18,13 @@ function rgCount(pattern, paths) {
   try {
     const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' });
     return out.split('\n').filter(Boolean).reduce((n, l) => n + Number(l.slice(l.lastIndexOf(':') + 1)), 0);
-  } catch { return 0; }
+  } catch (e) { if (e.status === 1) return 0; throw e; }
 }
 function rgFiles(pattern, paths) {
   try {
     return execFileSync('rg', ['-l', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' })
       .split('\n').filter(Boolean).map((f) => f.slice(RAIZ.length));
-  } catch { return []; }
+  } catch (e) { if (e.status === 1) return []; throw e; }
 }
 
 const edges = readdirSync(FDIR, { withFileTypes: true })
@@ -39,7 +39,7 @@ for (const f of edges) {
   const src = rgFiles(`(functions\\.invoke\\(\\s*['"\`]${q}['"\`]|functions/v1/${q}\\b|['"\`]${q}['"\`]\\s*[,)])`, ['src']);
   const migrations = rgFiles(`functions/v1/${q}\\b`, ['supabase/migrations']);
   const outrasEdges = rgFiles(`functions/v1/${q}\\b|['"\`]${q}['"\`]`, ['supabase/functions']).filter((p) => !p.startsWith(`supabase/functions/${f}/`));
-  const e2e = rgFiles(q, ['tests/e2e']);
+  const e2e = rgFiles(q, ['e2e']);
   const ci = rgFiles(q, ['.github/workflows', 'supabase/config.toml']);
   inventario[f] = {
     linhas: code.split('\n').length,

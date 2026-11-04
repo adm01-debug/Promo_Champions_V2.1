@@ -894,7 +894,7 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     _api_edge_functions = api_section("edge_functions", f"/projects/{ref}/functions", lambda fs: sorted(
         [keep(f, ("slug", "name", "status", "version", "verify_jwt", "import_map", "entrypoint_path", "import_map_path", "created_at", "updated_at")) for f in fs],
         key=lambda f: f["slug"] or ""))
-    out["edge_functions"] = _api_edge_functions or []
+    out["edge_functions"] = _api_edge_functions if _api_edge_functions is not None else ((previous_api or {}).get("edge_functions") or [])
     out["secrets_names"] = api_section("secrets", f"/projects/{ref}/secrets", lambda s: sorted(x.get("name") for x in s if isinstance(x, dict)))
     out["auth_config"] = api_section("auth_config", f"/projects/{ref}/config/auth", redact)
     out["postgrest_config"] = api_section("postgrest_config", f"/projects/{ref}/postgrest", redact)

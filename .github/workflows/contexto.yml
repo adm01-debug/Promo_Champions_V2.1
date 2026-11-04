@@ -201,16 +201,20 @@ jobs:
       - name: Recuperar snapshot anterior da branch contexto (CHANGELOG precisa do estado anterior)
         env:
           FORCE: ${{ inputs.force }}
+          REMOTE: "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
         run: |
           mkdir -p "$SNAPSHOT_DIR"
-          if git fetch --quiet --depth 1 "$REMOTE" "$CONTEXTO_BRANCH" 2>/dev/null; then
+          ls_exit=0
+          git ls-remote --exit-code --heads "$REMOTE" "$CONTEXTO_BRANCH" >/dev/null 2>&1 || ls_exit=$?
+          if [ "$ls_exit" -eq 0 ]; then
+            git fetch --quiet --depth 1 "$REMOTE" "$CONTEXTO_BRANCH"
             git archive FETCH_HEAD -- "$SNAPSHOT_DIR" 2>/dev/null | tar -x || echo "::warning::branch existe mas sem $SNAPSHOT_DIR — recomeçando do zero"
-          else
+          elif [ "$ls_exit" -eq 2 ]; then
             echo "Branch $CONTEXTO_BRANCH ainda não existe: primeira coleta."
+          else
+            echo "::error::Falha ao verificar existência da branch $CONTEXTO_BRANCH (exit $ls_exit)"; exit 1
           fi
           if [ "$FORCE" = "true" ]; then rm -f "$SNAPSHOT_DIR/snapshot.json"; fi
-        env:
-          REMOTE: "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
 
       - name: Gerar supabase/
         env:
@@ -227,10 +231,10 @@ jobs:
           fi
           python3 scripts/supabase_snapshot/snapshot.py
 
-      - name: Guard — nenhum segredo na saída
+      - name: Guard — enhum segredo na saída
         if: env.SNAPSHOT_SKIPPED != '1'
         run: |
-          if grep -rIEl 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|sb_secret_|sb_publishable_|postgres(ql)?://[^ ]*:[^ @]+@' "$SNAPSHOT_DIR"; then
+          if grep -rIEl 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|sb_secret_|sb_publishable_|sbp_[A-Za-z0-9]{20,}|postgres(ql)?://[^ ]*:[^ @]+@' "$SNAPSHOT_DIR"; then
             echo "::error::Possível segredo detectado no snapshot — publicação abortada"; exit 1
           fi
 
@@ -347,7 +351,7 @@ jobs:
               cp -a "$ART/contexto-$fonte" "$PUB/$CONTEXTO_DIR/$fonte"
               novos=$((novos + 1))
             else
-              echo "$fonte/: sem artefato neste run — mantém o que está na branch"
+              echo "$fonte/: sem artefato neste run — Mantém o que está na branch"
             fi
           done
           # manual/ é texto humano e vive em main: a cópia na branch segue a main
@@ -358,7 +362,7 @@ jobs:
           python3 scripts/regras_negocio/indice.py --repo "$PUB" --out "$CONTEXTO_DIR/00-INDEX.md" --head "$HEAD_MAIN" \
             --remote "$GITHUB_REPOSITORY" \
             --fonte "banco real=$CONTEXTO_DIR/supabase" \
-            --fonte "código=$CONTEXTO_DIR/codigo" \
+            --fonte "código =$CONTEXTO_DIR/codigo" \
             --fonte "regras de negócio=$CONTEXTO_DIR/regras"
           cat > "$PUB/README.md" <<'EOF'
           # Branch gerada: contexto para agentes de IA
@@ -394,7 +398,7 @@ jobs:
               print(0)
           ') || LAST=0
               if [ "$LAST" -eq 0 ]; then
-                echo "Não foi possível validar a data bancária publicada — publicando sem esperar."
+                echo "Não foi possímvel validar a data bancária publicada — publicando sem esperar."
               fi
             else
               LAST=$(git log -1 --format=%ct)
