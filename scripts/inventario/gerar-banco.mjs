@@ -84,7 +84,7 @@ function listarArquivos(dir, acc = []) {
  */
 export function contarUsoNoCodigo(raiz, nomes) {
   const uso = Object.fromEntries(nomes.map((n) => [n, { src: 0, edges: 0 }]));
-  const reFrom = /(\bstorage\s*)?\.from\(\s*['"` + '`' + `]([A-Za-z0-9_]+)['"` + '`' + `]/g;
+  const reFrom = /(\bstorage\s*)?\.from\(\s*['"`]([A-Za-z0-9_]+)['"`]/g;
   const reRest = /\/rest\/v1\/([A-Za-z0-9_]+)/g;
   for (const pasta of PASTAS_CODIGO) {
     const chave = pasta === 'src' ? 'src' : 'edges';
