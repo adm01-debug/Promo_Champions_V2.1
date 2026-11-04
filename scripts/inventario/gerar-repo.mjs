@@ -39,7 +39,7 @@ for (const f of edges) {
   const src = rgFiles(`(functions\\.invoke\\(\\s*['"\`]${q}['"\`]|functions/v1/${q}\\b|['"\`]${q}['"\`]\\s*[,)])`, ['src']);
   const migrations = rgFiles(`functions/v1/${q}\\b`, ['supabase/migrations']);
   const outrasEdges = rgFiles(`functions/v1/${q}\\b|['"\`]${q}['"\`]`, ['supabase/functions']).filter((p) => !p.startsWith(`supabase/functions/${f}/`));
-  const e2e = rgFiles(q, ['e2e']);
+  const e2e = rgFiles(q, ['tests/e2e']);
   const ci = rgFiles(q, ['.github/workflows', 'supabase/config.toml']);
   inventario[f] = {
     linhas: code.split('\n').length,
