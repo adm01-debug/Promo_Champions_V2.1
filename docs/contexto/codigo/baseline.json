@@ -1,0 +1,925 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "ef8074050be40b374e6bc628c978ad4b56d9edac",
+  "branch": "main",
+  "data_commit": "2026-11-04T20:31:00-03:00",
+  "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
+  "ultimos_commits": [
+   {
+    "sha": "ef807405",
+    "data": "2026-11-04",
+    "assunto": "feat: automações de contexto, inventário e types-sync para agentes de IA (#362)"
+   },
+   {
+    "sha": "71674e92",
+    "data": "2026-11-02",
+    "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)"
+   },
+   {
+    "sha": "c9f14489",
+    "data": "2026-11-02",
+    "assunto": "chore(deps): bump astral-sh/setup-uv (#354)"
+   },
+   {
+    "sha": "3f259403",
+    "data": "2026-10-31",
+    "assunto": "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline"
+   },
+   {
+    "sha": "cae024b8",
+    "data": "2026-10-31",
+    "assunto": "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs"
+   },
+   {
+    "sha": "c7585895",
+    "data": "2026-10-31",
+    "assunto": "docs: auditorias-anteriores — reconciliação com main (SHA c23e4e8b)"
+   },
+   {
+    "sha": "7e7ca434",
+    "data": "2026-10-31",
+    "assunto": "docs(auditoria): FASE4_PROGRESSO e RELATORIO_FINAL — Fases 4-5 (#350)"
+   },
+   {
+    "sha": "ccc8003a",
+    "data": "2026-10-31",
+    "assunto": "docs: adiciona reconciliação de auditorias e planos anteriores (#349)"
+   },
+   {
+    "sha": "f73ec537",
+    "data": "2026-10-31",
+    "assunto": "chore: FASE4_PROGRESSO.md — evidências dos 10 CRÍTICOs auditados (#346)"
+   },
+   {
+    "sha": "c23e4e8b",
+    "data": "2026-10-31",
+    "assunto": "chore(deps): lote de 8 PRs do dependabot + deno.lock regenerado (#344)"
+   },
+   {
+    "sha": "50386b06",
+    "data": "2026-10-29",
+    "assunto": "chore(deps): bump astral-sh/setup-uv (#326)"
+   },
+   {
+    "sha": "313127fa",
+    "data": "2026-10-28",
+    "assunto": "chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)"
+   },
+   {
+    "sha": "4b7905f9",
+    "data": "2026-10-27",
+    "assunto": "fix(db): corrigir achados R3 da canonização de sales.status (#341)"
+   },
+   {
+    "sha": "2d9f9384",
+    "data": "2026-10-27",
+    "assunto": "fix(crm): remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) (#343)"
+   },
+   {
+    "sha": "8d6274f4",
+    "data": "2026-10-27",
+    "assunto": "fix(db): remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse"
+   },
+   {
+    "sha": "839645f2",
+    "data": "2026-10-27",
+    "assunto": "fix(db): trava escrita direta em agent_runs/actions e idempotencia da retomada (#340)"
+   },
+   {
+    "sha": "2aa90b96",
+    "data": "2026-10-27",
+    "assunto": "fix: r3 — briefing jsonb coagido na borda, realtime sem remount morto, alerta de deploy por tag (#339)"
+   },
+   {
+    "sha": "4ff1f648",
+    "data": "2026-10-27",
+    "assunto": "docs(config): rodada 2 do inventário de CI — 3 bloqueios externos confirmados, resto verde (#338)"
+   },
+   {
+    "sha": "1e3a191b",
+    "data": "2026-10-27",
+    "assunto": "fix(db): restringe RPCs de agent_runs, retoma aprovações e valida JWT/embed (#334)"
+   },
+   {
+    "sha": "afb1f35e",
+    "data": "2026-10-27",
+    "assunto": "fix(services): integrações — JID com device, reply de protocolo/reação e lease+paginação no bitrix24-sync (#333)"
+   },
+   {
+    "sha": "ed7f40cc",
+    "data": "2026-10-27",
+    "assunto": "docs(config): RELATORIO_CI — dedupe do histórico e escopo real das correções (#337)"
+   },
+   {
+    "sha": "98ce4dd1",
+    "data": "2026-10-27",
+    "assunto": "fix(ui): tópicos realtime únicos por mount, embed salespeople e guard recommended_actions (#332)"
+   },
+   {
+    "sha": "5d22ecd3",
+    "data": "2026-10-27",
+    "assunto": "fix(db): canonizar vocabulário de sales.status em RPCs e edge functions (#335)"
+   },
+   {
+    "sha": "d8fcd7bd",
+    "data": "2026-10-27",
+    "assunto": "fix(gamification): endurecer RPCs de XP/corrida, sync de desafios e anonimizacao LGPD (#306)"
+   },
+   {
+    "sha": "e4615800",
+    "data": "2026-10-27",
+    "assunto": "fix(config): CI Failure Alert só dispara em conclusões na main + RELATORIO_CI/PENDENCIAS (#336)"
+   }
+  ],
+  "arquivos_mudados_7d": 63,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "src/hooks/win-loss",
+    "mudancas": 35
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 32
+   },
+   {
+    "pasta": "src/hooks/race",
+    "mudancas": 25
+   },
+   {
+    "pasta": "src/hooks/gamification",
+    "mudancas": 21
+   },
+   {
+    "pasta": "src/components/gamification",
+    "mudancas": 20
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 19
+   },
+   {
+    "pasta": "src/components/dashboard",
+    "mudancas": 19
+   },
+   {
+    "pasta": "RELATORIO_CI.md",
+    "mudancas": 18
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 16
+   },
+   {
+    "pasta": "src/hooks/deal-intelligence",
+    "mudancas": 15
+   },
+   {
+    "pasta": "src/hooks/conversational",
+    "mudancas": 13
+   },
+   {
+    "pasta": "PENDENCIAS.md",
+    "mudancas": 12
+   },
+   {
+    "pasta": "src/components/race",
+    "mudancas": 12
+   },
+   {
+    "pasta": "src/hooks/revenue",
+    "mudancas": 12
+   },
+   {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 12
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 82
+   },
+   {
+    "arquivo": "package.json",
+    "mudancas": 82
+   },
+   {
+    "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 32
+   },
+   {
+    "arquivo": "deno.lock",
+    "mudancas": 20
+   },
+   {
+    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
+    "mudancas": 18
+   },
+   {
+    "arquivo": "RELATORIO_CI.md",
+    "mudancas": 18
+   },
+   {
+    "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 13
+   },
+   {
+    "arquivo": ".github/workflows/cron-monitoring.yml",
+    "mudancas": 13
+   },
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 13
+   },
+   {
+    "arquivo": ".github/workflows/qa-exhaustive.yml",
+    "mudancas": 12
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 12
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 12
+   },
+   {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 12
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "mudancas": 12
+   },
+   {
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "vite.config.ts",
+    "mudancas": 10
+   },
+   {
+    "arquivo": ".github/workflows/graphify.yml",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/useQuotes.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "docs/RUNBOOK.md",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/hooks/admin/useV4Callbacks.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "supabase/functions/analyze-pipeline-coverage/index.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-oauth/index.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "supabase/functions/predict-quota-attainment/index.ts",
+    "mudancas": 8
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "devin-ai-integration[bot]",
+    "commits": 45
+   },
+   {
+    "autor": "adm01-debug",
+    "commits": 32
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 24
+   },
+   {
+    "autor": "Claude",
+    "commits": 12
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 3422,
+  "arquivos_codigo": 2449,
+  "linhas_codigo": 419653,
+  "rotas": 170,
+  "rotas_http_backend": 12,
+  "vistas_por_id": 0,
+  "itens_menu": 133,
+  "modulos": 173,
+  "componentes": 1276,
+  "hooks": 472,
+  "edge_functions": 171,
+  "tabelas": 414,
+  "migrations": 669,
+  "cron_jobs": 28,
+  "testes": 162,
+  "workflows": 24,
+  "scripts": 69,
+  "docs_md": 197
+ },
+ "por_pasta": {
+  "commitlint.config.js": {
+   "arquivos": 1,
+   "linhas": 30
+  },
+  "docs/graphify": {
+   "arquivos": 1,
+   "linhas": 83
+  },
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 87
+  },
+  "playwright.a11y.config.ts": {
+   "arquivos": 1,
+   "linhas": 32
+  },
+  "playwright.config.ts": {
+   "arquivos": 1,
+   "linhas": 91
+  },
+  "postcss.config.js": {
+   "arquivos": 1,
+   "linhas": 7
+  },
+  "public/register-sw.js": {
+   "arquivos": 1,
+   "linhas": 22
+  },
+  "public/sw.js": {
+   "arquivos": 1,
+   "linhas": 58
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1458
+  },
+  "scripts/bundle-edge-functions.ts": {
+   "arquivos": 1,
+   "linhas": 238
+  },
+  "scripts/check-bundle-budget.mjs": {
+   "arquivos": 1,
+   "linhas": 108
+  },
+  "scripts/check-coverage-ladder.mjs": {
+   "arquivos": 1,
+   "linhas": 90
+  },
+  "scripts/check-coverage-ratchet.mjs": {
+   "arquivos": 1,
+   "linhas": 70
+  },
+  "scripts/check-data-layer.mjs": {
+   "arquivos": 1,
+   "linhas": 107
+  },
+  "scripts/check-deno-types.mjs": {
+   "arquivos": 1,
+   "linhas": 158
+  },
+  "scripts/check-domain-boundaries.mjs": {
+   "arquivos": 1,
+   "linhas": 164
+  },
+  "scripts/check-migrations.mjs": {
+   "arquivos": 1,
+   "linhas": 201
+  },
+  "scripts/check-test-spec-patterns.ts": {
+   "arquivos": 1,
+   "linhas": 223
+  },
+  "scripts/check-typecheck-baseline.mjs": {
+   "arquivos": 1,
+   "linhas": 72
+  },
+  "scripts/ci": {
+   "arquivos": 11,
+   "linhas": 1336
+  },
+  "scripts/codemod-money.mjs": {
+   "arquivos": 1,
+   "linhas": 325
+  },
+  "scripts/codemod-typography.mjs": {
+   "arquivos": 1,
+   "linhas": 136
+  },
+  "scripts/db": {
+   "arquivos": 1,
+   "linhas": 76
+  },
+  "scripts/db-audit": {
+   "arquivos": 3,
+   "linhas": 367
+  },
+  "scripts/debt-report.mjs": {
+   "arquivos": 1,
+   "linhas": 251
+  },
+  "scripts/deno-test-suite.mjs": {
+   "arquivos": 1,
+   "linhas": 223
+  },
+  "scripts/e2e-precheck.mjs": {
+   "arquivos": 1,
+   "linhas": 84
+  },
+  "scripts/flaky-report.mjs": {
+   "arquivos": 1,
+   "linhas": 151
+  },
+  "scripts/gen-api-catalog.mjs": {
+   "arquivos": 1,
+   "linhas": 265
+  },
+  "scripts/gen-data-dict.mjs": {
+   "arquivos": 1,
+   "linhas": 275
+  },
+  "scripts/generate-role-permissions-seed.d.mts": {
+   "arquivos": 1,
+   "linhas": 3
+  },
+  "scripts/generate-role-permissions-seed.mjs": {
+   "arquivos": 1,
+   "linhas": 85
+  },
+  "scripts/graphify": {
+   "arquivos": 15,
+   "linhas": 1810
+  },
+  "scripts/inventario": {
+   "arquivos": 4,
+   "linhas": 832
+  },
+  "scripts/lib": {
+   "arquivos": 1,
+   "linhas": 58
+  },
+  "scripts/lint-input-validation.ts": {
+   "arquivos": 1,
+   "linhas": 133
+  },
+  "scripts/lint-request-id.ts": {
+   "arquivos": 1,
+   "linhas": 118
+  },
+  "scripts/load": {
+   "arquivos": 1,
+   "linhas": 73
+  },
+  "scripts/pack-quote-to-sale-artifacts.ts": {
+   "arquivos": 1,
+   "linhas": 57
+  },
+  "scripts/prod-health-check.ts": {
+   "arquivos": 1,
+   "linhas": 35
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2545
+  },
+  "scripts/run-win-loss-analysis.ts": {
+   "arquivos": 1,
+   "linhas": 193
+  },
+  "scripts/security": {
+   "arquivos": 1,
+   "linhas": 107
+  },
+  "scripts/seed-august-sales.ts": {
+   "arquivos": 1,
+   "linhas": 149
+  },
+  "scripts/seed-deal-outcomes.ts": {
+   "arquivos": 1,
+   "linhas": 57
+  },
+  "scripts/seed-fake-data.ts": {
+   "arquivos": 1,
+   "linhas": 387
+  },
+  "scripts/seed-probe.ts": {
+   "arquivos": 1,
+   "linhas": 38
+  },
+  "scripts/seed-race-cars.ts": {
+   "arquivos": 1,
+   "linhas": 96
+  },
+  "scripts/seed-real-people.ts": {
+   "arquivos": 1,
+   "linhas": 107
+  },
+  "scripts/smoke-target-backend.ts": {
+   "arquivos": 1,
+   "linhas": 246
+  },
+  "scripts/smokeTargetHelpers.ts": {
+   "arquivos": 1,
+   "linhas": 82
+  },
+  "scripts/sql-coverage-matrix.mjs": {
+   "arquivos": 1,
+   "linhas": 122
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2546
+  },
+  "scripts/types-sync": {
+   "arquivos": 1,
+   "linhas": 84
+  },
+  "scripts/update-coverage-baseline.mjs": {
+   "arquivos": 1,
+   "linhas": 100
+  },
+  "scripts/update-typecheck-baseline.mjs": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/verify-quote-to-sale-invariants.ts": {
+   "arquivos": 1,
+   "linhas": 163
+  },
+  "src/App.tsx": {
+   "arquivos": 1,
+   "linhas": 133
+  },
+  "src/components": {
+   "arquivos": 1183,
+   "linhas": 187732
+  },
+  "src/config": {
+   "arquivos": 3,
+   "linhas": 90
+  },
+  "src/constants": {
+   "arquivos": 1,
+   "linhas": 136
+  },
+  "src/contexts": {
+   "arquivos": 6,
+   "linhas": 606
+  },
+  "src/hooks": {
+   "arquivos": 504,
+   "linhas": 57684
+  },
+  "src/integrations": {
+   "arquivos": 4,
+   "linhas": 25560
+  },
+  "src/lib": {
+   "arquivos": 76,
+   "linhas": 8495
+  },
+  "src/main.tsx": {
+   "arquivos": 1,
+   "linhas": 52
+  },
+  "src/pages": {
+   "arquivos": 174,
+   "linhas": 42943
+  },
+  "src/routes": {
+   "arquivos": 3,
+   "linhas": 1557
+  },
+  "src/services": {
+   "arquivos": 7,
+   "linhas": 1123
+  },
+  "src/test": {
+   "arquivos": 10,
+   "linhas": 946
+  },
+  "src/types": {
+   "arquivos": 4,
+   "linhas": 391
+  },
+  "src/utils": {
+   "arquivos": 5,
+   "linhas": 568
+  },
+  "supabase/functions": {
+   "arquivos": 314,
+   "linhas": 65490
+  },
+  "tailwind.config.ts": {
+   "arquivos": 1,
+   "linhas": 507
+  },
+  "tests/a11y": {
+   "arquivos": 2,
+   "linhas": 250
+  },
+  "tests/e2e": {
+   "arquivos": 54,
+   "linhas": 7290
+  },
+  "tests/migrations": {
+   "arquivos": 3,
+   "linhas": 701
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 265
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 79
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 25491
+  },
+  {
+   "arquivo": "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
+   "linhas": 2268
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2144
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1724
+  },
+  {
+   "arquivo": "src/components/race/track/TrackScenery.tsx",
+   "linhas": 1398
+  },
+  {
+   "arquivo": "src/lib/winloss/atRiskFixtures.ts",
+   "linhas": 1215
+  },
+  {
+   "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+   "linhas": 1184
+  },
+  {
+   "arquivo": "src/routes/AppRoutes.tsx",
+   "linhas": 1156
+  },
+  {
+   "arquivo": "supabase/functions/run-retry-tests/retry_test.ts",
+   "linhas": 1054
+  },
+  {
+   "arquivo": "src/components/race/RaceCar.tsx",
+   "linhas": 940
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 924
+  },
+  {
+   "arquivo": "supabase/functions/sequence-runner/index.ts",
+   "linhas": 891
+  },
+  {
+   "arquivo": "supabase/functions/winloss-webhook-health-monitor/index.ts",
+   "linhas": 811
+  },
+  {
+   "arquivo": "src/pages/admin/AdminComercial.tsx",
+   "linhas": 807
+  },
+  {
+   "arquivo": "src/components/dashboard/Speedometer.tsx",
+   "linhas": 804
+  },
+  {
+   "arquivo": "src/pages/Estoque.tsx",
+   "linhas": 784
+  },
+  {
+   "arquivo": "src/components/activities/ActivityLogForm.tsx",
+   "linhas": 763
+  },
+  {
+   "arquivo": "src/components/win-loss/ScenarioForecastChart.tsx",
+   "linhas": 756
+  },
+  {
+   "arquivo": "supabase/functions/detect-winloss-at-risk/scenarios_test.ts",
+   "linhas": 742
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 731
+  },
+  {
+   "arquivo": "src/pages/Orcamentos.tsx",
+   "linhas": 683
+  },
+  {
+   "arquivo": "src/pages/SDRDashboard.tsx",
+   "linhas": 662
+  },
+  {
+   "arquivo": "src/pages/FollowUpInteligente.tsx",
+   "linhas": 641
+  },
+  {
+   "arquivo": "src/pages/admin/AdminV4CallbacksPage.tsx",
+   "linhas": 639
+  },
+  {
+   "arquivo": "src/components/race/RaceArena.tsx",
+   "linhas": 631
+  }
+ ],
+ "qualidade": {
+  "any": 6,
+  "console_log": 148,
+  "ts_ignore": 0,
+  "eslint_disable": 9,
+  "todos": 5,
+  "arquivos_acima_500_linhas": 62
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/check-data-layer.mjs",
+   "linha": 14,
+   "tipo": "TODO",
+   "texto": "no PR)."
+  },
+  {
+   "arquivo": "scripts/check-migrations.mjs",
+   "linha": 4,
+   "tipo": "TODO",
+   "texto": "PR (scan do diretório):"
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [
+   "/contas/:id"
+  ],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [
+   "Análises -> /dashboard/analises",
+   "Colete um power-up -> powerup",
+   "Competição -> /dashboard/competicao",
+   "Engajamento -> /dashboard/engajamento",
+   "Experimente os modos de visualização -> view-mode",
+   "Home -> /",
+   "Inteligência -> /dashboard/inteligencia",
+   "Menu -> #menu",
+   "Meu Dashboard -> /dashboard-custom",
+   "Neural Dashboard -> /sdr",
+   "Neural Dashboard -> /closer",
+   "Performance -> /dashboard/performance",
+   "Personalize seu carro -> car",
+   "Pular para a busca -> #search",
+   "Pular para a navegação -> #main-navigation",
+   "Pular para o conteúdo principal -> #main-content",
+   "Pular para o Dashboard -> #nav-item-dashboard",
+   "Pular para o Pipeline -> #nav-item-pipeline",
+   "Veja o leaderboard -> leaderboard",
+   "Vendas -> /vendas",
+   "Visão Geral -> /dashboard/visao-geral",
+   "Visite o Pit Stop -> pitstop"
+  ],
+  "edges_orfas": [
+   "activity-goal-alerts",
+   "admin-conversion-trail",
+   "ai-agent-orchestrator",
+   "ai-copilot",
+   "analyze-pipeline-coverage",
+   "auto-reassign-inactive",
+   "challenge-expiration-alerts",
+   "check-lead-sla",
+   "check-quote-expiration",
+   "customer-success-360",
+   "customer-success-hub",
+   "elevenlabs-stt",
+   "engagement-score-recompute",
+   "generate-loss-coaching",
+   "get-client-ip",
+   "lead-scoring",
+   "new-device-alert",
+   "notify-critical-pattern",
+   "process-race-event",
+   "process-scheduled-sends",
+   "ranking-api",
+   "run-retry-tests",
+   "semantic-coverage",
+   "semantic-reindex-batch",
+   "semantic-search-universal",
+   "sequence-record-reply",
+   "simulate-load",
+   "wal-health-alert",
+   "webvitals-regression-alert",
+   "winloss-webhook-health-monitor",
+   "winloss-webhook-replay-batch",
+   "winloss-webhook-timeline"
+  ],
+  "edges_chamadas_sem_pasta": [],
+  "tabelas_sem_rls": [
+   "ab_tests",
+   "experiment_assignments",
+   "experiment_variants",
+   "experiments",
+   "migration_log",
+   "security_events"
+  ],
+  "tabelas_usadas_sem_definicao": [
+   "auth_users_view",
+   "table",
+   "team_members"
+  ],
+  "tabelas_com_drift_migration_vs_types": [],
+  "rpcs_sem_definicao": [],
+  "componentes_orfaos": [
+   "src/components/ui/level-up-celebration.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "ActivityHeatmap",
+   "BIProductCard",
+   "BuyingCommitteeCard",
+   "ChurnPrediction",
+   "ClientSelector",
+   "CommissionCalculator",
+   "CompactGamificationCard",
+   "FeatureFlagsAdmin",
+   "PageHeaderSkeleton",
+   "PerformanceMonitor",
+   "PlaybookCard",
+   "RevenueForecast",
+   "SDRDashboard",
+   "SalesChart",
+   "Skeleton",
+   "SkeletonCard",
+   "StreakMilestoneOverlay",
+   "TableSkeleton",
+   "TeamActivityFeed"
+  ],
+  "scripts_orfaos": [
+   "scripts/ci/lint-ratchet.mjs",
+   "scripts/ci/typecheck-ratchet.mjs",
+   "scripts/codemod-money.mjs",
+   "scripts/db-audit/check-migration-drift.mjs"
+  ],
+  "env_usadas_nao_declaradas": [
+   "DEV",
+   "MODE",
+   "VITE_APP_URL",
+   "VITE_CANONICAL_URL",
+   "VITE_SENTRY_DSN",
+   "VITE_SUPABASE_ANON_KEY",
+   "VITE_SUPABASE_TEST_MODE"
+  ],
+  "ciclos_de_import": 2,
+  "possiveis_segredos_no_codigo": [
+   "scripts/ai-context/cenarios.mjs:102",
+   "scripts/ci/inventario-banco.unit.mjs:165"
+  ]
+ },
+ "erros_do_gerador": []
+}

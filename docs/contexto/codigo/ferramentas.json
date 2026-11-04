@@ -1,0 +1,2211 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "stack": {
+  "linguagens": [
+   "TypeScript (2382)",
+   "SQL (676)",
+   "Markdown (197)",
+   "JavaScript (64)",
+   "JSON (28)",
+   "YAML (26)",
+   "Python (5)",
+   "Shell (5)"
+  ],
+  "linguagem_principal": "TypeScript",
+  "framework": "React",
+  "backend_http": [],
+  "bundler": "Vite",
+  "roteador": "react-router",
+  "banco": "Supabase",
+  "testes": [
+   "vitest",
+   "playwright"
+  ],
+  "ui": [
+   "tailwind",
+   "radix/shadcn"
+  ],
+  "estado": [
+   "react-query"
+  ],
+  "gerenciador_pacotes": "npm",
+  "node": "22",
+  "python": null,
+  "deploy": [
+   "vercel"
+  ],
+  "monorepo": null,
+  "pastas_fonte": [
+   "src"
+  ]
+ },
+ "workspaces": [],
+ "package": {
+  "nome": "promo-champions-v2",
+  "versao": null,
+  "scripts": {
+   "a11y:report": "A11Y_REPORT_ONLY=1 playwright test -c playwright.a11y.config.ts",
+   "a11y:sweep": "playwright test -c playwright.a11y.config.ts",
+   "build": "vite build",
+   "build:bun": "bunx vite build",
+   "build:dev": "vite build --mode development",
+   "build:node": "vite build",
+   "check:data-layer": "node scripts/check-data-layer.mjs",
+   "check:domain-boundaries": "node scripts/check-domain-boundaries.mjs",
+   "check:migrations": "node scripts/check-migrations.mjs",
+   "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs",
+   "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
+   "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
+   "coverage:baseline:update": "node scripts/update-coverage-baseline.mjs",
+   "coverage:ladder": "node scripts/check-coverage-ladder.mjs",
+   "coverage:ratchet": "node scripts/check-coverage-ratchet.mjs",
+   "debt:report": "node scripts/debt-report.mjs",
+   "deps:check": "depcruise --config .dependency-cruiser.cjs src supabase/functions/_shared",
+   "deps:graph": "depcruise --config .dependency-cruiser.cjs --output-type dot src supabase/functions/_shared | dot -Tsvg -o dependency-graph.svg",
+   "dev": "vite --host",
+   "dev:bun": "bunx vite --host",
+   "dev:node": "vite --host",
+   "flaky:report": "node scripts/flaky-report.mjs",
+   "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+   "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+   "graphify:catalog": "node scripts/graphify/catalog-adapter.mjs",
+   "graphify:contracts": "node scripts/graphify/static-contracts.mjs",
+   "graphify:docs": "node scripts/graphify/docs-index.mjs",
+   "graphify:impact": "node scripts/graphify/impact-report.mjs",
+   "graphify:reconcile": "node scripts/graphify/reconcile-catalog.mjs",
+   "graphify:test": "node --test scripts/graphify/*.test.mjs",
+   "graphify:verify": "node scripts/graphify/verify-output.mjs",
+   "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+   "lint:complexity": "eslint . --report-unused-disable-directives --rule 'complexity: [warn, 20]' --rule 'max-lines: [warn, { max: 600, skipBlankLines: true, skipComments: true }]' --max-warnings 130",
+   "lint:fix": "eslint . --fix",
+   "prepare": "husky",
+   "preview": "vite preview",
+   "security:secrets": "tsx scripts/security/check-no-committed-service-role.ts",
+   "smoke:target": "tsx scripts/smoke-target-backend.ts",
+   "test": "vitest run",
+   "test:config": "tsx scripts/check-test-spec-patterns.ts",
+   "test:coverage": "vitest run --coverage",
+   "test:deno": "node scripts/deno-test-suite.mjs",
+   "test:e2e": "playwright test",
+   "test:e2e:ui": "playwright test --ui",
+   "test:load": "k6 run scripts/load/k6-smoke.js",
+   "test:sql": "scripts/run-sql-tests.sh",
+   "test:watch": "vitest",
+   "typecheck": "tsc --noEmit",
+   "typecheck:baseline": "node scripts/check-typecheck-baseline.mjs",
+   "typecheck:baseline:update": "node scripts/update-typecheck-baseline.mjs"
+  },
+  "dependencias": 80,
+  "dev_dependencias": 33,
+  "principais": {
+   "@supabase/supabase-js": "^2.118.0",
+   "@tanstack/react-query": "^5.17.0",
+   "date-fns": "^4.4.0",
+   "framer-motion": "^13.2.0",
+   "next-themes": "^0.4.6",
+   "react": "^18.3.1",
+   "react-day-picker": "^10.0.1",
+   "react-dom": "^18.3.1",
+   "react-helmet-async": "^3.0.0",
+   "react-hook-form": "^7.49.0",
+   "react-intersection-observer": "^11.0.1",
+   "react-leaflet": "^5.0.0",
+   "react-markdown": "^10.1.0",
+   "react-resizable-panels": "^2.0.0",
+   "react-router-dom": "^7.18.4",
+   "react-window": "^2.3.3",
+   "recharts": "^2.12.0",
+   "tailwindcss-animate": "^1.0.7",
+   "zod": "^4.6.7"
+  },
+  "engines": {
+   "node": ">=22.0.0"
+  },
+  "packageManager": null
+ },
+ "python": {
+  "dependencias": [
+   "dependencies",
+   "description",
+   "graphifyy",
+   "name",
+   "package",
+   "psycopg",
+   "requires-python",
+   "version"
+  ]
+ },
+ "configs": [
+  ".github/CODEOWNERS",
+  ".github/dependabot.yml",
+  ".husky/commit-msg",
+  ".husky/post-checkout",
+  ".husky/post-commit",
+  ".husky/pre-commit",
+  ".nvmrc",
+  "ai-context.config.json",
+  "commitlint.config.js",
+  "components.json",
+  "deno.json",
+  "eslint.config.js",
+  "package.json",
+  "playwright.config.ts",
+  "postcss.config.js",
+  "supabase/config.toml",
+  "tailwind.config.ts",
+  "tsconfig.app.json",
+  "tsconfig.json",
+  "tsconfig.node.json",
+  "tsconfig.strict.json",
+  "vercel.json",
+  "vite.config.ts",
+  "vitest.config.ts"
+ ],
+ "workflows": [
+  {
+   "arquivo": ".github/workflows/a11y-sweep.yml",
+   "nome": "A11y Sweep (UI PRs)",
+   "gatilhos": [
+    "pull_request",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "a11y-sweep"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [
+    "build",
+    "ci"
+   ],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/apply-migration.yml",
+   "nome": "Apply Migration",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "apply"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/checkout"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/ci-failure-alert.yml",
+   "nome": "CI Failure Alert",
+   "gatilhos": [
+    "workflow_dispatch",
+    "workflow_run"
+   ],
+   "crons": [],
+   "branches": [
+    "main",
+    "promo-champions-v2-v*",
+    "v*"
+   ],
+   "jobs": [
+    "alert"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "N8N_ALERT_WEBHOOK_SECRET",
+    "N8N_ALERT_WEBHOOK_URL"
+   ],
+   "actions": []
+  },
+  {
+   "arquivo": ".github/workflows/codeql.yml",
+   "nome": "CodeQL",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 4 * * 1"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "analyze",
+    "notify-failure"
+   ],
+   "permissoes": [
+    "contents: read",
+    "security-events: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "SLACK_CI_WEBHOOK_URL"
+   ],
+   "actions": [
+    "actions/checkout",
+    "github/codeql-action/analyze",
+    "github/codeql-action/init"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/contexto-testes.yml",
+   "nome": "Testes das automações de contexto",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "testes"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/contexto.yml",
+   "nome": "Contexto para agentes de IA (10 min)",
+   "gatilhos": [
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "3-59/10 * * * *"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "gate",
+    "codigo",
+    "banco",
+    "regras",
+    "publicar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ai-context/gerar.mjs",
+    "scripts/regras_negocio/generate.py",
+    "scripts/regras_negocio/indice.py",
+    "scripts/supabase_snapshot/snapshot.py"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/download-artifact",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "astral-sh/setup-uv"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/cron-monitoring.yml",
+   "nome": "Cron Monitoring Regression",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "0 6 * * *"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "deno-regression",
+    "notify-failure"
+   ],
+   "permissoes": [
+    "contents: read",
+    "actions: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "SLACK_CI_WEBHOOK_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "denoland/setup-deno"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/db-backup.yml",
+   "nome": "DB Backup (off-site)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "0 3 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "backup"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "AWS_BACKUP_ACCESS_KEY_ID",
+    "AWS_BACKUP_SECRET_ACCESS_KEY",
+    "BACKUP_ENCRYPTION_KEY",
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/db-probe.yml",
+   "nome": "DB Probe (read-only)",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "probe"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/db-audit/gen-migration-probes.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/checkout"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/dependabot-automerge.yml",
+   "nome": "Dependabot Auto-merge",
+   "gatilhos": [
+    "pull_request",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "30 11 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "enable-automerge",
+    "reconcile"
+   ],
+   "permissoes": [
+    "contents: write",
+    "pull-requests: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN"
+   ],
+   "actions": []
+  },
+  {
+   "arquivo": ".github/workflows/deploy.yml",
+   "nome": "Deploy Pipeline",
+   "gatilhos": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "validate",
+    "deploy"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/check-migrations.mjs"
+   ],
+   "npm_scripts": [
+    "build",
+    "ci",
+    "lint",
+    "test:coverage",
+    "typecheck"
+   ],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_PASSWORD"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "denoland/setup-deno",
+    "supabase/setup-cli"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/edge-functions-bundle.yml",
+   "nome": "Edge Functions Bundle Check",
+   "gatilhos": [
+    "pull_request",
+    "push"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "bundle"
+   ],
+   "permissoes": [
+    "contents: read",
+    "actions: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/upload-artifact",
+    "denoland/setup-deno"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/edge-functions-input-validation.yml",
+   "nome": "Edge Functions Input Validation Lint",
+   "gatilhos": [
+    "pull_request",
+    "push"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "lint"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "denoland/setup-deno"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/edge-functions-request-id.yml",
+   "nome": "Edge Functions X-Request-Id Lint",
+   "gatilhos": [
+    "pull_request",
+    "push"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "lint"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "denoland/setup-deno"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/graphify.yml",
+   "nome": "Graphify Foundation",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "foundation"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/graphify/extract-code-only.mjs"
+   ],
+   "npm_scripts": [
+    "ci",
+    "graphify:test"
+   ],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "astral-sh/setup-uv"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+   "nome": "Inventário do estado real (semanal)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 10 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "gerar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/inventario/gerar-banco.mjs",
+    "scripts/inventario/gerar-repo.mjs",
+    "scripts/inventario/gerar-rotas.mjs",
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/github-script",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "peter-evans/create-pull-request"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/main.yml",
+   "nome": "CI/CD — Post-merge Main",
+   "gatilhos": [
+    "push"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "validate"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [
+    "build",
+    "ci",
+    "lint",
+    "typecheck"
+   ],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/migrations-drift.yml",
+   "nome": "Migrations Drift",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "0 7 * * *"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "drift"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "supabase/setup-cli"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/pr-checks.yml",
+   "nome": "PR Checks",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "detect-changes",
+    "lint-and-typecheck",
+    "migrations-gate",
+    "security-audit",
+    "test",
+    "edge-functions-lint",
+    "deno-tests",
+    "sql-tests",
+    "k6-smoke",
+    "e2e",
+    "build",
+    "lighthouse",
+    "bundle-size",
+    "gen-types-drift",
+    "ci-gate",
+    "notify-failure"
+   ],
+   "permissoes": [
+    "contents: read",
+    "actions: write"
+   ],
+   "scripts_usados": [
+    "scripts/check-bundle-budget.mjs",
+    "scripts/check-deno-types.mjs",
+    "scripts/check-migrations.mjs",
+    "scripts/deno-test-suite.mjs",
+    "scripts/e2e-precheck.mjs",
+    "scripts/flaky-report.mjs"
+   ],
+   "npm_scripts": [
+    "build",
+    "ci",
+    "coverage:ladder",
+    "coverage:ratchet",
+    "deps:check",
+    "format:check",
+    "graphify:test",
+    "lint",
+    "lint:complexity",
+    "security:secrets",
+    "test:config",
+    "typecheck",
+    "typecheck:baseline"
+   ],
+   "secrets": [
+    "E2E_TEST_EMAIL",
+    "E2E_TEST_PASSWORD",
+    "SLACK_CI_WEBHOOK_URL",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "denoland/setup-deno",
+    "supabase/setup-cli",
+    "treosh/lighthouse-ci-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/pr-review-sla.yml",
+   "nome": "PR Review SLA",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "0 12 * * 1-5"
+   ],
+   "branches": [],
+   "jobs": [
+    "review-sla"
+   ],
+   "permissoes": [
+    "contents: read",
+    "pull-requests: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN"
+   ],
+   "actions": []
+  },
+  {
+   "arquivo": ".github/workflows/qa-exhaustive.yml",
+   "nome": "QA Exhaustive (Weekly)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "0 3 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "qa-exhaustive",
+    "notify-failure"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/check-bundle-budget.mjs"
+   ],
+   "npm_scripts": [
+    "build",
+    "ci",
+    "deps:check",
+    "deps:graph",
+    "lint",
+    "lint:complexity"
+   ],
+   "secrets": [
+    "SLACK_CI_WEBHOOK_URL"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "denoland/setup-deno"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
+   "nome": "Quote-to-Sale Guard Rails",
+   "gatilhos": [
+    "pull_request",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "unit-tests",
+    "invariants",
+    "e2e-quote-to-sale"
+   ],
+   "permissoes": [
+    "contents: read",
+    "actions: write"
+   ],
+   "scripts_usados": [
+    "scripts/e2e-precheck.mjs",
+    "scripts/verify-quote-to-sale-invariants.ts"
+   ],
+   "npm_scripts": [
+    "ci"
+   ],
+   "secrets": [
+    "E2E_TEST_EMAIL",
+    "E2E_TEST_PASSWORD",
+    "VITE_SUPABASE_PROJECT_ID",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/release-please.yml",
+   "nome": "Release Please",
+   "gatilhos": [
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "release-please"
+   ],
+   "permissoes": [
+    "contents: write",
+    "pull-requests: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "googleapis/release-please-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/types-sync.yml",
+   "nome": "types-sync",
+   "gatilhos": [
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "49 5 * * 1"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "ler-banco",
+    "notifica-falha-geracao",
+    "gates-e-pr"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/types-sync/validar.mjs"
+   ],
+   "npm_scripts": [
+    "ci",
+    "typecheck",
+    "typecheck:baseline"
+   ],
+   "secrets": [
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/download-artifact",
+    "actions/github-script",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "peter-evans/create-pull-request",
+    "supabase/setup-cli"
+   ]
+  }
+ ],
+ "hooks_git": [
+  {
+   "arquivo": ".husky/commit-msg",
+   "comandos": [
+    "npx --no -- commitlint --edit ${1}"
+   ]
+  },
+  {
+   "arquivo": ".husky/post-checkout",
+   "comandos": [
+    "(",
+    "export PYTHONHASHSEED=0",
+    "if [ -n \"${WINDIR:-}\" ] || [ -n \"${MSYSTEM:-}\" ]; then",
+    "    export GRAPHIFY_MAX_WORKERS=\"${GRAPHIFY_MAX_WORKERS:-1}\"",
+    "fi"
+   ]
+  },
+  {
+   "arquivo": ".husky/post-commit",
+   "comandos": [
+    "(",
+    "export PYTHONHASHSEED=0",
+    "if [ -n \"${WINDIR:-}\" ] || [ -n \"${MSYSTEM:-}\" ]; then",
+    "    export GRAPHIFY_MAX_WORKERS=\"${GRAPHIFY_MAX_WORKERS:-1}\"",
+    "fi"
+   ]
+  },
+  {
+   "arquivo": ".husky/pre-commit",
+   "comandos": [
+    "npx lint-staged"
+   ]
+  }
+ ],
+ "docs_raiz": [
+  {
+   "arquivo": ".github/ENVIRONMENTS.md",
+   "titulo": "GitHub Environments — Modelo de Segurança",
+   "linhas": 73
+  },
+  {
+   "arquivo": ".github/pull_request_template.md",
+   "titulo": null,
+   "linhas": 84
+  },
+  {
+   "arquivo": "AGENTS.md",
+   "titulo": "AGENTS.md — Promo_Champions_V2.1",
+   "linhas": 227
+  },
+  {
+   "arquivo": "CHANGELOG.md",
+   "titulo": "Changelog",
+   "linhas": 72
+  },
+  {
+   "arquivo": "CLAUDE.md",
+   "titulo": "CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)",
+   "linhas": 219
+  },
+  {
+   "arquivo": "CODE_OF_CONDUCT.md",
+   "titulo": "Código de Conduta — Promo Champions",
+   "linhas": 38
+  },
+  {
+   "arquivo": "CONTRIBUTING.md",
+   "titulo": "Contribuindo com Promo Champions v2",
+   "linhas": 73
+  },
+  {
+   "arquivo": "PENDENCIAS.md",
+   "titulo": "PENDÊNCIAS — Workflows com bloqueio externo",
+   "linhas": 333
+  },
+  {
+   "arquivo": "README.md",
+   "titulo": "🏆 Promo Champions v2 — Sales Performance Platform",
+   "linhas": 126
+  },
+  {
+   "arquivo": "RELATORIO_CI.md",
+   "titulo": "RELATORIO_CI.md — Promo Champions V2.1",
+   "linhas": 1017
+  },
+  {
+   "arquivo": "RELEASE_NOTES.md",
+   "titulo": "Release v2.1.0 — Mega-Jornada 10/10",
+   "linhas": 78
+  },
+  {
+   "arquivo": "SECURITY.md",
+   "titulo": "🔒 Política de Segurança",
+   "linhas": 195
+  },
+  {
+   "arquivo": "TEST_QUALITY_REPORT.md",
+   "titulo": "📊 Relatório Real de Qualidade e Testes",
+   "linhas": 61
+  },
+  {
+   "arquivo": "docs/API.md",
+   "titulo": "API — Promo Champions V2.1",
+   "linhas": 801
+  },
+  {
+   "arquivo": "docs/ARCHITECTURE.md",
+   "titulo": "Arquitetura — Promo Champions V2.1",
+   "linhas": 145
+  },
+  {
+   "arquivo": "docs/AUTH_CONFIG.md",
+   "titulo": "Checklist — Configuração server-side do Supabase Auth",
+   "linhas": 56
+  },
+  {
+   "arquivo": "docs/DATA_DICTIONARY.md",
+   "titulo": "Dicionário de Dados — Promo Champions V2.1",
+   "linhas": 7105
+  },
+  {
+   "arquivo": "docs/DATA_RETENTION.md",
+   "titulo": "DATA RETENTION — Política de retenção e purge",
+   "linhas": 90
+  },
+  {
+   "arquivo": "docs/DEAD_TABLES.md",
+   "titulo": "DEAD TABLES — Tabelas sem referência no código",
+   "linhas": 92
+  },
+  {
+   "arquivo": "docs/DEAL_RISK_CRITERIA.md",
+   "titulo": "Critério canônico de \"deal em risco\"",
+   "linhas": 26
+  },
+  {
+   "arquivo": "docs/DEPLOYMENT.md",
+   "titulo": "Deploy — Promo Champions V2.1",
+   "linhas": 110
+  },
+  {
+   "arquivo": "docs/DESIGN_SYSTEM.md",
+   "titulo": "Design System - Promo Champions",
+   "linhas": 1183
+  },
+  {
+   "arquivo": "docs/DOCUMENTACAO_SISTEMA.md",
+   "titulo": "📋 Documentação Completa do Sistema — Promo Champions (Sales Arena)",
+   "linhas": 1741
+  },
+  {
+   "arquivo": "docs/DR_PLAN.md",
+   "titulo": "Plano de Recuperação de Desastres (DR Plan)",
+   "linhas": 80
+  },
+  {
+   "arquivo": "docs/ENGINEERING_MANIFESTO.md",
+   "titulo": "Manifesto de Excelência em Engenharia de Software (Nível 10/10)",
+   "linhas": 71
+  },
+  {
+   "arquivo": "docs/ER.md",
+   "titulo": "Diagrama ER — Promo Champions V2.1",
+   "linhas": 519
+  },
+  {
+   "arquivo": "docs/FAQ_TROUBLESHOOTING.md",
+   "titulo": "FAQ — Troubleshooting de integrações externas",
+   "linhas": 71
+  },
+  {
+   "arquivo": "docs/FEATURE_SUMMARY.md",
+   "titulo": "📊 Promo Champions - Complete Feature Summary",
+   "linhas": 129
+  },
+  {
+   "arquivo": "docs/FUNCIONALIDADES_COMPLETAS.md",
+   "titulo": "📋 PROMO CHAMPIONS — Mapeamento Completo de Funcionalidades",
+   "linhas": 727
+  },
+  {
+   "arquivo": "docs/FUNCIONALIDADES_SEM_UI.md",
+   "titulo": "🧩 Funcionalidades com Backend/Hook prontos mas SEM UI Completa",
+   "linhas": 169
+  },
+  {
+   "arquivo": "docs/FUNCIONALIDADES_SISTEMA.md",
+   "titulo": "📋 Levantamento Completo de Funcionalidades — Sales Arena",
+   "linhas": 601
+  },
+  {
+   "arquivo": "docs/GAPS_CLASSE_MUNDIAL.md",
+   "titulo": "🌍 Análise de Gaps — Promo Champions vs CRMs de Classe Mundial",
+   "linhas": 283
+  },
+  {
+   "arquivo": "docs/HOTFIX.md",
+   "titulo": "Procedimento de hotfix",
+   "linhas": 53
+  },
+  {
+   "arquivo": "docs/LGPD.md",
+   "titulo": "LGPD — Conformidade no Promo Champions V2.1",
+   "linhas": 142
+  },
+  {
+   "arquivo": "docs/PROCESSOS.md",
+   "titulo": "Processos — rituais que sobrevivem a uma pessoa",
+   "linhas": 99
+  },
+  {
+   "arquivo": "docs/REPORTING_BI_COMPLETE.md",
+   "titulo": "Reporting & BI — estado em 2026-10-18",
+   "linhas": 71
+  },
+  {
+   "arquivo": "docs/RLS_AUDIT_QUERIES.md",
+   "titulo": "Queries de auditoria RLS / grants — executar no banco real",
+   "linhas": 187
+  },
+  {
+   "arquivo": "docs/RLS_MATRIX.md",
+   "titulo": "Matriz RLS — tabela × papel",
+   "linhas": 35
+  },
+  {
+   "arquivo": "docs/ROLLBACK.md",
+   "titulo": "Procedimento de Rollback",
+   "linhas": 31
+  },
+  {
+   "arquivo": "docs/RUNBOOK.md",
+   "titulo": "🚀 Runbook Operacional — Promo Champions",
+   "linhas": 369
+  },
+  {
+   "arquivo": "docs/SCHEMA_CONVENTIONS.md",
+   "titulo": "SCHEMA CONVENTIONS — Convenções de banco (Promo Champions V2.1)",
+   "linhas": 52
+  },
+  {
+   "arquivo": "docs/SEC-08_SERVICE_ROLE_AUDIT.md",
+   "titulo": "SEC-08 · Auditoria de uso de `SUPABASE_SERVICE_ROLE_KEY`",
+   "linhas": 65
+  },
+  {
+   "arquivo": "docs/SECRETS_ROTATION.md",
+   "titulo": "Rotação de Secrets — Inventário e Política",
+   "linhas": 133
+  },
+  {
+   "arquivo": "docs/SECURITY.md",
+   "titulo": "Security Guidelines",
+   "linhas": 128
+  },
+  {
+   "arquivo": "docs/SECURITY_HARDENING.md",
+   "titulo": "Hardening de Segurança — SECURITY DEFINER, RLS, Edge Functions & WAL",
+   "linhas": 240
+  },
+  {
+   "arquivo": "docs/SECURITY_HEADERS.md",
+   "titulo": "Headers de segurança — hosting e edge functions",
+   "linhas": 48
+  },
+  {
+   "arquivo": "docs/SIZING.md",
+   "titulo": "Sizing — gatilhos de upgrade de plano (Supabase + Vercel)",
+   "linhas": 34
+  },
+  {
+   "arquivo": "docs/STAGING.md",
+   "titulo": "Staging — Promo Champions V2.1",
+   "linhas": 70
+  },
+  {
+   "arquivo": "docs/TECH_DEBT.md",
+   "titulo": "Quadro de débito técnico — Promo Champions V2.1",
+   "linhas": 31
+  },
+  {
+   "arquivo": "docs/TELEMETRY_MODULE_DOCS.md",
+   "titulo": "📊 Módulo de Telemetria de Queries — Documentação Completa",
+   "linhas": 909
+  },
+  {
+   "arquivo": "docs/TYPE_DEBT.md",
+   "titulo": "TYPE_DEBT — débito de tipagem do frontend",
+   "linhas": 104
+  },
+  {
+   "arquivo": "docs/ZERO_DOWNTIME_MIGRATIONS.md",
+   "titulo": "Migrations sem downtime — disciplina expand-contract",
+   "linhas": 69
+  },
+  {
+   "arquivo": "docs/accessibility-checklist.md",
+   "titulo": "♿ Accessibility Checklist — Promo Champions v2",
+   "linhas": 55
+  },
+  {
+   "arquivo": "docs/auditoria_enterprise_v5.md",
+   "titulo": "🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0)",
+   "linhas": 95
+  },
+  {
+   "arquivo": "docs/component-guidelines.md",
+   "titulo": "🏗 Component Guidelines — Promo Champions v2",
+   "linhas": 42
+  },
+  {
+   "arquivo": "docs/soft-delete.md",
+   "titulo": "Soft delete — política por tabela",
+   "linhas": 58
+  },
+  {
+   "arquivo": "docs/style-guide.md",
+   "titulo": "🎨 Style Guide — Promo Champions v2",
+   "linhas": 36
+  }
+ ],
+ "docs_em_subpastas": [
+  {
+   "pasta": "docs/auditoria",
+   "arquivos_md": 27
+  },
+  {
+   "pasta": "docs/estado",
+   "arquivos_md": 19
+  },
+  {
+   "pasta": "docs/runbooks",
+   "arquivos_md": 16
+  },
+  {
+   "pasta": "docs/decisions",
+   "arquivos_md": 11
+  },
+  {
+   "pasta": "docs/reports",
+   "arquivos_md": 11
+  },
+  {
+   "pasta": "docs/graphify",
+   "arquivos_md": 9
+  },
+  {
+   "pasta": "docs/execucao",
+   "arquivos_md": 8
+  },
+  {
+   "pasta": "docs/contexto",
+   "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/benchmark",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/handoff",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/planos",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/postmortems",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/testes",
+   "arquivos_md": 1
+  }
+ ],
+ "changelog_topo": "2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)",
+ "env": {
+  "declaradas_no_env_example": [
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "usadas_no_front": [
+   "DEV",
+   "MODE",
+   "VITE_APP_URL",
+   "VITE_CANONICAL_URL",
+   "VITE_SENTRY_DSN",
+   "VITE_SUPABASE_ANON_KEY",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_TEST_MODE",
+   "VITE_SUPABASE_URL"
+  ],
+  "usadas_nas_edges": [
+   "ADMIN_NOTIFICATION_EMAIL",
+   "ALERT_CONSECUTIVE_FAILURES",
+   "ALERT_ESCALATION_EMAIL",
+   "ALERT_FROM_EMAIL",
+   "ALERT_MAX_ATTEMPTS",
+   "ALERT_MIN_DELIVERIES",
+   "ALERT_RETRY_RATE_THRESHOLD",
+   "ALERT_SUPPRESS_MINUTES",
+   "ALERT_WINDOW_MINUTES",
+   "APP_URL",
+   "APP_VERSION",
+   "BITRIX24_CLIENT_ID",
+   "BITRIX24_CLIENT_SECRET",
+   "BITRIX24_DOMAIN",
+   "BITRIX24_STATE_SECRET",
+   "BULK_EMAIL_FROM",
+   "CAMPAIGN_ALERT_COOLDOWN_HOURS",
+   "CAMPAIGN_ALERT_LOOKBACK_DAYS",
+   "EDGE_BASE_URL",
+   "EDGE_RETRY_ALERT_WINDOW_HOURS",
+   "EDGE_RETRY_EXHAUSTED_THRESHOLD",
+   "ELEVENLABS_API_KEY",
+   "EVOLUTION_API_KEY",
+   "EVOLUTION_API_URL",
+   "EVOLUTION_INSTANCE",
+   "EXTERNAL_BRIDGE_ALLOWED_RPCS",
+   "EXTERNAL_SUPABASE_ANON_KEY",
+   "EXTERNAL_SUPABASE_URL",
+   "FORMAT",
+   "FRESHDESK_API_KEY",
+   "FRESHDESK_DOMAIN",
+   "INTERCOM_ACCESS_TOKEN",
+   "LOVABLE_AI_GATEWAY_URL",
+   "LOVABLE_API_KEY",
+   "METRICS_INGEST_TOKEN",
+   "METRICS_INGEST_URL",
+   "ONLY",
+   "PROMOGIFTS_WEBHOOK_SECRET",
+   "QUOTE_CONVERSION_WEBHOOK_URL",
+   "QUOTE_SYNC_API_KEY",
+   "QUOTE_SYNC_WEBHOOK_SECRET",
+   "RESEND_API_KEY",
+   "SLACK_ALERT_WEBHOOK_URL",
+   "SLACK_DIGEST_WEBHOOK_URL",
+   "SLACK_WEBHOOK_URL",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "TEST_FORECAST_ID",
+   "TEST_USER_ACCESS_TOKEN",
+   "TWILIO_ALLOWED_DIAL_PREFIXES",
+   "TWILIO_AUTH_TOKEN",
+   "TWILIO_CALL_STATUS_URL",
+   "TWILIO_TWIML_URL",
+   "UNSUBSCRIBE_SECRET",
+   "V4_CALLBACK_API_KEY",
+   "V4_CALLBACK_URL",
+   "VAPID_PRIVATE_KEY",
+   "VAPID_PUBLIC_KEY",
+   "VAPID_SUBJECT",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL",
+   "WAL_MAX_SLOT_LAG_BYTES",
+   "WAL_SIZE_ALERT_BYTES",
+   "WEBVITALS_MIN_BASELINE_DAYS",
+   "WEBVITALS_MIN_DAY_SAMPLES",
+   "WEBVITALS_REGRESSION_FACTOR",
+   "WHATSAPP_INBOUND_WEBHOOK_SECRET",
+   "ZENDESK_API_TOKEN",
+   "ZENDESK_DOMAIN",
+   "ZENDESK_EMAIL"
+  ],
+  "usadas_no_python": [
+   "AI_CONTEXT_INDEX",
+   "AI_CONTEXT_MODEL",
+   "AI_CONTEXT_PROFILE",
+   "AI_CONTEXT_SCHEMA_SNAPSHOT",
+   "ANTHROPIC_API_KEY",
+   "CODE_SCAN_DIRS",
+   "CODE_SCAN_MAX_FILES",
+   "CRON_RUNS_PER_JOB",
+   "GEN_TYPES",
+   "PGDUMP",
+   "PGDUMP_SCHEMAS",
+   "REPO_ROOT",
+   "SNAPSHOT_DIR",
+   "SNAPSHOT_EXCLUDE_SCHEMAS",
+   "SNAPSHOT_INCLUDE_SCHEMAS",
+   "STAT_STATEMENTS_TOP",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_URL",
+   "SUPABASE_PROJECT_REF",
+   "SUPABASE_SNAPSHOT_PUBLICACAO"
+  ],
+  "usadas_mas_nao_declaradas": [
+   "DEV",
+   "MODE",
+   "VITE_APP_URL",
+   "VITE_CANONICAL_URL",
+   "VITE_SENTRY_DSN",
+   "VITE_SUPABASE_ANON_KEY",
+   "VITE_SUPABASE_TEST_MODE"
+  ],
+  "secrets_em_workflows": [
+   "AWS_BACKUP_ACCESS_KEY_ID",
+   "AWS_BACKUP_SECRET_ACCESS_KEY",
+   "BACKUP_ENCRYPTION_KEY",
+   "E2E_TEST_EMAIL",
+   "E2E_TEST_PASSWORD",
+   "GITHUB_TOKEN",
+   "N8N_ALERT_WEBHOOK_SECRET",
+   "N8N_ALERT_WEBHOOK_URL",
+   "SLACK_CI_WEBHOOK_URL",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_PASSWORD",
+   "SUPABASE_DB_URL",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "VITE_SUPABASE_PROJECT_ID",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ]
+ },
+ "deploy": {
+  "alvos": [
+   "vercel"
+  ],
+  "dockerfiles": [],
+  "compose": [],
+  "vercel": {
+   "framework": null,
+   "build": null,
+   "rewrites": 1,
+   "redirects": 0,
+   "headers": 2,
+   "ignore_command": null,
+   "crons": []
+  }
+ },
+ "integracoes": {
+  "sdks": [
+   {
+    "pacote": "@tanstack/react-query",
+    "servico": "react-query",
+    "versao": "^5.17.0"
+   },
+   {
+    "pacote": "@sentry/react",
+    "servico": "Sentry",
+    "versao": "^10.75.3"
+   },
+   {
+    "pacote": "@supabase/supabase-js",
+    "servico": "Supabase",
+    "versao": "^2.118.0"
+   },
+   {
+    "pacote": "zod",
+    "servico": "zod",
+    "versao": "^4.6.7"
+   }
+  ],
+  "hosts_externos": [
+   {
+    "host": "ai.gateway.lovable.dev",
+    "arquivos": 8
+   },
+   {
+    "host": "x.test",
+    "arquivos": 8
+   },
+   {
+    "host": "api.resend.com",
+    "arquivos": 7
+   },
+   {
+    "host": "example.test",
+    "arquivos": 5
+   },
+   {
+    "host": "usyxfpqlsspldubptrdl.supabase.co",
+    "arquivos": 4
+   },
+   {
+    "host": "api.elevenlabs.io",
+    "arquivos": 3
+   },
+   {
+    "host": "a.test",
+    "arquivos": 2
+   },
+   {
+    "host": "api.twilio.com",
+    "arquivos": 2
+   },
+   {
+    "host": "b.test",
+    "arquivos": 2
+   },
+   {
+    "host": "c.test",
+    "arquivos": 2
+   },
+   {
+    "host": "promo-champions-v2-1.vercel.app",
+    "arquivos": 2
+   },
+   {
+    "host": "promochampions.com.br",
+    "arquivos": 2
+   },
+   {
+    "host": "x.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "api.dicebear.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.intercom.io",
+    "arquivos": 1
+   },
+   {
+    "host": "api.supabase.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.x.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.z-api.io",
+    "arquivos": 1
+   },
+   {
+    "host": "app.example",
+    "arquivos": 1
+   },
+   {
+    "host": "app.example.test",
+    "arquivos": 1
+   },
+   {
+    "host": "app.promobrindes.com.br",
+    "arquivos": 1
+   },
+   {
+    "host": "carto.com",
+    "arquivos": 1
+   },
+   {
+    "host": "championgifts.lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "champions.promobrindes.com.br",
+    "arquivos": 1
+   },
+   {
+    "host": "edge-function.test",
+    "arquivos": 1
+   },
+   {
+    "host": "example.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "example.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "externo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "externo.example",
+    "arquivos": 1
+   },
+   {
+    "host": "fuzz.test",
+    "arquivos": 1
+   },
+   {
+    "host": "gateway.internal",
+    "arquivos": 1
+   },
+   {
+    "host": "graph.facebook.com",
+    "arquivos": 1
+   },
+   {
+    "host": "hook.test",
+    "arquivos": 1
+   },
+   {
+    "host": "i.pravatar.cc",
+    "arquivos": 1
+   },
+   {
+    "host": "lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "nominatim.openstreetmap.org",
+    "arquivos": 1
+   },
+   {
+    "host": "outro.com",
+    "arquivos": 1
+   },
+   {
+    "host": "preview.lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "seu-endpoint.com",
+    "arquivos": 1
+   },
+   {
+    "host": "sub.app.promobrindes.com.br",
+    "arquivos": 1
+   },
+   {
+    "host": "test.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "test.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "wa.me",
+    "arquivos": 1
+   },
+   {
+    "host": "www.promochampions.com.br",
+    "arquivos": 1
+   },
+   {
+    "host": "www.transparenttextures.com",
+    "arquivos": 1
+   },
+   {
+    "host": "xxx.supabase.co",
+    "arquivos": 1
+   }
+  ],
+  "env_de_integracao": [
+   "BITRIX24_CLIENT_ID",
+   "BITRIX24_CLIENT_SECRET",
+   "BITRIX24_STATE_SECRET",
+   "ELEVENLABS_API_KEY",
+   "EVOLUTION_API_KEY",
+   "EVOLUTION_API_URL",
+   "EVOLUTION_INSTANCE",
+   "FRESHDESK_API_KEY",
+   "INTERCOM_ACCESS_TOKEN",
+   "LOVABLE_API_KEY",
+   "METRICS_INGEST_TOKEN",
+   "PROMOGIFTS_WEBHOOK_SECRET",
+   "QUOTE_CONVERSION_WEBHOOK_URL",
+   "QUOTE_SYNC_API_KEY",
+   "QUOTE_SYNC_WEBHOOK_SECRET",
+   "RESEND_API_KEY",
+   "SLACK_ALERT_WEBHOOK_URL",
+   "SLACK_DIGEST_WEBHOOK_URL",
+   "SLACK_WEBHOOK_URL",
+   "TEST_USER_ACCESS_TOKEN",
+   "TWILIO_ALLOWED_DIAL_PREFIXES",
+   "TWILIO_AUTH_TOKEN",
+   "TWILIO_CALL_STATUS_URL",
+   "TWILIO_TWIML_URL",
+   "UNSUBSCRIBE_SECRET",
+   "V4_CALLBACK_API_KEY",
+   "VITE_SENTRY_DSN",
+   "WHATSAPP_INBOUND_WEBHOOK_SECRET",
+   "ZENDESK_API_TOKEN"
+  ],
+  "webhooks_recebidos": [
+   "bitrix24-oauth",
+   "campaign-health-alert",
+   "check-v4-callback-alerts",
+   "cron-failure-alerter",
+   "deal-risk-digest",
+   "detect-client-churn-alerts",
+   "edge-retry-threshold-alert",
+   "email-bulk-retry",
+   "email-unsubscribe",
+   "generate-urgent-client-tasks",
+   "health",
+   "inbound-email-webhook",
+   "log-web-vitals",
+   "multichannel-status-webhook",
+   "notify-v4-quote-status",
+   "process-call-recording-ingest",
+   "receive-quote-sync",
+   "receive-quote-webhook",
+   "report-embed-public",
+   "twilio-call-status",
+   "twilio-call-twiml",
+   "whatsapp-inbound-webhook"
+  ],
+  "realtime": [
+   "sales-feed"
+  ]
+ },
+ "permissoes": {
+  "papeis_no_codigo": [
+   {
+    "papel": "user",
+    "ocorrencias": 52
+   },
+   {
+    "papel": "system",
+    "ocorrencias": 43
+   },
+   {
+    "papel": "closer",
+    "ocorrencias": 21
+   },
+   {
+    "papel": "sdr",
+    "ocorrencias": 20
+   },
+   {
+    "papel": "admin",
+    "ocorrencias": 19
+   },
+   {
+    "papel": "hybrid",
+    "ocorrencias": 14
+   },
+   {
+    "papel": "status",
+    "ocorrencias": 13
+   },
+   {
+    "papel": "alert",
+    "ocorrencias": 11
+   },
+   {
+    "papel": "region",
+    "ocorrencias": 10
+   },
+   {
+    "papel": "authenticated",
+    "ocorrencias": 8
+   },
+   {
+    "papel": "manager",
+    "ocorrencias": 8
+   },
+   {
+    "papel": "list",
+    "ocorrencias": 7
+   },
+   {
+    "papel": "assistant",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "img",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "main",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "button",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "grid",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "group",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "tablist",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "combobox",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "dialog",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "gridcell",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "listitem",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "presentation",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "radio",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "radiogroup",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "row",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "tab",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "tool",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "Roles",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "agent",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "alertdialog",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "anon",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "champion",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "columnheader",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "dev",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "economic",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "link",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "listbox",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "navigation",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "rowheader",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "sales_rep",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "salesperson",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "service_role",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "slider",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "string",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "sup",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "table",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "technical",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "toolbar",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "tooltip",
+    "ocorrencias": 1
+   }
+  ],
+  "enums_de_papel": [
+   {
+    "enum": "salesperson_role",
+    "valores": [
+     "sdr",
+     "closer",
+     "hybrid"
+    ]
+   },
+   {
+    "enum": "app_role",
+    "valores": [
+     "admin",
+     "manager",
+     "salesperson"
+    ]
+   }
+  ],
+  "rpcs_de_autorizacao": [
+   "admin_edge_cron_status",
+   "admin_get_cron_job_stats",
+   "admin_get_rollback_rate_series",
+   "admin_reset_query_stats",
+   "admin_top_queries",
+   "fn_admin_conversion_trail",
+   "fn_admin_cron_alert_breakdown",
+   "fn_admin_cron_alert_metrics",
+   "fn_admin_get_new_cron_failures",
+   "fn_admin_list_dead_letter_ingest_jobs",
+   "fn_admin_mark_cron_failure_alerted",
+   "fn_admin_platform_slo",
+   "fn_admin_replay_dead_letter_ingest_job",
+   "fn_admin_web_vitals_p75",
+   "has_phone_consent",
+   "has_role",
+   "is_admin_or_manager",
+   "is_ip_blocked",
+   "is_ip_whitelisted",
+   "is_recipient_opted_out",
+   "verify_reauth_request"
+  ],
+  "guards": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/navigation/NavigationGuard.tsx"
+  ],
+  "rotas_protegidas": 36,
+  "rotas_publicas": [
+   "/*",
+   "/abm",
+   "/acesso-negado",
+   "/admin/regras-comissao",
+   "/agenda",
+   "/agentes",
+   "/analytics",
+   "/analytics/abc",
+   "/analytics/closing-time",
+   "/analytics/deal-velocity",
+   "/analytics/emails",
+   "/analytics/evolution",
+   "/analytics/objections",
+   "/analytics/win-loss",
+   "/aprovacoes",
+   "/arena",
+   "/assinatura-digital",
+   "/assistente",
+   "/atividades",
+   "/audit-logs",
+   "/automacao-inteligente",
+   "/automacoes",
+   "/benchmarking",
+   "/bi-closer",
+   "/bi-gestor",
+   "/bi-sdr",
+   "/bi-vendedor",
+   "/bitrix24",
+   "/busca",
+   "/busca-inteligente",
+   "/cadencias",
+   "/cadencias-orcamentos",
+   "/calendario",
+   "/clientes",
+   "/coaching-inteligente",
+   "/comissoes",
+   "/comparador-precos",
+   "/competencias",
+   "/configuracoes",
+   "/contas/:id",
+   "/conversational-intelligence",
+   "/conversational-intelligence/gravacoes",
+   "/customer-success",
+   "/customer-success-360",
+   "/deal-intelligence",
+   "/deduplicacao",
+   "/desafios",
+   "/desafios-diarios",
+   "/email-tracking",
+   "/embed/report/:token",
+   "/engagement/abm",
+   "/engagement/abm/:accountId",
+   "/engagement/bulk-composer",
+   "/engagement/dialer",
+   "/engagement/email-scoring",
+   "/engagement/send-time",
+   "/estoque",
+   "/evolucao-precos",
+   "/ferramentas/bi",
+   "/follow-up",
+   "/follow-up/audit",
+   "/fonte-leads",
+   "/forecast",
+   "/fornecedores",
+   "/funil",
+   "/gamificacao/badges",
+   "/gatilhos-inatividade",
+   "/health-score",
+   "/icp",
+   "/importar-exportar",
+   "/inteligencia",
+   "/inteligencia-compras",
+   "/inteligencia-preditiva",
+   "/kanban-clientes",
+   "/lead-routing",
+   "/lead-scoring",
+   "/mapa-clientes",
+   "/metas",
+   "/metas-atividades",
+   "/metricas-categoria",
+   "/meu-assistente",
+   "/minhas-premiacoes",
+   "/multichannel",
+   "/notificacoes",
+   "/nps",
+   "/onboarding-tracking",
+   "/orcamentos",
+   "/perfil-gamer",
+   "/perguntar",
+   "/pipeline",
+   "/playbooks",
+   "/portfolio",
+   "/previsao-demanda",
+   "/pricing-intelligence",
+   "/produtos",
+   "/race-arena",
+   "/race-arena/career",
+   "/race-arena/closer",
+   "/race-arena/garage",
+   "/race-arena/sdr",
+   "/race-arena/spectator/:seasonId",
+   "/ranking",
+   "/relatorio-atividades",
+   "/relatorios",
+   "/relatorios-agendados",
+   "/relatorios-custom",
+   "/relatorios-custom/:id",
+   "/relatorios-email",
+   "/relatorios-executivos",
+   "/relatorios/cohort",
+   "/relatorios/funil",
+   "/reset-password",
+   "/revenue-forecast",
+   "/revenue-forecast-v2",
+   "/revenue-intelligence",
+   "/revops",
+   "/roi",
+   "/sales-enablement",
+   "/sequences",
+   "/sla-tracking",
+   "/tarefas",
+   "/team-activity",
+   "/territorios",
+   "/territory-optimization",
+   "/times",
+   "/top-produtos",
+   "/vendedores",
+   "/victory-feed",
+   "/webhooks",
+   "/win-loss-intelligence",
+   "/workflow-builder",
+   "/workflows"
+  ],
+  "menu_com_papeis": [],
+  "tabelas_sem_rls": [
+   "ab_tests",
+   "experiment_assignments",
+   "experiment_variants",
+   "experiments",
+   "migration_log",
+   "security_events"
+  ]
+ },
+ "feature_flags": {
+  "total": 5,
+  "flags": [
+   {
+    "flag": "ENABLE_RLS",
+    "arquivos": 1
+   },
+   {
+    "flag": "FEATURE_X",
+    "arquivos": 1
+   },
+   {
+    "flag": "experimental_ui",
+    "arquivos": 1
+   },
+   {
+    "flag": "nova-tela",
+    "arquivos": 1
+   },
+   {
+    "flag": "novo-inbox",
+    "arquivos": 1
+   }
+  ],
+  "tabelas_de_flag": [
+   "auto_task_queue_settings",
+   "churn_alert_settings",
+   "feature_flags",
+   "follow_up_settings",
+   "integration_autotest_settings",
+   "portfolio_settings",
+   "rate_limit_settings",
+   "sdr_performance_settings",
+   "security_alert_settings",
+   "user_app_settings",
+   "user_mfa_settings",
+   "v4_callback_alert_settings",
+   "winloss_alert_settings"
+  ]
+ },
+ "providers": {
+  "entrada": "src/main.tsx",
+  "providers": [
+   "AudioProvider",
+   "AuthProvider",
+   "BrowserRouter",
+   "DashboardThemeProvider",
+   "GlobalErrorBoundary",
+   "HelmetProvider",
+   "I18nProvider",
+   "KeyboardShortcutsProvider",
+   "QueryClientProvider",
+   "TooltipProvider",
+   "XPToastProvider"
+  ]
+ },
+ "i18n": {
+  "arquivos": 0,
+  "idiomas": [],
+  "lib": []
+ }
+}

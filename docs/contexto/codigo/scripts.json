@@ -1,0 +1,765 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 69,
+ "scripts": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "descricao": "Simulação de cenários do gerador: monta centenas de repositórios sintéticos (variantes de SQL, rotas, menus, edges, workflows, monorepo, Python, arquivos corrompidos, fuzz) e confere:",
+   "linhas": 173,
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "descricao": "Gera o contexto de projeto para agentes de IA (padrão: inventario/ia/*). Zero dependências. Node >= 18. Genérico: funciona em qualquer repositório.",
+   "linhas": 924,
+   "env": [
+    "AI_CONTEXT_DIR",
+    "AI_CONTEXT_PUBLICACAO",
+    "AI_CONTEXT_ROOT"
+   ],
+   "npm_scripts": [
+    "contexto:ia"
+   ],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/bundle-edge-functions.ts",
+   "descricao": "* CI bundler check for every Supabase Edge Function.",
+   "linhas": 238,
+   "env": [
+    "FUNCTIONS_DIR",
+    "ONLY"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-bundle-budget.mjs",
+   "descricao": "* Onda O — Bundle-size budget guard.",
+   "linhas": 108,
+   "env": [],
+   "npm_scripts": [
+    "ci"
+   ],
+   "workflows": [
+    "pr-checks.yml",
+    "qa-exhaustive.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-coverage-ladder.mjs",
+   "descricao": "* Ratchet de cobertura em escada — por módulo crítico.",
+   "linhas": 90,
+   "env": [],
+   "npm_scripts": [
+    "coverage:ladder"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-coverage-ratchet.mjs",
+   "descricao": "* Etapa 32 do plano de 50 etapas — ratchet de cobertura.",
+   "linhas": 70,
+   "env": [],
+   "npm_scripts": [
+    "coverage:ratchet"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-data-layer.mjs",
+   "descricao": "* Ratchet da camada de dados (auditoria DATALAYER).",
+   "linhas": 107,
+   "env": [],
+   "npm_scripts": [
+    "check:data-layer"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-deno-types.mjs",
+   "descricao": "* Ratchet de type-check das edge functions (auditoria 2026-10 — item 18).",
+   "linhas": 158,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "pr-checks.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-domain-boundaries.mjs",
+   "descricao": "* Ratchet de fronteiras entre domínios (auditoria BOUNDARIES).",
+   "linhas": 164,
+   "env": [],
+   "npm_scripts": [
+    "check:domain-boundaries"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-migrations.mjs",
+   "descricao": "Gate de higiene de migrations (pacote auditoria DB/integridade, 2026-10-01). Invariantes verificadas em TODO PR (scan do diretório):",
+   "linhas": 201,
+   "env": [],
+   "npm_scripts": [
+    "check:migrations"
+   ],
+   "workflows": [
+    "deploy.yml",
+    "pr-checks.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-test-spec-patterns.ts",
+   "descricao": "* Guard de configuração de testes — falha quando um padrão declarado não casa",
+   "linhas": 223,
+   "env": [],
+   "npm_scripts": [
+    "test:config"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-typecheck-baseline.mjs",
+   "descricao": "* Ratchet de typecheck estrito (pacote de tipagem — STRICT).",
+   "linhas": 72,
+   "env": [],
+   "npm_scripts": [
+    "typecheck:baseline"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci-check-forbidden.sh",
+   "descricao": "List of forbidden patterns Determine the script name to exclude it",
+   "linhas": 36,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/lint-ratchet.mjs",
+   "descricao": "* Adaptador do gate de lint para o verificador compartilhado da Arquitetura V2",
+   "linhas": 108,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/ci/typecheck-ratchet.mjs",
+   "descricao": "* Adaptador do gate de tipos para o verificador compartilhado da Arquitetura V2",
+   "linhas": 57,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/codemod-money.mjs",
+   "descricao": "* Codemod MONEY — centraliza formatação monetária em @/lib/money.",
+   "linhas": 325,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/codemod-typography.mjs",
+   "descricao": "* Codemod: aplica tokens tipográficos semânticos",
+   "linhas": 136,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/check-migration-drift.mjs",
+   "descricao": "* Adaptador do passo \"migrations\" do verificador compartilhado da Arquitetura V2",
+   "linhas": 32,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
+   "descricao": "Gera SQL de sondagem que verifica, para cada migration em um intervalo de versões, se os objetos que ela cria existem em produção. Escopo =",
+   "linhas": 245,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "db-probe.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db/simulate-migrations-via-mcp.ts",
+   "descricao": "* Compila migrations no banco-alvo dentro de uma única transação e força",
+   "linhas": 76,
+   "env": [
+    "PROMO_CHAMPIONS_MCP_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/debt-report.mjs",
+   "descricao": "* Quadro consolidado de débito técnico.",
+   "linhas": 251,
+   "env": [],
+   "npm_scripts": [
+    "debt:report"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/deno-test-suite.mjs",
+   "descricao": "* Executor da suíte Deno das edge functions.",
+   "linhas": 223,
+   "env": [
+    "CI",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [
+    "test:deno"
+   ],
+   "workflows": [
+    "pr-checks.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/dev-kpis-as-role.sh",
+   "descricao": "dev-kpis-as-role.sh Run `public.get_dashboard_kpis` against the live database while",
+   "linhas": 67,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/e2e-precheck.mjs",
+   "descricao": "* Pré-checagem de credenciais E2E.",
+   "linhas": 84,
+   "env": [
+    "E2E_TEST_EMAIL",
+    "E2E_TEST_PASSWORD",
+    "GITHUB_OUTPUT",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "pr-checks.yml",
+    "quote-to-sale-e2e.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/flaky-report.mjs",
+   "descricao": "* Relatório de flakies + quarentena de specs (vitest).",
+   "linhas": 151,
+   "env": [
+    "CI"
+   ],
+   "npm_scripts": [
+    "flaky:report"
+   ],
+   "workflows": [
+    "pr-checks.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/gen-api-catalog.mjs",
+   "descricao": "* Gera docs/API.md — catálogo real das edge functions, rotas do frontend e",
+   "linhas": 265,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/gen-data-dict.mjs",
+   "descricao": "* Gera docs/DATA_DICTIONARY.md e docs/ER.md a partir das migrations",
+   "linhas": 275,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/generate-role-permissions-seed.mjs",
+   "descricao": "generate-role-permissions-seed.mjs Gera de forma determinística a migration que espelha a fonte única de",
+   "linhas": 85,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/catalog-adapter.mjs",
+   "descricao": null,
+   "linhas": 213,
+   "env": [],
+   "npm_scripts": [
+    "graphify:catalog"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/docs-index.mjs",
+   "descricao": null,
+   "linhas": 97,
+   "env": [],
+   "npm_scripts": [
+    "graphify:docs"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/extract-code-only.mjs",
+   "descricao": null,
+   "linhas": 194,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "graphify.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/graphify-utils.mjs",
+   "descricao": null,
+   "linhas": 268,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/impact-report.mjs",
+   "descricao": null,
+   "linhas": 55,
+   "env": [],
+   "npm_scripts": [
+    "graphify:impact"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/multigraph.mjs",
+   "descricao": null,
+   "linhas": 140,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/reconcile-catalog.mjs",
+   "descricao": null,
+   "linhas": 34,
+   "env": [],
+   "npm_scripts": [
+    "graphify:reconcile"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/static-contracts.mjs",
+   "descricao": null,
+   "linhas": 280,
+   "env": [],
+   "npm_scripts": [
+    "graphify:contracts"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/verify-output.mjs",
+   "descricao": null,
+   "linhas": 41,
+   "env": [],
+   "npm_scripts": [
+    "graphify:verify"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/banco.sql",
+   "descricao": null,
+   "linhas": 171,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.mjs",
+   "descricao": "* Inventario do banco oficial -> inventario/estado/banco.json (fonte de consulta dos agentes).",
+   "linhas": 340,
+   "env": [
+    "INVENTARIO_PERMITIR_OUTRO_PROJETO",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_API_URL",
+    "SUPABASE_PROJECT_REF"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-repo.mjs",
+   "descricao": "Inventario gerado do lado do repositorio (sem acesso ao banco):  - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI)",
+   "linhas": 70,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-rotas.mjs",
+   "descricao": "* Inventario das rotas do front -> inventario/estado/rotas.json (fonte de consulta dos agentes).",
+   "linhas": 338,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/mudou-conteudo.mjs",
+   "descricao": "* O inventario mudou de verdade? Compara cada arquivo de inventario/estado/ com a versao do",
+   "linhas": 84,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/lib/requireSupabaseAdminEnv.ts",
+   "descricao": null,
+   "linhas": 58,
+   "env": [
+    "CONFIRM_SUPABASE_ADMIN_WRITE"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/lint-input-validation.ts",
+   "descricao": "AUD-VALIDACAO — Lint: bloqueia edge function que escreve no banco sem validar o payload de entrada.",
+   "linhas": 133,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/lint-request-id.ts",
+   "descricao": "OBS-04 — Lint: bloqueia Deno.serve/serve sem withRequestId em edge functions. Regras:",
+   "linhas": 118,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/load/k6-smoke.js",
+   "descricao": "* Smoke de carga k6 — substitui a fachada antiga (tests/load/load-test.ts",
+   "linhas": 73,
+   "env": [],
+   "npm_scripts": [
+    "test:load"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/pack-quote-to-sale-artifacts.ts",
+   "descricao": "* Empacota (zip) todos os artefatos de uma execução dos testes quote-to-sale.",
+   "linhas": 57,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/prod-health-check.ts",
+   "descricao": "1. Check DB",
+   "linhas": 35,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "descricao": null,
+   "linhas": 2144,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "descricao": null,
+   "linhas": 237,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/publish.sh",
+   "descricao": "Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida. Variáveis:",
+   "linhas": 106,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/run-sql-tests.sh",
+   "descricao": "Executor das suites SQL de RLS/contrato (supabase/tests/). Modos:",
+   "linhas": 106,
+   "env": [],
+   "npm_scripts": [
+    "test:sql"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/run-win-loss-analysis.ts",
+   "descricao": "Run win/loss analysis via direct DB writes (bypass edge function auth). Reads sales, classifies heuristically, inserts into win_loss_analyses + patterns + insights.",
+   "linhas": 193,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/security/check-no-committed-service-role.ts",
+   "descricao": null,
+   "linhas": 107,
+   "env": [],
+   "npm_scripts": [
+    "security:secrets"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-august-sales.ts",
+   "descricao": "Seed sales + activities for August 2026 (current month shown in UI). Clean previous seed (idempotent)",
+   "linhas": 149,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-deal-outcomes.ts",
+   "descricao": "Populate deal_outcomes for the /analytics/win-loss page. Reads salespeople + closed sales, classifies heuristically, inserts deal_outcomes.",
+   "linhas": 57,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-fake-data.ts",
+   "descricao": "Seed: distribute existing sales/activities/tasks across all salespeople, create race seasons + battle participants, achievements, daily_metrics,",
+   "linhas": 387,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-probe.ts",
+   "descricao": "Check Aug sales + distribution",
+   "linhas": 38,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-race-cars.ts",
+   "descricao": "Popula race_cars para os 8 vendedores reais com cores/estilos distintos. Cada vendedor recebe um carro numerado e estilizado de acordo com o role:",
+   "linhas": 96,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-real-people.ts",
+   "descricao": "Seed real-named salespeople (não toca o admin). Idempotente. Names -> role. Admin stays untouched.",
+   "linhas": 107,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/smoke-target-backend.ts",
+   "descricao": "* Smoke test ponta a ponta do backend de DESTINO (pós-migração).",
+   "linhas": 246,
+   "env": [
+    "TARGET_SMOKE_EMAIL",
+    "TARGET_SMOKE_PASSWORD",
+    "TARGET_SUPABASE_ANON_KEY",
+    "TARGET_SUPABASE_URL"
+   ],
+   "npm_scripts": [
+    "smoke:target"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/smokeTargetHelpers.ts",
+   "descricao": "* Helpers puros (testáveis) do smoke test do backend de destino.",
+   "linhas": 82,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sql-coverage-matrix.mjs",
+   "descricao": "* Matriz de cobertura das suites SQL (supabase/tests/) sobre as tabelas public.",
+   "linhas": 122,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
+   "linhas": 1724,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/types-sync/validar.mjs",
+   "descricao": "* Confere o types.ts recém-gerado do banco oficial antes de ele substituir",
+   "linhas": 84,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "types-sync.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/update-coverage-baseline.mjs",
+   "descricao": "* Etapa 32 do plano de 50 etapas.",
+   "linhas": 100,
+   "env": [],
+   "npm_scripts": [
+    "coverage:baseline:update"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/update-typecheck-baseline.mjs",
+   "descricao": "* Regenera scripts/typecheck-baseline.json a partir da compilação atual de",
+   "linhas": 41,
+   "env": [],
+   "npm_scripts": [
+    "typecheck:baseline:update"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/verify-dispatcher-request-id.sh",
+   "descricao": "Verifies that the winloss-webhook-dispatcher returns a matching requestId in both the X-Request-Id response header and the JSON body.",
+   "linhas": 93,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/verify-quote-to-sale-invariants.ts",
+   "descricao": "* Verifica as 4 invariantes críticas do fluxo quote → sale em produção.",
+   "linhas": 163,
+   "env": [
+    "E2E_TEST_EMAIL",
+    "E2E_TEST_PASSWORD",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "quote-to-sale-e2e.yml"
+   ],
+   "orfao": false
+  }
+ ]
+}

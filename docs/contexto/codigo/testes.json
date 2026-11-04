@@ -1,0 +1,2215 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "frameworks": [
+  "vitest",
+  "playwright"
+ ],
+ "total": 162,
+ "por_tipo": {
+  "contrato": 5,
+  "e2e": 54,
+  "pytest": 2,
+  "unit": 96
+ },
+ "onde_ficam": [
+  {
+   "padrao": "co-localizado (*.test)",
+   "arquivos": 83
+  },
+  {
+   "padrao": "tests/",
+   "arquivos": 59
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 14
+  },
+  {
+   "padrao": "co-localizado (__tests__)",
+   "arquivos": 1
+  }
+ ],
+ "arquivos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tipo": "unit",
+   "linhas": 361,
+   "testa": [
+    "src/components/auth/ProtectedRoute.tsx",
+    "src/routes/AppRoutes.tsx"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/ci/ai-context-generator.unit.mjs",
+   "tipo": "unit",
+   "linhas": 3,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/ci/contexto-indice.unit.mjs",
+   "tipo": "unit",
+   "linhas": 135,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/ci/contexto-publicacao.unit.mjs",
+   "tipo": "unit",
+   "linhas": 383,
+   "testa": [],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/ci/inventario-banco.unit.mjs",
+   "tipo": "unit",
+   "linhas": 217,
+   "testa": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/ci/inventario-mudou.unit.mjs",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/ci/inventario-rotas.unit.mjs",
+   "tipo": "unit",
+   "linhas": 228,
+   "testa": [
+    "scripts/inventario/gerar-rotas.mjs",
+    "src/components/auth/ProtectedRoute.tsx",
+    "src/pages/Auth.tsx",
+    "src/pages/Clientes.tsx",
+    "src/pages/NotFound.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "scripts/ci/regras-negocio.unit.mjs",
+   "tipo": "unit",
+   "linhas": 11,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "scripts/ci/supabase-snapshot.unit.mjs",
+   "tipo": "unit",
+   "linhas": 19,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "scripts/ci/types-sync.unit.mjs",
+   "tipo": "unit",
+   "linhas": 67,
+   "testa": [
+    "scripts/types-sync/validar.mjs"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "scripts/db-audit/gen-migration-probes.test.mjs",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "scripts/db-audit/gen-migration-probes.mjs"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "scripts/graphify/catalog-adapter.test.mjs",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "scripts/graphify/catalog-adapter.mjs",
+    "scripts/graphify/graphify-utils.mjs"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "scripts/graphify/docs-index.test.mjs",
+   "tipo": "unit",
+   "linhas": 47,
+   "testa": [
+    "scripts/graphify/docs-index.mjs"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "scripts/graphify/extract-code-only.test.mjs",
+   "tipo": "unit",
+   "linhas": 161,
+   "testa": [],
+   "casos": 10
+  },
+  {
+   "arquivo": "scripts/graphify/graphify-utils.test.mjs",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "scripts/graphify/graphify-utils.mjs"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "scripts/graphify/multigraph.test.mjs",
+   "tipo": "unit",
+   "linhas": 44,
+   "testa": [
+    "scripts/graphify/multigraph.mjs"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "scripts/graphify/static-contracts.test.mjs",
+   "tipo": "contrato",
+   "linhas": 63,
+   "testa": [
+    "scripts/graphify/static-contracts.mjs"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "tipo": "pytest",
+   "linhas": 164,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "tipo": "pytest",
+   "linhas": 822,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/components/email/aiEmailComposer.test.ts",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [
+    "src/components/email/aiEmailHelpers.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/reporting/funnelReportHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 121,
+   "testa": [
+    "src/components/reporting/funnelReportHelpers.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/sales/SaleHUDCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/components/sales/SaleHUDCard.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/security/KnownDevices.test.tsx",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/components/security/KnownDevices.tsx",
+    "src/contexts/AuthContext.tsx",
+    "src/services/knownDeviceService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/hooks/assistant/usePersonalAssistantHelpers.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/hooks/bi/useChurnOverdueBySeller.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/hooks/bi/useChurnOverdueBySeller.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/crm/useClientPortfolio.test.tsx",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/hooks/crm/useClientPortfolio.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 180,
+   "testa": [
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/dashboard/useDashboardKPIsPeriod.test.tsx",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/email/campaignDeliveryHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/hooks/email/campaignDeliveryHelpers.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/hooks/email/emailOptOutMetricsHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [
+    "src/hooks/email/emailOptOutMetricsHelpers.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/hooks/email/failedDraftsHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 143,
+   "testa": [
+    "src/hooks/email/failedDraftsHelpers.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/hooks/email/recoveryRateHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/hooks/email/recoveryRateHelpers.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/hooks/email/useFailedDrafts.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/hooks/email/useFailedDrafts.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/gamification/useStreakRanking.test.tsx",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/hooks/gamification/useAchievements.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/orders/useOrderTracking.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/hooks/orders/useOrderTracking.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/race/useGhostCar.test.tsx",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/hooks/race/useGhostCar.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/reports/salesReportHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 463,
+   "testa": [
+    "src/hooks/reports/salesReportHelpers.ts"
+   ],
+   "casos": 33
+  },
+  {
+   "arquivo": "src/hooks/reports/useMarkupMinSamplePreference.test.tsx",
+   "tipo": "unit",
+   "linhas": 54,
+   "testa": [
+    "src/hooks/reports/useMarkupMinSamplePreference.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/rolePermissions.test.ts",
+   "tipo": "unit",
+   "linhas": 156,
+   "testa": [
+    "scripts/generate-role-permissions-seed.mjs",
+    "src/config/role-permissions.json"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/useBackNavigation.test.ts",
+   "tipo": "unit",
+   "linhas": 35,
+   "testa": [
+    "src/hooks/useBackNavigation.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/useClientsNeedingContact.test.tsx",
+   "tipo": "unit",
+   "linhas": 70,
+   "testa": [
+    "src/hooks/useClientsNeedingContact.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/useDigitalSignatures.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/hooks/useDigitalSignatures.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/useEligibleBonuses.test.ts",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/hooks/useCommissionBonuses.ts",
+    "src/hooks/useEligibleBonuses.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/useFormDraft.test.tsx",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/hooks/useFormDraft.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/useLeadAssignment.test.ts",
+   "tipo": "unit",
+   "linhas": 22,
+   "testa": [
+    "src/hooks/useLeadAssignment.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/useLeadRouting.test.tsx",
+   "tipo": "unit",
+   "linhas": 103,
+   "testa": [
+    "src/hooks/useLeadRouting.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/useLoginRateLimiter.test.tsx",
+   "tipo": "unit",
+   "linhas": 132,
+   "testa": [
+    "src/hooks/useLoginRateLimiter.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/useProductRecommendations.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/hooks/useProductRecommendations.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/useRunRateProjection.test.ts",
+   "tipo": "unit",
+   "linhas": 143,
+   "testa": [
+    "src/hooks/useRunRateProjection.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/hooks/useScrollRestoration.test.tsx",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "src/hooks/useScrollRestoration.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/auth/passwordErrorMessages.test.ts",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/lib/auth/passwordErrorMessages.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/bi/markupOverviewHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/lib/bi/markupOverviewHelpers.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/draftMigration.test.ts",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/lib/draftMigration.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/lib/gamification.test.ts",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/lib/gamification.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/lib/log/pii.test.ts",
+   "tipo": "unit",
+   "linhas": 54,
+   "testa": [
+    "src/lib/log/pii.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/lib/markupHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/lib/markupHelpers.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/lib/markupSummary.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "src/lib/markupHelpers.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/lib/mergeTags.test.ts",
+   "tipo": "unit",
+   "linhas": 181,
+   "testa": [
+    "src/lib/mergeTags.ts"
+   ],
+   "casos": 30
+  },
+  {
+   "arquivo": "src/lib/navigationGuard.test.tsx",
+   "tipo": "unit",
+   "linhas": 212,
+   "testa": [
+    "src/lib/navigationGuard.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/orderTracking/stages.test.ts",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/lib/orderTracking/stages.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/lib/revenueForecast/csvExport.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/lib/revenueForecast/csvExport.ts",
+    "src/lib/revenueForecast/forecastEngine.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/lib/revenueForecast/forecastEngine.test.ts",
+   "tipo": "unit",
+   "linhas": 213,
+   "testa": [
+    "src/lib/revenueForecast/forecastEngine.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/lib/safeNavigation.test.ts",
+   "tipo": "unit",
+   "linhas": 41,
+   "testa": [
+    "src/lib/safeNavigation.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/lib/staleAssetRecovery.test.ts",
+   "tipo": "unit",
+   "linhas": 292,
+   "testa": [
+    "src/lib/staleAssetRecovery.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/lib/supabase/all-in-calls.test.ts",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/lib/supabase/chunkedIn.test.ts",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/lib/supabase/chunkedIn.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/usageAnalytics.test.ts",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "src/lib/usageAnalytics.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/lib/validators/brDocuments.test.ts",
+   "tipo": "unit",
+   "linhas": 193,
+   "testa": [
+    "src/lib/validators/brDocuments.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/lib/validators/brSchemas.test.ts",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/lib/validators/brSchemas.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/lib/winloss/riskReasons.test.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/lib/winloss/riskReasons.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/lib/winloss/riskSeverity.test.ts",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [
+    "src/lib/winloss/riskSeverity.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/lib/winloss/scenarioChartKey.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/lib/winloss/scenarioChartKey.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/lib/winloss/severityFromScore.test.ts",
+   "tipo": "unit",
+   "linhas": 39,
+   "testa": [
+    "src/lib/winloss/severityFromScore.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/lib/winloss/winlossContract.test.ts",
+   "tipo": "unit",
+   "linhas": 133,
+   "testa": [
+    "src/lib/winloss/riskReasons.ts",
+    "src/lib/winloss/riskSeverity.ts",
+    "src/lib/winloss/severityFromScore.ts",
+    "supabase/functions/_shared/winloss-contract.ts",
+    "supabase/functions/detect-winloss-at-risk/scoring.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/pages/Index.test.tsx",
+   "tipo": "unit",
+   "linhas": 226,
+   "testa": [
+    "src/contexts/AuthContext.tsx",
+    "src/contexts/DashboardThemeContext.tsx",
+    "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
+    "src/hooks/dashboard/useGoalsDashboard.ts",
+    "src/hooks/sales/useSalesChartData.ts",
+    "src/pages/Index.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/services/callFeedbackService.test.ts",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/services/callFeedbackService.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/services/salesService.test.ts",
+   "tipo": "unit",
+   "linhas": 244,
+   "testa": [
+    "src/services/salesService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/test/bi-helpers.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/utils/bi-helpers.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/csv-export.test.ts",
+   "tipo": "unit",
+   "linhas": 34,
+   "testa": [
+    "src/utils/csvExport.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/factories.ts",
+   "tipo": "unit",
+   "linhas": 254,
+   "testa": [
+    "src/lib/supabase/typed-payloads.ts",
+    "src/types/index.ts"
+   ],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/quote-conversion-errors.test.ts",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/hooks/quoteErrorMessages.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/test/quote-error-messages.test.ts",
+   "tipo": "unit",
+   "linhas": 57,
+   "testa": [
+    "src/hooks/quoteErrorMessages.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/test/regressions.test.ts",
+   "tipo": "unit",
+   "linhas": 132,
+   "testa": [
+    "src/lib/gamification.ts",
+    "src/utils/bi-helpers.ts",
+    "src/utils/dateHelpers.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/test/sale-status.test.ts",
+   "tipo": "unit",
+   "linhas": 44,
+   "testa": [
+    "src/constants/index.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/integrations/supabase/env.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/test/setup.ts",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/smoke-target-helpers.test.ts",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "scripts/smokeTargetHelpers.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/utils/dateHelpers.test.ts",
+   "tipo": "unit",
+   "linhas": 19,
+   "testa": [
+    "src/utils/dateHelpers.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/_shared/campaign-health.test.ts",
+   "tipo": "unit",
+   "linhas": 146,
+   "testa": [
+    "supabase/functions/_shared/campaign-health.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "supabase/functions/_shared/retry-policy.test.ts",
+   "tipo": "unit",
+   "linhas": 168,
+   "testa": [
+    "supabase/functions/_shared/retry-policy.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "supabase/functions/_shared/retry.test.ts",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "supabase/functions/_shared/retry.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/check-v4-callback-alerts/index.test.ts",
+   "tipo": "unit",
+   "linhas": 41,
+   "testa": [
+    "supabase/functions/check-v4-callback-alerts/alerts.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/create-stagnant-tasks/index.test.ts",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/cron-failure-alerter/index.test.ts",
+   "tipo": "unit",
+   "linhas": 338,
+   "testa": [],
+   "casos": 16
+  },
+  {
+   "arquivo": "supabase/functions/forecast-narrative/index.test.ts",
+   "tipo": "unit",
+   "linhas": 210,
+   "testa": [],
+   "casos": 12
+  },
+  {
+   "arquivo": "supabase/functions/notify-v4-quote-status/index.test.ts",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/receive-quote-sync/index.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/a11y/axe-sweep.spec.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/a11y/routes.ts",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/auth-logout.spec.ts",
+   "tipo": "e2e",
+   "linhas": 47,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/auth-navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 219,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/core-flows.spec.ts",
+   "tipo": "e2e",
+   "linhas": 60,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/dashboard-navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 111,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/global-setup.ts",
+   "tipo": "e2e",
+   "linhas": 78,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/auth.ts",
+   "tipo": "e2e",
+   "linhas": 39,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/page-helpers.ts",
+   "tipo": "e2e",
+   "linhas": 56,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/quote-to-sale-failure-reporter.ts",
+   "tipo": "e2e",
+   "linhas": 69,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/quote-to-sale-fixtures.ts",
+   "tipo": "e2e",
+   "linhas": 167,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/helpers/quote-to-sale-helpers.ts",
+   "tipo": "e2e",
+   "linhas": 254,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/mobile-auth-smoke.spec.ts",
+   "tipo": "e2e",
+   "linhas": 104,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "tests/e2e/pages-admin-config.spec.ts",
+   "tipo": "e2e",
+   "linhas": 283,
+   "testa": [],
+   "casos": 56
+  },
+  {
+   "arquivo": "tests/e2e/pages-automation-ai.spec.ts",
+   "tipo": "e2e",
+   "linhas": 175,
+   "testa": [],
+   "casos": 32
+  },
+  {
+   "arquivo": "tests/e2e/pages-bi-analytics.spec.ts",
+   "tipo": "e2e",
+   "linhas": 287,
+   "testa": [],
+   "casos": 52
+  },
+  {
+   "arquivo": "tests/e2e/pages-critical-routes.spec.ts",
+   "tipo": "e2e",
+   "linhas": 140,
+   "testa": [],
+   "casos": 24
+  },
+  {
+   "arquivo": "tests/e2e/pages-crm-core.spec.ts",
+   "tipo": "e2e",
+   "linhas": 145,
+   "testa": [],
+   "casos": 24
+  },
+  {
+   "arquivo": "tests/e2e/pages-customer-success.spec.ts",
+   "tipo": "e2e",
+   "linhas": 214,
+   "testa": [],
+   "casos": 40
+  },
+  {
+   "arquivo": "tests/e2e/pages-gamification.spec.ts",
+   "tipo": "e2e",
+   "linhas": 163,
+   "testa": [],
+   "casos": 30
+  },
+  {
+   "arquivo": "tests/e2e/pages-navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 118,
+   "testa": [],
+   "casos": 9
+  },
+  {
+   "arquivo": "tests/e2e/pages-reports-hubs.spec.ts",
+   "tipo": "e2e",
+   "linhas": 314,
+   "testa": [],
+   "casos": 62
+  },
+  {
+   "arquivo": "tests/e2e/pages-sales-commerce.spec.ts",
+   "tipo": "e2e",
+   "linhas": 100,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "tests/e2e/pipeline-flows.spec.ts",
+   "tipo": "e2e",
+   "linhas": 100,
+   "testa": [],
+   "casos": 9
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-api-forbidden.spec.ts",
+   "tipo": "e2e",
+   "linhas": 120,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-approved-reuse.spec.ts",
+   "tipo": "e2e",
+   "linhas": 135,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-audit-log.spec.ts",
+   "tipo": "e2e",
+   "linhas": 122,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-backfill.spec.ts",
+   "tipo": "e2e",
+   "linhas": 93,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-cleanup-contract.spec.ts",
+   "tipo": "e2e",
+   "linhas": 84,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-concurrent-won.spec.ts",
+   "tipo": "e2e",
+   "linhas": 101,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-concurrent-x5.spec.ts",
+   "tipo": "e2e",
+   "linhas": 122,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-concurrent.spec.ts",
+   "tipo": "e2e",
+   "linhas": 106,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-error-payload-ui.spec.ts",
+   "tipo": "e2e",
+   "linhas": 177,
+   "testa": [
+    "src/hooks/quoteErrorMessages.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-forbidden.spec.ts",
+   "tipo": "e2e",
+   "linhas": 108,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-idempotencia-sequencial.spec.ts",
+   "tipo": "e2e",
+   "linhas": 113,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-invalid-total.spec.ts",
+   "tipo": "e2e",
+   "linhas": 87,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-order-reuse.spec.ts",
+   "tipo": "e2e",
+   "linhas": 100,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-race-approved-plus-ui.spec.ts",
+   "tipo": "e2e",
+   "linhas": 171,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-race-trigger-vs-rpc.spec.ts",
+   "tipo": "e2e",
+   "linhas": 112,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-reenvio.spec.ts",
+   "tipo": "e2e",
+   "linhas": 86,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-seq-no-advance.spec.ts",
+   "tipo": "e2e",
+   "linhas": 132,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-ui-error-alt.spec.ts",
+   "tipo": "e2e",
+   "linhas": 136,
+   "testa": [
+    "src/hooks/quoteErrorMessages.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-ui-error.spec.ts",
+   "tipo": "e2e",
+   "linhas": 120,
+   "testa": [
+    "src/hooks/quoteErrorMessages.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-ui-plus-rpc.spec.ts",
+   "tipo": "e2e",
+   "linhas": 166,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-validations.spec.ts",
+   "tipo": "e2e",
+   "linhas": 230,
+   "testa": [],
+   "casos": 7
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale-won-path.spec.ts",
+   "tipo": "e2e",
+   "linhas": 97,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/quote-to-sale.spec.ts",
+   "tipo": "e2e",
+   "linhas": 147,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/reset-password-hibp.spec.ts",
+   "tipo": "e2e",
+   "linhas": 144,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/revenue-forecast-v2.spec.ts",
+   "tipo": "e2e",
+   "linhas": 186,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/rls-authorization-edge-cases.spec.ts",
+   "tipo": "e2e",
+   "linhas": 94,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "tests/e2e/rls-scope-salesperson.spec.ts",
+   "tipo": "e2e",
+   "linhas": 302,
+   "testa": [],
+   "casos": 8
+  },
+  {
+   "arquivo": "tests/e2e/sales-markup-rls-salesperson.spec.ts",
+   "tipo": "e2e",
+   "linhas": 161,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "tests/e2e/security-definer-rpc-access.spec.ts",
+   "tipo": "e2e",
+   "linhas": 125,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/smoke.spec.ts",
+   "tipo": "e2e",
+   "linhas": 17,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/v4-callbacks-admin.spec.ts",
+   "tipo": "e2e",
+   "linhas": 44,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/e2e/win-loss-analysis.spec.ts",
+   "tipo": "e2e",
+   "linhas": 109,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/migrations/authz_hardening_contract_test.ts",
+   "tipo": "contrato",
+   "linhas": 101,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "tests/migrations/canonical_hardening_contract_test.ts",
+   "tipo": "contrato",
+   "linhas": 568,
+   "testa": [],
+   "casos": 21
+  },
+  {
+   "arquivo": "tests/migrations/race_leaderboard_status_contract_test.ts",
+   "tipo": "contrato",
+   "linhas": 32,
+   "testa": [],
+   "casos": 2
+  }
+ ],
+ "sql": [
+  "supabase/tests/canonical_post_migration_assertions.sql",
+  "supabase/tests/canonical_role_simulation.sql",
+  "supabase/tests/quote-to-sale-stress.sql",
+  "supabase/tests/rls_test_suite.sql",
+  "supabase/tests/role_helpers_matrix_assertions.sql"
+ ],
+ "cobertura_por_arquivo": {
+  "scripts/db-audit/gen-migration-probes.mjs": 1,
+  "scripts/generate-role-permissions-seed.mjs": 1,
+  "scripts/graphify/catalog-adapter.mjs": 1,
+  "scripts/graphify/docs-index.mjs": 1,
+  "scripts/graphify/graphify-utils.mjs": 2,
+  "scripts/graphify/multigraph.mjs": 1,
+  "scripts/graphify/static-contracts.mjs": 1,
+  "scripts/inventario/gerar-banco.mjs": 1,
+  "scripts/inventario/gerar-rotas.mjs": 1,
+  "scripts/inventario/mudou-conteudo.mjs": 1,
+  "scripts/smokeTargetHelpers.ts": 1,
+  "scripts/types-sync/validar.mjs": 1,
+  "src/components/auth/ProtectedRoute.tsx": 2,
+  "src/components/email/aiEmailHelpers.ts": 1,
+  "src/components/reporting/funnelReportHelpers.ts": 1,
+  "src/components/sales/SaleHUDCard.tsx": 1,
+  "src/components/security/KnownDevices.tsx": 1,
+  "src/config/role-permissions.json": 1,
+  "src/constants/index.ts": 1,
+  "src/contexts/AuthContext.tsx": 2,
+  "src/contexts/DashboardThemeContext.tsx": 1,
+  "src/hooks/assistant/usePersonalAssistantHelpers.ts": 1,
+  "src/hooks/bi/useChurnOverdueBySeller.ts": 1,
+  "src/hooks/crm/useClientPortfolio.ts": 1,
+  "src/hooks/dashboard/useDashboardKPIsPeriod.ts": 2,
+  "src/hooks/dashboard/useGoalsDashboard.ts": 1,
+  "src/hooks/email/campaignDeliveryHelpers.ts": 1,
+  "src/hooks/email/emailOptOutMetricsHelpers.ts": 1,
+  "src/hooks/email/failedDraftsHelpers.ts": 1,
+  "src/hooks/email/recoveryRateHelpers.ts": 1,
+  "src/hooks/email/useFailedDrafts.ts": 1,
+  "src/hooks/gamification/useAchievements.ts": 1,
+  "src/hooks/orders/useOrderTracking.ts": 1,
+  "src/hooks/quoteErrorMessages.ts": 5,
+  "src/hooks/race/useGhostCar.ts": 1,
+  "src/hooks/reports/salesReportHelpers.ts": 1,
+  "src/hooks/reports/useMarkupMinSamplePreference.ts": 1,
+  "src/hooks/sales/useSalesChartData.ts": 1,
+  "src/hooks/useBackNavigation.ts": 1,
+  "src/hooks/useClientsNeedingContact.ts": 1,
+  "src/hooks/useCommissionBonuses.ts": 1,
+  "src/hooks/useDigitalSignatures.ts": 1,
+  "src/hooks/useEligibleBonuses.ts": 1,
+  "src/hooks/useFormDraft.ts": 1,
+  "src/hooks/useLeadAssignment.ts": 1,
+  "src/hooks/useLeadRouting.ts": 1,
+  "src/hooks/useLoginRateLimiter.ts": 1,
+  "src/hooks/useProductRecommendations.ts": 1,
+  "src/hooks/useRunRateProjection.ts": 1,
+  "src/hooks/useScrollRestoration.ts": 1,
+  "src/integrations/supabase/client.ts": 2,
+  "src/integrations/supabase/env.ts": 1,
+  "src/lib/auth/passwordErrorMessages.ts": 1,
+  "src/lib/bi/markupOverviewHelpers.ts": 1,
+  "src/lib/draftMigration.ts": 1,
+  "src/lib/gamification.ts": 2,
+  "src/lib/log/pii.ts": 1,
+  "src/lib/markupHelpers.ts": 2,
+  "src/lib/mergeTags.ts": 1,
+  "src/lib/navigationGuard.ts": 1,
+  "src/lib/orderTracking/stages.ts": 1,
+  "src/lib/revenueForecast/csvExport.ts": 1,
+  "src/lib/revenueForecast/forecastEngine.ts": 2,
+  "src/lib/safeNavigation.ts": 1,
+  "src/lib/staleAssetRecovery.ts": 1,
+  "src/lib/supabase/chunkedIn.ts": 1,
+  "src/lib/supabase/typed-payloads.ts": 1,
+  "src/lib/usageAnalytics.ts": 1,
+  "src/lib/validators/brDocuments.ts": 1,
+  "src/lib/validators/brSchemas.ts": 1,
+  "src/lib/winloss/riskReasons.ts": 2,
+  "src/lib/winloss/riskSeverity.ts": 2,
+  "src/lib/winloss/scenarioChartKey.ts": 1,
+  "src/lib/winloss/severityFromScore.ts": 2,
+  "src/pages/Auth.tsx": 1,
+  "src/pages/Clientes.tsx": 1,
+  "src/pages/Index.tsx": 1,
+  "src/pages/NotFound.tsx": 1,
+  "src/routes/AppRoutes.tsx": 1,
+  "src/services/callFeedbackService.ts": 1,
+  "src/services/knownDeviceService.ts": 1,
+  "src/services/salesService.ts": 1,
+  "src/types/index.ts": 1,
+  "src/utils/bi-helpers.ts": 2,
+  "src/utils/csvExport.ts": 1,
+  "src/utils/dateHelpers.ts": 2,
+  "supabase/functions/_shared/campaign-health.ts": 1,
+  "supabase/functions/_shared/retry-policy.ts": 1,
+  "supabase/functions/_shared/retry.ts": 1,
+  "supabase/functions/_shared/winloss-contract.ts": 1,
+  "supabase/functions/check-v4-callback-alerts/alerts.ts": 1,
+  "supabase/functions/detect-winloss-at-risk/scoring.ts": 1
+ },
+ "sem_teste": {
+  "telas": [
+   "src/pages/ABCAnalysisPage.tsx",
+   "src/pages/AIAgents.tsx",
+   "src/pages/AccessDenied.tsx",
+   "src/pages/AccountBasedEngagement.tsx",
+   "src/pages/AccountBasedSelling.tsx",
+   "src/pages/AccountDetail.tsx",
+   "src/pages/AcompanhamentoPedidoDetalhe.tsx",
+   "src/pages/AcompanhamentoPedidos.tsx",
+   "src/pages/AdminAlertasChurn.tsx",
+   "src/pages/AdminAuditoriaPremiacoes.tsx",
+   "src/pages/AdminComissoes.tsx",
+   "src/pages/AdminDashboard.tsx",
+   "src/pages/AdminFilaTarefasAutomaticas.tsx",
+   "src/pages/AdminHistoricoAlertasChurn.tsx",
+   "src/pages/AdminPremiacoes.tsx",
+   "src/pages/AdminRegrasInatividade.tsx",
+   "src/pages/AdminSolicitacoesTitular.tsx",
+   "src/pages/AdminSupressaoEmails.tsx",
+   "src/pages/AdminTasksPage.tsx",
+   "src/pages/AdminTelemetria.tsx",
+   "src/pages/Agenda.tsx",
+   "src/pages/Analytics.tsx",
+   "src/pages/ApprovalWorkflowsPage.tsx",
+   "src/pages/ArenaCompetitiva.tsx",
+   "src/pages/AskAnything.tsx",
+   "src/pages/AssinaturaDigital.tsx",
+   "src/pages/Assistente.tsx",
+   "src/pages/Atividades.tsx",
+   "src/pages/AuditLogsPage.tsx",
+   "src/pages/AutomacaoInteligente.tsx",
+   "src/pages/Automacoes.tsx",
+   "src/pages/AutomationBuilder.tsx",
+   "src/pages/BICloser.tsx",
+   "src/pages/BIGestor.tsx",
+   "src/pages/BISDR.tsx",
+   "src/pages/BIVendedor.tsx",
+   "src/pages/BadgesGalleryPage.tsx",
+   "src/pages/Bitrix24.tsx",
+   "src/pages/BulkComposer.tsx",
+   "src/pages/BusinessIntelligencePage.tsx",
+   "src/pages/Cadencias.tsx",
+   "src/pages/Calendario.tsx",
+   "src/pages/CategoryMetrics.tsx",
+   "src/pages/ClientHealthScore.tsx",
+   "src/pages/ClosingTimePage.tsx",
+   "src/pages/CoachingInteligente.tsx",
+   "src/pages/CohortReportPage.tsx",
+   "src/pages/Comissoes.tsx",
+   "src/pages/CommissionRules.tsx",
+   "src/pages/ComparadorPrecos.tsx",
+   "src/pages/Competencias.tsx",
+   "src/pages/CompetitiveSeasonsAdmin.tsx",
+   "src/pages/Configuracoes.tsx",
+   "src/pages/ConversationalIntelligence.tsx",
+   "src/pages/ConversationalIntelligenceHub.tsx",
+   "src/pages/CustomReports.tsx",
+   "src/pages/CustomerSuccess360.tsx",
+   "src/pages/CustomerSuccessHub.tsx",
+   "src/pages/DealIntelligence.tsx",
+   "src/pages/DealVelocityPage.tsx",
+   "src/pages/Deduplication.tsx",
+   "src/pages/DesafiosSemanais.tsx",
+   "src/pages/EmailAnalyticsPage.tsx",
+   "src/pages/EmailEngagementScoring.tsx",
+   "src/pages/EmailTracking.tsx",
+   "src/pages/EmbedReportPage.tsx",
+   "src/pages/Estoque.tsx",
+   "src/pages/EvolutionCurvesPage.tsx",
+   "src/pages/FeatureFlagsAdmin.tsx",
+   "src/pages/FollowUpAudit.tsx",
+   "src/pages/FollowUpInteligente.tsx",
+   "src/pages/FonteLeads.tsx",
+   "src/pages/ForecastPonderado.tsx",
+   "src/pages/Fornecedores.tsx",
+   "src/pages/FunnelAnalysis.tsx",
+   "src/pages/FunnelReportPage.tsx",
+   "src/pages/GamifiedProfilePage.tsx",
+   "src/pages/HistoricalBenchmark.tsx",
+   "src/pages/HistoricoDesafiosDiarios.tsx",
+   "src/pages/ICP.tsx",
+   "src/pages/ImportExport.tsx",
+   "src/pages/InactivityTriggers.tsx",
+   "src/pages/InteligenciaPreditiva.tsx",
+   "src/pages/Intelligence.tsx",
+   "src/pages/KanbanClientes.tsx",
+   "src/pages/LeadRoutingPage.tsx",
+   "src/pages/LeadScoring.tsx",
+   "src/pages/MapaClientes.tsx",
+   "src/pages/Metas.tsx",
+   "src/pages/MetasAtividades.tsx",
+   "src/pages/MeuAssistente.tsx",
+   "src/pages/MinhasPremiacoes.tsx",
+   "src/pages/Multichannel.tsx",
+   "src/pages/NPSDashboard.tsx",
+   "src/pages/Notificacoes.tsx",
+   "src/pages/ObjectionsLibraryPage.tsx",
+   "src/pages/OnboardingTracking.tsx",
+   "src/pages/Orcamentos.tsx",
+   "src/pages/OrderDetailPage.tsx",
+   "src/pages/Pipeline.tsx",
+   "src/pages/Playbooks.tsx",
+   "src/pages/Portfolio.tsx",
+   "src/pages/PowerDialer.tsx",
+   "src/pages/PrevisaoDemanda.tsx",
+   "src/pages/PriceEvolution.tsx",
+   "src/pages/PricingIntelligenceHub.tsx",
+   "src/pages/Produtos.tsx",
+   "src/pages/PurchaseIntelligence.tsx",
+   "src/pages/QuoteCadencesPage.tsx",
+   "src/pages/ROIDashboard.tsx",
+   "src/pages/RaceArenaCareer.tsx",
+   "src/pages/RaceArenaCloser.tsx",
+   "src/pages/RaceArenaGarage.tsx",
+   "src/pages/RaceArenaHub.tsx",
+   "src/pages/RaceArenaSDR.tsx",
+   "src/pages/RaceArenaTV.tsx",
+   "src/pages/RaceSpectator.tsx",
+   "src/pages/RankingCompetitivo.tsx",
+   "src/pages/RelatorioAtividades.tsx",
+   "src/pages/Relatorios.tsx",
+   "src/pages/RelatoriosEmail.tsx",
+   "src/pages/RelatoriosExecutivos.tsx",
+   "src/pages/ResetPassword.tsx",
+   "src/pages/RetryTestStatusPage.tsx",
+   "src/pages/RevOpsHub.tsx",
+   "src/pages/RevenueForecast.tsx",
+   "src/pages/RevenueForecastV2.tsx",
+   "src/pages/RevenueIntelligence.tsx",
+   "src/pages/SLATrackingPage.tsx",
+   "src/pages/SalesEnablementHub.tsx",
+   "src/pages/SalesReportPage.tsx",
+   "src/pages/ScheduledReports.tsx",
+   "src/pages/SecurityDashboard.tsx",
+   "src/pages/SemanticSearch.tsx",
+   "src/pages/SendTimeOptimization.tsx",
+   "src/pages/SequencesPage.tsx",
+   "src/pages/SmartSearch.tsx",
+   "src/pages/Tarefas.tsx",
+   "src/pages/TeamActivityFeed.tsx",
+   "src/pages/Territorios.tsx",
+   "src/pages/TerritoryOptimizationHub.tsx",
+   "src/pages/Times.tsx",
+   "src/pages/TopProductsRanking.tsx",
+   "src/pages/UsageAnalytics.tsx",
+   "src/pages/Vendas.tsx",
+   "src/pages/Vendedores.tsx",
+   "src/pages/VictoryFeedPage.tsx",
+   "src/pages/WebhooksPage.tsx",
+   "src/pages/WinLossAnalysisPage.tsx",
+   "src/pages/WinLossIntelligence.tsx",
+   "src/pages/WorkflowsPage.tsx",
+   "src/pages/admin/AdminComercial.tsx",
+   "src/pages/admin/AdminConexoesPage.tsx",
+   "src/pages/admin/AdminPlatformSLOPage.tsx",
+   "src/pages/admin/AdminQuoteConversionsPage.tsx",
+   "src/pages/admin/AdminQuoteSyncInboundPage.tsx",
+   "src/pages/admin/AdminV4CallbacksPage.tsx",
+   "src/pages/admin/AdminWebVitalsPage.tsx",
+   "src/pages/admin/RaceArenaAdmin.tsx",
+   "src/pages/admin/WebhookAlertHistoryPage.tsx",
+   "src/pages/admin/WebhookAlertSettingsPage.tsx",
+   "src/pages/admin/WebhookTimelinePage.tsx",
+   "src/pages/admin/WebhooksDeadLettersAdmin.tsx"
+  ],
+  "hooks": [
+   "scripts/ai-context/cenarios.mjs",
+   "src/components/admin/connections/useCredentialsSource.ts",
+   "src/components/analytics/useChurnPrediction.ts",
+   "src/components/conversational/RecordingSummaryDrawer.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/contexts/AudioContext.tsx",
+   "src/contexts/GamificationContext.tsx",
+   "src/contexts/I18nContext.tsx",
+   "src/contexts/RaceCalmContext.tsx",
+   "src/hooks/abm/useAccounts.ts",
+   "src/hooks/activities/useActivities.ts",
+   "src/hooks/activities/useActivityGoals.ts",
+   "src/hooks/activities/useActivityQualityScore.ts",
+   "src/hooks/admin-tasks/useBulkApprovals.ts",
+   "src/hooks/admin-tasks/usePendingApprovals.ts",
+   "src/hooks/admin-tasks/useSquads.ts",
+   "src/hooks/admin-tasks/useTaskAssignments.ts",
+   "src/hooks/admin-tasks/useTaskCatalog.ts",
+   "src/hooks/admin-tasks/useXpAdjustments.ts",
+   "src/hooks/admin/useAdminStats.ts",
+   "src/hooks/admin/useApprovalWorkflows.ts",
+   "src/hooks/admin/useAuditLogs.ts",
+   "src/hooks/admin/useConnectionMetrics.ts",
+   "src/hooks/admin/useDataSubjectRequests.ts",
+   "src/hooks/admin/useIntegrationConnections.ts",
+   "src/hooks/admin/usePlatformSLO.ts",
+   "src/hooks/admin/useUsageAnalytics.ts",
+   "src/hooks/admin/useV4Callbacks.ts",
+   "src/hooks/admin/useWebVitalsP75.ts",
+   "src/hooks/agents/useAgentRunDetails.ts",
+   "src/hooks/agents/useAgentRuns.ts",
+   "src/hooks/agents/useApproveAgentRun.ts",
+   "src/hooks/agents/useStartAgentRun.ts",
+   "src/hooks/assistant/useBriefingHistory.ts",
+   "src/hooks/assistant/usePersonalAssistant.ts",
+   "src/hooks/assistant/useSpeechSynthesis.ts",
+   "src/hooks/auth/useAuthForm.ts",
+   "src/hooks/automation/useAutomationIntelligence.ts",
+   "src/hooks/automation/useAutomationRules.ts",
+   "src/hooks/automation/useAutomationWorkflows.ts",
+   "src/hooks/bi/useABCAnalysis.ts",
+   "src/hooks/bi/useBICloser.ts",
+   "src/hooks/bi/useBICloserTransformers.ts",
+   "src/hooks/bi/useBIDossierExport.ts",
+   "src/hooks/bi/useBIFilters.ts",
+   "src/hooks/bi/useBIGestor.ts",
+   "src/hooks/bi/useBISDR.ts",
+   "src/hooks/bi/useBISDRTransformers.ts",
+   "src/hooks/bi/useBITopClients.ts",
+   "src/hooks/bi/useBIVendedor.ts",
+   "src/hooks/bi/useChurnPeriodPreference.ts",
+   "src/hooks/bi/useChurnTaskCompletion.ts",
+   "src/hooks/bi/useClientBI.ts",
+   "src/hooks/bi/useClientSearch.ts",
+   "src/hooks/bi/useClientVsIndustry.ts",
+   "src/hooks/bi/useCriticalMarkupSales.ts",
+   "src/hooks/bi/useIndustryTrends.ts",
+   "src/hooks/bi/useMarkupOverview.ts",
+   "src/hooks/cadences/useABTests.ts",
+   "src/hooks/cadences/useBulkQuoteCadenceMutations.ts",
+   "src/hooks/cadences/useCadenceMetrics.ts",
+   "src/hooks/cadences/useCadenceMutations.ts",
+   "src/hooks/cadences/useCadenceQueries.ts",
+   "src/hooks/cadences/useCadenceTaskMutations.ts",
+   "src/hooks/cadences/useCadenceTasksByEnrollment.ts",
+   "src/hooks/cadences/useEnrollmentRules.ts",
+   "src/hooks/cadences/useLeadLogs.ts",
+   "src/hooks/cadences/useProspectCadenceMutations.ts",
+   "src/hooks/cadences/useQuoteCadenceComparison.ts",
+   "src/hooks/cadences/useQuoteCadenceConversion.ts",
+   "src/hooks/cadences/useQuoteCadenceMutations.ts",
+   "src/hooks/cadences/useQuoteCadenceRealtime.ts",
+   "src/hooks/cadences/useQuoteCadences.ts",
+   "src/hooks/cadences/useQuoteCadenceShortcuts.ts",
+   "src/hooks/cadences/useTodaysQuoteCadenceTasks.ts",
+   "src/hooks/calendar/useAgendaEvents.ts",
+   "src/hooks/coaching/useCoachingImpact.ts",
+   "src/hooks/coaching/useCoachingOpportunities.ts",
+   "src/hooks/coaching/useCoachingSessions.ts",
+   "src/hooks/coaching/useSkillGapAnalyzer.ts",
+   "src/hooks/conversation-intelligence/useAnalyzeConversation.ts",
+   "src/hooks/conversation-intelligence/useConversationAnalyses.ts",
+   "src/hooks/conversation-intelligence/useConversationInsights.ts",
+   "src/hooks/conversational/useCallLibrarySearch.ts",
+   "src/hooks/conversational/useCallRecordings.ts",
+   "src/hooks/conversational/useCoachingActions.ts",
+   "src/hooks/conversational/useCoachingScorecard.ts",
+   "src/hooks/conversational/useCompetitorMentions.ts",
+   "src/hooks/conversational/useCompetitorsRegistry.ts",
+   "src/hooks/conversational/useConversationMetrics.ts",
+   "src/hooks/conversational/useCreateActivitiesFromSummary.ts",
+   "src/hooks/conversational/useCriticalMoments.ts",
+   "src/hooks/conversational/useDiarizeRecording.ts",
+   "src/hooks/conversational/useObjectionAnalysis.ts",
+   "src/hooks/conversational/useQuestionAnalysis.ts",
+   "src/hooks/conversational/useSentimentTimeline.ts",
+   "src/hooks/conversational/useSummarizeRecording.ts",
+   "src/hooks/conversational/useTranscribeRecording.ts",
+   "src/hooks/conversational/useUploadCallRecording.ts",
+   "src/hooks/crm/useClient360.ts",
+   "src/hooks/crm/useClientKanban.ts",
+   "src/hooks/crm/useClientPredictions.ts",
+   "src/hooks/crm/useClients.ts",
+   "src/hooks/crm/useDeduplicationScan.ts",
+   "src/hooks/customer-success/useCustomerSuccess360.ts",
+   "src/hooks/customer-success/useFilteredCS360Data.ts",
+   "src/hooks/dashboard/useBIDossierExport.ts",
+   "src/hooks/dashboard/useDashboardKPIs.ts",
+   "src/hooks/dashboard/useDashboardLayout.ts",
+   "src/hooks/dashboard/useDashboardPriorities.ts",
+   "src/hooks/dashboard/useDashboardRedirect.ts",
+   "src/hooks/dashboard/useFunnelData.ts",
+   "src/hooks/dashboard/useFunnelStatusCounts.ts",
+   "src/hooks/dashboard/useIntelligenceZones.ts",
+   "src/hooks/dashboard/useROIDashboard.ts",
+   "src/hooks/deal-intelligence/useAtRiskDeals.ts",
+   "src/hooks/deal-intelligence/useCommitteeCoverage.ts",
+   "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
+   "src/hooks/deal-intelligence/useDealHealth.ts",
+   "src/hooks/deal-intelligence/useDealStakeholders.ts",
+   "src/hooks/deal-intelligence/useDealVelocity.ts",
+   "src/hooks/deal-intelligence/useStageBaselines.ts",
+   "src/hooks/deal-intelligence/useStageConversion.ts",
+   "src/hooks/deal-intelligence/useStageVelocity.ts",
+   "src/hooks/deal-intelligence/useWinLoss.ts",
+   "src/hooks/dialer/useClickToCall.ts",
+   "src/hooks/dialer/usePowerDialer.ts",
+   "src/hooks/email/useCampaignDeliveryStats.ts",
+   "src/hooks/email/useCampaignHealthAlerts.ts",
+   "src/hooks/email/useCampaignOptOutRates.ts",
+   "src/hooks/email/useComposeEmail.ts",
+   "src/hooks/email/useEmailOptOutMetrics.ts",
+   "src/hooks/email/useEmailOptOuts.ts",
+   "src/hooks/email/useRecoveryRates.ts",
+   "src/hooks/engagement/useAccountEngagement.ts",
+   "src/hooks/engagement/useBulkComposer.ts",
+   "src/hooks/engagement/useEmailEngagementScore.ts",
+   "src/hooks/engagement/useEngagementScore.ts",
+   "src/hooks/engagement/useMoodEntry.ts",
+   "src/hooks/engagement/useSendTimeOptimization.ts",
+   "src/hooks/executive-briefing/useBriefingHistory.ts",
+   "src/hooks/executive-briefing/useGenerateBriefing.ts",
+   "src/hooks/executive-briefing/useLatestBriefing.ts",
+   "src/hooks/follow-up/useFollowUpData.ts",
+   "src/hooks/forecast/useRevenueForecast.ts",
+   "src/hooks/gamification/useAchievementsByPerson.ts",
+   "src/hooks/gamification/useAchievementTrends.ts",
+   "src/hooks/gamification/useCollectibleBadges.ts",
+   "src/hooks/gamification/useDailyChallenges.ts",
+   "src/hooks/gamification/useDailyMissions.ts",
+   "src/hooks/gamification/useDailyStreakAchievements.ts",
+   "src/hooks/gamification/useFuturisticRanking.ts",
+   "src/hooks/gamification/useGamificationData.ts",
+   "src/hooks/gamification/useGamifiedProfile.ts",
+   "src/hooks/gamification/useLeagues.ts",
+   "src/hooks/gamification/useLevelUpCelebration.ts",
+   "src/hooks/gamification/usePrizeWheel.ts",
+   "src/hooks/gamification/useSalespersonXP.ts",
+   "src/hooks/gamification/useWeeklyChallenges.ts",
+   "src/hooks/gamification/useWeeklyMatchups.ts",
+   "src/hooks/gamification/useWeeklyRanking.ts",
+   "src/hooks/multichannel/useChannelCredentials.ts",
+   "src/hooks/multichannel/useOutboundMessages.ts",
+   "src/hooks/nlq/useNLQ.ts",
+   "src/hooks/notifications/useAlerts.ts",
+   "src/hooks/orders/useOrder.ts",
+   "src/hooks/orders/usePurchaseHistory.ts",
+   "src/hooks/pipeline-pulse/usePipelinePulse.ts",
+   "src/hooks/pipeline-pulse/useQuickAction.ts",
+   "src/hooks/pipeline/usePipelineHealthScore.ts",
+   "src/hooks/playbooks/usePlaybookMutations.ts",
+   "src/hooks/playbooks/usePlaybookQueries.ts",
+   "src/hooks/purchase-intelligence/usePurchaseIntelligence.ts",
+   "src/hooks/race/useCalmMode.ts",
+   "src/hooks/race/useChampionsHistory.ts",
+   "src/hooks/race/useDailyBriefing.ts",
+   "src/hooks/race/useDailyRaceCheckin.ts",
+   "src/hooks/race/useLeaderTakeoverDetector.ts",
+   "src/hooks/race/useMonthlyChampion.ts",
+   "src/hooks/race/useMyCareer.ts",
+   "src/hooks/race/useMyRaceCar.ts",
+   "src/hooks/race/useMyRival.ts",
+   "src/hooks/race/useNextGoal.ts",
+   "src/hooks/race/useOvertakeDetector.ts",
+   "src/hooks/race/usePitStopAnalysis.ts",
+   "src/hooks/race/useRaceAudioEngine.ts",
+   "src/hooks/race/useRaceBadges.ts",
+   "src/hooks/race/useRaceCommentary.ts",
+   "src/hooks/race/useRaceCommentaryLogic.ts",
+   "src/hooks/race/useRaceDetection.ts",
+   "src/hooks/race/useRaceDisplayEvents.ts",
+   "src/hooks/race/useRaceEvents.ts",
+   "src/hooks/race/useRaceLeaderboard.ts",
+   "src/hooks/race/useRacePowerups.ts",
+   "src/hooks/race/useRacePredictions.ts",
+   "src/hooks/race/useRaceReactions.ts",
+   "src/hooks/race/useRaceReplay.ts",
+   "src/hooks/race/useRaceScoringRules.ts",
+   "src/hooks/race/useRaceSeason.ts",
+   "src/hooks/race/useRaceSeasonByRole.ts",
+   "src/hooks/race/useRaceSmartNotifications.ts",
+   "src/hooks/race/useRaceSounds.ts",
+   "src/hooks/race/useRaceStreak.ts",
+   "src/hooks/race/useRaceTeams.ts",
+   "src/hooks/race/useRaceTrigger.ts",
+   "src/hooks/race/useRaceUnlocks.ts",
+   "src/hooks/race/useRaceViewMode.ts",
+   "src/hooks/race/useRaceViewTelemetry.ts",
+   "src/hooks/race/useRaceWhatIf.ts",
+   "src/hooks/race/useScreenShake.ts",
+   "src/hooks/race/useSessionDuration.ts",
+   "src/hooks/race/useStartRaceSeason.ts",
+   "src/hooks/race/useTrackConditions.ts",
+   "src/hooks/reporting/useCohortRetention.ts",
+   "src/hooks/reporting/useCustomReports.ts",
+   "src/hooks/reporting/useEmbeddedReportPreview.ts",
+   "src/hooks/reporting/useFunnelComparison.ts",
+   "src/hooks/reporting/useReportEmbedTokens.ts",
+   "src/hooks/reporting/useReportExecution.ts",
+   "src/hooks/reporting/useScheduledReportRuns.ts",
+   "src/hooks/reporting/useScheduledReports.ts",
+   "src/hooks/reporting/useTriggerScheduledReport.ts",
+   "src/hooks/reports/useMonthlySalesBenchmark.ts",
+   "src/hooks/reports/useSalesReport.ts",
+   "src/hooks/revenue-intelligence/useForecastAccuracy.ts",
+   "src/hooks/revenue-intelligence/useRevenueForecast.ts",
+   "src/hooks/revenue/useQuotaAttainment.ts",
+   "src/hooks/revenue/useQuotaAttainmentPredictor.ts",
+   "src/hooks/revenue/useRevenueHistory.ts",
+   "src/hooks/revenue/useRevenueIntelligenceHub.ts",
+   "src/hooks/revenue/useWinProbabilityCalibration.ts",
+   "src/hooks/sales/useSalesAssistant.ts",
+   "src/hooks/sales/useSalesBattles.ts",
+   "src/hooks/sales/useSalesData.ts",
+   "src/hooks/sales/useSalesEnablement.ts",
+   "src/hooks/sales/useSalesInsights.ts",
+   "src/hooks/sales/useSalespeople.ts",
+   "src/hooks/sales/useSalespeopleList.ts",
+   "src/hooks/sales/useSalespeopleMin.ts",
+   "src/hooks/sales/useSalespersonActivityReport.ts",
+   "src/hooks/sales/useSalespersonCoaching.ts",
+   "src/hooks/sales/useSalespersonCustomFields.ts",
+   "src/hooks/sales/useSalespersonPreferences.ts",
+   "src/hooks/sales/useSalesRealtime.ts",
+   "src/hooks/sales/useSalesStreaks.ts",
+   "src/hooks/scoring/useExplainBatch.ts",
+   "src/hooks/scoring/useLeadScoreExplanation.ts",
+   "src/hooks/scoring/useLeadScoringMetrics.ts",
+   "src/hooks/scoring/useScoreTrend.ts",
+   "src/hooks/sdr/useProspectingFunnel.ts",
+   "src/hooks/semantic/useIndexEntity.ts",
+   "src/hooks/semantic/useReindexBatch.ts",
+   "src/hooks/semantic/useSemanticCoverage.ts",
+   "src/hooks/semantic/useSemanticSearch.ts",
+   "src/hooks/sequences/useAIEmailComposer.ts",
+   "src/hooks/sequences/useAutoPause.ts",
+   "src/hooks/sequences/useEnrollContacts.ts",
+   "src/hooks/sequences/usePromoteWinners.ts",
+   "src/hooks/sequences/useSendTimeOptimization.ts",
+   "src/hooks/sequences/useSequenceEnrollments.ts",
+   "src/hooks/sequences/useSequences.ts",
+   "src/hooks/sequences/useSequenceSteps.ts",
+   "src/hooks/sequences/useSequenceVariantsOverview.ts",
+   "src/hooks/sequences/useStepVariants.ts",
+   "src/hooks/suppliers/useSupplierMutations.ts",
+   "src/hooks/suppliers/useSupplierQueries.ts",
+   "src/hooks/suppliers/useSupplierUtils.ts",
+   "src/hooks/tasks/useTaskMutations.ts",
+   "src/hooks/tasks/useTaskQueries.ts",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useApiTokens.ts",
+   "src/hooks/useAutoAwardBonuses.ts",
+   "src/hooks/useBehavioralAnalysis.ts",
+   "src/hooks/useBenchmarkData.ts",
+   "src/hooks/useBitrix24.ts",
+   "src/hooks/useCadences.ts",
+   "src/hooks/useCelebration.ts",
+   "src/hooks/useCelebrationEffects.ts",
+   "src/hooks/useCircuitBreaker.ts",
+   "src/hooks/useCircuitBreakerHistory.ts",
+   "src/hooks/useCloserMetrics.ts",
+   "src/hooks/useClosingTime.ts",
+   "src/hooks/useCoachingIntelligence.ts",
+   "src/hooks/useCommissionBonusAwards.ts",
+   "src/hooks/useCommissionRules.ts",
+   "src/hooks/useCommissions.ts",
+   "src/hooks/useCompetencyData.ts",
+   "src/hooks/useCompetitiveChat.ts",
+   "src/hooks/useCompetitiveRanking.ts",
+   "src/hooks/useCompetitiveSeasons.ts",
+   "src/hooks/useConversationalIntelligence.ts",
+   "src/hooks/useCountUp.ts",
+   "src/hooks/useCustomerSuccess.ts",
+   "src/hooks/useCustomTheme.ts",
+   "src/hooks/useDealChatHistory.ts",
+   "src/hooks/useDealProbability.ts",
+   "src/hooks/useDealSLAs.ts",
+   "src/hooks/useDealTimeline.ts",
+   "src/hooks/useDebouncedValue.ts",
+   "src/hooks/useDemandForecast.ts",
+   "src/hooks/useElevenLabsVoice.ts",
+   "src/hooks/useEmailMetrics.ts",
+   "src/hooks/useEmailTracking.ts",
+   "src/hooks/useEvolutionCurves.ts",
+   "src/hooks/useFeatureFlags.ts",
+   "src/hooks/useFeatureFlagsAdmin.ts",
+   "src/hooks/useFocusMode.ts",
+   "src/hooks/useFormGuard.ts",
+   "src/hooks/useGlobalKeyboardShortcuts.ts",
+   "src/hooks/useICPConfig.ts",
+   "src/hooks/useICPData.ts",
+   "src/hooks/useInactiveDeals.ts",
+   "src/hooks/useInventory.ts",
+   "src/hooks/useIPBlocking.ts",
+   "src/hooks/useKudos.ts",
+   "src/hooks/useLeadEnrichment.ts",
+   "src/hooks/useLeadRoutingEngine.ts",
+   "src/hooks/useLeadScoring.ts",
+   "src/hooks/useLeadSourceAnalysis.ts",
+   "src/hooks/useMediaQuery.ts",
+   "src/hooks/useMFA.ts",
+   "src/hooks/useMicroGoals.ts",
+   "src/hooks/useMobileNavigation.ts",
+   "src/hooks/useMultichannel.ts",
+   "src/hooks/useMultiplePipelines.ts",
+   "src/hooks/useMyBonusAwards.ts",
+   "src/hooks/useNextBestAction.ts",
+   "src/hooks/useNotificationPreferences.ts",
+   "src/hooks/useNotifications.ts",
+   "src/hooks/useNPSSurveys.ts",
+   "src/hooks/useObjectionsLibrary.ts",
+   "src/hooks/useOnboardingChecklist.ts",
+   "src/hooks/usePagination.ts",
+   "src/hooks/usePerformanceComparison.ts",
+   "src/hooks/usePeriodTrend.ts",
+   "src/hooks/usePermissions.ts",
+   "src/hooks/usePipeline.ts",
+   "src/hooks/usePipelineVelocity.ts",
+   "src/hooks/usePlaybooks.ts",
+   "src/hooks/usePortfolioSettings.ts",
+   "src/hooks/usePredictiveIntelligence.ts",
+   "src/hooks/usePriceHistory.ts",
+   "src/hooks/usePricingIntelligence.ts",
+   "src/hooks/useProducts.ts",
+   "src/hooks/useProgressiveGoals.ts",
+   "src/hooks/usePushNotifications.ts",
+   "src/hooks/useQueryPerformance.ts",
+   "src/hooks/useQuotes.ts",
+   "src/hooks/useRankingNotifications.ts",
+   "src/hooks/useRankNotifications.ts",
+   "src/hooks/useRateLimit.ts",
+   "src/hooks/useReauthentication.ts",
+   "src/hooks/useReducedMotion.ts",
+   "src/hooks/useReportData.ts",
+   "src/hooks/useRetryMutation.ts",
+   "src/hooks/useRetryTestRun.ts",
+   "src/hooks/useRevOpsHub.ts",
+   "src/hooks/useSaleNotificationAudits.ts",
+   "src/hooks/useSavedFilters.ts",
+   "src/hooks/useScoreChangeLogs.ts",
+   "src/hooks/useSDRActivityTrend.ts",
+   "src/hooks/useSDRAlertNotifications.ts",
+   "src/hooks/useSDRAlertSoundSettings.ts",
+   "src/hooks/useSDRMetrics.ts",
+   "src/hooks/useSecurityAlertNotifications.ts",
+   "src/hooks/useSecurityAlertSoundSettings.ts",
+   "src/hooks/useSecurityMonitoring.ts",
+   "src/hooks/useSelfBenchmark.ts",
+   "src/hooks/useSemanticSearch.ts",
+   "src/hooks/useSLATracking.ts",
+   "src/hooks/useSoundSettings.ts",
+   "src/hooks/useStageProbabilities.ts",
+   "src/hooks/useStagnantTasks.ts",
+   "src/hooks/useStockForecast.ts",
+   "src/hooks/useSuppliers.ts",
+   "src/hooks/useSyncedSetting.ts",
+   "src/hooks/useSystemSoundSettings.ts",
+   "src/hooks/useTasks.ts",
+   "src/hooks/useTeamAchievementStats.ts",
+   "src/hooks/useTeamActivityFeed.ts",
+   "src/hooks/useTeams.ts",
+   "src/hooks/useTerritories.ts",
+   "src/hooks/useTerritoryOptimization.ts",
+   "src/hooks/useTheme.ts",
+   "src/hooks/useTrendsData.ts",
+   "src/hooks/useUnreadNotificationsCount.ts",
+   "src/hooks/useUserRoles.ts",
+   "src/hooks/useVendasMacro.ts",
+   "src/hooks/useVictoryFeed.ts",
+   "src/hooks/useVoiceNavigation.ts",
+   "src/hooks/useWebAuthn.ts",
+   "src/hooks/useWebhooks.ts",
+   "src/hooks/useWeeklyComparison.ts",
+   "src/hooks/useWeightedForecast.ts",
+   "src/hooks/useWhatsApp.ts",
+   "src/hooks/useWinLossAnalysis.ts",
+   "src/hooks/useWorkflowRules.ts",
+   "src/hooks/useWorkflows.ts",
+   "src/hooks/win-loss/useAsyncReplayQueue.ts",
+   "src/hooks/win-loss/useAtRiskFromPatterns.ts",
+   "src/hooks/win-loss/useAtRiskSettings.ts",
+   "src/hooks/win-loss/useDeadLetterErrorGroups.ts",
+   "src/hooks/win-loss/useDeadLettersCounts.ts",
+   "src/hooks/win-loss/useICPCorrelation.ts",
+   "src/hooks/win-loss/useInsightAssignment.ts",
+   "src/hooks/win-loss/useInsightComments.ts",
+   "src/hooks/win-loss/useInsightExplanation.ts",
+   "src/hooks/win-loss/useInsightsImpact.ts",
+   "src/hooks/win-loss/useInsightTaskCreation.ts",
+   "src/hooks/win-loss/useNextBestWinLossDeal.ts",
+   "src/hooks/win-loss/usePreviousPeriodKpis.ts",
+   "src/hooks/win-loss/useReplayAudit.ts",
+   "src/hooks/win-loss/useReplayInvocations.ts",
+   "src/hooks/win-loss/useRunWinLossAnalysis.ts",
+   "src/hooks/win-loss/useScriptABTest.ts",
+   "src/hooks/win-loss/useSeasonComparison.ts",
+   "src/hooks/win-loss/useSentimentTrend.ts",
+   "src/hooks/win-loss/useWebhookAlertHistory.ts",
+   "src/hooks/win-loss/useWebhookAlerts.ts",
+   "src/hooks/win-loss/useWebhookAlertSettings.ts",
+   "src/hooks/win-loss/useWebhookAttemptSlice.ts",
+   "src/hooks/win-loss/useWebhookDeadLetters.ts",
+   "src/hooks/win-loss/useWebhookDeliveries.ts",
+   "src/hooks/win-loss/useWebhookDeliveryStats.ts",
+   "src/hooks/win-loss/useWebhookReplayPersistence.ts",
+   "src/hooks/win-loss/useWebhookResultTimers.ts",
+   "src/hooks/win-loss/useWebhookSubscriptionLatest.ts",
+   "src/hooks/win-loss/useWebhookSubscriptions.ts",
+   "src/hooks/win-loss/useWebhookTimeline.ts",
+   "src/hooks/win-loss/useWinByHourMatrix.ts",
+   "src/hooks/win-loss/useWinLossAggregations.ts",
+   "src/hooks/win-loss/useWinLossAnomalies.ts",
+   "src/hooks/win-loss/useWinLossCohort.ts",
+   "src/hooks/win-loss/useWinLossData.ts",
+   "src/hooks/win-loss/useWinLossDigest.ts",
+   "src/hooks/win-loss/useWinLossExport.ts",
+   "src/hooks/win-loss/useWinLossFilters.ts",
+   "src/hooks/win-loss/useWinLossForecast.ts",
+   "src/hooks/win-loss/useWinLossRealtime.ts",
+   "src/hooks/win-loss/useWinLossSalespersonScore.ts",
+   "src/hooks/win-loss/useWinLossSalespersonStats.ts",
+   "src/hooks/win-loss/useWinLossSavedViews.ts",
+   "src/hooks/win-loss/useWinLossScenarios.ts",
+   "src/hooks/win-loss/useWinLossShortcuts.ts",
+   "src/hooks/win-loss/useWinLossTelemetry.ts",
+   "src/hooks/win-loss/useWinLossViewPrefs.ts",
+   "supabase/functions/send-transactional-email/callers_test.ts"
+  ],
+  "edges": [
+   "access-denied-alerts",
+   "account-engagement-aggregator",
+   "activity-goal-alerts",
+   "admin-conversion-trail",
+   "aggregate-coaching-scorecard",
+   "ai-agent-orchestrator",
+   "ai-copilot",
+   "ai-email-composer",
+   "analyze-call",
+   "analyze-conversation",
+   "analyze-conversation-metrics",
+   "analyze-objection-handling",
+   "analyze-pipeline-coverage",
+   "analyze-question-quality",
+   "analyze-sentiment-timeline",
+   "analyze-skill-gaps",
+   "analyze-stage-conversion",
+   "analyze-win-loss",
+   "auto-enroll-cadence",
+   "auto-reassign-inactive",
+   "automation-suggestions",
+   "behavioral-analysis",
+   "bitrix24-oauth",
+   "bitrix24-sync",
+   "broadcast-sale-notification",
+   "calculate-committee-coverage",
+   "calculate-deal-health",
+   "calibrate-win-probability",
+   "campaign-health-alert",
+   "challenge-expiration-alerts",
+   "check-lead-sla",
+   "check-quote-expiration",
+   "coaching-impact-summary",
+   "coaching-intelligence",
+   "coaching-session-prep",
+   "collect-race-powerup",
+   "compute-forecast-accuracy",
+   "conversational-intelligence",
+   "csat-ces-trigger",
+   "customer-success-360",
+   "customer-success-hub",
+   "deal-probability",
+   "deal-risk-digest",
+   "demand-forecast",
+   "detect-at-risk-deals",
+   "detect-client-churn-alerts",
+   "detect-coaching-opportunities",
+   "detect-competitor-mentions",
+   "detect-critical-moments",
+   "detect-stuck-deals",
+   "detect-winloss-at-risk",
+   "dialer-queue-builder",
+   "diarize-call-recording",
+   "dispatch-webhook",
+   "edge-retry-threshold-alert",
+   "elevenlabs-stt",
+   "elevenlabs-tts",
+   "elevenlabs-voice",
+   "email-bulk-retry",
+   "email-bulk-send",
+   "email-composer-bulk",
+   "email-engagement-scorer",
+   "email-unsubscribe",
+   "engagement-score-recompute",
+   "enrich-lead",
+   "execute-workflow",
+   "expansion-detector",
+   "export-winloss-pdf",
+   "external-db-bridge",
+   "extract-coaching-actions",
+   "extract-committee-from-call",
+   "extract-deal-stakeholders",
+   "generate-coaching-actions",
+   "generate-executive-briefing",
+   "generate-loss-coaching",
+   "generate-revenue-forecast",
+   "generate-urgent-client-tasks",
+   "geocode-proxy",
+   "get-client-ip",
+   "helpdesk-sync",
+   "inbound-email-webhook",
+   "lead-scoring",
+   "log-web-vitals",
+   "mine-win-loss-patterns",
+   "multichannel-status-webhook",
+   "new-device-alert",
+   "next-best-action",
+   "nlq-query",
+   "notify-critical-pattern",
+   "notify-quote-conversion",
+   "notify-ranking-position",
+   "onboarding-launcher",
+   "personal-assistant-stream",
+   "pipeline-pulse-aggregator",
+   "predict-deal-velocity",
+   "predict-quota-attainment",
+   "predictive-intelligence",
+   "predictive-scoring-explain",
+   "pricing-intelligence",
+   "process-cadence-tasks",
+   "process-call-recording-ingest",
+   "process-race-event",
+   "process-scheduled-sends",
+   "purchase-intelligence-forecast",
+   "push-subscribe",
+   "qbr-generator",
+   "qbr-scheduler",
+   "race-commentary",
+   "ranking-api",
+   "receive-quote-webhook",
+   "recompute-stage-baselines",
+   "renewal-automation",
+   "report-builder-execute",
+   "report-embed-public",
+   "revenue-forecast-ai",
+   "revenue-intelligence",
+   "revops-hub",
+   "rotate-daily-challenges",
+   "run-retry-tests",
+   "sales-assistant-chat",
+   "salesperson-coaching",
+   "schedule-optimal-send",
+   "scheduled-report-trigger",
+   "scheduled-reports-runner",
+   "sdr-consecutive-alerts",
+   "semantic-coverage",
+   "semantic-index-entity",
+   "semantic-reindex-batch",
+   "semantic-search",
+   "semantic-search-universal",
+   "send-alert-notifications",
+   "send-churn-alert-email",
+   "send-multichannel-message",
+   "send-password-reset",
+   "send-push-notification",
+   "send-quote-to-client",
+   "send-time-optimizer",
+   "send-transactional-email",
+   "sequence-ab-promote",
+   "sequence-enroll",
+   "sequence-record-reply",
+   "sequence-runner",
+   "simulate-load",
+   "snapshot-forecast",
+   "start-race-season",
+   "stress-test-contracts",
+   "summarize-call-recording",
+   "territory-optimization",
+   "test-integration-connection",
+   "transcribe-call-recording",
+   "twilio-call-status",
+   "twilio-call-twiml",
+   "twilio-click-to-call",
+   "visual-search",
+   "wal-health-alert",
+   "webauthn",
+   "webvitals-regression-alert",
+   "whatsapp-inbound-webhook",
+   "winloss-webhook-dispatcher",
+   "winloss-webhook-health-monitor",
+   "winloss-webhook-replay",
+   "winloss-webhook-replay-batch",
+   "winloss-webhook-timeline",
+   "workflow-executor"
+  ],
+  "servicos": [
+   "src/services/biService.ts",
+   "src/services/clientService.ts"
+  ]
+ }
+}

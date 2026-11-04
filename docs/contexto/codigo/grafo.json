@@ -1,0 +1,349 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nos": 2292,
+ "arestas": 9447,
+ "hubs": [
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "importado_por": 710
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 551
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 541
+  },
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 539
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 392
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 310
+  },
+  {
+   "arquivo": "src/lib/money.ts",
+   "importado_por": 189
+  },
+  {
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 185
+  },
+  {
+   "arquivo": "supabase/functions/_shared/request-id.ts",
+   "importado_por": 173
+  },
+  {
+   "arquivo": "supabase/functions/_shared/cors.ts",
+   "importado_por": 172
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 135
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 128
+  },
+  {
+   "arquivo": "src/components/transitions/PageTransition.tsx",
+   "importado_por": 123
+  },
+  {
+   "arquivo": "src/components/ui/dialog.tsx",
+   "importado_por": 115
+  },
+  {
+   "arquivo": "supabase/functions/_shared/auth-client.ts",
+   "importado_por": 113
+  },
+  {
+   "arquivo": "src/components/ui/scroll-area.tsx",
+   "importado_por": 102
+  },
+  {
+   "arquivo": "src/constants/index.ts",
+   "importado_por": 94
+  },
+  {
+   "arquivo": "src/components/ui/tabs.tsx",
+   "importado_por": 84
+  },
+  {
+   "arquivo": "src/components/ui/tooltip.tsx",
+   "importado_por": 80
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 80
+  },
+  {
+   "arquivo": "src/components/ui/avatar.tsx",
+   "importado_por": 77
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 77
+  },
+  {
+   "arquivo": "supabase/functions/_shared/fetch-with-timeout.ts",
+   "importado_por": 71
+  },
+  {
+   "arquivo": "src/components/ui/switch.tsx",
+   "importado_por": 63
+  },
+  {
+   "arquivo": "supabase/functions/_shared/rate-limit.ts",
+   "importado_por": 62
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 59
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 56
+  },
+  {
+   "arquivo": "src/lib/supabase/realtime.ts",
+   "importado_por": 48
+  },
+  {
+   "arquivo": "supabase/functions/_shared/chunked-in.ts",
+   "importado_por": 40
+  },
+  {
+   "arquivo": "supabase/functions/_shared/ai-gateway.ts",
+   "importado_por": 39
+  },
+  {
+   "arquivo": "supabase/functions/_shared/business-date.ts",
+   "importado_por": 37
+  },
+  {
+   "arquivo": "src/hooks/race/useRaceLeaderboard.ts",
+   "importado_por": 33
+  },
+  {
+   "arquivo": "src/utils/dateHelpers.ts",
+   "importado_por": 32
+  },
+  {
+   "arquivo": "src/hooks/use-toast.ts",
+   "importado_por": 31
+  },
+  {
+   "arquivo": "src/hooks/useUserRoles.ts",
+   "importado_por": 31
+  },
+  {
+   "arquivo": "src/components/skeletons/SkeletonTransition.tsx",
+   "importado_por": 29
+  },
+  {
+   "arquivo": "src/components/skeletons/PageLoadingSkeleton.tsx",
+   "importado_por": 28
+  },
+  {
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 26
+  },
+  {
+   "arquivo": "src/components/ui/slider.tsx",
+   "importado_por": 26
+  },
+  {
+   "arquivo": "src/lib/supabase/chunkedIn.ts",
+   "importado_por": 26
+  }
+ ],
+ "ciclos": {
+  "total": 2,
+  "maiores": [
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/components/email/aiEmailHelpers.ts",
+     "src/hooks/email/useComposeEmail.ts"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/hooks/bi/useBISDR.ts",
+     "src/hooks/bi/useBISDRTransformers.ts"
+    ]
+   }
+  ]
+ },
+ "orfaos": [
+  "docs/graphify/revisao-20260911/reproduzir.mjs",
+  "public/register-sw.js",
+  "public/sw.js",
+  "src/components/ui/level-up-celebration.tsx",
+  "src/lib/orderTracking/stages.ts",
+  "supabase/functions/auto-reassign-inactive/contract_test.ts",
+  "supabase/functions/campaign-health-alert/authz_test.ts",
+  "supabase/functions/detect-winloss-at-risk/_dump_scenarios.ts",
+  "supabase/functions/detect-winloss-at-risk/_testHelpers_test.ts",
+  "supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts",
+  "supabase/functions/detect-winloss-at-risk/action_validation_test.ts",
+  "supabase/functions/detect-winloss-at-risk/breakdown_invariants_test.ts",
+  "supabase/functions/detect-winloss-at-risk/competitor_critical_test.ts",
+  "supabase/functions/detect-winloss-at-risk/critical_imperative_tokens_test.ts",
+  "supabase/functions/detect-winloss-at-risk/debug_breakdown_test.ts",
+  "supabase/functions/detect-winloss-at-risk/fallback_determinism_test.ts",
+  "supabase/functions/detect-winloss-at-risk/history_catalog_test.ts",
+  "supabase/functions/detect-winloss-at-risk/lse_fixtures_test.ts",
+  "supabase/functions/detect-winloss-at-risk/non_empty_strings_test.ts",
+  "supabase/functions/detect-winloss-at-risk/reasons_codes_test.ts",
+  "supabase/functions/detect-winloss-at-risk/scenarios_test.ts",
+  "supabase/functions/detect-winloss-at-risk/scoring_test.ts",
+  "supabase/functions/detect-winloss-at-risk/urgency_scale_outcome_symmetry_test.ts",
+  "supabase/functions/dispatch-webhook/authz_test.ts",
+  "supabase/functions/email-bulk-retry/authz_test.ts",
+  "supabase/functions/email-unsubscribe/security_test.ts",
+  "supabase/functions/enrich-lead/contract_test.ts",
+  "supabase/functions/execute-workflow/contracts_test.ts",
+  "supabase/functions/lead-scoring/lead-scoring_test.ts",
+  "supabase/functions/log-web-vitals/security_test.ts",
+  "supabase/functions/personal-assistant-stream/fallback_test.ts",
+  "supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts",
+  "supabase/functions/pipeline-pulse-aggregator/contract_test.ts",
+  "supabase/functions/process-race-event/index_test.ts",
+  "supabase/functions/race-commentary/index_test.ts",
+  "supabase/functions/receive-quote-sync/security_test.ts",
+  "supabase/functions/send-multichannel-message/authz_test.ts",
+  "supabase/functions/send-password-reset/authz_test.ts",
+  "supabase/functions/send-quote-to-client/authz_test.ts",
+  "supabase/functions/send-transactional-email/callers_test.ts",
+  "supabase/functions/send-transactional-email/contract_test.ts",
+  "supabase/functions/sequence-runner/integrity_test.ts",
+  "supabase/functions/start-race-season/index_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/request_id_consistency_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_backoff_sleep_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_delivery_before_sleep_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_dlq_body_headers_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_error_naming_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_insert_failure_dlq_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_log_counts_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_parametric_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_persist_status_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/retry_test.ts",
+  "supabase/functions/winloss-webhook-dispatcher/schema_test.ts",
+  "supabase/functions/winloss-webhook-replay-batch/schema_test.ts",
+  "supabase/functions/winloss-webhook-replay/request_id_consistency_test.ts",
+  "supabase/functions/winloss-webhook-replay/schema_test.ts"
+ ],
+ "modulos_mais_acoplados": [
+  {
+   "modulo": "pages",
+   "depende_de": 126,
+   "importado_por": 2
+  },
+  {
+   "modulo": "lib",
+   "depende_de": 6,
+   "importado_por": 103
+  },
+  {
+   "modulo": "components/ui",
+   "depende_de": 2,
+   "importado_por": 101
+  },
+  {
+   "modulo": "hooks",
+   "depende_de": 16,
+   "importado_por": 81
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 0,
+   "importado_por": 95
+  },
+  {
+   "modulo": "lib/supabase",
+   "depende_de": 1,
+   "importado_por": 37
+  },
+  {
+   "modulo": "hooks/sales",
+   "depende_de": 14,
+   "importado_por": 21
+  },
+  {
+   "modulo": "contexts",
+   "depende_de": 3,
+   "importado_por": 31
+  },
+  {
+   "modulo": "constants",
+   "depende_de": 0,
+   "importado_por": 30
+  },
+  {
+   "modulo": "components/dashboard",
+   "depende_de": 26,
+   "importado_por": 2
+  },
+  {
+   "modulo": "utils",
+   "depende_de": 3,
+   "importado_por": 25
+  },
+  {
+   "modulo": "types",
+   "depende_de": 2,
+   "importado_por": 20
+  },
+  {
+   "modulo": "components/templates",
+   "depende_de": 19,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/analytics",
+   "depende_de": 14,
+   "importado_por": 5
+  },
+  {
+   "modulo": "components/sdr",
+   "depende_de": 17,
+   "importado_por": 2
+  },
+  {
+   "modulo": "hooks/gamification",
+   "depende_de": 7,
+   "importado_por": 11
+  },
+  {
+   "modulo": "components/admin",
+   "depende_de": 13,
+   "importado_por": 4
+  },
+  {
+   "modulo": "components/activities",
+   "depende_de": 14,
+   "importado_por": 2
+  },
+  {
+   "modulo": "components/cadences",
+   "depende_de": 12,
+   "importado_por": 3
+  },
+  {
+   "modulo": "components/gamification",
+   "depende_de": 7,
+   "importado_por": 8
+  }
+ ],
+ "arestas_em": "docs/contexto/codigo/grafo-arestas.json"
+}

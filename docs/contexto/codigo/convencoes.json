@@ -1,0 +1,86 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (166)"
+  ],
+  "componentes": [
+   "src/components (1096)",
+   "src/pages (173)",
+   "src/contexts (5)"
+  ],
+  "hooks": [
+   "src/hooks (460)",
+   "src/contexts (6)",
+   "src/components (4)"
+  ],
+  "servicos_logica": [
+   "src/lib (52)",
+   "src/services (5)",
+   "src/integrations (4)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (83)",
+   "tests/ (59)",
+   "outro (14)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/graphify (9)",
+   "scripts/inventario (5)",
+   "scripts/regras_negocio (3)"
+  ],
+  "docs": [
+   "docs (44)",
+   "(raiz) (11)",
+   ".github (2)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (97%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (96%)",
+  "edge_functions": "kebab-case (99%)",
+  "tabelas": "snake_case (92%)"
+ },
+ "barrels_index": 8,
+ "extensao_componentes": [
+  ".tsx (1276)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "commitlint",
+  "exemplos": [
+   "feat: automações de contexto, inventário e types-sync para agentes de IA (#362)",
+   "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)",
+   "chore(deps): bump astral-sh/setup-uv (#354)",
+   "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline",
+   "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs"
+  ]
+ },
+ "pr_template": ".github/pull_request_template.md",
+ "codeowners": ".github/CODEOWNERS",
+ "contributing": "CONTRIBUTING.md",
+ "instrucoes_agentes": [
+  ".claude/CLAUDE.md",
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": false,
+  "noImplicitAny": null,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json",
+   "tsconfig.strict.json"
+  ]
+ }
+}
