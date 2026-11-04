@@ -72,7 +72,7 @@ async function fetchQuery() {
   return res.json();
 }
 
-amgsync function fetchEdgeFunctions() {
+async function fetchEdgeFunctions() {
   if (!TOKEN) return [];
   const res = await fetchWithRetry(`${API_BASE}/functions`, {
     headers: { Authorization: `Bearer ${TOKEN}` },
@@ -132,8 +132,7 @@ export function contarUsoNoCodigo(raiz, nomes) {
   return uso;
 }
 
-co
-nst PASTAS_CODIGO = ["src", "supabase/functions"];
+const PASTAS_CODIGO = ["src", "supabase/functions"];
 
 function recursiveFiles(dir) {
   let result = [];
