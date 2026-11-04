@@ -282,7 +282,7 @@ function projeto() {
   return ref;
 }
 
-anync function chamarApi(caminho, init = {}) {
+async function chamarApi(caminho, init = {}) {
   const token = process.env.SUPABASE_ACCESS_TOKEN?.trim();
   const res = await fetch(`${API}/${encodeURIComponent(projeto())}${caminho}`, {
     ...init,
