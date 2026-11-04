@@ -203,12 +203,14 @@ jobs:
           FORCE: ${{ inputs.force }}
         run: |
           mkdir -p "$SNAPSHOT_DIR"
-          if git fetch --quiet --depth 1 origin "$CONTEXTO_BRANCH" 2>/dev/null; then
+          if git fetch --quiet --depth 1 "$REMOTE" "$CONTEXTO_BRANCH" 2>/dev/null; then
             git archive FETCH_HEAD -- "$SNAPSHOT_DIR" 2>/dev/null | tar -x || echo "::warning::branch existe mas sem $SNAPSHOT_DIR — recomeçando do zero"
           else
             echo "Branch $CONTEXTO_BRANCH ainda não existe: primeira coleta."
           fi
           if [ "$FORCE" = "true" ]; then rm -f "$SNAPSHOT_DIR/snapshot.json"; fi
+        env:
+          REMOTE: "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
 
       - name: Gerar supabase/
         env:
@@ -380,17 +382,17 @@ jobs:
             if [ -d "$ART/contexto-supabase" ]; then
               # HEAD contém o manifest já publicado, mesmo no checkout raso e após commits só de código.
               LAST=$(git show "HEAD:$CONTEXTO_DIR/supabase/manifest.json" 2>/dev/null | python3 -c '
-          import json, sys
-          from datetime import datetime, timezone
-          try:
-              stamp = json.load(sys.stdin).get("gerado_em", "")
-              value = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
-              timestamp = int(value.timestamp())
-              now = int(datetime.now(timezone.utc).timestamp())
-              print(timestamp if value.tzinfo is not None and 0 < timestamp <= now else 0)
-          except Exception:
-              print(0)
-          ') || LAST=0
+import json, sys
+from datetime import datetime, timezone
+try:
+    stamp = json.load(sys.stdin).get("gerado_em", "")
+    value = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    timestamp = int(value.timestamp())
+    now = int(datetime.now(timezone.utc).timestamp())
+    print(timestamp if value.tzinfo is not None and 0 < timestamp <= now else 0)
+except Exception:
+    print(0)
+') || LAST=0
               if [ "$LAST" -eq 0 ]; then
                 echo "Não foi possível validar a data bancária publicada — publicando sem esperar."
               fi
@@ -405,4 +407,3 @@ jobs:
           git commit --quiet -m "chore(contexto): $novos fonte(s) regerada(s) @ main ${HEAD_MAIN:0:7} [skip ci]"
           git push --quiet "$REMOTE" "HEAD:refs/heads/$CONTEXTO_BRANCH"
           echo "Publicado em $CONTEXTO_BRANCH: $(git rev-parse --short HEAD) (fontes novas: $novos)"
-

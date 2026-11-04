@@ -84,12 +84,12 @@ function listarArquivos(dir, acc = []) {
  */
 export function contarUsoNoCodigo(raiz, nomes) {
   const uso = Object.fromEntries(nomes.map((n) => [n, { src: 0, edges: 0 }]));
-  const reFrom = /(\bstorage\s*)?\.from\(\s*['"`]([A-Za-z0-9_]+)['"`]/g;
+  const reFrom = /(\bstorage\s*)?\.from\(\s*['"` + '`' + `]([A-Za-z0-9_]+)['"` + '`' + `]/g;
   const reRest = /\/rest\/v1\/([A-Za-z0-9_]+)/g;
   for (const pasta of PASTAS_CODIGO) {
     const chave = pasta === 'src' ? 'src' : 'edges';
     for (const arquivo of listarArquivos(path.join(raiz, pasta))) {
-      if (/(\.test\.|\.spec\.|__tests__)/.test(arquivo)) continue;
+      if (/(\.(test|spec)\.|__tests__)/.test(arquivo)) continue;
       const texto = fs.readFileSync(arquivo, 'utf8');
       for (const m of texto.matchAll(reFrom)) if (!m[1] && uso[m[2]]) uso[m[2]][chave] += 1;
       for (const m of texto.matchAll(reRest)) if (m[1] !== 'rpc' && uso[m[1]]) uso[m[1]][chave] += 1;
