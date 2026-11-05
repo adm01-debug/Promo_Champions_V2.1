@@ -1,0 +1,1 @@
+GRANT SELECT ON public.mv_competitive_ranking TO authenticated;

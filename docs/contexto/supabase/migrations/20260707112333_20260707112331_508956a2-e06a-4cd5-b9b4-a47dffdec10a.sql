@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.fn_test_cleanup_dedupe_privileges() TO anon;

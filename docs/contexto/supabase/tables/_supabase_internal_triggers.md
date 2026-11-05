@@ -1,0 +1,12 @@
+# Triggers do app em tabelas internas (auth, storage)
+
+| tabela | trigger | timing | eventos | status | função | definição |
+|---|---|---|---|---|---|---|
+| auth.users | on_auth_user_created_role | AFTER | INSERT | enabled | private.handle_new_user_role | `CREATE TRIGGER on_auth_user_created_role AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION private.handle_new_user_role()` |
+| storage.buckets | enforce_bucket_name_length_trigger | BEFORE | INSERT OR UPDATE | enabled | storage.enforce_bucket_name_length | `CREATE TRIGGER enforce_bucket_name_length_trigger BEFORE INSERT OR UPDATE OF name ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.enforce_bucket_name_length()` |
+| storage.buckets | protect_bucket_control_insert | BEFORE | INSERT | enabled | storage.protect_bucket_control_columns | `CREATE TRIGGER protect_bucket_control_insert BEFORE INSERT ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.protect_bucket_control_columns('service_role')` |
+| storage.buckets | protect_bucket_control_update | BEFORE | UPDATE | enabled | storage.protect_bucket_control_columns | `CREATE TRIGGER protect_bucket_control_update BEFORE UPDATE OF lifecycle_configuration, lifecycle_configuration_generation ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.protect_bucket_control_columns()` |
+| storage.buckets | protect_bucket_control_update_role | AFTER | UPDATE | enabled | storage.enforce_bucket_lifecycle_service_role | `CREATE TRIGGER protect_bucket_control_update_role AFTER UPDATE OF lifecycle_configuration, lifecycle_configuration_generation ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.enforce_bucket_lifecycle_service_role('service_role')` |
+| storage.buckets | protect_buckets_delete | BEFORE | DELETE | enabled | storage.protect_delete | `CREATE TRIGGER protect_buckets_delete BEFORE DELETE ON storage.buckets FOR EACH STATEMENT EXECUTE FUNCTION storage.protect_delete()` |
+| storage.objects | protect_objects_delete | BEFORE | DELETE | enabled | storage.protect_delete | `CREATE TRIGGER protect_objects_delete BEFORE DELETE ON storage.objects FOR EACH STATEMENT EXECUTE FUNCTION storage.protect_delete()` |
+| storage.objects | update_objects_updated_at | BEFORE | UPDATE | enabled | storage.update_updated_at_column | `CREATE TRIGGER update_objects_updated_at BEFORE UPDATE ON storage.objects FOR EACH ROW EXECUTE FUNCTION storage.update_updated_at_column()` |

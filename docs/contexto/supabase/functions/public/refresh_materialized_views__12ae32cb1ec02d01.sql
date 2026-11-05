@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION public.refresh_materialized_views()
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_sales_performance;
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_monthly_revenue;
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_product_performance;
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_client_ltv;
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_pipeline_health;
+END;
+$function$

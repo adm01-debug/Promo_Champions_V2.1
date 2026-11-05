@@ -1,0 +1,1 @@
+-- ver arquivo supabase/migrations/20260902120000_revoke_anon_truncate_and_fix_battle_score.sql
