@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `713cb7f5eb` · branch `main` · 2026-11-06 20:58 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `13d4b861d4` · branch `main` · 2026-11-06 22:49 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3801,6 +3801,7 @@ _nenhum item encontrado_
 | SUPABASE_PROJECT_REF=${ref} nao e o banco oficial (${PROJETO_OFICIAL}). | `scripts/inventario/gerar-banco.mjs` |
 | a resposta nao parece ser do banco oficial: ${comuns} tabelas em comum com src/integrations/supabase/types.ts  | `scripts/inventario/gerar-banco.mjs` |
 | a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max};  | `scripts/inventario/gerar-banco.mjs` |
+| a resposta nao parece ser do banco oficial: ledger com ${registros} registros;  | `scripts/inventario/gerar-banco.mjs` |
 | a resposta nao traz resumo.ledger_versao_max/ledger_registros; rode o banco.sql atual. | `scripts/inventario/gerar-banco.mjs` |
 | a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql. | `scripts/inventario/gerar-banco.mjs` |
 | entrada sem as chaves: ${faltando.join( | `scripts/inventario/gerar-banco.mjs` |
@@ -4025,8 +4026,7 @@ _nenhum item encontrado_
 | Envio para assinatura indisponível | `src/hooks/useDigitalSignatures.ts` |
 | Erro ao criar documento | `src/hooks/useDigitalSignatures.ts` |
 | Erro ao excluir documento | `src/hooks/useDigitalSignatures.ts` |
-| Erro ao atualizar parâmetros | `src/hooks/useICPConfig.ts` |
-| … +611 linhas — lista completa em `context.json` | |
+| … +612 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)",
    "chore: inventario do estado real [auto] (#377)",
    "fix: remover check contagens_ok em conferirOrigem (drift Lovable) (#370)",
    "feat: supressão de DROP + filtro cmd em policies no gerador de probes de migrations (#375)",
-   "docs: reconcilia desfecho das PRs antigas #280 #298 #345 #347 (#373)",
-   "fix: bump eslint-plugin-react-refresh 0.5.7, jsdom 30.1.3, lint-staged 17.6.0 + regenera deno.lock"
+   "docs: reconcilia desfecho das PRs antigas #280 #298 #345 #347 (#373)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

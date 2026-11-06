@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `713cb7f5ebfd16103613119bf70ca730be175049` (2026-11-06T20:48:27Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `13d4b861d468b5d7ab313d76f9c174cad1253942` (2026-11-06T19:47:09-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3424 |
 | arquivos_codigo | 2449 |
-| linhas_codigo | 419877 |
+| linhas_codigo | 419884 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,7 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15928 nós · 58911 arestas · 605 comunidades · grafo do commit `713cb7f5`
+- 15928 nós · 58911 arestas · 605 comunidades · grafo do commit `13d4b861`
 - comunidades maiores: CardContent (393), Índice (341), Badge (339), SelectContent (307), client.ts (286), DialogContent (270), Card (258), PageTransition (223), Skeleton (210), TableRow (208), Button (205), getCorsHeaders (200)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -736,6 +736,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ## Últimos commits
+- 2026-11-06 `13d4b86` fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)
 - 2026-11-06 `713cb7f` chore: inventario do estado real [auto] (#377)
 - 2026-11-06 `ae24e8f` fix: remover check contagens_ok em conferirOrigem (drift Lovable) (#370)
 - 2026-11-06 `82ee984` feat: supressão de DROP + filtro cmd em policies no gerador de probes de migrations (#375)
@@ -750,7 +751,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-05 `e3f7790` chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)
 - 2026-11-05 `fdb81b3` chore(deps): bump react-window 2.3.3→2.5.3 (#355)
 - 2026-11-05 `eddf062` chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)
-- 2026-11-04 `ef80740` feat: automações de contexto, inventário e types-sync para agentes de IA (#362)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

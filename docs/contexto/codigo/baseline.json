@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "713cb7f5ebfd16103613119bf70ca730be175049",
+  "commit": "13d4b861d468b5d7ab313d76f9c174cad1253942",
   "branch": "main",
-  "data_commit": "2026-11-06T20:48:27Z",
+  "data_commit": "2026-11-06T19:47:09-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "13d4b86",
+    "data": "2026-11-06",
+    "assunto": "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)"
+   },
    {
     "sha": "713cb7f",
     "data": "2026-11-06",
@@ -126,11 +131,6 @@
     "sha": "c23e4e8",
     "data": "2026-10-31",
     "assunto": "chore(deps): lote de 8 PRs do dependabot + deno.lock regenerado (#344)"
-   },
-   {
-    "sha": "50386b0",
-    "data": "2026-10-29",
-    "assunto": "chore(deps): bump astral-sh/setup-uv (#326)"
    }
   ],
   "arquivos_mudados_7d": 71,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 39
+    "commits": 40
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3424,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419877,
+  "linhas_codigo": 419884,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -476,7 +476,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 831
+   "linhas": 838
   },
   "scripts/lib": {
    "arquivos": 1,

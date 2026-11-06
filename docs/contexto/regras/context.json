@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "713cb7f5ebfd16103613119bf70ca730be175049",
+  "sha": "13d4b861d468b5d7ab313d76f9c174cad1253942",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 20:58 UTC",
+  "generated_at": "2026-11-06 22:49 UTC",
   "files_total": 3439,
   "code_files": 3126,
-  "code_lines": 449818
+  "code_lines": 449825
  },
  "version": "1.3.2",
- "facts_hash": "6100fab819fd2248",
+ "facts_hash": "3df57a70a01fc0ed",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77363,7 +77363,7 @@
   {
    "module": "scripts",
    "files": 83,
-   "lines": 17029,
+   "lines": 17036,
    "tables": [
     "a",
     "achievements",
@@ -89991,6 +89991,10 @@
    {
     "file": "scripts/inventario/gerar-banco.mjs",
     "msg": "a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; "
+   },
+   {
+    "file": "scripts/inventario/gerar-banco.mjs",
+    "msg": "a resposta nao parece ser do banco oficial: ledger com ${registros} registros; "
    },
    {
     "file": "scripts/inventario/gerar-banco.mjs",
@@ -177513,7 +177517,7 @@
   },
   "scripts/inventario/gerar-banco.mjs": {
    "path": "scripts/inventario/gerar-banco.mjs",
-   "lines": 339,
+   "lines": 346,
    "exports": [
     "const PROJETO_OFICIAL",
     "const LIMIARES",
@@ -177554,6 +177558,7 @@
     "SUPABASE_PROJECT_REF=${ref} nao e o banco oficial (${PROJETO_OFICIAL}).",
     "a resposta nao parece ser do banco oficial: ${comuns} tabelas em comum com src/integrations/supabase/types.ts ",
     "a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; ",
+    "a resposta nao parece ser do banco oficial: ledger com ${registros} registros; ",
     "a resposta nao traz resumo.ledger_versao_max/ledger_registros; rode o banco.sql atual.",
     "a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql.",
     "entrada sem as chaves: ${faltando.join(",
@@ -243850,10 +243855,19 @@
   }
  },
  "git": {
-  "sha": "713cb7f5ebfd16103613119bf70ca730be175049",
+  "sha": "13d4b861d468b5d7ab313d76f9c174cad1253942",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "13d4b86",
+    "date": "2026-11-06",
+    "author": "adm01-debug",
+    "subject": "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)",
+    "files": [
+     "scripts/inventario/gerar-banco.mjs"
+    ]
+   },
    {
     "sha": "713cb7f",
     "date": "2026-11-06",
@@ -244207,18 +244221,6 @@
     "files": [
      "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql"
     ]
-   },
-   {
-    "sha": "839645f",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(db): trava escrita direta em agent_runs/actions e idempotencia da retomada (#340)",
-    "files": [
-     "supabase/functions/ai-agent-orchestrator/index.ts",
-     "supabase/functions/report-embed-public/index.ts",
-     "supabase/functions/send-password-reset/index.ts",
-     "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -244232,7 +244234,7 @@
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
-    3
+    4
    ],
    [
     "deno.lock",
