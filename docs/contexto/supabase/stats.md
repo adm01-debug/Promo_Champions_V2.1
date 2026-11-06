@@ -6,8 +6,8 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | métrica | valor |
 |---|---|
-| tamanho | 219.9 MB |
-| schema public | 130.5 MB |
+| tamanho | 220.1 MB |
+| schema public | 130.6 MB |
 
 
 ## Tabelas (ordenadas por tamanho)
@@ -16,9 +16,9 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 |---|---|---|---|---|---|---|---|---|
 | public.audit_logs | ~22k | 75.0 MB | 51.3 MB | 12.6 MB | ~2.4k | ~40 | ~1.3k | 2026-11-04 |
 | public.web_vitals_samples | ~28.4k | 14.4 MB | 8.4 MB | 6.0 MB | 0 | ~50 | ~480 | 2026-11-05 |
-| public.notifications | ~4.1k | 2.9 MB | 1.7 MB | 1.2 MB | 0 | ~50 | ~40.1k | 2026-10-29 |
+| public.notifications | ~4.1k | 3.0 MB | 1.7 MB | 1.2 MB | 0 | ~50 | ~40.1k | 2026-10-29 |
 | public.sales | ~710 | 2.2 MB | 424.0 KB | 1.8 MB | 0 | ~70.3k | ~1.5M | 2026-11-04 |
-| public.db_rollback_snapshots | ~8.7k | 1.7 MB | 864.0 KB | 880.0 KB | ~290 | ~20 | ~6.6k | 2026-11-04 |
+| public.db_rollback_snapshots | ~8.8k | 1.7 MB | 864.0 KB | 880.0 KB | ~290 | ~20 | ~6.6k | 2026-11-04 |
 | public.activities | ~2.2k | 1.6 MB | 384.0 KB | 1.2 MB | 0 | ~2.7k | ~9.7k | 2026-08-15 |
 | public.error_logs | ~60 | 1.6 MB | 1.2 MB | 192.0 KB | ~60 | ~40 | ~29.3k | 2026-10-22 |
 | public.semantic_index | 0 | 1.2 MB | 0 B | 1.2 MB | 0 | ~50 | 0 |  |
@@ -32,7 +32,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.audit_log | ~330 | 584.0 KB | 304.0 KB | 248.0 KB | 4 | ~60 | ~170 |  |
 | public.commissions | ~940 | 568.0 KB | 200.0 KB | 328.0 KB | ~200 | ~60 | ~1.5k | 2026-11-04 |
 | public.login_attempts | ~1.3k | 568.0 KB | 216.0 KB | 312.0 KB | ~140 | ~1.7k | ~9.9k | 2026-11-04 |
-| public.cron_failure_alerts | ~950 | 552.0 KB | 160.0 KB | 352.0 KB | ~150 | ~1k | ~63.7k | 2026-11-04 |
+| public.cron_failure_alerts | ~950 | 552.0 KB | 160.0 KB | 352.0 KB | ~150 | ~1k | ~63.9k | 2026-11-04 |
 | public.deal_stage_transitions | ~1.3k | 552.0 KB | 208.0 KB | 304.0 KB | 0 | ~50 | ~8.6k | 2026-11-04 |
 | public.win_loss_analyses | ~500 | 544.0 KB | 208.0 KB | 296.0 KB | 0 | ~100 | ~10.2k | 2026-08-14 |
 | public.territories | ~40 | 520.0 KB | 248.0 KB | 232.0 KB | 0 | ~610 | ~1M | 2026-11-04 |
@@ -66,7 +66,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.data_access_log | ~120 | 112.0 KB | 16.0 KB | 64.0 KB | 1 | ~50 | ~100 |  |
 | public.feed_reactions | ~150 | 112.0 KB | 16.0 KB | 64.0 KB | 0 | ~50 | ~4.4k |  |
 | public.onboarding_journeys | ~100 | 112.0 KB | 16.0 KB | 64.0 KB | 0 | ~60 | ~10 |  |
-| public.slow_query_alerts | 6 | 112.0 KB | 8.0 KB | 64.0 KB | 6 | ~1.6k | ~1.5k | 2026-11-05 |
+| public.slow_query_alerts | 6 | 112.0 KB | 8.0 KB | 64.0 KB | ~10 | ~1.6k | ~1.5k | 2026-11-05 |
 | public.supplier_products | 0 | 112.0 KB | 16.0 KB | 64.0 KB | ~40 | ~50 | ~200 |  |
 | public.suppliers | 6 | 112.0 KB | 8.0 KB | 96.0 KB | 8 | ~70 | ~1.3k |  |
 | public.support_tickets | ~150 | 112.0 KB | 24.0 KB | 56.0 KB | 0 | ~60 | 5 |  |
@@ -96,7 +96,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.qbr_schedule | 0 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | ~50 | ~30 |  |
 | public.role_permissions | 0 | 72.0 KB | 8.0 KB | 48.0 KB | 0 | ~50 | ~20 | 2026-08-04 |
 | public.team_closers | 0 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | ~50 | ~20 |  |
-| public.v4_callback_dead_letters | 0 | 72.0 KB | 8.0 KB | 56.0 KB | 0 | ~60 | ~22.5k |  |
+| public.v4_callback_dead_letters | 0 | 72.0 KB | 8.0 KB | 56.0 KB | 0 | ~60 | ~22.6k |  |
 | public.winloss_webhook_subscriptions | 1 | 72.0 KB | 8.0 KB | 24.0 KB | ~30 | ~1.1k | ~100 | 2026-10-31 |
 | public.active_power_ups | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~50 | ~20 |  |
 | public.automation_runs | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~60 | 4 |  |
@@ -231,7 +231,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_webhook_dead_letters | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~50 | ~380 |  |
 | public.winloss_webhook_replay_invocations | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~50 | 1 |  |
 | public.xp_adjustments | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~50 | 0 |  |
-| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~184.7k | ~44.1k |  |
+| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~185.3k | ~44.3k |  |
 | public.account_plans | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | 7 |  |
 | public.active_sessions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | 3 |  |
 | public.activity_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~150 | 7 |  |
@@ -435,8 +435,8 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | idx_dst_open | public.deal_stage_transitions | 88.0 KB |
 | idx_login_attempts_email_created | public.login_attempts | 88.0 KB |
 | idx_maintenance_log_started_at | public.maintenance_log | 120.0 KB |
-| idx_notifications_category | public.notifications | 360.0 KB |
-| idx_notifications_user_unread | public.notifications | 360.0 KB |
+| idx_notifications_category | public.notifications | 368.0 KB |
+| idx_notifications_user_unread | public.notifications | 368.0 KB |
 | idx_sales_status_created_at | public.sales | 80.0 KB |
 | idx_semantic_index_embedding | public.semantic_index | 1.2 MB |
 | idx_web_vitals_user_created | public.web_vitals_samples | 1.4 MB |
@@ -463,21 +463,21 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~350 | ~1.6M | 4623.53 | `SELECT public.detect_stalled_cron_jobs()` |
-| service_role | ~520 | ~787.4k | 1517.06 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
-| postgres | ~9.7k | ~238.2k | 24.63 | `SELECT public.trigger_internal_edge_job($1)` |
+| postgres | ~370 | ~1.7M | 4615.59 | `SELECT public.detect_stalled_cron_jobs()` |
+| service_role | ~550 | ~833.7k | 1521.38 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
+| postgres | ~10.2k | ~252.6k | 24.68 | `SELECT public.trigger_internal_edge_job($1)` |
 | authenticated | ~1k | ~123.7k | 119.07 | `WITH pgrst_source AS ( SELECT "public"."sales".* FROM "public"."sales" WHERE "public"."sales"."status" = ANY ($1) LIMIT $2 OFFSET $3 ) SELECT $4::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, ` |
 | anon | ~1.1k | ~74.1k | 70.36 | `WITH pgrst_source AS ( SELECT "public"."sales"."client_name", "public"."sales"."created_at", "public"."sales"."status" FROM "public"."sales" WHERE "public"."sales"."status" = ANY ($1) ORDER BY "public"."sales"."created_a` |
 | authenticated | ~1.4k | ~67.1k | 48.49 | `WITH pgrst_source AS ( SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE "public"."notifications"."user_id" = $1 AND "public"."notifications"."read_at" IS NULL AND "public"."notifications"."archive` |
-| postgres | ~1k | ~46.8k | 44.79 | `SELECT public.admin_capture_rollback_snapshot()` |
+| postgres | ~1.1k | ~49.4k | 44.71 | `SELECT public.admin_capture_rollback_snapshot()` |
 | authenticated | ~30 | ~16.8k | 579.29 | `WITH pgrst_source AS ( SELECT "public"."tasks"."id", "public"."tasks"."task_type", "public"."tasks"."created_at", "public"."tasks"."salesperson_id" FROM "public"."tasks" WHERE "public"."tasks"."created_at" >= $1 AND "pub` |
 | service_role | ~1.4k | ~14.3k | 10.61 | `WITH pgrst_source AS (INSERT INTO "public"."web_vitals_samples"("connection_type", "metric", "navigation_type", "rating", "route", "session_id", "user_agent", "value", "viewport_width") SELECT "pgrst_body"."connection_ty` |
-| postgres | ~14.7k | ~13.4k | 0.91 | `WITH rows AS ( SELECT id FROM net.http_request_queue ORDER BY id LIMIT $1 ) DELETE FROM net.http_request_queue q USING rows WHERE q.id = rows.id RETURNING q.id, q.method, q.url, timeout_milliseconds, array(select key \|\| ` |
-| postgres | ~14.7k | ~10.9k | 0.74 | `WITH rows AS ( SELECT ctid FROM net._http_response WHERE created < now() - $1 ORDER BY created LIMIT $2 ) DELETE FROM net._http_response r USING rows WHERE r.ctid = rows.ctid` |
+| postgres | ~15.6k | ~14.2k | 0.91 | `WITH rows AS ( SELECT id FROM net.http_request_queue ORDER BY id LIMIT $1 ) DELETE FROM net.http_request_queue q USING rows WHERE q.id = rows.id RETURNING q.id, q.method, q.url, timeout_milliseconds, array(select key \|\| ` |
+| postgres | ~15.6k | ~11.5k | 0.74 | `WITH rows AS ( SELECT ctid FROM net._http_response WHERE created < now() - $1 ORDER BY created LIMIT $2 ) DELETE FROM net._http_response r USING rows WHERE r.ctid = rows.ctid` |
+| postgres | 4 | ~10.9k | 2726.14 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
 | authenticated | ~20 | ~9.4k | 446.82 | `WITH pgrst_source AS ( SELECT "public"."sales"."id", "public"."sales"."client_name", "public"."sales"."amount", "public"."sales"."status", "public"."sales"."created_at" FROM "public"."sales" LIMIT $1 OFFSET $2 ) SELECT $` |
 | authenticated | ~1.4k | ~9k | 6.54 | `WITH pgrst_source AS ( SELECT "public"."salespeople"."id", "public"."salespeople"."name", "public"."salespeople"."avatar_url" FROM "public"."salespeople" WHERE "public"."salespeople"."is_active" = $1 LIMIT $2 OFFSET $3 )` |
-| service_role | ~170 | ~8.5k | 51.05 | `WITH pgrst_source AS (INSERT INTO "public"."notifications"("action_label", "action_url", "category", "icon", "message", "metadata", "priority", "title", "type", "user_id") SELECT "pgrst_body"."action_label", "pgrst_body"` |
-| postgres | ~90 | ~8.1k | 92.73 | `SELECT public.detect_slow_queries($1, $2)` |
+| service_role | ~180 | ~9k | 50.92 | `WITH pgrst_source AS (INSERT INTO "public"."notifications"("action_label", "action_url", "category", "icon", "message", "metadata", "priority", "title", "type", "user_id") SELECT "pgrst_body"."action_label", "pgrst_body"` |
 
 
 ## Conexões
