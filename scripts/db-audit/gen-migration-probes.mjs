@@ -68,7 +68,9 @@ const DROP_PATTERNS = [
   ['table',    new RegExp(String.raw`drop\s+table\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
   ['view',     new RegExp(String.raw`drop\s+view\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
   ['matview',  new RegExp(String.raw`drop\s+materialized\s+view\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
-  ['function', new RegExp(String.raw`drop\s+function\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
+  // function: captura a lista de argumentos (opcional) — drop com aridade
+  // só casa create de MESMA aridade; sem parênteses fica sem aux (backcompat).
+  ['function', new RegExp(String.raw`drop\s+function\s+(?:if\s+exists\s+)?${SCH}(${ID})(?:\s*\(\s*([^()]*(?:\([^()]*\)[^()]*)*)\s*\))?`, 'gi')],
   ['trigger',  new RegExp(String.raw`drop\s+trigger\s+(?:if\s+exists\s+)?(${ID})\s+on\s+${SCH}(${ID})`, 'gi')],
   ['policy',   new RegExp(String.raw`drop\s+policy\s+(?:if\s+exists\s+)?(${ID})\s+on\s+${SCH}(${ID})`, 'gi')],
   ['index',    new RegExp(String.raw`drop\s+index\s+(?:concurrently\s+)?(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
@@ -186,8 +188,9 @@ export const collectProbes = (rawSql, version, file = '') => {
 
 // Extrai os drops de um SQL de migration com a mesma lógica de shape de
 // collectProbes (schema/extra por kind; policy/trigger → extra=tabela;
-// constraint/column → tabela do ALTER que envolve; index/function → sem
-// aux). Exportado para o teste de regressão.
+// constraint/column → tabela do ALTER que envolve; index → sem aux;
+// function → aridade dos args, quando presentes). Exportado para o teste
+// de regressão.
 export const collectDrops = (rawSql, version, file = '') => {
   const sql = stripComments(rawSql);
   const rows = [];
@@ -211,6 +214,11 @@ export const collectDrops = (rawSql, version, file = '') => {
         schema = ''; obj = groups[0] ?? groups[1];
       } else if (kind === 'cron') {
         schema = ''; obj = groups[0];
+      } else if (kind === 'function') {
+        // Aridade em extra — drop com args só casa create de mesma aridade.
+        schema = groups[0] ?? 'public'; obj = groups[1];
+        const argc = countArgs(groups[2]);
+        extra = argc === null ? '' : String(argc);
       } else {
         schema = groups[0] ?? 'public'; obj = groups[1];
       }
@@ -236,15 +244,20 @@ export const suppressKey = (row) => {
     const table = aux.includes('|') ? aux.split('|')[1] ?? '' : aux;
     return `${row.kind}|${row.schema}|${row.obj}|${table}`;
   }
+  if (row.kind === 'function') {
+    // Aridade: drop com args só suprime create de MESMA aridade; sem args
+    // casa sem aridade (backcompat com o comportamento anterior).
+    return `${row.kind}|${row.schema}|${row.obj}${aux !== '' ? `|${aux}` : ''}`;
+  }
   return `${row.kind}|${row.schema}|${row.obj}`;
 };
 
 // Supressão por net-state: percorre os arquivos em ordem crescente de
-// version; na passada reversa mantém o set de drops vistos depois. Para
-// cada arquivo, primeiro registra os drops do próprio arquivo e depois
-// filtra os creates que serão dropados daqui em diante. Create-then-drop
-// (mesmo arquivo ou posterior) é suprimido; drop-then-recreate em arquivo
-// posterior sobrevive (recreate).
+// version; na passada reversa mantém o set de drops vistos em arquivos
+// posteriores. Para cada arquivo, filtra os creates contra esse set ANTES
+// de registrar os drops do próprio arquivo — drop-then-recreate no MESMO
+// arquivo sobrevive (recreate). Create-then-drop em arquivo posterior
+// continua suprimido.
 export const suppressDropped = (fileSets) => {
   const sorted = [...fileSets]
     .sort((a, b) => (a.version < b.version ? -1 : a.version > b.version ? 1 : 0))
@@ -253,9 +266,9 @@ export const suppressDropped = (fileSets) => {
   const keeps = [];
   for (let i = sorted.length - 1; i >= 0; i--) {
     const fs = sorted[i];
-    for (const d of fs.drops) droppedLater.add(suppressKey(d));
     const kept = fs.creates.filter((c) => !droppedLater.has(suppressKey(c)));
     keeps.unshift(...kept);
+    for (const d of fs.drops) droppedLater.add(suppressKey(d));
   }
   return keeps;
 };
@@ -293,7 +306,7 @@ const main = () => {
     .map((r) => `  (${lit(r.version)}, ${lit(r.kind)}, ${lit(r.schema)}, ${lit(r.obj)}, ${lit(r.extra ?? '')})`)
     .join(',\n');
 
-const renderSql = (values) => `\pset footer off
+const renderSql = (values) => `\\pset footer off
 -- cron.job só existe com pg_cron instalado — referência estática a ela
 -- quebra o parse do SELECT inteiro (CASE não ajuda, o parser resolve a
 -- relação em todos os ramos). pg_temp + EXECUTE dinâmico avalia em runtime.
