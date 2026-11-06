@@ -129,7 +129,7 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   const limite = recentes[Math.min(LEDGER_TOLERANCIA.versoesRecentes, recentes.length) - 1];
   if (String(max) < limite) {
     throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; `
-      + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERANCIA.versoesRecentes}a mais recente e ${limite}. `
+      + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERA8CIA.versoesRecentes}a mais recente e ${limite}. `
       + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
   }
   return { ...origem, ledger_registros: registros, migrations_no_repo: versoesRepo.length };
@@ -223,7 +223,7 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   if (semRls.length) alertas.push({ tipo: 'tabela_sem_rls', detalhe: semRls });
   // RLS ligado sem nenhuma policy nega tudo pra authenticated/anon (service_role sempre passa por
   // cima, rolbypassrls). Pode ser de proposito (tabela so-interna), mas hoje fica invisivel: nem
-  // tabela_sem_rls (tem RLS) nem nenhum outro alerta aponta — inclusive tabela vazia hoje (ex. um
+  // tabela_sem_rls (tem RLS) nem nenhum outro alerta aponta ⒄ inclusive tabela vazia hoje (ex. um
   // cofre de credencial ainda sem linha) merece o aviso do mesmo jeito.
   const rlsSemPolicy = tabelas.filter((t) => t.rls && t.policies === 0).map((t) => t.nome);
   if (rlsSemPolicy.length) alertas.push({ tipo: 'rls_sem_policy', detalhe: rlsSemPolicy });
@@ -281,7 +281,7 @@ function projeto() {
   return ref;
 }
 
-anync function chamarApi(caminho, init = {}) {
+async function chamarApi(caminho, init = {}) {
   const token = process.env.SUPABASE_ACCESS_TOKEN?.trim();
   const res = await fetch(`${API}/${encodeURIComponent(projeto())}${caminho}`, {
     ...init,
