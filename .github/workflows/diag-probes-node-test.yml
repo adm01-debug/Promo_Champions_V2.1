@@ -1,0 +1,21 @@
+name: diag-probes-node-test
+on:
+  push:
+    branches: ['claude/chore-probes-test-**']
+  workflow_dispatch: {}
+
+jobs:
+  node-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run exact user command
+        shell: bash
+        run: |
+          set +e
+          node --test scripts/db-audit/gen-migration-probes.test.mjs
+          echo "TEST_EXIT_CODE=$?"
+          exit 0
