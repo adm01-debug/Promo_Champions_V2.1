@@ -1,7 +1,7 @@
 // Testes de regressão do gerador de probes: node --test scripts/db-audit/gen-migration-probes.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { collectProbes } from './gen-migration-probes.mjs';
+import { collectProbes, collectDrops, suppressKey, suppressDropped } from './gen-migration-probes.mjs';
 
 const V = '20261019000000';
 
@@ -86,4 +86,93 @@ test('comentários não geram probes falsas', () => {
     CREATE TABLE real_t (id int);`;
   const tables = collectProbes(sql, V).filter((r) => r.kind === 'table');
   assert.deepEqual(tables.map((r) => r.obj), ['real_t']);
+});
+
+test('create-then-drop em arquivo posterior é suprimido (net-state)', () => {
+  const fileSets = [
+    {
+      file: '20261019000000_a.sql', version: '20261019000000',
+      creates: collectProbes('CREATE TABLE legacy_roles (id int);', '20261019000000', '20261019000000_a.sql'),
+      drops: [],
+    },
+    {
+      file: '20261020000000_b.sql', version: '20261020000000',
+      creates: [],
+      drops: collectDrops('DROP TABLE IF EXISTS legacy_roles;', '20261020000000', '20261020000000_b.sql'),
+    },
+  ];
+  const keeps = suppressDropped(fileSets);
+  assert.deepEqual(keeps.filter((r) => r.kind === 'table'), []);
+});
+
+test('drop em arquivo anterior + create posterior sobrevive (recreate)', () => {
+  const fileSets = [
+    {
+      file: '20261019000000_a.sql', version: '20261019000000',
+      creates: [],
+      drops: collectDrops('DROP TABLE IF EXISTS legacy_roles;', '20261019000000', '20261019000000_a.sql'),
+    },
+    {
+      file: '20261020000000_b.sql', version: '20261020000000',
+      creates: collectProbes('CREATE TABLE legacy_roles (id int);', '20261020000000', '20261020000000_b.sql'),
+      drops: [],
+    },
+  ];
+  const keeps = suppressDropped(fileSets);
+  assert.deepEqual(
+    keeps.filter((r) => r.kind === 'table').map((r) => [r.obj, r.schema]),
+    [['legacy_roles', 'public']],
+  );
+});
+
+test('policy com FOR SELECT e FOR ALL carrega o cmd no extra', () => {
+  const sel = collectProbes('CREATE POLICY p_sel ON t FOR SELECT USING (true);', V).find((r) => r.kind === 'policy');
+  assert.equal(sel.extra, 'select|t');
+  const all = collectProbes('CREATE POLICY p_all ON t FOR ALL USING (true);', V).find((r) => r.kind === 'policy');
+  assert.equal(all.extra, 'all|t');
+});
+
+test('policy sem FOR fica sem filtro de cmd (backcompat)', () => {
+  const pol = collectProbes('CREATE POLICY p_plain ON t USING (true);', V).find((r) => r.kind === 'policy');
+  assert.equal(pol.extra, 't');
+});
+
+test('drop-then-recreate no MESMO arquivo sobrevive (net-state)', () => {
+  const sql = 'DROP TABLE IF EXISTS t; CREATE TABLE t (id int);';
+  const fileSets = [
+    {
+      file: '20261019000000_a.sql', version: '20261019000000',
+      creates: collectProbes(sql, '20261019000000', '20261019000000_a.sql'),
+      drops: collectDrops(sql, '20261019000000', '20261019000000_a.sql'),
+    },
+  ];
+  const keeps = suppressDropped(fileSets);
+  assert.deepEqual(keeps.filter((r) => r.kind === 'table').map((r) => r.obj), ['t']);
+});
+
+test('DROP FUNCTION sem parênteses continua sem aux em collectDrops', () => {
+  const drops = collectDrops('DROP FUNCTION IF EXISTS public.f;', V);
+  assert.deepEqual(drops.filter((r) => r.kind === 'function').map((r) => [r.obj, r.schema, r.extra]), [['f', 'public', '']]);
+});
+
+test('aridade no DROP FUNCTION casa create/drop pela MESMA aridade', () => {
+  const fs = (sql, file, version) => ({ file, version, creates: collectProbes(sql, version, file), drops: collectDrops(sql, version, file) });
+  // a) aridade diferente (1 × 2): NÃO suprime.
+  const naSup = suppressDropped([
+    fs('CREATE FUNCTION f(a int, b int) RETURNS int AS $$ SELECT 1 $$ LANGUAGE sql;', '20261019000000_a.sql', '20261019000000'),
+    fs('DROP FUNCTION IF EXISTS f(int);', '20261020000000_b.sql', '20261020000000'),
+  ]);
+  assert.deepEqual(naSup.filter((r) => r.kind === 'function').map((r) => [r.obj, r.schema, r.extra]), [['f', 'public', '2']]);
+  // b) mesma aridade: SUPRIME.
+  const sup = suppressDropped([
+    fs('CREATE FUNCTION f(a int, b int) RETURNS int AS $$ SELECT 1 $$ LANGUAGE sql;', '20261019000000_a.sql', '20261019000000'),
+    fs('DROP FUNCTION IF EXISTS f(int, int);', '20261020000000_b.sql', '20261020000000'),
+  ]);
+  assert.deepEqual(sup.filter((r) => r.kind === 'function'), []);
+});
+
+test('suppressKey de function distingue aridade; table ignora aux', () => {
+  assert.equal(suppressKey({ kind: 'function', schema: 'public', obj: 'f', extra: '2' }), 'function|public|f|2');
+  assert.equal(suppressKey({ kind: 'function', schema: 'public', obj: 'f', extra: '' }), 'function|public|f');
+  assert.equal(suppressKey({ kind: 'table', schema: 'public', obj: 't', extra: 'x' }), 'table|public|t');
 });
