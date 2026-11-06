@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6c6df6fb05` · branch `main` · 2026-11-06 03:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `82ee984faa` · branch `main` · 2026-11-06 20:37 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1207 testes em 133 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1215 testes em 133 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4153,6 +4153,7 @@ _nenhum item encontrado_
 | `src/hooks/email/failedDraftsHelpers.test.ts` | 19 | isPermanentError · não classifica ausência de erro como permanente · marca  · mantém  … |
 | `src/hooks/email/recoveryRateHelpers.test.ts` | 19 | failureTypeLabel · traduz códigos conhecidos · devolve o código bruto quando desconhecido · isPermanentFailureType … |
 | `tests/e2e/pages-crm-core.spec.ts` | 18 | Vendas — Deals Pipeline · carrega heading e filtros · title da página correto · Clientes — Client Hub … |
+| `scripts/db-audit/gen-migration-probes.test.mjs` | 17 | ALTER TABLE com vários ADD em uma linha carrega a tabela em todos · ALTER TABLE IF EXISTS não captura  · ALTER TABLE IF EXISTS com , ADD encadeado resolve a tabela certa · DROP CONSTRAINT + ADD CONSTRAINT na mesma statement resolve a tabela … |
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |
 | `src/components/reporting/funnelReportHelpers.test.ts` | 16 | funnelReportHelpers.computeStageDeltas · calcula delta absoluto, percentual, valor e conversão por estágio · trata previous ausente como zero (novo estágio ganha 100%) · retorna 0% quando previous é 0 e current também … |
 | `src/hooks/assistant/usePersonalAssistantHelpers.test.ts` | 16 | parseSSELine · extrai delta.content de linha data: · retorna string vazia para [DONE] · retorna string vazia para linha sem prefixo data: … |
@@ -4179,7 +4180,6 @@ _nenhum item encontrado_
 | `src/lib/winloss/scenarioChartKey.test.ts` | 11 | buildScenarioChartKey · retorna scenario-empty quando data vazia · retorna scenario-empty quando fitN=0 mesmo com data · retorna scenario-insufficient com fitN < 3 … |
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
-| `scripts/db-audit/gen-migration-probes.test.mjs` | 9 | ALTER TABLE com vários ADD em uma linha carrega a tabela em todos · ALTER TABLE IF EXISTS não captura  · ALTER TABLE IF EXISTS com , ADD encadeado resolve a tabela certa · DROP CONSTRAINT + ADD CONSTRAINT na mesma statement resolve a tabela … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |

@@ -119,11 +119,11 @@
   {
    "arquivo": "scripts/db-audit/gen-migration-probes.test.mjs",
    "tipo": "unit",
-   "linhas": 90,
+   "linhas": 179,
    "testa": [
     "scripts/db-audit/gen-migration-probes.mjs"
    ],
-   "casos": 9
+   "casos": 17
   },
   {
    "arquivo": "scripts/graphify/catalog-adapter.test.mjs",

@@ -214,7 +214,7 @@
   {
    "arquivo": "scripts/db-audit/gen-migration-probes.mjs",
    "descricao": "Gera SQL de sondagem que verifica, para cada migration em um intervalo de versões, se os objetos que ela cria existem em produção. Escopo =",
-   "linhas": 245,
+   "linhas": 366,
    "env": [],
    "npm_scripts": [],
    "workflows": [

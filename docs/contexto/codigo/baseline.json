@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6c6df6fb055c01c1e83d8b43078c1594de2217e3",
+  "commit": "82ee984faa28944f2993f07a98b9e193f20ceb63",
   "branch": "main",
-  "data_commit": "2026-11-05T23:51:11-03:00",
+  "data_commit": "2026-11-06T13:39:06-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "82ee984",
+    "data": "2026-11-06",
+    "assunto": "feat: supressão de DROP + filtro cmd em policies no gerador de probes de migrations (#375)"
+   },
+   {
+    "sha": "4385b7d",
+    "data": "2026-11-06",
+    "assunto": "docs: reconcilia desfecho das PRs antigas #280 #298 #345 #347 (#373)"
+   },
    {
     "sha": "6c6df6f",
     "data": "2026-11-05",
@@ -121,19 +131,9 @@
     "sha": "4b7905f",
     "data": "2026-10-27",
     "assunto": "fix(db): corrigir achados R3 da canonização de sales.status (#341)"
-   },
-   {
-    "sha": "2d9f938",
-    "data": "2026-10-27",
-    "assunto": "fix(crm): remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) (#343)"
-   },
-   {
-    "sha": "8d6274f",
-    "data": "2026-10-27",
-    "assunto": "fix(db): remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse"
    }
   ],
-  "arquivos_mudados_7d": 68,
+  "arquivos_mudados_7d": 70,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 45
+    "commits": 42
    },
    {
     "autor": "adm01-debug",
-    "commits": 36
+    "commits": 38
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3423,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419669,
+  "linhas_codigo": 419879,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -432,7 +432,7 @@
   },
   "scripts/db-audit": {
    "arquivos": 3,
-   "linhas": 367
+   "linhas": 577
   },
   "scripts/debt-report.mjs": {
    "arquivos": 1,
