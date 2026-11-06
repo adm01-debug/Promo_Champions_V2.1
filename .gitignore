@@ -1,81 +1,46 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
-
-# Build
-dist/
-build/
-.vite/
-
-# Environment (nunca commitar nenhuma variante; .env.example é a exceção)
-.env
-.env.*
-!.env.example
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Testing
-coverage/
-.lighthouseci/
-test-results/
-playwright-report/
-
 # Logs
+logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Runtime — lockfile canônico é package-lock.json (CI usa npm ci)
-bun.lockb
-bun.lock
+node_modules
+dist
+dist-ssr
+*.local
 
-# Estado efêmero gerado pela Supabase CLI (link, versões e cache local)
-supabase/.temp/
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# E2E session cache
-tests/e2e/.auth/
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Onda O — bundle analyzer output
-bundle-stats/
-dependency-graph.svg
+# Coverage
+coverage
+.nyc_output
 
-# Onda Q — a11y sweep artifacts
-a11y-report.json
-a11y-report-html/
-graphify-out/graph.json
-graphify-out/graph.html
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
-# Snapshots locais do Graphify — nunca entram no índice nem em artefatos de CI.
-.graphify-local/
-graphify-out/cache/
-**/graphify-out/cache/
-sql-coverage-matrix.md
+# TypeScript
+*.tsbuildinfo
 
-# graphify — artefatos locais por máquina
-graphify-out/.graphify_root
-graphify-out/.graphify_python
-graphify-out/.graphify_labels.json*
-graphify-out/[0-9][0-9][0-9][0-9]-*/
-
-# gerado pelo contexto.yml na branch contexto (nunca em main); manual/ e texto humano e fica em main
-docs/contexto/*
-!docs/contexto/regras/
-docs/contexto/regras/*
-!docs/contexto/regras/manual/
-
-# saída opcional do gerar-repo.mjs com lista de tabelas no stdin (não versionada)
-inventario/estado/tabelas-uso.json
-
-# bytecode Python dos geradores de contexto
-__pycache__/
-
-# ci-trigger-6
+# ci-trigger-7
