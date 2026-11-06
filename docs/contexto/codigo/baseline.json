@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ae24e8f0c47542918f761470f2d47427e12f5af9",
+  "commit": "713cb7f5ebfd16103613119bf70ca730be175049",
   "branch": "main",
-  "data_commit": "2026-11-06T17:40:36-03:00",
+  "data_commit": "2026-11-06T20:48:27Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "713cb7f",
+    "data": "2026-11-06",
+    "assunto": "chore: inventario do estado real [auto] (#377)"
+   },
    {
     "sha": "ae24e8f",
     "data": "2026-11-06",
@@ -126,14 +131,9 @@
     "sha": "50386b0",
     "data": "2026-10-29",
     "assunto": "chore(deps): bump astral-sh/setup-uv (#326)"
-   },
-   {
-    "sha": "313127f",
-    "data": "2026-10-28",
-    "assunto": "chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)"
    }
   ],
-  "arquivos_mudados_7d": 70,
+  "arquivos_mudados_7d": 71,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -314,11 +314,15 @@
    {
     "autor": "Claude",
     "commits": 12
+   },
+   {
+    "autor": "github-actions[bot]",
+    "commits": 1
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3423,
+  "arquivos_total": 3424,
   "arquivos_codigo": 2449,
   "linhas_codigo": 419877,
   "rotas": 170,

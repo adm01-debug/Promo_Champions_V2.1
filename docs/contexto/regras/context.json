@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "ae24e8f0c47542918f761470f2d47427e12f5af9",
+  "sha": "713cb7f5ebfd16103613119bf70ca730be175049",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 20:48 UTC",
-  "files_total": 3438,
+  "generated_at": "2026-11-06 20:58 UTC",
+  "files_total": 3439,
   "code_files": 3126,
   "code_lines": 449818
  },
@@ -243850,10 +243850,20 @@
   }
  },
  "git": {
-  "sha": "ae24e8f0c47542918f761470f2d47427e12f5af9",
+  "sha": "713cb7f5ebfd16103613119bf70ca730be175049",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "713cb7f",
+    "date": "2026-11-06",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#377)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json"
+    ]
+   },
    {
     "sha": "ae24e8f",
     "date": "2026-11-06",
@@ -244209,73 +244219,6 @@
      "supabase/functions/send-password-reset/index.ts",
      "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
     ]
-   },
-   {
-    "sha": "2aa90b9",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix: r3 — briefing jsonb coagido na borda, realtime sem remount morto, alerta de deploy por tag (#339)",
-    "files": [
-     ".github/workflows/ci-failure-alert.yml",
-     "src/components/admin/connections/DeadLetterIngestPanel.tsx",
-     "src/components/executive-briefing/briefingHelpers.ts",
-     "src/components/gamification/CelebrationOverlayProvider.tsx",
-     "src/components/lead-scoring/LeadScoringDashboard.tsx",
-     "src/components/race/admin/RaceAuditFeed.tsx",
-     "src/components/race/admin/SeasonsManagerTable.tsx",
-     "src/components/sales/cadence/RuleAuditLogs.tsx",
-     "src/hooks/admin/useV4Callbacks.ts",
-     "src/hooks/agents/useAgentRunDetails.ts",
-     "src/hooks/agents/useAgentRuns.ts",
-     "src/hooks/cadences/useQuoteCadenceRealtime.ts",
-     "src/hooks/conversational/useCoachingScorecard.ts",
-     "src/hooks/conversational/useConversationMetrics.ts",
-     "src/hooks/conversational/useCriticalMoments.ts",
-     "src/hooks/conversational/useObjectionAnalysis.ts",
-     "src/hooks/conversational/useQuestionAnalysis.ts",
-     "src/hooks/dashboard/useDashboardKPIs.ts",
-     "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
-     "src/hooks/deal-intelligence/useCommitteeCoverage.ts",
-     "src/hooks/deal-intelligence/useDealHealth.ts",
-     "src/hooks/deal-intelligence/useDealStakeholders.ts",
-     "src/hooks/deal-intelligence/useDealVelocity.ts",
-     "src/hooks/engagement/useBulkComposer.ts",
-     "src/hooks/executive-briefing/useBriefingHistory.ts",
-     "src/hooks/executive-briefing/useGenerateBriefing.ts",
-     "src/hooks/executive-briefing/useLatestBriefing.ts",
-     "src/hooks/race/useRaceEvents.ts",
-     "src/hooks/race/useRaceLeaderboard.ts",
-     "src/hooks/race/useRacePowerups.ts",
-     "src/hooks/race/useRaceReactions.ts",
-     "src/hooks/race/useRaceScoringRules.ts",
-     "src/hooks/race/useRaceSeason.ts",
-     "src/hooks/race/useRaceStreak.ts",
-     "src/hooks/revenue-intelligence/useRevenueForecast.ts",
-     "src/hooks/revenue/useQuotaAttainment.ts",
-     "src/hooks/revenue/useQuotaAttainmentPredictor.ts",
-     "src/hooks/revenue/useWinProbabilityCalibration.ts",
-     "src/hooks/sales/useSalesRealtime.ts",
-     "src/hooks/sequences/useSendTimeOptimization.ts",
-     "src/hooks/useCompetitiveChat.ts",
-     "src/hooks/useKudos.ts",
-     "src/hooks/useMyBonusAwards.ts",
-     "src/hooks/useNotifications.ts",
-     "src/hooks/useRankNotifications.ts",
-     "src/hooks/useRankingNotifications.ts",
-     "src/hooks/useSDRAlertNotifications.ts",
-     "src/hooks/useSecurityAlertNotifications.ts",
-     "src/hooks/useTeamActivityFeed.ts",
-     "src/hooks/useUnreadNotificationsCount.ts",
-     "src/hooks/useVictoryFeed.ts",
-     "src/hooks/win-loss/useInsightComments.ts",
-     "src/hooks/win-loss/useWinLossRealtime.ts",
-     "src/lib/supabase/realtime.ts",
-     "src/pages/AdminAuditoriaPremiacoes.tsx",
-     "src/pages/RaceSpectator.tsx",
-     "src/pages/TeamActivityFeed.tsx",
-     "supabase/functions/generate-executive-briefing/index.ts",
-     "supabase/functions/recompute-stage-baselines/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -244294,6 +244237,10 @@
    [
     "deno.lock",
     3
+   ],
+   [
+    "inventario/estado/edges.json",
+    2
    ],
    [
     "analise-prs/decisoes.md",
@@ -244320,8 +244267,8 @@
     2
    ],
    [
-    "src/hooks/useTeamActivityFeed.ts",
-    2
+    "inventario/estado/banco.json",
+    1
    ],
    [
     "scripts/db-audit/gen-migration-probes.mjs",
@@ -244353,10 +244300,6 @@
    ],
    [
     ".github/workflows/README.md",
-    1
-   ],
-   [
-    ".github/workflows/contexto-testes.yml",
     1
    ]
   ]
