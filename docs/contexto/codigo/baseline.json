@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "82ee984faa28944f2993f07a98b9e193f20ceb63",
+  "commit": "ae24e8f0c47542918f761470f2d47427e12f5af9",
   "branch": "main",
-  "data_commit": "2026-11-06T13:39:06-03:00",
+  "data_commit": "2026-11-06T17:40:36-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "ae24e8f",
+    "data": "2026-11-06",
+    "assunto": "fix: remover check contagens_ok em conferirOrigem (drift Lovable) (#370)"
+   },
    {
     "sha": "82ee984",
     "data": "2026-11-06",
@@ -126,11 +131,6 @@
     "sha": "313127f",
     "data": "2026-10-28",
     "assunto": "chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)"
-   },
-   {
-    "sha": "4b7905f",
-    "data": "2026-10-27",
-    "assunto": "fix(db): corrigir achados R3 da canonização de sales.status (#341)"
    }
   ],
   "arquivos_mudados_7d": 70,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 38
+    "commits": 39
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3423,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419879,
+  "linhas_codigo": 419877,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -472,7 +472,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 833
+   "linhas": 831
   },
   "scripts/lib": {
    "arquivos": 1,
