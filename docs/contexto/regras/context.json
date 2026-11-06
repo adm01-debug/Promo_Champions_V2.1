@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "aba5965f5e64ef48c856e383bee4d9ab288ced4d",
+  "sha": "aeb70d7271001e6e5c2ae03b17b1cbe41e82cdf2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 01:45 UTC",
+  "generated_at": "2026-11-06 02:17 UTC",
   "files_total": 3437,
   "code_files": 3126,
   "code_lines": 449610
@@ -243807,10 +243807,19 @@
   }
  },
  "git": {
-  "sha": "aba5965f5e64ef48c856e383bee4d9ab288ced4d",
+  "sha": "aeb70d7271001e6e5c2ae03b17b1cbe41e82cdf2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "aeb70d7",
+    "date": "2026-11-05",
+    "author": "adm01-debug",
+    "subject": "fix: release-please com continue-on-error para não reprovar status da main",
+    "files": [
+     ".github/workflows/release-please.yml"
+    ]
+   },
    {
     "sha": "aba5965",
     "date": "2026-11-05",
@@ -244238,55 +244247,6 @@
     "files": [
      "RELATORIO_CI.md"
     ]
-   },
-   {
-    "sha": "98ce4dd",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(ui): tópicos realtime únicos por mount, embed salespeople e guard recommended_actions (#332)",
-    "files": [
-     "src/components/admin/connections/DeadLetterIngestPanel.tsx",
-     "src/components/deal-intelligence/DealHealthCard.tsx",
-     "src/components/deal-intelligence/NextBestActionPanel.tsx",
-     "src/components/executive-briefing/BriefingActionsList.tsx",
-     "src/components/gamification/CelebrationOverlayProvider.tsx",
-     "src/components/intelligence/ExecutiveSummaryReport.tsx",
-     "src/components/intelligence/StrategicRecommendations.tsx",
-     "src/components/lead-scoring/LeadScoringDashboard.tsx",
-     "src/components/race/admin/RaceAuditFeed.tsx",
-     "src/components/race/admin/SeasonsManagerTable.tsx",
-     "src/components/sales/cadence/RuleAuditLogs.tsx",
-     "src/hooks/admin/useV4Callbacks.ts",
-     "src/hooks/agents/useAgentRunDetails.ts",
-     "src/hooks/agents/useAgentRuns.ts",
-     "src/hooks/cadences/useQuoteCadenceRealtime.ts",
-     "src/hooks/conversational/useCoachingScorecard.ts",
-     "src/hooks/conversational/useConversationMetrics.ts",
-     "src/hooks/conversational/useCriticalMoments.ts",
-     "src/hooks/conversational/useObjectionAnalysis.ts",
-     "src/hooks/conversational/useQuestionAnalysis.ts",
-     "src/hooks/engagement/useBulkComposer.ts",
-     "src/hooks/race/useRacePowerups.ts",
-     "src/hooks/race/useRaceScoringRules.ts",
-     "src/hooks/race/useRaceSeason.ts",
-     "src/hooks/race/useRaceStreak.ts",
-     "src/hooks/revenue-intelligence/useRevenueForecast.ts",
-     "src/hooks/revenue/useQuotaAttainment.ts",
-     "src/hooks/revenue/useQuotaAttainmentPredictor.ts",
-     "src/hooks/revenue/useWinProbabilityCalibration.ts",
-     "src/hooks/sequences/useSendTimeOptimization.ts",
-     "src/hooks/useCompetitiveChat.ts",
-     "src/hooks/useKudos.ts",
-     "src/hooks/useRankNotifications.ts",
-     "src/hooks/useSDRAlertNotifications.ts",
-     "src/hooks/useSecurityAlertNotifications.ts",
-     "src/hooks/win-loss/useInsightComments.ts",
-     "src/hooks/win-loss/useWinLossRealtime.ts",
-     "src/pages/AdminAuditoriaPremiacoes.tsx",
-     "src/pages/RaceSpectator.tsx",
-     "src/pages/TeamActivityFeed.tsx",
-     "supabase/functions/recompute-stage-baselines/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -244347,28 +244307,28 @@
     2
    ],
    [
-    "src/components/admin/connections/DeadLetterIngestPanel.tsx",
+    "RELATORIO_CI.md",
     2
    ],
    [
-    "src/components/gamification/CelebrationOverlayProvider.tsx",
-    2
+    ".github/workflows/release-please.yml",
+    1
    ],
    [
-    "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    2
+    ".github/workflows/migrations-drift.yml",
+    1
    ],
    [
-    "src/components/race/admin/RaceAuditFeed.tsx",
-    2
+    "supabase/functions/cron-failure-alerter/index.test.ts",
+    1
    ],
    [
-    "src/components/race/admin/SeasonsManagerTable.tsx",
-    2
+    "scripts/check-migrations.mjs",
+    1
    ],
    [
-    "src/components/sales/cadence/RuleAuditLogs.tsx",
-    2
+    ".github/workflows/README.md",
+    1
    ]
   ]
  }

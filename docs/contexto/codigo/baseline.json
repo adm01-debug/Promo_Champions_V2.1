@@ -2,138 +2,138 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "aba5965f5e64ef48c856e383bee4d9ab288ced4d",
+  "commit": "aeb70d7271001e6e5c2ae03b17b1cbe41e82cdf2",
   "branch": "main",
-  "data_commit": "2026-11-05T22:44:47-03:00",
+  "data_commit": "2026-11-05T23:13:38-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
    {
-    "sha": "aba5965f",
+    "sha": "aeb70d7",
+    "data": "2026-11-05",
+    "assunto": "fix: release-please com continue-on-error para não reprovar status da main"
+   },
+   {
+    "sha": "aba5965",
     "data": "2026-11-05",
     "assunto": "fix: corrige 3 workflows autônomos com falha repetida (#363)"
    },
    {
-    "sha": "b5797bd8",
+    "sha": "b5797bd",
     "data": "2026-11-05",
     "assunto": "chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)"
    },
    {
-    "sha": "5abf2731",
+    "sha": "5abf273",
     "data": "2026-11-05",
     "assunto": "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)"
    },
    {
-    "sha": "42b62f1e",
+    "sha": "42b62f1",
     "data": "2026-11-05",
     "assunto": "chore(deps-dev): bump eslint 9.39→10.14 (#359)"
    },
    {
-    "sha": "04e498f6",
+    "sha": "04e498f",
     "data": "2026-11-05",
     "assunto": "chore(deps-dev): bump @sentry/vite-plugin 5.4→11.10 (#357)"
    },
    {
-    "sha": "e3f77904",
+    "sha": "e3f7790",
     "data": "2026-11-05",
     "assunto": "chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)"
    },
    {
-    "sha": "fdb81b3b",
+    "sha": "fdb81b3",
     "data": "2026-11-05",
     "assunto": "chore(deps): bump react-window 2.3.3→2.5.3 (#355)"
    },
    {
-    "sha": "eddf062e",
+    "sha": "eddf062",
     "data": "2026-11-05",
     "assunto": "chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)"
    },
    {
-    "sha": "ef807405",
+    "sha": "ef80740",
     "data": "2026-11-04",
     "assunto": "feat: automações de contexto, inventário e types-sync para agentes de IA (#362)"
    },
    {
-    "sha": "71674e92",
+    "sha": "71674e9",
     "data": "2026-11-02",
     "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)"
    },
    {
-    "sha": "c9f14489",
+    "sha": "c9f1448",
     "data": "2026-11-02",
     "assunto": "chore(deps): bump astral-sh/setup-uv (#354)"
    },
    {
-    "sha": "3f259403",
+    "sha": "3f25940",
     "data": "2026-10-31",
     "assunto": "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline"
    },
    {
-    "sha": "cae024b8",
+    "sha": "cae024b",
     "data": "2026-10-31",
     "assunto": "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs"
    },
    {
-    "sha": "c7585895",
+    "sha": "c758589",
     "data": "2026-10-31",
     "assunto": "docs: auditorias-anteriores — reconciliação com main (SHA c23e4e8b)"
    },
    {
-    "sha": "7e7ca434",
+    "sha": "7e7ca43",
     "data": "2026-10-31",
     "assunto": "docs(auditoria): FASE4_PROGRESSO e RELATORIO_FINAL — Fases 4-5 (#350)"
    },
    {
-    "sha": "ccc8003a",
+    "sha": "ccc8003",
     "data": "2026-10-31",
     "assunto": "docs: adiciona reconciliação de auditorias e planos anteriores (#349)"
    },
    {
-    "sha": "f73ec537",
+    "sha": "f73ec53",
     "data": "2026-10-31",
     "assunto": "chore: FASE4_PROGRESSO.md — evidências dos 10 CRÍTICOs auditados (#346)"
    },
    {
-    "sha": "c23e4e8b",
+    "sha": "c23e4e8",
     "data": "2026-10-31",
     "assunto": "chore(deps): lote de 8 PRs do dependabot + deno.lock regenerado (#344)"
    },
    {
-    "sha": "50386b06",
+    "sha": "50386b0",
     "data": "2026-10-29",
     "assunto": "chore(deps): bump astral-sh/setup-uv (#326)"
    },
    {
-    "sha": "313127fa",
+    "sha": "313127f",
     "data": "2026-10-28",
     "assunto": "chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)"
    },
    {
-    "sha": "4b7905f9",
+    "sha": "4b7905f",
     "data": "2026-10-27",
     "assunto": "fix(db): corrigir achados R3 da canonização de sales.status (#341)"
    },
    {
-    "sha": "2d9f9384",
+    "sha": "2d9f938",
     "data": "2026-10-27",
     "assunto": "fix(crm): remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) (#343)"
    },
    {
-    "sha": "8d6274f4",
+    "sha": "8d6274f",
     "data": "2026-10-27",
     "assunto": "fix(db): remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse"
    },
    {
-    "sha": "839645f2",
+    "sha": "839645f",
     "data": "2026-10-27",
     "assunto": "fix(db): trava escrita direta em agent_runs/actions e idempotencia da retomada (#340)"
-   },
-   {
-    "sha": "2aa90b96",
-    "data": "2026-10-27",
-    "assunto": "fix: r3 — briefing jsonb coagido na borda, realtime sem remount morto, alerta de deploy por tag (#339)"
    }
   ],
-  "arquivos_mudados_7d": 66,
+  "arquivos_mudados_7d": 67,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 34
+    "commits": 35
    },
    {
     "autor": "dependabot[bot]",
