@@ -76,7 +76,7 @@
     "npm:dependency-cruiser@^18.7.0": "18.7.0",
     "npm:embla-carousel-react@8": "8.6.0_react@18.3.1",
     "npm:eslint-plugin-react-hooks@^5.2.0": "5.2.0_eslint@9.39.5",
-    "npm:eslint-plugin-react-refresh@~0.4.26": "0.4.26_eslint@10.14.0",
+    "npm:eslint-plugin-react-refresh@~0.5.7": "0.5.7_eslint@10.14.0",
     "npm:eslint-plugin-unused-imports@^4.4.1": "4.4.1_eslint@10.14.0",
     "npm:eslint@^10.14.0": "10.14.0",
     "npm:exceljs@^4.4.0": "4.4.0",
@@ -3595,7 +3595,7 @@
         "@types/node"
       ]
     },
-    "@typescript-eslint/eslint-plugin@8.72.1_@typescript-eslint+parser@8.72.1__eslint@10.14.0__typescript@5.9.3_eslint@10.14.0_typescript@5.9.3": {
+    "@typescript-eslint/eslint-plugin@8.72.1_@typescript-eslint+parser@8.72.1_eslint@10.14.0_typescript@5.9.3": {
       "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
       "dependencies": [
         "@eslint-community/regexpp",
@@ -4388,7 +4388,7 @@
     "core-util-is@1.0.3": {
       "integrity": "sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ=="
     },
-    "cosmiconfig-typescript-loader@6.3.0_cosmiconfig@9.0.2__typescript@5.9.3_typescript@5.9.3": {
+    "cosmiconfig-typescript-loader@6.3.0_cosmiconfig@9.0.2_typescript@5.9.3": {
       "integrity": "sha512-Akr82WH1Wfqatyiqpj8HDkO2o2KmJRu1FhKfSNJP3K4IdXwHfEyL7MOb62i1AGQVLtIQM+iCE9CGOtrfhR+mmA==",
       "dependencies": [
         "cosmiconfig",
@@ -4982,8 +4982,8 @@
         "eslint@9.39.5"
       ]
     },
-    "eslint-plugin-react-refresh@0.4.26_eslint@10.14.0": {
-      "integrity": "sha512-1RETEylht2O6FM/MvgnyvT+8K21wLqDNg4qD51Zj3guhjt433XbnnkVttHMyaVyAFD03QSV4LPS5iE3VQmO7XQ==",
+    "eslint-plugin-react-refresh@0.5.7_eslint@10.14.0": {
+      "integrity": "sha512-XhJSzLljuYD4UjNuFGJu2v7aD3sqNVK12w5/DCUfrNfHWegZo2+TsavNx8MuxMwEquuFAzNbNfXKU0WoZ+YUIg==",
       "dependencies": [
         "eslint@10.14.0"
       ]
@@ -9233,7 +9233,7 @@
         "npm:dependency-cruiser@^18.7.0",
         "npm:embla-carousel-react@8",
         "npm:eslint-plugin-react-hooks@^5.2.0",
-        "npm:eslint-plugin-react-refresh@~0.4.26",
+        "npm:eslint-plugin-react-refresh@~0.5.7",
         "npm:eslint-plugin-unused-imports@^4.4.1",
         "npm:eslint@^10.14.0",
         "npm:exceljs@^4.4.0",
