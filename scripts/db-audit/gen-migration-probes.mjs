@@ -7,6 +7,9 @@
 // não prova que a migration foi registrada, e vice-versa.
 // Cobre: function, table, view, matview, trigger, cron, policy, index,
 // constraint, column, extension, type.
+// Objetos criados e depois dropados em migration posterior são suprimidos
+// (net-state, evita falso positivo garantido); policies com FOR <cmd>
+// também filtram o cmd em pg_policies.
 //
 // Uso: node scripts/db-audit/gen-migration-probes.mjs [since_version]
 // Saída: SQL em stdout — alimentar em psql -At (pipe-separated).
@@ -41,7 +44,7 @@ const PATTERNS = [
   // tabelas diferentes, então sondar só o nome produziria falso-positivo.
   ['trigger',  new RegExp(String.raw`create\s+(?:or\s+replace\s+)?(?:constraint\s+)?trigger\s+(${ID})[^;]*?\bon\s+${SCH}(${ID})`, 'gi'), 'trg'],
   ['cron',     /cron\.schedule\s*\(\s*'([^']+)'/gi, 'cron'],
-  ['policy',   new RegExp(String.raw`create\s+policy\s+(${ID})\s+on\s+${SCH}(${ID})`, 'gi'), 'pol'],
+  ['policy',   new RegExp(String.raw`create\s+policy\s+(${ID})\s+on\s+${SCH}(${ID})(?:\s+as\s+(?:restrictive|permissive))?(?:\s+for\s+(all|select|insert|update|delete))?`, 'gi'), 'pol'],
   // Índice: captura a tabela do ON para a probe casar schemaname+tablename
   // (índices de mesmo nome em tabelas/schemas diferentes não colidem).
   ['index',    new RegExp(String.raw`create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(${ID})[^;]*?\bon\s+(?:only\s+)?(?:(${ID})\.)?(${ID})`, 'gi'), 'idx'],
@@ -55,6 +58,26 @@ const PATTERNS = [
   ['column',   new RegExp(String.raw`,\s*add\s+column\s+(?:if\s+not\s+exists\s+)?(${ID})`, 'gi'), 'col'],
   ['extension', /create\s+extension\s+(?:if\s+not\s+exists\s+)?"([^"]+)"|create\s+extension\s+(?:if\s+not\s+exists\s+)?([a-zA-Z_][a-zA-Z0-9_]*)/gi, 'ext'],
   ['type',     new RegExp(String.raw`create\s+type\s+${SCH}(${ID})\s+as`, 'gi'), 'type'],
+];
+
+// Drops de objetos — usados para suprimir probes de objetos criados num
+// arquivo e dropados neste ou em outro posterior (net-state). Labels =
+// mesmos kinds de probe. Formas encadeadas de constraint/column espelham
+// os patterns de ADD (a tabela vem do ALTER TABLE que envolve).
+const DROP_PATTERNS = [
+  ['table',    new RegExp(String.raw`drop\s+table\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
+  ['view',     new RegExp(String.raw`drop\s+view\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
+  ['matview',  new RegExp(String.raw`drop\s+materialized\s+view\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
+  ['function', new RegExp(String.raw`drop\s+function\s+(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
+  ['trigger',  new RegExp(String.raw`drop\s+trigger\s+(?:if\s+exists\s+)?(${ID})\s+on\s+${SCH}(${ID})`, 'gi')],
+  ['policy',   new RegExp(String.raw`drop\s+policy\s+(?:if\s+exists\s+)?(${ID})\s+on\s+${SCH}(${ID})`, 'gi')],
+  ['index',    new RegExp(String.raw`drop\s+index\s+(?:concurrently\s+)?(?:if\s+exists\s+)?${SCH}(${ID})`, 'gi')],
+  ['constraint', new RegExp(String.raw`${ALTER_TBL_HEAD}${SCH}(${ID})\s+drop\s+constraint\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
+  ['constraint', new RegExp(String.raw`,\s*drop\s+constraint\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
+  ['column',   new RegExp(String.raw`${ALTER_TBL_HEAD}${SCH}(${ID})\s+drop\s+column\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
+  ['column',   new RegExp(String.raw`,\s*drop\s+column\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
+  ['extension', new RegExp(String.raw`drop\s+extension\s+(?:if\s+exists\s+)?(${ID})`, 'gi')],
+  ['cron',     /cron\.unschedule\s*\(\s*'([^']+)'/gi],
 ];
 
 // Desfaz aspas de borda e o escape "" → " dentro de identificadores
@@ -124,7 +147,8 @@ export const collectProbes = (rawSql, version, file = '') => {
       const groups = m.slice(1).map(strip);
       let schema, obj, extra;
       if (kind === 'policy') {
-        obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
+        obj = groups[0]; schema = groups[1] ?? 'public';
+        extra = groups[3] ? `${groups[3].toLowerCase()}|${groups[2]}` : groups[2];
       } else if (kind === 'constraint' || kind === 'column') {
         // Dois shapes: ALTER TABLE t ADD X → (schema, tabela, obj) e
         // ", ADD X" → (obj) — a tabela vem do ALTER TABLE que envolve.
@@ -160,6 +184,82 @@ export const collectProbes = (rawSql, version, file = '') => {
   return rows;
 };
 
+// Extrai os drops de um SQL de migration com a mesma lógica de shape de
+// collectProbes (schema/extra por kind; policy/trigger → extra=tabela;
+// constraint/column → tabela do ALTER que envolve; index/function → sem
+// aux). Exportado para o teste de regressão.
+export const collectDrops = (rawSql, version, file = '') => {
+  const sql = stripComments(rawSql);
+  const rows = [];
+  const seen = new Set();
+  for (const [kind, re] of DROP_PATTERNS) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(sql))) {
+      const groups = m.slice(1).map(strip);
+      let schema, obj, extra;
+      if (kind === 'trigger' || kind === 'policy') {
+        obj = groups[0]; schema = groups[1] ?? 'public'; extra = groups[2];
+      } else if (kind === 'constraint' || kind === 'column') {
+        if (groups[2] !== undefined) {
+          schema = groups[0] ?? 'public'; extra = groups[1]; obj = groups[2];
+        } else {
+          const enc = enclosingAlterTable(sql, m.index);
+          schema = enc?.schema ?? 'public'; extra = enc?.table ?? ''; obj = groups[0];
+        }
+      } else if (kind === 'extension') {
+        schema = ''; obj = groups[0] ?? groups[1];
+      } else if (kind === 'cron') {
+        schema = ''; obj = groups[0];
+      } else {
+        schema = groups[0] ?? 'public'; obj = groups[1];
+      }
+      if (!obj) continue;
+      const key = `${version}|${kind}|${schema}|${obj}|${extra ?? ''}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      rows.push({ version, kind, schema, obj, extra, file });
+    }
+  }
+  return rows;
+};
+
+// Chave estável para casar create com drop: policy/trigger/constraint/
+// column levam a tabela (aux) — para policy o cmd é desconsiderado (uma
+// policy recriada com outro FOR não conta como drop do mesmo objeto).
+export const suppressKey = (row) => {
+  const aux = row.extra ?? '';
+  if (row.kind === 'constraint' || row.kind === 'column' || row.kind === 'trigger') {
+    return `${row.kind}|${row.schema}|${row.obj}|${aux}`;
+  }
+  if (row.kind === 'policy') {
+    const table = aux.includes('|') ? aux.split('|')[1] ?? '' : aux;
+    return `${row.kind}|${row.schema}|${row.obj}|${table}`;
+  }
+  return `${row.kind}|${row.schema}|${row.obj}`;
+};
+
+// Supressão por net-state: percorre os arquivos em ordem crescente de
+// version; na passada reversa mantém o set de drops vistos depois. Para
+// cada arquivo, primeiro registra os drops do próprio arquivo e depois
+// filtra os creates que serão dropados daqui em diante. Create-then-drop
+// (mesmo arquivo ou posterior) é suprimido; drop-then-recreate em arquivo
+// posterior sobrevive (recreate).
+export const suppressDropped = (fileSets) => {
+  const sorted = [...fileSets]
+    .sort((a, b) => (a.version < b.version ? -1 : a.version > b.version ? 1 : 0))
+    .map((fs) => ({ ...fs, creates: fs.creates ?? [], drops: fs.drops ?? [] }));
+  const droppedLater = new Set();
+  const keeps = [];
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    const fs = sorted[i];
+    for (const d of fs.drops) droppedLater.add(suppressKey(d));
+    const kept = fs.creates.filter((c) => !droppedLater.has(suppressKey(c)));
+    keeps.unshift(...kept);
+  }
+  return keeps;
+};
+
 const lit = (s) => `'${String(s).replaceAll("'", "''")}'`;
 
 const main = () => {
@@ -168,24 +268,32 @@ const main = () => {
     .filter((f) => /^\d{8,14}_.*\.sql$/.test(f) && f.split('_')[0] >= since)
     .sort();
 
-  const rows = [];
-  const unprobeable = [];
+  const fileSets = [];
   for (const f of files) {
     const version = f.split('_')[0];
-    const fileRows = collectProbes(
-      readFileSync(join(MIG_DIR, f), 'utf8'),
+    const rawSql = readFileSync(join(MIG_DIR, f), 'utf8');
+    fileSets.push({
+      file: f,
       version,
-      f,
-    );
-    rows.push(...fileRows);
-    if (!fileRows.length) unprobeable.push(f);
+      creates: collectProbes(rawSql, version, f),
+      drops: collectDrops(rawSql, version, f),
+    });
   }
+  const rows = suppressDropped(fileSets);
+
+  // Arquivos sem objeto sondável que sobreviveu (a supressão pode ter
+  // eliminado todas as probes do arquivo — vira alvo de revisão manual).
+  const perFileKeeps = new Map();
+  for (const r of rows) {
+    perFileKeeps.set(r.file, [...(perFileKeeps.get(r.file) ?? []), r]);
+  }
+  const unprobeable = files.filter((f) => !(perFileKeeps.get(f)?.length));
 
   const values = rows
     .map((r) => `  (${lit(r.version)}, ${lit(r.kind)}, ${lit(r.schema)}, ${lit(r.obj)}, ${lit(r.extra ?? '')})`)
     .join(',\n');
 
-const renderSql = (values) => `\\pset footer off
+const renderSql = (values) => `\pset footer off
 -- cron.job só existe com pg_cron instalado — referência estática a ela
 -- quebra o parse do SELECT inteiro (CASE não ajuda, o parser resolve a
 -- relação em todos os ramos). pg_temp + EXECUTE dinâmico avalia em runtime.
@@ -214,7 +322,7 @@ SELECT version || '|' || kind || '|' ||
          WHEN 'matview'    THEN EXISTS(SELECT 1 FROM pg_matviews WHERE schemaname=probes.schema AND matviewname=probes.obj)::text
          WHEN 'trigger'    THEN EXISTS(SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE t.tgname=probes.obj AND c.relname=probes.aux AND n.nspname=probes.schema AND NOT t.tgisinternal)::text
          WHEN 'cron'       THEN pg_temp.probe_cron(probes.obj)
-         WHEN 'policy'     THEN EXISTS(SELECT 1 FROM pg_policies WHERE schemaname=probes.schema AND policyname=probes.obj AND tablename=probes.aux)::text
+         WHEN 'policy'     THEN EXISTS(SELECT 1 FROM pg_policies WHERE schemaname=probes.schema AND policyname=probes.obj AND (probes.aux NOT LIKE '%|%' OR cmd=upper(split_part(probes.aux,'|',1))) AND tablename=coalesce(nullif(split_part(probes.aux,'|',2),''),probes.aux))::text
          WHEN 'index'      THEN EXISTS(SELECT 1 FROM pg_indexes WHERE indexname=probes.obj AND schemaname=probes.schema AND tablename=probes.aux)::text
          WHEN 'constraint' THEN EXISTS(SELECT 1 FROM pg_constraint c JOIN pg_class r ON r.oid=c.conrelid JOIN pg_namespace n ON n.oid=r.relnamespace WHERE c.conname=probes.obj AND (probes.aux='' OR (r.relname=probes.aux AND n.nspname=probes.schema)))::text
          WHEN 'column'     THEN EXISTS(SELECT 1 FROM information_schema.columns WHERE (probes.aux='' OR (table_schema=probes.schema AND table_name=probes.aux)) AND column_name=probes.obj)::text

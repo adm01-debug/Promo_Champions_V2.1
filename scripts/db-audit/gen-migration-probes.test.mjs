@@ -1,7 +1,7 @@
 // Testes de regressão do gerador de probes: node --test scripts/db-audit/gen-migration-probes.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { collectProbes } from './gen-migration-probes.mjs';
+import { collectProbes, collectDrops, suppressKey, suppressDropped } from './gen-migration-probes.mjs';
 
 const V = '20261019000000';
 
@@ -86,4 +86,53 @@ test('comentários não geram probes falsas', () => {
     CREATE TABLE real_t (id int);`;
   const tables = collectProbes(sql, V).filter((r) => r.kind === 'table');
   assert.deepEqual(tables.map((r) => r.obj), ['real_t']);
+});
+
+test('create-then-drop em arquivo posterior é suprimido (net-state)', () => {
+  const fileSets = [
+    {
+      file: '20261019000000_a.sql', version: '20261019000000',
+      creates: collectProbes('CREATE TABLE legacy_roles (id int);', '20261019000000', '20261019000000_a.sql'),
+      drops: [],
+    },
+    {
+      file: '20261020000000_b.sql', version: '20261020000000',
+      creates: [],
+      drops: collectDrops('DROP TABLE IF EXISTS legacy_roles;', '20261020000000', '20261020000000_b.sql'),
+    },
+  ];
+  const keeps = suppressDropped(fileSets);
+  assert.deepEqual(keeps.filter((r) => r.kind === 'table'), []);
+});
+
+test('drop em arquivo anterior + create posterior sobrevive (recreate)', () => {
+  const fileSets = [
+    {
+      file: '20261019000000_a.sql', version: '20261019000000',
+      creates: [],
+      drops: collectDrops('DROP TABLE IF EXISTS legacy_roles;', '20261019000000', '20261019000000_a.sql'),
+    },
+    {
+      file: '20261020000000_b.sql', version: '20261020000000',
+      creates: collectProbes('CREATE TABLE legacy_roles (id int);', '20261020000000', '20261020000000_b.sql'),
+      drops: [],
+    },
+  ];
+  const keeps = suppressDropped(fileSets);
+  assert.deepEqual(
+    keeps.filter((r) => r.kind === 'table').map((r) => [r.obj, r.schema]),
+    [['legacy_roles', 'public']],
+  );
+});
+
+test('policy com FOR SELECT e FOR ALL carrega o cmd no extra', () => {
+  const sel = collectProbes('CREATE POLICY p_sel ON t FOR SELECT USING (true);', V).find((r) => r.kind === 'policy');
+  assert.equal(sel.extra, 'select|t');
+  const all = collectProbes('CREATE POLICY p_all ON t FOR ALL USING (true);', V).find((r) => r.kind === 'policy');
+  assert.equal(all.extra, 'all|t');
+});
+
+test('policy sem FOR fica sem filtro de cmd (backcompat)', () => {
+  const pol = collectProbes('CREATE POLICY p_plain ON t USING (true);', V).find((r) => r.kind === 'policy');
+  assert.equal(pol.extra, 't');
 });
