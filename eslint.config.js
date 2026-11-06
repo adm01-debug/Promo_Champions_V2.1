@@ -2,6 +2,10 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import unusedImports from 'eslint-plugin-unused-imports';
 import tseslint from 'typescript-eslint';
+// typescript-eslint 8.x não suporta a API nativa do TypeScript 7.0.
+// TypeScript 7.0 fornece compatibilidade retroativa via 'typescript/ts6'.
+// Ref: https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0
+import ts from 'typescript/ts6';
 
 export default tseslint.config(
   {
@@ -26,6 +30,11 @@ export default tseslint.config(
   },
   {
     files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        typescriptModule: ts,
+      },
+    },
     extends: [
       ...tseslint.configs.recommended,
     ],
