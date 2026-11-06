@@ -145,19 +145,15 @@
    },
    {
     "pasta": "src/hooks/race",
-    "mudancas": 25
-   },
-   {
-    "pasta": "src/hooks/gamification",
-    "mudancas": 21
+    "mudancas": 24
    },
    {
     "pasta": "src/components/gamification",
     "mudancas": 20
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 19
+    "pasta": "src/hooks/gamification",
+    "mudancas": 20
    },
    {
     "pasta": "src/components/dashboard",
@@ -168,12 +164,12 @@
     "mudancas": 18
    },
    {
-    "pasta": "package.json",
-    "mudancas": 16
-   },
-   {
     "pasta": "src/hooks/deal-intelligence",
     "mudancas": 15
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 13
    },
    {
     "pasta": "src/hooks/conversational",
@@ -194,6 +190,10 @@
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 12
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 11
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 24
+    "commits": 18
    },
    {
     "autor": "Claude",
