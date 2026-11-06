@@ -162,12 +162,19 @@ if (baseRef) {
       }
 
       const content = readFileSync(target, 'utf8');
-      if (CREATE_TABLE.test(content) && !ENABLE_RLS.test(content)) {
+      // Strip comments before structural checks to avoid false positives from
+      // commented-out DDL (e.g. "-- CREATE TABLE example").
+      const strippedContent = stripComments(content);
+      if (CREATE_TABLE.test(strippedContent) && !ENABLE_RLS.test(strippedContent)) {
         fail(
           `${target}: CREATE TABLE sem 'ENABLE ROW LEVEL SECURITY' no mesmo arquivo`,
         );
       }
       for (const { pattern, label } of FORBIDDEN_LITERALS) {
+        // Reset lastIndex before each test(): RegExp objects with the g flag
+        // retain lastIndex state across calls, causing non-deterministic results
+        // when reused across multiple files.
+        pattern.lastIndex = 0;
         if (pattern.test(content)) {
           fail(`${target}: contém literal proibido (${label})`);
         }
