@@ -127,8 +127,9 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   }
   const recentes = [...versoesRepo].sort().reverse();
   const limite = recentes[Math.min(LEDGER_TOLERANCIA.versoesRecentes, recentes.length) - 1];
-  const difPct = Math.abs(registros - versoesRepo.length) * 100 / versoesRepo.length;
-  if (String(max) < limite || difPct > LEDGER_TOLERANCIA.registrosPct) {
+  const versoesMenoresOuIgual = versoesRepo.filter((v) => String(v) <= String(max)).length;
+  const contagens_ok = versoesMenoresOuIgual === 0 || registros >= versoesMenoresOuIgual * (1 - LEDGER_TOLERANCIA.registrosPct / 100);
+  if (String(max) < limite || !contagens_ok) {
     throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; `
       + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERANCIA.versoesRecentes}a mais recente e ${limite}. `
       + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
