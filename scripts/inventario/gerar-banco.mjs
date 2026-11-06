@@ -129,7 +129,14 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   const limite = recentes[Math.min(LEDGER_TOLERANCIA.versoesRecentes, recentes.length) - 1];
   if (String(max) < limite) {
     throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; `
-      + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERA8CIA.versoesRecentes}a mais recente e ${limite}. `
+      + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERANCIA.versoesRecentes}a mais recente e ${limite}. `
+      + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
+  }
+  const esperados = versoesRepo.length;
+  const minimo = Math.floor(esperados * (1 - LEDGER_TOLERANCIA.registrosPct / 100));
+  if (registros < minimo) {
+    throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros; `
+      + `o repo tem ${esperados} migrations, mas a contagem nao pode variar mais que ${LEDGER_TOLERANCIA.registrosPct}% (minimo ${minimo}). `
       + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
   }
   return { ...origem, ledger_registros: registros, migrations_no_repo: versoesRepo.length };
