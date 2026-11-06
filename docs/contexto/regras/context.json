@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "42b62f1e6fcc9e9ab1cbb9387ab2fc1f385803c7",
+  "sha": "b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 00:58 UTC",
+  "generated_at": "2026-11-06 01:08 UTC",
   "files_total": 3437,
   "code_files": 3126,
-  "code_lines": 449594
+  "code_lines": 449601
  },
  "version": "1.3.2",
- "facts_hash": "4887dad0283d2f8a",
+ "facts_hash": "600ed9310a06e199",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77363,7 +77363,7 @@
   {
    "module": "scripts",
    "files": 83,
-   "lines": 16813,
+   "lines": 16820,
    "tables": [
     "a",
     "achievements",
@@ -175538,7 +175538,7 @@
   },
   "scripts/check-migrations.mjs": {
    "path": "scripts/check-migrations.mjs",
-   "lines": 201,
+   "lines": 208,
    "params": [
     {
      "name": "MIGRATIONS_DIR",
@@ -243807,10 +243807,29 @@
   }
  },
  "git": {
-  "sha": "42b62f1e6fcc9e9ab1cbb9387ab2fc1f385803c7",
+  "sha": "b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b5797bd",
+    "date": "2026-11-05",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "5abf273",
+    "date": "2026-11-05",
+    "author": "adm01-debug",
+    "subject": "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)",
+    "files": [
+     "scripts/check-migrations.mjs"
+    ]
+   },
    {
     "sha": "42b62f1",
     "date": "2026-11-05",
@@ -244267,40 +244286,6 @@
      "supabase/functions/next-best-action/index.ts",
      "supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql"
     ]
-   },
-   {
-    "sha": "d8fcd7b",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(gamification): endurecer RPCs de XP/corrida, sync de desafios e anonimizacao LGPD (#306)",
-    "files": [
-     "src/components/gamification/CelebrationTestButtons.tsx",
-     "src/hooks/admin/useDataSubjectRequests.ts",
-     "src/hooks/gamification/useDailyChallenges.ts",
-     "src/hooks/gamification/useDailyMissions.ts",
-     "src/hooks/gamification/useSalespersonXP.ts",
-     "src/hooks/gamification/useWeeklyChallenges.ts",
-     "src/hooks/sales/useSalesRealtime.ts",
-     "src/hooks/salesRealtimeUtils.ts",
-     "supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql"
-    ]
-   },
-   {
-    "sha": "e461580",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(config): CI Failure Alert só dispara em conclusões na main + RELATORIO_CI/PENDENCIAS (#336)",
-    "files": [
-     ".github/workflows/ci-failure-alert.yml",
-     ".github/workflows/codeql.yml",
-     "PENDENCIAS.md",
-     "RELATORIO_CI.md",
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "scripts/graphify/extract-code-only.mjs",
-     "scripts/graphify/extract-code-only.test.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -244311,10 +244296,6 @@
    [
     "package.json",
     8
-   ],
-   [
-    "RELATORIO_CI.md",
-    3
    ],
    [
     "CLAUDE.md",
@@ -244330,10 +244311,6 @@
    ],
    [
     "docs/auditoria/FASE4_PROGRESSO.md",
-    2
-   ],
-   [
-    "deno.lock",
     2
    ],
    [
@@ -244365,10 +244342,6 @@
     2
    ],
    [
-    ".github/workflows/ci-failure-alert.yml",
-    2
-   ],
-   [
     "src/components/admin/connections/DeadLetterIngestPanel.tsx",
     2
    ],
@@ -244382,6 +244355,18 @@
    ],
    [
     "src/components/race/admin/RaceAuditFeed.tsx",
+    2
+   ],
+   [
+    "src/components/race/admin/SeasonsManagerTable.tsx",
+    2
+   ],
+   [
+    "src/components/sales/cadence/RuleAuditLogs.tsx",
+    2
+   ],
+   [
+    "src/hooks/admin/useV4Callbacks.ts",
     2
    ]
   ]

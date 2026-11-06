@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "42b62f1e6fcc9e9ab1cbb9387ab2fc1f385803c7",
+  "commit": "b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e",
   "branch": "main",
-  "data_commit": "2026-11-05T21:52:35-03:00",
+  "data_commit": "2026-11-05T22:05:22-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b5797bd8",
+    "data": "2026-11-05",
+    "assunto": "chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)"
+   },
+   {
+    "sha": "5abf2731",
+    "data": "2026-11-05",
+    "assunto": "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)"
+   },
    {
     "sha": "42b62f1e",
     "data": "2026-11-05",
@@ -121,19 +131,9 @@
     "sha": "4ff1f648",
     "data": "2026-10-27",
     "assunto": "docs(config): rodada 2 do inventário de CI — 3 bloqueios externos confirmados, resto verde (#338)"
-   },
-   {
-    "sha": "1e3a191b",
-    "data": "2026-10-27",
-    "assunto": "fix(db): restringe RPCs de agent_runs, retoma aprovações e valida JWT/embed (#334)"
-   },
-   {
-    "sha": "afb1f35e",
-    "data": "2026-10-27",
-    "assunto": "fix(services): integrações — JID com device, reply de protocolo/reação e lease+paginação no bitrix24-sync (#333)"
    }
   ],
-  "arquivos_mudados_7d": 63,
+  "arquivos_mudados_7d": 64,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -156,6 +156,10 @@
     "mudancas": 20
    },
    {
+    "pasta": "package-lock.json",
+    "mudancas": 19
+   },
+   {
     "pasta": "src/components/dashboard",
     "mudancas": 19
    },
@@ -164,12 +168,8 @@
     "mudancas": 18
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 18
-   },
-   {
     "pasta": "package.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "pasta": "src/hooks/deal-intelligence",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 87
+    "mudancas": 88
    },
    {
     "arquivo": "package.json",
-    "mudancas": 87
+    "mudancas": 88
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -305,11 +305,11 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 32
+    "commits": 33
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 23
+    "commits": 24
    },
    {
     "autor": "Claude",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3422,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419653,
+  "linhas_codigo": 419660,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -404,7 +404,7 @@
   },
   "scripts/check-migrations.mjs": {
    "arquivos": 1,
-   "linhas": 201
+   "linhas": 208
   },
   "scripts/check-test-spec-patterns.ts": {
    "arquivos": 1,

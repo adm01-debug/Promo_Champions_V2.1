@@ -124,7 +124,7 @@
   {
    "arquivo": "scripts/check-migrations.mjs",
    "descricao": "Gate de higiene de migrations (pacote auditoria DB/integridade, 2026-10-01). Invariantes verificadas em TODO PR (scan do diretório):",
-   "linhas": 201,
+   "linhas": 208,
    "env": [],
    "npm_scripts": [
     "check:migrations"
