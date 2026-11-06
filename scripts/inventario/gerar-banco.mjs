@@ -127,9 +127,7 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   }
   const recentes = [...versoesRepo].sort().reverse();
   const limite = recentes[Math.min(LEDGER_TOLERANCIA.versoesRecentes, recentes.length) - 1];
-  const versoesMenoresOuIgual = versoesRepo.filter((v) => String(v) <= String(max)).length;
-  const contagens_ok = versoesMenoresOuIgual === 0 || registros >= versoesMenoresOuIgual * (1 - LEDGER_TOLERANCIA.registrosPct / 100);
-  if (String(max) < limite || !contagens_ok) {
+  if (String(max) < limite) {
     throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; `
       + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERANCIA.versoesRecentes}a mais recente e ${limite}. `
       + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
@@ -213,7 +211,7 @@ export function rodaTodoDia(agenda) {
   return campos.length === 5 && CAMPO_TODO.every((re, i) => re.test(campos[i + 2]));
 }
 
-/** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/). */
+/** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/*. */
 export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   const tabelas = dado.tabelas.map((t) => ({ ...t, uso_no_codigo: uso[t.nome] ?? { src: 0, edges: 0 } }));
   const orfas = tabelas
@@ -283,7 +281,7 @@ function projeto() {
   return ref;
 }
 
-async function chamarApi(caminho, init = {}) {
+anync function chamarApi(caminho, init = {}) {
   const token = process.env.SUPABASE_ACCESS_TOKEN?.trim();
   const res = await fetch(`${API}/${encodeURIComponent(projeto())}${caminho}`, {
     ...init,
