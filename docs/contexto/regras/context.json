@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "ef8074050be40b374e6bc628c978ad4b56d9edac",
+  "sha": "eddf062e0898c1d847a92944cf6ef4515e58d62c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 00:17 UTC",
+  "generated_at": "2026-11-06 00:53 UTC",
   "files_total": 3437,
   "code_files": 3126,
   "code_lines": 449594
@@ -243807,10 +243807,20 @@
   }
  },
  "git": {
-  "sha": "ef8074050be40b374e6bc628c978ad4b56d9edac",
+  "sha": "eddf062e0898c1d847a92944cf6ef4515e58d62c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "eddf062",
+    "date": "2026-11-05",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "ef80740",
     "date": "2026-11-04",
@@ -244287,34 +244297,20 @@
     "files": [
      "RELATORIO_CI.md"
     ]
-   },
-   {
-    "sha": "2dfddca",
-    "date": "2026-10-22",
-    "author": "adm01-debug",
-    "subject": "docs(config): §16-§17 RELATORIO_CI — Apply Migration run #25 success + tabela final (#323)",
-    "files": [
-     "PENDENCIAS.md",
-     "RELATORIO_CI.md"
-    ]
    }
   ],
   "hot_files": [
    [
-    "RELATORIO_CI.md",
-    6
+    "package-lock.json",
+    5
    ],
    [
-    "package-lock.json",
-    4
+    "RELATORIO_CI.md",
+    5
    ],
    [
     "package.json",
-    3
-   ],
-   [
-    "PENDENCIAS.md",
-    3
+    4
    ],
    [
     "CLAUDE.md",
@@ -244378,6 +244374,10 @@
    ],
    [
     "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    2
+   ],
+   [
+    "src/components/race/admin/RaceAuditFeed.tsx",
     2
    ]
   ]

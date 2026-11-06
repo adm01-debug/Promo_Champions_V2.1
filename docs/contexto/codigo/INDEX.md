@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ef8074050be40b374e6bc628c978ad4b56d9edac` (2026-11-04T20:31:00-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `eddf062e0898c1d847a92944cf6ef4515e58d62c` (2026-11-05T21:52:21-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -574,14 +574,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15922 nós · 58894 arestas · 604 comunidades · grafo do commit `ef807405`
+- 15922 nós · 58894 arestas · 604 comunidades · grafo do commit `eddf062e`
 - comunidades maiores: cn (360), Índice (341), Badge (325), Card (312), Button (284), SelectContent (256), DialogContent (253), withRequestId (245), client.ts (221), lazyPages.ts (185), formatBRL (181), TooltipContent (148)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (82)
-- package.json (82)
+- package-lock.json (83)
+- package.json (83)
 - .github/workflows/pr-checks.yml (32)
 - deno.lock (20)
 - .github/workflows/quote-to-sale-e2e.yml (18)
@@ -736,6 +736,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ## Últimos commits
+- 2026-11-05 `eddf062e` chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)
 - 2026-11-04 `ef807405` feat: automações de contexto, inventário e types-sync para agentes de IA (#362)
 - 2026-11-02 `71674e92` chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)
 - 2026-11-02 `c9f14489` chore(deps): bump astral-sh/setup-uv (#354)
@@ -750,7 +751,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-10-28 `313127fa` chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)
 - 2026-10-27 `4b7905f9` fix(db): corrigir achados R3 da canonização de sales.status (#341)
 - 2026-10-27 `2d9f9384` fix(crm): remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) (#343)
-- 2026-10-27 `8d6274f4` fix(db): remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)",
    "feat: automações de contexto, inventário e types-sync para agentes de IA (#362)",
    "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)",
    "chore(deps): bump astral-sh/setup-uv (#354)",
-   "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline",
-   "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs"
+   "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

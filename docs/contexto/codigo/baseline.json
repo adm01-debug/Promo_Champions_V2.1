@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ef8074050be40b374e6bc628c978ad4b56d9edac",
+  "commit": "eddf062e0898c1d847a92944cf6ef4515e58d62c",
   "branch": "main",
-  "data_commit": "2026-11-04T20:31:00-03:00",
+  "data_commit": "2026-11-05T21:52:21-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "eddf062e",
+    "data": "2026-11-05",
+    "assunto": "chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)"
+   },
    {
     "sha": "ef807405",
     "data": "2026-11-04",
@@ -126,11 +131,6 @@
     "sha": "d8fcd7bd",
     "data": "2026-10-27",
     "assunto": "fix(gamification): endurecer RPCs de XP/corrida, sync de desafios e anonimizacao LGPD (#306)"
-   },
-   {
-    "sha": "e4615800",
-    "data": "2026-10-27",
-    "assunto": "fix(config): CI Failure Alert só dispara em conclusões na main + RELATORIO_CI/PENDENCIAS (#336)"
    }
   ],
   "arquivos_mudados_7d": 63,
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "pasta": "src/hooks/conversational",
@@ -177,6 +177,10 @@
    },
    {
     "pasta": "PENDENCIAS.md",
+    "mudancas": 12
+   },
+   {
+    "pasta": "package.json",
     "mudancas": 12
    },
    {
@@ -190,20 +194,16 @@
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 12
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 11
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 82
+    "mudancas": 83
    },
    {
     "arquivo": "package.json",
-    "mudancas": 82
+    "mudancas": 83
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 18
+    "commits": 19
    },
    {
     "autor": "Claude",
