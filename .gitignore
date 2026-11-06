@@ -77,3 +77,5 @@ inventario/estado/tabelas-uso.json
 
 # bytecode Python dos geradores de contexto
 __pycache__/
+
+# ci-trigger-placeholder
