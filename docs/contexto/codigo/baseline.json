@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e",
+  "commit": "aba5965f5e64ef48c856e383bee4d9ab288ced4d",
   "branch": "main",
-  "data_commit": "2026-11-05T22:05:22-03:00",
+  "data_commit": "2026-11-05T22:44:47-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "aba5965f",
+    "data": "2026-11-05",
+    "assunto": "fix: corrige 3 workflows autônomos com falha repetida (#363)"
+   },
    {
     "sha": "b5797bd8",
     "data": "2026-11-05",
@@ -126,14 +131,9 @@
     "sha": "2aa90b96",
     "data": "2026-10-27",
     "assunto": "fix: r3 — briefing jsonb coagido na borda, realtime sem remount morto, alerta de deploy por tag (#339)"
-   },
-   {
-    "sha": "4ff1f648",
-    "data": "2026-10-27",
-    "assunto": "docs(config): rodada 2 do inventário de CI — 3 bloqueios externos confirmados, resto verde (#338)"
    }
   ],
-  "arquivos_mudados_7d": 64,
+  "arquivos_mudados_7d": 66,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -148,16 +148,16 @@
     "mudancas": 24
    },
    {
+    "pasta": "package-lock.json",
+    "mudancas": 20
+   },
+   {
     "pasta": "src/components/gamification",
     "mudancas": 20
    },
    {
     "pasta": "src/hooks/gamification",
     "mudancas": 20
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 19
    },
    {
     "pasta": "src/components/dashboard",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "pasta": "src/hooks/deal-intelligence",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 88
+    "mudancas": 89
    },
    {
     "arquivo": "package.json",
-    "mudancas": 88
+    "mudancas": 89
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 33
+    "commits": 34
    },
    {
     "autor": "dependabot[bot]",
@@ -320,7 +320,7 @@
  "contagens": {
   "arquivos_total": 3422,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419660,
+  "linhas_codigo": 419669,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -472,7 +472,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 832
+   "linhas": 833
   },
   "scripts/lib": {
    "arquivos": 1,
@@ -628,7 +628,7 @@
   },
   "supabase/functions": {
    "arquivos": 314,
-   "linhas": 65490
+   "linhas": 65498
   },
   "tailwind.config.ts": {
    "arquivos": 1,

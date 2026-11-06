@@ -880,7 +880,7 @@
   {
    "arquivo": "supabase/functions/cron-failure-alerter/index.test.ts",
    "tipo": "unit",
-   "linhas": 338,
+   "linhas": 346,
    "testa": [],
    "casos": 16
   },

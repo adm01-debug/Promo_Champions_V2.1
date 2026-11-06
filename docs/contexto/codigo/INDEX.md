@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e` (2026-11-05T22:05:22-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `aba5965f5e64ef48c856e383bee4d9ab288ced4d` (2026-11-05T22:44:47-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3422 |
 | arquivos_codigo | 2449 |
-| linhas_codigo | 419660 |
+| linhas_codigo | 419669 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,16 +574,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15922 nós · 58894 arestas · 604 comunidades · grafo do commit `b5797bd8`
+- 15922 nós · 58894 arestas · 604 comunidades · grafo do commit `aba5965f`
 - comunidades maiores: cn (360), Índice (341), Badge (325), Card (312), Button (284), SelectContent (256), DialogContent (253), withRequestId (245), client.ts (221), lazyPages.ts (185), formatBRL (181), TooltipContent (148)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (88)
-- package.json (88)
+- package-lock.json (89)
+- package.json (89)
 - .github/workflows/pr-checks.yml (32)
-- deno.lock (20)
+- deno.lock (21)
 - .github/workflows/quote-to-sale-e2e.yml (18)
 - RELATORIO_CI.md (18)
 - .github/workflows/codeql.yml (13)
@@ -736,6 +736,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ## Últimos commits
+- 2026-11-05 `aba5965f` fix: corrige 3 workflows autônomos com falha repetida (#363)
 - 2026-11-05 `b5797bd8` chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)
 - 2026-11-05 `5abf2731` fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)
 - 2026-11-05 `42b62f1e` chore(deps-dev): bump eslint 9.39→10.14 (#359)
@@ -750,7 +751,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-10-31 `cae024b8` docs: analise-prs — 7 artefatos de inventário e dossiers de PRs
 - 2026-10-31 `c7585895` docs: auditorias-anteriores — reconciliação com main (SHA c23e4e8b)
 - 2026-10-31 `7e7ca434` docs(auditoria): FASE4_PROGRESSO e RELATORIO_FINAL — Fases 4-5 (#350)
-- 2026-10-31 `ccc8003a` docs: adiciona reconciliação de auditorias e planos anteriores (#349)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

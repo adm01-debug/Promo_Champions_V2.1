@@ -438,7 +438,7 @@
   {
    "arquivo": "scripts/inventario/gerar-banco.mjs",
    "descricao": "* Inventario do banco oficial -> inventario/estado/banco.json (fonte de consulta dos agentes).",
-   "linhas": 340,
+   "linhas": 341,
    "env": [
     "INVENTARIO_PERMITIR_OUTRO_PROJETO",
     "SUPABASE_ACCESS_TOKEN",

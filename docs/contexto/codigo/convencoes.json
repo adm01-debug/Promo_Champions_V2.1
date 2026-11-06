@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige 3 workflows autônomos com falha repetida (#363)",
    "chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)",
    "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)",
    "chore(deps-dev): bump eslint 9.39→10.14 (#359)",
-   "chore(deps-dev): bump @sentry/vite-plugin 5.4→11.10 (#357)",
-   "chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)"
+   "chore(deps-dev): bump @sentry/vite-plugin 5.4→11.10 (#357)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e",
+  "sha": "aba5965f5e64ef48c856e383bee4d9ab288ced4d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 01:08 UTC",
+  "generated_at": "2026-11-06 01:45 UTC",
   "files_total": 3437,
   "code_files": 3126,
-  "code_lines": 449601
+  "code_lines": 449610
  },
  "version": "1.3.2",
- "facts_hash": "600ed9310a06e199",
+ "facts_hash": "6f83aca869696317",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77363,7 +77363,7 @@
   {
    "module": "scripts",
    "files": 83,
-   "lines": 16820,
+   "lines": 16821,
    "tables": [
     "a",
     "achievements",
@@ -78935,7 +78935,7 @@
   {
    "module": "supabase/functions",
    "files": 314,
-   "lines": 65490,
+   "lines": 65498,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -177470,7 +177470,7 @@
   },
   "scripts/inventario/gerar-banco.mjs": {
    "path": "scripts/inventario/gerar-banco.mjs",
-   "lines": 340,
+   "lines": 341,
    "exports": [
     "const PROJETO_OFICIAL",
     "const LIMIARES",
@@ -226300,7 +226300,7 @@
   },
   "supabase/functions/cron-failure-alerter/index.test.ts": {
    "path": "supabase/functions/cron-failure-alerter/index.test.ts",
-   "lines": 338,
+   "lines": 346,
    "is_test": true,
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -243807,10 +243807,24 @@
   }
  },
  "git": {
-  "sha": "b5797bd8b88f6ec10fd7a5a03a4a39aa5085f17e",
+  "sha": "aba5965f5e64ef48c856e383bee4d9ab288ced4d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "aba5965",
+    "date": "2026-11-05",
+    "author": "adm01-debug",
+    "subject": "fix: corrige 3 workflows autônomos com falha repetida (#363)",
+    "files": [
+     ".github/workflows/migrations-drift.yml",
+     "deno.lock",
+     "package-lock.json",
+     "package.json",
+     "scripts/inventario/gerar-banco.mjs",
+     "supabase/functions/cron-failure-alerter/index.test.ts"
+    ]
+   },
    {
     "sha": "b5797bd",
     "date": "2026-11-05",
@@ -244273,29 +244287,24 @@
      "src/pages/TeamActivityFeed.tsx",
      "supabase/functions/recompute-stage-baselines/index.ts"
     ]
-   },
-   {
-    "sha": "5d22ecd",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(db): canonizar vocabulário de sales.status em RPCs e edge functions (#335)",
-    "files": [
-     "scripts/db-audit/gen-migration-probes.mjs",
-     "scripts/db-audit/gen-migration-probes.test.mjs",
-     "supabase/functions/detect-coaching-opportunities/index.ts",
-     "supabase/functions/next-best-action/index.ts",
-     "supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    8
+    9
    ],
    [
     "package.json",
-    8
+    9
+   ],
+   [
+    "deno.lock",
+    2
+   ],
+   [
+    "scripts/inventario/gerar-banco.mjs",
+    2
    ],
    [
     "CLAUDE.md",
@@ -244315,10 +244324,6 @@
    ],
    [
     "src/hooks/useTeamActivityFeed.ts",
-    2
-   ],
-   [
-    "supabase/functions/next-best-action/index.ts",
     2
    ],
    [
@@ -244363,10 +244368,6 @@
    ],
    [
     "src/components/sales/cadence/RuleAuditLogs.tsx",
-    2
-   ],
-   [
-    "src/hooks/admin/useV4Callbacks.ts",
     2
    ]
   ]
