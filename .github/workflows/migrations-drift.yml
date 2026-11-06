@@ -60,7 +60,7 @@ jobs:
 
           # Colunas: Local | Remote | Time (UTC). Só a coluna Remote importa:
           # o lado local é derivado dos arquivos do repo (abaixo).
-          supabase migration list > /tmp/migration_list.txt
+          supabase migration list --remote > /tmp/migration_list.txt
           cat /tmp/migration_list.txt
 
           # A posição da coluna Remote é detectada pelo cabeçalho — se o CLI
