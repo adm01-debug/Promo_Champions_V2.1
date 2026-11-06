@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `eddf062e0898c1d847a92944cf6ef4515e58d62c` (2026-11-05T21:52:21-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `42b62f1e6fcc9e9ab1cbb9387ab2fc1f385803c7` (2026-11-05T21:52:35-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -574,14 +574,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15922 nós · 58894 arestas · 604 comunidades · grafo do commit `eddf062e`
+- 15922 nós · 58894 arestas · 604 comunidades · grafo do commit `42b62f1e`
 - comunidades maiores: cn (360), Índice (341), Badge (325), Card (312), Button (284), SelectContent (256), DialogContent (253), withRequestId (245), client.ts (221), lazyPages.ts (185), formatBRL (181), TooltipContent (148)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package-lock.json (83)
-- package.json (83)
+- package-lock.json (87)
+- package.json (87)
 - .github/workflows/pr-checks.yml (32)
 - deno.lock (20)
 - .github/workflows/quote-to-sale-e2e.yml (18)
@@ -736,6 +736,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ## Últimos commits
+- 2026-11-05 `42b62f1e` chore(deps-dev): bump eslint 9.39→10.14 (#359)
+- 2026-11-05 `04e498f6` chore(deps-dev): bump @sentry/vite-plugin 5.4→11.10 (#357)
+- 2026-11-05 `e3f77904` chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)
+- 2026-11-05 `fdb81b3b` chore(deps): bump react-window 2.3.3→2.5.3 (#355)
 - 2026-11-05 `eddf062e` chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)
 - 2026-11-04 `ef807405` feat: automações de contexto, inventário e types-sync para agentes de IA (#362)
 - 2026-11-02 `71674e92` chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)
@@ -747,10 +751,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-10-31 `ccc8003a` docs: adiciona reconciliação de auditorias e planos anteriores (#349)
 - 2026-10-31 `f73ec537` chore: FASE4_PROGRESSO.md — evidências dos 10 CRÍTICOs auditados (#346)
 - 2026-10-31 `c23e4e8b` chore(deps): lote de 8 PRs do dependabot + deno.lock regenerado (#344)
-- 2026-10-29 `50386b06` chore(deps): bump astral-sh/setup-uv (#326)
-- 2026-10-28 `313127fa` chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)
-- 2026-10-27 `4b7905f9` fix(db): corrigir achados R3 da canonização de sales.status (#341)
-- 2026-10-27 `2d9f9384` fix(crm): remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) (#343)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
