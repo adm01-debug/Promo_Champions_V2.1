@@ -9,7 +9,7 @@
     },
     {
       "detalhe": [
-        "187355 linhas com mais de 7 dias"
+        "189806 linhas com mais de 7 dias"
       ],
       "tipo": "historico_cron_sem_limpeza"
     },
@@ -109,10 +109,10 @@
       "max_worker_processes": "6"
     },
     "historico": {
-      "bytes": 55934976,
-      "linhas": 210319,
+      "bytes": 56573952,
+      "linhas": 212770,
       "mais_antigo": "2026-08-04T11:30:00Z",
-      "mais_de_7_dias": 187355
+      "mais_de_7_dias": 189806
     },
     "horas_paradas_7d": [],
     "jobs": [
@@ -413,7 +413,7 @@
         "duracao_max_s_7d": 4,
         "execucoes_24h": 1440,
         "execucoes_7d": 10080,
-        "falhas_24h": 1,
+        "falhas_24h": 0,
         "falhas_7d": 1,
         "nome": "process-call-recording-ingest-1min",
         "startup_timeout_7d": 1,
@@ -1410,7 +1410,7 @@
   "integracoes": {
     "conexoes": []
   },
-  "medido_em": "2026-11-06T20:43:30Z",
+  "medido_em": "2026-11-07T14:36:36Z",
   "resumo": {
     "cron_ativos": 32,
     "cron_jobs": 32,
@@ -1422,7 +1422,7 @@
     "postgres": "17.6",
     "tabelas_public": 405,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 233016467,
+    "tamanho_bytes": 234032275,
     "triggers_public": 382,
     "views_public": 36
   },
@@ -1803,7 +1803,7 @@
       }
     },
     {
-      "bytes": 79527936,
+      "bytes": 79544320,
       "citada_no_banco": true,
       "linhas": 33817,
       "linhas_exatas": true,
@@ -1893,9 +1893,9 @@
       }
     },
     {
-      "bytes": 163840,
+      "bytes": 172032,
       "citada_no_banco": true,
-      "linhas": 414,
+      "linhas": 432,
       "linhas_exatas": true,
       "nome": "bitrix24_sync_logs",
       "policies": 1,
@@ -2928,9 +2928,9 @@
       }
     },
     {
-      "bytes": 581632,
+      "bytes": 614400,
       "citada_no_banco": true,
-      "linhas": 1039,
+      "linhas": 1062,
       "linhas_exatas": true,
       "nome": "cron_failure_alerts",
       "policies": 1,
@@ -3125,7 +3125,7 @@
     {
       "bytes": 1818624,
       "citada_no_banco": true,
-      "linhas": 8842,
+      "linhas": 8769,
       "linhas_exatas": true,
       "nome": "db_rollback_snapshots",
       "policies": 1,
@@ -4428,9 +4428,9 @@
       }
     },
     {
-      "bytes": 1236992,
+      "bytes": 1253376,
       "citada_no_banco": true,
-      "linhas": 2742,
+      "linhas": 2764,
       "linhas_exatas": true,
       "nome": "maintenance_log",
       "policies": 1,
@@ -4548,9 +4548,9 @@
       }
     },
     {
-      "bytes": 3260416,
+      "bytes": 3325952,
       "citada_no_banco": true,
-      "linhas": 4679,
+      "linhas": 4796,
       "linhas_exatas": true,
       "nome": "notifications",
       "policies": 7,
@@ -4700,7 +4700,7 @@
     {
       "bytes": 311296,
       "citada_no_banco": true,
-      "linhas": 155,
+      "linhas": 156,
       "linhas_exatas": true,
       "nome": "page_analytics",
       "policies": 3,
@@ -5330,7 +5330,7 @@
     {
       "bytes": 417792,
       "citada_no_banco": true,
-      "linhas": 277,
+      "linhas": 278,
       "linhas_exatas": true,
       "nome": "quote_sync_inbound_log",
       "policies": 1,
@@ -6993,9 +6993,9 @@
       }
     },
     {
-      "bytes": 15613952,
+      "bytes": 15826944,
       "citada_no_banco": true,
-      "linhas": 30891,
+      "linhas": 31289,
       "linhas_exatas": true,
       "nome": "web_vitals_samples",
       "policies": 1,
