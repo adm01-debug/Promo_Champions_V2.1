@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9bbfbd26aee85915d36a240d8dae61a6907b6c57",
+  "sha": "9cabc93d1f0db2abab611c577984e586077c3604",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 17:39 UTC",
+  "generated_at": "2026-11-07 18:31 UTC",
   "files_total": 3440,
   "code_files": 3126,
   "code_lines": 449828
@@ -243855,10 +243855,22 @@
   }
  },
  "git": {
-  "sha": "9bbfbd26aee85915d36a240d8dae61a6907b6c57",
+  "sha": "9cabc93d1f0db2abab611c577984e586077c3604",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9cabc93",
+    "date": "2026-11-07",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.1.0 (#378)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "9bbfbd2",
     "date": "2026-11-07",
@@ -244195,25 +244207,16 @@
     "files": [
      "analise-prs/auditorias-anteriores.md"
     ]
-   },
-   {
-    "sha": "f73ec53",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "chore: FASE4_PROGRESSO.md — evidências dos 10 CRÍTICOs auditados (#346)",
-    "files": [
-     "docs/auditoria/FASE4_PROGRESSO.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    9
+    10
    ],
    [
     "package-lock.json",
-    8
+    9
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
@@ -244260,8 +244263,12 @@
     2
    ],
    [
-    "docs/auditoria/FASE4_PROGRESSO.md",
-    2
+    ".release-please-manifest.json",
+    1
+   ],
+   [
+    "CHANGELOG.md",
+    1
    ],
    [
     "analise-prs/VALIDACAO_POS_MERGES.md",
@@ -244281,10 +244288,6 @@
    ],
    [
     "scripts/db-audit/gen-migration-probes.test.mjs",
-    1
-   ],
-   [
-    "docs/ci-trigger.txt",
     1
    ]
   ]

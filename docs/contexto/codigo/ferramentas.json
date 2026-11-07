@@ -43,7 +43,7 @@
  "workspaces": [],
  "package": {
   "nome": "promo-champions-v2",
-  "versao": null,
+  "versao": "1.1.0",
   "scripts": {
    "a11y:report": "A11Y_REPORT_ONLY=1 playwright test -c playwright.a11y.config.ts",
    "a11y:sweep": "playwright test -c playwright.a11y.config.ts",
@@ -1004,7 +1004,7 @@
   {
    "arquivo": "CHANGELOG.md",
    "titulo": "Changelog",
-   "linhas": 72
+   "linhas": 104
   },
   {
    "arquivo": "CLAUDE.md",
@@ -1326,7 +1326,7 @@
    "arquivos_md": 1
   }
  ],
- "changelog_topo": "2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)",
+ "changelog_topo": "[1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)",
  "env": {
   "declaradas_no_env_example": [
    "VITE_SUPABASE_PUBLISHABLE_KEY",

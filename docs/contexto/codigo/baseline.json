@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9bbfbd26aee85915d36a240d8dae61a6907b6c57",
+  "commit": "9cabc93d1f0db2abab611c577984e586077c3604",
   "branch": "main",
-  "data_commit": "2026-11-07T14:03:31-03:00",
+  "data_commit": "2026-11-07T18:11:11Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9cabc93",
+    "data": "2026-11-07",
+    "assunto": "chore(main): release 1.1.0 (#378)"
+   },
    {
     "sha": "9bbfbd2",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "c9f1448",
     "data": "2026-11-02",
     "assunto": "chore(deps): bump astral-sh/setup-uv (#354)"
-   },
-   {
-    "sha": "3f25940",
-    "data": "2026-10-31",
-    "assunto": "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline"
    }
   ],
-  "arquivos_mudados_7d": 74,
+  "arquivos_mudados_7d": 76,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -149,7 +149,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 21
+    "mudancas": 22
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 20
    },
    {
     "pasta": "src/components/gamification",
@@ -158,10 +162,6 @@
    {
     "pasta": "src/hooks/gamification",
     "mudancas": 20
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 19
    },
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package-lock.json",
-    "mudancas": 90
+    "mudancas": 91
    },
    {
     "arquivo": "package.json",
-    "mudancas": 90
+    "mudancas": 91
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -317,7 +317,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 2
+    "commits": 3
    }
   ]
  },
