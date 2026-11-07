@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f37cc9eb4c1515daad51d363eacbb035084a3779",
+  "commit": "f6010c9683f79fd87ba92218ad30c17d645af48c",
   "branch": "main",
-  "data_commit": "2026-11-07T14:45:17Z",
+  "data_commit": "2026-11-07T12:23:27-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f6010c9",
+    "data": "2026-11-07",
+    "assunto": "fix: parsers de linha toleram CRLF em checkouts Windows (#384)"
+   },
    {
     "sha": "f37cc9e",
     "data": "2026-11-07",
@@ -126,11 +131,6 @@
     "sha": "c758589",
     "data": "2026-10-31",
     "assunto": "docs: auditorias-anteriores — reconciliação com main (SHA c23e4e8b)"
-   },
-   {
-    "sha": "7e7ca43",
-    "data": "2026-10-31",
-    "assunto": "docs(auditoria): FASE4_PROGRESSO e RELATORIO_FINAL — Fases 4-5 (#350)"
    }
   ],
   "arquivos_mudados_7d": 72,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 42
+    "commits": 43
    },
    {
     "autor": "devin-ai-integration[bot]",

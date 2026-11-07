@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f37cc9eb4c1515daad51d363eacbb035084a3779",
+  "sha": "f6010c9683f79fd87ba92218ad30c17d645af48c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 14:57 UTC",
+  "generated_at": "2026-11-07 15:32 UTC",
   "files_total": 3439,
   "code_files": 3126,
   "code_lines": 449828
@@ -243855,10 +243855,22 @@
   }
  },
  "git": {
-  "sha": "f37cc9eb4c1515daad51d363eacbb035084a3779",
+  "sha": "f6010c9683f79fd87ba92218ad30c17d645af48c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f6010c9",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "fix: parsers de linha toleram CRLF em checkouts Windows (#384)",
+    "files": [
+     "scripts/ai-context/gerar.mjs",
+     "scripts/ci/contexto-publicacao.unit.mjs",
+     "scripts/inventario/gerar-banco.mjs",
+     "scripts/types-sync/validar.mjs"
+    ]
+   },
    {
     "sha": "f37cc9e",
     "date": "2026-11-07",
@@ -244194,29 +244206,20 @@
     "files": [
      ".github/workflows/graphify.yml"
     ]
-   },
-   {
-    "sha": "313127f",
-    "date": "2026-10-28",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (#329)",
-    "files": [
-     "package-lock.json"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "package-lock.json",
-    10
-   ],
    [
     "package.json",
     10
    ],
    [
+    "package-lock.json",
+    9
+   ],
+   [
     "scripts/inventario/gerar-banco.mjs",
-    5
+    6
    ],
    [
     "inventario/estado/edges.json",
@@ -244225,6 +244228,18 @@
    [
     "deno.lock",
     3
+   ],
+   [
+    "scripts/ai-context/gerar.mjs",
+    2
+   ],
+   [
+    "scripts/ci/contexto-publicacao.unit.mjs",
+    2
+   ],
+   [
+    "scripts/types-sync/validar.mjs",
+    2
    ],
    [
     "inventario/estado/banco.json",
@@ -244272,18 +244287,6 @@
    ],
    [
     ".github/workflows/release-please.yml",
-    1
-   ],
-   [
-    ".github/workflows/migrations-drift.yml",
-    1
-   ],
-   [
-    "supabase/functions/cron-failure-alerter/index.test.ts",
-    1
-   ],
-   [
-    "scripts/check-migrations.mjs",
     1
    ]
   ]
