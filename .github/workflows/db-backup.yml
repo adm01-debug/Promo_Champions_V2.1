@@ -102,6 +102,22 @@ jobs:
           echo "BACKUP_FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh "$FILE"
 
+      - name: Validar restauração do dump (chave + integridade)
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          # Descriptografa com a MESMA chave do secret e abre o índice com
+          # pg_restore --list: prova que o upload sobe um dump restaurabil.
+          # Chave trocada desde o dump ou arquivo corrompido -> openssl ou
+          # pg_restore falha aqui e o artifact NÃO é publicado.
+          CHECK=/tmp/restore-check.dump
+          openssl enc -d -aes-256-cbc -pbkdf2 -in "$BACKUP_FILE" -out "$CHECK" \
+            -pass env:BACKUP_ENCRYPTION_KEY
+          docker run --rm -v "$CHECK:/check.dump:ro" postgres:17.6 \
+            pg_restore --list /check.dump | sed -n '1,14p'
+          rm -f "$CHECK"
+          echo "restore check OK: $BACKUP_FILE abre como dump válido"
+
       - name: Upload artifact (retenção 7 dias)
         if: steps.gate.outputs.run == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
