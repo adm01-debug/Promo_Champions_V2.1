@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)
+
+
+### Funcionalidades
+
+* automações de contexto, inventário e types-sync para agentes de IA ([#362](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/362)) ([ef80740](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/ef8074050be40b374e6bc628c978ad4b56d9edac))
+* supressão de DROP + filtro cmd em policies no gerador de probes de migrations ([#375](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/375)) ([82ee984](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/82ee984faa28944f2993f07a98b9e193f20ceb63))
+
+
+### Correções
+
+* bump eslint-plugin-react-refresh 0.5.7, jsdom 30.1.3, lint-staged 17.6.0 + regenera deno.lock ([6c6df6f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/6c6df6fb055c01c1e83d8b43078c1594de2217e3)), closes [#298](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/298) [#358](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/358) [#360](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/360)
+* check-migrations — reset lastIndex e strippedContent no RLS check ([#364](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/364)) ([5abf273](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5abf2731d842eaa52daa9cd24e92a4cb8d2c0a44))
+* **ci:** correções de CI — migration CONCURRENTLY, dompurify CVE, codeql SHA, RELATORIO §9-12 ([18aadd0](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/18aadd0f5b84a8457e5570e3c1f9b18a2c88dabe))
+* **config:** CI Failure Alert só dispara em conclusões na main + RELATORIO_CI/PENDENCIAS ([#336](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/336)) ([e461580](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e46158001dc72c167613e139fd6e08d586208d10))
+* corrige 3 workflows autônomos com falha repetida ([#363](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/363)) ([aba5965](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/aba5965f5e64ef48c856e383bee4d9ab288ced4d))
+* corrige typo LEDGER_TOLERA8CIA -&gt; LEDGER_TOLERANCIA em conferirOrigem ([#379](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/379)) ([13d4b86](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/13d4b861d468b5d7ab313d76f9c174cad1253942))
+* **crm:** remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) ([#343](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/343)) ([2d9f938](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2d9f9384ef7917ef6882f8e5a5ace7c18508e987))
+* **db:** canonizar vocabulário de sales.status em RPCs e edge functions ([#335](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/335)) ([5d22ecd](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5d22ecd3b7cb62671172b69afa046090784f801e))
+* **db:** corrigir achados R3 da canonização de sales.status ([#341](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/341)) ([4b7905f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/4b7905f9619796b69ef2e3d7f361d2fe25e3bea9))
+* **db:** guarda products.active na migration 20261014000002 ([8999bde](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8999bdec99e0c9d5b78929379b8e85be834f4855))
+* **db:** remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse ([#342](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/342)) ([8d6274f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/8d6274f42869e6cd1a46d5b5de87566f5a2ecd82))
+* **db:** restringe RPCs de agent_runs, retoma aprovações e valida JWT/embed ([#334](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/334)) ([1e3a191](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1e3a191b26504af202a587703385466c16611108))
+* **db:** trava escrita direta em agent_runs/actions e idempotencia da retomada ([#340](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/340)) ([839645f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/839645f2409495213588d8174d9f3c5534eaa0b0))
+* desabilita gate e2e em PRs ([#374](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/374)) ([4606224](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/460622417d808c24b22775783abdc023cf5a6789))
+* **gamification:** endurecer RPCs de XP/corrida, sync de desafios e anonimizacao LGPD ([#306](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/306)) ([d8fcd7b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d8fcd7bddd9634ef7154dff6a9d9b6b92e1f5e2d))
+* r3 — briefing jsonb coagido na borda, realtime sem remount morto, alerta de deploy por tag ([#339](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/339)) ([2aa90b9](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2aa90b96fec954d1bb1ab3d04bd563964a8b164d))
+* release-please com continue-on-error para não reprovar status da main ([aeb70d7](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/aeb70d7271001e6e5c2ae03b17b1cbe41e82cdf2))
+* remover check contagens_ok em conferirOrigem (drift Lovable) ([#370](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/370)) ([ae24e8f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/ae24e8f0c47542918f761470f2d47427e12f5af9))
+* **services:** integrações — JID com device, reply de protocolo/reação e lease+paginação no bitrix24-sync ([#333](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/333)) ([afb1f35](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/afb1f35e2bfbd7ab15b46d850acabdc136d6e446))
+* **ui:** tópicos realtime únicos por mount, embed salespeople e guard recommended_actions ([#332](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/332)) ([98ce4dd](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/98ce4dd183ce2c1dcb2bc0241fb1fd1211133678))
+
 ## 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ### 🔒 Segurança
