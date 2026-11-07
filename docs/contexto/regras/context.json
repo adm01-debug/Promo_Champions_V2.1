@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9cabc93d1f0db2abab611c577984e586077c3604",
+  "sha": "b80e8790c3041637c5156967c4953d87916675de",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 18:31 UTC",
+  "generated_at": "2026-11-07 22:22 UTC",
   "files_total": 3440,
   "code_files": 3126,
-  "code_lines": 449828
+  "code_lines": 449831
  },
  "version": "1.3.2",
- "facts_hash": "6ee93e1f202c483d",
+ "facts_hash": "449a028b791ede95",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77363,7 +77363,7 @@
   {
    "module": "scripts",
    "files": 83,
-   "lines": 17039,
+   "lines": 17042,
    "tables": [
     "a",
     "achievements",
@@ -89907,6 +89907,10 @@
    {
     "file": "scripts/graphify/impact-report.mjs",
     "msg": "Snapshot está obsoleto para este checkout; gere uma nova extração ou use --allow-stale com suíte completa."
+   },
+   {
+    "file": "scripts/graphify/impact-report.mjs",
+    "msg": "multigraph.json ausente; impacto exige geração identificada."
    },
    {
     "file": "scripts/graphify/impact-report.mjs",
@@ -177365,7 +177369,7 @@
   },
   "scripts/graphify/impact-report.mjs": {
    "path": "scripts/graphify/impact-report.mjs",
-   "lines": 55,
+   "lines": 58,
    "errors": [
     "--changed exige ao menos um id de nó.",
     "--snapshot exige um caminho.",
@@ -177374,6 +177378,7 @@
     "Informe ${flag} <valor>.",
     "Não foi possível validar o estado Git atual.",
     "Snapshot está obsoleto para este checkout; gere uma nova extração ou use --allow-stale com suíte completa.",
+    "multigraph.json ausente; impacto exige geração identificada.",
     "multigraph.json não confere com snapshot.json.",
     "snapshot.json ausente; impacto exige geração identificada.",
     "snapshot.json não informa escopo de origem."
@@ -243855,10 +243860,19 @@
   }
  },
  "git": {
-  "sha": "9cabc93d1f0db2abab611c577984e586077c3604",
+  "sha": "b80e8790c3041637c5156967c4953d87916675de",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b80e879",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "fix: corrige relatório de impacto do graphify (#390)",
+    "files": [
+     "scripts/graphify/impact-report.mjs"
+    ]
+   },
    {
     "sha": "9cabc93",
     "date": "2026-11-07",
@@ -244198,15 +244212,6 @@
      "docs/auditoria/FASE4_PROGRESSO.md",
      "docs/auditoria/RELATORIO_FINAL.md"
     ]
-   },
-   {
-    "sha": "ccc8003",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "docs: adiciona reconciliação de auditorias e planos anteriores (#349)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -244259,8 +244264,8 @@
     2
    ],
    [
-    "analise-prs/auditorias-anteriores.md",
-    2
+    "scripts/graphify/impact-report.mjs",
+    1
    ],
    [
     ".release-please-manifest.json",

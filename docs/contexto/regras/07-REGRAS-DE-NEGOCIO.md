@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9cabc93d1f` · branch `main` · 2026-11-07 18:31 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b80e8790c3` · branch `main` · 2026-11-07 22:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3780,6 +3780,7 @@ _nenhum item encontrado_
 | Informe ${flag} <valor>. | `scripts/graphify/impact-report.mjs` |
 | Não foi possível validar o estado Git atual. | `scripts/graphify/impact-report.mjs` |
 | Snapshot está obsoleto para este checkout; gere uma nova extração ou use --allow-stale com suíte completa. | `scripts/graphify/impact-report.mjs` |
+| multigraph.json ausente; impacto exige geração identificada. | `scripts/graphify/impact-report.mjs` |
 | multigraph.json não confere com snapshot.json. | `scripts/graphify/impact-report.mjs` |
 | snapshot.json ausente; impacto exige geração identificada. | `scripts/graphify/impact-report.mjs` |
 | snapshot.json não informa escopo de origem. | `scripts/graphify/impact-report.mjs` |
@@ -4025,8 +4026,7 @@ _nenhum item encontrado_
 | Confirmação de assinatura indisponível | `src/hooks/useDigitalSignatures.ts` |
 | Envio para assinatura indisponível | `src/hooks/useDigitalSignatures.ts` |
 | Erro ao criar documento | `src/hooks/useDigitalSignatures.ts` |
-| Erro ao excluir documento | `src/hooks/useDigitalSignatures.ts` |
-| … +612 linhas — lista completa em `context.json` | |
+| … +613 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

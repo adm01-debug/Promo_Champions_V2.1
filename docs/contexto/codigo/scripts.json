@@ -376,7 +376,7 @@
   {
    "arquivo": "scripts/graphify/impact-report.mjs",
    "descricao": null,
-   "linhas": 55,
+   "linhas": 58,
    "env": [],
    "npm_scripts": [
     "graphify:impact"

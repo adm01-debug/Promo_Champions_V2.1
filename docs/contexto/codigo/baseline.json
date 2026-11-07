@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9cabc93d1f0db2abab611c577984e586077c3604",
+  "commit": "b80e8790c3041637c5156967c4953d87916675de",
   "branch": "main",
-  "data_commit": "2026-11-07T18:11:11Z",
+  "data_commit": "2026-11-07T19:17:24-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b80e879",
+    "data": "2026-11-07",
+    "assunto": "fix: corrige relatório de impacto do graphify (#390)"
+   },
    {
     "sha": "9cabc93",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "71674e9",
     "data": "2026-11-02",
     "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)"
-   },
-   {
-    "sha": "c9f1448",
-    "data": "2026-11-02",
-    "assunto": "chore(deps): bump astral-sh/setup-uv (#354)"
    }
   ],
-  "arquivos_mudados_7d": 76,
+  "arquivos_mudados_7d": 64,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 45
+    "commits": 46
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3425,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419887,
+  "linhas_codigo": 419890,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -472,7 +472,7 @@
   },
   "scripts/graphify": {
    "arquivos": 15,
-   "linhas": 1810
+   "linhas": 1813
   },
   "scripts/inventario": {
    "arquivos": 4,
