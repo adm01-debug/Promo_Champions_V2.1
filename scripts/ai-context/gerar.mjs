@@ -604,7 +604,7 @@ const edgesSemPasta = uniq(appFiles.flatMap(([, d]) => d.edges)).filter((e) => !
 
 // ---------- ferramentas / scripts / workflows / deploy ----------
 const workflows = secao('workflows', () => ALL.filter((f) => /^\.github\/workflows\/.+\.ya?ml$/.test(f)).map((f) => {
-  const y = readText(f);
+  const y = readText(f).replace(/\r\n/g, '\n');
   const name = (/^name:\s*(.+)$/m.exec(y) || [])[1]?.trim().replace(/^['"]|['"]$/g, '') || path.posix.basename(f);
   const onBlock = (y.split(/^on:/m)[1] || '').split(/^[a-z]/m)[0];
   const gatilhos = uniq([...onBlock.matchAll(/^\s{2}([a-z_]+):/gm)].map((m) => m[1]).concat((/^on:\s*\[([^\]]*)\]/m.exec(y) || [, ''])[1].split(',').map((s) => s.trim()).filter(Boolean)));
