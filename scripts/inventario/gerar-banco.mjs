@@ -162,7 +162,7 @@ export function versoesEsperadasNoLedger(raiz) {
 
 /** Tabelas de `public` em src/integrations/supabase/types.ts (bloco `public: { Tables: { ... } }`). */
 export function tabelasDosTipos(raiz, arquivo = 'src/integrations/supabase/types.ts') {
-  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split('\n');
+  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split(/\r?\n/);
   const inicio = linhas.findIndex((l, i) => l === '  public: {' && linhas[i + 1] === '    Tables: {');
   if (inicio === -1) throw new Error(`${arquivo} sem o bloco public.Tables`);
   const nomes = [];

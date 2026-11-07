@@ -17,7 +17,7 @@ export const COBERTURA_MINIMA = 0.9;
 
 /** Chaves de primeiro nível de um bloco `    <Bloco>: {` dentro de `  public: {`. */
 export function chavesDoBloco(texto, bloco) {
-  const linhas = texto.split('\n');
+  const linhas = texto.split(/\r?\n/);
   const publico = linhas.findIndex((l) => l === '  public: {');
   if (publico === -1) return null;
   const inicio = linhas.findIndex((l, i) => i > publico && l === `    ${bloco}: {`);
