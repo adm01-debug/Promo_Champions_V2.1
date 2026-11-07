@@ -4,7 +4,7 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: bun run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "13d4b861d468b5d7ab313d76f9c174cad1253942",
+ "commit_do_grafo": "460622417d808c24b22775783abdc023cf5a6789",
  "grafo_atual": true,
  "nos": 15928,
  "arestas": 58911,

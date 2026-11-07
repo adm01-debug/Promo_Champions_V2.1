@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "13d4b861d468b5d7ab313d76f9c174cad1253942",
+  "commit": "460622417d808c24b22775783abdc023cf5a6789",
   "branch": "main",
-  "data_commit": "2026-11-06T19:47:09-03:00",
+  "data_commit": "2026-11-07T00:44:35Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4606224",
+    "data": "2026-11-07",
+    "assunto": "fix: desabilita gate e2e em PRs (#374)"
+   },
    {
     "sha": "13d4b86",
     "data": "2026-11-06",
@@ -126,14 +131,9 @@
     "sha": "f73ec53",
     "data": "2026-10-31",
     "assunto": "chore: FASE4_PROGRESSO.md — evidências dos 10 CRÍTICOs auditados (#346)"
-   },
-   {
-    "sha": "c23e4e8",
-    "data": "2026-10-31",
-    "assunto": "chore(deps): lote de 8 PRs do dependabot + deno.lock regenerado (#344)"
    }
   ],
-  "arquivos_mudados_7d": 71,
+  "arquivos_mudados_7d": 72,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 32
+    "mudancas": 33
    },
    {
     "arquivo": "deno.lock",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 40
+    "commits": 41
    },
    {
     "autor": "dependabot[bot]",

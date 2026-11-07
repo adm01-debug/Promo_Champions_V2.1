@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "13d4b861d468b5d7ab313d76f9c174cad1253942",
+  "sha": "460622417d808c24b22775783abdc023cf5a6789",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-06 22:49 UTC",
+  "generated_at": "2026-11-07 00:45 UTC",
   "files_total": 3439,
   "code_files": 3126,
   "code_lines": 449825
@@ -243855,10 +243855,19 @@
   }
  },
  "git": {
-  "sha": "13d4b861d468b5d7ab313d76f9c174cad1253942",
+  "sha": "460622417d808c24b22775783abdc023cf5a6789",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4606224",
+    "date": "2026-11-06",
+    "author": "adm01-debug",
+    "subject": "fix: desabilita gate e2e em PRs (#374)",
+    "files": [
+     ".github/workflows/pr-checks.yml"
+    ]
+   },
    {
     "sha": "13d4b86",
     "date": "2026-11-06",
@@ -244212,15 +244221,6 @@
      "supabase/migrations/20261027140000_match_whatsapp_reply_e_lock_release.sql",
      "tests/migrations/canonical_hardening_contract_test.ts"
     ]
-   },
-   {
-    "sha": "8d6274f",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(db): remediacao r3 lgpd/gamificacao — cobertura da anonimizacao, telefone canonico, guarda de payload e xp com posse (#342)",
-    "files": [
-     "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -244269,6 +244269,10 @@
     2
    ],
    [
+    ".github/workflows/pr-checks.yml",
+    1
+   ],
+   [
     "inventario/estado/banco.json",
     1
    ],
@@ -244298,10 +244302,6 @@
    ],
    [
     "scripts/check-migrations.mjs",
-    1
-   ],
-   [
-    ".github/workflows/README.md",
     1
    ]
   ]
