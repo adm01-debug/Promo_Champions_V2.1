@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "460622417d808c24b22775783abdc023cf5a6789",
+  "sha": "195e4fd7845c08a9d2a9ba9003114f3a9d4fed8d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 00:45 UTC",
+  "generated_at": "2026-11-07 14:42 UTC",
   "files_total": 3439,
   "code_files": 3126,
-  "code_lines": 449825
+  "code_lines": 449828
  },
  "version": "1.3.2",
- "facts_hash": "3df57a70a01fc0ed",
+ "facts_hash": "6ee93e1f202c483d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77363,7 +77363,7 @@
   {
    "module": "scripts",
    "files": 83,
-   "lines": 17036,
+   "lines": 17039,
    "tables": [
     "a",
     "achievements",
@@ -177517,7 +177517,7 @@
   },
   "scripts/inventario/gerar-banco.mjs": {
    "path": "scripts/inventario/gerar-banco.mjs",
-   "lines": 346,
+   "lines": 349,
    "exports": [
     "const PROJETO_OFICIAL",
     "const LIMIARES",
@@ -243855,10 +243855,19 @@
   }
  },
  "git": {
-  "sha": "460622417d808c24b22775783abdc023cf5a6789",
+  "sha": "195e4fd7845c08a9d2a9ba9003114f3a9d4fed8d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "195e4fd",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)",
+    "files": [
+     "scripts/inventario/gerar-banco.mjs"
+    ]
+   },
    {
     "sha": "4606224",
     "date": "2026-11-06",
@@ -244208,19 +244217,6 @@
      "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql",
      "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql"
     ]
-   },
-   {
-    "sha": "2d9f938",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(crm): remediacao r3 de integracoes (bitrix24-sync, whatsapp-inbound, reply log) (#343)",
-    "files": [
-     "src/components/admin/InboundReplyLogPanel.tsx",
-     "supabase/functions/bitrix24-sync/index.ts",
-     "supabase/functions/whatsapp-inbound-webhook/index.ts",
-     "supabase/migrations/20261027140000_match_whatsapp_reply_e_lock_release.sql",
-     "tests/migrations/canonical_hardening_contract_test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -244234,7 +244230,7 @@
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
-    4
+    5
    ],
    [
     "deno.lock",

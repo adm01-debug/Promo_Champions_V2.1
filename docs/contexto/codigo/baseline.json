@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "460622417d808c24b22775783abdc023cf5a6789",
+  "commit": "195e4fd7845c08a9d2a9ba9003114f3a9d4fed8d",
   "branch": "main",
-  "data_commit": "2026-11-07T00:44:35Z",
+  "data_commit": "2026-11-07T11:35:19-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "195e4fd",
+    "data": "2026-11-07",
+    "assunto": "fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)"
+   },
    {
     "sha": "4606224",
     "data": "2026-11-07",
@@ -126,11 +131,6 @@
     "sha": "ccc8003",
     "data": "2026-10-31",
     "assunto": "docs: adiciona reconciliação de auditorias e planos anteriores (#349)"
-   },
-   {
-    "sha": "f73ec53",
-    "data": "2026-10-31",
-    "assunto": "chore: FASE4_PROGRESSO.md — evidências dos 10 CRÍTICOs auditados (#346)"
    }
   ],
   "arquivos_mudados_7d": 72,
@@ -300,11 +300,11 @@
   ],
   "autores_30d": [
    {
-    "autor": "devin-ai-integration[bot]",
+    "autor": "adm01-debug",
     "commits": 42
    },
    {
-    "autor": "adm01-debug",
+    "autor": "devin-ai-integration[bot]",
     "commits": 41
    },
    {
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3424,
   "arquivos_codigo": 2449,
-  "linhas_codigo": 419884,
+  "linhas_codigo": 419887,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -476,7 +476,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 838
+   "linhas": 841
   },
   "scripts/lib": {
    "arquivos": 1,
