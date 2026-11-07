@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "195e4fd7845c08a9d2a9ba9003114f3a9d4fed8d",
+  "sha": "f37cc9eb4c1515daad51d363eacbb035084a3779",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 14:42 UTC",
+  "generated_at": "2026-11-07 14:57 UTC",
   "files_total": 3439,
   "code_files": 3126,
   "code_lines": 449828
@@ -243855,10 +243855,20 @@
   }
  },
  "git": {
-  "sha": "195e4fd7845c08a9d2a9ba9003114f3a9d4fed8d",
+  "sha": "f37cc9eb4c1515daad51d363eacbb035084a3779",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f37cc9e",
+    "date": "2026-11-07",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#383)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json"
+    ]
+   },
    {
     "sha": "195e4fd",
     "date": "2026-11-07",
@@ -244193,30 +244203,6 @@
     "files": [
      "package-lock.json"
     ]
-   },
-   {
-    "sha": "4b7905f",
-    "date": "2026-10-27",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(db): corrigir achados R3 da canonização de sales.status (#341)",
-    "files": [
-     "src/constants/index.ts",
-     "src/hooks/bi/useABCAnalysis.ts",
-     "src/hooks/notifications/useAlerts.ts",
-     "src/hooks/useOnboardingChecklist.ts",
-     "src/hooks/useTeamActivityFeed.ts",
-     "src/hooks/win-loss/useScriptABTest.ts",
-     "src/hooks/win-loss/useWinByHourMatrix.ts",
-     "supabase/functions/_shared/business-date.ts",
-     "supabase/functions/analyze-win-loss/index.ts",
-     "supabase/functions/calculate-deal-health/index.ts",
-     "supabase/functions/demand-forecast/index.ts",
-     "supabase/functions/generate-urgent-client-tasks/index.ts",
-     "supabase/functions/next-best-action/index.ts",
-     "supabase/functions/process-race-event/index.ts",
-     "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql",
-     "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -244233,11 +244219,15 @@
     5
    ],
    [
+    "inventario/estado/edges.json",
+    3
+   ],
+   [
     "deno.lock",
     3
    ],
    [
-    "inventario/estado/edges.json",
+    "inventario/estado/banco.json",
     2
    ],
    [
@@ -244266,10 +244256,6 @@
    ],
    [
     ".github/workflows/pr-checks.yml",
-    1
-   ],
-   [
-    "inventario/estado/banco.json",
     1
    ],
    [

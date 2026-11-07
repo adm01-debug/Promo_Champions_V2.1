@@ -93,9 +93,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-07 14:55:00 | succeeded | 0.06 | 1 row |
+| 2026-11-07 14:50:00 | succeeded | 0.05 | 1 row |
 | 2026-11-07 14:45:00 | succeeded | 0.08 | 1 row |
-| 2026-11-07 14:40:00 | succeeded | 0.08 | 1 row |
-| 2026-11-07 14:35:00 | succeeded | 0.06 | 1 row |
 
 
 ## 14 · purge-rollback-snapshots-daily
@@ -174,36 +174,36 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-07 14:55:00 | succeeded | 0.04 | 1 row |
+| 2026-11-07 14:50:00 | succeeded | 0.02 | 1 row |
 | 2026-11-07 14:45:00 | succeeded | 0.06 | 1 row |
-| 2026-11-07 14:40:00 | succeeded | 0.03 | 1 row |
-| 2026-11-07 14:35:00 | succeeded | 0.06 | 1 row |
 
 
 ## 37 · check-v4-callback-alerts-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-07 14:55:00 | succeeded | 0.02 | 1 row |
+| 2026-11-07 14:50:00 | succeeded | 0.02 | 1 row |
 | 2026-11-07 14:45:00 | succeeded | 0.06 | 1 row |
-| 2026-11-07 14:40:00 | succeeded | 0.04 | 1 row |
-| 2026-11-07 14:35:00 | succeeded | 0.07 | 1 row |
 
 
 ## 38 · cron-failure-alerter-10min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-07 14:50:00 | succeeded | 0.04 | 1 row |
 | 2026-11-07 14:40:00 | succeeded | 0.06 | 1 row |
 | 2026-11-07 14:30:00 | succeeded | 0.07 | 1 row |
-| 2026-11-07 14:20:00 | succeeded | 0.03 | 1 row |
 
 
 ## 39 · process-call-recording-ingest-1min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-07 14:47:00 | succeeded | 0.04 | 1 row |
-| 2026-11-07 14:46:00 | succeeded | 0.04 | 1 row |
-| 2026-11-07 14:45:00 | succeeded | 0.06 | 1 row |
+| 2026-11-07 14:59:00 | succeeded | 0.03 | 1 row |
+| 2026-11-07 14:58:00 | succeeded | 0.08 | 1 row |
+| 2026-11-07 14:57:00 | succeeded | 0.02 | 1 row |
 
 
 ## 40 · edge-retry-threshold-alert-15min
@@ -219,9 +219,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-07 14:55:00 | succeeded | 0.02 | 1 row |
+| 2026-11-07 14:50:00 | succeeded | 0.03 | 1 row |
 | 2026-11-07 14:45:00 | succeeded | 0.05 | 1 row |
-| 2026-11-07 14:40:00 | succeeded | 0.04 | 1 row |
-| 2026-11-07 14:35:00 | succeeded | 0.05 | 1 row |
 
 
 ## 42 · winloss-webhook-health-monitor-15min

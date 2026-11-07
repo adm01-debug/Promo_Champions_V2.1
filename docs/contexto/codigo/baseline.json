@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "195e4fd7845c08a9d2a9ba9003114f3a9d4fed8d",
+  "commit": "f37cc9eb4c1515daad51d363eacbb035084a3779",
   "branch": "main",
-  "data_commit": "2026-11-07T11:35:19-03:00",
+  "data_commit": "2026-11-07T14:45:17Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f37cc9e",
+    "data": "2026-11-07",
+    "assunto": "chore: inventario do estado real [auto] (#383)"
+   },
    {
     "sha": "195e4fd",
     "data": "2026-11-07",
@@ -126,11 +131,6 @@
     "sha": "7e7ca43",
     "data": "2026-10-31",
     "assunto": "docs(auditoria): FASE4_PROGRESSO e RELATORIO_FINAL — Fases 4-5 (#350)"
-   },
-   {
-    "sha": "ccc8003",
-    "data": "2026-10-31",
-    "assunto": "docs: adiciona reconciliação de auditorias e planos anteriores (#349)"
    }
   ],
   "arquivos_mudados_7d": 72,
@@ -317,7 +317,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 1
+    "commits": 2
    }
   ]
  },
