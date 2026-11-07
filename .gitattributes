@@ -1,1 +1,18 @@
+# Normaliza LF para código; git armazena LF
+* text=auto eol=lf
+
+# Binários não devem ser normalizados (evita corrupção de assets)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.lockb binary
+
 graphify-out/graph.json merge=graphify
