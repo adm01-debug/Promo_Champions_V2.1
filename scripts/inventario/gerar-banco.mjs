@@ -132,12 +132,15 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
       + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERANCIA.versoesRecentes}a mais recente e ${limite}. `
       + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
   }
-  const esperados = versoesRepo.length;
-  const minimo = Math.floor(esperados * (1 - LEDGER_TOLERANCIA.registrosPct / 100));
-  if (registros < minimo) {
-    throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros; `
-      + `o repo tem ${esperados} migrations, mas a contagem nao pode variar mais que ${LEDGER_TOLERANCIA.registrosPct}% (minimo ${minimo}). `
-      + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
+  const topo = recentes[0];
+  if (String(max) >= topo) {
+    const esperados = versoesRepo.length;
+    const minimo = Math.floor(esperados * (1 - LEDGER_TOLERANCIA.registrosPct / 100));
+    if (registros < minimo) {
+      throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros; `
+        + `o repo tem ${esperados} migrations, mas a contagem nao pode variar mais que ${LEDGER_TOLERANCIA.registrosPct}% (minimo ${minimo}). `
+        + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
+    }
   }
   return { ...origem, ledger_registros: registros, migrations_no_repo: versoesRepo.length };
 }
@@ -159,7 +162,7 @@ export function versoesEsperadasNoLedger(raiz) {
 
 /** Tabelas de `public` em src/integrations/supabase/types.ts (bloco `public: { Tables: { ... } }`). */
 export function tabelasDosTipos(raiz, arquivo = 'src/integrations/supabase/types.ts') {
-  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split('\n');
+  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split(/\r?\n/);
   const inicio = linhas.findIndex((l, i) => l === '  public: {' && linhas[i + 1] === '    Tables: {');
   if (inicio === -1) throw new Error(`${arquivo} sem o bloco public.Tables`);
   const nomes = [];
