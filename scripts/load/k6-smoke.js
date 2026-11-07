@@ -19,12 +19,16 @@ import { Rate } from 'k6/metrics';
 const BASE_URL =
   __ENV.K6_BASE_URL || 'https://usyxfpqlsspldubptrdl.supabase.co';
 const ORIGIN = __ENV.K6_ORIGIN || 'https://champions.promobrindes.com.br';
+// KEY pública (publishable) — sem ela o /auth/v1/health responde 401.
+// Mesma chave exposta em src/integrations/supabase/env.ts.
+const ANON_KEY =
+  __ENV.K6_ANON_KEY || 'sb_publishable_5lvZYipoPfIqXcAbNQhI9A_mwlA7Nx-';
 
 const EDGE_FUNCTIONS = [
   'log-web-vitals',
-  'get-client-ip',
-  'ranking-api',
-  'ai-copilot',
+  'send-multichannel-message',
+  'send-transactional-email',
+  'detect-client-churn-alerts',
 ];
 
 const unexpectedStatus = new Rate('unexpected_status');
@@ -46,6 +50,7 @@ export const options = {
 export default function () {
   // Health público do GoTrue — mede a disponibilidade da camada de auth.
   const health = http.get(`${BASE_URL}/auth/v1/health`, {
+    headers: { apikey: ANON_KEY },
     tags: { endpoint: 'auth-health' },
   });
   check(health, { 'auth health 200': (r) => r.status === 200 }) ||
