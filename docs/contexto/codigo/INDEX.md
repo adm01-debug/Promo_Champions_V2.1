@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f3802bbb9961e90e686972d7019098187d0ed517` (2026-11-07T13:37:10-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9bbfbd26aee85915d36a240d8dae61a6907b6c57` (2026-11-07T14:03:31-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2382), SQL (676), Markdown (197), JavaScript (64), JSON (29), YAML (26), Python (5), Shell (5)
+- linguagens: TypeScript (2382), SQL (676), Markdown (198), JavaScript (64), JSON (29), YAML (26), Python (5), Shell (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3424 |
+| arquivos_total | 3425 |
 | arquivos_codigo | 2449 |
 | linhas_codigo | 419887 |
 | rotas | 170 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 162 |
 | workflows | 24 |
 | scripts | 69 |
-| docs_md | 197 |
+| docs_md | 198 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
@@ -574,8 +574,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15928 nós · 58911 arestas · 605 comunidades · grafo do commit `f3802bbb`
-- comunidades maiores: CardContent (393), Índice (341), Badge (339), SelectContent (307), client.ts (286), DialogContent (270), Card (258), PageTransition (223), Skeleton (210), TableRow (208), Button (205), getCorsHeaders (200)
+- 15938 nós · 58921 arestas · 630 comunidades · grafo do commit `9bbfbd26`
+- comunidades maiores: Card (361), Índice (341), client.ts (300), getCorsHeaders (241), lucide-react (239), SelectContent (238), Avatar (238), Button (222), Badge (213), Skeleton (204), ref_npm_supabase (202), utils.ts (188)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -736,6 +736,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ## Últimos commits
+- 2026-11-07 `9bbfbd2` docs: consolidacao da validacao pos-merges (5 sessoes) (#386)
 - 2026-11-07 `f3802bb` chore: normaliza line endings (LF) para prevenir bugs de parser (#385)
 - 2026-11-07 `f6010c9` fix: parsers de linha toleram CRLF em checkouts Windows (#384)
 - 2026-11-07 `f37cc9e` chore: inventario do estado real [auto] (#383)
@@ -750,7 +751,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-05 `aeb70d7` fix: release-please com continue-on-error para não reprovar status da main
 - 2026-11-05 `aba5965` fix: corrige 3 workflows autônomos com falha repetida (#363)
 - 2026-11-05 `b5797bd` chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)
-- 2026-11-05 `5abf273` fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

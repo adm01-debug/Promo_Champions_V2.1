@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f3802bbb9961e90e686972d7019098187d0ed517",
+  "commit": "9bbfbd26aee85915d36a240d8dae61a6907b6c57",
   "branch": "main",
-  "data_commit": "2026-11-07T13:37:10-03:00",
+  "data_commit": "2026-11-07T14:03:31-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9bbfbd2",
+    "data": "2026-11-07",
+    "assunto": "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)"
+   },
    {
     "sha": "f3802bb",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "3f25940",
     "data": "2026-10-31",
     "assunto": "docs: analise-prs complementar — fontes, regras, funcionalidades e baseline"
-   },
-   {
-    "sha": "cae024b",
-    "data": "2026-10-31",
-    "assunto": "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs"
    }
   ],
-  "arquivos_mudados_7d": 73,
+  "arquivos_mudados_7d": 74,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 44
+    "commits": 45
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3424,
+  "arquivos_total": 3425,
   "arquivos_codigo": 2449,
   "linhas_codigo": 419887,
   "rotas": 170,
@@ -339,7 +339,7 @@
   "testes": 162,
   "workflows": 24,
   "scripts": 69,
-  "docs_md": 197
+  "docs_md": 198
  },
  "por_pasta": {
   "commitlint.config.js": {

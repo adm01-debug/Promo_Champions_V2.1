@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "f3802bbb9961e90e686972d7019098187d0ed517",
+  "sha": "9bbfbd26aee85915d36a240d8dae61a6907b6c57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 17:15 UTC",
-  "files_total": 3439,
+  "generated_at": "2026-11-07 17:39 UTC",
+  "files_total": 3440,
   "code_files": 3126,
   "code_lines": 449828
  },
@@ -243855,10 +243855,19 @@
   }
  },
  "git": {
-  "sha": "f3802bbb9961e90e686972d7019098187d0ed517",
+  "sha": "9bbfbd26aee85915d36a240d8dae61a6907b6c57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9bbfbd2",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)",
+    "files": [
+     "analise-prs/VALIDACAO_POS_MERGES.md"
+    ]
+   },
    {
     "sha": "f3802bb",
     "date": "2026-11-07",
@@ -244195,27 +244204,16 @@
     "files": [
      "docs/auditoria/FASE4_PROGRESSO.md"
     ]
-   },
-   {
-    "sha": "c23e4e8",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "chore(deps): lote de 8 PRs do dependabot + deno.lock regenerado (#344)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    10
+    9
    ],
    [
     "package-lock.json",
-    9
+    8
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
@@ -244223,10 +244221,6 @@
    ],
    [
     "inventario/estado/edges.json",
-    3
-   ],
-   [
-    "deno.lock",
     3
    ],
    [
@@ -244254,6 +244248,10 @@
     2
    ],
    [
+    "deno.lock",
+    2
+   ],
+   [
     "CLAUDE.md",
     2
    ],
@@ -244264,6 +244262,10 @@
    [
     "docs/auditoria/FASE4_PROGRESSO.md",
     2
+   ],
+   [
+    "analise-prs/VALIDACAO_POS_MERGES.md",
+    1
    ],
    [
     ".gitattributes",
@@ -244283,10 +244285,6 @@
    ],
    [
     "docs/ci-trigger.txt",
-    1
-   ],
-   [
-    ".github/workflows/release-please.yml",
     1
    ]
   ]
