@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f6010c9683f79fd87ba92218ad30c17d645af48c` (2026-11-07T12:23:27-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f3802bbb9961e90e686972d7019098187d0ed517` (2026-11-07T13:37:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -574,7 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15928 nós · 58911 arestas · 605 comunidades · grafo do commit `f6010c96`
+- 15928 nós · 58911 arestas · 605 comunidades · grafo do commit `f3802bbb`
 - comunidades maiores: CardContent (393), Índice (341), Badge (339), SelectContent (307), client.ts (286), DialogContent (270), Card (258), PageTransition (223), Skeleton (210), TableRow (208), Button (205), getCorsHeaders (200)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -736,6 +736,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: 2026-09-03 — Auditoria 20 dimensões: Quick Wins + Sprint 1 (PR #90)
 
 ## Últimos commits
+- 2026-11-07 `f3802bb` chore: normaliza line endings (LF) para prevenir bugs de parser (#385)
 - 2026-11-07 `f6010c9` fix: parsers de linha toleram CRLF em checkouts Windows (#384)
 - 2026-11-07 `f37cc9e` chore: inventario do estado real [auto] (#383)
 - 2026-11-07 `195e4fd` fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)
@@ -750,7 +751,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-05 `aba5965` fix: corrige 3 workflows autônomos com falha repetida (#363)
 - 2026-11-05 `b5797bd` chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)
 - 2026-11-05 `5abf273` fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)
-- 2026-11-05 `42b62f1` chore(deps-dev): bump eslint 9.39→10.14 (#359)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

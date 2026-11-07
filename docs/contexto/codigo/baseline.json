@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f6010c9683f79fd87ba92218ad30c17d645af48c",
+  "commit": "f3802bbb9961e90e686972d7019098187d0ed517",
   "branch": "main",
-  "data_commit": "2026-11-07T12:23:27-03:00",
+  "data_commit": "2026-11-07T13:37:10-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f3802bb",
+    "data": "2026-11-07",
+    "assunto": "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)"
+   },
    {
     "sha": "f6010c9",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "cae024b",
     "data": "2026-10-31",
     "assunto": "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs"
-   },
-   {
-    "sha": "c758589",
-    "data": "2026-10-31",
-    "assunto": "docs: auditorias-anteriores — reconciliação com main (SHA c23e4e8b)"
    }
   ],
-  "arquivos_mudados_7d": 72,
+  "arquivos_mudados_7d": 73,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 43
+    "commits": 44
    },
    {
     "autor": "devin-ai-integration[bot]",

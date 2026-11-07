@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)",
    "fix: parsers de linha toleram CRLF em checkouts Windows (#384)",
    "chore: inventario do estado real [auto] (#383)",
    "fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)",
-   "fix: desabilita gate e2e em PRs (#374)",
-   "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)"
+   "fix: desabilita gate e2e em PRs (#374)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

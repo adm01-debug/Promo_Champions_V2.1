@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f6010c9683f79fd87ba92218ad30c17d645af48c",
+  "sha": "f3802bbb9961e90e686972d7019098187d0ed517",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 15:32 UTC",
+  "generated_at": "2026-11-07 17:15 UTC",
   "files_total": 3439,
   "code_files": 3126,
   "code_lines": 449828
@@ -243855,10 +243855,19 @@
   }
  },
  "git": {
-  "sha": "f6010c9683f79fd87ba92218ad30c17d645af48c",
+  "sha": "f3802bbb9961e90e686972d7019098187d0ed517",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f3802bb",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)",
+    "files": [
+     ".gitattributes"
+    ]
+   },
    {
     "sha": "f6010c9",
     "date": "2026-11-07",
@@ -244197,15 +244206,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "50386b0",
-    "date": "2026-10-29",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump astral-sh/setup-uv (#326)",
-    "files": [
-     ".github/workflows/graphify.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -244258,16 +244258,16 @@
     2
    ],
    [
-    ".github/workflows/graphify.yml",
-    2
-   ],
-   [
     "analise-prs/auditorias-anteriores.md",
     2
    ],
    [
     "docs/auditoria/FASE4_PROGRESSO.md",
     2
+   ],
+   [
+    ".gitattributes",
+    1
    ],
    [
     ".github/workflows/pr-checks.yml",
