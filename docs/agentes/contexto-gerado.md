@@ -17,7 +17,9 @@ A branch `contexto` é gerada (nunca abra PR dela). Testes offline de todas as a
 
 ## Graphify — detalhes
 
-- Grafo em `graphify-out/` (`GRAPH_REPORT.md` traz a contagem de nós/arestas/comunidades e o commit de origem em "Built from commit").
+- Grafo em `graphify-out/` (`GRAPH_REPORT.md` traz a contagem de nós/arestas/comunidades e o commit de origem em "Built from commit"). Só `GRAPH_REPORT.md` e `manifest.json` são versionados; `graph.json` **não** é — num checkout/worktree novo ele não existe, e `graphify query` só funciona depois de `graphify update .` (ou do auto-sync) gerá-lo.
+- Comandos: `graphify query "<pergunta>"` (perguntas de codebase), `graphify path "<A>" "<B>"` (relacionamentos), `graphify explain "<conceito>"`; após mudança de código, `graphify update .` (AST-only, sem custo de API).
+- Outros scripts npm não listados no AGENTS.md: `test:coverage`, `test:deno`, `test:sql`, `a11y:report`, `lint:fix`, `format`, `format:check` (CI só checa `src/**`), `deps:check`, `graphify:test`, `graphify:verify`, `contexto:ia`.
 - Frescura do grafo: compare `git rev-parse --short HEAD` com `grep "Built from commit" graphify-out/GRAPH_REPORT.md`. Se divergirem, o auto-sync N8N corrige em até 15 min; para forçar, `graphify update . --force`.
 - Regras adicionais do repo em `.claude/CLAUDE.md` (impacto só a partir de `multigraph.json` de um snapshot identificado por `snapshot.json`; `npm run graphify:contracts -- --out .graphify-local/<arquivo>.json` coleta relações estáticas; o Graphify não amplia permissões).
 - Hooks git `post-commit` e `post-checkout` (husky) disparam rebuild em background; `GRAPHIFY_SKIP_HOOK=1` desliga.

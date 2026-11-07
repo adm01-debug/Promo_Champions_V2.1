@@ -1,8 +1,8 @@
 # Mapa do sistema — Promo_Champions_V2.1
 
-Referência para localizar módulos, edge functions e integrações. Movido do antigo `CLAUDE.md` (seções 3 a 6) na limpeza das instruções para agentes. Contagens verificadas no HEAD em 2026-10-18; em 2026-11-07 o repo tinha 669 migrations e 173 edge functions.
+Referência para localizar módulos, edge functions e integrações. Movido do antigo `CLAUDE.md` (seções 2 a 6) na limpeza das instruções para agentes. Contagens do texto original verificadas no HEAD em 2026-10-18; em 2026-11-07 o repo tinha 669 migrations e **171 edge functions** (pastas com `index.ts`; `ls supabase/functions` dá 173 porque inclui `README.md` e `_shared`).
 
-> CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes. Maior sistema do lote: 175 rotas, 173 edge functions (plano Supabase limita a 100 deployadas), 656+ migrations.
+> CRM de vendas completo com IA, coaching e gamificação para a equipe comercial da Promo Brindes. Maior sistema do lote: 175 rotas, 171 edge functions (plano Supabase limita a 100 deployadas), 656+ migrations.
 
 ## 1. Três camadas funcionais
 
@@ -25,7 +25,7 @@ Referência para localizar módulos, edge functions e integrações. Movido do a
 - Copilot/assistente: `ai-agent-orchestrator`, `personal-assistant-stream`, `sales-assistant-chat`, `next-best-action`, `automation-suggestions`
 - `ai-copilot` existe no repo mas **não tem chamador** (órfã — verificado 2026-10-18)
 - Email IA: `ai-email-composer`, `email-composer-bulk`, `schedule-optimal-send`, `send-time-optimizer`
-- Forecast/revenue: `revenue-forecast-ai`, `predict-quota-attainment`, `predict-deal-velocity`, `snapshot-forecast`, `compute-forecast-accuracy`, `calibrate-win-probabilities`, `generate-revenue-forecast`, `demand-forecast`, `purchase-intelligence-forecast`, `forecast-narrative`
+- Forecast/revenue: `revenue-forecast-ai`, `predict-quota-attainment`, `predict-deal-velocity`, `snapshot-forecast`, `compute-forecast-accuracy`, `generate-revenue-forecast`, `demand-forecast`, `purchase-intelligence-forecast`, `forecast-narrative`
 - BI por papel: **BISDR** (prospecção), **BICloser** (carteira), **BIVendedor** (individual), **BIGestor** (equipe)
 - Busca semântica: `semantic-search`, `semantic-search-universal`, `semantic-index-entity`, `nlq-query`
 
@@ -37,11 +37,11 @@ Referência para localizar módulos, edge functions e integrações. Movido do a
 - Badges e conquistas: `achievements/`, desafios por atividade
 - Broadcast: `broadcast-sale-notification`
 
-## 2. Edge Functions (173 funções Deno; plano Supabase limita a 100 deployadas)
+## 2. Edge Functions (171 funções Deno; plano Supabase limita a 100 deployadas)
 
-Grupos por domínio:
+Grupos por domínio (nomes herdados do CLAUDE.md antigo; em 2026-11-07 foram removidos `calibrate-win-probabilities` e `refresh-stage-baselines`, que não existem em `supabase/functions/`):
 
-**CRM/Pipeline:** deal-probability, deal-risk-digest, detect-stuck-deals, detect-at-risk-deals, detect-winloss-at-risk, analyze-pipeline-coverage, analyze-stage-conversion, analyze-win-loss, mine-win-loss-patterns, recompute-stage-baselines, refresh-stage-baselines, calibrate-win-probabilities, calibrate-win-probability
+**CRM/Pipeline:** deal-probability, deal-risk-digest, detect-stuck-deals, detect-at-risk-deals, detect-winloss-at-risk, analyze-pipeline-coverage, analyze-stage-conversion, analyze-win-loss, mine-win-loss-patterns, recompute-stage-baselines, calibrate-win-probability
 
 **Leads/Roteamento:** lead-scoring, check-lead-sla, enrich-lead, dialer-queue-builder, territory-optimization, behavioral-analysis
 

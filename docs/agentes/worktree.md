@@ -1,6 +1,6 @@
 # Isolamento por worktree (trabalho local)
 
-Movido do antigo `AGENTS.md` (seção "GIT: Isolamento Worktree") na limpeza das instruções para agentes. O nome da branch segue a regra 6.4 do `AGENTS.md` (`claude/<tipo>-<slug>-<AAMMDD-HHMM>`); o esquema `fix/hermes-<id>-<descricao>` abaixo é o formato original do Hermes Agent e vale só para esse executor.
+Movido do antigo `AGENTS.md` (seção "GIT: Isolamento Worktree") na limpeza das instruções para agentes. O nome da branch segue a regra 5.4 do `AGENTS.md` (`claude/<tipo>-<slug>-<AAMMDD-HHMM>`); o esquema `fix/hermes-<id>-<descricao>` abaixo é o formato original do Hermes Agent e vale só para esse executor.
 
 **NUNCA usar `git checkout -b` diretamente no checkout principal.** Sempre criar worktree isolado:
 
