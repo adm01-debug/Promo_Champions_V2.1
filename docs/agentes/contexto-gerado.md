@@ -21,5 +21,8 @@ A branch `contexto` é gerada (nunca abra PR dela). Testes offline de todas as a
 - Comandos: `graphify query "<pergunta>"` (perguntas de codebase), `graphify path "<A>" "<B>"` (relacionamentos), `graphify explain "<conceito>"`; após mudança de código, `graphify update .` (AST-only, sem custo de API).
 - Outros scripts npm não listados no AGENTS.md: `test:coverage`, `test:deno`, `test:sql`, `a11y:report`, `lint:fix`, `format`, `format:check` (CI só checa `src/**`), `deps:check`, `graphify:test`, `graphify:verify`, `contexto:ia`.
 - Frescura do grafo: compare `git rev-parse --short HEAD` com `grep "Built from commit" graphify-out/GRAPH_REPORT.md`. Se divergirem, o auto-sync N8N corrige em até 15 min; para forçar, `graphify update . --force`.
-- Regras adicionais do repo em `.claude/CLAUDE.md` (impacto só a partir de `multigraph.json` de um snapshot identificado por `snapshot.json`; `npm run graphify:contracts -- --out .graphify-local/<arquivo>.json` coleta relações estáticas; o Graphify não amplia permissões).
+- Skill `graphify` (`.claude/skills/graphify/SKILL.md`, gatilho `/graphify`) transforma código e documentos em grafo.
+- Análise de impacto: use apenas o `multigraph.json` de um snapshot identificado por `snapshot.json`; consulte a fonte indicada antes de concluir a alteração.
+- `npm run graphify:contracts -- --out .graphify-local/<arquivo>.json` coleta relações estáticas de código e migrations; SQL dinâmico e referências não literais continuam como lacunas.
+- O Graphify não amplia permissões: catálogo Supabase, dados, deploys e escrita seguem as regras e os acessos já existentes.
 - Hooks git `post-commit` e `post-checkout` (husky) disparam rebuild em background; `GRAPHIFY_SKIP_HOOK=1` desliga.

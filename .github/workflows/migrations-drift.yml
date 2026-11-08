@@ -6,7 +6,7 @@ name: Migrations Drift
 # Gate tolerante:
 #   - Sem SUPABASE_ACCESS_TOKEN → apenas warning (job não falha).
 #   - Com o secret → FALHA se a base tem versão aplicada que não existe como
-#     arquivo no repo (DDL aplicada fora do fluxo, violando CLAUDE.md §1).
+#     arquivo no repo (DDL aplicada fora do fluxo, violando AGENTS.md §7).
 #   - Versão local ainda não aplicada na base = pendência de deploy: warning.
 #
 # Roda em todo PR/push que toca supabase/migrations + diariamente (drift por

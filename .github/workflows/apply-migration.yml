@@ -4,7 +4,7 @@ name: Apply Migration
 # (pooler IPv4) e registra a versão em supabase_migrations.schema_migrations.
 #
 # É o caminho canônico de deploy de DDL deste repo: `db push` é proibido
-# (CLAUDE.md §1) e o MCP/PAT depende de credencial pessoal. O workflow só
+# (AGENTS.md §7) e o MCP/PAT depende de credencial pessoal. O workflow só
 # roda por dispatch manual e só executa arquivo já revisado na main —
 # não aceita SQL arbitrário por input.
 #

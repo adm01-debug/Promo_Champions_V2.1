@@ -52,6 +52,31 @@ jobs:
             echo "PR contém apenas docs/markdown — pulando jobs de código."
           fi
 
+  # GA02: AGENTS.md (+ docs/agentes/) é a instrução que todo agente de IA carrega em
+  # cada chamada. Este guard confere os 8 cabeçalhos obrigatórios e barra encolhimento
+  # (>30% no conjunto, >50% em qualquer arquivo) vs a main — wipe de sessão paralela.
+  # Fica FORA do detect-changes de propósito: esse wipe chega justamente em PR que só
+  # toca markdown, onde os jobs de código são pulados.
+  instrucoes-agentes:
+    name: Agent Instructions Integrity (GA02)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      HUSKY: 0
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '22'
+
+      - name: AGENTS.md + docs/agentes/ integrity
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          CLAUDE_MD_BASE=FETCH_HEAD node scripts/ci/check-claude-md-integrity.mjs
+
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest
@@ -658,9 +683,10 @@ jobs:
     name: CI Gate
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    # Apenas os 3 jobs que eram required checks antes (security-audit e
-    # edge-functions-lint são informativos — intencionalmente fora do gate).
-    needs: [lint-and-typecheck, test, build]
+    # Os 3 jobs que eram required checks antes (security-audit e
+    # edge-functions-lint são informativos — intencionalmente fora do gate)
+    # + GA02: instrução de agente apagada não pode entrar na main por merge.
+    needs: [lint-and-typecheck, test, build, instrucoes-agentes]
     if: always()
     steps:
       - name: Check required jobs
