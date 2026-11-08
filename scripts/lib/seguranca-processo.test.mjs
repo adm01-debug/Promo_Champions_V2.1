@@ -119,3 +119,23 @@ test('RAIZ_REPO aponta para o pacote Promo_Champions_V2.1 e esta entre as raizes
   assert.equal(pacote.name, 'promo-champions-v2');
   assert.equal(RAIZES_PERMITIDAS.includes(RAIZ_REPO), true);
 });
+
+// Regressao: sem a checagem de caminho absoluto, um PATH com entrada relativa (".")
+// devolvia um caminho relativo e o execFileSync o resolvia contra o cwd -- um binario
+// plantado no diretorio de trabalho respondia pelo comando.
+test('resolverExecutavel ignora entrada relativa do PATH', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'exec-relativo-'));
+  const anterior = { PATH: process.env.PATH, cwd: process.cwd() };
+  try {
+    fs.writeFileSync(path.join(dir, 'falso-git'), '#!/bin/sh\nexit 0\n', { mode: 0o755 });
+    process.chdir(dir);
+    process.env.PATH = '.';
+    assert.throws(() => resolverExecutavel('falso-git'), /nao encontrado no PATH/);
+    process.env.PATH = dir;
+    assert.equal(resolverExecutavel('falso-git'), path.join(dir, 'falso-git'));
+  } finally {
+    process.chdir(anterior.cwd);
+    process.env.PATH = anterior.PATH;
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});

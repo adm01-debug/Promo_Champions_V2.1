@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { coletarPins, commitDaTag, verificarPins } from './check-workflow-pins-resolvem.mjs';
+import { coletarPins, commitDaTag, verificarPins, lerPinDaLinha } from './check-workflow-pins-resolvem.mjs';
 
 const REAL = 'f49aabe0b5af0936a0987cfb85d86b75731b0186';
 const INVENTADO = 'f49aabe0b5af0936a0987cfb85d86b75b3f07db4'; // o pin do scorecard.yml até 15/10/2026
@@ -47,4 +47,39 @@ test('aprova o pin real; reprova tag inexistente, pin sem comentário e falha de
   assert.match(ruins[0], /a tag não existe/);
   assert.match(ruins[1], /pin sem comentário/);
   assert.match(ruins[2], /não foi possível consultar/);
+});
+
+// Regressao: a regex antiga nao era ancorada na linha nem lia o escalar YAML, entao um
+// `uses:` entre aspas ou com SHA em maiusculas passava batido (pin fabricado aprovado) e
+// um `uses:` comentado ou citado dentro de `run: |` era contado como pin real (CI vermelho
+// por um pin que nao existe).
+const SHA40 = 'a'.repeat(40);
+
+test('coleta pin com valor entre aspas e normaliza SHA em maiúsculas', () => {
+  for (const linha of [
+    `      - uses: 'owner/repo@${SHA40}' # v1.2.3`,
+    `      - uses: "owner/repo@${SHA40}" # v1.2.3`,
+    `      - uses: owner/repo@${SHA40.toUpperCase()} # v1.2.3`,
+  ]) {
+    const pins = coletarPins([['x.yml', linha]]);
+    assert.equal(pins.length, 1, linha);
+    assert.equal(pins[0].sha, SHA40);
+    assert.equal(pins[0].tag, 'v1.2.3');
+  }
+});
+
+test('ignora uses comentado, citado em run:, local e docker', () => {
+  for (const linha of [
+    `      # - uses: owner/repo@${SHA40} # v1`,
+    `          echo "uses: owner/repo@${SHA40} # v1"`,
+    '      - uses: ./.github/actions/local',
+    '      - uses: docker://imagem:tag',
+  ]) {
+    assert.deepEqual(coletarPins([['x.yml', linha]]), [], linha);
+  }
+});
+
+test('lerPinDaLinha usa só a primeira palavra do comentário como tag', () => {
+  const pin = lerPinDaLinha(`      - uses: owner/repo@${SHA40} # v1.2.3 (ver nota)`);
+  assert.equal(pin.tag, 'v1.2.3');
 });

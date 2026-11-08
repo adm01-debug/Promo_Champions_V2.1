@@ -44,8 +44,13 @@ export function resolverExecutavel(comando) {
   const diretorios = (process.env.PATH || '').split(path.delimiter).filter(Boolean);
   for (const diretorio of diretorios) {
     const candidato = path.join(diretorio, comando);
+    // PATH com entrada relativa (ex.: "." herdado do ambiente) devolveria um caminho
+    // relativo, e o execFileSync resolveria contra o cwd: um binario plantado no
+    // diretorio de trabalho passaria a responder pelo git. So caminho absoluto serve.
+    if (!path.isAbsolute(candidato)) continue;
     try {
       fs.accessSync(candidato, fs.constants.X_OK);
+      if (!fs.statSync(candidato).isFile()) continue;
       return candidato;
     } catch {
       // Nao esta neste diretorio: segue a busca, igual ao shell.
