@@ -30,7 +30,7 @@
   "scripts": [
    "scripts/graphify (9)",
    "scripts/inventario (5)",
-   "scripts/regras_negocio (3)"
+   "scripts/ci (3)"
   ],
   "docs": [
    "docs (44)",
@@ -58,18 +58,17 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: replica o padrão de instruções para agentes do Zapp Web V2 (skill enxuto + guard GA02) (#392)",
    "feat: workflow auto-corrige deno.lock em PRs do Dependabot (#368)",
    "fix: probe de tabela filtra table_type='BASE TABLE' (#381)",
    "chore: instruções enxutas para agentes (#380)",
-   "fix: corrige relatório de impacto do graphify (#390)",
-   "chore(main): release 1.1.0 (#378)"
+   "fix: corrige relatório de impacto do graphify (#390)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
  "codeowners": ".github/CODEOWNERS",
  "contributing": "CONTRIBUTING.md",
  "instrucoes_agentes": [
-  ".claude/CLAUDE.md",
   "AGENTS.md",
   "CLAUDE.md"
  ],

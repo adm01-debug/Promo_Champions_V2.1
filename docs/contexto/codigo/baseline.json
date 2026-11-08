@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d95348f78b81a6ab56b37e50b69cabf2ed6d3cd5",
+  "commit": "b38cfe67b3d9b9f1e06ed885c20b927810cf39f6",
   "branch": "main",
-  "data_commit": "2026-11-08T20:03:03Z",
+  "data_commit": "2026-11-08T21:03:43Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b38cfe6",
+    "data": "2026-11-08",
+    "assunto": "chore: replica o padrão de instruções para agentes do Zapp Web V2 (skill enxuto + guard GA02) (#392)"
+   },
    {
     "sha": "d95348f",
     "data": "2026-11-08",
@@ -126,14 +131,9 @@
     "sha": "e3f7790",
     "data": "2026-11-05",
     "assunto": "chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)"
-   },
-   {
-    "sha": "fdb81b3",
-    "data": "2026-11-05",
-    "assunto": "chore(deps): bump react-window 2.3.3→2.5.3 (#355)"
    }
   ],
-  "arquivos_mudados_7d": 69,
+  "arquivos_mudados_7d": 75,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "arquivo": "deno.lock",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 49
+    "commits": 50
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -323,8 +323,8 @@
  },
  "contagens": {
   "arquivos_total": 3430,
-  "arquivos_codigo": 2449,
-  "linhas_codigo": 419890,
+  "arquivos_codigo": 2450,
+  "linhas_codigo": 420014,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -338,8 +338,8 @@
   "cron_jobs": 28,
   "testes": 162,
   "workflows": 25,
-  "scripts": 69,
-  "docs_md": 202
+  "scripts": 70,
+  "docs_md": 201
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -419,8 +419,8 @@
    "linhas": 72
   },
   "scripts/ci": {
-   "arquivos": 11,
-   "linhas": 1336
+   "arquivos": 12,
+   "linhas": 1460
   },
   "scripts/codemod-money.mjs": {
    "arquivos": 1,
@@ -763,7 +763,7 @@
  ],
  "qualidade": {
   "any": 6,
-  "console_log": 148,
+  "console_log": 149,
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
