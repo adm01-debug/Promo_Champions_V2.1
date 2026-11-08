@@ -32,7 +32,7 @@ Sistema ~80% pronto, em manutenção. **O dono não é dev**: decide negócio; o
 - Destrutivo de verdade: uma linha ("isso apaga X, sem volta — confirma?").
 - **Toda execução fecha com exatamente 3 "Próximos passos"** (`1. [título] — [por quê] · [onde]`): por impacto, do que viu nesta sessão, executáveis via MCP, para não-dev; nada genérico. É menu (`1`, `1 e 3`, `APROVADO 2`, "todos", bloco colado) = executar na ordem sem reconfirmar. Consulta ou nada pendente → `Próximos passos: nada pendente neste escopo.`
 
-## 5. Fluxo Git (vários agentes nos mesmos repos)
+## 5. Fluxo Git (vários agentes nos mesmos repos) — detalhe em docs/agentes/github-ci.md
 
 Escrita no GitHub (`adm01-debug`): MCP **`GITHUB - MCP - FOREVER`** (o padrão dá 403 em write).
 
@@ -55,6 +55,7 @@ Escrita no GitHub (`adm01-debug`): MCP **`GITHUB - MCP - FOREVER`** (o padrão d
 - Stack: Vite/React 18/TypeScript/Tailwind/shadcn/TanStack Query/React Router; Supabase Cloud (Postgres, RLS, Auth, Edge Functions Deno); Vitest, Playwright; Vercel.
 - Onde: `src/pages/` (rotas em `src/routes/AppRoutes.tsx`), `src/components/<domínio>/`, `src/integrations/supabase/` (`env.ts`, `types.ts` gerado), `supabase/functions/`, `supabase/migrations/`, `.github/workflows/` (gate: `pr-checks.yml`).
 - Mapa de módulos, edge functions e integrações: docs/agentes/mapa-do-sistema.md.
+- Deploy e Vercel: ler docs/agentes/vercel-deploy.md antes de confirmar deploy ou mexer em env/domínio.
 
 ## 7. Banco oficial e migrations
 
