@@ -33,6 +33,13 @@ concurrency:
   group: migrations-drift-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# A versão do CLI é a mesma que o types-sync.yml usa para GERAR
+# src/integrations/supabase/types.ts. Com `version: latest` o verificador e o gerador
+# rodavam versões diferentes: uma mudança de formatação do CLI pintava o gate de
+# vermelho sem nenhuma alteração de schema. Mude aqui e no types-sync.yml juntos.
+env:
+  SUPABASE_CLI_VERSION: '2.116.0'
+
 jobs:
   drift:
     name: Repo vs supabase_migrations
@@ -42,10 +49,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup Supabase CLI
+      - name: Setup Supabase CLI ${{ env.SUPABASE_CLI_VERSION }}
         uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
         with:
-          version: latest
+          version: ${{ env.SUPABASE_CLI_VERSION }}
 
       - name: Drift check
         env:
