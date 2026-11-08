@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b80e8790c3041637c5156967c4953d87916675de",
+  "commit": "9500f8766ca8acfc47d852aef26e53be6c04b1e2",
   "branch": "main",
-  "data_commit": "2026-11-07T19:17:24-03:00",
+  "data_commit": "2026-11-08T14:06:20Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9500f87",
+    "data": "2026-11-08",
+    "assunto": "chore: instruções enxutas para agentes (#380)"
+   },
    {
     "sha": "b80e879",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "ef80740",
     "data": "2026-11-04",
     "assunto": "feat: automações de contexto, inventário e types-sync para agentes de IA (#362)"
-   },
-   {
-    "sha": "71674e9",
-    "data": "2026-11-02",
-    "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)"
    }
   ],
-  "arquivos_mudados_7d": 64,
+  "arquivos_mudados_7d": 68,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -222,15 +222,15 @@
     "mudancas": 18
    },
    {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 14
+   },
+   {
     "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 13
-   },
-   {
-    "arquivo": "CLAUDE.md",
     "mudancas": 13
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 46
+    "commits": 47
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3425,
+  "arquivos_total": 3429,
   "arquivos_codigo": 2449,
   "linhas_codigo": 419890,
   "rotas": 170,
@@ -339,7 +339,7 @@
   "testes": 162,
   "workflows": 24,
   "scripts": 69,
-  "docs_md": 198
+  "docs_md": 202
  },
  "por_pasta": {
   "commitlint.config.js": {

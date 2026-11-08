@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (2382)",
    "SQL (676)",
-   "Markdown (198)",
+   "Markdown (202)",
    "JavaScript (64)",
    "JSON (29)",
    "YAML (26)",
@@ -999,7 +999,7 @@
   {
    "arquivo": "AGENTS.md",
    "titulo": "AGENTS.md — Promo_Champions_V2.1",
-   "linhas": 227
+   "linhas": 72
   },
   {
    "arquivo": "CHANGELOG.md",
@@ -1008,8 +1008,8 @@
   },
   {
    "arquivo": "CLAUDE.md",
-   "titulo": "CLAUDE.md — PROMO CHAMPIONS V2.1 (leitura OBRIGATÓRIA antes de qualquer ação)",
-   "linhas": 219
+   "titulo": null,
+   "linhas": 2
   },
   {
    "arquivo": "CODE_OF_CONDUCT.md",
@@ -1300,6 +1300,10 @@
   {
    "pasta": "docs/execucao",
    "arquivos_md": 8
+  },
+  {
+   "pasta": "docs/agentes",
+   "arquivos_md": 4
   },
   {
    "pasta": "docs/contexto",

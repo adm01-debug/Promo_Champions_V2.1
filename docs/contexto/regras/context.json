@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "b80e8790c3041637c5156967c4953d87916675de",
+  "sha": "9500f8766ca8acfc47d852aef26e53be6c04b1e2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-07 22:22 UTC",
-  "files_total": 3440,
+  "generated_at": "2026-11-08 14:12 UTC",
+  "files_total": 3444,
   "code_files": 3126,
   "code_lines": 449831
  },
@@ -243860,10 +243860,24 @@
   }
  },
  "git": {
-  "sha": "b80e8790c3041637c5156967c4953d87916675de",
+  "sha": "9500f8766ca8acfc47d852aef26e53be6c04b1e2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "9500f87",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "chore: instruções enxutas para agentes (#380)",
+    "files": [
+     "AGENTS.md",
+     "CLAUDE.md",
+     "docs/agentes/banco-e-mcp.md",
+     "docs/agentes/contexto-gerado.md",
+     "docs/agentes/mapa-do-sistema.md",
+     "docs/agentes/worktree.md"
+    ]
+   },
    {
     "sha": "b80e879",
     "date": "2026-11-07",
@@ -244202,16 +244216,6 @@
     "files": [
      "analise-prs/auditorias-anteriores.md"
     ]
-   },
-   {
-    "sha": "7e7ca43",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): FASE4_PROGRESSO e RELATORIO_FINAL — Fases 4-5 (#350)",
-    "files": [
-     "docs/auditoria/FASE4_PROGRESSO.md",
-     "docs/auditoria/RELATORIO_FINAL.md"
-    ]
    }
   ],
   "hot_files": [
@@ -244228,8 +244232,16 @@
     6
    ],
    [
+    "CLAUDE.md",
+    3
+   ],
+   [
     "inventario/estado/edges.json",
     3
+   ],
+   [
+    "AGENTS.md",
+    2
    ],
    [
     "scripts/ai-context/gerar.mjs",
@@ -244260,8 +244272,20 @@
     2
    ],
    [
-    "CLAUDE.md",
-    2
+    "docs/agentes/banco-e-mcp.md",
+    1
+   ],
+   [
+    "docs/agentes/contexto-gerado.md",
+    1
+   ],
+   [
+    "docs/agentes/mapa-do-sistema.md",
+    1
+   ],
+   [
+    "docs/agentes/worktree.md",
+    1
    ],
    [
     "scripts/graphify/impact-report.mjs",
@@ -244273,26 +244297,6 @@
    ],
    [
     "CHANGELOG.md",
-    1
-   ],
-   [
-    "analise-prs/VALIDACAO_POS_MERGES.md",
-    1
-   ],
-   [
-    ".gitattributes",
-    1
-   ],
-   [
-    ".github/workflows/pr-checks.yml",
-    1
-   ],
-   [
-    "scripts/db-audit/gen-migration-probes.mjs",
-    1
-   ],
-   [
-    "scripts/db-audit/gen-migration-probes.test.mjs",
     1
    ]
   ]
