@@ -18,6 +18,8 @@ Major bump (0.4 → 0.5). A versão 0.5 do plugin renomeia e adiciona regras ESL
 4. Push na branch do dependabot (ou criar branch nova aplicando o mesmo bump com config atualizada)
 5. CI verde → mergear
 
+**Estado atual (reconciliação 2026-11-06):** ✅ PENDÊNCIA RESOLVIDA NO MAIN. O bump (eslint-plugin-react-refresh 0.4→0.5) foi aplicado direto no `main` em 2026-11-06T02:51Z (head `6c6df6fb`), junto com jsdom 30.1.3 e lint-staged 17.6.0. PR fechada sem merge.
+
 ---
 
 ## #281 — fix: 4 bugs em scripts de auditoria (DRAFT)
@@ -32,6 +34,8 @@ PR está em modo **DRAFT**. O código foi verificado e os fixes são reais e nec
 2. Clicar em **"Ready for review"** para tirar do modo DRAFT
 3. CI executa automaticamente; esperado: verde
 4. Mergear após CI verde
+
+**Estado atual (reconciliação 2026-11-06):** ⏳ AINDA PENDENTE. Sem desfecho registrado nesta reconciliação (nenhum SHA de merge associado). Segue sem merge.
 
 **Contexto dos fixes (para referência):**
 - RegExp g-flag: regex reutilizados com flag `g` tinham `lastIndex` acumulado entre chamadas
@@ -61,6 +65,8 @@ Conflito de merge com `main`. Após o squash-merge de #344, os arquivos tocados 
 - `schemaname` ausente: queries sem qualificação de schema falhavam em schemas não-`public`
 - `policy cmd`: valor de comando de política retornado incorretamente em probes de RLS
 
+**Estado atual (reconciliação 2026-11-06):** ❌ FECHADA sem merge. A correção da PR foi superada pela reescrita do script no `main` (hoje `collectProbes`/`PATTERNS`, `MIG_DIR='supabase/migrations'`), que não traz a supressão de DROP. Reimplementar ficou em backlog.
+
 ---
 
 ## #254 — bump TS 7 + vite-plugin-pwa 2 (major)
@@ -83,6 +89,8 @@ Dois major bumps simultâneos com breaking changes que quebram o CI:
 **Referências:**
 - TypeScript 7 migration: https://www.typescriptlang.org/docs/handbook/release-notes/
 - vite-plugin-pwa v2 migration: https://vite-pwa-org.netlify.app/guide/
+
+**Estado atual (reconciliação 2026-11-06):** ⚠️ SUPERADA PARCIALMENTE. Os dois majors foram tratados via merge da #347 (2026-11-06): vite-plugin-pwa `^2.0.0` permanece no `main`, mas **TypeScript 7 foi REVERTIDO** para `^5.3.0` — detalhes e evidência no bloco da #347 (commit `aba5965f`). `main` hoje (head `6c6df6fb`): typescript `^5.3.0`, vite-plugin-pwa `^2.0.0`.
 
 ---
 
@@ -107,6 +115,28 @@ React 19 é um major com breaking changes que afetam potencialmente toda a codeb
 7. Validar em ambiente de staging antes de mergear em `main`
 8. Planejar janela de deploy — impacto em produção é alto
 
+**Estado atual (reconciliação 2026-11-06):** ❌ NÃO APLICADO. O bump para React 19 não entrou no `main` — package.json@main (head `6c6df6fb`) mantém `react ^18.3.1`. Mesmo desfecho da #345.
+
 **Referências:**
 - React 19 upgrade guide: https://react.dev/blog/2024/04/25/react-19-upgrade-guide
 - React 19 breaking changes: https://react.dev/blog/2024/12/05/react-19
+
+---
+
+## #345 — bump React 19
+
+**URL:** https://github.com/adm01-debug/Promo_Champions_V2.1/pull/345
+
+**Estado atual (reconciliação 2026-11-06):** ❌ FECHADA sem merge. O React 19 não entrou — `main` mantém `react ^18.3.1` (package.json@head `6c6df6fb`). Ver também #252.
+
+---
+
+## #347 — dependabot build-tools (5 deps)
+
+**URL:** https://github.com/adm01-debug/Promo_Champions_V2.1/pull/347
+
+**Estado atual (reconciliação 2026-11-06):** ✅ MERGIDA. `merge_commit_sha`=`b5797bd8`, head `0e8e65bf`, merge em 2026-11-06T01:05:22Z. 5 dependências: @vitejs/plugin-react-swc 4.3.3, rollup-plugin-visualizer 7.1.1, typescript 7.0.2, typescript-eslint 8.72.1, vite-plugin-pwa 2.0.0.
+
+**Reversão do TypeScript 7 (peça central desta reconciliação):** o major `typescript ^7.0.2` trazido por esta PR foi **REVERTIDO** para `^5.3.0` no commit `aba5965f5e64ef48c856e383bee4d9ab288ced4d` (autor adm01-debug, 2026-11-06T01:44:47Z, parte do merge #363). Mensagem do commit literal: *'fix: reverte typescript ^7.0.2→^5.3.0 — typescript-eslint@8.x não suporta TS 7'*. Causa: o bump quebrou o check Lint & Type Check (issue #10940); `package-lock.json` e `deno.lock` regenerados. O mesmo commit também corrigiu 3 workflows (--remote em `supabase migration list`, `gerar-banco.mjs` sem `difPct`, cron-failure-alerter pulando E2E com `console.warn` em 401).
+
+**Conclusão:** pendência resolvida no `main` — typescript `^5.3.0` (head `6c6df6fb`).

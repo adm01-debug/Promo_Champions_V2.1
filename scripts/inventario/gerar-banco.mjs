@@ -127,12 +127,20 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   }
   const recentes = [...versoesRepo].sort().reverse();
   const limite = recentes[Math.min(LEDGER_TOLERANCIA.versoesRecentes, recentes.length) - 1];
-  const versoesMenoresOuIgual = versoesRepo.filter((v) => String(v) <= String(max)).length;
-  const contagens_ok = versoesMenoresOuIgual === 0 || registros >= versoesMenoresOuIgual * (1 - LEDGER_TOLERANCIA.registrosPct / 100);
-  if (String(max) < limite || !contagens_ok) {
+  if (String(max) < limite) {
     throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros e maior versao ${max}; `
       + `o repo tem ${versoesRepo.length} migrations e a ${LEDGER_TOLERANCIA.versoesRecentes}a mais recente e ${limite}. `
       + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
+  }
+  const topo = recentes[0];
+  if (String(max) >= topo) {
+    const esperados = versoesRepo.length;
+    const minimo = Math.floor(esperados * (1 - LEDGER_TOLERANCIA.registrosPct / 100));
+    if (registros < minimo) {
+      throw new Error(`a resposta nao parece ser do banco oficial: ledger com ${registros} registros; `
+        + `o repo tem ${esperados} migrations, mas a contagem nao pode variar mais que ${LEDGER_TOLERANCIA.registrosPct}% (minimo ${minimo}). `
+        + 'Confira se o MCP/projeto usado e o usyxfpqlsspldubptrdl.');
+    }
   }
   return { ...origem, ledger_registros: registros, migrations_no_repo: versoesRepo.length };
 }
@@ -154,7 +162,7 @@ export function versoesEsperadasNoLedger(raiz) {
 
 /** Tabelas de `public` em src/integrations/supabase/types.ts (bloco `public: { Tables: { ... } }`). */
 export function tabelasDosTipos(raiz, arquivo = 'src/integrations/supabase/types.ts') {
-  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split('\n');
+  const linhas = fs.readFileSync(path.join(raiz, arquivo), 'utf8').split(/\r?\n/);
   const inicio = linhas.findIndex((l, i) => l === '  public: {' && linhas[i + 1] === '    Tables: {');
   if (inicio === -1) throw new Error(`${arquivo} sem o bloco public.Tables`);
   const nomes = [];
@@ -213,7 +221,7 @@ export function rodaTodoDia(agenda) {
   return campos.length === 5 && CAMPO_TODO.every((re, i) => re.test(campos[i + 2]));
 }
 
-/** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/). */
+/** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/*. */
 export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   const tabelas = dado.tabelas.map((t) => ({ ...t, uso_no_codigo: uso[t.nome] ?? { src: 0, edges: 0 } }));
   const orfas = tabelas
@@ -225,7 +233,7 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   if (semRls.length) alertas.push({ tipo: 'tabela_sem_rls', detalhe: semRls });
   // RLS ligado sem nenhuma policy nega tudo pra authenticated/anon (service_role sempre passa por
   // cima, rolbypassrls). Pode ser de proposito (tabela so-interna), mas hoje fica invisivel: nem
-  // tabela_sem_rls (tem RLS) nem nenhum outro alerta aponta — inclusive tabela vazia hoje (ex. um
+  // tabela_sem_rls (tem RLS) nem nenhum outro alerta aponta ⒄ inclusive tabela vazia hoje (ex. um
   // cofre de credencial ainda sem linha) merece o aviso do mesmo jeito.
   const rlsSemPolicy = tabelas.filter((t) => t.rls && t.policies === 0).map((t) => t.nome);
   if (rlsSemPolicy.length) alertas.push({ tipo: 'rls_sem_policy', detalhe: rlsSemPolicy });
