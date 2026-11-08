@@ -1,0 +1,43 @@
+name: Dependabot – Fix deno.lock
+
+# Roda com permissões do repo base (pull_request_target), permitindo
+# fazer push de volta para a branch do Dependabot.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-lockfile:
+    name: Atualizar deno.lock desatualizado
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Checkout da branch do PR
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
+        with:
+          deno-version: v2.9.x
+
+      - name: Atualizar deno.lock
+        run: deno install --frozen=false
+
+      - name: Commitar se mudou
+        run: |
+          if git diff --exit-code deno.lock; then
+            echo "deno.lock sem alterações"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add deno.lock
+            git commit -m "chore: atualiza deno.lock (dependabot auto-fix)"
+            git push
+          fi
