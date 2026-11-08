@@ -33,12 +33,13 @@ concurrency:
   group: migrations-drift-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
-# A versão do CLI é a mesma que o types-sync.yml usa para GERAR
-# src/integrations/supabase/types.ts. Com `version: latest` o verificador e o gerador
-# rodavam versões diferentes: uma mudança de formatação do CLI pintava o gate de
-# vermelho sem nenhuma alteração de schema. Mude aqui e no types-sync.yml juntos.
+# `version: latest` é referência mutável: o dist-tag do npm move sozinho (hoje
+# `latest=3.0.0`) e uma release do Supabase muda o CLI sem nenhum commit neste repo.
+# 3.0.0 é exatamente o que `latest` resolve agora, então travar aqui não altera o que
+# já roda — e `supabase migration list --remote` só existe na 3.x. O types-sync.yml
+# usa 2.116.0 e gera o mesmo types.ts; unificar as duas é decisão à parte.
 env:
-  SUPABASE_CLI_VERSION: '2.116.0'
+  SUPABASE_CLI_VERSION: '3.0.0'
 
 jobs:
   drift:

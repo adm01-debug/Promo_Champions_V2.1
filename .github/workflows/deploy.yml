@@ -49,10 +49,11 @@ concurrency:
 
 # `version: latest` fazia o deploy das edge functions e o `db push` rodarem com um CLI
 # que muda sozinho: uma release do Supabase podia quebrar o deploy em produção sem
-# nenhum commit neste repo. A versão é a mesma dos outros workflows (types-sync.yml é
-# a referência, porque é ele que gera o types.ts versionado). Mude nos quatro juntos.
+# nenhum commit neste repo. 3.0.0 é o que o dist-tag `latest` do npm resolve hoje
+# (`latest=3.0.0`, `v2.stable=2.122.1`), então travar aqui não muda nada do que já roda.
+# O types-sync.yml usa 2.116.0; as duas geram o mesmo types.ts hoje. Ver nota nos outros.
 env:
-  SUPABASE_CLI_VERSION: '2.116.0'
+  SUPABASE_CLI_VERSION: '3.0.0'
 
 jobs:
   validate:
