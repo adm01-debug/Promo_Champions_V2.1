@@ -86,7 +86,7 @@ jobs:
         run: npm run build
 
       - name: Setup Deno
-        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.9.x
 
@@ -116,7 +116,7 @@ jobs:
           ref: ${{ github.event.inputs.ref || github.sha }}
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3
+        uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
         with:
           version: latest
 

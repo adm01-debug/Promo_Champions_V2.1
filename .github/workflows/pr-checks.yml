@@ -135,6 +135,15 @@ jobs:
       - name: Graphify wrapper tests
         run: npm run graphify:test
 
+      # Pin por SHA confere formato, não existência: um SHA inventado ou de outra
+      # tag passa batido e o workflow só quebra no "Set up job". Este check resolve
+      # cada `owner/repo@<sha> # vX.Y.Z` contra a tag real via git ls-remote.
+      - name: Pins de Actions resolvem a tag declarada
+        run: node scripts/ci/check-workflow-pins-resolvem.mjs
+
+      - name: Testes dos guards de pin e de execução de processo
+        run: node --test scripts/lib/seguranca-processo.test.mjs scripts/ci/check-workflow-pins-resolvem.unit.mjs
+
   # Gate de higiene de migrations (pacote auditoria DB/integridade):
   # nomenclatura ^\d{8,14}_.*\.sql$, versões únicas, sem arquivo vazio; em PR,
   # migration nova exige versão estritamente maior que a base, CREATE TABLE
@@ -279,7 +288,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Deno
-        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           # Pinado na minor: uma major/minor nova pode trazer regra de lint e
           # quebrar o gate sem mudança de código.
@@ -327,7 +336,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Deno
-        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.9.x
 
@@ -659,7 +668,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3
+        uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
         with:
           version: latest
 
