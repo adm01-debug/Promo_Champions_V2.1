@@ -6,7 +6,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | métrica | valor |
 |---|---|
-| tamanho | 227.8 MB |
+| tamanho | 227.9 MB |
 | schema public | 136.1 MB |
 
 
@@ -29,7 +29,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.lead_scores | ~900 | 640.0 KB | 448.0 KB | 160.0 KB | ~50 | ~80 | ~7.7k |  |
 | public.deal_health_scores | ~900 | 632.0 KB | 400.0 KB | 200.0 KB | 0 | ~70 | ~6.3k |  |
 | public.login_attempts | ~1.3k | 632.0 KB | 256.0 KB | 336.0 KB | ~380 | ~1.7k | ~14.4k | 2026-11-06 |
-| public.cron_failure_alerts | ~1.1k | 624.0 KB | 184.0 KB | 400.0 KB | ~240 | ~1.1k | ~71.1k | 2026-11-07 |
+| public.cron_failure_alerts | ~1.1k | 624.0 KB | 184.0 KB | 400.0 KB | ~240 | ~1.1k | ~71.2k | 2026-11-07 |
 | public.quotes | ~470 | 600.0 KB | 256.0 KB | 304.0 KB | 0 | ~1.8k | ~157.9k | 2026-11-08 |
 | public.audit_log | ~330 | 584.0 KB | 304.0 KB | 248.0 KB | 4 | ~60 | ~180 |  |
 | public.commissions | ~940 | 576.0 KB | 200.0 KB | 336.0 KB | ~100 | ~70 | ~1.7k | 2026-11-08 |
@@ -66,7 +66,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.data_access_log | ~120 | 112.0 KB | 16.0 KB | 64.0 KB | 1 | ~60 | ~110 |  |
 | public.feed_reactions | ~150 | 112.0 KB | 16.0 KB | 64.0 KB | 0 | ~60 | ~4.4k |  |
 | public.onboarding_journeys | ~100 | 112.0 KB | 16.0 KB | 64.0 KB | 0 | ~70 | ~10 |  |
-| public.slow_query_alerts | 8 | 112.0 KB | 8.0 KB | 64.0 KB | ~30 | ~1.8k | ~1.7k | 2026-11-08 |
+| public.slow_query_alerts | 8 | 112.0 KB | 8.0 KB | 64.0 KB | ~40 | ~1.8k | ~1.7k | 2026-11-08 |
 | public.supplier_products | 0 | 112.0 KB | 16.0 KB | 64.0 KB | ~40 | ~60 | ~200 |  |
 | public.suppliers | 6 | 112.0 KB | 8.0 KB | 96.0 KB | 8 | ~80 | ~1.4k |  |
 | public.support_tickets | ~150 | 112.0 KB | 24.0 KB | 56.0 KB | 0 | ~70 | 5 |  |
@@ -231,7 +231,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_webhook_dead_letters | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | ~440 |  |
 | public.winloss_webhook_replay_invocations | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | 1 |  |
 | public.xp_adjustments | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | 0 |  |
-| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~199.2k | ~46.5k |  |
+| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~199.4k | ~46.5k |  |
 | public.account_plans | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 7 |  |
 | public.active_sessions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 3 |  |
 | public.activity_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~160 | 7 |  |
@@ -461,21 +461,21 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~630 | ~2.9M | 4639.97 | `SELECT public.detect_stalled_cron_jobs()` |
-| service_role | ~930 | ~1.4M | 1513.77 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
-| postgres | ~220 | ~711.2k | 3160.97 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
-| postgres | ~17.4k | ~487.6k | 28.03 | `SELECT public.trigger_internal_edge_job($1)` |
+| postgres | ~630 | ~2.9M | 4632.89 | `SELECT public.detect_stalled_cron_jobs()` |
+| service_role | ~940 | ~1.4M | 1515.13 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
+| postgres | ~230 | ~738k | 3180.97 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| postgres | ~17.5k | ~492.5k | 28.11 | `SELECT public.trigger_internal_edge_job($1)` |
 | authenticated | ~2.3k | ~345.3k | 150.41 | `WITH pgrst_source AS ( SELECT "public"."sales".* FROM "public"."sales" WHERE "public"."sales"."status" = ANY ($1) LIMIT $2 OFFSET $3 ) SELECT $4::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, ` |
 | authenticated | ~3.7k | ~248.1k | 66.39 | `WITH pgrst_source AS ( SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE "public"."notifications"."user_id" = $1 AND "public"."notifications"."read_at" IS NULL AND "public"."notifications"."archive` |
 | authenticated | ~300 | ~198.2k | 649.99 | `WITH pgrst_source AS (SELECT pgrst_call.pgrst_scalar FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_quote_id" FROM json_to_record(pgrst_payload.json_data) AS _("_quote_id" uuid) LIMIT $4) pgrst_body , LAT` |
+| postgres | ~230 | ~195.2k | 841.31 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
 | anon | ~2.4k | ~191.9k | 81.22 | `WITH pgrst_source AS ( SELECT "public"."sales"."client_name", "public"."sales"."created_at", "public"."sales"."status" FROM "public"."sales" WHERE "public"."sales"."status" = ANY ($1) ORDER BY "public"."sales"."created_a` |
-| postgres | ~220 | ~188.8k | 839.22 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
-| postgres | ~220 | ~101.6k | 451.53 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| postgres | ~1.9k | ~91.2k | 48.58 | `SELECT public.admin_capture_rollback_snapshot()` |
+| postgres | ~230 | ~104k | 448.30 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| postgres | ~1.9k | ~92.1k | 48.70 | `SELECT public.admin_capture_rollback_snapshot()` |
 | service_role | ~3.6k | ~66.5k | 18.26 | `WITH pgrst_source AS (INSERT INTO "public"."web_vitals_samples"("connection_type", "metric", "navigation_type", "rating", "route", "session_id", "user_agent", "value", "viewport_width") SELECT "pgrst_body"."connection_ty` |
-| postgres | ~220 | ~63.3k | 281.22 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| postgres | ~230 | ~65.1k | 280.51 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
 | authenticated | ~100 | ~54.7k | 552.72 | `WITH pgrst_source AS (DELETE FROM "public"."sales" WHERE "public"."sales"."id" = ANY ($1) RETURNING $2) SELECT $3 AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, array[]::text[] AS header, $4::text AS ` |
-| postgres | ~220 | ~50.2k | 222.91 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
+| postgres | ~230 | ~51.8k | 223.32 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
 
 
 ## Conexões
