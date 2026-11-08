@@ -41,12 +41,15 @@ try {
   if (unknown.length > 0) throw new Error('Há ids alterados que não existem no snapshot. Execute a suíte completa e gere um snapshot novo.');
   const snapshotIndex = process.argv.indexOf('--snapshot');
   if (snapshotIndex !== -1 && !process.argv[snapshotIndex + 1]) throw new Error('--snapshot exige um caminho.');
-  const snapshotPath = path.resolve(snapshotIndex === -1 ? path.join(path.dirname(graphPath), 'snapshot.json') : process.argv[snapshotIndex + 1]);
+  const snapshotPath = path.resolve(snapshotIndex === -1 ? path.join(path.dirname(path.dirname(graphPath)), 'snapshot.json') : process.argv[snapshotIndex + 1]);
   if (!fs.existsSync(snapshotPath)) throw new Error('snapshot.json ausente; impacto exige geração identificada.');
   const snapshot = JSON.parse(fs.readFileSync(snapshotPath, 'utf8'));
-  if (snapshot.multigraph?.digest !== digestValue(graph)) throw new Error('multigraph.json não confere com snapshot.json.');
+  const multigraphPath = path.join(path.dirname(path.dirname(graphPath)), 'multigraph.json');
+  if (!fs.existsSync(multigraphPath)) throw new Error('multigraph.json ausente; impacto exige geração identificada.');
+  const multigraph = JSON.parse(fs.readFileSync(multigraphPath, 'utf8'));
+  if (snapshot.multigraph?.digest !== digestValue(multigraph)) throw new Error('multigraph.json não confere com snapshot.json.');
   if (!process.argv.includes('--allow-stale')) assertFreshSnapshot(snapshot, fs.realpathSync(process.cwd()));
-  const report = { ...findPotentialImpact(graph, changed), snapshot: { commit: snapshot.source?.commit ?? null, scope: snapshot.source?.scope ?? null } };
+  const report = { ...findPotentialImpact(multigraph, changed), snapshot: { commit: snapshot.source?.commit ?? null, scope: snapshot.source?.scope ?? null } };
   console.log(JSON.stringify(report, null, 2));
 } catch (error) {
   console.error(`Relatório de impacto recusado: ${sanitizeError(error)}`);
