@@ -9,7 +9,7 @@
 //
 // Regras sobre ARQUIVOS NOVOS (só com --base <ref>, diff contra a base do PR):
 //   4. Migration adicionada no PR precisa ter versão estritamente MAIOR que
-//      todas as versões já presentes na base (timestamp crescente, CLAUDE.md §1).
+//      todas as versões já presentes na base (timestamp crescente, AGENTS.md §7).
 //   5. Migration nova com CREATE TABLE exige ENABLE ROW LEVEL SECURITY
 //      no mesmo arquivo.
 //   6. Migrations novas não podem conter literais *.supabase.co nem tokens
