@@ -8,7 +8,7 @@
    "Markdown (202)",
    "JavaScript (64)",
    "JSON (29)",
-   "YAML (26)",
+   "YAML (27)",
    "Python (5)",
    "Shell (5)"
   ],
@@ -460,6 +460,30 @@
     "GITHUB_TOKEN"
    ],
    "actions": []
+  },
+  {
+   "arquivo": ".github/workflows/dependabot-fix-lockfile.yml",
+   "nome": "Dependabot – Fix deno.lock",
+   "gatilhos": [
+    "pull_request_target"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "fix-lockfile"
+   ],
+   "permissoes": [
+    "contents: write"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "denoland/setup-deno"
+   ]
   },
   {
    "arquivo": ".github/workflows/deploy.yml",

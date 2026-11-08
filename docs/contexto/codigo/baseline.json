@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fa271519296988d072d3357c9a9a52234a841563",
+  "commit": "d95348f78b81a6ab56b37e50b69cabf2ed6d3cd5",
   "branch": "main",
-  "data_commit": "2026-11-08T14:14:40Z",
+  "data_commit": "2026-11-08T20:03:03Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d95348f",
+    "data": "2026-11-08",
+    "assunto": "feat: workflow auto-corrige deno.lock em PRs do Dependabot (#368)"
+   },
    {
     "sha": "fa27151",
     "data": "2026-11-08",
@@ -126,14 +131,9 @@
     "sha": "fdb81b3",
     "data": "2026-11-05",
     "assunto": "chore(deps): bump react-window 2.3.3→2.5.3 (#355)"
-   },
-   {
-    "sha": "eddf062",
-    "data": "2026-11-05",
-    "assunto": "chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)"
    }
   ],
-  "arquivos_mudados_7d": 68,
+  "arquivos_mudados_7d": 69,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 48
+    "commits": 49
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3429,
+  "arquivos_total": 3430,
   "arquivos_codigo": 2449,
   "linhas_codigo": 419890,
   "rotas": 170,
@@ -337,7 +337,7 @@
   "migrations": 669,
   "cron_jobs": 28,
   "testes": 162,
-  "workflows": 24,
+  "workflows": 25,
   "scripts": 69,
   "docs_md": 202
  },

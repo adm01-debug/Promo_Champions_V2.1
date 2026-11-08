@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "fa271519296988d072d3357c9a9a52234a841563",
+  "sha": "d95348f78b81a6ab56b37e50b69cabf2ed6d3cd5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-08 14:23 UTC",
-  "files_total": 3444,
+  "generated_at": "2026-11-08 20:27 UTC",
+  "files_total": 3445,
   "code_files": 3126,
   "code_lines": 449831
  },
  "version": "1.3.2",
- "facts_hash": "449a028b791ede95",
+ "facts_hash": "51c59f1640f48b08",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -242,6 +242,11 @@
      "schedule",
      "workflow_dispatch"
     ]
+   },
+   {
+    "file": ".github/workflows/dependabot-fix-lockfile.yml",
+    "name": "Dependabot – Fix deno.lock",
+    "triggers": []
    },
    {
     "file": ".github/workflows/deploy.yml",
@@ -243860,10 +243865,19 @@
   }
  },
  "git": {
-  "sha": "fa271519296988d072d3357c9a9a52234a841563",
+  "sha": "d95348f78b81a6ab56b37e50b69cabf2ed6d3cd5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d95348f",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: workflow auto-corrige deno.lock em PRs do Dependabot (#368)",
+    "files": [
+     ".github/workflows/dependabot-fix-lockfile.yml"
+    ]
+   },
    {
     "sha": "fa27151",
     "date": "2026-11-08",
@@ -244201,21 +244215,6 @@
      "analise-prs/funcionalidades.md",
      "analise-prs/regras-de-negocio.md"
     ]
-   },
-   {
-    "sha": "cae024b",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "docs: analise-prs — 7 artefatos de inventário e dossiers de PRs",
-    "files": [
-     "analise-prs/RELATORIO_PRS.md",
-     "analise-prs/decisoes.md",
-     "analise-prs/dossies/PR-280.md",
-     "analise-prs/dossies/PR-281.md",
-     "analise-prs/dossies/PR-344.md",
-     "analise-prs/progresso.json",
-     "analise-prs/prs.json"
-    ]
    }
   ],
   "hot_files": [
@@ -244264,16 +244263,16 @@
     2
    ],
    [
-    "analise-prs/decisoes.md",
-    2
-   ],
-   [
     ".gitignore",
     2
    ],
    [
     "deno.lock",
     2
+   ],
+   [
+    ".github/workflows/dependabot-fix-lockfile.yml",
+    1
    ],
    [
     "docs/agentes/banco-e-mcp.md",
