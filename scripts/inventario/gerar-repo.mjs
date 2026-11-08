@@ -58,8 +58,16 @@ for (const f of edges) {
   };
 }
 const semChamador = Object.entries(inventario).filter(([, v]) => v.sem_chamador).map(([k]) => k);
-writeFileSync(join(OUT, 'edges.json'), JSON.stringify({ gerado_em: new Date().toISOString(), total: edges.length, sem_chamador_no_repo: semChamador, edge_functions: inventario }) + '\n');
-console.log(`edges: ${edges.length} | sem chamador no repo (src/migrations/edges): ${semChamador.length}`);
+// Zero edge functions num repo que tem 171 significa leitura quebrada (pasta vazia,
+// subdiretorio sem index.ts), nao inventario vazio. edges.json e versionado e entra no
+// PR automatico do inventario-estado-semanal.yml: sobrescrever com total 0 apagaria o
+// inventario com CI verde. Mesmo criterio do tabelas-uso.json abaixo.
+if (edges.length > 0) {
+  writeFileSync(join(OUT, 'edges.json'), JSON.stringify({ gerado_em: new Date().toISOString(), total: edges.length, sem_chamador_no_repo: semChamador, edge_functions: inventario }) + '\n');
+  console.log(`edges: ${edges.length} | sem chamador no repo (src/migrations/edges): ${semChamador.length}`);
+} else {
+  console.error(`AVISO: nenhuma edge function encontrada em ${FDIR} — edges.json mantido como estava.`);
+}
 
 if (!process.stdin.isTTY) {
   const nomes = readFileSync(0, 'utf8').split(/\s+/).filter(Boolean);

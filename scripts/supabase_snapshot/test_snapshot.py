@@ -141,9 +141,50 @@ class SnapshotSQLRecoveryTests(SnapshotFixture):
         with mock.patch.object(self.snapshot, "introspect_db", side_effect=AssertionError("coleta proibida")):
             with contextlib.redirect_stderr(io.StringIO()) as stderr:
                 self.assertEqual(self.snapshot.main(), 2)
-        self.assertIn("sem marcador/snapshot válido", stderr.getvalue())
+        self.assertIn("sem saída anterior deste script", stderr.getvalue())
         self.assertEqual(sentinel.read_text(encoding="utf-8"), "não apagar")
         self.assertFalse((unowned / self.snapshot.OUTPUT_MARKER).exists())
+
+    def test_restored_output_without_marker_is_accepted(self):
+        """O ciclo artefato -> branch do contexto.yml perde o marcador (dotfile), e o
+        --force remove o snapshot.json: a coleta ainda tem de reconhecer a saída."""
+        self.out.mkdir()
+        (self.out / "manifest.json").write_text("{}", encoding="utf-8")
+        (self.out / "errors.md").write_text("_nenhum_\n", encoding="utf-8")
+        self.assertFalse((self.out / self.snapshot.OUTPUT_MARKER).exists())
+        self.assertFalse((self.out / "snapshot.json").exists())
+        self.assertEqual(self.collect(), 0)
+
+    def test_foreign_directory_with_lone_snapshot_json_is_rejected(self):
+        """Um snapshot.json v2 solto não é prova de autoria: já apagou arquivo de usuário."""
+        foreign = pathlib.Path(self.temp.name) / "trabalho-de-outra-pessoa"
+        foreign.mkdir()
+        sentinel = foreign / "tese.tex"
+        sentinel.write_text("não apagar", encoding="utf-8")
+        (foreign / "snapshot.json").write_text(
+            json.dumps({"format_version": 2, "db": {}, "api": {}}), encoding="utf-8"
+        )
+        self.snapshot.OUT = foreign
+        with mock.patch.object(self.snapshot, "introspect_db", side_effect=AssertionError("coleta proibida")):
+            with contextlib.redirect_stderr(io.StringIO()) as stderr:
+                self.assertEqual(self.snapshot.main(), 2)
+        self.assertIn("sem saída anterior deste script", stderr.getvalue())
+        self.assertEqual(sentinel.read_text(encoding="utf-8"), "não apagar")
+
+    def test_unwritable_marker_does_not_abort_collection(self):
+        """O marcador é best-effort: falha de escrita não pode impedir a coleta."""
+        self.out.mkdir()
+        (self.out / "manifest.json").write_text("{}", encoding="utf-8")
+        (self.out / "errors.md").write_text("_nenhum_\n", encoding="utf-8")
+        real_write = pathlib.Path.write_text
+
+        def write_text(this, *args, **kwargs):
+            if this.name == self.snapshot.OUTPUT_MARKER:
+                raise PermissionError(13, "sem permissão")
+            return real_write(this, *args, **kwargs)
+
+        with mock.patch.object(pathlib.Path, "write_text", write_text):
+            self.assertEqual(self.collect(), 0)
 
     def test_broad_output_paths_are_rejected_before_collection(self):
         cwd = pathlib.Path.cwd().resolve()

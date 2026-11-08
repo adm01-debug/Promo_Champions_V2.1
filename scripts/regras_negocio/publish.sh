@@ -154,9 +154,22 @@ if [ "$MODE" = "push" ]; then
         fi
       else
         git rebase --abort >/dev/null 2>&1 || true
-        echo "ERRO: conflito fora da saída gerada; o checkout local foi preservado." >&2
+        # Também cai aqui quando o rebase nem comeca (ex.: arquivo nao rastreado local
+        # colidindo com arquivo novo da origem): nesse caso nao houve conflito algum.
+        echo "ERRO: não foi possível reaplicar a saída gerada sobre origin/$BRANCH;" >&2
+        echo "      o checkout local foi preservado. Veja 'git status'." >&2
         exit 1
       fi
+    fi
+    # `git rebase --autostash` sai 0 mesmo quando o reaplique do autostash conflita: o
+    # rebase concluiu, mas o checkout fica com arquivos unmerged e o `commit --amend`
+    # abaixo morreria com "Committing is not possible... unmerged files". Pare aqui; o
+    # git ja guardou as alteracoes locais no stash e nada foi publicado.
+    if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+      echo "ERRO: o autostash conflitou ao ser reaplicado — o checkout tem arquivos em" >&2
+      echo "      conflito e nada foi publicado. Resolva o que 'git status' lista; suas" >&2
+      echo "      alterações locais também estão em 'git stash list'." >&2
+      exit 1
     fi
     # Um rebase bem-sucedido troca o SHA do commit sobrevivente mesmo quando a
     # regeneração seguinte não cria diff. Não atualize a identidade se ele foi

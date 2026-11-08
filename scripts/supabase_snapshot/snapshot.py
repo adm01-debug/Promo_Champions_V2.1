@@ -154,6 +154,39 @@ def valid_previous_snapshot(path: pathlib.Path) -> bool:
     )
 
 
+# Arquivos que só este script escreve na raiz do SNAPSHOT_DIR. Ver OWN_OUTPUT_MIN_HITS.
+OWN_OUTPUT_FILES = ("manifest.json", "errors.md", "snapshot.json", "CHANGELOG.md", "stats.md")
+# Dois acertos: um diretório alheio não tem dois destes por coincidência, e a saída
+# publicada sem snapshot.json (o --force do contexto.yml remove só esse) ainda é
+# reconhecida. Um único arquivo nunca basta: um snapshot.json v2 solto num diretório
+# de trabalho de outra pessoa já foi suficiente para apagá-lo em teste.
+OWN_OUTPUT_MIN_HITS = 2
+
+
+def looks_like_own_output(directory: pathlib.Path) -> bool:
+    """Reconhece uma saída anterior DESTE script sem depender do marcador.
+
+    O marcador é um dotfile e não sobrevive ao ciclo artefato -> branch do
+    contexto.yml (actions/upload-artifact ignora arquivos ocultos), então em CI
+    o diretório restaurado chega sem ele. Em vez de aceitar qualquer pasta com
+    um snapshot.json — que já apagou arquivos de usuário em teste — exige um
+    conjunto de artefatos que só esta coleta produz.
+    """
+    hits = 0
+    for name in OWN_OUTPUT_FILES:
+        try:
+            if not (directory / name).is_file():
+                continue
+        except OSError:
+            continue
+        # snapshot.json só conta quando é um v2 íntegro: um JSON qualquer com esse
+        # nome não é prova de autoria.
+        if name == "snapshot.json" and not valid_previous_snapshot(directory / name):
+            continue
+        hits += 1
+    return hits >= OWN_OUTPUT_MIN_HITS
+
+
 def prepare_output_directory() -> None:
     """Recusa alvos amplos ou alheios antes de qualquer coleta/limpeza."""
     cwd = pathlib.Path.cwd().resolve()
@@ -166,24 +199,34 @@ def prepare_output_directory() -> None:
     if OUT.exists() and not OUT.is_dir():
         raise ValueError(f"SNAPSHOT_DIR não é um diretório: {OUT}")
 
-    if OUT.exists():
-        entries = list(OUT.iterdir())
-        marker = OUT / OUTPUT_MARKER
-        marker_valid = False
-        if marker.is_file():
-            try:
-                marker_valid = marker.read_text(encoding="utf-8") == OUTPUT_MARKER_CONTENT
-            except (OSError, UnicodeError):
-                marker_valid = False
-        legacy_valid = valid_previous_snapshot(OUT / "snapshot.json")
-        if entries and not (marker_valid or legacy_valid):
-            raise ValueError(
-                f"SNAPSHOT_DIR não vazio e sem marcador/snapshot válido: {OUT}. Nada foi alterado."
-            )
-    else:
-        OUT.mkdir(parents=True)
+    try:
+        if OUT.exists():
+            entries = list(OUT.iterdir())
+            marker = OUT / OUTPUT_MARKER
+            marker_valid = False
+            if marker.is_file():
+                try:
+                    marker_valid = marker.read_text(encoding="utf-8") == OUTPUT_MARKER_CONTENT
+                except (OSError, UnicodeError):
+                    marker_valid = False
+            if entries and not (marker_valid or looks_like_own_output(OUT)):
+                raise ValueError(
+                    f"SNAPSHOT_DIR não vazio e sem saída anterior deste script: {OUT}. Nada foi alterado."
+                )
+        else:
+            # exist_ok: dois processos podem criar o diretório ao mesmo tempo.
+            OUT.mkdir(parents=True, exist_ok=True)
 
-    (OUT / OUTPUT_MARKER).write_text(OUTPUT_MARKER_CONTENT, encoding="utf-8")
+        # O marcador é best-effort: a falha de escrita não impede a coleta, porque
+        # looks_like_own_output() reconhece a saída pelos artefatos versionados.
+        try:
+            marker_path = OUT / OUTPUT_MARKER
+            if not marker_path.is_dir():
+                marker_path.write_text(OUTPUT_MARKER_CONTENT, encoding="utf-8")
+        except OSError as error:
+            log(f"aviso: não foi possível escrever {OUTPUT_MARKER}: {error}")
+    except OSError as error:
+        raise ValueError(f"SNAPSHOT_DIR inacessível: {OUT} ({error})") from error
 
 
 def jsonable(value: Any) -> Any:
