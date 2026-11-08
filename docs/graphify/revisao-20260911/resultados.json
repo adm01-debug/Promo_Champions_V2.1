@@ -1,0 +1,90 @@
+{
+  "resultados": [
+    {
+      "cenario": "extração mínima simulada",
+      "observado": 0,
+      "esperado": 0,
+      "conforme": true
+    },
+    {
+      "cenario": "reutilização de snapshot completo",
+      "observado": 1,
+      "esperado": 1,
+      "conforme": true
+    },
+    {
+      "cenario": "versão 0.9.480 aceita por comparação parcial",
+      "observado": 0,
+      "esperado": 1,
+      "conforme": false
+    },
+    {
+      "cenario": "link simbólico intermediário permite escrita externa",
+      "observado": true,
+      "esperado": false,
+      "conforme": false
+    },
+    {
+      "cenario": "saída por link intermediário deve falhar",
+      "observado": 0,
+      "esperado": 1,
+      "conforme": false
+    },
+    {
+      "cenario": "destino preexistente incompleto deve ser recusado",
+      "observado": 0,
+      "esperado": 1,
+      "conforme": false
+    },
+    {
+      "cenario": "grafo vazio",
+      "observado": true,
+      "esperado": false,
+      "conforme": false
+    },
+    {
+      "cenario": "importação com destino vazio",
+      "observado": true,
+      "esperado": false,
+      "conforme": false
+    },
+    {
+      "cenario": "aresta sem relação ou proveniência",
+      "observado": true,
+      "esperado": false,
+      "conforme": false
+    },
+    {
+      "cenario": "segredo sintético do subprocesso alcança stderr",
+      "observado": true,
+      "esperado": false,
+      "conforme": false
+    },
+    {
+      "cenario": "erro JSON reproduz conteúdo privado sintético no log",
+      "observado": false,
+      "esperado": false,
+      "conforme": true
+    },
+    {
+      "cenario": "segredo sintético codificado em escape Unicode deve ser recusado",
+      "observado": 0,
+      "esperado": 1,
+      "conforme": false
+    },
+    {
+      "cenario": "extração com Graphify real escreve além da raiz via link",
+      "observado": true,
+      "esperado": false,
+      "conforme": false
+    },
+    {
+      "cenario": "wrapper com Graphify real deveria recusar link externo",
+      "observado": 0,
+      "esperado": 1,
+      "conforme": false
+    }
+  ],
+  "codigoSaida": 1,
+  "commitAuditado": "a90a0523bb51fe4fb0f450f7e77bf2e2f2b9d863"
+}
