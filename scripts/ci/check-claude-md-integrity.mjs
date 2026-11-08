@@ -11,7 +11,7 @@
  * Mesmo guard do Zapp_Web_V2 (scripts/ci/check-claude-md-integrity.mjs), com os cabecalhos deste repo.
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 
 const AGENTS = 'AGENTS.md';
@@ -65,7 +65,9 @@ function bytesNaBase(base) {
   const porArquivo = new Map();
   const tamanho = (path) => {
     try {
-      const out = execSync(`git cat-file -s ${base}:${path}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+      // execFileSync (sem shell) em vez de execSync: CLAUDE_MD_BASE vem do ambiente e
+      // interpolado num comando de shell virava alerta de command injection no CodeQL.
+      const out = execFileSync('git', ['cat-file', '-s', `${base}:${path}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
       porArquivo.set(path, Number.parseInt(out.trim(), 10) || 0);
     } catch {
       /* nao existe na base */
@@ -74,7 +76,7 @@ function bytesNaBase(base) {
   for (const f of CONJUNTO_RAIZ) tamanho(f);
   let lista = '';
   try {
-    lista = execSync(`git ls-tree -r --name-only ${base} -- ${DOCS_DIR}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    lista = execFileSync('git', ['ls-tree', '-r', '--name-only', base, '--', DOCS_DIR], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
   } catch {
     lista = '';
   }
