@@ -14,10 +14,10 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 
 | tabela | linhas (~) | total | heap | índices | linhas mortas (~) | seq scans (~) | idx scans (~) | último autovacuum |
 |---|---|---|---|---|---|---|---|---|
-| public.audit_logs | ~26.8k | 79.3 MB | 54.2 MB | 13.4 MB | ~4.2k | ~40 | ~1.4k | 2026-11-07 |
+| public.audit_logs | ~26.8k | 79.3 MB | 54.2 MB | 13.4 MB | ~4.5k | ~40 | ~1.4k | 2026-11-07 |
 | public.web_vitals_samples | ~31.3k | 15.1 MB | 8.4 MB | 6.7 MB | 0 | ~50 | ~510 | 2026-11-07 |
 | public.notifications | ~4.6k | 3.3 MB | 1.9 MB | 1.4 MB | 0 | ~60 | ~44.9k | 2026-11-06 |
-| public.sales | ~960 | 2.2 MB | 424.0 KB | 1.8 MB | ~100 | ~84k | ~1.9M | 2026-11-08 |
+| public.sales | ~960 | 2.2 MB | 424.0 KB | 1.8 MB | ~200 | ~84.2k | ~1.9M | 2026-11-08 |
 | public.db_rollback_snapshots | ~8.7k | 1.7 MB | 864.0 KB | 880.0 KB | ~290 | ~30 | ~6.6k | 2026-11-07 |
 | public.activities | ~2.2k | 1.6 MB | 384.0 KB | 1.2 MB | 0 | ~2.7k | ~9.9k | 2026-08-15 |
 | public.error_logs | ~60 | 1.6 MB | 1.2 MB | 192.0 KB | ~60 | ~50 | ~32.3k | 2026-10-22 |
@@ -28,24 +28,24 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.clients | ~100 | 704.0 KB | 40.0 KB | 624.0 KB | ~20 | ~570 | ~6.4k | 2026-08-14 |
 | public.lead_scores | ~900 | 640.0 KB | 448.0 KB | 160.0 KB | ~50 | ~80 | ~7.7k |  |
 | public.deal_health_scores | ~900 | 632.0 KB | 400.0 KB | 200.0 KB | 0 | ~70 | ~6.3k |  |
-| public.login_attempts | ~1.3k | 632.0 KB | 256.0 KB | 336.0 KB | ~380 | ~1.7k | ~14.4k | 2026-11-06 |
-| public.cron_failure_alerts | ~1.1k | 624.0 KB | 184.0 KB | 400.0 KB | ~240 | ~1.1k | ~71.2k | 2026-11-07 |
-| public.quotes | ~470 | 600.0 KB | 256.0 KB | 304.0 KB | 0 | ~1.8k | ~157.9k | 2026-11-08 |
+| public.login_attempts | ~1.3k | 632.0 KB | 256.0 KB | 336.0 KB | ~400 | ~1.7k | ~14.5k | 2026-11-06 |
+| public.cron_failure_alerts | ~1.1k | 624.0 KB | 184.0 KB | 400.0 KB | ~270 | ~1.1k | ~71.4k | 2026-11-07 |
+| public.quotes | ~470 | 600.0 KB | 256.0 KB | 304.0 KB | 0 | ~1.8k | ~158.4k | 2026-11-08 |
 | public.audit_log | ~330 | 584.0 KB | 304.0 KB | 248.0 KB | 4 | ~60 | ~180 |  |
-| public.commissions | ~940 | 576.0 KB | 200.0 KB | 336.0 KB | ~100 | ~70 | ~1.7k | 2026-11-08 |
-| public.deal_stage_transitions | ~1.3k | 552.0 KB | 208.0 KB | 304.0 KB | ~100 | ~50 | ~8.8k | 2026-11-08 |
+| public.commissions | ~940 | 576.0 KB | 200.0 KB | 336.0 KB | ~200 | ~70 | ~1.7k | 2026-11-08 |
+| public.deal_stage_transitions | ~1.3k | 552.0 KB | 208.0 KB | 304.0 KB | ~200 | ~50 | ~8.8k | 2026-11-08 |
 | public.win_loss_analyses | ~500 | 544.0 KB | 208.0 KB | 296.0 KB | 0 | ~100 | ~10.4k | 2026-08-14 |
 | public.territories | ~40 | 520.0 KB | 248.0 KB | 232.0 KB | 0 | ~620 | ~1.3M | 2026-11-08 |
-| public.deal_stage_history | ~1.3k | 464.0 KB | 128.0 KB | 296.0 KB | ~100 | ~80 | ~24.2k | 2026-11-08 |
-| public.orders | ~340 | 456.0 KB | 144.0 KB | 272.0 KB | 0 | ~450 | ~148.2k | 2026-11-08 |
+| public.deal_stage_history | ~1.3k | 472.0 KB | 136.0 KB | 296.0 KB | ~200 | ~80 | ~24.3k | 2026-11-08 |
+| public.orders | ~340 | 456.0 KB | 144.0 KB | 272.0 KB | 0 | ~450 | ~148.7k | 2026-11-08 |
 | public.deal_velocity_predictions | ~900 | 408.0 KB | 240.0 KB | 136.0 KB | 0 | ~60 | ~7.1k |  |
 | public.quote_sync_inbound_log | ~120 | 408.0 KB | 80.0 KB | 160.0 KB | ~240 | ~140 | ~300 |  |
-| public.quote_items | ~1.1k | 376.0 KB | 168.0 KB | 168.0 KB | ~100 | ~50 | ~105.1k | 2026-11-08 |
+| public.quote_items | ~1.1k | 376.0 KB | 168.0 KB | 168.0 KB | ~200 | ~50 | ~105.5k | 2026-11-08 |
 | public.quotes_inbound | ~150 | 352.0 KB | 48.0 KB | 136.0 KB | ~20 | ~70 | ~340 |  |
 | public.deal_stakeholders | ~600 | 336.0 KB | 136.0 KB | 168.0 KB | 0 | ~60 | ~6.5k |  |
 | public.webhook_inbound_dedupe | 0 | 312.0 KB | 72.0 KB | 72.0 KB | ~190 | ~160 | ~1.2k |  |
 | public.page_analytics | ~160 | 304.0 KB | 104.0 KB | 168.0 KB | ~430 | ~400 | ~740 |  |
-| public.order_items | ~620 | 280.0 KB | 128.0 KB | 112.0 KB | ~100 | ~50 | ~29.6k | 2026-11-08 |
+| public.order_items | ~620 | 280.0 KB | 128.0 KB | 112.0 KB | 0 | ~50 | ~29.7k | 2026-11-08 |
 | public.deal_outcomes | ~500 | 256.0 KB | 88.0 KB | 136.0 KB | 0 | ~70 | ~5.7k |  |
 | public.order_status_events | ~350 | 248.0 KB | 96.0 KB | 112.0 KB | 0 | ~50 | ~3.5k | 2026-11-08 |
 | public.deal_health_history | ~900 | 240.0 KB | 96.0 KB | 112.0 KB | 0 | ~60 | ~6.2k |  |
@@ -53,14 +53,14 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.products | ~20 | 200.0 KB | 8.0 KB | 184.0 KB | 4 | ~2.9k | ~2.8k |  |
 | public.quote_conversion_audit | ~170 | 184.0 KB | 48.0 KB | 104.0 KB | 0 | ~60 | 0 |  |
 | public.bitrix24_sync_logs | 0 | 176.0 KB | 64.0 KB | 80.0 KB | 0 | ~60 | ~80 |  |
-| public.accounts | ~120 | 168.0 KB | 24.0 KB | 104.0 KB | 0 | ~110 | ~53.9k | 2026-11-08 |
+| public.accounts | ~120 | 168.0 KB | 24.0 KB | 104.0 KB | 0 | ~110 | ~54.1k | 2026-11-08 |
 | public.client_portfolio | ~100 | 168.0 KB | 16.0 KB | 120.0 KB | 0 | ~80 | ~480 |  |
 | public.stock_movements | ~480 | 168.0 KB | 48.0 KB | 88.0 KB | 1 | ~60 | ~10 |  |
 | public.price_history | ~200 | 144.0 KB | 32.0 KB | 80.0 KB | 0 | ~90 | 5 |  |
 | public.salespeople | 9 | 144.0 KB | 8.0 KB | 128.0 KB | ~40 | ~15.4M | ~59.1k |  |
 | public.renewals | ~100 | 128.0 KB | 16.0 KB | 80.0 KB | 0 | ~60 | ~30 |  |
-| public.battle_participants | 1 | 120.0 KB | 16.0 KB | 64.0 KB | 0 | ~1.2k | ~34.2k | 2026-08-14 |
-| public.monthly_sales_summary | ~30 | 120.0 KB | 64.0 KB | 16.0 KB | 0 | ~30 | ~43.8k | 2026-11-08 |
+| public.battle_participants | 1 | 120.0 KB | 16.0 KB | 64.0 KB | 0 | ~1.2k | ~34.3k | 2026-08-14 |
+| public.monthly_sales_summary | ~30 | 120.0 KB | 64.0 KB | 16.0 KB | 0 | ~30 | ~43.9k | 2026-11-08 |
 | public.nps_surveys | ~250 | 120.0 KB | 40.0 KB | 48.0 KB | 0 | ~70 | ~5.3k |  |
 | public.client_churn_alerts_state | 3 | 112.0 KB | 8.0 KB | 64.0 KB | ~20 | ~1.7k | ~80 | 2026-10-28 |
 | public.data_access_log | ~120 | 112.0 KB | 16.0 KB | 64.0 KB | 1 | ~60 | ~110 |  |
@@ -72,7 +72,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.support_tickets | ~150 | 112.0 KB | 24.0 KB | 56.0 KB | 0 | ~70 | 5 |  |
 | public.weekly_matchups | ~40 | 112.0 KB | 16.0 KB | 64.0 KB | ~30 | ~130 | ~370 |  |
 | public.victory_feed | ~80 | 104.0 KB | 24.0 KB | 48.0 KB | 8 | ~60 | ~420 |  |
-| public.winloss_webhook_deliveries | 1 | 104.0 KB | 8.0 KB | 56.0 KB | ~30 | ~740 | ~20 | 2026-11-07 |
+| public.winloss_webhook_deliveries | 1 | 104.0 KB | 8.0 KB | 56.0 KB | ~40 | ~750 | ~20 | 2026-11-07 |
 | public.access_denied_logs | 0 | 96.0 KB | 16.0 KB | 48.0 KB | 7 | ~100 | ~340 |  |
 | public.achievements | 4 | 96.0 KB | 8.0 KB | 80.0 KB | ~30 | ~480 | ~40 |  |
 | public.csat_ces_surveys | ~110 | 96.0 KB | 16.0 KB | 48.0 KB | 0 | ~80 | 5 |  |
@@ -88,7 +88,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.cadence_outcome_rules | 4 | 80.0 KB | 8.0 KB | 64.0 KB | 4 | ~60 | 0 |  |
 | public.forecast_snapshots | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~60 | 7 |  |
 | public.price_alerts | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~90 | 2 |  |
-| public.prospect_cadences | 0 | 80.0 KB | 0 B | 72.0 KB | 0 | ~650 | ~23k |  |
+| public.prospect_cadences | 0 | 80.0 KB | 0 B | 72.0 KB | 0 | ~650 | ~23.1k |  |
 | public.revenue_forecasts | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~60 | ~20 |  |
 | public.stage_conversion_metrics | 0 | 80.0 KB | 8.0 KB | 64.0 KB | 0 | ~60 | ~10 |  |
 | public.call_recordings | 0 | 72.0 KB | 0 B | 64.0 KB | 0 | ~70 | ~5.3k |  |
@@ -96,8 +96,8 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.qbr_schedule | 0 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | ~60 | ~30 |  |
 | public.role_permissions | 0 | 72.0 KB | 8.0 KB | 48.0 KB | 0 | ~60 | ~20 | 2026-08-04 |
 | public.team_closers | 0 | 72.0 KB | 8.0 KB | 64.0 KB | 0 | ~60 | ~20 |  |
-| public.v4_callback_dead_letters | 0 | 72.0 KB | 8.0 KB | 56.0 KB | 0 | ~70 | ~24.4k |  |
-| public.winloss_webhook_subscriptions | 1 | 72.0 KB | 8.0 KB | 24.0 KB | ~40 | ~1.4k | ~100 | 2026-11-06 |
+| public.v4_callback_dead_letters | 0 | 72.0 KB | 8.0 KB | 56.0 KB | 0 | ~70 | ~24.5k |  |
+| public.winloss_webhook_subscriptions | 1 | 72.0 KB | 8.0 KB | 24.0 KB | ~50 | ~1.4k | ~100 | 2026-11-06 |
 | public.active_power_ups | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~60 | ~20 |  |
 | public.automation_runs | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~70 | 4 |  |
 | public.automation_workflows | 0 | 64.0 KB | 8.0 KB | 48.0 KB | 0 | ~110 | ~40 |  |
@@ -177,7 +177,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.campaign_health_alerts | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | 1 |  |
 | public.circuit_breaker_events | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | ~20 |  |
 | public.commission_bonus_awards | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | 1 |  |
-| public.commission_rules | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | ~49k |  |
+| public.commission_rules | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | ~49.2k |  |
 | public.competitive_chat_messages | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | ~20 |  |
 | public.consent_records | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~30 | 0 |  |
 | public.contact_engagement_score | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~70 | 1 |  |
@@ -231,7 +231,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_webhook_dead_letters | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | ~440 |  |
 | public.winloss_webhook_replay_invocations | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | 1 |  |
 | public.xp_adjustments | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | 0 |  |
-| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~199.5k | ~46.6k |  |
+| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~199.7k | ~46.6k |  |
 | public.account_plans | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 7 |  |
 | public.active_sessions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 3 |  |
 | public.activity_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~160 | 7 |  |
@@ -241,7 +241,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.asset_usage_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 3 |  |
 | public.cadence_ab_tests | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~80 | 2 |  |
 | public.cadence_alert_templates | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 2 | ~60 | 1 |  |
-| public.cadence_enrollment_rules | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~80 | ~26.3k |  |
+| public.cadence_enrollment_rules | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~80 | ~26.4k |  |
 | public.call_conversation_metrics | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 1 |  |
 | public.call_objections | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 1 |  |
 | public.call_questions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 1 |  |
@@ -289,7 +289,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.migration_log | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 1 | ~60 | 4 |  |
 | public.mql_qualifications | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | ~5.3k |  |
 | public.password_reset_requests | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | ~44.5k |  |
-| public.performance_bets | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | ~154.9k |  |
+| public.performance_bets | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | ~155.4k |  |
 | public.personal_assistant_briefings | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | ~180 |  |
 | public.personal_assistant_nudges | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | 0 |  |
 | public.pipeline_coverage_recommendations | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~50 | 0 |  |
@@ -461,21 +461,21 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~640 | ~2.9M | 4627.16 | `SELECT public.detect_stalled_cron_jobs()` |
-| service_role | ~940 | ~1.4M | 1513.25 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
-| postgres | ~240 | ~761k | 3197.54 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
-| postgres | ~17.6k | ~495.9k | 28.11 | `SELECT public.trigger_internal_edge_job($1)` |
+| postgres | ~640 | ~3M | 4628.92 | `SELECT public.detect_stalled_cron_jobs()` |
+| service_role | ~950 | ~1.4M | 1513.37 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
+| postgres | ~240 | ~774.8k | 3188.51 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| postgres | ~17.8k | ~500.2k | 28.17 | `SELECT public.trigger_internal_edge_job($1)` |
 | authenticated | ~2.3k | ~345.3k | 150.41 | `WITH pgrst_source AS ( SELECT "public"."sales".* FROM "public"."sales" WHERE "public"."sales"."status" = ANY ($1) LIMIT $2 OFFSET $3 ) SELECT $4::bigint AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, ` |
 | authenticated | ~3.7k | ~248.1k | 66.39 | `WITH pgrst_source AS ( SELECT "public"."notifications"."id" FROM "public"."notifications" WHERE "public"."notifications"."user_id" = $1 AND "public"."notifications"."read_at" IS NULL AND "public"."notifications"."archive` |
-| postgres | ~240 | ~200.3k | 841.57 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| postgres | ~240 | ~204.4k | 841.28 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
 | authenticated | ~300 | ~198.2k | 649.99 | `WITH pgrst_source AS (SELECT pgrst_call.pgrst_scalar FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_quote_id" FROM json_to_record(pgrst_payload.json_data) AS _("_quote_id" uuid) LIMIT $4) pgrst_body , LAT` |
 | anon | ~2.4k | ~191.9k | 81.22 | `WITH pgrst_source AS ( SELECT "public"."sales"."client_name", "public"."sales"."created_at", "public"."sales"."status" FROM "public"."sales" WHERE "public"."sales"."status" = ANY ($1) ORDER BY "public"."sales"."created_a` |
-| postgres | ~240 | ~106.1k | 445.98 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| postgres | ~1.9k | ~92.8k | 48.70 | `SELECT public.admin_capture_rollback_snapshot()` |
-| postgres | ~240 | ~66.6k | 279.92 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
-| service_role | ~3.6k | ~66.5k | 18.26 | `WITH pgrst_source AS (INSERT INTO "public"."web_vitals_samples"("connection_type", "metric", "navigation_type", "rating", "route", "session_id", "user_agent", "value", "viewport_width") SELECT "pgrst_body"."connection_ty` |
+| postgres | ~240 | ~108.6k | 446.83 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| postgres | ~1.9k | ~93.5k | 48.75 | `SELECT public.admin_capture_rollback_snapshot()` |
+| postgres | ~240 | ~68.1k | 280.27 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| service_role | ~3.6k | ~66.6k | 18.26 | `WITH pgrst_source AS (INSERT INTO "public"."web_vitals_samples"("connection_type", "metric", "navigation_type", "rating", "route", "session_id", "user_agent", "value", "viewport_width") SELECT "pgrst_body"."connection_ty` |
 | authenticated | ~100 | ~54.7k | 552.72 | `WITH pgrst_source AS (DELETE FROM "public"."sales" WHERE "public"."sales"."id" = ANY ($1) RETURNING $2) SELECT $3 AS total_result_set, pg_catalog.count(_postgrest_t) AS page_total, array[]::text[] AS header, $4::text AS ` |
-| postgres | ~240 | ~53k | 222.57 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
+| postgres | ~240 | ~54.2k | 223.20 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
 
 
 ## Conexões
