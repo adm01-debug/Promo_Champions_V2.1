@@ -84,18 +84,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-08 08:30:00 | succeeded | 0.08 | 1 row |
+| 2026-11-08 08:00:00 | succeeded | 0.05 | 1 row |
 | 2026-11-08 07:30:00 | succeeded | 0.11 | 1 row |
-| 2026-11-08 07:00:00 | succeeded | 0.13 | 1 row |
-| 2026-11-08 06:30:00 | succeeded | 0.05 | 1 row |
 
 
 ## 13 · capture-rollback-snapshot-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:55:00 | succeeded | 0.06 | 1 row |
-| 2026-11-08 07:50:00 | succeeded | 0.05 | 1 row |
-| 2026-11-08 07:45:00 | succeeded | 0.06 | 1 row |
+| 2026-11-08 08:55:00 | succeeded | 0.05 | 1 row |
+| 2026-11-08 08:50:00 | succeeded | 0.05 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.07 | 1 row |
 
 
 ## 14 · purge-rollback-snapshots-daily
@@ -120,18 +120,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-08 08:20:00 | succeeded | 0.14 | 1 row |
 | 2026-11-08 07:20:00 | succeeded | 0.12 | 1 row |
 | 2026-11-08 06:20:00 | succeeded | 0.13 | 1 row |
-| 2026-11-08 05:20:00 | succeeded | 0.13 | 1 row |
 
 
 ## 17 · detect-stalled-cron-15min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:45:00 | succeeded | 4.40 | 1 row |
-| 2026-11-08 07:30:00 | succeeded | 1.79 | 1 row |
-| 2026-11-08 07:15:00 | succeeded | 6.54 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 4.72 | 1 row |
+| 2026-11-08 08:30:00 | succeeded | 1.47 | 1 row |
+| 2026-11-08 08:15:00 | succeeded | 4.99 | 1 row |
 
 
 ## 21 · deal-risk-digest-daily
@@ -147,90 +147,90 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:45:00 | succeeded | 0.04 | 1 row |
-| 2026-11-08 07:30:00 | succeeded | 0.11 | 1 row |
-| 2026-11-08 07:15:00 | succeeded | 0.05 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.03 | 1 row |
+| 2026-11-08 08:30:00 | succeeded | 0.03 | 1 row |
+| 2026-11-08 08:15:00 | succeeded | 0.02 | 1 row |
 
 
 ## 29 · auto-task-queue-hourly
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-08 08:00:00 | succeeded | 0.05 | 1 row |
 | 2026-11-08 07:00:00 | succeeded | 0.10 | 1 row |
 | 2026-11-08 06:00:00 | succeeded | 0.06 | 1 row |
-| 2026-11-08 05:00:00 | succeeded | 0.03 | 1 row |
 
 
 ## 30 · detect-client-churn-alerts-hourly
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-08 08:15:00 | succeeded | 0.01 | 1 row |
 | 2026-11-08 07:15:00 | succeeded | 0.06 | 1 row |
 | 2026-11-08 06:15:00 | succeeded | 0.02 | 1 row |
-| 2026-11-08 05:15:00 | succeeded | 0.01 | 1 row |
 
 
 ## 36 · notify-v4-quote-status-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:55:00 | succeeded | 0.05 | 1 row |
-| 2026-11-08 07:50:00 | succeeded | 0.06 | 1 row |
-| 2026-11-08 07:45:00 | succeeded | 0.04 | 1 row |
+| 2026-11-08 08:55:00 | succeeded | 0.02 | 1 row |
+| 2026-11-08 08:50:00 | succeeded | 0.05 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.03 | 1 row |
 
 
 ## 37 · check-v4-callback-alerts-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:55:00 | succeeded | 0.04 | 1 row |
-| 2026-11-08 07:50:00 | succeeded | 0.04 | 1 row |
-| 2026-11-08 07:45:00 | succeeded | 0.03 | 1 row |
+| 2026-11-08 08:55:00 | succeeded | 0.01 | 1 row |
+| 2026-11-08 08:50:00 | succeeded | 0.08 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.03 | 1 row |
 
 
 ## 38 · cron-failure-alerter-10min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:50:00 | succeeded | 0.05 | 1 row |
-| 2026-11-08 07:40:00 | succeeded | 0.06 | 1 row |
-| 2026-11-08 07:30:00 | succeeded | 0.11 | 1 row |
+| 2026-11-08 08:50:00 | succeeded | 0.04 | 1 row |
+| 2026-11-08 08:40:00 | succeeded | 0.06 | 1 row |
+| 2026-11-08 08:30:00 | succeeded | 0.07 | 1 row |
 
 
 ## 39 · process-call-recording-ingest-1min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:59:00 | succeeded | 0.02 | 1 row |
-| 2026-11-08 07:58:00 | succeeded | 0.01 | 1 row |
-| 2026-11-08 07:57:00 | succeeded | 0.01 | 1 row |
+| 2026-11-08 08:59:00 | succeeded | 0.02 | 1 row |
+| 2026-11-08 08:58:00 | succeeded | 0.03 | 1 row |
+| 2026-11-08 08:57:00 | succeeded | 0.01 | 1 row |
 
 
 ## 40 · edge-retry-threshold-alert-15min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:45:00 | succeeded | 0.03 | 1 row |
-| 2026-11-08 07:30:00 | succeeded | 0.13 | 1 row |
-| 2026-11-08 07:15:00 | succeeded | 0.05 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.03 | 1 row |
+| 2026-11-08 08:30:00 | succeeded | 0.04 | 1 row |
+| 2026-11-08 08:15:00 | succeeded | 0.01 | 1 row |
 
 
 ## 41 · wal-health-alert-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:55:00 | succeeded | 0.04 | 1 row |
-| 2026-11-08 07:50:00 | succeeded | 0.05 | 1 row |
-| 2026-11-08 07:45:00 | succeeded | 0.02 | 1 row |
+| 2026-11-08 08:55:00 | succeeded | 0.01 | 1 row |
+| 2026-11-08 08:50:00 | succeeded | 0.08 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.03 | 1 row |
 
 
 ## 42 · winloss-webhook-health-monitor-15min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-08 07:45:00 | succeeded | 0.03 | 1 row |
-| 2026-11-08 07:30:00 | succeeded | 0.11 | 1 row |
-| 2026-11-08 07:15:00 | succeeded | 0.05 | 1 row |
+| 2026-11-08 08:45:00 | succeeded | 0.02 | 1 row |
+| 2026-11-08 08:30:00 | succeeded | 0.07 | 1 row |
+| 2026-11-08 08:15:00 | succeeded | 0.02 | 1 row |
 
 
 ## 44 · webvitals-regression-alert-daily
@@ -271,9 +271,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-08 08:17:00 | succeeded | 0.03 | 1 row |
 | 2026-11-08 07:17:00 | succeeded | 0.03 | 1 row |
 | 2026-11-08 06:17:00 | succeeded | 0.01 | 1 row |
-| 2026-11-08 05:17:00 | succeeded | 0.01 | 1 row |
 
 
 ## 49 · weekly-matchups-resolution
