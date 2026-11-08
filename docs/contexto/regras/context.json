@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9500f8766ca8acfc47d852aef26e53be6c04b1e2",
+  "sha": "fa271519296988d072d3357c9a9a52234a841563",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-08 14:12 UTC",
+  "generated_at": "2026-11-08 14:23 UTC",
   "files_total": 3444,
   "code_files": 3126,
   "code_lines": 449831
@@ -243860,10 +243860,19 @@
   }
  },
  "git": {
-  "sha": "9500f8766ca8acfc47d852aef26e53be6c04b1e2",
+  "sha": "fa271519296988d072d3357c9a9a52234a841563",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "fa27151",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: probe de tabela filtra table_type='BASE TABLE' (#381)",
+    "files": [
+     "scripts/db-audit/gen-migration-probes.mjs"
+    ]
+   },
    {
     "sha": "9500f87",
     "date": "2026-11-08",
@@ -244207,15 +244216,6 @@
      "analise-prs/progresso.json",
      "analise-prs/prs.json"
     ]
-   },
-   {
-    "sha": "c758589",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "docs: auditorias-anteriores — reconciliação com main (SHA c23e4e8b)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -244238,6 +244238,10 @@
    [
     "inventario/estado/edges.json",
     3
+   ],
+   [
+    "scripts/db-audit/gen-migration-probes.mjs",
+    2
    ],
    [
     "AGENTS.md",
@@ -244293,10 +244297,6 @@
    ],
    [
     ".release-please-manifest.json",
-    1
-   ],
-   [
-    "CHANGELOG.md",
     1
    ]
   ]

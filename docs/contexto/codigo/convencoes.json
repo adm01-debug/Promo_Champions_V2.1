@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: probe de tabela filtra table_type='BASE TABLE' (#381)",
    "chore: instruções enxutas para agentes (#380)",
    "fix: corrige relatório de impacto do graphify (#390)",
    "chore(main): release 1.1.0 (#378)",
-   "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)",
-   "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)"
+   "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
