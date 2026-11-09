@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b38cfe67b3d9b9f1e06ed885c20b927810cf39f6` (2026-11-08T21:03:43Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1` (2026-11-08T22:51:35-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2382), SQL (676), Markdown (201), JavaScript (65), JSON (29), YAML (27), Python (5), Shell (5)
+- linguagens: TypeScript (2382), SQL (676), Markdown (203), JavaScript (65), JSON (29), YAML (27), Shell (6), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3430 |
+| arquivos_total | 3433 |
 | arquivos_codigo | 2450 |
-| linhas_codigo | 420014 |
+| linhas_codigo | 420245 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 162 |
 | workflows | 25 |
 | scripts | 70 |
-| docs_md | 201 |
+| docs_md | 203 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
@@ -574,8 +574,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15908 nós · 58889 arestas · 632 comunidades · grafo do commit `b38cfe67`
-- comunidades maiores: Card (561), cn (395), Índice (341), Badge (315), client.ts (240), getCorsHeaders (239), Button (216), ref_npm_supabase (214), Input (213), formatBRL (189), lucide-react (172), framer-motion (157)
+- 15946 nós · 58942 arestas · 620 comunidades · grafo do commit `042d3e7f`
+- comunidades maiores: CardContent (453), Índice (341), cn (325), getCorsHeaders (274), Input (269), DialogContent (264), client.ts (256), Button (248), lucide-react (225), PageTransition (191), Badge (188), ref_node_fs (177)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -678,7 +678,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Documentos (raiz e docs/)
 - `.github/ENVIRONMENTS.md` — GitHub Environments — Modelo de Segurança (73 linhas)
 - `.github/pull_request_template.md` (84 linhas)
-- `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (72 linhas)
+- `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (73 linhas)
 - `CHANGELOG.md` — Changelog (104 linhas)
 - `CLAUDE.md` (2 linhas)
 - `CODE_OF_CONDUCT.md` — Código de Conduta — Promo Champions (38 linhas)
@@ -733,10 +733,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/component-guidelines.md` — 🏗 Component Guidelines — Promo Champions v2 (42 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
-- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/agentes (4), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
+- subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/agentes (6), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)
 
 ## Últimos commits
+- 2026-11-08 `042d3e7` fix: corrige restore incondicional no hook de grafo e typo no count de workflows
+- 2026-11-08 `37bccd8` fix: protege a saída do snapshot e o trabalho local na publicação do contexto
+- 2026-11-08 `d67653a` chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)
 - 2026-11-08 `b38cfe6` chore: replica o padrão de instruções para agentes do Zapp Web V2 (skill enxuto + guard GA02) (#392)
 - 2026-11-08 `d95348f` feat: workflow auto-corrige deno.lock em PRs do Dependabot (#368)
 - 2026-11-08 `fa27151` fix: probe de tabela filtra table_type='BASE TABLE' (#381)
@@ -749,9 +752,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-07 `f37cc9e` chore: inventario do estado real [auto] (#383)
 - 2026-11-07 `195e4fd` fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)
 - 2026-11-07 `4606224` fix: desabilita gate e2e em PRs (#374)
-- 2026-11-06 `13d4b86` fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)
-- 2026-11-06 `713cb7f` chore: inventario do estado real [auto] (#377)
-- 2026-11-06 `ae24e8f` fix: remover check contagens_ok em conferirOrigem (drift Lovable) (#370)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

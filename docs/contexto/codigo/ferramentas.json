@@ -5,12 +5,12 @@
   "linguagens": [
    "TypeScript (2382)",
    "SQL (676)",
-   "Markdown (201)",
+   "Markdown (203)",
    "JavaScript (65)",
    "JSON (29)",
    "YAML (27)",
-   "Python (5)",
-   "Shell (5)"
+   "Shell (6)",
+   "Python (5)"
   ],
   "linguagem_principal": "TypeScript",
   "framework": "React",
@@ -1025,7 +1025,7 @@
   {
    "arquivo": "AGENTS.md",
    "titulo": "AGENTS.md — Promo_Champions_V2.1",
-   "linhas": 72
+   "linhas": 73
   },
   {
    "arquivo": "CHANGELOG.md",
@@ -1329,7 +1329,7 @@
   },
   {
    "pasta": "docs/agentes",
-   "arquivos_md": 4
+   "arquivos_md": 6
   },
   {
    "pasta": "docs/contexto",
@@ -1453,8 +1453,6 @@
    "AI_CONTEXT_SCHEMA_SNAPSHOT",
    "ANTHROPIC_API_KEY",
    "CODE_SCAN_DIRS",
-   "CODE_SCAN_MAX_FILES",
-   "CRON_RUNS_PER_JOB",
    "GEN_TYPES",
    "PGDUMP",
    "PGDUMP_SCHEMAS",
@@ -1462,7 +1460,6 @@
    "SNAPSHOT_DIR",
    "SNAPSHOT_EXCLUDE_SCHEMAS",
    "SNAPSHOT_INCLUDE_SCHEMAS",
-   "STAT_STATEMENTS_TOP",
    "SUPABASE_ACCESS_TOKEN",
    "SUPABASE_DB_URL",
    "SUPABASE_PROJECT_REF",

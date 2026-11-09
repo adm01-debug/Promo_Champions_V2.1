@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b38cfe67b3d9b9f1e06ed885c20b927810cf39f6",
+  "sha": "042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-08 22:16 UTC",
-  "files_total": 3445,
+  "generated_at": "2026-11-09 05:00 UTC",
+  "files_total": 3448,
   "code_files": 3127,
-  "code_lines": 449955
+  "code_lines": 450186
  },
  "version": "1.3.2",
- "facts_hash": "569dad1f7c53827c",
+ "facts_hash": "6f5f545bd4cebc70",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77368,7 +77368,7 @@
   {
    "module": "scripts",
    "files": 84,
-   "lines": 17166,
+   "lines": 17397,
    "tables": [
     "a",
     "achievements",
@@ -77434,7 +77434,7 @@
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
     "test_generate.py: CurrentSqlSourcesTests",
-    "snapshot.py: log, record_error, jsonable, dumps, sha, md_cell",
+    "snapshot.py: env_int, log, record_error, valid_previous_snapshot, looks_like_own_output, prepare_output_directory",
     "test_snapshot.py: OfflineConnection, function, migration, structural_records, SnapshotFixture, SnapshotSQLRecoveryTests",
     "validar.mjs: TAMANHO_MINIMO, COBERTURA_MINIMA, chavesDoBloco, comparar, resumoMarkdown"
    ],
@@ -85778,14 +85778,8 @@
    "CODE_SCAN_DIRS": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
-   "CODE_SCAN_MAX_FILES": [
-    "scripts/supabase_snapshot/snapshot.py"
-   ],
    "CONFIRM_SUPABASE_ADMIN_WRITE": [
     "scripts/lib/requireSupabaseAdminEnv.ts"
-   ],
-   "CRON_RUNS_PER_JOB": [
-    "scripts/supabase_snapshot/snapshot.py"
    ],
    "DB_URL": [
     "scripts/ai-context/gerar.unit.mjs"
@@ -86091,9 +86085,6 @@
    ],
    "SRK": [
     "scripts/ai-context/cenarios.mjs"
-   ],
-   "STAT_STATEMENTS_TOP": [
-    "scripts/supabase_snapshot/snapshot.py"
    ],
    "SUPABASE_ACCESS_TOKEN": [
     "scripts/inventario/gerar-banco.mjs",
@@ -90031,6 +90022,14 @@
    {
     "file": "scripts/inventario/gerar-banco.mjs",
     "msg": "sem --entrada e sem SUPABASE_ACCESS_TOKEN: nada para ler (veja o cabecalho do script)."
+   },
+   {
+    "file": "scripts/inventario/gerar-repo.mjs",
+    "msg": "ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado."
+   },
+   {
+    "file": "scripts/inventario/gerar-repo.mjs",
+    "msg": "ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança."
    },
    {
     "file": "scripts/lib/requireSupabaseAdminEnv.ts",
@@ -177634,12 +177633,16 @@
   },
   "scripts/inventario/gerar-repo.mjs": {
    "path": "scripts/inventario/gerar-repo.mjs",
-   "lines": 70,
+   "lines": 91,
    "tables": [
     {
      "table": "tabela",
      "op": "ref"
     }
+   ],
+   "errors": [
+    "ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado.",
+    "ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança."
    ],
    "doc": "!/usr/bin/env node Inventario gerado do lado do repositorio (sem acesso ao banco): - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI) - tabelas: para cada nome recebido em stdin (uma por linha), quantos .from('tabela') ha em src/ e supab …"
   },
@@ -177911,10 +177914,14 @@
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
-   "lines": 1724,
+   "lines": 1837,
    "exports": [
+    "def env_int",
     "def log",
     "def record_error",
+    "def valid_previous_snapshot",
+    "def looks_like_own_output",
+    "def prepare_output_directory",
     "def jsonable",
     "def dumps",
     "def sha",
@@ -177968,11 +177975,7 @@
     "def api_section",
     "def introspect_api",
     "def run_pg_dump",
-    "def run_gen_types",
-    "def is_caller_source",
-    "def sql_without_routine_declarations",
-    "def scan_code_files",
-    "def rx_name_keys"
+    "def run_gen_types"
    ],
    "rpc": [
     "fn",
@@ -177980,8 +177983,6 @@
    ],
    "env": [
     "CODE_SCAN_DIRS",
-    "CODE_SCAN_MAX_FILES",
-    "CRON_RUNS_PER_JOB",
     "GEN_TYPES",
     "PGDUMP",
     "PGDUMP_SCHEMAS",
@@ -177989,7 +177990,6 @@
     "SNAPSHOT_DIR",
     "SNAPSHOT_EXCLUDE_SCHEMAS",
     "SNAPSHOT_INCLUDE_SCHEMAS",
-    "STAT_STATEMENTS_TOP",
     "SUPABASE_ACCESS_TOKEN",
     "SUPABASE_DB_URL",
     "SUPABASE_PROJECT_REF",
@@ -178037,7 +178037,7 @@
   },
   "scripts/supabase_snapshot/test_snapshot.py": {
    "path": "scripts/supabase_snapshot/test_snapshot.py",
-   "lines": 822,
+   "lines": 919,
    "exports": [
     "class OfflineConnection",
     "def function",
@@ -178052,6 +178052,7 @@
     "class SnapshotHeartbeatTests",
     "def source_freshness_case",
     "class SnapshotDBStatsTests",
+    "class SnapshotConfigurationTests",
     "def db_stats_case"
    ],
    "rpc": [
@@ -243902,10 +243903,45 @@
   }
  },
  "git": {
-  "sha": "b38cfe67b3d9b9f1e06ed885c20b927810cf39f6",
+  "sha": "042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "042d3e7",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: corrige restore incondicional no hook de grafo e typo no count de workflows",
+    "files": [
+     ".claude/hooks/session-start.sh",
+     "docs/agentes/github-ci.md"
+    ]
+   },
+   {
+    "sha": "37bccd8",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: protege a saída do snapshot e o trabalho local na publicação do contexto",
+    "files": [
+     "scripts/inventario/gerar-repo.mjs",
+     "scripts/regras_negocio/publish.sh",
+     "scripts/supabase_snapshot/snapshot.py",
+     "scripts/supabase_snapshot/test_snapshot.py"
+    ]
+   },
+   {
+    "sha": "d67653a",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)",
+    "files": [
+     ".claude/hooks/session-start.sh",
+     ".gitignore",
+     "AGENTS.md",
+     "docs/agentes/github-ci.md",
+     "docs/agentes/vercel-deploy.md"
+    ]
+   },
    {
     "sha": "b38cfe6",
     "date": "2026-11-08",
@@ -244187,100 +244223,36 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "ef80740",
-    "date": "2026-11-04",
-    "author": "adm01-debug",
-    "subject": "feat: automações de contexto, inventário e types-sync para agentes de IA (#362)",
-    "files": [
-     ".github/workflows/README.md",
-     ".github/workflows/contexto-testes.yml",
-     ".github/workflows/contexto.yml",
-     ".github/workflows/inventario-estado-semanal.yml",
-     ".github/workflows/types-sync.yml",
-     ".gitignore",
-     "CLAUDE.md",
-     "ai-context.config.json",
-     "docs/contexto/regras/manual/README.md",
-     "docs/contexto/regras/manual/TEMPLATE-regras-de-negocio.md",
-     "eslint.config.js",
-     "inventario/estado/README.md",
-     "inventario/estado/edges.json",
-     "inventario/estado/rotas.json",
-     "package.json",
-     "scripts/ai-context/README.md",
-     "scripts/ai-context/cenarios.mjs",
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ai-context/gerar.unit.mjs",
-     "scripts/ci/ai-context-generator.unit.mjs",
-     "scripts/ci/contexto-indice.unit.mjs",
-     "scripts/ci/contexto-publicacao.unit.mjs",
-     "scripts/ci/inventario-banco.unit.mjs",
-     "scripts/ci/inventario-mudou.unit.mjs",
-     "scripts/ci/inventario-rotas.unit.mjs",
-     "scripts/ci/regras-negocio.unit.mjs",
-     "scripts/ci/supabase-snapshot.unit.mjs",
-     "scripts/ci/types-sync.unit.mjs",
-     "scripts/inventario/README.md",
-     "scripts/inventario/banco.sql",
-     "scripts/inventario/gerar-banco.mjs",
-     "scripts/inventario/gerar-repo.mjs",
-     "scripts/inventario/gerar-rotas.mjs",
-     "scripts/inventario/mudou-conteudo.mjs",
-     "scripts/regras_negocio/README.md",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/indice.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/supabase_snapshot/README.md",
-     "scripts/supabase_snapshot/requirements.txt",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py",
-     "scripts/types-sync/README.md",
-     "scripts/types-sync/validar.mjs"
-    ]
-   },
-   {
-    "sha": "71674e9",
-    "date": "2026-11-02",
-    "author": "adm01-debug",
-    "subject": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#361)",
-    "files": [
-     "AGENTS.md",
-     "CLAUDE.md"
-    ]
-   },
-   {
-    "sha": "c9f1448",
-    "date": "2026-11-02",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump astral-sh/setup-uv (#354)",
-    "files": [
-     ".github/workflows/graphify.yml"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "package.json",
-    10
-   ],
    [
     "package-lock.json",
     9
    ],
    [
+    "package.json",
+    9
+   ],
+   [
     "scripts/inventario/gerar-banco.mjs",
-    7
+    6
    ],
    [
-    "CLAUDE.md",
-    3
+    ".claude/hooks/session-start.sh",
+    2
    ],
    [
-    "inventario/estado/edges.json",
-    3
+    "docs/agentes/github-ci.md",
+    2
+   ],
+   [
+    ".gitignore",
+    2
+   ],
+   [
+    "AGENTS.md",
+    2
    ],
    [
     ".github/workflows/migrations-drift.yml",
@@ -244303,27 +244275,11 @@
     2
    ],
    [
-    "AGENTS.md",
-    2
-   ],
-   [
-    "scripts/ai-context/gerar.mjs",
-    2
-   ],
-   [
-    "scripts/ci/contexto-publicacao.unit.mjs",
-    2
-   ],
-   [
-    "scripts/types-sync/validar.mjs",
-    2
-   ],
-   [
     "inventario/estado/banco.json",
     2
    ],
    [
-    ".gitignore",
+    "inventario/estado/edges.json",
     2
    ],
    [
@@ -244331,15 +244287,23 @@
     2
    ],
    [
-    ".agents/skills/Promo_Champions_V2.1/SKILL.md",
+    "scripts/inventario/gerar-repo.mjs",
     1
    ],
    [
-    ".claude/CLAUDE.md",
+    "scripts/regras_negocio/publish.sh",
     1
    ],
    [
-    ".claude/settings.json",
+    "scripts/supabase_snapshot/snapshot.py",
+    1
+   ],
+   [
+    "scripts/supabase_snapshot/test_snapshot.py",
+    1
+   ],
+   [
+    "docs/agentes/vercel-deploy.md",
     1
    ]
   ]

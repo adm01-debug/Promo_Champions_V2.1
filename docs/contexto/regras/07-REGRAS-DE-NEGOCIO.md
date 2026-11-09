@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b38cfe67b3` · branch `main` · 2026-11-08 22:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `042d3e7f71` · branch `main` · 2026-11-09 05:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3809,6 +3809,8 @@ _nenhum item encontrado_
 | entrada sem tabelas | `scripts/inventario/gerar-banco.mjs` |
 | format_version ${dado.format_version} desconhecido (esperado 1) | `scripts/inventario/gerar-banco.mjs` |
 | sem --entrada e sem SUPABASE_ACCESS_TOKEN: nada para ler (veja o cabecalho do script). | `scripts/inventario/gerar-banco.mjs` |
+| ripgrep (rg) falhou com exit ${status}; o inventário não foi gerado. | `scripts/inventario/gerar-repo.mjs` |
+| ripgrep (rg) não encontrado; o inventário não pode ser gerado com segurança. | `scripts/inventario/gerar-repo.mjs` |
 | ${name} é obrigatório. Defina-o no ambiente ou no gerenciador de segredos antes de executar este script. | `scripts/lib/requireSupabaseAdminEnv.ts` |
 | Este script pode alterar dados. Defina CONFIRM_SUPABASE_ADMIN_WRITE=EXECUTAR_ESCRITA_ADMINISTRATIVA somente após confirmar o projeto, o escopo e o backup. | `scripts/lib/requireSupabaseAdminEnv.ts` |
 | SUPABASE_URL precisa ser uma URL HTTP(S) válida. | `scripts/lib/requireSupabaseAdminEnv.ts` |
@@ -4024,9 +4026,7 @@ _nenhum item encontrado_
 | Erro ao gerar previsões | `src/hooks/useDemandForecast.ts` |
 | Erro na movimentação | `src/hooks/useDemandForecast.ts` |
 | Confirmação de assinatura indisponível | `src/hooks/useDigitalSignatures.ts` |
-| Envio para assinatura indisponível | `src/hooks/useDigitalSignatures.ts` |
-| Erro ao criar documento | `src/hooks/useDigitalSignatures.ts` |
-| … +613 linhas — lista completa em `context.json` | |
+| … +615 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

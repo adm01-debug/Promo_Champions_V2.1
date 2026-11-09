@@ -467,7 +467,7 @@
   {
    "arquivo": "scripts/inventario/gerar-repo.mjs",
    "descricao": "Inventario gerado do lado do repositorio (sem acesso ao banco):  - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI)",
-   "linhas": 70,
+   "linhas": 91,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -580,7 +580,7 @@
   {
    "arquivo": "scripts/regras_negocio/publish.sh",
    "descricao": "Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida. Variáveis:",
-   "linhas": 106,
+   "linhas": 208,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -708,7 +708,7 @@
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
    "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
-   "linhas": 1724,
+   "linhas": 1837,
    "env": [],
    "npm_scripts": [],
    "workflows": [

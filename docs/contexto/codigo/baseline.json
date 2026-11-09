@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b38cfe67b3d9b9f1e06ed885c20b927810cf39f6",
+  "commit": "042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1",
   "branch": "main",
-  "data_commit": "2026-11-08T21:03:43Z",
+  "data_commit": "2026-11-08T22:51:35-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "042d3e7",
+    "data": "2026-11-08",
+    "assunto": "fix: corrige restore incondicional no hook de grafo e typo no count de workflows"
+   },
+   {
+    "sha": "37bccd8",
+    "data": "2026-11-08",
+    "assunto": "fix: protege a saída do snapshot e o trabalho local na publicação do contexto"
+   },
+   {
+    "sha": "d67653a",
+    "data": "2026-11-08",
+    "assunto": "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)"
+   },
    {
     "sha": "b38cfe6",
     "data": "2026-11-08",
@@ -116,24 +131,9 @@
     "sha": "5abf273",
     "data": "2026-11-05",
     "assunto": "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)"
-   },
-   {
-    "sha": "42b62f1",
-    "data": "2026-11-05",
-    "assunto": "chore(deps-dev): bump eslint 9.39→10.14 (#359)"
-   },
-   {
-    "sha": "04e498f",
-    "data": "2026-11-05",
-    "assunto": "chore(deps-dev): bump @sentry/vite-plugin 5.4→11.10 (#357)"
-   },
-   {
-    "sha": "e3f7790",
-    "data": "2026-11-05",
-    "assunto": "chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)"
    }
   ],
-  "arquivos_mudados_7d": 75,
+  "arquivos_mudados_7d": 78,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 50
+    "commits": 53
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3430,
+  "arquivos_total": 3433,
   "arquivos_codigo": 2450,
-  "linhas_codigo": 420014,
+  "linhas_codigo": 420245,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "testes": 162,
   "workflows": 25,
   "scripts": 70,
-  "docs_md": 201
+  "docs_md": 203
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -476,7 +476,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 841
+   "linhas": 862
   },
   "scripts/lib": {
    "arquivos": 1,
@@ -552,7 +552,7 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 2546
+   "linhas": 2756
   },
   "scripts/types-sync": {
    "arquivos": 1,
@@ -674,7 +674,7 @@
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1724
+   "linhas": 1837
   },
   {
    "arquivo": "src/components/race/track/TrackScenery.tsx",
