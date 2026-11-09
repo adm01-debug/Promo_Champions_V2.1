@@ -6,7 +6,7 @@ name: Migrations Drift
 # Gate tolerante:
 #   - Sem SUPABASE_ACCESS_TOKEN → apenas warning (job não falha).
 #   - Com o secret → FALHA se a base tem versão aplicada que não existe como
-#     arquivo no repo (DDL aplicada fora do fluxo, violando CLAUDE.md §1).
+#     arquivo no repo (DDL aplicada fora do fluxo, violando AGENTS.md §7).
 #   - Versão local ainda não aplicada na base = pendência de deploy: warning.
 #
 # Roda em todo PR/push que toca supabase/migrations + diariamente (drift por
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3
+        uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3
         with:
           version: latest
 
