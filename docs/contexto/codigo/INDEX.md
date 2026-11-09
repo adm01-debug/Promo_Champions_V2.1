@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `999a7088be4fe1f365321a8fb18b4c6715515efe` (2026-11-09T20:34:57Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7535bb0ff75a1a606f66d4bf4584a5e49748615d` (2026-11-09T21:04:53Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3433 |
 | arquivos_codigo | 2450 |
-| linhas_codigo | 420245 |
+| linhas_codigo | 420249 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,7 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15946 nós · 58942 arestas · 620 comunidades · grafo do commit `999a7088`
+- 15946 nós · 58942 arestas · 620 comunidades · grafo do commit `7535bb0f`
 - comunidades maiores: CardContent (453), Índice (341), cn (325), getCorsHeaders (274), Input (269), DialogContent (264), client.ts (256), Button (248), lucide-react (225), PageTransition (191), Badge (188), ref_node_fs (177)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -737,6 +737,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)
 
 ## Últimos commits
+- 2026-11-09 `7535bb0` fix: k6-smoke mira funções não deployadas e health sem chave (#388)
 - 2026-11-09 `999a708` infra: valida restauracao do dump antes do upload no db-backup (#387)
 - 2026-11-09 `95e8e8a` chore: inventario do estado real [auto] (#412)
 - 2026-11-09 `053885b` chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)
@@ -751,7 +752,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `fa27151` fix: probe de tabela filtra table_type='BASE TABLE' (#381)
 - 2026-11-08 `9500f87` chore: instruções enxutas para agentes (#380)
 - 2026-11-07 `b80e879` fix: corrige relatório de impacto do graphify (#390)
-- 2026-11-07 `9cabc93` chore(main): release 1.1.0 (#378)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

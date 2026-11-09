@@ -529,7 +529,7 @@
   {
    "arquivo": "scripts/load/k6-smoke.js",
    "descricao": "* Smoke de carga k6 — substitui a fachada antiga (tests/load/load-test.ts",
-   "linhas": 73,
+   "linhas": 77,
    "env": [],
    "npm_scripts": [
     "test:load"

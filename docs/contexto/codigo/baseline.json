@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "999a7088be4fe1f365321a8fb18b4c6715515efe",
+  "commit": "7535bb0ff75a1a606f66d4bf4584a5e49748615d",
   "branch": "main",
-  "data_commit": "2026-11-09T20:34:57Z",
+  "data_commit": "2026-11-09T21:04:53Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7535bb0",
+    "data": "2026-11-09",
+    "assunto": "fix: k6-smoke mira funções não deployadas e health sem chave (#388)"
+   },
    {
     "sha": "999a708",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "ae24e8f",
     "data": "2026-11-06",
     "assunto": "fix: remover check contagens_ok em conferirOrigem (drift Lovable) (#370)"
-   },
-   {
-    "sha": "82ee984",
-    "data": "2026-11-06",
-    "assunto": "feat: supressão de DROP + filtro cmd em policies no gerador de probes de migrations (#375)"
    }
   ],
-  "arquivos_mudados_7d": 80,
+  "arquivos_mudados_7d": 81,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 54
+    "commits": 55
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3433,
   "arquivos_codigo": 2450,
-  "linhas_codigo": 420245,
+  "linhas_codigo": 420249,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -492,7 +492,7 @@
   },
   "scripts/load": {
    "arquivos": 1,
-   "linhas": 73
+   "linhas": 77
   },
   "scripts/pack-quote-to-sale-artifacts.ts": {
    "arquivos": 1,
