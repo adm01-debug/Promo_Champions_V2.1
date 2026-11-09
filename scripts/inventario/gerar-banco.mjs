@@ -39,7 +39,7 @@ const API = `${(process.env.SUPABASE_API_URL || 'https://api.supabase.com').repl
 export const LIMIARES = {
   taxaFalhaCronPct: 5,
   historicoCronMaisDe7Dias: 50000,
-  // Plano Supabase deste projeto aceita 100 edge functions publicadas (CLAUDE.md, secao 4); o repo
+  // Plano Supabase deste projeto aceita 100 edge functions publicadas (AGENTS.md secao 7); o repo
   // tem mais pastas que isso. Avisa a partir de 95 para o proximo deploy nao falhar no limite.
   edgesPublicadasMax: 100,
   edgesPublicadasAviso: 95,
