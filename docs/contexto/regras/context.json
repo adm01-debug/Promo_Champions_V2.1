@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7535bb0ff75a1a606f66d4bf4584a5e49748615d",
+  "sha": "4f31f1f07f797f738175f7d3d60ef9ce1713e4cf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 21:19 UTC",
+  "generated_at": "2026-11-09 21:35 UTC",
   "files_total": 3448,
   "code_files": 3127,
-  "code_lines": 450190
+  "code_lines": 450191
  },
  "version": "1.3.2",
- "facts_hash": "5100b7612b610888",
+ "facts_hash": "97b0759d0306f5ba",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77368,7 +77368,7 @@
   {
    "module": "scripts",
    "files": 84,
-   "lines": 17401,
+   "lines": 17402,
    "tables": [
     "a",
     "achievements",
@@ -177563,7 +177563,7 @@
   },
   "scripts/inventario/gerar-banco.mjs": {
    "path": "scripts/inventario/gerar-banco.mjs",
-   "lines": 349,
+   "lines": 350,
    "exports": [
     "const PROJETO_OFICIAL",
     "const LIMIARES",
@@ -243903,10 +243903,19 @@
   }
  },
  "git": {
-  "sha": "7535bb0ff75a1a606f66d4bf4584a5e49748615d",
+  "sha": "4f31f1f07f797f738175f7d3d60ef9ce1713e4cf",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4f31f1f",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)",
+    "files": [
+     "scripts/inventario/gerar-banco.mjs"
+    ]
+   },
    {
     "sha": "7535bb0",
     "date": "2026-11-09",
@@ -244208,20 +244217,6 @@
     "files": [
      ".github/workflows/release-please.yml"
     ]
-   },
-   {
-    "sha": "aba5965",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: corrige 3 workflows autônomos com falha repetida (#363)",
-    "files": [
-     ".github/workflows/migrations-drift.yml",
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "scripts/inventario/gerar-banco.mjs",
-     "supabase/functions/cron-failure-alerter/index.test.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -244238,23 +244233,15 @@
     3
    ],
    [
-    ".github/workflows/migrations-drift.yml",
-    3
-   ],
-   [
     ".github/workflows/pr-checks.yml",
     3
    ],
    [
-    "package-lock.json",
-    3
-   ],
-   [
-    "package.json",
-    3
-   ],
-   [
     ".github/workflows/codeql.yml",
+    2
+   ],
+   [
+    ".github/workflows/migrations-drift.yml",
     2
    ],
    [
@@ -244286,7 +244273,11 @@
     2
    ],
    [
-    "deno.lock",
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
     2
    ],
    [
@@ -244303,6 +244294,10 @@
    ],
    [
     ".github/workflows/contexto.yml",
+    1
+   ],
+   [
+    "scripts/inventario/gerar-repo.mjs",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7535bb0ff75a1a606f66d4bf4584a5e49748615d",
+  "commit": "4f31f1f07f797f738175f7d3d60ef9ce1713e4cf",
   "branch": "main",
-  "data_commit": "2026-11-09T21:04:53Z",
+  "data_commit": "2026-11-09T18:31:54-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4f31f1f",
+    "data": "2026-11-09",
+    "assunto": "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)"
+   },
    {
     "sha": "7535bb0",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "713cb7f",
     "data": "2026-11-06",
     "assunto": "chore: inventario do estado real [auto] (#377)"
-   },
-   {
-    "sha": "ae24e8f",
-    "data": "2026-11-06",
-    "assunto": "fix: remover check contagens_ok em conferirOrigem (drift Lovable) (#370)"
    }
   ],
   "arquivos_mudados_7d": 81,
@@ -282,6 +282,10 @@
     "mudancas": 8
    },
    {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 8
+   },
+   {
     "arquivo": "src/hooks/admin/useV4Callbacks.ts",
     "mudancas": 8
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "supabase/functions/bitrix24-oauth/index.ts",
     "mudancas": 8
-   },
-   {
-    "arquivo": "supabase/functions/predict-quota-attainment/index.ts",
-    "mudancas": 8
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 55
+    "commits": 56
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3433,
   "arquivos_codigo": 2450,
-  "linhas_codigo": 420249,
+  "linhas_codigo": 420250,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -476,7 +476,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 862
+   "linhas": 863
   },
   "scripts/lib": {
    "arquivos": 1,

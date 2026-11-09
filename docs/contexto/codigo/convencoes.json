@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)",
    "fix: k6-smoke mira funções não deployadas e health sem chave (#388)",
    "infra: valida restauracao do dump antes do upload no db-backup (#387)",
    "chore: inventario do estado real [auto] (#412)",
-   "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)",
-   "chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)"
+   "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
