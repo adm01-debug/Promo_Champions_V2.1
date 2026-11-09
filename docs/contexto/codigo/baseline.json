@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4f31f1f07f797f738175f7d3d60ef9ce1713e4cf",
+  "commit": "09ee2d8ed3457591c9dd24e34bbca799c9cc2b99",
   "branch": "main",
-  "data_commit": "2026-11-09T18:31:54-03:00",
+  "data_commit": "2026-11-09T19:33:06-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "09ee2d8",
+    "data": "2026-11-09",
+    "assunto": "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)"
+   },
    {
     "sha": "4f31f1f",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "13d4b86",
     "data": "2026-11-06",
     "assunto": "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)"
-   },
-   {
-    "sha": "713cb7f",
-    "data": "2026-11-06",
-    "assunto": "chore: inventario do estado real [auto] (#377)"
    }
   ],
   "arquivos_mudados_7d": 81,
@@ -266,6 +266,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 9
+   },
+   {
     "arquivo": "src/hooks/useQuotes.ts",
     "mudancas": 9
    },
@@ -279,10 +283,6 @@
    },
    {
     "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 8
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 56
+    "commits": 57
    },
    {
     "autor": "devin-ai-integration[bot]",

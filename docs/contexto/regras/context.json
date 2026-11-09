@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "4f31f1f07f797f738175f7d3d60ef9ce1713e4cf",
+  "sha": "09ee2d8ed3457591c9dd24e34bbca799c9cc2b99",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 21:35 UTC",
+  "generated_at": "2026-11-09 22:42 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450191
@@ -243903,10 +243903,19 @@
   }
  },
  "git": {
-  "sha": "4f31f1f07f797f738175f7d3d60ef9ce1713e4cf",
+  "sha": "09ee2d8ed3457591c9dd24e34bbca799c9cc2b99",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "09ee2d8",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)",
+    "files": [
+     "scripts/inventario/gerar-banco.mjs"
+    ]
+   },
    {
     "sha": "4f31f1f",
     "date": "2026-11-09",
@@ -244208,21 +244217,12 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "aeb70d7",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: release-please com continue-on-error para não reprovar status da main",
-    "files": [
-     ".github/workflows/release-please.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/inventario/gerar-banco.mjs",
-    6
+    7
    ],
    [
     "inventario/estado/banco.json",
