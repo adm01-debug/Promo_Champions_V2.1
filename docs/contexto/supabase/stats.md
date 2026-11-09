@@ -231,7 +231,7 @@ Valores aproximados de propósito, para não gerar commits a cada coleta. Fora d
 | public.winloss_webhook_dead_letters | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | ~460 |  |
 | public.winloss_webhook_replay_invocations | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | 1 |  |
 | public.xp_adjustments | 0 | 40.0 KB | 0 B | 32.0 KB | 0 | ~60 | 0 |  |
-| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~203.6k | ~47.2k |  |
+| public._internal_secrets | 0 | 32.0 KB | 8.0 KB | 16.0 KB | 0 | ~203.7k | ~47.3k |  |
 | public.account_plans | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 7 |  |
 | public.active_sessions | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~60 | 3 |  |
 | public.activity_audit_logs | 0 | 32.0 KB | 0 B | 24.0 KB | 0 | ~160 | 7 |  |
@@ -461,27 +461,27 @@ _nenhum_
 ## Consultas mais custosas (pg_stat_statements, desde o último reset)
 | role | chamadas (~) | total ms (~) | média ms | query |
 |---|---|---|---|---|
-| postgres | ~40 | ~213.5k | 4964.33 | `SELECT public.detect_stalled_cron_jobs()` |
-| postgres | ~40 | ~111.8k | 2541.32 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
-| service_role | ~60 | ~91.4k | 1406.68 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
-| postgres | ~40 | ~35.9k | 815.29 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
-| postgres | ~1.2k | ~32.4k | 27.32 | `SELECT public.trigger_internal_edge_job($1)` |
-| postgres | ~40 | ~19.1k | 432.95 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
-| postgres | ~40 | ~12.3k | 279.04 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
-| postgres | ~40 | ~9.2k | 209.48 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
-| postgres | ~40 | ~9.1k | 206.29 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
-| postgres | ~40 | ~7.4k | 168.23 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
-| postgres | ~40 | ~6.9k | 156.87 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
-| postgres | ~40 | ~6k | 137.50 | `SELECT n.nspname AS schema, c.relname AS "table", con.conname AS name, CASE con.contype WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 WHEN $7 THEN $8 WHEN $9 THEN $10 ELSE con.contype::text END AS type, pg_get_constrai` |
-| postgres | ~130 | ~5.9k | 46.30 | `SELECT public.admin_capture_rollback_snapshot()` |
-| pgbouncer | ~40 | ~4.6k | 106.92 | `SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput, coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, $1), ARRAY ( SELECT a.atttypid FROM pg_attribute AS a WHERE a.attrelid = t.typrelid AND a.` |
-| postgres | ~40 | ~3.9k | 87.84 | `SELECT schemaname AS schema, tablename AS "table", policyname AS name, coalesce(qual, $1) \|\| $2 \|\| coalesce(with_check, $3) AS expr FROM pg_policies WHERE schemaname NOT IN ($4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $1` |
+| postgres | ~50 | ~242.4k | 5049.56 | `SELECT public.detect_stalled_cron_jobs()` |
+| postgres | ~50 | ~116.3k | 2325.05 | `SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE` |
+| service_role | ~70 | ~105.6k | 1466.58 | `WITH pgrst_source AS (SELECT "pgrst_call".* FROM (SELECT $1 AS json_data) pgrst_payload, LATERAL (SELECT "_since_minutes" FROM json_to_record(pgrst_payload.json_data) AS _("_since_minutes" integer) LIMIT $4) pgrst_body ,` |
+| postgres | ~50 | ~40.8k | 816.62 | `SELECT n.nspname AS schema, c.relname AS "table", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS "default", NULLIF(` |
+| postgres | ~1.3k | ~36.6k | 27.87 | `SELECT public.trigger_internal_edge_job($1)` |
+| postgres | ~50 | ~22.4k | 448.33 | `SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.` |
+| postgres | ~50 | ~13.8k | 275.88 | `SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o` |
+| postgres | ~50 | ~10.5k | 210.81 | `SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH` |
+| postgres | ~50 | ~10.3k | 205.89 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c` |
+| postgres | ~50 | ~8.4k | 168.91 | `SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)` |
+| postgres | ~50 | ~7.9k | 157.91 | `SELECT n.nspname AS schema, t.relname AS "table", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth` |
+| postgres | ~140 | ~7.7k | 54.12 | `SELECT public.admin_capture_rollback_snapshot()` |
+| postgres | ~50 | ~7k | 139.63 | `SELECT n.nspname AS schema, c.relname AS "table", con.conname AS name, CASE con.contype WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 WHEN $7 THEN $8 WHEN $9 THEN $10 ELSE con.contype::text END AS type, pg_get_constrai` |
+| pgbouncer | ~50 | ~5.3k | 103.67 | `SELECT t.oid, t.typname, t.typsend, t.typreceive, t.typoutput, t.typinput, coalesce(d.typelem, t.typelem), coalesce(r.rngsubtype, $1), ARRAY ( SELECT a.atttypid FROM pg_attribute AS a WHERE a.attrelid = t.typrelid AND a.` |
+| postgres | ~50 | ~4.7k | 94.92 | `SELECT schemaname AS schema, tablename AS "table", policyname AS name, coalesce(qual, $1) \|\| $2 \|\| coalesce(with_check, $3) AS expr FROM pg_policies WHERE schemaname NOT IN ($4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $1` |
 
 
 ## Conexões
 | usuário | estado | n |
 |---|---|---|
-| authenticator | idle | 4 |
+| authenticator | idle | 5 |
 | pgbouncer | idle | 1 |
 | postgres | active | 1 |
 | postgres | idle | 1 |
