@@ -21,11 +21,11 @@ name: Deploy Pipeline
 #     (`supabase functions deploy --project-ref usyxfpqlsspldubptrdl`).
 #   - Aplicação de migrations pendentes: exige SUPABASE_ACCESS_TOKEN +
 #     SUPABASE_DB_PASSWORD (`supabase db push --linked`).
-#   - Deploy do frontend: feito pela Lovable Cloud (build+publish a partir
+#   - Deploy do frontend: feito pela integração Vercel↔GitHub (build+publish a partir
 #     da branch main), não existe CLI — o step `deploy` só valida e documenta.
 #
 # Dashboards:
-#   Lovable:  https://lovable.dev (projeto Promo Champions)
+#   Vercel:   https://vercel.com/juca1/promo-champions-v2-1
 #   Supabase: https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl
 
 on:
@@ -79,7 +79,7 @@ jobs:
       - name: Unit tests
         run: npm run test:coverage
 
-      - name: Build (validação — artefato de produção é buildado pela Lovable)
+      - name: Build (validação — artefato de produção é buildado pela Vercel)
         env:
           VITE_SUPABASE_URL: https://placeholder.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
@@ -144,13 +144,13 @@ jobs:
           supabase link --project-ref usyxfpqlsspldubptrdl
           supabase db push --linked
 
-      - name: Deploy do frontend (Lovable Cloud)
+      - name: Deploy do frontend (Vercel)
         run: |
-          # O frontend é publicado pela integração Lovable ↔ GitHub (sync da
-          # branch main) ou manualmente no dashboard. Não há CLI público.
-          echo "Frontend deploy: https://lovable.dev (projeto Promo Champions)"
-          echo "Se a tag foi criada a partir de main, o sync automático já cobre."
-          echo "Caso contrário, publicar manualmente no dashboard da Lovable."
+          # O frontend é publicado pela integração Vercel ↔ GitHub (build+publish
+          # automático da branch main). Não há CLI a rodar aqui.
+          echo "Frontend deploy: https://vercel.com/juca1/promo-champions-v2-1"
+          echo "Se a tag foi criada a partir de main, o deploy automático já cobre."
+          echo "Caso contrário, confirme o deploy no painel da Vercel."
 
       - name: Post-deploy health check (edge function 'health')
         run: |
@@ -172,11 +172,11 @@ jobs:
             echo "- Aprovado no environment: production"
             echo ""
             echo "### Passos manuais pendentes (sem secrets no Actions)"
-            echo "1. Frontend: publicar/verificar no dashboard Lovable"
+            echo "1. Frontend: confirmar o deploy no painel da Vercel"
             echo "2. Functions: \`supabase functions deploy --project-ref usyxfpqlsspldubptrdl\`"
             echo "3. Migrations: \`supabase db push --linked\`"
             echo ""
             echo "### Links"
             echo "- Supabase: https://supabase.com/dashboard/project/usyxfpqlsspldubptrdl"
-            echo "- Lovable: https://lovable.dev"
+            echo "- Vercel: https://vercel.com/juca1/promo-champions-v2-1"
           } >> "$GITHUB_STEP_SUMMARY"
