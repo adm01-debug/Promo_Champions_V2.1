@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "adf041442a70d1503123573fdc83176eb6cf52f2",
+  "sha": "053885bfd95143cfa8f827eddbb95297659cfd36",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 07:00 UTC",
+  "generated_at": "2026-11-09 07:18 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450186
@@ -243903,10 +243903,19 @@
   }
  },
  "git": {
-  "sha": "adf041442a70d1503123573fdc83176eb6cf52f2",
+  "sha": "053885bfd95143cfa8f827eddbb95297659cfd36",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "053885b",
+    "date": "2026-11-09",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)",
+    "files": [
+     ".github/workflows/codeql.yml"
+    ]
+   },
    {
     "sha": "adf0414",
     "date": "2026-11-09",
@@ -244214,16 +244223,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "04e498f",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump @sentry/vite-plugin 5.4→11.10 (#357)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -244233,11 +244232,11 @@
    ],
    [
     "package-lock.json",
-    6
+    5
    ],
    [
     "package.json",
-    6
+    5
    ],
    [
     ".github/workflows/migrations-drift.yml",
@@ -244246,6 +244245,10 @@
    [
     ".github/workflows/pr-checks.yml",
     3
+   ],
+   [
+    ".github/workflows/codeql.yml",
+    2
    ],
    [
     ".github/workflows/types-sync.yml",
@@ -244290,10 +244293,6 @@
    [
     "deno.lock",
     2
-   ],
-   [
-    ".github/workflows/codeql.yml",
-    1
    ],
    [
     ".github/workflows/deploy.yml",

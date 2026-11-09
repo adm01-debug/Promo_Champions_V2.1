@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "adf041442a70d1503123573fdc83176eb6cf52f2",
+  "commit": "053885bfd95143cfa8f827eddbb95297659cfd36",
   "branch": "main",
-  "data_commit": "2026-11-09T06:56:04Z",
+  "data_commit": "2026-11-09T07:03:09Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "053885b",
+    "data": "2026-11-09",
+    "assunto": "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)"
+   },
    {
     "sha": "adf0414",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "6c6df6f",
     "data": "2026-11-05",
     "assunto": "fix: bump eslint-plugin-react-refresh 0.5.7, jsdom 30.1.3, lint-staged 17.6.0 + regenera deno.lock"
-   },
-   {
-    "sha": "aeb70d7",
-    "data": "2026-11-05",
-    "assunto": "fix: release-please com continue-on-error para não reprovar status da main"
    }
   ],
   "arquivos_mudados_7d": 79,
@@ -223,7 +223,7 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "CLAUDE.md",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 27
+    "commits": 28
    },
    {
     "autor": "Claude",

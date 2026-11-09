@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `adf041442a70d1503123573fdc83176eb6cf52f2` (2026-11-09T06:56:04Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `053885bfd95143cfa8f827eddbb95297659cfd36` (2026-11-09T07:03:09Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -574,7 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 15946 nós · 58942 arestas · 620 comunidades · grafo do commit `adf04144`
+- 15946 nós · 58942 arestas · 620 comunidades · grafo do commit `053885bf`
 - comunidades maiores: CardContent (453), Índice (341), cn (325), getCorsHeaders (274), Input (269), DialogContent (264), client.ts (256), Button (248), lucide-react (225), PageTransition (191), Badge (188), ref_node_fs (177)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -586,7 +586,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - deno.lock (22)
 - .github/workflows/quote-to-sale-e2e.yml (18)
 - RELATORIO_CI.md (18)
-- .github/workflows/codeql.yml (14)
+- .github/workflows/codeql.yml (15)
 - CLAUDE.md (14)
 - .github/workflows/cron-monitoring.yml (13)
 - .github/workflows/qa-exhaustive.yml (12)
@@ -737,6 +737,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)
 
 ## Últimos commits
+- 2026-11-09 `053885b` chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)
 - 2026-11-09 `adf0414` chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)
 - 2026-11-09 `4424fde` chore(deps): bump supabase/setup-cli (#400)
 - 2026-11-09 `407c311` chore(deps): bump actions/download-artifact (#399)
@@ -751,7 +752,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-07 `9cabc93` chore(main): release 1.1.0 (#378)
 - 2026-11-07 `9bbfbd2` docs: consolidacao da validacao pos-merges (5 sessoes) (#386)
 - 2026-11-07 `f3802bb` chore: normaliza line endings (LF) para prevenir bugs de parser (#385)
-- 2026-11-07 `f6010c9` fix: parsers de linha toleram CRLF em checkouts Windows (#384)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
