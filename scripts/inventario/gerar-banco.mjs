@@ -325,7 +325,7 @@ async function main(argv) {
 
   const dado = extrairInventario(bruto);
   const origemInfo = conferirOrigem(dado, tabelasDosTipos(RAIZ), versoesEsperadasNoLedger(RAIZ));
-  Object.assign(dado.resumo, origemInfo);
+  Object.assign(dado.resumo, { ...origemInfo, migrations_no_repo: versoesDoRepo(RAIZ).length });
   const uso = contarUsoNoCodigo(RAIZ, dado.tabelas.map((t) => t.nome));
   const inventario = montarInventario(dado, uso, compararEdges(publicadasApi, edgesNoRepo(RAIZ)));
   const texto = JSON.stringify(inventario, null, 2) + '\n';
