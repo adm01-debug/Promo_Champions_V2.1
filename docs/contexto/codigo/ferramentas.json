@@ -406,7 +406,8 @@
     "SUPABASE_DB_URL"
    ],
    "actions": [
-    "actions/upload-artifact"
+    "actions/upload-artifact",
+    "aws-actions/configure-aws-credentials"
    ]
   },
   {

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "95e8e8a18b5bcd8405df2d95fea35a916f18f429",
+  "commit": "999a7088be4fe1f365321a8fb18b4c6715515efe",
   "branch": "main",
-  "data_commit": "2026-11-09T20:09:36Z",
+  "data_commit": "2026-11-09T20:34:57Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "999a708",
+    "data": "2026-11-09",
+    "assunto": "infra: valida restauracao do dump antes do upload no db-backup (#387)"
+   },
    {
     "sha": "95e8e8a",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "82ee984",
     "data": "2026-11-06",
     "assunto": "feat: supressão de DROP + filtro cmd em policies no gerador de probes de migrations (#375)"
-   },
-   {
-    "sha": "4385b7d",
-    "data": "2026-11-06",
-    "assunto": "docs: reconcilia desfecho das PRs antigas #280 #298 #345 #347 (#373)"
    }
   ],
-  "arquivos_mudados_7d": 79,
+  "arquivos_mudados_7d": 80,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 53
+    "commits": 54
    },
    {
     "autor": "devin-ai-integration[bot]",

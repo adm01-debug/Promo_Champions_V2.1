@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "95e8e8a18b5bcd8405df2d95fea35a916f18f429",
+  "sha": "999a7088be4fe1f365321a8fb18b4c6715515efe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 20:16 UTC",
+  "generated_at": "2026-11-09 20:47 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450186
@@ -243903,10 +243903,19 @@
   }
  },
  "git": {
-  "sha": "95e8e8a18b5bcd8405df2d95fea35a916f18f429",
+  "sha": "999a7088be4fe1f365321a8fb18b4c6715515efe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "999a708",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "infra: valida restauracao do dump antes do upload no db-backup (#387)",
+    "files": [
+     ".github/workflows/db-backup.yml"
+    ]
+   },
    {
     "sha": "95e8e8a",
     "date": "2026-11-09",
@@ -244214,15 +244223,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "5abf273",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)",
-    "files": [
-     "scripts/check-migrations.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -244283,16 +244283,16 @@
     2
    ],
    [
-    "scripts/check-migrations.mjs",
-    2
-   ],
-   [
     "scripts/db-audit/gen-migration-probes.mjs",
     2
    ],
    [
     "deno.lock",
     2
+   ],
+   [
+    ".github/workflows/db-backup.yml",
+    1
    ],
    [
     ".github/workflows/deploy.yml",
