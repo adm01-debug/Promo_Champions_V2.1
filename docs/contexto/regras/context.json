@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1",
+  "sha": "4424fdef830439ba3eabb590a9d3b2f73334c107",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 05:00 UTC",
+  "generated_at": "2026-11-09 06:51 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450186
@@ -243903,10 +243903,32 @@
   }
  },
  "git": {
-  "sha": "042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1",
+  "sha": "4424fdef830439ba3eabb590a9d3b2f73334c107",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4424fde",
+    "date": "2026-11-09",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump supabase/setup-cli (#400)",
+    "files": [
+     ".github/workflows/deploy.yml",
+     ".github/workflows/migrations-drift.yml",
+     ".github/workflows/pr-checks.yml",
+     ".github/workflows/types-sync.yml"
+    ]
+   },
+   {
+    "sha": "407c311",
+    "date": "2026-11-09",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump actions/download-artifact (#399)",
+    "files": [
+     ".github/workflows/contexto.yml",
+     ".github/workflows/types-sync.yml"
+    ]
+   },
    {
     "sha": "042d3e7",
     "date": "2026-11-08",
@@ -244203,40 +244225,32 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "fdb81b3",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump react-window 2.3.3→2.5.3 (#355)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "eddf062",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump autoprefixer 10.4.21→10.6.2 (#353)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    9
+    7
    ],
    [
     "package.json",
-    9
+    7
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
     6
+   ],
+   [
+    ".github/workflows/migrations-drift.yml",
+    3
+   ],
+   [
+    ".github/workflows/pr-checks.yml",
+    3
+   ],
+   [
+    ".github/workflows/types-sync.yml",
+    2
    ],
    [
     ".claude/hooks/session-start.sh",
@@ -244252,14 +244266,6 @@
    ],
    [
     "AGENTS.md",
-    2
-   ],
-   [
-    ".github/workflows/migrations-drift.yml",
-    2
-   ],
-   [
-    ".github/workflows/pr-checks.yml",
     2
    ],
    [
@@ -244287,23 +244293,19 @@
     2
    ],
    [
+    ".github/workflows/deploy.yml",
+    1
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    1
+   ],
+   [
     "scripts/inventario/gerar-repo.mjs",
     1
    ],
    [
     "scripts/regras_negocio/publish.sh",
-    1
-   ],
-   [
-    "scripts/supabase_snapshot/snapshot.py",
-    1
-   ],
-   [
-    "scripts/supabase_snapshot/test_snapshot.py",
-    1
-   ],
-   [
-    "docs/agentes/vercel-deploy.md",
     1
    ]
   ]

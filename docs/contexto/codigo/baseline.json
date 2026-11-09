@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1",
+  "commit": "4424fdef830439ba3eabb590a9d3b2f73334c107",
   "branch": "main",
-  "data_commit": "2026-11-08T22:51:35-03:00",
+  "data_commit": "2026-11-09T06:48:02Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "4424fde",
+    "data": "2026-11-09",
+    "assunto": "chore(deps): bump supabase/setup-cli (#400)"
+   },
+   {
+    "sha": "407c311",
+    "data": "2026-11-09",
+    "assunto": "chore(deps): bump actions/download-artifact (#399)"
+   },
    {
     "sha": "042d3e7",
     "data": "2026-11-08",
@@ -121,16 +131,6 @@
     "sha": "aba5965",
     "data": "2026-11-05",
     "assunto": "fix: corrige 3 workflows autônomos com falha repetida (#363)"
-   },
-   {
-    "sha": "b5797bd",
-    "data": "2026-11-05",
-    "assunto": "chore(deps-dev): bump build-tools group — typescript, vite-plugin-pwa e outros (#347)"
-   },
-   {
-    "sha": "5abf273",
-    "data": "2026-11-05",
-    "assunto": "fix: check-migrations — reset lastIndex e strippedContent no RLS check (#364)"
    }
   ],
   "arquivos_mudados_7d": 78,
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "arquivo": "deno.lock",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 24
+    "commits": 26
    },
    {
     "autor": "Claude",

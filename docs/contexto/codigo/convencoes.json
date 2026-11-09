@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps): bump supabase/setup-cli (#400)",
+   "chore(deps): bump actions/download-artifact (#399)",
    "fix: corrige restore incondicional no hook de grafo e typo no count de workflows",
    "fix: protege a saída do snapshot e o trabalho local na publicação do contexto",
-   "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)",
-   "chore: replica o padrão de instruções para agentes do Zapp Web V2 (skill enxuto + guard GA02) (#392)",
-   "feat: workflow auto-corrige deno.lock em PRs do Dependabot (#368)"
+   "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
