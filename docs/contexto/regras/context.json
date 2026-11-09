@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "053885bfd95143cfa8f827eddbb95297659cfd36",
+  "sha": "95e8e8a18b5bcd8405df2d95fea35a916f18f429",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 07:18 UTC",
+  "generated_at": "2026-11-09 20:16 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450186
@@ -243903,10 +243903,20 @@
   }
  },
  "git": {
-  "sha": "053885bfd95143cfa8f827eddbb95297659cfd36",
+  "sha": "95e8e8a18b5bcd8405df2d95fea35a916f18f429",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "95e8e8a",
+    "date": "2026-11-09",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#412)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json"
+    ]
+   },
    {
     "sha": "053885b",
     "date": "2026-11-09",
@@ -244213,16 +244223,6 @@
     "files": [
      "scripts/check-migrations.mjs"
     ]
-   },
-   {
-    "sha": "42b62f1",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump eslint 9.39→10.14 (#359)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -244232,11 +244232,19 @@
    ],
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
+    4
+   ],
+   [
+    "inventario/estado/banco.json",
+    3
+   ],
+   [
+    "inventario/estado/edges.json",
+    3
    ],
    [
     ".github/workflows/migrations-drift.yml",
@@ -244280,14 +244288,6 @@
    ],
    [
     "scripts/db-audit/gen-migration-probes.mjs",
-    2
-   ],
-   [
-    "inventario/estado/banco.json",
-    2
-   ],
-   [
-    "inventario/estado/edges.json",
     2
    ],
    [

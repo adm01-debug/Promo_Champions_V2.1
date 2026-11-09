@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "053885bfd95143cfa8f827eddbb95297659cfd36",
+  "commit": "95e8e8a18b5bcd8405df2d95fea35a916f18f429",
   "branch": "main",
-  "data_commit": "2026-11-09T07:03:09Z",
+  "data_commit": "2026-11-09T20:09:36Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "95e8e8a",
+    "data": "2026-11-09",
+    "assunto": "chore: inventario do estado real [auto] (#412)"
+   },
    {
     "sha": "053885b",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "4385b7d",
     "data": "2026-11-06",
     "assunto": "docs: reconcilia desfecho das PRs antigas #280 #298 #345 #347 (#373)"
-   },
-   {
-    "sha": "6c6df6f",
-    "data": "2026-11-05",
-    "assunto": "fix: bump eslint-plugin-react-refresh 0.5.7, jsdom 30.1.3, lint-staged 17.6.0 + regenera deno.lock"
    }
   ],
   "arquivos_mudados_7d": 79,
@@ -317,7 +317,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 3
+    "commits": 4
    }
   ]
  },

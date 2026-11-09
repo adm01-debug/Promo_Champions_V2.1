@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: inventario do estado real [auto] (#412)",
    "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)",
    "chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)",
    "chore(deps): bump supabase/setup-cli (#400)",
-   "chore(deps): bump actions/download-artifact (#399)",
-   "fix: corrige restore incondicional no hook de grafo e typo no count de workflows"
+   "chore(deps): bump actions/download-artifact (#399)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
