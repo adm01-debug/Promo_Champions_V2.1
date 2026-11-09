@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-09 21:06 UTC
+
+- **grants** adicionado (1305): `public._internal_secrets:anon`, `public._internal_secrets:authenticated`, `public._internal_secrets:service_role`, `public.ab_tests:anon`, `public.ab_tests:authenticated`, `public.ab_tests:service_role`, `public.access_denied_logs:anon`, `public.access_denied_logs:authenticated`, `public.access_denied_logs:service_role`, `public.account_activities:anon`, `public.account_activities:authenticated`, `public.account_activities:service_role`, `public.account_contacts:anon`, `public.account_contacts:authenticated`, `public.account_contacts:service_role`, `public.account_plans:anon`, `public.account_plans:authenticated`, `public.account_plans:service_role`, `public.accounts:anon`, `public.accounts:authenticated`, `public.accounts:service_role`, `public.achievements:anon`, `public.achievements:authenticated`, `public.achievements:service_role`, `public.active_power_ups:anon`, `public.active_power_ups:authenticated`, `public.active_power_ups:service_role`, `public.active_sessions:anon`, `public.active_sessions:authenticated`, `public.active_sessions:service_role`, `public.activities:anon`, `public.activities:authenticated`, `public.activities:service_role`, `public.activities_active:authenticated`, `public.activities_active:service_role`, `public.activity_audit_logs:anon`, `public.activity_audit_logs:authenticated`, `public.activity_audit_logs:service_role`, `public.activity_goals:anon`, `public.activity_goals:authenticated` … (+1265)
+
 ## 2026-11-09 05:01 UTC
 
 - **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_12`

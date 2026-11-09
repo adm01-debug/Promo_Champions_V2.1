@@ -88,9 +88,3 @@ Cada fonte é atualizada independentemente; referências anteriores não comprov
 | `manifest.json` | data UTC da coleta concluída, erros e seções reaproveitadas; usado pelo índice de contexto |
 | `CHANGELOG.md` | diff semântico a cada mudança |
 | `errors.md` | seções que falharam na última coleta |
-
-## ⚠️ Problemas na última coleta
-
-| seção | erro |
-|---|---|
-| grants | canceling statement due to statement timeout |

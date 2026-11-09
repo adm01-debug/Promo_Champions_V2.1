@@ -99,4 +99,8 @@
 
 ## Grants
 
-_nenhum_
+| role | privilégios |
+|---|---|
+| anon | DELETE, REFERENCES, SELECT, TRIGGER |
+| authenticated | DELETE, REFERENCES, SELECT, TRIGGER |
+| service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
