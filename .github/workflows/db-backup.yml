@@ -37,6 +37,12 @@ jobs:
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+      # Off-site AWS (S3): exposto via env p/ o `if` testar a existencia do secret
+      # (o contexto secrets NAO e permitido em `if`). Ausente -> upload S3 pulado.
+      AWS_BACKUP_ACCESS_KEY_ID: ${{ secrets.AWS_BACKUP_ACCESS_KEY_ID }}
+      AWS_BACKUP_SECRET_ACCESS_KEY: ${{ secrets.AWS_BACKUP_SECRET_ACCESS_KEY }}
+      AWS_BACKUP_REGION: ${{ vars.AWS_BACKUP_REGION }}
+      AWS_BACKUP_BUCKET: ${{ vars.AWS_BACKUP_BUCKET }}
     steps:
       - name: Verificar secret e projeto alvo
         id: gate
@@ -102,6 +108,22 @@ jobs:
           echo "BACKUP_FILE=$FILE" >> "$GITHUB_ENV"
           ls -lh "$FILE"
 
+      - name: Validar restauração do dump (chave + integridade)
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          # Descriptografa com a MESMA chave do secret e abre o índice com
+          # pg_restore --list: prova que o upload sobe um dump restaurabil.
+          # Chave trocada desde o dump ou arquivo corrompido -> openssl ou
+          # pg_restore falha aqui e o artifact NÃO é publicado.
+          CHECK=/tmp/restore-check.dump
+          openssl enc -d -aes-256-cbc -pbkdf2 -in "$BACKUP_FILE" -out "$CHECK" \
+            -pass env:BACKUP_ENCRYPTION_KEY
+          docker run --rm -v "$CHECK:/check.dump:ro" postgres:17.6 \
+            pg_restore --list /check.dump | sed -n '1,14p'
+          rm -f "$CHECK"
+          echo "restore check OK: $BACKUP_FILE abre como dump válido"
+
       - name: Upload artifact (retenção 7 dias)
         if: steps.gate.outputs.run == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -110,10 +132,24 @@ jobs:
           path: promo-champions-db-*.dump*
           retention-days: 7
 
-      # Off-site real (ex.: S3): descomentar quando os secrets AWS existirem.
-      # - name: Upload para bucket off-site
-      #   if: steps.gate.outputs.run == 'true'
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_BACKUP_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_BACKUP_SECRET_ACCESS_KEY }}
-      #   run: aws s3 cp "$BACKUP_FILE" s3://promo-backups/db/
+      # Off-site AWS (S3): roda SO quando os 4 valores AWS existirem (2 secrets + 2 vars).
+      # Com o secret ausente o passo e pulado -> a PR pode ser mergeada antes
+      # dos secrets existirem e o schedule sai verde sem custo AWS.
+      # Decisao: aws-actions/configure-aws-credentials@v4 (pinado por SHA de COMMIT,
+      # nao o SHA do objeto da tag) em passo normal do runner: upload-artifact ja roda
+      # no runner e a imagem postgres (container) nao tem aws cli.
+      - name: Configurar credenciais AWS (off-site)
+        if: steps.gate.outputs.run == 'true' && env.AWS_BACKUP_ACCESS_KEY_ID != '' && env.AWS_BACKUP_SECRET_ACCESS_KEY != '' && env.AWS_BACKUP_REGION != '' && env.AWS_BACKUP_BUCKET != ''
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_BACKUP_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_BACKUP_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_BACKUP_REGION }}
+
+      - name: Upload para bucket off-site (S3)
+        if: steps.gate.outputs.run == 'true' && env.AWS_BACKUP_ACCESS_KEY_ID != '' && env.AWS_BACKUP_SECRET_ACCESS_KEY != '' && env.AWS_BACKUP_REGION != '' && env.AWS_BACKUP_BUCKET != ''
+        run: |
+          set -euo pipefail
+          # --only-show-errors: sem o progresso (que imprimiria o key no log).
+          # O valor do secret e mascarado automaticamente pelo runner.
+          aws s3 cp "$BACKUP_FILE" "s3://${AWS_BACKUP_BUCKET}/db/$BACKUP_FILE" --only-show-errors
