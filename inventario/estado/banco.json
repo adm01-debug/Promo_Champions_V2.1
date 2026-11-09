@@ -9,7 +9,7 @@
     },
     {
       "detalhe": [
-        "189806 linhas com mais de 7 dias"
+        "197109 linhas com mais de 7 dias"
       ],
       "tipo": "historico_cron_sem_limpeza"
     },
@@ -109,10 +109,10 @@
       "max_worker_processes": "6"
     },
     "historico": {
-      "bytes": 56573952,
-      "linhas": 212770,
+      "bytes": 58564608,
+      "linhas": 220073,
       "mais_antigo": "2026-08-04T11:30:00Z",
-      "mais_de_7_dias": 189806
+      "mais_de_7_dias": 197109
     },
     "horas_paradas_7d": [],
     "jobs": [
@@ -170,7 +170,7 @@
         "chama": [
           "public.admin_capture_rollback_snapshot"
         ],
-        "duracao_max_s_7d": 2,
+        "duracao_max_s_7d": 3,
         "execucoes_24h": 288,
         "execucoes_7d": 2016,
         "falhas_24h": 0,
@@ -503,7 +503,7 @@
           "public.reset_pg_stat_statements_weekly"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 0,
+        "execucoes_24h": 1,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -567,7 +567,7 @@
           "public.process_weekly_league_reset"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 0,
+        "execucoes_24h": 1,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -583,7 +583,7 @@
           "public.match_weekly_players"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 0,
+        "execucoes_24h": 1,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -599,7 +599,7 @@
           "public.resolve_weekly_matchups"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 0,
+        "execucoes_24h": 1,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -1410,7 +1410,7 @@
   "integracoes": {
     "conexoes": []
   },
-  "medido_em": "2026-11-07T14:36:36Z",
+  "medido_em": "2026-11-09T20:01:04Z",
   "resumo": {
     "cron_ativos": 32,
     "cron_jobs": 32,
@@ -1422,7 +1422,7 @@
     "postgres": "17.6",
     "tabelas_public": 405,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 234032275,
+    "tamanho_bytes": 240209043,
     "triggers_public": 382,
     "views_public": 36
   },
@@ -1803,9 +1803,9 @@
       }
     },
     {
-      "bytes": 79544320,
+      "bytes": 83288064,
       "citada_no_banco": true,
-      "linhas": 33817,
+      "linhas": 34306,
       "linhas_exatas": true,
       "nome": "audit_logs",
       "policies": 2,
@@ -1893,9 +1893,9 @@
       }
     },
     {
-      "bytes": 172032,
+      "bytes": 180224,
       "citada_no_banco": true,
-      "linhas": 432,
+      "linhas": 485,
       "linhas_exatas": true,
       "nome": "bitrix24_sync_logs",
       "policies": 1,
@@ -2928,9 +2928,9 @@
       }
     },
     {
-      "bytes": 614400,
+      "bytes": 638976,
       "citada_no_banco": true,
-      "linhas": 1062,
+      "linhas": 1142,
       "linhas_exatas": true,
       "nome": "cron_failure_alerts",
       "policies": 1,
@@ -3125,7 +3125,7 @@
     {
       "bytes": 1818624,
       "citada_no_banco": true,
-      "linhas": 8769,
+      "linhas": 8835,
       "linhas_exatas": true,
       "nome": "db_rollback_snapshots",
       "policies": 1,
@@ -3258,7 +3258,7 @@
       }
     },
     {
-      "bytes": 466944,
+      "bytes": 475136,
       "citada_no_banco": true,
       "linhas": 1343,
       "linhas_exatas": true,
@@ -3273,7 +3273,7 @@
       }
     },
     {
-      "bytes": 565248,
+      "bytes": 573440,
       "citada_no_banco": true,
       "linhas": 1343,
       "linhas_exatas": true,
@@ -4413,9 +4413,9 @@
       }
     },
     {
-      "bytes": 606208,
+      "bytes": 647168,
       "citada_no_banco": true,
-      "linhas": 1324,
+      "linhas": 1326,
       "linhas_exatas": true,
       "nome": "login_attempts",
       "policies": 1,
@@ -4428,9 +4428,9 @@
       }
     },
     {
-      "bytes": 1253376,
+      "bytes": 1286144,
       "citada_no_banco": true,
-      "linhas": 2764,
+      "linhas": 2828,
       "linhas_exatas": true,
       "nome": "maintenance_log",
       "policies": 1,
@@ -4548,9 +4548,9 @@
       }
     },
     {
-      "bytes": 3325952,
+      "bytes": 3612672,
       "citada_no_banco": true,
-      "linhas": 4796,
+      "linhas": 5200,
       "linhas_exatas": true,
       "nome": "notifications",
       "policies": 7,
@@ -4668,7 +4668,7 @@
       }
     },
     {
-      "bytes": 458752,
+      "bytes": 466944,
       "citada_no_banco": true,
       "linhas": 336,
       "linhas_exatas": true,
@@ -5298,9 +5298,9 @@
       }
     },
     {
-      "bytes": 188416,
+      "bytes": 196608,
       "citada_no_banco": true,
-      "linhas": 195,
+      "linhas": 201,
       "linhas_exatas": true,
       "nome": "quote_conversion_audit",
       "policies": 1,
@@ -5330,7 +5330,7 @@
     {
       "bytes": 417792,
       "citada_no_banco": true,
-      "linhas": 278,
+      "linhas": 318,
       "linhas_exatas": true,
       "nome": "quote_sync_inbound_log",
       "policies": 1,
@@ -5358,7 +5358,7 @@
       }
     },
     {
-      "bytes": 606208,
+      "bytes": 614400,
       "citada_no_banco": true,
       "linhas": 474,
       "linhas_exatas": true,
@@ -6380,7 +6380,7 @@
     {
       "bytes": 114688,
       "citada_no_banco": true,
-      "linhas": 6,
+      "linhas": 9,
       "linhas_exatas": true,
       "nome": "slow_query_alerts",
       "policies": 2,
@@ -6995,7 +6995,7 @@
     {
       "bytes": 15826944,
       "citada_no_banco": true,
-      "linhas": 31289,
+      "linhas": 31411,
       "linhas_exatas": true,
       "nome": "web_vitals_samples",
       "policies": 1,
@@ -7160,7 +7160,7 @@
     {
       "bytes": 114688,
       "citada_no_banco": true,
-      "linhas": 45,
+      "linhas": 51,
       "linhas_exatas": true,
       "nome": "weekly_matchups",
       "policies": 2,
