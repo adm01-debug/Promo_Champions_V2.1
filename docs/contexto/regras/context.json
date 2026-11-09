@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "4424fdef830439ba3eabb590a9d3b2f73334c107",
+  "sha": "adf041442a70d1503123573fdc83176eb6cf52f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 06:51 UTC",
+  "generated_at": "2026-11-09 07:00 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450186
@@ -243903,10 +243903,19 @@
   }
  },
  "git": {
-  "sha": "4424fdef830439ba3eabb590a9d3b2f73334c107",
+  "sha": "adf041442a70d1503123573fdc83176eb6cf52f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "adf0414",
+    "date": "2026-11-09",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)",
+    "files": [
+     ".github/workflows/codeql.yml"
+    ]
+   },
    {
     "sha": "4424fde",
     "date": "2026-11-09",
@@ -244215,29 +244224,19 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "e3f7790",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump @tanstack/react-query 5.83→5.105 (#356)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
+    "scripts/inventario/gerar-banco.mjs",
+    6
+   ],
+   [
     "package-lock.json",
-    7
+    6
    ],
    [
     "package.json",
-    7
-   ],
-   [
-    "scripts/inventario/gerar-banco.mjs",
     6
    ],
    [
@@ -244293,6 +244292,10 @@
     2
    ],
    [
+    ".github/workflows/codeql.yml",
+    1
+   ],
+   [
     ".github/workflows/deploy.yml",
     1
    ],
@@ -244302,10 +244305,6 @@
    ],
    [
     "scripts/inventario/gerar-repo.mjs",
-    1
-   ],
-   [
-    "scripts/regras_negocio/publish.sh",
     1
    ]
   ]

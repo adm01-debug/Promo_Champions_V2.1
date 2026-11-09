@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4424fdef830439ba3eabb590a9d3b2f73334c107",
+  "commit": "adf041442a70d1503123573fdc83176eb6cf52f2",
   "branch": "main",
-  "data_commit": "2026-11-09T06:48:02Z",
+  "data_commit": "2026-11-09T06:56:04Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "adf0414",
+    "data": "2026-11-09",
+    "assunto": "chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)"
+   },
    {
     "sha": "4424fde",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "aeb70d7",
     "data": "2026-11-05",
     "assunto": "fix: release-please com continue-on-error para não reprovar status da main"
-   },
-   {
-    "sha": "aba5965",
-    "data": "2026-11-05",
-    "assunto": "fix: corrige 3 workflows autônomos com falha repetida (#363)"
    }
   ],
-  "arquivos_mudados_7d": 78,
+  "arquivos_mudados_7d": 79,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -222,12 +222,12 @@
     "mudancas": 18
    },
    {
-    "arquivo": "CLAUDE.md",
+    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 14
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 13
+    "arquivo": "CLAUDE.md",
+    "mudancas": 14
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 26
+    "commits": 27
    },
    {
     "autor": "Claude",
