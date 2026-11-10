@@ -52,6 +52,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/7b/a014352968ab607b0589a7bb03676a52b2d45603b065ca1b93e9b5a81b07/graphifyy-0.9.70-py3-none-any.whl", hash = "sha256:6cb0f060b93778552511e8881c92700d7879a0023b89d69936c77cc9b42239da", size = 1504086, upload-time = "2026-09-27T18:20:23.954Z" },
 ]
 
+[package.optional-dependencies]
+sql = [
+    { name = "tree-sitter-sql" },
+]
+
 [[package]]
 name = "networkx"
 version = "3.4.2"
@@ -189,11 +194,11 @@ name = "promo-champions-graphify-tools"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "graphifyy" },
+    { name = "graphifyy", extra = ["sql"] },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "graphifyy", specifier = "==0.9.70" }]
+requires-dist = [{ name = "graphifyy", extras = ["sql"], specifier = "==0.9.70" }]
 
 [[package]]
 name = "rapidfuzz"
@@ -670,6 +675,22 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/1a/a7/d1539a33de9841facb01821c5bc05b4562c4f9f6fc6c28c528b07380054c/tree_sitter_scala-0.26.2-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:a2ba6e45827e01f11790b24cdae357db51ede59ee7ee5c8b7eccc61e9a7782ea", size = 498561, upload-time = "2026-08-08T03:54:42.106Z" },
     { url = "https://files.pythonhosted.org/packages/af/b0/89e63b1f66dbdc6d51d927a1c64685fd0d03527cdcd354f6e312938bd1c3/tree_sitter_scala-0.26.2-cp39-abi3-win_amd64.whl", hash = "sha256:eba630fc41cee1093005883fa70e275ecb26351e3ca6471ac2f6f83779478d07", size = 460912, upload-time = "2026-08-08T03:54:43.3Z" },
     { url = "https://files.pythonhosted.org/packages/e0/07/3bc158469095b1b872b3a462860b223113f7a6bd7cf180f2cbfc9eb1089c/tree_sitter_scala-0.26.2-cp39-abi3-win_arm64.whl", hash = "sha256:0ac121c9afd813e0820c9f0e90c2d028ca90e096298cbcab2f139ba5f4a8aaaa", size = 464751, upload-time = "2026-08-08T03:54:44.285Z" },
+]
+
+[[package]]
+name = "tree-sitter-sql"
+version = "0.3.12"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3e/3f/dbb10042fb8bb7cd24bf189067610d2023d74666e48bfdf5ef097402d91e/tree_sitter_sql-0.3.12.tar.gz", hash = "sha256:7441ba9f495f9db80d77a3fbfc9fcae144067722ac2f6cddc7c882f72def32f0", size = 2684500, upload-time = "2026-11-09T21:40:37.753Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/59/e95bc6ffd3e40f22a32504e67fc54808910e2db52caaa5cd6a7a74487bc1/tree_sitter_sql-0.3.12-cp310-abi3-macosx_10_9_x86_64.whl", hash = "sha256:93f0e0f8fe4370cf96bfd9abb7fc98c7b968024c556588f200dd034f09af63f2", size = 898880, upload-time = "2026-11-09T21:40:27.815Z" },
+    { url = "https://files.pythonhosted.org/packages/0f/c7/2ea3cceb8d27a9746279d8cbaf6a37c9191dd753b6d2b3bc764501893ab2/tree_sitter_sql-0.3.12-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:6a9e169a7e92f6cbf2ec13a996eded9b9db5c5d3c3d29aea257b8d82beb8899c", size = 995160, upload-time = "2026-11-09T21:40:29.202Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/aa/b317e62f2718be83bb402bc58e30537b1f5bba54ee2f8fc9100fd4d58449/tree_sitter_sql-0.3.12-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:05eae36833872814541328e6539e5950a6bae5479f455193aacf313e40cd37af", size = 958052, upload-time = "2026-11-09T21:40:30.496Z" },
+    { url = "https://files.pythonhosted.org/packages/99/1d/56d97f058dfd85f9fb812e7d6e0e89dde0bf765815bf7a15705238e89344/tree_sitter_sql-0.3.12-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:975f6dfb17adec14dfd62e22c582c22d3d89c8a9e6aa4b32fd90f55d7244e2f5", size = 957502, upload-time = "2026-11-09T21:40:31.719Z" },
+    { url = "https://files.pythonhosted.org/packages/39/9f/08bd44d33a6293309eb5c7664453228689af1b53b804e0cb0a1f2f6b5200/tree_sitter_sql-0.3.12-cp310-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:a621339de92c7a78df8ed630636be43a9e6665d0ecc130be8699abb6a1d543af", size = 957623, upload-time = "2026-11-09T21:40:33.072Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/57/c4e835afd473d86f79ecab88081c35e814aba2696a55e2068a2135320236/tree_sitter_sql-0.3.12-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:b1a70298e3f8324c06ee31af863d614299a945546048b4d0ba1e0cc030f90f0b", size = 956368, upload-time = "2026-11-09T21:40:34.25Z" },
+    { url = "https://files.pythonhosted.org/packages/06/19/b8665fbc21bc8b302d0885a0634993dd523d981532985d91564153fac651/tree_sitter_sql-0.3.12-cp310-abi3-win_amd64.whl", hash = "sha256:b1b432ac9b0676ad7ebd56d9a5b118f9919d1c821d1f3d74942450927e3f5dad", size = 893272, upload-time = "2026-11-09T21:40:35.469Z" },
+    { url = "https://files.pythonhosted.org/packages/90/6f/41e9e6c975df2f2d04a29eedec0a0a3b605026a72bf9961480d1d1eff2a2/tree_sitter_sql-0.3.12-cp310-abi3-win_arm64.whl", hash = "sha256:194e3b73d247e1a2b56647de4254d8c5f404681f944fa7e52fae4f4b0609ae11", size = 893658, upload-time = "2026-11-09T21:40:36.561Z" },
 ]
 
 [[package]]
