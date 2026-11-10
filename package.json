@@ -176,9 +176,11 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --write",
+      "eslint --max-warnings 0"
     ],
-    "*.{ts,tsx,css,json,md}": [
+    "*.{css,json,md}": [
       "prettier --write"
     ]
   },
