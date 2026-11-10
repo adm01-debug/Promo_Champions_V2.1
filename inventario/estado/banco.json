@@ -9,7 +9,7 @@
     },
     {
       "detalhe": [
-        "197109 linhas com mais de 7 dias"
+        "197708 linhas com mais de 7 dias"
       ],
       "tipo": "historico_cron_sem_limpeza"
     },
@@ -109,10 +109,10 @@
       "max_worker_processes": "6"
     },
     "historico": {
-      "bytes": 58564608,
-      "linhas": 220073,
+      "bytes": 58712064,
+      "linhas": 220672,
       "mais_antigo": "2026-08-04T11:30:00Z",
-      "mais_de_7_dias": 197109
+      "mais_de_7_dias": 197708
     },
     "horas_paradas_7d": [],
     "jobs": [
@@ -567,7 +567,7 @@
           "public.process_weekly_league_reset"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 1,
+        "execucoes_24h": 0,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -583,7 +583,7 @@
           "public.match_weekly_players"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 1,
+        "execucoes_24h": 0,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -599,7 +599,7 @@
           "public.resolve_weekly_matchups"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 1,
+        "execucoes_24h": 0,
         "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
@@ -1410,7 +1410,7 @@
   "integracoes": {
     "conexoes": []
   },
-  "medido_em": "2026-11-09T20:01:04Z",
+  "medido_em": "2026-11-10T00:26:52Z",
   "resumo": {
     "cron_ativos": 32,
     "cron_jobs": 32,
@@ -1418,11 +1418,14 @@
     "ledger_registros": 306,
     "ledger_versao_max": "20261018200000",
     "max_connections": 60,
+    "migrations_no_repo": 669,
     "policies": 1003,
     "postgres": "17.6",
+    "tabelas_em_comum_com_manifesto": 405,
+    "tabelas_no_manifesto": 405,
     "tabelas_public": 405,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 240209043,
+    "tamanho_bytes": 240503955,
     "triggers_public": 382,
     "views_public": 36
   },
@@ -1803,7 +1806,7 @@
       }
     },
     {
-      "bytes": 83288064,
+      "bytes": 83435520,
       "citada_no_banco": true,
       "linhas": 34306,
       "linhas_exatas": true,
@@ -1893,9 +1896,9 @@
       }
     },
     {
-      "bytes": 180224,
+      "bytes": 188416,
       "citada_no_banco": true,
-      "linhas": 485,
+      "linhas": 490,
       "linhas_exatas": true,
       "nome": "bitrix24_sync_logs",
       "policies": 1,
@@ -2930,7 +2933,7 @@
     {
       "bytes": 638976,
       "citada_no_banco": true,
-      "linhas": 1142,
+      "linhas": 1149,
       "linhas_exatas": true,
       "nome": "cron_failure_alerts",
       "policies": 1,
@@ -3125,7 +3128,7 @@
     {
       "bytes": 1818624,
       "citada_no_banco": true,
-      "linhas": 8835,
+      "linhas": 8888,
       "linhas_exatas": true,
       "nome": "db_rollback_snapshots",
       "policies": 1,
@@ -3258,7 +3261,7 @@
       }
     },
     {
-      "bytes": 475136,
+      "bytes": 491520,
       "citada_no_banco": true,
       "linhas": 1343,
       "linhas_exatas": true,
@@ -3273,7 +3276,7 @@
       }
     },
     {
-      "bytes": 573440,
+      "bytes": 581632,
       "citada_no_banco": true,
       "linhas": 1343,
       "linhas_exatas": true,
@@ -4430,7 +4433,7 @@
     {
       "bytes": 1286144,
       "citada_no_banco": true,
-      "linhas": 2828,
+      "linhas": 2834,
       "linhas_exatas": true,
       "nome": "maintenance_log",
       "policies": 1,
@@ -4548,9 +4551,9 @@
       }
     },
     {
-      "bytes": 3612672,
+      "bytes": 3637248,
       "citada_no_banco": true,
-      "linhas": 5200,
+      "linhas": 5235,
       "linhas_exatas": true,
       "nome": "notifications",
       "policies": 7,
@@ -5328,9 +5331,9 @@
       }
     },
     {
-      "bytes": 417792,
+      "bytes": 425984,
       "citada_no_banco": true,
-      "linhas": 318,
+      "linhas": 346,
       "linhas_exatas": true,
       "nome": "quote_sync_inbound_log",
       "policies": 1,
@@ -6995,7 +6998,7 @@
     {
       "bytes": 15826944,
       "citada_no_banco": true,
-      "linhas": 31411,
+      "linhas": 31443,
       "linhas_exatas": true,
       "nome": "web_vitals_samples",
       "policies": 1,
