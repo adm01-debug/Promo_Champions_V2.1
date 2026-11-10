@@ -803,6 +803,38 @@
       "manual": ["node", "scripts/automation.mjs", "doctor", "--static"],
       "triggers": ["manual"],
       "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/quote-to-sale-e2e.yml. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
+    },
+    {
+      "id": "legacy-ce593affb75612f2",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-workflow-pins-resolvem.mjs"],
+      "manual": ["node", "scripts/ci/check-workflow-pins-resolvem.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/pr-checks.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-c0dd2d2d10f9f4b4",
+      "kind": "legacy",
+      "files": ["scripts/ci/check-workflow-pins-resolvem.unit.mjs"],
+      "manual": ["node", "scripts/ci/check-workflow-pins-resolvem.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/pr-checks.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-aa19f3e87b1a0a11",
+      "kind": "legacy",
+      "files": ["scripts/lib/seguranca-processo.mjs"],
+      "manual": ["node", "scripts/lib/seguranca-processo.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/pr-checks.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-fb2b4c6d8a1e2c30",
+      "kind": "legacy",
+      "files": ["scripts/lib/seguranca-processo.test.mjs"],
+      "manual": ["node", "scripts/lib/seguranca-processo.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/pr-checks.yml. O dispatcher não executa esta operação."
     }
   ],
   "ci": [
