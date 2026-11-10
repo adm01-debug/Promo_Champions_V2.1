@@ -9,7 +9,7 @@
       "section": "grants"
     }
   ],
-  "gerado_em": "2026-11-09T23:49:50Z",
+  "gerado_em": "2026-11-10T00:58:35Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }
