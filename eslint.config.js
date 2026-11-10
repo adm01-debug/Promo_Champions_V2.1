@@ -22,6 +22,11 @@ export default tseslint.config(
       // contexto-testes.yml); ficam fora do ratchet de complexidade, que mede o código do app.
       'scripts/ai-context/**',
       'scripts/ci/contexto-publicacao.unit.mjs',
+      // Utilitários de automação/manutenção locais (gatilhos Git e rotina local) portados do
+      // Zapp_Web_V2 — ficam fora do ratchet de complexidade, que mede o código do app.
+      'scripts/automation.mjs',
+      'scripts/graphify-local.mjs',
+      'scripts/maintenance/**',
     ],
   },
   {
