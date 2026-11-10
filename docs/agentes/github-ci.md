@@ -16,7 +16,7 @@ ou um workflow falhar de forma estranha. Medido no HEAD em 2026-11-08.
 ## Perímetro — estado medido (não há guard automático que compare isso)
 
 Branch protection do `main` tem **duas fontes independentes** que valem ao mesmo tempo — mexer só
-numa e achar que cobriu o perímetro é o erro mais caro aqui:
+uma e achar que cobriu o perímetro é o erro mais caro aqui:
 
 | Fonte | O que exige |
 |---|---|
@@ -43,7 +43,7 @@ Sintoma de `strict: true`: merge recusado com "N of N required status checks are
 CI verde — a PR ficou `BEHIND` da `main` (`mergeStateStatus`). Solução: atualizar a branch com a
 `main` (merge ou rebase), não mexer no `strict`.
 
-## Workflows (24 arquivos em `.github/workflows/`)
+## Workflows (25 arquivos em `.github/workflows/`)
 
 `a11y-sweep` · `apply-migration` · `ci-failure-alert` · `codeql` · `contexto` · `contexto-testes` ·
 `cron-monitoring` · `db-backup` · `db-probe` · `dependabot-automerge` · `dependabot-fix-lockfile` ·

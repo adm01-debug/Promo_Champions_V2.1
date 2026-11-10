@@ -58,26 +58,14 @@ if [ -f graphify-out/graph.json ] && [ -f graphify-out/GRAPH_REPORT.md ] && [ "$
   exit 0
 fi
 
-# GRAPH_REPORT.md e manifest.json são versionados neste repo — guarda o hash deles ANTES do
-# rebuild para poder restaurar depois. O `graphify update .` escreve os dois de novo (não tem
-# flag para pular), e deixar "modificado" um arquivo versionado por um build local da sessão
-# sujaria o worktree para o primeiro commit do agente.
-antes_report="$(git hash-object graphify-out/GRAPH_REPORT.md 2>/dev/null || true)"
-antes_manifest="$(git hash-object graphify-out/manifest.json 2>/dev/null || true)"
-
+# GRAPH_REPORT.md e manifest.json são versionados neste repo — o `graphify update .`
+# sobrescreve os dois, mas a versão canônica é a do HEAD (N8N mantém). Restauramos
+# incondicionalmente: evita que worktree fique sujo e fecha a falha silenciosa quando o
+# arquivo não existia antes do rebuild (git hash-object retornava "" e o guard nunca disparava).
 rm -f "$MARCA"
 PYTHONHASHSEED=0 graphify update .
-
-depois_report="$(git hash-object graphify-out/GRAPH_REPORT.md 2>/dev/null || true)"
-depois_manifest="$(git hash-object graphify-out/manifest.json 2>/dev/null || true)"
-if [ -n "$antes_report" ] && [ "$antes_report" != "$depois_report" ]; then
-  git checkout -- graphify-out/GRAPH_REPORT.md
-  echo "GRAPH_REPORT.md restaurado ao HEAD (o N8N do repo é quem atualiza a versão versionada)"
-fi
-if [ -n "$antes_manifest" ] && [ "$antes_manifest" != "$depois_manifest" ]; then
-  git checkout -- graphify-out/manifest.json
-  echo "manifest.json restaurado ao HEAD (o N8N do repo é quem atualiza a versão versionada)"
-fi
+git checkout -- graphify-out/GRAPH_REPORT.md graphify-out/manifest.json
+echo "GRAPH_REPORT.md e manifest.json restaurados ao HEAD"
 
 # O build leva minutos e roda em segundo plano: se o checkout mudou no meio, não carimba —
 # a próxima sessão refaz.
