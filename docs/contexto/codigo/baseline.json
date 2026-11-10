@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5bccdda12946ae92b89088e10e2f7b4ac52d8aca",
+  "commit": "b315faa3ec2c1ff314cef8b477cc4a4b381ea67d",
   "branch": "main",
-  "data_commit": "2026-11-10T16:21:27-03:00",
+  "data_commit": "2026-11-10T16:48:50-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "b315faa",
+    "data": "2026-11-10",
+    "assunto": "chore: exclui testes unitários do escopo do CodeQL (#419)"
+   },
    {
     "sha": "5bccdda",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "f3802bb",
     "data": "2026-11-07",
     "assunto": "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)"
-   },
-   {
-    "sha": "f6010c9",
-    "data": "2026-11-07",
-    "assunto": "fix: parsers de linha toleram CRLF em checkouts Windows (#384)"
    }
   ],
   "arquivos_mudados_7d": 113,
@@ -223,7 +223,7 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 60
+    "commits": 61
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 40
+    "commits": 39
    },
    {
     "autor": "dependabot[bot]",

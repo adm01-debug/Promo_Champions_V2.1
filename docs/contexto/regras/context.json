@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "5bccdda12946ae92b89088e10e2f7b4ac52d8aca",
+  "sha": "b315faa3ec2c1ff314cef8b477cc4a4b381ea67d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-10 19:22 UTC",
+  "generated_at": "2026-11-10 19:49 UTC",
   "files_total": 3468,
   "code_files": 3139,
   "code_lines": 456685
@@ -244312,10 +244312,19 @@
   }
  },
  "git": {
-  "sha": "5bccdda12946ae92b89088e10e2f7b4ac52d8aca",
+  "sha": "b315faa3ec2c1ff314cef8b477cc4a4b381ea67d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b315faa",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "chore: exclui testes unitários do escopo do CodeQL (#419)",
+    "files": [
+     ".github/workflows/codeql.yml"
+    ]
+   },
    {
     "sha": "5bccdda",
     "date": "2026-11-10",
@@ -244653,16 +244662,6 @@
     "files": [
      "scripts/inventario/gerar-banco.mjs"
     ]
-   },
-   {
-    "sha": "713cb7f",
-    "date": "2026-11-06",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#377)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json"
-    ]
    }
   ],
   "hot_files": [
@@ -244671,23 +244670,23 @@
     6
    ],
    [
+    ".github/workflows/codeql.yml",
+    4
+   ],
+   [
     ".github/workflows/pr-checks.yml",
     4
    ],
    [
-    "inventario/estado/banco.json",
-    4
-   ],
-   [
-    "inventario/estado/edges.json",
-    4
-   ],
-   [
-    ".github/workflows/codeql.yml",
+    ".github/workflows/migrations-drift.yml",
     3
    ],
    [
-    ".github/workflows/migrations-drift.yml",
+    "inventario/estado/banco.json",
+    3
+   ],
+   [
+    "inventario/estado/edges.json",
     3
    ],
    [
