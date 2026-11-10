@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+    "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+    "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
+    "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "dev": "vite --host",
     "dev:bun": "bunx vite --host",
     "dev:node": "vite --host",
@@ -52,7 +56,16 @@
     "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
     "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
     "ci": "npm run lint && npm run typecheck && npm run security:secrets && npm run graphify:test && npm run test:coverage && npm run build && node scripts/check-bundle-budget.mjs",
-    "debt:report": "node scripts/debt-report.mjs"
+    "debt:report": "node scripts/debt-report.mjs",
+    "automation:doctor": "node scripts/automation.mjs doctor",
+    "automation:test": "node scripts/automation.mjs test",
+    "automation:check": "node scripts/automation.mjs check --ref HEAD",
+    "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+    "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+    "automation:graph": "node scripts/automation.mjs graph",
+    "automation:status": "node scripts/automation.mjs graph status",
+    "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+    "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -176,9 +189,11 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --write",
+      "eslint --max-warnings 0"
     ],
-    "*.{ts,tsx,css,json,md}": [
+    "*.{css,json,md}": [
       "prettier --write"
     ]
   },
