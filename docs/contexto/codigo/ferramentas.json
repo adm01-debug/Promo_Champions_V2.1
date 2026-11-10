@@ -6,7 +6,7 @@
    "TypeScript (2382)",
    "SQL (676)",
    "Markdown (203)",
-   "JavaScript (65)",
+   "JavaScript (69)",
    "JSON (29)",
    "YAML (27)",
    "Shell (6)",
@@ -768,6 +768,7 @@
     "scripts/check-deno-types.mjs",
     "scripts/check-migrations.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/ci/check-workflow-pins-resolvem.mjs",
     "scripts/deno-test-suite.mjs",
     "scripts/e2e-precheck.mjs",
     "scripts/flaky-report.mjs"

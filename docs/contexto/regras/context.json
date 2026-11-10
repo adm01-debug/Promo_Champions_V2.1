@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ed266a1a03e8a046abc420030ffe360f3aabb6ef",
+  "sha": "258c9989a6e83e8f3c2a849666a0a31980739dd7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-10 01:42 UTC",
-  "files_total": 3448,
-  "code_files": 3127,
-  "code_lines": 450191
+  "generated_at": "2026-11-10 18:42 UTC",
+  "files_total": 3452,
+  "code_files": 3131,
+  "code_lines": 450647
  },
  "version": "1.3.2",
- "facts_hash": "97b0759d0306f5ba",
+ "facts_hash": "02a636a3654b7165",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -370,7 +370,7 @@
    ".tsx": 1304,
    ".ts": 1077,
    ".sql": 676,
-   ".mjs": 59,
+   ".mjs": 63,
    ".js": 6,
    ".py": 5,
    ".cjs": 1
@@ -77367,8 +77367,8 @@
   },
   {
    "module": "scripts",
-   "files": 84,
-   "lines": 17402,
+   "files": 88,
+   "lines": 17858,
    "tables": [
     "a",
     "achievements",
@@ -77418,6 +77418,7 @@
     "generate-role-permissions-seed.mjs: SQL_HEADER, generateSql",
     "smokeTargetHelpers.ts: CheckStatus, CheckResult, PostgrestLikeError, isAccessDenied, anonReadIsIsolated, summarize",
     "gerar.unit.mjs: AppRoutes, useContacts",
+    "check-workflow-pins-resolvem.mjs: lerPinDaLinha, coletarPins, commitDaTag, verificarPins",
     "inventario-rotas.unit.mjs: AppRoutes, adminOnlyItems, ACL_ALERTS_TABLE, f, handlerA, handlerB",
     "lint-ratchet.mjs: eslintCommandArguments, scopeBaseline, compareBaseline",
     "gen-migration-probes.mjs: collectProbes, collectDrops, suppressKey, suppressDropped",
@@ -77430,6 +77431,7 @@
     "gerar-rotas.mjs: ARQ_ROTAS, ARQ_LAZY, ARQ_MENU, resolverImport, extrairImports, extrairChamadas",
     "mudou-conteudo.mjs: PADRAO, semCarimbos, mudou",
     "requireSupabaseAdminEnv.ts: requireSupabaseAdminEnv",
+    "seguranca-processo.mjs: RAIZ_REPO, RAIZES_PERMITIDAS, resolverExecutavel, estaDentro, resolverCaminhoPermitido",
     "k6-smoke.js: options, function",
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
@@ -77528,6 +77530,8 @@
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/ci/ai-context-generator.unit.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/ci/check-workflow-pins-resolvem.mjs",
+    "scripts/ci/check-workflow-pins-resolvem.unit.mjs",
     "scripts/ci/contexto-indice.unit.mjs",
     "scripts/ci/contexto-publicacao.unit.mjs",
     "scripts/ci/inventario-banco.unit.mjs",
@@ -77563,10 +77567,8 @@
     "scripts/inventario/gerar-rotas.mjs",
     "scripts/inventario/mudou-conteudo.mjs",
     "scripts/lib/requireSupabaseAdminEnv.ts",
-    "scripts/load/k6-smoke.js",
-    "scripts/regras_negocio/generate.py",
-    "scripts/regras_negocio/indice.py",
-    "scripts/regras_negocio/test_generate.py"
+    "scripts/lib/seguranca-processo.mjs",
+    "scripts/lib/seguranca-processo.test.mjs"
    ]
   },
   {
@@ -85991,7 +85993,9 @@
     "supabase/functions/detect-winloss-at-risk/_dump_scenarios.ts"
    ],
    "PATH": [
-    "scripts/ci/contexto-publicacao.unit.mjs"
+    "scripts/ci/contexto-publicacao.unit.mjs",
+    "scripts/lib/seguranca-processo.mjs",
+    "scripts/lib/seguranca-processo.test.mjs"
    ],
    "PGDUMP": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -90046,6 +90050,14 @@
    {
     "file": "scripts/lib/requireSupabaseAdminEnv.ts",
     "msg": "SUPABASE_URL precisa usar HTTPS; HTTP é aceito somente para um Supabase local em loopback."
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.mjs",
+    "msg": "caminho de "
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.mjs",
+    "msg": "comando nao encontrado no PATH: "
    },
    {
     "file": "scripts/supabase_snapshot/test_snapshot.py",
@@ -130412,6 +130424,50 @@
    {
     "file": "scripts/graphify/static-contracts.test.mjs",
     "name": "não confunde delimitadores de comentário dentro de literal com comentário SQL"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverExecutavel devolve caminho absoluto existente igual ao do shell"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverExecutavel lanca para comando inexistente"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "estaDentro aceita a raiz e subpastas"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "estaDentro recusa "
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverCaminhoPermitido aceita caminho do repositorio e do tmpdir"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverCaminhoPermitido recusa "
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverCaminhoPermitido respeita o array de raizes explicito do chamador"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverCaminhoPermitido recusa arquivo existente acessado por symlink que escapa da raiz"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverCaminhoPermitido recusa alvo inexistente sob diretorio symlink que escapa da raiz"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "RAIZ_REPO aponta para o pacote Promo_Champions_V2.1 e esta entre as raizes permitidas"
+   },
+   {
+    "file": "scripts/lib/seguranca-processo.test.mjs",
+    "name": "resolverExecutavel ignora entrada relativa do PATH"
    },
    {
     "file": "src/components/email/aiEmailComposer.test.ts",
@@ -176868,6 +176924,45 @@
     "// com >= 50% do tamanho de la. CLAUDE.md fica de fora: e so `@AGENTS.md` por design."
    ]
   },
+  "scripts/ci/check-workflow-pins-resolvem.mjs": {
+   "path": "scripts/ci/check-workflow-pins-resolvem.mjs",
+   "lines": 122,
+   "exports": [
+    "function lerPinDaLinha",
+    "function coletarPins",
+    "function commitDaTag",
+    "function verificarPins"
+   ],
+   "doc": "!/usr/bin/env node Todo pin de Action (`owner/repo@<sha40> # vX.Y.Z`) precisa ser o commit REAL da tag declarada no comentário. Este check confere se o SHA EXISTE e é o commit da tag declarada; o formato do pin (40 hex, repositório autorizado) não é coberto por nenhum guard neste repo ainda. Em 15/1 …",
+   "temporal": [
+    "return execFileSync(resolverExecutavel('git'), args, { encoding: 'utf8', timeout: 10_000, stdio: ['ignore', 'pipe', 'pipe'] });"
+   ],
+   "percents": [
+    "// Linha 100% comentada nao define um `uses:` do workflow."
+   ]
+  },
+  "scripts/ci/check-workflow-pins-resolvem.unit.mjs": {
+   "path": "scripts/ci/check-workflow-pins-resolvem.unit.mjs",
+   "lines": 86,
+   "params": [
+    {
+     "name": "REAL",
+     "value": "'f49aabe0b5af0936a0987cfb85d86b75731b0186'"
+    },
+    {
+     "name": "INVENTADO",
+     "value": "'f49aabe0b5af0936a0987cfb85d86b75b3f07db4'"
+    },
+    {
+     "name": "TAG_OBJ",
+     "value": "'ea651e62978af7915d09fe2e282747c798bf2dab'"
+    },
+    {
+     "name": "SHA40",
+     "value": "'a'"
+    }
+   ]
+  },
   "scripts/ci/contexto-indice.unit.mjs": {
    "path": "scripts/ci/contexto-indice.unit.mjs",
    "lines": 135,
@@ -177750,6 +177845,53 @@
     }
    ],
    "uses_service_role": true
+  },
+  "scripts/lib/seguranca-processo.mjs": {
+   "path": "scripts/lib/seguranca-processo.mjs",
+   "lines": 106,
+   "exports": [
+    "const RAIZ_REPO",
+    "const RAIZES_PERMITIDAS",
+    "function resolverExecutavel",
+    "function estaDentro",
+    "function resolverCaminhoPermitido"
+   ],
+   "env": [
+    "PATH"
+   ],
+   "errors": [
+    "caminho de ",
+    "comando nao encontrado no PATH: "
+   ],
+   "rule_comments": [
+    "processo filho. A regra `javascript:S4036` e puramente sintatica: dispara",
+    "fazendo `git init` passar onde ele deve ser bloqueado).",
+    "inexistentes. Assim `tmp/link-para-fora/novo.json` nao passa apenas porque"
+   ]
+  },
+  "scripts/lib/seguranca-processo.test.mjs": {
+   "path": "scripts/lib/seguranca-processo.test.mjs",
+   "lines": 142,
+   "is_test": true,
+   "env": [
+    "PATH"
+   ],
+   "rule_comments": [
+    "E o MESMO binario que o shell resolveria: nao pode pegar outro shim do PATH."
+   ],
+   "tests": [
+    "resolverExecutavel devolve caminho absoluto existente igual ao do shell",
+    "resolverExecutavel lanca para comando inexistente",
+    "estaDentro aceita a raiz e subpastas",
+    "estaDentro recusa ",
+    "resolverCaminhoPermitido aceita caminho do repositorio e do tmpdir",
+    "resolverCaminhoPermitido recusa ",
+    "resolverCaminhoPermitido respeita o array de raizes explicito do chamador",
+    "resolverCaminhoPermitido recusa arquivo existente acessado por symlink que escapa da raiz",
+    "resolverCaminhoPermitido recusa alvo inexistente sob diretorio symlink que escapa da raiz",
+    "RAIZ_REPO aponta para o pacote Promo_Champions_V2.1 e esta entre as raizes permitidas",
+    "resolverExecutavel ignora entrada relativa do PATH"
+   ]
   },
   "scripts/load/k6-smoke.js": {
    "path": "scripts/load/k6-smoke.js",
@@ -243903,10 +244045,40 @@
   }
  },
  "git": {
-  "sha": "ed266a1a03e8a046abc420030ffe360f3aabb6ef",
+  "sha": "258c9989a6e83e8f3c2a849666a0a31980739dd7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "258c998",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)",
+    "files": [
+     ".github/workflows/a11y-sweep.yml",
+     ".github/workflows/apply-migration.yml",
+     ".github/workflows/codeql.yml",
+     ".github/workflows/cron-monitoring.yml",
+     ".github/workflows/db-backup.yml",
+     ".github/workflows/db-probe.yml",
+     ".github/workflows/dependabot-fix-lockfile.yml",
+     ".github/workflows/deploy.yml",
+     ".github/workflows/edge-functions-bundle.yml",
+     ".github/workflows/edge-functions-input-validation.yml",
+     ".github/workflows/edge-functions-request-id.yml",
+     ".github/workflows/graphify.yml",
+     ".github/workflows/main.yml",
+     ".github/workflows/migrations-drift.yml",
+     ".github/workflows/pr-checks.yml",
+     ".github/workflows/qa-exhaustive.yml",
+     ".github/workflows/quote-to-sale-e2e.yml",
+     ".github/workflows/release-please.yml",
+     "scripts/ci/check-workflow-pins-resolvem.mjs",
+     "scripts/ci/check-workflow-pins-resolvem.unit.mjs",
+     "scripts/lib/seguranca-processo.mjs",
+     "scripts/lib/seguranca-processo.test.mjs"
+    ]
+   },
    {
     "sha": "ed266a1",
     "date": "2026-11-10",
@@ -244205,21 +244377,16 @@
      "scripts/db-audit/gen-migration-probes.mjs",
      "scripts/db-audit/gen-migration-probes.test.mjs"
     ]
-   },
-   {
-    "sha": "4385b7d",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "docs: reconcilia desfecho das PRs antigas #280 #298 #345 #347 (#373)",
-    "files": [
-     "analise-prs/decisoes.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/inventario/gerar-banco.mjs",
     7
+   ],
+   [
+    ".github/workflows/pr-checks.yml",
+    4
    ],
    [
     "inventario/estado/banco.json",
@@ -244230,15 +244397,27 @@
     4
    ],
    [
-    ".github/workflows/pr-checks.yml",
+    ".github/workflows/codeql.yml",
     3
    ],
    [
-    ".github/workflows/codeql.yml",
+    ".github/workflows/migrations-drift.yml",
+    3
+   ],
+   [
+    ".github/workflows/apply-migration.yml",
     2
    ],
    [
-    ".github/workflows/migrations-drift.yml",
+    ".github/workflows/db-backup.yml",
+    2
+   ],
+   [
+    ".github/workflows/dependabot-fix-lockfile.yml",
+    2
+   ],
+   [
+    ".github/workflows/deploy.yml",
     2
    ],
    [
@@ -244266,35 +244445,19 @@
     2
    ],
    [
-    "scripts/load/k6-smoke.js",
+    ".github/workflows/a11y-sweep.yml",
     1
    ],
    [
-    ".github/workflows/db-backup.yml",
+    ".github/workflows/cron-monitoring.yml",
     1
    ],
    [
-    ".github/workflows/deploy.yml",
+    ".github/workflows/db-probe.yml",
     1
    ],
    [
-    ".github/workflows/contexto.yml",
-    1
-   ],
-   [
-    "scripts/inventario/gerar-repo.mjs",
-    1
-   ],
-   [
-    "scripts/regras_negocio/publish.sh",
-    1
-   ],
-   [
-    "scripts/supabase_snapshot/snapshot.py",
-    1
-   ],
-   [
-    "scripts/supabase_snapshot/test_snapshot.py",
+    ".github/workflows/edge-functions-bundle.yml",
     1
    ]
   ]

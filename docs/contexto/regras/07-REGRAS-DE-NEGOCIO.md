@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ed266a1a03` · branch `main` · 2026-11-10 01:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `258c9989a6` · branch `main` · 2026-11-10 18:42 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3815,6 +3815,8 @@ _nenhum item encontrado_
 | Este script pode alterar dados. Defina CONFIRM_SUPABASE_ADMIN_WRITE=EXECUTAR_ESCRITA_ADMINISTRATIVA somente após confirmar o projeto, o escopo e o backup. | `scripts/lib/requireSupabaseAdminEnv.ts` |
 | SUPABASE_URL precisa ser uma URL HTTP(S) válida. | `scripts/lib/requireSupabaseAdminEnv.ts` |
 | SUPABASE_URL precisa usar HTTPS; HTTP é aceito somente para um Supabase local em loopback. | `scripts/lib/requireSupabaseAdminEnv.ts` |
+| caminho de  | `scripts/lib/seguranca-processo.mjs` |
+| comando nao encontrado no PATH:  | `scripts/lib/seguranca-processo.mjs` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
 | catálogo indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -4024,9 +4026,7 @@ _nenhum item encontrado_
 | Deal not found | `src/hooks/useDealProbability.ts` |
 | Erro ao atualizar estoque | `src/hooks/useDemandForecast.ts` |
 | Erro ao gerar previsões | `src/hooks/useDemandForecast.ts` |
-| Erro na movimentação | `src/hooks/useDemandForecast.ts` |
-| Confirmação de assinatura indisponível | `src/hooks/useDigitalSignatures.ts` |
-| … +615 linhas — lista completa em `context.json` | |
+| … +617 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1215 testes em 133 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1226 testes em 134 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4174,6 +4174,7 @@ _nenhum item encontrado_
 | `src/lib/bi/markupOverviewHelpers.test.ts` | 12 | aggregateMarkupOverview · lista vazia → resumo zerado e sem vendedores · agrupa média por vendedor e ordena desc · conta vendas críticas abaixo do limiar … |
 | `src/lib/log/pii.test.ts` | 12 | maskEmail · preserva primeira e última letra do local + domínio · retorna vazio para entrada nula e *** para formato inválido · maskPhone … |
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
+| `scripts/lib/seguranca-processo.test.mjs` | 11 | resolverExecutavel devolve caminho absoluto existente igual ao do shell · resolverExecutavel lanca para comando inexistente · estaDentro aceita a raiz e subpastas · estaDentro recusa  … |
 | `src/hooks/useRunRateProjection.test.ts` | 11 | computeRunRateProjection · primeiro dia do mês: paceDaily = mtd, projeta para todos os dias do mês · meio do mês com bom ritmo: confidence media, projeção acima da meta · gap grande: dailyPaceRequired calculado corretamente … |
 | `src/lib/navigationGuard.test.tsx` | 11 | navigationGuard · requestNavigation executa direto sem sujeira · requestNavigation confirma antes de sair com sujeira · requestNavigation bloqueia quando o usuário cancela … |
 | `src/lib/auth/passwordErrorMessages.test.ts` | 11 | classifyPasswordError · returns unknown for null/undefined · detects HIBP leaked password via message · detects HIBP via weak_password code even when message is empty … |

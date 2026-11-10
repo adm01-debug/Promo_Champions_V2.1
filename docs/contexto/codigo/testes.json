@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 162,
+ "total": 164,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 96
+  "unit": 98
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 83
+   "arquivos": 84
   },
   {
    "padrao": "tests/",
@@ -23,7 +23,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 14
+   "arquivos": 15
   },
   {
    "padrao": "co-localizado (__tests__)",
@@ -47,6 +47,15 @@
    "linhas": 3,
    "testa": [],
    "casos": 0
+  },
+  {
+   "arquivo": "scripts/ci/check-workflow-pins-resolvem.unit.mjs",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "scripts/ci/check-workflow-pins-resolvem.mjs"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "scripts/ci/contexto-indice.unit.mjs",
@@ -177,6 +186,15 @@
     "scripts/graphify/static-contracts.mjs"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "scripts/lib/seguranca-processo.test.mjs",
+   "tipo": "unit",
+   "linhas": 142,
+   "testa": [
+    "scripts/lib/seguranca-processo.mjs"
+   ],
+   "casos": 11
   },
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
@@ -1333,6 +1351,7 @@
   "supabase/tests/role_helpers_matrix_assertions.sql"
  ],
  "cobertura_por_arquivo": {
+  "scripts/ci/check-workflow-pins-resolvem.mjs": 1,
   "scripts/db-audit/gen-migration-probes.mjs": 1,
   "scripts/generate-role-permissions-seed.mjs": 1,
   "scripts/graphify/catalog-adapter.mjs": 1,
@@ -1343,6 +1362,7 @@
   "scripts/inventario/gerar-banco.mjs": 1,
   "scripts/inventario/gerar-rotas.mjs": 1,
   "scripts/inventario/mudou-conteudo.mjs": 1,
+  "scripts/lib/seguranca-processo.mjs": 1,
   "scripts/smokeTargetHelpers.ts": 1,
   "scripts/types-sync/validar.mjs": 1,
   "src/components/auth/ProtectedRoute.tsx": 2,

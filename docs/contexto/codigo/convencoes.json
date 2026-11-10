@@ -21,16 +21,16 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (83)",
+   "co-localizado (*.test) (84)",
    "tests/ (59)",
-   "outro (14)"
+   "outro (15)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
   "scripts": [
    "scripts/graphify (9)",
    "scripts/inventario (5)",
-   "scripts/ci (3)"
+   "scripts/ci (4)"
   ],
   "docs": [
    "docs (44)",
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)",
    "chore: inventario do estado real [auto] (#414)",
    "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)",
    "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)",
-   "fix: k6-smoke mira funções não deployadas e health sem chave (#388)",
-   "infra: valida restauracao do dump antes do upload no db-backup (#387)"
+   "fix: k6-smoke mira funções não deployadas e health sem chave (#388)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

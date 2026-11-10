@@ -5,6 +5,9 @@
   "scripts/ai-context/cenarios.mjs": [
    "src/types/index.ts"
   ],
+  "scripts/ci/check-workflow-pins-resolvem.mjs": [
+   "scripts/lib/seguranca-processo.mjs"
+  ],
   "scripts/graphify/catalog-adapter.mjs": [
    "scripts/graphify/graphify-utils.mjs"
   ],

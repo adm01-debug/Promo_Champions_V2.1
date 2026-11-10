@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ed266a1a03e8a046abc420030ffe360f3aabb6ef",
+  "commit": "258c9989a6e83e8f3c2a849666a0a31980739dd7",
   "branch": "main",
-  "data_commit": "2026-11-10T01:32:03Z",
+  "data_commit": "2026-11-10T18:41:43Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "258c998",
+    "data": "2026-11-10",
+    "assunto": "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)"
+   },
    {
     "sha": "ed266a1",
     "data": "2026-11-10",
@@ -126,14 +131,9 @@
     "sha": "195e4fd",
     "data": "2026-11-07",
     "assunto": "fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)"
-   },
-   {
-    "sha": "4606224",
-    "data": "2026-11-07",
-    "assunto": "fix: desabilita gate e2e em PRs (#374)"
    }
   ],
-  "arquivos_mudados_7d": 81,
+  "arquivos_mudados_7d": 95,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "arquivo": "deno.lock",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -223,19 +223,19 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 15
+    "mudancas": 16
+   },
+   {
+    "arquivo": ".github/workflows/cron-monitoring.yml",
+    "mudancas": 14
    },
    {
     "arquivo": "CLAUDE.md",
     "mudancas": 14
    },
    {
-    "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 13
-   },
-   {
     "arquivo": ".github/workflows/qa-exhaustive.yml",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -255,15 +255,15 @@
    },
    {
     "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "mudancas": 11
+   },
+   {
+    "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 10
    },
    {
     "arquivo": "vite.config.ts",
     "mudancas": 10
-   },
-   {
-    "arquivo": ".github/workflows/graphify.yml",
-    "mudancas": 9
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 57
+    "commits": 58
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 41
+    "commits": 40
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3433,
-  "arquivos_codigo": 2450,
-  "linhas_codigo": 420250,
+  "arquivos_total": 3437,
+  "arquivos_codigo": 2454,
+  "linhas_codigo": 420706,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,9 +336,9 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 162,
+  "testes": 164,
   "workflows": 25,
-  "scripts": 70,
+  "scripts": 72,
   "docs_md": 203
  },
  "por_pasta": {
@@ -419,8 +419,8 @@
    "linhas": 72
   },
   "scripts/ci": {
-   "arquivos": 12,
-   "linhas": 1460
+   "arquivos": 14,
+   "linhas": 1668
   },
   "scripts/codemod-money.mjs": {
    "arquivos": 1,
@@ -479,8 +479,8 @@
    "linhas": 863
   },
   "scripts/lib": {
-   "arquivos": 1,
-   "linhas": 58
+   "arquivos": 3,
+   "linhas": 306
   },
   "scripts/lint-input-validation.ts": {
    "arquivos": 1,
@@ -763,7 +763,7 @@
  ],
  "qualidade": {
   "any": 6,
-  "console_log": 149,
+  "console_log": 150,
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
