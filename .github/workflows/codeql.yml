@@ -3,8 +3,12 @@ name: CodeQL
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'scripts/*.unit.mjs'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'scripts/*.unit.mjs'
   schedule:
     - cron: '23 4 * * 1'
   workflow_dispatch:
