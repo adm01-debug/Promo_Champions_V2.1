@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "09ee2d8ed3457591c9dd24e34bbca799c9cc2b99",
+  "sha": "ed266a1a03e8a046abc420030ffe360f3aabb6ef",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-09 22:42 UTC",
+  "generated_at": "2026-11-10 01:42 UTC",
   "files_total": 3448,
   "code_files": 3127,
   "code_lines": 450191
@@ -243903,10 +243903,20 @@
   }
  },
  "git": {
-  "sha": "09ee2d8ed3457591c9dd24e34bbca799c9cc2b99",
+  "sha": "ed266a1a03e8a046abc420030ffe360f3aabb6ef",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "ed266a1",
+    "date": "2026-11-10",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#414)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json"
+    ]
+   },
    {
     "sha": "09ee2d8",
     "date": "2026-11-09",
@@ -244204,19 +244214,6 @@
     "files": [
      "analise-prs/decisoes.md"
     ]
-   },
-   {
-    "sha": "6c6df6f",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: bump eslint-plugin-react-refresh 0.5.7, jsdom 30.1.3, lint-staged 17.6.0 + regenera deno.lock",
-    "files": [
-     ".gitignore",
-     "deno.lock",
-     "docs/ci-trigger.txt",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -244226,11 +244223,11 @@
    ],
    [
     "inventario/estado/banco.json",
-    3
+    4
    ],
    [
     "inventario/estado/edges.json",
-    3
+    4
    ],
    [
     ".github/workflows/pr-checks.yml",
@@ -244257,10 +244254,6 @@
     2
    ],
    [
-    ".gitignore",
-    2
-   ],
-   [
     "AGENTS.md",
     2
    ],
@@ -244270,14 +244263,6 @@
    ],
    [
     "scripts/db-audit/gen-migration-probes.mjs",
-    2
-   ],
-   [
-    "package-lock.json",
-    2
-   ],
-   [
-    "package.json",
     2
    ],
    [
@@ -244298,6 +244283,18 @@
    ],
    [
     "scripts/inventario/gerar-repo.mjs",
+    1
+   ],
+   [
+    "scripts/regras_negocio/publish.sh",
+    1
+   ],
+   [
+    "scripts/supabase_snapshot/snapshot.py",
+    1
+   ],
+   [
+    "scripts/supabase_snapshot/test_snapshot.py",
     1
    ]
   ]

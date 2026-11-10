@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "09ee2d8ed3457591c9dd24e34bbca799c9cc2b99",
+  "commit": "ed266a1a03e8a046abc420030ffe360f3aabb6ef",
   "branch": "main",
-  "data_commit": "2026-11-09T19:33:06-03:00",
+  "data_commit": "2026-11-10T01:32:03Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "ed266a1",
+    "data": "2026-11-10",
+    "assunto": "chore: inventario do estado real [auto] (#414)"
+   },
    {
     "sha": "09ee2d8",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "4606224",
     "data": "2026-11-07",
     "assunto": "fix: desabilita gate e2e em PRs (#374)"
-   },
-   {
-    "sha": "13d4b86",
-    "data": "2026-11-06",
-    "assunto": "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)"
    }
   ],
   "arquivos_mudados_7d": 81,
@@ -317,7 +317,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 4
+    "commits": 5
    }
   ]
  },
