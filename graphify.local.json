@@ -7,9 +7,7 @@
   "state": "tools/graphify/.venv/graphify-local-state",
   "output": "graphify-out",
   "adapter": "champions",
-  "scope": [
-    "src/components/ui"
-  ],
+  "scope": ["src/components/ui"],
   "partial": true,
   "timeoutMs": 1200000,
   "minAvailableMb": 6144,
