@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "project": "Promo_Champions_V2.1",
+  "environment": "tools/graphify/.venv",
+  "pin": "0.9.70",
+  "pythonVersion": "3.11",
+  "state": "tools/graphify/.venv/graphify-local-state",
+  "output": "graphify-out",
+  "adapter": "champions",
+  "scope": [
+    "src/components/ui"
+  ],
+  "partial": true,
+  "timeoutMs": 1200000,
+  "minAvailableMb": 6144,
+  "metadata": [
+    ".gitignore",
+    ".graphifyignore",
+    ".graphifyrc",
+    "package.json",
+    "tsconfig.json",
+    "tools/graphify/pyproject.toml",
+    "tools/graphify/uv.lock",
+    "scripts/graphify/extract-code-only.mjs",
+    "scripts/graphify/graphify-utils.mjs",
+    "scripts/graphify/verify-output.mjs"
+  ]
+}
