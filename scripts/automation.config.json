@@ -227,13 +227,15 @@
         "scripts/bundle-edge-functions.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/bundle-edge-functions.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/deploy.yml, .github/workflows/edge-functions-bundle.yml. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/deploy.yml, .github/workflows/edge-functions-bundle.yml. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-68921f383dc1ec5b",
@@ -347,13 +349,15 @@
         "scripts/check-test-spec-patterns.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/check-test-spec-patterns.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-90f7d48298c23ae7",
@@ -657,13 +661,15 @@
         "scripts/db/simulate-migrations-via-mcp.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/db/simulate-migrations-via-mcp.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-755a6733716b272e",
@@ -1083,13 +1089,15 @@
         "scripts/lib/requireSupabaseAdminEnv.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/lib/requireSupabaseAdminEnv.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-6fcb724eda6a76e6",
@@ -1098,13 +1106,15 @@
         "scripts/lint-input-validation.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/lint-input-validation.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/edge-functions-input-validation.yml. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/edge-functions-input-validation.yml. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-d77d0495aa85be03",
@@ -1113,13 +1123,15 @@
         "scripts/lint-request-id.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/lint-request-id.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/edge-functions-request-id.yml. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/edge-functions-request-id.yml. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-af93fc7aae6c2408",
@@ -1143,13 +1155,15 @@
         "scripts/pack-quote-to-sale-artifacts.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/pack-quote-to-sale-artifacts.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-cf6d451f3fccd206",
@@ -1158,13 +1172,15 @@
         "scripts/prod-health-check.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/prod-health-check.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-6add96711eef222b",
@@ -1248,13 +1264,15 @@
         "scripts/run-win-loss-analysis.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/run-win-loss-analysis.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-33b418220633d14a",
@@ -1263,13 +1281,15 @@
         "scripts/security/check-no-committed-service-role.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/security/check-no-committed-service-role.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-2863997bd0c052a3",
@@ -1278,13 +1298,15 @@
         "scripts/seed-august-sales.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/seed-august-sales.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-8d1ee29c703786eb",
@@ -1293,13 +1315,15 @@
         "scripts/seed-deal-outcomes.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/seed-deal-outcomes.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-a183da842cea566f",
@@ -1308,13 +1332,15 @@
         "scripts/seed-fake-data.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/seed-fake-data.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-678ca5ce3c4ca5cb",
@@ -1323,13 +1349,15 @@
         "scripts/seed-probe.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/seed-probe.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-e1fa18159af43c49",
@@ -1338,13 +1366,15 @@
         "scripts/seed-race-cars.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/seed-race-cars.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-5e7b6dc6c6495601",
@@ -1353,13 +1383,15 @@
         "scripts/seed-real-people.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/seed-real-people.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-8f8876f1cae61ac8",
@@ -1368,13 +1400,15 @@
         "scripts/smoke-target-backend.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/smoke-target-backend.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-0802d19df7aee2be",
@@ -1383,13 +1417,15 @@
         "scripts/smokeTargetHelpers.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/smokeTargetHelpers.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
+      "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     },
     {
       "id": "legacy-21ab46cd8e55e1f0",
@@ -1503,13 +1539,15 @@
         "scripts/verify-quote-to-sale-invariants.ts"
       ],
       "manual": [
-        "bun",
-        "scripts/verify-quote-to-sale-invariants.ts"
+        "node",
+        "scripts/automation.mjs",
+        "doctor",
+        "--static"
       ],
       "triggers": [
         "manual"
       ],
-      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/quote-to-sale-e2e.yml. O dispatcher não executa esta operação."
+      "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/quote-to-sale-e2e.yml. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
     }
   ],
   "ci": [

@@ -40,14 +40,14 @@ As suites usam fixtures descartáveis e não executam os scripts operacionais do
 
 ## Registro exato dos demais scripts
 
-Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
+Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores; não são incluídos automaticamente no novo pipeline. Para arquivos TypeScript de apoio sem runner comprovado, o comando listado só valida o inventário; os chamadores originais continuam sendo a referência de execução. Referência literal indica onde o arquivo é citado, sem garantir que esse caminho rode nem autorização para executar operações contra serviços. Sem referência, o arquivo é mantido manual porque função, parâmetros e ambiente precisam de revisão antes de ativar qualquer gatilho. Scripts novos não cobertos por registro fazem `doctor --static` falhar; não existe registro genérico `scripts/**` para ocultá-los.
 
 | Arquivo exato | Invocação manual de inventário | Chamadores literais / justificativa |
 |---|---|---|
 | `scripts/ai-context/cenarios.mjs` | `node scripts/ai-context/cenarios.mjs` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/ai-context/gerar.mjs` | `node scripts/ai-context/gerar.mjs` | package.json:scripts, .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/ai-context/gerar.unit.mjs` | `node --test scripts/ai-context/gerar.unit.mjs` | package.json:scripts, .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
-| `scripts/bundle-edge-functions.ts` | `bun scripts/bundle-edge-functions.ts` | .github/workflows/deploy.yml, .github/workflows/edge-functions-bundle.yml |
+| `scripts/bundle-edge-functions.ts` | `node scripts/automation.mjs doctor --static` | .github/workflows/deploy.yml, .github/workflows/edge-functions-bundle.yml |
 | `scripts/check-bundle-budget.mjs` | `node scripts/check-bundle-budget.mjs` | package.json:scripts, .github/workflows/pr-checks.yml, .github/workflows/qa-exhaustive.yml |
 | `scripts/check-coverage-ladder.mjs` | `node scripts/check-coverage-ladder.mjs` | package.json:scripts |
 | `scripts/check-coverage-ratchet.mjs` | `node scripts/check-coverage-ratchet.mjs` | package.json:scripts |
@@ -55,7 +55,7 @@ Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores;
 | `scripts/check-deno-types.mjs` | `node scripts/check-deno-types.mjs` | .github/workflows/pr-checks.yml |
 | `scripts/check-domain-boundaries.mjs` | `node scripts/check-domain-boundaries.mjs` | package.json:scripts |
 | `scripts/check-migrations.mjs` | `node scripts/check-migrations.mjs` | package.json:scripts, .github/workflows/deploy.yml, .github/workflows/pr-checks.yml |
-| `scripts/check-test-spec-patterns.ts` | `bun scripts/check-test-spec-patterns.ts` | package.json:scripts |
+| `scripts/check-test-spec-patterns.ts` | `node scripts/automation.mjs doctor --static` | package.json:scripts |
 | `scripts/check-typecheck-baseline.mjs` | `node scripts/check-typecheck-baseline.mjs` | package.json:scripts |
 | `scripts/ci-check-forbidden.sh` | `sh scripts/ci-check-forbidden.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/ci/ai-context-generator.unit.mjs` | `node --test scripts/ci/ai-context-generator.unit.mjs` | .github/workflows/contexto-testes.yml |
@@ -75,7 +75,7 @@ Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores;
 | `scripts/db-audit/check-migration-drift.mjs` | `node scripts/db-audit/check-migration-drift.mjs` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/db-audit/gen-migration-probes.mjs` | `node scripts/db-audit/gen-migration-probes.mjs` | .github/workflows/db-probe.yml |
 | `scripts/db-audit/gen-migration-probes.test.mjs` | `node --test scripts/db-audit/gen-migration-probes.test.mjs` | scripts/db-audit/gen-migration-probes.mjs |
-| `scripts/db/simulate-migrations-via-mcp.ts` | `bun scripts/db/simulate-migrations-via-mcp.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/db/simulate-migrations-via-mcp.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/debt-report.mjs` | `node scripts/debt-report.mjs` | package.json:scripts |
 | `scripts/deno-test-suite.mjs` | `node scripts/deno-test-suite.mjs` | package.json:scripts, .github/workflows/pr-checks.yml |
 | `scripts/dev-kpis-as-role.sh` | `sh scripts/dev-kpis-as-role.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
@@ -103,27 +103,27 @@ Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores;
 | `scripts/inventario/gerar-repo.mjs` | `node scripts/inventario/gerar-repo.mjs` | .github/workflows/contexto-testes.yml, .github/workflows/inventario-estado-semanal.yml |
 | `scripts/inventario/gerar-rotas.mjs` | `node scripts/inventario/gerar-rotas.mjs` | .github/workflows/contexto-testes.yml, .github/workflows/inventario-estado-semanal.yml |
 | `scripts/inventario/mudou-conteudo.mjs` | `node scripts/inventario/mudou-conteudo.mjs` | .github/workflows/contexto-testes.yml, .github/workflows/inventario-estado-semanal.yml |
-| `scripts/lib/requireSupabaseAdminEnv.ts` | `bun scripts/lib/requireSupabaseAdminEnv.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/lint-input-validation.ts` | `bun scripts/lint-input-validation.ts` | .github/workflows/edge-functions-input-validation.yml |
-| `scripts/lint-request-id.ts` | `bun scripts/lint-request-id.ts` | .github/workflows/edge-functions-request-id.yml |
+| `scripts/lib/requireSupabaseAdminEnv.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/lint-input-validation.ts` | `node scripts/automation.mjs doctor --static` | .github/workflows/edge-functions-input-validation.yml |
+| `scripts/lint-request-id.ts` | `node scripts/automation.mjs doctor --static` | .github/workflows/edge-functions-request-id.yml |
 | `scripts/load/k6-smoke.js` | `node scripts/load/k6-smoke.js` | package.json:scripts, .github/workflows/pr-checks.yml |
-| `scripts/pack-quote-to-sale-artifacts.ts` | `bun scripts/pack-quote-to-sale-artifacts.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/prod-health-check.ts` | `bun scripts/prod-health-check.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/pack-quote-to-sale-artifacts.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/prod-health-check.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/regras_negocio/generate.py` | `python3 scripts/regras_negocio/generate.py` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/regras_negocio/indice.py` | `python3 scripts/regras_negocio/indice.py` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/regras_negocio/publish.sh` | `sh scripts/regras_negocio/publish.sh` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/regras_negocio/test_generate.py` | `python3 scripts/regras_negocio/test_generate.py` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/run-sql-tests.sh` | `sh scripts/run-sql-tests.sh` | package.json:scripts, .github/workflows/pr-checks.yml |
-| `scripts/run-win-loss-analysis.ts` | `bun scripts/run-win-loss-analysis.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/security/check-no-committed-service-role.ts` | `bun scripts/security/check-no-committed-service-role.ts` | package.json:scripts |
-| `scripts/seed-august-sales.ts` | `bun scripts/seed-august-sales.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/seed-deal-outcomes.ts` | `bun scripts/seed-deal-outcomes.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/seed-fake-data.ts` | `bun scripts/seed-fake-data.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/seed-probe.ts` | `bun scripts/seed-probe.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/seed-race-cars.ts` | `bun scripts/seed-race-cars.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/seed-real-people.ts` | `bun scripts/seed-real-people.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/smoke-target-backend.ts` | `bun scripts/smoke-target-backend.ts` | package.json:scripts |
-| `scripts/smokeTargetHelpers.ts` | `bun scripts/smokeTargetHelpers.ts` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/run-win-loss-analysis.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/security/check-no-committed-service-role.ts` | `node scripts/automation.mjs doctor --static` | package.json:scripts |
+| `scripts/seed-august-sales.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/seed-deal-outcomes.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/seed-fake-data.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/seed-probe.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/seed-race-cars.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/seed-real-people.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
+| `scripts/smoke-target-backend.ts` | `node scripts/automation.mjs doctor --static` | package.json:scripts |
+| `scripts/smokeTargetHelpers.ts` | `node scripts/automation.mjs doctor --static` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
 | `scripts/sql-coverage-matrix.mjs` | `node scripts/sql-coverage-matrix.mjs` | scripts/run-sql-tests.sh |
 | `scripts/supabase_snapshot/snapshot.py` | `python3 scripts/supabase_snapshot/snapshot.py` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
 | `scripts/supabase_snapshot/test_snapshot.py` | `python3 scripts/supabase_snapshot/test_snapshot.py` | .github/workflows/contexto-testes.yml, .github/workflows/contexto.yml |
@@ -131,7 +131,7 @@ Os registros `legacy` abaixo preservam ferramentas anteriores e seus chamadores;
 | `scripts/update-coverage-baseline.mjs` | `node scripts/update-coverage-baseline.mjs` | package.json:scripts |
 | `scripts/update-typecheck-baseline.mjs` | `node scripts/update-typecheck-baseline.mjs` | package.json:scripts |
 | `scripts/verify-dispatcher-request-id.sh` | `sh scripts/verify-dispatcher-request-id.sh` | Sem chamador literal; manter manual e revisar parâmetros/ambiente antes de executar. |
-| `scripts/verify-quote-to-sale-invariants.ts` | `bun scripts/verify-quote-to-sale-invariants.ts` | .github/workflows/quote-to-sale-e2e.yml |
+| `scripts/verify-quote-to-sale-invariants.ts` | `node scripts/automation.mjs doctor --static` | .github/workflows/quote-to-sale-e2e.yml |
 
 ## Hooks e workflows anteriores
 
