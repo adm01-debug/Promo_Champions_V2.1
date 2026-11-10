@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "31f6e2b2c4f96d7be7570979f680b4a87876e28a",
+  "commit": "5bccdda12946ae92b89088e10e2f7b4ac52d8aca",
   "branch": "main",
-  "data_commit": "2026-11-10T16:04:45-03:00",
+  "data_commit": "2026-11-10T16:21:27-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "5bccdda",
+    "data": "2026-11-10",
+    "assunto": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#418)"
+   },
    {
     "sha": "31f6e2b",
     "data": "2026-11-10",
@@ -126,14 +131,9 @@
     "sha": "f6010c9",
     "data": "2026-11-07",
     "assunto": "fix: parsers de linha toleram CRLF em checkouts Windows (#384)"
-   },
-   {
-    "sha": "f37cc9e",
-    "data": "2026-11-07",
-    "assunto": "chore: inventario do estado real [auto] (#383)"
    }
   ],
-  "arquivos_mudados_7d": 95,
+  "arquivos_mudados_7d": 113,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/hooks/win-loss",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "pasta": "src/components/gamification",
@@ -198,11 +198,11 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 91
+    "arquivo": "package.json",
+    "mudancas": 92
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 91
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 59
+    "commits": 60
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3437,
-  "arquivos_codigo": 2454,
-  "linhas_codigo": 420712,
+  "arquivos_total": 3453,
+  "arquivos_codigo": 2462,
+  "linhas_codigo": 426744,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,10 +336,10 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 164,
-  "workflows": 25,
-  "scripts": 72,
-  "docs_md": 203
+  "testes": 167,
+  "workflows": 26,
+  "scripts": 78,
+  "docs_md": 205
  },
  "por_pasta": {
   "commitlint.config.js": {
@@ -352,7 +352,7 @@
   },
   "eslint.config.js": {
    "arquivos": 1,
-   "linhas": 87
+   "linhas": 92
   },
   "playwright.a11y.config.ts": {
    "arquivos": 1,
@@ -377,6 +377,14 @@
   "scripts/ai-context": {
    "arquivos": 3,
    "linhas": 1458
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 1046
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 629
   },
   "scripts/bundle-edge-functions.ts": {
    "arquivos": 1,
@@ -474,6 +482,14 @@
    "arquivos": 15,
    "linhas": 1813
   },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 1145
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 501
+  },
   "scripts/inventario": {
    "arquivos": 4,
    "linhas": 863
@@ -493,6 +509,10 @@
   "scripts/load": {
    "arquivos": 1,
    "linhas": 77
+  },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 2706
   },
   "scripts/pack-quote-to-sale-artifacts.ts": {
    "arquivos": 1,
@@ -693,8 +713,16 @@
    "linhas": 1156
   },
   {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 1145
+  },
+  {
    "arquivo": "supabase/functions/run-retry-tests/retry_test.ts",
    "linhas": 1054
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 1046
   },
   {
    "arquivo": "src/components/race/RaceCar.tsx",
@@ -709,6 +737,10 @@
    "linhas": 891
   },
   {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "linhas": 859
+  },
+  {
    "arquivo": "supabase/functions/winloss-webhook-health-monitor/index.ts",
    "linhas": 811
   },
@@ -719,6 +751,10 @@
   {
    "arquivo": "src/components/dashboard/Speedometer.tsx",
    "linhas": 804
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "linhas": 792
   },
   {
    "arquivo": "src/pages/Estoque.tsx",
@@ -743,31 +779,15 @@
   {
    "arquivo": "src/pages/Orcamentos.tsx",
    "linhas": 683
-  },
-  {
-   "arquivo": "src/pages/SDRDashboard.tsx",
-   "linhas": 662
-  },
-  {
-   "arquivo": "src/pages/FollowUpInteligente.tsx",
-   "linhas": 641
-  },
-  {
-   "arquivo": "src/pages/admin/AdminV4CallbacksPage.tsx",
-   "linhas": 639
-  },
-  {
-   "arquivo": "src/components/race/RaceArena.tsx",
-   "linhas": 631
   }
  ],
  "qualidade": {
   "any": 6,
-  "console_log": 150,
+  "console_log": 167,
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
-  "arquivos_acima_500_linhas": 62
+  "arquivos_acima_500_linhas": 66
  },
  "todos": [
   {
@@ -904,12 +924,7 @@
    "TableSkeleton",
    "TeamActivityFeed"
   ],
-  "scripts_orfaos": [
-   "scripts/ci/lint-ratchet.mjs",
-   "scripts/ci/typecheck-ratchet.mjs",
-   "scripts/codemod-money.mjs",
-   "scripts/db-audit/check-migration-drift.mjs"
-  ],
+  "scripts_orfaos": [],
   "env_usadas_nao_declaradas": [
    "DEV",
    "MODE",

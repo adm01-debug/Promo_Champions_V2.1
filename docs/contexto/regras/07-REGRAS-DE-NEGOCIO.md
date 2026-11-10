@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `31f6e2b2c4` · branch `main` · 2026-11-10 19:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5bccdda129` · branch `main` · 2026-11-10 19:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3727,6 +3727,7 @@ _nenhum item encontrado_
 | Mensagem | Arquivo |
 |---|---|
 | Esta reprodução exige o runtime real Graphify 0.9.48 instalado na raiz informada. | `docs/graphify/revisao-20260911/reproduzir.mjs` |
+| falha fixture | `scripts/automation.unit.mjs` |
 | protocolo inválido: ${parsedUrl.protocol} | `scripts/e2e-precheck.mjs` |
 | no sales | `scripts/seed-fake-data.ts` |
 | Nenhum vendedor real encontrado. Rode seed-real-people.ts primeiro. | `scripts/seed-race-cars.ts` |
@@ -3817,6 +3818,12 @@ _nenhum item encontrado_
 | SUPABASE_URL precisa usar HTTPS; HTTP é aceito somente para um Supabase local em loopback. | `scripts/lib/requireSupabaseAdminEnv.ts` |
 | caminho de  | `scripts/lib/seguranca-processo.mjs` |
 | comando nao encontrado no PATH:  | `scripts/lib/seguranca-processo.mjs` |
+| failed | `scripts/maintenance/lib.mjs` |
+| missing_dependencies | `scripts/maintenance/lib.mjs` |
+| skipped_busy | `scripts/maintenance/lib.mjs` |
+| formatter fixture failed | `scripts/maintenance/maintenance.unit.mjs` |
+| blocked_network_sandbox | `scripts/maintenance/run.mjs` |
+| pending_patch | `scripts/maintenance/run.mjs` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
 | catálogo indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -4019,14 +4026,7 @@ _nenhum item encontrado_
 | No closers found | `src/hooks/useCloserMetrics.ts` |
 | Erro ao remover premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
 | Erro ao salvar premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
-| Erro ao remover regra: ${error.message} | `src/hooks/useCommissionRules.ts` |
-| Erro ao salvar regra: ${error.message} | `src/hooks/useCommissionRules.ts` |
-| Erro ao atualizar comissão | `src/hooks/useCommissions.ts` |
-| Conversational Intelligence error: ${res.status} | `src/hooks/useConversationalIntelligence.ts` |
-| Deal not found | `src/hooks/useDealProbability.ts` |
-| Erro ao atualizar estoque | `src/hooks/useDemandForecast.ts` |
-| Erro ao gerar previsões | `src/hooks/useDemandForecast.ts` |
-| … +617 linhas — lista completa em `context.json` | |
+| … +624 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

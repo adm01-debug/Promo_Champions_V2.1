@@ -23,7 +23,7 @@
   "testes": [
    "co-localizado (*.test) (84)",
    "tests/ (59)",
-   "outro (15)"
+   "outro (18)"
   ],
   "edge_functions": "supabase/functions",
   "migrations": "supabase/migrations",
@@ -33,7 +33,7 @@
    "scripts/ci (4)"
   ],
   "docs": [
-   "docs (44)",
+   "docs (45)",
    "(raiz) (11)",
    ".github (2)"
   ]
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#418)",
    "fix: corrigir timeout da seção grants no snapshot do banco (#417)",
    "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)",
    "chore: inventario do estado real [auto] (#414)",
-   "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)",
-   "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)"
+   "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

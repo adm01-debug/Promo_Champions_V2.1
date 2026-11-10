@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 164,
+ "total": 167,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 98
+  "unit": 101
  },
  "onde_ficam": [
   {
@@ -23,7 +23,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 15
+   "arquivos": 18
   },
   {
    "padrao": "co-localizado (__tests__)",
@@ -40,6 +40,15 @@
     "src/routes/AppRoutes.tsx"
    ],
    "casos": 18
+  },
+  {
+   "arquivo": "scripts/automation.unit.mjs",
+   "tipo": "unit",
+   "linhas": 629,
+   "testa": [
+    "scripts/automation.mjs"
+   ],
+   "casos": 32
   },
   {
    "arquivo": "scripts/ci/ai-context-generator.unit.mjs",
@@ -135,6 +144,15 @@
    "casos": 17
   },
   {
+   "arquivo": "scripts/graphify-local.unit.mjs",
+   "tipo": "unit",
+   "linhas": 501,
+   "testa": [
+    "scripts/graphify-local.mjs"
+   ],
+   "casos": 24
+  },
+  {
    "arquivo": "scripts/graphify/catalog-adapter.test.mjs",
    "tipo": "unit",
    "linhas": 53,
@@ -195,6 +213,16 @@
     "scripts/lib/seguranca-processo.mjs"
    ],
    "casos": 11
+  },
+  {
+   "arquivo": "scripts/maintenance/maintenance.unit.mjs",
+   "tipo": "unit",
+   "linhas": 961,
+   "testa": [
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/run.mjs"
+   ],
+   "casos": 44
   },
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
@@ -1351,9 +1379,11 @@
   "supabase/tests/role_helpers_matrix_assertions.sql"
  ],
  "cobertura_por_arquivo": {
+  "scripts/automation.mjs": 1,
   "scripts/ci/check-workflow-pins-resolvem.mjs": 1,
   "scripts/db-audit/gen-migration-probes.mjs": 1,
   "scripts/generate-role-permissions-seed.mjs": 1,
+  "scripts/graphify-local.mjs": 1,
   "scripts/graphify/catalog-adapter.mjs": 1,
   "scripts/graphify/docs-index.mjs": 1,
   "scripts/graphify/graphify-utils.mjs": 2,
@@ -1363,6 +1393,8 @@
   "scripts/inventario/gerar-rotas.mjs": 1,
   "scripts/inventario/mudou-conteudo.mjs": 1,
   "scripts/lib/seguranca-processo.mjs": 1,
+  "scripts/maintenance/lib.mjs": 1,
+  "scripts/maintenance/run.mjs": 1,
   "scripts/smokeTargetHelpers.ts": 1,
   "scripts/types-sync/validar.mjs": 1,
   "src/components/auth/ProtectedRoute.tsx": 2,

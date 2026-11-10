@@ -5,11 +5,11 @@
   "linguagens": [
    "TypeScript (2382)",
    "SQL (676)",
-   "Markdown (203)",
-   "JavaScript (69)",
-   "JSON (29)",
-   "YAML (27)",
-   "Shell (6)",
+   "Markdown (205)",
+   "JavaScript (77)",
+   "JSON (33)",
+   "YAML (28)",
+   "Shell (7)",
    "Python (5)"
   ],
   "linguagem_principal": "TypeScript",
@@ -47,6 +47,15 @@
   "scripts": {
    "a11y:report": "A11Y_REPORT_ONLY=1 playwright test -c playwright.a11y.config.ts",
    "a11y:sweep": "playwright test -c playwright.a11y.config.ts",
+   "automation:check": "node scripts/automation.mjs check --ref HEAD",
+   "automation:doctor": "node scripts/automation.mjs doctor",
+   "automation:graph": "node scripts/automation.mjs graph",
+   "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+   "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+   "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+   "automation:status": "node scripts/automation.mjs graph status",
+   "automation:test": "node scripts/automation.mjs test",
+   "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks",
    "build": "vite build",
    "build:bun": "bunx vite build",
    "build:dev": "vite build --mode development",
@@ -79,6 +88,9 @@
    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
    "lint:complexity": "eslint . --report-unused-disable-directives --rule 'complexity: [warn, 20]' --rule 'max-lines: [warn, { max: 600, skipBlankLines: true, skipComments: true }]' --max-warnings 130",
    "lint:fix": "eslint . --fix",
+   "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+   "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+   "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
    "prepare": "husky",
    "preview": "vite preview",
    "security:secrets": "tsx scripts/security/check-no-committed-service-role.ts",
@@ -90,6 +102,7 @@
    "test:e2e": "playwright test",
    "test:e2e:ui": "playwright test --ui",
    "test:load": "k6 run scripts/load/k6-smoke.js",
+   "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
    "test:sql": "scripts/run-sql-tests.sh",
    "test:watch": "vitest",
    "typecheck": "tsc --noEmit",
@@ -211,6 +224,34 @@
    ],
    "actions": [
     "actions/checkout"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/automation-local.yml",
+   "nome": "Automação local",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "contracts"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/automation.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
    ]
   },
   {
@@ -1095,6 +1136,11 @@
    "linhas": 56
   },
   {
+   "arquivo": "docs/AUTOMACAO_LOCAL.md",
+   "titulo": "Automação local — Promo_Champions_V2.1",
+   "linhas": 176
+  },
+  {
    "arquivo": "docs/DATA_DICTIONARY.md",
    "titulo": "Dicionário de Dados — Promo Champions V2.1",
    "linhas": 7105
@@ -1676,6 +1722,10 @@
     "arquivos": 1
    },
    {
+    "host": "maintenance.invalid",
+    "arquivos": 1
+   },
+   {
     "host": "nominatim.openstreetmap.org",
     "arquivos": 1
    },
@@ -1685,6 +1735,14 @@
    },
    {
     "host": "preview.lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "production.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "production.supabase.co",
     "arquivos": 1
    },
    {

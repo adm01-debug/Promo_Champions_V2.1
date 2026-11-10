@@ -32,6 +32,12 @@
   "scripts/graphify/verify-output.mjs": [
    "scripts/graphify/graphify-utils.mjs"
   ],
+  "scripts/maintenance/run.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
+  "scripts/maintenance/typecheck.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
   "scripts/prod-health-check.ts": [
    "src/integrations/supabase/client.ts"
   ],
