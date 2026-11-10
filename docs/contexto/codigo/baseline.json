@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "258c9989a6e83e8f3c2a849666a0a31980739dd7",
+  "commit": "31f6e2b2c4f96d7be7570979f680b4a87876e28a",
   "branch": "main",
-  "data_commit": "2026-11-10T18:41:43Z",
+  "data_commit": "2026-11-10T16:04:45-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "31f6e2b",
+    "data": "2026-11-10",
+    "assunto": "fix: corrigir timeout da seção grants no snapshot do banco (#417)"
+   },
    {
     "sha": "258c998",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "f37cc9e",
     "data": "2026-11-07",
     "assunto": "chore: inventario do estado real [auto] (#383)"
-   },
-   {
-    "sha": "195e4fd",
-    "data": "2026-11-07",
-    "assunto": "fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)"
    }
   ],
   "arquivos_mudados_7d": 95,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 58
+    "commits": 59
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3437,
   "arquivos_codigo": 2454,
-  "linhas_codigo": 420706,
+  "linhas_codigo": 420712,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -552,7 +552,7 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 2756
+   "linhas": 2762
   },
   "scripts/types-sync": {
    "arquivos": 1,
@@ -674,7 +674,7 @@
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1837
+   "linhas": 1843
   },
   {
    "arquivo": "src/components/race/track/TrackScenery.tsx",

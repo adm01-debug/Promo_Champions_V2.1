@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "258c9989a6e83e8f3c2a849666a0a31980739dd7",
+  "sha": "31f6e2b2c4f96d7be7570979f680b4a87876e28a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-10 18:42 UTC",
+  "generated_at": "2026-11-10 19:05 UTC",
   "files_total": 3452,
   "code_files": 3131,
-  "code_lines": 450647
+  "code_lines": 450653
  },
  "version": "1.3.2",
- "facts_hash": "02a636a3654b7165",
+ "facts_hash": "59f64be9a4eaad17",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77368,7 +77368,7 @@
   {
    "module": "scripts",
    "files": 88,
-   "lines": 17858,
+   "lines": 17864,
    "tables": [
     "a",
     "achievements",
@@ -178056,7 +178056,7 @@
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
-   "lines": 1837,
+   "lines": 1843,
    "exports": [
     "def env_int",
     "def log",
@@ -244045,10 +244045,19 @@
   }
  },
  "git": {
-  "sha": "258c9989a6e83e8f3c2a849666a0a31980739dd7",
+  "sha": "31f6e2b2c4f96d7be7570979f680b4a87876e28a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "31f6e2b",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir timeout da seção grants no snapshot do banco (#417)",
+    "files": [
+     "scripts/supabase_snapshot/snapshot.py"
+    ]
+   },
    {
     "sha": "258c998",
     "date": "2026-11-10",
@@ -244367,16 +244376,6 @@
     "files": [
      "scripts/inventario/gerar-banco.mjs"
     ]
-   },
-   {
-    "sha": "82ee984",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "feat: supressão de DROP + filtro cmd em policies no gerador de probes de migrations (#375)",
-    "files": [
-     "scripts/db-audit/gen-migration-probes.mjs",
-     "scripts/db-audit/gen-migration-probes.test.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -244403,6 +244402,10 @@
    [
     ".github/workflows/migrations-drift.yml",
     3
+   ],
+   [
+    "scripts/supabase_snapshot/snapshot.py",
+    2
    ],
    [
     ".github/workflows/apply-migration.yml",
@@ -244438,10 +244441,6 @@
    ],
    [
     "docs/agentes/contexto-gerado.md",
-    2
-   ],
-   [
-    "scripts/db-audit/gen-migration-probes.mjs",
     2
    ],
    [

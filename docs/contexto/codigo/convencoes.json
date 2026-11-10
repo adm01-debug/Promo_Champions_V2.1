@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrigir timeout da seção grants no snapshot do banco (#417)",
    "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)",
    "chore: inventario do estado real [auto] (#414)",
    "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)",
-   "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)",
-   "fix: k6-smoke mira funções não deployadas e health sem chave (#388)"
+   "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
