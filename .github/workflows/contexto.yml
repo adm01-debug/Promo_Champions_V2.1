@@ -229,13 +229,27 @@ jobs:
             if [ "$EVENTO" = "workflow_dispatch" ]; then exit 1; fi
             exit 0
           fi
+          START_MS=$(( $(date +%s%N) / 1000000 ))
           python3 scripts/supabase_snapshot/snapshot.py
+          END_MS=$(( $(date +%s%N) / 1000000 ))
+          DURATION_MS=$(( END_MS - START_MS ))
+          echo "SNAPSHOT_DURATION_MS=$DURATION_MS" >> "$GITHUB_ENV"
 
       - name: Guard — enhum segredo na saída
         if: env.SNAPSHOT_SKIPPED != '1'
         run: |
           if grep -rIEl 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|sb_secret_|sb_publishable_|sbp_[A-Za-z0-9]{20,}|postgres(ql)?://[^ ]*:[^ @]+@' "$SNAPSHOT_DIR"; then
             echo "::error::Possível segredo detectado no snapshot — publicação abortada"; exit 1
+          fi
+
+      - name: Alertar lentidão do snapshot (threshold 60s)
+        if: env.SNAPSHOT_SKIPPED != '1' && env.SNAPSHOT_DURATION_MS != ''
+        run: |
+          DURATION_S=$(( SNAPSHOT_DURATION_MS / 1000 ))
+          if [ "$DURATION_S" -gt 60 ]; then
+            echo "::warning::Snapshot do banco mais lento que o esperado: ${DURATION_S}s (threshold 60s). Seção de grants possivelmente regredindo."
+          else
+            echo "Snapshot em ${DURATION_S}s — dentro do esperado."
           fi
 
       - name: Reportar seções com erro (não falha o job)
