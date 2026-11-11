@@ -52,7 +52,7 @@ export const MapeBySegmentChart: FC = () => {
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="segment" className="text-xs" />
               <YAxis className="text-xs" tickFormatter={(v: number) => `${v}%`} />
-              <Tooltip formatter={(v: number | string) => formatMape(Number(v))} />
+              <Tooltip formatter={v => formatMape(Number(v))} />
               <Bar dataKey="mape" name="MAPE" fill="hsl(var(--primary))" />
             </BarChart>
           </ResponsiveContainer>

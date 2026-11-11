@@ -1,11 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveContainer, Treemap, Tooltip } from 'recharts';
-import type {
-  ValueType,
-  NameType,
-  Payload,
-} from 'recharts/types/component/DefaultTooltipContent';
+import type { TreemapDataType } from 'recharts/types/chart/Treemap';
 import { GitBranch } from 'lucide-react';
 import type { WLAnalysisRow } from '@/hooks/win-loss/useWinLossData';
 import { stageLabel } from '@/components/deal-intelligence/winloss/winLossHelpers';
@@ -23,11 +19,6 @@ interface Leaf {
   reason: string;
   fill: string;
 }
-interface Node {
-  name: string;
-  children: Leaf[];
-}
-
 const COLORS = [
   'hsl(var(--primary))',
   'hsl(var(--destructive))',
@@ -38,7 +29,7 @@ const COLORS = [
 ];
 
 export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }: Props) {
-  const data: Node[] = useMemo(() => {
+  const data: TreemapDataType[] = useMemo(() => {
     const grouped = new Map<string, Map<string, number>>();
     rows
       .filter(r => r.outcome === WIN_LOSS_OUTCOME.LOST)
@@ -95,12 +86,8 @@ export const LossReasonFlow = memo(function LossReasonFlow({ rows, onLeafClick }
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                formatter={(
-                  value: ValueType,
-                  _name: NameType,
-                  item: Payload<ValueType, NameType>
-                ) => [
-                  `${value} perdas`,
+                formatter={(value, _name, item) => [
+                  `${Number(value ?? 0)} perdas`,
                   (item?.payload as Leaf | undefined)?.reason ?? '',
                 ]}
               />

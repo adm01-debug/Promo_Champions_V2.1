@@ -253,7 +253,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({
                   </Pie>
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    formatter={(value: number, name: string) => [`${value} leads`, name]}
+                    formatter={(value, name) => [`${value} leads`, name]}
                   />
                 </PieChart>
               </ResponsiveContainer>

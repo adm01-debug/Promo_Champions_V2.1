@@ -205,7 +205,7 @@ export function WeightedForecastDashboard() {
                 />
                 <YAxis type="category" dataKey="name" width={90} className="text-xs" />
                 <Tooltip
-                  formatter={(value: number | string) => formatBRL(Number(value))}
+                  formatter={value => formatBRL(Number(value))}
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',

@@ -348,12 +348,7 @@ const RelatoriosExecutivos = () => {
                         width={100}
                         tick={{ fontSize: 12 }}
                       />
-                      <Tooltip
-                        formatter={(v: number | string) => [
-                          `${formatBRL(Number(v))}`,
-                          'Receita',
-                        ]}
-                      />
+                      <Tooltip formatter={v => [`${formatBRL(Number(v))}`, 'Receita']} />
                       <Bar
                         dataKey="revenue"
                         fill="hsl(var(--primary))"

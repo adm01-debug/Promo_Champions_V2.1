@@ -54,10 +54,7 @@ export const VendedorCharts = memo(function VendedorCharts({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                 }}
-                formatter={(value: number | string) => [
-                  `${formatBRL(Number(value))}`,
-                  'Vendas',
-                ]}
+                formatter={value => [`${formatBRL(Number(value))}`, 'Vendas']}
               />
               <Area
                 type="monotone"
@@ -103,7 +100,7 @@ export const VendedorCharts = memo(function VendedorCharts({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                 }}
-                formatter={(value: number | string) => [`${formatBRL(Number(value))}`]}
+                formatter={value => [`${formatBRL(Number(value))}`]}
               />
             </PieChart>
           </ResponsiveContainer>

@@ -101,9 +101,9 @@ export function StageBottlenecksChart() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number, name: string) => [
-                    formatHours(value),
-                    name.toUpperCase(),
+                  formatter={(value, name) => [
+                    formatHours(Number(value)),
+                    String(name).toUpperCase(),
                   ]}
                 />
                 <Bar

@@ -137,9 +137,9 @@ const EvolutionChartComponent: FC = () => {
               tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
-              formatter={(value: number) => formatBRL(value)}
+              formatter={value => formatBRL(Number(value))}
               labelFormatter={label => {
-                const d = new Date(label);
+                const d = new Date(String(label));
                 return d.toLocaleDateString('pt-BR');
               }}
               contentStyle={{

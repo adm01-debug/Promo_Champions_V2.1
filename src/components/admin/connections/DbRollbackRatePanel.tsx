@@ -172,8 +172,8 @@ export function DbRollbackRatePanel() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number, name) => [
-                    name === 'rate' ? `${value}/min` : `${value}%`,
+                  formatter={(value, name) => [
+                    name === 'rate' ? `${Number(value)}/min` : `${Number(value)}%`,
                     name === 'rate' ? 'Rollbacks' : 'Ratio',
                   ]}
                 />

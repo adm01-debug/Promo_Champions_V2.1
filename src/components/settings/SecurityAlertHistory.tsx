@@ -197,7 +197,7 @@ export function SecurityAlertHistory() {
                       boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     }}
                     labelStyle={{ color: 'hsl(var(--foreground))' }}
-                    formatter={(value: number) => [`${value} alerta(s)`, 'Alertas']}
+                    formatter={value => [`${value} alerta(s)`, 'Alertas']}
                     labelFormatter={(label, payload) =>
                       payload?.[0]?.payload?.fullDate || label
                     }

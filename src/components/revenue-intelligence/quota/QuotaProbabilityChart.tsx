@@ -70,7 +70,7 @@ export const QuotaProbabilityChart: FC = () => {
               stroke="hsl(var(--muted-foreground))"
             />
             <Tooltip
-              formatter={(v: number | string, k: string) => [
+              formatter={(v, k) => [
                 fmtBRL(Number(v)),
                 k === 'p50' ? 'P50 (mediana)' : k === 'quota' ? 'Meta' : k,
               ]}

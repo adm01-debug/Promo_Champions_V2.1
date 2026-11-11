@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
+import type { TooltipContentProps } from 'recharts';
 
 import { cn } from '@/lib/utils';
 
@@ -99,26 +100,43 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
+type ChartTooltipContentCustomProps = {
+  hideLabel?: boolean;
+  hideIndicator?: boolean;
+  indicator?: 'line' | 'dot' | 'dashed';
+  nameKey?: string;
+  labelKey?: string;
+  color?: string;
+};
+
+type ChartTooltipContentInjectedProps = Omit<
+  TooltipContentProps,
+  'payload' | 'active' | 'coordinate' | 'accessibilityLayer' | 'activeIndex' | 'label'
+> &
+  Partial<
+    Pick<
+      TooltipContentProps,
+      'payload' | 'active' | 'coordinate' | 'accessibilityLayer' | 'activeIndex'
+    >
+  > & {
+    label?: string | number;
+  };
+
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<'div'> & {
-      hideLabel?: boolean;
-      hideIndicator?: boolean;
-      indicator?: 'line' | 'dot' | 'dashed';
-      nameKey?: string;
-      labelKey?: string;
-    }
+  React.ComponentProps<'div'> &
+    ChartTooltipContentInjectedProps &
+    ChartTooltipContentCustomProps
 >(
   (
     {
       active,
-      payload: payloadProp,
+      payload,
       className,
       indicator = 'dot',
       hideLabel = false,
       hideIndicator = false,
-      label: labelProp,
+      label,
       labelFormatter,
       labelClassName,
       formatter,
@@ -128,18 +146,6 @@ const ChartTooltipContent = React.forwardRef<
     },
     ref
   ) => {
-    const payload = payloadProp as
-      | Array<
-          Record<string, unknown> & {
-            dataKey?: string;
-            name?: string;
-            value?: number;
-            color?: string;
-            payload?: Record<string, unknown> & { fill?: string };
-          }
-        >
-      | undefined;
-    const label = labelProp as React.ReactNode;
     const { config } = useChart();
 
     const tooltipLabel = React.useMemo(() => {
@@ -193,20 +199,14 @@ const ChartTooltipContent = React.forwardRef<
 
             return (
               <div
-                key={item.dataKey}
+                key={key}
                 className={cn(
                   'flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground',
                   indicator === 'dot' && 'items-center'
                 )}
               >
                 {formatter && item?.value !== undefined && item.name ? (
-                  formatter(
-                    item.value,
-                    item.name,
-                    item as never,
-                    index,
-                    (item.payload ?? []) as never
-                  )
+                  formatter(item.value, item.name, item, index, item.payload ?? [])
                 ) : (
                   <>
                     {itemConfig?.icon ? (

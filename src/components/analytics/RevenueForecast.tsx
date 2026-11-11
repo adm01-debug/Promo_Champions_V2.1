@@ -287,7 +287,7 @@ export const RevenueForecast: FC = () => {
                   borderRadius: '12px',
                   fontSize: '12px',
                 }}
-                formatter={(v: number | string) => [fmt(v), '']}
+                formatter={v => [fmt(Number(v)), '']}
               />
               <Area
                 type="monotone"

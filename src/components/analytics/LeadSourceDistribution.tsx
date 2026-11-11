@@ -98,7 +98,7 @@ export function LeadSourceDistribution() {
                   boxShadow: '0 10px 40px -10px hsl(var(--primary) / 0.3)',
                   backdropFilter: 'blur(8px)',
                 }}
-                formatter={(value: number | string) => [`${value} leads`, 'Quantidade']}
+                formatter={value => [`${value} leads`, 'Quantidade']}
               />
               <Legend
                 wrapperStyle={{ fontSize: '11px' }}

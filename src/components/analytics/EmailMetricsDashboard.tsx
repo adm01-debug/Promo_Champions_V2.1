@@ -295,7 +295,7 @@ export function EmailMetricsDashboard() {
                           borderRadius: '12px',
                         }}
                         labelFormatter={date =>
-                          format(new Date(date), 'dd MMM yyyy', { locale: ptBR })
+                          format(new Date(String(date)), 'dd MMM yyyy', { locale: ptBR })
                         }
                       />
                       <Area
@@ -364,7 +364,9 @@ export function EmailMetricsDashboard() {
                             borderColor: 'hsl(var(--border))',
                             borderRadius: '12px',
                           }}
-                          labelFormatter={name => FUNCTION_LABELS[name] || name}
+                          labelFormatter={name =>
+                            FUNCTION_LABELS[String(name)] || String(name)
+                          }
                         />
                         <Bar
                           dataKey="sent"

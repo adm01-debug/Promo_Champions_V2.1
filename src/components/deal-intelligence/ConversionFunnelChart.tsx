@@ -9,11 +9,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type {
-  ValueType,
-  NameType,
-  Payload,
-} from 'recharts/types/component/DefaultTooltipContent';
 import type { StageConversionMetric } from '@/hooks/deal-intelligence/useStageConversion';
 import { severityFillHsl, stageLabel } from './conversionHelpers';
 import type { Severity } from './conversionHelpers';
@@ -63,14 +58,10 @@ export function ConversionFunnelChart({ metrics }: Props) {
               />
               <YAxis dataKey="name" type="category" width={140} fontSize={11} />
               <Tooltip
-                formatter={(
-                  value: ValueType,
-                  _n: NameType,
-                  p: Payload<ValueType, NameType>
-                ) => {
+                formatter={(value, _n, p) => {
                   if (p.dataKey === 'rate')
                     return [`${Number(value).toFixed(1)}%`, 'Conversão'];
-                  return [value, _n];
+                  return [String(value), String(_n)];
                 }}
                 contentStyle={{
                   background: 'hsl(var(--popover))',
