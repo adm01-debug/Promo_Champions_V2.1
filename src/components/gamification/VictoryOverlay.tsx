@@ -69,7 +69,7 @@ export function VictoryOverlay({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/80 backdrop-blur-md"
+          className="fixed inset-0 z-9999 flex items-center justify-center bg-background/80 backdrop-blur-md"
           onClick={onComplete}
         >
           <motion.div
@@ -79,7 +79,7 @@ export function VictoryOverlay({
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="relative"
           >
-            <div className="absolute inset-0 -m-12 rounded-full bg-gradient-to-br from-primary/30 via-accent/20 to-primary/30 blur-3xl animate-pulse" />
+            <div className="absolute inset-0 -m-12 rounded-full bg-linear-to-br from-primary/30 via-accent/20 to-primary/30 blur-3xl animate-pulse" />
 
             <div
               className={cn(

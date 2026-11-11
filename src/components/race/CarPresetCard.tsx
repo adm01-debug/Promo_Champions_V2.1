@@ -37,7 +37,7 @@ export function CarPresetCard({ preset, selected, onSelect }: CarPresetCardProps
         </div>
       )}
 
-      <div className="flex h-14 w-full items-center justify-center overflow-hidden rounded-md bg-gradient-to-b from-sky-100 to-sky-50 dark:from-slate-800 dark:to-slate-900">
+      <div className="flex h-14 w-full items-center justify-center overflow-hidden rounded-md bg-linear-to-b from-sky-100 to-sky-50 dark:from-slate-800 dark:to-slate-900">
         <svg viewBox="-40 -22 80 44" className="h-12 w-20" aria-hidden>
           <RaceCar
             primaryColor={preset.primary}

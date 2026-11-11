@@ -278,7 +278,7 @@ export default function RetryTestStatusPage() {
                           <StatusBadge status={t.status} />
                         </TableCell>
                         <TableCell className="font-mono text-xs">
-                          <div className="break-words">{t.name}</div>
+                          <div className="wrap-break-word">{t.name}</div>
                           {t.error && (
                             <div className="mt-1.5 text-destructive text-xs whitespace-pre-wrap">
                               {t.error}

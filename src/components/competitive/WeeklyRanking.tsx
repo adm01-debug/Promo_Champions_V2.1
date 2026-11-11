@@ -76,7 +76,7 @@ const WeeklyRankingComponent: FC<WeeklyRankingProps> = ({ className }) => {
         <div className="bg-white/5 backdrop-blur-xl relative z-10">
           <CardHeader className="pb-4 border-b border-white/5">
             <CardTitle className="text-section-title flex items-center gap-4 italic uppercase font-black tracking-tighter">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center shadow-xl shadow-rank-gold/20 group-hover:rotate-6 transition-transform">
+              <div className="h-12 w-12 rounded-xl bg-linear-to-br from-rank-gold to-coins flex items-center justify-center shadow-xl shadow-rank-gold/20 group-hover:rotate-6 transition-transform">
                 <Crown className="h-6 w-6 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,215,0,0.4)]" />
               </div>
               <div>
@@ -115,7 +115,7 @@ const WeeklyRankingComponent: FC<WeeklyRankingProps> = ({ className }) => {
                   >
                     <div
                       className={cn(
-                        'relative z-10 h-14 w-14 rounded-2xl flex items-center justify-center bg-gradient-to-br text-primary-foreground shadow-2xl group-hover/row:scale-110 transition-transform duration-500',
+                        'relative z-10 h-14 w-14 rounded-2xl flex items-center justify-center bg-linear-to-br text-primary-foreground shadow-2xl group-hover/row:scale-110 transition-transform duration-500',
                         config?.gradient || 'from-muted to-muted'
                       )}
                     >

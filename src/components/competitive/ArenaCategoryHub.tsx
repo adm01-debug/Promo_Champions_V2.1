@@ -60,7 +60,7 @@ export const ArenaCategoryHub = memo(function ArenaCategoryHub({
                 'relative overflow-hidden p-4 h-full border transition-all duration-300 group',
                 isActive
                   ? 'border-primary/60 bg-primary/5 shadow-lg shadow-primary/10'
-                  : 'border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                  : 'border-white/5 bg-white/2 hover:border-white/20 hover:bg-white/4'
               )}
             >
               <div

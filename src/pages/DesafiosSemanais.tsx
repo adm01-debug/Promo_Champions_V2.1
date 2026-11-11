@@ -73,7 +73,7 @@ export default function DesafiosSemanais() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="bg-gradient-to-br from-info/10 to-info/5 border-info/20">
+              <Card className="bg-linear-to-br from-info/10 to-info/5 border-info/20">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-info/20 rounded-full">
@@ -93,7 +93,7 @@ export default function DesafiosSemanais() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="bg-gradient-to-br from-success/10 to-success/5 border-success/20">
+              <Card className="bg-linear-to-br from-success/10 to-success/5 border-success/20">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-success/20 rounded-full">
@@ -115,7 +115,7 @@ export default function DesafiosSemanais() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <Card className="bg-linear-to-br from-primary/10 to-primary/5 border-primary/20">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-primary/20 rounded-full">
@@ -137,7 +137,7 @@ export default function DesafiosSemanais() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <Card className="bg-gradient-to-br from-streak/10 to-streak/5 border-streak/20">
+              <Card className="bg-linear-to-br from-streak/10 to-streak/5 border-streak/20">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-streak/20 rounded-full">
@@ -200,11 +200,11 @@ export default function DesafiosSemanais() {
                           transition={{ delay: index * 0.05 }}
                           className={`flex items-center gap-4 p-4 rounded-lg ${
                             index === 0
-                              ? 'bg-gradient-to-r from-coins/20 to-coins/10 border border-warning/30'
+                              ? 'bg-linear-to-r from-coins/20 to-coins/10 border border-warning/30'
                               : index === 1
-                                ? 'bg-gradient-to-r from-rank-silver/20 to-rank-silver/10 border border-rank-silver/30'
+                                ? 'bg-linear-to-r from-rank-silver/20 to-rank-silver/10 border border-rank-silver/30'
                                 : index === 2
-                                  ? 'bg-gradient-to-r from-rank-gold/20 to-rank-gold/10 border border-rank-gold/30'
+                                  ? 'bg-linear-to-r from-rank-gold/20 to-rank-gold/10 border border-rank-gold/30'
                                   : 'bg-muted/50'
                           }`}
                         >

@@ -64,7 +64,7 @@ export function LeadDetailedAuditLogs({
                 <p className="text-sm">Nenhum evento registrado ainda.</p>
               </div>
             ) : (
-              <div className="relative space-y-4 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-border/50 before:via-border/50 before:to-transparent">
+              <div className="relative space-y-4 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:bg-linear-to-b before:from-border/50 before:via-border/50 before:to-transparent">
                 {logs.map(log => {
                   const Icon = EVENT_ICONS[log.event_type] || Activity;
                   const details = (log.details ?? {}) as {

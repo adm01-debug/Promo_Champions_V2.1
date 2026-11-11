@@ -84,7 +84,7 @@ const BIGestor = () => {
                 transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
               >
                 <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
                   <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
                   <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
                   <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -169,9 +169,9 @@ const BIGestor = () => {
                         className={cn(
                           'absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none',
                           stat.variant === 'primary' &&
-                            'bg-gradient-to-br from-primary/10 to-transparent',
+                            'bg-linear-to-br from-primary/10 to-transparent',
                           stat.variant === 'success' &&
-                            'bg-gradient-to-br from-success/10 to-transparent'
+                            'bg-linear-to-br from-success/10 to-transparent'
                         )}
                       />
                       <CardContent className="p-4 relative">
@@ -180,9 +180,9 @@ const BIGestor = () => {
                             className={cn(
                               'p-2 rounded-xl transition-all duration-300 group-hover:scale-110',
                               stat.variant === 'primary'
-                                ? 'bg-gradient-to-br from-primary to-primary-glow'
+                                ? 'bg-linear-to-br from-primary to-primary-glow'
                                 : stat.variant === 'success'
-                                  ? 'bg-gradient-to-br from-success to-success/80'
+                                  ? 'bg-linear-to-br from-success to-success/80'
                                   : 'bg-muted'
                             )}
                           >
@@ -249,7 +249,7 @@ const BIGestor = () => {
                 >
                   <CardHeader>
                     <CardTitle className="text-section-title flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                      <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
                         <TrendingUp className="h-4 w-4 text-primary-foreground" />
                       </div>
                       Evolução de Receita (6 meses)
@@ -285,7 +285,7 @@ const BIGestor = () => {
                 >
                   <CardHeader>
                     <CardTitle className="text-section-title flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-xp to-primary">
+                      <div className="p-2 rounded-lg bg-linear-to-br from-xp to-primary">
                         <PieIcon className="h-4 w-4 text-xp-foreground" />
                       </div>
                       Análise ABC
@@ -350,7 +350,7 @@ const BIGestor = () => {
                 >
                   <CardHeader>
                     <CardTitle className="text-section-title flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                      <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
                         <Briefcase className="h-4 w-4 text-primary-foreground" />
                       </div>
                       Saúde do Pipeline
@@ -364,7 +364,7 @@ const BIGestor = () => {
                         </p>
                         <p className="text-xs text-muted-foreground font-medium">Deals</p>
                       </div>
-                      <div className="text-center p-3 rounded-xl bg-gradient-to-br from-warning/10 to-transparent border border-warning/20 hover-scale-sm">
+                      <div className="text-center p-3 rounded-xl bg-linear-to-br from-warning/10 to-transparent border border-warning/20 hover-scale-sm">
                         <p className="text-2xl font-black text-warning">
                           {data?.atRiskDeals || 0}
                         </p>
@@ -417,7 +417,7 @@ const BIGestor = () => {
                 >
                   <CardHeader>
                     <CardTitle className="text-section-title flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-chart-2 to-success">
+                      <div className="p-2 rounded-lg bg-linear-to-br from-chart-2 to-success">
                         <Activity className="h-4 w-4 text-success-foreground" />
                       </div>
                       Deals por Fonte

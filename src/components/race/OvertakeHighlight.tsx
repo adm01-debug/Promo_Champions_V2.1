@@ -52,7 +52,7 @@ export function OvertakeHighlight({
           <motion.div
             key={latestId}
             aria-hidden
-            className="fixed inset-0 pointer-events-none z-[55]"
+            className="fixed inset-0 pointer-events-none z-55"
             initial={{ opacity: 0 }}
             animate={{ opacity: latestInvolvesMe ? [0, 0.35, 0] : [0, 0.15, 0] }}
             exit={{ opacity: 0 }}
@@ -69,7 +69,7 @@ export function OvertakeHighlight({
       </AnimatePresence>
 
       <div
-        className="fixed top-20 left-1/2 -translate-x-1/2 z-[60] flex flex-col gap-3 pointer-events-none"
+        className="fixed top-20 left-1/2 -translate-x-1/2 z-60 flex flex-col gap-3 pointer-events-none"
         aria-live="polite"
         aria-atomic="true"
       >

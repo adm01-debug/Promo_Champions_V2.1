@@ -12,7 +12,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
     >
       <div className="flex items-center gap-3">
         <motion.div
-          className="relative p-3 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600"
+          className="relative p-3 rounded-2xl bg-linear-to-br from-cyan-400 to-purple-600"
           animate={{ boxShadow: ['0 0 20px #22d3ee', '0 0 40px #a855f7'] }}
           transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
         >
@@ -40,14 +40,14 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
         >
           Entre no{' '}
           <span
-            className="bg-gradient-to-r from-cyan-300 via-purple-400 to-pink-400 bg-clip-text text-transparent"
+            className="bg-linear-to-r from-cyan-300 via-purple-400 to-pink-400 bg-clip-text text-transparent"
             style={{ filter: 'drop-shadow(0 0 24px rgba(168,85,247,0.4))' }}
           >
             Circuito
           </span>
           .<br />
           Domine o{' '}
-          <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-300 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-pink-400 via-purple-400 to-cyan-300 bg-clip-text text-transparent">
             pódio
           </span>
           .
@@ -72,7 +72,7 @@ export const AuthBrandPanel = React.memo(function AuthBrandPanel() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 + i * 0.1 }}
             whileHover={{ y: -4, scale: 1.03 }}
-            className="relative p-4 rounded-xl border bg-white/[0.02] backdrop-blur-sm overflow-hidden group"
+            className="relative p-4 rounded-xl border bg-white/2 backdrop-blur-sm overflow-hidden group"
             style={{ borderColor: `${s.color}40` }}
           >
             <div

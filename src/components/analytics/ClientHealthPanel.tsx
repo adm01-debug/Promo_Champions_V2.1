@@ -201,7 +201,7 @@ export const ClientHealthPanel = React.memo(() => {
               <p className="text-[8px] font-mono font-bold uppercase tracking-widest opacity-60">
                 {config.label}
               </p>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-[1px] bg-current opacity-20" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-px bg-current opacity-20" />
             </div>
           );
         })}
@@ -235,7 +235,7 @@ export const ClientHealthPanel = React.memo(() => {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 transition-all group/row"
+                    className="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5 hover:border-white/20 transition-all group/row"
                   >
                     <div className="flex-1 min-w-0 pr-4">
                       <p className="text-[11px] font-mono font-black uppercase truncate group-row:text-primary transition-colors">
@@ -281,7 +281,7 @@ export const ClientHealthPanel = React.memo(() => {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 right-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 7, repeat: Infinity }}
       />

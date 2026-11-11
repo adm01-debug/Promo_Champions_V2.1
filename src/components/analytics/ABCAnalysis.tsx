@@ -67,7 +67,7 @@ export function ABCAnalysis() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 group/header">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110 group-hover/header:shadow-primary/40">
+          <div className="p-2 rounded-lg bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110 group-hover/header:shadow-primary/40">
             <Layers className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="flex flex-col">
@@ -155,14 +155,14 @@ export function ABCAnalysis() {
             <TabsList className="glass border border-border/50">
               <TabsTrigger
                 value="products"
-                className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
+                className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-linear-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
               >
                 <Package className="h-4 w-4" />
                 Produtos
               </TabsTrigger>
               <TabsTrigger
                 value="clients"
-                className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
+                className="gap-2 font-display transition-all duration-300 data-[state=active]:bg-linear-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground data-[state=active]:shadow-md"
               >
                 <Users className="h-4 w-4" />
                 Clientes

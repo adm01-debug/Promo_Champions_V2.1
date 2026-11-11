@@ -48,7 +48,7 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-destructive to-primary-glow flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-linear-to-br from-destructive to-primary-glow flex items-center justify-center">
               <Swords className="h-4 w-4 text-primary-foreground" />
             </div>
             Head-to-Head Semanal
@@ -69,7 +69,7 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
-                className="p-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-background to-accent/5"
+                className="p-4 rounded-xl border border-primary/20 bg-linear-to-r from-primary/5 via-background to-accent/5"
               >
                 <div className="flex items-center justify-between mb-3">
                   <Badge
@@ -107,7 +107,7 @@ const HeadToHeadComponent: FC<HeadToHeadProps> = ({ className }) => {
 
                   {/* VS */}
                   <div className="flex flex-col items-center gap-1">
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-destructive to-primary-glow flex items-center justify-center shadow-lg">
+                    <div className="h-12 w-12 rounded-full bg-linear-to-br from-destructive to-primary-glow flex items-center justify-center shadow-lg">
                       <span className="text-primary-foreground font-black text-sm">
                         VS
                       </span>

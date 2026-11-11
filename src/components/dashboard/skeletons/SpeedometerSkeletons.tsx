@@ -1,5 +1,5 @@
 export const SpeedometerSkeleton = () => (
-  <div className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 p-5 overflow-hidden animate-pulse">
+  <div className="relative rounded-2xl border border-border/50 bg-linear-to-b from-card/95 via-card to-card/80 p-5 overflow-hidden animate-pulse">
     <div className="flex items-center justify-between mb-3">
       <div className="flex items-center gap-2">
         <div className="h-6 w-6 rounded-lg bg-muted/40" />
@@ -10,7 +10,7 @@ export const SpeedometerSkeleton = () => (
     <div className="relative flex items-center justify-center h-[165px]">
       <div className="relative w-[180px] h-[120px] overflow-hidden">
         <div
-          className="absolute inset-0 rounded-full border-[10px] border-border/40 border-b-transparent"
+          className="absolute inset-0 rounded-full border-10 border-border/40 border-b-transparent"
           style={{ transform: 'rotate(45deg)' }}
         />
         <div className="absolute inset-x-0 bottom-3 flex flex-col items-center gap-1.5">

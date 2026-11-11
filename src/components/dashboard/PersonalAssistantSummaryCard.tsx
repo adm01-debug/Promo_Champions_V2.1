@@ -45,7 +45,7 @@ export const PersonalAssistantSummaryCard: FC<Props> = ({ onOpenChat, onOpenHub 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="relative overflow-hidden border-primary/20 bg-gradient-to-br from-card via-card to-primary/5 p-5">
+      <Card className="relative overflow-hidden border-primary/20 bg-linear-to-br from-card via-card to-primary/5 p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className="h-10 w-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">

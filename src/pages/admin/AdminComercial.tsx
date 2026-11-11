@@ -775,7 +775,7 @@ export default function AdminComercial() {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center gap-1.5 cursor-help max-w-[300px] truncate">
-                                  <Info className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                                  <Info className="h-3 w-3 text-muted-foreground shrink-0" />
                                   <span className="text-[10px] font-mono text-muted-foreground">
                                     {JSON.stringify(log.changes).substring(0, 50)}...
                                   </span>

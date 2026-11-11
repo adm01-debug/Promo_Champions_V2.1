@@ -183,7 +183,7 @@ export function EdgeRetryEventsPanel() {
                   </span>
                 </div>
                 {(row.error_name || row.error_message) && (
-                  <p className="text-muted-foreground break-words">
+                  <p className="text-muted-foreground wrap-break-word">
                     <span className="font-medium text-foreground">
                       {row.error_name ?? 'erro'}:
                     </span>{' '}

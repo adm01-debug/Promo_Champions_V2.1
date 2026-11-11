@@ -115,7 +115,7 @@ export function EmailMetricsDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 group/header">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110">
+          <div className="p-2.5 rounded-xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/header:scale-110">
             <Mail className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="text-lg font-display font-semibold gradient-text">
@@ -150,7 +150,7 @@ export function EmailMetricsDashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2.5 rounded-xl ${card.gradient ? `bg-gradient-to-br ${card.gradient}` : card.iconBg} shadow-md transition-all duration-300 group-hover:scale-110`}
+                    className={`p-2.5 rounded-xl ${card.gradient ? `bg-linear-to-br ${card.gradient}` : card.iconBg} shadow-md transition-all duration-300 group-hover:scale-110`}
                   >
                     <Icon
                       className={`h-4 w-4 ${card.gradient ? 'text-primary-foreground' : card.iconColor}`}
@@ -192,28 +192,28 @@ export function EmailMetricsDashboard() {
           <TabsList className="glass border border-border/50 p-1">
             <TabsTrigger
               value="trend"
-              className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
+              className="gap-2 font-display data-[state=active]:bg-linear-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
             >
               <TrendingUp className="h-4 w-4" />
               Tendência
             </TabsTrigger>
             <TabsTrigger
               value="functions"
-              className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
+              className="gap-2 font-display data-[state=active]:bg-linear-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
             >
               <Activity className="h-4 w-4" />
               Por Função
             </TabsTrigger>
             <TabsTrigger
               value="subjects"
-              className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
+              className="gap-2 font-display data-[state=active]:bg-linear-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
             >
               <Layout className="h-4 w-4" />
               Assuntos A/B
             </TabsTrigger>
             <TabsTrigger
               value="logs"
-              className="gap-2 font-display data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
+              className="gap-2 font-display data-[state=active]:bg-linear-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-primary-foreground"
             >
               <Clock className="h-4 w-4" />
               Histórico
@@ -224,7 +224,7 @@ export function EmailMetricsDashboard() {
             <Card variant="elevated" className="glass border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+                  <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md">
                     <TrendingUp className="h-4 w-4 text-primary-foreground" />
                   </div>
                   <span className="gradient-text">Volume de Emails por Dia</span>
@@ -329,7 +329,7 @@ export function EmailMetricsDashboard() {
               >
                 <CardHeader className="pb-2">
                   <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+                    <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md">
                       <Activity className="h-4 w-4 text-primary-foreground" />
                     </div>
                     <span className="gradient-text">Emails por Função</span>
@@ -392,7 +392,7 @@ export function EmailMetricsDashboard() {
               >
                 <CardHeader className="pb-2">
                   <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+                    <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md">
                       <Users className="h-4 w-4 text-primary-foreground" />
                     </div>
                     <span className="gradient-text">Top Destinatários</span>
@@ -437,7 +437,7 @@ export function EmailMetricsDashboard() {
             <Card variant="elevated" className="glass border-border/40 dark:border-glow">
               <CardHeader className="pb-2">
                 <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+                  <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md">
                     <Layout className="h-4 w-4 text-primary-foreground" />
                   </div>
                   <span className="gradient-text">Performance por Assunto (A/B)</span>

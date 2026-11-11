@@ -92,7 +92,7 @@ export function AdminQuickLinks() {
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
         <CardTitle className="text-section-title flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+          <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-primary/5">
             <TrendingUp className="h-4 w-4 text-primary" />
           </div>
           Acesso Rápido

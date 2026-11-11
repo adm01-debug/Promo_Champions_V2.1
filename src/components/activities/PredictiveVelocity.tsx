@@ -75,7 +75,7 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
         </div>
 
         <div className="p-4 rounded-2xl bg-background/50 border border-white/5 space-y-3 relative overflow-hidden group/guideline">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
 
           {/* Tactical Overlay */}
           <div className="absolute top-0 right-0 p-2 opacity-10 group-hover/guideline:opacity-30 transition-opacity">
@@ -110,12 +110,12 @@ export const PredictiveVelocity: React.FC<PredictiveVelocityProps> = ({ data }) 
               )}
               style={{ width: `${Math.min(avgProgress, 100)}%` }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
             </div>
             {/* Hour Markers */}
-            <div className="absolute top-0 left-1/4 w-[1px] h-full bg-white/10" />
-            <div className="absolute top-0 left-2/4 w-[1px] h-full bg-white/10" />
-            <div className="absolute top-0 left-3/4 w-[1px] h-full bg-white/10" />
+            <div className="absolute top-0 left-1/4 w-px h-full bg-white/10" />
+            <div className="absolute top-0 left-2/4 w-px h-full bg-white/10" />
+            <div className="absolute top-0 left-3/4 w-px h-full bg-white/10" />
           </div>
 
           <div className="space-y-2 pt-2 relative z-10">

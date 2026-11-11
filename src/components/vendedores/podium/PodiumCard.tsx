@@ -147,7 +147,7 @@ export const PodiumCard = React.memo(function PodiumCard({
             />
             <AvatarFallback
               className={cn(
-                'bg-gradient-to-br text-primary-foreground font-bold rounded-none w-full h-full',
+                'bg-linear-to-br text-primary-foreground font-bold rounded-none w-full h-full',
                 config.bgGradient,
                 isChampion ? 'text-3xl' : 'text-lg'
               )}
@@ -202,10 +202,7 @@ export const PodiumCard = React.memo(function PodiumCard({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: config.delay + 0.4 }}
-        className={cn(
-          'font-black text-center truncate max-w-[10rem] mt-2',
-          config.nameSize
-        )}
+        className={cn('font-black text-center truncate max-w-40 mt-2', config.nameSize)}
       >
         {person.name.split(' ')[0]}
       </motion.p>
@@ -312,7 +309,7 @@ export const PodiumCard = React.memo(function PodiumCard({
           />
           <EnergyParticles color={config.neonColor} />
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12"
+            className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -skew-x-12"
             animate={{ x: ['-200%', '200%'] }}
             transition={{
               duration: 4,

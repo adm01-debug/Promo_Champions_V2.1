@@ -270,7 +270,7 @@ export function WorkflowBuilder() {
     <div className="space-y-6 p-4 lg:p-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10">
+          <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-accent/10">
             <GitBranch className="h-6 w-6 text-primary" />
           </div>
           <div>

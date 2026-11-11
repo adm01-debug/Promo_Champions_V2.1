@@ -14,7 +14,7 @@ interface InsightBannerProps {
 
 export function InsightBanner({ data }: InsightBannerProps) {
   return (
-    <div className="rounded-2xl bg-gradient-to-r from-indigo-600/20 via-purple-600/10 to-transparent border border-indigo-500/20 p-5 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-xl">
+    <div className="rounded-2xl bg-linear-to-r from-indigo-600/20 via-purple-600/10 to-transparent border border-indigo-500/20 p-5 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-xl">
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
           <Brain className="h-6 w-6 text-indigo-400" />

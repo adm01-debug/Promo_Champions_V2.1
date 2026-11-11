@@ -54,7 +54,7 @@ export const AchievementBadgeDisplay: React.FC = () => {
       variant="glass"
       className="border-border/20 bg-background/20 backdrop-blur-xl group/achievements hover:bg-background/30 transition-all duration-700 overflow-hidden relative"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover/achievements:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover/achievements:opacity-100 transition-opacity" />
       <CardContent className="p-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between px-1">
@@ -77,7 +77,7 @@ export const AchievementBadgeDisplay: React.FC = () => {
                     >
                       {/* Holographic Pulse Effect */}
                       <div className="absolute inset-0 bg-white/20 rounded-[1.5rem] opacity-0 group-hover/badge:opacity-40 animate-ping pointer-events-none" />
-                      <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-[1.5rem]" />
+                      <div className="absolute inset-0 bg-linear-to-tr from-white/10 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-[1.5rem]" />
 
                       <badge.icon
                         className={cn(

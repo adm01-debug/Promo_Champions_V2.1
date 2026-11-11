@@ -47,7 +47,7 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({
                 )}
               >
                 <AvatarImage src={data.avatar_url || undefined} />
-                <AvatarFallback className="bg-gradient-to-br from-primary/30 to-accent/20 text-xl font-bold">
+                <AvatarFallback className="bg-linear-to-br from-primary/30 to-accent/20 text-xl font-bold">
                   {data.salesperson_name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -93,15 +93,15 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({
                 </div>
                 <div className="w-32 h-2 bg-black/40 rounded-full overflow-hidden border border-white/5 shadow-inner relative">
                   <div
-                    className="h-full bg-gradient-to-r from-primary/60 via-primary to-primary/60 animate-shimmer relative transition-all duration-1000"
+                    className="h-full bg-linear-to-r from-primary/60 via-primary to-primary/60 animate-shimmer relative transition-all duration-1000"
                     style={{ width: `${(data.progress.overall % 10) * 10}%` }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
                   </div>
                   {/* XP Threshold Markers */}
-                  <div className="absolute top-0 left-1/4 w-[1px] h-full bg-white/10" />
-                  <div className="absolute top-0 left-2/4 w-[1px] h-full bg-white/10" />
-                  <div className="absolute top-0 left-3/4 w-[1px] h-full bg-white/10" />
+                  <div className="absolute top-0 left-1/4 w-px h-full bg-white/10" />
+                  <div className="absolute top-0 left-2/4 w-px h-full bg-white/10" />
+                  <div className="absolute top-0 left-3/4 w-px h-full bg-white/10" />
                 </div>
                 <p className="text-[7px] font-bold text-muted-foreground/60 uppercase tracking-tighter opacity-0 group-hover/xp:opacity-100 transition-opacity">
                   +125 XP para o Próximo Nível
@@ -164,7 +164,7 @@ export const EnhancedActivityCard: React.FC<EnhancedActivityCardProps> = ({
               className={cn(
                 'absolute top-0 left-0 h-full transition-all duration-1000 ease-spring',
                 isWinner
-                  ? 'bg-gradient-to-r from-rank-gold via-yellow-400 to-rank-gold animate-shimmer'
+                  ? 'bg-linear-to-r from-rank-gold via-yellow-400 to-rank-gold animate-shimmer'
                   : 'bg-primary'
               )}
               style={{ width: `${Math.min(data.progress.overall, 100)}%` }}

@@ -70,7 +70,7 @@ function DeliveryRow({ row }: { row: AttemptDeliveryRow }) {
           </span>
         </p>
         {row.error_message && (
-          <p className="text-[11px] text-destructive mt-1 break-words">
+          <p className="text-[11px] text-destructive mt-1 wrap-break-word">
             {row.error_message}
           </p>
         )}

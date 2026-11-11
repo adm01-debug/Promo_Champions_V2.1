@@ -64,7 +64,7 @@ export const ArenaStatusBadge: React.FC<ArenaStatusBadgeProps> = ({
       )}
     >
       {/* Dynamic scan effect inside the badge */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none" />
 
       <div className="relative flex items-center justify-center">
         {showRipple && status !== 'offline' && (

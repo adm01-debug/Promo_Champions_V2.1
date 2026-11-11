@@ -31,7 +31,7 @@ export function ProspectingFunnel() {
     <Card className="glass border-primary/30 bg-black/40 backdrop-blur-xl overflow-hidden relative group">
       {/* Decorative scanline */}
       <motion.div
-        className="absolute top-0 left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+        className="absolute top-0 left-0 w-full h-px bg-primary/20 z-0 pointer-events-none"
         animate={{ top: ['0%', '100%', '0%'] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
       />

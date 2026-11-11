@@ -105,7 +105,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
           <div
-            className={cn('w-1.5 h-full min-h-[2rem] rounded-full shadow-sm', stageColor)}
+            className={cn('w-1.5 h-full min-h-8 rounded-full shadow-sm', stageColor)}
           />
           <div className="flex-1">
             <CardTitle className="text-section-title">{playbook.title}</CardTitle>
@@ -125,7 +125,7 @@ export const PlaybookCard = ({ playbook, stageColor, index }: PlaybookCardProps)
           </Button>
           <Badge
             variant="outline"
-            className="shrink-0 bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-primary/30 shadow-sm"
+            className="shrink-0 bg-linear-to-r from-primary/10 to-accent/10 text-primary border-primary/30 shadow-sm"
           >
             {playbook.items?.length || 0} itens
           </Badge>

@@ -43,7 +43,7 @@ const SeasonAndPowerUpsComponent: FC = () => {
             <CardHeader className="pb-4">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-5">
-                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                  <div className="h-16 w-16 rounded-2xl bg-linear-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
                     <Flame className="h-8 w-8 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
                   </div>
                   <div>
@@ -98,7 +98,7 @@ const SeasonAndPowerUpsComponent: FC = () => {
                   initial={{ width: 0 }}
                   animate={{ width: '65%' }}
                   transition={{ duration: 1.5, ease: 'circOut' }}
-                  className="h-full bg-gradient-to-r from-primary to-accent relative"
+                  className="h-full bg-linear-to-r from-primary to-accent relative"
                 >
                   <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
                 </motion.div>
@@ -145,7 +145,7 @@ const SeasonAndPowerUpsComponent: FC = () => {
                   <div
                     className={cn(
                       'group relative flex items-center gap-5 p-5 rounded-3xl border glass overflow-hidden transition-all duration-500 hover:border-primary/40',
-                      'bg-gradient-to-br',
+                      'bg-linear-to-br',
                       color
                     )}
                   >

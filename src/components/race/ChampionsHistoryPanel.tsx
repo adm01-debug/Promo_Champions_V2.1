@@ -50,7 +50,7 @@ export function ChampionsHistoryPanel({
             aria-label="Alternar Hall da Fama"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-warning/30 to-warning/10 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-linear-to-br from-warning/30 to-warning/10 flex items-center justify-center">
                 <Trophy className="w-5 h-5 text-warning" />
               </div>
               <div className="text-left">

@@ -126,7 +126,7 @@ export const ABCChartTable = React.memo(function ABCChartTable({
 
   const emptyState = (
     <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-xl border border-dashed border-border/50">
-      <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-2 shadow-inner animate-pulse">
+      <div className="p-3 rounded-full bg-linear-to-br from-muted/50 to-muted/30 mb-2 shadow-inner animate-pulse">
         {emptyIcon}
       </div>
       <p className="text-sm font-display gradient-text">Sem dados disponíveis</p>
@@ -141,7 +141,7 @@ export const ABCChartTable = React.memo(function ABCChartTable({
       >
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group/title">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
               <TrendingUp className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">{chartTitle}</span>
@@ -224,7 +224,7 @@ export const ABCChartTable = React.memo(function ABCChartTable({
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group/title">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
+              <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md transition-all duration-300 group-hover/title:scale-110">
                 {tableIcon}
               </div>
               <span className="gradient-text">{tableTitle}</span>

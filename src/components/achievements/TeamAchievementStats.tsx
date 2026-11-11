@@ -121,7 +121,7 @@ export function TeamAchievementStats() {
         <CardContent className="space-y-6">
           {/* Record Holder Highlight */}
           {stats.teamBestStreak > 0 && stats.teamBestStreakHolder && (
-            <div className="p-6 rounded-3xl bg-gradient-to-br from-rank-gold/30 via-rank-gold/10 to-primary/20 border border-rank-gold/30 shadow-glow-gold/10 relative overflow-hidden group">
+            <div className="p-6 rounded-3xl bg-linear-to-br from-rank-gold/30 via-rank-gold/10 to-primary/20 border border-rank-gold/30 shadow-glow-gold/10 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-rank-gold/10 blur-3xl rounded-full -mr-16 -mt-16 animate-pulse" />
               <div className="flex items-center gap-6 relative z-10">
                 <div className="relative">

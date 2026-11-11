@@ -91,7 +91,7 @@ function Row({ row }: { row: SubscriptionLatestRow }) {
       </div>
 
       {row.last_error_message && (
-        <p className="mt-1 text-[11px] text-destructive/80 break-words line-clamp-2">
+        <p className="mt-1 text-[11px] text-destructive/80 wrap-break-word line-clamp-2">
           {row.last_error_message}
         </p>
       )}

@@ -65,7 +65,7 @@ export function NextGoalPanel({
     >
       <Card
         className={cn(
-          'relative overflow-hidden p-3 bg-gradient-to-br from-primary/10 via-card to-card border-primary/20',
+          'relative overflow-hidden p-3 bg-linear-to-br from-primary/10 via-card to-card border-primary/20',
           goal.isCloseToOvertake &&
             'border-warning/60 shadow-[0_0_18px_-4px_hsl(var(--warning)/0.5)]'
         )}
@@ -146,8 +146,8 @@ export function NextGoalPanel({
                 className={cn(
                   'h-full rounded-full',
                   isHunting
-                    ? 'bg-gradient-to-r from-primary to-warning'
-                    : 'bg-gradient-to-r from-success to-warning'
+                    ? 'bg-linear-to-r from-primary to-warning'
+                    : 'bg-linear-to-r from-success to-warning'
                 )}
                 initial={{ width: 0 }}
                 animate={{ width: `${goal.gapPercent}%` }}
@@ -174,7 +174,7 @@ export function NextGoalPanel({
             </div>
             <div className="h-1 rounded-full bg-muted/60 overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-primary to-success rounded-full"
+                className="h-full bg-linear-to-r from-primary to-success rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${goal.seasonProgress}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}

@@ -69,7 +69,7 @@ export function CarCustomizer({ open, onOpenChange }: Props) {
         </DialogHeader>
 
         {/* Preview grande do preset selecionado */}
-        <div className="rounded-lg bg-gradient-to-b from-sky-100 to-sky-50 p-6 dark:from-slate-800 dark:to-slate-900">
+        <div className="rounded-lg bg-linear-to-b from-sky-100 to-sky-50 p-6 dark:from-slate-800 dark:to-slate-900">
           <div className="flex items-center justify-center">
             <svg
               viewBox="-50 -28 100 56"

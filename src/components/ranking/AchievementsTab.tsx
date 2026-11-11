@@ -42,10 +42,10 @@ export const AchievementsTab = memo(function AchievementsTab({
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <div
-                  className={`h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${
                     isStreak
-                      ? 'bg-gradient-to-br from-streak/20 to-primary/20'
-                      : 'bg-gradient-to-br from-status-success/20 to-status-success/20'
+                      ? 'bg-linear-to-br from-streak/20 to-primary/20'
+                      : 'bg-linear-to-br from-status-success/20 to-status-success/20'
                   }`}
                 >
                   {isStreak ? (

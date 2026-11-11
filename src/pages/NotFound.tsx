@@ -28,7 +28,7 @@ const NotFound = () => {
           className="text-center max-w-md px-6"
         >
           <div className="relative mb-6 mx-auto w-fit">
-            <span className="text-[120px] font-display font-black leading-none bg-gradient-to-b from-primary/30 to-primary/5 bg-clip-text text-transparent select-none">
+            <span className="text-[120px] font-display font-black leading-none bg-linear-to-b from-primary/30 to-primary/5 bg-clip-text text-transparent select-none">
               404
             </span>
             <Search className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12 text-primary/60" />

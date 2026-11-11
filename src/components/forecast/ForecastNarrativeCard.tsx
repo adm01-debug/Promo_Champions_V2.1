@@ -19,7 +19,7 @@ export const ForecastNarrativeCard: FC<Props> = ({ narrative, risks, opportuniti
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="glass border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-transparent relative overflow-hidden group">
+      <Card className="glass border-primary/20 bg-linear-to-br from-primary/5 via-transparent to-transparent relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-5 -mr-4 -mt-4 group-hover:rotate-12 transition-transform duration-700">
           <BrainCircuit className="h-24 w-24" />
         </div>

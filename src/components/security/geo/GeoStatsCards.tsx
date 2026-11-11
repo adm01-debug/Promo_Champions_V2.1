@@ -50,7 +50,7 @@ export const GeoStatsCards = React.memo(function GeoStatsCards({
         return (
           <Card
             key={stat.label}
-            className={`bg-gradient-to-br ${isDestructive ? 'from-destructive/10 to-destructive/5 border-destructive/20' : `from-${stat.colorClass}-500/10 to-${stat.colorClass}-600/5 border-${stat.colorClass}-500/20`}`}
+            className={`bg-linear-to-br ${isDestructive ? 'from-destructive/10 to-destructive/5 border-destructive/20' : `from-${stat.colorClass}-500/10 to-${stat.colorClass}-600/5 border-${stat.colorClass}-500/20`}`}
           >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">

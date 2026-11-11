@@ -256,7 +256,7 @@ export function CreateCadenceDialog() {
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto glass border-border/50 dark:border-glow">
         <DialogHeader>
           <DialogTitle className="text-section-title flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-accent/10">
               <Plus className="h-4 w-4 gradient-primary" />
             </div>
             {step === 'info' ? 'Criar Nova Cadência' : 'Configurar Etapas'}
@@ -339,7 +339,7 @@ export function CreateCadenceDialog() {
                   <div className="flex items-center justify-between">
                     <Badge
                       variant="secondary"
-                      className="text-xs bg-gradient-to-r from-primary/20 to-accent/10 text-primary border border-primary/20"
+                      className="text-xs bg-linear-to-r from-primary/20 to-accent/10 text-primary border border-primary/20"
                     >
                       Etapa {index + 1}
                     </Badge>

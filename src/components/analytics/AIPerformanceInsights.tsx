@@ -51,7 +51,7 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
   }, [sales, salespeople]);
 
   return (
-    <Card className="border-none bg-gradient-to-br from-card/50 to-card/30 backdrop-blur-md shadow-xl overflow-hidden">
+    <Card className="border-none bg-linear-to-br from-card/50 to-card/30 backdrop-blur-md shadow-xl overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm flex items-center gap-2">
@@ -72,7 +72,7 @@ export const AIPerformanceInsights = React.memo(function AIPerformanceInsights()
             transition={{ delay: index * 0.1 }}
             className="group relative p-4 rounded-2xl bg-accent/20 border border-white/5 hover:border-primary/20 transition-all cursor-default overflow-hidden"
           >
-            <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-y-0 left-0 w-1 bg-linear-to-b from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
             <div className="flex gap-4">
               <div className={`mt-1 p-2 rounded-xl ${insight.bg} shrink-0`}>

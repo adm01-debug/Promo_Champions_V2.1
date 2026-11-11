@@ -99,7 +99,7 @@ export function DashboardSection({
             {badge}
           </span>
         )}
-        <div className="flex-1 h-px bg-gradient-to-r from-border/40 via-border/20 to-transparent mx-2" />
+        <div className="flex-1 h-px bg-linear-to-r from-border/40 via-border/20 to-transparent mx-2" />
         <motion.span
           animate={{ rotate: isOpen ? 0 : -90 }}
           transition={{ duration: 0.2 }}
@@ -129,7 +129,7 @@ export function DashboardSection({
               setIsOpen(true);
               persistSectionState(sectionId, true);
             }}
-            className="w-full text-left px-4 py-3 rounded-xl bg-gradient-to-r from-muted/30 to-muted/10 border border-border/30 hover:bg-muted/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300 group/teaser"
+            className="w-full text-left px-4 py-3 rounded-xl bg-linear-to-r from-muted/30 to-muted/10 border border-border/30 hover:bg-muted/50 hover:border-primary/20 hover:shadow-sm transition-all duration-300 group/teaser"
           >
             <div className="flex items-center gap-3">
               {previewStats && previewStats.length > 0 ? (

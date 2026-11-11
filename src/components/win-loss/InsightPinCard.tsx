@@ -36,7 +36,7 @@ export function InsightPinCard({ insights, onCopilot }: Props) {
   if (!top.length) return null;
 
   return (
-    <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+    <Card className="border-primary/30 bg-linear-to-br from-primary/5 to-transparent">
       <CardContent className="p-3">
         <div className="flex items-center gap-2 mb-3">
           <Pin className="h-4 w-4 text-primary" />

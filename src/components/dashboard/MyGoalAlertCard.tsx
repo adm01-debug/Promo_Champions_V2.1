@@ -161,7 +161,7 @@ export const MyGoalAlertCard = () => {
 
       <div
         className={cn(
-          'relative rounded-2xl border-2 backdrop-blur-xl p-5 overflow-hidden bg-gradient-to-br',
+          'relative rounded-2xl border-2 backdrop-blur-xl p-5 overflow-hidden bg-linear-to-br',
           alert.bgGradient,
           alert.border
         )}

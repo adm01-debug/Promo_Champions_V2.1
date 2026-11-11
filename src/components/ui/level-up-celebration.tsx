@@ -30,7 +30,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
@@ -39,7 +39,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
             exit={{ scale: 0.8, opacity: 0, y: 30 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             onClick={e => e.stopPropagation()}
-            className="relative w-[90vw] max-w-sm rounded-2xl border border-rank-gold/30 bg-gradient-to-b from-background via-background to-rank-gold/5 p-8 shadow-2xl text-center overflow-hidden"
+            className="relative w-[90vw] max-w-sm rounded-2xl border border-rank-gold/30 bg-linear-to-b from-background via-background to-rank-gold/5 p-8 shadow-2xl text-center overflow-hidden"
           >
             {/* Close */}
             <button
@@ -58,7 +58,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
-              className="relative mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-rank-gold to-coins flex items-center justify-center shadow-lg"
+              className="relative mx-auto mb-4 w-20 h-20 rounded-full bg-linear-to-br from-rank-gold to-coins flex items-center justify-center shadow-lg"
             >
               <Crown className="h-10 w-10 text-foreground" />
             </motion.div>
@@ -119,7 +119,7 @@ export const LevelUpCelebration: FC<LevelUpCelebrationProps> = ({
 
             <Button
               onClick={onClose}
-              className="w-full bg-gradient-to-r from-rank-gold to-coins text-foreground font-bold hover:from-rank-gold hover:to-coins/90"
+              className="w-full bg-linear-to-r from-rank-gold to-coins text-foreground font-bold hover:from-rank-gold hover:to-coins/90"
             >
               Continuar
             </Button>

@@ -43,7 +43,7 @@ export function XPProgressBar({
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <Badge
-                    className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 text-[10px] px-1.5 py-0 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-1 group`}
+                    className={`bg-linear-to-r ${levelInfo.color} text-primary-foreground border-0 text-[10px] px-1.5 py-0 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-1 group`}
                   >
                     <Star className="h-2.5 w-2.5 fill-current group-hover:animate-pulse" />
                     <span className="font-display font-bold">
@@ -66,10 +66,10 @@ export function XPProgressBar({
               >
                 {progress > 0 && (
                   <div
-                    className={`h-full rounded-full bg-gradient-to-r ${levelInfo.color} transition-all duration-700 ease-out relative overflow-hidden`}
+                    className={`h-full rounded-full bg-linear-to-r ${levelInfo.color} transition-all duration-700 ease-out relative overflow-hidden`}
                     style={{ width: `${Math.min(progress, 100)}%` }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                    <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
                   </div>
                 )}
               </div>
@@ -112,7 +112,7 @@ export function XPProgressBar({
             {/* Current Level */}
             <div className="flex items-center gap-3">
               <div
-                className={`p-2.5 rounded-xl bg-gradient-to-br ${levelInfo.color} shadow-lg`}
+                className={`p-2.5 rounded-xl bg-linear-to-br ${levelInfo.color} shadow-lg`}
               >
                 <span className="text-xl">{levelInfo.emoji}</span>
               </div>

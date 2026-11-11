@@ -116,7 +116,7 @@ export const RevenueForecastHub: FC = () => {
               <Sparkles className="h-3 w-3" /> Neural Forecast Hub
             </Badge>
           </div>
-          <h1 className="text-page-title bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">
+          <h1 className="text-page-title bg-clip-text text-transparent bg-linear-to-r from-foreground via-foreground/80 to-muted-foreground">
             Revenue Intelligence 10/10
           </h1>
           <p className="text-muted-foreground max-w-lg leading-relaxed font-medium">
@@ -266,7 +266,7 @@ export const RevenueForecastHub: FC = () => {
         <div className="space-y-6">
           {/* Confidence Shield */}
           <Card className="glass overflow-hidden border-primary/20 relative group p-6">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between mb-6">
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Motor de Confiança
@@ -357,7 +357,7 @@ export const RevenueForecastHub: FC = () => {
                   <Progress
                     value={goalProgress}
                     className="h-2 bg-white/5"
-                    indicatorClassName="bg-gradient-to-r from-primary/50 to-primary shadow-[0_0_10px_rgba(147,51,234,0.3)]"
+                    indicatorClassName="bg-linear-to-r from-primary/50 to-primary shadow-[0_0_10px_rgba(147,51,234,0.3)]"
                   />
                 </div>
 

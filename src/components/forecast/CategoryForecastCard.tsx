@@ -18,7 +18,7 @@ export const CategoryForecastCard: FC<Props> = ({ categories, goal: _goal }) => 
 
   return (
     <Card className="glass relative overflow-hidden border-2 border-white/5 bg-background/20 hover:shadow-xl transition-all duration-500">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent pointer-events-none" />
 
       <CardContent className="p-7 relative z-10">
         <div className="flex items-center justify-between mb-6">

@@ -173,7 +173,7 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
                       {isActive && (
                         <motion.div
                           layoutId="mobile-view-mode-pill"
-                          className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
+                          className="absolute inset-0 bg-linear-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
                           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                         />
                       )}
@@ -241,7 +241,7 @@ export const MobileDrawer: FC<MobileDrawerProps> = ({ isOpen, onClose }) => {
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-6 border-t border-primary/5 bg-primary/[0.02]">
+        <SheetFooter className="p-6 border-t border-primary/5 bg-primary/2">
           <div className="flex items-center gap-4 w-full">
             <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary text-xl shadow-inner border border-primary/10">
               {salesperson?.name?.charAt(0)?.toUpperCase() || 'U'}

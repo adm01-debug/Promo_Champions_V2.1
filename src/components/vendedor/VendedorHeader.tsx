@@ -31,7 +31,7 @@ export const VendedorHeader = memo(function VendedorHeader({
         <ArrowLeft className="h-4 w-4" />
         <span className="text-sm">Voltar para Ranking</span>
       </Link>
-      <div className="glass rounded-2xl p-6 border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5">
+      <div className="glass rounded-2xl p-6 border-2 border-primary/20 bg-linear-to-br from-primary/5 via-transparent to-secondary/5">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative">
             <Avatar className="h-24 w-24 ring-4 ring-primary/30 shadow-xl">
@@ -39,7 +39,7 @@ export const VendedorHeader = memo(function VendedorHeader({
                 src={salesperson.avatar_url || undefined}
                 alt={salesperson.name}
               />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold">
+              <AvatarFallback className="bg-linear-to-br from-primary to-secondary text-primary-foreground text-2xl font-bold">
                 {salesperson.name
                   .split(' ')
                   .map(n => n[0])

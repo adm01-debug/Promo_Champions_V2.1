@@ -131,7 +131,7 @@ export default function Bitrix24() {
                     {needsReauth && (
                       <div className="rounded-lg border border-warning/50 bg-warning/10 p-4">
                         <div className="flex items-start gap-3">
-                          <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+                          <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
                           <div className="flex-1">
                             <p className="text-sm font-medium text-warning">
                               Token Expirado

@@ -35,7 +35,7 @@ export function PerformanceComparison() {
       <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-primary/5">
               <Users className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text font-display">Comparativo de Performance</span>
@@ -53,7 +53,7 @@ export function PerformanceComparison() {
       <Card className="glass dark:border-glow card-elevated">
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-primary/5">
               <Users className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text font-display">Comparativo de Performance</span>
@@ -141,7 +141,7 @@ export function PerformanceComparison() {
                     <div className="flex items-center gap-2 p-2 rounded-lg bg-rank-gold/5 border border-rank-gold/20">
                       <Avatar className="h-8 w-8 border-2 border-rank-gold/50 shadow-sm shadow-rank-gold/20">
                         <AvatarImage src={benchmark.topPerformer.avatar_url || ''} />
-                        <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5 font-display">
+                        <AvatarFallback className="text-xs bg-linear-to-br from-primary/20 to-primary/5 font-display">
                           {benchmark.topPerformer.name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
@@ -170,7 +170,7 @@ export function PerformanceComparison() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+              <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-primary/5">
                 <Users className="h-5 w-5 text-primary" />
               </div>
               <span className="gradient-text font-display">

@@ -55,7 +55,7 @@ export function FloatingEventFeed({ events, cars }: Props) {
               </Button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <div className="h-full [&>div]:h-full [&>div]:border-0 [&>div]:rounded-none [&>div]:shadow-none [&_[data-slot=card-header]]:hidden">
+              <div className="h-full [&>div]:h-full [&>div]:border-0 [&>div]:rounded-none [&>div]:shadow-none **:data-[slot=card-header]:hidden">
                 <RaceEventFeed events={events} cars={cars} />
               </div>
             </div>

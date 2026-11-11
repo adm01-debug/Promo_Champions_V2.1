@@ -117,7 +117,7 @@ export function EligibleBonusesCard({ salespersonId }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="p-5 border-amber-500/20 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent">
+      <Card className="p-5 border-amber-500/20 bg-linear-to-br from-amber-500/5 via-transparent to-transparent">
         <header className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2">
             <div className="h-9 w-9 rounded-lg bg-amber-500/15 flex items-center justify-center">

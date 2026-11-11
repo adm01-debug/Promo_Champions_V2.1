@@ -185,7 +185,7 @@ export const AppSidebar = memo(function AppSidebar() {
     >
       <SidebarHeader className="px-4 pt-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/25">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/25">
             <Crown className="h-5 w-5 text-primary-foreground" />
           </div>
           {!isCollapsed && (
@@ -236,7 +236,7 @@ export const AppSidebar = memo(function AppSidebar() {
                       {isActive && (
                         <motion.div
                           layoutId="active-view-mode"
-                          className="absolute inset-0 bg-gradient-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
+                          className="absolute inset-0 bg-linear-to-br from-primary to-primary-glow rounded-xl -z-10 shadow-lg shadow-primary/20"
                           initial={false}
                           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                         />
@@ -329,7 +329,7 @@ export const AppSidebar = memo(function AppSidebar() {
             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 hover:bg-muted/40 transition-colors group cursor-default">
               <div
                 className={cn(
-                  'h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm',
+                  'h-9 w-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm',
                   userTypeAccentClasses[userType as keyof typeof userTypeAccentClasses]
                 )}
               >
@@ -343,7 +343,7 @@ export const AppSidebar = memo(function AppSidebar() {
                   >
                     {salesperson?.name || 'Usuário'}
                   </p>
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <UserRoleBadge />
                   </div>
                 </div>

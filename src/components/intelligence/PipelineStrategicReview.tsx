@@ -22,7 +22,7 @@ import {
 export const PipelineStrategicReview = () => {
   return (
     <div className="space-y-4 animate-in fade-in duration-500">
-      <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
+      <Card className="border-primary/20 bg-linear-to-br from-card to-primary/5">
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between gap-4">
             <div>

@@ -62,7 +62,7 @@ export const SaleHUDCard = memo(({ sale, index }: { sale: Sale; index: number })
 
   return (
     <div
-      className="group relative overflow-hidden bg-gradient-to-r from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-5 transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
+      className="group relative overflow-hidden bg-linear-to-r from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-5 transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
       style={{ animationDelay: `${200 + index * 30}ms` }}
     >
       <div className="absolute top-0 left-0 w-1 h-full bg-primary/40 group-hover:bg-primary transition-colors" />

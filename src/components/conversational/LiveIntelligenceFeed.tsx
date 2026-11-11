@@ -68,7 +68,7 @@ export function LiveIntelligenceFeed({ recordingId }: { recordingId?: string }) 
 
   return (
     <Card className="glass border-primary/20 bg-primary/5 shadow-[0_0_30px_rgba(var(--primary-rgb),0.1)] relative overflow-hidden group">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary/40 to-transparent" />
       <CardHeader className="pb-2">
         <CardTitle className="text-section-title text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-primary">
           <div className="relative">

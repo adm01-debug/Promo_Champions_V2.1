@@ -266,7 +266,7 @@ export function ReplayStatusByIdPanel() {
                   <strong>{dl.last_replay_status ?? '—'}</strong>
                 </p>
                 {dl.last_replay_error && (
-                  <p className="text-destructive break-words">
+                  <p className="text-destructive wrap-break-word">
                     <span className="text-muted-foreground">Erro:</span>{' '}
                     {dl.last_replay_error}
                   </p>
@@ -276,7 +276,7 @@ export function ReplayStatusByIdPanel() {
 
             {/* Original error */}
             {dl.last_error && (
-              <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-[11px] text-destructive break-words">
+              <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-[11px] text-destructive wrap-break-word">
                 <p className="font-medium mb-1">Erro original (antes dos replays)</p>
                 {dl.last_error}
               </div>
@@ -319,7 +319,7 @@ export function ReplayStatusByIdPanel() {
               <summary className="cursor-pointer px-3 py-2 text-xs font-medium">
                 Ver payload
               </summary>
-              <pre className="text-[11px] bg-muted/40 p-3 overflow-x-auto whitespace-pre-wrap break-words rounded-b-md">
+              <pre className="text-[11px] bg-muted/40 p-3 overflow-x-auto whitespace-pre-wrap wrap-break-word rounded-b-md">
                 {JSON.stringify(dl.payload, null, 2)}
               </pre>
             </details>

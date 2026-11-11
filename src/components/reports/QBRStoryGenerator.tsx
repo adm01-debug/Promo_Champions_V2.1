@@ -33,7 +33,7 @@ export const QBRStoryGenerator = ({
 
   return (
     <Card className="glass border-primary/20 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-primary/10 via-background to-transparent pb-6">
+      <CardHeader className="bg-linear-to-r from-primary/10 via-background to-transparent pb-6">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary animate-pulse" />
           <CardTitle className="text-section-title">
@@ -46,7 +46,7 @@ export const QBRStoryGenerator = ({
       </CardHeader>
       <CardContent className="p-6">
         <div className="space-y-8 relative">
-          <div className="absolute left-[11px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/30 via-border to-transparent" />
+          <div className="absolute left-[11px] top-2 bottom-2 w-[2px] bg-linear-to-b from-primary/30 via-border to-transparent" />
 
           {/* Chapter 1: The Victory */}
           <motion.div

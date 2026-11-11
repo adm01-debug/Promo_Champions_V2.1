@@ -130,7 +130,7 @@ export const RunRateProjectionCard = memo(function RunRateProjectionCard({
       transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       className={className}
     >
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card">
+      <Card className="border-primary/20 bg-linear-to-br from-primary/5 via-card to-card">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <CardTitle className="text-sm font-medium flex items-center gap-2">

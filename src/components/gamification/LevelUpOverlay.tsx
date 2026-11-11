@@ -49,7 +49,7 @@ export function LevelUpOverlay({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9998] flex items-center justify-center bg-background/80 backdrop-blur-sm"
+          className="fixed inset-0 z-9998 flex items-center justify-center bg-background/80 backdrop-blur-sm"
           onClick={onComplete}
         >
           <motion.div
@@ -59,7 +59,7 @@ export function LevelUpOverlay({
             transition={{ type: 'spring', duration: 0.8, bounce: 0.4 }}
             className="relative"
           >
-            <div className="absolute inset-0 -m-8 rounded-full bg-gradient-to-r from-xp via-coins to-xp opacity-30 blur-2xl animate-pulse" />
+            <div className="absolute inset-0 -m-8 rounded-full bg-linear-to-r from-xp via-coins to-xp opacity-30 blur-2xl animate-pulse" />
 
             <div
               className={cn(

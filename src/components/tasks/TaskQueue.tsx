@@ -219,7 +219,7 @@ export function TaskQueue() {
                   <div className="flex items-center gap-2">
                     <Avatar className="h-5 w-5 border border-background">
                       <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="text-[9px] bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                      <AvatarFallback className="text-[9px] bg-linear-to-br from-primary to-accent text-primary-foreground">
                         {sp.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
@@ -313,7 +313,7 @@ export function TaskQueue() {
 
       {totalTasks === 0 ? (
         <Card className="p-12 text-center glass border border-border/40 dark:border-glow card-elevated animate-fade-in">
-          <div className="p-4 rounded-full bg-gradient-to-br from-status-success/30 to-status-success/10 w-fit mx-auto mb-4 shadow-lg shadow-status-success/20">
+          <div className="p-4 rounded-full bg-linear-to-br from-status-success/30 to-status-success/10 w-fit mx-auto mb-4 shadow-lg shadow-status-success/20">
             <CheckCircle className="h-12 w-12 text-status-success animate-pulse" />
           </div>
           <h3 className="text-section-title gradient-text">Nenhuma tarefa para hoje!</h3>

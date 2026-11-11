@@ -135,7 +135,7 @@ export const AlertHistoryDialog = ({
                       </div>
                     </div>
                   </div>
-                  <div className="absolute -left-1 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
+                  <div className="absolute -left-1 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-primary/20 to-transparent" />
                 </div>
               ))
             )}

@@ -68,7 +68,7 @@ export function VictoryLapOverlay({ events, cars, onPlaySound }: VictoryLapOverl
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-            className="relative bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl border-4 border-amber-200"
+            className="relative bg-linear-to-br from-amber-400 via-yellow-300 to-amber-500 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl border-4 border-amber-200"
           >
             <Button
               variant="ghost"

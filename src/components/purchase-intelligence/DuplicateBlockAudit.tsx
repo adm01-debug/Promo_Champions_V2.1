@@ -65,7 +65,7 @@ export const DuplicateBlockAudit = () => {
           </div>
         ) : (
           <Table>
-            <TableHeader className="bg-white/[0.02]">
+            <TableHeader className="bg-white/2">
               <TableRow className="border-white/5 hover:bg-transparent">
                 <TableHead className="text-[10px] font-mono font-bold uppercase tracking-wider">
                   Data / Hora
@@ -91,7 +91,7 @@ export const DuplicateBlockAudit = () => {
               {logs?.map(log => (
                 <TableRow
                   key={log.id}
-                  className="border-white/5 hover:bg-white/[0.02] transition-colors group"
+                  className="border-white/5 hover:bg-white/2 transition-colors group"
                 >
                   <TableCell className="font-mono text-[11px] text-muted-foreground">
                     {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {

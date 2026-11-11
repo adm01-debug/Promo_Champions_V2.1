@@ -40,7 +40,7 @@ export function StalledDealsTable() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 shadow-md">
+            <div className="p-2 rounded-lg bg-linear-to-br from-primary/30 to-primary/10 shadow-md">
               <Sparkles className="h-4 w-4 text-primary" />
             </div>
             <span className="gradient-text">Saúde dos Deals</span>

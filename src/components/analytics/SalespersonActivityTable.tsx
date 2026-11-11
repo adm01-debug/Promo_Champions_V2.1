@@ -35,7 +35,7 @@ export function SalespersonActivityTable({ data }: SalespersonActivityTableProps
     <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
       <CardHeader className="pb-2">
         <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg">
+          <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-primary/5 shadow-lg">
             <Users className="h-4 w-4 text-primary" />
           </div>
           <span className="gradient-text">Atividades por Vendedor</span>
@@ -54,7 +54,7 @@ export function SalespersonActivityTable({ data }: SalespersonActivityTableProps
           <div className="space-y-4">
             {data.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl animate-fade-in">
-                <div className="p-4 rounded-full bg-gradient-to-br from-muted/20 to-muted/5 mb-3 shadow-lg">
+                <div className="p-4 rounded-full bg-linear-to-br from-muted/20 to-muted/5 mb-3 shadow-lg">
                   <Activity className="h-10 w-10 opacity-50 animate-pulse" />
                 </div>
                 <p className="text-sm font-medium gradient-text">
@@ -89,22 +89,22 @@ export function SalespersonActivityTable({ data }: SalespersonActivityTableProps
                         )}
                       >
                         <AvatarImage src={sp.avatar_url || undefined} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary text-sm font-bold">
+                        <AvatarFallback className="bg-linear-to-br from-primary/20 to-primary/5 text-primary text-sm font-bold">
                           {sp.salesperson_name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       {index === 0 && (
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg animate-float">
+                        <div className="absolute -top-1 -right-1 bg-linear-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg animate-float">
                           <Crown className="h-3 w-3 text-background" />
                         </div>
                       )}
                       {index === 1 && (
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-silver to-rank-silver/80 rounded-full p-1 shadow-md">
+                        <div className="absolute -top-1 -right-1 bg-linear-to-br from-rank-silver to-rank-silver/80 rounded-full p-1 shadow-md">
                           <Medal className="h-3 w-3 text-background" />
                         </div>
                       )}
                       {index === 2 && (
-                        <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-bronze to-rank-bronze/80 rounded-full p-1 shadow-md">
+                        <div className="absolute -top-1 -right-1 bg-linear-to-br from-rank-bronze to-rank-bronze/80 rounded-full p-1 shadow-md">
                           <Medal className="h-3 w-3 text-background" />
                         </div>
                       )}

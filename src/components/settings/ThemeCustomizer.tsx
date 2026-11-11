@@ -49,7 +49,7 @@ export function ThemeCustomizer() {
   } = useCustomTheme();
 
   return (
-    <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+    <div className="bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
       <div className="p-6 border-b border-border/10">
         <h3 className="font-display font-black text-lg uppercase tracking-tighter italic flex items-center gap-3">
           <Sparkles className="h-5 w-5 text-primary" />

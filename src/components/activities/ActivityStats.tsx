@@ -108,7 +108,7 @@ export function ActivityStats() {
                 <div
                   className={`p-2 rounded-lg transition-all duration-300 ${
                     isFirst
-                      ? 'bg-gradient-to-br from-primary/30 to-accent/20 shadow-sm group-hover:shadow-md group-hover:shadow-primary/20'
+                      ? 'bg-linear-to-br from-primary/30 to-accent/20 shadow-sm group-hover:shadow-md group-hover:shadow-primary/20'
                       : 'bg-muted/50 group-hover:bg-muted/70'
                   }`}
                 >

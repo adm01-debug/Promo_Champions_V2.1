@@ -39,7 +39,7 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
 
   if (streakLoading || achievementsLoading) {
     return (
-      <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20">
+      <Card className="bg-linear-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20">
         <CardContent className="p-4">
           <Skeleton className="h-16 w-full" />
         </CardContent>
@@ -57,9 +57,9 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
   const daysToNext = nextMilestone ? nextMilestone.days - streak : 0;
 
   return (
-    <Card className="bg-gradient-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20 overflow-hidden relative h-full">
+    <Card className="bg-linear-to-br from-streak/10 via-destructive/5 to-coins/10 border-streak/20 overflow-hidden relative h-full">
       {/* Animated fire glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-t from-streak/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-streak/5 to-transparent pointer-events-none" />
 
       <CardContent className="p-4 relative flex flex-col h-full">
         <div className="flex items-center justify-between mb-3">
@@ -154,7 +154,7 @@ function StreakWidgetImpl({ salespersonId }: StreakWidgetProps) {
                 {[1, 2, 3, 4, 5, 6, 7].map(i => (
                   <motion.div
                     key={i}
-                    className="w-2 rounded-full bg-gradient-to-t from-streak/25 to-streak/10"
+                    className="w-2 rounded-full bg-linear-to-t from-streak/25 to-streak/10"
                     style={{ height: `${8 + i * 3}px` }}
                     animate={{ opacity: [0.3, 0.8, 0.3], scaleY: [0.7, 1, 0.7] }}
                     transition={{

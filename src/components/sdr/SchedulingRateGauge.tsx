@@ -90,13 +90,13 @@ export function SchedulingRateGauge({
 
       {/* Scanning line */}
       <motion.div
-        className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+        className="absolute left-0 w-full h-px bg-primary/20 z-0 pointer-events-none"
         animate={{ top: ['0%', '100%', '0%'] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
       />
 
       {/* Ambient Glow */}
-      <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] bg-primary/10 blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[80px] rounded-full pointer-events-none" />
 
       <CardContent className="p-6 relative z-10">
         <div className="flex items-center justify-between mb-8">
@@ -213,7 +213,7 @@ export function SchedulingRateGauge({
 
           <div className="md:col-span-2 space-y-6 flex flex-col justify-center">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 flex items-center gap-4 group/item hover:bg-white/[0.05] transition-colors">
+              <div className="p-4 rounded-xl bg-white/3 border border-white/5 flex items-center gap-4 group/item hover:bg-white/5 transition-colors">
                 <div className="p-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 group-hover/item:scale-110 transition-transform">
                   <Users className="h-5 w-5" />
                 </div>
@@ -227,7 +227,7 @@ export function SchedulingRateGauge({
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.03] border border-white/5 flex items-center gap-4 group/item hover:bg-white/[0.05] transition-colors">
+              <div className="p-4 rounded-xl bg-white/3 border border-white/5 flex items-center gap-4 group/item hover:bg-white/5 transition-colors">
                 <div className="p-2.5 rounded-lg bg-success/10 text-success border border-success/20 group-hover/item:scale-110 transition-transform">
                   <CalendarCheck className="h-5 w-5" />
                 </div>

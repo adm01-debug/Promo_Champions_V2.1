@@ -174,7 +174,7 @@ export function NextBestAction() {
 
         {nextBestAction.data && (
           <div className="space-y-4 animate-in fade-in-50 duration-500">
-            <div className="flex items-start gap-3 p-4 rounded-xl glass border border-primary/30 bg-gradient-to-r from-primary/10 to-transparent">
+            <div className="flex items-start gap-3 p-4 rounded-xl glass border border-primary/30 bg-linear-to-r from-primary/10 to-transparent">
               <div className="p-1.5 rounded-lg bg-primary/20">
                 <Lightbulb className="h-5 w-5 text-primary" />
               </div>

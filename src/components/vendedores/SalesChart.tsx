@@ -71,7 +71,7 @@ export function SalesChart({ salespeople }: SalesChartProps) {
     <Card className="glass dark:border-glow card-elevated overflow-hidden">
       <CardHeader className="pb-2">
         <CardTitle className="text-section-title flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-sm">
+          <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 shadow-sm">
             <BarChart3 className="h-5 w-5 text-primary" />
           </div>
           <div>
@@ -152,12 +152,12 @@ export function SalesChart({ salespeople }: SalesChartProps) {
 
         <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-border/40 text-xs text-muted-foreground">
           <div className="flex items-center gap-2 p-2 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors">
-            <div className="w-3 h-3 rounded-sm bg-gradient-to-b from-primary to-primary/60" />
+            <div className="w-3 h-3 rounded-sm bg-linear-to-b from-primary to-primary/60" />
             <Target className="h-3 w-3 text-primary" />
             <span>Vendas</span>
           </div>
           <div className="flex items-center gap-2 p-2 rounded-lg bg-status-success/5 hover:bg-status-success/10 transition-colors">
-            <div className="w-3 h-3 rounded-sm bg-gradient-to-b from-status-success to-status-success/60" />
+            <div className="w-3 h-3 rounded-sm bg-linear-to-b from-status-success to-status-success/60" />
             <Trophy className="h-3 w-3 text-status-success" />
             <span>Meta atingida</span>
           </div>

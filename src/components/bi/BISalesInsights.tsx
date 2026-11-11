@@ -71,7 +71,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
       <Card className="glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+            <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
               <Receipt className="h-4 w-4 text-primary-foreground" />
             </div>
             Ticket Médio por Cliente
@@ -79,7 +79,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
         </CardHeader>
         <CardContent>
           {/* Global KPI */}
-          <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 mb-4">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-linear-to-r from-primary/10 to-transparent border border-primary/20 mb-4">
             <div>
               <p className="text-sm text-muted-foreground font-medium">
                 Ticket Médio Geral
@@ -159,7 +159,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
       <Card className="glass-card">
         <CardHeader className="pb-3">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-success to-success/80">
+            <div className="p-2 rounded-lg bg-linear-to-br from-success to-success/80">
               <RefreshCw className="h-4 w-4 text-success-foreground" />
             </div>
             Taxa de Recompra
@@ -167,7 +167,7 @@ export const BISalesInsights: FC<{ className?: string }> = ({ className }) => {
         </CardHeader>
         <CardContent>
           {/* Global KPI */}
-          <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-success/10 to-transparent border border-success/20 mb-4">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-linear-to-r from-success/10 to-transparent border border-success/20 mb-4">
             <div>
               <p className="text-sm text-muted-foreground font-medium">
                 Taxa de Recompra Geral

@@ -84,7 +84,7 @@ const TopClientsCard: FC<{ clients: TopClientData[]; maxValue: number }> = ({
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">
                 <div
                   className={cn(
-                    'h-full rounded-full bg-gradient-to-r transition-all duration-700',
+                    'h-full rounded-full bg-linear-to-r transition-all duration-700',
                     BAR_COLORS[idx % BAR_COLORS.length]
                   )}
                   style={{
@@ -147,7 +147,7 @@ const SupplierSalesCard: FC<{ suppliers: SupplierSalesData[]; maxValue: number }
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">
                 <div
                   className={cn(
-                    'h-full rounded-full bg-gradient-to-r transition-all duration-700',
+                    'h-full rounded-full bg-linear-to-r transition-all duration-700',
                     BAR_COLORS[idx % BAR_COLORS.length]
                   )}
                   style={{
@@ -205,7 +205,7 @@ const TopCompaniesCard: FC<{ companies: TopCompanyData[]; maxValue: number }> = 
               <div className="w-full h-1.5 rounded-full bg-muted/50 overflow-hidden">
                 <div
                   className={cn(
-                    'h-full rounded-full bg-gradient-to-r transition-all duration-700',
+                    'h-full rounded-full bg-linear-to-r transition-all duration-700',
                     BAR_COLORS[idx % BAR_COLORS.length]
                   )}
                   style={{

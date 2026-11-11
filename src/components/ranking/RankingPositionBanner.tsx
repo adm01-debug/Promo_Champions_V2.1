@@ -54,7 +54,7 @@ export const RankingPositionBanner: FC<{ className?: string }> = ({ className })
       >
         <Card
           className={cn(
-            'relative overflow-hidden border bg-gradient-to-r p-4',
+            'relative overflow-hidden border bg-linear-to-r p-4',
             rankAccent(notif.rank)
           )}
         >

@@ -156,7 +156,7 @@ export function SeasonalityHeatmap() {
                                   </div>
                                 )}
                                 {cell && cell.revenue > matrix.max * 0.7 && (
-                                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
+                                  <div className="absolute inset-0 bg-linear-to-tr from-white/5 to-transparent pointer-events-none" />
                                 )}
                               </motion.div>
                             </TooltipTrigger>

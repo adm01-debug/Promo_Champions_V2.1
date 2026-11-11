@@ -126,7 +126,7 @@ const ToastContent = ({
       exit={{ x: 50, opacity: 0 }}
       className={cn(
         'relative flex items-center gap-3 p-4 rounded-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] bg-[#0d1117]/80 backdrop-blur-xl',
-        'before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:opacity-20 before:-z-10'
+        'before:absolute before:inset-0 before:rounded-xl before:bg-linear-to-r before:opacity-20 before:-z-10'
       )}
     >
       <motion.div

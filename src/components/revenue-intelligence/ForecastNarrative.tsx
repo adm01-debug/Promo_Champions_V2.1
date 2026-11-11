@@ -95,7 +95,7 @@ export const ForecastNarrative: FC<Props> = ({ forecastId, cachedNarrative }) =>
             animate={{ opacity: 1 }}
             className="flex items-start gap-2 text-xs text-muted-foreground"
           >
-            <AlertCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+            <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             <span>
               Clique em <strong className="text-foreground">Explicar forecast</strong>{' '}
               para uma leitura executiva em português com drivers, riscos e recomendação

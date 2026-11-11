@@ -79,8 +79,8 @@ export const PersonalAssistantDrawer: FC = () => {
       <SheetTrigger asChild>
         <motion.button
           className={cn(
-            'fixed z-[60] bottom-6 right-6 h-12 w-12 rounded-full',
-            'bg-gradient-to-br from-primary via-primary to-primary/80 text-primary-foreground',
+            'fixed z-60 bottom-6 right-6 h-12 w-12 rounded-full',
+            'bg-linear-to-br from-primary via-primary to-primary/80 text-primary-foreground',
             'shadow-lg hover:shadow-xl border border-primary-foreground/10',
             'flex items-center justify-center'
           )}

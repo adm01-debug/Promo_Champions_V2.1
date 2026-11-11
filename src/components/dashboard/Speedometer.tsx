@@ -371,7 +371,7 @@ export const Speedometer = memo(
                         className={cn(
                           'absolute inset-0 rounded-full transition-all duration-300 overflow-hidden border',
                           theme === 'cyber'
-                            ? 'bg-gradient-radial from-card/60 via-background/95 to-background/100 backdrop-blur-xl border-border/40'
+                            ? 'bg-gradient-radial from-card/60 via-background/95 to-background backdrop-blur-xl border-border/40'
                             : 'bg-card border-border shadow-lg'
                         )}
                         style={

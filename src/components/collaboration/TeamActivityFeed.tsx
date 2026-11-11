@@ -52,7 +52,7 @@ const ActivityItem = React.memo(
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.05 }}
-        className="group relative flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/[0.04] border border-transparent hover:border-white/5 overflow-hidden"
+        className="group relative flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/4 border border-transparent hover:border-white/5 overflow-hidden"
       >
         <div className="relative shrink-0">
           <Avatar className="h-10 w-10 ring-1 ring-white/10 group-hover:ring-primary/40 transition-all">
@@ -187,7 +187,7 @@ export const TeamActivityFeed = React.memo(() => {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 right-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 6, repeat: Infinity }}
       />

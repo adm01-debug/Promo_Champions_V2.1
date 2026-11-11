@@ -292,7 +292,7 @@ function ActionItem({
 
   return (
     <div className="flex gap-3 p-3 rounded-lg border bg-card hover:bg-accent/30 transition-colors group">
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <div className="p-2 rounded-lg bg-primary/10 text-primary">
           {actionIcons[action.actionType] || actionIcons.other}
         </div>
@@ -352,7 +352,7 @@ function ActionItem({
 
         {action.expectedImpact && (
           <p className="text-[10px] text-muted-foreground flex items-start gap-1">
-            <TrendingUp className="h-3 w-3 mt-0.5 text-primary/60 flex-shrink-0" />
+            <TrendingUp className="h-3 w-3 mt-0.5 text-primary/60 shrink-0" />
             <span className="italic">{action.expectedImpact}</span>
           </p>
         )}

@@ -42,7 +42,7 @@ export const DailyChallengeCard = React.memo(function DailyChallengeCard({
     >
       <div className="flex items-start gap-3">
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-primary-foreground text-lg shrink-0`}
+          className={`flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br ${getDailyChallengeColor(challenge.challenge_type)} text-primary-foreground text-lg shrink-0`}
         >
           {getDailyChallengeIcon(challenge.challenge_type)}
         </div>

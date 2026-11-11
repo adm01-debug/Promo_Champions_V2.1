@@ -25,7 +25,7 @@ export function PricingHealthBanner({ health, dealsCount }: PricingHealthBannerP
     >
       <div
         className={cn(
-          'absolute inset-0 opacity-10 bg-gradient-to-r',
+          'absolute inset-0 opacity-10 bg-linear-to-r',
           health === 'critical'
             ? 'from-destructive via-transparent to-transparent'
             : 'from-primary via-transparent to-transparent'

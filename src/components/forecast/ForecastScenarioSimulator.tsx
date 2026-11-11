@@ -40,7 +40,7 @@ export const ForecastScenarioSimulator = ({ baseForecast }: Props) => {
   const isPositive = delta >= 0;
 
   return (
-    <Card className="glass overflow-hidden border-primary/20 bg-gradient-to-br from-background/40 to-primary/5">
+    <Card className="glass overflow-hidden border-primary/20 bg-linear-to-br from-background/40 to-primary/5">
       <CardHeader className="bg-primary/10 pb-6 border-b border-white/5 relative">
         <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
           <Network className="h-32 w-32" />
@@ -164,7 +164,7 @@ export const ForecastScenarioSimulator = ({ baseForecast }: Props) => {
             />
 
             <div className="relative h-full flex flex-col items-center justify-center p-10 rounded-3xl bg-background/60 border border-white/10 shadow-inner overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary/50 to-transparent" />
 
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="p-3 rounded-2xl bg-white/5 border border-white/10">

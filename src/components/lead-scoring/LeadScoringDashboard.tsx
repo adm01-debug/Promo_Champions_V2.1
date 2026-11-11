@@ -201,7 +201,7 @@ export function LeadScoringDashboard() {
       />
       {/* Real-time Global Sync Loading State */}
       {(isLoadingLeads || explainBatch.isPending) && (
-        <div className="fixed top-0 left-0 w-full h-1 z-[100] overflow-hidden bg-primary/5">
+        <div className="fixed top-0 left-0 w-full h-1 z-100 overflow-hidden bg-primary/5">
           <div className="h-full bg-primary animate-progress shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" />
         </div>
       )}

@@ -130,7 +130,7 @@ export const SalesForecast = React.memo(() => {
           </div>
         </div>
 
-        <div className="space-y-4 p-5 rounded-xl bg-white/[0.03] border border-white/5 shadow-inner">
+        <div className="space-y-4 p-5 rounded-xl bg-white/3 border border-white/5 shadow-inner">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground/80">
@@ -165,7 +165,7 @@ export const SalesForecast = React.memo(() => {
             </span>
           </div>
 
-          <div className="relative h-2 bg-black/50 rounded-full overflow-hidden border border-white/5 p-[1px]">
+          <div className="relative h-2 bg-black/50 rounded-full overflow-hidden border border-white/5 p-px">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${confidence}%` }}
@@ -196,7 +196,7 @@ export const SalesForecast = React.memo(() => {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 right-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 4, repeat: Infinity }}
       />

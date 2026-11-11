@@ -73,7 +73,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000 p-6 selection:bg-primary selection:text-primary-foreground">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-indigo-500 to-emerald-500 z-50 animate-pulse" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-primary via-indigo-500 to-emerald-500 z-50 animate-pulse" />
 
       <Client360Header
         clientName={clientName}

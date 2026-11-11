@@ -36,7 +36,7 @@ export function TeamLeaderboard({ seasonId, defaultOpen = false, className }: Pr
             aria-label="Alternar Escuderias"
           >
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary/30 to-primary/10 flex items-center justify-center">
                 <Users2 className="w-4 h-4 text-primary" />
               </div>
               <div className="text-left">

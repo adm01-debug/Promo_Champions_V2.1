@@ -69,7 +69,7 @@ export const SkillTrackCards: FC = () => {
 
             {t.ai_plan && (
               <div className="rounded-md bg-primary/5 border border-primary/20 p-2.5 flex gap-2">
-                <Sparkles className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
+                <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                 <p className="text-xs leading-relaxed">{t.ai_plan}</p>
               </div>
             )}
@@ -77,7 +77,7 @@ export const SkillTrackCards: FC = () => {
             <ol className="space-y-1.5 text-xs">
               {t.milestones.map((m, i) => (
                 <li key={i} className="flex gap-2">
-                  <span className="font-mono text-muted-foreground flex-shrink-0">
+                  <span className="font-mono text-muted-foreground shrink-0">
                     S{m.week}
                   </span>
                   <span>{m.title}</span>

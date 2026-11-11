@@ -46,14 +46,14 @@ const KPIRow = React.memo(function KPIRow({
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/40 hover:bg-white/[0.06] transition-all group overflow-hidden"
+      className="relative flex flex-col gap-1 p-4 rounded-xl bg-white/3 border border-white/5 hover:border-primary/40 hover:bg-white/6 transition-all group overflow-hidden"
     >
       <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-[0.25em] group-hover:text-primary transition-all duration-300 z-10">
         {label}
       </span>
       <div className="flex flex-col">
         <span
-          className="text-[min(10vw,12rem)] sm:text-[min(6vw,18rem)] lg:text-[min(4vw,24rem)] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 drop-shadow-[0_0_150px_rgba(139,92,246,0.8)] transition-all duration-500"
+          className="text-[min(10vw,12rem)] sm:text-[min(6vw,18rem)] lg:text-[min(4vw,24rem)] font-display font-black tabular-nums tracking-tighter z-10 bg-clip-text text-transparent bg-linear-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-4 sm:py-8 drop-shadow-[0_0_150px_rgba(139,92,246,0.8)] transition-all duration-500"
           style={{
             textShadow:
               '0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--primary) / 0.4), 0 0 120px hsl(var(--primary) / 0.1)',
@@ -61,7 +61,7 @@ const KPIRow = React.memo(function KPIRow({
         >
           {formatted}
         </span>
-        <div className="flex items-center gap-2 mt-[-1rem] mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+        <div className="flex items-center gap-2 -mt-4 mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
           <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(139,92,246,0.8)]" />
           <span className="text-[9px] font-mono font-bold text-primary/70 tracking-widest uppercase">
             IA Verified
@@ -75,7 +75,7 @@ const KPIRow = React.memo(function KPIRow({
       </div>
 
       {/* Micro decoration */}
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-primary/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+      <div className="absolute bottom-0 left-0 w-full h-px bg-primary/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
     </motion.div>
   );
 });

@@ -178,7 +178,7 @@ export function DailyChallengesCard({
               <div className="p-4 flex items-start gap-4 relative z-10">
                 <div
                   className={cn(
-                    'flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg shrink-0 transition-transform duration-500 group-hover/item:scale-110 group-hover/item:rotate-6',
+                    'flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br shadow-lg shrink-0 transition-transform duration-500 group-hover/item:scale-110 group-hover/item:rotate-6',
                     getDailyChallengeColor(challenge.challenge_type),
                     'text-white'
                   )}

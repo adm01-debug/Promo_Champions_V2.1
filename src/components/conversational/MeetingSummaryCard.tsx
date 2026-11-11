@@ -32,7 +32,7 @@ export const MeetingSummaryCard = ({
   return (
     <Card
       variant="primary"
-      className="overflow-hidden border-primary/20 bg-gradient-to-br from-card to-primary/5"
+      className="overflow-hidden border-primary/20 bg-linear-to-br from-card to-primary/5"
     >
       <CardHeader className="pb-3 bg-primary/5 border-b border-primary/10">
         <div className="flex items-center justify-between gap-3 flex-wrap">

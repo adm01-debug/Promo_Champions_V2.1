@@ -208,7 +208,7 @@ const BICloser = () => {
                 <Card className="glass-card">
                   <CardHeader>
                     <CardTitle className="text-section-title flex items-center gap-2">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+                      <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
                         <Briefcase className="h-4 w-4 text-primary-foreground" />
                       </div>
                       Pipeline de Vendas

@@ -47,7 +47,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
                 </span>
               </div>
             </div>
-            <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-inner">
+            <div className="p-3 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 shadow-inner">
               <Wallet className="h-6 w-6 text-primary" />
             </div>
           </div>
@@ -81,7 +81,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
                 </Badge>
               </div>
             </div>
-            <div className="p-3 rounded-xl bg-gradient-to-br from-chart-2/20 to-chart-2/5 shadow-inner">
+            <div className="p-3 rounded-xl bg-linear-to-br from-chart-2/20 to-chart-2/5 shadow-inner">
               <UserCog className="h-6 w-6 text-chart-2" />
             </div>
           </div>
@@ -113,7 +113,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
                   : 'Processos comerciais em dia'}
               </p>
             </div>
-            <div className="p-3 rounded-xl bg-gradient-to-br from-warning/20 to-warning/5 shadow-inner">
+            <div className="p-3 rounded-xl bg-linear-to-br from-warning/20 to-warning/5 shadow-inner">
               <ShieldCheck className="h-6 w-6 text-warning" />
             </div>
           </div>
@@ -154,7 +154,7 @@ export function AdminQuickStats({ stats }: AdminQuickStatsProps) {
                 </Badge>
               </div>
             </div>
-            <div className="p-3 rounded-xl bg-gradient-to-br from-destructive/20 to-destructive/5 shadow-inner">
+            <div className="p-3 rounded-xl bg-linear-to-br from-destructive/20 to-destructive/5 shadow-inner">
               <Activity className="h-6 w-6 text-destructive" />
             </div>
           </div>

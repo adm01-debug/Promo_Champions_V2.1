@@ -73,7 +73,7 @@ export function SeasonRecapCard({
     <div className="space-y-3">
       <div
         ref={ref}
-        className="rounded-xl p-6 bg-gradient-to-br from-warning/30 via-primary/10 to-background border-2 border-warning/40 shadow-2xl"
+        className="rounded-xl p-6 bg-linear-to-br from-warning/30 via-primary/10 to-background border-2 border-warning/40 shadow-2xl"
         aria-label={`Resumo da temporada ${seasonName}`}
       >
         <div className="flex items-center gap-4">

@@ -60,11 +60,11 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({
                     className={cn(
                       'flex items-center gap-3 p-3 rounded-xl transition-all duration-300 hover-lift-sm',
                       idx === 0
-                        ? 'bg-gradient-to-r from-rank-gold/10 to-transparent border-2 border-rank-gold/30'
+                        ? 'bg-linear-to-r from-rank-gold/10 to-transparent border-2 border-rank-gold/30'
                         : idx === 1
-                          ? 'bg-gradient-to-r from-rank-silver/10 to-transparent border border-rank-silver/30'
+                          ? 'bg-linear-to-r from-rank-silver/10 to-transparent border border-rank-silver/30'
                           : idx === 2
-                            ? 'bg-gradient-to-r from-rank-bronze/10 to-transparent border border-rank-bronze/30'
+                            ? 'bg-linear-to-r from-rank-bronze/10 to-transparent border border-rank-bronze/30'
                             : 'glass'
                     )}
                   >
@@ -118,7 +118,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({
         <Card className="glass-card animate-slide-up" style={{ animationDelay: '650ms' }}>
           <CardHeader>
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-warning to-warning/80">
+              <div className="p-2 rounded-lg bg-linear-to-br from-warning to-warning/80">
                 <AlertTriangle className="h-4 w-4 text-warning-foreground" />
               </div>
               Requerem Atenção
@@ -130,7 +130,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({
                 {underperformers.map(sp => (
                   <div
                     key={sp.id}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-warning/5 to-transparent border border-warning/20 hover-lift-sm"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-linear-to-r from-warning/5 to-transparent border border-warning/20 hover-lift-sm"
                   >
                     <Avatar className="h-9 w-9 ring-2 ring-warning/30">
                       <AvatarImage src={sp.avatar_url || undefined} />
@@ -175,7 +175,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({
       <Card className="glass-card animate-slide-up" style={{ animationDelay: '700ms' }}>
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+            <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
               <Users className="h-4 w-4 text-primary-foreground" />
             </div>
             Performance Detalhada do Time
@@ -213,7 +213,7 @@ export const BIGestorTeamSection = React.memo(function BIGestorTeamSection({
                       key={sp.id}
                       className={cn(
                         'border-b border-border/30 hover:bg-muted/30 transition-colors',
-                        idx < 3 && 'bg-gradient-to-r from-rank-gold/5 to-transparent'
+                        idx < 3 && 'bg-linear-to-r from-rank-gold/5 to-transparent'
                       )}
                     >
                       <td className="py-3 px-2">

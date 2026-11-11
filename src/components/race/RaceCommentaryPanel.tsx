@@ -25,7 +25,7 @@ export function RaceCommentaryPanel({ items, isGenerating, onRegenerate }: Props
   const latest = items[0];
 
   return (
-    <Card className="border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 overflow-hidden">
+    <Card className="border-primary/30 bg-linear-to-br from-card via-card to-primary/5 overflow-hidden">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">

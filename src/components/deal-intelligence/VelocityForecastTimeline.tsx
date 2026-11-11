@@ -39,7 +39,7 @@ export function VelocityForecastTimeline({
         />
         {/* Elapsed */}
         <div
-          className="h-full bg-gradient-to-r from-primary/60 to-primary transition-all"
+          className="h-full bg-linear-to-r from-primary/60 to-primary transition-all"
           style={{ width: `${elapsedPct}%` }}
         />
       </div>

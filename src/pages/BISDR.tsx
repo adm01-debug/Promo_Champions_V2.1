@@ -65,13 +65,13 @@ const BISDR = () => {
                 transition={{ duration: 0.5 }}
               >
                 <div className="glass-card rounded-2xl p-6 border-2 border-primary/20 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
                   <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
                   <div className="relative flex flex-col md:flex-row items-center gap-6">
                     <div className="relative">
                       <Avatar className="h-20 w-20 ring-4 ring-primary/30 shadow-xl hover-scale">
                         <AvatarImage src={salesperson?.avatar_url || undefined} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xl font-bold">
+                        <AvatarFallback className="bg-linear-to-br from-primary to-primary-glow text-primary-foreground text-xl font-bold">
                           {salesperson?.name
                             ?.split(' ')
                             .map(n => n[0])

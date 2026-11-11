@@ -42,11 +42,11 @@ const getRankIcon = (rank: number) => {
 const getRankBadgeColor = (rank: number) => {
   switch (rank) {
     case 1:
-      return 'bg-gradient-to-r from-rank-gold to-coins text-background shadow-glow-gold';
+      return 'bg-linear-to-r from-rank-gold to-coins text-background shadow-glow-gold';
     case 2:
-      return 'bg-gradient-to-r from-rank-silver to-gray-300 text-background';
+      return 'bg-linear-to-r from-rank-silver to-gray-300 text-background';
     case 3:
-      return 'bg-gradient-to-r from-rank-bronze to-streak text-background';
+      return 'bg-linear-to-r from-rank-bronze to-streak text-background';
     default:
       return 'bg-muted text-muted-foreground';
   }
@@ -99,22 +99,21 @@ function GamificationCardImpl({
         <div
           className={cn(
             'absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300',
-            rank === 1 &&
-              'bg-gradient-to-br from-rank-gold via-transparent to-transparent',
+            rank === 1 && 'bg-linear-to-br from-rank-gold via-transparent to-transparent',
             rank === 2 &&
-              'bg-gradient-to-br from-rank-silver via-transparent to-transparent',
+              'bg-linear-to-br from-rank-silver via-transparent to-transparent',
             rank === 3 &&
-              'bg-gradient-to-br from-rank-bronze via-transparent to-transparent'
+              'bg-linear-to-br from-rank-bronze via-transparent to-transparent'
           )}
         />
       )}
 
       <div className="relative z-10">
         <div className="flex items-start gap-3">
-          <div className="relative flex-shrink-0">
+          <div className="relative shrink-0">
             <div
               className={cn(
-                'rounded-full p-0.5 bg-gradient-to-br',
+                'rounded-full p-0.5 bg-linear-to-br',
                 levelColor,
                 'shadow-lg'
               )}
@@ -135,7 +134,7 @@ function GamificationCardImpl({
                 ) : (
                   <div
                     className={cn(
-                      'h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-display font-bold',
+                      'h-full w-full flex items-center justify-center bg-linear-to-br from-primary/20 to-primary/10 text-primary font-display font-bold',
                       size === 'sm' ? 'text-sm' : size === 'md' ? 'text-lg' : 'text-xl'
                     )}
                   >
@@ -146,7 +145,7 @@ function GamificationCardImpl({
             </div>
             <div
               className={cn(
-                'absolute -bottom-1 -right-1 rounded-full flex items-center justify-center bg-gradient-to-br shadow-md border-2 border-background',
+                'absolute -bottom-1 -right-1 rounded-full flex items-center justify-center bg-linear-to-br shadow-md border-2 border-background',
                 levelColor,
                 size === 'sm' ? 'h-5 w-5 text-[8px]' : 'h-6 w-6 text-[10px]'
               )}
@@ -181,7 +180,7 @@ function GamificationCardImpl({
               <Badge
                 variant="secondary"
                 className={cn(
-                  'bg-gradient-to-r text-primary-foreground border-0 px-1.5 py-0 text-[9px] font-medium',
+                  'bg-linear-to-r text-primary-foreground border-0 px-1.5 py-0 text-[9px] font-medium',
                   levelColor
                 )}
               >
@@ -205,11 +204,11 @@ function GamificationCardImpl({
                 animate={{ width: `${Math.min(progress, 100)}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}
                 className={cn(
-                  'h-full rounded-full bg-gradient-to-r relative overflow-hidden',
+                  'h-full rounded-full bg-linear-to-r relative overflow-hidden',
                   levelColor
                 )}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-xp-shimmer" />
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-xp-shimmer" />
               </motion.div>
             </div>
             {!isMaxLevel && (

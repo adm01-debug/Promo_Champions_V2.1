@@ -100,7 +100,7 @@ const CATEGORIES: ArenaCategory[] = [
     description: 'Posições, streaks, ligas e 1v1',
     icon: Flame,
     tabs: ['ranking', 'leagues', 'streaks', 'h2h', 'bench'],
-    gradient: 'bg-gradient-to-br from-orange-500/20 via-red-500/10 to-transparent',
+    gradient: 'bg-linear-to-br from-orange-500/20 via-red-500/10 to-transparent',
   },
   {
     id: 'competitions',
@@ -108,7 +108,7 @@ const CATEGORIES: ArenaCategory[] = [
     description: 'Duelos, torneios, apostas e territórios',
     icon: Swords,
     tabs: ['battles', 'tournament', 'bets', 'territory', 'missions', 'wheel'],
-    gradient: 'bg-gradient-to-br from-primary/20 via-blue-500/10 to-transparent',
+    gradient: 'bg-linear-to-br from-primary/20 via-blue-500/10 to-transparent',
   },
   {
     id: 'profile',
@@ -116,7 +116,7 @@ const CATEGORIES: ArenaCategory[] = [
     description: 'Perfil, badges, kudos, metas e vitórias',
     icon: User,
     tabs: ['feed', 'profile', 'badges', 'fame', 'goals', 'evolution', 'heatmap'],
-    gradient: 'bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-transparent',
+    gradient: 'bg-linear-to-br from-emerald-500/20 via-teal-500/10 to-transparent',
   },
   {
     id: 'broadcast',
@@ -124,7 +124,7 @@ const CATEGORIES: ArenaCategory[] = [
     description: 'Modos de exibição para monitores',
     icon: Tv,
     tabs: ['tv', 'tvpro', 'scoreboard'],
-    gradient: 'bg-gradient-to-br from-purple-500/20 via-pink-500/10 to-transparent',
+    gradient: 'bg-linear-to-br from-purple-500/20 via-pink-500/10 to-transparent',
   },
   {
     id: 'tools',
@@ -132,7 +132,7 @@ const CATEGORIES: ArenaCategory[] = [
     description: 'Chat, comparativos e plano de melhoria',
     icon: ListChecks,
     tabs: ['chat', 'comparison', 'plan'],
-    gradient: 'bg-gradient-to-br from-yellow-500/20 via-amber-500/10 to-transparent',
+    gradient: 'bg-linear-to-br from-yellow-500/20 via-amber-500/10 to-transparent',
   },
 ];
 

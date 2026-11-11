@@ -74,8 +74,8 @@ export const GeoBlockingMap = () => {
   };
 
   return (
-    <div className="relative w-full aspect-[2/1] bg-black/20 rounded-xl border border-white/5 overflow-hidden group">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+    <div className="relative w-full aspect-2/1 bg-black/20 rounded-xl border border-white/5 overflow-hidden group">
+      <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
 
       {/* Legend */}
       <div className="absolute top-4 left-4 z-10 space-y-2">

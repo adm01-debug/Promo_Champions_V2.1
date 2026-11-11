@@ -67,7 +67,7 @@ function GoalsLeaderboardImpl({ salespeople, isLoading }: GoalsLeaderboardProps)
       <Card className="glass border border-border/40 dark:border-glow card-elevated">
         <CardHeader className="pb-2 border-b border-border/30">
           <CardTitle className="text-section-title text-sm flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md">
+            <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 shadow-md">
               <Trophy className="h-4 w-4 text-primary" />
             </div>
             <span className="gradient-text">Ranking de Metas</span>
@@ -97,7 +97,7 @@ function GoalsLeaderboardImpl({ salespeople, isLoading }: GoalsLeaderboardProps)
         <div className="space-y-5">
           <div className="flex items-center justify-between">
             <CardTitle className="text-section-title text-sm font-black flex items-center gap-3 uppercase italic">
-              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-rank-gold/30 to-rank-gold/5 shadow-lg shadow-rank-gold/10 group-hover:rotate-12 transition-transform duration-500">
+              <div className="p-2.5 rounded-2xl bg-linear-to-br from-rank-gold/30 to-rank-gold/5 shadow-lg shadow-rank-gold/10 group-hover:rotate-12 transition-transform duration-500">
                 <Trophy className="h-5 w-5 text-rank-gold" />
               </div>
               <span className="gradient-text">Hall da Fama: Vendas</span>
@@ -158,9 +158,9 @@ function GoalsLeaderboardImpl({ salespeople, isLoading }: GoalsLeaderboardProps)
         <ScrollArea className="h-[480px]">
           <div className="p-4 space-y-5">
             {withGoals.length > 0 && (
-              <div className="mb-8 p-6 rounded-3xl bg-gradient-to-br from-rank-gold/25 via-rank-gold/5 to-transparent border border-rank-gold/30 relative overflow-hidden group shadow-2xl animate-fade-in ring-1 ring-rank-gold/20">
+              <div className="mb-8 p-6 rounded-3xl bg-linear-to-br from-rank-gold/25 via-rank-gold/5 to-transparent border border-rank-gold/30 relative overflow-hidden group shadow-2xl animate-fade-in ring-1 ring-rank-gold/20">
                 {/* Animated Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
 
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-all duration-700 group-hover:scale-125 group-hover:rotate-12">
                   <Trophy className="h-24 w-24 text-rank-gold" />
@@ -168,7 +168,7 @@ function GoalsLeaderboardImpl({ salespeople, isLoading }: GoalsLeaderboardProps)
 
                 <div className="relative z-10 flex items-center gap-6">
                   <div className="relative">
-                    <div className="absolute -inset-2 bg-gradient-to-r from-rank-gold via-yellow-400 to-rank-gold rounded-full blur-md opacity-50 group-hover:opacity-80 transition-opacity animate-spin-slow" />
+                    <div className="absolute -inset-2 bg-linear-to-r from-rank-gold via-yellow-400 to-rank-gold rounded-full blur-md opacity-50 group-hover:opacity-80 transition-opacity animate-spin-slow" />
                     <div className="relative h-20 w-20 rounded-full border-4 border-rank-gold overflow-hidden shadow-2xl group-hover:scale-105 transition-transform duration-500">
                       <img
                         src={withGoals[0].avatar_url || '/placeholder.svg'}

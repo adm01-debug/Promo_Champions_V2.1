@@ -301,7 +301,7 @@ function TournamentBracketsComponent() {
                   <CardHeader className="pb-4 border-b border-border/10 relative z-10">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border border-primary/10">
+                        <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 shadow-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border border-primary/10">
                           <Trophy className="h-6 w-6 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
                         </div>
                         <div>
@@ -362,11 +362,11 @@ function TournamentBracketsComponent() {
                           return (
                             <div key={r} className="flex flex-col gap-6 w-60">
                               <div className="flex items-center gap-3 justify-center">
-                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-border/30" />
+                                <div className="h-px flex-1 bg-linear-to-r from-transparent to-border/30" />
                                 <span className="text-[10px] font-black text-primary/70 uppercase tracking-[0.2em] italic whitespace-nowrap">
                                   {label}
                                 </span>
-                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-border/30" />
+                                <div className="h-px flex-1 bg-linear-to-l from-transparent to-border/30" />
                               </div>
 
                               <div className="flex flex-col justify-around flex-1 gap-8">
@@ -492,7 +492,7 @@ function TournamentBracketsComponent() {
 
                                         {/* Connector Line to Next Round (Visual only for now) */}
                                         {!isFinal && (
-                                          <div className="absolute top-1/2 -right-12 w-12 h-px bg-gradient-to-r from-border/50 to-transparent" />
+                                          <div className="absolute top-1/2 -right-12 w-12 h-px bg-linear-to-r from-border/50 to-transparent" />
                                         )}
                                       </div>
                                     );

@@ -47,7 +47,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const EmojiParticles = ({ x, y, emoji }: { x: number; y: number; emoji: string }) => {
   return (
-    <div className="fixed pointer-events-none z-[9999]" style={{ left: x, top: y }}>
+    <div className="fixed pointer-events-none z-9999" style={{ left: x, top: y }}>
       {[...Array(12)].map((_, i) => (
         <motion.div
           key={i}
@@ -213,14 +213,14 @@ export default function MetasAtividades() {
         >
           <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/30">
             {/* Background Decorative Elements - Advanced Arena DNA */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-            <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-primary/10 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[40px_40px] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-[800px] bg-linear-to-b from-primary/10 via-transparent to-transparent pointer-events-none" />
             <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[150px] rounded-full animate-pulse pointer-events-none" />
             <div className="absolute bottom-[-5%] left-[-5%] w-[40%] h-[40%] bg-accent/15 blur-[120px] rounded-full animate-float pointer-events-none" />
 
             {/* Scanning Line Effect - Improved */}
             <div className="scan-line" />
-            <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%]" />
+            <div className="absolute inset-0 pointer-events-none opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-size-[100%_2px,3px_100%]" />
 
             <AnimatePresence>
               {emojiEffect && (
@@ -236,7 +236,7 @@ export default function MetasAtividades() {
               {/* Header Section with Holographic Title v12.0 */}
               <div className="animate-fade-in-up relative group/arena-header">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 p-10 rounded-[3rem] glass border border-white/20 shadow-glow-primary/10 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 opacity-50" />
+                  <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-accent/5 opacity-50" />
 
                   <div className="space-y-4 relative z-10">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
@@ -260,7 +260,7 @@ export default function MetasAtividades() {
                           </div>
                         </div>
                       </h1>
-                      <div className="h-2 w-48 bg-gradient-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
+                      <div className="h-2 w-48 bg-linear-to-r from-primary via-accent to-transparent rounded-full mt-4 animate-shimmer" />
                     </div>
 
                     <div className="text-base text-muted-foreground font-medium flex items-center gap-3 pl-1">
@@ -320,10 +320,10 @@ export default function MetasAtividades() {
 
                     <div className="flex flex-col items-end gap-2 group/boss-bar">
                       <div className="px-10 py-6 rounded-[2.5rem] glass-morphism border border-primary/30 shadow-2xl shadow-primary/20 flex flex-col items-end group/ritmo relative overflow-hidden min-w-[280px] transition-all duration-500 hover:scale-[1.02]">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/10 opacity-50" />
+                        <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-transparent to-accent/10 opacity-50" />
                         <div className="absolute inset-x-0 bottom-0 h-1 bg-white/5 overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-primary via-accent to-primary animate-shimmer"
+                            className="h-full bg-linear-to-r from-primary via-accent to-primary animate-shimmer"
                             style={{ width: `${avgProgress}%` }}
                           />
                         </div>
@@ -518,7 +518,7 @@ export default function MetasAtividades() {
                         {/* Progress Cards Grid */}
                         <div className="lg:col-span-2 animate-fade-in-up stagger-3">
                           {completed > 0 && (
-                            <div className="mb-6 p-6 rounded-[2rem] bg-gradient-to-r from-rank-gold/20 via-primary/10 to-rank-gold/20 border border-rank-gold/30 shadow-glow-gold/10 animate-pulse relative overflow-hidden group">
+                            <div className="mb-6 p-6 rounded-4xl bg-linear-to-r from-rank-gold/20 via-primary/10 to-rank-gold/20 border border-rank-gold/30 shadow-glow-gold/10 animate-pulse relative overflow-hidden group">
                               <div className="absolute inset-0 bg-shimmer opacity-20" />
                               <div className="relative z-10 flex items-center justify-between">
                                 <div className="flex items-center gap-4">

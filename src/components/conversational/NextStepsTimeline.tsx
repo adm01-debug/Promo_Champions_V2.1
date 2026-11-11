@@ -25,7 +25,7 @@ export const NextStepsTimeline = ({ steps }: Props) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="relative space-y-6 before:absolute before:inset-0 before:ml-2 before:h-full before:w-0.5 before:-translate-x-1/2 before:bg-gradient-to-b before:from-primary/50 before:via-primary/20 before:to-transparent">
+        <div className="relative space-y-6 before:absolute before:inset-0 before:ml-2 before:h-full before:w-0.5 before:-translate-x-1/2 before:bg-linear-to-b before:from-primary/50 before:via-primary/20 before:to-transparent">
           {steps.map((s, i) => (
             <div key={i} className="relative pl-6 group">
               <span className="absolute left-0 top-1.5 size-4 rounded-full bg-primary border-4 border-background shadow-sm transition-transform group-hover:scale-125 group-hover:bg-primary" />

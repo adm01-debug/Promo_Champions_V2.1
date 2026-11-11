@@ -83,7 +83,7 @@ export const ActivityHeatmap: React.FC = () => {
       variant="glass"
       className="overflow-hidden border-border/20 bg-background/40 backdrop-blur-xl relative group/heatmap"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-50 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5 opacity-50 pointer-events-none" />
       <CardHeader className="pb-3 border-b border-border/10 relative z-10">
         <CardTitle className="text-section-title text-xs font-black uppercase tracking-[0.2em] flex items-center justify-between">
           <div className="flex items-center gap-2">

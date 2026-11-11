@@ -60,7 +60,7 @@ function MiniLeaderboardImpl() {
     <Card className="relative overflow-hidden bg-black/40 border-white/5 backdrop-blur-md group">
       {/* Decorative scanline */}
       <motion.div
-        className="absolute top-0 left-0 w-full h-[1px] bg-primary/10"
+        className="absolute top-0 left-0 w-full h-px bg-primary/10"
         animate={{ top: ['0%', '100%', '0%'] }}
         transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
       />
@@ -103,7 +103,7 @@ function MiniLeaderboardImpl() {
                 'group/item relative flex items-center gap-2.5 p-2 rounded-xl transition-all duration-300 border',
                 isCurrentUser
                   ? 'bg-primary/10 border-primary/30 shadow-[0_0_15px_rgba(14,165,233,0.1)]'
-                  : 'bg-white/[0.03] border-white/5 hover:border-white/20 hover:bg-white/[0.06]'
+                  : 'bg-white/3 border-white/5 hover:border-white/20 hover:bg-white/6'
               )}
             >
               {/* Rank Badge */}

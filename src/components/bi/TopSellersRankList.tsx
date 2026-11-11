@@ -22,9 +22,9 @@ interface TopSellersRankListProps {
 const formatCompact = (value: number) => `${formatBRL(value)}`;
 
 const rankStyles = [
-  'bg-gradient-to-r from-rank-gold/10 to-transparent border border-rank-gold/30',
-  'bg-gradient-to-r from-rank-silver/10 to-transparent border border-rank-silver/20',
-  'bg-gradient-to-r from-rank-bronze/10 to-transparent border border-rank-bronze/20',
+  'bg-linear-to-r from-rank-gold/10 to-transparent border border-rank-gold/30',
+  'bg-linear-to-r from-rank-silver/10 to-transparent border border-rank-silver/20',
+  'bg-linear-to-r from-rank-bronze/10 to-transparent border border-rank-bronze/20',
 ];
 
 const rankBadgeStyles = ['rank-gold', 'rank-silver', 'rank-bronze'];

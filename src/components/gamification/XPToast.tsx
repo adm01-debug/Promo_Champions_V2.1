@@ -45,7 +45,7 @@ export function XPToastProvider({ children }: { children: ReactNode }) {
 function XPToastContainer({ notifications }: { notifications: XPNotification[] }) {
   return (
     <div
-      className="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+      className="fixed top-20 right-4 z-100 flex flex-col gap-2 pointer-events-none"
       role="status"
       aria-live="polite"
       aria-label="Notificações de XP"
@@ -89,7 +89,7 @@ function XPToastItem({ notification }: { notification: XPNotification }) {
   return (
     <motion.div
       {...motionProps}
-      className={`bg-gradient-to-r ${bgColor} backdrop-blur-md rounded-lg shadow-lg px-4 py-3 min-w-[200px] pointer-events-auto`}
+      className={`bg-linear-to-r ${bgColor} backdrop-blur-md rounded-lg shadow-lg px-4 py-3 min-w-[200px] pointer-events-auto`}
       aria-label={`+${amount} XP: ${reason}`}
     >
       <div className="flex items-center gap-3">

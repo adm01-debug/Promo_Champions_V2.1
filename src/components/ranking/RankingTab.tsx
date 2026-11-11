@@ -85,7 +85,7 @@ export const RankingTab = memo(function RankingTab({
             transition={{ delay: idx * 0.05 }}
           >
             <Card
-              className={`glass border overflow-hidden transition-all hover:scale-[1.01] group relative bg-gradient-to-r ${getRankGradient(person.rank)}`}
+              className={`glass border overflow-hidden transition-all hover:scale-[1.01] group relative bg-linear-to-r ${getRankGradient(person.rank)}`}
             >
               {/* Scanlines effect for rank 1-3 in list too */}
               {person.rank <= 3 && (
@@ -99,14 +99,14 @@ export const RankingTab = memo(function RankingTab({
 
               <CardContent className="p-4 relative z-10">
                 <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-background/50 border border-border/50 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-background/50 border border-border/50 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                     {getRankIcon(person.rank)}
                   </div>
 
                   <div className="relative">
                     <Avatar className="h-14 w-14 border-2 border-border/50 shadow-md">
                       <AvatarImage src={person.avatar_url || ''} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-lg font-black">
+                      <AvatarFallback className="bg-linear-to-br from-primary/20 to-secondary/20 text-lg font-black">
                         {person.name
                           .split(' ')
                           .map(n => n[0])
@@ -128,7 +128,7 @@ export const RankingTab = memo(function RankingTab({
                       </h3>
                       {person.title && (
                         <Badge
-                          className={`bg-gradient-to-r ${person.color} text-primary-foreground border-0 text-[10px] font-black uppercase tracking-widest`}
+                          className={`bg-linear-to-r ${person.color} text-primary-foreground border-0 text-[10px] font-black uppercase tracking-widest`}
                         >
                           {person.emoji} {person.title}
                         </Badge>

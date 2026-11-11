@@ -52,7 +52,7 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
       <CardHeader className="pb-2 border-b border-border/10 relative z-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <CardTitle className="text-section-title font-black flex items-center gap-2 uppercase italic">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:rotate-6 transition-transform">
+            <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 shadow-md group-hover:rotate-6 transition-transform">
               <BarChart3 className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text">Arena de Comparação</span>

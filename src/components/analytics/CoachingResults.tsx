@@ -60,11 +60,11 @@ export const CoachingResults = React.memo(function CoachingResults({
             <div className="relative group">
               <Avatar className="h-20 w-20 border-2 border-status-purple/30 shadow-lg shadow-status-purple/10 transition-transform duration-300 group-hover:scale-105">
                 <AvatarImage src={coaching.salesperson.avatar_url || undefined} />
-                <AvatarFallback className="text-2xl bg-gradient-to-br from-status-purple/30 to-status-purple/10 font-display">
+                <AvatarFallback className="text-2xl bg-linear-to-br from-status-purple/30 to-status-purple/10 font-display">
                   {coaching.salesperson.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-gradient-to-br from-status-purple to-status-purple/80 shadow-lg">
+              <div className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-linear-to-br from-status-purple to-status-purple/80 shadow-lg">
                 <Award className="h-4 w-4 text-background" />
               </div>
             </div>
@@ -130,7 +130,7 @@ export const CoachingResults = React.memo(function CoachingResults({
       {/* Strengths */}
       {coaching.coaching.strengths.length > 0 && (
         <Card
-          className="glass border-status-success/30 bg-gradient-to-br from-status-success/10 to-transparent animate-fade-in"
+          className="glass border-status-success/30 bg-linear-to-br from-status-success/10 to-transparent animate-fade-in"
           style={{ animationDelay: '100ms' }}
         >
           <CardHeader className="pb-3">
@@ -174,7 +174,7 @@ export const CoachingResults = React.memo(function CoachingResults({
       {/* Improvements */}
       {coaching.coaching.improvements.length > 0 && (
         <Card
-          className="glass border-status-warning/30 bg-gradient-to-br from-status-warning/10 to-transparent animate-fade-in"
+          className="glass border-status-warning/30 bg-linear-to-br from-status-warning/10 to-transparent animate-fade-in"
           style={{ animationDelay: '150ms' }}
         >
           <CardHeader className="pb-3">
@@ -226,7 +226,7 @@ export const CoachingResults = React.memo(function CoachingResults({
       {/* Recommended Actions */}
       {coaching.coaching.actions.length > 0 && (
         <Card
-          className="glass border-status-purple/30 bg-gradient-to-br from-status-purple/10 to-transparent animate-fade-in"
+          className="glass border-status-purple/30 bg-linear-to-br from-status-purple/10 to-transparent animate-fade-in"
           style={{ animationDelay: '200ms' }}
         >
           <CardHeader className="pb-3">

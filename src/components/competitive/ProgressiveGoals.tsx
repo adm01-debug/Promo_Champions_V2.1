@@ -56,10 +56,10 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
   return (
     <div className="space-y-4">
       <Card className="border-none shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-accent/10 to-primary/10">
+        <div className="bg-linear-to-r from-accent/10 to-primary/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+              <div className="h-8 w-8 rounded-lg bg-linear-to-br from-accent to-primary flex items-center justify-center">
                 <Target className="h-4 w-4 text-primary-foreground" />
               </div>
               Metas Progressivas
@@ -104,7 +104,7 @@ const ProgressiveGoalsComponent: FC<ProgressiveGoalsProps> = ({ salespersonId })
                       <div className="flex items-center gap-1.5">
                         <Badge
                           className={cn(
-                            'text-[10px] h-4 bg-gradient-to-r text-primary-foreground border-0',
+                            'text-[10px] h-4 bg-linear-to-r text-primary-foreground border-0',
                             levelColor
                           )}
                         >

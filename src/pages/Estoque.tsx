@@ -254,7 +254,7 @@ export default function Estoque() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
+            <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="p-4 rounded-2xl bg-primary/10 ring-1 ring-white/5 group-hover:bg-primary/20 transition-colors">
                   <Package className="h-6 w-6 text-primary" />
@@ -273,10 +273,10 @@ export default function Estoque() {
                   </div>
                 </div>
               </CardContent>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-transparent opacity-20" />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-primary/50 to-transparent opacity-20" />
             </Card>
 
-            <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
+            <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="p-4 rounded-2xl bg-rose-500/10 ring-1 ring-white/5 group-hover:bg-rose-500/20 transition-colors">
                   <AlertTriangle className="h-6 w-6 text-rose-500" />
@@ -295,10 +295,10 @@ export default function Estoque() {
                   </div>
                 </div>
               </CardContent>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500/50 to-transparent opacity-20" />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-rose-500/50 to-transparent opacity-20" />
             </Card>
 
-            <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
+            <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="p-4 rounded-2xl bg-amber-500/10 ring-1 ring-white/5 group-hover:bg-amber-500/20 transition-colors">
                   <TrendingUp className="h-6 w-6 text-amber-500" />
@@ -317,10 +317,10 @@ export default function Estoque() {
                   </div>
                 </div>
               </CardContent>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/50 to-transparent opacity-20" />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-amber-500/50 to-transparent opacity-20" />
             </Card>
 
-            <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
+            <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md group">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="p-4 rounded-2xl bg-emerald-500/10 ring-1 ring-white/5 group-hover:bg-emerald-500/20 transition-colors">
                   <ArrowUpCircle className="h-6 w-6 text-emerald-500" />
@@ -339,7 +339,7 @@ export default function Estoque() {
                   </div>
                 </div>
               </CardContent>
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/50 to-transparent opacity-20" />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-500/50 to-transparent opacity-20" />
             </Card>
           </div>
 
@@ -369,7 +369,7 @@ export default function Estoque() {
             </TabsList>
 
             <TabsContent value="inventory" className="mt-4">
-              <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+              <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
                 <CardHeader className="p-6 border-b border-border/10 flex flex-row items-center justify-between">
                   <CardTitle className="text-section-title font-black uppercase tracking-tighter italic">
                     Strategic Inventory
@@ -479,10 +479,10 @@ export default function Estoque() {
                                         className={cn(
                                           'h-full rounded-full transition-all duration-500 relative z-10',
                                           pct <= 20
-                                            ? 'bg-gradient-to-r from-rose-600 to-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.5)]'
+                                            ? 'bg-linear-to-r from-rose-600 to-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.5)]'
                                             : pct <= 40
-                                              ? 'bg-gradient-to-r from-amber-600 to-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
-                                              : 'bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                                              ? 'bg-linear-to-r from-amber-600 to-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
+                                              : 'bg-linear-to-r from-emerald-600 to-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.4)]'
                                         )}
                                       />
                                       {/* Reorder Point Indicator */}
@@ -673,7 +673,7 @@ export default function Estoque() {
             </TabsContent>
 
             <TabsContent value="movements" className="mt-4">
-              <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+              <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
                 <CardHeader className="p-6 border-b border-border/10 flex flex-row items-center justify-between">
                   <CardTitle className="text-section-title font-black uppercase tracking-tighter italic">
                     Tactical Movements

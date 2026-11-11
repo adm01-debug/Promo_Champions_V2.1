@@ -70,7 +70,7 @@ const CompetitiveChatComponent: FC<CompetitiveChatProps> = ({ salespersonId }) =
       <CardHeader className="pb-2 shrink-0 space-y-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success to-success/80 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-linear-to-br from-success to-success/80 flex items-center justify-center">
               <MessageCircle className="h-4 w-4 text-primary-foreground" />
             </div>
             Arena Chat

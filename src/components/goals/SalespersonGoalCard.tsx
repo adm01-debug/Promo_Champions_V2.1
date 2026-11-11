@@ -59,10 +59,10 @@ function SalespersonGoalCardImpl({
     <div
       className={`group p-5 rounded-2xl border transition-all duration-500 hover:scale-[1.02] cursor-pointer relative overflow-hidden ${
         hasExceededGoal
-          ? 'bg-gradient-to-br from-status-success/10 via-background to-background border-status-success/40 shadow-xl shadow-status-success/10'
+          ? 'bg-linear-to-br from-status-success/10 via-background to-background border-status-success/40 shadow-xl shadow-status-success/10'
           : onTrack
             ? 'glass bg-card/80 border-border/40 hover:border-primary/40'
-            : 'bg-gradient-to-br from-status-warning/10 via-background to-background border-status-warning/30 shadow-lg shadow-status-warning/5'
+            : 'bg-linear-to-br from-status-warning/10 via-background to-background border-status-warning/30 shadow-lg shadow-status-warning/5'
       }`}
     >
       {/* Dynamic Background Glow */}
@@ -190,8 +190,8 @@ function SalespersonGoalCardImpl({
           <div
             className={`absolute h-full transition-all duration-1000 ease-out ${
               hasExceededGoal
-                ? 'bg-gradient-to-r from-status-success via-status-success/80 to-rank-gold animate-xp-shimmer'
-                : 'bg-gradient-to-r from-primary via-primary/80 to-accent'
+                ? 'bg-linear-to-r from-status-success via-status-success/80 to-rank-gold animate-xp-shimmer'
+                : 'bg-linear-to-r from-primary via-primary/80 to-accent'
             }`}
             style={{ width: `${progressCapped}%` }}
           />

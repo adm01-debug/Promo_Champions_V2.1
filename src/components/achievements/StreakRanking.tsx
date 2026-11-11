@@ -24,22 +24,22 @@ const getStreakIcon = (streak: number) => {
 
 const getStreakBadgeColor = (streak: number) => {
   if (streak >= 30)
-    return 'bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada';
+    return 'bg-linear-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada';
   if (streak >= 15)
-    return 'bg-gradient-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50';
+    return 'bg-linear-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50';
   if (streak >= 7)
-    return 'bg-gradient-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50';
+    return 'bg-linear-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50';
   if (streak >= 3) return 'bg-status-info/20 text-status-info border-status-info/40';
   return 'bg-muted text-muted-foreground border-border';
 };
 
 const getRankStyle = (rank: number) => {
   if (rank === 1)
-    return 'bg-gradient-to-r from-rank-gold/20 to-rank-gold/10 border-rank-gold/40';
+    return 'bg-linear-to-r from-rank-gold/20 to-rank-gold/10 border-rank-gold/40';
   if (rank === 2)
-    return 'bg-gradient-to-r from-rank-silver/20 to-rank-silver/10 border-rank-silver/40';
+    return 'bg-linear-to-r from-rank-silver/20 to-rank-silver/10 border-rank-silver/40';
   if (rank === 3)
-    return 'bg-gradient-to-r from-rank-bronze/20 to-rank-bronze/10 border-rank-bronze/40';
+    return 'bg-linear-to-r from-rank-bronze/20 to-rank-bronze/10 border-rank-bronze/40';
   return 'bg-muted/30 border-border/40';
 };
 

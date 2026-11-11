@@ -69,7 +69,7 @@ export function ActivityStatsCharts({
         )}
       >
         <div className="overflow-hidden">
-          <div className="p-6 rounded-2xl glass border border-border/40 shadow-xl bg-gradient-to-br from-background/50 to-muted/20 relative">
+          <div className="p-6 rounded-2xl glass border border-border/40 shadow-xl bg-linear-to-br from-background/50 to-muted/20 relative">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full pointer-events-none" />
 

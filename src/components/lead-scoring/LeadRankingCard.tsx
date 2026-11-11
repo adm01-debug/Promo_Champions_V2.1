@@ -171,9 +171,9 @@ export function LeadRankingCard({
                   onClick={() => onSelectLead(lead.id)}
                   className={cn(
                     'group relative flex items-center gap-6 p-5 transition-all duration-500 cursor-pointer',
-                    'hover:bg-primary/[0.04] hover:backdrop-blur-md',
+                    'hover:bg-primary/4 hover:backdrop-blur-md',
                     idx === 0 &&
-                      'bg-primary/[0.03] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary'
+                      'bg-primary/3 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary'
                   )}
                 >
                   {/* Futuristic Rank Indicator */}
@@ -418,7 +418,7 @@ export function LeadRankingCard({
                     </div>
                   </div>
 
-                  <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-y-0 left-0 w-1 bg-linear-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               );
             })}

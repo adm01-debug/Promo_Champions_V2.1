@@ -195,7 +195,7 @@ export default function Comissoes() {
             >
               <div
                 className={cn(
-                  'absolute top-0 right-0 w-24 h-24 blur-[40px] rounded-full opacity-10 transition-opacity group-hover:opacity-20',
+                  'absolute top-0 right-0 w-24 h-24 blur-2xl rounded-full opacity-10 transition-opacity group-hover:opacity-20',
                   item.bg
                 )}
               />

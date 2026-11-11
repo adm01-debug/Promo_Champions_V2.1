@@ -75,7 +75,7 @@ const CloserStatCardInner = function CloserStatCard({
           'relative overflow-hidden transition-all duration-300 bg-black/40 backdrop-blur-md border border-white/5 group h-full',
           styles.border,
           hero &&
-            'md:col-span-2 border-primary/20 bg-primary/[0.02] shadow-[0_0_30px_rgba(14,165,233,0.05)]',
+            'md:col-span-2 border-primary/20 bg-primary/2 shadow-[0_0_30px_rgba(14,165,233,0.05)]',
           highlight && 'ring-1 ring-primary/30'
         )}
       >
@@ -89,7 +89,7 @@ const CloserStatCardInner = function CloserStatCard({
               <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-primary" />
             </div>
             <motion.div
-              className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+              className="absolute left-0 w-full h-px bg-primary/20 z-0 pointer-events-none"
               animate={{ top: ['0%', '100%', '0%'] }}
               transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
             />
@@ -123,7 +123,7 @@ const CloserStatCardInner = function CloserStatCard({
                     hero ? 'text-5xl sm:text-7xl md:text-8xl' : 'text-2xl sm:text-3xl',
                     styles.text,
                     hero &&
-                      'bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary'
+                      'bg-clip-text text-transparent bg-linear-to-br from-primary via-primary-glow to-primary'
                   )}
                   style={{
                     textShadow: `0 0 25px ${styles.glow}`,

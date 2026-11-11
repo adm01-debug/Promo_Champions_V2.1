@@ -5,7 +5,7 @@ export function QuoteCadenceEmptyState() {
     <div
       role="status"
       aria-label="Nenhum follow-up encontrado"
-      className="text-center py-16 border border-dashed border-border/50 rounded-xl bg-gradient-to-b from-muted/5 to-muted/15"
+      className="text-center py-16 border border-dashed border-border/50 rounded-xl bg-linear-to-b from-muted/5 to-muted/15"
     >
       <motion.svg
         width="120"

@@ -186,7 +186,7 @@ export function AsyncReplayQueueDialog({
                   .map(c => (
                     <li
                       key={c.index}
-                      className="text-[11px] text-destructive break-words"
+                      className="text-[11px] text-destructive wrap-break-word"
                     >
                       Lote {c.index + 1}: {c.error}
                     </li>

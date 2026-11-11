@@ -280,7 +280,7 @@ export const LeadScoreExplainCard = React.memo(
         {/* Summary Visualizer */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <div className="md:col-span-5">
-            <Card className="h-full glass border-white/5 bg-gradient-to-br from-card/80 to-card/40 flex flex-col items-center justify-center p-6 relative overflow-hidden group">
+            <Card className="h-full glass border-white/5 bg-linear-to-br from-card/80 to-card/40 flex flex-col items-center justify-center p-6 relative overflow-hidden group">
               <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               <div className="relative mb-4">
                 <Brain className="h-8 w-8 text-primary/20 absolute -top-4 -right-4 animate-pulse" />

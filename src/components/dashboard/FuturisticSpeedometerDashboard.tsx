@@ -301,7 +301,7 @@ export const FuturisticSpeedometerDashboard = () => {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="relative p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30">
+          <div className="relative p-2 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 border border-primary/30">
             <Gauge className="h-5 w-5 text-primary" />
           </div>
           <div>

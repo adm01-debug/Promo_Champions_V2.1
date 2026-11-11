@@ -65,13 +65,13 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
       className={cn(
         'p-3 rounded-lg border transition-all duration-200 space-y-2 hover-lift group',
         isSuccess
-          ? 'bg-gradient-to-br from-status-success/5 to-transparent border-status-success/20 shadow-sm'
+          ? 'bg-linear-to-br from-status-success/5 to-transparent border-status-success/20 shadow-sm'
           : 'bg-muted/30 hover:bg-muted/50 border-border/30 hover:border-border/50'
       )}
     >
       <div className="flex items-start gap-3">
         <div className="relative">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-accent/10 shadow-sm">
+          <div className="p-2 rounded-lg bg-linear-to-br from-primary/20 to-accent/10 shadow-sm">
             <Icon className="h-4 w-4 gradient-primary" />
           </div>
           {isVeryRecent && (
@@ -211,7 +211,7 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
         <div className="flex items-center gap-2 pl-11">
           <Avatar className="h-5 w-5 border border-border/40 shadow-sm">
             <AvatarImage src={salesperson.avatar_url || undefined} />
-            <AvatarFallback className="text-[8px] font-bold bg-gradient-to-br from-primary/20 to-accent/10">
+            <AvatarFallback className="text-[8px] font-bold bg-linear-to-br from-primary/20 to-accent/10">
               {salesperson.name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>

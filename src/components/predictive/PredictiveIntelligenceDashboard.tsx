@@ -92,7 +92,7 @@ export function PredictiveIntelligenceDashboard() {
 
       {/* AI INSIGHTS */}
       {data?.ai_insights && (
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+        <Card className="border-primary/20 bg-linear-to-br from-primary/5 via-transparent to-transparent">
           <CardHeader className="pb-3">
             <CardTitle className="text-section-title flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
@@ -109,7 +109,7 @@ export function PredictiveIntelligenceDashboard() {
                 <ul className="space-y-1.5">
                   {data.ai_insights.recommendations.map((r, i) => (
                     <li key={i} className="text-sm flex gap-2">
-                      <ChevronRight className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                      <ChevronRight className="h-4 w-4 text-success shrink-0 mt-0.5" />
                       <span>{r}</span>
                     </li>
                   ))}
@@ -122,7 +122,7 @@ export function PredictiveIntelligenceDashboard() {
                 <ul className="space-y-1.5">
                   {data.ai_insights.risks.map((r, i) => (
                     <li key={i} className="text-sm flex gap-2">
-                      <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                      <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                       <span>{r}</span>
                     </li>
                   ))}
@@ -292,7 +292,7 @@ export function PredictiveIntelligenceDashboard() {
                           ))}
                         </div>
                       </div>
-                      <Badge variant="destructive" className="flex-shrink-0">
+                      <Badge variant="destructive" className="shrink-0">
                         {c.risk}%
                       </Badge>
                     </div>
@@ -337,7 +337,7 @@ export function PredictiveIntelligenceDashboard() {
                           </div>
                           <div className="flex items-center gap-2">
                             <Progress value={o.probability * 100} className="w-20 h-2" />
-                            <Badge variant="default" className="flex-shrink-0">
+                            <Badge variant="default" className="shrink-0">
                               {Math.round(o.probability * 100)}%
                             </Badge>
                           </div>

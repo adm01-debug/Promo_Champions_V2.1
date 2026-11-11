@@ -37,7 +37,7 @@ const RankNotificationsComponent: FC<RankNotificationsProps> = ({
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-destructive to-streak flex items-center justify-center">
+              <div className="h-8 w-8 rounded-lg bg-linear-to-br from-destructive to-streak flex items-center justify-center">
                 <Bell className="h-4 w-4 text-primary-foreground" />
               </div>
               Alertas de Ultrapassagem

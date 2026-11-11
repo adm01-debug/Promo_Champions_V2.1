@@ -67,7 +67,7 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
     <Card className="glass border-border/40">
       <CardHeader className="pb-3">
         <CardTitle className="text-section-title flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-gradient-to-br from-chart-3/20 to-chart-3/5">
+          <div className="p-1.5 rounded-md bg-linear-to-br from-chart-3/20 to-chart-3/5">
             <Server className="h-4 w-4 text-chart-3" />
           </div>
           Status do Sistema
@@ -89,13 +89,13 @@ export function AdminSystemStatus({ edgeStatus, queryMetrics }: AdminSystemStatu
                     className="flex items-center gap-2 p-2 rounded-md bg-muted/30"
                   >
                     {status === 'ok' && (
-                      <CheckCircle2 className="h-3.5 w-3.5 text-success flex-shrink-0" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
                     )}
                     {status === 'erro' && (
-                      <XCircle className="h-3.5 w-3.5 text-destructive flex-shrink-0" />
+                      <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
                     )}
                     {(status === 'pendente' || status === 'inativo') && (
-                      <Activity className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                      <Activity className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate">

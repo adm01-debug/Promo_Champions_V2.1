@@ -193,7 +193,7 @@ const ActivityListComponent = ({
         {showHeader && (
           <CardHeader className="pb-2">
             <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-              <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+              <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-accent/10">
                 <ClipboardList className="h-4 w-4 gradient-primary" />
               </div>
               Log de Atividades
@@ -218,7 +218,7 @@ const ActivityListComponent = ({
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+                <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-accent/10">
                   <ClipboardList className="h-4 w-4 gradient-primary" />
                 </div>
                 Log de Atividades

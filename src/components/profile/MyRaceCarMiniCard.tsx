@@ -41,7 +41,7 @@ export function MyRaceCarMiniCard({ salespersonId }: MyRaceCarMiniCardProps) {
   const progress = Math.round(Number(myEntry?.progress ?? 0) * 100);
 
   return (
-    <Card className="border-2 border-primary/30 bg-gradient-to-br from-card to-primary/5">
+    <Card className="border-2 border-primary/30 bg-linear-to-br from-card to-primary/5">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

@@ -39,7 +39,7 @@ export const CoachingMetricsTable = React.memo(function CoachingMetricsTable({
     <Card className="glass dark:border-glow card-elevated animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="text-section-title flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-secondary/30 to-secondary/10">
+          <div className="p-1.5 rounded-lg bg-linear-to-br from-secondary/30 to-secondary/10">
             <BarChart3 className="h-5 w-5 text-secondary" />
           </div>
           <span className="gradient-text">Comparativo de Métricas</span>
@@ -92,7 +92,7 @@ export const CoachingMetricsTable = React.memo(function CoachingMetricsTable({
                           <AvatarImage
                             src={coaching.salesperson.avatar_url || undefined}
                           />
-                          <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5 font-display">
+                          <AvatarFallback className="text-xs bg-linear-to-br from-primary/20 to-primary/5 font-display">
                             {coaching.salesperson.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>

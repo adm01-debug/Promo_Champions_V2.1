@@ -252,7 +252,7 @@ export function CustomizableDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10">
+          <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-accent/10">
             <LayoutGrid className="h-6 w-6 text-primary" />
           </div>
           <div>

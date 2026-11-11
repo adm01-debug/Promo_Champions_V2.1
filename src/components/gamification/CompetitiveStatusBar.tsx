@@ -27,7 +27,7 @@ export function CompetitiveStatusBar() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/30">
+            <div className="p-2.5 rounded-xl bg-linear-to-br from-muted to-muted/50 border border-border/30">
               <Users className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
@@ -82,7 +82,7 @@ export function CompetitiveStatusBar() {
     <div
       className={cn(
         'rounded-xl p-4 transition-all border backdrop-blur-sm',
-        'bg-gradient-to-r from-card via-card to-primary/[0.03]',
+        'bg-linear-to-r from-card via-card to-primary/3',
         isTopThree
           ? 'border-primary/30 shadow-md shadow-primary/5'
           : 'border-border/40 shadow-sm'
@@ -90,12 +90,12 @@ export function CompetitiveStatusBar() {
     >
       <div className="flex items-center gap-4 flex-wrap">
         {/* === RANK POSITION (Primary - visually prominent) === */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           <div
             className={`p-2.5 rounded-xl shadow-lg ${
               myRanking.color
-                ? `bg-gradient-to-br ${myRanking.color}`
-                : 'bg-gradient-to-br from-muted to-muted/50'
+                ? `bg-linear-to-br ${myRanking.color}`
+                : 'bg-linear-to-br from-muted to-muted/50'
             }`}
           >
             <RankIcon
@@ -106,13 +106,13 @@ export function CompetitiveStatusBar() {
             <div className="flex items-center gap-2">
               <span
                 className={cn(
-                  'inline-flex items-center justify-center font-display font-black text-lg min-w-[2.5rem] h-9 rounded-xl border-2 shadow-sm',
+                  'inline-flex items-center justify-center font-display font-black text-lg min-w-10 h-9 rounded-xl border-2 shadow-sm',
                   myRanking.rank === 1 &&
-                    'bg-gradient-to-br from-coins to-rank-gold text-rank-gold-foreground border-rank-gold/60',
+                    'bg-linear-to-br from-coins to-rank-gold text-rank-gold-foreground border-rank-gold/60',
                   myRanking.rank === 2 &&
-                    'bg-gradient-to-br from-rank-silver to-muted text-rank-silver-foreground border-rank-silver/60',
+                    'bg-linear-to-br from-rank-silver to-muted text-rank-silver-foreground border-rank-silver/60',
                   myRanking.rank === 3 &&
-                    'bg-gradient-to-br from-streak to-rank-gold text-streak-foreground border-streak/60',
+                    'bg-linear-to-br from-streak to-rank-gold text-streak-foreground border-streak/60',
                   myRanking.rank > 3 && 'bg-muted text-foreground border-border/50'
                 )}
               >
@@ -121,7 +121,7 @@ export function CompetitiveStatusBar() {
               {myRanking.title && (
                 <Badge
                   variant="outline"
-                  className={`bg-gradient-to-r ${myRanking.color} text-primary-foreground border-0 shadow-sm`}
+                  className={`bg-linear-to-r ${myRanking.color} text-primary-foreground border-0 shadow-sm`}
                 >
                   {myRanking.title}
                 </Badge>

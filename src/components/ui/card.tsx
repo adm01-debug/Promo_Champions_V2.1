@@ -15,14 +15,14 @@ const cardVariants = cva(
         floating:
           'bg-card border-border/30 shadow-lg hover:shadow-xl hover:-translate-y-1 hover:border-primary/25',
         glass: 'glass glass-hover backdrop-blur-md',
-        depth: 'card-depth bg-gradient-to-b from-card to-card/95',
+        depth: 'card-depth bg-linear-to-b from-card to-card/95',
         interactive:
           'bg-card border-border/40 shadow-sm hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 cursor-pointer',
         ghost: 'bg-transparent border-transparent shadow-none',
         modern: 'card-modern bg-card border-border/40',
         glow: 'bg-card border-border/40 shadow-sm hover:shadow-glow-primary hover:border-primary/40',
         gradient:
-          'bg-gradient-to-br from-card via-card to-muted/20 border-border/40 shadow-sm hover:shadow-md',
+          'bg-linear-to-br from-card via-card to-muted/20 border-border/40 shadow-sm hover:shadow-md',
         outlined: 'bg-transparent border-2 border-border hover:border-primary/50',
         success:
           'bg-card border-l-4 border-l-success border-border/40 shadow-sm hover:shadow-glow-success',

@@ -143,7 +143,7 @@ export function PredictiveSuccessMap() {
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 space-y-3">
+        <div className="p-4 rounded-xl bg-linear-to-br from-primary/10 to-transparent border border-primary/10 space-y-3">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-primary">

@@ -171,7 +171,7 @@ export const DealRow = React.memo(function DealRow({
             </Button>
           </div>
           {aiAnalysis && (
-            <div className="mt-3 p-3 rounded-lg bg-gradient-to-r from-primary/15 to-accent/10 border border-primary/30 space-y-2 shadow-inner animate-fade-in">
+            <div className="mt-3 p-3 rounded-lg bg-linear-to-r from-primary/15 to-accent/10 border border-primary/30 space-y-2 shadow-inner animate-fade-in">
               <p className="text-sm">{aiAnalysis.analysis}</p>
               {aiAnalysis.recommendations?.length > 0 && (
                 <div className="mt-2">

@@ -25,7 +25,7 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
       variant="glass"
       className="overflow-hidden border-accent/20 bg-accent/5 backdrop-blur-xl relative"
     >
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary animate-shimmer" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-primary via-accent to-primary animate-shimmer" />
       <CardHeader className="pb-2 text-center">
         <CardTitle className="text-section-title text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-3">
           <div className="p-2 rounded-xl bg-accent/20 border border-accent/30 shadow-glow-accent/20 animate-pulse">
@@ -39,7 +39,7 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
           {/* Duelist 1 - The Challenger/Leader */}
           <div className="flex-1 text-center space-y-4">
             <div className="relative inline-block group">
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-primary via-accent to-primary rounded-full blur-md opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="absolute -inset-1.5 bg-linear-to-r from-primary via-accent to-primary rounded-full blur-md opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
               <Avatar className="h-20 w-20 border-2 border-primary/50 relative shadow-glow-primary/20 transition-transform group-hover:scale-110">
                 <AvatarImage src={d1.avatar_url || undefined} />
                 <AvatarFallback className="bg-primary/20 text-primary font-black text-xl">
@@ -66,13 +66,13 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
               VS
             </div>
             <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full scale-150 animate-pulse" />
-            <div className="h-16 w-[1px] bg-gradient-to-b from-transparent via-primary/30 to-transparent" />
+            <div className="h-16 w-px bg-linear-to-b from-transparent via-primary/30 to-transparent" />
           </div>
 
           {/* Duelist 2 - The Defender */}
           <div className="flex-1 text-center space-y-4">
             <div className="relative inline-block group">
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-accent via-primary to-accent rounded-full blur-md opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="absolute -inset-1.5 bg-linear-to-r from-accent via-primary to-accent rounded-full blur-md opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
               <Avatar className="h-20 w-20 border-2 border-accent/50 relative shadow-glow-accent/20 transition-transform group-hover:scale-110">
                 <AvatarImage src={d2.avatar_url || undefined} />
                 <AvatarFallback className="bg-accent/20 text-accent font-black text-xl">
@@ -109,7 +109,7 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
           </div>
           <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden flex shadow-inner border border-white/5">
             <div
-              className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-1000 ease-out relative"
+              className="h-full bg-linear-to-r from-primary to-primary/80 transition-all duration-1000 ease-out relative"
               style={{
                 width: `${(d1.progress.overall / (d1.progress.overall + d2.progress.overall)) * 100}%`,
               }}
@@ -117,7 +117,7 @@ export const ActivityVersusDuel: React.FC<ActivityVersusDuelProps> = ({ data }) 
               <div className="absolute inset-0 bg-white/20 animate-pulse" />
             </div>
             <div
-              className="h-full bg-gradient-to-l from-accent to-accent/80 transition-all duration-1000 ease-out relative"
+              className="h-full bg-linear-to-l from-accent to-accent/80 transition-all duration-1000 ease-out relative"
               style={{
                 width: `${(d2.progress.overall / (d1.progress.overall + d2.progress.overall)) * 100}%`,
               }}

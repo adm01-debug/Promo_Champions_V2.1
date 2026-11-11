@@ -116,7 +116,7 @@ export function RaceOnboardingChecklist({ items, onDismiss }: Props) {
                     >
                       <span
                         className={cn(
-                          'w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0',
+                          'w-4 h-4 rounded-full border flex items-center justify-center shrink-0',
                           item.done
                             ? 'bg-success border-success text-success-foreground'
                             : 'border-muted-foreground/40'

@@ -86,7 +86,7 @@ export const PlaybookEmptyState = memo(function PlaybookEmptyState({
     <Card className="glass border-border/40 overflow-hidden">
       <CardContent className="p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
+          <div className="p-3 rounded-xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20">
             <Sparkles className="h-5 w-5 text-primary-foreground" aria-hidden="true" />
           </div>
           <div className="flex-1">

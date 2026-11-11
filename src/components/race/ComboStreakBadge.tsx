@@ -23,7 +23,7 @@ function getTier(days: number): Tier | null {
   if (days >= 14) {
     return {
       Icon: Crown,
-      bg: 'bg-gradient-to-br from-destructive via-warning to-primary',
+      bg: 'bg-linear-to-br from-destructive via-warning to-primary',
       ring: 'ring-2 ring-warning/60 shadow-[0_0_18px_-2px_hsl(var(--warning)/0.7)]',
       iconClass: 'text-warning-foreground drop-shadow',
       label: 'LENDÁRIO',
@@ -32,7 +32,7 @@ function getTier(days: number): Tier | null {
   if (days >= 7) {
     return {
       Icon: Zap,
-      bg: 'bg-gradient-to-br from-warning to-destructive',
+      bg: 'bg-linear-to-br from-warning to-destructive',
       ring: 'ring-1 ring-destructive/40 shadow-[0_0_12px_-3px_hsl(var(--destructive)/0.6)]',
       iconClass: 'text-warning-foreground',
       label: 'EM CHAMAS',
@@ -41,7 +41,7 @@ function getTier(days: number): Tier | null {
   if (days >= 3) {
     return {
       Icon: Flame,
-      bg: 'bg-gradient-to-br from-warning/90 to-warning',
+      bg: 'bg-linear-to-br from-warning/90 to-warning',
       ring: 'ring-1 ring-warning/40',
       iconClass: 'text-warning-foreground',
       label: 'AQUECENDO',
@@ -121,7 +121,7 @@ export function ComboStreakBadge({
       {isLegendary && !reduceMotion && (
         <motion.span
           aria-hidden
-          className="absolute inset-y-0 -inset-x-1 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+          className="absolute inset-y-0 -inset-x-1 bg-linear-to-r from-transparent via-white/40 to-transparent"
           initial={{ x: '-120%' }}
           animate={{ x: '120%' }}
           transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}

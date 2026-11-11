@@ -49,7 +49,7 @@ export function StreakMilestoneOverlay({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/80 backdrop-blur-md"
+          className="fixed inset-0 z-9999 flex items-center justify-center bg-background/80 backdrop-blur-md"
           onClick={onComplete}
         >
           {/* Animated fire particles background */}
@@ -84,14 +84,14 @@ export function StreakMilestoneOverlay({
             transition={{ type: 'spring', duration: 0.7, bounce: 0.5 }}
             className="relative"
           >
-            <div className="absolute inset-0 -m-16 rounded-full bg-gradient-to-t from-destructive via-streak to-coins opacity-40 blur-3xl animate-pulse" />
-            <div className="absolute inset-0 -m-8 rounded-full bg-gradient-to-t from-streak via-rank-gold to-coins opacity-30 blur-2xl" />
+            <div className="absolute inset-0 -m-16 rounded-full bg-linear-to-t from-destructive via-streak to-coins opacity-40 blur-3xl animate-pulse" />
+            <div className="absolute inset-0 -m-8 rounded-full bg-linear-to-t from-streak via-rank-gold to-coins opacity-30 blur-2xl" />
 
             <div
               className={cn(
                 'relative glass-card p-10 rounded-3xl text-center',
                 'border-2 border-streak/50 shadow-2xl',
-                'min-w-[320px] bg-gradient-to-b from-background/95 to-background/80'
+                'min-w-[320px] bg-linear-to-b from-background/95 to-background/80'
               )}
             >
               <motion.div
@@ -137,7 +137,7 @@ export function StreakMilestoneOverlay({
                       transition={{ delay: 0.2 }}
                       className="mb-3"
                     >
-                      <span className="text-2xl font-display font-bold bg-gradient-to-r from-streak via-amber-500 to-coins bg-clip-text text-transparent uppercase tracking-wider">
+                      <span className="text-2xl font-display font-bold bg-linear-to-r from-streak via-amber-500 to-coins bg-clip-text text-transparent uppercase tracking-wider">
                         {milestoneTitle}
                       </span>
                     </motion.div>
@@ -148,7 +148,7 @@ export function StreakMilestoneOverlay({
                       transition={{ delay: 0.4, type: 'spring', bounce: 0.6 }}
                       className="relative mb-2"
                     >
-                      <span className="text-6xl font-display font-bold bg-gradient-to-b from-streak to-destructive bg-clip-text text-transparent">
+                      <span className="text-6xl font-display font-bold bg-linear-to-b from-streak to-destructive bg-clip-text text-transparent">
                         {streakDays}
                       </span>
                       <span className="text-2xl font-bold text-streak ml-2">dias</span>
@@ -159,7 +159,7 @@ export function StreakMilestoneOverlay({
                         initial={{ scale: 0, y: 20 }}
                         animate={{ scale: 1, y: 0 }}
                         transition={{ delay: 0.6, type: 'spring' }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-rank-gold/20 to-streak/20 border border-rank-gold/30 mb-3"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-linear-to-r from-rank-gold/20 to-streak/20 border border-rank-gold/30 mb-3"
                       >
                         <Zap className="h-5 w-5 text-rank-gold" />
                         <span className="text-lg font-bold text-rank-gold">

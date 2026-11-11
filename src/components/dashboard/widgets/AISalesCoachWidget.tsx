@@ -10,7 +10,7 @@ export function AISalesCoachWidget() {
   const { data: nbaData, isLoading } = useNextBestActionQuery(salesperson?.id);
 
   return (
-    <Card className="h-full border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5 backdrop-blur-sm group overflow-hidden relative">
+    <Card className="h-full border-primary/20 bg-linear-to-br from-primary/5 via-background to-accent/5 backdrop-blur-sm group overflow-hidden relative">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
         <BrainCircuit className="h-16 w-16 text-primary" />
       </div>

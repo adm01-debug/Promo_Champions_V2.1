@@ -126,7 +126,7 @@ function NotificationItem({
     >
       <div
         className={cn(
-          'flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center',
+          'shrink-0 h-9 w-9 rounded-full flex items-center justify-center',
           isUnread ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
         )}
       >
@@ -143,7 +143,7 @@ function NotificationItem({
             {n.title}
           </p>
           {isUnread && (
-            <span className="flex-shrink-0 h-2 w-2 rounded-full bg-primary mt-1.5" />
+            <span className="shrink-0 h-2 w-2 rounded-full bg-primary mt-1.5" />
           )}
         </div>
         {n.message && (

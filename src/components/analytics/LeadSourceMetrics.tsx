@@ -28,7 +28,7 @@ export function LeadSourceMetrics() {
       <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
         <CardHeader>
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 shadow-lg">
               <Target className="h-4 w-4 text-primary animate-pulse" />
             </div>
             <span className="gradient-text">Análise por Fonte</span>
@@ -54,7 +54,7 @@ export function LeadSourceMetrics() {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
               <Target className="h-4 w-4 text-primary" />
             </div>
             <span className="gradient-text">Análise por Fonte de Lead</span>
@@ -208,7 +208,7 @@ export function LeadSourceMetrics() {
 
             {(!data?.sources || data.sources.length === 0) && (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
-                <div className="p-4 rounded-full bg-gradient-to-br from-muted/30 to-muted/10 mb-3 shadow-lg">
+                <div className="p-4 rounded-full bg-linear-to-br from-muted/30 to-muted/10 mb-3 shadow-lg">
                   <Zap className="h-10 w-10 opacity-50 animate-pulse" />
                 </div>
                 <p className="text-sm font-display font-medium gradient-text">

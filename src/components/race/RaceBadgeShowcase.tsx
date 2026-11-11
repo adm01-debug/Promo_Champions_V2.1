@@ -22,7 +22,7 @@ export function RaceBadgeShowcase() {
                 key={b.code}
                 className={`relative rounded-xl border p-3 text-center transition-all ${
                   earned
-                    ? 'bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/40 dark:to-amber-800/40 border-amber-400 shadow-md'
+                    ? 'bg-linear-to-br from-amber-100 to-amber-200 dark:from-amber-900/40 dark:to-amber-800/40 border-amber-400 shadow-md'
                     : 'bg-muted/30 border-border opacity-60'
                 }`}
               >

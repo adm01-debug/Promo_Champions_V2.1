@@ -44,7 +44,7 @@ export function DailyMissionsPanel() {
   return (
     <motion.div variants={itemVariants}>
       <Card className="glass dark:border-glow card-elevated overflow-hidden group">
-        <div className="bg-gradient-to-r from-primary/10 via-accent/5 to-transparent border-b border-border/30">
+        <div className="bg-linear-to-r from-primary/10 via-accent/5 to-transparent border-b border-border/30">
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-section-title text-sm flex items-center gap-2">

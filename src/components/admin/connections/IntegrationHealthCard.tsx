@@ -275,7 +275,7 @@ export function IntegrationHealthCard({
                       </span>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-md">
-                      <p className="text-xs whitespace-pre-wrap break-words">
+                      <p className="text-xs whitespace-pre-wrap wrap-break-word">
                         {last.error}
                       </p>
                     </TooltipContent>

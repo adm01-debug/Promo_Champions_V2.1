@@ -53,7 +53,7 @@ export function CapacityDashboard() {
                 <div key={sp.id} className="rounded-lg border bg-card/50 p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                         <Users className="h-3.5 w-3.5 text-primary" />
                       </div>
                       <span className="text-sm font-medium truncate">{sp.name}</span>

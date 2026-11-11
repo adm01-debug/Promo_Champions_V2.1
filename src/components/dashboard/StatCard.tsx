@@ -51,11 +51,11 @@ export const StatCard = React.memo(
       () => ({
         default: 'bg-black/40 border-white/5 backdrop-blur-md hover:border-white/20',
         primary:
-          'bg-gradient-to-br from-primary/20 via-primary/5 to-transparent border-primary/30 shadow-[0_0_20px_rgba(14,165,233,0.05)] hover:border-primary/50',
+          'bg-linear-to-br from-primary/20 via-primary/5 to-transparent border-primary/30 shadow-[0_0_20px_rgba(14,165,233,0.05)] hover:border-primary/50',
         success:
-          'bg-gradient-to-br from-success/20 via-success/5 to-transparent border-success/30 shadow-[0_0_20px_rgba(34,197,94,0.05)] hover:border-success/50',
+          'bg-linear-to-br from-success/20 via-success/5 to-transparent border-success/30 shadow-[0_0_20px_rgba(34,197,94,0.05)] hover:border-success/50',
         warning:
-          'bg-gradient-to-br from-warning/20 via-warning/5 to-transparent border-warning/30 shadow-[0_0_20px_rgba(234,179,8,0.05)] hover:border-warning/50',
+          'bg-linear-to-br from-warning/20 via-warning/5 to-transparent border-warning/30 shadow-[0_0_20px_rgba(234,179,8,0.05)] hover:border-warning/50',
       }),
       []
     );
@@ -125,7 +125,7 @@ export const StatCard = React.memo(
               </div>
               {/* Scanning line for Hero */}
               <motion.div
-                className="absolute left-0 w-full h-[1px] bg-primary/20 z-0 pointer-events-none"
+                className="absolute left-0 w-full h-px bg-primary/20 z-0 pointer-events-none"
                 animate={{ top: ['0%', '100%', '0%'] }}
                 transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
               />
@@ -149,7 +149,7 @@ export const StatCard = React.memo(
 
           {/* Ambient Glow for Hero */}
           {hero && (
-            <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/10 blur-[60px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[60px] rounded-full pointer-events-none" />
           )}
 
           <CardContent className={cn('relative z-10 p-4 sm:p-5', hero && 'sm:p-7')}>
@@ -172,7 +172,7 @@ export const StatCard = React.memo(
                   className={cn(
                     'text-lg sm:text-2xl font-black tabular-nums font-display tracking-tighter truncate',
                     hero &&
-                      'text-2xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-black text-primary bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-2 sm:py-4 lg:py-6 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500 truncate',
+                      'text-2xl sm:text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-black text-primary bg-clip-text text-transparent bg-linear-to-br from-primary via-primary-glow to-primary selection:bg-primary/30 py-2 sm:py-4 lg:py-6 drop-shadow-[0_0_80px_rgba(14,165,233,0.6)] animate-pulse-gentle transition-all duration-500 truncate',
                     !hero && variant === 'primary' && 'text-primary',
                     !hero && variant === 'success' && 'text-success',
                     !hero && variant === 'warning' && 'text-warning'
@@ -300,7 +300,7 @@ export const StatCard = React.memo(
 
           {/* Decorative Grid Scanline */}
           {theme === 'cyber' && (
-            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
+            <div className="absolute bottom-0 left-0 w-full h-px bg-linear-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
           )}
         </Card>
       </motion.div>

@@ -111,7 +111,7 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
       {/* Profile Card */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <Card className="border-none shadow-xl overflow-hidden">
-          <div className={cn('bg-gradient-to-r p-6', leagueStyle.color)}>
+          <div className={cn('bg-linear-to-r p-6', leagueStyle.color)}>
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16 ring-3 ring-primary-foreground/30">
                 <AvatarImage src={profile.avatar_url || undefined} />

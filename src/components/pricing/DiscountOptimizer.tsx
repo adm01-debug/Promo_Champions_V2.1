@@ -71,7 +71,7 @@ export const DiscountOptimizer = ({
   }
 
   return (
-    <Card className="glass border-primary/30 bg-gradient-to-br from-slate-950 to-slate-900 shadow-2xl relative overflow-hidden group">
+    <Card className="glass border-primary/30 bg-linear-to-br from-slate-950 to-slate-900 shadow-2xl relative overflow-hidden group">
       {/* Animated Glow */}
       <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/20 blur-[100px] rounded-full group-hover:bg-primary/30 transition-all duration-700" />
       <div className="absolute -left-20 -bottom-20 w-64 h-64 bg-info/10 blur-[100px] rounded-full" />

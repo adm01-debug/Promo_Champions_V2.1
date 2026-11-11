@@ -214,7 +214,7 @@ export const CohortHeatmap = memo(
           {!isLoading && rows && rows.length > 0 && (
             <div className="flex items-center justify-end gap-2 pt-1">
               <span className="text-[10px] text-muted-foreground">Menos retido</span>
-              <div className="h-2 w-32 rounded-full bg-gradient-to-r from-muted via-primary/40 to-primary" />
+              <div className="h-2 w-32 rounded-full bg-linear-to-r from-muted via-primary/40 to-primary" />
               <span className="text-[10px] text-muted-foreground">Mais retido</span>
             </div>
           )}

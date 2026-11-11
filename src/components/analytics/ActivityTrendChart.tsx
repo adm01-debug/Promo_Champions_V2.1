@@ -66,7 +66,7 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
               <TrendingUp className="h-4 w-4 text-primary" />
             </div>
             <span className="gradient-text">Tendência de Atividades (30 dias)</span>
@@ -123,7 +123,7 @@ export function ActivityTrendChart({ data }: ActivityTrendChartProps) {
         <div className="h-[220px] animate-fade-in" style={{ animationDelay: '100ms' }}>
           {data.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground glass rounded-xl border border-dashed border-border/50">
-              <div className="p-4 rounded-full bg-gradient-to-br from-muted/30 to-muted/10 mb-3 shadow-lg">
+              <div className="p-4 rounded-full bg-linear-to-br from-muted/30 to-muted/10 mb-3 shadow-lg">
                 <Activity className="h-10 w-10 opacity-50 animate-pulse" />
               </div>
               <p className="text-sm font-display font-medium gradient-text">

@@ -75,7 +75,7 @@ export function LeaderTakeoverCelebration({ takeover, onClear, onPlaySound }: Pr
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center pointer-events-none"
+      className="fixed inset-0 z-70 flex items-center justify-center pointer-events-none"
       aria-live="assertive"
       aria-atomic="true"
     >

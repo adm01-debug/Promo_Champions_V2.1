@@ -140,7 +140,7 @@ export const SDRSequenceOrchestrator = () => {
         </CardContent>
       </Card>
 
-      <Card className="glass border-primary/10 bg-gradient-to-br from-primary/5 to-transparent">
+      <Card className="glass border-primary/10 bg-linear-to-br from-primary/5 to-transparent">
         <CardHeader>
           <CardTitle className="text-section-title text-sm flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />

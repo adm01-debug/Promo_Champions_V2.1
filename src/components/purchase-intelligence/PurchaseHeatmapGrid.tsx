@@ -232,7 +232,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
 
           <div className="flex-1 flex items-center justify-end gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             Frio
-            <div className="h-2 w-32 rounded-full bg-gradient-to-r from-muted to-primary" />
+            <div className="h-2 w-32 rounded-full bg-linear-to-r from-muted to-primary" />
             Quente
           </div>
         </div>
@@ -252,7 +252,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
                       key={m}
                       className="text-[10px] font-bold text-muted-foreground pb-8 min-w-[50px] relative"
                     >
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 rotate-[-45deg] origin-bottom-left whitespace-nowrap mb-2">
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 -rotate-45 origin-bottom-left whitespace-nowrap mb-2">
                         {monthLabelFromIso(m)}
                       </div>
                     </th>
@@ -283,7 +283,7 @@ export function PurchaseHeatmapGrid({ clientId, months = 24 }: Props) {
                       const borderClass = cell?.hasMine
                         ? 'border-[2.5px] border-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.2)]'
                         : cell?.hasOthers
-                          ? 'border-[2px] border-dashed border-orange-500/60'
+                          ? 'border-2 border-dashed border-orange-500/60'
                           : 'border border-border/20';
 
                       return (

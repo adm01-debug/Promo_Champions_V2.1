@@ -193,7 +193,7 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
       <Card className="glass border-border/40">
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-primary" />
             </div>
             Evolução de Conversão SDR
@@ -213,7 +213,7 @@ export function SDRConversionEvolution({ period }: SDRConversionEvolutionProps) 
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <div className="flex items-center gap-4">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-primary" />
             </div>
             Evolução de Conversão SDR
