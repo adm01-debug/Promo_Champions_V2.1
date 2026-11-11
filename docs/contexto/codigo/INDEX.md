@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b315faa3ec2c1ff314cef8b477cc4a4b381ea67d` (2026-11-10T16:48:50-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `22662d40f8f5c450333327aeb53b807cb966689c` (2026-11-11T09:32:50-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -574,7 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20104 nós · 63876 arestas · 1472 comunidades · grafo do commit `b315faa3`
+- 20104 nós · 63876 arestas · 1472 comunidades · grafo do commit `22662d40`
 - comunidades maiores: Badge (283), Índice (277), client.ts (261), react (258), lucide-react (251), PageTransition (247), getCorsHeaders (241), SelectContent (226), card.tsx (202), isAuthorizedCronRequest (187), date-fns (185), formatBRL (179)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)
 
 ## Últimos commits
+- 2026-11-11 `22662d4` chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)
 - 2026-11-10 `b315faa` chore: exclui testes unitários do escopo do CodeQL (#419)
 - 2026-11-10 `5bccdda` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#418)
 - 2026-11-10 `31f6e2b` fix: corrigir timeout da seção grants no snapshot do banco (#417)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-09 `adf0414` chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)
 - 2026-11-09 `4424fde` chore(deps): bump supabase/setup-cli (#400)
 - 2026-11-09 `407c311` chore(deps): bump actions/download-artifact (#399)
-- 2026-11-08 `042d3e7` fix: corrige restore incondicional no hook de grafo e typo no count de workflows
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

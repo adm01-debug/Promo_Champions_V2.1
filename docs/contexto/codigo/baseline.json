@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b315faa3ec2c1ff314cef8b477cc4a4b381ea67d",
+  "commit": "22662d40f8f5c450333327aeb53b807cb966689c",
   "branch": "main",
-  "data_commit": "2026-11-10T16:48:50-03:00",
+  "data_commit": "2026-11-11T09:32:50-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "22662d4",
+    "data": "2026-11-11",
+    "assunto": "chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)"
+   },
    {
     "sha": "b315faa",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "9bbfbd2",
     "data": "2026-11-07",
     "assunto": "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)"
-   },
-   {
-    "sha": "f3802bb",
-    "data": "2026-11-07",
-    "assunto": "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)"
    }
   ],
   "arquivos_mudados_7d": 113,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 39
+    "commits": 38
    },
    {
     "autor": "dependabot[bot]",

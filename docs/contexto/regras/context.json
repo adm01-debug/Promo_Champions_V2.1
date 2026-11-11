@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b315faa3ec2c1ff314cef8b477cc4a4b381ea67d",
+  "sha": "22662d40f8f5c450333327aeb53b807cb966689c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-10 19:49 UTC",
+  "generated_at": "2026-11-11 12:40 UTC",
   "files_total": 3468,
   "code_files": 3139,
   "code_lines": 456685
@@ -244312,10 +244312,19 @@
   }
  },
  "git": {
-  "sha": "b315faa3ec2c1ff314cef8b477cc4a4b381ea67d",
+  "sha": "22662d40f8f5c450333327aeb53b807cb966689c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "22662d4",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
    {
     "sha": "b315faa",
     "date": "2026-11-10",
@@ -244653,21 +244662,12 @@
     "files": [
      ".github/workflows/pr-checks.yml"
     ]
-   },
-   {
-    "sha": "13d4b86",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "fix: corrige typo LEDGER_TOLERA8CIA -> LEDGER_TOLERANCIA em conferirOrigem (#379)",
-    "files": [
-     "scripts/inventario/gerar-banco.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/inventario/gerar-banco.mjs",
-    6
+    5
    ],
    [
     ".github/workflows/codeql.yml",
@@ -244688,6 +244688,10 @@
    [
     "inventario/estado/edges.json",
     3
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    2
    ],
    [
     ".gitignore",
@@ -244739,10 +244743,6 @@
    ],
    [
     ".github/workflows/automation-local.yml",
-    1
-   ],
-   [
-    "docs/AUTOMACAO_LOCAL.md",
     1
    ]
   ]
