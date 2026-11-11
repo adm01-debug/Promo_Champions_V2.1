@@ -68,7 +68,7 @@ export const QuestionMixDonut = ({ analysis }: Props) => {
           ))}
         </Pie>
         <Tooltip
-                    content={({ active, payload }) => {
+          content={({ active, payload }) => {
             if (!active || !payload?.length) return null;
             const p = payload[0];
             return (

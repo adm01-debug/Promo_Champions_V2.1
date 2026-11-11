@@ -221,9 +221,7 @@ export function PurchaseIntelligenceHub() {
                               border: '1px solid hsl(var(--border))',
                               borderRadius: '8px',
                             }}
-                            formatter={(value) => [
-                              `${formatBRL(Number(value))}`,
-                            ]}
+                            formatter={value => [`${formatBRL(Number(value))}`]}
                           />
                           <Bar
                             dataKey="gastado"

@@ -132,7 +132,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
                   <Tooltip
                     contentStyle={{ ...tooltipStyle, boxShadow: 'var(--shadow-lg)' }}
-                    formatter={(value) => [formatCurrency(Number(value)), 'Vendas']}
+                    formatter={value => [formatCurrency(Number(value)), 'Vendas']}
                   />
                   <Area
                     type="monotone"
@@ -181,7 +181,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value) => [formatCurrency(Number(value))]}
+                      formatter={value => [formatCurrency(Number(value))]}
                       contentStyle={tooltipStyle}
                     />
                   </PieChart>

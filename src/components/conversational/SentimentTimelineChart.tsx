@@ -71,9 +71,7 @@ export const SentimentTimelineChart = ({
   const shifts = useMemo(() => (timeline ? detectShifts(timeline) : []), [timeline]);
 
   const handleClick = (e: { activeLabel?: string | number | undefined }) => {
-    const seg = timeline?.find(
-      s => s.start_sec === Math.round(Number(e.activeLabel))
-    );
+    const seg = timeline?.find(s => s.start_sec === Math.round(Number(e.activeLabel)));
     if (seg) {
       if (onSeek) onSeek(seg.start_sec);
       const shift = shifts.find(s => Math.abs(s.start_sec - seg.start_sec) < 5);

@@ -61,7 +61,7 @@ export const TeamRankingWidget = React.memo(function TeamRankingWidget() {
                 tickLine={false}
               />
               <Tooltip
-                formatter={(v) => [`${formatBRL(Number(v))}`, 'Receita']}
+                formatter={v => [`${formatBRL(Number(v))}`, 'Receita']}
                 contentStyle={{
                   borderRadius: 8,
                   border: 'none',

@@ -109,10 +109,7 @@ export function ICPPerformanceChart() {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value) => [
-                  `${Number(value).toFixed(1)}%`,
-                  'Win Rate',
-                ]}
+                formatter={value => [`${Number(value).toFixed(1)}%`, 'Win Rate']}
               />
               <Bar dataKey="winRate" radius={[4, 4, 0, 0]} barSize={40}>
                 {stats?.map((entry, index) => (
@@ -144,7 +141,7 @@ export function ICPPerformanceChart() {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value) => [
+                formatter={value => [
                   formatBRL(Number(value), { decimals: 2 }),
                   'Ticket Médio',
                 ]}

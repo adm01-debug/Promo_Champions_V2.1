@@ -61,7 +61,7 @@ export function CronAlertBreakdownChart() {
                   borderRadius: 8,
                   fontSize: 12,
                 }}
-                labelFormatter={(label) => label}
+                labelFormatter={label => label}
                 formatter={(value, name) => [value, name]}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />

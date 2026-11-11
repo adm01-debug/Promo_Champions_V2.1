@@ -188,7 +188,7 @@ export function AchievementTrendChart() {
                     name === 'dailyGoals' ? 'Metas Batidas' : 'Marcos de Sequência';
                   return [value, label];
                 }}
-                labelFormatter={(label) => `Ciclo: ${label}`}
+                labelFormatter={label => `Ciclo: ${label}`}
               />
               <Legend
                 verticalAlign="top"

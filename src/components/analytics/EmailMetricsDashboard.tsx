@@ -364,7 +364,9 @@ export function EmailMetricsDashboard() {
                             borderColor: 'hsl(var(--border))',
                             borderRadius: '12px',
                           }}
-                          labelFormatter={name => FUNCTION_LABELS[String(name)] || String(name)}
+                          labelFormatter={name =>
+                            FUNCTION_LABELS[String(name)] || String(name)
+                          }
                         />
                         <Bar
                           dataKey="sent"

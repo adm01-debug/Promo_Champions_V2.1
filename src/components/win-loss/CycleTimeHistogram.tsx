@@ -83,9 +83,7 @@ export const CycleTimeHistogram = memo(function CycleTimeHistogram({
                 name="Won"
                 fill="hsl(var(--primary))"
                 radius={[4, 4, 0, 0]}
-                onClick={(d) =>
-                  onBinClick?.(String(d.payload?.label ?? ''), 'won')
-                }
+                onClick={d => onBinClick?.(String(d.payload?.label ?? ''), 'won')}
                 style={{ cursor: onBinClick ? 'pointer' : undefined }}
               />
               <Bar
@@ -93,9 +91,7 @@ export const CycleTimeHistogram = memo(function CycleTimeHistogram({
                 name="Lost"
                 fill="hsl(var(--destructive))"
                 radius={[4, 4, 0, 0]}
-                onClick={(d) =>
-                  onBinClick?.(String(d.payload?.label ?? ''), 'lost')
-                }
+                onClick={d => onBinClick?.(String(d.payload?.label ?? ''), 'lost')}
                 style={{ cursor: onBinClick ? 'pointer' : undefined }}
               />
             </BarChart>

@@ -245,7 +245,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
                     fontSize={11}
                   />
                   <Tooltip
-                    formatter={(value) => [
+                    formatter={value => [
                       `${Number(value).toFixed(2)} dias (${(Number(value) * 24).toFixed(0)}h)`,
                       'Tempo Médio',
                     ]}

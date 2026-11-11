@@ -83,10 +83,7 @@ export const PortfolioValueChart: FC<PortfolioValueChartProps> = ({
               tickFormatter={v => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip
-              formatter={(v) => [
-                `${formatBRL(Number(v))}`,
-                'Valor Total',
-              ]}
+              formatter={v => [`${formatBRL(Number(v))}`, 'Valor Total']}
               contentStyle={{
                 borderRadius: 8,
                 border: 'none',

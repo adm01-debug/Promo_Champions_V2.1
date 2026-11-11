@@ -227,10 +227,7 @@ export const LTVBySegment: FC<{
                     axisLine={false}
                   />
                   <Tooltip
-                    formatter={(value) => [
-                      `${formatBRL(Number(value))}`,
-                      'LTV Médio',
-                    ]}
+                    formatter={value => [`${formatBRL(Number(value))}`, 'LTV Médio']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',

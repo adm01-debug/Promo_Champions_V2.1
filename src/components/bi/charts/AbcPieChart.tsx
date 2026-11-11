@@ -28,7 +28,7 @@ const AbcPieChart = ({ data, formatCurrency }: AbcPieChartProps) => (
         ))}
       </Pie>
       <Tooltip
-        formatter={(value) => [formatCurrency(Number(value))]}
+        formatter={value => [formatCurrency(Number(value))]}
         contentStyle={{
           backgroundColor: 'hsl(var(--card))',
           border: '1px solid hsl(var(--border))',

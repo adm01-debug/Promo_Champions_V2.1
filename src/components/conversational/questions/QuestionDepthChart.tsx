@@ -44,7 +44,7 @@ export const QuestionDepthChart = ({ questions }: Props) => {
         <XAxis dataKey="label" tick={{ fontSize: 10 }} interval={0} />
         <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
         <Tooltip
-                    content={({ active, payload }) => {
+          content={({ active, payload }) => {
             if (!active || !payload?.length) return null;
             const p = payload[0];
             return (

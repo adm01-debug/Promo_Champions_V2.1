@@ -122,7 +122,7 @@ export const EmailSuppressionMetricsCard = React.memo(
                       fontSize: 12,
                       color: 'hsl(var(--popover-foreground))',
                     }}
-                    formatter={(value) => [`${value}`, 'Supressões']}
+                    formatter={value => [`${value}`, 'Supressões']}
                   />
                   <Area
                     type="monotone"
