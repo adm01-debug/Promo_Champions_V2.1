@@ -69,7 +69,7 @@ const BenchmarkingComponent: FC = () => {
         <div className="bg-white/5 backdrop-blur-xl relative z-10">
           <CardHeader className="pb-4 border-b border-white/5">
             <CardTitle className="text-section-title flex items-center gap-3 italic uppercase font-black tracking-tighter">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
+              <div className="h-10 w-10 rounded-xl bg-linear-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
                 <BarChart3 className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
@@ -130,7 +130,7 @@ const BenchmarkingComponent: FC = () => {
         <div className="space-y-6">
           {/* Avatars comparison */}
           <div className="flex items-center justify-between px-8 py-4 bg-white/5 rounded-3xl border border-white/5 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 opacity-50" />
+            <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-accent/5 opacity-50" />
             <div className="flex items-center gap-4 relative z-10">
               <div className="relative">
                 <Avatar className="h-20 w-20 border-4 border-background shadow-2xl">
@@ -160,7 +160,7 @@ const BenchmarkingComponent: FC = () => {
               <div className="text-4xl font-black italic tracking-tighter opacity-10">
                 VS
               </div>
-              <div className="h-px w-20 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <div className="h-px w-20 bg-linear-to-r from-transparent via-white/20 to-transparent" />
             </div>
 
             <div className="flex items-center gap-4 flex-row-reverse relative z-10">
@@ -240,7 +240,7 @@ const BenchmarkingComponent: FC = () => {
                               className={cn(
                                 'h-full rounded-full transition-all duration-1000 ease-out',
                                 aWins
-                                  ? 'bg-gradient-to-l from-emerald-500 to-emerald-300'
+                                  ? 'bg-linear-to-l from-emerald-500 to-emerald-300'
                                   : 'bg-white/10'
                               )}
                             />
@@ -255,7 +255,7 @@ const BenchmarkingComponent: FC = () => {
                               className={cn(
                                 'h-full rounded-full transition-all duration-1000 ease-out',
                                 bWins
-                                  ? 'bg-gradient-to-r from-emerald-500 to-emerald-300'
+                                  ? 'bg-linear-to-r from-emerald-500 to-emerald-300'
                                   : 'bg-white/10'
                               )}
                             />

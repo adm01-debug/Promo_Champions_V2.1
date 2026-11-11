@@ -51,7 +51,7 @@ export const SalespersonCard = React.memo(function SalespersonCard({
     <div
       className={`p-4 rounded-xl glass border border-border/40 dark:border-glow transition-all duration-300 animate-fade-in ${
         isTop
-          ? 'ring-1 ring-rank-gold/30 hover-glow-gold bg-gradient-to-br from-rank-gold/5 to-transparent'
+          ? 'ring-1 ring-rank-gold/30 hover-glow-gold bg-linear-to-br from-rank-gold/5 to-transparent'
           : isTopThree
             ? 'hover-glow'
             : 'hover-lift'
@@ -70,22 +70,22 @@ export const SalespersonCard = React.memo(function SalespersonCard({
             }`}
           >
             <AvatarImage src={person.avatar_url || ''} />
-            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-bold font-display">
+            <AvatarFallback className="bg-linear-to-br from-primary/20 to-primary/5 text-primary font-bold font-display">
               {person.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           {isTop && (
-            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg animate-pulse">
+            <div className="absolute -top-1 -right-1 bg-linear-to-br from-rank-gold to-rank-gold/80 rounded-full p-1 shadow-lg animate-pulse">
               <Crown className="h-3 w-3 text-background" />
             </div>
           )}
           {rank === 2 && (
-            <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full p-0.5 shadow">
+            <div className="absolute -bottom-1 -right-1 bg-linear-to-br from-gray-400 to-gray-500 rounded-full p-0.5 shadow">
               <span className="text-[8px] font-bold text-background">2º</span>
             </div>
           )}
           {rank === 3 && (
-            <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-rank-gold to-rank-gold/80 rounded-full p-0.5 shadow">
+            <div className="absolute -bottom-1 -right-1 bg-linear-to-br from-rank-gold to-rank-gold/80 rounded-full p-0.5 shadow">
               <span className="text-[8px] font-bold text-background">3º</span>
             </div>
           )}

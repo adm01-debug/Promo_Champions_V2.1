@@ -147,7 +147,7 @@ export default function QuoteCadencesPage() {
       >
         <header className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/20">
+            <div className="p-2.5 rounded-xl bg-linear-to-br from-primary/20 to-accent/10 border border-primary/20">
               <Send className="h-5 w-5 text-primary" />
             </div>
             <div>

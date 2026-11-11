@@ -146,7 +146,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
               </div>
               Revenue Battle
             </CardTitle>
-            <p className="text-[10px] font-mono font-bold text-muted-foreground tracking-[0.1em] uppercase">
+            <p className="text-[10px] font-mono font-bold text-muted-foreground tracking-widest uppercase">
               COMPARAÇÃO COMPETITIVA {periodLabel}
             </p>
           </div>
@@ -264,7 +264,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
               className={`p-3 rounded-xl transition-all group/item hover:scale-105 ${
                 index === 0
                   ? 'bg-primary/10 border border-primary/30 shadow-[0_0_20px_rgba(14,165,233,0.1)]'
-                  : 'bg-white/[0.03] border border-white/5'
+                  : 'bg-white/3 border border-white/5'
               }`}
             >
               <div className="flex items-center justify-between mb-1">

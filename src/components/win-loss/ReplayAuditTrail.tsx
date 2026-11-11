@@ -93,7 +93,9 @@ export function ReplayAuditTrail({ deadLetterId }: ReplayAuditTrailProps) {
               </span>
             </div>
             {e.error && (
-              <p className="mt-1 text-destructive break-words line-clamp-2">{e.error}</p>
+              <p className="mt-1 text-destructive wrap-break-word line-clamp-2">
+                {e.error}
+              </p>
             )}
             <p className="mt-0.5 text-muted-foreground">
               requestId: <code className="text-[10px]">{e.request_id}</code>

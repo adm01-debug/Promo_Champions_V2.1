@@ -205,7 +205,7 @@ export function EditCadenceDialog({
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto glass border-border/50 dark:border-glow">
         <DialogHeader>
           <DialogTitle className="text-section-title flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-accent/10">
               <Pencil className="h-4 w-4 text-primary" />
             </div>
             Editar Cadência

@@ -30,7 +30,7 @@ const getAchievementConfig = (type: string): AchievementConfig => {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Crown className="h-4 w-4" />,
         color:
-          'bg-gradient-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada',
+          'bg-linear-to-r from-rank-gold/30 to-rank-gold/20 text-rank-gold border-rank-gold/50 animate-tada',
       };
     }
     if (streakNum >= 15) {
@@ -38,7 +38,7 @@ const getAchievementConfig = (type: string): AchievementConfig => {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Star className="h-4 w-4" />,
         color:
-          'bg-gradient-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50',
+          'bg-linear-to-r from-status-purple/30 to-accent/30 text-accent border-accent/50',
       };
     }
     if (streakNum >= 7) {
@@ -46,7 +46,7 @@ const getAchievementConfig = (type: string): AchievementConfig => {
         label: `${streakNum} Dias Seguidos!`,
         icon: <Flame className="h-4 w-4" />,
         color:
-          'bg-gradient-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50',
+          'bg-linear-to-r from-status-warning/30 to-status-error/30 text-status-warning border-status-warning/50',
       };
     }
     if (streakNum >= 5) {

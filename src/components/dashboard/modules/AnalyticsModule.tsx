@@ -11,7 +11,7 @@ import { EngagementLeaderboardWidget } from '@/components/engagement/EngagementL
 export const AnalyticsModule = () => {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-2xl p-1 border border-primary/10">
+      <div className="bg-linear-to-r from-primary/5 to-transparent rounded-2xl p-1 border border-primary/10">
         <DashboardNLQWidget />
       </div>
 
@@ -44,7 +44,7 @@ export const AnalyticsModule = () => {
           <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-md">
             <ClientHealthPanel />
           </div>
-          <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-md bg-gradient-to-br from-card to-accent/5">
+          <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-md bg-linear-to-br from-card to-accent/5">
             <EngagementLeaderboardWidget limit={5} />
           </div>
         </div>

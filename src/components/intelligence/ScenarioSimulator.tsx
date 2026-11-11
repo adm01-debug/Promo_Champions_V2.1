@@ -86,7 +86,7 @@ export const ScenarioSimulator = () => {
 
   return (
     <Card className="border-primary/20 bg-black/40 backdrop-blur-xl overflow-hidden group shadow-2xl relative">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-primary/50 to-transparent" />
       <div className="absolute -right-24 -top-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px] pointer-events-none" />
 
       <CardHeader className="pb-2">
@@ -176,7 +176,7 @@ export const ScenarioSimulator = () => {
           </div>
         </div>
 
-        <div className="relative p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 mt-8 group/result overflow-hidden shadow-inner">
+        <div className="relative p-6 rounded-2xl bg-linear-to-br from-primary/10 to-transparent border border-primary/20 mt-8 group/result overflow-hidden shadow-inner">
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover/result:scale-125 transition-transform duration-700">
             <TrendingUp className="size-20" />
           </div>
@@ -301,7 +301,7 @@ export const ScenarioSimulator = () => {
             className="w-full h-12 text-[11px] font-black uppercase tracking-[0.2em] gap-3 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 relative overflow-hidden group/btn mt-2"
             onClick={() => handleSimulate()}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
             <Zap className="size-4 fill-current" />
             Run Advanced AI Simulation
           </Button>

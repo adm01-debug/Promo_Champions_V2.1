@@ -50,7 +50,7 @@ export function RaceEasterEggs({ showFireworks }: Props) {
         {rainbowActive && (
           <motion.div
             key="rainbow"
-            className="pointer-events-none absolute inset-0 z-[8] rounded-3xl"
+            className="pointer-events-none absolute inset-0 z-8 rounded-3xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.55 }}
             exit={{ opacity: 0 }}
@@ -73,7 +73,7 @@ export function RaceEasterEggs({ showFireworks }: Props) {
         {showFireworks && !reducedMotion && (
           <motion.svg
             key="fireworks-svg"
-            className="pointer-events-none absolute inset-0 z-[9]"
+            className="pointer-events-none absolute inset-0 z-9"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             initial={{ opacity: 0 }}

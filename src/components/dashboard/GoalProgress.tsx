@@ -146,7 +146,7 @@ export const GoalProgress = React.memo(function GoalProgress({
 
       {/* Scanline decoration */}
       <motion.div
-        className="absolute top-0 left-0 w-full h-[1px] bg-primary/20"
+        className="absolute top-0 left-0 w-full h-px bg-primary/20"
         animate={{ top: ['0%', '100%', '0%'] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
       />

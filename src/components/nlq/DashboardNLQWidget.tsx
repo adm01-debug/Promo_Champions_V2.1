@@ -13,7 +13,7 @@ export function DashboardNLQWidget() {
 
   return (
     <>
-      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      <Card className="border-primary/30 bg-linear-to-br from-primary/5 via-background to-accent/5">
         <CardContent className="p-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">

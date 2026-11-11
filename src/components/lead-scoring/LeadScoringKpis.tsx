@@ -17,7 +17,7 @@ export function LeadScoringKpis({
 }: LeadScoringKpisProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
+      <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md">
         <CardContent className="p-6 flex items-center gap-4">
           <div className="relative group">
             <ScoreRing score={avgScore} size={64} />
@@ -35,7 +35,7 @@ export function LeadScoringKpis({
             </div>
           </div>
         </CardContent>
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-transparent opacity-20" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-primary/50 to-transparent opacity-20" />
       </Card>
 
       {[
@@ -49,7 +49,7 @@ export function LeadScoringKpis({
           <Card
             key={cat}
             className={cn(
-              'relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-xl backdrop-blur-md transition-all hover:scale-[1.02]'
+              'relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-xl backdrop-blur-md transition-all hover:scale-[1.02]'
             )}
           >
             <CardContent className="p-6 flex items-center gap-5">

@@ -28,7 +28,7 @@ export function NextRaceActionCard({ salespersonId }: Props) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
         transition={{ duration: 0.35 }}
-        className="relative rounded-xl border-2 border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-3 shadow-lg backdrop-blur-sm"
+        className="relative rounded-xl border-2 border-primary/30 bg-linear-to-r from-primary/10 via-primary/5 to-transparent p-3 shadow-lg backdrop-blur-sm"
       >
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">

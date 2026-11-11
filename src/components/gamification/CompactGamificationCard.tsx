@@ -5,11 +5,11 @@ import { cn } from '@/lib/utils';
 const getRankBadgeColor = (rank: number) => {
   switch (rank) {
     case 1:
-      return 'bg-gradient-to-r from-rank-gold to-coins text-background shadow-glow-gold';
+      return 'bg-linear-to-r from-rank-gold to-coins text-background shadow-glow-gold';
     case 2:
-      return 'bg-gradient-to-r from-rank-silver to-gray-300 text-background';
+      return 'bg-linear-to-r from-rank-silver to-gray-300 text-background';
     case 3:
-      return 'bg-gradient-to-r from-rank-bronze to-streak text-background';
+      return 'bg-linear-to-r from-rank-bronze to-streak text-background';
     default:
       return 'bg-muted text-muted-foreground';
   }
@@ -55,7 +55,7 @@ export function CompactGamificationCard({
       {rank && (
         <div
           className={cn(
-            'flex items-center justify-center rounded-full w-7 h-7 flex-shrink-0',
+            'flex items-center justify-center rounded-full w-7 h-7 shrink-0',
             getRankBadgeColor(rank)
           )}
         >
@@ -73,8 +73,8 @@ export function CompactGamificationCard({
         </div>
       )}
 
-      <div className="relative flex-shrink-0">
-        <div className={cn('h-10 w-10 rounded-full p-0.5 bg-gradient-to-br', levelColor)}>
+      <div className="relative shrink-0">
+        <div className={cn('h-10 w-10 rounded-full p-0.5 bg-linear-to-br', levelColor)}>
           <div className="h-full w-full rounded-full overflow-hidden bg-background">
             {avatarUrl ? (
               <img
@@ -92,7 +92,7 @@ export function CompactGamificationCard({
         </div>
         <div
           className={cn(
-            'absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-[8px] font-bold text-primary-foreground bg-gradient-to-br shadow-sm border border-background',
+            'absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-[8px] font-bold text-primary-foreground bg-linear-to-br shadow-sm border border-background',
             levelColor
           )}
         >

@@ -27,7 +27,7 @@ export function RecentClosedDeals() {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-status-success/20 to-status-success/5 shadow-lg group-hover:scale-110 transition-transform">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-status-success/20 to-status-success/5 shadow-lg group-hover:scale-110 transition-transform">
               <CheckCircle className="h-4 w-4 text-status-success" />
             </div>
             <span className="gradient-text">Vendas Recentes</span>
@@ -47,7 +47,7 @@ export function RecentClosedDeals() {
           <div className="space-y-2">
             {deals?.length === 0 && (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
-                <div className="p-4 rounded-full bg-gradient-to-br from-status-success/10 to-status-success/5 mb-3 shadow-lg">
+                <div className="p-4 rounded-full bg-linear-to-br from-status-success/10 to-status-success/5 mb-3 shadow-lg">
                   <DollarSign className="h-10 w-10 text-status-success/50 animate-pulse" />
                 </div>
                 <p className="text-sm font-display font-medium gradient-text">
@@ -73,8 +73,8 @@ export function RecentClosedDeals() {
                   className={cn(
                     'p-2 rounded-lg shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg',
                     index === 0
-                      ? 'bg-gradient-to-br from-status-success to-status-success/70 shadow-status-success/30'
-                      : 'bg-gradient-to-br from-status-success/20 to-status-success/10 border border-status-success/30'
+                      ? 'bg-linear-to-br from-status-success to-status-success/70 shadow-status-success/30'
+                      : 'bg-linear-to-br from-status-success/20 to-status-success/10 border border-status-success/30'
                   )}
                 >
                   <DollarSign

@@ -37,11 +37,11 @@ export function SalespersonCoaching() {
   return (
     <div className="space-y-6">
       {/* Header with Selector */}
-      <Card className="glass dark:border-glow card-elevated animate-fade-in bg-gradient-to-br from-status-purple/10 via-transparent to-accent/5">
+      <Card className="glass dark:border-glow card-elevated animate-fade-in bg-linear-to-br from-status-purple/10 via-transparent to-accent/5">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-status-purple/30 to-status-purple/10 shadow-lg shadow-status-purple/10 group-hover:scale-110 transition-transform">
+              <div className="p-2.5 rounded-xl bg-linear-to-br from-status-purple/30 to-status-purple/10 shadow-lg shadow-status-purple/10 group-hover:scale-110 transition-transform">
                 <Brain className="h-6 w-6 text-status-purple" />
               </div>
               <div>
@@ -91,7 +91,7 @@ export function SalespersonCoaching() {
                       <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6 border border-border/50">
                           <AvatarImage src={sp.avatar_url || undefined} />
-                          <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5 font-display">
+                          <AvatarFallback className="text-xs bg-linear-to-br from-primary/20 to-primary/5 font-display">
                             {sp.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
@@ -119,7 +119,7 @@ export function SalespersonCoaching() {
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-status-purple/20 animate-ping" />
-                <div className="relative p-4 rounded-full bg-gradient-to-br from-status-purple/30 to-status-purple/10">
+                <div className="relative p-4 rounded-full bg-linear-to-br from-status-purple/30 to-status-purple/10">
                   <Loader2 className="h-10 w-10 animate-spin text-status-purple" />
                 </div>
                 <Sparkles className="h-5 w-5 text-status-warning absolute -top-1 -right-1 animate-pulse" />
@@ -163,7 +163,7 @@ export function SalespersonCoaching() {
           <CardContent className="py-12">
             <div className="flex flex-col items-center gap-4 text-center">
               <div className="relative">
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-status-purple/20 to-status-purple/5 animate-pulse">
+                <div className="p-5 rounded-2xl bg-linear-to-br from-status-purple/20 to-status-purple/5 animate-pulse">
                   <Brain className="h-10 w-10 text-status-purple" />
                 </div>
                 <Sparkles className="h-5 w-5 text-status-warning absolute -top-1 -right-1 animate-pulse" />

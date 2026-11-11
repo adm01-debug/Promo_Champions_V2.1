@@ -205,7 +205,7 @@ export function ObjectionsLibrary() {
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
+            <div className="p-2 rounded-xl bg-linear-to-br from-primary/30 to-primary/10 shadow-lg shadow-primary/10 group-hover:scale-110 transition-transform">
               <BookOpen className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text font-display">Biblioteca de Objeções</span>
@@ -487,7 +487,7 @@ export function ObjectionsLibrary() {
                       </Button>
                     </div>
                   </div>
-                  <div className="glass rounded-lg p-3 border border-status-success/30 bg-gradient-to-br from-status-success/10 to-transparent relative overflow-hidden group/response">
+                  <div className="glass rounded-lg p-3 border border-status-success/30 bg-linear-to-br from-status-success/10 to-transparent relative overflow-hidden group/response">
                     <div className="flex items-start gap-2 relative z-10">
                       <CheckCircle2 className="h-4 w-4 text-status-success mt-0.5 shrink-0" />
                       <p className="text-sm text-status-success whitespace-pre-wrap leading-relaxed font-medium">

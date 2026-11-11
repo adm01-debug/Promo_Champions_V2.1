@@ -187,7 +187,7 @@ const RankingCompetitivo = () => {
                         </p>
                       </div>
                       <div
-                        className={`h-12 w-12 rounded-full bg-gradient-to-br ${stat.bg} flex items-center justify-center`}
+                        className={`h-12 w-12 rounded-full bg-linear-to-br ${stat.bg} flex items-center justify-center`}
                       >
                         <stat.icon className={`h-6 w-6 ${stat.iconColor}`} />
                       </div>
@@ -266,7 +266,7 @@ const RankingCompetitivo = () => {
                             <p className="text-sm text-muted-foreground">{stat.sub}</p>
                           </div>
                           <div
-                            className={`h-12 w-12 rounded-full bg-gradient-to-br ${stat.bg} flex items-center justify-center`}
+                            className={`h-12 w-12 rounded-full bg-linear-to-br ${stat.bg} flex items-center justify-center`}
                           >
                             <stat.icon className={`h-6 w-6 ${stat.color}`} />
                           </div>
@@ -294,14 +294,14 @@ const RankingCompetitivo = () => {
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center gap-4">
-                          <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-background/50 flex items-center justify-center">
+                          <div className="shrink-0 w-10 h-10 rounded-xl bg-background/50 flex items-center justify-center">
                             <span className="text-lg font-bold text-muted-foreground">
                               #{index + 1}
                             </span>
                           </div>
                           <Avatar className="h-12 w-12 border-2 border-border/50">
                             <AvatarImage src={salesperson?.avatar_url || ''} />
-                            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20">
+                            <AvatarFallback className="bg-linear-to-br from-primary/20 to-secondary/20">
                               {(salesperson?.name || '?')
                                 .split(' ')
                                 .map(n => n[0])

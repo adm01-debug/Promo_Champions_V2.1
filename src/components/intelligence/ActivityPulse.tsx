@@ -48,7 +48,7 @@ export const ActivityPulse = () => {
         </p>
       )}
 
-      <div className="space-y-3 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-white/5">
+      <div className="space-y-3 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-px before:bg-white/5">
         {activities.map((act, i) => (
           <motion.div
             key={act.id}

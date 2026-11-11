@@ -43,12 +43,12 @@ export const CoachingCardGrid = React.memo(function CoachingCardGrid({
                   className={`h-12 w-12 border-2 transition-transform duration-300 group-hover:scale-105 ${index === 0 ? 'border-rank-gold shadow-lg shadow-rank-gold/20' : 'border-primary/30'}`}
                 >
                   <AvatarImage src={coaching.salesperson.avatar_url || undefined} />
-                  <AvatarFallback className="font-display bg-gradient-to-br from-primary/20 to-primary/5">
+                  <AvatarFallback className="font-display bg-linear-to-br from-primary/20 to-primary/5">
                     {coaching.salesperson.name.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 {index === 0 && (
-                  <div className="absolute -top-1 -right-1 p-1 rounded-full bg-gradient-to-br from-rank-gold to-rank-gold/80 shadow-lg animate-pulse">
+                  <div className="absolute -top-1 -right-1 p-1 rounded-full bg-linear-to-br from-rank-gold to-rank-gold/80 shadow-lg animate-pulse">
                     <Crown className="h-3 w-3 text-background" />
                   </div>
                 )}

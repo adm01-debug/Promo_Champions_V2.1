@@ -40,7 +40,7 @@ export const PostVictoryForm: FC<PostVictoryFormProps> = React.memo(
     };
 
     return (
-      <Card className="border-none shadow-md bg-gradient-to-r from-primary/5 to-accent/5">
+      <Card className="border-none shadow-md bg-linear-to-r from-primary/5 to-accent/5">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
             <Trophy className="h-4 w-4 text-primary" />

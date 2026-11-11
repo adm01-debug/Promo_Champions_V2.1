@@ -29,7 +29,7 @@ export function AgentStepTimeline({ actions }: Props) {
         const Icon = meta.icon;
         return (
           <li key={a.id} className="ml-4">
-            <span className="absolute -left-[9px] flex h-4 w-4 items-center justify-center rounded-full bg-background border border-border">
+            <span className="absolute left-[-9px] flex h-4 w-4 items-center justify-center rounded-full bg-background border border-border">
               <Icon className={`h-3 w-3 ${meta.className}`} />
             </span>
             <div className="flex items-center gap-2">

@@ -161,7 +161,7 @@ export const AlertsPanel = React.memo(function AlertsPanel() {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 right-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 3, repeat: Infinity }}
       />

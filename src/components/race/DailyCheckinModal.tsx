@@ -62,7 +62,7 @@ export function DailyCheckinModal({ open, onOpenChange, data }: Props) {
         >
           <DialogHeader className="text-center space-y-3">
             <motion.div
-              className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center shadow-2xl shadow-primary/40"
+              className="mx-auto w-16 h-16 rounded-2xl bg-linear-to-br from-primary to-primary-glow flex items-center justify-center shadow-2xl shadow-primary/40"
               animate={
                 reduce ? {} : { rotate: [0, -5, 5, -3, 3, 0], scale: [1, 1.06, 1] }
               }
@@ -81,7 +81,7 @@ export function DailyCheckinModal({ open, onOpenChange, data }: Props) {
           <div className="space-y-4 mt-4">
             {/* Streak */}
             <motion.div
-              className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-warning/15 to-warning/5 border border-warning/30"
+              className="flex items-center justify-between p-4 rounded-xl bg-linear-to-r from-warning/15 to-warning/5 border border-warning/30"
               initial={reduce ? { opacity: 0 } : { opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 }}

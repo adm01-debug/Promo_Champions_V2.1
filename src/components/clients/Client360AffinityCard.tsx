@@ -63,7 +63,7 @@ export function Client360AffinityCard({ data }: { data: Client360Data }) {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + i * 0.1 }}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 group hover:bg-white/[0.08] cursor-pointer transition-all"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 group hover:bg-white/8 cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded-lg bg-primary/10">

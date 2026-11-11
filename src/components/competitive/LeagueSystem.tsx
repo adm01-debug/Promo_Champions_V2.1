@@ -58,7 +58,7 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent to-info flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-linear-to-br from-accent to-info flex items-center justify-center">
               <Shield className="h-4 w-4 text-primary-foreground" />
             </div>
             Sistema de Ligas
@@ -81,7 +81,7 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
                     {i > 0 && <div className="hidden" />}
                     <div
                       className={cn(
-                        'h-10 w-10 rounded-xl flex items-center justify-center bg-gradient-to-br text-primary-foreground shadow-md text-lg',
+                        'h-10 w-10 rounded-xl flex items-center justify-center bg-linear-to-br text-primary-foreground shadow-md text-lg',
                         config.color
                       )}
                     >
@@ -117,7 +117,7 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
                   </h3>
                   <div
                     className={cn(
-                      'h-0.5 flex-1 rounded bg-gradient-to-r',
+                      'h-0.5 flex-1 rounded bg-linear-to-r',
                       config.color,
                       'opacity-30'
                     )}

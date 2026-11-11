@@ -31,7 +31,7 @@ export const QualityReportView = () => {
     ) || [];
 
   return (
-    <Card className="glass border-primary/20 shadow-2xl overflow-hidden bg-gradient-to-br from-card/90 to-card/50">
+    <Card className="glass border-primary/20 shadow-2xl overflow-hidden bg-linear-to-br from-card/90 to-card/50">
       <CardHeader className="border-b border-border/10 bg-primary/5 pb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

@@ -95,7 +95,7 @@ export const DealPlaybookModal = ({
 
         <ScrollArea className="h-[450px] p-6">
           {/* Etapa 8: AI Strategic Insight Panel */}
-          <div className="mb-8 p-4 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-xl relative overflow-hidden group">
+          <div className="mb-8 p-4 rounded-2xl bg-linear-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-3">
               <Sparkles className="h-5 w-5 text-primary animate-pulse" />
             </div>

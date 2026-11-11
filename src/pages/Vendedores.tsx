@@ -135,7 +135,7 @@ const Vendedores = () => {
                 className="opacity-0 animate-fade-in-up glass rounded-xl overflow-hidden"
                 style={{ animationDelay: '300ms' }}
               >
-                <div className="p-5 border-b border-border/40 bg-gradient-to-r from-primary/[0.03] to-transparent">
+                <div className="p-5 border-b border-border/40 bg-linear-to-r from-primary/3 to-transparent">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="p-2 rounded-xl bg-primary/10">

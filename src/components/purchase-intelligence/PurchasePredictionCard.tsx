@@ -79,7 +79,7 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
 
   return (
     <Card className="border-white/5 bg-black/40 backdrop-blur-xl shadow-2xl h-full flex flex-col overflow-hidden relative group">
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
+      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700" />
 
       <CardHeader className="pb-4 relative z-10">
         <div className="flex items-center justify-between">
@@ -179,7 +179,7 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
                   'shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500',
                   isOverdue
                     ? 'bg-destructive'
-                    : 'bg-gradient-to-r from-primary/60 to-primary'
+                    : 'bg-linear-to-r from-primary/60 to-primary'
                 )}
               />
             </div>
@@ -262,7 +262,7 @@ export const PurchasePredictionCard = React.memo(({ clientId }: Props) => {
               </div>
 
               {/* Insights and Strategic Actions */}
-              <div className="rounded-xl bg-gradient-to-br from-muted/50 to-muted/20 border border-border/50 p-5 space-y-4">
+              <div className="rounded-xl bg-linear-to-br from-muted/50 to-muted/20 border border-border/50 p-5 space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-primary/20 text-primary mt-0.5">
                     <CheckCircle2 className="h-4 w-4" />

@@ -64,7 +64,7 @@ export function CommissionCalculator({
       <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title font-black flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-status-success to-status-success/70 shadow-lg group-hover:rotate-12 transition-transform duration-500">
+            <div className="p-2 rounded-xl bg-linear-to-br from-status-success to-status-success/70 shadow-lg group-hover:rotate-12 transition-transform duration-500">
               <DollarSign className="h-5 w-5 text-white" />
             </div>
             <span className="gradient-text italic uppercase tracking-tighter">
@@ -82,7 +82,7 @@ export function CommissionCalculator({
       <CardContent className="space-y-4 pt-5 relative z-10">
         {/* Team Totals */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl glass border border-status-success/20 hover-lift cursor-pointer transition-all bg-gradient-to-br from-status-success/5 to-transparent relative overflow-hidden group/stats">
+          <div className="p-5 rounded-2xl glass border border-status-success/20 hover-lift cursor-pointer transition-all bg-linear-to-br from-status-success/5 to-transparent relative overflow-hidden group/stats">
             <div className="absolute inset-0 bg-status-success/5 opacity-0 group-hover/stats:opacity-100 transition-opacity" />
             <div className="flex items-center gap-2 mb-3 relative z-10">
               <div className="p-2 rounded-xl bg-status-success/20 shadow-sm">
@@ -96,7 +96,7 @@ export function CommissionCalculator({
               {formatBRL(totalCurrentCommission, { decimals: 2 })}
             </p>
           </div>
-          <div className="p-5 rounded-2xl glass border border-primary/20 hover-lift cursor-pointer transition-all bg-gradient-to-br from-primary/5 to-transparent relative overflow-hidden group/stats">
+          <div className="p-5 rounded-2xl glass border border-primary/20 hover-lift cursor-pointer transition-all bg-linear-to-br from-primary/5 to-transparent relative overflow-hidden group/stats">
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/stats:opacity-100 transition-opacity" />
             <div className="flex items-center gap-2 mb-3 relative z-10">
               <div className="p-2 rounded-xl bg-primary/20 shadow-sm">
@@ -131,7 +131,7 @@ export function CommissionCalculator({
                   <div className="flex items-center gap-4 relative z-10">
                     <div className="relative">
                       <div
-                        className={`absolute -inset-1 bg-gradient-to-br ${index === 0 ? 'from-rank-gold to-yellow-500' : 'from-primary to-blue-500'} rounded-full blur opacity-0 group-hover/card:opacity-30 transition-opacity`}
+                        className={`absolute -inset-1 bg-linear-to-br ${index === 0 ? 'from-rank-gold to-yellow-500' : 'from-primary to-blue-500'} rounded-full blur opacity-0 group-hover/card:opacity-30 transition-opacity`}
                       />
                       <Avatar
                         className={`h-12 w-12 border-2 shadow-lg relative ${index === 0 ? 'border-rank-gold scale-110' : 'border-background'}`}
@@ -142,7 +142,7 @@ export function CommissionCalculator({
                         </AvatarFallback>
                       </Avatar>
                       {index === 0 && (
-                        <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-gradient-to-br from-rank-gold to-yellow-600 rounded-full flex items-center justify-center shadow-xl border border-white/20 animate-bounce-subtle z-20">
+                        <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-linear-to-br from-rank-gold to-yellow-600 rounded-full flex items-center justify-center shadow-xl border border-white/20 animate-bounce-subtle z-20">
                           <Trophy className="h-3 w-3 text-white" />
                         </div>
                       )}
@@ -194,10 +194,10 @@ export function CommissionCalculator({
                           <div
                             className={`absolute h-full transition-all duration-1000 ease-out ${
                               sp.progress >= 120
-                                ? 'bg-gradient-to-r from-rank-gold via-yellow-400 to-status-success shadow-[0_0_15px_rgba(255,215,0,0.4)]'
+                                ? 'bg-linear-to-r from-rank-gold via-yellow-400 to-status-success shadow-[0_0_15px_rgba(255,215,0,0.4)]'
                                 : sp.progress >= 100
-                                  ? 'bg-gradient-to-r from-status-success to-status-success/60 shadow-[0_0_12px_rgba(34,197,94,0.3)]'
-                                  : 'bg-gradient-to-r from-primary via-primary/80 to-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.2)]'
+                                  ? 'bg-linear-to-r from-status-success to-status-success/60 shadow-[0_0_12px_rgba(34,197,94,0.3)]'
+                                  : 'bg-linear-to-r from-primary via-primary/80 to-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.2)]'
                             }`}
                             style={{
                               width: `${Math.min((sp.progress / nextTier) * 100, 100)}%`,

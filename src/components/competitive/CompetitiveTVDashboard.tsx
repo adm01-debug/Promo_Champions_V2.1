@@ -103,7 +103,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
       </div>
 
       {/* Slide Content */}
-      <div className="relative min-h-[400px] rounded-xl overflow-hidden bg-gradient-to-br from-background to-muted/30 border shadow-xl">
+      <div className="relative min-h-[400px] rounded-xl overflow-hidden bg-linear-to-br from-background to-muted/30 border shadow-xl">
         {/* Clock overlay */}
         <div className="absolute top-4 right-4 z-10 text-right">
           <p className="text-2xl font-bold text-foreground tabular-nums">
@@ -182,7 +182,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.1 }}
-                        className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-streak/10 to-destructive/10 border border-streak/20"
+                        className="flex items-center gap-3 p-4 rounded-xl bg-linear-to-r from-streak/10 to-destructive/10 border border-streak/20"
                       >
                         <div className="text-3xl">🔥</div>
                         <div>
@@ -228,7 +228,7 @@ const CompetitiveTVDashboardComponent: FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.15 }}
-                        className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
+                        className="flex items-center gap-4 p-4 rounded-xl bg-linear-to-r from-primary/10 to-accent/10 border border-primary/20"
                       >
                         <div className="text-center flex-1">
                           <p className="font-bold text-foreground">

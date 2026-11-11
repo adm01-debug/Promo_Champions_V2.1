@@ -243,7 +243,7 @@ export function PasswordResetApproval() {
           return (
             <Card
               key={label}
-              className={`bg-gradient-to-br ${isDestructive ? 'from-destructive/10 to-destructive/5 border-destructive/20' : isPrimary ? 'from-primary/10 to-primary/5 border-primary/20' : `from-${color}-500/10 to-${color}-600/5 border-${color}-500/20`}`}
+              className={`bg-linear-to-br ${isDestructive ? 'from-destructive/10 to-destructive/5 border-destructive/20' : isPrimary ? 'from-primary/10 to-primary/5 border-primary/20' : `from-${color}-500/10 to-${color}-600/5 border-${color}-500/20`}`}
             >
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
@@ -287,7 +287,7 @@ export function PasswordResetApproval() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+              <div className="p-2 rounded-lg bg-linear-to-br from-primary/20 to-primary/10">
                 <Shield className="h-5 w-5 text-primary" />
               </div>
               <div>

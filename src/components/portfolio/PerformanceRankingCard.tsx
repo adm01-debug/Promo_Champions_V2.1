@@ -38,11 +38,11 @@ const getRankIcon = (rank: number) => {
 const getRankBadgeStyle = (rank: number) => {
   switch (rank) {
     case 1:
-      return 'bg-gradient-to-r from-coins/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins';
+      return 'bg-linear-to-r from-coins/20 to-rank-gold/20 border-warning/30 text-warning dark:text-coins';
     case 2:
-      return 'bg-gradient-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/30 text-muted-foreground dark:text-muted-foreground';
+      return 'bg-linear-to-r from-rank-silver/20 to-rank-silver/20 border-rank-silver/30 text-muted-foreground dark:text-muted-foreground';
     case 3:
-      return 'bg-gradient-to-r from-rank-gold/20 to-streak/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold';
+      return 'bg-linear-to-r from-rank-gold/20 to-streak/20 border-rank-gold/30 text-rank-gold dark:text-rank-gold';
     default:
       return 'bg-muted';
   }
@@ -94,7 +94,7 @@ export function PerformanceRankingCard({ data, isLoading }: PerformanceRankingCa
                   : 'bg-muted/50 border-border/50'
               }`}
             >
-              <div className="flex-shrink-0">{getRankIcon(sp.rank ?? idx + 1)}</div>
+              <div className="shrink-0">{getRankIcon(sp.rank ?? idx + 1)}</div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">

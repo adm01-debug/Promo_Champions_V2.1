@@ -30,7 +30,7 @@ export function OrderDetailsDialog({ order, onClose }: OrderDetailsDialogProps) 
   return (
     <Dialog open={!!order} onOpenChange={open => !open && onClose()}>
       <DialogContent className="max-w-2xl bg-black/90 backdrop-blur-2xl border-white/10 rounded-3xl overflow-hidden p-0 shadow-2xl">
-        <div className="h-1 bg-gradient-to-r from-primary via-indigo-500 to-emerald-500" />
+        <div className="h-1 bg-linear-to-r from-primary via-indigo-500 to-emerald-500" />
         <DialogHeader className="p-8 pb-4">
           <div className="flex justify-between items-start">
             <div>

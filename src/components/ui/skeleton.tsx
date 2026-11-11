@@ -25,19 +25,19 @@ interface SkeletonProps
 const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
   ({ className, variant, branded = true, ...props }, ref) => {
     const shimmerGradient = branded
-      ? 'from-transparent via-primary/[0.12] to-transparent'
+      ? 'from-transparent via-primary/12 to-transparent'
       : 'from-transparent via-muted-foreground/10 to-transparent';
 
     return (
       <div ref={ref} className={cn(skeletonVariants({ variant }), className)} {...props}>
         <div
           className={cn(
-            'absolute inset-0 -translate-x-full bg-gradient-to-r animate-shimmer',
+            'absolute inset-0 -translate-x-full bg-linear-to-r animate-shimmer',
             shimmerGradient
           )}
         />
         {branded && (
-          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(45deg,transparent_25%,rgba(14,165,233,0.5)_50%,transparent_75%)] bg-[length:250%_250%] animate-scan" />
+          <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(45deg,transparent_25%,rgba(14,165,233,0.5)_50%,transparent_75%)] bg-size-[250%_250%] animate-scan" />
         )}
       </div>
     );

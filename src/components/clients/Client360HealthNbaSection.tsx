@@ -86,7 +86,7 @@ export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
         </CardContent>
       </Card>
 
-      <Card className="lg:col-span-2 border-primary/20 bg-gradient-to-br from-primary/10 to-transparent backdrop-blur-md shadow-xl rounded-2xl overflow-hidden border-2">
+      <Card className="lg:col-span-2 border-primary/20 bg-linear-to-br from-primary/10 to-transparent backdrop-blur-md shadow-xl rounded-2xl overflow-hidden border-2">
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title flex items-center gap-2 text-sm uppercase font-black tracking-tighter text-primary">
             <Zap className="h-4 w-4 fill-primary" />

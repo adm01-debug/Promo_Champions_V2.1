@@ -97,7 +97,7 @@ export function RelationshipHealthGraph({ saleId }: Props) {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="relative h-[350px] bg-gradient-to-b from-transparent to-primary/5 rounded-b-xl overflow-hidden">
+      <CardContent className="relative h-[350px] bg-linear-to-b from-transparent to-primary/5 rounded-b-xl overflow-hidden">
         {/* Background Grid Lines */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"

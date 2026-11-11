@@ -100,7 +100,7 @@ const RankingRowCard = ({
       )}
       <div
         className={cn(
-          'relative flex items-center gap-3 p-3 rounded-xl border bg-gradient-to-r from-card/95 to-card/70 backdrop-blur-xl transition-all hover:border-primary/40',
+          'relative flex items-center gap-3 p-3 rounded-xl border bg-linear-to-r from-card/95 to-card/70 backdrop-blur-xl transition-all hover:border-primary/40',
           isTop3 ? 'border-border/60' : 'border-border/40'
         )}
       >
@@ -144,12 +144,12 @@ const RankingRowCard = ({
               className={cn(
                 'absolute inset-y-0 left-0 rounded-full',
                 row.position === 1
-                  ? 'bg-gradient-to-r from-warning via-warning to-warning/70'
+                  ? 'bg-linear-to-r from-warning via-warning to-warning/70'
                   : row.position === 2
-                    ? 'bg-gradient-to-r from-muted-foreground/60 to-muted-foreground'
+                    ? 'bg-linear-to-r from-muted-foreground/60 to-muted-foreground'
                     : row.position === 3
-                      ? 'bg-gradient-to-r from-accent to-accent/70'
-                      : 'bg-gradient-to-r from-primary/60 to-primary'
+                      ? 'bg-linear-to-r from-accent to-accent/70'
+                      : 'bg-linear-to-r from-primary/60 to-primary'
               )}
             />
           </div>
@@ -202,7 +202,7 @@ export const FuturisticRanking = () => {
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="absolute inset-0 bg-warning/40 blur-lg rounded-full animate-pulse" />
-            <div className="relative p-2 rounded-xl bg-gradient-to-br from-warning/20 to-warning/5 border border-warning/30">
+            <div className="relative p-2 rounded-xl bg-linear-to-br from-warning/20 to-warning/5 border border-warning/30">
               <Trophy className="h-5 w-5 text-warning" />
             </div>
           </div>
@@ -221,7 +221,7 @@ export const FuturisticRanking = () => {
       </div>
 
       {/* Body */}
-      <div className="relative rounded-2xl border border-border/50 bg-gradient-to-b from-card/95 via-card to-card/80 backdrop-blur-xl p-4 overflow-hidden">
+      <div className="relative rounded-2xl border border-border/50 bg-linear-to-b from-card/95 via-card to-card/80 backdrop-blur-xl p-4 overflow-hidden">
         {/* Grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.04] pointer-events-none"

@@ -56,7 +56,7 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] bg-background/90 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-60 bg-background/90 backdrop-blur-md flex items-center justify-center p-4"
         >
           {/* confete dourado */}
           {Array.from({ length: 60 }).map((_, i) => (
@@ -89,7 +89,7 @@ export function MonthlyChampionOverlay({ roleType, onPlaySound }: Props) {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.6, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-            className="relative bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500 rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl border-4 border-amber-200"
+            className="relative bg-linear-to-br from-amber-400 via-yellow-300 to-amber-500 rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl border-4 border-amber-200"
           >
             <Button
               variant="ghost"

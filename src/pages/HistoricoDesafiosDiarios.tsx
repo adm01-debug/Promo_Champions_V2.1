@@ -211,7 +211,7 @@ export default function HistoricoDesafiosDiarios() {
           {statCards.map(({ icon: Icon, color, label, value }) => (
             <motion.div key={label} variants={itemVariants}>
               <Card
-                className={`bg-gradient-to-br from-${color}-500/10 to-${color}-600/5 border-${color}-500/20`}
+                className={`bg-linear-to-br from-${color}-500/10 to-${color}-600/5 border-${color}-500/20`}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">

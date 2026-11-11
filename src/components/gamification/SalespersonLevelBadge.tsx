@@ -42,7 +42,7 @@ export function SalespersonLevelBadge({
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge
-            className={`bg-gradient-to-r ${levelInfo.color} text-primary-foreground border-0 shadow-sm hover:shadow-md transition-all duration-200 ${sizeClasses[size]} cursor-default flex-shrink-0 flex items-center gap-0.5 animate-bounce-in hover:animate-pop`}
+            className={`bg-linear-to-r ${levelInfo.color} text-primary-foreground border-0 shadow-sm hover:shadow-md transition-all duration-200 ${sizeClasses[size]} cursor-default shrink-0 flex items-center gap-0.5 animate-bounce-in hover:animate-pop`}
           >
             <Star
               className={`${iconSizes[size]} fill-current group-hover:animate-wiggle`}
@@ -52,7 +52,7 @@ export function SalespersonLevelBadge({
         </TooltipTrigger>
         <TooltipContent className="glass border-border/40 dark:border-glow p-3">
           <div className="flex items-center gap-2 mb-2">
-            <div className={`p-1.5 rounded-lg bg-gradient-to-r ${levelInfo.color}`}>
+            <div className={`p-1.5 rounded-lg bg-linear-to-r ${levelInfo.color}`}>
               <span className="text-sm">{levelInfo.emoji}</span>
             </div>
             <div>

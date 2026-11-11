@@ -35,7 +35,7 @@ export function RoutingHistoryPanel() {
             {data.map(a => (
               <div key={a.id} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <Zap className="h-3.5 w-3.5 text-primary" />
                   </div>
                   <div className="min-w-0">

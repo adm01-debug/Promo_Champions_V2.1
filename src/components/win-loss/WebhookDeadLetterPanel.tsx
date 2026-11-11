@@ -378,7 +378,7 @@ export function WebhookDeadLetterPanel({
                     </p>
                   )}
                   {d.last_error && (
-                    <p className="text-[11px] text-destructive mt-1 break-words line-clamp-2">
+                    <p className="text-[11px] text-destructive mt-1 wrap-break-word line-clamp-2">
                       {d.last_error}
                     </p>
                   )}
@@ -529,7 +529,7 @@ export function WebhookDeadLetterPanel({
                   </p>
                   <ReplayAuditTrail deadLetterId={previewOf.id} />
                 </div>
-                <pre className="text-[11px] bg-muted/40 rounded-md p-3 overflow-x-auto whitespace-pre-wrap break-words">
+                <pre className="text-[11px] bg-muted/40 rounded-md p-3 overflow-x-auto whitespace-pre-wrap wrap-break-word">
                   {JSON.stringify(previewOf.payload, null, 2)}
                 </pre>
               </>

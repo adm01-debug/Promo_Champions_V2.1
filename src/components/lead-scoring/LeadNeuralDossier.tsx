@@ -85,7 +85,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-background/95 backdrop-blur-xl border-white/5 shadow-2xl p-0 gap-0">
         <div ref={dossierRef} className="contents">
-          <DialogHeader className="p-6 border-b border-white/5 bg-gradient-to-r from-primary/10 to-transparent">
+          <DialogHeader className="p-6 border-b border-white/5 bg-linear-to-r from-primary/10 to-transparent">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="relative">
@@ -317,7 +317,7 @@ export const LeadNeuralDossier = ({ lead, isOpen, onClose }: LeadNeuralDossierPr
 
             {/* Explanation Component */}
             <div className="relative">
-              <div className="absolute -left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary/20 via-primary/5 to-transparent hidden md:block" />
+              <div className="absolute -left-6 top-0 bottom-0 w-px bg-linear-to-b from-primary/20 via-primary/5 to-transparent hidden md:block" />
               <LeadScoreExplainCard saleId={saleId} churnRisk={lead.churnRisk} />
             </div>
 

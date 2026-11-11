@@ -79,7 +79,7 @@ export function DealTimelineExpand({ saleId }: Props) {
           key={`${e.type}-${e.id}`}
           className="flex items-start gap-2 text-[11px] relative"
         >
-          <span className="absolute -left-[15px] top-0.5 h-2 w-2 rounded-full bg-primary/60 ring-2 ring-background" />
+          <span className="absolute left-[-15px] top-0.5 h-2 w-2 rounded-full bg-primary/60 ring-2 ring-background" />
           <span className="text-muted-foreground shrink-0">{iconFor(e.type)}</span>
           <span className="flex-1 min-w-0 truncate">{labelFor(e)}</span>
           <span className="text-muted-foreground shrink-0 tabular-nums text-[10px]">

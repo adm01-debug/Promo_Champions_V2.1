@@ -80,7 +80,7 @@ function ReasonTooltip({ active, payload }: RechartsTooltipProps) {
         {p.count} falha{p.count === 1 ? '' : 's'}
       </p>
       {p.sampleMessage && (
-        <p className="mt-1 text-muted-foreground/80 italic break-words">
+        <p className="mt-1 text-muted-foreground/80 italic wrap-break-word">
           "{p.sampleMessage}"
         </p>
       )}

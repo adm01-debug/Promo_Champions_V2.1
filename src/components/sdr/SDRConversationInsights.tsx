@@ -24,7 +24,7 @@ export const SDRConversationInsights = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+        <div className="absolute -inset-0.5 bg-linear-to-r from-green-500/20 to-blue-500/20 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
         <div className="relative">
           <SentimentDistributionCard data={insights.sentiment} />
           <div className="absolute top-12 right-6 space-y-3 hidden sm:block">
@@ -45,7 +45,7 @@ export const SDRConversationInsights = () => {
       </div>
 
       <div className="relative group">
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
+        <div className="absolute -inset-0.5 bg-linear-to-r from-amber-500/20 to-orange-500/20 rounded-xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
         <div className="relative">
           <ObjectionsTrendChart data={insights.topObjections} />
         </div>

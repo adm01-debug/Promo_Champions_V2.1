@@ -179,7 +179,7 @@ const IntelligenceCockpit = () => {
             <PerformanceTrends />
             <ScenarioSimulator />
           </div>
-          <Card className="p-6 border-border/40 bg-gradient-to-br from-card to-primary/5 relative overflow-hidden">
+          <Card className="p-6 border-border/40 bg-linear-to-br from-card to-primary/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
             <div className="flex items-center justify-between mb-8 relative z-10">
               <h3 className="text-section-title flex items-center gap-2 uppercase italic tracking-tighter">
@@ -316,7 +316,7 @@ const IntelligenceCockpit = () => {
             <RelationshipGraph />
           </div>
 
-          <Card className="p-4 bg-gradient-to-br from-primary to-blue-600 border-none relative overflow-hidden group/ask">
+          <Card className="p-4 bg-linear-to-br from-primary to-blue-600 border-none relative overflow-hidden group/ask">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16 group-hover/ask:scale-150 transition-transform duration-700" />
             <div className="flex items-center gap-3 mb-2 relative z-10">
               <div className="size-8 rounded-lg bg-white/20 flex items-center justify-center text-white">

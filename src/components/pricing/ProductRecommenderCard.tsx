@@ -65,7 +65,7 @@ export function ProductRecommenderCard({
               {recommendations.slice(0, 5).map(p => (
                 <TableRow
                   key={p.product_name}
-                  className="border-white/5 hover:bg-white/[0.03] transition-all group/row"
+                  className="border-white/5 hover:bg-white/3 transition-all group/row"
                 >
                   <TableCell className="pl-8 py-5">
                     <div className="flex flex-col">

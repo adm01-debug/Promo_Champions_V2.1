@@ -19,7 +19,7 @@ export function LeadSourceDistribution() {
       <Card className="glass dark:border-glow card-elevated hover-lift transition-all animate-fade-in">
         <CardHeader>
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 shadow-lg">
               <PieChartIcon className="h-4 w-4 text-primary animate-pulse" />
             </div>
             <span className="gradient-text">Distribuição por Fonte</span>
@@ -51,7 +51,7 @@ export function LeadSourceDistribution() {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary/20 to-primary/5 shadow-lg group-hover:scale-110 transition-transform">
               <PieChartIcon className="h-4 w-4 text-primary" />
             </div>
             <span className="gradient-text">Distribuição de Leads por Fonte</span>

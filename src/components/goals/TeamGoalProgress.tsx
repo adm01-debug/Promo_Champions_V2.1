@@ -51,13 +51,13 @@ export function TeamGoalProgress({
   return (
     <Card className="glass border border-border/40 dark:border-glow card-elevated overflow-hidden relative group">
       {/* Dynamic Background Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
       <div
         className={`h-2 relative z-10 w-full overflow-hidden ${
           onTrack
-            ? 'bg-gradient-to-r from-status-success via-status-success/80 to-status-success/50 animate-pulse-subtle'
-            : 'bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/50'
+            ? 'bg-linear-to-r from-status-success via-status-success/80 to-status-success/50 animate-pulse-subtle'
+            : 'bg-linear-to-r from-status-warning via-status-warning/80 to-status-warning/50'
         }`}
       >
         <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] animate-shimmer" />
@@ -66,7 +66,7 @@ export function TeamGoalProgress({
       <CardHeader className="pb-3 border-b border-border/30 relative z-10">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title font-black flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+            <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
               <Target className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text italic uppercase tracking-tight">
@@ -203,7 +203,7 @@ export function TeamGoalProgress({
 
         {/* Projection */}
         <div
-          className="p-5 rounded-2xl glass border border-border/30 space-y-4 hover-lift shadow-xl transition-all animate-fade-in bg-gradient-to-br from-background/80 to-muted/50 relative overflow-hidden group/forecast"
+          className="p-5 rounded-2xl glass border border-border/30 space-y-4 hover-lift shadow-xl transition-all animate-fade-in bg-linear-to-br from-background/80 to-muted/50 relative overflow-hidden group/forecast"
           style={{ animationDelay: '50ms' }}
         >
           {/* Animated Glow for Forecast */}
@@ -243,8 +243,8 @@ export function TeamGoalProgress({
               <div
                 className={`absolute h-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(var(--status-success),0.3)] ${
                   onTrack
-                    ? 'bg-gradient-to-r from-status-success via-status-success/80 to-status-success/60'
-                    : 'bg-gradient-to-r from-status-warning via-status-warning/80 to-status-warning/60'
+                    ? 'bg-linear-to-r from-status-success via-status-success/80 to-status-success/60'
+                    : 'bg-linear-to-r from-status-warning via-status-warning/80 to-status-warning/60'
                 }`}
                 style={{ width: `${Math.min(projectionProgress, 100)}%` }}
               />
@@ -346,7 +346,7 @@ export function TeamGoalProgress({
 
           {!onTrack && (
             <div
-              className="p-5 rounded-2xl bg-gradient-to-br from-status-warning/10 to-transparent border border-status-warning/20 animate-pulse-subtle relative overflow-hidden"
+              className="p-5 rounded-2xl bg-linear-to-br from-status-warning/10 to-transparent border border-status-warning/20 animate-pulse-subtle relative overflow-hidden"
               style={{ animationDelay: '250ms' }}
             >
               <div className="flex items-center gap-2 mb-2 relative z-10">
@@ -373,7 +373,7 @@ export function TeamGoalProgress({
 
           {onTrack && progress < 100 && (
             <div
-              className="p-5 rounded-2xl bg-gradient-to-br from-status-success/10 to-transparent border border-status-success/20 relative overflow-hidden"
+              className="p-5 rounded-2xl bg-linear-to-br from-status-success/10 to-transparent border border-status-success/20 relative overflow-hidden"
               style={{ animationDelay: '250ms' }}
             >
               <div className="flex items-center gap-2 mb-2 relative z-10">

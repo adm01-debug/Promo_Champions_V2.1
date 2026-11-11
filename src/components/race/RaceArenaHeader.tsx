@@ -63,7 +63,7 @@ export const RaceArenaHeader: FC<Props> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={cn(
-        'relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-card via-card to-muted/30 p-4 shadow-sm',
+        'relative overflow-hidden rounded-xl border border-border bg-linear-to-br from-card via-card to-muted/30 p-4 shadow-sm',
         className
       )}
     >

@@ -81,7 +81,7 @@ export function ABCActionableAutomations({ automations }: ABCActionableAutomatio
               <Button
                 onClick={() => runAutomation(auto.title)}
                 size="sm"
-                className="w-full gap-2 bg-gradient-to-r from-primary to-accent hover:shadow-lg hover:shadow-primary/20 transition-all"
+                className="w-full gap-2 bg-linear-to-r from-primary to-accent hover:shadow-lg hover:shadow-primary/20 transition-all"
               >
                 <Zap className="h-3.5 w-3.5" />
                 Executar Agora

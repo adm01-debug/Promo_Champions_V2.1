@@ -24,7 +24,7 @@ export function SemanticSearchResultRow({ result, query, onSelect }: Props) {
     >
       <div
         className={cn(
-          'flex-shrink-0 h-9 w-9 rounded-md flex items-center justify-center',
+          'shrink-0 h-9 w-9 rounded-md flex items-center justify-center',
           meta.color
         )}
       >

@@ -106,7 +106,7 @@ export function DailyBriefingModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-md"
+          className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-md"
           style={{ background: 'hsl(var(--background) / 0.85)' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

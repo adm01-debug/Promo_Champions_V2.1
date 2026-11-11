@@ -50,7 +50,7 @@ export const RouteProgressBar = React.memo(() => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed top-0 left-0 right-0 h-[3px] bg-background/10 z-[9999] overflow-hidden backdrop-blur-md"
+          className="fixed top-0 left-0 right-0 h-[3px] bg-background/10 z-9999 overflow-hidden backdrop-blur-md"
         >
           <motion.div
             initial={{ width: '0%' }}
@@ -59,12 +59,12 @@ export const RouteProgressBar = React.memo(() => {
               width: { type: 'spring', stiffness: 100, damping: 30 },
               opacity: { duration: 0.2 },
             }}
-            className="h-full bg-gradient-to-r from-primary via-primary-glow to-accent shadow-[0_0_20px_hsl(var(--primary)/0.6)] relative will-change-[width]"
+            className="h-full bg-linear-to-r from-primary via-primary-glow to-accent shadow-[0_0_20px_hsl(var(--primary)/0.6)] relative will-change-[width]"
           >
             <motion.div
               animate={{ x: ['-100%', '200%'] }}
               transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
-              className="absolute top-0 left-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12"
+              className="absolute top-0 left-0 h-full w-1/2 bg-linear-to-r from-transparent via-white/40 to-transparent skew-x-12"
             />
           </motion.div>
         </motion.div>

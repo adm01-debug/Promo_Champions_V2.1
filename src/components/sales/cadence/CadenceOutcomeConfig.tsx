@@ -369,7 +369,7 @@ export function CadenceOutcomeConfig() {
                         {STAGES.find(s => s.id === rule.to_stage)?.label || rule.to_stage}
                       </span>
                     </div>
-                    <div className="h-3 w-[1px] bg-border/40" />
+                    <div className="h-3 w-px bg-border/40" />
                     <div className="flex items-center gap-2">
                       <Zap className="h-3 w-3 text-status-warning" />
                       <span className="text-[10px] text-muted-foreground uppercase">
@@ -380,7 +380,7 @@ export function CadenceOutcomeConfig() {
                     </div>
                     {(rule.push_template_id || rule.email_template_id) && (
                       <>
-                        <div className="h-3 w-[1px] bg-border/40" />
+                        <div className="h-3 w-px bg-border/40" />
                         <div className="flex items-center gap-2">
                           <Bell className="h-3 w-3 text-status-warning" />
                           <span className="text-[10px] text-muted-foreground">

@@ -82,7 +82,7 @@ export function Client360KpiCards({ data }: Client360KpiCardsProps) {
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-indigo-600/10 to-purple-600/5 border-indigo-500/20 shadow-sm overflow-hidden relative group backdrop-blur-sm">
+      <Card className="bg-linear-to-br from-indigo-600/10 to-purple-600/5 border-indigo-500/20 shadow-sm overflow-hidden relative group backdrop-blur-sm">
         <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/10 blur-2xl rounded-full -mr-8 -mt-8 group-hover:bg-purple-500/20 transition-all" />
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title text-[10px] font-black text-muted-foreground uppercase tracking-widest">

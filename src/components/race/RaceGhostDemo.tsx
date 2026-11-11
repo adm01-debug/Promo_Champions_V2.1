@@ -36,7 +36,7 @@ const DEMO_CARS = [
  */
 export function RaceGhostDemo() {
   return (
-    <div className="relative w-full aspect-[5/3] rounded-xl overflow-hidden border border-border bg-[hsl(var(--race-grass))]">
+    <div className="relative w-full aspect-5/3 rounded-xl overflow-hidden border border-border bg-[hsl(var(--race-grass))]">
       <RaceTrack>
         {DEMO_CARS.map(c => (
           <motion.g key={c.number} animate={{ progress: 1 } as never} initial={false}>

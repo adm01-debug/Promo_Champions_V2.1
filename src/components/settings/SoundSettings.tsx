@@ -180,7 +180,7 @@ export function SoundSettings() {
             <Button
               onClick={onTestLevelUp}
               size="sm"
-              className={`gap-1.5 bg-gradient-to-r from-rank-gold to-streak hover:from-rank-gold/90 hover:to-streak/90 text-primary-foreground transition-all ${activeCelebration === 'levelup' ? 'animate-pulse ring-2 ring-rank-gold' : ''}`}
+              className={`gap-1.5 bg-linear-to-r from-rank-gold to-streak hover:from-rank-gold/90 hover:to-streak/90 text-primary-foreground transition-all ${activeCelebration === 'levelup' ? 'animate-pulse ring-2 ring-rank-gold' : ''}`}
               disabled={
                 (selectedSound === 'none' && volume === 0) ||
                 (activeCelebration !== null && activeCelebration !== 'levelup') ||
@@ -197,7 +197,7 @@ export function SoundSettings() {
             <Button
               onClick={onTestStreakRecord}
               size="sm"
-              className={`gap-1.5 bg-gradient-to-r from-coins to-rank-gold hover:from-coins/90 hover:to-rank-gold/90 text-primary-foreground transition-all ${activeCelebration === 'record' ? 'animate-pulse ring-2 ring-coins' : ''}`}
+              className={`gap-1.5 bg-linear-to-r from-coins to-rank-gold hover:from-coins/90 hover:to-rank-gold/90 text-primary-foreground transition-all ${activeCelebration === 'record' ? 'animate-pulse ring-2 ring-coins' : ''}`}
               disabled={
                 (selectedSound === 'none' && volume === 0) ||
                 (activeCelebration !== null && activeCelebration !== 'record') ||

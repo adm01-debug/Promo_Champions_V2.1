@@ -210,9 +210,9 @@ const Clientes = () => {
                               delay: index * 0.05,
                               ease: [0.23, 1, 0.32, 1],
                             }}
-                            className="group relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 hover:border-primary/30 will-change-transform"
+                            className="group relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-xl backdrop-blur-md rounded-2xl p-6 transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 hover:border-primary/30 will-change-transform"
                           >
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                             <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 z-10">
                               <Button
                                 variant="outline"
@@ -249,7 +249,7 @@ const Clientes = () => {
                             </div>
                             <div className="flex items-start gap-4 mb-6">
                               <Avatar className="h-14 w-14 rounded-2xl ring-2 ring-background group-hover:ring-primary/20 transition-all">
-                                <AvatarFallback className="bg-gradient-to-br from-primary/10 to-accent/10 text-primary font-black uppercase">
+                                <AvatarFallback className="bg-linear-to-br from-primary/10 to-accent/10 text-primary font-black uppercase">
                                   {client.name
                                     .split(' ')
                                     .map(n => n[0])

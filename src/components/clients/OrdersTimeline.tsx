@@ -17,7 +17,7 @@ export function OrdersTimeline({
 }: OrdersTimelineProps) {
   return (
     <div className="p-8 relative">
-      <div className="absolute left-[39px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary/50 via-border to-transparent" />
+      <div className="absolute left-[39px] top-8 bottom-8 w-0.5 bg-linear-to-b from-primary/50 via-border to-transparent" />
       <div className="space-y-12">
         {orders.map((order, idx) => {
           const isHighValue = Number(order.amount) > averageTicket * 1.5;
@@ -44,7 +44,7 @@ export function OrdersTimeline({
                       : 'bg-rose-500'
                 )}
               />
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/[0.08] transition-all relative overflow-hidden">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/8 transition-all relative overflow-hidden">
                 {isHighValue && (
                   <div className="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 bg-primary/20 blur-2xl rounded-full" />
                 )}

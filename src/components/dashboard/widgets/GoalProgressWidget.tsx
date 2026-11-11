@@ -28,7 +28,7 @@ export const GoalProgressWidget = React.memo(function GoalProgressWidget() {
           : 'destructive';
 
   return (
-    <Card className="h-full border-none shadow-sm bg-gradient-to-br from-card to-card/50 overflow-hidden relative group">
+    <Card className="h-full border-none shadow-sm bg-linear-to-br from-card to-card/50 overflow-hidden relative group">
       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
         <Target className="h-12 w-12 text-primary rotate-12" />
       </div>

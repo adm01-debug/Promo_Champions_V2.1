@@ -95,9 +95,9 @@ export const BitrixSyncHistory = React.memo(function BitrixSyncHistory({
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-start gap-3">
                         {log.status === 'success' ? (
-                          <CheckCircle2 className="h-5 w-5 text-status-success flex-shrink-0 mt-0.5" />
+                          <CheckCircle2 className="h-5 w-5 text-status-success shrink-0 mt-0.5" />
                         ) : (
-                          <XCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                          <XCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                         )}
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -147,7 +147,7 @@ export const BitrixSyncHistory = React.memo(function BitrixSyncHistory({
                           )}
                         </div>
                       </div>
-                      <div className="text-right text-xs text-muted-foreground flex-shrink-0">
+                      <div className="text-right text-xs text-muted-foreground shrink-0">
                         <p>
                           {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', {
                             locale: ptBR,

@@ -30,7 +30,7 @@ export default function GamifiedProfilePage() {
       <PageTransition>
         <div className="space-y-6 p-6 lg:p-8">
           {/* Hero Header */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/20 via-accent/10 to-primary/5 border border-primary/20 p-8 shadow-2xl">
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-primary/20 via-accent/10 to-primary/5 border border-primary/20 p-8 shadow-2xl">
             <div className="absolute top-0 right-0 p-8 opacity-10">
               <Crown className="h-40 w-40 text-primary rotate-12" />
             </div>
@@ -43,7 +43,7 @@ export default function GamifiedProfilePage() {
                     {profile?.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-rank-gold to-coins p-2 rounded-xl shadow-lg border border-white/20">
+                <div className="absolute -bottom-2 -right-2 bg-linear-to-br from-rank-gold to-coins p-2 rounded-xl shadow-lg border border-white/20">
                   <Trophy className="h-6 w-6 text-primary-foreground" />
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function GamifiedProfilePage() {
                 </CardContent>
               </Card>
 
-              <Card className="glass border-border/40 bg-gradient-to-br from-coins/10 to-transparent">
+              <Card className="glass border-border/40 bg-linear-to-br from-coins/10 to-transparent">
                 <CardHeader>
                   <CardTitle className="text-section-title text-sm flex items-center gap-2">
                     <Award className="h-4 w-4 text-coins" />

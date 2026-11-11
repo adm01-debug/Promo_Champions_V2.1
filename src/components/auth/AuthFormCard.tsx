@@ -94,7 +94,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
     >
       {/* Mobile brand */}
       <div className="lg:hidden flex items-center justify-center gap-3 mb-6">
-        <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-600">
+        <div className="p-2.5 rounded-xl bg-linear-to-br from-cyan-400 to-purple-600">
           <Crown className="h-5 w-5 text-white" />
         </div>
         <h1 className="text-lg font-black tracking-wider">PROMO CHAMPIONS</h1>
@@ -102,7 +102,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
 
       <div className="relative">
         <motion.div
-          className="absolute -inset-[1px] rounded-2xl opacity-60"
+          className="absolute -inset-px rounded-2xl opacity-60"
           style={{
             background: 'linear-gradient(135deg, #22d3ee, #a855f7, #ec4899, #22d3ee)',
             backgroundSize: '300% 300%',
@@ -139,7 +139,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
 
           <div className="mb-6 p-3 rounded-xl bg-cyan-500/5 border border-cyan-400/20 flex items-start gap-2.5">
             <Lock
-              className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0"
+              className="h-4 w-4 text-cyan-400 mt-0.5 shrink-0"
               style={{ filter: 'drop-shadow(0 0 6px #22d3ee)' }}
             />
             <p className="text-[11px] text-white/60 leading-relaxed">
@@ -173,7 +173,7 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
               <Button
                 type="submit"
                 disabled={isMfaLoading || mfaCode.replace(/\s/g, '').length < 6}
-                className="relative w-full h-12 mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                className="relative w-full h-12 mt-4 bg-linear-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.4)]"
               >
                 {isMfaLoading ? (
                   <Loader2 className="h-5 w-5 motion-safe:animate-spin" />
@@ -341,10 +341,10 @@ export const AuthFormCard = React.memo(function AuthFormCard(props: AuthFormCard
                 <Button
                   type="submit"
                   disabled={isLoginDisabled}
-                  className="relative w-full h-12 mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden group/btn shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+                  className="relative w-full h-12 mt-4 bg-linear-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-xl overflow-hidden group/btn shadow-[0_0_20px_rgba(34,211,238,0.4)]"
                 >
                   <motion.div
-                    className="absolute inset-0 bg-white/10 translate-x-[-100%]"
+                    className="absolute inset-0 bg-white/10 -translate-x-full"
                     whileHover={reducedMotion ? undefined : { translateX: '100%' }}
                     transition={{ duration: 0.6 }}
                   />

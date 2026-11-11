@@ -282,7 +282,7 @@ export function ActivityLogForm({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-accent/10">
               <Plus className="h-4 w-4 gradient-primary" />
             </div>
             Registrar Atividade
@@ -347,7 +347,7 @@ export function ActivityLogForm({
                           onClick={() => field.onChange(type.value)}
                           className={`p-2.5 rounded-lg border text-xs font-medium flex flex-col items-center gap-1.5 transition-all duration-200 ${
                             field.value === type.value
-                              ? 'border-primary bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-sm shadow-primary/20'
+                              ? 'border-primary bg-linear-to-br from-primary/20 to-primary/5 text-primary shadow-sm shadow-primary/20'
                               : 'border-border/50 hover:border-primary/50 text-muted-foreground hover:text-foreground bg-muted/30 hover:bg-muted/50'
                           }`}
                         >
@@ -527,7 +527,7 @@ export function ActivityLogForm({
                       </FormControl>
                     </PopoverTrigger>
                     <PopoverContent
-                      className="w-[--radix-popover-trigger-width] p-0"
+                      className="w-(--radix-popover-trigger-width) p-0"
                       align="start"
                     >
                       <Command className="glass border-border/50">
@@ -598,7 +598,7 @@ export function ActivityLogForm({
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent
-                        className="w-[--radix-popover-trigger-width] p-0"
+                        className="w-(--radix-popover-trigger-width) p-0"
                         align="start"
                       >
                         <Command className="glass border-border/50">

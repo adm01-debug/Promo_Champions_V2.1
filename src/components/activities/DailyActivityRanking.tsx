@@ -47,11 +47,11 @@ const getRankIcon = (rank: number) => {
 
 const getRankStyle = (rank: number) => {
   if (rank === 1)
-    return 'bg-gradient-to-r from-rank-gold/20 to-rank-gold/5 border-rank-gold/40 shadow-sm shadow-rank-gold/10';
+    return 'bg-linear-to-r from-rank-gold/20 to-rank-gold/5 border-rank-gold/40 shadow-sm shadow-rank-gold/10';
   if (rank === 2)
-    return 'bg-gradient-to-r from-rank-silver/20 to-rank-silver/5 border-rank-silver/40';
+    return 'bg-linear-to-r from-rank-silver/20 to-rank-silver/5 border-rank-silver/40';
   if (rank === 3)
-    return 'bg-gradient-to-r from-rank-bronze/20 to-rank-bronze/5 border-rank-bronze/40';
+    return 'bg-linear-to-r from-rank-bronze/20 to-rank-bronze/5 border-rank-bronze/40';
   return 'bg-muted/30 border-border/30 hover:bg-muted/50';
 };
 
@@ -59,7 +59,7 @@ const getStatusBadge = (progress: number, hasGoals: boolean) => {
   if (!hasGoals) return null;
   if (progress >= 100) {
     return (
-      <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] gap-1 border border-status-success/30 animate-bounce-in hover:animate-pop">
+      <Badge className="bg-linear-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] gap-1 border border-status-success/30 animate-bounce-in hover:animate-pop">
         <Flame className="h-3 w-3 animate-fire-pulse" />
         Meta Batida!
       </Badge>
@@ -134,13 +134,13 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-section-title text-sm font-black uppercase tracking-widest flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+              <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md">
                 <Trophy className="h-4 w-4 text-primary-foreground" />
               </div>
               <span className="gradient-text">Race Arena: Diário</span>
             </CardTitle>
             {completedCount > 0 && (
-              <Badge className="bg-gradient-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] border border-status-success/40 shadow-sm shadow-status-success/20 animate-bounce-in hover:animate-pop font-black uppercase">
+              <Badge className="bg-linear-to-r from-status-success/30 to-status-success/20 text-status-success text-[10px] border border-status-success/40 shadow-sm shadow-status-success/20 animate-bounce-in hover:animate-pop font-black uppercase">
                 🎉 {completedCount} Champions
               </Badge>
             )}
@@ -185,7 +185,7 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
           <div className="p-4 space-y-3">
             {rankedData.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-lg border border-dashed border-border/50">
-                <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner">
+                <div className="p-3 rounded-full bg-linear-to-br from-muted/50 to-muted/30 mb-3 shadow-inner">
                   <Trophy className="h-10 w-10 opacity-50" />
                 </div>
                 <p className="text-sm font-display font-medium gradient-text">
@@ -227,11 +227,11 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
                     }}
                   >
                     {isTopThree && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                      <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     )}
                     {/* Rank */}
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 ${
                         isTopThree ? 'bg-background/80 shadow-md' : 'bg-muted/50'
                       }`}
                     >
@@ -249,7 +249,7 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
                       }`}
                     >
                       <AvatarImage src={sp.avatar_url || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary/30 to-accent/20 text-primary text-xs font-medium">
+                      <AvatarFallback className="bg-linear-to-br from-primary/30 to-accent/20 text-primary text-xs font-medium">
                         {sp.salesperson_name.substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -325,7 +325,7 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
                     </div>
 
                     {/* Progress */}
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right shrink-0">
                       <div
                         className={`text-xl font-display font-black transition-all duration-500 ${
                           sp.progress.overall >= 100
@@ -359,7 +359,7 @@ const DailyActivityRankingComponent = ({ data }: DailyActivityRankingProps) => {
           {activeReactions.map(reaction => (
             <div
               key={reaction.id}
-              className="fixed pointer-events-none z-[9999] animate-float-up opacity-0"
+              className="fixed pointer-events-none z-9999 animate-float-up opacity-0"
               style={{
                 left: reaction.x - 10,
                 top: reaction.y - 20,

@@ -83,7 +83,7 @@ function ChallengeItem({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, scale: 1.01 }}
       className={cn(
-        'relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br transition-all duration-500 shadow-xl group/challenge',
+        'relative overflow-hidden rounded-2xl p-5 bg-linear-to-br transition-all duration-500 shadow-xl group/challenge',
         gradientClass,
         'text-primary-foreground border border-white/10'
       )}
@@ -225,7 +225,7 @@ export function WeeklyChallengesCard({
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <div className="relative mb-4">
-              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center">
+              <div className="h-16 w-16 rounded-2xl bg-linear-to-br from-primary/15 to-accent/10 flex items-center justify-center">
                 <Trophy className="h-8 w-8 text-primary/40" />
               </div>
               <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-muted flex items-center justify-center">

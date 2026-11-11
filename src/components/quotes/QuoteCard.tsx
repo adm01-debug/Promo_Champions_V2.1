@@ -142,7 +142,7 @@ export const QuoteCard = React.memo(function QuoteCard({
           </p>
         </div>
 
-        <div className="flex items-center gap-1 flex-shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             size="sm"
             variant="outline"

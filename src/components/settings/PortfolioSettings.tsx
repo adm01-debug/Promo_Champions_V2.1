@@ -76,7 +76,7 @@ export function PortfolioSettings() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+      <div className="bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
         <div className="p-6 border-b border-border/10">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10">

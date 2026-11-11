@@ -112,8 +112,8 @@ export const PeriodTrendChart = () => {
     >
       {/* Deep ambient glow */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[40%] h-[40%] bg-success/5 blur-[80px] rounded-full" />
+        <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[40%] bg-success/5 blur-[80px] rounded-full" />
       </div>
 
       {/* Futuristic grid overlay */}
@@ -143,7 +143,7 @@ export const PeriodTrendChart = () => {
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                 className="absolute inset-0 bg-primary/40 blur-md rounded-xl"
               />
-              <div className="relative p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/40 shadow-inner">
+              <div className="relative p-2.5 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 border border-primary/40 shadow-inner">
                 <Activity className="h-5 w-5 text-primary" />
               </div>
             </div>
@@ -375,7 +375,7 @@ const StatPill = ({ icon: Icon, label, value, accent }: StatPillProps) => {
   return (
     <div
       className={cn(
-        'relative group overflow-hidden rounded-xl border p-4 flex items-center gap-4 transition-all hover:bg-white/[0.02]',
+        'relative group overflow-hidden rounded-xl border p-4 flex items-center gap-4 transition-all hover:bg-white/2',
         accentBorder,
         accentBg
       )}
@@ -404,7 +404,7 @@ const StatPill = ({ icon: Icon, label, value, accent }: StatPillProps) => {
 
       {/* Mini scanline decoration */}
       <motion.div
-        className="absolute bottom-0 left-0 h-[1px] bg-current opacity-20"
+        className="absolute bottom-0 left-0 h-px bg-current opacity-20"
         animate={{ width: ['0%', '100%', '0%'] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         style={{

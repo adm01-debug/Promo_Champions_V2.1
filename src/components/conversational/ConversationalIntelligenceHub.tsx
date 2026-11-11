@@ -101,7 +101,7 @@ export const ConversationalIntelligenceHub = () => {
               </div>
             </div>
           </div>
-          <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
+          <h1 className="text-5xl font-black font-sora tracking-tight bg-linear-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
             Conversational <span className="text-primary/80">Intelligence</span>{' '}
             <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase ml-2 align-middle">
               10/10
@@ -323,7 +323,7 @@ export const ConversationalIntelligenceHub = () => {
                 <Card className="h-[650px] flex flex-col items-center justify-center border border-primary/20 bg-slate-950/60 relative overflow-hidden group shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]">
                   {/* Deep Neural Visual Effects */}
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.05),transparent)]" />
-                  <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:40px_40px]" />
+                  <div className="absolute inset-0 bg-grid-white/[0.02] bg-size-[40px_40px]" />
 
                   <div className="relative z-10 flex flex-col items-center text-center px-10">
                     <div className="mb-10 relative">
@@ -358,7 +358,7 @@ export const ConversationalIntelligenceHub = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box shadow-2xl"
+                        className="p-5 rounded-2xl bg-white/3 border border-white/10 text-left backdrop-blur-md relative group/box shadow-2xl"
                       >
                         <div className="absolute top-0 left-0 w-1 h-0 group-hover:h-full bg-primary transition-all duration-500" />
                         <p className="text-[10px] font-black uppercase text-primary mb-2 tracking-widest flex items-center gap-2">
@@ -384,7 +384,7 @@ export const ConversationalIntelligenceHub = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left backdrop-blur-md relative group/box shadow-2xl"
+                        className="p-5 rounded-2xl bg-white/3 border border-white/10 text-left backdrop-blur-md relative group/box shadow-2xl"
                       >
                         <div className="absolute top-0 right-0 w-1 h-0 group-hover:h-full bg-warning transition-all duration-500" />
                         <p className="text-[10px] font-black uppercase text-warning mb-2 tracking-widest flex items-center gap-2">
@@ -474,7 +474,7 @@ export const ConversationalIntelligenceHub = () => {
                       type="button"
                       key={r.id}
                       onClick={() => drawer.open(r.id)}
-                      className="w-full text-left border border-white/5 bg-white/[0.02] rounded-2xl p-6 hover:bg-white/5 hover:border-primary/30 transition-all shadow-sm"
+                      className="w-full text-left border border-white/5 bg-white/2 rounded-2xl p-6 hover:bg-white/5 hover:border-primary/30 transition-all shadow-sm"
                     >
                       <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div className="flex-1 min-w-0">

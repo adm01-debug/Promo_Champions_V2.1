@@ -100,7 +100,7 @@ export function WeightedForecastDashboard() {
   return (
     <div className="space-y-6 p-4 lg:p-8">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10">
+        <div className="p-2 rounded-xl bg-linear-to-br from-primary/20 to-accent/10">
           <TrendingUp className="h-6 w-6 text-primary" />
         </div>
         <div>
@@ -112,7 +112,7 @@ export function WeightedForecastDashboard() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+        <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
               <DollarSign className="h-3.5 w-3.5" />

@@ -119,11 +119,11 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
     <Card className="glass border-destructive/20 overflow-hidden relative group transition-all duration-500 hover:shadow-[0_0_40px_rgba(239,68,68,0.1)]">
       {/* Background Neural Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(239,68,68,0.05),transparent)] pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-linear-to-br from-destructive/5 via-transparent to-transparent opacity-50" />
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-0 relative z-10">
         {/* Lado Esquerdo: Resumo Crítico */}
-        <div className="md:col-span-4 p-8 bg-destructive/5 border-r border-border/40 flex flex-col justify-center relative overflow-hidden group-hover:bg-destructive/[0.08] transition-colors">
+        <div className="md:col-span-4 p-8 bg-destructive/5 border-r border-border/40 flex flex-col justify-center relative overflow-hidden group-hover:bg-destructive/8 transition-colors">
           <div className="absolute -left-10 -top-10 w-32 h-32 bg-destructive/20 blur-3xl rounded-full animate-pulse" />
 
           <div className="flex items-center gap-2 mb-2">
@@ -236,7 +236,7 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
                               }}
                               className={cn('h-full rounded-full relative z-10', item.bg)}
                             >
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/30 animate-pulse" />
+                              <div className="absolute inset-0 bg-linear-to-r from-transparent to-white/30 animate-pulse" />
                             </motion.div>
                           </div>
                         </div>

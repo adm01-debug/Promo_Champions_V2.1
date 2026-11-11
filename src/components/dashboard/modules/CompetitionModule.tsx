@@ -15,7 +15,7 @@ export const CompetitionModule = ({ salesperson }: CompetitionModuleProps) => {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 rounded-3xl bg-gradient-to-b from-primary/5 to-transparent border border-primary/10 p-1 shadow-2xl">
+        <div className="lg:col-span-2 rounded-3xl bg-linear-to-b from-primary/5 to-transparent border border-primary/10 p-1 shadow-2xl">
           <FuturisticRanking />
         </div>
         <div className="rounded-3xl bg-card border border-border/40 p-4 shadow-xl">
@@ -53,7 +53,7 @@ export const CompetitionModule = ({ salesperson }: CompetitionModuleProps) => {
           <DailyChallengesCard salespersonId={salesperson?.id} compact showTestButton />
         </div>
 
-        <div className="lg:col-span-3 rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/20 transition-all bg-gradient-to-r from-card via-card to-primary/5">
+        <div className="lg:col-span-3 rounded-2xl border border-border/40 bg-card p-4 shadow-lg hover:border-primary/20 transition-all bg-linear-to-r from-card via-card to-primary/5">
           <WeeklyChallengesCard salespersonId={salesperson?.id} compact />
         </div>
       </div>

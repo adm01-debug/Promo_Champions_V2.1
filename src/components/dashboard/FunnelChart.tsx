@@ -78,7 +78,7 @@ export const FunnelChart: FC = React.memo(() => {
           <div className="space-y-6">
             <div className="relative">
               {/* Vertical decorative stream */}
-              <div className="absolute left-[79px] top-0 bottom-0 w-[1px] bg-white/5" />
+              <div className="absolute left-[79px] top-0 bottom-0 w-px bg-white/5" />
 
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart
@@ -157,7 +157,7 @@ export const FunnelChart: FC = React.memo(() => {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 left-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 left-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 3, repeat: Infinity }}
       />

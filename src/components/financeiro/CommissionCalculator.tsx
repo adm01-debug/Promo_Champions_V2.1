@@ -72,7 +72,7 @@ export function CommissionCalculator() {
         </div>
 
         <motion.div
-          className="p-4 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/30 text-center space-y-1"
+          className="p-4 rounded-xl bg-linear-to-br from-primary/20 to-accent/10 border border-primary/30 text-center space-y-1"
           key={commission}
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}

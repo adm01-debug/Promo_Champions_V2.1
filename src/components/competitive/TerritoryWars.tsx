@@ -133,7 +133,7 @@ function TerritoryWarsComponent() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.1 }}
-                  className="flex-shrink-0 text-center p-3 rounded-lg bg-muted/30 min-w-[120px]"
+                  className="shrink-0 text-center p-3 rounded-lg bg-muted/30 min-w-[120px]"
                 >
                   <div className="text-lg mb-1">
                     {i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : '⚔️'}

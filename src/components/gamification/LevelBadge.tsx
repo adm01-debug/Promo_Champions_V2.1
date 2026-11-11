@@ -60,7 +60,7 @@ export const LevelBadge: FC<LevelBadgeProps> = ({
         variant="outline"
         className={cn(
           'font-medium',
-          'bg-gradient-to-r',
+          'bg-linear-to-r',
           gradient,
           sizeStyles[size],
           className

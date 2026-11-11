@@ -25,7 +25,7 @@ export default function EvolutionCurvesPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
+              <div className="p-2.5 rounded-xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20">
                 <TrendingUp className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>

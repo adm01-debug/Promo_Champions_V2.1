@@ -75,7 +75,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(
             </motion.div>
           </div>
         )}
-        <div className={cn('bg-gradient-to-r relative', gradient)}>
+        <div className={cn('bg-linear-to-r relative', gradient)}>
           {(item.value ?? 0) >= 10000 && (
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.15),transparent_50%)]" />
           )}
@@ -209,7 +209,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(
                               '?'}
                             :
                           </span>
-                          <span className="text-muted-foreground break-words">
+                          <span className="text-muted-foreground wrap-break-word">
                             {c.content}
                           </span>
                         </div>

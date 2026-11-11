@@ -115,7 +115,7 @@ export function EmailTrackingDashboard() {
 
       {/* Futuristic Telemetry Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+        <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-4 rounded-2xl bg-primary/10 ring-1 ring-white/5">
               <Send className="h-6 w-6 text-primary" />
@@ -132,10 +132,10 @@ export function EmailTrackingDashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-transparent opacity-20" />
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-primary/50 to-transparent opacity-20" />
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+        <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-4 rounded-2xl bg-emerald-500/10 ring-1 ring-white/5">
               <Eye className="h-6 w-6 text-emerald-500" />
@@ -152,10 +152,10 @@ export function EmailTrackingDashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/50 to-transparent opacity-20" />
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-500/50 to-transparent opacity-20" />
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+        <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-4 rounded-2xl bg-blue-500/10 ring-1 ring-white/5">
               <MousePointer2 className="h-6 w-6 text-blue-500" />
@@ -172,10 +172,10 @@ export function EmailTrackingDashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/50 to-transparent opacity-20" />
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-blue-500/50 to-transparent opacity-20" />
         </Card>
 
-        <Card className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
+        <Card className="relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border-none shadow-2xl backdrop-blur-md transition-all hover:scale-[1.02]">
           <CardContent className="p-6 flex items-center gap-4">
             <div className="p-4 rounded-2xl bg-indigo-500/10 ring-1 ring-white/5">
               <Reply className="h-6 w-6 text-indigo-500" />
@@ -192,7 +192,7 @@ export function EmailTrackingDashboard() {
               </div>
             </div>
           </CardContent>
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/50 to-transparent opacity-20" />
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-indigo-500/50 to-transparent opacity-20" />
         </Card>
       </div>
 
@@ -274,7 +274,7 @@ export function EmailTrackingDashboard() {
         </Card>
 
         {/* Elite Event Log */}
-        <Card className="lg:col-span-2 relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
+        <Card className="lg:col-span-2 relative overflow-hidden bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl">
           <CardHeader className="p-6 border-b border-border/10">
             <div className="flex items-center justify-between">
               <CardTitle className="text-section-title flex items-center gap-3 font-black uppercase tracking-tighter italic">
@@ -336,7 +336,7 @@ export function EmailTrackingDashboard() {
                             })}
                           </span>
                         </div>
-                        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute inset-y-0 left-0 w-1 bg-linear-to-b from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     );
                   })

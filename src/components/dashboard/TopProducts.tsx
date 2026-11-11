@@ -96,7 +96,7 @@ export const TopProducts = React.memo(() => {
                         {product.sales} units
                       </span>
                     </p>
-                    <div className="h-1.5 w-[1px] bg-white/10" />
+                    <div className="h-1.5 w-px bg-white/10" />
                     <p className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-tighter">
                       Val:{' '}
                       <span className="text-foreground/80 font-bold">
@@ -116,12 +116,12 @@ export const TopProducts = React.memo(() => {
                     ease: 'easeOut',
                     delay: 0.3 + index * 0.1,
                   }}
-                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary/60 to-primary rounded-full shadow-[0_0_10px_rgba(14,165,233,0.3)]"
+                  className="absolute inset-y-0 left-0 bg-linear-to-r from-primary/60 to-primary rounded-full shadow-[0_0_10px_rgba(14,165,233,0.3)]"
                 />
 
                 {/* Animated highlight on progress bar */}
                 <motion.div
-                  className="absolute inset-y-0 w-8 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  className="absolute inset-y-0 w-8 bg-linear-to-r from-transparent via-white/20 to-transparent"
                   animate={{ left: ['-20%', '120%'] }}
                   transition={{
                     duration: 2,
@@ -144,7 +144,7 @@ export const TopProducts = React.memo(() => {
       </CardContent>
 
       {/* Background decoration */}
-      <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-primary/5 blur-[40px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-4 -right-4 h-24 w-24 bg-primary/5 blur-2xl rounded-full pointer-events-none" />
     </Card>
   );
 });

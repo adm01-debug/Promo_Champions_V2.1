@@ -73,7 +73,7 @@ export function RaceEventFeed({ events, cars }: Props) {
                 exit={{ opacity: 0 }}
                 className="flex items-start gap-2 p-2 rounded-md bg-muted/40 text-sm"
               >
-                <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${meta.color}`} />
+                <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${meta.color}`} />
                 <div className="flex-1 min-w-0">
                   <p className="leading-tight">
                     {meta.label(e.metadata, nameOf(e.salesperson_id))}

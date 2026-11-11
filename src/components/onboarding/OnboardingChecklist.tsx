@@ -30,7 +30,7 @@ export const OnboardingChecklist = forwardRef<HTMLDivElement>((_, ref) => {
     >
       <div className="rounded-xl border border-primary/30 bg-black/40 backdrop-blur-md p-5 shadow-[0_0_30px_rgba(14,165,233,0.05)] group relative overflow-hidden">
         {/* Animated accent line */}
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-primary/40 to-transparent" />
 
         {/* Compact Header — always visible */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative z-10">

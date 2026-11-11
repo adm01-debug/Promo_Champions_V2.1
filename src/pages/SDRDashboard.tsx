@@ -330,7 +330,7 @@ export default function SDRDashboard() {
                     transition={{ duration: 0.5, delay: 0.1 }}
                   >
                     <div className="relative">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 rounded-xl blur-xl opacity-70" />
+                      <div className="absolute -inset-1 bg-linear-to-r from-primary/30 via-primary/10 to-primary/30 rounded-xl blur-xl opacity-70" />
                       <div className="relative h-full">
                         <SchedulingRateGauge
                           rate={metrics?.current.schedulingRate ?? 0}
@@ -342,7 +342,7 @@ export default function SDRDashboard() {
                     </div>
 
                     <div className="relative">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-success/30 via-success/10 to-success/30 rounded-xl blur-xl opacity-70" />
+                      <div className="absolute -inset-1 bg-linear-to-r from-success/30 via-success/10 to-success/30 rounded-xl blur-xl opacity-70" />
                       <div className="relative h-full">
                         <SchedulingRateGauge
                           rate={

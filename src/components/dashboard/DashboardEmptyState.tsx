@@ -292,13 +292,13 @@ export function DashboardEmptyState({ type, hero = false }: DashboardEmptyStateP
         className={cn(
           'border-dashed border-2 border-border/40 bg-card/50 overflow-hidden relative group hover:border-primary/30 hover:shadow-lg transition-all duration-300 h-full',
           state.glowColor,
-          hero && 'sm:p-8 lg:p-12 border-primary/20 bg-primary/[0.02]'
+          hero && 'sm:p-8 lg:p-12 border-primary/20 bg-primary/2'
         )}
       >
         {/* Gradient background */}
         <div
           className={cn(
-            'absolute inset-0 bg-gradient-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-500',
+            'absolute inset-0 bg-linear-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-500',
             state.gradient
           )}
         />
@@ -311,7 +311,7 @@ export function DashboardEmptyState({ type, hero = false }: DashboardEmptyStateP
             <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-primary/20" />
             <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-primary/20" />
             <motion.div
-              className="absolute left-0 w-full h-[1px] bg-primary/10 z-0 pointer-events-none"
+              className="absolute left-0 w-full h-px bg-primary/10 z-0 pointer-events-none"
               animate={{ top: ['0%', '100%', '0%'] }}
               transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             />

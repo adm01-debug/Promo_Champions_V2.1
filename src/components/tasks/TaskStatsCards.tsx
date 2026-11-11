@@ -55,7 +55,7 @@ export const TaskStatsCards = React.memo(function TaskStatsCards({
         >
           <div className="flex items-center gap-3">
             <div
-              className={`p-2.5 rounded-xl bg-gradient-to-br ${bg} shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg`}
+              className={`p-2.5 rounded-xl bg-linear-to-br ${bg} shadow-md transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg`}
             >
               <Icon
                 className={`h-5 w-5 ${text} ${key === 'high' ? 'group-hover:animate-pulse' : ''}`}

@@ -243,7 +243,7 @@ const VictoryFeedPage = () => {
                                   <span className="font-bold text-primary min-w-fit">
                                     {comment.salespeople?.name || 'Anônimo'}:
                                   </span>
-                                  <span className="text-muted-foreground break-words">
+                                  <span className="text-muted-foreground wrap-break-word">
                                     {comment.content}
                                   </span>
                                 </div>

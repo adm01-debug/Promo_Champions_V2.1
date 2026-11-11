@@ -68,7 +68,7 @@ export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) =>
       <CardHeader className="pb-4 border-b border-white/5 relative z-10 bg-white/5">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-5">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:rotate-12 transition-transform duration-500">
+            <div className="h-14 w-14 rounded-2xl bg-linear-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:rotate-12 transition-transform duration-500">
               <Swords className="h-7 w-7 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
             </div>
             <div>
@@ -174,8 +174,8 @@ export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) =>
                           className={cn(
                             'absolute h-full relative transition-all duration-1000',
                             i === 0
-                              ? 'bg-gradient-to-r from-rank-gold to-yellow-400'
-                              : 'bg-gradient-to-r from-primary to-accent'
+                              ? 'bg-linear-to-r from-rank-gold to-yellow-400'
+                              : 'bg-linear-to-r from-primary to-accent'
                           )}
                         >
                           <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-shimmer" />
@@ -194,7 +194,7 @@ export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) =>
         </div>
 
         {!isActive && battle.winner_id && (
-          <div className="mt-6 p-6 rounded-3xl bg-gradient-to-br from-rank-gold/20 via-rank-gold/5 to-transparent border border-rank-gold/30 text-center relative overflow-hidden group/winner shadow-2xl shadow-rank-gold/10">
+          <div className="mt-6 p-6 rounded-3xl bg-linear-to-br from-rank-gold/20 via-rank-gold/5 to-transparent border border-rank-gold/30 text-center relative overflow-hidden group/winner shadow-2xl shadow-rank-gold/10">
             <div className="absolute inset-0 bg-rank-gold/5 animate-pulse opacity-50" />
             <div className="relative z-10">
               <div className="size-16 rounded-full bg-rank-gold/20 flex items-center justify-center mx-auto mb-4 border border-rank-gold/30 group-hover/winner:scale-110 group-hover/winner:rotate-12 transition-transform duration-700 shadow-2xl">

@@ -128,7 +128,7 @@ export function AIAssistantSettings() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
+    <div className="bg-linear-to-br from-card/80 to-card/40 border border-border/20 shadow-2xl backdrop-blur-md rounded-2xl overflow-hidden">
       <div className="p-6 border-b border-border/10">
         <h3 className="font-display font-black text-lg uppercase tracking-tighter italic flex items-center gap-3">
           <Bot className="h-5 w-5 text-primary" />
@@ -141,7 +141,7 @@ export function AIAssistantSettings() {
       <div className="p-6 space-y-6">
         {/* Current Assistant Display */}
         <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
+          <div className="h-12 w-12 rounded-full bg-linear-to-br from-primary to-primary/50 flex items-center justify-center">
             <Sparkles className="h-6 w-6 text-primary-foreground" />
           </div>
           <div className="flex-1">

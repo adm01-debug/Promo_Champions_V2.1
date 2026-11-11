@@ -133,7 +133,7 @@ const PredictionCard = ({
           <CollapsibleTrigger asChild>
             <button className="w-full flex items-center gap-3 text-left">
               {/* Avatar */}
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
                 {prediction.displayName
                   .split(' ')
                   .map(n => n[0])
@@ -183,8 +183,8 @@ const PredictionCard = ({
                   className={cn(
                     'h-2',
                     prediction.riskLevel === 'high'
-                      ? '[&>[role=progressbar]]:bg-destructive'
-                      : '[&>[role=progressbar]]:bg-warning'
+                      ? '*:[[role=progressbar]]:bg-destructive'
+                      : '*:[[role=progressbar]]:bg-warning'
                   )}
                 />
               </div>

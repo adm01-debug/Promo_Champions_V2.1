@@ -130,7 +130,7 @@ export function BrowserPushSettings() {
         {isActive ? (
           <>
             <div className="flex items-start gap-2 p-3 rounded-lg bg-status-success/10 border border-status-success/20">
-              <Check className="h-4 w-4 text-status-success mt-0.5 flex-shrink-0" />
+              <Check className="h-4 w-4 text-status-success mt-0.5 shrink-0" />
               <div className="text-sm">
                 <p className="font-medium text-status-success">
                   Notificações push ativas!
@@ -178,7 +178,7 @@ export function BrowserPushSettings() {
           </>
         ) : permission === 'denied' ? (
           <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-            <BellOff className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+            <BellOff className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
             <div className="text-sm">
               <p className="font-medium text-destructive">Notificações bloqueadas</p>
               <p className="text-muted-foreground mt-1">
@@ -196,7 +196,7 @@ export function BrowserPushSettings() {
         ) : (
           <>
             <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
-              <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
               <div className="text-sm text-muted-foreground">
                 <p>
                   Ative as notificações push para receber alertas em tempo real,{' '}

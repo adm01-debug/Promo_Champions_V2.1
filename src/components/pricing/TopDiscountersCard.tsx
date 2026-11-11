@@ -65,7 +65,7 @@ export function TopDiscountersCard({ discounters }: { discounters: TopDiscounter
               {discounters.slice(0, 5).map((s, idx) => (
                 <TableRow
                   key={s.salesperson_id}
-                  className="border-white/5 hover:bg-white/[0.03] transition-all group/row"
+                  className="border-white/5 hover:bg-white/3 transition-all group/row"
                 >
                   <TableCell className="pl-8 py-5">
                     <div className="flex items-center gap-4">

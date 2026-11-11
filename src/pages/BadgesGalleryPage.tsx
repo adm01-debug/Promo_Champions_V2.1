@@ -25,7 +25,7 @@ export default function BadgesGalleryPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-rank-gold to-coins shadow-lg shadow-rank-gold/20">
+            <div className="p-2.5 rounded-xl bg-linear-to-br from-rank-gold to-coins shadow-lg shadow-rank-gold/20">
               <Trophy className="h-6 w-6 text-white" />
             </div>
             <div>

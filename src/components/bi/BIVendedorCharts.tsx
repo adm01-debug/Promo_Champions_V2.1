@@ -95,7 +95,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
         >
           <CardHeader>
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+              <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
                 <TrendingUp className="h-4 w-4 text-primary-foreground" />
               </div>
               Vendas do Mês
@@ -217,7 +217,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
         <Card className="glass-card animate-slide-up" style={{ animationDelay: '500ms' }}>
           <CardHeader>
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+              <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
                 <ShoppingBag className="h-4 w-4 text-primary-foreground" />
               </div>
               Pipeline por Estágio
@@ -266,7 +266,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
         <Card className="glass-card animate-slide-up" style={{ animationDelay: '550ms' }}>
           <CardHeader>
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-xp to-primary">
+              <div className="p-2 rounded-lg bg-linear-to-br from-xp to-primary">
                 <Activity className="h-4 w-4 text-xp-foreground" />
               </div>
               Atividades & Conquistas
@@ -290,7 +290,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
               </div>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-streak/10 to-transparent border border-streak/20 hover-lift-sm">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-linear-to-r from-streak/10 to-transparent border border-streak/20 hover-lift-sm">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-lg bg-streak/20 animate-streak-fire">
                     <Flame className="h-5 w-5 text-streak" />
@@ -301,7 +301,7 @@ export const BIVendedorCharts = React.memo(function BIVendedorCharts({
                   {currentStreak || 0} dias
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 hover-lift-sm">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-linear-to-r from-primary/10 to-transparent border border-primary/20 hover-lift-sm">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-lg bg-primary/20">
                     <Award className="h-5 w-5 text-primary" />

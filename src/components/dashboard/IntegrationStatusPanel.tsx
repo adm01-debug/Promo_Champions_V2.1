@@ -328,7 +328,7 @@ export const IntegrationStatusPanel = () => {
                         )}
                       />
                       {idx !== logs.length - 1 && (
-                        <div className="w-[1px] h-12 bg-white/5" />
+                        <div className="w-px h-12 bg-white/5" />
                       )}
                     </div>
 

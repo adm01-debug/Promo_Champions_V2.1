@@ -35,7 +35,7 @@ export function MessageBubble({
             </AvatarFallback>
           </>
         ) : (
-          <AvatarFallback className="bg-gradient-to-br from-primary to-accent">
+          <AvatarFallback className="bg-linear-to-br from-primary to-accent">
             <Bot className="h-4 w-4 text-primary-foreground" />
           </AvatarFallback>
         )}

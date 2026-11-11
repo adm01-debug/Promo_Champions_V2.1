@@ -238,7 +238,7 @@ export function GeoBlockingManager() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10">
+              <div className="p-2 rounded-lg bg-linear-to-br from-primary/20 to-primary/10">
                 <Globe className="h-5 w-5 text-primary" />
               </div>
               <div>

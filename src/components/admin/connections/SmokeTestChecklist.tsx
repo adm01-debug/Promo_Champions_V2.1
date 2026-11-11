@@ -276,7 +276,7 @@ export function SmokeTestChecklist() {
                             </span>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-md">
-                            <p className="text-xs whitespace-pre-wrap break-words">
+                            <p className="text-xs whitespace-pre-wrap wrap-break-word">
                               {r.error}
                             </p>
                           </TooltipContent>

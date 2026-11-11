@@ -94,7 +94,7 @@ function CadenceCardImpl({
             <div className="flex-1">
               <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
                 <div
-                  className={`p-1.5 rounded-lg transition-all duration-300 group-hover:scale-110 ${isSelected ? 'bg-gradient-to-br from-primary to-accent shadow-md shadow-primary/30' : 'bg-gradient-to-br from-primary/80 to-accent/80 shadow-sm'}`}
+                  className={`p-1.5 rounded-lg transition-all duration-300 group-hover:scale-110 ${isSelected ? 'bg-linear-to-br from-primary to-accent shadow-md shadow-primary/30' : 'bg-linear-to-br from-primary/80 to-accent/80 shadow-sm'}`}
                 >
                   <ListTodo className="h-3.5 w-3.5 text-primary-foreground" />
                 </div>
@@ -105,7 +105,7 @@ function CadenceCardImpl({
                 </span>
                 <Badge
                   variant="outline"
-                  className="text-[10px] bg-gradient-to-r from-primary/20 to-primary/10 text-primary border-primary/30 font-medium shadow-sm"
+                  className="text-[10px] bg-linear-to-r from-primary/20 to-primary/10 text-primary border-primary/30 font-medium shadow-sm"
                 >
                   {steps.length} etapas
                 </Badge>
@@ -237,7 +237,7 @@ function CadenceCardImpl({
                         <Icon className="h-3.5 w-3.5" />
                       </div>
                       {index < steps.length - 1 && (
-                        <div className="w-px h-4 bg-gradient-to-b from-primary/40 to-transparent my-1" />
+                        <div className="w-px h-4 bg-linear-to-b from-primary/40 to-transparent my-1" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">

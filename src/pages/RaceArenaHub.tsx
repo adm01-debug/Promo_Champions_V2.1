@@ -76,7 +76,7 @@ function RoleCard({ cfg, index }: { cfg: (typeof ROLES)[number]; index: number }
       transition={{ delay: index * 0.1, type: 'spring', stiffness: 120, damping: 18 }}
     >
       <Card className="overflow-hidden border-2 hover:border-primary/40 transition-all hover:shadow-2xl group h-full">
-        <div className={`bg-gradient-to-br ${cfg.gradient} p-6 border-b border-border`}>
+        <div className={`bg-linear-to-br ${cfg.gradient} p-6 border-b border-border`}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-xl bg-background/80 backdrop-blur flex items-center justify-center shadow-lg">
@@ -238,7 +238,7 @@ export default function RaceArenaHub() {
             className="block group"
             aria-label="Abrir minha carreira"
           >
-            <Card className="border-warning/30 bg-gradient-to-r from-warning/10 via-card to-card hover:border-warning/60 transition-all">
+            <Card className="border-warning/30 bg-linear-to-r from-warning/10 via-card to-card hover:border-warning/60 transition-all">
               <CardContent className="p-4 flex items-center gap-4">
                 <div className="w-11 h-11 rounded-xl bg-warning/20 flex items-center justify-center shrink-0">
                   <Award className="w-6 h-6 text-warning" />

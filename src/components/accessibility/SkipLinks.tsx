@@ -25,7 +25,7 @@ export const SkipLinks: FC<SkipLinksProps> = ({ links = defaultLinks, className 
       aria-label="Atalhos de navegação"
       className={cn('sr-only focus-within:not-sr-only', className)}
     >
-      <ul className="fixed top-0 left-0 z-[100] flex flex-col gap-1 p-2 bg-background">
+      <ul className="fixed top-0 left-0 z-100 flex flex-col gap-1 p-2 bg-background">
         {links.map(link => (
           <li key={link.href}>
             <a

@@ -52,7 +52,7 @@ export const NavItem: FC<NavItemProps> = memo(
             className={cn(
               'relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground transition-all duration-300 hover:text-foreground hover:bg-muted/40 group/item overflow-hidden will-change-transform',
               isActive &&
-                'bg-gradient-to-r from-primary/15 to-primary/5 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.1)] border border-primary/20'
+                'bg-linear-to-r from-primary/15 to-primary/5 text-primary font-bold shadow-[0_0_15px_rgba(var(--primary),0.1)] border border-primary/20'
             )}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -68,7 +68,7 @@ export const NavItem: FC<NavItemProps> = memo(
             <div className="relative z-10 flex items-center justify-center">
               <Icon
                 className={cn(
-                  'h-[18px] w-[18px] flex-shrink-0 transition-all duration-500 group-hover/item:scale-125 group-hover/item:rotate-[5deg]',
+                  'h-[18px] w-[18px] shrink-0 transition-all duration-500 group-hover/item:scale-125 group-hover/item:rotate-[5deg]',
                   isActive
                     ? 'text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.6)]'
                     : 'text-muted-foreground',

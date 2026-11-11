@@ -141,7 +141,7 @@ export const PerformanceMonitor = memo(() => {
   );
 
   return (
-    <div className="fixed bottom-4 right-4 z-[9999] pointer-events-none">
+    <div className="fixed bottom-4 right-4 z-9999 pointer-events-none">
       <motion.div
         layout
         initial={{ opacity: 0, y: 20 }}

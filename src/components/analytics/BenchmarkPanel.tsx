@@ -89,7 +89,7 @@ export const BenchmarkPanel = React.memo(() => {
                   ? 'border-success/30 bg-success/5 hover:border-success/50'
                   : b.trend === 'down'
                     ? 'border-destructive/30 bg-destructive/5 hover:border-destructive/50'
-                    : 'border-white/5 bg-white/[0.03] hover:border-white/20'
+                    : 'border-white/5 bg-white/3 hover:border-white/20'
               )}
             >
               <div className="relative z-10">
@@ -137,7 +137,7 @@ export const BenchmarkPanel = React.memo(() => {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 right-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 5, repeat: Infinity }}
       />

@@ -107,7 +107,7 @@ const FollowUpLeadCardInner = function FollowUpLeadCard({
                   {lead.client_name}
                 </span>
                 {lead.score && lead.score >= 80 && (
-                  <Badge className="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white border-none text-[10px] h-5 px-1.5 shadow-sm">
+                  <Badge className="bg-linear-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white border-none text-[10px] h-5 px-1.5 shadow-sm">
                     <Zap className="h-3 w-3 mr-0.5 fill-current" />
                     CLASSE A
                   </Badge>

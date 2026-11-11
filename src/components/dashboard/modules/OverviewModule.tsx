@@ -52,13 +52,13 @@ export const OverviewModule = memo(({ goalsData, kpis }: OverviewModuleProps) =>
         variants={itemVariants}
         className="grid grid-cols-1 lg:grid-cols-12 gap-6"
       >
-        <div className="lg:col-span-8 min-h-[300px] sm:min-h-[400px] rounded-xl bg-gradient-to-br from-card via-card to-primary/[0.02] border border-border/40 shadow-md overflow-hidden hover:border-primary/30 transition-all duration-300">
+        <div className="lg:col-span-8 min-h-[300px] sm:min-h-[400px] rounded-xl bg-linear-to-br from-card via-card to-primary/2 border border-border/40 shadow-md overflow-hidden hover:border-primary/30 transition-all duration-300">
           <SalesChart />
         </div>
 
         <div className="lg:col-span-4 space-y-6">
           <div
-            className="rounded-xl bg-gradient-to-br from-card via-card to-accent/[0.03] border border-border/40 shadow-md overflow-hidden hover:border-accent/30 transition-all duration-300 h-[220px]"
+            className="rounded-xl bg-linear-to-br from-card via-card to-accent/3 border border-border/40 shadow-md overflow-hidden hover:border-accent/30 transition-all duration-300 h-[220px]"
             data-tour="goals"
           >
             <GoalProgress

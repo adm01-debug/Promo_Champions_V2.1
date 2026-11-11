@@ -69,7 +69,7 @@ export const PipelineFunnelWidget = React.memo(function PipelineFunnelWidget() {
   const maxCount = Math.max(...entries.map(([, v]) => v.count), 1);
 
   return (
-    <Card className="h-full border-none shadow-sm bg-gradient-to-br from-card to-card/50 overflow-hidden group">
+    <Card className="h-full border-none shadow-sm bg-linear-to-br from-card to-card/50 overflow-hidden group">
       <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
         <CardTitle className="text-section-title text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-info/10">
@@ -117,7 +117,7 @@ export const PipelineFunnelWidget = React.memo(function PipelineFunnelWidget() {
                 <div className="h-[6px] bg-muted/40 rounded-full overflow-hidden relative shadow-inner">
                   <div
                     className={cn(
-                      'h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r shadow-lg relative z-10',
+                      'h-full rounded-full transition-all duration-1000 ease-out bg-linear-to-r shadow-lg relative z-10',
                       config.gradient
                     )}
                     style={{ width: `${pct}%`, transitionDelay: `${index * 150}ms` }}

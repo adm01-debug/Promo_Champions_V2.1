@@ -217,7 +217,7 @@ export default function WebhookTimelinePage() {
                       id={it.attempt !== null ? `attempt-${it.attempt}` : undefined}
                       className="ml-4 scroll-mt-20"
                     >
-                      <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border bg-background flex items-center justify-center">
+                      <span className="absolute left-[-7px] mt-1.5 h-3 w-3 rounded-full border bg-background flex items-center justify-center">
                         <SourceIcon item={it} />
                       </span>
                       <div className="rounded-md border bg-card p-3">
@@ -255,7 +255,7 @@ export default function WebhookTimelinePage() {
                           </span>
                         </div>
                         {it.message && (
-                          <p className="mt-1.5 text-xs text-muted-foreground break-words">
+                          <p className="mt-1.5 text-xs text-muted-foreground wrap-break-word">
                             {it.message}
                           </p>
                         )}

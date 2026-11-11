@@ -365,7 +365,7 @@ export function CadenceFunnelConfig() {
                     </Badge>
                   </div>
 
-                  <div className="h-4 w-[1px] bg-border/40 hidden md:block" />
+                  <div className="h-4 w-px bg-border/40 hidden md:block" />
 
                   <div className="flex items-center gap-2">
                     <Zap className="h-3 w-3 text-status-warning" />

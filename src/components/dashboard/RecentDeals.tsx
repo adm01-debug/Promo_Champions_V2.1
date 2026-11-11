@@ -101,7 +101,7 @@ export const RecentDeals = React.memo(() => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="group/item relative flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/30 hover:bg-white/[0.05] transition-all cursor-default"
+                className="group/item relative flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5 hover:border-primary/30 hover:bg-white/5 transition-all cursor-default"
               >
                 <div className="min-w-0 flex-1 pr-4">
                   <p className="text-[11px] font-mono font-bold uppercase tracking-tight truncate group-hover/item:text-primary transition-colors">
@@ -111,7 +111,7 @@ export const RecentDeals = React.memo(() => {
                     <p className="text-xs font-mono font-black text-foreground tabular-nums">
                       {formatBRL(deal.amount || 0)}
                     </p>
-                    <div className="h-2 w-[1px] bg-white/10" />
+                    <div className="h-2 w-px bg-white/10" />
                     <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-tighter">
                       {new Date(deal.created_at).toLocaleTimeString('pt-BR', {
                         hour: '2-digit',
@@ -155,7 +155,7 @@ export const RecentDeals = React.memo(() => {
 
       {/* Decorative vertical scanline */}
       <motion.div
-        className="absolute top-0 right-0 w-[1px] h-full bg-primary/10"
+        className="absolute top-0 right-0 w-px h-full bg-primary/10"
         animate={{ opacity: [0.1, 0.4, 0.1] }}
         transition={{ duration: 2, repeat: Infinity }}
       />

@@ -175,7 +175,7 @@ export function SalespersonForm({ onSuccess }: SalespersonFormProps) {
       <DialogContent className="glass dark:border-glow border-border/50 animate-fade-in">
         <DialogHeader>
           <DialogTitle className="text-section-title flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-primary/5">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-primary/5">
               <UserPlus className="h-5 w-5 text-primary" />
             </div>
             <span className="gradient-text">Cadastrar Vendedor</span>

@@ -109,7 +109,7 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
       <Card className="border-none shadow-lg overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-linear-to-br from-primary to-primary-glow flex items-center justify-center">
               <Gift className="h-4 w-4 text-primary-foreground" />
             </div>
             Roda da Sorte
@@ -127,7 +127,7 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
             <div className="relative">
               {/* Pointer */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-10">
-                <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[16px] border-l-transparent border-r-transparent border-t-destructive drop-shadow-lg" />
+                <div className="w-0 h-0 border-l-10 border-r-10 border-t-16 border-l-transparent border-r-transparent border-t-destructive drop-shadow-lg" />
               </div>
 
               <motion.div
@@ -163,7 +163,7 @@ const PrizeWheelComponent: FC<PrizeWheelProps> = ({ salespersonId, className }) 
               onClick={handleSpin}
               disabled={isSpinning || availableSpins <= 0 || !salespersonId}
               size="lg"
-              className="gap-2 bg-gradient-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 text-primary-foreground shadow-lg"
+              className="gap-2 bg-linear-to-r from-primary to-primary-glow hover:from-primary/90 hover:to-primary-glow/90 text-primary-foreground shadow-lg"
             >
               <RotateCw className={cn('h-4 w-4', isSpinning && 'animate-spin')} />
               {isSpinning

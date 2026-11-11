@@ -53,10 +53,10 @@ export function CoachingComparison() {
   return (
     <div className="space-y-6">
       {/* Selector */}
-      <Card className="glass dark:border-glow card-elevated animate-fade-in bg-gradient-to-br from-secondary/10 via-transparent to-status-info/5">
+      <Card className="glass dark:border-glow card-elevated animate-fade-in bg-linear-to-br from-secondary/10 via-transparent to-status-info/5">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-secondary/30 to-secondary/10 shadow-lg shadow-secondary/10">
+            <div className="p-2.5 rounded-xl bg-linear-to-br from-secondary/30 to-secondary/10 shadow-lg shadow-secondary/10">
               <Users className="h-6 w-6 text-secondary" />
             </div>
             <div>
@@ -89,7 +89,7 @@ export function CoachingComparison() {
                     className={`h-6 w-6 transition-transform ${selectedIds.includes(sp.id) ? 'scale-110' : ''}`}
                   >
                     <AvatarImage src={sp.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5 font-display">
+                    <AvatarFallback className="text-xs bg-linear-to-br from-primary/20 to-primary/5 font-display">
                       {sp.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -126,7 +126,7 @@ export function CoachingComparison() {
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-secondary/20 animate-ping" />
-                <div className="relative p-4 rounded-full bg-gradient-to-br from-secondary/30 to-secondary/10">
+                <div className="relative p-4 rounded-full bg-linear-to-br from-secondary/30 to-secondary/10">
                   <Loader2 className="h-10 w-10 animate-spin text-secondary" />
                 </div>
                 <Sparkles className="h-5 w-5 text-status-warning absolute -top-1 -right-1 animate-pulse" />
@@ -152,7 +152,7 @@ export function CoachingComparison() {
 
           {/* Insights Summary */}
           <Card
-            className="glass dark:border-glow card-elevated animate-fade-in bg-gradient-to-br from-status-purple/10 via-transparent to-accent/5"
+            className="glass dark:border-glow card-elevated animate-fade-in bg-linear-to-br from-status-purple/10 via-transparent to-accent/5"
             style={{ animationDelay: '200ms' }}
           >
             <CardHeader className="pb-3">
@@ -231,7 +231,7 @@ export function CoachingComparison() {
           <CardContent className="py-12">
             <div className="flex flex-col items-center gap-4 text-center">
               <div className="relative">
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/5 animate-pulse">
+                <div className="p-5 rounded-2xl bg-linear-to-br from-secondary/20 to-secondary/5 animate-pulse">
                   <Users className="h-10 w-10 text-secondary" />
                 </div>
                 <Sparkles className="h-5 w-5 text-status-warning absolute -top-1 -right-1 animate-pulse" />

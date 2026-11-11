@@ -205,7 +205,7 @@ const CompetitiveSeasonsAdmin = () => {
                         className={cn(
                           'p-3 rounded-xl',
                           season.status === 'active'
-                            ? 'bg-gradient-to-br from-primary/20 to-accent/10'
+                            ? 'bg-linear-to-br from-primary/20 to-accent/10'
                             : 'bg-muted/50'
                         )}
                       >

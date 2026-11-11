@@ -456,7 +456,7 @@ export const PipelineBoard = () => {
         </div>
 
         {/* Stats Bar */}
-        <div className="relative flex items-center justify-between p-6 rounded-2xl bg-gradient-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
+        <div className="relative flex items-center justify-between p-6 rounded-2xl bg-linear-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
           {/* Background glow overlay */}
           <div className="absolute -right-24 -top-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
 
@@ -476,7 +476,7 @@ export const PipelineBoard = () => {
             </div>
 
             <div className="hidden lg:flex items-center">
-              <div className="h-10 w-px bg-gradient-to-b from-transparent via-border to-transparent mr-12" />
+              <div className="h-10 w-px bg-linear-to-b from-transparent via-border to-transparent mr-12" />
               <div className="flex flex-col">
                 <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">
                   Time em Win-Streak

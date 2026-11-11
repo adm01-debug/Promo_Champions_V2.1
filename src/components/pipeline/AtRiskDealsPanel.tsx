@@ -59,7 +59,7 @@ export function AtRiskDealsPanel() {
       >
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2 group">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-status-success/30 to-status-success/10 shadow-md transition-all duration-200 group-hover:scale-110">
+            <div className="p-2 rounded-lg bg-linear-to-br from-status-success/30 to-status-success/10 shadow-md transition-all duration-200 group-hover:scale-110">
               <AlertTriangle className="h-4 w-4 text-status-success" />
             </div>
             <span className="gradient-text">Deals em Risco — inatividade</span>
@@ -67,7 +67,7 @@ export function AtRiskDealsPanel() {
         </CardHeader>
         <CardContent>
           <div className="text-center py-6 text-muted-foreground glass rounded-lg border border-dashed border-border/50">
-            <div className="p-3 rounded-full bg-gradient-to-br from-status-success/20 to-status-success/5 w-fit mx-auto mb-3 shadow-inner">
+            <div className="p-3 rounded-full bg-linear-to-br from-status-success/20 to-status-success/5 w-fit mx-auto mb-3 shadow-inner">
               <Activity className="h-10 w-10 text-status-success opacity-60" />
             </div>
             <p className="font-display font-medium gradient-text">
@@ -88,7 +88,7 @@ export function AtRiskDealsPanel() {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title flex items-center gap-2 group">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-status-warning/30 to-status-warning/10 shadow-md transition-all duration-200 group-hover:scale-110">
+            <div className="p-2 rounded-lg bg-linear-to-br from-status-warning/30 to-status-warning/10 shadow-md transition-all duration-200 group-hover:scale-110">
               <AlertTriangle className="h-4 w-4 text-status-warning" />
             </div>
             <span className="gradient-text">Deals em Risco — inatividade</span>

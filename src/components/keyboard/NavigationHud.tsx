@@ -19,7 +19,7 @@ export const NavigationHud: FC<NavigationHudProps> = ({ isVisible, baseKey }) =>
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100]"
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-100"
         >
           <div className="bg-background/80 backdrop-blur-xl border border-primary/20 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-4">
             <div className="flex items-center gap-2">

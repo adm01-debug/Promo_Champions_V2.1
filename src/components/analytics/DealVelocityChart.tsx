@@ -65,7 +65,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
       >
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
+            <div className="p-2 rounded-xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20 animate-pulse">
               <Clock className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="gradient-text">Velocidade do Deal</span>
@@ -100,7 +100,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title flex items-center gap-2 group/title">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40 group-hover/title:rotate-3">
+            <div className="p-2.5 rounded-xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all duration-300 group-hover/title:scale-110 group-hover/title:shadow-primary/40 group-hover/title:rotate-3">
               <Activity className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="gradient-text">Velocidade do Deal</span>
@@ -133,7 +133,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
       <CardContent className="space-y-4">
         {!hasData ? (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
-            <div className="p-4 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
+            <div className="p-4 rounded-full bg-linear-to-br from-muted/50 to-muted/30 mb-3 shadow-inner animate-pulse">
               <Clock className="h-10 w-10 opacity-50" />
             </div>
             <p className="text-sm font-display font-medium gradient-text">
@@ -148,7 +148,7 @@ export function DealVelocityChart({ salespersonId }: DealVelocityChartProps) {
             {/* Summary Stats */}
             <div className="grid grid-cols-3 gap-4">
               <div className="glass rounded-xl p-4 text-center border border-primary/30 hover-lift transition-all duration-300 animate-fade-in group cursor-pointer hover:border-primary/50">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30 group-hover:rotate-3">
+                <div className="p-2.5 rounded-xl bg-linear-to-br from-primary to-accent shadow-md w-fit mx-auto mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shadow-primary/30 group-hover:rotate-3">
                   <Timer className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div className="flex items-center justify-center gap-2">

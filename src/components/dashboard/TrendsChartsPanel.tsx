@@ -176,7 +176,7 @@ export const TrendsChartsPanel = () => {
                   {active && (
                     <motion.div
                       layoutId="activeMetric"
-                      className="absolute inset-0 bg-white/[0.05] border border-white/10 rounded-md shadow-inner"
+                      className="absolute inset-0 bg-white/5 border border-white/10 rounded-md shadow-inner"
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -214,7 +214,7 @@ export const TrendsChartsPanel = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.15 }}
             exit={{ opacity: 0 }}
-            className="absolute -top-[20%] -right-[10%] w-[50%] h-[60%] blur-[120px] rounded-full pointer-events-none"
+            className="absolute top-[-20%] right-[-10%] w-[50%] h-[60%] blur-[120px] rounded-full pointer-events-none"
             style={{ backgroundColor: cfg.color }}
           />
         </AnimatePresence>
@@ -376,7 +376,7 @@ const StatPill = ({
   icon?: React.ComponentType<{ className?: string }>;
   color?: string;
 }) => (
-  <div className="group relative rounded-xl bg-black/40 border border-white/5 p-4 transition-all hover:bg-white/[0.02]">
+  <div className="group relative rounded-xl bg-black/40 border border-white/5 p-4 transition-all hover:bg-white/2">
     <div className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-muted-foreground/60 mb-2 flex items-center gap-2 group-hover:text-muted-foreground transition-colors">
       {Icon && <Icon className="h-3 w-3" />}
       {label}

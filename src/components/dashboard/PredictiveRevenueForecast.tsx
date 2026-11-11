@@ -50,7 +50,7 @@ export const PredictiveRevenueForecast = () => {
         : 'text-danger';
 
   return (
-    <Card className="h-full bg-gradient-to-br from-card via-card to-primary/[0.03] border-primary/20 shadow-lg overflow-hidden group hover:border-primary/40 transition-all duration-500">
+    <Card className="h-full bg-linear-to-br from-card via-card to-primary/3 border-primary/20 shadow-lg overflow-hidden group hover:border-primary/40 transition-all duration-500">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -146,7 +146,7 @@ export const PredictiveRevenueForecast = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-3 rounded-lg bg-primary/[0.03] border border-primary/10 space-y-3"
+            className="p-3 rounded-lg bg-primary/3 border border-primary/10 space-y-3"
           >
             <div className="flex gap-2">
               <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />

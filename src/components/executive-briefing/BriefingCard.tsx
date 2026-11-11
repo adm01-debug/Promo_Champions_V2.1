@@ -17,7 +17,7 @@ export function BriefingCard({ briefing }: Props) {
       transition={{ duration: 0.4 }}
     >
       <Card className={`p-6 border ${tone.border} ${tone.bg} relative overflow-hidden`}>
-        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-48 h-48 bg-linear-to-br from-primary/10 to-transparent rounded-full blur-3xl pointer-events-none" />
         <div className="relative space-y-4">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Calendar className="h-3.5 w-3.5" />

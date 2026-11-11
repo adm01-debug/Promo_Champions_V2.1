@@ -70,7 +70,7 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
           <CardHeader className="pb-6 border-b border-white/5">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <CardTitle className="text-section-title text-3xl flex items-center gap-4 italic uppercase font-black tracking-tighter">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:rotate-6 transition-transform">
+                <div className="h-14 w-14 rounded-2xl bg-linear-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/20 group-hover:rotate-6 transition-transform">
                   <Monitor className="h-7 w-7 text-primary-foreground drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
                 </div>
                 <div>
@@ -210,7 +210,7 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                       <motion.div
                         className={cn(
                           'absolute inset-y-0 left-0 opacity-10',
-                          i < 3 ? `bg-gradient-to-r ${RANK_COLORS[i]}` : 'bg-primary'
+                          i < 3 ? `bg-linear-to-r ${RANK_COLORS[i]}` : 'bg-primary'
                         )}
                         initial={{ width: 0 }}
                         animate={{ width: `${barWidth}%` }}
@@ -225,7 +225,7 @@ const LiveScoreboardComponent: FC<LiveScoreboardProps> = ({ className }) => {
                         className={cn(
                           'relative z-10 h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-2xl',
                           i < 3
-                            ? `bg-gradient-to-br ${RANK_COLORS[i]} text-primary-foreground`
+                            ? `bg-linear-to-br ${RANK_COLORS[i]} text-primary-foreground`
                             : 'bg-white/10 text-muted-foreground'
                         )}
                       >

@@ -27,7 +27,7 @@ const getRankDecor = (rank: number) => {
         icon: <Crown className="h-4 w-4 text-rank-gold" />,
         border: 'border-rank-gold/50',
         bg: 'from-rank-gold/20 via-background to-background shadow-[0_0_20px_rgba(251,191,36,0.1)]',
-        rankBg: 'bg-gradient-to-br from-rank-gold to-coins text-foreground',
+        rankBg: 'bg-linear-to-br from-rank-gold to-coins text-foreground',
         glow: '#f59e0b',
       };
     case 2:
@@ -35,7 +35,7 @@ const getRankDecor = (rank: number) => {
         icon: <Medal className="h-4 w-4 text-slate-300" />,
         border: 'border-slate-400/40',
         bg: 'from-slate-400/15 via-background to-background',
-        rankBg: 'bg-gradient-to-br from-slate-400 to-slate-500 text-primary-foreground',
+        rankBg: 'bg-linear-to-br from-slate-400 to-slate-500 text-primary-foreground',
         glow: '#94a3b8',
       };
     case 3:
@@ -43,7 +43,7 @@ const getRankDecor = (rank: number) => {
         icon: <Award className="h-4 w-4 text-amber-600" />,
         border: 'border-amber-700/40',
         bg: 'from-amber-700/15 via-background to-background',
-        rankBg: 'bg-gradient-to-br from-amber-700 to-amber-900 text-primary-foreground',
+        rankBg: 'bg-linear-to-br from-amber-700 to-amber-900 text-primary-foreground',
         glow: '#b45309',
       };
     default:
@@ -113,7 +113,7 @@ export const RankingGridItem = React.memo(function RankingGridItem({
                 alt={name}
                 className="object-cover"
               />
-              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-foreground font-black text-xs rounded-none">
+              <AvatarFallback className="bg-linear-to-br from-primary/20 to-secondary/20 text-foreground font-black text-xs rounded-none">
                 {name
                   .split(' ')
                   .map(n => n[0])

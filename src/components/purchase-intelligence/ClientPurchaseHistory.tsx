@@ -361,7 +361,7 @@ export function ClientPurchaseHistory({ clientId }: Props) {
         <DialogContent className="max-w-2xl bg-black/95 border-primary/20 backdrop-blur-2xl p-0 overflow-hidden">
           {selectedOrder && (
             <>
-              <div className="h-24 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent relative">
+              <div className="h-24 bg-linear-to-r from-primary/20 via-primary/5 to-transparent relative">
                 <div className="absolute bottom-4 left-6 flex items-center gap-3">
                   <div className="p-3 rounded-2xl bg-primary/20 border border-primary/30 text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
                     <Receipt className="h-6 w-6" />

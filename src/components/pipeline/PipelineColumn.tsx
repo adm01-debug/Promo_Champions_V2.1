@@ -66,7 +66,7 @@ export const PipelineColumn = ({
       ref={setNodeRef}
       className={cn(
         'flex flex-col min-w-[300px] max-w-[320px] 2xl:min-w-0 2xl:max-w-none rounded-2xl transition-all duration-500 snap-center h-full relative',
-        'bg-gradient-to-b from-card/40 to-background/20 backdrop-blur-sm border border-border/20',
+        'bg-linear-to-b from-card/40 to-background/20 backdrop-blur-sm border border-border/20',
         // Etapa 3: Heatmap Glow
         avgScore > 75
           ? 'shadow-[0_0_30px_rgba(16,185,129,0.05)]'
@@ -147,7 +147,7 @@ export const PipelineColumn = ({
         >
           {deals.length === 0 ? (
             // Etapa 7: Empty Stage Gamification
-            <div className="flex flex-col items-center justify-center min-h-[160px] border-2 border-dashed border-primary/20 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent transition-all hover:border-primary/40 group/empty">
+            <div className="flex flex-col items-center justify-center min-h-[160px] border-2 border-dashed border-primary/20 rounded-2xl bg-linear-to-b from-primary/5 to-transparent transition-all hover:border-primary/40 group/empty">
               <div className="p-4 rounded-full bg-primary/10 mb-3 group-hover/empty:scale-110 transition-transform">
                 <Target className="h-6 w-6 text-primary/40" />
               </div>

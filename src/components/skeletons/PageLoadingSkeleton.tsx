@@ -114,7 +114,7 @@ export const PipelineLoadingSkeleton: FC = () => (
       {Array.from({ length: 5 }).map((_, i) => (
         <Card
           key={i}
-          className="min-w-[280px] flex-shrink-0 border-primary/5 bg-background/20"
+          className="min-w-[280px] shrink-0 border-primary/5 bg-background/20"
         >
           <CardHeader>
             <Skeleton className="h-5 w-24" />

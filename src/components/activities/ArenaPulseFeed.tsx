@@ -116,7 +116,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
         <Radar className="h-24 w-24 text-primary animate-spin-slow" />
       </div>
 
-      <CardHeader className="pb-3 border-b border-white/10 bg-gradient-to-r from-primary/10 via-transparent to-transparent relative">
+      <CardHeader className="pb-3 border-b border-white/10 bg-linear-to-r from-primary/10 via-transparent to-transparent relative">
         <div className="flex flex-col gap-1.5">
           <CardTitle className="text-section-title text-xs font-black uppercase tracking-[0.3em] flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -154,7 +154,7 @@ export const ArenaPulseFeed: React.FC<ArenaPulseFeedProps> = ({ data }) => {
       <CardContent className="p-0">
         <div className="relative">
           {/* Scanning line for the list */}
-          <div className="absolute left-0 top-0 w-[2px] h-full bg-gradient-to-b from-transparent via-primary to-transparent opacity-20" />
+          <div className="absolute left-0 top-0 w-[2px] h-full bg-linear-to-b from-transparent via-primary to-transparent opacity-20" />
 
           <div className="divide-y divide-white/5">
             {events.length > 0 ? (

@@ -61,7 +61,7 @@ export function CloserPipeline() {
               className={cn(
                 'space-y-3 group cursor-default transition-all p-2 rounded-xl border border-transparent',
                 isLargestValue &&
-                  'bg-white/[0.03] border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.02)]'
+                  'bg-white/3 border-white/5 shadow-[0_0_15px_rgba(255,255,255,0.02)]'
               )}
             >
               <div className="flex items-center justify-between">
@@ -113,7 +113,7 @@ export function CloserPipeline() {
 
         {/* Total summary */}
         <div className="pt-6 border-t border-white/5 mt-4">
-          <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/5 border border-primary/20">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-linear-to-r from-primary/10 to-accent/5 border border-primary/20">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-primary/20">
                 <DollarSign className="h-4 w-4 text-primary" />

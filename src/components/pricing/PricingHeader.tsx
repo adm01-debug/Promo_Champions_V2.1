@@ -28,7 +28,7 @@ export function PricingHeader({ days, onDaysChange }: PricingHeaderProps) {
             </div>
           </div>
         </div>
-        <h1 className="text-5xl font-black font-sora tracking-tight bg-gradient-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
+        <h1 className="text-5xl font-black font-sora tracking-tight bg-linear-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent sm:text-6xl">
           Pricing Hub <span className="text-primary/80">10/10</span>
         </h1>
         <p className="text-base text-muted-foreground/80 max-w-3xl font-medium leading-relaxed">

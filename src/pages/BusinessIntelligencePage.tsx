@@ -84,7 +84,7 @@ export default function BusinessIntelligencePage() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
+              <div className="p-2.5 rounded-xl bg-linear-to-br from-primary to-accent shadow-lg shadow-primary/20">
                 <Sparkles className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>

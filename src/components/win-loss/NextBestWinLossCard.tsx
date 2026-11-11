@@ -11,7 +11,7 @@ export function NextBestWinLossCard() {
 
   if (isLoading) {
     return (
-      <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-transparent">
+      <Card className="border-border/50 bg-linear-to-br from-primary/5 to-transparent">
         <CardContent className="py-4">
           <Skeleton className="h-16" />
         </CardContent>
@@ -21,7 +21,7 @@ export function NextBestWinLossCard() {
   if (!data) return null;
 
   return (
-    <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+    <Card className="border-primary/30 bg-linear-to-br from-primary/5 via-transparent to-transparent">
       <CardHeader className="pb-2">
         <CardTitle className="text-section-title flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />

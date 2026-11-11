@@ -61,8 +61,8 @@ export const BIProjectionCard: FC<BIProjectionCardProps> = ({
           className={cn(
             'absolute inset-0 pointer-events-none',
             willMeetGoal
-              ? 'bg-gradient-to-br from-success/5 via-transparent to-transparent'
-              : 'bg-gradient-to-br from-warning/5 via-transparent to-transparent'
+              ? 'bg-linear-to-br from-success/5 via-transparent to-transparent'
+              : 'bg-linear-to-br from-warning/5 via-transparent to-transparent'
           )}
         />
 

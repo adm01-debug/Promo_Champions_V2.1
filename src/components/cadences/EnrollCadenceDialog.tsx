@@ -79,7 +79,7 @@ export function EnrollCadenceDialog({
       <DialogContent className="max-w-xl glass border-border/50 dark:border-glow">
         <DialogHeader>
           <DialogTitle className="text-section-title flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-gradient-to-br from-primary/20 to-accent/10">
+            <div className="p-1.5 rounded-md bg-linear-to-br from-primary/20 to-accent/10">
               <Play className="h-4 w-4 gradient-primary" />
             </div>
             Inscrever em Cadência
@@ -87,7 +87,7 @@ export function EnrollCadenceDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="p-3 rounded-lg bg-gradient-to-r from-muted/50 to-muted/30 border border-border/30">
+          <div className="p-3 rounded-lg bg-linear-to-r from-muted/50 to-muted/30 border border-border/30">
             <p className="text-sm">
               <span className="text-muted-foreground">Prospect:</span>{' '}
               <span className="font-display font-semibold gradient-text">

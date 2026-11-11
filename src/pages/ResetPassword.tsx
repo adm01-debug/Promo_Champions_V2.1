@@ -83,7 +83,7 @@ export default function ResetPassword() {
           <title>Redefinir Senha | Promo Champions</title>
           <meta name="description" content="Redefina sua senha de acesso" />
         </Helmet>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-background via-background to-muted/20 p-4">
           <Card className="w-full max-w-md glass border-border/40 hover-lift-sm">
             <CardContent className="pt-6">
               <div className="text-center space-y-4">
@@ -103,7 +103,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-background via-background to-muted/20 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8 space-y-4">
           <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">

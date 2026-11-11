@@ -20,11 +20,11 @@ function TopClosersRankingImpl() {
 
   const getRankStyle = (index: number) => {
     if (index === 0)
-      return 'bg-gradient-to-r from-rank-gold/20 to-rank-gold/5 border-rank-gold/50 ring-1 ring-rank-gold/30 shadow-lg shadow-rank-gold/10 hover-glow-gold';
+      return 'bg-linear-to-r from-rank-gold/20 to-rank-gold/5 border-rank-gold/50 ring-1 ring-rank-gold/30 shadow-lg shadow-rank-gold/10 hover-glow-gold';
     if (index === 1)
-      return 'bg-gradient-to-r from-rank-silver/20 to-rank-silver/5 border-rank-silver/50 ring-1 ring-rank-silver/20 shadow-md';
+      return 'bg-linear-to-r from-rank-silver/20 to-rank-silver/5 border-rank-silver/50 ring-1 ring-rank-silver/20 shadow-md';
     if (index === 2)
-      return 'bg-gradient-to-r from-rank-bronze/20 to-rank-bronze/5 border-rank-bronze/50 ring-1 ring-rank-bronze/20 shadow-md';
+      return 'bg-linear-to-r from-rank-bronze/20 to-rank-bronze/5 border-rank-bronze/50 ring-1 ring-rank-bronze/20 shadow-md';
     return 'border-border/40 hover:bg-muted/30 hover:border-primary/30';
   };
 
@@ -42,7 +42,7 @@ function TopClosersRankingImpl() {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2 group">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-rank-gold/20 to-rank-gold/5 shadow-lg group-hover:scale-110 transition-transform">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-rank-gold/20 to-rank-gold/5 shadow-lg group-hover:scale-110 transition-transform">
               <Trophy className="h-4 w-4 text-rank-gold" />
             </div>
             <span className="gradient-text">Top Closers</span>
@@ -60,7 +60,7 @@ function TopClosersRankingImpl() {
           <div className="space-y-2.5">
             {closers?.length === 0 && (
               <div className="flex flex-col items-center justify-center py-10 text-muted-foreground glass rounded-xl border border-dashed border-border/50 animate-fade-in">
-                <div className="p-4 rounded-full bg-gradient-to-br from-rank-gold/10 to-rank-gold/5 mb-3 shadow-lg">
+                <div className="p-4 rounded-full bg-linear-to-br from-rank-gold/10 to-rank-gold/5 mb-3 shadow-lg">
                   <Trophy className="h-10 w-10 text-rank-gold/50 animate-pulse" />
                 </div>
                 <p className="text-sm font-display font-medium gradient-text">
@@ -91,11 +91,11 @@ function TopClosersRankingImpl() {
                     className={cn(
                       'flex items-center justify-center w-8 h-8 rounded-lg text-xs font-bold shadow-md transition-all group-hover:scale-110 group-hover:shadow-lg',
                       index === 0 &&
-                        'bg-gradient-to-br from-rank-gold to-streak text-primary-foreground shadow-rank-gold/40 animate-float',
+                        'bg-linear-to-br from-rank-gold to-streak text-primary-foreground shadow-rank-gold/40 animate-float',
                       index === 1 &&
-                        'bg-gradient-to-br from-rank-silver to-rank-silver/70 text-primary-foreground shadow-rank-silver/30',
+                        'bg-linear-to-br from-rank-silver to-rank-silver/70 text-primary-foreground shadow-rank-silver/30',
                       index === 2 &&
-                        'bg-gradient-to-br from-rank-bronze to-rank-bronze/70 text-primary-foreground shadow-rank-bronze/30',
+                        'bg-linear-to-br from-rank-bronze to-rank-bronze/70 text-primary-foreground shadow-rank-bronze/30',
                       index > 2 && 'bg-muted text-muted-foreground'
                     )}
                   >
@@ -108,7 +108,7 @@ function TopClosersRankingImpl() {
                     )}
                   >
                     <AvatarImage src={closer.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs bg-gradient-to-br from-primary/20 to-primary/5 text-primary font-display font-bold">
+                    <AvatarFallback className="text-xs bg-linear-to-br from-primary/20 to-primary/5 text-primary font-display font-bold">
                       {closer.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

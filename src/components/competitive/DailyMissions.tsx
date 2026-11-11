@@ -87,7 +87,7 @@ const DailyMissionsComponent: FC<DailyMissionsProps> = ({ salespersonId, classNa
       <Card className="glass border-white/5 shadow-2xl overflow-hidden relative group">
         <div
           className={cn(
-            'absolute inset-0 bg-gradient-to-r transition-colors duration-1000',
+            'absolute inset-0 bg-linear-to-r transition-colors duration-1000',
             allCompleted
               ? 'from-emerald-500/10 via-emerald-500/5 to-transparent'
               : 'from-primary/10 via-primary/5 to-transparent'
@@ -102,7 +102,7 @@ const DailyMissionsComponent: FC<DailyMissionsProps> = ({ salespersonId, classNa
                     'h-12 w-12 rounded-xl flex items-center justify-center shadow-xl transition-all duration-500 group-hover:rotate-6',
                     allCompleted
                       ? 'bg-emerald-500 text-white shadow-emerald-500/20'
-                      : 'bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-primary/20'
+                      : 'bg-linear-to-br from-primary to-accent text-primary-foreground shadow-primary/20'
                   )}
                 >
                   {allCompleted ? (
@@ -267,7 +267,7 @@ const DailyMissionsComponent: FC<DailyMissionsProps> = ({ salespersonId, classNa
                     >
                       {mission.title}
                     </h4>
-                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.1em] line-clamp-1">
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest line-clamp-1">
                       {mission.description}
                     </p>
                   </div>

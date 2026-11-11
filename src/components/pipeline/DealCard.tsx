@@ -134,7 +134,7 @@ export const DealCard = ({
         {/* Etapa 2: Heatmap Overlay */}
         <div
           className={cn(
-            'absolute inset-0 bg-gradient-to-br opacity-40 transition-opacity duration-700 pointer-events-none',
+            'absolute inset-0 bg-linear-to-br opacity-40 transition-opacity duration-700 pointer-events-none',
             getHealthGradient(healthScore)
           )}
         />

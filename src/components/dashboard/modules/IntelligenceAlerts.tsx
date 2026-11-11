@@ -83,7 +83,7 @@ export const IntelligenceAlerts = React.memo(
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="relative p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-primary/30 hover:bg-white/[0.04] transition-all group/item overflow-hidden"
+                className="relative p-3 rounded-xl bg-white/2 border border-white/5 hover:border-primary/30 hover:bg-white/4 transition-all group/item overflow-hidden"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 space-y-1">

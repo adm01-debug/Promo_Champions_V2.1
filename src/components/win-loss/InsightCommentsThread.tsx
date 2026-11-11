@@ -81,7 +81,7 @@ export function InsightCommentsThread({ insightId }: Props) {
                     })}
                   </span>
                 </div>
-                <p className="text-muted-foreground whitespace-pre-wrap break-words">
+                <p className="text-muted-foreground whitespace-pre-wrap wrap-break-word">
                   {c.body}
                 </p>
               </div>

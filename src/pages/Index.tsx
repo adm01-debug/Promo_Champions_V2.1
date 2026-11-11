@@ -231,7 +231,7 @@ const Index = () => {
               exit={{ x: 20, opacity: 0 }}
               className="p-3 rounded-lg border bg-primary/10 border-primary/20 text-primary flex items-center gap-3 overflow-hidden relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              <div className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <div className="p-1.5 rounded-full bg-current/10 relative z-10">
                 <Zap className="h-4 w-4 animate-pulse" />
               </div>

@@ -78,7 +78,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({
         <Card className="glass-card">
           <CardHeader>
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
+              <div className="p-2 rounded-lg bg-linear-to-br from-primary to-primary-glow">
                 <TrendingUp className="h-4 w-4 text-primary-foreground" />
               </div>
               Leads por Dia
@@ -158,7 +158,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({
         <Card className="glass-card">
           <CardHeader>
             <CardTitle className="text-section-title flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-chart-2 to-success">
+              <div className="p-2 rounded-lg bg-linear-to-br from-chart-2 to-success">
                 <Activity className="h-4 w-4 text-success-foreground" />
               </div>
               Atividades por Dia
@@ -218,7 +218,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({
                     </div>
                     <div className="h-6 bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-primary to-primary-glow rounded-full transition-all duration-500"
+                        className="h-full bg-linear-to-r from-primary to-primary-glow rounded-full transition-all duration-500"
                         style={{ width: `${stage.percentage}%` }}
                       />
                     </div>
@@ -280,7 +280,7 @@ export const BISDRCharts = React.memo(function BISDRCharts({
       <Card className="glass-card">
         <CardHeader>
           <CardTitle className="text-section-title flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-primary">
+            <div className="p-2 rounded-lg bg-linear-to-br from-indigo-500 to-primary">
               <Zap className="h-4 w-4 text-white" />
             </div>
             Efetividade por Canal & Desfecho

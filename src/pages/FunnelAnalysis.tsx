@@ -178,7 +178,7 @@ const FunnelAnalysis = () => {
                             style={{ width: `${widthPercent}%`, minWidth: '320px' }}
                           >
                             {/* Neural Background Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
                             <div className="flex items-center justify-between relative z-10">
                               <div className="flex items-center gap-3">
@@ -267,7 +267,7 @@ const FunnelAnalysis = () => {
 
                           {nextStage && (
                             <div className="flex flex-col items-center py-2 relative h-12">
-                              <div className="w-px h-full bg-gradient-to-b from-primary/40 to-transparent relative">
+                              <div className="w-px h-full bg-linear-to-b from-primary/40 to-transparent relative">
                                 <motion.div
                                   animate={{ y: [0, 40], opacity: [0, 1, 0] }}
                                   transition={{
@@ -313,7 +313,7 @@ const FunnelAnalysis = () => {
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: '87%' }}
-                            className="h-full bg-gradient-to-r from-primary to-info rounded-full shadow-[0_0_10px_rgba(155,135,245,0.3)]"
+                            className="h-full bg-linear-to-r from-primary to-info rounded-full shadow-[0_0_10px_rgba(155,135,245,0.3)]"
                           />
                         </div>
                       </div>

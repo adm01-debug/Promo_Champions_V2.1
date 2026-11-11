@@ -62,7 +62,7 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
         <Brain className="size-48" />
       </div>
 
-      <CardHeader className="pb-6 border-b border-white/5 bg-gradient-to-r from-primary/10 via-transparent to-transparent">
+      <CardHeader className="pb-6 border-b border-white/5 bg-linear-to-r from-primary/10 via-transparent to-transparent">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="text-section-title font-black uppercase tracking-widest flex items-center gap-2">
@@ -93,7 +93,7 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
               Humor Detalhado (Score -1 a +1)
             </h4>
           </div>
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
+          <div className="p-4 rounded-2xl bg-white/2 border border-white/5 shadow-inner">
             <SentimentTimelineChart
               recordingId={recordingId}
               moments={moments ?? []}
@@ -111,7 +111,7 @@ export const NeuralSentimentTimeline = ({ recordingId }: Props) => {
                 <MessageSquare className="size-3" />
                 Diarização & Talk Ratio
               </h4>
-              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-6">
+              <div className="p-5 rounded-2xl bg-white/2 border border-white/5 space-y-6">
                 <TalkRatioBar
                   seller={rec.talk_ratio_seller}
                   client={rec.talk_ratio_client}

@@ -18,7 +18,7 @@ export function RaceArenaOverlays({
   return (
     <>
       <div
-        className="pointer-events-none absolute inset-0 z-[5] rounded-3xl"
+        className="pointer-events-none absolute inset-0 z-5 rounded-3xl"
         style={{
           background:
             'radial-gradient(circle at 92% 8%, hsl(48 100% 75% / 0.22) 0%, hsl(45 95% 65% / 0.08) 30%, transparent 65%)',
@@ -29,7 +29,7 @@ export function RaceArenaOverlays({
 
       {yellowFlag && (
         <div
-          className="pointer-events-none absolute inset-0 z-[6] rounded-3xl"
+          className="pointer-events-none absolute inset-0 z-6 rounded-3xl"
           style={{
             background: 'hsl(45 95% 55% / 0.15)',
             animation: 'race-track-yellow-overlay 0.7s ease-in-out infinite',

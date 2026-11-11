@@ -58,10 +58,10 @@ function StreakAchievementsCardImpl({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Current Streak Display */}
-        <div className="bg-gradient-to-r from-streak/10 via-destructive/10 to-rank-gold/10 rounded-xl p-4 border border-streak/20">
+        <div className="bg-linear-to-r from-streak/10 via-destructive/10 to-rank-gold/10 rounded-xl p-4 border border-streak/20">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="h-16 w-16 rounded-full bg-gradient-to-br from-streak to-destructive flex items-center justify-center shadow-lg">
+              <div className="h-16 w-16 rounded-full bg-linear-to-br from-streak to-destructive flex items-center justify-center shadow-lg">
                 <span className="text-2xl font-bold text-primary-foreground">
                   {currentStreak || 0}
                 </span>
@@ -114,7 +114,7 @@ function StreakAchievementsCardImpl({
                 animate={{ opacity: 1, scale: 1 }}
                 className={`relative rounded-lg border p-3 text-center transition-all ${
                   isAchieved
-                    ? 'bg-gradient-to-br from-rank-gold/10 to-streak/10 border-rank-gold/30'
+                    ? 'bg-linear-to-br from-rank-gold/10 to-streak/10 border-rank-gold/30'
                     : 'bg-muted/30 opacity-60'
                 }`}
               >

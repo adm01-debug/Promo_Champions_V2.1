@@ -98,12 +98,12 @@ export const DashboardHeader = () => {
               <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/60">
                 Session Established
               </span>
-              <div className="h-[1px] w-8 bg-primary/20" />
+              <div className="h-px w-8 bg-primary/20" />
             </div>
             <h1 className="text-page-title sm:text-4xl uppercase text-foreground">
               {greeting},{' '}
               <span
-                className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-glow to-primary animate-pulse"
+                className="text-primary bg-clip-text text-transparent bg-linear-to-r from-primary via-primary-glow to-primary animate-pulse"
                 style={{ textShadow: '0 0 25px rgba(14,165,233,0.5)' }}
               >
                 {firstName}
@@ -180,7 +180,7 @@ export const DashboardHeader = () => {
 
       {/* Scanline decoration */}
       <motion.div
-        className="absolute top-0 left-0 w-full h-[1px] bg-primary/10"
+        className="absolute top-0 left-0 w-full h-px bg-primary/10"
         animate={{ top: ['0%', '100%', '0%'] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
       />

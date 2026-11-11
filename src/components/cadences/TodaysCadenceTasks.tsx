@@ -224,7 +224,7 @@ export function TodaysCadenceTasks() {
       >
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md animate-pulse">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md animate-pulse">
               <ListTodo className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Tarefas de Cadência - Hoje</span>
@@ -265,7 +265,7 @@ export function TodaysCadenceTasks() {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent shadow-md">
+            <div className="p-1.5 rounded-lg bg-linear-to-br from-primary to-accent shadow-md">
               <ListTodo className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="gradient-text">Tarefas de Cadência - Hoje</span>
@@ -274,7 +274,7 @@ export function TodaysCadenceTasks() {
             variant="secondary"
             className={`text-xs font-medium border transition-all duration-300 ${
               tasks && tasks.length > 0
-                ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-primary border-primary/30 animate-pulse'
+                ? 'bg-linear-to-r from-primary/20 to-accent/20 text-primary border-primary/30 animate-pulse'
                 : 'bg-muted/50 text-muted-foreground border-border/50'
             }`}
           >
@@ -298,7 +298,7 @@ export function TodaysCadenceTasks() {
           <div className="p-4 space-y-3">
             {!tasks || tasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-muted-foreground glass rounded-lg border border-dashed border-border/50">
-                <div className="p-3 rounded-full bg-gradient-to-br from-muted/50 to-muted/30 mb-3 shadow-inner">
+                <div className="p-3 rounded-full bg-linear-to-br from-muted/50 to-muted/30 mb-3 shadow-inner">
                   <Clock className="h-8 w-8 opacity-50" />
                 </div>
                 <p className="text-sm font-display font-medium gradient-text">

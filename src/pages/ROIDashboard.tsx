@@ -124,7 +124,7 @@ const ROIDashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0 }}
           >
-            <Card className="border-none shadow-xl bg-gradient-to-br from-primary/15 to-transparent relative overflow-hidden group">
+            <Card className="border-none shadow-xl bg-linear-to-br from-primary/15 to-transparent relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                 <DollarSign className="h-12 w-12" />
               </div>
