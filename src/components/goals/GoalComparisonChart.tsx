@@ -96,7 +96,7 @@ export const GoalComparisonChart: FC<GoalComparisonChartProps> = ({ salespeople 
             />
             <Tooltip
               cursor={{ fill: 'hsl(var(--primary)/0.05)' }}
-              formatter={(v: number | string, name: string) => [
+              formatter={(v, name) => [
                 `${formatBRL(Number(v))}`,
                 name === 'vendido' ? 'Vendido' : name === 'meta' ? 'Meta' : 'Forecast',
               ]}

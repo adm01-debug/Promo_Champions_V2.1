@@ -109,7 +109,7 @@ export function ICPPerformanceChart() {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value: number | string) => [
+                formatter={(value) => [
                   `${Number(value).toFixed(1)}%`,
                   'Win Rate',
                 ]}
@@ -144,7 +144,7 @@ export function ICPPerformanceChart() {
                   borderRadius: '8px',
                   color: '#fff',
                 }}
-                formatter={(value: number | string) => [
+                formatter={(value) => [
                   formatBRL(Number(value), { decimals: 2 }),
                   'Ticket Médio',
                 ]}

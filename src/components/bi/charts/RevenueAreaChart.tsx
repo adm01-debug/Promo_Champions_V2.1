@@ -40,7 +40,7 @@ const RevenueAreaChart = ({ data, formatCurrency }: RevenueAreaChartProps) => (
           borderRadius: '12px',
           boxShadow: 'var(--shadow-lg)',
         }}
-        formatter={(value: number | string) => [formatCurrency(value), 'Receita']}
+        formatter={(value) => [formatCurrency(Number(value)), 'Receita']}
       />
       <Area
         type="monotone"

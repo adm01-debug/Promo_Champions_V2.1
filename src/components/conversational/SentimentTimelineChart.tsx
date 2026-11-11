@@ -70,15 +70,15 @@ export const SentimentTimelineChart = ({
 
   const shifts = useMemo(() => (timeline ? detectShifts(timeline) : []), [timeline]);
 
-  const handleClick = (e: {
-    activePayload?: Array<{ payload?: { start_sec: number; excerpt?: string } }>;
-  }) => {
-    const seg = e?.activePayload?.[0]?.payload;
+  const handleClick = (e: { activeLabel?: string | number | undefined }) => {
+    const seg = timeline?.find(
+      s => s.start_sec === Math.round(Number(e.activeLabel))
+    );
     if (seg) {
       if (onSeek) onSeek(seg.start_sec);
       const shift = shifts.find(s => Math.abs(s.start_sec - seg.start_sec) < 5);
       if (shift) {
-        setSelectedShift({ start_sec: shift.start_sec, text: seg.excerpt });
+        setSelectedShift({ start_sec: shift.start_sec, text: seg.excerpt ?? undefined });
       }
     }
   };

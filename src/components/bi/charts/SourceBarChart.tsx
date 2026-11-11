@@ -40,7 +40,7 @@ const SourceBarChart = ({ data, formatCurrency }: SourceBarChartProps) => (
           border: '1px solid hsl(var(--border))',
           borderRadius: '12px',
         }}
-        formatter={(value: number | string) => [formatCurrency(value), 'Valor']}
+        formatter={(value) => [formatCurrency(Number(value)), 'Valor']}
       />
       <Bar dataKey="value" fill="hsl(var(--primary))" radius={[0, 8, 8, 0]} />
     </BarChart>

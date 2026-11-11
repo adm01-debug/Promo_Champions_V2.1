@@ -227,7 +227,7 @@ export const LTVBySegment: FC<{
                     axisLine={false}
                   />
                   <Tooltip
-                    formatter={(value: number | string) => [
+                    formatter={(value) => [
                       `${formatBRL(Number(value))}`,
                       'LTV Médio',
                     ]}

@@ -78,8 +78,8 @@ export const ForecastWidget = React.memo(function ForecastWidget() {
               </defs>
               <XAxis dataKey="day" hide />
               <Tooltip
-                formatter={(v: number, name: string) => [
-                  `${formatBRL(v)}`,
+                formatter={(v, name) => [
+                  `${formatBRL(Number(v))}`,
                   name === 'actual' ? 'Real' : 'Projeção',
                 ]}
                 contentStyle={{

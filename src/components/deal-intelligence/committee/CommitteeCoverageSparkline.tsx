@@ -51,7 +51,7 @@ export function CommitteeCoverageSparkline({ saleId }: Props) {
                 fontSize: 11,
               }}
               labelFormatter={v => new Date(v as string).toLocaleDateString('pt-BR')}
-              formatter={(v: number) => [`${v.toFixed(0)} pts`, 'Cobertura']}
+              formatter={(v) => [`${Number(v).toFixed(0)} pts`, 'Cobertura']}
             />
             <Line
               type="monotone"

@@ -74,7 +74,7 @@ export const WinRateBreakdownChart: FC<Props> = ({
                   border: '1px solid hsl(var(--border))',
                   borderRadius: 8,
                 }}
-                formatter={(v: number | string, name: string) =>
+                formatter={(v, name) =>
                   name === 'win_rate' ? `${v}%` : v
                 }
               />

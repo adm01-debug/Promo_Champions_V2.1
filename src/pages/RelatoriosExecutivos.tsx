@@ -349,7 +349,7 @@ const RelatoriosExecutivos = () => {
                         tick={{ fontSize: 12 }}
                       />
                       <Tooltip
-                        formatter={(v: number | string) => [
+                        formatter={(v) => [
                           `${formatBRL(Number(v))}`,
                           'Receita',
                         ]}

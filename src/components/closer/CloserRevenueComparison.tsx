@@ -243,7 +243,7 @@ export function CloserRevenueComparison({ period }: CloserRevenueComparisonProps
                 <LabelList
                   dataKey="revenue"
                   position="right"
-                  formatter={(value: number | string) =>
+                  formatter={(value) =>
                     formatCurrencyFull(Number(value))
                   }
                   style={{

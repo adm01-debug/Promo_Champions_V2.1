@@ -262,7 +262,7 @@ const ROIDashboard = () => {
                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip
-                      formatter={(value: number | string, name: string) => [
+                      formatter={(value, name) => [
                         name === 'roi' ? `${value}%` : formatBRL(Number(value)),
                         name === 'roi' ? 'ROI' : name === 'revenue' ? 'Receita' : 'Custo',
                       ]}
@@ -337,7 +337,7 @@ const ROIDashboard = () => {
                     />
                     <ZAxis type="number" dataKey="z" range={[60, 400]} name="Vendas" />
                     <Tooltip
-                      formatter={(value: number | string, name: string) => [
+                      formatter={(value, name) => [
                         name === 'Receita' ? formatBRL(Number(value)) : value,
                         name,
                       ]}

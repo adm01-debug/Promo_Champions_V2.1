@@ -221,7 +221,7 @@ export function PurchaseIntelligenceHub() {
                               border: '1px solid hsl(var(--border))',
                               borderRadius: '8px',
                             }}
-                            formatter={(value: number | string) => [
+                            formatter={(value) => [
                               `${formatBRL(Number(value))}`,
                             ]}
                           />

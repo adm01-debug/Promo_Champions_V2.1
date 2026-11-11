@@ -128,7 +128,7 @@ export function CoachingImpactTracker() {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: 8,
                   }}
-                  formatter={(v: number | string) => [
+                  formatter={(v) => [
                     `${Number(v).toFixed(1)}%`,
                     'Δ Score',
                   ]}

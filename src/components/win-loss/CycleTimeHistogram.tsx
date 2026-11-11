@@ -83,8 +83,8 @@ export const CycleTimeHistogram = memo(function CycleTimeHistogram({
                 name="Won"
                 fill="hsl(var(--primary))"
                 radius={[4, 4, 0, 0]}
-                onClick={(d: { label?: string }) =>
-                  onBinClick?.(d.label as string, 'won')
+                onClick={(d) =>
+                  onBinClick?.(String(d.payload?.label ?? ''), 'won')
                 }
                 style={{ cursor: onBinClick ? 'pointer' : undefined }}
               />
@@ -93,8 +93,8 @@ export const CycleTimeHistogram = memo(function CycleTimeHistogram({
                 name="Lost"
                 fill="hsl(var(--destructive))"
                 radius={[4, 4, 0, 0]}
-                onClick={(d: { label?: string }) =>
-                  onBinClick?.(d.label as string, 'lost')
+                onClick={(d) =>
+                  onBinClick?.(String(d.payload?.label ?? ''), 'lost')
                 }
                 style={{ cursor: onBinClick ? 'pointer' : undefined }}
               />

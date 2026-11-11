@@ -52,7 +52,7 @@ export const HistoryTab = memo(function HistoryTab({
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number | string) => [
+                    formatter={(value) => [
                       formatCurrency(Number(value)),
                       'Total',
                     ]}

@@ -58,9 +58,9 @@ export const VelocityScoreWidget = React.memo(function VelocityScoreWidget() {
                 />
                 <YAxis hide />
                 <Tooltip
-                  formatter={(v: number, name: string) => {
-                    if (name === 'velocity') return [v.toLocaleString('pt-BR'), 'Score'];
-                    return [`${v}d`, 'Ciclo'];
+                  formatter={(v, name) => {
+                    if (name === 'velocity') return [Number(v).toLocaleString('pt-BR'), 'Score'];
+                    return [`${Number(v)}d`, 'Ciclo'];
                   }}
                   contentStyle={{
                     borderRadius: 8,

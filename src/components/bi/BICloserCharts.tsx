@@ -88,7 +88,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                   />
                   <Tooltip
                     contentStyle={tooltipStyle}
-                    formatter={(value: number) => [formatBRL(value), 'Faturamento']}
+                    formatter={(value) => [formatBRL(Number(value)), 'Faturamento']}
                   />
                   <Area
                     type="monotone"
@@ -136,7 +136,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: number) => [formatBRL(value)]}
+                      formatter={(value) => [formatBRL(Number(value))]}
                       contentStyle={tooltipStyle}
                     />
                   </PieChart>
@@ -193,7 +193,7 @@ export const BICloserCharts = memo(function BICloserCharts({
                 />
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  formatter={(value: number) => [formatBRL(value), 'Faturamento']}
+                  formatter={(value) => [formatBRL(Number(value)), 'Faturamento']}
                 />
                 <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>

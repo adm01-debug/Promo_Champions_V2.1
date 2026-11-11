@@ -124,7 +124,7 @@ export const PerformanceCharts = React.memo(function PerformanceCharts({
                 />
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  formatter={(value: number) => [formatCurrency(value), 'Receita']}
+                  formatter={(value) => [formatCurrency(Number(value)), 'Receita']}
                 />
                 <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
                   {revenueChartData.map((entry, index) => (

@@ -13,8 +13,6 @@ import {
   Legend,
   Cell,
 } from 'recharts';
-import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
-
 export function AchievementComparisonChart() {
   const { data, isLoading } = useAchievementsByPerson();
 
@@ -106,7 +104,7 @@ export function AchievementComparisonChart() {
                   letterSpacing: '0.1em',
                 }}
                 cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                formatter={(value: ValueType, name: NameType) => {
+                formatter={(value, name) => {
                   const label = name === 'dailyGoals' ? 'Metas' : 'Marcos';
                   return [value, label];
                 }}
