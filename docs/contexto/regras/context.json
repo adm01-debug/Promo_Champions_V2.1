@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3c3c10d55c7fc4015b36f5f591b6a1b3ab5cd661",
+  "sha": "e6a77847b0a63cef8ae4867a0c3483e12d6a373f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-11 13:56 UTC",
+  "generated_at": "2026-11-11 21:02 UTC",
   "files_total": 3468,
   "code_files": 3139,
-  "code_lines": 456685
+  "code_lines": 456615
  },
  "version": "1.3.2",
- "facts_hash": "63553a589d9d03e2",
+ "facts_hash": "b2af4abb36ed62c3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -62,7 +62,7 @@
     "in": "package.json"
    },
    "recharts": {
-    "version": "^2.12.0",
+    "version": "3.10.1",
     "role": "Gráficos Recharts",
     "in": "package.json"
    },
@@ -77635,7 +77635,7 @@
   {
    "module": "src/components",
    "files": 1183,
-   "lines": 187731,
+   "lines": 187666,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78583,7 +78583,7 @@
   {
    "module": "src/pages",
    "files": 174,
-   "lines": 42943,
+   "lines": 42938,
    "tables": [
     "achievements",
     "activities",
@@ -178563,7 +178563,7 @@
   },
   "src/components/achievements/AchievementComparisonChart.tsx": {
    "path": "src/components/achievements/AchievementComparisonChart.tsx",
-   "lines": 157,
+   "lines": 155,
    "exports": [
     "function AchievementComparisonChart"
    ]
@@ -180293,7 +180293,7 @@
   },
   "src/components/analytics/EmailMetricsDashboard.tsx": {
    "path": "src/components/analytics/EmailMetricsDashboard.tsx",
-   "lines": 498,
+   "lines": 500,
    "exports": [
     "function EmailMetricsDashboard"
    ]
@@ -180307,7 +180307,7 @@
   },
   "src/components/analytics/LTVBySegment.tsx": {
    "path": "src/components/analytics/LTVBySegment.tsx",
-   "lines": 292,
+   "lines": 289,
    "exports": [
     "const LTVBySegment"
    ],
@@ -182393,7 +182393,7 @@
   },
   "src/components/closer/CloserRevenueComparison.tsx": {
    "path": "src/components/closer/CloserRevenueComparison.tsx",
-   "lines": 297,
+   "lines": 295,
    "exports": [
     "function CloserRevenueComparison"
    ],
@@ -182547,7 +182547,7 @@
   },
   "src/components/coaching/impact/CoachingImpactTracker.tsx": {
    "path": "src/components/coaching/impact/CoachingImpactTracker.tsx",
-   "lines": 164,
+   "lines": 161,
    "exports": [
     "function CoachingImpactTracker"
    ]
@@ -184026,7 +184026,7 @@
   },
   "src/components/conversational/SentimentTimelineChart.tsx": {
    "path": "src/components/conversational/SentimentTimelineChart.tsx",
-   "lines": 258,
+   "lines": 256,
    "exports": [
     "const SentimentTimelineChart"
    ]
@@ -184353,7 +184353,7 @@
   },
   "src/components/conversational/questions/QuestionDepthChart.tsx": {
    "path": "src/components/conversational/questions/QuestionDepthChart.tsx",
-   "lines": 70,
+   "lines": 66,
    "exports": [
     "const QuestionDepthChart"
    ]
@@ -184367,7 +184367,7 @@
   },
   "src/components/conversational/questions/QuestionMixDonut.tsx": {
    "path": "src/components/conversational/questions/QuestionMixDonut.tsx",
-   "lines": 90,
+   "lines": 86,
    "exports": [
     "const QuestionMixDonut"
    ]
@@ -185640,7 +185640,7 @@
   },
   "src/components/dashboard/widgets/VelocityScoreWidget.tsx": {
    "path": "src/components/dashboard/widgets/VelocityScoreWidget.tsx",
-   "lines": 97,
+   "lines": 98,
    "exports": [
     "const VelocityScoreWidget"
    ]
@@ -185661,7 +185661,7 @@
   },
   "src/components/deal-intelligence/ConversionFunnelChart.tsx": {
    "path": "src/components/deal-intelligence/ConversionFunnelChart.tsx",
-   "lines": 95,
+   "lines": 86,
    "exports": [
     "function ConversionFunnelChart"
    ]
@@ -186843,7 +186843,7 @@
   },
   "src/components/forecast/PipelineContributionChart.tsx": {
    "path": "src/components/forecast/PipelineContributionChart.tsx",
-   "lines": 171,
+   "lines": 168,
    "exports": [
     "const PipelineContributionChart"
    ]
@@ -187380,7 +187380,7 @@
   },
   "src/components/icp/ICPPerformanceChart.tsx": {
    "path": "src/components/icp/ICPPerformanceChart.tsx",
-   "lines": 164,
+   "lines": 161,
    "exports": [
     "function ICPPerformanceChart"
    ],
@@ -189128,7 +189128,7 @@
   },
   "src/components/portfolio/PortfolioValueChart.tsx": {
    "path": "src/components/portfolio/PortfolioValueChart.tsx",
-   "lines": 108,
+   "lines": 105,
    "exports": [
     "const PortfolioValueChart"
    ]
@@ -189485,7 +189485,7 @@
   },
   "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx": {
    "path": "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx",
-   "lines": 265,
+   "lines": 263,
    "exports": [
     "function PurchaseIntelligenceHub"
    ],
@@ -191045,7 +191045,7 @@
   },
   "src/components/ranking/HistoryTab.tsx": {
    "path": "src/components/ranking/HistoryTab.tsx",
-   "lines": 159,
+   "lines": 156,
    "exports": [
     "const HistoryTab"
    ]
@@ -191582,7 +191582,7 @@
   },
   "src/components/revenue-intelligence/WinRateBreakdownChart.tsx": {
    "path": "src/components/revenue-intelligence/WinRateBreakdownChart.tsx",
-   "lines": 89,
+   "lines": 87,
    "exports": [
     "const WinRateBreakdownChart"
    ]
@@ -192402,7 +192402,7 @@
   },
   "src/components/sdr/LeadTemperatureChart.tsx": {
    "path": "src/components/sdr/LeadTemperatureChart.tsx",
-   "lines": 130,
+   "lines": 127,
    "exports": [
     "function LeadTemperatureChart"
    ]
@@ -194915,7 +194915,7 @@
   },
   "src/components/vendedor/VendedorCharts.tsx": {
    "path": "src/components/vendedor/VendedorCharts.tsx",
-   "lines": 133,
+   "lines": 130,
    "exports": [
     "const VendedorCharts"
    ]
@@ -195314,7 +195314,7 @@
   },
   "src/components/win-loss/CycleTimeHistogram.tsx": {
    "path": "src/components/win-loss/CycleTimeHistogram.tsx",
-   "lines": 108,
+   "lines": 104,
    "exports": [
     "const CycleTimeHistogram"
    ]
@@ -195442,7 +195442,7 @@
   },
   "src/components/win-loss/LossReasonFlow.tsx": {
    "path": "src/components/win-loss/LossReasonFlow.tsx",
-   "lines": 117,
+   "lines": 104,
    "exports": [
     "const LossReasonFlow"
    ]
@@ -219036,7 +219036,7 @@
   },
   "src/pages/RelatoriosExecutivos.tsx": {
    "path": "src/pages/RelatoriosExecutivos.tsx",
-   "lines": 483,
+   "lines": 478,
    "exports": [
     "default RelatoriosExecutivos"
    ],
@@ -244312,10 +244312,72 @@
   }
  },
  "git": {
-  "sha": "3c3c10d55c7fc4015b36f5f591b6a1b3ab5cd661",
+  "sha": "e6a77847b0a63cef8ae4867a0c3483e12d6a373f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e6a7784",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json",
+     "src/components/achievements/AchievementComparisonChart.tsx",
+     "src/components/achievements/AchievementTrendChart.tsx",
+     "src/components/admin/connections/CronAlertBreakdownChart.tsx",
+     "src/components/admin/connections/DbRollbackRatePanel.tsx",
+     "src/components/analytics/ActivityOutcomesChart.tsx",
+     "src/components/analytics/DealVelocityChart.tsx",
+     "src/components/analytics/EmailMetricsDashboard.tsx",
+     "src/components/analytics/LTVBySegment.tsx",
+     "src/components/analytics/LeadSourceDistribution.tsx",
+     "src/components/analytics/RevenueForecast.tsx",
+     "src/components/analytics/WeightedForecastDashboard.tsx",
+     "src/components/analytics/performance/PerformanceCharts.tsx",
+     "src/components/bi/BICloserCharts.tsx",
+     "src/components/bi/BISDRCharts.tsx",
+     "src/components/bi/BIVendedorCharts.tsx",
+     "src/components/bi/charts/AbcPieChart.tsx",
+     "src/components/bi/charts/RevenueAreaChart.tsx",
+     "src/components/bi/charts/SourceBarChart.tsx",
+     "src/components/closer/CloserRevenueComparison.tsx",
+     "src/components/coaching/impact/CoachingImpactTracker.tsx",
+     "src/components/competitive/EvolutionChart.tsx",
+     "src/components/conversational/SentimentTimelineChart.tsx",
+     "src/components/conversational/questions/QuestionDepthChart.tsx",
+     "src/components/conversational/questions/QuestionMixDonut.tsx",
+     "src/components/dashboard/widgets/ForecastWidget.tsx",
+     "src/components/dashboard/widgets/TeamRankingWidget.tsx",
+     "src/components/dashboard/widgets/VelocityScoreWidget.tsx",
+     "src/components/deal-intelligence/ConversionFunnelChart.tsx",
+     "src/components/deal-intelligence/committee/CommitteeCoverageSparkline.tsx",
+     "src/components/deal-intelligence/velocity/StageBottlenecksChart.tsx",
+     "src/components/email/EmailSuppressionMetricsCard.tsx",
+     "src/components/forecast/PipelineContributionChart.tsx",
+     "src/components/goals/GoalComparisonChart.tsx",
+     "src/components/icp/ICPPerformanceChart.tsx",
+     "src/components/portfolio/PortfolioDistributionChart.tsx",
+     "src/components/portfolio/PortfolioValueChart.tsx",
+     "src/components/pricing/PricingDistributionCard.tsx",
+     "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx",
+     "src/components/ranking/HistoryTab.tsx",
+     "src/components/revenue-intelligence/WinRateBreakdownChart.tsx",
+     "src/components/revenue-intelligence/forecast/MapeBySegmentChart.tsx",
+     "src/components/revenue-intelligence/quota/QuotaProbabilityChart.tsx",
+     "src/components/sdr/LeadTemperatureChart.tsx",
+     "src/components/settings/SecurityAlertHistory.tsx",
+     "src/components/ui/chart.tsx",
+     "src/components/vendedor/VendedorCharts.tsx",
+     "src/components/win-loss/CycleTimeHistogram.tsx",
+     "src/components/win-loss/LossReasonFlow.tsx",
+     "src/pages/ROIDashboard.tsx",
+     "src/pages/RelatoriosExecutivos.tsx",
+     "src/pages/UsageAnalytics.tsx"
+    ]
+   },
    {
     "sha": "3c3c10d",
     "date": "2026-11-11",
@@ -244653,15 +244715,6 @@
      "inventario/estado/banco.json",
      "inventario/estado/edges.json"
     ]
-   },
-   {
-    "sha": "195e4fd",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: confere contagem do ledger apenas quando banco esta no topo do repo (#382)",
-    "files": [
-     "scripts/inventario/gerar-banco.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -244671,7 +244724,11 @@
    ],
    [
     "scripts/inventario/gerar-banco.mjs",
-    5
+    4
+   ],
+   [
+    "package.json",
+    3
    ],
    [
     ".github/workflows/migrations-drift.yml",
@@ -244690,15 +244747,15 @@
     3
    ],
    [
+    "package-lock.json",
+    2
+   ],
+   [
     ".github/workflows/contexto.yml",
     2
    ],
    [
     ".gitignore",
-    2
-   ],
-   [
-    "package.json",
     2
    ],
    [
@@ -244740,10 +244797,6 @@
    [
     "docs/agentes/contexto-gerado.md",
     2
-   ],
-   [
-    ".github/workflows/automation-local.yml",
-    1
    ]
   ]
  }

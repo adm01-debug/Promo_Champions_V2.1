@@ -118,7 +118,7 @@
     "AchievementComparisonChart"
    ],
    "export_default": null,
-   "linhas": 157,
+   "linhas": 155,
    "dominio": "components/achievements",
    "hooks_locais": [
     "useAchievementsByPerson"
@@ -1852,7 +1852,7 @@
     "EmailMetricsDashboard"
    ],
    "export_default": null,
-   "linhas": 498,
+   "linhas": 500,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useEmailMetrics"
@@ -1948,7 +1948,7 @@
     "LTVBySegment"
    ],
    "export_default": null,
-   "linhas": 292,
+   "linhas": 289,
    "dominio": "components/analytics",
    "hooks_locais": [],
    "tabelas": [
@@ -3761,7 +3761,7 @@
     "CloserRevenueComparison"
    ],
    "export_default": null,
-   "linhas": 297,
+   "linhas": 295,
    "dominio": "components/closer",
    "hooks_locais": [],
    "tabelas": [
@@ -3874,7 +3874,7 @@
     "CoachingImpactTracker"
    ],
    "export_default": null,
-   "linhas": 164,
+   "linhas": 161,
    "dominio": "components/coaching",
    "hooks_locais": [
     "useCoachingImpact"
@@ -5409,7 +5409,7 @@
     "QuestionDepthChart"
    ],
    "export_default": null,
-   "linhas": 70,
+   "linhas": 66,
    "dominio": "components/conversational",
    "hooks_locais": [],
    "tabelas": [],
@@ -5439,7 +5439,7 @@
     "QuestionMixDonut"
    ],
    "export_default": null,
-   "linhas": 90,
+   "linhas": 86,
    "dominio": "components/conversational",
    "hooks_locais": [],
    "tabelas": [],
@@ -5503,7 +5503,7 @@
     "SentimentTimelineChart"
    ],
    "export_default": null,
-   "linhas": 258,
+   "linhas": 256,
    "dominio": "components/conversational",
    "hooks_locais": [
     "useAnalyzeSentiment",
@@ -6633,7 +6633,7 @@
     "VelocityScoreWidget"
    ],
    "export_default": null,
-   "linhas": 97,
+   "linhas": 98,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "usePipelineVelocity"
@@ -6761,7 +6761,7 @@
     "ConversionFunnelChart"
    ],
    "export_default": null,
-   "linhas": 95,
+   "linhas": 86,
    "dominio": "components/deal-intelligence",
    "hooks_locais": [],
    "tabelas": [],
@@ -8122,7 +8122,7 @@
     "PipelineContributionChart"
    ],
    "export_default": null,
-   "linhas": 171,
+   "linhas": 168,
    "dominio": "components/forecast",
    "hooks_locais": [],
    "tabelas": [],
@@ -8640,7 +8640,7 @@
     "ICPPerformanceChart"
    ],
    "export_default": null,
-   "linhas": 164,
+   "linhas": 161,
    "dominio": "components/icp",
    "hooks_locais": [],
    "tabelas": [
@@ -10357,7 +10357,7 @@
     "PortfolioValueChart"
    ],
    "export_default": null,
-   "linhas": 108,
+   "linhas": 105,
    "dominio": "components/portfolio",
    "hooks_locais": [],
    "tabelas": [],
@@ -10729,7 +10729,7 @@
     "PurchaseIntelligenceHub"
    ],
    "export_default": null,
-   "linhas": 265,
+   "linhas": 263,
    "dominio": "components/purchase-intelligence",
    "hooks_locais": [],
    "tabelas": [],
@@ -12269,7 +12269,7 @@
     "HistoryTab"
    ],
    "export_default": null,
-   "linhas": 159,
+   "linhas": 156,
    "dominio": "components/ranking",
    "hooks_locais": [],
    "tabelas": [],
@@ -13179,7 +13179,7 @@
     "WinRateBreakdownChart"
    ],
    "export_default": null,
-   "linhas": 89,
+   "linhas": 87,
    "dominio": "components/revenue-intelligence",
    "hooks_locais": [],
    "tabelas": [],
@@ -13544,7 +13544,7 @@
     "LeadTemperatureChart"
    ],
    "export_default": null,
-   "linhas": 130,
+   "linhas": 127,
    "dominio": "components/sdr",
    "hooks_locais": [
     "useLeadTemperatureDistribution"
@@ -16189,7 +16189,7 @@
     "VendedorCharts"
    ],
    "export_default": null,
-   "linhas": 133,
+   "linhas": 130,
    "dominio": "components/vendedor",
    "hooks_locais": [],
    "tabelas": [],
@@ -16503,7 +16503,7 @@
     "CycleTimeHistogram"
    ],
    "export_default": null,
-   "linhas": 108,
+   "linhas": 104,
    "dominio": "components/win-loss",
    "hooks_locais": [],
    "tabelas": [],
@@ -16661,7 +16661,7 @@
     "LossReasonFlow"
    ],
    "export_default": null,
-   "linhas": 117,
+   "linhas": 104,
    "dominio": "components/win-loss",
    "hooks_locais": [],
    "tabelas": [],
@@ -19757,7 +19757,7 @@
     "RelatoriosExecutivos"
    ],
    "export_default": "RelatoriosExecutivos",
-   "linhas": 483,
+   "linhas": 478,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [
