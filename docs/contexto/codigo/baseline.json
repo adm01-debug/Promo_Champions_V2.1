@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "22662d40f8f5c450333327aeb53b807cb966689c",
+  "commit": "3c3c10d55c7fc4015b36f5f591b6a1b3ab5cd661",
   "branch": "main",
-  "data_commit": "2026-11-11T09:32:50-03:00",
+  "data_commit": "2026-11-11T10:35:57-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "3c3c10d",
+    "data": "2026-11-11",
+    "assunto": "chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)"
+   },
    {
     "sha": "22662d4",
     "data": "2026-11-11",
@@ -126,11 +131,6 @@
     "sha": "9cabc93",
     "data": "2026-11-07",
     "assunto": "chore(main): release 1.1.0 (#378)"
-   },
-   {
-    "sha": "9bbfbd2",
-    "data": "2026-11-07",
-    "assunto": "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)"
    }
   ],
   "arquivos_mudados_7d": 113,
@@ -180,6 +180,10 @@
     "mudancas": 13
    },
    {
+    "pasta": ".github/workflows/codeql.yml",
+    "mudancas": 12
+   },
+   {
     "pasta": "PENDENCIAS.md",
     "mudancas": 12
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "src/hooks/revenue",
-    "mudancas": 12
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 12
    }
   ],
@@ -218,12 +218,12 @@
     "mudancas": 19
    },
    {
-    "arquivo": "RELATORIO_CI.md",
+    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 18
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 17
+    "arquivo": "RELATORIO_CI.md",
+    "mudancas": 18
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 61
+    "commits": 62
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 38
+    "commits": 35
    },
    {
     "autor": "dependabot[bot]",

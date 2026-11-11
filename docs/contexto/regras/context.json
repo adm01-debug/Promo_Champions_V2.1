@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "22662d40f8f5c450333327aeb53b807cb966689c",
+  "sha": "3c3c10d55c7fc4015b36f5f591b6a1b3ab5cd661",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-11 12:40 UTC",
+  "generated_at": "2026-11-11 13:56 UTC",
   "files_total": 3468,
   "code_files": 3139,
   "code_lines": 456685
@@ -244312,10 +244312,19 @@
   }
  },
  "git": {
-  "sha": "22662d40f8f5c450333327aeb53b807cb966689c",
+  "sha": "3c3c10d55c7fc4015b36f5f591b6a1b3ab5cd661",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "3c3c10d",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)",
+    "files": [
+     ".github/workflows/codeql.yml"
+    ]
+   },
    {
     "sha": "22662d4",
     "date": "2026-11-11",
@@ -244653,32 +244662,23 @@
     "files": [
      "scripts/inventario/gerar-banco.mjs"
     ]
-   },
-   {
-    "sha": "4606224",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "fix: desabilita gate e2e em PRs (#374)",
-    "files": [
-     ".github/workflows/pr-checks.yml"
-    ]
    }
   ],
   "hot_files": [
+   [
+    ".github/workflows/codeql.yml",
+    5
+   ],
    [
     "scripts/inventario/gerar-banco.mjs",
     5
    ],
    [
-    ".github/workflows/codeql.yml",
-    4
+    ".github/workflows/migrations-drift.yml",
+    3
    ],
    [
     ".github/workflows/pr-checks.yml",
-    4
-   ],
-   [
-    ".github/workflows/migrations-drift.yml",
     3
    ],
    [
