@@ -14,6 +14,8 @@ import { DialerQueueCard } from '@/components/dialer/DialerQueueCard';
 import { CurrentCallCard } from '@/components/dialer/CurrentCallCard';
 import { CallDispositionForm } from '@/components/dialer/CallDispositionForm';
 import { QueueBuilderDialog } from '@/components/dialer/QueueBuilderDialog';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +43,11 @@ const PowerDialer = () => {
   const nextItem = useNextItem();
   const rebuild = useRebuildQueue();
   const deleteQueue = useDeleteQueue();
+  const { user } = useAuth();
+  const { isAdmin } = useUserRoles();
+
+  // Espelha a policy ALL de dialer_queues: só o dono ou um admin altera a fila.
+  const canManage = (queue: DialerQueue) => isAdmin || queue.owner_id === user?.id;
 
   const handleEdit = (queue: DialerQueue) => {
     setEditingQueue(queue);
@@ -125,8 +132,8 @@ const PowerDialer = () => {
                 onSelect={() => setActiveQueueId(q.id)}
                 onRebuild={() => rebuild.mutate(q.id)}
                 onStart={() => handleStart(q.id)}
-                onEdit={() => handleEdit(q)}
-                onDelete={() => setQueueToDelete(q)}
+                onEdit={canManage(q) ? () => handleEdit(q) : undefined}
+                onDelete={canManage(q) ? () => setQueueToDelete(q) : undefined}
                 rebuilding={rebuild.isPending && rebuild.variables === q.id}
               />
             ))}
