@@ -20,6 +20,16 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Plus,
   Save,
   Trash2,
@@ -28,6 +38,7 @@ import {
   Eye,
   CheckCircle,
   AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import {
   useMessageTemplates,
@@ -71,6 +82,7 @@ export function CadenceTemplateManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<TemplateForm>(EMPTY_FORM);
   const [activeTab, setActiveTab] = useState<'manage' | 'approval'>('manage');
+  const [pendingDelete, setPendingDelete] = useState<MessageTemplate | null>(null);
   const isSaving = createTemplate.isPending || updateTemplate.isPending;
 
   const closeForm = () => {
@@ -108,6 +120,19 @@ export function CadenceTemplateManager() {
       { ...payload, salesperson_id: salesperson.id },
       { onSuccess: closeForm }
     );
+  };
+
+  const handleDeleteOpenChange = (open: boolean) => {
+    if (open || deleteTemplate.isPending) return;
+    setPendingDelete(null);
+    deleteTemplate.reset();
+  };
+
+  const confirmDelete = () => {
+    if (!pendingDelete) return;
+    deleteTemplate.mutate(pendingDelete.id, {
+      onSuccess: () => setPendingDelete(null),
+    });
   };
 
   const insertVariable = (variable: string) => {
@@ -220,10 +245,10 @@ export function CadenceTemplateManager() {
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-bold uppercase flex items-center gap-2">
                       <Eye className="h-4 w-4" />
-                      Pré-visualização (Simulação com Variáveis)
+                      Pré-visualização
                     </Label>
                     <Badge variant="outline" className="text-[10px] bg-background">
-                      Preview Real
+                      Exemplo com dados fictícios
                     </Badge>
                   </div>
                   <div className="p-3 bg-background rounded-md border border-border/40 min-h-[80px]">
@@ -250,13 +275,11 @@ export function CadenceTemplateManager() {
                         : 'O conteúdo aparecerá aqui...'}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] text-muted-foreground">
-                      Variáveis validadas:{' '}
-                      {(formData.body.match(/{{.*?}}/g) || []).length} encontradas
-                    </span>
-                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    As variáveis acima foram substituídas por valores de exemplo; no envio
+                    real usam os dados do lead. Variáveis no texto:{' '}
+                    {(formData.body.match(/{{.*?}}/g) || []).length}
+                  </p>
                 </div>
 
                 <div className="flex justify-end gap-2">
@@ -310,7 +333,7 @@ export function CadenceTemplateManager() {
                         aria-label="Excluir template"
                         className="h-8 w-8 text-destructive"
                         disabled={deleteTemplate.isPending}
-                        onClick={() => deleteTemplate.mutate(t.id)}
+                        onClick={() => setPendingDelete(t)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -379,6 +402,45 @@ export function CadenceTemplateManager() {
           </Card>
         </div>
       )}
+
+      <AlertDialog open={pendingDelete !== null} onOpenChange={handleDeleteOpenChange}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir template?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O template &quot;{pendingDelete?.name}&quot; será excluído definitivamente.
+              Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deleteTemplate.isError && (
+            <p role="alert" className="text-sm text-destructive">
+              Não foi possível excluir o template. Tente novamente.
+            </p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteTemplate.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteTemplate.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={e => {
+                e.preventDefault();
+                confirmDelete();
+              }}
+            >
+              {deleteTemplate.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Excluindo...
+                </>
+              ) : (
+                'Excluir'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

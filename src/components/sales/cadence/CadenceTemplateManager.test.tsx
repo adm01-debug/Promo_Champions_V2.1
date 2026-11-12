@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { screen, fireEvent } from '@testing-library/dom';
+import { screen, fireEvent, waitFor } from '@testing-library/dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const hooks = vi.hoisted(() => ({
@@ -11,7 +11,7 @@ const hooks = vi.hoisted(() => ({
   },
   create: { mutate: vi.fn(), isPending: false },
   update: { mutate: vi.fn(), isPending: false },
-  remove: { mutate: vi.fn(), isPending: false },
+  remove: { mutate: vi.fn(), reset: vi.fn(), isPending: false, isError: false },
   salesperson: { id: 'sp-1' } as { id: string } | null,
 }));
 
@@ -60,6 +60,7 @@ describe('CadenceTemplateManager (message_templates)', () => {
     vi.clearAllMocks();
     hooks.query = { data: [], isLoading: false, isError: false, refetch: vi.fn() };
     hooks.salesperson = { id: 'sp-1' };
+    hooks.remove = { mutate: vi.fn(), reset: vi.fn(), isPending: false, isError: false };
   });
 
   it('mostra estado vazio sem template fictício', () => {
@@ -134,10 +135,69 @@ describe('CadenceTemplateManager (message_templates)', () => {
     );
   });
 
-  it('exclui template via delete no banco', () => {
+  it('exclui template via delete no banco somente após confirmação', () => {
     hooks.query = { ...hooks.query, data: [template] };
     render(<CadenceTemplateManager />);
     fireEvent.click(screen.getByRole('button', { name: 'Excluir template' }));
-    expect(hooks.remove.mutate).toHaveBeenCalledWith('tpl-1');
+
+    expect(hooks.remove.mutate).not.toHaveBeenCalled();
+    expect(screen.getByRole('alertdialog')).toBeTruthy();
+    expect(screen.getByText(/"Retorno de proposta" será excluído/)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+    expect(hooks.remove.mutate).toHaveBeenCalledWith(
+      'tpl-1',
+      expect.objectContaining({ onSuccess: expect.any(Function) })
+    );
+    // Diálogo continua aberto até o banco confirmar a exclusão.
+    expect(screen.getByRole('alertdialog')).toBeTruthy();
+  });
+
+  it('fecha o diálogo de exclusão quando o banco confirma', async () => {
+    hooks.query = { ...hooks.query, data: [template] };
+    hooks.remove.mutate = vi.fn((_id: string, opts?: { onSuccess?: () => void }) =>
+      opts?.onSuccess?.()
+    );
+    render(<CadenceTemplateManager />);
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir template' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+    await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
+  });
+
+  it('cancelar a exclusão não apaga nada', async () => {
+    hooks.query = { ...hooks.query, data: [template] };
+    render(<CadenceTemplateManager />);
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir template' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+    await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
+    expect(hooks.remove.mutate).not.toHaveBeenCalled();
+  });
+
+  it('mostra loading e erro no diálogo de exclusão', () => {
+    hooks.query = { ...hooks.query, data: [template] };
+    const { rerender } = render(<CadenceTemplateManager />);
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir template' }));
+
+    hooks.remove = { ...hooks.remove, isPending: true };
+    rerender(<CadenceTemplateManager />);
+    expect(
+      (screen.getByRole('button', { name: /Excluindo/ }) as HTMLButtonElement).disabled
+    ).toBe(true);
+
+    hooks.remove = { ...hooks.remove, isPending: false, isError: true };
+    rerender(<CadenceTemplateManager />);
+    expect(screen.getByRole('alert').textContent).toContain(
+      'Não foi possível excluir o template.'
+    );
+  });
+
+  it('rotula a pré-visualização como exemplo fictício, sem selo de dado real', () => {
+    render(<CadenceTemplateManager />);
+    fireEvent.click(screen.getByRole('button', { name: /Novo Template/ }));
+    fillForm('Boas vindas', 'Olá {{singu_lead_name}}!');
+
+    expect(screen.getByText('Exemplo com dados fictícios')).toBeTruthy();
+    expect(screen.queryByText('Preview Real')).toBeNull();
+    expect(screen.queryByText(/Variáveis validadas/)).toBeNull();
   });
 });
