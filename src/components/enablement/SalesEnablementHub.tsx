@@ -5,6 +5,7 @@ import {
   useCreateAsset,
   useUpdateAsset,
   useArchiveAsset,
+  useRestoreAsset,
   usePlaybooks,
   useAssetEfficiency,
   type EnablementAsset,
@@ -60,6 +61,7 @@ import {
   DollarSign,
   Pencil,
   Archive,
+  ArchiveRestore,
   Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -131,6 +133,26 @@ const ArchiveAssetButton = ({ asset }: { asset: EnablementAsset }) => {
   );
 };
 
+const RestoreAssetButton = ({ asset }: { asset: EnablementAsset }) => {
+  const restore = useRestoreAsset();
+  return (
+    <Button
+      size="sm"
+      variant="ghost"
+      className="h-8 text-muted-foreground"
+      onClick={() => restore.mutate(asset.id)}
+      disabled={restore.isPending}
+    >
+      {restore.isPending ? (
+        <Loader2 className="size-4 mr-1 animate-spin" />
+      ) : (
+        <ArchiveRestore className="size-4 mr-1" />
+      )}
+      Reativar
+    </Button>
+  );
+};
+
 const AssetCard = ({
   asset,
   canManage,
@@ -142,7 +164,8 @@ const AssetCard = ({
   const { data: efficiency } = useAssetEfficiency(asset.id);
   const Icon = typeIcon(asset.asset_type);
   const handleOpen = () => {
-    log.mutate({ asset_id: asset.id, action: 'view' });
+    // Material arquivado aberto pelo gestor não conta como uso pelo time.
+    if (asset.is_active) log.mutate({ asset_id: asset.id, action: 'view' });
     if (asset.file_url) window.open(asset.file_url, '_blank', 'noopener,noreferrer');
   };
   return (
@@ -153,7 +176,8 @@ const AssetCard = ({
             <Icon className="size-5" />
           </div>
           <div className="flex items-center gap-1">
-            {canManage && (
+            {canManage && !asset.is_active && <RestoreAssetButton asset={asset} />}
+            {canManage && asset.is_active && (
               <>
                 <AssetFormDialog
                   asset={asset}
@@ -362,9 +386,14 @@ export const SalesEnablementHub = () => {
   const [activeTab, setActiveTab] = useState('assets');
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
-  const { data: assets, isLoading: assetsLoading } = useEnablementAssets(category);
-  const { data: playbooks, isLoading: playbooksLoading } = usePlaybooks();
+  const [showArchived, setShowArchived] = useState(false);
   const { isAdminOrManager } = useUserRoles();
+  const archivedView = showArchived && isAdminOrManager;
+  const { data: assets, isLoading: assetsLoading } = useEnablementAssets(
+    category,
+    archivedView
+  );
+  const { data: playbooks, isLoading: playbooksLoading } = usePlaybooks();
 
   const filteredAssets = (assets ?? []).filter(
     a =>
@@ -449,6 +478,17 @@ export const SalesEnablementHub = () => {
                 {c.label}
               </Badge>
             ))}
+            {isAdminOrManager && (
+              <Badge
+                variant={archivedView ? 'default' : 'outline'}
+                className="cursor-pointer hover:bg-primary/10 transition-all px-4 py-1 gap-1"
+                onClick={() => setShowArchived(v => !v)}
+                aria-pressed={archivedView}
+              >
+                <Archive className="size-3" />
+                Arquivados
+              </Badge>
+            )}
           </div>
 
           {assetsLoading ? (
@@ -461,7 +501,11 @@ export const SalesEnablementHub = () => {
             <Card className="border-dashed">
               <CardContent className="py-12 text-center text-muted-foreground">
                 <BookOpen className="size-12 mx-auto mb-3 opacity-50" />
-                <p>Nenhum material encontrado nesta categoria.</p>
+                <p>
+                  {archivedView
+                    ? 'Nenhum material arquivado nesta categoria.'
+                    : 'Nenhum material encontrado nesta categoria.'}
+                </p>
               </CardContent>
             </Card>
           ) : (

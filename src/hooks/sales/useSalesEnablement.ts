@@ -46,14 +46,18 @@ export interface PlaybookItem {
   is_required: boolean;
 }
 
-export const useEnablementAssets = (category?: string) => {
+/**
+ * `archived` lista os materiais arquivados (is_active = false). A RLS só
+ * devolve arquivados para admin/gestor; para o vendedor a lista vem vazia.
+ */
+export const useEnablementAssets = (category?: string, archived = false) => {
   return useQuery({
-    queryKey: ['enablement-assets', category],
+    queryKey: ['enablement-assets', category, archived],
     queryFn: async () => {
       let q = supabase
         .from('sales_enablement_assets')
         .select('*')
-        .eq('is_active', true)
+        .eq('is_active', !archived)
         .order('view_count', { ascending: false });
       if (category && category !== 'all') q = q.eq('category', category);
       const { data, error } = await q;
@@ -225,6 +229,26 @@ export const useArchiveAsset = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['enablement-assets'] });
       toast.success('Material arquivado');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
+export const useRestoreAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('sales_enablement_assets')
+        .update({ is_active: true })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para reativar este material');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['enablement-assets'] });
+      toast.success('Material reativado');
     },
     onError: (e: Error) => toast.error(e.message),
   });
