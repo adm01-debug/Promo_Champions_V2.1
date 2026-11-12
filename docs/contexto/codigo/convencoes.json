@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: migra tailwind 3->4 (v4.3.5) (#423)",
    "feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)",
    "chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)",
    "chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)",
-   "chore: exclui testes unitários do escopo do CodeQL (#419)",
-   "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#418)"
+   "chore: exclui testes unitários do escopo do CodeQL (#419)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

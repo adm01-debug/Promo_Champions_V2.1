@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e6a77847b0` · branch `main` · 2026-11-11 21:02 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f5e1a4f86d` · branch `main` · 2026-11-12 01:52 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2129,7 +2129,7 @@ _nenhum item encontrado_
   ```
 - **RankingPodium({ top3 }: RankingPodiumProps)** — `src/components/vendedores/RankingPodium.tsx`
   ```
-  if (top3.length < 3) return null; const maxSales = top3[0]?.totalSales || 1; return ( <div className="relative rounded-2xl border border-border/20 overflow-hidden bg-gradient-to-b from-background via-background to-background/95 shadow-sm"> <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" /> <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,hsl(var(--primary)/0.05),transparent_60%)]" /> <div className="absolute in …
+  if (top3.length < 3) return null; const maxSales = top3[0]?.totalSales || 1; return ( <div className="relative rounded-2xl border border-border/20 overflow-hidden bg-linear-to-b from-background via-background to-background/95 shadow-sm"> <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" /> <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,hsl(var(--primary)/0.05),transparent_60%)]" /> <div className="absolute inse …
   ```
 - **apply(id: string)** — `src/components/win-loss/ActionableInsightsPanel.tsx`
   ```

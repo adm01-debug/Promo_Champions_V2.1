@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e6a77847b0a63cef8ae4867a0c3483e12d6a373f",
+  "commit": "f5e1a4f86dc5992550e6d4c10823032400a9aabf",
   "branch": "main",
-  "data_commit": "2026-11-11T16:25:28-03:00",
+  "data_commit": "2026-11-11T20:56:11-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f5e1a4f",
+    "data": "2026-11-11",
+    "assunto": "feat: migra tailwind 3->4 (v4.3.5) (#423)"
+   },
    {
     "sha": "e6a7784",
     "data": "2026-11-11",
@@ -126,41 +131,56 @@
     "sha": "9500f87",
     "data": "2026-11-08",
     "assunto": "chore: instruções enxutas para agentes (#380)"
-   },
-   {
-    "sha": "b80e879",
-    "data": "2026-11-07",
-    "assunto": "fix: corrige relatório de impacto do graphify (#390)"
    }
   ],
-  "arquivos_mudados_7d": 164,
+  "arquivos_mudados_7d": 492,
   "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "src/components/dashboard",
+    "mudancas": 56
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 49
+   },
+   {
+    "pasta": "src/components/analytics",
+    "mudancas": 40
+   },
+   {
+    "pasta": "src/components/gamification",
+    "mudancas": 36
+   },
+   {
+    "pasta": "src/components/race",
+    "mudancas": 36
+   },
    {
     "pasta": "src/hooks/win-loss",
     "mudancas": 35
    },
    {
-    "pasta": "src/components/ui",
-    "mudancas": 33
+    "pasta": "src/components/competitive",
+    "mudancas": 25
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 24
    },
    {
     "pasta": "src/hooks/race",
     "mudancas": 24
    },
    {
-    "pasta": "package-lock.json",
+    "pasta": "package.json",
     "mudancas": 23
    },
    {
-    "pasta": "package.json",
-    "mudancas": 22
+    "pasta": "src/components/win-loss",
+    "mudancas": 23
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 22
-   },
-   {
-    "pasta": "src/components/gamification",
+    "pasta": "src/components/sdr",
     "mudancas": 20
    },
    {
@@ -168,42 +188,22 @@
     "mudancas": 20
    },
    {
+    "pasta": "src/components/conversational",
+    "mudancas": 19
+   },
+   {
     "pasta": "RELATORIO_CI.md",
     "mudancas": 18
-   },
-   {
-    "pasta": "src/hooks/deal-intelligence",
-    "mudancas": 15
-   },
-   {
-    "pasta": "src/components/analytics",
-    "mudancas": 14
-   },
-   {
-    "pasta": "src/components/conversational",
-    "mudancas": 13
-   },
-   {
-    "pasta": "src/components/revenue-intelligence",
-    "mudancas": 13
-   },
-   {
-    "pasta": "src/hooks/conversational",
-    "mudancas": 13
-   },
-   {
-    "pasta": ".github/workflows/codeql.yml",
-    "mudancas": 12
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 93
+    "mudancas": 94
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 92
+    "mudancas": 93
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
@@ -286,22 +286,22 @@
     "mudancas": 8
    },
    {
+    "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    "mudancas": 8
+   },
+   {
     "arquivo": "src/hooks/admin/useV4Callbacks.ts",
     "mudancas": 8
    },
    {
-    "arquivo": "supabase/functions/analyze-pipeline-coverage/index.ts",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "supabase/functions/bitrix24-oauth/index.ts",
+    "arquivo": "src/pages/admin/AdminComercial.tsx",
     "mudancas": 8
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 63
+    "commits": 64
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3453,
   "arquivos_codigo": 2462,
-  "linhas_codigo": 426674,
+  "linhas_codigo": 426670,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -364,7 +364,7 @@
   },
   "postcss.config.js": {
    "arquivos": 1,
-   "linhas": 7
+   "linhas": 6
   },
   "public/register-sw.js": {
    "arquivos": 1,
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1183,
-   "linhas": 187667
+   "linhas": 187664
   },
   "src/config": {
    "arquivos": 3,

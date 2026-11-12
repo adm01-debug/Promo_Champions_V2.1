@@ -8313,7 +8313,7 @@
     "GamificationCard"
    ],
    "export_default": null,
-   "linhas": 268,
+   "linhas": 267,
    "dominio": "components/gamification",
    "hooks_locais": [],
    "tabelas": [],
@@ -15815,7 +15815,7 @@
     "ScrollBar"
    ],
    "export_default": null,
-   "linhas": 46,
+   "linhas": 45,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -16305,7 +16305,7 @@
     "PodiumCard"
    ],
    "export_default": null,
-   "linhas": 382,
+   "linhas": 379,
    "dominio": "components/vendedores",
    "hooks_locais": [],
    "tabelas": [],
@@ -16691,7 +16691,7 @@
     "ReplayAuditTrail"
    ],
    "export_default": null,
-   "linhas": 107,
+   "linhas": 109,
    "dominio": "components/win-loss",
    "hooks_locais": [
     "useReplayAuditForDeadLetter"

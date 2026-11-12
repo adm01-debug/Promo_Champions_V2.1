@@ -110,7 +110,7 @@
    "typecheck:baseline:update": "node scripts/update-typecheck-baseline.mjs"
   },
   "dependencias": 80,
-  "dev_dependencias": 33,
+  "dev_dependencias": 34,
   "principais": {
    "@supabase/supabase-js": "^2.118.0",
    "@tanstack/react-query": "^5.105.1",
