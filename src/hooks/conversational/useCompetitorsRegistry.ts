@@ -70,6 +70,7 @@ export function useCompetitorMarketIntel() {
             .from('sales_enablement_assets')
             .select('id, title, file_url')
             .in('id', chunk as string[])
+            .eq('is_active', true)
         ),
         Promise.all(
           competitors.map(async c => {
@@ -121,6 +122,7 @@ export function useUpsertCompetitor() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['competitors-registry'] });
+      qc.invalidateQueries({ queryKey: ['competitor-market-intel'] });
       toast.success('Competidor salvo');
     },
     onError: e => toast.error(e instanceof Error ? e.message : 'Erro ao salvar'),
@@ -136,6 +138,7 @@ export function useDeleteCompetitor() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['competitors-registry'] });
+      qc.invalidateQueries({ queryKey: ['competitor-market-intel'] });
       toast.success('Competidor removido');
     },
     onError: e => toast.error(e instanceof Error ? e.message : 'Erro ao remover'),
