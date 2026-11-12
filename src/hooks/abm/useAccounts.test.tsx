@@ -7,6 +7,12 @@ type Result = { data: unknown; error: { message: string; code?: string } | null 
 
 const calls: Array<{ op: string; args: unknown[] }> = [];
 let nextResult: Result = { data: null, error: null };
+// Fila opcional para hooks com mais de uma chamada; vazia = usa nextResult.
+const queuedResults: Result[] = [];
+const takeResult = () => queuedResults.shift() ?? nextResult;
+// Fila opcional para hooks com mais de uma chamada; vazia = usa nextResult.
+const queuedResults: Result[] = [];
+const takeResult = () => queuedResults.shift() ?? nextResult;
 
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
@@ -25,27 +31,33 @@ vi.mock('@/integrations/supabase/client', () => {
       };
     const query = {
       update: record('update'),
+      insert: record('insert'),
       delete: record('delete'),
       eq: record('eq'),
       select: record('select'),
       maybeSingle: () => {
         calls.push({ op: 'maybeSingle', args: [] });
-        return Promise.resolve(nextResult);
+        return Promise.resolve(takeResult());
       },
       single: () => {
         calls.push({ op: 'single', args: [] });
-        return Promise.resolve(nextResult);
+        return Promise.resolve(takeResult());
       },
       then: (resolve: (value: Result) => unknown) =>
-        Promise.resolve(nextResult).then(resolve),
+        Promise.resolve(takeResult()).then(resolve),
     };
     return query;
   };
   return { supabase: { from: builder } };
 });
 
-const { useUpdateAccount, useDeleteAccount, useUpdateContact, useDeleteContact } =
-  await import('./useAccounts');
+const {
+  useUpdateAccount,
+  useDeleteAccount,
+  useUpdateContact,
+  useDeleteContact,
+  useUpdateAccountPlan,
+} = await import('./useAccounts');
 
 let client: QueryClient;
 function wrapper({ children }: { children: ReactNode }) {
@@ -240,5 +252,80 @@ describe('contatos da conta ABM', () => {
     });
 
     expect(toastError).toHaveBeenCalled();
+  });
+});
+
+describe('useUpdateAccountPlan', () => {
+  beforeEach(() => {
+    calls.length = 0;
+    queuedResults.length = 0;
+    toastSuccess.mockReset();
+    toastError.mockReset();
+    client = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  });
+
+  it('plano existente: atualiza pela conta e invalida o cache do plano', async () => {
+    const invalidate = vi.spyOn(client, 'invalidateQueries');
+    queuedResults.push(
+      { data: { id: 'plan-1' }, error: null },
+      { data: { id: 'plan-1', account_strategy: 'Expandir' }, error: null }
+    );
+    const { result } = renderHook(() => useUpdateAccountPlan(), { wrapper });
+
+    let saved: unknown;
+    await act(async () => {
+      saved = await result.current.mutateAsync({
+        account_id: 'acc-1',
+        account_strategy: 'Expandir',
+      });
+    });
+
+    expect(saved).toEqual({ id: 'plan-1', account_strategy: 'Expandir' });
+    expect(calls.find(c => c.op === 'update')?.args[0]).toEqual({
+      account_strategy: 'Expandir',
+    });
+    expect(ops().filter(o => o === 'maybeSingle')).toHaveLength(2);
+    expect(ops()).not.toContain('single');
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['account-plan', 'acc-1'] });
+    expect(toastSuccess).toHaveBeenCalledWith('Plano de conta atualizado');
+  });
+
+  it('RLS com 0 linhas no update vira erro de permissão em PT-BR', async () => {
+    queuedResults.push(
+      { data: { id: 'plan-1' }, error: null },
+      { data: null, error: null }
+    );
+    const { result } = renderHook(() => useUpdateAccountPlan(), { wrapper });
+
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ account_id: 'acc-1', account_strategy: 'X' })
+      ).rejects.toThrow('Sem permissão para editar o plano da conta.');
+    });
+
+    expect(toastSuccess).not.toHaveBeenCalled();
+    expect(toastError).toHaveBeenCalledWith(
+      'Erro: Sem permissão para editar o plano da conta.'
+    );
+    expect(toastError.mock.calls.flat().join(' ')).not.toMatch(/JSON object requested/);
+  });
+
+  it('sem plano: cria um novo para a conta', async () => {
+    queuedResults.push(
+      { data: null, error: null },
+      { data: { id: 'plan-2', account_id: 'acc-1' }, error: null }
+    );
+    const { result } = renderHook(() => useUpdateAccountPlan(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ account_id: 'acc-1', fiscal_year: '2026' });
+    });
+
+    expect(calls.find(c => c.op === 'insert')?.args[0]).toEqual({
+      account_id: 'acc-1',
+      fiscal_year: '2026',
+    });
+    expect(ops()).not.toContain('update');
+    expect(toastSuccess).toHaveBeenCalledWith('Plano de conta atualizado');
   });
 });

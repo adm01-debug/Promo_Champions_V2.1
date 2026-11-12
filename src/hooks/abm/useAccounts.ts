@@ -95,8 +95,10 @@ export const useUpdateAccountPlan = () => {
           .update(rest)
           .eq('account_id', account_id)
           .select()
-          .single();
+          .maybeSingle();
         if (error) throw error;
+        // RLS bloqueou (0 linhas): evita a mensagem crua do PostgREST.
+        if (!data) throw new Error('Sem permissão para editar o plano da conta.');
         return data;
       } else {
         const { data, error } = await supabase
