@@ -139,8 +139,9 @@ export const useUpdateWorkflow = () => {
         )
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
       if (error) throw error;
+      if (!data) throw new Error('Sem permissão para editar este workflow.');
       return parseRow<AutomationWorkflow>(data);
     },
     onSuccess: () => {

@@ -31,7 +31,7 @@ vi.mock('@/integrations/supabase/client', () => {
       select(...args);
       return query;
     },
-    single: () => Promise.resolve(singleResult),
+    maybeSingle: () => Promise.resolve(singleResult),
     then: (resolve: (value: { data: unknown; error: unknown }) => unknown) =>
       Promise.resolve(selectResult).then(resolve),
   };
@@ -107,6 +107,19 @@ describe('useUpdateWorkflow', () => {
     });
 
     expect(toastError).toHaveBeenCalledWith('Erro: permission denied');
+  });
+
+  it('trata UPDATE sem linha afetada (RLS) como erro de permissão, não sucesso', async () => {
+    singleResult = { data: null, error: null };
+    const { result } = renderHook(() => useUpdateWorkflow(), { wrapper });
+
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ id: 'wf-1', name: 'X', trigger_type: 'manual' })
+      ).rejects.toThrow('Sem permissão para editar este workflow.');
+    });
+
+    expect(toastSuccess).not.toHaveBeenCalled();
   });
 });
 
