@@ -418,14 +418,17 @@ export const SalesEnablementHub = () => {
             Materiais, propostas e treinamentos para acelerar suas vendas
           </p>
         </div>
-        <AssetFormDialog
-          trigger={
-            <Button>
-              <Plus className="size-4 mr-2" />
-              Novo material
-            </Button>
-          }
-        />
+        {/* RLS "Managers can manage assets" só aceita INSERT de admin/gestor. */}
+        {isAdminOrManager && (
+          <AssetFormDialog
+            trigger={
+              <Button>
+                <Plus className="size-4 mr-2" />
+                Novo material
+              </Button>
+            }
+          />
+        )}
       </div>
 
       <Card>

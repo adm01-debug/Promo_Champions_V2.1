@@ -60,6 +60,7 @@ describe('SalesEnablementHub — materiais arquivados', () => {
     expect(useEnablementAssets).toHaveBeenLastCalledWith('all', false);
     expect(screen.getByText('Proposta padrão')).toBeInTheDocument();
     expect(screen.getByLabelText('Arquivar material')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Novo material/ })).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('Arquivados'));
 
@@ -78,6 +79,15 @@ describe('SalesEnablementHub — materiais arquivados', () => {
     expect(screen.queryByText('Arquivados')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Arquivar material')).not.toBeInTheDocument();
     expect(useEnablementAssets).toHaveBeenLastCalledWith('all', false);
+  });
+
+  it('vendedor não vê "Novo material" (RLS só aceita insert de admin/gestor)', () => {
+    isAdminOrManager = false;
+    render(<SalesEnablementHub />);
+    expect(screen.getByText('Proposta padrão')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Novo material/ })
+    ).not.toBeInTheDocument();
   });
 
   it('mostra estado vazio honesto quando não há arquivados', () => {
