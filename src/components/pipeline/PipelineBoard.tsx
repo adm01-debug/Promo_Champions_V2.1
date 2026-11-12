@@ -1,8 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
-import { DICEBEAR_AVATARS_URL } from '@/config/external';
 
 import {
   DndContext,
@@ -46,6 +44,10 @@ import { useLeadScores, useCalculateLeadScores } from '@/hooks/useLeadScoring';
 import { useActiveCadencesBySaleIds } from '@/hooks/useCadences';
 import { useICPByClientName } from '@/hooks/useICPData';
 import { useStageProbabilities } from '@/hooks/useStageProbabilities';
+import {
+  useClientPhonesByIds,
+  useStakeholdersBySaleIds,
+} from '@/hooks/pipeline/useDealCardContext';
 
 import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
@@ -140,6 +142,20 @@ export const PipelineBoard = () => {
       (currentDealsByStage[stage.id] || []).map(deal => deal.id)
     );
   }, [currentDealsByStage, currentStages]);
+
+  const allClientIds = useMemo(() => {
+    if (!currentDealsByStage) return [];
+    const ids = new Set<string>();
+    for (const stage of currentStages) {
+      for (const deal of currentDealsByStage[stage.id] || []) {
+        if (deal.client_id) ids.add(deal.client_id);
+      }
+    }
+    return [...ids];
+  }, [currentDealsByStage, currentStages]);
+
+  const { data: stakeholdersBySale } = useStakeholdersBySaleIds(allDealIds);
+  const { data: clientPhones } = useClientPhonesByIds(allClientIds);
 
   const { data: rawProbabilities } = useDealProbabilities();
   const { data: leadScoresData } = useLeadScores();
@@ -456,53 +472,9 @@ export const PipelineBoard = () => {
         </div>
 
         {/* Stats Bar */}
-        <div className="relative flex items-center justify-between p-6 rounded-2xl bg-linear-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
+        <div className="relative flex items-center justify-end p-6 rounded-2xl bg-linear-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
           {/* Background glow overlay */}
           <div className="absolute -right-24 -top-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
-
-          <div className="flex gap-12 relative z-10">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">
-                Pipeline Health (P2)
-              </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-display font-black tracking-tighter">
-                  92.4%
-                </span>
-                <span className="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" /> Eficiência
-                </span>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex items-center">
-              <div className="h-10 w-px bg-linear-to-b from-transparent via-border to-transparent mr-12" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">
-                  Time em Win-Streak
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <div className="flex -space-x-2 mr-2">
-                    {[1, 2, 3].map(i => (
-                      <Avatar
-                        key={i}
-                        className="h-6 w-6 border-2 border-background ring-2 ring-primary/20"
-                      >
-                        <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`} />
-                        src={`${DICEBEAR_AVATARS_URL}?seed=${i + 10}`}
-                      </Avatar>
-                    ))}
-                  </div>
-                  <span className="text-xl font-display font-black tracking-tighter text-primary">
-                    +12 Deals
-                  </span>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
-                    / Semana
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div className="flex gap-3 relative z-10">
             {isDefaultPipeline && (
@@ -567,6 +539,8 @@ export const PipelineBoard = () => {
                     leadScores={isDefaultPipeline ? leadScores : undefined}
                     activeCadences={isDefaultPipeline ? activeCadences : undefined}
                     icpByClientName={isDefaultPipeline ? icpByClientName : undefined}
+                    stakeholdersBySale={stakeholdersBySale}
+                    clientPhones={clientPhones}
                     showFunnelLayer={showFunnelLayer}
                     conversionRate={conversionRate}
                   />
@@ -586,6 +560,12 @@ export const PipelineBoard = () => {
                   icpData={
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
                       { is_icp_match: boolean; grupo_nicho?: string } | undefined
+                  }
+                  stakeholders={stakeholdersBySale?.[activeDeal.id]}
+                  clientPhone={
+                    activeDeal.client_id
+                      ? clientPhones?.[activeDeal.client_id]
+                      : undefined
                   }
                 />
               </div>
