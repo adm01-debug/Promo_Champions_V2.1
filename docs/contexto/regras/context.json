@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "566ef2fe4bf49da895b93c592adcaae18a4aa572",
+  "sha": "7884531319b71b1b2224dad4545c9ddb9d1951d7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-12 13:45 UTC",
+  "generated_at": "2026-11-12 19:08 UTC",
   "files_total": 3468,
   "code_files": 3139,
   "code_lines": 456611
@@ -244312,10 +244312,20 @@
   }
  },
  "git": {
-  "sha": "566ef2fe4bf49da895b93c592adcaae18a4aa572",
+  "sha": "7884531319b71b1b2224dad4545c9ddb9d1951d7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7884531",
+    "date": "2026-11-12",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#425)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json"
+    ]
+   },
    {
     "sha": "566ef2f",
     "date": "2026-11-12",
@@ -245082,15 +245092,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "9bbfbd2",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "docs: consolidacao da validacao pos-merges (5 sessoes) (#386)",
-    "files": [
-     "analise-prs/VALIDACAO_POS_MERGES.md"
-    ]
    }
   ],
   "hot_files": [
@@ -245105,6 +245106,14 @@
    [
     ".github/workflows/codeql.yml",
     5
+   ],
+   [
+    "inventario/estado/banco.json",
+    3
+   ],
+   [
+    "inventario/estado/edges.json",
+    3
    ],
    [
     "deno.lock",
@@ -245164,14 +245173,6 @@
    ],
    [
     "src/components/bi/BIVendedorCharts.tsx",
-    2
-   ],
-   [
-    "src/components/closer/CloserRevenueComparison.tsx",
-    2
-   ],
-   [
-    "src/components/goals/GoalComparisonChart.tsx",
     2
    ]
   ]
