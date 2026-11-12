@@ -28,7 +28,6 @@ import {
   Phone,
   Eye,
   CheckCircle,
-  XCircle,
 } from 'lucide-react';
 import type { CadenceTemplate, TemplateType } from '@/types/sales';
 import { toast } from 'sonner';
@@ -120,7 +119,6 @@ export function CadenceTemplateManager() {
           className="rounded-none border-b-2 border-transparent data-[variant=default]:border-primary"
         >
           Fila de Aprovação
-          <Badge className="ml-2 bg-amber-500">2</Badge>
         </Button>
       </div>
 
@@ -350,61 +348,15 @@ export function CadenceTemplateManager() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {[
-                {
-                  id: 'p1',
-                  lead: 'Ana Silva',
-                  template: 'Follow-up Interesse Alto',
-                  content: 'Oi Ana! Vi que você acessou nossa proposta...',
-                  type: 'whatsapp',
-                },
-                {
-                  id: 'p2',
-                  lead: 'Bruno Costa',
-                  template: 'Follow-up Interesse Alto',
-                  content: 'Oi Bruno! Vi que você acessou nossa proposta...',
-                  type: 'whatsapp',
-                },
-              ].map(pending => (
-                <div
-                  key={pending.id}
-                  className="p-4 border rounded-lg bg-background flex flex-col md:flex-row justify-between gap-4"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm">{pending.lead}</span>
-                      <Badge variant="outline" className="text-[10px]">
-                        {pending.template}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground italic">
-                      "{pending.content}"
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Trigger: Clique em Link de Preço (3x)
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 text-destructive border-destructive/30"
-                      onClick={() => toast.error('Ação rejeitada')}
-                    >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Rejeitar
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-8 bg-green-600 hover:bg-green-700"
-                      onClick={() => toast.success('Ação aprovada e enviada!')}
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Aprovar & Enviar
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              {/* Sem backend que retenha ações de cadência para aprovação:
+                  estado vazio honesto, sem itens fictícios nem botões sem efeito. */}
+              <div className="text-center py-10 text-muted-foreground">
+                <CheckCircle className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                <p className="font-medium">Nenhuma ação aguardando aprovação.</p>
+                <p className="text-sm">
+                  As cadências ainda não enviam mensagens que dependam de aprovação.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
