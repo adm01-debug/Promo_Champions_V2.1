@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "e324e953a15742a5936a54ee7bb4a6367d239f86",
+  "sha": "566ef2fe4bf49da895b93c592adcaae18a4aa572",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-12 11:52 UTC",
+  "generated_at": "2026-11-12 13:45 UTC",
   "files_total": 3468,
   "code_files": 3139,
   "code_lines": 456611
@@ -244312,10 +244312,21 @@
   }
  },
  "git": {
-  "sha": "e324e953a15742a5936a54ee7bb4a6367d239f86",
+  "sha": "566ef2fe4bf49da895b93c592adcaae18a4aa572",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "566ef2f",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps-dev): bump tsx from 4.22.4 to 4.23.15 (#409)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "e324e95",
     "date": "2026-11-12",
@@ -245080,20 +245091,15 @@
     "files": [
      "analise-prs/VALIDACAO_POS_MERGES.md"
     ]
-   },
-   {
-    "sha": "f3802bb",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "chore: normaliza line endings (LF) para prevenir bugs de parser (#385)",
-    "files": [
-     ".gitattributes"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
+    6
+   ],
+   [
+    "package-lock.json",
     5
    ],
    [
@@ -245101,8 +245107,8 @@
     5
    ],
    [
-    "package-lock.json",
-    4
+    "deno.lock",
+    3
    ],
    [
     ".github/workflows/migrations-drift.yml",
@@ -245122,10 +245128,6 @@
    ],
    [
     "CHANGELOG.md",
-    2
-   ],
-   [
-    "deno.lock",
     2
    ],
    [

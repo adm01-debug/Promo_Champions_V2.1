@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps-dev): bump tsx from 4.22.4 to 4.23.15 (#409)",
    "chore(main): release 1.2.0 (#391)",
    "feat: migra tailwind 3->4 (v4.3.5) (#423)",
    "feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)",
-   "chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)",
-   "chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)"
+   "chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
