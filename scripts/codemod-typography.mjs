@@ -38,37 +38,37 @@ const files = execSync(
   .filter(Boolean);
 
 const stripPage = [
-  /\btext-(2xl|3xl|4xl)\b/g,
-  /\bfont-(bold|extrabold|black)\b/g,
+  /(?<!\S)text-(2xl|3xl|4xl)(?!\S)/g,
+  /(?<!\S)font-(bold|extrabold|black)(?!\S)/g,
   /\btracking-(tight|tighter)\b/g,
-  /\bleading-(none|tight)\b/g,
-  /\bfont-display\b/g,
+  /(?<!\S)leading-(none|tight)(?!\S)/g,
+  /(?<!\S)font-display(?!\S)/g,
 ];
 const stripSection = [
-  /\btext-(base|lg|xl|2xl)\b/g,
-  /\bfont-(semibold|bold)\b/g,
+  /(?<!\S)text-(base|lg|xl|2xl)(?!\S)/g,
+  /(?<!\S)font-(semibold|bold)(?!\S)/g,
   /\btracking-tight\b/g,
-  /\bleading-(snug|tight)\b/g,
-  /\bfont-display\b/g,
+  /(?<!\S)leading-(snug|tight)(?!\S)/g,
+  /(?<!\S)font-display(?!\S)/g,
 ];
-const stripLabel = [/\btext-sm\b/g, /\bfont-medium\b/g, /\bleading-none\b/g];
+const stripLabel = [/(?<!\S)text-sm(?!\S)/g, /(?<!\S)font-medium(?!\S)/g, /(?<!\S)leading-none(?!\S)/g];
 
 // Regras por tag.
 //  - force: aplica token sem exigir size+weight (componentes já-semânticos)
 const tagRules = {
   // HTML básicos — exigem assinatura
   h1: { token: "text-page-title", strip: stripPage,
-        size: /\btext-(2xl|3xl|4xl)\b/, weight: /\bfont-(bold|extrabold|black)\b/ },
+        size: /(?<!\S)text-(2xl|3xl|4xl)(?!\S)/, weight: /(?<!\S)font-(bold|extrabold|black)(?!\S)/ },
   h2: { token: "text-section-title", strip: stripSection,
-        size: /\btext-(base|lg|xl|2xl)\b/, weight: /\bfont-(semibold|bold)\b/ },
+        size: /(?<!\S)text-(base|lg|xl|2xl)(?!\S)/, weight: /(?<!\S)font-(semibold|bold)(?!\S)/ },
   h3: { token: "text-section-title", strip: stripSection,
-        size: /\btext-(base|lg|xl|2xl)\b/, weight: /\bfont-(semibold|bold)\b/ },
+        size: /(?<!\S)text-(base|lg|xl|2xl)(?!\S)/, weight: /(?<!\S)font-(semibold|bold)(?!\S)/ },
   h4: { token: "text-section-title", strip: stripSection,
-        size: /\btext-(base|lg|xl)\b/, weight: /\bfont-(semibold|bold|medium)\b/ },
+        size: /(?<!\S)text-(base|lg|xl)(?!\S)/, weight: /(?<!\S)font-(semibold|bold|medium)(?!\S)/ },
   label: { token: "text-label", strip: stripLabel,
-           size: /\btext-sm\b/, weight: /\bfont-medium\b/ },
+           size: /(?<!\S)text-sm(?!\S)/, weight: /(?<!\S)font-medium(?!\S)/ },
   Label: { token: "text-label", strip: stripLabel,
-           size: /\btext-sm\b/, weight: /\bfont-medium\b/ },
+           size: /(?<!\S)text-sm(?!\S)/, weight: /(?<!\S)font-medium(?!\S)/ },
 
   // Componentes semânticos — token aplicado sempre
   PageTitle:        { token: "text-page-title",    strip: stripPage,    force: true },
@@ -102,7 +102,10 @@ for (const file of files) {
       `(<${tag}\\b[^>]*?className=")([^"]+)("[^>]*>)`,
       "g"
     );
-    out = out.replace(re, (m, open, classes, close) => {
+    out = out.replace(re, (m, open, classes, close, offset, whole) => {
+      // (12/11) JSX dentro de comentário (// ou bloco /* … */) é exemplo/documentação: não reescrever
+      const linha = whole.slice(whole.lastIndexOf("\n", offset) + 1, offset);
+      if (/^\s*(\/\/|\*|\/\*)/.test(linha) || whole.lastIndexOf("/*", offset) > whole.lastIndexOf("*/", offset)) return m;
       if (classes.includes(rule.token)) return m;
       if (!rule.force) {
         if (!rule.size.test(classes) || !rule.weight.test(classes)) return m;
