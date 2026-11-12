@@ -16,7 +16,7 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     return getLocalISODate(d);
   }, [periodDays]);
 
-  const { data: salespeople } = useQuery({
+  const { data: salespeople, isError: salespeopleError } = useQuery({
     queryKey: ['evolution-salespeople'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -28,7 +28,11 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     },
   });
 
-  const { data: sales, isLoading } = useQuery({
+  const {
+    data: sales,
+    isLoading,
+    isError: salesError,
+  } = useQuery({
     queryKey: ['evolution-sales', startDate],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -96,5 +100,6 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
     chartData,
     salespeople: salespeople || [],
     isLoading,
+    isError: salespeopleError || salesError,
   };
 }
