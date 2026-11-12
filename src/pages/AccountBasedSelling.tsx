@@ -27,6 +27,16 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -42,16 +52,21 @@ import {
   TrendingUp,
   Shield,
   Search,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import {
   useAccounts,
   useAccountContacts,
   useCreateAccount,
   useCreateContact,
+  useUpdateContact,
+  useDeleteContact,
   useRecalculateAccountScore,
   useAccountPlan,
   useUpdateAccountPlan,
   type Account,
+  type AccountContact,
   type AccountTier,
   type BuyingRole,
   type AccountPlan,
@@ -95,10 +110,14 @@ export default function AccountBasedSelling() {
   const { data: contacts } = useAccountContacts(selected?.id ?? null);
   const createAccount = useCreateAccount();
   const createContact = useCreateContact();
+  const updateContact = useUpdateContact();
+  const deleteContact = useDeleteContact();
   const recalc = useRecalculateAccountScore();
 
   const [newAccountOpen, setNewAccountOpen] = useState(false);
   const [newContactOpen, setNewContactOpen] = useState(false);
+  const [editingContactId, setEditingContactId] = useState<string | null>(null);
+  const [contactToDelete, setContactToDelete] = useState<AccountContact | null>(null);
 
   const [accForm, setAccForm] = useState({
     name: '',
@@ -139,30 +158,65 @@ export default function AccountBasedSelling() {
     );
   };
 
-  const handleCreateContact = () => {
+  const resetContactForm = () => {
+    setEditingContactId(null);
+    setCtForm({
+      name: '',
+      email: '',
+      job_title: '',
+      buying_role: 'user',
+      influence_level: 3,
+    });
+  };
+
+  const handleContactDialogChange = (open: boolean) => {
+    setNewContactOpen(open);
+    if (!open) resetContactForm();
+  };
+
+  const handleEditContact = (contact: AccountContact) => {
+    setEditingContactId(contact.id);
+    setCtForm({
+      name: contact.name,
+      email: contact.email ?? '',
+      job_title: contact.job_title ?? '',
+      buying_role: contact.buying_role,
+      influence_level: contact.influence_level,
+    });
+    setNewContactOpen(true);
+  };
+
+  const handleSaveContact = () => {
     if (!selected) return;
-    createContact.mutate(
-      {
-        account_id: selected.id,
-        name: ctForm.name,
-        email: ctForm.email || null,
-        job_title: ctForm.job_title || null,
-        buying_role: ctForm.buying_role,
-        influence_level: ctForm.influence_level,
+    const fields = {
+      name: ctForm.name,
+      email: ctForm.email || null,
+      job_title: ctForm.job_title || null,
+      buying_role: ctForm.buying_role,
+      influence_level: ctForm.influence_level,
+    };
+    const options = {
+      onSuccess: () => {
+        setNewContactOpen(false);
+        resetContactForm();
       },
-      {
-        onSuccess: () => {
-          setNewContactOpen(false);
-          setCtForm({
-            name: '',
-            email: '',
-            job_title: '',
-            buying_role: 'user',
-            influence_level: 3,
-          });
-        },
-      }
-    );
+    };
+    if (editingContactId) {
+      updateContact.mutate(
+        { id: editingContactId, account_id: selected.id, ...fields },
+        options
+      );
+    } else {
+      createContact.mutate({ account_id: selected.id, ...fields }, options);
+    }
+  };
+
+  const handleConfirmDeleteContact = () => {
+    if (!contactToDelete) return;
+    deleteContact.mutate({
+      id: contactToDelete.id,
+      account_id: contactToDelete.account_id,
+    });
   };
 
   return (
@@ -442,7 +496,10 @@ export default function AccountBasedSelling() {
                           <Users className="h-4 w-4 text-primary" />
                           Stakeholders ({contacts?.length ?? 0})
                         </h3>
-                        <Dialog open={newContactOpen} onOpenChange={setNewContactOpen}>
+                        <Dialog
+                          open={newContactOpen}
+                          onOpenChange={handleContactDialogChange}
+                        >
                           <DialogTrigger asChild>
                             <Button size="sm">
                               <Plus className="h-4 w-4 mr-1" /> Stakeholder
@@ -450,7 +507,11 @@ export default function AccountBasedSelling() {
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Adicionar Stakeholder</DialogTitle>
+                              <DialogTitle>
+                                {editingContactId
+                                  ? 'Editar Stakeholder'
+                                  : 'Adicionar Stakeholder'}
+                              </DialogTitle>
                             </DialogHeader>
                             <div className="space-y-3">
                               <div>
@@ -504,10 +565,14 @@ export default function AccountBasedSelling() {
                             </div>
                             <DialogFooter>
                               <Button
-                                onClick={handleCreateContact}
-                                disabled={!ctForm.name || createContact.isPending}
+                                onClick={handleSaveContact}
+                                disabled={
+                                  !ctForm.name ||
+                                  createContact.isPending ||
+                                  updateContact.isPending
+                                }
                               >
-                                Mapear
+                                {editingContactId ? 'Salvar' : 'Mapear'}
                               </Button>
                             </DialogFooter>
                           </DialogContent>
@@ -531,9 +596,27 @@ export default function AccountBasedSelling() {
                                 </p>
                               </div>
                             </div>
-                            <Badge variant="outline">
-                              {c.influence_level}/5 Influência
-                            </Badge>
+                            <div className="flex items-center gap-1">
+                              <Badge variant="outline">
+                                {c.influence_level}/5 Influência
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`Editar ${c.name}`}
+                                onClick={() => handleEditContact(c)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`Excluir ${c.name}`}
+                                onClick={() => setContactToDelete(c)}
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -549,6 +632,31 @@ export default function AccountBasedSelling() {
           </Card>
         </div>
       </div>
+
+      <AlertDialog
+        open={!!contactToDelete}
+        onOpenChange={open => !open && setContactToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir stakeholder?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {contactToDelete?.name} será removido do buying committee desta conta. Esta
+              ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDeleteContact}
+              disabled={deleteContact.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
