@@ -19,11 +19,9 @@ import {
   Edit2,
   Check,
   Sparkles,
-  RefreshCw,
   Mic,
   ShieldCheck,
   History,
-  Database,
 } from 'lucide-react';
 import { StagnantDealAlert } from './StagnantDealAlert';
 import { DealSummaryCard } from './DealSummaryCard';
@@ -70,7 +68,6 @@ export const DealCard = ({
   activeCadence,
   icpData,
 }: DealCardProps) => {
-  const [isEnriching, setIsEnriching] = useState(false); // Etapa 3: Data Enrichment
   const [playbookOpen, setPlaybookOpen] = useState(false);
   useLeadScoreExplanation(leadScore ? deal.id : null);
   const { data: playbooks } = usePlaybooksByStage(deal.status);
@@ -139,36 +136,6 @@ export const DealCard = ({
           )}
         />
 
-        {/* Etapa 1: Presença em Tempo Real (Colaboração Ativa) */}
-        <div className="absolute top-1 right-8 flex -space-x-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="relative">
-                <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-primary/20 hover:scale-110 transition-transform">
-                  <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Felix`} />
-                  <AvatarFallback className="text-[6px]">FX</AvatarFallback>
-                </Avatar>
-                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px] font-bold">
-              Felix está editando agora...
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all hover:scale-110">
-                <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Anna`} />
-                <AvatarFallback className="text-[6px]">AN</AvatarFallback>
-              </Avatar>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px] font-bold">
-              Anna visualizou há 1 min
-            </TooltipContent>
-          </Tooltip>
-        </div>
-
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2 relative">
           {/* Etapa 4: Quick Action Overlay */}
@@ -185,28 +152,6 @@ export const DealCard = ({
               </TooltipTrigger>
               <TooltipContent className="font-bold">
                 WhatsApp Rápido (Automação Etapa 2)
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    'h-8 w-8 hover:bg-indigo-500/20 text-indigo-500',
-                    isEnriching && 'animate-pulse'
-                  )}
-                  onClick={e => {
-                    e.stopPropagation();
-                    setIsEnriching(true);
-                    setTimeout(() => setIsEnriching(false), 2000);
-                  }}
-                >
-                  <Database className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="font-bold">
-                Enriquecer com Dados de Ecossistema (Etapa 3)
               </TooltipContent>
             </Tooltip>
             <Tooltip>
@@ -240,7 +185,6 @@ export const DealCard = ({
           <div className="flex-1 min-w-0">
             <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors flex items-center gap-1.5">
               {deal.client_name}
-              {isEnriching && <RefreshCw className="h-3 w-3 animate-spin text-primary" />}
             </h4>
             <p className="text-xs text-muted-foreground truncate mt-0.5">
               {deal.product_name}
