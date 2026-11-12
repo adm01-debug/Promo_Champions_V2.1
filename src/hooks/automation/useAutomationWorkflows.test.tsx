@@ -91,7 +91,7 @@ describe('useUpdateWorkflow', () => {
         conditions: [],
       })
     );
-    expect(update.mock.calls[0][0]).not.toHaveProperty('id');
+    expect(update.mock.calls[0]?.[0]).not.toHaveProperty('id');
     expect(eq).toHaveBeenCalledWith('id', 'wf-1');
     expect(toastSuccess).toHaveBeenCalledWith('Workflow atualizado');
   });
