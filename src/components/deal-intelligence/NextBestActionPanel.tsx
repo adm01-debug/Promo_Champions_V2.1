@@ -1,21 +1,9 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useDealHealth } from '@/hooks/deal-intelligence/useDealHealth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Zap,
-  Target,
-  Brain,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Sparkles, Clock, Zap, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
 
 interface Props {
   saleId: string | null | undefined;
@@ -23,7 +11,6 @@ interface Props {
 
 export function NextBestActionPanel({ saleId }: Props) {
   const { data: health, isLoading } = useDealHealth(saleId || undefined);
-  const [expandedAction, setExpandedAction] = useState<number | null>(null);
 
   if (isLoading) {
     return (
@@ -41,13 +28,10 @@ export function NextBestActionPanel({ saleId }: Props) {
     );
   }
 
-  const actions = (Array.isArray(health?.recommended_actions)
+  const actions = Array.isArray(health?.recommended_actions)
     ? health.recommended_actions
-    : null) || [
-    { title: 'Mapear Economic Buyer no deal', priority: 'high' },
-    { title: 'Agendar call de acompanhamento', priority: 'medium' },
-    { title: 'Enviar case de sucesso do mesmo setor', priority: 'low' },
-  ];
+    : [];
+  const aiRecommendation = health?.ai_recommendation?.trim();
 
   return (
     <Card className="glass border-border/40 overflow-hidden card-elevated">
@@ -66,6 +50,11 @@ export function NextBestActionPanel({ saleId }: Props) {
         </div>
       </CardHeader>
       <CardContent className="pt-4 space-y-4">
+        {actions.length === 0 && !aiRecommendation && (
+          <p className="py-6 text-center text-sm text-muted-foreground">
+            Sem recomendações para este deal ainda.
+          </p>
+        )}
         {actions.map((action, i) => (
           <motion.div
             key={i}
@@ -73,16 +62,14 @@ export function NextBestActionPanel({ saleId }: Props) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
             className={cn(
-              'group relative p-3 rounded-xl border transition-all duration-300 cursor-pointer',
+              'group relative p-3 rounded-xl border transition-all duration-300',
               'bg-card/50 hover:bg-card border-border/30 hover:border-primary/40',
               action.priority === 'high'
                 ? 'border-l-4 border-l-destructive shadow-sm'
                 : action.priority === 'medium'
                   ? 'border-l-4 border-l-amber-500'
-                  : 'border-l-4 border-l-emerald-500',
-              expandedAction === i && 'bg-secondary/20'
+                  : 'border-l-4 border-l-emerald-500'
             )}
-            onClick={() => setExpandedAction(expandedAction === i ? null : i)}
           >
             <div className="flex items-start gap-3">
               <div
@@ -102,7 +89,7 @@ export function NextBestActionPanel({ saleId }: Props) {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start mb-0.5">
+                <div className="mb-0.5">
                   <span
                     className={cn(
                       'text-[9px] font-bold uppercase tracking-widest',
@@ -120,70 +107,28 @@ export function NextBestActionPanel({ saleId }: Props) {
                         ? 'Alta'
                         : 'Normal'}
                   </span>
-                  {expandedAction === i ? (
-                    <ChevronUp className="size-3" />
-                  ) : (
-                    <ChevronDown className="size-3 opacity-50" />
-                  )}
                 </div>
                 <p className="text-sm font-medium text-foreground leading-tight group-hover:text-primary transition-colors">
                   {action.title}
                 </p>
-
-                <AnimatePresence>
-                  {expandedAction === i && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mt-3 space-y-3"
-                    >
-                      <div className="p-2 rounded-lg bg-black/40 border border-white/5">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 flex items-center gap-1">
-                          <Brain className="size-3" /> AI Playbook
-                        </p>
-                        <p className="text-[11px] text-muted-foreground leading-relaxed">
-                          Baseado em 42 deals similares, o playbook recomenda focar no
-                          argumento de "ROI em 6 meses" usando o case da TechCorp.
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 px-2 text-[10px] gap-1 hover:bg-primary/10 hover:text-primary"
-                        >
-                          <CheckCircle2 className="h-3 w-3" /> Concluir
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="h-7 px-3 text-[10px] font-bold uppercase tracking-widest gap-1 bg-primary text-primary-foreground"
-                        >
-                          Executar Play <ArrowRight className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </div>
           </motion.div>
         ))}
 
-        <div className="p-3 rounded-lg bg-secondary/30 border border-dashed border-border/40">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] font-bold uppercase tracking-tight">
-              Raciocínio da IA
-            </span>
+        {aiRecommendation && (
+          <div className="p-3 rounded-lg bg-secondary/30 border border-dashed border-border/40">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[11px] font-bold uppercase tracking-tight">
+                Raciocínio da IA
+              </span>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed italic">
+              "{aiRecommendation}"
+            </p>
           </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed italic">
-            "
-            {health?.ai_recommendation ||
-              'Baseado na falta de interação nos últimos 5 dias e na ausência do Comprador Econômico no comitê, o deal apresenta 65% de chance de estagnação. Ações sugeridas visam retomar o momentum e blindar a conta contra concorrentes citados.'}
-            "
-          </p>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
