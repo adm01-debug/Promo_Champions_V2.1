@@ -128,6 +128,9 @@ describe('useDeleteActivity', () => {
     expect(mocks.is).toHaveBeenCalledWith('deleted_at', null);
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['activities'] });
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['activity-stats'] });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: ['activities-latest-per-sale'],
+    });
     expect(toast.success).toHaveBeenCalledWith('Atividade excluída');
   });
 

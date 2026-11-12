@@ -517,6 +517,9 @@ export const useDeleteActivity = () => {
       queryClient.invalidateQueries({ queryKey: ['activities'] });
       queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
       queryClient.invalidateQueries({ queryKey: ['sdr-leaderboard'] });
+      // Última atividade por venda (useInactiveDeals): sem isto, o painel e os gatilhos de
+      // inatividade seguem com a data da atividade excluída até o staleTime vencer.
+      queryClient.invalidateQueries({ queryKey: ['activities-latest-per-sale'] });
       toast.success('Atividade excluída');
     },
     onError: (err: Error) => toast.error(`Erro ao excluir atividade: ${err.message}`),
