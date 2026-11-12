@@ -4,9 +4,10 @@ import { useMemo } from 'react';
 import { WON_SALE_STATUSES } from '@/constants';
 import { getLocalISODate } from '@/utils/dateHelpers';
 
+// Pontos indexados pelo id do vendedor (nomes podem se repetir); o nome é só rótulo.
 interface EvolutionPoint {
   date: string;
-  [salespersonName: string]: number | string;
+  [salespersonId: string]: number | string;
 }
 
 export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[] = []) {
@@ -63,7 +64,7 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
       const key = getLocalISODate(d);
       const entry: Record<string, number> = {};
       filteredPeople.forEach(sp => {
-        entry[sp.name] = 0;
+        entry[sp.id] = 0;
       });
       days.set(key, entry);
     }
@@ -76,21 +77,21 @@ export function useEvolutionCurves(periodDays: number = 30, selectedIds: string[
       const day = getLocalISODate(new Date(sale.created_at));
       const entry = days.get(day);
       if (entry) {
-        entry[sp.name] = (entry[sp.name] || 0) + (sale.amount || 0);
+        entry[sp.id] = (entry[sp.id] || 0) + (sale.amount || 0);
       }
     });
 
     // Convert to cumulative
     const cumulative: Record<string, number> = {};
     filteredPeople.forEach(sp => {
-      cumulative[sp.name] = 0;
+      cumulative[sp.id] = 0;
     });
 
     return Array.from(days.entries()).map(([date, dailyValues]) => {
       const point: EvolutionPoint = { date };
       filteredPeople.forEach(sp => {
-        cumulative[sp.name] += dailyValues[sp.name] || 0;
-        point[sp.name] = cumulative[sp.name];
+        cumulative[sp.id] += dailyValues[sp.id] || 0;
+        point[sp.id] = cumulative[sp.id];
       });
       return point;
     });

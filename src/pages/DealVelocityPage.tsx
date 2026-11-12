@@ -1,10 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { DealVelocityChart } from '@/components/analytics/DealVelocityChart';
 import { PageTransition } from '@/components/transitions/PageTransition';
-import { Clock, Download, ArrowLeftRight, Calendar } from 'lucide-react';
+import { Clock, ArrowLeftRight, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useDealVelocity } from '@/hooks/deal-intelligence/useDealAnalyticsVelocity';
 import { useSalespeopleMin } from '@/hooks/sales/useSalespeopleMin';
 import { useMemo, useState } from 'react';
@@ -77,14 +76,6 @@ export default function DealVelocityPage() {
                   <SelectItem value="365">Último ano</SelectItem>
                 </SelectContent>
               </Select>
-              <Button
-                variant="outline"
-                size="sm"
-                className="glass gap-2 border-border/50"
-              >
-                <Download className="h-4 w-4" />
-                Exportar
-              </Button>
             </div>
           </div>
 

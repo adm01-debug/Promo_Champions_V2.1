@@ -1,10 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { EvolutionChart } from '@/components/competitive/EvolutionChart';
 import { PageTransition } from '@/components/transitions/PageTransition';
-import { TrendingUp, Users, Filter, Share2 } from 'lucide-react';
+import { TrendingUp, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useEvolutionCurves } from '@/hooks/useEvolutionCurves';
 import { formatBRL } from '@/lib/money';
 import { useMemo } from 'react';
@@ -20,7 +19,7 @@ export default function EvolutionCurvesPage() {
     const last = chartData[chartData.length - 1];
     if (!last) return [];
     return salespeople
-      .map(sp => ({ id: sp.id, name: sp.name, revenue: Number(last[sp.name]) || 0 }))
+      .map(sp => ({ id: sp.id, name: sp.name, revenue: Number(last[sp.id]) || 0 }))
       .filter(l => l.revenue > 0)
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, 3);
@@ -54,25 +53,6 @@ export default function EvolutionCurvesPage() {
                 </p>
               </div>
             </motion.div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="glass gap-2 border-border/50"
-              >
-                <Share2 className="h-4 w-4" />
-                Compartilhar
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="glass gap-2 border-border/50"
-              >
-                <Filter className="h-4 w-4" />
-                Filtrar Segmentos
-              </Button>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
