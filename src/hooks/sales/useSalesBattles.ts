@@ -121,6 +121,8 @@ export function useSalesBattles() {
 
   // RLS (is_admin_or_manager) bloqueia em silêncio: 0 linhas sem erro.
   // O `.select('id')` permite detectar isso e avisar o usuário.
+  // Só batalhas 'active' mudam: finalizada é histórico (Hall of Fame) e
+  // cancelá-la a tiraria da listagem.
   const updateBattle = useMutation({
     mutationFn: async ({
       id,
@@ -137,9 +139,11 @@ export function useSalesBattles() {
         .from('sales_battles')
         .update(changes)
         .eq('id', id)
+        .eq('status', 'active')
         .select('id');
       if (error) throw error;
-      if (!data?.length) throw new Error('Sem permissão para editar esta batalha');
+      if (!data?.length)
+        throw new Error('Sem permissão para editar esta batalha ou ela já foi encerrada');
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sales-battles'] }),
   });
@@ -152,9 +156,13 @@ export function useSalesBattles() {
         .from('sales_battles')
         .update({ status: 'cancelled' })
         .eq('id', id)
+        .eq('status', 'active')
         .select('id');
       if (error) throw error;
-      if (!data?.length) throw new Error('Sem permissão para cancelar esta batalha');
+      if (!data?.length)
+        throw new Error(
+          'Sem permissão para cancelar esta batalha ou ela já foi encerrada'
+        );
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sales-battles'] }),
   });

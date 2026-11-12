@@ -264,8 +264,9 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
             </Badge>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Finalizadas são histórico: sem editar/cancelar (o hook também só altera 'active'). */}
             {completedBattles.slice(0, 4).map((b: Battle) => (
-              <BattleCardItem key={b.id} battle={b} {...manageProps} />
+              <BattleCardItem key={b.id} battle={b} />
             ))}
           </div>
           <div className="flex justify-center pt-4">

@@ -29,9 +29,14 @@ vi.mock('@/integrations/supabase/client', () => {
       },
       eq: (...args: unknown[]) => {
         eq(...args);
-        return {
+        const filtered = {
+          eq: (...more: unknown[]) => {
+            eq(...more);
+            return filtered;
+          },
           select: () => Promise.resolve(mutationResult),
         };
+        return filtered;
       },
     };
     return query;
@@ -94,6 +99,7 @@ describe('useSalesBattles — editar e cancelar', () => {
       xp_reward: 250,
     });
     expect(eq).toHaveBeenCalledWith('id', 'batalha-1');
+    expect(eq).toHaveBeenCalledWith('status', 'active');
   });
 
   it('falha quando a RLS não deixa editar (0 linhas)', async () => {
@@ -116,7 +122,22 @@ describe('useSalesBattles — editar e cancelar', () => {
 
     expect(update).toHaveBeenCalledWith({ status: 'cancelled' });
     expect(eq).toHaveBeenCalledWith('id', 'batalha-1');
+    expect(eq).toHaveBeenCalledWith('status', 'active');
     expect(del).not.toHaveBeenCalled();
+  });
+
+  it('não altera batalha já finalizada (0 linhas no filtro de status)', async () => {
+    mutationResult = { data: [], error: null };
+    const { result } = renderHook(() => useSalesBattles(), { wrapper });
+
+    await act(async () => {
+      await expect(result.current.updateBattle.mutateAsync(changes)).rejects.toThrow(
+        'ela já foi encerrada'
+      );
+      await expect(result.current.cancelBattle.mutateAsync('batalha-1')).rejects.toThrow(
+        'ela já foi encerrada'
+      );
+    });
   });
 
   it('falha quando a RLS não deixa cancelar (0 linhas)', async () => {
