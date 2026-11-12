@@ -464,22 +464,7 @@ export const PipelineBoard = () => {
           <div className="absolute -right-24 -top-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
 
           <div className="flex gap-12 relative z-10">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">
-                Pipeline Health (P2)
-              </span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-display font-black tracking-tighter">
-                  92.4%
-                </span>
-                <span className="text-[10px] font-bold text-emerald-500 uppercase flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" /> Eficiência
-                </span>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex items-center">
-              <div className="h-10 w-px bg-linear-to-b from-transparent via-border to-transparent mr-12" />
+            <div className="flex items-center">
               <div className="flex flex-col">
                 <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-1">
                   Vendas Ganhas

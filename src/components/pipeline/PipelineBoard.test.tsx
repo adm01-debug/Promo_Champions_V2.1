@@ -80,6 +80,15 @@ describe('PipelineBoard — vendas ganhas na semana', () => {
     expect(screen.queryByText('+12 Deals')).not.toBeInTheDocument();
   });
 
+  it('não exibe o indicador fixo de Pipeline Health (92.4%)', () => {
+    weekly.data = 2;
+    render(<PipelineBoard />);
+
+    expect(screen.getByTestId('weekly-won-deals')).toHaveTextContent('2 Deals');
+    expect(screen.queryByText(/92\.4%/)).not.toBeInTheDocument();
+    expect(screen.queryByText('Pipeline Health (P2)')).not.toBeInTheDocument();
+  });
+
   it('usa singular quando há uma única venda ganha', () => {
     weekly.data = 1;
     render(<PipelineBoard />);
