@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { chunkedIn } from '@/lib/supabase/chunkedIn';
 import { toast } from 'sonner';
 
 export interface CompetitorRegistry {
@@ -63,13 +64,13 @@ export function useCompetitorMarketIntel() {
         ),
       ];
 
-      const [cardsResult, mentionCounts] = await Promise.all([
-        cardIds.length > 0
-          ? supabase
-              .from('sales_enablement_assets')
-              .select('id, title, file_url')
-              .in('id', cardIds)
-          : Promise.resolve({ data: [], error: null }),
+      const [cards, mentionCounts] = await Promise.all([
+        chunkedIn(cardIds, chunk =>
+          supabase
+            .from('sales_enablement_assets')
+            .select('id, title, file_url')
+            .in('id', chunk as string[])
+        ),
         Promise.all(
           competitors.map(async c => {
             const { count, error: countError } = await supabase
@@ -81,11 +82,7 @@ export function useCompetitorMarketIntel() {
           })
         ),
       ]);
-      if (cardsResult.error) throw cardsResult.error;
-
-      const cardsById = new Map(
-        (cardsResult.data ?? []).map(card => [card.id, card] as const)
-      );
+      const cardsById = new Map(cards.map(card => [card.id, card] as const));
 
       return competitors
         .map((c, index) => ({
