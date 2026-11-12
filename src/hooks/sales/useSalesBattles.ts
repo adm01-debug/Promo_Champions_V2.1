@@ -119,5 +119,45 @@ export function useSalesBattles() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sales-battles'] }),
   });
 
-  return { battles, isLoading, createBattle, updateScore };
+  // RLS (is_admin_or_manager) bloqueia em silêncio: 0 linhas sem erro.
+  // O `.select('id')` permite detectar isso e avisar o usuário.
+  const updateBattle = useMutation({
+    mutationFn: async ({
+      id,
+      ...changes
+    }: {
+      id: string;
+      title: string;
+      battle_type: string;
+      metric: string;
+      ends_at: string;
+      xp_reward: number;
+    }) => {
+      const { data, error } = await supabase
+        .from('sales_battles')
+        .update(changes)
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para editar esta batalha');
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sales-battles'] }),
+  });
+
+  // Cancela em vez de DELETE: a FK de battle_participants é ON DELETE CASCADE e
+  // apagaria placar e histórico. A listagem já esconde status 'cancelled'.
+  const cancelBattle = useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('sales_battles')
+        .update({ status: 'cancelled' })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para cancelar esta batalha');
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sales-battles'] }),
+  });
+
+  return { battles, isLoading, createBattle, updateScore, updateBattle, cancelBattle };
 }

@@ -1,6 +1,6 @@
 import React, { FC, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Swords, Trophy, Zap, Plus, Users, TrendingUp } from 'lucide-react';
+import { Swords, Trophy, Zap, Plus, Users, TrendingUp, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,18 @@ import { cn } from '@/lib/utils';
 import { useSalesBattles } from '@/hooks/sales/useSalesBattles';
 import { BattleCardItem } from './BattleCardItem';
 import { CreateBattleDialog } from './CreateBattleDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useUserRoles } from '@/hooks/useUserRoles';
+import { toast } from 'sonner';
 
 interface Battle {
   id: string;
@@ -30,8 +42,35 @@ interface BattleArenaProps {
 }
 
 const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
-  const { battles, isLoading } = useSalesBattles();
+  const { battles, isLoading, cancelBattle } = useSalesBattles();
+  const { isAdminOrManager } = useUserRoles();
   const [showCreate, setShowCreate] = useState(false);
+  const [editingBattle, setEditingBattle] = useState<Battle | null>(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const [cancelingBattle, setCancelingBattle] = useState<Battle | null>(null);
+
+  // RLS de sales_battles: só admin/gestor edita ou cancela.
+  const manageProps = isAdminOrManager
+    ? {
+        onEdit: (b: Battle) => {
+          setEditingBattle(b);
+          setShowEdit(true);
+        },
+        onCancel: setCancelingBattle,
+      }
+    : {};
+
+  const handleConfirmCancel = () => {
+    if (!cancelingBattle) return;
+    cancelBattle.mutate(cancelingBattle.id, {
+      onSuccess: () => {
+        toast.success('Batalha cancelada');
+        setCancelingBattle(null);
+      },
+      onError: error =>
+        toast.error('Erro ao cancelar batalha', { description: error.message }),
+    });
+  };
 
   const { activeBattles, completedBattles, stats } = useMemo(() => {
     const active = battles?.filter((b: Battle) => b.status === 'active') || [];
@@ -178,7 +217,7 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <BattleCardItem battle={b} />
+                  <BattleCardItem battle={b} {...manageProps} />
                 </motion.div>
               ))}
             </div>
@@ -226,7 +265,7 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {completedBattles.slice(0, 4).map((b: Battle) => (
-              <BattleCardItem key={b.id} battle={b} />
+              <BattleCardItem key={b.id} battle={b} {...manageProps} />
             ))}
           </div>
           <div className="flex justify-center pt-4">
@@ -241,6 +280,48 @@ const BattleArenaComponent: FC<BattleArenaProps> = ({ className }) => {
       )}
 
       <CreateBattleDialog open={showCreate} onOpenChange={setShowCreate} />
+      <CreateBattleDialog
+        open={showEdit}
+        onOpenChange={setShowEdit}
+        battle={editingBattle}
+      />
+      <AlertDialog
+        open={!!cancelingBattle}
+        onOpenChange={open => !open && setCancelingBattle(null)}
+      >
+        <AlertDialogContent className="glass border-border/50">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-section-title text-destructive">
+              Cancelar batalha?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {`A batalha "${cancelingBattle?.title ?? ''}" será encerrada sem vencedor e sairá da arena. O placar dos participantes fica guardado.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={cancelBattle.isPending}>
+              Voltar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={event => {
+                event.preventDefault();
+                handleConfirmCancel();
+              }}
+              disabled={cancelBattle.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {cancelBattle.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Cancelando...
+                </>
+              ) : (
+                'Cancelar batalha'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
