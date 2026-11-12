@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Phone, ArrowRight, Inbox } from 'lucide-react';
 import {
+  type DialerQueue,
+  useDeleteQueue,
   useDialerQueues,
   useNextItem,
   useRebuildQueue,
@@ -12,6 +14,16 @@ import { DialerQueueCard } from '@/components/dialer/DialerQueueCard';
 import { CurrentCallCard } from '@/components/dialer/CurrentCallCard';
 import { CallDispositionForm } from '@/components/dialer/CallDispositionForm';
 import { QueueBuilderDialog } from '@/components/dialer/QueueBuilderDialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const PowerDialer = () => {
   const [activeQueueId, setActiveQueueId] = useState<string | null>(null);
@@ -21,10 +33,34 @@ const PowerDialer = () => {
     score: number;
   } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingQueue, setEditingQueue] = useState<DialerQueue | null>(null);
+  const [queueToDelete, setQueueToDelete] = useState<DialerQueue | null>(null);
 
   const { data: queues, isLoading } = useDialerQueues();
   const nextItem = useNextItem();
   const rebuild = useRebuildQueue();
+  const deleteQueue = useDeleteQueue();
+
+  const handleEdit = (queue: DialerQueue) => {
+    setEditingQueue(queue);
+    setEditOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!queueToDelete) return;
+    const deletedId = queueToDelete.id;
+    try {
+      await deleteQueue.mutateAsync(deletedId);
+    } catch {
+      return; // erro já exibido via toast
+    }
+    if (activeQueueId === deletedId) {
+      setActiveQueueId(null);
+      setCurrentItem(null);
+    }
+    setQueueToDelete(null);
+  };
 
   const handleStart = async (queueId: string) => {
     setActiveQueueId(queueId);
@@ -89,6 +125,8 @@ const PowerDialer = () => {
                 onSelect={() => setActiveQueueId(q.id)}
                 onRebuild={() => rebuild.mutate(q.id)}
                 onStart={() => handleStart(q.id)}
+                onEdit={() => handleEdit(q)}
+                onDelete={() => setQueueToDelete(q)}
                 rebuilding={rebuild.isPending && rebuild.variables === q.id}
               />
             ))}
@@ -135,6 +173,42 @@ const PowerDialer = () => {
       </div>
 
       <QueueBuilderDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <QueueBuilderDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        queue={editingQueue}
+      />
+
+      <AlertDialog
+        open={!!queueToDelete}
+        onOpenChange={open => !open && !deleteQueue.isPending && setQueueToDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir fila?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A fila <strong>{queueToDelete?.name}</strong> e todos os seus itens
+              pendentes serão excluídos. O histórico de chamadas já registradas é mantido.
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteQueue.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={e => {
+                e.preventDefault();
+                void handleConfirmDelete();
+              }}
+              disabled={deleteQueue.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteQueue.isPending ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
