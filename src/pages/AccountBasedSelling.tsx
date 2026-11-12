@@ -36,6 +36,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -59,6 +60,8 @@ import {
   useAccounts,
   useAccountContacts,
   useCreateAccount,
+  useUpdateAccount,
+  useDeleteAccount,
   useCreateContact,
   useUpdateContact,
   useDeleteContact,
@@ -109,12 +112,16 @@ export default function AccountBasedSelling() {
   const [selected, setSelected] = useState<Account | null>(null);
   const { data: contacts } = useAccountContacts(selected?.id ?? null);
   const createAccount = useCreateAccount();
+  const updateAccount = useUpdateAccount();
+  const deleteAccount = useDeleteAccount();
   const createContact = useCreateContact();
   const updateContact = useUpdateContact();
   const deleteContact = useDeleteContact();
   const recalc = useRecalculateAccountScore();
 
   const [newAccountOpen, setNewAccountOpen] = useState(false);
+  const [editingAccountId, setEditingAccountId] = useState<string | null>(null);
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   const [newContactOpen, setNewContactOpen] = useState(false);
   const [editingContactId, setEditingContactId] = useState<string | null>(null);
   const [contactToDelete, setContactToDelete] = useState<AccountContact | null>(null);
@@ -134,28 +141,70 @@ export default function AccountBasedSelling() {
     influence_level: 3,
   });
 
-  const handleCreateAccount = () => {
-    createAccount.mutate(
-      {
-        name: accForm.name,
-        tier: accForm.tier,
-        industry: accForm.industry || null,
-        annual_revenue: accForm.annual_revenue ? Number(accForm.annual_revenue) : null,
-        employee_count: accForm.employee_count ? Number(accForm.employee_count) : null,
+  const resetAccForm = () =>
+    setAccForm({
+      name: '',
+      tier: 'smb',
+      industry: '',
+      annual_revenue: '',
+      employee_count: '',
+    });
+
+  const handleAccountDialogChange = (open: boolean) => {
+    setNewAccountOpen(open);
+    if (!open) {
+      setEditingAccountId(null);
+      resetAccForm();
+    }
+  };
+
+  const openEditAccount = (account: Account) => {
+    setEditingAccountId(account.id);
+    setAccForm({
+      name: account.name,
+      tier: account.tier,
+      industry: account.industry ?? '',
+      annual_revenue:
+        account.annual_revenue != null ? String(account.annual_revenue) : '',
+      employee_count:
+        account.employee_count != null ? String(account.employee_count) : '',
+    });
+    setNewAccountOpen(true);
+  };
+
+  const handleSaveAccount = () => {
+    const payload = {
+      name: accForm.name,
+      tier: accForm.tier,
+      industry: accForm.industry || null,
+      annual_revenue: accForm.annual_revenue ? Number(accForm.annual_revenue) : null,
+      employee_count: accForm.employee_count ? Number(accForm.employee_count) : null,
+    };
+    if (editingAccountId) {
+      updateAccount.mutate(
+        { id: editingAccountId, ...payload },
+        {
+          onSuccess: updated => {
+            setSelected(prev => (prev?.id === updated.id ? updated : prev));
+            handleAccountDialogChange(false);
+          },
+        }
+      );
+      return;
+    }
+    createAccount.mutate(payload, {
+      onSuccess: () => handleAccountDialogChange(false),
+    });
+  };
+
+  const handleDeleteAccount = () => {
+    if (!selected) return;
+    deleteAccount.mutate(selected.id, {
+      onSuccess: () => {
+        setDeleteAccountOpen(false);
+        setSelected(null);
       },
-      {
-        onSuccess: () => {
-          setNewAccountOpen(false);
-          setAccForm({
-            name: '',
-            tier: 'smb',
-            industry: '',
-            annual_revenue: '',
-            employee_count: '',
-          });
-        },
-      }
-    );
+    });
   };
 
   const resetContactForm = () => {
@@ -243,7 +292,7 @@ export default function AccountBasedSelling() {
               Estratégia de venda em contas-chave com multi-threading e buying committee.
             </p>
           </div>
-          <Dialog open={newAccountOpen} onOpenChange={setNewAccountOpen}>
+          <Dialog open={newAccountOpen} onOpenChange={handleAccountDialogChange}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -252,7 +301,9 @@ export default function AccountBasedSelling() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Nova Conta Estratégica</DialogTitle>
+                <DialogTitle>
+                  {editingAccountId ? 'Editar Conta' : 'Nova Conta Estratégica'}
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-3">
                 <div>
@@ -314,10 +365,12 @@ export default function AccountBasedSelling() {
               </div>
               <DialogFooter>
                 <Button
-                  onClick={handleCreateAccount}
-                  disabled={!accForm.name || createAccount.isPending}
+                  onClick={handleSaveAccount}
+                  disabled={
+                    !accForm.name || createAccount.isPending || updateAccount.isPending
+                  }
                 >
-                  Criar
+                  {editingAccountId ? 'Salvar' : 'Criar'}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -398,6 +451,56 @@ export default function AccountBasedSelling() {
                         />{' '}
                         Score
                       </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openEditAccount(selected)}
+                      >
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Editar
+                      </Button>
+                      <AlertDialog
+                        open={deleteAccountOpen}
+                        onOpenChange={setDeleteAccountOpen}
+                      >
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Excluir conta?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              A conta "{selected.name}" será excluída permanentemente,
+                              junto com stakeholders, plano de conta, atividades,
+                              renovações, tickets e demais registros vinculados a ela.
+                              Vendas associadas serão mantidas, mas desvinculadas. Esta
+                              ação não pode ser desfeita.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel disabled={deleteAccount.isPending}>
+                              Cancelar
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={e => {
+                                e.preventDefault();
+                                handleDeleteAccount();
+                              }}
+                              disabled={deleteAccount.isPending}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              {deleteAccount.isPending ? 'Excluindo...' : 'Excluir'}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 </CardHeader>

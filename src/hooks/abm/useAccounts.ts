@@ -166,6 +166,64 @@ export const useCreateAccount = () => {
   });
 };
 
+export const useUpdateAccount = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...patch }: Partial<Account> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('accounts')
+        .update(updatePayload('accounts', patch))
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Account;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['accounts'] });
+      toast.success('Conta atualizada');
+    },
+    onError: (e: Error & { code?: string }) => {
+      if (e.code === '23505') {
+        toast.error('Já existe uma conta com esse nome');
+      } else {
+        toast.error(`Erro: ${e.message}`);
+      }
+    },
+  });
+};
+
+export const useDeleteAccount = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('accounts')
+        .delete()
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('Você não tem permissão para excluir esta conta');
+      }
+      return id;
+    },
+    onSuccess: id => {
+      qc.invalidateQueries({ queryKey: ['accounts'] });
+      qc.removeQueries({ queryKey: ['account-contacts', id] });
+      qc.removeQueries({ queryKey: ['account-plan', id] });
+      toast.success('Conta excluída');
+    },
+    onError: (e: Error & { code?: string }) => {
+      if (e.code === '23503') {
+        toast.error('A conta possui registros vinculados e não pode ser excluída');
+      } else {
+        toast.error(`Erro: ${e.message}`);
+      }
+    },
+  });
+};
+
 export const useCreateContact = () => {
   const qc = useQueryClient();
   return useMutation({
