@@ -76,6 +76,7 @@ export function useROIDashboard(periodMonths: number = 3) {
       const { data, error } = await supabase
         .from('activities')
         .select('id, salesperson_id, activity_type, outcome')
+        .is('deleted_at', null)
         .gte('created_at', startDate);
       if (error) throw error;
       return data || [];

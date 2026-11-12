@@ -41,10 +41,12 @@ export function useWeeklyComparison() {
         supabase
           .from('activities')
           .select('id')
+          .is('deleted_at', null)
           .gte('created_at', thisWeekStart.toISOString()),
         supabase
           .from('activities')
           .select('id')
+          .is('deleted_at', null)
           .gte('created_at', lastWeekStart.toISOString())
           .lte('created_at', lastWeekEnd.toISOString()),
         supabase

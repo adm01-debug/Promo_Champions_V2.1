@@ -34,6 +34,7 @@ export const SDRHandoffContext: React.FC<SDRHandoffContextProps> = ({ saleId }) 
           salesperson:salespeople(name, role, avatar_url)
         `
         )
+        .is('deleted_at', null)
         .eq('sale_id', saleId)
         .order('created_at', { ascending: false });
 

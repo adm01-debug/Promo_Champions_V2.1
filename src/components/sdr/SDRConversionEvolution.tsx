@@ -85,6 +85,7 @@ const useSDRConversionEvolution = (period: PeriodFilter) => {
       const { data: activities } = await supabase
         .from('activities')
         .select('salesperson_id, created_at, outcome')
+        .is('deleted_at', null)
         .gte('created_at', startDate.toISOString())
         .in(
           'salesperson_id',

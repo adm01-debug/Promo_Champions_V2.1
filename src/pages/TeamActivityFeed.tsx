@@ -45,6 +45,7 @@ const TeamActivityFeed = () => {
         .select(
           'id, activity_type, outcome, notes, contact_name, created_at, duration_minutes, salesperson_id, salespeople:salesperson_id(name, avatar_url)'
         )
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;

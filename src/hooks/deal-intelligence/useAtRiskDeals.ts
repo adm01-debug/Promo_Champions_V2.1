@@ -53,6 +53,7 @@ export function useAtRiskDeals() {
       const { data: activities, error: activitiesError } = await supabase
         .from('activities')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (activitiesError) throw activitiesError;

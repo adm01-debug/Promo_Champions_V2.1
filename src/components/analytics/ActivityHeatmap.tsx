@@ -82,6 +82,7 @@ export function ActivityHeatmap({
       const { data, error } = await supabase
         .from('activities')
         .select('created_at')
+        .is('deleted_at', null)
         .eq('salesperson_id', salesperson.id)
         .gte('created_at', startDate.toISOString());
       if (error) return [];

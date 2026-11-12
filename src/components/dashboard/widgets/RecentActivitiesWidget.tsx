@@ -26,6 +26,7 @@ export const RecentActivitiesWidget = React.memo(function RecentActivitiesWidget
       const { data, error } = await supabase
         .from('activities')
         .select('id, activity_type, contact_name, outcome, created_at')
+        .is('deleted_at', null)
         .eq('salesperson_id', salesperson!.id)
         .order('created_at', { ascending: false })
         .limit(6);

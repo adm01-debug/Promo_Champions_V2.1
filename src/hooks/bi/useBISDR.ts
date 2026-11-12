@@ -105,18 +105,21 @@ export function useBISDR({ dateRange, salespersonId }: UseBISDROptions) {
         supabase
           .from('activities')
           .select('id, activity_type, outcome, contact_name, created_at')
+          .is('deleted_at', null)
           .eq('salesperson_id', targetSalespersonId)
           .gte('created_at', dateRange.start.toISOString())
           .lte('created_at', dateRange.end.toISOString()),
         supabase
           .from('activities')
           .select('id')
+          .is('deleted_at', null)
           .eq('salesperson_id', targetSalespersonId)
           .gte('created_at', previousRange.start.toISOString())
           .lte('created_at', previousRange.end.toISOString()),
         supabase
           .from('activities')
           .select('id')
+          .is('deleted_at', null)
           .eq('salesperson_id', targetSalespersonId)
           .gte('created_at', lastYearRange.start.toISOString())
           .lte('created_at', lastYearRange.end.toISOString()),
@@ -133,6 +136,7 @@ export function useBISDR({ dateRange, salespersonId }: UseBISDROptions) {
         supabase
           .from('activities')
           .select('activity_type, contact_name, outcome, created_at')
+          .is('deleted_at', null)
           .eq('salesperson_id', targetSalespersonId)
           .order('created_at', { ascending: false })
           .limit(10),

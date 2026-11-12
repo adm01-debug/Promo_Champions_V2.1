@@ -77,6 +77,7 @@ function useSDRConversionRanking(period: PeriodFilter) {
         supabase
           .from('activities')
           .select('salesperson_id, activity_type, outcome')
+          .is('deleted_at', null)
           // chunked-in-safe: sdrIds vem de agregação por período (~50)
           .in('salesperson_id', sdrIds)
           .eq('activity_type', 'meeting')

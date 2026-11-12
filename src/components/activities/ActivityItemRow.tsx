@@ -31,7 +31,7 @@ interface AuditLog {
   old_data: Record<string, unknown> | null;
   new_data: Record<string, unknown> | null;
   created_at: string;
-  user_id: string | null;
+  changed_by: string | null;
 }
 
 interface ActivityItemRowProps {
@@ -52,6 +52,7 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
   const [expanded, setExpanded] = useState(false);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [loadingAudit, setLoadingAudit] = useState(false);
+  const [auditError, setAuditError] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const deleteActivity = useDeleteActivity();
@@ -63,6 +64,7 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
 
   const fetchAuditLogs = useCallback(async () => {
     setLoadingAudit(true);
+    setAuditError(false);
     const { data, error } = await supabase
       .from('activity_audit_logs')
       .select('*')
@@ -70,12 +72,26 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
       .order('created_at', { ascending: false });
 
     /* eslint-disable no-restricted-syntax */
-    if (!error && data) setAuditLogs(data as unknown as AuditLog[]);
+    if (error) setAuditError(true);
+    else setAuditLogs((data ?? []) as unknown as AuditLog[]);
     /* eslint-enable no-restricted-syntax */
     setLoadingAudit(false);
   }, [activity.id]);
 
   const isSuccess = activity.outcome === 'scheduled' || activity.outcome === 'qualified';
+
+  // O AlertDialogAction fecha o diálogo no clique; o preventDefault mantém o diálogo aberto
+  // (com "Excluindo...") até a mutation terminar: fecha no sucesso e fica aberto no erro.
+  // Assinatura com rest para casar com o onConfirm `() => void` do DeleteConfirmDialog compartilhado.
+  const handleConfirmDelete = (...args: unknown[]) => {
+    (args[0] as { preventDefault?: () => void } | undefined)?.preventDefault?.();
+    deleteActivity.mutate(activity.id, { onSuccess: () => setDeleteOpen(false) });
+  };
+
+  const handleDeleteOpenChange = (next: boolean) => {
+    if (!next && deleteActivity.isPending) return;
+    setDeleteOpen(next);
+  };
 
   return (
     <div
@@ -138,6 +154,10 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
                   {loadingAudit ? (
                     <div className="text-[10px] text-center py-4 text-muted-foreground">
                       Carregando histórico...
+                    </div>
+                  ) : auditError ? (
+                    <div className="text-[10px] text-center py-4 text-destructive">
+                      Não foi possível carregar o histórico
                     </div>
                   ) : auditLogs.length === 0 ? (
                     <div className="text-[10px] text-center py-4 text-muted-foreground">
@@ -266,8 +286,8 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
       )}
       <DeleteConfirmDialog
         open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        onConfirm={() => deleteActivity.mutate(activity.id)}
+        onOpenChange={handleDeleteOpenChange}
+        onConfirm={handleConfirmDelete}
         title="Excluir atividade?"
         description={`A atividade "${activityLabels[activity.activity_type]}" será removida do log de atividades.`}
         isDeleting={deleteActivity.isPending}

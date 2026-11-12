@@ -125,6 +125,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
         const { data: actData, error: actError } = await supabase
           .from('activities')
           .select('*')
+          .is('deleted_at', null)
           .or(`sale_id.in.(${saleIds.join(',')}),client_id.eq.${clientId}`)
           .order('created_at', { ascending: false })
           .limit(100);
@@ -135,6 +136,7 @@ export const ClientTimeline: FC<ClientTimelineProps> = ({ clientId, clientName }
         const { data: actData, error: actError } = await supabase
           .from('activities')
           .select('*')
+          .is('deleted_at', null)
           .eq('client_id', clientId)
           .order('created_at', { ascending: false })
           .limit(100);

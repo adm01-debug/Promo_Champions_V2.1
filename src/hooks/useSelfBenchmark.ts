@@ -34,6 +34,7 @@ export function useSelfBenchmark(salespersonId?: string) {
         supabase
           .from('activities')
           .select('id, outcome, created_at')
+          .is('deleted_at', null)
           .eq('salesperson_id', salespersonId!)
           .gte('created_at', months[months.length - 1].start.toISOString()),
         supabase

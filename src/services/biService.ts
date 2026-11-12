@@ -61,6 +61,7 @@ export const biService = {
       supabase
         .from('activities')
         .select('salesperson_id, activity_type')
+        .is('deleted_at', null)
         .gte('created_at', monthStart.toISOString()),
       supabase
         .from('sales')
@@ -214,6 +215,7 @@ export const biService = {
       supabase
         .from('activities')
         .select('activity_type, created_at')
+        .is('deleted_at', null)
         .eq('salesperson_id', salesperson.id)
         .gte('created_at', thirtyDaysAgo)
         .order('created_at', { ascending: false }),
