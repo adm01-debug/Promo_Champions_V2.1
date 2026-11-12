@@ -308,9 +308,12 @@ export function EmailTrackingDashboard() {
                           )}
                         >
                           {config.icon &&
-                            React.cloneElement(config.icon as React.ReactElement, {
-                              className: cn('h-4 w-4', config.color),
-                            })}
+                            React.cloneElement(
+                              config.icon as React.ReactElement<{ className?: string }>,
+                              {
+                                className: cn('h-4 w-4', config.color),
+                              }
+                            )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-black uppercase tracking-tighter truncate group-hover:text-primary transition-colors">
