@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'diamond' | 'legendary';
@@ -139,37 +139,5 @@ export function useLeagues() {
         .sort((a, b) => b.points - a.points);
     },
     staleTime: 60000,
-  });
-}
-
-export function useJoinLeague() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      salespersonId,
-      leagueId,
-    }: {
-      salespersonId: string;
-      leagueId: string;
-    }) => {
-      const { data, error } = await supabase
-        .from('league_members')
-        .upsert(
-          {
-            salesperson_id: salespersonId,
-            league_id: leagueId,
-            weekly_xp: 0,
-          },
-          { onConflict: 'salesperson_id' }
-        )
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['salesperson-leagues'] });
-    },
   });
 }
