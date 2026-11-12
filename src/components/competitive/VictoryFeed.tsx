@@ -27,7 +27,15 @@ interface VictoryFeedProps {
 }
 
 const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) => {
-  const { feedItems, isLoading, addReaction, addComment, postVictory } = useVictoryFeed();
+  const {
+    feedItems,
+    isLoading,
+    addReaction,
+    addComment,
+    updateComment,
+    deleteComment,
+    postVictory,
+  } = useVictoryFeed();
 
   if (isLoading) {
     return (
@@ -94,6 +102,12 @@ const VictoryFeedComponent: FC<VictoryFeedProps> = ({ currentSalespersonId }) =>
                       content,
                     });
                   }}
+                  onUpdateComment={(commentId, content) =>
+                    updateComment.mutateAsync({ commentId, content })
+                  }
+                  onDeleteComment={commentId => deleteComment.mutate(commentId)}
+                  isUpdatingComment={updateComment.isPending}
+                  isDeletingComment={deleteComment.isPending}
                 />
               </motion.div>
             )

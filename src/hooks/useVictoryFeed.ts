@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { uniqueChannelTopic } from '@/lib/supabase/realtime';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 export function useVictoryFeed(limit = 20) {
   const queryClient = useQueryClient();
@@ -91,6 +92,48 @@ export function useVictoryFeed(limit = 20) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['victory-feed'] }),
   });
 
+  // Edição/exclusão só do próprio comentário (RLS: salesperson_id do autor).
+  // `.select('id')` detecta 0 linhas afetadas, que o RLS devolve sem erro.
+  const updateComment = useMutation({
+    mutationFn: async ({
+      commentId,
+      content,
+    }: {
+      commentId: string;
+      content: string;
+    }) => {
+      const { data, error } = await supabase
+        .from('feed_comments')
+        .update({ content })
+        .eq('id', commentId)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para editar este comentário');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['victory-feed'] });
+      toast.success('Comentário atualizado');
+    },
+    onError: (err: Error) => toast.error(`Erro ao editar comentário: ${err.message}`),
+  });
+
+  const deleteComment = useMutation({
+    mutationFn: async (commentId: string) => {
+      const { data, error } = await supabase
+        .from('feed_comments')
+        .delete()
+        .eq('id', commentId)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para excluir este comentário');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['victory-feed'] });
+      toast.success('Comentário excluído');
+    },
+    onError: (err: Error) => toast.error(`Erro ao excluir comentário: ${err.message}`),
+  });
+
   const postVictory = useMutation({
     mutationFn: async (item: {
       salesperson_id: string;
@@ -105,5 +148,13 @@ export function useVictoryFeed(limit = 20) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['victory-feed'] }),
   });
 
-  return { feedItems, isLoading, addReaction, addComment, postVictory };
+  return {
+    feedItems,
+    isLoading,
+    addReaction,
+    addComment,
+    updateComment,
+    deleteComment,
+    postVictory,
+  };
 }

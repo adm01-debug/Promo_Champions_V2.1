@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useVictoryFeed } from '@/hooks/useVictoryFeed';
+import { FeedCommentOwnerActions } from '@/components/competitive/FeedCommentOwnerActions';
 import { useAuth } from '@/contexts/AuthContext';
 import { Trophy, MessageCircle, Send, PartyPopper, Star, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -26,7 +27,8 @@ const EVENT_ICONS: Record<string, { icon: React.ElementType; color: string }> = 
 };
 
 const VictoryFeedPage = () => {
-  const { feedItems, isLoading, addReaction, addComment } = useVictoryFeed(50);
+  const { feedItems, isLoading, addReaction, addComment, updateComment, deleteComment } =
+    useVictoryFeed(50);
   const { salesperson } = useAuth();
   const [commentText, setCommentText] = useState<Record<string, string>>({});
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
@@ -234,6 +236,7 @@ const VictoryFeedPage = () => {
                               (comment: {
                                 id: string;
                                 content: string;
+                                salesperson_id: string;
                                 salespeople?: { name: string } | null;
                               }) => (
                                 <div
@@ -246,6 +249,21 @@ const VictoryFeedPage = () => {
                                   <span className="text-muted-foreground wrap-break-word">
                                     {comment.content}
                                   </span>
+                                  {!!salesperson?.id &&
+                                    comment.salesperson_id === salesperson.id && (
+                                      <FeedCommentOwnerActions
+                                        content={comment.content}
+                                        onUpdate={content =>
+                                          updateComment.mutateAsync({
+                                            commentId: comment.id,
+                                            content,
+                                          })
+                                        }
+                                        onDelete={() => deleteComment.mutate(comment.id)}
+                                        isUpdating={updateComment.isPending}
+                                        isDeleting={deleteComment.isPending}
+                                      />
+                                    )}
                                 </div>
                               )
                             )}
