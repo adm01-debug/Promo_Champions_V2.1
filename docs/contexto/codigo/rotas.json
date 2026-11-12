@@ -243,12 +243,14 @@
     "useCallback",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteContact",
     "useMutation",
     "useQuery",
     "useQueryClient",
     "useRecalculateAccountScore",
     "useState",
-    "useUpdateAccountPlan"
+    "useUpdateAccountPlan",
+    "useUpdateContact"
    ],
    "hooks_locais": [
     "useAccountContacts",
@@ -256,8 +258,10 @@
     "useAccounts",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteContact",
     "useRecalculateAccountScore",
-    "useUpdateAccountPlan"
+    "useUpdateAccountPlan",
+    "useUpdateContact"
    ],
    "tabelas": [
     "account_contacts",
@@ -271,7 +275,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 17
+   "arquivos_puxados": 18
   },
   {
    "protegida": false,

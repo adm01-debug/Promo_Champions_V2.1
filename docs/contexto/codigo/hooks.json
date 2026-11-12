@@ -318,10 +318,12 @@
     "useAccounts",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteContact",
     "useRecalculateAccountScore",
-    "useUpdateAccountPlan"
+    "useUpdateAccountPlan",
+    "useUpdateContact"
    ],
-   "linhas": 209,
+   "linhas": 263,
    "dominio": "hooks/abm",
    "tabelas": [
     "account_contacts",
@@ -342,7 +344,7 @@
    "usado_por_arquivos": [
     "src/pages/AccountBasedSelling.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/activities/useActivities.ts",

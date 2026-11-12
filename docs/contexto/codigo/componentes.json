@@ -15413,7 +15413,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -17422,7 +17422,7 @@
     "AccountBasedSelling"
    ],
    "export_default": "AccountBasedSelling",
-   "linhas": 617,
+   "linhas": 732,
    "dominio": "pages",
    "hooks_locais": [
     "useAccountContacts",
@@ -17430,8 +17430,10 @@
     "useAccounts",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteContact",
     "useRecalculateAccountScore",
-    "useUpdateAccountPlan"
+    "useUpdateAccountPlan",
+    "useUpdateContact"
    ],
    "tabelas": [],
    "edges": [],

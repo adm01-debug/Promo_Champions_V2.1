@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7884531319b71b1b2224dad4545c9ddb9d1951d7",
+  "commit": "d51e6339eee5046bdca46c1a378552fa2c704ecc",
   "branch": "main",
-  "data_commit": "2026-11-12T16:12:26Z",
+  "data_commit": "2026-11-12T18:18:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d51e633",
+    "data": "2026-11-12",
+    "assunto": "feat: editar e excluir stakeholders da conta ABM (#427)"
+   },
    {
     "sha": "7884531",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "d67653a",
     "data": "2026-11-08",
     "assunto": "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)"
-   },
-   {
-    "sha": "b38cfe6",
-    "data": "2026-11-08",
-    "assunto": "chore: replica o padrão de instruções para agentes do Zapp Web V2 (skill enxuto + guard GA02) (#392)"
    }
   ],
-  "arquivos_mudados_7d": 492,
+  "arquivos_mudados_7d": 495,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -160,16 +160,8 @@
     "mudancas": 35
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 25
-   },
-   {
     "pasta": "src/components/competitive",
     "mudancas": 25
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 24
    },
    {
     "pasta": "src/hooks/race",
@@ -178,6 +170,14 @@
    {
     "pasta": "src/components/win-loss",
     "mudancas": 23
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 22
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 21
    },
    {
     "pasta": "src/hooks/gamification",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 64
+    "commits": 65
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 24
+    "commits": 21
    },
    {
     "autor": "Claude",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3453,
-  "arquivos_codigo": 2462,
-  "linhas_codigo": 426670,
+  "arquivos_total": 3454,
+  "arquivos_codigo": 2463,
+  "linhas_codigo": 426963,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 167,
+  "testes": 168,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 504,
-   "linhas": 57684
+   "arquivos": 505,
+   "linhas": 57862
   },
   "src/integrations": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 174,
-   "linhas": 42938
+   "linhas": 43053
   },
   "src/routes": {
    "arquivos": 3,
@@ -773,12 +773,12 @@
    "linhas": 742
   },
   {
-   "arquivo": "src/components/ui/sidebar.tsx",
-   "linhas": 731
+   "arquivo": "src/pages/AccountBasedSelling.tsx",
+   "linhas": 732
   },
   {
-   "arquivo": "src/pages/Orcamentos.tsx",
-   "linhas": 683
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 731
   }
  ],
  "qualidade": {

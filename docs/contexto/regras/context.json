@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7884531319b71b1b2224dad4545c9ddb9d1951d7",
+  "sha": "d51e6339eee5046bdca46c1a378552fa2c704ecc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-12 19:08 UTC",
-  "files_total": 3468,
-  "code_files": 3139,
-  "code_lines": 456611
+  "generated_at": "2026-11-12 23:01 UTC",
+  "files_total": 3469,
+  "code_files": 3140,
+  "code_lines": 456904
  },
  "version": "1.3.2",
- "facts_hash": "0db41c673d71dfdf",
+ "facts_hash": "fe7d609f937b3361",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1304,
+   ".tsx": 1305,
    ".ts": 1077,
    ".sql": 676,
    ".mjs": 71,
@@ -66226,7 +66226,7 @@
     "rpc_transitive": [
      "calculate_account_score"
     ],
-    "deps_count": 16
+    "deps_count": 17
    },
    {
     "path": "/acesso-negado",
@@ -73890,6 +73890,14 @@
     "file": "src/hooks/abm/useAccounts.ts"
    },
    {
+    "name": "useUpdateContact",
+    "file": "src/hooks/abm/useAccounts.ts"
+   },
+   {
+    "name": "useDeleteContact",
+    "file": "src/hooks/abm/useAccounts.ts"
+   },
+   {
     "name": "useRecalculateAccountScore",
     "file": "src/hooks/abm/useAccounts.ts"
    },
@@ -77958,8 +77966,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 504,
-   "lines": 57684,
+   "files": 505,
+   "lines": 57862,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78583,7 +78591,7 @@
   {
    "module": "src/pages",
    "files": 174,
-   "lines": 42938,
+   "lines": 43053,
    "tables": [
     "achievements",
     "activities",
@@ -79600,6 +79608,12 @@
      "supabase/functions/sequence-runner/index.ts"
     ],
     "insert": [
+     "src/hooks/abm/useAccounts.ts"
+    ],
+    "update": [
+     "src/hooks/abm/useAccounts.ts"
+    ],
+    "delete": [
      "src/hooks/abm/useAccounts.ts"
     ]
    },
@@ -91368,6 +91382,14 @@
    {
     "file": "src/hooks/useWorkflows.ts",
     "msg": "Falha na execução"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Contato não encontrado ou sem permissão para editar"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Contato não encontrado ou sem permissão para excluir"
    },
    {
     "file": "src/hooks/abm/useAccounts.ts",
@@ -130930,6 +130952,26 @@
    {
     "file": "src/hooks/useScrollRestoration.test.tsx",
     "name": "vai ao topo no POP quando não há posição salva"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "contatos da conta ABM"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "edita o contato sem enviar id nem account_id no payload e invalida a lista"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "acusa erro quando a edição não afeta nenhuma linha (RLS)"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "exclui o contato e invalida a lista"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "acusa erro quando a exclusão não remove nenhuma linha (RLS)"
    },
    {
     "file": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",
@@ -202340,13 +202382,26 @@
    ],
    "doc": "Convert ArrayBuffer to base64url"
   },
+  "src/hooks/abm/useAccounts.test.tsx": {
+   "path": "src/hooks/abm/useAccounts.test.tsx",
+   "lines": 124,
+   "is_test": true,
+   "tests": [
+    "contatos da conta ABM",
+    "edita o contato sem enviar id nem account_id no payload e invalida a lista",
+    "acusa erro quando a edição não afeta nenhuma linha (RLS)",
+    "exclui o contato e invalida a lista",
+    "acusa erro quando a exclusão não remove nenhuma linha (RLS)"
+   ]
+  },
   "src/hooks/abm/useAccounts.ts": {
    "path": "src/hooks/abm/useAccounts.ts",
-   "lines": 209,
+   "lines": 263,
    "exports": [
     "type AccountTier",
     "type BuyingRole",
     "interface Account",
+    "interface AccountContact",
     "interface AccountPlan",
     "const useAccountPlan",
     "const useUpdateAccountPlan",
@@ -202354,6 +202409,8 @@
     "const useAccountContacts",
     "const useCreateAccount",
     "const useCreateContact",
+    "const useUpdateContact",
+    "const useDeleteContact",
     "const useRecalculateAccountScore"
    ],
    "tables": [
@@ -202388,6 +202445,14 @@
     {
      "table": "account_contacts",
      "op": "insert,select"
+    },
+    {
+     "table": "account_contacts",
+     "op": "select,update"
+    },
+    {
+     "table": "account_contacts",
+     "op": "delete,select"
     }
    ],
    "table_cols": {
@@ -202396,13 +202461,16 @@
      "id"
     ],
     "account_contacts": [
-     "account_id"
+     "account_id",
+     "id"
     ]
    },
    "rpc": [
     "calculate_account_score"
    ],
    "errors": [
+    "Contato não encontrado ou sem permissão para editar",
+    "Contato não encontrado ou sem permissão para excluir",
     "Erro: ${e.message}"
    ],
    "enums": [
@@ -202422,6 +202490,8 @@
     "useAccountContacts",
     "useCreateAccount",
     "useCreateContact",
+    "useUpdateContact",
+    "useDeleteContact",
     "useRecalculateAccountScore"
    ]
   },
@@ -216828,7 +216898,7 @@
   },
   "src/pages/AccountBasedSelling.tsx": {
    "path": "src/pages/AccountBasedSelling.tsx",
-   "lines": 617,
+   "lines": 732,
    "exports": [
     "function AccountBasedSelling"
    ],
@@ -244312,10 +244382,21 @@
   }
  },
  "git": {
-  "sha": "7884531319b71b1b2224dad4545c9ddb9d1951d7",
+  "sha": "d51e6339eee5046bdca46c1a378552fa2c704ecc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d51e633",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "feat: editar e excluir stakeholders da conta ABM (#427)",
+    "files": [
+     "src/hooks/abm/useAccounts.test.tsx",
+     "src/hooks/abm/useAccounts.ts",
+     "src/pages/AccountBasedSelling.tsx"
+    ]
+   },
    {
     "sha": "7884531",
     "date": "2026-11-12",
@@ -245080,32 +245161,20 @@
     "files": [
      "scripts/graphify/impact-report.mjs"
     ]
-   },
-   {
-    "sha": "9cabc93",
-    "date": "2026-11-07",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.1.0 (#378)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    6
-   ],
-   [
-    "package-lock.json",
     5
    ],
    [
     ".github/workflows/codeql.yml",
     5
+   ],
+   [
+    "package-lock.json",
+    4
    ],
    [
     "inventario/estado/banco.json",
@@ -245130,14 +245199,6 @@
    [
     "scripts/inventario/gerar-banco.mjs",
     3
-   ],
-   [
-    ".release-please-manifest.json",
-    2
-   ],
-   [
-    "CHANGELOG.md",
-    2
    ],
    [
     "src/components/analytics/ActivityOutcomesChart.tsx",
@@ -245173,6 +245234,14 @@
    ],
    [
     "src/components/bi/BIVendedorCharts.tsx",
+    2
+   ],
+   [
+    "src/components/closer/CloserRevenueComparison.tsx",
+    2
+   ],
+   [
+    "src/components/goals/GoalComparisonChart.tsx",
     2
    ]
   ]

@@ -10534,8 +10534,8 @@
   {
    "modulo": "hooks/abm",
    "arquivos": 1,
-   "testes": 0,
-   "linhas": 209,
+   "testes": 1,
+   "linhas": 263,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10547,8 +10547,10 @@
     "useAccounts",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteContact",
     "useRecalculateAccountScore",
-    "useUpdateAccountPlan"
+    "useUpdateAccountPlan",
+    "useUpdateContact"
    ],
    "edges": [],
    "tabelas": [
@@ -15451,7 +15453,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 1,
-   "linhas": 38592,
+   "linhas": 38707,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -15983,6 +15985,7 @@
     "useDeleteCommissionRule",
     "useDeleteCommitteeMember",
     "useDeleteCompetitor",
+    "useDeleteContact",
     "useDeleteCustomReport",
     "useDeleteEnrollmentRule",
     "useDeleteFeatureFlag",
@@ -16430,6 +16433,7 @@
     "useUpdateCoachingAction",
     "useUpdateCoachingSession",
     "useUpdateCommissionStatus",
+    "useUpdateContact",
     "useUpdateCriticalMoment",
     "useUpdateCustomReport",
     "useUpdateDataSubjectRequest",
@@ -17786,6 +17790,7 @@
     "useDeleteCommitteeMember",
     "useDeleteCompetitor",
     "useDeleteConnection",
+    "useDeleteContact",
     "useDeleteCustomReport",
     "useDeleteEnrollmentRule",
     "useDeleteFeatureFlag",
@@ -18248,6 +18253,7 @@
     "useUpdateCoachingSession",
     "useUpdateCommissionStatus",
     "useUpdateConnection",
+    "useUpdateContact",
     "useUpdateCriticalMoment",
     "useUpdateCustomReport",
     "useUpdateDataSubjectRequest",

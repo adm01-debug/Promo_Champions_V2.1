@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7884531319` · branch `main` · 2026-11-12 19:08 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d51e6339ee` · branch `main` · 2026-11-12 23:01 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4026,7 +4026,7 @@ _nenhum item encontrado_
 | No closers found | `src/hooks/useCloserMetrics.ts` |
 | Erro ao remover premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
 | Erro ao salvar premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
-| … +624 linhas — lista completa em `context.json` | |
+| … +626 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1226 testes em 134 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1231 testes em 135 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4203,6 +4203,7 @@ _nenhum item encontrado_
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
+| `src/hooks/abm/useAccounts.test.tsx` | 5 | contatos da conta ABM · edita o contato sem enviar id nem account_id no payload e invalida a lista · acusa erro quando a edição não afeta nenhuma linha (RLS) · exclui o contato e invalida a lista … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
 | `src/test/csv-export.test.ts` | 5 | CSV Export Utils · formatDateForExport should format correctly · formatPercentForExport should format correctly · formatCurrencyForExport should format correctly … |
