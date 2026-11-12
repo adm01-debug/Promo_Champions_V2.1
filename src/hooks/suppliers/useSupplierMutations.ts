@@ -102,6 +102,58 @@ export function useSupplierMutations() {
     },
   });
 
+  const updateSupplierProduct = useMutation({
+    mutationFn: async ({
+      id,
+      ...updates
+    }: {
+      id: string;
+      unit_price: number;
+      min_order_quantity: number | null;
+      is_preferred: boolean;
+    }) => {
+      const { data, error } = await supabase
+        .from('supplier_products')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast({ title: 'Produto do fornecedor atualizado' });
+      queryClient.invalidateQueries({ queryKey: ['supplier-products'] });
+      queryClient.invalidateQueries({ queryKey: ['price-history'] });
+    },
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
+    },
+  });
+
+  const deleteSupplierProduct = useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('supplier_products')
+        .delete()
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      // RLS bloqueia em silêncio (0 linhas): sem isso o toast de sucesso mentiria.
+      if (!data || data.length === 0) {
+        throw new Error('Sem permissão para excluir ou produto já removido.');
+      }
+    },
+    onSuccess: () => {
+      toast({ title: 'Produto removido do fornecedor' });
+      queryClient.invalidateQueries({ queryKey: ['supplier-products'] });
+      queryClient.invalidateQueries({ queryKey: ['price-history'] });
+    },
+    onError: error => {
+      toast({ title: 'Erro', description: error.message, variant: 'destructive' });
+    },
+  });
+
   const createRiskAssessment = useMutation({
     mutationFn: async (assessment: {
       supplier_id: string;
@@ -153,9 +205,13 @@ export function useSupplierMutations() {
     updateSupplier: updateSupplier.mutate,
     deleteSupplier: deleteSupplier.mutate,
     addSupplierProduct: addSupplierProduct.mutate,
+    updateSupplierProduct: updateSupplierProduct.mutate,
+    deleteSupplierProduct: deleteSupplierProduct.mutate,
     createRiskAssessment: createRiskAssessment.mutate,
     isCreating: createSupplier.isPending,
     isUpdating: updateSupplier.isPending,
     isDeleting: deleteSupplier.isPending,
+    isUpdatingSupplierProduct: updateSupplierProduct.isPending,
+    isDeletingSupplierProduct: deleteSupplierProduct.isPending,
   };
 }
