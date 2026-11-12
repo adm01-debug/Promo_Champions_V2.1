@@ -39,6 +39,8 @@ vi.mock('@/hooks/abm/useAccounts', () => ({
   useUpdateAccount: () => mutation(updateMutate),
   useDeleteAccount: () => mutation(deleteMutate),
   useCreateContact: () => mutation(),
+  useUpdateContact: () => mutation(),
+  useDeleteContact: () => mutation(),
   useRecalculateAccountScore: () => mutation(),
 }));
 

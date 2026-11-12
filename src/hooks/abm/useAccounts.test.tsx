@@ -10,9 +10,6 @@ let nextResult: Result = { data: null, error: null };
 // Fila opcional para hooks com mais de uma chamada; vazia = usa nextResult.
 const queuedResults: Result[] = [];
 const takeResult = () => queuedResults.shift() ?? nextResult;
-// Fila opcional para hooks com mais de uma chamada; vazia = usa nextResult.
-const queuedResults: Result[] = [];
-const takeResult = () => queuedResults.shift() ?? nextResult;
 
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
@@ -183,6 +180,7 @@ describe('useDeleteAccount', () => {
 describe('contatos da conta ABM', () => {
   beforeEach(() => {
     calls.length = 0;
+    nextResult = { data: null, error: null };
     toastSuccess.mockReset();
     toastError.mockReset();
     client = new QueryClient({
