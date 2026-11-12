@@ -213,10 +213,13 @@ export default function AccountBasedSelling() {
 
   const handleConfirmDeleteContact = () => {
     if (!contactToDelete) return;
-    deleteContact.mutate({
-      id: contactToDelete.id,
-      account_id: contactToDelete.account_id,
-    });
+    deleteContact.mutate(
+      {
+        id: contactToDelete.id,
+        account_id: contactToDelete.account_id,
+      },
+      { onSuccess: () => setContactToDelete(null) }
+    );
   };
 
   return (
@@ -648,7 +651,11 @@ export default function AccountBasedSelling() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleConfirmDeleteContact}
+              onClick={e => {
+                // Mantém o diálogo aberto até a exclusão terminar (loading/erro visíveis).
+                e.preventDefault();
+                handleConfirmDeleteContact();
+              }}
               disabled={deleteContact.isPending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
