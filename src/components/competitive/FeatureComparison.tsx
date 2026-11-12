@@ -22,8 +22,6 @@ import {
   Target,
   Search,
   FileText,
-  Share2,
-  Download,
   Eye,
   Sparkles,
   Rocket,
@@ -32,7 +30,6 @@ import {
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -186,15 +183,6 @@ export const FeatureComparison = () => {
     }
   };
 
-  const handleExportPDF = () => {
-    toast.success('Gerando Relatório de Inteligência de Mercado...');
-    setTimeout(() => {
-      toast.info(
-        'O PDF será baixado em instantes com análise detalhada, evidências e roadmap.'
-      );
-    }, 1500);
-  };
-
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -216,23 +204,6 @@ export const FeatureComparison = () => {
           <p className="text-muted-foreground text-sm font-medium">
             Análise comparativa de paridade funcional e roadmap estratégico.
           </p>
-        </div>
-
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 h-10 px-4 border-white/5 bg-white/5 hover:bg-white/10 transition-all text-xs font-bold uppercase tracking-widest"
-            onClick={handleExportPDF}
-          >
-            <Download className="h-4 w-4" /> Export PDF
-          </Button>
-          <Button
-            size="sm"
-            className="gap-2 h-10 px-4 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 transition-all text-xs font-bold uppercase tracking-widest"
-          >
-            <Share2 className="h-4 w-4" /> Share Intel
-          </Button>
         </div>
       </div>
 
@@ -485,11 +456,6 @@ export const FeatureComparison = () => {
               </motion.div>
             ))}
           </CardContent>
-          <div className="p-4 border-t border-white/5 bg-white/5">
-            <Button className="w-full h-10 bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 text-[10px] font-black uppercase tracking-[0.2em]">
-              Executar Roadmap
-            </Button>
-          </div>
         </Card>
       </div>
     </div>
