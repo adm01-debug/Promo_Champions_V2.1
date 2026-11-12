@@ -175,8 +175,10 @@ export const useUpdateAccount = () => {
         .update(updatePayload('accounts', patch))
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
       if (error) throw error;
+      // RLS bloqueou (0 linhas): evita a mensagem crua do PostgREST.
+      if (!data) throw new Error('Você não tem permissão para editar esta conta');
       return data as Account;
     },
     onSuccess: () => {

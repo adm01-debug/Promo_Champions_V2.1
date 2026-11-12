@@ -74,6 +74,7 @@ import {
   type BuyingRole,
   type AccountPlan,
 } from '@/hooks/abm/useAccounts';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 const tierLabel: Record<AccountTier, string> = {
   strategic: 'Estratégica',
@@ -114,6 +115,8 @@ export default function AccountBasedSelling() {
   const createAccount = useCreateAccount();
   const updateAccount = useUpdateAccount();
   const deleteAccount = useDeleteAccount();
+  // Excluir apaga em cascata dados de CS de outras equipes: só admin/gestor.
+  const { isAdminOrManager } = useUserRoles();
   const createContact = useCreateContact();
   const updateContact = useUpdateContact();
   const deleteContact = useDeleteContact();
@@ -459,48 +462,53 @@ export default function AccountBasedSelling() {
                         <Pencil className="h-4 w-4 mr-2" />
                         Editar
                       </Button>
-                      <AlertDialog
-                        open={deleteAccountOpen}
-                        onOpenChange={setDeleteAccountOpen}
-                      >
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Excluir
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Excluir conta?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              A conta "{selected.name}" será excluída permanentemente,
-                              junto com stakeholders, plano de conta, atividades,
-                              renovações, tickets e demais registros vinculados a ela.
-                              Vendas associadas serão mantidas, mas desvinculadas. Esta
-                              ação não pode ser desfeita.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel disabled={deleteAccount.isPending}>
-                              Cancelar
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={e => {
-                                e.preventDefault();
-                                handleDeleteAccount();
-                              }}
-                              disabled={deleteAccount.isPending}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      {isAdminOrManager && (
+                        <AlertDialog
+                          open={deleteAccountOpen}
+                          onOpenChange={setDeleteAccountOpen}
+                        >
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-destructive"
                             >
-                              {deleteAccount.isPending ? 'Excluindo...' : 'Excluir'}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Excluir
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Excluir conta?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                A conta "{selected.name}" será excluída permanentemente e
+                                apagará junto, inclusive o que foi registrado por outras
+                                equipes (Customer Success): stakeholders, plano de conta,
+                                atividades, renovações, tickets de suporte, QBRs,
+                                pesquisas CSAT/CES, jornadas de onboarding, oportunidades
+                                de expansão e dados de uso do produto. Vendas e subcontas
+                                serão mantidas, mas desvinculadas. Esta ação não pode ser
+                                desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel disabled={deleteAccount.isPending}>
+                                Cancelar
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={e => {
+                                  e.preventDefault();
+                                  handleDeleteAccount();
+                                }}
+                                disabled={deleteAccount.isPending}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {deleteAccount.isPending ? 'Excluindo...' : 'Excluir'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
