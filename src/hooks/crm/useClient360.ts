@@ -204,13 +204,13 @@ export function useClient360(clientName: string | undefined) {
 
       // Próxima ação sugerida: regra estática baseada só nos dados reais do cliente
       // (sem ofertas, cupons ou brindes que não existam no sistema).
-      const daysSinceLast =
-        sales.length > 0
-          ? Math.floor(
-              (new Date().getTime() - new Date(sales[0].created_at).getTime()) /
-                (1000 * 60 * 60 * 24)
-            )
-          : null;
+      const lastSale = sales[0];
+      const daysSinceLast = lastSale
+        ? Math.floor(
+            (new Date().getTime() - new Date(lastSale.created_at).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        : null;
       const topProductName = topProducts[0]?.name;
 
       let nba = {
