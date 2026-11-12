@@ -147,6 +147,7 @@ Deno.serve(
         supabase
           .from('activities')
           .select('id, activity_type, outcome, created_at, sale_id')
+          .is('deleted_at', null)
           .eq('salesperson_id', salespersonId)
           .order('created_at', { ascending: false })
           .limit(40),

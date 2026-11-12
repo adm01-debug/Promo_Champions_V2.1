@@ -283,6 +283,7 @@ export async function queryActivities(
   let q = supabase
     .from('activities')
     .select('id, activity_type, outcome, created_at, duration_minutes')
+    .is('deleted_at', null)
     .gte('created_at', period_start)
     .lte('created_at', period_end)
     .limit(5000);
