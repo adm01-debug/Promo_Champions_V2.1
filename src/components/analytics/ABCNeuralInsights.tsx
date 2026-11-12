@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brain, Sparkles, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Lightbulb, Sparkles, TrendingUp, AlertTriangle, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface NeuralInsight {
   title: string;
   description: string;
-  type: 'opportunity' | 'warning' | 'trend';
+  type: 'opportunity' | 'warning' | 'trend' | 'info';
 }
 
 interface ABCNeuralInsightsProps {
@@ -33,6 +33,7 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
               {insight.type === 'trend' && (
                 <TrendingUp className="h-12 w-12 text-primary" />
               )}
+              {insight.type === 'info' && <Info className="h-12 w-12 text-primary" />}
             </div>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
@@ -45,7 +46,7 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
                         : 'bg-primary/20 text-primary'
                   }`}
                 >
-                  <Brain className="h-4 w-4" />
+                  <Lightbulb className="h-4 w-4" />
                 </div>
                 <CardTitle className="text-section-title text-sm uppercase tracking-wider">
                   {insight.title}

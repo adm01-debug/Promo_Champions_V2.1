@@ -21,7 +21,8 @@ vi.mock('@/integrations/supabase/client', () => {
   return { supabase: { from: () => query } };
 });
 
-const { useABCAnalysis } = await import('./useABCAnalysis');
+const { useABCAnalysis, CONCENTRATION_WARNING_THRESHOLD_PCT } =
+  await import('./useABCAnalysis');
 
 function wrapper({ children }: { children: ReactNode }) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -68,6 +69,45 @@ describe('useABCAnalysis', () => {
     expect(result.current.data?.neuralInsights.map(i => i.description)).toEqual([
       'Seu principal cliente gera 100.0% da receita.',
     ]);
+  });
+
+  it('concentração até o limiar documentado é informativa, não alerta', async () => {
+    salesRows = Array.from({ length: 10 }, (_, i) => ({
+      amount: 100,
+      product_name: 'Caneca',
+      client_name: `Cliente ${i + 1}`,
+      status: 'won',
+    }));
+
+    const { result } = renderHook(() => useABCAnalysis(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(CONCENTRATION_WARNING_THRESHOLD_PCT).toBe(50);
+    expect(result.current.data?.neuralInsights).toEqual([
+      {
+        title: 'Concentração de Receita',
+        description: 'Seus 3 principais clientes geram 30.0% da receita.',
+        type: 'info',
+      },
+    ]);
+  });
+
+  it('exatamente no limiar de 50% ainda é info', async () => {
+    // 6 clientes iguais: top 3 = 300 de 600 → 50,0% (não excede o limiar).
+    salesRows = Array.from({ length: 6 }, (_, i) => ({
+      amount: 100,
+      product_name: 'Caneca',
+      client_name: `Cliente ${i + 1}`,
+      status: 'won',
+    }));
+
+    const { result } = renderHook(() => useABCAnalysis(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.neuralInsights[0]).toMatchObject({
+      description: 'Seus 3 principais clientes geram 50.0% da receita.',
+      type: 'info',
+    });
   });
 
   it('sem vendas, não gera nenhum insight', async () => {

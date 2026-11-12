@@ -13,7 +13,7 @@ interface ABCItem {
 interface NeuralInsight {
   title: string;
   description: string;
-  type: 'opportunity' | 'warning' | 'trend';
+  type: 'opportunity' | 'warning' | 'trend' | 'info';
 }
 
 interface ABCSummary {
@@ -28,6 +28,13 @@ interface ABCAnalysisResult {
   totalRevenue: number;
   neuralInsights: NeuralInsight[];
 }
+
+/**
+ * Limiar de alerta de concentração: quando os até 3 maiores clientes somam mais
+ * de 50% da receita ganha, metade do faturamento depende de poucos clientes e o
+ * insight vira 'warning'. Abaixo (ou igual) disso, é só informativo ('info').
+ */
+export const CONCENTRATION_WARNING_THRESHOLD_PCT = 50;
 
 function classifyABC(items: { name: string; revenue: number }[]): ABCItem[] {
   const sorted = [...items].sort((a, b) => b.revenue - a.revenue);
@@ -114,7 +121,7 @@ export const useABCAnalysis = () => {
             topClients.length === 1
               ? `Seu principal cliente gera ${topShare.toFixed(1)}% da receita.`
               : `Seus ${topClients.length} principais clientes geram ${topShare.toFixed(1)}% da receita.`,
-          type: 'warning',
+          type: topShare > CONCENTRATION_WARNING_THRESHOLD_PCT ? 'warning' : 'info',
         });
       }
 

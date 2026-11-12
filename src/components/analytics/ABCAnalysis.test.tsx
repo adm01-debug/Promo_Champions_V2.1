@@ -68,11 +68,21 @@ describe('ABCAnalysis', () => {
     expect(screen.getByRole('button', { name: /Exportar/i })).toBeInTheDocument();
   });
 
+  it('usa rótulos factuais, sem prometer IA ou versão inexistente', () => {
+    hookData = abcData;
+    renderABC();
+
+    expect(screen.getByText('Insights da curva ABC')).toBeInTheDocument();
+    expect(screen.queryByText(/Neural/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Insight Engine/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/V10\.0/)).not.toBeInTheDocument();
+  });
+
   it('sem vendas, não exibe a seção de insights', () => {
     hookData = { ...abcData, products: [], clients: [], neuralInsights: [] };
     renderABC();
 
-    expect(screen.queryByText(/Pareto Neural Insights/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Insights da curva ABC/i)).not.toBeInTheDocument();
     expect(screen.getAllByText('Sem dados disponíveis').length).toBeGreaterThan(0);
   });
 });
