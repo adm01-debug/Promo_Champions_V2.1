@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { format, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
+import { getLocalISODate } from '@/utils/dateHelpers';
 
 /** Valores aceitos pelo CHECK `cadence_steps_action_type_check` no banco. */
 export const CADENCE_CHANNEL_TYPES = [
@@ -57,8 +58,10 @@ export async function fetchCadenceChannelStats(
   days: number,
   today: Date = new Date()
 ): Promise<CadenceChannelStats> {
-  const until = format(today, 'yyyy-MM-dd');
-  const since = format(subDays(today, days), 'yyyy-MM-dd');
+  // Janela de N dias corridos incluindo hoje (data local), mesma regra do
+  // relatório de cadências (useCadenceReport): N=30 → hoje e os 29 anteriores.
+  const until = getLocalISODate(today);
+  const since = getLocalISODate(subDays(today, days - 1));
 
   const counts = await Promise.all(
     CADENCE_CHANNEL_TYPES.map(async type => {

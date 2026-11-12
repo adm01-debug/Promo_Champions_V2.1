@@ -75,9 +75,20 @@ describe('fetchCadenceChannelStats', () => {
       expect(call.table).toBe('cadence_tasks');
       expect(call.options).toEqual({ count: 'exact', head: true });
       expect(call.select).toContain('cadence_steps!inner(action_type)');
-      expect(call.filters).toContainEqual(['gte', 'scheduled_date', '2026-10-13']);
+      expect(call.filters).toContainEqual(['gte', 'scheduled_date', '2026-10-14']);
       expect(call.filters).toContainEqual(['lte', 'scheduled_date', '2026-11-12']);
     }
+  });
+
+  it('usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje)', async () => {
+    await fetchCadenceChannelStats(30, new Date(2026, 10, 12, 23, 30));
+    expect(calls[0]?.filters).toContainEqual(['gte', 'scheduled_date', '2026-10-14']);
+    expect(calls[0]?.filters).toContainEqual(['lte', 'scheduled_date', '2026-11-12']);
+
+    calls.length = 0;
+    await fetchCadenceChannelStats(1, new Date(2026, 10, 12, 23, 30));
+    expect(calls[0]?.filters).toContainEqual(['gte', 'scheduled_date', '2026-11-12']);
+    expect(calls[0]?.filters).toContainEqual(['lte', 'scheduled_date', '2026-11-12']);
   });
 
   it('calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas)', async () => {
