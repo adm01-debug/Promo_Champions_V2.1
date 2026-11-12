@@ -16,6 +16,26 @@
  * Uso: node scripts/codemod-typography.mjs [--write]
  */
 import { readFileSync, writeFileSync } from "node:fs";
+
+let ultimoFonte = null, ultimasFaixas = [];
+function faixasDeComentario(src) {
+  const faixas = [];
+  for (let i = 0; i < src.length; i++) {
+    const c = src[i], d = src[i + 1];
+    if (c === '"' || c === "'" || c === "`") {
+      for (i++; i < src.length && src[i] !== c; i++) if (src[i] === "\\") i++;
+    } else if (c === "/" && d === "/") {
+      const fim = src.indexOf("\n", i); faixas.push([i, fim < 0 ? src.length : fim]); i = fim < 0 ? src.length : fim;
+    } else if (c === "/" && d === "*") {
+      const fim = src.indexOf("*/", i + 2); faixas.push([i, fim < 0 ? src.length : fim + 2]); i = fim < 0 ? src.length : fim + 1;
+    }
+  }
+  return faixas;
+}
+function dentroDeComentario(src, pos) {
+  if (src !== ultimoFonte) { ultimoFonte = src; ultimasFaixas = faixasDeComentario(src); }
+  return ultimasFaixas.some(([a, b]) => pos >= a && pos < b);
+}
 import { execSync } from "node:child_process";
 
 const WRITE = process.argv.includes("--write");
@@ -40,14 +60,14 @@ const files = execSync(
 const stripPage = [
   /(?<!\S)text-(2xl|3xl|4xl)(?!\S)/g,
   /(?<!\S)font-(bold|extrabold|black)(?!\S)/g,
-  /\btracking-(tight|tighter)\b/g,
+  /(?<!\S)tracking-(tight|tighter)(?!\S)/g,
   /(?<!\S)leading-(none|tight)(?!\S)/g,
   /(?<!\S)font-display(?!\S)/g,
 ];
 const stripSection = [
   /(?<!\S)text-(base|lg|xl|2xl)(?!\S)/g,
   /(?<!\S)font-(semibold|bold)(?!\S)/g,
-  /\btracking-tight\b/g,
+  /(?<!\S)tracking-tight(?!\S)/g,
   /(?<!\S)leading-(snug|tight)(?!\S)/g,
   /(?<!\S)font-display(?!\S)/g,
 ];
@@ -103,9 +123,9 @@ for (const file of files) {
       "g"
     );
     out = out.replace(re, (m, open, classes, close, offset, whole) => {
-      // (12/11) JSX dentro de comentário (// ou bloco /* … */) é exemplo/documentação: não reescrever
-      const linha = whole.slice(whole.lastIndexOf("\n", offset) + 1, offset);
-      if (/^\s*(\/\/|\*|\/\*)/.test(linha) || whole.lastIndexOf("/*", offset) > whole.lastIndexOf("*/", offset)) return m;
+      // (12/11) JSX dentro de comentário (// ou /* … */) é exemplo/documentação: não reescrever. Faixas calculadas por
+      // um léxico que respeita strings/template literals ("./**/*.tsx" num glob NÃO abre comentário).
+      if (dentroDeComentario(whole, offset)) return m;
       if (classes.includes(rule.token)) return m;
       if (!rule.force) {
         if (!rule.size.test(classes) || !rule.weight.test(classes)) return m;

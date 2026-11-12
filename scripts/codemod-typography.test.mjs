@@ -46,6 +46,19 @@ test("className dinâmico (cn) e texto/comentário não são tocados", () => {
   const src = `import { cn } from "@/lib/utils";\nexport const C = (x: boolean) => <h1 className={cn("mt-2", x && "o")}>T</h1>;\n// <h1 className="text-3xl font-bold"> comentário\n`;
   assert.equal(rodar(src, "--write"), src);
 });
+test("revisão: tracking-* com prefixo também fica inteiro", () => {
+  const cs = classes(rodar(h1("text-3xl font-bold md:tracking-tight lg:tracking-tighter"), "--write"));
+  assert.ok(cs.includes("md:tracking-tight") && cs.includes("lg:tracking-tighter"), cs.join(" "));
+  assert.ok(!cs.some((c) => /:$/.test(c)), cs.join(" "));
+});
+test("revisão: '/*' dentro de string (glob) não desliga o codemod no resto do arquivo", () => {
+  const out = rodar(`const pages = import.meta.glob("./pages/**/*.tsx");\n` + h1("text-3xl font-bold"), "--write");
+  assert.match(out, /className="text-page-title"/);
+});
+test("revisão: comentário no FIM da linha não é reescrito", () => {
+  const src = `export const y = 1; // <h1 className="text-3xl font-bold"> exemplo\n`;
+  assert.equal(rodar(src, "--write"), src);
+});
 test("idempotente", () => {
   const um = rodar(h1("mt-4 text-3xl font-bold md:text-4xl"), "--write");
   assert.equal(rodar(um, "--write"), um);
