@@ -1,6 +1,26 @@
 import { render } from '@testing-library/react';
 import { screen, fireEvent } from '@testing-library/dom';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('@/hooks/useMultichannel', () => {
+  const mutation = { mutate: vi.fn(), isPending: false };
+  return {
+    useMessageTemplates: () => ({
+      data: [],
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    }),
+    useCreateTemplate: () => mutation,
+    useUpdateTemplate: () => mutation,
+    useDeleteTemplate: () => mutation,
+  };
+});
+
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({ salesperson: { id: 'sp-1' } }),
+}));
+
 import { ApprovalQueue } from './ApprovalQueue';
 import { CadenceTemplateManager } from './CadenceTemplateManager';
 
