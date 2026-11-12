@@ -9,6 +9,10 @@ const del = vi.fn();
 const eq = vi.fn();
 const toast = vi.fn();
 let deleteResult: { data: { id: string }[] | null; error: { message: string } | null };
+let updateResult: { data: unknown; error: unknown } = {
+  data: { id: 'sp-1' },
+  error: null,
+};
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -28,7 +32,7 @@ vi.mock('@/integrations/supabase/client', () => ({
           return query;
         },
         select: () => query,
-        single: () => Promise.resolve({ data: { id: 'sp-1' }, error: null }),
+        maybeSingle: () => Promise.resolve(updateResult),
         then: (resolve: (value: typeof deleteResult) => unknown) =>
           Promise.resolve(deleteResult).then(resolve),
       };
@@ -107,5 +111,24 @@ describe('useSupplierMutations — produtos do fornecedor', () => {
       )
     );
     expect(toast).not.toHaveBeenCalledWith({ title: 'Produto removido do fornecedor' });
+  });
+  it('mostra erro de permissão quando a edição não afeta nenhuma linha (RLS)', async () => {
+    updateResult = { data: null, error: null };
+    const { result } = renderHook(() => useSupplierMutations(), { wrapper });
+
+    result.current.updateSupplierProduct({
+      id: 'sp-1',
+      unit_price: 10,
+      min_order_quantity: null,
+      is_preferred: false,
+    });
+
+    await waitFor(() =>
+      expect(toast).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'Erro', variant: 'destructive' })
+      )
+    );
+    expect(toast).not.toHaveBeenCalledWith({ title: 'Produto do fornecedor atualizado' });
+    updateResult = { data: { id: 'sp-1' }, error: null };
   });
 });

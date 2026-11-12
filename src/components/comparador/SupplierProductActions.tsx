@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -81,10 +81,25 @@ export function SupplierProductActions({
     );
   };
 
+  // O AlertDialogAction fecha o diálogo no clique; enquanto a exclusão roda,
+  // ignoramos esse fechamento para manter o estado "Excluindo..." e, em caso de
+  // erro, deixar o diálogo aberto junto do toast.
+  const deletePendingRef = useRef(false);
   const handleDelete = () => {
+    deletePendingRef.current = true;
     deleteSupplierProduct(supplierProduct.id, {
-      onSuccess: () => setIsDeleteOpen(false),
+      onSuccess: () => {
+        deletePendingRef.current = false;
+        setIsDeleteOpen(false);
+      },
+      onError: () => {
+        deletePendingRef.current = false;
+      },
     });
+  };
+  const handleDeleteOpenChange = (open: boolean) => {
+    if (!open && deletePendingRef.current) return;
+    setIsDeleteOpen(open);
   };
 
   return (
@@ -176,7 +191,7 @@ export function SupplierProductActions({
 
       <DeleteConfirmDialog
         open={isDeleteOpen}
-        onOpenChange={setIsDeleteOpen}
+        onOpenChange={handleDeleteOpenChange}
         onConfirm={handleDelete}
         title="Excluir produto do fornecedor"
         description={`Remover ${productName} de ${supplierName}? O histórico de preços desta cotação também será apagado. Esta ação não pode ser desfeita.`}
