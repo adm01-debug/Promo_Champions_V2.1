@@ -11,7 +11,12 @@
 --   3) tr_update_bets_on_activity → public.process_performance_bet_event() (SECURITY INVOKER) soma +1
 --      por cima do recálculo já feito pelos outros 3 triggers de aposta (conta a atividade 2x) e chama
 --      check_performance_bets_completion() como o vendedor, que insere em xp_history (RLS só SELECT)
---      → a atividade que "completa" a aposta pela contagem dobrada é rejeitada.
+--      → a atividade que "completa" a aposta pela contagem dobrada é rejeitada. Em sales a mesma função
+--      (tr_update_bets_on_sale) lê NEW.value, coluna inexistente (sales só tem amount) → com 1 aposta
+--      'revenue' ativa do vendedor, toda venda nova dele falha ("record "new" has no field "value"");
+--      com aposta 'deals' soma +1 por venda em qualquer status, por cima do recálculo.
+--   3b) update_performance_bet_progress(), ao ganhar a aposta, soma o XP em salesperson_xp E insere em
+--      xp_history, cujo trigger sync_total_xp soma de novo → XP da aposta creditado 2x.
 --   4) Soft-delete (deleted_at) não é respeitado no recálculo de apostas (handle_performance_update,
 --      update_performance_bet_progress, sync_performance_bets), na batalha (sync_battle_score) nem no
 --      placar da corrida (race_leaderboard_view): atividade excluída continua pontuando.
@@ -22,7 +27,10 @@
 --   - performance_bets ganha updated_at (+ trigger padrão) → as funções de aposta voltam a rodar.
 --   - handle_performance_update credita o XP da aposta ganha via xp_history (sync_total_xp atualiza
 --     salesperson_xp), sem tabela inexistente.
---   - Sai o trigger redundante tr_update_bets_on_activity de activities (sales não muda).
+--   - Saem os triggers redundantes tr_update_bets_on_activity (activities) e tr_update_bets_on_sale
+--     (sales): tr_sync_bets_*, tr_performance_update_* e update_bets_on_* já recalculam a aposta a partir
+--     de sales.amount/activities. process_performance_bet_event() fica sem trigger.
+--   - update_performance_bet_progress credita o XP da aposta ganha só via xp_history (1x).
 --   - Recálculos de aposta/batalha e o placar da corrida passam a ignorar atividade excluída.
 --   - Trigger BEFORE UPDATE em activities: deleted_by = auth.uid() ao excluir, autoria imutável e
 --     restauração só por admin/gestor (ou backend com service_role).
@@ -40,9 +48,10 @@ CREATE TRIGGER update_performance_bets_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- ============================================================================
--- 2) Trigger redundante que conta a atividade 2x e grava XP como o vendedor
+-- 2) Triggers redundantes que contam 2x, leem sales.value (inexistente) e gravam XP como o vendedor
 -- ============================================================================
 DROP TRIGGER IF EXISTS tr_update_bets_on_activity ON public.activities;
+DROP TRIGGER IF EXISTS tr_update_bets_on_sale ON public.sales;
 
 -- ============================================================================
 -- 3) Recálculos ignoram atividade excluída (deleted_at IS NULL)
@@ -210,13 +219,7 @@ BEGIN
             
             xp_change := (bet_record.xp_wagered * bet_record.xp_multiplier)::INTEGER;
             
-            -- Award XP
-            UPDATE public.salesperson_xp 
-            SET total_xp = total_xp + xp_change,
-                updated_at = now()
-            WHERE salesperson_id = bet_record.salesperson_id;
-            
-            -- Log history
+            -- Award XP (xp_history → trigger sync_total_xp atualiza salesperson_xp; não somar aqui de novo)
             INSERT INTO public.xp_history (salesperson_id, xp_amount, source_type, source_id, description)
             VALUES (bet_record.salesperson_id, xp_change, 'bet_won', bet_record.id, 'Ganhou aposta: ' || bet_record.description);
             
