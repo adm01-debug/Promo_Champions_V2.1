@@ -101,7 +101,7 @@
     "@radix-ui/react-toggle-group": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.4.1",
     "@sentry/react": "^10.75.3",
-    "@simplewebauthn/server": "14.0.2",
+    "@simplewebauthn/server": "14.0.3",
     "@supabase/supabase-js": "^2.118.0",
     "@tanstack/react-query": "^5.105.1",
     "@types/canvas-confetti": "^1.9.0",
