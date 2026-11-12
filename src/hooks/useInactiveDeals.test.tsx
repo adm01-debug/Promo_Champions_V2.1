@@ -17,6 +17,7 @@ vi.mock('@/integrations/supabase/client', () => ({
           return query;
         },
         not: () => query,
+        is: () => query,
         order: () => query,
         then: (resolve: (value: Result) => unknown) =>
           Promise.resolve(responses[table] ?? { data: [], error: null }).then(resolve),
