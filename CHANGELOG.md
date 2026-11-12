@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.2.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.1.0...promo-champions-v2-v1.2.0) (2026-11-12)
+
+
+### Funcionalidades
+
+* migra recharts 2-&gt;3 (v3.10.1) typecheck/lint verdes ([#422](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/422)) ([e6a7784](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e6a77847b0a63cef8ae4867a0c3483e12d6a373f))
+* migra tailwind 3-&gt;4 (v4.3.5) ([#423](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/423)) ([f5e1a4f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f5e1a4f86dc5992550e6d4c10823032400a9aabf))
+* workflow auto-corrige deno.lock em PRs do Dependabot ([#368](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/368)) ([d95348f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d95348f78b81a6ab56b37e50b69cabf2ed6d3cd5))
+
+
+### Correções
+
+* corrige relatório de impacto do graphify ([#390](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/390)) ([b80e879](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b80e8790c3041637c5156967c4953d87916675de))
+* corrige restore incondicional no hook de grafo e typo no count de workflows ([042d3e7](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/042d3e7f7116a11fe5abb5f3ebe7967a1bdd89c1))
+* corrigir migrations_no_repo para contar apenas .sql do repo (~669) ([09ee2d8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/09ee2d8ed3457591c9dd24e34bbca799c9cc2b99))
+* corrigir timeout da seção grants no snapshot do banco ([#417](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/417)) ([31f6e2b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/31f6e2b2c4f96d7be7570979f680b4a87876e28a))
+* k6-smoke mira funções não deployadas e health sem chave ([#388](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/388)) ([7535bb0](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/7535bb0ff75a1a606f66d4bf4584a5e49748615d))
+* probe de tabela filtra table_type='BASE TABLE' ([#381](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/381)) ([fa27151](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fa271519296988d072d3357c9a9a52234a841563))
+* protege a saída do snapshot e o trabalho local na publicação do contexto ([37bccd8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/37bccd899e8d973619d0b2f21b265958fdb06cc6))
+* surfaçar migrations_no_repo em banco.json.resumo ([#413](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/413)) ([4f31f1f](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/4f31f1f07f797f738175f7d3d60ef9ce1713e4cf))
+
 ## [1.1.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.0.0...promo-champions-v2-v1.1.0) (2026-11-07)
 
 
