@@ -6,7 +6,6 @@ interface NeuralInsight {
   title: string;
   description: string;
   type: 'opportunity' | 'warning' | 'trend';
-  score: number;
 }
 
 interface ABCNeuralInsightsProps {
@@ -54,24 +53,9 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {insight.description}
               </p>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">
-                  Confidence Score
-                </span>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map(s => (
-                    <div
-                      key={s}
-                      className={`h-1 w-4 rounded-full ${
-                        s <= insight.score ? 'bg-primary' : 'bg-muted/30'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
             </CardContent>
           </Card>
         </motion.div>
