@@ -177,6 +177,59 @@ export const useCreateAsset = () => {
   });
 };
 
+export type EnablementAssetUpdate = Pick<
+  EnablementAsset,
+  'id' | 'title' | 'description' | 'category' | 'asset_type' | 'file_url' | 'funnel_stage'
+>;
+
+export const useUpdateAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...fields }: EnablementAssetUpdate) => {
+      const { data, error } = await supabase
+        .from('sales_enablement_assets')
+        .update({
+          title: fields.title,
+          description: fields.description || null,
+          category: fields.category,
+          asset_type: fields.asset_type,
+          file_url: fields.file_url || null,
+          funnel_stage: fields.funnel_stage || null,
+        })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      // RLS (is_admin_or_manager) bloqueia em silêncio: 0 linhas afetadas sem erro.
+      if (!data?.length) throw new Error('Sem permissão para editar este material');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['enablement-assets'] });
+      toast.success('Material atualizado');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
+export const useArchiveAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('sales_enablement_assets')
+        .update({ is_active: false })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para arquivar este material');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['enablement-assets'] });
+      toast.success('Material arquivado');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
 export const useTogglePlaybookItem = () => {
   const qc = useQueryClient();
   return useMutation({

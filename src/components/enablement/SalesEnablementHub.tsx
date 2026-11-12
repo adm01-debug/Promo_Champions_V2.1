@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   useEnablementAssets,
   useLogAssetUsage,
   useCreateAsset,
+  useUpdateAsset,
+  useArchiveAsset,
   usePlaybooks,
   useAssetEfficiency,
   type EnablementAsset,
 } from '@/hooks/sales/useSalesEnablement';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import {
   Card,
   CardContent,
@@ -31,6 +34,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
   BookOpen,
   Eye,
   ExternalLink,
@@ -44,6 +58,9 @@ import {
   Shield,
   BarChart3,
   DollarSign,
+  Pencil,
+  Archive,
+  Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -64,7 +81,63 @@ const typeIcon = (t: string) => {
   return FileText;
 };
 
-const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
+const ArchiveAssetButton = ({ asset }: { asset: EnablementAsset }) => {
+  const [open, setOpen] = useState(false);
+  const archive = useArchiveAsset();
+  const confirm = async () => {
+    try {
+      await archive.mutateAsync(asset.id);
+      setOpen(false);
+    } catch {
+      // erro já exibido via toast em onError
+    }
+  };
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="size-8 text-muted-foreground hover:text-destructive"
+          aria-label="Arquivar material"
+        >
+          <Archive className="size-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Arquivar material?</AlertDialogTitle>
+          <AlertDialogDescription>
+            "{asset.title}" deixará de aparecer no repositório para o time de vendas. O
+            histórico de uso é mantido.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={archive.isPending}>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={e => {
+              e.preventDefault();
+              void confirm();
+            }}
+            disabled={archive.isPending}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            {archive.isPending && <Loader2 className="size-4 mr-2 animate-spin" />}
+            Arquivar
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
+
+const AssetCard = ({
+  asset,
+  canManage,
+}: {
+  asset: EnablementAsset;
+  canManage: boolean;
+}) => {
   const log = useLogAssetUsage();
   const { data: efficiency } = useAssetEfficiency(asset.id);
   const Icon = typeIcon(asset.asset_type);
@@ -79,10 +152,30 @@ const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
           <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
             <Icon className="size-5" />
           </div>
-          <Badge variant="secondary" className="text-xs gap-1">
-            <Eye className="size-3" />
-            {asset.view_count}
-          </Badge>
+          <div className="flex items-center gap-1">
+            {canManage && (
+              <>
+                <AssetFormDialog
+                  asset={asset}
+                  trigger={
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="size-8 text-muted-foreground"
+                      aria-label="Editar material"
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                  }
+                />
+                <ArchiveAssetButton asset={asset} />
+              </>
+            )}
+            <Badge variant="secondary" className="text-xs gap-1">
+              <Eye className="size-3" />
+              {asset.view_count}
+            </Badge>
+          </div>
         </div>
         <CardTitle className="text-section-title mt-3 line-clamp-2 group-hover:text-primary transition-colors">
           {asset.title}
@@ -137,40 +230,56 @@ const AssetCard = ({ asset }: { asset: EnablementAsset }) => {
   );
 };
 
-const NewAssetDialog = () => {
+const EMPTY_ASSET_FORM = {
+  title: '',
+  description: '',
+  category: 'general',
+  asset_type: 'document',
+  file_url: '',
+  funnel_stage: '',
+};
+
+const assetToForm = (asset: EnablementAsset): typeof EMPTY_ASSET_FORM => ({
+  title: asset.title,
+  description: asset.description ?? '',
+  category: asset.category,
+  asset_type: asset.asset_type,
+  file_url: asset.file_url ?? '',
+  funnel_stage: asset.funnel_stage ?? '',
+});
+
+/** Cria (sem `asset`) ou edita (com `asset`) um material, com os mesmos campos. */
+const AssetFormDialog = ({
+  asset,
+  trigger,
+}: {
+  asset?: EnablementAsset;
+  trigger: ReactNode;
+}) => {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    category: 'general',
-    asset_type: 'document',
-    file_url: '',
-    funnel_stage: '',
-  });
+  const [form, setForm] = useState(EMPTY_ASSET_FORM);
   const create = useCreateAsset();
+  const update = useUpdateAsset();
+  const isPending = create.isPending || update.isPending;
+  const handleOpenChange = (next: boolean) => {
+    if (next) setForm(asset ? assetToForm(asset) : EMPTY_ASSET_FORM);
+    setOpen(next);
+  };
   const submit = async () => {
-    await create.mutateAsync(form);
-    setOpen(false);
-    setForm({
-      title: '',
-      description: '',
-      category: 'general',
-      asset_type: 'document',
-      file_url: '',
-      funnel_stage: '',
-    });
+    try {
+      if (asset) await update.mutateAsync({ id: asset.id, ...form });
+      else await create.mutateAsync(form);
+      setOpen(false);
+    } catch {
+      // erro já exibido via toast em onError; mantém o diálogo aberto
+    }
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="size-4 mr-2" />
-          Novo material
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar material</DialogTitle>
+          <DialogTitle>{asset ? 'Editar material' : 'Adicionar material'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div>
@@ -234,10 +343,11 @@ const NewAssetDialog = () => {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
             Cancelar
           </Button>
-          <Button onClick={submit} disabled={!form.title || create.isPending}>
+          <Button onClick={submit} disabled={!form.title.trim() || isPending}>
+            {isPending && <Loader2 className="size-4 mr-2 animate-spin" />}
             Salvar
           </Button>
         </DialogFooter>
@@ -254,6 +364,7 @@ export const SalesEnablementHub = () => {
   const [search, setSearch] = useState('');
   const { data: assets, isLoading: assetsLoading } = useEnablementAssets(category);
   const { data: playbooks, isLoading: playbooksLoading } = usePlaybooks();
+  const { isAdminOrManager } = useUserRoles();
 
   const filteredAssets = (assets ?? []).filter(
     a =>
@@ -278,7 +389,14 @@ export const SalesEnablementHub = () => {
             Materiais, propostas e treinamentos para acelerar suas vendas
           </p>
         </div>
-        <NewAssetDialog />
+        <AssetFormDialog
+          trigger={
+            <Button>
+              <Plus className="size-4 mr-2" />
+              Novo material
+            </Button>
+          }
+        />
       </div>
 
       <Card>
@@ -349,7 +467,7 @@ export const SalesEnablementHub = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredAssets.map(a => (
-                <AssetCard key={a.id} asset={a} />
+                <AssetCard key={a.id} asset={a} canManage={isAdminOrManager} />
               ))}
             </div>
           )}
