@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f5e1a4f86dc5992550e6d4c10823032400a9aabf",
+  "sha": "e324e953a15742a5936a54ee7bb4a6367d239f86",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-12 01:52 UTC",
+  "generated_at": "2026-11-12 11:52 UTC",
   "files_total": 3468,
   "code_files": 3139,
   "code_lines": 456611
@@ -244312,10 +244312,22 @@
   }
  },
  "git": {
-  "sha": "f5e1a4f86dc5992550e6d4c10823032400a9aabf",
+  "sha": "e324e953a15742a5936a54ee7bb4a6367d239f86",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e324e95",
+    "date": "2026-11-12",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.2.0 (#391)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "f5e1a4f",
     "date": "2026-11-11",
@@ -245077,36 +245089,20 @@
     "files": [
      ".gitattributes"
     ]
-   },
-   {
-    "sha": "f6010c9",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: parsers de linha toleram CRLF em checkouts Windows (#384)",
-    "files": [
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ci/contexto-publicacao.unit.mjs",
-     "scripts/inventario/gerar-banco.mjs",
-     "scripts/types-sync/validar.mjs"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "package.json",
+    5
+   ],
    [
     ".github/workflows/codeql.yml",
     5
    ],
    [
-    "package.json",
-    4
-   ],
-   [
-    "scripts/inventario/gerar-banco.mjs",
-    4
-   ],
-   [
     "package-lock.json",
-    3
+    4
    ],
    [
     ".github/workflows/migrations-drift.yml",
@@ -245115,6 +245111,18 @@
    [
     ".github/workflows/pr-checks.yml",
     3
+   ],
+   [
+    "scripts/inventario/gerar-banco.mjs",
+    3
+   ],
+   [
+    ".release-please-manifest.json",
+    2
+   ],
+   [
+    "CHANGELOG.md",
+    2
    ],
    [
     "deno.lock",
@@ -245162,14 +245170,6 @@
    ],
    [
     "src/components/goals/GoalComparisonChart.tsx",
-    2
-   ],
-   [
-    "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx",
-    2
-   ],
-   [
-    "src/components/sdr/LeadTemperatureChart.tsx",
     2
    ]
   ]
