@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
-import { insertPayload } from '@/lib/supabase/typed-payloads';
+import { insertPayload, updatePayload } from '@/lib/supabase/typed-payloads';
 
 export type AccountTier = 'strategic' | 'enterprise' | 'mid_market' | 'smb';
 type HealthStatus = 'healthy' | 'at_risk' | 'critical' | 'unknown';
@@ -27,7 +27,7 @@ export interface Account {
   updated_at: string;
 }
 
-interface AccountContact {
+export interface AccountContact {
   id: string;
   account_id: string;
   name: string;
@@ -184,6 +184,60 @@ export const useCreateContact = () => {
       qc.invalidateQueries({ queryKey: ['account-contacts', vars.account_id] });
       qc.invalidateQueries({ queryKey: ['accounts'] });
       toast.success('Contato adicionado');
+    },
+    onError: (e: Error) => toast.error(`Erro: ${e.message}`),
+  });
+};
+
+export const useUpdateContact = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      account_id: _accountId,
+      ...patch
+    }: Partial<Omit<AccountContact, 'id' | 'account_id'>> & {
+      id: string;
+      account_id: string;
+    }) => {
+      const { data, error } = await supabase
+        .from('account_contacts')
+        .update(updatePayload('account_contacts', patch))
+        .eq('id', id)
+        .select()
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Contato não encontrado ou sem permissão para editar');
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['account-contacts', vars.account_id] });
+      qc.invalidateQueries({ queryKey: ['accounts'] });
+      toast.success('Contato atualizado');
+    },
+    onError: (e: Error) => toast.error(`Erro: ${e.message}`),
+  });
+};
+
+export const useDeleteContact = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id }: { id: string; account_id: string }) => {
+      const { data, error } = await supabase
+        .from('account_contacts')
+        .delete()
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) {
+        throw new Error('Contato não encontrado ou sem permissão para excluir');
+      }
+      return id;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['account-contacts', vars.account_id] });
+      qc.invalidateQueries({ queryKey: ['accounts'] });
+      toast.success('Contato excluído');
     },
     onError: (e: Error) => toast.error(`Erro: ${e.message}`),
   });
