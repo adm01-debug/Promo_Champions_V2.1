@@ -1,4 +1,5 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,16 +18,29 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+export interface EditableBattle {
+  id: string;
+  title: string;
+  metric: string;
+  battle_type: string;
+  ends_at: string;
+  xp_reward: number;
+}
+
 interface CreateBattleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Quando informado, o diálogo edita esta batalha em vez de criar uma nova. */
+  battle?: EditableBattle | null;
 }
 
 export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
   open,
   onOpenChange,
+  battle,
 }) => {
-  const { createBattle } = useSalesBattles();
+  const { createBattle, updateBattle } = useSalesBattles();
+  const isEditing = !!battle;
   const { data: salespeople = [] } = useSalespeople();
   const [title, setTitle] = useState('');
   const [metric, setMetric] = useState('revenue');
@@ -34,6 +48,15 @@ export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
   const [xpReward, setXpReward] = useState('100');
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
   const [endsAt, setEndsAt] = useState('');
+
+  useEffect(() => {
+    if (!open || !battle) return;
+    setTitle(battle.title);
+    setMetric(battle.metric);
+    setBattleType(battle.battle_type);
+    setXpReward(String(battle.xp_reward));
+    setEndsAt(format(new Date(battle.ends_at), "yyyy-MM-dd'T'HH:mm"));
+  }, [open, battle]);
 
   const { data: currentSp } = useQuery({
     queryKey: ['battle-current-sp'],
@@ -51,7 +74,40 @@ export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
     },
   });
 
+  const handleUpdate = () => {
+    if (!battle) return;
+
+    if (!endsAt) {
+      toast.error('Selecione uma data de encerramento');
+      return;
+    }
+
+    updateBattle.mutate(
+      {
+        id: battle.id,
+        title,
+        battle_type: battleType,
+        metric,
+        ends_at: new Date(endsAt).toISOString(),
+        xp_reward: parseInt(xpReward),
+      },
+      {
+        onSuccess: () => {
+          toast.success('Batalha atualizada!');
+          onOpenChange(false);
+        },
+        onError: error =>
+          toast.error('Erro ao atualizar batalha', { description: error.message }),
+      }
+    );
+  };
+
   const handleCreate = () => {
+    if (isEditing) {
+      handleUpdate();
+      return;
+    }
+
     if (!currentSp?.id) {
       toast.error('Usuário não identificado');
       return;
@@ -98,7 +154,7 @@ export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
             <div className="p-2 rounded-xl bg-primary/10 shadow-lg">
               <Swords className="h-6 w-6 text-primary animate-pulse-subtle" />
             </div>
-            Nova Batalha de Elite
+            {isEditing ? 'Editar Batalha' : 'Nova Batalha de Elite'}
           </DialogTitle>
         </DialogHeader>
 
@@ -175,51 +231,53 @@ export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              Selecionar Gladiadores
-            </Label>
-            <div className="grid grid-cols-2 gap-2 max-h-[150px] overflow-y-auto pr-2 scrollbar-hide">
-              {salespeople.map(sp => (
-                <button
-                  key={sp.id}
-                  onClick={() => {
-                    setSelectedParticipants(prev =>
-                      prev.includes(sp.id)
-                        ? prev.filter(id => id !== sp.id)
-                        : [...prev, sp.id]
-                    );
-                  }}
-                  className={`p-3 rounded-xl border text-left transition-all flex items-center gap-3 group ${
-                    selectedParticipants.includes(sp.id)
-                      ? 'bg-primary/10 border-primary/40 ring-1 ring-primary/20 shadow-lg shadow-primary/5'
-                      : 'border-border/10 bg-muted/20 hover:bg-muted/40'
-                  }`}
-                >
-                  <div
-                    className={`h-6 w-6 rounded-lg flex items-center justify-center text-[8px] font-black ${
+          {!isEditing && (
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                Selecionar Gladiadores
+              </Label>
+              <div className="grid grid-cols-2 gap-2 max-h-[150px] overflow-y-auto pr-2 scrollbar-hide">
+                {salespeople.map(sp => (
+                  <button
+                    key={sp.id}
+                    onClick={() => {
+                      setSelectedParticipants(prev =>
+                        prev.includes(sp.id)
+                          ? prev.filter(id => id !== sp.id)
+                          : [...prev, sp.id]
+                      );
+                    }}
+                    className={`p-3 rounded-xl border text-left transition-all flex items-center gap-3 group ${
                       selectedParticipants.includes(sp.id)
-                        ? 'bg-primary text-white'
-                        : 'bg-muted text-muted-foreground'
+                        ? 'bg-primary/10 border-primary/40 ring-1 ring-primary/20 shadow-lg shadow-primary/5'
+                        : 'border-border/10 bg-muted/20 hover:bg-muted/40'
                     }`}
                   >
-                    {selectedParticipants.includes(sp.id)
-                      ? '✓'
-                      : sp.name.slice(0, 2).toUpperCase()}
-                  </div>
-                  <span
-                    className={`text-[10px] font-black uppercase tracking-tight truncate ${
-                      selectedParticipants.includes(sp.id)
-                        ? 'text-primary'
-                        : 'text-muted-foreground/80'
-                    }`}
-                  >
-                    {sp.name}
-                  </span>
-                </button>
-              ))}
+                    <div
+                      className={`h-6 w-6 rounded-lg flex items-center justify-center text-[8px] font-black ${
+                        selectedParticipants.includes(sp.id)
+                          ? 'bg-primary text-white'
+                          : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {selectedParticipants.includes(sp.id)
+                        ? '✓'
+                        : sp.name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <span
+                      className={`text-[10px] font-black uppercase tracking-tight truncate ${
+                        selectedParticipants.includes(sp.id)
+                          ? 'text-primary'
+                          : 'text-muted-foreground/80'
+                      }`}
+                    >
+                      {sp.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -255,10 +313,16 @@ export const CreateBattleDialog: FC<CreateBattleDialogProps> = ({
           <Button
             className="w-full h-12 shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-sm italic rounded-2xl group/btn"
             onClick={handleCreate}
-            disabled={!title.trim() || createBattle.isPending}
+            disabled={!title.trim() || createBattle.isPending || updateBattle.isPending}
           >
             <Swords className="h-5 w-5 mr-3 group-hover/btn:rotate-12 transition-transform" />
-            {createBattle.isPending ? 'Mobilizando Gladiadores...' : 'Iniciar Combate'}
+            {isEditing
+              ? updateBattle.isPending
+                ? 'Salvando...'
+                : 'Salvar Alterações'
+              : createBattle.isPending
+                ? 'Mobilizando Gladiadores...'
+                : 'Iniciar Combate'}
           </Button>
         </div>
       </DialogContent>

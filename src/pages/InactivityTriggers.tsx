@@ -8,7 +8,16 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useInactiveDeals, INACTIVITY_RULES } from '@/hooks/useInactiveDeals';
-import { AlertTriangle, Clock, Send, Eye, Timer, TrendingDown } from 'lucide-react';
+import { useSendNotification } from '@/hooks/useNotifications';
+import {
+  AlertTriangle,
+  Clock,
+  Loader2,
+  RefreshCw,
+  Send,
+  Timer,
+  TrendingDown,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -31,14 +40,51 @@ const severityConfig = {
   },
 };
 
+const notificationPriority = {
+  mild: 'low',
+  moderate: 'medium',
+  critical: 'high',
+} as const;
+
+type InactiveDealItem = ReturnType<typeof useInactiveDeals>['inactiveDeals'][number];
+
 const InactivityTriggers = () => {
-  const { inactiveDeals } = useInactiveDeals();
+  const { inactiveDeals, isLoading, isError, refetch } = useInactiveDeals();
+  const sendNotification = useSendNotification();
+  const notifyingId = sendNotification.isPending
+    ? (sendNotification.variables?.metadata?.sale_id as string | undefined)
+    : undefined;
 
-  const handleNotify = (dealName: string) => {
-    toast.success(`Notificação enviada para deal "${dealName}"`);
+  // Notificação real (RPC send_notification) para o vendedor dono do deal.
+  // Erros já viram toast no onError do useSendNotification.
+  const handleNotify = (deal: InactiveDealItem) => {
+    if (!deal.salespersonUserId) return;
+    sendNotification.mutate(
+      {
+        user_id: deal.salespersonUserId,
+        type: 'inactivity_alert',
+        category: 'sales',
+        priority: notificationPriority[deal.severity],
+        title: `Deal parado há ${deal.daysInactive} dias`,
+        message: `"${deal.clientName}" (${deal.stage}) está sem atividade há ${deal.daysInactive} dias. Retome o contato.`,
+        action_url: '/pipeline',
+        action_label: 'Abrir pipeline',
+        metadata: {
+          sale_id: deal.id,
+          stage: deal.stage,
+          severity: deal.severity,
+          days_inactive: deal.daysInactive,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success(
+            `${deal.salespersonName ?? 'Vendedor'} notificado sobre "${deal.clientName}"`
+          );
+        },
+      }
+    );
   };
-
-  const isLoading = false;
 
   const grouped = React.useMemo(() => {
     if (!inactiveDeals?.length)
@@ -122,6 +168,27 @@ const InactivityTriggers = () => {
                 <Skeleton key={i} className="h-20 rounded-xl" />
               ))}
             </div>
+          ) : isError ? (
+            <motion.div variants={itemVariants}>
+              <Card className="p-8 text-center glass border-border/40">
+                <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-3" />
+                <p className="font-display font-bold text-lg">
+                  Não foi possível carregar os deals
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Verifique sua conexão e tente novamente.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4 gap-2"
+                  onClick={refetch}
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Tentar novamente
+                </Button>
+              </Card>
+            </motion.div>
           ) : total === 0 ? (
             <motion.div variants={itemVariants}>
               <Card className="p-8 text-center glass border-border/40">
@@ -199,21 +266,23 @@ const InactivityTriggers = () => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8"
-                              title="Ver deal"
-                              aria-label="Ver deal"
-                            >
-                              <Eye className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
                               className="h-8 w-8 hover:text-primary"
-                              title="Notificar"
-                              onClick={() => handleNotify(deal.clientName)}
+                              title={
+                                deal.salespersonUserId
+                                  ? `Notificar ${deal.salespersonName ?? 'vendedor'}`
+                                  : 'Deal sem vendedor com acesso ao sistema'
+                              }
+                              onClick={() => handleNotify(deal)}
+                              disabled={
+                                !deal.salespersonUserId || notifyingId === deal.id
+                              }
                               aria-label="Notificar vendedor"
                             >
-                              <Send className="h-3.5 w-3.5" />
+                              {notifyingId === deal.id ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <Send className="h-3.5 w-3.5" />
+                              )}
                             </Button>
                           </div>
                         </div>
