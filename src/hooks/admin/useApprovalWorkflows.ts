@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import type { TableInsert } from '@/lib/supabase/typed-payloads';
+import type { TableInsert, TableUpdate } from '@/lib/supabase/typed-payloads';
 
-interface ApprovalWorkflow {
+export interface ApprovalWorkflow {
   id: string;
   name: string;
   workflow_type: string;
@@ -161,5 +161,95 @@ export function useCreateWorkflow() {
       toast.success('Workflow criado!');
     },
     onError: () => toast.error('Erro ao criar workflow'),
+  });
+}
+
+type WorkflowEditableFields = Pick<
+  TableUpdate<'approval_workflows'>,
+  'name' | 'workflow_type' | 'threshold_amount' | 'required_approvers' | 'description'
+>;
+
+/** Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */
+export class WorkflowInUseError extends Error {
+  constructor(public readonly linkedRequests: number) {
+    super('Fluxo possui solicitações vinculadas');
+    this.name = 'WorkflowInUseError';
+  }
+}
+
+async function updateWorkflowRow(id: string, patch: TableUpdate<'approval_workflows'>) {
+  const { data, error } = await supabase
+    .from('approval_workflows')
+    .update(patch)
+    .eq('id', id)
+    .select('id');
+  if (error) throw error;
+  // RLS bloqueia em silêncio (0 linhas): trata como falha.
+  if (!data?.length) throw new Error('Sem permissão para alterar este fluxo');
+}
+
+export function useUpdateWorkflow() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...patch }: WorkflowEditableFields & { id: string }) =>
+      updateWorkflowRow(id, patch),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['approval-workflows'] });
+      toast.success('Workflow atualizado!');
+    },
+    onError: () => toast.error('Erro ao atualizar workflow'),
+  });
+}
+
+export function useToggleWorkflowActive() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) =>
+      updateWorkflowRow(id, { is_active }),
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ['approval-workflows'] });
+      toast.success(vars.is_active ? 'Workflow ativado' : 'Workflow desativado');
+    },
+    onError: () => toast.error('Erro ao alterar status do workflow'),
+  });
+}
+
+export function useDeleteWorkflow() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // A FK approval_requests.workflow_id é ON DELETE CASCADE: excluir apagaria
+      // o histórico de solicitações. Com vínculos, só é permitido desativar.
+      const { count, error: countError } = await supabase
+        .from('approval_requests')
+        .select('id', { count: 'exact', head: true })
+        .eq('workflow_id', id);
+      if (countError) throw countError;
+      if (count && count > 0) throw new WorkflowInUseError(count);
+
+      const { data, error } = await supabase
+        .from('approval_workflows')
+        .delete()
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para excluir este fluxo');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['approval-workflows'] });
+      toast.success('Workflow excluído');
+    },
+    onError: (error: Error) => {
+      if (error instanceof WorkflowInUseError) {
+        toast.error(
+          `Este workflow tem ${error.linkedRequests} solicitação(ões) vinculada(s). Desative-o em vez de excluir.`
+        );
+        return;
+      }
+      toast.error('Erro ao excluir workflow');
+    },
   });
 }
