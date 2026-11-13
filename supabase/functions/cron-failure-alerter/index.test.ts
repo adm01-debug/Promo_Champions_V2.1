@@ -40,18 +40,22 @@ async function rpc<T = unknown>(fn: string, params: Record<string, unknown>): Pr
 }
 
 // Base id sintético — usar offsets negativos distintos por cenário.
+// A base é sorteada por execução: o dedupe de 6h e a limpeza são por jobid,
+// então execuções de CI simultâneas (várias PRs) com ids fixos colidiam no
+// mesmo registro do banco e o teste de dedupe falhava sem bug real.
+const RUN_BASE = -1_000_000 - Math.floor(Math.random() * 1_000_000) * 100;
 const JOB = {
-  fiveMin: -1001,
-  tenMin: -1002,
-  fifteenMin: -1003,
-  thirtyMin: -1004,
-  hourly: -1005,
-  daily: -1006,
-  weekly: -1007,
-  unknown: -1008,
-  dedupe6h: -1009,
-  intermittent: -1010,
-  alerterDedupe: -1011,
+  fiveMin: RUN_BASE - 1,
+  tenMin: RUN_BASE - 2,
+  fifteenMin: RUN_BASE - 3,
+  thirtyMin: RUN_BASE - 4,
+  hourly: RUN_BASE - 5,
+  daily: RUN_BASE - 6,
+  weekly: RUN_BASE - 7,
+  unknown: RUN_BASE - 8,
+  dedupe6h: RUN_BASE - 9,
+  intermittent: RUN_BASE - 10,
+  alerterDedupe: RUN_BASE - 11,
 } as const;
 
 async function cleanup(jobid: number) {
