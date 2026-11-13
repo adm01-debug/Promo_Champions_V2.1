@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0c1ae11459a07f744ff54a4a9c7b567b5715176a",
+  "commit": "53e363f436ae7070b150621eaf20cfd7d04e669a",
   "branch": "main",
-  "data_commit": "2026-11-13T04:51:37Z",
+  "data_commit": "2026-11-13T05:00:25Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "53e363f",
+    "data": "2026-11-13",
+    "assunto": "test: serializa execuções do stress quote→sale com lock consultivo (#465)"
+   },
    {
     "sha": "0c1ae11",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "95e8e8a",
     "data": "2026-11-09",
     "assunto": "chore: inventario do estado real [auto] (#412)"
-   },
-   {
-    "sha": "053885b",
-    "data": "2026-11-09",
-    "assunto": "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)"
    }
   ],
-  "arquivos_mudados_7d": 504,
+  "arquivos_mudados_7d": 505,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 69
+    "commits": 70
    },
    {
     "autor": "devin-ai-integration[bot]",

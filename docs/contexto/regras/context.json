@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0c1ae11459a07f744ff54a4a9c7b567b5715176a",
+  "sha": "53e363f436ae7070b150621eaf20cfd7d04e669a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 04:57 UTC",
+  "generated_at": "2026-11-13 05:05 UTC",
   "files_total": 3475,
   "code_files": 3146,
-  "code_lines": 457883
+  "code_lines": 457888
  },
  "version": "1.3.2",
- "facts_hash": "5ebf197e2f27171d",
+ "facts_hash": "e187c96c9baf9b17",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -79446,7 +79446,7 @@
   {
    "module": "supabase/tests",
    "files": 5,
-   "lines": 652,
+   "lines": 657,
    "tables": [],
    "exports": [],
    "docs": [],
@@ -242680,7 +242680,7 @@
   },
   "supabase/tests/quote-to-sale-stress.sql": {
    "path": "supabase/tests/quote-to-sale-stress.sql",
-   "lines": 122,
+   "lines": 127,
    "is_test": true,
    "temporal": [
     "WHERE order_number LIKE 'ORC-%' AND created_at > now() - interval '5 minutes';",
@@ -244725,10 +244725,19 @@
   }
  },
  "git": {
-  "sha": "0c1ae11459a07f744ff54a4a9c7b567b5715176a",
+  "sha": "53e363f436ae7070b150621eaf20cfd7d04e669a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "53e363f",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "test: serializa execuções do stress quote→sale com lock consultivo (#465)",
+    "files": [
+     "supabase/tests/quote-to-sale-stress.sql"
+    ]
+   },
    {
     "sha": "0c1ae11",
     "date": "2026-11-13",
@@ -245488,18 +245497,6 @@
     "files": [
      ".claude/hooks/session-start.sh",
      "docs/agentes/github-ci.md"
-    ]
-   },
-   {
-    "sha": "37bccd8",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: protege a saída do snapshot e o trabalho local na publicação do contexto",
-    "files": [
-     "scripts/inventario/gerar-repo.mjs",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py"
     ]
    }
   ],
