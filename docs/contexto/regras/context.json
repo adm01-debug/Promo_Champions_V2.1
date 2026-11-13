@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "075d0c3859e00388d5c199bdf2b1769518562ba8",
+  "sha": "c4f625e35bb4b16760b9278262edddafc8571f1c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 02:13 UTC",
+  "generated_at": "2026-11-13 03:20 UTC",
   "files_total": 3469,
   "code_files": 3140,
   "code_lines": 456904
@@ -244382,10 +244382,22 @@
   }
  },
  "git": {
-  "sha": "075d0c3859e00388d5c199bdf2b1769518562ba8",
+  "sha": "c4f625e35bb4b16760b9278262edddafc8571f1c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "c4f625e",
+    "date": "2026-11-13",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.3.0 (#462)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "075d0c3",
     "date": "2026-11-12",
@@ -245149,30 +245161,16 @@
     "files": [
      "scripts/db-audit/gen-migration-probes.mjs"
     ]
-   },
-   {
-    "sha": "9500f87",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "chore: instruções enxutas para agentes (#380)",
-    "files": [
-     "AGENTS.md",
-     "CLAUDE.md",
-     "docs/agentes/banco-e-mcp.md",
-     "docs/agentes/contexto-gerado.md",
-     "docs/agentes/mapa-do-sistema.md",
-     "docs/agentes/worktree.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    6
+    7
    ],
    [
     "package-lock.json",
-    5
+    6
    ],
    [
     ".github/workflows/codeql.yml",
@@ -245201,6 +245199,14 @@
    [
     "scripts/inventario/gerar-banco.mjs",
     3
+   ],
+   [
+    ".release-please-manifest.json",
+    2
+   ],
+   [
+    "CHANGELOG.md",
+    2
    ],
    [
     "src/components/analytics/ActivityOutcomesChart.tsx",
@@ -245236,14 +245242,6 @@
    ],
    [
     "src/components/bi/BIVendedorCharts.tsx",
-    2
-   ],
-   [
-    "src/components/closer/CloserRevenueComparison.tsx",
-    2
-   ],
-   [
-    "src/components/goals/GoalComparisonChart.tsx",
     2
    ]
   ]

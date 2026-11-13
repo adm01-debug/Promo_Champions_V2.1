@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(main): release 1.3.0 (#462)",
    "chore(deps): bump react-day-picker from 10.0.1 to 10.0.2 (#405)",
    "feat: editar e excluir stakeholders da conta ABM (#427)",
    "chore: inventario do estado real [auto] (#425)",
-   "chore(deps-dev): bump tsx from 4.22.4 to 4.23.15 (#409)",
-   "chore(main): release 1.2.0 (#391)"
+   "chore(deps-dev): bump tsx from 4.22.4 to 4.23.15 (#409)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
