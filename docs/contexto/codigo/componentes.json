@@ -18026,10 +18026,11 @@
     "AssinaturaDigital"
    ],
    "export_default": "AssinaturaDigital",
-   "linhas": 466,
+   "linhas": 627,
    "dominio": "pages",
    "hooks_locais": [
-    "useDigitalSignatures"
+    "useDigitalSignatures",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],

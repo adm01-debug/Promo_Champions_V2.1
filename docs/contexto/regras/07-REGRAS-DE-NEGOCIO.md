@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `56b4d2b8f1` · branch `main` · 2026-11-13 05:42 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5d2f222306` · branch `main` · 2026-11-13 05:53 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1890,6 +1890,7 @@ _nenhum item encontrado_
 | `dsr-email` | type=email | `src/pages/AdminSolicitacoesTitular.tsx` |
 | `optout-email` | type=email | `src/pages/AdminSupressaoEmails.tsx` |
 | `ev-when` | type=datetime-local | `src/pages/Agenda.tsx` |
+| `edit-signer-email` | type=email | `src/pages/AssinaturaDigital.tsx` |
 | `email` | type=email | `src/pages/Notificacoes.tsx` |
 | `password` | type=password | `src/pages/ResetPassword.tsx` |
 | `confirm-password` | type=password | `src/pages/ResetPassword.tsx` |
@@ -4026,7 +4027,7 @@ _nenhum item encontrado_
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
 | Erro na sincronização | `src/hooks/useBitrix24.ts` |
-| … +637 linhas — lista completa em `context.json` | |
+| … +641 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4133,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1282 testes em 141 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1287 testes em 141 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4185,6 +4186,7 @@ _nenhum item encontrado_
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
+| `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |
 | `src/lib/markupSummary.test.ts` | 8 | summarizeMarkup · lista vazia → tudo zerado e sem média · classifica por faixa e ignora nulos na média · mediana com quantidade par usa a média central … |
@@ -4235,7 +4237,6 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
-| `src/hooks/useDigitalSignatures.test.tsx` | 3 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente |
 | `src/hooks/useProductRecommendations.test.tsx` | 3 | useProductRecommendations — regressão Onda J/K · particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn · agrega counts ignorando product_id null e tolera product_name/amount nulos |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |
 | `src/hooks/gamification/useStreakRanking.test.tsx` | 3 | useStreakRanking — agregação sem N+1 · busca conquistas de todos os vendedores em uma única query .in() · monta ranking correto com múltiplos vendedores e conquistas |
@@ -4581,6 +4582,8 @@ _nenhum item encontrado_
 | banco — apenas 'won'/'lost'). Centraliza as comparações de resultado. | `src/constants/index.ts` |
 | - Executa apenas quando o dashboard exibido pertence ao usuário autenticado | `src/hooks/useAutoAwardBonuses.ts` |
 | Request notification permission on mount | `src/hooks/useCelebration.ts` |
+| RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão | `src/hooks/useDigitalSignatures.ts` |
+| RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão | `src/hooks/useDigitalSignatures.ts` |
 | - `clearDraft()` deve ser chamado após submit bem-sucedido. | `src/hooks/useFormDraft.ts` |
 | SEM .limit deliberadamente: Estoque.tsx calcula criticalCount/lowCount/ | `src/hooks/useInventory.ts` |
 | * Calcula somente uma sugestão para a interface. A atribuição persistente de | `src/hooks/useLeadAssignment.ts` |
@@ -4832,6 +4835,4 @@ _nenhum item encontrado_
 | Win-rate por faixa de desconto → slope linear (elasticidade medida). | `supabase/functions/pricing-intelligence/index.ts` |
 | Validação mínima defensiva — dados vêm de cliente autenticado, mas nunca confiar. | `supabase/functions/process-call-recording-ingest/index.ts` |
 | 6. eventos derivados (overtake/checkpoint/victory) emitem no máximo uma | `supabase/functions/process-race-event/index.ts` |
-| vendas antigas não pode farmar boosts sem nova sequência. | `supabase/functions/process-race-event/index.ts` |
-| Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/purchase-intelligence-forecast/index.ts` |
-| … +104 linhas — lista completa em `context.json` | |
+| … +106 linhas — lista completa em `context.json` | |

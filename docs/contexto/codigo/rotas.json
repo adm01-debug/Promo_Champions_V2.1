@@ -2646,6 +2646,7 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
     "useContext",
     "useDigitalSignatures",
@@ -2660,26 +2661,36 @@
     "useReducedMotion",
     "useRef",
     "useState",
-    "useToast"
+    "useToast",
+    "useUserRoles"
    ],
    "hooks_locais": [
+    "useAuth",
     "useDigitalSignatures",
     "useReducedMotion",
-    "useToast"
+    "useToast",
+    "useUserRoles"
    ],
    "tabelas": [
     "digital_signatures",
     "document_signers",
-    "salespeople"
+    "salespeople",
+    "user_roles"
    ],
    "rpcs": [],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
    "papeis": [
-    "alert"
+    "admin",
+    "alert",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
    ],
-   "arquivos_puxados": 20
+   "arquivos_puxados": 23
   },
   {
    "protegida": false,

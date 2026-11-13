@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: editar e remover signatários na assinatura digital (#428)",
    "fix(hooks): plano de conta ABM envia created_by ao criar (#467)",
    "feat: editar e excluir contas no Account-Based Selling (#426)",
    "test: serializa execuções do stress quote→sale com lock consultivo (#465)",
-   "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)",
-   "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)"
+   "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

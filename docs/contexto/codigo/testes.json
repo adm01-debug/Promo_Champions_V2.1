@@ -482,11 +482,11 @@
   {
    "arquivo": "src/hooks/useDigitalSignatures.test.tsx",
    "tipo": "unit",
-   "linhas": 94,
+   "linhas": 179,
    "testa": [
     "src/hooks/useDigitalSignatures.ts"
    ],
-   "casos": 2
+   "casos": 6
   },
   {
    "arquivo": "src/hooks/useEligibleBonuses.test.ts",

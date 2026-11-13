@@ -9629,7 +9629,7 @@
    "modulo": "hooks",
    "arquivos": 145,
    "testes": 13,
-   "linhas": 19403,
+   "linhas": 19473,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -15464,7 +15464,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 3,
-   "linhas": 38887,
+   "linhas": 39048,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",

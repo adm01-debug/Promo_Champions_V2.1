@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "56b4d2b8f1f7436f95dd704f0995b77a9bfbb31c",
+  "sha": "5d2f222306a05820320574ab510ba90c68fffc58",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 05:42 UTC",
+  "generated_at": "2026-11-13 05:53 UTC",
   "files_total": 3476,
   "code_files": 3147,
-  "code_lines": 458405
+  "code_lines": 458721
  },
  "version": "1.3.2",
- "facts_hash": "4a1c9184ca76599c",
+ "facts_hash": "6691b5342f382b2c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -65115,11 +65115,12 @@
     "tables_transitive": [
      "digital_signatures",
      "document_signers",
-     "salespeople"
+     "salespeople",
+     "user_roles"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 19
+    "deps_count": 22
    },
    {
     "path": "",
@@ -78013,7 +78014,7 @@
   {
    "module": "src/hooks",
    "files": 508,
-   "lines": 58642,
+   "lines": 58797,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78637,7 +78638,7 @@
   {
    "module": "src/pages",
    "files": 176,
-   "lines": 43472,
+   "lines": 43633,
    "tables": [
     "achievements",
     "activities",
@@ -80968,6 +80969,12 @@
      "src/hooks/useDigitalSignatures.ts"
     ],
     "select": [
+     "src/hooks/useDigitalSignatures.ts"
+    ],
+    "update": [
+     "src/hooks/useDigitalSignatures.ts"
+    ],
+    "delete": [
      "src/hooks/useDigitalSignatures.ts"
     ]
    },
@@ -84519,6 +84526,7 @@
    ],
    "document_signers": [
     "document_id",
+    "id",
     "sign_order"
    ],
    "edge_retry_events": [
@@ -88855,6 +88863,11 @@
     "rules": "type=datetime-local"
    },
    {
+    "file": "src/pages/AssinaturaDigital.tsx",
+    "field": "edit-signer-email",
+    "rules": "type=email"
+   },
+   {
     "file": "src/pages/Notificacoes.tsx",
     "field": "email",
     "rules": "type=email"
@@ -91069,6 +91082,10 @@
    },
    {
     "file": "src/hooks/useDigitalSignatures.ts",
+    "msg": "Apenas administradores e gestores podem remover signatários."
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.ts",
     "msg": "Confirmação de assinatura indisponível"
    },
    {
@@ -91077,11 +91094,23 @@
    },
    {
     "file": "src/hooks/useDigitalSignatures.ts",
+    "msg": "Erro ao atualizar signatário"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.ts",
     "msg": "Erro ao criar documento"
    },
    {
     "file": "src/hooks/useDigitalSignatures.ts",
     "msg": "Erro ao excluir documento"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.ts",
+    "msg": "Erro ao remover signatário"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.ts",
+    "msg": "Você não tem permissão para editar este signatário."
    },
    {
     "file": "src/hooks/useICPConfig.ts",
@@ -94158,6 +94187,14 @@
    {
     "file": "src/hooks/useCelebration.ts",
     "text": "Request notification permission on mount"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.ts",
+    "text": "RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.ts",
+    "text": "RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão"
    },
    {
     "file": "src/hooks/useFormDraft.ts",
@@ -120022,6 +120059,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/AssinaturaDigital.tsx",
+    "field": "status",
+    "value": "draft",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/AutomationBuilder.tsx",
     "field": "status",
     "value": "success",
@@ -130914,6 +130957,26 @@
    {
     "file": "src/hooks/useDigitalSignatures.test.tsx",
     "name": "não permite registrar assinatura ou recusa pelo cliente"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.test.tsx",
+    "name": "useDigitalSignatures — edição e remoção de signatários"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.test.tsx",
+    "name": "atualiza nome e e-mail do signatário"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.test.tsx",
+    "name": "acusa erro quando o RLS não deixa editar nenhuma linha"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.test.tsx",
+    "name": "remove o signatário"
+   },
+   {
+    "file": "src/hooks/useDigitalSignatures.test.tsx",
+    "name": "acusa erro quando o RLS não deixa remover (não é admin/gestor)"
    },
    {
     "file": "src/hooks/useEligibleBonuses.test.ts",
@@ -198077,17 +198140,22 @@
   },
   "src/hooks/useDigitalSignatures.test.tsx": {
    "path": "src/hooks/useDigitalSignatures.test.tsx",
-   "lines": 94,
+   "lines": 179,
    "is_test": true,
    "tests": [
     "useDigitalSignatures sem provedor configurado",
     "não altera o status ao tentar enviar um documento",
-    "não permite registrar assinatura ou recusa pelo cliente"
+    "não permite registrar assinatura ou recusa pelo cliente",
+    "useDigitalSignatures — edição e remoção de signatários",
+    "atualiza nome e e-mail do signatário",
+    "acusa erro quando o RLS não deixa editar nenhuma linha",
+    "remove o signatário",
+    "acusa erro quando o RLS não deixa remover (não é admin/gestor)"
    ]
   },
   "src/hooks/useDigitalSignatures.ts": {
    "path": "src/hooks/useDigitalSignatures.ts",
-   "lines": 224,
+   "lines": 294,
    "exports": [
     "interface DigitalSignature",
     "const DIGITAL_SIGNATURE_INTEGRATION_MESSAGE",
@@ -198121,6 +198189,14 @@
     {
      "table": "document_signers",
      "op": "insert"
+    },
+    {
+     "table": "document_signers",
+     "op": "select,update"
+    },
+    {
+     "table": "document_signers",
+     "op": "delete,select"
     }
    ],
    "table_cols": {
@@ -198132,14 +198208,19 @@
     ],
     "document_signers": [
      "document_id",
+     "id",
      "sign_order"
     ]
    },
    "errors": [
+    "Apenas administradores e gestores podem remover signatários.",
     "Confirmação de assinatura indisponível",
     "Envio para assinatura indisponível",
+    "Erro ao atualizar signatário",
     "Erro ao criar documento",
-    "Erro ao excluir documento"
+    "Erro ao excluir documento",
+    "Erro ao remover signatário",
+    "Você não tem permissão para editar este signatário."
    ],
    "status_values": [
     {
@@ -198162,6 +198243,10 @@
      "value": "signed",
      "kind": "escreve"
     }
+   ],
+   "rule_comments": [
+    "RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão",
+    "RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão"
    ],
    "hooks": [
     "useDigitalSignatures"
@@ -217979,12 +218064,18 @@
   },
   "src/pages/AssinaturaDigital.tsx": {
    "path": "src/pages/AssinaturaDigital.tsx",
-   "lines": 466,
+   "lines": 627,
    "exports": [
     "function AssinaturaDigital"
    ],
    "errors": [
     ">\n              <CardContent className="
+   ],
+   "html_constraints": [
+    {
+     "field": "edit-signer-email",
+     "rules": "type=email"
+    }
    ],
    "status_values": [
     {
@@ -218015,6 +218106,11 @@
     {
      "field": "status",
      "value": "pending",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "draft",
      "kind": "compara"
     },
     {
@@ -244894,10 +244990,21 @@
   }
  },
  "git": {
-  "sha": "56b4d2b8f1f7436f95dd704f0995b77a9bfbb31c",
+  "sha": "5d2f222306a05820320574ab510ba90c68fffc58",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "5d2f222",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e remover signatários na assinatura digital (#428)",
+    "files": [
+     "src/hooks/useDigitalSignatures.test.tsx",
+     "src/hooks/useDigitalSignatures.ts",
+     "src/pages/AssinaturaDigital.tsx"
+    ]
+   },
    {
     "sha": "56b4d2b",
     "date": "2026-11-13",
@@ -245656,18 +245763,6 @@
     "subject": "chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)",
     "files": [
      ".github/workflows/codeql.yml"
-    ]
-   },
-   {
-    "sha": "4424fde",
-    "date": "2026-11-09",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump supabase/setup-cli (#400)",
-    "files": [
-     ".github/workflows/deploy.yml",
-     ".github/workflows/migrations-drift.yml",
-     ".github/workflows/pr-checks.yml",
-     ".github/workflows/types-sync.yml"
     ]
    }
   ],

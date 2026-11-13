@@ -10017,7 +10017,8 @@
    "src/components/ui/label.tsx",
    "src/components/ui/table.tsx",
    "src/components/ui/textarea.tsx",
-   "src/hooks/useDigitalSignatures.ts"
+   "src/hooks/useDigitalSignatures.ts",
+   "src/hooks/useUserRoles.ts"
   ],
   "src/pages/Assistente.tsx": [
    "src/components/assistant/SalesAssistantChat.tsx",

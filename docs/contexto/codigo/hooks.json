@@ -8329,7 +8329,7 @@
    "hooks_exportados": [
     "useDigitalSignatures"
    ],
-   "linhas": 224,
+   "linhas": 294,
    "dominio": "hooks",
    "tabelas": [
     "digital_signatures",
@@ -10801,7 +10801,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 32,
+   "usado_por": 33,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
@@ -10829,10 +10829,10 @@
     "src/pages/AccountBasedEngagement.tsx",
     "src/pages/AccountBasedSelling.tsx",
     "src/pages/ApprovalWorkflowsPage.tsx",
+    "src/pages/AssinaturaDigital.tsx",
     "src/pages/Configuracoes.tsx",
     "src/pages/DesafiosSemanais.tsx",
-    "src/pages/FollowUpInteligente.tsx",
-    "src/pages/RaceArenaHub.tsx"
+    "src/pages/FollowUpInteligente.tsx"
    ],
    "coberto_por_testes": 0
   },
