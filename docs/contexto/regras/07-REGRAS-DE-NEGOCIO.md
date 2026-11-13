@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4e0bb0027d` · branch `main` · 2026-11-13 07:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2c36718033` · branch `main` · 2026-11-13 07:33 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4031,7 +4031,7 @@ _nenhum item encontrado_
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
-| … +653 linhas — lista completa em `context.json` | |
+| … +659 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4137,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1332 testes em 150 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1337 testes em 151 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4218,6 +4218,7 @@ _nenhum item encontrado_
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
+| `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
 | `src/hooks/dialer/usePowerDialer.test.tsx` | 5 | usePowerDialer — editar e excluir fila · atualiza nome, estratégia e filtro da fila e invalida a lista · acusa erro quando o RLS não deixa alterar a fila (0 linhas) · exclui a fila e invalida a lista … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
@@ -4616,6 +4617,7 @@ _nenhum item encontrado_
 | Request notification permission on mount | `src/hooks/useSDRAlertNotifications.ts` |
 | Limit to recent activities for speed | `src/hooks/useSDRMetrics.ts` |
 | O cache de módulo não expira sozinho: no logout/troca de conta a | `src/hooks/useUnreadNotificationsCount.ts` |
+| * Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */ | `src/hooks/admin/useApprovalWorkflows.ts` |
 | - Limite defensivo de 30 registros para não pesar o Hub. | `src/hooks/assistant/useBriefingHistory.ts` |
 | - staleTime alto pois histórico muda no máximo 1x por dia. | `src/hooks/assistant/useBriefingHistory.ts` |
 | Check if MFA upgrade is required (AAL1 → AAL2) | `src/hooks/auth/useAuthForm.ts` |
@@ -4847,5 +4849,4 @@ _nenhum item encontrado_
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predict-quota-attainment/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-intelligence/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-scoring-explain/index.ts` |
-| Win-rate por faixa de desconto → slope linear (elasticidade medida). | `supabase/functions/pricing-intelligence/index.ts` |
-| … +108 linhas — lista completa em `context.json` | |
+| … +109 linhas — lista completa em `context.json` | |

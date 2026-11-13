@@ -15423,7 +15423,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 22,
    "orfao": false
   },
   {
@@ -15981,7 +15981,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 63,
+   "usado_por": 64,
    "orfao": false
   },
   {
@@ -17979,7 +17979,7 @@
     "ApprovalWorkflowsPage"
    ],
    "export_default": "ApprovalWorkflowsPage",
-   "linhas": 629,
+   "linhas": 786,
    "dominio": "pages",
    "hooks_locais": [
     "useApprovalRequests",
@@ -17987,6 +17987,9 @@
     "useCreateApprovalRequest",
     "useCreateWorkflow",
     "useDecideApproval",
+    "useDeleteWorkflow",
+    "useToggleWorkflowActive",
+    "useUpdateWorkflow",
     "useUserRoles"
    ],
    "tabelas": [],

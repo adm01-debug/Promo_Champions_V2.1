@@ -639,9 +639,12 @@
     "useApprovalWorkflows",
     "useCreateApprovalRequest",
     "useCreateWorkflow",
-    "useDecideApproval"
+    "useDecideApproval",
+    "useDeleteWorkflow",
+    "useToggleWorkflowActive",
+    "useUpdateWorkflow"
    ],
-   "linhas": 166,
+   "linhas": 256,
    "dominio": "hooks/admin",
    "tabelas": [
     "approval_decisions",
@@ -661,7 +664,7 @@
    "usado_por_arquivos": [
     "src/pages/ApprovalWorkflowsPage.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/admin/useAuditLogs.ts",

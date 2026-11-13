@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2301,
- "arestas": 9474,
+ "arestas": 9476,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -98,7 +98,7 @@
   },
   {
    "arquivo": "src/components/ui/switch.tsx",
-   "importado_por": 63
+   "importado_por": 64
   },
   {
    "arquivo": "supabase/functions/_shared/rate-limit.ts",

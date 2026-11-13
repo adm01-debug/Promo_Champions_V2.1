@@ -2456,6 +2456,7 @@
     "useCreateApprovalRequest",
     "useCreateWorkflow",
     "useDecideApproval",
+    "useDeleteWorkflow",
     "useEffect",
     "useLocation",
     "useMemo",
@@ -2467,6 +2468,8 @@
     "useReducedMotion",
     "useRef",
     "useState",
+    "useToggleWorkflowActive",
+    "useUpdateWorkflow",
     "useUserRoles"
    ],
    "hooks_locais": [
@@ -2476,7 +2479,10 @@
     "useCreateApprovalRequest",
     "useCreateWorkflow",
     "useDecideApproval",
+    "useDeleteWorkflow",
     "useReducedMotion",
+    "useToggleWorkflowActive",
+    "useUpdateWorkflow",
     "useUserRoles"
    ],
    "tabelas": [
@@ -2498,7 +2504,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 22
+   "arquivos_puxados": 24
   },
   {
    "protegida": false,

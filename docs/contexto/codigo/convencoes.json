@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (100)",
+   "co-localizado (*.test) (101)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)",
    "feat: editar e excluir filas do Power Dialer (#435)",
    "feat: editar e arquivar materiais no Sales Enablement (#433)",
    "feat: editar e desativar desafios semanais (#432)",
-   "feat: editar e cancelar batalhas de vendas (#431)",
-   "feat: editar e excluir workflows no Automation Builder (#430)"
+   "feat: editar e cancelar batalhas de vendas (#431)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

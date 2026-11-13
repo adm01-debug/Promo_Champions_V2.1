@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4e0bb0027dbd429dec86b045e78a959f9c6de156",
+  "sha": "2c36718033f0e336dc9794c8703e25404ce8ac0a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 07:03 UTC",
-  "files_total": 3485,
-  "code_files": 3156,
-  "code_lines": 460825
+  "generated_at": "2026-11-13 07:33 UTC",
+  "files_total": 3486,
+  "code_files": 3157,
+  "code_lines": 461206
  },
  "version": "1.3.2",
- "facts_hash": "4e884b9bc6d735d4",
+ "facts_hash": "f0872d00e4391e68",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1320,
+   ".tsx": 1321,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -65106,7 +65106,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 21
+    "deps_count": 23
    },
    {
     "path": "",
@@ -74070,6 +74070,18 @@
     "file": "src/hooks/admin/useApprovalWorkflows.ts"
    },
    {
+    "name": "useUpdateWorkflow",
+    "file": "src/hooks/admin/useApprovalWorkflows.ts"
+   },
+   {
+    "name": "useToggleWorkflowActive",
+    "file": "src/hooks/admin/useApprovalWorkflows.ts"
+   },
+   {
+    "name": "useDeleteWorkflow",
+    "file": "src/hooks/admin/useApprovalWorkflows.ts"
+   },
+   {
     "name": "useAuditLogs",
     "file": "src/hooks/admin/useAuditLogs.ts"
    },
@@ -78074,8 +78086,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 513,
-   "lines": 59846,
+   "files": 514,
+   "lines": 60070,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78699,7 +78711,7 @@
   {
    "module": "src/pages",
    "files": 177,
-   "lines": 43938,
+   "lines": 44095,
    "tables": [
     "achievements",
     "activities",
@@ -79965,6 +79977,12 @@
      "src/hooks/admin/useApprovalWorkflows.ts"
     ],
     "insert": [
+     "src/hooks/admin/useApprovalWorkflows.ts"
+    ],
+    "update": [
+     "src/hooks/admin/useApprovalWorkflows.ts"
+    ],
+    "delete": [
      "src/hooks/admin/useApprovalWorkflows.ts"
     ]
    },
@@ -84083,6 +84101,10 @@
     "value"
    ],
    "approval_requests": [
+    "id",
+    "workflow_id"
+   ],
+   "approval_workflows": [
     "id"
    ],
    "audit_logs": [
@@ -91605,6 +91627,14 @@
    },
    {
     "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "msg": "Erro ao alterar status do workflow"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "msg": "Erro ao atualizar workflow"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
     "msg": "Erro ao criar solicitação"
    },
    {
@@ -91613,11 +91643,27 @@
    },
    {
     "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "msg": "Erro ao excluir workflow"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
     "msg": "Erro ao processar decisão"
    },
    {
     "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "msg": "Este workflow tem ${error.linkedRequests} solicitação(ões) vinculada(s). Desative-o em vez de excluir."
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
     "msg": "Not authenticated"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "msg": "Sem permissão para alterar este fluxo"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "msg": "Sem permissão para excluir este fluxo"
    },
    {
     "file": "src/hooks/admin/useDataSubjectRequests.ts",
@@ -94398,6 +94444,10 @@
    {
     "file": "src/hooks/useUnreadNotificationsCount.ts",
     "text": "O cache de módulo não expira sozinho: no logout/troca de conta a"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.ts",
+    "text": "* Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */"
    },
    {
     "file": "src/hooks/assistant/useBriefingHistory.ts",
@@ -131468,6 +131518,26 @@
    {
     "file": "src/hooks/abm/useAccounts.test.tsx",
     "name": "sem sessão: não tenta inserir e avisa para entrar de novo"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.test.tsx",
+    "name": "CRUD de workflows de aprovação"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.test.tsx",
+    "name": "atualiza os campos editáveis do workflow"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.test.tsx",
+    "name": "ativa/desativa via is_active e falha quando RLS não altera nenhuma linha"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.test.tsx",
+    "name": "exclui workflow sem solicitações vinculadas"
+   },
+   {
+    "file": "src/hooks/admin/useApprovalWorkflows.test.tsx",
+    "name": "bloqueia exclusão quando há solicitações vinculadas (FK em cascata)"
    },
    {
     "file": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",
@@ -203668,16 +203738,33 @@
     "5"
    ]
   },
+  "src/hooks/admin/useApprovalWorkflows.test.tsx": {
+   "path": "src/hooks/admin/useApprovalWorkflows.test.tsx",
+   "lines": 134,
+   "is_test": true,
+   "tests": [
+    "CRUD de workflows de aprovação",
+    "atualiza os campos editáveis do workflow",
+    "ativa/desativa via is_active e falha quando RLS não altera nenhuma linha",
+    "exclui workflow sem solicitações vinculadas",
+    "bloqueia exclusão quando há solicitações vinculadas (FK em cascata)"
+   ]
+  },
   "src/hooks/admin/useApprovalWorkflows.ts": {
    "path": "src/hooks/admin/useApprovalWorkflows.ts",
-   "lines": 166,
+   "lines": 256,
    "exports": [
+    "interface ApprovalWorkflow",
     "interface ApprovalRequest",
     "function useApprovalWorkflows",
     "function useApprovalRequests",
     "function useCreateApprovalRequest",
     "function useDecideApproval",
-    "function useCreateWorkflow"
+    "function useCreateWorkflow",
+    "class WorkflowInUseError",
+    "function useUpdateWorkflow",
+    "function useToggleWorkflowActive",
+    "function useDeleteWorkflow"
    ],
    "tables": [
     {
@@ -203703,25 +203790,53 @@
     {
      "table": "approval_workflows",
      "op": "insert,select"
+    },
+    {
+     "table": "approval_workflows",
+     "op": "select,update"
+    },
+    {
+     "table": "approval_requests",
+     "op": "select"
+    },
+    {
+     "table": "approval_workflows",
+     "op": "delete,select"
     }
    ],
    "table_cols": {
     "approval_requests": [
+     "id",
+     "workflow_id"
+    ],
+    "approval_workflows": [
      "id"
     ]
    },
    "errors": [
+    "Erro ao alterar status do workflow",
+    "Erro ao atualizar workflow",
     "Erro ao criar solicitação",
     "Erro ao criar workflow",
+    "Erro ao excluir workflow",
     "Erro ao processar decisão",
-    "Not authenticated"
+    "Este workflow tem ${error.linkedRequests} solicitação(ões) vinculada(s). Desative-o em vez de excluir.",
+    "Not authenticated",
+    "Sem permissão para alterar este fluxo",
+    "Sem permissão para excluir este fluxo"
+   ],
+   "rule_comments": [
+    "* Lançado quando o fluxo tem solicitações vinculadas e não pode ser excluído. */"
    ],
    "hooks": [
     "useApprovalWorkflows",
     "useApprovalRequests",
     "useCreateApprovalRequest",
     "useDecideApproval",
-    "useCreateWorkflow"
+    "useCreateWorkflow",
+    "useUpdateWorkflow",
+    "useToggleWorkflowActive",
+    "useDeleteWorkflow"
    ],
    "temporal": [
     "expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),"
@@ -218557,7 +218672,7 @@
   },
   "src/pages/ApprovalWorkflowsPage.tsx": {
    "path": "src/pages/ApprovalWorkflowsPage.tsx",
-   "lines": 629,
+   "lines": 786,
    "exports": [
     "default ApprovalWorkflowsPage"
    ],
@@ -245563,10 +245678,21 @@
   }
  },
  "git": {
-  "sha": "4e0bb0027dbd429dec86b045e78a959f9c6de156",
+  "sha": "2c36718033f0e336dc9794c8703e25404ce8ac0a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "2c36718",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)",
+    "files": [
+     "src/hooks/admin/useApprovalWorkflows.test.tsx",
+     "src/hooks/admin/useApprovalWorkflows.ts",
+     "src/pages/ApprovalWorkflowsPage.tsx"
+    ]
+   },
    {
     "sha": "4e0bb00",
     "date": "2026-11-13",
@@ -246345,15 +246471,6 @@
     "date": "2026-11-09",
     "author": "adm01-debug",
     "subject": "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)",
-    "files": [
-     "scripts/inventario/gerar-banco.mjs"
-    ]
-   },
-   {
-    "sha": "4f31f1f",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)",
     "files": [
      "scripts/inventario/gerar-banco.mjs"
     ]
