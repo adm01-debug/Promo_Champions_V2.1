@@ -149,7 +149,7 @@ export function PricingIntelligenceHub() {
       {/* Ocultando antigo competitor threats pois foi integrado acima */}
 
       {/* Margin Alerts - Passo 4 Premium */}
-      <MarginAlertsCard />
+      <MarginAlertsCard days={days} />
     </div>
   );
 }
