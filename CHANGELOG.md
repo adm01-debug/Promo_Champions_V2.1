@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
+
+
+### Funcionalidades
+
+* editar e excluir stakeholders da conta ABM ([#427](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/427)) ([d51e633](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d51e6339eee5046bdca46c1a378552fa2c704ecc))
+
 ## [1.2.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.1.0...promo-champions-v2-v1.2.0) (2026-11-12)
 
 
