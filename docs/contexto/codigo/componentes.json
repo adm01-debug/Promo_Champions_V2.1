@@ -4283,10 +4283,11 @@
     "BattleArena"
    ],
    "export_default": null,
-   "linhas": 249,
+   "linhas": 331,
    "dominio": "components/competitive",
    "hooks_locais": [
-    "useSalesBattles"
+    "useSalesBattles",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],
@@ -4299,7 +4300,7 @@
     "BattleCardItem"
    ],
    "export_default": null,
-   "linhas": 224,
+   "linhas": 258,
    "dominio": "components/competitive",
    "hooks_locais": [],
    "tabelas": [],
@@ -4361,10 +4362,11 @@
   {
    "arquivo": "src/components/competitive/CreateBattleDialog.tsx",
    "exports": [
-    "CreateBattleDialog"
+    "CreateBattleDialog",
+    "EditableBattle"
    ],
    "export_default": null,
-   "linhas": 268,
+   "linhas": 332,
    "dominio": "components/competitive",
    "hooks_locais": [
     "useSalesBattles",
@@ -15415,7 +15417,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -15512,7 +15514,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 540,
+   "usado_por": 541,
    "orfao": false
   },
   {

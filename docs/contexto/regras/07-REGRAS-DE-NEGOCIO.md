@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9d3c316eac` · branch `main` · 2026-11-13 06:01 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b68acd2b2d` · branch `main` · 2026-11-13 06:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1416,7 +1416,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `breached` | compara | `src/components/pipeline/SLADashboard.tsx`<br>`src/hooks/useDealSLAs.ts` |
 | `status` | `busy` | compara | `supabase/functions/twilio-call-status/index.ts` |
 | `status` | `canceled` | compara | `supabase/functions/twilio-call-status/index.ts` |
-| `status` | `cancelled` | compara, escreve, filtra | `src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/orders/orderHelpers.ts`<br>`src/components/vendedor/VendedorBottomRow.tsx`<br>… +15 |
+| `status` | `cancelled` | compara, escreve, filtra | `src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/components/orders/orderHelpers.ts`<br>`src/components/vendedor/VendedorBottomRow.tsx`<br>… +16 |
 | `status` | `churned` | compara | `supabase/functions/customer-success-360/index.ts` |
 | `status` | `closed` | compara | `supabase/migrations/20260105000004_performance_indexes.sql` |
 | `status` | `closed_lost` | compara | `src/components/assistant/DealPreviewCard.tsx`<br>`src/components/assistant/dealRiskCalculator.ts` |
@@ -3871,6 +3871,8 @@ _nenhum item encontrado_
 | Cadência e nome são obrigatórios | `src/components/cadences/EnrollmentRulesDialog.tsx` |
 | Erro ao executar auto-enrollment | `src/components/cadences/EnrollmentRulesDialog.tsx` |
 | Erro ao aceitar lead | `src/components/closer/CloserHandoffs.tsx` |
+| Erro ao cancelar batalha | `src/components/competitive/BattleArena.tsx` |
+| Erro ao atualizar batalha | `src/components/competitive/CreateBattleDialog.tsx` |
 | Erro ao iniciar batalha | `src/components/competitive/CreateBattleDialog.tsx` |
 | Selecione pelo menos 2 gladiadores | `src/components/competitive/CreateBattleDialog.tsx` |
 | Selecione uma data de encerramento | `src/components/competitive/CreateBattleDialog.tsx` |
@@ -4025,9 +4027,7 @@ _nenhum item encontrado_
 | Falha na análise comportamental | `src/hooks/useBehavioralAnalysis.ts` |
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
-| Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
-| Erro na sincronização | `src/hooks/useBitrix24.ts` |
-| … +643 linhas — lista completa em `context.json` | |
+| … +647 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4133,7 +4133,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1294 testes em 142 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1302 testes em 144 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4197,6 +4197,7 @@ _nenhum item encontrado_
 | `src/hooks/useLoginRateLimiter.test.tsx` | 6 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
 | `src/hooks/reports/useMarkupMinSamplePreference.test.tsx` | 6 | useMarkupMinSamplePreference · começa com a amostra padrão 1 e expõe as opções · lê valor válido persistido no localStorage · ignora valor inválido persistido e volta ao padrão … |
+| `src/hooks/sales/useSalesBattles.test.tsx` | 6 | useSalesBattles — editar e cancelar · atualiza somente os campos da batalha pelo id · falha quando a RLS não deixa editar (0 linhas) · cancela a batalha pelo id sem apagar a linha … |
 | `src/lib/supabase/chunkedIn.test.ts` | 6 | chunkedIn · short-circuits on empty array · splits into chunks of chunkSize and concatenates data · preserves order in sequential mode … |
 | `src/pages/Index.test.tsx` | 6 | Dashboard Integration Tests · recalculates KPIs when period is changed · shows skeleton states while loading · handles data fetch failure and recovery … |
 | `supabase/functions/_shared/retry.test.ts` | 6 | withRetry — sucesso na primeira tentativa não retorna RetryError · withRetry — success_after_retry após 5xx transient · withRetry — retry_exhausted lança RetryError com attempts=maxAttempts · withRetry — non_retryable (4xx) não faz retry … |
@@ -4249,6 +4250,7 @@ _nenhum item encontrado_
 | `tests/e2e/quote-to-sale-seq-no-advance.spec.ts` | 3 | Sequence: falha de conversão não avança sequence · TOTAL_MISMATCH: sequence estável e zero orders/sales · FORBIDDEN: sequence estável e zero orders/sales |
 | `tests/e2e/quote-to-sale-won-path.spec.ts` | 3 | Path novo (won): RPC cria ORC-* e avança sequence · won: 1 conversão gera ORC-* e sequence +1 · won x3 quotes independentes: sequence avança exatamente +3, números únicos |
 | `tests/e2e/smoke.spec.ts` | 3 | Smoke Tests · should load the home page · should redirect to auth if not logged in |
+| `src/components/competitive/BattleArena.test.tsx` | 2 | BattleArena — gerenciar batalhas · mostra editar/cancelar só na batalha ativa, nunca na finalizada |
 | `src/hooks/useClientsNeedingContact.test.tsx` | 2 | useClientsNeedingContact · particiona a busca de contatos para carteiras grandes |
 | `src/hooks/useLeadAssignment.test.ts` | 2 | assignLeadRoundRobin · não mantém cursor de round-robin no módulo do navegador |
 | `src/hooks/bi/useChurnOverdueBySeller.test.tsx` | 2 | useChurnOverdueBySeller · particiona a consulta de vendedores quando há mais de 100 IDs |

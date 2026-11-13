@@ -2021,14 +2021,17 @@
   "src/components/competitive/BattleArena.tsx": [
    "src/components/competitive/BattleCardItem.tsx",
    "src/components/competitive/CreateBattleDialog.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/hooks/sales/useSalesBattles.ts",
+   "src/hooks/useUserRoles.ts",
    "src/lib/utils.ts"
   ],
   "src/components/competitive/BattleCardItem.tsx": [
    "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/lib/utils.ts"
   ],

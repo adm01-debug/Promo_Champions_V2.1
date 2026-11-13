@@ -1705,8 +1705,8 @@
   {
    "modulo": "components/competitive",
    "arquivos": 33,
-   "testes": 0,
-   "linhas": 8148,
+   "testes": 1,
+   "linhas": 8328,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1734,6 +1734,7 @@
     "useSalespeople",
     "useSalespeopleRanking",
     "useUpdateSalesperson",
+    "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
     "useWeeklyRanking"
@@ -1774,6 +1775,7 @@
     "tournament_matches",
     "tournament_participants",
     "tournaments",
+    "user_roles",
     "victory_feed",
     "weekly_matchups"
    ],
@@ -1786,12 +1788,20 @@
    "buckets": [],
    "canais_realtime": [],
    "env": [
+    "DEV",
     "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [
@@ -13908,8 +13918,8 @@
   {
    "modulo": "hooks/sales",
    "arquivos": 16,
-   "testes": 1,
-   "linhas": 2264,
+   "testes": 2,
+   "linhas": 2312,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

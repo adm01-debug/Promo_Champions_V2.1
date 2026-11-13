@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2301,
- "arestas": 9464,
+ "arestas": 9467,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 540
+   "importado_por": 541
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -129,11 +129,11 @@
    "importado_por": 37
   },
   {
-   "arquivo": "src/hooks/race/useRaceLeaderboard.ts",
-   "importado_por": 33
+   "arquivo": "src/hooks/useUserRoles.ts",
+   "importado_por": 34
   },
   {
-   "arquivo": "src/hooks/useUserRoles.ts",
+   "arquivo": "src/hooks/race/useRaceLeaderboard.ts",
    "importado_por": 33
   },
   {

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9d3c316eac7a49bede04e12dd209182463ea6cd7",
+  "sha": "b68acd2b2d4e0743c20de4080699758f3a902d40",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 06:01 UTC",
-  "files_total": 3477,
-  "code_files": 3148,
-  "code_lines": 459079
+  "generated_at": "2026-11-13 06:07 UTC",
+  "files_total": 3479,
+  "code_files": 3150,
+  "code_lines": 459515
  },
  "version": "1.3.2",
- "facts_hash": "22ff557527c2ac15",
+ "facts_hash": "3c4ca94072568f72",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1312,
+   ".tsx": 1314,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -66373,6 +66373,7 @@
      "tournament_matches",
      "tournament_participants",
      "tournaments",
+     "user_roles",
      "victory_feed",
      "weekly_matchups"
     ],
@@ -66383,7 +66384,7 @@
      "spin_prize_wheel",
      "sync_challenge_progress"
     ],
-    "deps_count": 77
+    "deps_count": 81
    },
    {
     "path": "/assistente",
@@ -73858,7 +73859,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1185,
+  "components_count": 1186,
   "hooks": [
    {
     "name": "useContacts",
@@ -77697,8 +77698,8 @@
   },
   {
    "module": "src/components",
-   "files": 1185,
-   "lines": 187956,
+   "files": 1186,
+   "lines": 188190,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78021,8 +78022,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 509,
-   "lines": 59020,
+   "files": 510,
+   "lines": 59222,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -82639,6 +82640,9 @@
     ],
     "ref": [
      "src/hooks/sales/useSalesBattles.ts"
+    ],
+    "update": [
+     "src/hooks/sales/useSalesBattles.ts"
     ]
    },
    "sales_enablement_assets": {
@@ -85223,6 +85227,7 @@
    ],
    "sales_battles": [
     "id",
+    "status",
     "title"
    ],
    "sales_enablement_assets": [
@@ -90424,6 +90429,14 @@
     "msg": "Erro ao aceitar lead"
    },
    {
+    "file": "src/components/competitive/BattleArena.tsx",
+    "msg": "Erro ao cancelar batalha"
+   },
+   {
+    "file": "src/components/competitive/CreateBattleDialog.tsx",
+    "msg": "Erro ao atualizar batalha"
+   },
+   {
     "file": "src/components/competitive/CreateBattleDialog.tsx",
     "msg": "Erro ao iniciar batalha"
    },
@@ -92138,6 +92151,14 @@
    {
     "file": "src/hooks/sales/useSalesAssistant.ts",
     "msg": "Não foi possível criar ou encontrar uma conversa."
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.ts",
+    "msg": "Sem permissão para cancelar esta batalha ou ela já foi encerrada"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.ts",
+    "msg": "Sem permissão para editar esta batalha ou ela já foi encerrada"
    },
    {
     "file": "src/hooks/sales/useSalesData.ts",
@@ -119396,6 +119417,24 @@
    {
     "file": "src/hooks/sales/useSalesBattles.ts",
     "field": "status",
+    "value": "cancelled",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.ts",
+    "field": "status",
+    "value": "active",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.ts",
+    "field": "status",
+    "value": "active",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.ts",
+    "field": "status",
     "value": "active",
     "kind": "filtra"
    },
@@ -130746,6 +130785,14 @@
     "name": "resolverExecutavel ignora entrada relativa do PATH"
    },
    {
+    "file": "src/components/competitive/BattleArena.test.tsx",
+    "name": "BattleArena — gerenciar batalhas"
+   },
+   {
+    "file": "src/components/competitive/BattleArena.test.tsx",
+    "name": "mostra editar/cancelar só na batalha ativa, nunca na finalizada"
+   },
+   {
     "file": "src/components/email/aiEmailComposer.test.ts",
     "name": "AIEmailComposer mapping logic"
    },
@@ -131976,6 +132023,30 @@
    {
     "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
     "name": "não consulta nem salva sem perfil de vendedor"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.test.tsx",
+    "name": "useSalesBattles — editar e cancelar"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.test.tsx",
+    "name": "atualiza somente os campos da batalha pelo id"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.test.tsx",
+    "name": "falha quando a RLS não deixa editar (0 linhas)"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.test.tsx",
+    "name": "cancela a batalha pelo id sem apagar a linha"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.test.tsx",
+    "name": "não altera batalha já finalizada (0 linhas no filtro de status)"
+   },
+   {
+    "file": "src/hooks/sales/useSalesBattles.test.tsx",
+    "name": "falha quando a RLS não deixa cancelar (0 linhas)"
    },
    {
     "file": "src/lib/draftMigration.test.ts",
@@ -159894,6 +159965,7 @@
       "escreve:src/hooks/cadences/useBulkQuoteCadenceMutations.ts",
       "escreve:src/hooks/cadences/useProspectCadenceMutations.ts",
       "escreve:src/hooks/cadences/useQuoteCadenceMutations.ts",
+      "escreve:src/hooks/sales/useSalesBattles.ts",
       "escreve:src/hooks/sequences/useSendTimeOptimization.ts",
       "escreve:src/hooks/win-loss/useAsyncReplayQueue.ts",
       "escreve:src/pages/AdminAuditoriaPremiacoes.tsx",
@@ -183395,11 +183467,23 @@
     "transition={{ delay: Math.min(i * 0.03, 0.4) }}"
    ]
   },
+  "src/components/competitive/BattleArena.test.tsx": {
+   "path": "src/components/competitive/BattleArena.test.tsx",
+   "lines": 54,
+   "is_test": true,
+   "tests": [
+    "BattleArena — gerenciar batalhas",
+    "mostra editar/cancelar só na batalha ativa, nunca na finalizada"
+   ]
+  },
   "src/components/competitive/BattleArena.tsx": {
    "path": "src/components/competitive/BattleArena.tsx",
-   "lines": 249,
+   "lines": 331,
    "exports": [
     "const BattleArena"
+   ],
+   "errors": [
+    "Erro ao cancelar batalha"
    ],
    "status_values": [
     {
@@ -183416,7 +183500,7 @@
   },
   "src/components/competitive/BattleCardItem.tsx": {
    "path": "src/components/competitive/BattleCardItem.tsx",
-   "lines": 224,
+   "lines": 258,
    "exports": [
     "const BattleCardItem"
    ],
@@ -183486,8 +183570,9 @@
   },
   "src/components/competitive/CreateBattleDialog.tsx": {
    "path": "src/components/competitive/CreateBattleDialog.tsx",
-   "lines": 268,
+   "lines": 332,
    "exports": [
+    "interface EditableBattle",
     "const CreateBattleDialog"
    ],
    "tables": [
@@ -183503,6 +183588,7 @@
     ]
    },
    "errors": [
+    "Erro ao atualizar batalha",
     "Erro ao iniciar batalha",
     "Selecione pelo menos 2 gladiadores",
     "Selecione uma data de encerramento",
@@ -212992,9 +213078,22 @@
     "50"
    ]
   },
+  "src/hooks/sales/useSalesBattles.test.tsx": {
+   "path": "src/hooks/sales/useSalesBattles.test.tsx",
+   "lines": 154,
+   "is_test": true,
+   "tests": [
+    "useSalesBattles — editar e cancelar",
+    "atualiza somente os campos da batalha pelo id",
+    "falha quando a RLS não deixa editar (0 linhas)",
+    "cancela a batalha pelo id sem apagar a linha",
+    "não altera batalha já finalizada (0 linhas no filtro de status)",
+    "falha quando a RLS não deixa cancelar (0 linhas)"
+   ]
+  },
   "src/hooks/sales/useSalesBattles.ts": {
    "path": "src/hooks/sales/useSalesBattles.ts",
-   "lines": 124,
+   "lines": 172,
    "exports": [
     "function useSalesBattles"
    ],
@@ -213014,14 +213113,45 @@
     {
      "table": "battle_participants",
      "op": "update"
+    },
+    {
+     "table": "sales_battles",
+     "op": "select,update"
+    },
+    {
+     "table": "sales_battles",
+     "op": "select,update"
     }
    ],
    "table_cols": {
     "battle_participants": [
      "id"
+    ],
+    "sales_battles": [
+     "id",
+     "status"
     ]
    },
+   "errors": [
+    "Sem permissão para cancelar esta batalha ou ela já foi encerrada",
+    "Sem permissão para editar esta batalha ou ela já foi encerrada"
+   ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "cancelled",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "active",
+     "kind": "filtra"
+    },
+    {
+     "field": "status",
+     "value": "active",
+     "kind": "filtra"
+    },
     {
      "field": "status",
      "value": "active",
@@ -245068,10 +245198,24 @@
   }
  },
  "git": {
-  "sha": "9d3c316eac7a49bede04e12dd209182463ea6cd7",
+  "sha": "b68acd2b2d4e0743c20de4080699758f3a902d40",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "b68acd2",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e cancelar batalhas de vendas (#431)",
+    "files": [
+     "src/components/competitive/BattleArena.test.tsx",
+     "src/components/competitive/BattleArena.tsx",
+     "src/components/competitive/BattleCardItem.tsx",
+     "src/components/competitive/CreateBattleDialog.tsx",
+     "src/hooks/sales/useSalesBattles.test.tsx",
+     "src/hooks/sales/useSalesBattles.ts"
+    ]
+   },
    {
     "sha": "9d3c316",
     "date": "2026-11-13",
@@ -245835,15 +245979,6 @@
      "inventario/estado/banco.json",
      "inventario/estado/edges.json"
     ]
-   },
-   {
-    "sha": "053885b",
-    "date": "2026-11-09",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump github/codeql-action/analyze from 4.39.1 to 4.39.3 (#402)",
-    "files": [
-     ".github/workflows/codeql.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -245857,10 +245992,6 @@
    ],
    [
     "deno.lock",
-    4
-   ],
-   [
-    ".github/workflows/codeql.yml",
     4
    ],
    [
@@ -245878,6 +246009,14 @@
    [
     "inventario/estado/edges.json",
     3
+   ],
+   [
+    ".github/workflows/codeql.yml",
+    3
+   ],
+   [
+    "src/components/competitive/BattleCardItem.tsx",
+    2
    ],
    [
     "src/pages/AccountBasedSelling.tsx",
@@ -245921,10 +246060,6 @@
    ],
    [
     "src/components/analytics/WeightedForecastDashboard.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/performance/PerformanceCharts.tsx",
     2
    ]
   ]

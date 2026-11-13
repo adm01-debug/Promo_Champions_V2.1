@@ -6471,7 +6471,7 @@
    "hooks_exportados": [
     "useSalesBattles"
    ],
-   "linhas": 124,
+   "linhas": 172,
    "dominio": "hooks/sales",
    "tabelas": [
     "battle_participants",
@@ -6491,7 +6491,7 @@
     "src/components/competitive/BattleArena.tsx",
     "src/components/competitive/CreateBattleDialog.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/sales/useSalesChartData.ts",
@@ -10803,10 +10803,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 33,
+   "usado_por": 34,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
+    "src/components/competitive/BattleArena.tsx",
     "src/components/conversational/CoachingActionsList.tsx",
     "src/components/dashboard/DevKpiDebugPanel.tsx",
     "src/components/mobile/MobileDrawer.tsx",
@@ -10833,8 +10834,7 @@
     "src/pages/ApprovalWorkflowsPage.tsx",
     "src/pages/AssinaturaDigital.tsx",
     "src/pages/Configuracoes.tsx",
-    "src/pages/DesafiosSemanais.tsx",
-    "src/pages/FollowUpInteligente.tsx"
+    "src/pages/DesafiosSemanais.tsx"
    ],
    "coberto_por_testes": 0
   },

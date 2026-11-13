@@ -2513,6 +2513,7 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
     "useCollectibleBadges",
     "useCompetitiveChat",
@@ -2549,11 +2550,13 @@
     "useSalespeopleRanking",
     "useState",
     "useUpdateSalesperson",
+    "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
     "useWeeklyRanking"
    ],
    "hooks_locais": [
+    "useAuth",
     "useCollectibleBadges",
     "useCompetitiveChat",
     "useCompetitiveRanking",
@@ -2576,6 +2579,7 @@
     "useSalespeople",
     "useSalespeopleRanking",
     "useUpdateSalesperson",
+    "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
     "useWeeklyRanking"
@@ -2614,6 +2618,7 @@
     "tournament_matches",
     "tournament_participants",
     "tournaments",
+    "user_roles",
     "victory_feed",
     "weekly_matchups"
    ],
@@ -2627,9 +2632,15 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [
-    "region"
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "region",
+    "salesperson",
+    "sdr"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 82
   },
   {
    "protegida": false,
