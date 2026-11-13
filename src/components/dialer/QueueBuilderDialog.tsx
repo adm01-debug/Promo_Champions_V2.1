@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -16,29 +16,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCreateQueue } from '@/hooks/dialer/usePowerDialer';
+import {
+  type DialerQueue,
+  useCreateQueue,
+  useUpdateQueue,
+} from '@/hooks/dialer/usePowerDialer';
 import { STRATEGY_OPTIONS } from './dialerHelpers';
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Quando informado, o diálogo edita esta fila em vez de criar uma nova. */
+  queue?: DialerQueue | null;
 }
 
-export const QueueBuilderDialog = ({ open, onOpenChange }: Props) => {
+export const QueueBuilderDialog = ({ open, onOpenChange, queue }: Props) => {
   const [name, setName] = useState('');
   const [strategy, setStrategy] = useState<'hybrid' | 'score' | 'recency' | 'send_time'>(
     'hybrid'
   );
   const [minScore, setMinScore] = useState(0);
   const create = useCreateQueue();
+  const update = useUpdateQueue();
+  const isEdit = !!queue;
+  const isPending = create.isPending || update.isPending;
+
+  useEffect(() => {
+    if (!open || !queue) return;
+    setName(queue.name);
+    setStrategy(queue.priority_strategy);
+    setMinScore(Number(queue.filter?.min_score ?? 0));
+  }, [open, queue]);
 
   const handleCreate = async () => {
     if (!name.trim()) return;
-    await create.mutateAsync({
-      name: name.trim(),
-      priority_strategy: strategy,
-      filter: { min_score: minScore },
-    });
+    if (queue) {
+      try {
+        await update.mutateAsync({
+          id: queue.id,
+          name: name.trim(),
+          priority_strategy: strategy,
+          filter: { ...queue.filter, min_score: minScore },
+        });
+      } catch {
+        return; // erro já exibido via toast; mantém o diálogo aberto
+      }
+    } else {
+      await create.mutateAsync({
+        name: name.trim(),
+        priority_strategy: strategy,
+        filter: { min_score: minScore },
+      });
+    }
     setName('');
     setStrategy('hybrid');
     setMinScore(0);
@@ -49,7 +78,9 @@ export const QueueBuilderDialog = ({ open, onOpenChange }: Props) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Nova fila de discagem</DialogTitle>
+          <DialogTitle>
+            {isEdit ? 'Editar fila de discagem' : 'Nova fila de discagem'}
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
@@ -95,10 +126,10 @@ export const QueueBuilderDialog = ({ open, onOpenChange }: Props) => {
           </Button>
           <Button
             onClick={handleCreate}
-            disabled={!name.trim() || create.isPending}
-            loading={create.isPending}
+            disabled={!name.trim() || isPending}
+            loading={isPending}
           >
-            Criar fila
+            {isEdit ? 'Salvar alterações' : 'Criar fila'}
           </Button>
         </DialogFooter>
       </DialogContent>
