@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,6 +34,7 @@ import {
 } from '@/hooks/activities/useActivities';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useClients } from '@/hooks/crm/useClients';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Phone,
   Mail,
@@ -135,6 +136,9 @@ export function ActivityLogForm({
 }: ActivityLogFormProps) {
   const { data: salespeople } = useSalespeople();
   const { data: clients } = useClients();
+  // A policy de INSERT em activities exige salesperson_id = vendedor logado
+  // (ou admin/gestor); por isso o campo Vendedor já vem com o usuário logado.
+  const { salesperson: authSalesperson } = useAuth();
   const createActivity = useCreateActivity();
   const [salespersonOpen, setSalespersonOpen] = useState(false);
   const [clientOpen, setClientOpen] = useState(false);
@@ -201,13 +205,20 @@ export function ActivityLogForm({
     defaultValues: {
       activity_type: defaultActivityType || 'call',
       outcome: 'connected',
-      salesperson_id: '',
+      salesperson_id: authSalesperson?.id ?? '',
       client_id: clientId || '',
       contact_name: '',
       duration_minutes: undefined,
       notes: '',
     },
   });
+
+  // O perfil do vendedor carrega de forma assíncrona no AuthContext.
+  useEffect(() => {
+    if (authSalesperson?.id && !form.getValues('salesperson_id')) {
+      form.setValue('salesperson_id', authSalesperson.id);
+    }
+  }, [authSalesperson?.id, form]);
 
   const selectedActivityType = form.watch('activity_type');
   const selectedOutcome = form.watch('outcome');
