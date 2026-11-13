@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)",
    "fix: grava vendedor logado como dono ao criar conta no ABM (#475)",
    "fix: enviar user_id ao criar preferência de notificação (#474)",
    "fix: grava pesquisa NPS no vendedor logado (#473)",
-   "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)",
-   "fix: etapa do playbook grava o vendedor certo em completed_by (#479)"
+   "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

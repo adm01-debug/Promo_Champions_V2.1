@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `52ad2f4057c69d1331632e65fd2084c5b298cd51` (2026-11-13T09:48:57Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7b450235c1123bc84af5c7e3c71a396844612658` (2026-11-13T10:34:06Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -574,7 +574,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20301 nós · 64485 arestas · 1477 comunidades · grafo do commit `52ad2f40`
+- 20301 nós · 64485 arestas · 1477 comunidades · grafo do commit `7b450235`
 - comunidades maiores: Card (808), Button (538), client.ts (310), getCorsHeaders (286), Índice (277), Cadencias.tsx (235), utils.ts (232), Skeleton (223), Avatar (207), TabsTrigger (198), react (174), constants/index.ts (167)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -582,19 +582,19 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package.json (88)
 - package-lock.json (87)
-- .github/workflows/pr-checks.yml (38)
-- deno.lock (26)
-- .github/workflows/quote-to-sale-e2e.yml (21)
-- .github/workflows/codeql.yml (20)
+- .github/workflows/pr-checks.yml (37)
+- deno.lock (27)
+- .github/workflows/quote-to-sale-e2e.yml (20)
+- .github/workflows/codeql.yml (19)
 - RELATORIO_CI.md (18)
-- .github/workflows/cron-monitoring.yml (16)
-- .github/workflows/qa-exhaustive.yml (15)
+- .github/workflows/cron-monitoring.yml (15)
+- .github/workflows/qa-exhaustive.yml (14)
 - CLAUDE.md (14)
-- supabase/functions/bitrix24-sync/index.ts (14)
-- .github/workflows/edge-functions-bundle.yml (13)
-- src/integrations/supabase/types.ts (13)
-- supabase/config.toml (13)
+- supabase/functions/bitrix24-sync/index.ts (13)
+- .github/workflows/edge-functions-bundle.yml (12)
 - PENDENCIAS.md (12)
+- src/integrations/supabase/types.ts (12)
+- supabase/config.toml (12)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `7b45023` chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)
 - 2026-11-13 `52ad2f4` fix: grava vendedor logado como dono ao criar conta no ABM (#475)
 - 2026-11-13 `3044064` fix: enviar user_id ao criar preferência de notificação (#474)
 - 2026-11-13 `e399094` fix: grava pesquisa NPS no vendedor logado (#473)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `4e0bb00` feat: editar e excluir filas do Power Dialer (#435)
 - 2026-11-13 `7ab97e0` feat: editar e arquivar materiais no Sales Enablement (#433)
 - 2026-11-13 `1f60080` feat: editar e desativar desafios semanais (#432)
-- 2026-11-13 `b68acd2` feat: editar e cancelar batalhas de vendas (#431)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

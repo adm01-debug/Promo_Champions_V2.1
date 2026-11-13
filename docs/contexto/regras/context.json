@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "52ad2f4057c69d1331632e65fd2084c5b298cd51",
+  "sha": "7b450235c1123bc84af5c7e3c71a396844612658",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 10:20 UTC",
+  "generated_at": "2026-11-13 11:38 UTC",
   "files_total": 3496,
   "code_files": 3167,
   "code_lines": 462485
@@ -246070,10 +246070,21 @@
   }
  },
  "git": {
-  "sha": "52ad2f4057c69d1331632e65fd2084c5b298cd51",
+  "sha": "7b450235c1123bc84af5c7e3c71a396844612658",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7b45023",
+    "date": "2026-11-13",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "52ad2f4",
     "date": "2026-11-13",
@@ -246401,24 +246412,16 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "e324e95",
-    "date": "2026-11-12",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.2.0 (#391)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
     5
+   ],
+   [
+    "package-lock.json",
+    4
    ],
    [
     "src/hooks/abm/useAccounts.test.tsx",
@@ -246429,8 +246432,8 @@
     4
    ],
    [
-    "package-lock.json",
-    4
+    "deno.lock",
+    3
    ],
    [
     "src/hooks/sales/useSalesEnablement.test.tsx",
@@ -246454,18 +246457,6 @@
    ],
    [
     "src/hooks/useInactiveDeals.ts",
-    2
-   ],
-   [
-    ".release-please-manifest.json",
-    2
-   ],
-   [
-    "CHANGELOG.md",
-    2
-   ],
-   [
-    "deno.lock",
     2
    ],
    [
@@ -246494,6 +246485,14 @@
    ],
    [
     "src/components/cadences/EnrollCadenceDialog.test.tsx",
+    1
+   ],
+   [
+    "src/components/cadences/EnrollCadenceDialog.tsx",
+    1
+   ],
+   [
+    "src/components/sales/SaleHUDCard.test.tsx",
     1
    ]
   ]
