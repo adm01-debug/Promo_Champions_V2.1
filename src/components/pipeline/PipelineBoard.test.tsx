@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { screen } from '@testing-library/dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const weekly: { data: number | undefined; isError: boolean } = {
@@ -16,6 +17,19 @@ const emptyStages = {
   closed: [],
 };
 const idleMutation = { mutate: vi.fn(), isPending: false };
+
+function renderBoard() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0 },
+    },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <PipelineBoard />
+    </QueryClientProvider>
+  );
+}
 
 vi.mock('@/hooks/pipeline/useWeeklyWonDeals', () => ({
   WEEKLY_WON_DEALS_WINDOW_DAYS: 7,
@@ -73,7 +87,7 @@ describe('PipelineBoard — vendas ganhas na semana', () => {
 
   it('mostra a contagem real de vendas ganhas nos últimos 7 dias', () => {
     weekly.data = 3;
-    render(<PipelineBoard />);
+    renderBoard();
 
     expect(screen.getByTestId('weekly-won-deals')).toHaveTextContent('3 Deals');
     expect(screen.getByText('/ 7 dias')).toBeInTheDocument();
@@ -82,7 +96,7 @@ describe('PipelineBoard — vendas ganhas na semana', () => {
 
   it('não exibe o indicador fixo de Pipeline Health (92.4%)', () => {
     weekly.data = 2;
-    render(<PipelineBoard />);
+    renderBoard();
 
     expect(screen.getByTestId('weekly-won-deals')).toHaveTextContent('2 Deals');
     expect(screen.queryByText(/92\.4%/)).not.toBeInTheDocument();
@@ -91,14 +105,14 @@ describe('PipelineBoard — vendas ganhas na semana', () => {
 
   it('usa singular quando há uma única venda ganha', () => {
     weekly.data = 1;
-    render(<PipelineBoard />);
+    renderBoard();
 
     expect(screen.getByTestId('weekly-won-deals')).toHaveTextContent('1 Deal');
   });
 
   it('não inventa número enquanto carrega ou quando a consulta falha', () => {
     weekly.isError = true;
-    render(<PipelineBoard />);
+    renderBoard();
 
     const value = screen.getByTestId('weekly-won-deals');
     expect(value).toHaveTextContent('—');
