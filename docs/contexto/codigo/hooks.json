@@ -6551,14 +6551,17 @@
    "arquivo": "src/hooks/sales/useSalesEnablement.ts",
    "hooks_exportados": [
     "useAllPlaybookProgress",
+    "useArchiveAsset",
     "useAssetEfficiency",
     "useCreateAsset",
     "useEnablementAssets",
     "useLogAssetUsage",
     "usePlaybooks",
-    "useTogglePlaybookItem"
+    "useRestoreAsset",
+    "useTogglePlaybookItem",
+    "useUpdateAsset"
    ],
-   "linhas": 228,
+   "linhas": 305,
    "dominio": "hooks/sales",
    "tabelas": [
     "asset_usage_logs",
@@ -6583,7 +6586,7 @@
     "src/components/enablement/PlaybookExecutionDialog.tsx",
     "src/components/enablement/SalesEnablementHub.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/sales/useSalesInsights.ts",
@@ -10804,13 +10807,14 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 34,
+   "usado_por": 35,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
     "src/components/competitive/BattleArena.tsx",
     "src/components/conversational/CoachingActionsList.tsx",
     "src/components/dashboard/DevKpiDebugPanel.tsx",
+    "src/components/enablement/SalesEnablementHub.tsx",
     "src/components/mobile/MobileDrawer.tsx",
     "src/components/molecules/UserRoleBadge.tsx",
     "src/components/organisms/AppSidebar.tsx",
@@ -10834,8 +10838,7 @@
     "src/pages/AccountBasedSelling.tsx",
     "src/pages/ApprovalWorkflowsPage.tsx",
     "src/pages/AssinaturaDigital.tsx",
-    "src/pages/Configuracoes.tsx",
-    "src/pages/DesafiosSemanais.tsx"
+    "src/pages/Configuracoes.tsx"
    ],
    "coberto_por_testes": 0
   },

@@ -3580,6 +3580,7 @@
   ],
   "src/components/enablement/SalesEnablementHub.tsx": [
    "src/components/enablement/PlaybookCard.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -3591,6 +3592,7 @@
    "src/components/ui/tabs.tsx",
    "src/components/ui/textarea.tsx",
    "src/hooks/sales/useSalesEnablement.ts",
+   "src/hooks/useUserRoles.ts",
    "src/lib/utils.ts"
   ],
   "src/components/engagement/Account/AccountCoverageBar.tsx": [

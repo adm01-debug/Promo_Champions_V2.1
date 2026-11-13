@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1f60080cc6cbace9f740ad8e82dc13f35e7f147b",
+  "commit": "7ab97e01e7ad92e0cc7181504c2c4ca40c4db6bc",
   "branch": "main",
-  "data_commit": "2026-11-13T06:13:17Z",
+  "data_commit": "2026-11-13T06:20:31Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "7ab97e0",
+    "data": "2026-11-13",
+    "assunto": "feat: editar e arquivar materiais no Sales Enablement (#433)"
+   },
    {
     "sha": "1f60080",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "31f6e2b",
     "data": "2026-11-10",
     "assunto": "fix: corrigir timeout da seção grants no snapshot do banco (#417)"
-   },
-   {
-    "sha": "258c998",
-    "data": "2026-11-10",
-    "assunto": "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)"
    }
   ],
-  "arquivos_mudados_7d": 520,
+  "arquivos_mudados_7d": 526,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -185,7 +185,7 @@
    },
    {
     "pasta": "src/components/conversational",
-    "mudancas": 19
+    "mudancas": 21
    },
    {
     "pasta": "src/components/pipeline",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 99
+    "mudancas": 101
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 97
+    "mudancas": 99
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 36
+    "mudancas": 38
    },
    {
     "arquivo": "deno.lock",
@@ -215,11 +215,11 @@
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 19
+    "mudancas": 21
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 18
+    "mudancas": 20
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -227,14 +227,30 @@
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 14
+    "mudancas": 16
+   },
+   {
+    "arquivo": ".github/workflows/qa-exhaustive.yml",
+    "mudancas": 15
    },
    {
     "arquivo": "CLAUDE.md",
     "mudancas": 14
    },
    {
-    "arquivo": ".github/workflows/qa-exhaustive.yml",
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 14
+   },
+   {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 14
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "mudancas": 14
+   },
+   {
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
     "mudancas": 13
    },
    {
@@ -242,19 +258,19 @@
     "mudancas": 12
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "vite.config.ts",
     "mudancas": 12
    },
    {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 12
+    "arquivo": "src/hooks/useQuotes.ts",
+    "mudancas": 11
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 12
+    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
+    "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
     "mudancas": 11
    },
    {
@@ -262,46 +278,30 @@
     "mudancas": 10
    },
    {
-    "arquivo": "vite.config.ts",
+    "arquivo": "docs/RUNBOOK.md",
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/inventario/gerar-banco.mjs",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/hooks/useQuotes.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 8
-   },
-   {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 8
+    "mudancas": 10
    },
    {
     "arquivo": "src/hooks/admin/useV4Callbacks.ts",
-    "mudancas": 8
+    "mudancas": 10
    },
    {
     "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 8
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/pages/admin/AdminComercial.tsx",
+    "mudancas": 10
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 76
+    "commits": 77
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3465,
-  "arquivos_codigo": 2474,
-  "linhas_codigo": 429828,
+  "arquivos_total": 3468,
+  "arquivos_codigo": 2477,
+  "linhas_codigo": 430443,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 178,
+  "testes": 181,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1186,
-   "linhas": 188312
+   "arquivos": 1188,
+   "linhas": 188648
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 511,
-   "linhas": 59359
+   "arquivos": 512,
+   "linhas": 59638
   },
   "src/integrations": {
    "arquivos": 4,
@@ -787,7 +787,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
-  "arquivos_acima_500_linhas": 68
+  "arquivos_acima_500_linhas": 69
  },
  "todos": [
   {

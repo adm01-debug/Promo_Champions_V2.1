@@ -4843,7 +4843,7 @@
     "BattleCardSuggestion"
    ],
    "export_default": null,
-   "linhas": 80,
+   "linhas": 81,
    "dominio": "components/conversational",
    "hooks_locais": [],
    "tabelas": [
@@ -7635,14 +7635,18 @@
     "SalesEnablementHub"
    ],
    "export_default": null,
-   "linhas": 496,
+   "linhas": 661,
    "dominio": "components/enablement",
    "hooks_locais": [
+    "useArchiveAsset",
     "useAssetEfficiency",
     "useCreateAsset",
     "useEnablementAssets",
     "useLogAssetUsage",
-    "usePlaybooks"
+    "usePlaybooks",
+    "useRestoreAsset",
+    "useUpdateAsset",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],
@@ -15418,7 +15422,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 20,
    "orfao": false
   },
   {

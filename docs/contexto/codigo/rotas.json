@@ -9837,6 +9837,7 @@
    "redireciona": null,
    "hooks": [
     "useAllPlaybookProgress",
+    "useArchiveAsset",
     "useArchiveNotification",
     "useAssetEfficiency",
     "useAuth",
@@ -9858,15 +9859,19 @@
     "useQuery",
     "useQueryClient",
     "useRef",
+    "useRestoreAsset",
     "useRetryMutation",
     "useSalesData",
     "useSendNotification",
     "useState",
     "useSystemSoundSettings",
-    "useTogglePlaybookItem"
+    "useTogglePlaybookItem",
+    "useUpdateAsset",
+    "useUserRoles"
    ],
    "hooks_locais": [
     "useAllPlaybookProgress",
+    "useArchiveAsset",
     "useArchiveNotification",
     "useAssetEfficiency",
     "useAuth",
@@ -9880,11 +9885,14 @@
     "useMarkNotificationRead",
     "useNotifications",
     "usePlaybooks",
+    "useRestoreAsset",
     "useRetryMutation",
     "useSalesData",
     "useSendNotification",
     "useSystemSoundSettings",
-    "useTogglePlaybookItem"
+    "useTogglePlaybookItem",
+    "useUpdateAsset",
+    "useUserRoles"
    ],
    "tabelas": [
     "asset_usage_logs",
@@ -9895,7 +9903,8 @@
     "sales",
     "sales_enablement_assets",
     "sales_with_markup",
-    "salespeople"
+    "salespeople",
+    "user_roles"
    ],
    "rpcs": [
     "calculate_asset_efficiency",
@@ -9905,8 +9914,15 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 40
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
+   "arquivos_puxados": 43
   },
   {
    "protegida": true,

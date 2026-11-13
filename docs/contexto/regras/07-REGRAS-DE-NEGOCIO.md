@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1f60080cc6` · branch `main` · 2026-11-13 06:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7ab97e01e7` · branch `main` · 2026-11-13 06:27 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4027,7 +4027,7 @@ _nenhum item encontrado_
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
-| … +648 linhas — lista completa em `context.json` | |
+| … +651 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4133,7 +4133,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1306 testes em 145 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1324 testes em 148 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4185,6 +4185,7 @@ _nenhum item encontrado_
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
+| `src/hooks/sales/useSalesEnablement.test.tsx` | 9 | useSalesEnablement — editar, arquivar e reativar materiais · lista só materiais ativos por padrão e só arquivados quando pedido · edita pelo id e grava campos vazios como null · falha ao editar quando a RLS bloqueia (0 linhas) … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
@@ -4208,6 +4209,7 @@ _nenhum item encontrado_
 | `tests/e2e/quote-to-sale-validations.spec.ts` | 6 | Conversão de orçamento — validações e concorrência · EMPTY_ITEMS: orçamento sem itens é bloqueado e mensagem PT-BR na UI · Tolerância ±R$ 0,02: 3× 33,33 vs total 100,00 converte (0,01 de diff) · TOTAL_MISMATCH: diferença de R$ 0,05 é bloqueada … |
 | `tests/e2e/rls-authorization-edge-cases.spec.ts` | 6 | SEC-02 — RLS edge cases (anon) · anon não lê ${table} (select cru) · anon não lê ${table} com filtro user_id fabricado · apikey ausente é bloqueado pelo gateway … |
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
+| `src/components/enablement/SalesEnablementHub.test.tsx` | 5 | SalesEnablementHub — materiais arquivados · gestor alterna para Arquivados e reativa o material · vendedor não vê o filtro de arquivados nem ações de gestão · vendedor não vê  … |
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
@@ -4225,6 +4227,7 @@ _nenhum item encontrado_
 | `tests/e2e/win-loss-analysis.spec.ts` | 5 | Win/Loss Analysis — página dedicada · redireciona usuário anônimo para /auth · renderiza header, título e ações principais quando autenticado · exibe painéis laterais de Estratégia e Projeção … |
 | `scripts/graphify/multigraph.test.mjs` | 4 | preserva relações múltiplas dirigidas entre os mesmos nós · materializa importações externas e mantém todas as relações da fonte · impacto reverso conserva evidência e informa relações ambíguas · rejeita documento que perde uma relação da fonte |
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
+| `src/components/conversational/BattleCardSuggestion.test.tsx` | 4 | BattleCardSuggestion · busca só battle card ativo (arquivado não é sugerido) · não renderiza nada quando o material não volta (arquivado ou inexistente) · mostra o material ativo sugerido |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |

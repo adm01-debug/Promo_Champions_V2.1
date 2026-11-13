@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1f60080cc6cbace9f740ad8e82dc13f35e7f147b",
+  "sha": "7ab97e01e7ad92e0cc7181504c2c4ca40c4db6bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 06:13 UTC",
-  "files_total": 3480,
-  "code_files": 3151,
-  "code_lines": 459774
+  "generated_at": "2026-11-13 06:27 UTC",
+  "files_total": 3483,
+  "code_files": 3154,
+  "code_lines": 460389
  },
  "version": "1.3.2",
- "facts_hash": "9553e771cb0873a0",
+ "facts_hash": "d0710099c80b7271",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1315,
+   ".tsx": 1318,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -66046,7 +66046,8 @@
      "playbook_progress",
      "playbooks",
      "sales_enablement_assets",
-     "salespeople"
+     "salespeople",
+     "user_roles"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -66054,7 +66055,7 @@
      "mark_all_notifications_read",
      "send_notification"
     ],
-    "deps_count": 28
+    "deps_count": 31
    },
    {
     "path": "",
@@ -73859,7 +73860,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1186,
+  "components_count": 1188,
   "hooks": [
    {
     "name": "useContacts",
@@ -75830,6 +75831,18 @@
     "file": "src/hooks/sales/useSalesEnablement.ts"
    },
    {
+    "name": "useUpdateAsset",
+    "file": "src/hooks/sales/useSalesEnablement.ts"
+   },
+   {
+    "name": "useArchiveAsset",
+    "file": "src/hooks/sales/useSalesEnablement.ts"
+   },
+   {
+    "name": "useRestoreAsset",
+    "file": "src/hooks/sales/useSalesEnablement.ts"
+   },
+   {
     "name": "useTogglePlaybookItem",
     "file": "src/hooks/sales/useSalesEnablement.ts"
    },
@@ -77702,8 +77715,8 @@
   },
   {
    "module": "src/components",
-   "files": 1186,
-   "lines": 188311,
+   "files": 1188,
+   "lines": 188647,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78026,8 +78039,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 511,
-   "lines": 59359,
+   "files": 512,
+   "lines": 59638,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -82655,6 +82668,9 @@
      "src/hooks/sales/useSalesEnablement.ts"
     ],
     "insert": [
+     "src/hooks/sales/useSalesEnablement.ts"
+    ],
+    "update": [
      "src/hooks/sales/useSalesEnablement.ts"
     ]
    },
@@ -92179,6 +92195,18 @@
    {
     "file": "src/hooks/sales/useSalesEnablement.ts",
     "msg": "Não autenticado"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.ts",
+    "msg": "Sem permissão para arquivar este material"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.ts",
+    "msg": "Sem permissão para editar este material"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.ts",
+    "msg": "Sem permissão para reativar este material"
    },
    {
     "file": "src/hooks/sales/useSalespeople.ts",
@@ -130809,6 +130837,22 @@
     "name": "mostra editar/cancelar só na batalha ativa, nunca na finalizada"
    },
    {
+    "file": "src/components/conversational/BattleCardSuggestion.test.tsx",
+    "name": "BattleCardSuggestion"
+   },
+   {
+    "file": "src/components/conversational/BattleCardSuggestion.test.tsx",
+    "name": "busca só battle card ativo (arquivado não é sugerido)"
+   },
+   {
+    "file": "src/components/conversational/BattleCardSuggestion.test.tsx",
+    "name": "não renderiza nada quando o material não volta (arquivado ou inexistente)"
+   },
+   {
+    "file": "src/components/conversational/BattleCardSuggestion.test.tsx",
+    "name": "mostra o material ativo sugerido"
+   },
+   {
     "file": "src/components/email/aiEmailComposer.test.ts",
     "name": "AIEmailComposer mapping logic"
    },
@@ -130823,6 +130867,26 @@
    {
     "file": "src/components/email/aiEmailComposer.test.ts",
     "name": "should use fallback values for missing fields"
+   },
+   {
+    "file": "src/components/enablement/SalesEnablementHub.test.tsx",
+    "name": "SalesEnablementHub — materiais arquivados"
+   },
+   {
+    "file": "src/components/enablement/SalesEnablementHub.test.tsx",
+    "name": "gestor alterna para Arquivados e reativa o material"
+   },
+   {
+    "file": "src/components/enablement/SalesEnablementHub.test.tsx",
+    "name": "vendedor não vê o filtro de arquivados nem ações de gestão"
+   },
+   {
+    "file": "src/components/enablement/SalesEnablementHub.test.tsx",
+    "name": "vendedor não vê "
+   },
+   {
+    "file": "src/components/enablement/SalesEnablementHub.test.tsx",
+    "name": "mostra estado vazio honesto quando não há arquivados"
    },
    {
     "file": "src/components/pipeline/InactivityPanel.test.tsx",
@@ -132079,6 +132143,42 @@
    {
     "file": "src/hooks/sales/useSalesBattles.test.tsx",
     "name": "falha quando a RLS não deixa cancelar (0 linhas)"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "useSalesEnablement — editar, arquivar e reativar materiais"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "lista só materiais ativos por padrão e só arquivados quando pedido"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "edita pelo id e grava campos vazios como null"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "falha ao editar quando a RLS bloqueia (0 linhas)"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "arquiva marcando is_active=false, sem apagar, e invalida a lista"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "falha ao arquivar quando a RLS bloqueia (0 linhas)"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "propaga erro do banco ao arquivar"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "reativa marcando is_active=true e invalida a lista"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "falha ao reativar quando a RLS bloqueia (0 linhas)"
    },
    {
     "file": "src/lib/draftMigration.test.ts",
@@ -184270,9 +184370,20 @@
     "const ActionItemsList"
    ]
   },
+  "src/components/conversational/BattleCardSuggestion.test.tsx": {
+   "path": "src/components/conversational/BattleCardSuggestion.test.tsx",
+   "lines": 65,
+   "is_test": true,
+   "tests": [
+    "BattleCardSuggestion",
+    "busca só battle card ativo (arquivado não é sugerido)",
+    "não renderiza nada quando o material não volta (arquivado ou inexistente)",
+    "mostra o material ativo sugerido"
+   ]
+  },
   "src/components/conversational/BattleCardSuggestion.tsx": {
    "path": "src/components/conversational/BattleCardSuggestion.tsx",
-   "lines": 80,
+   "lines": 81,
    "exports": [
     "function BattleCardSuggestion"
    ],
@@ -184287,6 +184398,7 @@
      "description",
      "file_url",
      "id",
+     "is_active",
      "title"
     ]
    }
@@ -187025,9 +187137,21 @@
     "const PlaybookExecutionDialog"
    ]
   },
+  "src/components/enablement/SalesEnablementHub.test.tsx": {
+   "path": "src/components/enablement/SalesEnablementHub.test.tsx",
+   "lines": 105,
+   "is_test": true,
+   "tests": [
+    "SalesEnablementHub — materiais arquivados",
+    "gestor alterna para Arquivados e reativa o material",
+    "vendedor não vê o filtro de arquivados nem ações de gestão",
+    "vendedor não vê ",
+    "mostra estado vazio honesto quando não há arquivados"
+   ]
+  },
   "src/components/enablement/SalesEnablementHub.tsx": {
    "path": "src/components/enablement/SalesEnablementHub.tsx",
-   "lines": 496,
+   "lines": 661,
    "exports": [
     "const SalesEnablementHub"
    ],
@@ -213278,9 +213402,25 @@
     "useCreateSale"
    ]
   },
+  "src/hooks/sales/useSalesEnablement.test.tsx": {
+   "path": "src/hooks/sales/useSalesEnablement.test.tsx",
+   "lines": 202,
+   "is_test": true,
+   "tests": [
+    "useSalesEnablement — editar, arquivar e reativar materiais",
+    "lista só materiais ativos por padrão e só arquivados quando pedido",
+    "edita pelo id e grava campos vazios como null",
+    "falha ao editar quando a RLS bloqueia (0 linhas)",
+    "arquiva marcando is_active=false, sem apagar, e invalida a lista",
+    "falha ao arquivar quando a RLS bloqueia (0 linhas)",
+    "propaga erro do banco ao arquivar",
+    "reativa marcando is_active=true e invalida a lista",
+    "falha ao reativar quando a RLS bloqueia (0 linhas)"
+   ]
+  },
   "src/hooks/sales/useSalesEnablement.ts": {
    "path": "src/hooks/sales/useSalesEnablement.ts",
-   "lines": 228,
+   "lines": 305,
    "exports": [
     "interface EnablementAsset",
     "interface Playbook",
@@ -213290,6 +213430,10 @@
     "const useAssetEfficiency",
     "const useLogAssetUsage",
     "const useCreateAsset",
+    "type EnablementAssetUpdate",
+    "const useUpdateAsset",
+    "const useArchiveAsset",
+    "const useRestoreAsset",
     "const useTogglePlaybookItem",
     "const useAllPlaybookProgress"
    ],
@@ -213311,6 +213455,18 @@
      "op": "insert"
     },
     {
+     "table": "sales_enablement_assets",
+     "op": "select,update"
+    },
+    {
+     "table": "sales_enablement_assets",
+     "op": "select,update"
+    },
+    {
+     "table": "sales_enablement_assets",
+     "op": "select,update"
+    },
+    {
      "table": "playbook_progress",
      "op": "insert"
     },
@@ -213325,6 +213481,7 @@
    ],
    "table_cols": {
     "sales_enablement_assets": [
+     "id",
      "is_active"
     ],
     "playbook_progress": [
@@ -213336,7 +213493,10 @@
     "calculate_asset_efficiency"
    ],
    "errors": [
-    "Não autenticado"
+    "Não autenticado",
+    "Sem permissão para arquivar este material",
+    "Sem permissão para editar este material",
+    "Sem permissão para reativar este material"
    ],
    "status_values": [
     {
@@ -213351,6 +213511,9 @@
     "useAssetEfficiency",
     "useLogAssetUsage",
     "useCreateAsset",
+    "useUpdateAsset",
+    "useArchiveAsset",
+    "useRestoreAsset",
     "useTogglePlaybookItem",
     "useAllPlaybookProgress"
    ],
@@ -245262,10 +245425,24 @@
   }
  },
  "git": {
-  "sha": "1f60080cc6cbace9f740ad8e82dc13f35e7f147b",
+  "sha": "7ab97e01e7ad92e0cc7181504c2c4ca40c4db6bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "7ab97e0",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e arquivar materiais no Sales Enablement (#433)",
+    "files": [
+     "src/components/conversational/BattleCardSuggestion.test.tsx",
+     "src/components/conversational/BattleCardSuggestion.tsx",
+     "src/components/enablement/SalesEnablementHub.test.tsx",
+     "src/components/enablement/SalesEnablementHub.tsx",
+     "src/hooks/sales/useSalesEnablement.test.tsx",
+     "src/hooks/sales/useSalesEnablement.ts"
+    ]
+   },
    {
     "sha": "1f60080",
     "date": "2026-11-13",
@@ -246036,15 +246213,6 @@
     "subject": "fix: k6-smoke mira funções não deployadas e health sem chave (#388)",
     "files": [
      "scripts/load/k6-smoke.js"
-    ]
-   },
-   {
-    "sha": "999a708",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "infra: valida restauracao do dump antes do upload no db-backup (#387)",
-    "files": [
-     ".github/workflows/db-backup.yml"
     ]
    }
   ],
