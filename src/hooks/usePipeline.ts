@@ -80,6 +80,26 @@ export interface Deal {
   interaction_history?: number[]; // Etapa 4: Sparklines
 }
 
+// Status reais de `sales` (CHECK sales_status_check) que não têm coluna
+// própria no board padrão. Sem este mapa, `completed` (venda concluída pelo
+// cadastro manual) e `cancelled` caíam na coluna "Ativação (SDR)".
+// `pending`/`prospecting` são estágios abertos iniciais (OPEN_SALE_STATUSES,
+// probabilidade 0.10/0.15 em stage_probabilities) → primeira coluna.
+const SALE_STATUS_TO_STAGE: Record<string, PipelineStageId> = {
+  completed: 'won',
+  cancelled: 'lost',
+  pending: 'lead',
+  prospecting: 'lead',
+};
+
+const PIPELINE_STAGE_IDS = new Set<string>(PIPELINE_STAGES.map(s => s.id));
+
+/** Coluna do board padrão para um status de `sales`. */
+export const saleStatusToStage = (status: string | null | undefined): PipelineStageId => {
+  if (status && PIPELINE_STAGE_IDS.has(status)) return status as PipelineStageId;
+  return (status && SALE_STATUS_TO_STAGE[status]) || 'lead';
+};
+
 export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
   return useQuery<Record<PipelineStageId, Deal[]>>({
     queryKey: ['pipeline-deals', filters],
@@ -109,13 +129,7 @@ export const usePipelineDeals = (filters?: { salespersonId?: string }) => {
       };
 
       (data || []).forEach(sale => {
-        const status = sale.status as PipelineStageId;
-        if (dealsByStage[status]) {
-          dealsByStage[status].push(sale as Deal);
-        } else {
-          // Default to 'lead' if status doesn't match
-          dealsByStage.lead.push(sale as Deal);
-        }
+        dealsByStage[saleStatusToStage(sale.status)].push(sale as Deal);
       });
 
       return dealsByStage;
