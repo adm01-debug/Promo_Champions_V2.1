@@ -3,6 +3,8 @@ import { useInactiveDeals } from '@/hooks/useInactiveDeals';
 import { Clock, AlertOctagon, AlertTriangle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -31,7 +33,43 @@ const SeverityConfig = {
 };
 
 export const InactivityPanel = React.memo(() => {
-  const { inactiveDeals, summary } = useInactiveDeals();
+  const { inactiveDeals, summary, isLoading, isError, refetch } = useInactiveDeals();
+
+  if (isLoading) {
+    return (
+      <div
+        className="glass rounded-xl border border-border/40 p-4 space-y-3"
+        aria-busy="true"
+        data-testid="inactivity-panel-loading"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-display font-semibold text-sm">Deals Inativos</h3>
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="glass rounded-xl border border-destructive/40 p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-2">
+          <Clock className="h-4 w-4 text-muted-foreground" />
+          <h3 className="font-display font-semibold text-sm">Deals Inativos</h3>
+        </div>
+        <div role="alert" className="flex items-center gap-2 text-destructive text-xs">
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span>Erro ao carregar deals inativos.</span>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => void refetch()}>
+          Tentar novamente
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="glass rounded-xl border border-border/40 p-4 space-y-3">
