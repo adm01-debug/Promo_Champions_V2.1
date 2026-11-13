@@ -95,8 +95,10 @@ export const useUpdateAccountPlan = () => {
           .update(rest)
           .eq('account_id', account_id)
           .select()
-          .single();
+          .maybeSingle();
         if (error) throw error;
+        // RLS bloqueou (0 linhas): evita a mensagem crua do PostgREST.
+        if (!data) throw new Error('Sem permissão para editar o plano da conta.');
         return data;
       } else {
         const { data, error } = await supabase
@@ -163,6 +165,66 @@ export const useCreateAccount = () => {
       toast.success('Conta criada com sucesso');
     },
     onError: (e: Error) => toast.error(`Erro: ${e.message}`),
+  });
+};
+
+export const useUpdateAccount = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...patch }: Partial<Account> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('accounts')
+        .update(updatePayload('accounts', patch))
+        .eq('id', id)
+        .select()
+        .maybeSingle();
+      if (error) throw error;
+      // RLS bloqueou (0 linhas): evita a mensagem crua do PostgREST.
+      if (!data) throw new Error('Você não tem permissão para editar esta conta');
+      return data as Account;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['accounts'] });
+      toast.success('Conta atualizada');
+    },
+    onError: (e: Error & { code?: string }) => {
+      if (e.code === '23505') {
+        toast.error('Já existe uma conta com esse nome');
+      } else {
+        toast.error(`Erro: ${e.message}`);
+      }
+    },
+  });
+};
+
+export const useDeleteAccount = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('accounts')
+        .delete()
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('Você não tem permissão para excluir esta conta');
+      }
+      return id;
+    },
+    onSuccess: id => {
+      qc.invalidateQueries({ queryKey: ['accounts'] });
+      qc.removeQueries({ queryKey: ['account-contacts', id] });
+      qc.removeQueries({ queryKey: ['account-plan', id] });
+      toast.success('Conta excluída');
+    },
+    onError: (e: Error & { code?: string }) => {
+      if (e.code === '23503') {
+        toast.error('A conta possui registros vinculados e não pode ser excluída');
+      } else {
+        toast.error(`Erro: ${e.message}`);
+      }
+    },
   });
 };
 
