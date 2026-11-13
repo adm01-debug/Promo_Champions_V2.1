@@ -7,10 +7,12 @@ const orMock = vi.fn();
 const selectMock = vi.fn();
 const insertMock = vi.fn();
 const fromMock = vi.fn();
+const rpcMock = vi.fn();
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: (...args: unknown[]) => fromMock(...args),
+    rpc: (...args: unknown[]) => rpcMock(...args),
   },
 }));
 
@@ -177,6 +179,51 @@ describe('salesService.getSales', () => {
 });
 
 describe('salesService.createSale', () => {
+  beforeEach(() => {
+    // Padrão: usuário sem cadastro de vendedor (admin/gestor) → RPC devolve null.
+    rpcMock.mockResolvedValue({ data: null, error: null });
+  });
+
+  it('preenche salesperson_id com o vendedor logado quando o payload não traz', async () => {
+    rpcMock.mockResolvedValue({ data: 'sp-logado', error: null });
+    const singleMock = vi.fn().mockResolvedValue({ data: { id: 'new-2' }, error: null });
+    insertMock.mockReturnValue({ select: () => ({ single: singleMock }) });
+    fromMock.mockImplementation(() => ({ insert: insertMock }));
+
+    const payload = { client_name: 'X', product_name: 'Y', amount: 10 };
+    await salesService.createSale(payload);
+    expect(rpcMock).toHaveBeenCalledWith('get_current_salesperson_id');
+    expect(insertMock).toHaveBeenCalledWith([
+      { ...payload, salesperson_id: 'sp-logado' },
+    ]);
+  });
+
+  it('mantém salesperson_id explícito sem consultar o RPC', async () => {
+    const singleMock = vi.fn().mockResolvedValue({ data: { id: 'new-3' }, error: null });
+    insertMock.mockReturnValue({ select: () => ({ single: singleMock }) });
+    fromMock.mockImplementation(() => ({ insert: insertMock }));
+
+    const payload = {
+      client_name: 'X',
+      product_name: 'Y',
+      amount: 10,
+      salesperson_id: 'sp-x',
+    };
+    await salesService.createSale(payload);
+    expect(rpcMock).not.toHaveBeenCalled();
+    expect(insertMock).toHaveBeenCalledWith([payload]);
+  });
+
+  it('propaga erro do RPC sem inserir', async () => {
+    rpcMock.mockResolvedValue({ data: null, error: new Error('rpc') });
+    fromMock.mockImplementation(() => ({ insert: insertMock }));
+
+    await expect(
+      salesService.createSale({ client_name: 'X', product_name: 'Y', amount: 10 })
+    ).rejects.toThrow('rpc');
+    expect(insertMock).not.toHaveBeenCalled();
+  });
+
   it('insere e retorna a row criada', async () => {
     const singleMock = vi.fn().mockResolvedValue({ data: { id: 'new-1' }, error: null });
     const selectAfterInsert = vi.fn().mockReturnValue({ single: singleMock });
