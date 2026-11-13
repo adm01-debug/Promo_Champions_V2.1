@@ -17,7 +17,10 @@ vi.mock('@/hooks/activities/useActivities', () => ({
 
 vi.mock('@/hooks/sales/useSalespeople', () => ({
   useSalespeople: () => ({
-    data: [{ id: 'sp-vendedor', name: 'Vendedor Logado', auth_user_id: 'auth-1' }],
+    data: [
+      { id: 'sp-outro', name: 'Ana Primeira da Lista', auth_user_id: null },
+      { id: 'sp-vendedor', name: 'Vendedor Logado', auth_user_id: 'auth-1' },
+    ],
   }),
 }));
 
@@ -54,5 +57,21 @@ describe('ActivityLogForm', () => {
 
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
     expect(mutate.mock.calls[0]?.[0]).toMatchObject({ salesperson_id: 'sp-vendedor' });
+  });
+
+  it.each([
+    ['🚀 Call Rápida', 'call'],
+    ['📧 Email Rápido', 'email'],
+  ])('%s grava no vendedor logado, não no primeiro da lista', async (label, tipo) => {
+    authState.salesperson = { id: 'sp-vendedor', name: 'Vendedor Logado' };
+    render(<ActivityLogForm />);
+
+    fireEvent.click(screen.getByRole('button', { name: label }));
+
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
+    expect(mutate.mock.calls[0]?.[0]).toMatchObject({
+      salesperson_id: 'sp-vendedor',
+      activity_type: tipo,
+    });
   });
 });

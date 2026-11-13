@@ -305,8 +305,8 @@ export function ActivityLogForm({
               size="sm"
               className="h-7 text-[10px] font-black uppercase tracking-tighter hover:bg-primary/10 hover:text-primary transition-all"
               onClick={() => {
-                const me = salespeople?.find(s => s.auth_user_id === 'currentUser'); // Placeholder check logic might be needed or use current active user
-                const salespersonId = me?.id || salespeople?.[0]?.id; // Fallback to first if not found, though better to use auth.uid
+                const salespersonId =
+                  form.getValues('salesperson_id') || authSalesperson?.id;
 
                 form.setValue('activity_type', 'call');
                 form.setValue('outcome', 'connected');
@@ -322,8 +322,8 @@ export function ActivityLogForm({
               size="sm"
               className="h-7 text-[10px] font-black uppercase tracking-tighter hover:bg-streak/10 hover:text-streak transition-all"
               onClick={() => {
-                const me = salespeople?.find(s => s.auth_user_id === 'currentUser');
-                const salespersonId = me?.id || salespeople?.[0]?.id;
+                const salespersonId =
+                  form.getValues('salesperson_id') || authSalesperson?.id;
 
                 form.setValue('activity_type', 'email');
                 form.setValue('outcome', 'connected');
