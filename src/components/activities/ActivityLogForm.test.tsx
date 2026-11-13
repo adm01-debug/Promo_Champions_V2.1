@@ -42,7 +42,7 @@ describe('ActivityLogForm', () => {
     submit();
 
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
-    expect(mutate.mock.calls[0][0]).toMatchObject({ salesperson_id: 'sp-vendedor' });
+    expect(mutate.mock.calls[0]?.[0]).toMatchObject({ salesperson_id: 'sp-vendedor' });
   });
 
   it('preenche o vendedor logado quando o perfil carrega depois da montagem', async () => {
@@ -53,6 +53,6 @@ describe('ActivityLogForm', () => {
     submit();
 
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
-    expect(mutate.mock.calls[0][0]).toMatchObject({ salesperson_id: 'sp-vendedor' });
+    expect(mutate.mock.calls[0]?.[0]).toMatchObject({ salesperson_id: 'sp-vendedor' });
   });
 });
