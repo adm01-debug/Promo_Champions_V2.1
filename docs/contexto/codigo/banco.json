@@ -49363,7 +49363,7 @@
   {
    "nome": "get_current_salesperson_id",
    "definida": true,
-   "usada_em": 6
+   "usada_em": 7
   },
   {
    "nome": "get_dashboard_kpis",

@@ -99,6 +99,7 @@
     "useUpdateCadenceStep",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
+    "useUserRoles",
     "useWhatsApp"
    ],
    "hooks_locais": [
@@ -148,6 +149,7 @@
     "useUpdateCadenceStep",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
+    "useUserRoles",
     "useWhatsApp"
    ],
    "tabelas": [
@@ -167,6 +169,7 @@
     "sales_with_markup",
     "salespeople",
     "saved_filters",
+    "user_roles",
     "whatsapp_conversations"
    ],
    "rpcs": [
@@ -187,10 +190,12 @@
     "closer",
     "combobox",
     "hybrid",
+    "manager",
     "navigation",
+    "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 85
+   "arquivos_puxados": 87
   },
   {
    "protegida": false,

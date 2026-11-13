@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8",
+  "sha": "e37f60a9aa65087d918347f29700a780d7ac690d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 08:41 UTC",
-  "files_total": 3492,
-  "code_files": 3163,
-  "code_lines": 461982
+  "generated_at": "2026-11-13 09:02 UTC",
+  "files_total": 3493,
+  "code_files": 3164,
+  "code_lines": 462190
  },
  "version": "1.3.2",
- "facts_hash": "eb3df3587892c4be",
+ "facts_hash": "3a4ede8cd4c7982b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1327,
+   ".tsx": 1328,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -66080,6 +66080,7 @@
     "invokes_transitive": [],
     "rpc_transitive": [
      "calculate_asset_efficiency",
+     "get_current_salesperson_id",
      "mark_all_notifications_read",
      "send_notification"
     ],
@@ -67695,6 +67696,7 @@
      "salespeople",
      "saved_filters",
      "teams",
+     "user_roles",
      "whatsapp_conversations"
     ],
     "invokes_transitive": [
@@ -67710,7 +67712,7 @@
      "get_current_salesperson_id",
      "merge_clients"
     ],
-    "deps_count": 80
+    "deps_count": 82
    },
    {
     "path": "/vendedor/:id",
@@ -73899,7 +73901,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1191,
+  "components_count": 1192,
   "hooks": [
    {
     "name": "useContacts",
@@ -77774,8 +77776,8 @@
   },
   {
    "module": "src/components",
-   "files": 1191,
-   "lines": 189043,
+   "files": 1192,
+   "lines": 189181,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78099,7 +78101,7 @@
   {
    "module": "src/hooks",
    "files": 517,
-   "lines": 60449,
+   "lines": 60519,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -87011,6 +87013,7 @@
     "src/hooks/conversational/useCallRecordings.ts",
     "src/hooks/conversational/useUploadCallRecording.ts",
     "src/hooks/playbooks/usePlaybookMutations.ts",
+    "src/hooks/sales/useSalesEnablement.ts",
     "src/hooks/tasks/useTaskMutations.ts",
     "src/services/salesService.ts",
     "tests/e2e/helpers/quote-to-sale-helpers.ts"
@@ -130984,6 +130987,22 @@
     "name": "preenche o vendedor logado quando o perfil carrega depois da montagem"
    },
    {
+    "file": "src/components/cadences/EnrollCadenceDialog.test.tsx",
+    "name": "EnrollCadenceDialog — responsável da inscrição"
+   },
+   {
+    "file": "src/components/cadences/EnrollCadenceDialog.test.tsx",
+    "name": "vendedor sem escolher responsável inscreve com o próprio salesperson_id"
+   },
+   {
+    "file": "src/components/cadences/EnrollCadenceDialog.test.tsx",
+    "name": "vendedor só vê a si mesmo na lista de responsáveis"
+   },
+   {
+    "file": "src/components/cadences/EnrollCadenceDialog.test.tsx",
+    "name": "admin/gestor continua vendo todos os vendedores"
+   },
+   {
     "file": "src/components/competitive/BattleArena.test.tsx",
     "name": "BattleArena — gerenciar batalhas"
    },
@@ -132402,6 +132421,22 @@
    {
     "file": "src/hooks/sales/useSalesEnablement.test.tsx",
     "name": "falha ao reativar quando a RLS bloqueia (0 linhas)"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "useTogglePlaybookItem — marcar etapa do playbook"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "grava completed_by com o salespeople.id do vendedor logado (FK para salespeople), não o auth uid"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "admin/gestor sem cadastro de vendedor grava completed_by NULL"
+   },
+   {
+    "file": "src/hooks/sales/useSalesEnablement.test.tsx",
+    "name": "não insere se a consulta do vendedor falhar"
    },
    {
     "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
@@ -182685,9 +182720,20 @@
     }
    ]
   },
+  "src/components/cadences/EnrollCadenceDialog.test.tsx": {
+   "path": "src/components/cadences/EnrollCadenceDialog.test.tsx",
+   "lines": 122,
+   "is_test": true,
+   "tests": [
+    "EnrollCadenceDialog — responsável da inscrição",
+    "vendedor sem escolher responsável inscreve com o próprio salesperson_id",
+    "vendedor só vê a si mesmo na lista de responsáveis",
+    "admin/gestor continua vendo todos os vendedores"
+   ]
+  },
   "src/components/cadences/EnrollCadenceDialog.tsx": {
    "path": "src/components/cadences/EnrollCadenceDialog.tsx",
-   "lines": 173,
+   "lines": 183,
    "exports": [
     "function EnrollCadenceDialog"
    ]
@@ -192988,7 +193034,7 @@
   },
   "src/components/sales/SaleHUDCard.test.tsx": {
    "path": "src/components/sales/SaleHUDCard.test.tsx",
-   "lines": 83,
+   "lines": 89,
    "is_test": true,
    "tests": [
     "SaleHUDCard",
@@ -213812,7 +213858,7 @@
   },
   "src/hooks/sales/useSalesEnablement.test.tsx": {
    "path": "src/hooks/sales/useSalesEnablement.test.tsx",
-   "lines": 202,
+   "lines": 266,
    "is_test": true,
    "tests": [
     "useSalesEnablement — editar, arquivar e reativar materiais",
@@ -213823,12 +213869,16 @@
     "falha ao arquivar quando a RLS bloqueia (0 linhas)",
     "propaga erro do banco ao arquivar",
     "reativa marcando is_active=true e invalida a lista",
-    "falha ao reativar quando a RLS bloqueia (0 linhas)"
+    "falha ao reativar quando a RLS bloqueia (0 linhas)",
+    "useTogglePlaybookItem — marcar etapa do playbook",
+    "grava completed_by com o salespeople.id do vendedor logado (FK para salespeople), não o auth uid",
+    "admin/gestor sem cadastro de vendedor grava completed_by NULL",
+    "não insere se a consulta do vendedor falhar"
    ]
   },
   "src/hooks/sales/useSalesEnablement.ts": {
    "path": "src/hooks/sales/useSalesEnablement.ts",
-   "lines": 305,
+   "lines": 311,
    "exports": [
     "interface EnablementAsset",
     "interface Playbook",
@@ -213898,7 +213948,8 @@
     ]
    },
    "rpc": [
-    "calculate_asset_efficiency"
+    "calculate_asset_efficiency",
+    "get_current_salesperson_id"
    ],
    "errors": [
     "Não autenticado",
@@ -245901,10 +245952,31 @@
   }
  },
  "git": {
-  "sha": "d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8",
+  "sha": "e37f60a9aa65087d918347f29700a780d7ac690d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e37f60a",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)",
+    "files": [
+     "src/components/cadences/EnrollCadenceDialog.test.tsx",
+     "src/components/cadences/EnrollCadenceDialog.tsx",
+     "src/components/sales/SaleHUDCard.test.tsx"
+    ]
+   },
+   {
+    "sha": "39cb90c",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: etapa do playbook grava o vendedor certo em completed_by (#479)",
+    "files": [
+     "src/hooks/sales/useSalesEnablement.test.tsx",
+     "src/hooks/sales/useSalesEnablement.ts"
+    ]
+   },
    {
     "sha": "d21dcd1",
     "date": "2026-11-13",
@@ -246646,24 +246718,6 @@
     "files": [
      ".github/workflows/codeql.yml"
     ]
-   },
-   {
-    "sha": "22662d4",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
-   },
-   {
-    "sha": "b315faa",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "chore: exclui testes unitários do escopo do CodeQL (#419)",
-    "files": [
-     ".github/workflows/codeql.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -246686,6 +246740,18 @@
    [
     "src/hooks/abm/useAccounts.ts",
     3
+   ],
+   [
+    "src/components/cadences/EnrollCadenceDialog.tsx",
+    2
+   ],
+   [
+    "src/hooks/sales/useSalesEnablement.test.tsx",
+    2
+   ],
+   [
+    "src/hooks/sales/useSalesEnablement.ts",
+    2
    ],
    [
     "src/components/activities/ActivityLogForm.tsx",
@@ -246733,18 +246799,6 @@
    ],
    [
     "src/components/analytics/DealVelocityChart.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/EmailMetricsDashboard.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/LeadSourceDistribution.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/WeightedForecastDashboard.tsx",
     2
    ]
   ]

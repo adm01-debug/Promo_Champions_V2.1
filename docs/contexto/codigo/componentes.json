@@ -3176,13 +3176,15 @@
     "EnrollCadenceDialog"
    ],
    "export_default": null,
-   "linhas": 173,
+   "linhas": 183,
    "dominio": "components/cadences",
    "hooks_locais": [
+    "useAuth",
     "useCadenceSteps",
     "useCadences",
     "useEnrollInCadence",
-    "useSalespeople"
+    "useSalespeople",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],
@@ -17346,7 +17348,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 82,
+   "usado_por": 83,
    "orfao": false
   },
   {

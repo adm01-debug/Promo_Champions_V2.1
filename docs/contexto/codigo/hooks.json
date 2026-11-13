@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 82,
+   "usado_por": 83,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -189,6 +189,7 @@
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/DevOnly.tsx",
     "src/components/auth/ProtectedRoute.tsx",
+    "src/components/cadences/EnrollCadenceDialog.tsx",
     "src/components/calendar/ActivityCalendar.tsx",
     "src/components/closer/CloserHandoffs.tsx",
     "src/components/competitive/StreakIndicator.tsx",
@@ -207,8 +208,7 @@
     "src/components/dashboard/widgets/RecentActivitiesWidget.tsx",
     "src/components/dashboard/widgets/SelfBenchmarkWidget.tsx",
     "src/components/deal-intelligence/health/CriticalDealsTable.tsx",
-    "src/components/engagement/MoodTrackerWidget.tsx",
-    "src/components/gamification/CelebrationOverlayProvider.tsx"
+    "src/components/engagement/MoodTrackerWidget.tsx"
    ],
    "coberto_por_testes": 2
   },
@@ -6568,7 +6568,7 @@
     "useTogglePlaybookItem",
     "useUpdateAsset"
    ],
-   "linhas": 305,
+   "linhas": 311,
    "dominio": "hooks/sales",
    "tabelas": [
     "asset_usage_logs",
@@ -6577,7 +6577,8 @@
     "sales_enablement_assets"
    ],
    "rpcs": [
-    "calculate_asset_efficiency"
+    "calculate_asset_efficiency",
+    "get_current_salesperson_id"
    ],
    "edges": [],
    "hooks_internos": [
@@ -10817,10 +10818,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 37,
+   "usado_por": 38,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
+    "src/components/cadences/EnrollCadenceDialog.tsx",
     "src/components/competitive/BattleArena.tsx",
     "src/components/conversational/CoachingActionsList.tsx",
     "src/components/dashboard/DevKpiDebugPanel.tsx",
@@ -10847,8 +10849,7 @@
     "src/pages/AccessDenied.tsx",
     "src/pages/AccountBasedEngagement.tsx",
     "src/pages/AccountBasedSelling.tsx",
-    "src/pages/ApprovalWorkflowsPage.tsx",
-    "src/pages/AssinaturaDigital.tsx"
+    "src/pages/ApprovalWorkflowsPage.tsx"
    ],
    "coberto_por_testes": 0
   },

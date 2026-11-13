@@ -1107,8 +1107,8 @@
   {
    "modulo": "components/cadences",
    "arquivos": 22,
-   "testes": 0,
-   "linhas": 4779,
+   "testes": 1,
+   "linhas": 4789,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1117,6 +1117,7 @@
     "useABTestResults",
     "useABTests",
     "useActiveCadencesBySaleIds",
+    "useAuth",
     "useBulkCancelQuoteCadences",
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
@@ -1165,7 +1166,8 @@
     "useUpdateCadenceStep",
     "useUpdateEnrollmentRule",
     "useUpdateLeadStage",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useUserRoles"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -1187,7 +1189,8 @@
     "sales_goals",
     "salespeople",
     "salesperson_preferences",
-    "saved_filters"
+    "saved_filters",
+    "user_roles"
    ],
    "rpcs": [
     "enroll_quote_in_cadence",
@@ -1209,7 +1212,13 @@
    ],
    "flags": [],
    "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
     "region",
+    "salesperson",
+    "sdr",
     "status"
    ],
    "diretos": {
@@ -7185,6 +7194,7 @@
     "useUpdateCadenceStep",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
+    "useUserRoles",
     "useWhatsApp"
    ],
    "hooks_definidos": [],
@@ -7214,6 +7224,7 @@
     "sales_with_markup",
     "salespeople",
     "salesperson_preferences",
+    "user_roles",
     "whatsapp_conversations"
    ],
    "rpcs": [
@@ -7240,6 +7251,8 @@
     "closer",
     "combobox",
     "hybrid",
+    "manager",
+    "salesperson",
     "sdr"
    ],
    "diretos": {
@@ -13999,7 +14012,7 @@
    "modulo": "hooks/sales",
    "arquivos": 16,
    "testes": 3,
-   "linhas": 2389,
+   "linhas": 2395,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -14156,7 +14169,8 @@
      "team_custom_fields"
     ],
     "rpcs": [
-     "calculate_asset_efficiency"
+     "calculate_asset_efficiency",
+     "get_current_salesperson_id"
     ]
    },
    "importado_por_outros_modulos": [

@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2302,
- "arestas": 9487,
+ "arestas": 9489,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -73,11 +73,11 @@
    "importado_por": 94
   },
   {
-   "arquivo": "src/components/ui/tabs.tsx",
-   "importado_por": 84
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 85
   },
   {
-   "arquivo": "src/contexts/AuthContext.tsx",
+   "arquivo": "src/components/ui/tabs.tsx",
    "importado_por": 84
   },
   {
@@ -126,7 +126,7 @@
   },
   {
    "arquivo": "src/hooks/useUserRoles.ts",
-   "importado_por": 37
+   "importado_por": 38
   },
   {
    "arquivo": "supabase/functions/_shared/business-date.ts",

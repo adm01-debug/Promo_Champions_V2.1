@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d21dcd1524` · branch `main` · 2026-11-13 08:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e37f60a9aa` · branch `main` · 2026-11-13 09:02 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4137,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1360 testes em 156 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1368 testes em 157 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4174,6 +4174,7 @@ _nenhum item encontrado_
 | `scripts/graphify/graphify-utils.test.mjs` | 13 | aceita caminho dentro da raiz e recusa travessia · valida inteiro positivo · exige a versão completa e exata do Graphify · recusa arestas órfãs e ids repetidos … |
 | `src/hooks/email/campaignDeliveryHelpers.test.ts` | 13 | campaignDeliveryHelpers · toFiniteNumber trata nulos, strings e NaN · normalizeDeliveryRow preenche defaults seguros · failureRate calcula sobre o total processado … |
 | `src/hooks/email/emailOptOutMetricsHelpers.test.ts` | 13 | aggregateOptOutMetrics · retorna estrutura vazia coerente sem registros · conta janelas de 7 e 30 dias corretamente · calcula delta percentual contra os 7 dias anteriores … |
+| `src/hooks/sales/useSalesEnablement.test.tsx` | 13 | useSalesEnablement — editar, arquivar e reativar materiais · lista só materiais ativos por padrão e só arquivados quando pedido · edita pelo id e grava campos vazios como null · falha ao editar quando a RLS bloqueia (0 linhas) … |
 | `src/lib/validators/brSchemas.test.ts` | 13 | brPhoneField · aceita campo vazio (opcional):  · brCpfOrCnpjField · aceita documento válido: %s … |
 | `supabase/functions/_shared/retry-policy.test.ts` | 13 | erros permanentes são reconhecidos · erros transitórios não são permanentes · já enviado é ignorado · sem erro é ignorado … |
 | `tests/e2e/pages-sales-commerce.spec.ts` | 13 | Orçamentos — CPQ Engine · carrega heading  · title da página correto · mostra filtros de status … |
@@ -4189,7 +4190,6 @@ _nenhum item encontrado_
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
-| `src/hooks/sales/useSalesEnablement.test.tsx` | 9 | useSalesEnablement — editar, arquivar e reativar materiais · lista só materiais ativos por padrão e só arquivados quando pedido · edita pelo id e grava campos vazios como null · falha ao editar quando a RLS bloqueia (0 linhas) … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
@@ -4235,6 +4235,7 @@ _nenhum item encontrado_
 | `tests/e2e/win-loss-analysis.spec.ts` | 5 | Win/Loss Analysis — página dedicada · redireciona usuário anônimo para /auth · renderiza header, título e ações principais quando autenticado · exibe painéis laterais de Estratégia e Projeção … |
 | `scripts/graphify/multigraph.test.mjs` | 4 | preserva relações múltiplas dirigidas entre os mesmos nós · materializa importações externas e mantém todas as relações da fonte · impacto reverso conserva evidência e informa relações ambíguas · rejeita documento que perde uma relação da fonte |
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
+| `src/components/cadences/EnrollCadenceDialog.test.tsx` | 4 | EnrollCadenceDialog — responsável da inscrição · vendedor sem escolher responsável inscreve com o próprio salesperson_id · vendedor só vê a si mesmo na lista de responsáveis · admin/gestor continua vendo todos os vendedores |
 | `src/components/conversational/BattleCardSuggestion.test.tsx` | 4 | BattleCardSuggestion · busca só battle card ativo (arquivado não é sugerido) · não renderiza nada quando o material não volta (arquivado ou inexistente) · mostra o material ativo sugerido |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |

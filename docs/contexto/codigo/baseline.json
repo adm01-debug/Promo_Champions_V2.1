@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8",
+  "commit": "e37f60a9aa65087d918347f29700a780d7ac690d",
   "branch": "main",
-  "data_commit": "2026-11-13T08:06:31Z",
+  "data_commit": "2026-11-13T08:48:39Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e37f60a",
+    "data": "2026-11-13",
+    "assunto": "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)"
+   },
+   {
+    "sha": "39cb90c",
+    "data": "2026-11-13",
+    "assunto": "fix: etapa do playbook grava o vendedor certo em completed_by (#479)"
+   },
    {
     "sha": "d21dcd1",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "7884531",
     "data": "2026-11-12",
     "assunto": "chore: inventario do estado real [auto] (#425)"
-   },
-   {
-    "sha": "566ef2f",
-    "data": "2026-11-12",
-    "assunto": "chore(deps-dev): bump tsx from 4.22.4 to 4.23.15 (#409)"
-   },
-   {
-    "sha": "e324e95",
-    "data": "2026-11-12",
-    "assunto": "chore(main): release 1.2.0 (#391)"
    }
   ],
-  "arquivos_mudados_7d": 548,
+  "arquivos_mudados_7d": 550,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -192,22 +192,22 @@
     "mudancas": 19
    },
    {
-    "pasta": "RELATORIO_CI.md",
-    "mudancas": 18
+    "pasta": "src/hooks/sales",
+    "mudancas": 19
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 96
+    "mudancas": 93
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 95
+    "mudancas": 92
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "arquivo": "deno.lock",
@@ -215,14 +215,18 @@
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
+    "mudancas": 19
+   },
+   {
+    "arquivo": ".github/workflows/qa-exhaustive.yml",
     "mudancas": 18
    },
    {
@@ -230,23 +234,23 @@
     "mudancas": 18
    },
    {
-    "arquivo": ".github/workflows/qa-exhaustive.yml",
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 17
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
     "mudancas": 16
    },
    {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
-    "mudancas": 15
-   },
-   {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 15
+    "mudancas": 16
    },
    {
     "arquivo": "supabase/config.toml",
+    "mudancas": 16
+   },
+   {
+    "arquivo": "vite.config.ts",
     "mudancas": 15
    },
    {
@@ -254,54 +258,50 @@
     "mudancas": 14
    },
    {
-    "arquivo": "vite.config.ts",
+    "arquivo": "src/hooks/useQuotes.ts",
     "mudancas": 14
    },
    {
-    "arquivo": "src/hooks/useQuotes.ts",
-    "mudancas": 13
-   },
-   {
     "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 13
-   },
-   {
-    "arquivo": "PENDENCIAS.md",
-    "mudancas": 12
+    "mudancas": 14
    },
    {
     "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "src/hooks/admin/useV4Callbacks.ts",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "src/pages/admin/AdminComercial.tsx",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "supabase/functions/analyze-pipeline-coverage/index.ts",
-    "mudancas": 12
+    "mudancas": 13
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-oauth/index.ts",
+    "mudancas": 13
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 84
+    "commits": 86
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3477,
-  "arquivos_codigo": 2486,
-  "linhas_codigo": 432036,
+  "arquivos_total": 3478,
+  "arquivos_codigo": 2487,
+  "linhas_codigo": 432244,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 189,
+  "testes": 190,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1191,
-   "linhas": 189044
+   "arquivos": 1192,
+   "linhas": 189182
   },
   "src/config": {
    "arquivos": 3,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 517,
-   "linhas": 60449
+   "linhas": 60519
   },
   "src/integrations": {
    "arquivos": 4,
