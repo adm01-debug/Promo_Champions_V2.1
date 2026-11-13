@@ -16,7 +16,10 @@ import {
   Calendar,
   Cpu,
 } from 'lucide-react';
-import { useActivityGoalProgress } from '@/hooks/activities/useActivityGoals';
+import {
+  useActivityGoalProgress,
+  type ActivityGoalProgress,
+} from '@/hooks/activities/useActivityGoals';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { ActivityGoalEditDialog } from '@/components/activities/ActivityGoalEditDialog';
 import { DailyActivityRanking } from '@/components/activities/DailyActivityRanking';
@@ -49,6 +52,30 @@ import {
 import { ActivityLogForm } from '@/components/activities/ActivityLogForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Até 4 vendedores com metas no cabeçalho (fora do componente da página para não somar
+// complexidade a ele — lint:complexity tem teto de 20).
+const TeamAvatars = ({ members }: { members: ActivityGoalProgress[] }) => {
+  if (members.length === 0) return null;
+  return (
+    <div className="flex -space-x-3 mr-4 transition-all hover:-space-x-1">
+      {members.slice(0, 4).map(sp => (
+        <div
+          key={sp.salesperson_id}
+          className="relative group/avatar"
+          title={sp.salesperson_name}
+        >
+          <Avatar className="border-2 border-background h-12 w-12 ring-2 ring-primary/20 shadow-xl transition-transform group-hover/avatar:-translate-y-2">
+            <AvatarImage src={sp.avatar_url ?? undefined} alt={sp.salesperson_name} />
+            <AvatarFallback>
+              {sp.salesperson_name.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const EmojiParticles = ({ x, y, emoji }: { x: number; y: number; emoji: string }) => {
   return (
@@ -286,27 +313,7 @@ export default function MetasAtividades() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 relative z-10">
-                    {withGoals.length > 0 && (
-                      <div className="flex -space-x-3 mr-4 transition-all hover:-space-x-1">
-                        {withGoals.slice(0, 4).map(sp => (
-                          <div
-                            key={sp.salesperson_id}
-                            className="relative group/avatar"
-                            title={sp.salesperson_name}
-                          >
-                            <Avatar className="border-2 border-background h-12 w-12 ring-2 ring-primary/20 shadow-xl transition-transform group-hover/avatar:-translate-y-2">
-                              <AvatarImage
-                                src={sp.avatar_url ?? undefined}
-                                alt={sp.salesperson_name}
-                              />
-                              <AvatarFallback>
-                                {sp.salesperson_name.slice(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <TeamAvatars members={withGoals} />
                     <Button
                       variant="outline"
                       size="lg"
