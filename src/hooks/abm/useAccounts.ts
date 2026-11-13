@@ -157,9 +157,19 @@ export const useCreateAccount = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: Partial<Account> & { name: string }) => {
+      // A policy exige is_admin_or_manager OU owner_id = get_current_salesperson_id();
+      // a coluna não tem default. Admin/gestor sem vendedor vinculado segue com NULL.
+      let ownerId = payload.owner_id;
+      if (ownerId === undefined) {
+        const { data: sp, error: spErr } = await supabase.rpc(
+          'get_current_salesperson_id'
+        );
+        if (spErr) throw spErr;
+        ownerId = sp ?? null;
+      }
       const { data, error } = await supabase
         .from('accounts')
-        .insert(insertPayload('accounts', payload))
+        .insert(insertPayload('accounts', { ...payload, owner_id: ownerId }))
         .select()
         .single();
       if (error) throw error;
