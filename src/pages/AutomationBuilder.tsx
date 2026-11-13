@@ -23,6 +23,16 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Workflow,
   Plus,
   Play,
@@ -31,11 +41,14 @@ import {
   XCircle,
   Clock,
   Trash2,
+  Pencil,
 } from 'lucide-react';
 import {
   useAutomationWorkflows,
   useWorkflowRuns,
   useCreateWorkflow,
+  useUpdateWorkflow,
+  useDeleteWorkflow,
   useToggleWorkflow,
   useExecuteWorkflow,
   type AutomationWorkflow,
@@ -77,10 +90,14 @@ export default function AutomationBuilder() {
   const [selected, setSelected] = useState<AutomationWorkflow | null>(null);
   const { data: runs } = useWorkflowRuns(selected?.id ?? null);
   const createWf = useCreateWorkflow();
+  const updateWf = useUpdateWorkflow();
+  const deleteWf = useDeleteWorkflow();
   const toggleWf = useToggleWorkflow();
   const executeWf = useExecuteWorkflow();
 
   const [newOpen, setNewOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AutomationWorkflow | null>(null);
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -109,6 +126,65 @@ export default function AutomationBuilder() {
   const removeAction = (idx: number) => {
     setForm({ ...form, actions: form.actions.filter((_, i) => i !== idx) });
   };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setActionTitle('');
+    setForm({
+      name: '',
+      description: '',
+      trigger_type: 'manual',
+      actions: [],
+      conditions: [],
+    });
+  };
+
+  const openEdit = (w: AutomationWorkflow) => {
+    setEditingId(w.id);
+    setActionTitle('');
+    setForm({
+      name: w.name,
+      description: w.description ?? '',
+      trigger_type: w.trigger_type,
+      actions: w.actions,
+      conditions: w.conditions,
+    });
+    setNewOpen(true);
+  };
+
+  const handleUpdate = () => {
+    if (!editingId) return;
+    updateWf.mutate(
+      {
+        id: editingId,
+        name: form.name,
+        description: form.description || null,
+        trigger_type: form.trigger_type,
+        actions: form.actions,
+        conditions: form.conditions,
+      },
+      {
+        onSuccess: updated => {
+          if (updated && selected?.id === updated.id) setSelected(updated);
+          setNewOpen(false);
+          resetForm();
+        },
+      }
+    );
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget.id;
+    deleteWf.mutate(id, {
+      onSuccess: () => {
+        if (selected?.id === id) setSelected(null);
+        setDeleteTarget(null);
+      },
+    });
+  };
+
+  const isSaving = createWf.isPending || updateWf.isPending;
 
   const handleCreate = () => {
     createWf.mutate(
@@ -155,16 +231,24 @@ export default function AutomationBuilder() {
               Crie automações no-code conectando gatilhos, condições e ações.
             </p>
           </div>
-          <Dialog open={newOpen} onOpenChange={setNewOpen}>
+          <Dialog
+            open={newOpen}
+            onOpenChange={open => {
+              setNewOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
-              <Button>
+              <Button onClick={resetForm}>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Workflow
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Criar Workflow</DialogTitle>
+                <DialogTitle>
+                  {editingId ? 'Editar Workflow' : 'Criar Workflow'}
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -265,10 +349,14 @@ export default function AutomationBuilder() {
               </div>
               <DialogFooter>
                 <Button
-                  onClick={handleCreate}
-                  disabled={!form.name || form.actions.length === 0 || createWf.isPending}
+                  onClick={editingId ? handleUpdate : handleCreate}
+                  disabled={!form.name || form.actions.length === 0 || isSaving}
                 >
-                  Criar Workflow
+                  {editingId
+                    ? updateWf.isPending
+                      ? 'Salvando…'
+                      : 'Salvar alterações'
+                    : 'Criar Workflow'}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -332,18 +420,37 @@ export default function AutomationBuilder() {
                         </p>
                       )}
                     </div>
-                    {selected.trigger_type === 'manual' && (
+                    <div className="flex items-center gap-2">
+                      {selected.trigger_type === 'manual' && (
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            executeWf.mutate({ workflowId: selected.id, payload: {} })
+                          }
+                          disabled={executeWf.isPending}
+                        >
+                          <Play className="h-4 w-4 mr-2" />
+                          Executar
+                        </Button>
+                      )}
                       <Button
                         size="sm"
-                        onClick={() =>
-                          executeWf.mutate({ workflowId: selected.id, payload: {} })
-                        }
-                        disabled={executeWf.isPending}
+                        variant="outline"
+                        onClick={() => openEdit(selected)}
                       >
-                        <Play className="h-4 w-4 mr-2" />
-                        Executar
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Editar
                       </Button>
-                    )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => setDeleteTarget(selected)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Excluir
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -410,6 +517,34 @@ export default function AutomationBuilder() {
           </Card>
         </div>
       </div>
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={open => !open && !deleteWf.isPending && setDeleteTarget(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir workflow?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O workflow <strong>{deleteTarget?.name}</strong> e todo o seu histórico de
+              execuções serão removidos permanentemente. Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteWf.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={e => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={deleteWf.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteWf.isPending ? 'Excluindo…' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
