@@ -154,36 +154,6 @@ export const DealCard = ({
           )}
         />
 
-        {/* Etapa 1: Presença em Tempo Real (Colaboração Ativa) */}
-        <div className="absolute top-1 right-8 flex -space-x-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="relative">
-                <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-primary/20 hover:scale-110 transition-transform">
-                  <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Felix`} />
-                  <AvatarFallback className="text-[6px]">FX</AvatarFallback>
-                </Avatar>
-                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px] font-bold">
-              Felix está editando agora...
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all hover:scale-110">
-                <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Anna`} />
-                <AvatarFallback className="text-[6px]">AN</AvatarFallback>
-              </Avatar>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px] font-bold">
-              Anna visualizou há 1 min
-            </TooltipContent>
-          </Tooltip>
-        </div>
-
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2 relative">
           {/* Etapa 4: Quick Action Overlay */}

@@ -126,3 +126,25 @@ describe('DealCard — sem dado inventado', () => {
     expect(screen.getByText('Página de tarefas')).toBeDefined();
   });
 });
+
+describe('DealCard — sem presença inventada de usuários', () => {
+  it('renderiza o deal sem presença fictícia de outros usuários', () => {
+    const { container } = renderCard({});
+
+    expect(screen.getByText('Cliente Real')).toBeInTheDocument();
+    expect(screen.queryByText(/Felix/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Anna/)).not.toBeInTheDocument();
+    expect(container.innerHTML).not.toMatch(/seed=(Felix|Anna)/);
+    expect(screen.queryByText('FX')).not.toBeInTheDocument();
+    expect(screen.queryByText('AN')).not.toBeInTheDocument();
+  });
+
+  it('não oferece o botão simulado de enriquecimento', () => {
+    renderCard({});
+
+    expect(
+      screen.queryByText(/Enriquecer com Dados de Ecossistema/)
+    ).not.toBeInTheDocument();
+    expect(document.querySelector('.lucide-database')).toBeNull();
+  });
+});
