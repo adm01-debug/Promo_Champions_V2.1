@@ -63,3 +63,22 @@ test("idempotente", () => {
   const um = rodar(h1("mt-4 text-3xl font-bold md:text-4xl"), "--write");
   assert.equal(rodar(um, "--write"), um);
 });
+
+// (13/11) Casos achados na revisão adversarial: o léxico manual confundia texto JSX, regex literal e template.
+const H1 = `<h1 className="text-3xl font-bold">T</h1>`;
+const intacto = (src) => assert.equal(rodar(src, "--write"), src);
+const converte = (src) => assert.match(rodar(src, "--write"), /className="text-page-title"/);
+test("apóstrofo em texto JSX não engole o comentário seguinte", () => intacto(`export const A = () => <p>Don't</p>;\n// ${H1}\n`));
+test("regex literal com aspas não engole o comentário seguinte", () => intacto(`const r = /"/;\n// ${H1}\n`));
+test("template com crase dentro de \${} não engole o comentário seguinte", () => intacto("const t = `a ${'`'} b`;\n// " + H1 + "\n"));
+test("regex literal com /* não desliga o resto do arquivo", () => converte(`const r = /a\\/*b/;\nexport const X = () => ${H1};\n`));
+test("regex literal com \\/\\/ na mesma linha", () => converte(`const r = /https?:\\/\\//; export const X = () => ${H1};\n`));
+test("// em texto JSX na mesma linha", () => converte(`export const X = () => <div><a>http://x</a>${H1}</div>;\n`));
+test("/* aberto em texto JSX não desliga o resto", () => converte(`export const A = () => <code>dir/*.ts</code>;\nexport const X = () => ${H1};\n`));
+test("token procurado como classe inteira (text-label-muted não é text-label)", () => {
+  assert.match(rodar(`export const X = () => <FormLabel className="text-label-muted text-sm">L</FormLabel>;\n`, "--write"), /className="text-label text-label-muted"/);
+});
+test("tag em várias linhas (formato do Prettier)", () => converte(`export const X = () => (\n  <h1\n    className="text-3xl font-bold"\n  >\n    T\n  </h1>\n);\n`));
+test("=> antes do className", () => converte(`export const X = ({ f }: { f: () => void }) => <h1 onClick={() => f()} className="text-3xl font-bold">T</h1>;\n`));
+test("nenhum arquivo com alvo: sai 0 sem quebrar", () => intacto(`export const y = 1;\n`));
+test("comentário JSX {/* */} não é tocado", () => intacto(`export const X = () => <div>{/* ${H1} */}</div>;\n`));

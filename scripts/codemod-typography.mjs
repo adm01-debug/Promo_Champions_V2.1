@@ -15,47 +15,35 @@
  *
  * Uso: node scripts/codemod-typography.mjs [--write]
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { createRequire } from "node:module";
 
-let ultimoFonte = null, ultimasFaixas = [];
-function faixasDeComentario(src) {
-  const faixas = [];
-  for (let i = 0; i < src.length; i++) {
-    const c = src[i], d = src[i + 1];
-    if (c === '"' || c === "'" || c === "`") {
-      for (i++; i < src.length && src[i] !== c; i++) if (src[i] === "\\") i++;
-    } else if (c === "/" && d === "/") {
-      const fim = src.indexOf("\n", i); faixas.push([i, fim < 0 ? src.length : fim]); i = fim < 0 ? src.length : fim;
-    } else if (c === "/" && d === "*") {
-      const fim = src.indexOf("*/", i + 2); faixas.push([i, fim < 0 ? src.length : fim + 2]); i = fim < 0 ? src.length : fim + 1;
-    }
+// (13/11) Lê a árvore de sintaxe do TypeScript em vez de regex/léxico sobre o texto: comentários, regex literais,
+// texto JSX (Don't, http://x, dir/*.ts), tags em várias linhas e props com "=>" deixam de enganar o codemod.
+function carregarTs() {
+  for (const base of [import.meta.url, join(process.cwd(), "package.json")]) {
+    try { return createRequire(base)("typescript"); } catch { /* tenta a próxima origem */ }
   }
-  return faixas;
+  console.error("codemod-typography: pacote 'typescript' não encontrado (rode npm ci).");
+  process.exit(2);
 }
-function dentroDeComentario(src, pos) {
-  if (src !== ultimoFonte) { ultimoFonte = src; ultimasFaixas = faixasDeComentario(src); }
-  return ultimasFaixas.some(([a, b]) => pos >= a && pos < b);
-}
-import { execSync } from "node:child_process";
-
+const ts = carregarTs();
 const WRITE = process.argv.includes("--write");
 
-const TAGS = [
-  "h1", "h2", "h3", "h4", "label", "Label",
-  "CardTitle", "DialogTitle", "SheetTitle", "AlertDialogTitle",
-  "DrawerTitle", "PopoverTitle", "AlertTitle", "SectionTitle", "PageTitle",
-  "TypographyH1", "TypographyH2", "TypographyH3", "TypographyH4",
-  "FormLabel",
-];
-
-const files = execSync(
-  `grep -rEl --include='*.tsx' '<(${TAGS.join("|")})[^>]*className=' src/`,
-  { maxBuffer: 32 * 1024 * 1024 }
-)
-  .toString()
-  .trim()
-  .split("\n")
-  .filter(Boolean);
+function arquivosTsx(dir) {
+  const lista = [];
+  let entradas = [];
+  try { entradas = readdirSync(dir, { withFileTypes: true }); } catch { return lista; }
+  for (const e of entradas) {
+    if (e.name === "node_modules" || e.name.startsWith(".")) continue;
+    const p = join(dir, e.name);
+    if (e.isDirectory()) lista.push(...arquivosTsx(p));
+    else if (e.isFile() && e.name.endsWith(".tsx")) lista.push(p);
+  }
+  return lista.sort();
+}
+const files = arquivosTsx("src");
 
 const stripPage = [
   /(?<!\S)text-(2xl|3xl|4xl)(?!\S)/g,
@@ -107,44 +95,45 @@ const tagRules = {
   FormLabel:        { token: "text-label",         strip: stripLabel,   force: true },
 };
 
-const cleanup = (s) =>
-  s.replace(/\s{2,}/g, " ").replace(/"\s+/g, '"').replace(/\s+"/g, '"').trim();
+const temClasse = (classes, token) => classes.split(/\s+/).includes(token);
+const limpar = (s) => s.split(/\s+/).filter(Boolean).join(" ");
+
+// Reescreve as classes de UM className="…" conforme a regra; null = não mexe.
+function reescrever(classes, rule) {
+  if (temClasse(classes, rule.token)) return null;
+  if (!rule.force && (!rule.size.test(classes) || !rule.weight.test(classes))) return null;
+  let next = classes;
+  for (const p of rule.strip) next = next.replace(p, "");
+  return limpar(`${rule.token} ${next}`);
+}
 
 let totalChanges = 0;
 const touched = [];
 
 for (const file of files) {
   const original = readFileSync(file, "utf8");
-  let out = original;
-
-  for (const [tag, rule] of Object.entries(tagRules)) {
-    const re = new RegExp(
-      `(<${tag}\\b[^>]*?className=")([^"]+)("[^>]*>)`,
-      "g"
-    );
-    out = out.replace(re, (m, open, classes, close, offset, whole) => {
-      // (12/11) JSX dentro de comentário (// ou /* … */) é exemplo/documentação: não reescrever. Faixas calculadas por
-      // um léxico que respeita strings/template literals ("./**/*.tsx" num glob NÃO abre comentário).
-      if (dentroDeComentario(whole, offset)) return m;
-      if (classes.includes(rule.token)) return m;
-      if (!rule.force) {
-        if (!rule.size.test(classes) || !rule.weight.test(classes)) return m;
+  const sf = ts.createSourceFile(file, original, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const trocas = [];
+  (function visita(no) {
+    if (ts.isJsxOpeningElement(no) || ts.isJsxSelfClosingElement(no)) {
+      const rule = Object.prototype.hasOwnProperty.call(tagRules, no.tagName.getText(sf)) ? tagRules[no.tagName.getText(sf)] : null;
+      if (rule) {
+        for (const at of no.attributes.properties) {
+          if (!ts.isJsxAttribute(at) || at.name.getText(sf) !== "className" || !at.initializer || !ts.isStringLiteral(at.initializer)) continue;
+          const ini = at.initializer.getStart(sf) + 1, fim = at.initializer.getEnd() - 1;
+          const novo = reescrever(original.slice(ini, fim), rule);
+          if (novo !== null && novo !== original.slice(ini, fim)) trocas.push({ ini, fim, novo });
+        }
       }
-      let next = classes;
-      for (const p of rule.strip) next = next.replace(p, "");
-      next = cleanup(`${rule.token} ${next}`);
-      return `${open}${next}${close}`;
-    });
-  }
-
-  if (out !== original) {
-    const changes =
-      (out.match(/text-(page-title|section-title|label)/g) || []).length -
-      (original.match(/text-(page-title|section-title|label)/g) || []).length;
-    totalChanges += changes;
-    touched.push({ file, changes });
-    if (WRITE) writeFileSync(file, out);
-  }
+    }
+    ts.forEachChild(no, visita);
+  })(sf);
+  if (!trocas.length) continue;
+  let out = original;
+  for (const t of trocas.sort((x, y) => y.ini - x.ini)) out = out.slice(0, t.ini) + t.novo + out.slice(t.fim);
+  totalChanges += trocas.length;
+  touched.push({ file, changes: trocas.length });
+  if (WRITE) writeFileSync(file, out);
 }
 
 console.log(
