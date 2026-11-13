@@ -49,8 +49,10 @@ import {
   Eye,
   Trash2,
   Loader2,
+  Pencil,
 } from 'lucide-react';
 import { useDigitalSignatures } from '@/hooks/useDigitalSignatures';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { SignatureStatsCards } from '@/components/signature/SignatureStatsCards';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
@@ -105,9 +107,21 @@ export default function AssinaturaDigital() {
     error,
     createDocument,
     deleteDocument,
+    updateSigner,
+    removeSigner,
     signatureIntegrationConfigured,
     signatureIntegrationMessage,
   } = useDigitalSignatures();
+  const { isAdminOrManager } = useUserRoles();
+  const [signerToEdit, setSignerToEdit] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
+  const [signerToRemove, setSignerToRemove] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState<string | null>(null);
@@ -131,6 +145,21 @@ export default function AssinaturaDigital() {
         },
       }
     );
+  };
+
+  const handleUpdateSigner = () => {
+    if (!signerToEdit) return;
+    updateSigner.mutate(
+      { signerId: signerToEdit.id, name: signerToEdit.name, email: signerToEdit.email },
+      { onSuccess: () => setSignerToEdit(null) }
+    );
+  };
+
+  const handleRemoveSigner = () => {
+    if (!signerToRemove) return;
+    removeSigner.mutate(signerToRemove.id, {
+      onSettled: () => setSignerToRemove(null),
+    });
   };
 
   return (
@@ -326,6 +355,43 @@ export default function AssinaturaDigital() {
                                       {s.name}
                                       {s.status === 'pending' && ' — não enviado'}
                                     </span>
+                                    {doc.status === 'draft' && (
+                                      <>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-6 w-6 p-0"
+                                          onClick={() =>
+                                            setSignerToEdit({
+                                              id: s.id,
+                                              name: s.name,
+                                              email: s.email,
+                                            })
+                                          }
+                                          disabled={updateSigner.isPending}
+                                          aria-label={`Editar signatário ${s.name}`}
+                                        >
+                                          <Pencil className="h-3 w-3" />
+                                        </Button>
+                                        {isAdminOrManager && (
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                                            onClick={() =>
+                                              setSignerToRemove({
+                                                id: s.id,
+                                                name: s.name,
+                                              })
+                                            }
+                                            disabled={removeSigner.isPending}
+                                            aria-label={`Remover signatário ${s.name}`}
+                                          >
+                                            <Trash2 className="h-3 w-3" />
+                                          </Button>
+                                        )}
+                                      </>
+                                    )}
                                   </div>
                                 ))}
                               </div>
@@ -455,6 +521,101 @@ export default function AssinaturaDigital() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Dialog
+          open={signerToEdit !== null}
+          onOpenChange={open => {
+            if (!open) setSignerToEdit(null);
+          }}
+        >
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Editar signatário</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-signer-name">Nome *</Label>
+                <Input
+                  id="edit-signer-name"
+                  value={signerToEdit?.name ?? ''}
+                  onChange={e =>
+                    setSignerToEdit(prev =>
+                      prev ? { ...prev, name: e.target.value } : prev
+                    )
+                  }
+                  placeholder="Nome do signatário"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-signer-email">Email *</Label>
+                <Input
+                  id="edit-signer-email"
+                  type="email"
+                  value={signerToEdit?.email ?? ''}
+                  onChange={e =>
+                    setSignerToEdit(prev =>
+                      prev ? { ...prev, email: e.target.value } : prev
+                    )
+                  }
+                  placeholder="email@exemplo.com"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setSignerToEdit(null)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleUpdateSigner}
+                disabled={
+                  !signerToEdit?.name.trim() ||
+                  !signerToEdit?.email.trim() ||
+                  updateSigner.isPending
+                }
+              >
+                {updateSigner.isPending && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                )}
+                Salvar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog
+          open={signerToRemove !== null}
+          onOpenChange={open => {
+            if (!open && !removeSigner.isPending) setSignerToRemove(null);
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remover signatário?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {signerToRemove?.name} será removido deste documento. Esta ação não pode
+                ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={removeSigner.isPending}>
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={e => {
+                  e.preventDefault();
+                  handleRemoveSigner();
+                }}
+                disabled={removeSigner.isPending}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {removeSigner.isPending && (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                )}
+                Remover
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
