@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "d03b42e6a8bffb08ba23c180163c389f5126246d",
+  "sha": "1ae8ecb61c90d3dba886aa214a0671c7f19cea0c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 21:24 UTC",
-  "files_total": 3538,
+  "generated_at": "2026-11-13 22:22 UTC",
+  "files_total": 3539,
   "code_files": 3209,
   "code_lines": 465651
  },
@@ -247253,10 +247253,19 @@
   }
  },
  "git": {
-  "sha": "d03b42e6a8bffb08ba23c180163c389f5126246d",
+  "sha": "1ae8ecb61c90d3dba886aa214a0671c7f19cea0c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "1ae8ecb",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "d03b42e",
     "date": "2026-11-13",
@@ -247610,16 +247619,6 @@
      "src/components/cadences/EnrollCadenceDialog.tsx",
      "src/components/sales/SaleHUDCard.test.tsx"
     ]
-   },
-   {
-    "sha": "39cb90c",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: etapa do playbook grava o vendedor certo em completed_by (#479)",
-    "files": [
-     "src/hooks/sales/useSalesEnablement.test.tsx",
-     "src/hooks/sales/useSalesEnablement.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -247646,6 +247645,10 @@
    [
     "src/components/pipeline/PipelineBoard.tsx",
     2
+   ],
+   [
+    "docs/prod-readiness.md",
+    1
    ],
    [
     "src/components/activities/ActivityLogForm.test.tsx",
@@ -247697,10 +247700,6 @@
    ],
    [
     "src/components/conversational/ConversationalIntelligenceHub.tsx",
-    1
-   ],
-   [
-    "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
     1
    ]
   ]

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d03b42e6a8bffb08ba23c180163c389f5126246d` (2026-11-13T17:07:52-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1ae8ecb61c90d3dba886aa214a0671c7f19cea0c` (2026-11-13T17:57:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2450), SQL (677), Markdown (205), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2450), SQL (677), Markdown (206), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3523 |
+| arquivos_total | 3524 |
 | arquivos_codigo | 2531 |
 | linhas_codigo | 435683 |
 | rotas | 170 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 230 |
 | workflows | 26 |
 | scripts | 78 |
-| docs_md | 205 |
+| docs_md | 206 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
-- docs: docs (45), (raiz) (11), .github (2)
+- docs: docs (46), (raiz) (11), .github (2)
 - nomenclatura: {"componentes":"PascalCase (97%)","hooks":"use + PascalCase","servicos":"camelCase (96%)","edge_functions":"kebab-case (99%)","tabelas":"snake_case (92%)"}
 - instruções para agentes no repo: AGENTS.md, CLAUDE.md
 
@@ -574,27 +574,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20495 nós · 64936 arestas · 1485 comunidades · grafo do commit `d03b42e6`
-- comunidades maiores: Button (310), Input (304), client.ts (301), Índice (277), framer-motion (260), getCorsHeaders (250), PageTransition (242), CardHeader (216), fetchWithTimeout (212), card.tsx (211), Textarea (206), CardContent (189)
+- 20516 nós · 64966 arestas · 1478 comunidades · grafo do commit `1ae8ecb6`
+- comunidades maiores: Card (732), Button (587), client.ts (294), Índice (279), PageTransition (274), getCorsHeaders (247), Badge (234), react (219), vitest (208), ref_npm_supabase (195), Avatar (184), RaceArena.tsx (178)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (83)
+- package.json (82)
 - package-lock.json (81)
 - .github/workflows/pr-checks.yml (33)
-- deno.lock (29)
-- .github/workflows/codeql.yml (19)
-- .github/workflows/quote-to-sale-e2e.yml (18)
+- deno.lock (30)
+- .github/workflows/codeql.yml (20)
+- .github/workflows/quote-to-sale-e2e.yml (19)
 - RELATORIO_CI.md (18)
-- CLAUDE.md (14)
-- .github/workflows/cron-monitoring.yml (13)
-- .github/workflows/qa-exhaustive.yml (13)
-- .github/workflows/edge-functions-bundle.yml (12)
+- CLAUDE.md (15)
+- .github/workflows/cron-monitoring.yml (14)
+- .github/workflows/qa-exhaustive.yml (14)
+- .github/workflows/edge-functions-bundle.yml (13)
 - PENDENCIAS.md (12)
-- src/integrations/supabase/types.ts (11)
-- supabase/functions/bitrix24-sync/index.ts (11)
-- .github/workflows/graphify.yml (10)
+- src/integrations/supabase/types.ts (12)
+- supabase/functions/bitrix24-sync/index.ts (12)
+- src/components/pipeline/PipelineBoard.tsx (11)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -746,12 +746,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/accessibility-checklist.md` — ♿ Accessibility Checklist — Promo Champions v2 (55 linhas)
 - `docs/auditoria_enterprise_v5.md` — 🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0) (95 linhas)
 - `docs/component-guidelines.md` — 🏗 Component Guidelines — Promo Champions v2 (42 linhas)
+- `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1060 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
 - subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/agentes (6), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `1ae8ecb` docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)
 - 2026-11-13 `d03b42e` fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)
 - 2026-11-13 `01cd315` fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)
 - 2026-11-13 `c0af401` codemod de tipografia: tracking-* sem \b e comentários ignorados (#480)
@@ -766,7 +768,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `749babe` fix: metas de atividades sem indicadores e ações fictícias (#444)
 - 2026-11-13 `c82f9b3` fix: relatório de cadências passa a usar dados reais do banco (#449)
 - 2026-11-13 `05eca38` fix: apontar APP_URL para o domínio de produção na Vercel (#439)
-- 2026-11-13 `fb51238` fix: aba Market Intel da /arena mostra concorrentes reais em vez de matriz fixa (#455)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (2450)",
    "SQL (677)",
-   "Markdown (205)",
+   "Markdown (206)",
    "JavaScript (78)",
    "JSON (33)",
    "YAML (28)",
@@ -1336,6 +1336,11 @@
    "arquivo": "docs/component-guidelines.md",
    "titulo": "🏗 Component Guidelines — Promo Champions v2",
    "linhas": 42
+  },
+  {
+   "arquivo": "docs/prod-readiness.md",
+   "titulo": "Prontidão para produção — Promo_Champions_V2.1",
+   "linhas": 1060
   },
   {
    "arquivo": "docs/soft-delete.md",

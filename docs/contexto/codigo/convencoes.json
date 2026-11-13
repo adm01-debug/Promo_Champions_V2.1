@@ -33,7 +33,7 @@
    "scripts/ci (4)"
   ],
   "docs": [
-   "docs (45)",
+   "docs (46)",
    "(raiz) (11)",
    ".github (2)"
   ]
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)",
    "fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)",
    "fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)",
    "codemod de tipografia: tracking-* sem \\b e comentários ignorados (#480)",
-   "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)",
-   "fix: remover tendências fixas dos KPIs de conversas (#451)"
+   "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
