@@ -41,10 +41,13 @@ const deal: Deal = {
   health_score: 90,
 };
 
-function renderCard(props: {
-  stakeholders?: DealStakeholderSummary[];
-  clientPhone?: string | null;
-}) {
+function renderCard(
+  props: {
+    stakeholders?: DealStakeholderSummary[];
+    clientPhone?: string | null;
+  },
+  cardDeal: Deal = deal
+) {
   return render(
     <MemoryRouter initialEntries={['/pipeline']}>
       <TooltipProvider>
@@ -53,8 +56,8 @@ function renderCard(props: {
             path="/pipeline"
             element={
               <DndContext>
-                <SortableContext items={[deal.id]}>
-                  <DealCard deal={deal} {...props} />
+                <SortableContext items={[cardDeal.id]}>
+                  <DealCard deal={cardDeal} {...props} />
                 </SortableContext>
               </DndContext>
             }
@@ -124,5 +127,43 @@ describe('DealCard — sem dado inventado', () => {
     fireEvent.click(screen.getByLabelText('Abrir minhas tarefas'));
 
     expect(screen.getByText('Página de tarefas')).toBeDefined();
+  });
+});
+
+describe('DealCard — sem presença inventada de usuários', () => {
+  it('renderiza o deal sem presença fictícia de outros usuários', () => {
+    const { container } = renderCard({});
+
+    expect(screen.getByText('Cliente Real')).toBeInTheDocument();
+    expect(screen.queryByText(/Felix/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Anna/)).not.toBeInTheDocument();
+    expect(container.innerHTML).not.toMatch(/seed=(Felix|Anna)/);
+    expect(screen.queryByText('FX')).not.toBeInTheDocument();
+    expect(screen.queryByText('AN')).not.toBeInTheDocument();
+  });
+
+  it('não oferece o botão simulado de enriquecimento', () => {
+    renderCard({});
+
+    expect(
+      screen.queryByText(/Enriquecer com Dados de Ecossistema/)
+    ).not.toBeInTheDocument();
+    expect(document.querySelector('.lucide-database')).toBeNull();
+  });
+});
+
+describe('DealCard — saúde sem valor inventado', () => {
+  it('deal sem health_score e sem lead score não recebe saúde 50 nem "Fit alto!"', () => {
+    renderCard({}, { ...deal, health_score: undefined });
+
+    expect(screen.queryByText(/Fit alto!/i)).toBeNull();
+    expect(screen.queryByText(/Oportunidade:/i)).toBeNull();
+    expect(screen.queryByText(/Alerta de Churn Iminente/i)).toBeNull();
+  });
+
+  it('deal com health_score baixo real continua mostrando o alerta', () => {
+    renderCard({}, { ...deal, health_score: 20 });
+
+    expect(screen.getByText(/Alerta de Churn Iminente/i)).toBeTruthy();
   });
 });

@@ -75,6 +75,10 @@ const SENTIMENT_TEXT_COLOR: Record<DealStakeholderSummary['sentiment'], string> 
   negative: 'text-destructive',
 };
 
+// Sem score real (null) não há faixa de saúde: nada de alerta ou recomendação.
+const isHealthBelow = (score: number | null, limit: number) =>
+  score !== null && score < limit;
+
 export const DealCard = ({
   deal,
   probability,
@@ -109,16 +113,18 @@ export const DealCard = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedAmount, setEditedAmount] = useState(deal.amount.toString());
 
-  // Etapa 2: Dynamic Health Heatmap
-  const healthScore = deal.health_score || leadScore?.score || 50;
-  const getHealthGradient = (score: number) => {
+  // Etapa 2: Dynamic Health Heatmap. Sem score real (deal nem lead) fica null:
+  // não inventa 50 nem mostra recomendação/alerta baseado em saúde.
+  const healthScore = deal.health_score ?? leadScore?.score ?? null;
+  const getHealthGradient = (score: number | null) => {
+    if (score === null) return '';
     if (score > 80) return 'from-emerald-500/10 via-transparent';
     if (score < 40) return 'from-red-500/10 via-transparent';
     return 'from-amber-500/10 via-transparent';
   };
 
   const isHighRisk =
-    healthScore < 30 ||
+    isHealthBelow(healthScore, 30) ||
     (Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 10;
 
   return (
@@ -153,36 +159,6 @@ export const DealCard = ({
             getHealthGradient(healthScore)
           )}
         />
-
-        {/* Etapa 1: Presença em Tempo Real (Colaboração Ativa) */}
-        <div className="absolute top-1 right-8 flex -space-x-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="relative">
-                <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-primary/20 hover:scale-110 transition-transform">
-                  <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Felix`} />
-                  <AvatarFallback className="text-[6px]">FX</AvatarFallback>
-                </Avatar>
-                <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-background animate-pulse" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px] font-bold">
-              Felix está editando agora...
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Avatar className="h-6 w-6 border-2 border-background ring-1 ring-indigo-500/20 grayscale group-hover:grayscale-0 transition-all hover:scale-110">
-                <AvatarImage src={`${DICEBEAR_AVATARS_URL}?seed=Anna`} />
-                <AvatarFallback className="text-[6px]">AN</AvatarFallback>
-              </Avatar>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px] font-bold">
-              Anna visualizou há 1 min
-            </TooltipContent>
-          </Tooltip>
-        </div>
 
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-2 relative">
@@ -326,13 +302,13 @@ export const DealCard = ({
 
         {/* Etapa 4: Dynamic AI Action Nudge */}
         <AnimatePresence>
-          {healthScore < 60 && (
+          {isHealthBelow(healthScore, 60) && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               className={cn(
                 'mb-2 rounded-lg border p-2 overflow-hidden',
-                healthScore < 40
+                isHealthBelow(healthScore, 40)
                   ? 'bg-destructive/5 border-destructive/20'
                   : 'bg-primary/5 border-primary/20'
               )}
@@ -341,13 +317,13 @@ export const DealCard = ({
                 <Sparkles
                   className={cn(
                     'h-3 w-3',
-                    healthScore < 40 ? 'text-destructive' : 'text-primary'
+                    isHealthBelow(healthScore, 40) ? 'text-destructive' : 'text-primary'
                   )}
                 />
                 <p className="text-[10px] font-bold tracking-tight">
-                  {healthScore < 40 ? 'Ação Reativa: ' : 'Oportunidade: '}
+                  {isHealthBelow(healthScore, 40) ? 'Ação Reativa: ' : 'Oportunidade: '}
                   <span className="font-medium text-foreground/80 italic">
-                    {healthScore < 40
+                    {isHealthBelow(healthScore, 40)
                       ? 'Deal esfriando! Sugerimos envio de case de sucesso via WhatsApp.'
                       : 'Fit alto! O cliente está pronto para uma proposta de valor.'}
                   </span>
@@ -359,7 +335,7 @@ export const DealCard = ({
 
         {/* Etapa 5: Predictive Churn Guard & Revenue Ops Audit */}
         <AnimatePresence>
-          {healthScore < 30 && (
+          {isHealthBelow(healthScore, 30) && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
