@@ -4442,8 +4442,8 @@
   {
    "nome": "qbr-scheduler",
    "entrada": "supabase/functions/qbr-scheduler/index.ts",
-   "arquivos": 1,
-   "linhas": 191,
+   "arquivos": 2,
+   "linhas": 213,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

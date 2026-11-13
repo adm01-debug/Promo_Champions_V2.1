@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ceaddbf823ddb236d773808817f2d6dfd6968e26",
+  "sha": "3cf041b47cadb2cdcacb8219e13098980a6e397e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 12:20 UTC",
-  "files_total": 3498,
-  "code_files": 3169,
-  "code_lines": 462580
+  "generated_at": "2026-11-13 13:20 UTC",
+  "files_total": 3500,
+  "code_files": 3171,
+  "code_lines": 462656
  },
  "version": "1.3.2",
- "facts_hash": "3a13047041a8c78c",
+ "facts_hash": "f3f505cfcdd2d374",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -390,7 +390,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1331,
-   ".ts": 1080,
+   ".ts": 1082,
    ".sql": 676,
    ".mjs": 71,
    ".js": 6,
@@ -70732,7 +70732,9 @@
     "external": [],
     "invokes": [],
     "doc": "",
-    "errors": [],
+    "errors": [
+     "agenda_events: ${evError.message}"
+    ],
     "side_effects": [],
     "webhook_events": [],
     "idempotency": true
@@ -78564,8 +78566,8 @@
   },
   {
    "module": "src/lib",
-   "files": 76,
-   "lines": 8495,
+   "files": 77,
+   "lines": 8549,
    "tables": [
     "daily_metrics",
     "error_logs",
@@ -78698,6 +78700,7 @@
     "src/lib/log/pii.ts",
     "src/lib/orderTracking/stages.test.ts",
     "src/lib/orderTracking/stages.ts",
+    "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
     "src/lib/race/easings.ts",
     "src/lib/reports/salesReportPdf.ts",
     "src/lib/revenueForecast/csvExport.test.ts",
@@ -79116,8 +79119,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 315,
-   "lines": 65541,
+   "files": 316,
+   "lines": 65563,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -84095,7 +84098,8 @@
     "event_type",
     "id",
     "salesperson_id",
-    "scheduled_at"
+    "scheduled_at",
+    "title"
    ],
    "ai_agent_actions": [
     "id",
@@ -93309,6 +93313,10 @@
    {
     "file": "supabase/functions/purchase-intelligence-forecast/index.ts",
     "msg": "AI gateway: ${aiResp.status}"
+   },
+   {
+    "file": "supabase/functions/qbr-scheduler/index.ts",
+    "msg": "agenda_events: ${evError.message}"
    },
    {
     "file": "supabase/functions/ranking-api/index.ts",
@@ -112966,6 +112974,16 @@
     "value": "20"
    },
    {
+    "file": "supabase/functions/qbr-scheduler/agenda-event.ts",
+    "name": "QBR_EVENT_TYPE",
+    "value": "\"meeting\""
+   },
+   {
+    "file": "supabase/functions/qbr-scheduler/agenda-event.ts",
+    "name": "QBR_EVENT_STATUS",
+    "value": "\"pending\""
+   },
+   {
     "file": "supabase/functions/race-commentary/index.ts",
     "name": "COMMENTARY_CACHE_TTL_MS",
     "value": "60"
@@ -124675,12 +124693,6 @@
    },
    {
     "file": "supabase/functions/qbr-scheduler/index.ts",
-    "field": "status",
-    "value": "scheduled",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/qbr-scheduler/index.ts",
     "field": "type",
     "value": "qbr_scheduled",
     "kind": "escreve"
@@ -133334,6 +133346,22 @@
    {
     "file": "src/lib/orderTracking/stages.test.ts",
     "name": "formatDateTime devolve — quando vazio"
+   },
+   {
+    "file": "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+    "name": "qbr-scheduler — linha de agenda_events"
+   },
+   {
+    "file": "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+    "name": "respeita os CHECKs de event_type, status e priority"
+   },
+   {
+    "file": "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+    "name": "mantém dono, horário e título reconhecível pelo dedup"
+   },
+   {
+    "file": "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+    "name": "a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert"
    },
    {
     "file": "src/lib/revenueForecast/csvExport.test.ts",
@@ -160565,8 +160593,7 @@
      ],
      "scheduled": [
       "compara:src/components/coaching/sessions/CoachingSessionPlanner.tsx",
-      "compara:src/hooks/email/failedDraftsHelpers.ts",
-      "escreve:supabase/functions/qbr-scheduler/index.ts"
+      "compara:src/hooks/email/failedDraftsHelpers.ts"
      ],
      "won": [
       "compara:src/components/competitive/PerformanceBets.tsx",
@@ -217758,6 +217785,18 @@
     }
    ]
   },
+  "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts": {
+   "path": "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+   "lines": 54,
+   "is_test": true,
+   "doc": "Contrato edge/banco do qbr-scheduler: a linha gravada em agenda_events precisa passar nos CHECKs de produção. Antes o payload usava event_type \"qbr\" e status \"scheduled\", e o insert falhava inteiro.",
+   "tests": [
+    "qbr-scheduler — linha de agenda_events",
+    "respeita os CHECKs de event_type, status e priority",
+    "mantém dono, horário e título reconhecível pelo dedup",
+    "a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert"
+   ]
+  },
   "src/lib/race/easings.ts": {
    "path": "src/lib/race/easings.ts",
    "lines": 10,
@@ -235272,9 +235311,30 @@
     "10000"
    ]
   },
+  "supabase/functions/qbr-scheduler/agenda-event.ts": {
+   "path": "supabase/functions/qbr-scheduler/agenda-event.ts",
+   "lines": 25,
+   "exports": [
+    "const QBR_EVENT_TYPE",
+    "const QBR_EVENT_STATUS",
+    "const QBR_TITLE_PREFIX",
+    "function buildQbrAgendaEvent"
+   ],
+   "params": [
+    {
+     "name": "QBR_EVENT_TYPE",
+     "value": "\"meeting\""
+    },
+    {
+     "name": "QBR_EVENT_STATUS",
+     "value": "\"pending\""
+    }
+   ],
+   "doc": "Linha de agenda_events gerada para uma QBR. Módulo puro (sem Deno) para ser testado pelo vitest. Os valores precisam respeitar os CHECKs de produção: agenda_events_event_type_check (reminder|follow_up|meeting|call|task) e agenda_events_status_check (pending|in_progress|completed|cancelled). Não exis …"
+  },
   "supabase/functions/qbr-scheduler/index.ts": {
    "path": "supabase/functions/qbr-scheduler/index.ts",
-   "lines": 191,
+   "lines": 188,
    "tables": [
     {
      "table": "qbr_schedule",
@@ -235322,19 +235382,18 @@
     "agenda_events": [
      "event_type",
      "salesperson_id",
-     "scheduled_at"
+     "scheduled_at",
+     "title"
     ]
    },
    "rpc": [
     "is_admin_or_manager",
     "schedule_next_qbrs"
    ],
+   "errors": [
+    "agenda_events: ${evError.message}"
+   ],
    "status_values": [
-    {
-     "field": "status",
-     "value": "scheduled",
-     "kind": "escreve"
-    },
     {
      "field": "type",
      "value": "qbr_scheduled",
@@ -246168,10 +246227,21 @@
   }
  },
  "git": {
-  "sha": "ceaddbf823ddb236d773808817f2d6dfd6968e26",
+  "sha": "3cf041b47cadb2cdcacb8219e13098980a6e397e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "3cf041b",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)",
+    "files": [
+     "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+     "supabase/functions/qbr-scheduler/agenda-event.ts",
+     "supabase/functions/qbr-scheduler/index.ts"
+    ]
+   },
    {
     "sha": "ceaddbf",
     "date": "2026-11-13",
@@ -246500,16 +246570,6 @@
      "src/hooks/abm/useAccounts.ts",
      "src/pages/AccountBasedSelling.tsx"
     ]
-   },
-   {
-    "sha": "7884531",
-    "date": "2026-11-12",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#425)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json"
-    ]
    }
   ],
   "hot_files": [
@@ -246558,6 +246618,18 @@
     2
    ],
    [
+    "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/qbr-scheduler/agenda-event.ts",
+    1
+   ],
+   [
+    "supabase/functions/qbr-scheduler/index.ts",
+    1
+   ],
+   [
     "src/hooks/automation/executeWorkflowActions.test.ts",
     1
    ],
@@ -246579,18 +246651,6 @@
    ],
    [
     "src/hooks/useNotificationPreferences.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/useNotificationPreferences.ts",
-    1
-   ],
-   [
-    "src/hooks/useNPSSurveys.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/useNPSSurveys.ts",
     1
    ]
   ]

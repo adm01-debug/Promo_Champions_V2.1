@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 194,
+ "total": 195,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 128
+  "unit": 129
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 111
+   "arquivos": 112
   },
   {
    "padrao": "tests/",
@@ -832,6 +832,15 @@
     "src/lib/orderTracking/stages.ts"
    ],
    "casos": 13
+  },
+  {
+   "arquivo": "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
+   "tipo": "unit",
+   "linhas": 54,
+   "testa": [
+    "supabase/functions/qbr-scheduler/agenda-event.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/lib/revenueForecast/csvExport.test.ts",
@@ -1754,7 +1763,8 @@
   "supabase/functions/_shared/winloss-contract.ts": 1,
   "supabase/functions/check-v4-callback-alerts/alerts.ts": 1,
   "supabase/functions/detect-winloss-at-risk/scoring.ts": 1,
-  "supabase/functions/execute-workflow/actions.ts": 1
+  "supabase/functions/execute-workflow/actions.ts": 1,
+  "supabase/functions/qbr-scheduler/agenda-event.ts": 1
  },
  "sem_teste": {
   "telas": [

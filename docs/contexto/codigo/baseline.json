@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ceaddbf823ddb236d773808817f2d6dfd6968e26",
+  "commit": "3cf041b47cadb2cdcacb8219e13098980a6e397e",
   "branch": "main",
-  "data_commit": "2026-11-13T11:45:27Z",
+  "data_commit": "2026-11-13T09:30:58-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "3cf041b",
+    "data": "2026-11-13",
+    "assunto": "fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)"
+   },
    {
     "sha": "ceaddbf",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "91cded0",
     "data": "2026-11-13",
     "assunto": "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)"
-   },
-   {
-    "sha": "39a5d8a",
-    "data": "2026-11-13",
-    "assunto": "fix: regras de frequencia de contato passam a salvar no banco (#448)"
    }
   ],
-  "arquivos_mudados_7d": 559,
+  "arquivos_mudados_7d": 562,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 89
+    "mudancas": 88
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 87
+    "mudancas": 86
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 38
+    "mudancas": 37
    },
    {
     "arquivo": "deno.lock",
@@ -215,11 +215,11 @@
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 21
+    "mudancas": 20
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -227,11 +227,11 @@
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 16
+    "mudancas": 15
    },
    {
     "arquivo": ".github/workflows/qa-exhaustive.yml",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
     "arquivo": "CLAUDE.md",
@@ -239,38 +239,26 @@
    },
    {
     "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/edge-functions-bundle.yml",
-    "mudancas": 13
-   },
-   {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
-    "arquivo": "supabase/config.toml",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 12
+   },
+   {
+    "arquivo": "supabase/config.toml",
+    "mudancas": 11
    },
    {
     "arquivo": "vite.config.ts",
-    "mudancas": 12
-   },
-   {
-    "arquivo": "src/hooks/useQuotes.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
     "mudancas": 11
    },
    {
@@ -278,30 +266,42 @@
     "mudancas": 10
    },
    {
-    "arquivo": "docs/RUNBOOK.md",
+    "arquivo": "src/hooks/useQuotes.ts",
     "mudancas": 10
+   },
+   {
+    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "docs/RUNBOOK.md",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 9
    },
    {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 10
+    "mudancas": 9
    },
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 10
+    "mudancas": 9
    },
    {
     "arquivo": "src/hooks/admin/useV4Callbacks.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 10
+    "mudancas": 9
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 90
+    "commits": 91
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3483,
-  "arquivos_codigo": 2492,
-  "linhas_codigo": 432634,
+  "arquivos_total": 3485,
+  "arquivos_codigo": 2494,
+  "linhas_codigo": 432710,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
-  "modulos": 173,
+  "modulos": 174,
   "componentes": 1277,
   "hooks": 473,
   "edge_functions": 171,
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 194,
+  "testes": 195,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -619,8 +619,8 @@
    "linhas": 25560
   },
   "src/lib": {
-   "arquivos": 76,
-   "linhas": 8495
+   "arquivos": 77,
+   "linhas": 8549
   },
   "src/main.tsx": {
    "arquivos": 1,
@@ -651,8 +651,8 @@
    "linhas": 568
   },
   "supabase/functions": {
-   "arquivos": 315,
-   "linhas": 65541
+   "arquivos": 316,
+   "linhas": 65563
   },
   "tailwind.config.ts": {
    "arquivos": 1,

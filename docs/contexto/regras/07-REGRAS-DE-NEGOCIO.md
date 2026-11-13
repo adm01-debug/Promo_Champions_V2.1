@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ceaddbf823` · branch `main` · 2026-11-13 12:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3cf041b47c` · branch `main` · 2026-11-13 13:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3060,6 +3060,8 @@ _nenhum item encontrado_
 | `MODEL` | `"google/gemini-2.5-flash"` | `supabase/functions/personal-assistant-stream/index.ts` |
 | `BUCKETS` | `8` | `supabase/functions/pricing-intelligence/index.ts` |
 | `BATCH_SIZE` | `20` | `supabase/functions/process-call-recording-ingest/index.ts` |
+| `QBR_EVENT_TYPE` | `"meeting"` | `supabase/functions/qbr-scheduler/agenda-event.ts` |
+| `QBR_EVENT_STATUS` | `"pending"` | `supabase/functions/qbr-scheduler/agenda-event.ts` |
 | `COMMENTARY_CACHE_TTL_MS` | `60` | `supabase/functions/race-commentary/index.ts` |
 | `MAX_WEBHOOK_BODY_BYTES` | `240` | `supabase/functions/receive-quote-sync/index.ts` |
 | `MAX_EVENT_LENGTH` | `120` | `supabase/functions/receive-quote-sync/index.ts` |
@@ -4032,7 +4034,7 @@ _nenhum item encontrado_
 | Falha na análise comportamental | `src/hooks/useBehavioralAnalysis.ts` |
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
-| … +663 linhas — lista completa em `context.json` | |
+| … +664 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4138,7 +4140,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1386 testes em 161 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1390 testes em 162 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4244,6 +4246,7 @@ _nenhum item encontrado_
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/hooks/gamification/useWeeklyChallenges.test.tsx` | 4 | useDeactivateWeeklyChallenge · desativa via is_active=false (soft-delete) e invalida a lista · trata 0 linhas afetadas (bloqueio de RLS) como erro · propaga erro do Supabase com toast |
 | `src/hooks/playbooks/usePlaybookMutations.test.tsx` | 4 | useTogglePlaybookItem — marcar item do checklist · envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS) · admin/gestor sem registro de vendedor grava completed_by NULL · não insere se a consulta do vendedor falhar |
+| `src/lib/qbr/qbrSchedulerAgendaEvent.test.ts` | 4 | qbr-scheduler — linha de agenda_events · respeita os CHECKs de event_type, status e priority · mantém dono, horário e título reconhecível pelo dedup · a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |

@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2303,
- "arestas": 9492,
+ "nos": 2304,
+ "arestas": 9493,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",

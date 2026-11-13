@@ -13043,7 +13043,8 @@
    "supabase/functions/_shared/chunked-in.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/notification-categories.ts",
-   "supabase/functions/_shared/request-id.ts"
+   "supabase/functions/_shared/request-id.ts",
+   "supabase/functions/qbr-scheduler/agenda-event.ts"
   ],
   "supabase/functions/race-commentary/index.ts": [
    "supabase/functions/_shared/ai-gateway.ts",

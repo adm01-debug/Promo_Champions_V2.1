@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ceaddbf823ddb236d773808817f2d6dfd6968e26` (2026-11-13T11:45:27Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3cf041b47cadb2cdcacb8219e13098980a6e397e` (2026-11-13T09:30:58-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2412), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2414), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,21 +34,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3483 |
-| arquivos_codigo | 2492 |
-| linhas_codigo | 432634 |
+| arquivos_total | 3485 |
+| arquivos_codigo | 2494 |
+| linhas_codigo | 432710 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
-| modulos | 173 |
+| modulos | 174 |
 | componentes | 1277 |
 | hooks | 473 |
 | edge_functions | 171 |
 | tabelas | 414 |
 | migrations | 669 |
 | cron_jobs | 28 |
-| testes | 194 |
+| testes | 195 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1097), src/pages (173), src/contexts (5)
 - hooks: src/hooks (461), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (111), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (112), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -574,27 +574,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20307 nós · 64499 arestas · 1472 comunidades · grafo do commit `ceaddbf8`
-- comunidades maiores: Card (737), Button (600), Skeleton (393), client.ts (316), Índice (277), Badge (245), request-id.ts (223), getCorsHeaders (207), utils.ts (198), Avatar (192), ScrollArea (181), react (174)
+- 20317 nós · 64518 arestas · 1477 comunidades · grafo do commit `3cf041b4`
+- comunidades maiores: CardContent (475), Badge (327), date-fns (320), cn (311), Índice (277), getCorsHeaders (244), client.ts (241), Input (236), formatBRL (222), SelectContent (208), react (207), vitest (173)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (89)
-- package-lock.json (87)
-- .github/workflows/pr-checks.yml (38)
+- package.json (88)
+- package-lock.json (86)
+- .github/workflows/pr-checks.yml (37)
 - deno.lock (27)
-- .github/workflows/quote-to-sale-e2e.yml (21)
-- .github/workflows/codeql.yml (20)
+- .github/workflows/quote-to-sale-e2e.yml (20)
+- .github/workflows/codeql.yml (19)
 - RELATORIO_CI.md (18)
-- .github/workflows/cron-monitoring.yml (16)
-- .github/workflows/qa-exhaustive.yml (15)
+- .github/workflows/cron-monitoring.yml (15)
+- .github/workflows/qa-exhaustive.yml (14)
 - CLAUDE.md (14)
-- supabase/functions/bitrix24-sync/index.ts (14)
-- .github/workflows/edge-functions-bundle.yml (13)
-- src/integrations/supabase/types.ts (13)
+- supabase/functions/bitrix24-sync/index.ts (13)
+- .github/workflows/edge-functions-bundle.yml (12)
 - PENDENCIAS.md (12)
-- supabase/config.toml (12)
+- src/integrations/supabase/types.ts (12)
+- supabase/config.toml (11)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `3cf041b` fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)
 - 2026-11-13 `ceaddbf` fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)
 - 2026-11-13 `7b45023` chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)
 - 2026-11-13 `52ad2f4` fix: grava vendedor logado como dono ao criar conta no ABM (#475)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `7bc13e2` feat: editar e excluir produto do fornecedor no comparador de preços (#437)
 - 2026-11-13 `2c36718` feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)
 - 2026-11-13 `4e0bb00` feat: editar e excluir filas do Power Dialer (#435)
-- 2026-11-13 `7ab97e0` feat: editar e arquivar materiais no Sales Enablement (#433)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
