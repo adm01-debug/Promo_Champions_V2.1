@@ -983,7 +983,7 @@
   {
    "arquivo": "supabase/functions/cron-failure-alerter/index.test.ts",
    "tipo": "unit",
-   "linhas": 346,
+   "linhas": 350,
    "testa": [],
    "casos": 16
   },

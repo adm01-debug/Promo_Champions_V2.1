@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "91cded0b814fa1717e9847a6c7b2d6452ca44dcb",
+  "sha": "0c1ae11459a07f744ff54a4a9c7b567b5715176a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 04:41 UTC",
+  "generated_at": "2026-11-13 04:57 UTC",
   "files_total": 3475,
   "code_files": 3146,
-  "code_lines": 457879
+  "code_lines": 457883
  },
  "version": "1.3.2",
- "facts_hash": "3493bcf08ca5c183",
+ "facts_hash": "5ebf197e2f27171d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -78996,7 +78996,7 @@
   {
    "module": "supabase/functions",
    "files": 314,
-   "lines": 65498,
+   "lines": 65502,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -227212,11 +227212,17 @@
   },
   "supabase/functions/cron-failure-alerter/index.test.ts": {
    "path": "supabase/functions/cron-failure-alerter/index.test.ts",
-   "lines": 346,
+   "lines": 350,
    "is_test": true,
    "env": [
     "SUPABASE_SERVICE_ROLE_KEY",
     "VITE_SUPABASE_URL"
+   ],
+   "params": [
+    {
+     "name": "RUN_BASE",
+     "value": "-1"
+    }
    ],
    "rule_comments": [
     "2) próxima varredura do detector (5min depois, ainda travado) — deve deduplicar",
@@ -244719,10 +244725,20 @@
   }
  },
  "git": {
-  "sha": "91cded0b814fa1717e9847a6c7b2d6452ca44dcb",
+  "sha": "0c1ae11459a07f744ff54a4a9c7b567b5715176a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "0c1ae11",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)",
+    "files": [
+     "package.json",
+     "supabase/functions/cron-failure-alerter/index.test.ts"
+    ]
+   },
    {
     "sha": "91cded0",
     "date": "2026-11-13",
@@ -245485,25 +245501,12 @@
      "scripts/supabase_snapshot/snapshot.py",
      "scripts/supabase_snapshot/test_snapshot.py"
     ]
-   },
-   {
-    "sha": "d67653a",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)",
-    "files": [
-     ".claude/hooks/session-start.sh",
-     ".gitignore",
-     "AGENTS.md",
-     "docs/agentes/github-ci.md",
-     "docs/agentes/vercel-deploy.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    7
+    8
    ],
    [
     "package-lock.json",
