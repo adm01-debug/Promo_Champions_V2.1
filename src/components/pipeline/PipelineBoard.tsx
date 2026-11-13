@@ -48,6 +48,10 @@ import {
   useWeeklyWonDeals,
   WEEKLY_WON_DEALS_WINDOW_DAYS,
 } from '@/hooks/pipeline/useWeeklyWonDeals';
+import {
+  useClientPhonesByIds,
+  useStakeholdersBySaleIds,
+} from '@/hooks/pipeline/useDealCardContext';
 
 import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
@@ -55,6 +59,10 @@ const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 // Fora do componente para não somar ao teto de complexidade (lint:complexity, máx. 20).
 const formatWeeklyWonDeals = (n: number | undefined) =>
   n === undefined ? '—' : `${n} ${n === 1 ? 'Deal' : 'Deals'}`;
+const phoneForClient = (
+  phones: Record<string, string> | undefined,
+  clientId: string | null | undefined
+) => (clientId ? phones?.[clientId] : undefined);
 
 export const PipelineBoard = () => {
   const [selectedPipelineId, setSelectedPipelineId] =
@@ -147,6 +155,20 @@ export const PipelineBoard = () => {
       (currentDealsByStage[stage.id] || []).map(deal => deal.id)
     );
   }, [currentDealsByStage, currentStages]);
+
+  const allClientIds = useMemo(() => {
+    if (!currentDealsByStage) return [];
+    const ids = new Set<string>();
+    for (const stage of currentStages) {
+      for (const deal of currentDealsByStage[stage.id] || []) {
+        if (deal.client_id) ids.add(deal.client_id);
+      }
+    }
+    return [...ids];
+  }, [currentDealsByStage, currentStages]);
+
+  const { data: stakeholdersBySale } = useStakeholdersBySaleIds(allDealIds);
+  const { data: clientPhones } = useClientPhonesByIds(allClientIds);
 
   const { data: rawProbabilities } = useDealProbabilities();
   const { data: leadScoresData } = useLeadScores();
@@ -463,7 +485,7 @@ export const PipelineBoard = () => {
         </div>
 
         {/* Stats Bar */}
-        <div className="relative flex items-center justify-between p-6 rounded-2xl bg-linear-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
+        <div className="relative flex items-center justify-end p-6 rounded-2xl bg-linear-to-r from-card/80 via-card/40 to-background/50 backdrop-blur-xl border border-border/20 shadow-2xl overflow-hidden group">
           {/* Background glow overlay */}
           <div className="absolute -right-24 -top-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700" />
 
@@ -552,6 +574,8 @@ export const PipelineBoard = () => {
                     leadScores={isDefaultPipeline ? leadScores : undefined}
                     activeCadences={isDefaultPipeline ? activeCadences : undefined}
                     icpByClientName={isDefaultPipeline ? icpByClientName : undefined}
+                    stakeholdersBySale={stakeholdersBySale}
+                    clientPhones={clientPhones}
                     showFunnelLayer={showFunnelLayer}
                     conversionRate={conversionRate}
                   />
@@ -572,6 +596,8 @@ export const PipelineBoard = () => {
                     icpByClientName?.get(activeDeal.client_name.toLowerCase()) as
                       { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
+                  stakeholders={stakeholdersBySale?.[activeDeal.id]}
+                  clientPhone={phoneForClient(clientPhones, activeDeal.client_id)}
                 />
               </div>
             )}
