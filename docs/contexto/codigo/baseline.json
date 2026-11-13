@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c4f625e35bb4b16760b9278262edddafc8571f1c",
+  "commit": "c2c73445b59a17a5429196775398cdb9213be8a2",
   "branch": "main",
-  "data_commit": "2026-11-13T02:15:58Z",
+  "data_commit": "2026-11-13T03:39:30Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "c2c7344",
+    "data": "2026-11-13",
+    "assunto": "fix: estados de loading e erro reais no painel de deals inativos (#458)"
+   },
    {
     "sha": "c4f625e",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "407c311",
     "data": "2026-11-09",
     "assunto": "chore(deps): bump actions/download-artifact (#399)"
-   },
-   {
-    "sha": "042d3e7",
-    "data": "2026-11-08",
-    "assunto": "fix: corrige restore incondicional no hook de grafo e typo no count de workflows"
    }
   ],
-  "arquivos_mudados_7d": 493,
+  "arquivos_mudados_7d": 497,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -192,8 +192,8 @@
     "mudancas": 18
    },
    {
-    "pasta": "src/components/bi",
-    "mudancas": 16
+    "pasta": "src/components/pipeline",
+    "mudancas": 18
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 65
+    "commits": 66
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3454,
-  "arquivos_codigo": 2463,
-  "linhas_codigo": 426963,
+  "arquivos_total": 3456,
+  "arquivos_codigo": 2465,
+  "linhas_codigo": 427179,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 168,
+  "testes": 170,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1183,
-   "linhas": 187664
+   "arquivos": 1184,
+   "linhas": 187787
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 505,
-   "linhas": 57862
+   "arquivos": 506,
+   "linhas": 57955
   },
   "src/integrations": {
    "arquivos": 4,

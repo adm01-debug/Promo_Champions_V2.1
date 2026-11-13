@@ -9971,7 +9971,7 @@
     "InactivityPanel"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 151,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useInactiveDeals"
@@ -15510,7 +15510,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 539,
+   "usado_por": 540,
    "orfao": false
   },
   {
@@ -15943,7 +15943,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 310,
+   "usado_por": 311,
    "orfao": false
   },
   {

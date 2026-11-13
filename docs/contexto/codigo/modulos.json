@@ -5741,8 +5741,8 @@
   {
    "modulo": "components/pipeline",
    "arquivos": 16,
-   "testes": 0,
-   "linhas": 3094,
+   "testes": 1,
+   "linhas": 3132,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5859,6 +5859,7 @@
    "flags": [],
    "papeis": [
     "admin",
+    "alert",
     "button",
     "closer",
     "hybrid"
@@ -9621,8 +9622,8 @@
   {
    "modulo": "hooks",
    "arquivos": 145,
-   "testes": 12,
-   "linhas": 19373,
+   "testes": 13,
+   "linhas": 19390,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

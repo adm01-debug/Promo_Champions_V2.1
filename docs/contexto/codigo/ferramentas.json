@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2383)",
+   "TypeScript (2385)",
    "SQL (676)",
    "Markdown (205)",
    "JavaScript (77)",
@@ -1869,7 +1869,7 @@
    },
    {
     "papel": "alert",
-    "ocorrencias": 11
+    "ocorrencias": 12
    },
    {
     "papel": "region",

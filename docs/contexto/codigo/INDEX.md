@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c4f625e35bb4b16760b9278262edddafc8571f1c` (2026-11-13T02:15:58Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c2c73445b59a17a5429196775398cdb9213be8a2` (2026-11-13T03:39:30Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2383), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2385), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3454 |
-| arquivos_codigo | 2463 |
-| linhas_codigo | 426963 |
+| arquivos_total | 3456 |
+| arquivos_codigo | 2465 |
+| linhas_codigo | 427179 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 414 |
 | migrations | 669 |
 | cron_jobs | 28 |
-| testes | 168 |
+| testes | 170 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1096), src/pages (173), src/contexts (5)
 - hooks: src/hooks (460), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (85), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (87), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -551,7 +551,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, LOVABLE_API_KEY, METRICS_INGEST_TOKEN, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
 
 ## Permissões / papéis
-- papéis no código: user (52), system (43), closer (21), sdr (20), admin (19), hybrid (14), status (13), alert (11), region (10), authenticated (8), manager (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), tab (2), tool (2), Roles (1), agent (1), alertdialog (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), salesperson (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
+- papéis no código: user (52), system (43), closer (21), sdr (20), admin (19), hybrid (14), status (13), alert (12), region (10), authenticated (8), manager (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), tab (2), tool (2), Roles (1), agent (1), alertdialog (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), salesperson (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
 - enums de papel: salesperson_role: sdr|closer|hybrid; app_role: admin|manager|salesperson
 - guards: src/components/auth/ProtectedRoute.tsx, src/components/navigation/NavigationGuard.tsx · rotas protegidas: 36 · públicas: /*, /abm, /acesso-negado, /admin/regras-comissao, /agenda, /agentes, /analytics, /analytics/abc, /analytics/closing-time, /analytics/deal-velocity, /analytics/emails, /analytics/evolution, /analytics/objections, /analytics/win-loss, /aprovacoes, /arena, /assinatura-digital, /assistente, /atividades, /audit-logs, /automacao-inteligente, /automacoes, /benchmarking, /bi-closer, /bi-gestor, /bi-sdr, /bi-vendedor, /bitrix24, /busca, /busca-inteligente, /cadencias, /cadencias-orcamentos, /calendario, /clientes, /coaching-inteligente, /comissoes, /comparador-precos, /competencias, /configuracoes, /contas/:id, /conversational-intelligence, /conversational-intelligence/gravacoes, /customer-success, /customer-success-360, /deal-intelligence, /deduplicacao, /desafios, /desafios-diarios, /email-tracking, /embed/report/:token, /engagement/abm, /engagement/abm/:accountId, /engagement/bulk-composer, /engagement/dialer, /engagement/email-scoring, /engagement/send-time, /estoque, /evolucao-precos, /ferramentas/bi, /follow-up, /follow-up/audit, /fonte-leads, /forecast, /fornecedores, /funil, /gamificacao/badges, /gatilhos-inatividade, /health-score, /icp, /importar-exportar, /inteligencia, /inteligencia-compras, /inteligencia-preditiva, /kanban-clientes, /lead-routing, /lead-scoring, /mapa-clientes, /metas, /metas-atividades, /metricas-categoria, /meu-assistente, /minhas-premiacoes, /multichannel, /notificacoes, /nps, /onboarding-tracking, /orcamentos, /perfil-gamer, /perguntar, /pipeline, /playbooks, /portfolio, /previsao-demanda, /pricing-intelligence, /produtos, /race-arena, /race-arena/career, /race-arena/closer, /race-arena/garage, /race-arena/sdr, /race-arena/spectator/:seasonId, /ranking, /relatorio-atividades, /relatorios, /relatorios-agendados, /relatorios-custom, /relatorios-custom/:id, /relatorios-email, /relatorios-executivos, /relatorios/cohort, /relatorios/funil, /reset-password, /revenue-forecast, /revenue-forecast-v2, /revenue-intelligence, /revops, /roi, /sales-enablement, /sequences, /sla-tracking, /tarefas, /team-activity, /territorios, /territory-optimization, /times, /top-produtos, /vendedores, /victory-feed, /webhooks, /win-loss-intelligence, /workflow-builder, /workflows
 - feature flags: ENABLE_RLS, FEATURE_X, experimental_ui, nova-tela, novo-inbox
@@ -574,8 +574,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20123 nós · 63922 arestas · 1465 comunidades · grafo do commit `c4f625e3`
-- comunidades maiores: Card (703), Button (618), framer-motion (299), Badge (290), client.ts (285), Índice (277), withRequestId (218), getCorsHeaders (213), utils.ts (203), useQuotes.ts (169), lazyPages.ts (160), formatBRL (159)
+- 20133 nós · 63946 arestas · 1448 comunidades · grafo do commit `c2c73445`
+- comunidades maiores: Card (456), cn (390), client.ts (311), Índice (277), Button (259), getCorsHeaders (244), Input (236), TabsTrigger (217), lucide-react (201), Skeleton (183), ref_npm_supabase (182), constants/index.ts (159)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `c2c7344` fix: estados de loading e erro reais no painel de deals inativos (#458)
 - 2026-11-13 `c4f625e` chore(main): release 1.3.0 (#462)
 - 2026-11-12 `075d0c3` chore(deps): bump react-day-picker from 10.0.1 to 10.0.2 (#405)
 - 2026-11-12 `d51e633` feat: editar e excluir stakeholders da conta ABM (#427)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `5bccdda` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#418)
 - 2026-11-10 `31f6e2b` fix: corrigir timeout da seção grants no snapshot do banco (#417)
 - 2026-11-10 `258c998` ci: verifica que cada pin de Action é o commit real da tag declarada (#395)
-- 2026-11-10 `ed266a1` chore: inventario do estado real [auto] (#414)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

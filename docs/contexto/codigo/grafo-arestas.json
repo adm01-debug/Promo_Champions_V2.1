@@ -4675,6 +4675,8 @@
   ],
   "src/components/pipeline/InactivityPanel.tsx": [
    "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/skeleton.tsx",
    "src/hooks/useInactiveDeals.ts",
    "src/lib/utils.ts"
   ],

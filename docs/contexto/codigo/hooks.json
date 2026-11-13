@@ -8662,7 +8662,7 @@
    "hooks_exportados": [
     "useInactiveDeals"
    ],
-   "linhas": 200,
+   "linhas": 217,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8682,7 +8682,7 @@
     "src/components/pipeline/InactivityPanel.tsx",
     "src/pages/InactivityTriggers.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/useInventory.ts",

@@ -7744,6 +7744,7 @@
    "flags": [],
    "papeis": [
     "admin",
+    "alert",
     "button",
     "closer",
     "hybrid"

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c4f625e35b` · branch `main` · 2026-11-13 03:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c2c73445b5` · branch `main` · 2026-11-13 04:04 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3908,6 +3908,7 @@ _nenhum item encontrado_
 | Créditos de IA esgotados. | `src/components/pipeline/AtRiskDealsPanel.tsx` |
 | Erro ao analisar deal | `src/components/pipeline/AtRiskDealsPanel.tsx` |
 | Limite de requisições atingido. Tente novamente em alguns minutos. | `src/components/pipeline/AtRiskDealsPanel.tsx` |
+|  className= | `src/components/pipeline/InactivityPanel.tsx` |
 | Erro ao encaminhar lead | `src/components/pipeline/QuickActionsMenu.tsx` |
 | Erro ao executar macro | `src/components/pipeline/QuickActionsMenu.tsx` |
 | ,                               title:  | `src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx` |
@@ -4025,8 +4026,7 @@ _nenhum item encontrado_
 | Erro na sincronização | `src/hooks/useBitrix24.ts` |
 | No closers found | `src/hooks/useCloserMetrics.ts` |
 | Erro ao remover premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
-| Erro ao salvar premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
-| … +626 linhas — lista completa em `context.json` | |
+| … +627 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1231 testes em 135 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1240 testes em 137 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4201,6 +4201,7 @@ _nenhum item encontrado_
 | `tests/e2e/quote-to-sale-validations.spec.ts` | 6 | Conversão de orçamento — validações e concorrência · EMPTY_ITEMS: orçamento sem itens é bloqueado e mensagem PT-BR na UI · Tolerância ±R$ 0,02: 3× 33,33 vs total 100,00 converte (0,01 de diff) · TOTAL_MISMATCH: diferença de R$ 0,05 é bloqueada … |
 | `tests/e2e/rls-authorization-edge-cases.spec.ts` | 6 | SEC-02 — RLS edge cases (anon) · anon não lê ${table} (select cru) · anon não lê ${table} com filtro user_id fabricado · apikey ausente é bloqueado pelo gateway … |
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
+| `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/hooks/abm/useAccounts.test.tsx` | 5 | contatos da conta ABM · edita o contato sem enviar id nem account_id no payload e invalida a lista · acusa erro quando a edição não afeta nenhuma linha (RLS) · exclui o contato e invalida a lista … |
@@ -4218,6 +4219,7 @@ _nenhum item encontrado_
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
+| `src/hooks/useInactiveDeals.test.tsx` | 4 | useInactiveDeals · começa em loading e termina com os deals inativos reais · sinaliza erro quando a consulta de vendas falha · sinaliza erro quando a consulta de atividades falha |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
