@@ -7424,7 +7424,9 @@
    "tabelas": [
     "nps_surveys"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],

@@ -9715,8 +9715,8 @@
   {
    "modulo": "hooks",
    "arquivos": 145,
-   "testes": 13,
-   "linhas": 19473,
+   "testes": 14,
+   "linhas": 19483,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10496,6 +10496,7 @@
      "disable_totp",
      "fn_convert_quote_to_sale",
      "generate_api_token",
+     "get_current_salesperson_id",
      "get_login_lockout_status",
      "get_mfa_status",
      "is_ip_blocked",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e37f60a9aa65087d918347f29700a780d7ac690d` (2026-11-13T08:48:39Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e3990945df3e11a6b365b273c6a86fa9890bb61e` (2026-11-13T09:04:52Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2407), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2408), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3478 |
-| arquivos_codigo | 2487 |
-| linhas_codigo | 432244 |
+| arquivos_total | 3479 |
+| arquivos_codigo | 2488 |
+| linhas_codigo | 432309 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 414 |
 | migrations | 669 |
 | cron_jobs | 28 |
-| testes | 190 |
+| testes | 191 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (1097), src/pages (173), src/contexts (5)
 - hooks: src/hooks (461), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (107), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (108), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -574,27 +574,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20287 nós · 64452 arestas · 1441 comunidades · grafo do commit `e37f60a9`
-- comunidades maiores: Badge (389), lucide-react (352), cn (348), Card (330), getCorsHeaders (289), DialogContent (285), client.ts (280), Índice (277), Input (263), formatBRL (229), Button (207), Skeleton (207)
+- 20291 nós · 64460 arestas · 1436 comunidades · grafo do commit `e3990945`
+- comunidades maiores: Card (520), Button (360), client.ts (301), getCorsHeaders (283), Badge (280), Índice (277), Avatar (266), DialogContent (254), lazyPages.ts (191), vitest (181), Skeleton (179), date-fns (178)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (93)
-- package-lock.json (92)
-- .github/workflows/pr-checks.yml (41)
+- package.json (91)
+- package-lock.json (90)
+- .github/workflows/pr-checks.yml (40)
 - deno.lock (26)
-- .github/workflows/quote-to-sale-e2e.yml (24)
-- .github/workflows/codeql.yml (23)
-- .github/workflows/cron-monitoring.yml (19)
-- .github/workflows/qa-exhaustive.yml (18)
+- .github/workflows/quote-to-sale-e2e.yml (23)
+- .github/workflows/codeql.yml (22)
+- .github/workflows/cron-monitoring.yml (18)
 - RELATORIO_CI.md (18)
-- supabase/functions/bitrix24-sync/index.ts (17)
-- .github/workflows/edge-functions-bundle.yml (16)
-- src/integrations/supabase/types.ts (16)
-- supabase/config.toml (16)
-- vite.config.ts (15)
+- .github/workflows/qa-exhaustive.yml (17)
+- supabase/functions/bitrix24-sync/index.ts (16)
+- .github/workflows/edge-functions-bundle.yml (15)
+- src/integrations/supabase/types.ts (15)
+- supabase/config.toml (15)
 - CLAUDE.md (14)
+- vite.config.ts (14)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `e399094` fix: grava pesquisa NPS no vendedor logado (#473)
 - 2026-11-13 `e37f60a` Inscrição em cadência usa o vendedor logado como responsável padrão (#472)
 - 2026-11-13 `39cb90c` fix: etapa do playbook grava o vendedor certo em completed_by (#479)
 - 2026-11-13 `d21dcd1` fix: enviar completed_by ao marcar item do playbook no pipeline (#470)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `b68acd2` feat: editar e cancelar batalhas de vendas (#431)
 - 2026-11-13 `9d3c316` feat: editar e excluir workflows no Automation Builder (#430)
 - 2026-11-13 `5d2f222` feat: editar e remover signatários na assinatura digital (#428)
-- 2026-11-13 `56b4d2b` fix(hooks): plano de conta ABM envia created_by ao criar (#467)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e37f60a9aa65087d918347f29700a780d7ac690d",
+  "commit": "e3990945df3e11a6b365b273c6a86fa9890bb61e",
   "branch": "main",
-  "data_commit": "2026-11-13T08:48:39Z",
+  "data_commit": "2026-11-13T09:04:52Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e399094",
+    "data": "2026-11-13",
+    "assunto": "fix: grava pesquisa NPS no vendedor logado (#473)"
+   },
    {
     "sha": "e37f60a",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "d51e633",
     "data": "2026-11-12",
     "assunto": "feat: editar e excluir stakeholders da conta ABM (#427)"
-   },
-   {
-    "sha": "7884531",
-    "data": "2026-11-12",
-    "assunto": "chore: inventario do estado real [auto] (#425)"
    }
   ],
-  "arquivos_mudados_7d": 550,
+  "arquivos_mudados_7d": 552,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 93
+    "mudancas": 91
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 92
+    "mudancas": 90
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "deno.lock",
@@ -215,18 +215,14 @@
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 24
-   },
-   {
-    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 23
    },
    {
-    "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 19
+    "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 22
    },
    {
-    "arquivo": ".github/workflows/qa-exhaustive.yml",
+    "arquivo": ".github/workflows/cron-monitoring.yml",
     "mudancas": 18
    },
    {
@@ -234,23 +230,23 @@
     "mudancas": 18
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "arquivo": ".github/workflows/qa-exhaustive.yml",
     "mudancas": 17
    },
    {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 16
+   },
+   {
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "mudancas": 15
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 16
+    "mudancas": 15
    },
    {
     "arquivo": "supabase/config.toml",
-    "mudancas": 16
-   },
-   {
-    "arquivo": "vite.config.ts",
     "mudancas": 15
    },
    {
@@ -258,50 +254,54 @@
     "mudancas": 14
    },
    {
-    "arquivo": "src/hooks/useQuotes.ts",
+    "arquivo": "vite.config.ts",
     "mudancas": 14
+   },
+   {
+    "arquivo": "src/hooks/useQuotes.ts",
+    "mudancas": 13
    },
    {
     "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 14
+    "mudancas": 13
+   },
+   {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 12
    },
    {
     "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "src/hooks/admin/useV4Callbacks.ts",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "src/pages/admin/AdminComercial.tsx",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "supabase/functions/analyze-pipeline-coverage/index.ts",
-    "mudancas": 13
-   },
-   {
-    "arquivo": "supabase/functions/bitrix24-oauth/index.ts",
-    "mudancas": 13
+    "mudancas": 12
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 86
+    "commits": 87
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3478,
-  "arquivos_codigo": 2487,
-  "linhas_codigo": 432244,
+  "arquivos_total": 3479,
+  "arquivos_codigo": 2488,
+  "linhas_codigo": 432309,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 190,
+  "testes": 191,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 517,
-   "linhas": 60519
+   "arquivos": 518,
+   "linhas": 60584
   },
   "src/integrations": {
    "arquivos": 4,
