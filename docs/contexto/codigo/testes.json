@@ -300,11 +300,11 @@
   {
    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
    "tipo": "unit",
-   "linhas": 330,
+   "linhas": 353,
    "testa": [
     "src/hooks/abm/useAccounts.ts"
    ],
-   "casos": 13
+   "casos": 14
   },
   {
    "arquivo": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `21eae42a81259886458779fa5f31c1fee0f656bc` (2026-11-13T05:22:07Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `56b4d2b8f1f7436f95dd704f0995b77a9bfbb31c` (2026-11-13T05:41:32Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3461 |
 | arquivos_codigo | 2470 |
-| linhas_codigo | 428431 |
+| linhas_codigo | 428459 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,8 +574,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20174 nós · 64051 arestas · 1451 comunidades · grafo do commit `21eae42a`
-- comunidades maiores: Card (433), getCorsHeaders (297), client.ts (291), Índice (277), Button (244), Avatar (227), Badge (226), card.tsx (200), SelectContent (188), lazyPages.ts (187), utils.ts (180), formatBRL (168)
+- 20175 nós · 64052 arestas · 1460 comunidades · grafo do commit `56b4d2b8`
+- comunidades maiores: Card (614), lucide-react (565), Índice (277), client.ts (270), getCorsHeaders (265), Button (247), formatBRL (186), Input (183), SelectContent (180), date-fns (168), lazyPages.ts (164), ref_npm_supabase (163)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `56b4d2b` fix(hooks): plano de conta ABM envia created_by ao criar (#467)
 - 2026-11-13 `21eae42` feat: editar e excluir contas no Account-Based Selling (#426)
 - 2026-11-13 `53e363f` test: serializa execuções do stress quote→sale com lock consultivo (#465)
 - 2026-11-13 `0c1ae11` test: ids sintéticos por execução no teste do cron-failure-alerter (#463)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `e324e95` chore(main): release 1.2.0 (#391)
 - 2026-11-11 `f5e1a4f` feat: migra tailwind 3->4 (v4.3.5) (#423)
 - 2026-11-11 `e6a7784` feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)
-- 2026-11-11 `3c3c10d` chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

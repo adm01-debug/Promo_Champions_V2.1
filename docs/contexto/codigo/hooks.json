@@ -325,7 +325,7 @@
     "useUpdateAccountPlan",
     "useUpdateContact"
    ],
-   "linhas": 325,
+   "linhas": 330,
    "dominio": "hooks/abm",
    "tabelas": [
     "account_contacts",
