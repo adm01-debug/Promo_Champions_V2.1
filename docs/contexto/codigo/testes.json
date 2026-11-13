@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 172,
+ "total": 173,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 106
+  "unit": 107
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 89
+   "arquivos": 90
   },
   {
    "padrao": "tests/",
@@ -250,7 +250,7 @@
   {
    "arquivo": "src/components/pipeline/InactivityPanel.test.tsx",
    "tipo": "unit",
-   "linhas": 85,
+   "linhas": 87,
    "testa": [
     "src/components/pipeline/InactivityPanel.tsx",
     "src/hooks/useInactiveDeals.ts"
@@ -510,11 +510,11 @@
   {
    "arquivo": "src/hooks/useInactiveDeals.test.tsx",
    "tipo": "unit",
-   "linhas": 76,
+   "linhas": 130,
    "testa": [
     "src/hooks/useInactiveDeals.ts"
    ],
-   "casos": 3
+   "casos": 4
   },
   {
    "arquivo": "src/hooks/useLeadAssignment.test.ts",
@@ -788,6 +788,15 @@
     "supabase/functions/detect-winloss-at-risk/scoring.ts"
    ],
    "casos": 10
+  },
+  {
+   "arquivo": "src/pages/InactivityTriggers.test.tsx",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/pages/InactivityTriggers.tsx"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/pages/Index.test.tsx",
@@ -1514,6 +1523,7 @@
   "src/lib/winloss/severityFromScore.ts": 2,
   "src/pages/Auth.tsx": 1,
   "src/pages/Clientes.tsx": 1,
+  "src/pages/InactivityTriggers.tsx": 1,
   "src/pages/Index.tsx": 1,
   "src/pages/NotFound.tsx": 1,
   "src/routes/AppRoutes.tsx": 1,
@@ -1615,7 +1625,6 @@
    "src/pages/HistoricoDesafiosDiarios.tsx",
    "src/pages/ICP.tsx",
    "src/pages/ImportExport.tsx",
-   "src/pages/InactivityTriggers.tsx",
    "src/pages/InteligenciaPreditiva.tsx",
    "src/pages/Intelligence.tsx",
    "src/pages/KanbanClientes.tsx",

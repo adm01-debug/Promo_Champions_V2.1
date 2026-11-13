@@ -19037,10 +19037,11 @@
     "InactivityTriggers"
    ],
    "export_default": "InactivityTriggers",
-   "linhas": 234,
+   "linhas": 303,
    "dominio": "pages",
    "hooks_locais": [
-    "useInactiveDeals"
+    "useInactiveDeals",
+    "useSendNotification"
    ],
    "tabelas": [],
    "edges": [],

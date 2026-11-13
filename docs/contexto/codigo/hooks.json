@@ -8687,7 +8687,7 @@
    "hooks_exportados": [
     "useInactiveDeals"
    ],
-   "linhas": 217,
+   "linhas": 230,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8697,6 +8697,7 @@
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
+    "useCallback",
     "useMemo",
     "useQuery",
     "useStageInactivityRules"
@@ -9267,10 +9268,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/notifications/NotificationCenter.tsx",
-    "src/hooks/sales/useSalesEnablement.ts"
+    "src/hooks/sales/useSalesEnablement.ts",
+    "src/pages/InactivityTriggers.tsx"
    ],
    "coberto_por_testes": 0
   },

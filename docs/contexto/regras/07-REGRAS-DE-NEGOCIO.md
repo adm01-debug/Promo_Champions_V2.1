@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `39a5d8a48d` · branch `main` · 2026-11-13 04:27 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `91cded0b81` · branch `main` · 2026-11-13 04:41 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1264,6 +1264,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `image_url` | escreve | `supabase/functions/visual-search/index.ts` |
 | `type` | `in` | compara | `supabase/functions/external-db-bridge/index.ts` |
 | `type` | `inactive_client` | escreve | `src/hooks/notifications/useAlerts.ts`<br>`supabase/functions/send-alert-notifications/index.ts` |
+| `type` | `inactivity_alert` | escreve | `src/pages/InactivityTriggers.tsx` |
 | `type` | `inbound` | compara | `supabase/functions/_shared/webhook-integrity.ts` |
 | `type` | `info` | compara, escreve | `src/components/dashboard/AlertsPanel.tsx`<br>`src/components/intelligence/PipelineStrategicReview.tsx`<br>`src/pages/RelatoriosExecutivos.tsx`<br>`supabase/functions/_shared/notification-categories_test.ts` |
 | `type` | `input_audio` | escreve | `supabase/functions/transcribe-call-recording/index.ts` |
@@ -1487,8 +1488,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `partial` | compara, escreve | `src/components/competitive/FeatureComparison.tsx` |
 | `status` | `passed` | compara, escreve | `src/hooks/useRetryTestRun.ts`<br>`src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
 | `status` | `paused` | compara, escreve, filtra | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/TodaysCadenceTasks.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +4 |
-| `status` | `pendente` | compara | `src/components/admin/AdminSystemStatus.tsx` |
-| … +135 linhas — lista completa em `context.json` | | | |
+| … +136 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -4026,7 +4026,7 @@ _nenhum item encontrado_
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
 | Erro na sincronização | `src/hooks/useBitrix24.ts` |
-| … +630 linhas — lista completa em `context.json` | |
+| … +631 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1259 testes em 139 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1265 testes em 140 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4206,9 +4206,11 @@ _nenhum item encontrado_
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
+| `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/abm/useAccounts.test.tsx` | 5 | contatos da conta ABM · edita o contato sem enviar id nem account_id no payload e invalida a lista · acusa erro quando a edição não afeta nenhuma linha (RLS) · exclui o contato e invalida a lista … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
+| `src/pages/InactivityTriggers.test.tsx` | 5 | InactivityTriggers · não afirma  · mostra erro com nova tentativa real quando a consulta falha · notifica o vendedor via send_notification e só confirma após sucesso … |
 | `src/test/csv-export.test.ts` | 5 | CSV Export Utils · formatDateForExport should format correctly · formatPercentForExport should format correctly · formatCurrencyForExport should format correctly … |
 | `src/test/quote-error-messages.test.ts` | 5 | parseConvertQuoteError (módulo standalone) · normaliza espaços em branco antes do prefixo · devolve UNKNOWN para prefixo inválido ou desconhecido · todos os códigos têm mensagem PT-BR não-vazia mapeada … |
 | `src/test/sale-status.test.ts` | 5 | sale status helpers · treats manual and integration successful statuses as won · recognises lost statuses · treats pipeline stages as open (neither won nor lost) … |
@@ -4221,7 +4223,6 @@ _nenhum item encontrado_
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
-| `src/hooks/useInactiveDeals.test.tsx` | 4 | useInactiveDeals · começa em loading e termina com os deals inativos reais · sinaliza erro quando a consulta de vendas falha · sinaliza erro quando a consulta de atividades falha |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
@@ -4448,6 +4449,8 @@ _nenhum item encontrado_
 | `invoke(` | `src/pages/Cadencias.tsx` |
 | `sendWhatsApp` | `src/pages/FollowUpInteligente.tsx` |
 | `invoke(` | `src/pages/HistoricoDesafiosDiarios.tsx` |
+| `notifyingId` | `src/pages/InactivityTriggers.tsx` |
+| `sendNotification` | `src/pages/InactivityTriggers.tsx` |
 | `notify_at_risk_goals` | `src/pages/Notificacoes.tsx` |
 | `notify_inactive_clients` | `src/pages/Notificacoes.tsx` |
 | `notify_stagnant_deals` | `src/pages/Notificacoes.tsx` |

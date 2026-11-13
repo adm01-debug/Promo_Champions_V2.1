@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "39a5d8a48dc5a1e835138fe688a30c20871ca645",
+  "sha": "91cded0b814fa1717e9847a6c7b2d6452ca44dcb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 04:27 UTC",
-  "files_total": 3474,
-  "code_files": 3145,
-  "code_lines": 457612
+  "generated_at": "2026-11-13 04:41 UTC",
+  "files_total": 3475,
+  "code_files": 3146,
+  "code_lines": 457879
  },
  "version": "1.3.2",
- "facts_hash": "ff15f6fb082f5dc6",
+ "facts_hash": "3493bcf08ca5c183",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1309,
+   ".tsx": 1310,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -65563,16 +65563,30 @@
    },
    {
     "path": "",
+    "file": "src/pages/InactivityTriggers.test.tsx",
+    "component": "InactivityTriggers.test",
+    "tables_transitive": [],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 0
+   },
+   {
+    "path": "",
     "file": "src/pages/InactivityTriggers.tsx",
     "component": "InactivityTriggers",
     "tables_transitive": [
      "activities",
+     "notifications",
      "sales",
+     "salespeople",
      "stage_inactivity_rules"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
-    "deps_count": 11
+    "rpc_transitive": [
+     "mark_all_notifications_read",
+     "send_notification"
+    ],
+    "deps_count": 14
    },
    {
     "path": "",
@@ -77649,7 +77663,7 @@
   {
    "module": "src/components",
    "files": 1185,
-   "lines": 187954,
+   "lines": 187956,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -77973,7 +77987,7 @@
   {
    "module": "src/hooks",
    "files": 508,
-   "lines": 58279,
+   "lines": 58346,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78596,8 +78610,8 @@
   },
   {
    "module": "src/pages",
-   "files": 174,
-   "lines": 43053,
+   "files": 175,
+   "lines": 43251,
    "tables": [
     "achievements",
     "activities",
@@ -92284,6 +92298,10 @@
    {
     "file": "src/pages/ImportExport.tsx",
     "msg": "Nenhum dado para exportar"
+   },
+   {
+    "file": "src/pages/InactivityTriggers.tsx",
+    "msg": ",\n        category: "
    },
    {
     "file": "src/pages/MinhasPremiacoes.tsx",
@@ -120170,6 +120188,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/InactivityTriggers.tsx",
+    "field": "type",
+    "value": "inactivity_alert",
+    "kind": "escreve"
+   },
+   {
     "file": "src/pages/Index.tsx",
     "field": "role",
     "value": "sdr",
@@ -130909,11 +130933,15 @@
    },
    {
     "file": "src/hooks/useInactiveDeals.test.tsx",
-    "name": "começa em loading e termina com os deals inativos reais"
+    "name": "começa carregando e expõe o vendedor real do deal para notificação"
    },
    {
     "file": "src/hooks/useInactiveDeals.test.tsx",
-    "name": "sinaliza erro quando a consulta de vendas falha"
+    "name": "sinaliza erro quando a consulta de vendas falha (não mostra "
+   },
+   {
+    "file": "src/hooks/useInactiveDeals.test.tsx",
+    "name": "começa em loading e termina com os deals inativos reais"
    },
    {
     "file": "src/hooks/useInactiveDeals.test.tsx",
@@ -133030,6 +133058,26 @@
    {
     "file": "src/lib/winloss/winlossContract.test.ts",
     "name": "STUCK_STATUSES do contrato (usado por stageMatchScore na edge)"
+   },
+   {
+    "file": "src/pages/InactivityTriggers.test.tsx",
+    "name": "InactivityTriggers"
+   },
+   {
+    "file": "src/pages/InactivityTriggers.test.tsx",
+    "name": "não afirma "
+   },
+   {
+    "file": "src/pages/InactivityTriggers.test.tsx",
+    "name": "mostra erro com nova tentativa real quando a consulta falha"
+   },
+   {
+    "file": "src/pages/InactivityTriggers.test.tsx",
+    "name": "notifica o vendedor via send_notification e só confirma após sucesso"
+   },
+   {
+    "file": "src/pages/InactivityTriggers.test.tsx",
+    "name": "desabilita a notificação quando o deal não tem vendedor com acesso"
    },
    {
     "file": "src/pages/Index.test.tsx",
@@ -136034,6 +136082,14 @@
    {
     "file": "src/pages/HistoricoDesafiosDiarios.tsx",
     "call": "invoke("
+   },
+   {
+    "file": "src/pages/InactivityTriggers.tsx",
+    "call": "notifyingId"
+   },
+   {
+    "file": "src/pages/InactivityTriggers.tsx",
+    "call": "sendNotification"
    },
    {
     "file": "src/pages/Notificacoes.tsx",
@@ -158854,6 +158910,9 @@
      "win_factor": [
       "compara:src/lib/winloss/riskSeverity.ts",
       "compara:supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts"
+     ],
+     "inactivity_alert": [
+      "escreve:src/pages/InactivityTriggers.tsx"
      ],
      "trophy": [
       "compara:src/pages/MetasAtividades.tsx"
@@ -188781,7 +188840,7 @@
   },
   "src/components/pipeline/InactivityPanel.test.tsx": {
    "path": "src/components/pipeline/InactivityPanel.test.tsx",
-   "lines": 85,
+   "lines": 87,
    "is_test": true,
    "errors": [
     ")).toHaveTextContent(\n      "
@@ -198464,18 +198523,24 @@
   },
   "src/hooks/useInactiveDeals.test.tsx": {
    "path": "src/hooks/useInactiveDeals.test.tsx",
-   "lines": 76,
+   "lines": 130,
    "is_test": true,
+   "temporal": [
+    "created_at: subDays(new Date(), 30).toISOString(),",
+    "updated_at: subDays(new Date(), 12).toISOString(),",
+    "updated_at: subDays(new Date(), 5).toISOString(),"
+   ],
    "tests": [
     "useInactiveDeals",
+    "começa carregando e expõe o vendedor real do deal para notificação",
+    "sinaliza erro quando a consulta de vendas falha (não mostra ",
     "começa em loading e termina com os deals inativos reais",
-    "sinaliza erro quando a consulta de vendas falha",
     "sinaliza erro quando a consulta de atividades falha"
    ]
   },
   "src/hooks/useInactiveDeals.ts": {
    "path": "src/hooks/useInactiveDeals.ts",
-   "lines": 217,
+   "lines": 230,
    "exports": [
     "const INACTIVITY_RULES",
     "const useInactiveDeals"
@@ -218678,11 +218743,43 @@
     }
    ]
   },
+  "src/pages/InactivityTriggers.test.tsx": {
+   "path": "src/pages/InactivityTriggers.test.tsx",
+   "lines": 129,
+   "is_test": true,
+   "errors": [
+    ",\n      category: "
+   ],
+   "temporal": [
+    "lastActivityDate: subDays(new Date(), 12).toISOString(),"
+   ],
+   "tests": [
+    "InactivityTriggers",
+    "não afirma ",
+    "mostra erro com nova tentativa real quando a consulta falha",
+    "notifica o vendedor via send_notification e só confirma após sucesso",
+    "desabilita a notificação quando o deal não tem vendedor com acesso"
+   ]
+  },
   "src/pages/InactivityTriggers.tsx": {
    "path": "src/pages/InactivityTriggers.tsx",
-   "lines": 234,
+   "lines": 303,
    "exports": [
     "default InactivityTriggers"
+   ],
+   "errors": [
+    ",\n        category: "
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "inactivity_alert",
+     "kind": "escreve"
+    }
+   ],
+   "side_effects": [
+    "notifyingId",
+    "sendNotification"
    ]
   },
   "src/pages/Index.test.tsx": {
@@ -244622,10 +244719,23 @@
   }
  },
  "git": {
-  "sha": "39a5d8a48dc5a1e835138fe688a30c20871ca645",
+  "sha": "91cded0b814fa1717e9847a6c7b2d6452ca44dcb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "91cded0",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)",
+    "files": [
+     "src/components/pipeline/InactivityPanel.test.tsx",
+     "src/hooks/useInactiveDeals.test.tsx",
+     "src/hooks/useInactiveDeals.ts",
+     "src/pages/InactivityTriggers.test.tsx",
+     "src/pages/InactivityTriggers.tsx"
+    ]
+   },
    {
     "sha": "39a5d8a",
     "date": "2026-11-13",
@@ -245388,25 +245498,6 @@
      "docs/agentes/github-ci.md",
      "docs/agentes/vercel-deploy.md"
     ]
-   },
-   {
-    "sha": "b38cfe6",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "chore: replica o padrão de instruções para agentes do Zapp Web V2 (skill enxuto + guard GA02) (#392)",
-    "files": [
-     ".agents/skills/Promo_Champions_V2.1/SKILL.md",
-     ".claude/CLAUDE.md",
-     ".claude/settings.json",
-     ".claude/skills/Promo_Champions_V2.1/SKILL.md",
-     ".github/workflows/apply-migration.yml",
-     ".github/workflows/migrations-drift.yml",
-     ".github/workflows/pr-checks.yml",
-     "docs/agentes/contexto-gerado.md",
-     "scripts/check-migrations.mjs",
-     "scripts/ci/check-claude-md-integrity.mjs",
-     "scripts/inventario/gerar-banco.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -245435,16 +245526,16 @@
     3
    ],
    [
-    ".github/workflows/migrations-drift.yml",
-    3
+    "src/components/pipeline/InactivityPanel.test.tsx",
+    2
    ],
    [
-    ".github/workflows/pr-checks.yml",
-    3
+    "src/hooks/useInactiveDeals.test.tsx",
+    2
    ],
    [
-    "scripts/inventario/gerar-banco.mjs",
-    3
+    "src/hooks/useInactiveDeals.ts",
+    2
    ],
    [
     ".release-please-manifest.json",

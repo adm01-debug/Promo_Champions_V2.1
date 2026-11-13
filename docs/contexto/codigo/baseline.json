@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "39a5d8a48dc5a1e835138fe688a30c20871ca645",
+  "commit": "91cded0b814fa1717e9847a6c7b2d6452ca44dcb",
   "branch": "main",
-  "data_commit": "2026-11-13T04:20:35Z",
+  "data_commit": "2026-11-13T04:41:10Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "91cded0",
+    "data": "2026-11-13",
+    "assunto": "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)"
+   },
    {
     "sha": "39a5d8a",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "adf0414",
     "data": "2026-11-09",
     "assunto": "chore(deps): bump github/codeql-action/init from 4.39.1 to 4.39.3 (#403)"
-   },
-   {
-    "sha": "4424fde",
-    "data": "2026-11-09",
-    "assunto": "chore(deps): bump supabase/setup-cli (#400)"
    }
   ],
-  "arquivos_mudados_7d": 501,
+  "arquivos_mudados_7d": 503,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -188,11 +188,11 @@
     "mudancas": 19
    },
    {
-    "pasta": "RELATORIO_CI.md",
-    "mudancas": 18
+    "pasta": "src/components/pipeline",
+    "mudancas": 19
    },
    {
-    "pasta": "src/components/pipeline",
+    "pasta": "RELATORIO_CI.md",
     "mudancas": 18
    }
   ],
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 67
+    "commits": 68
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3459,
-  "arquivos_codigo": 2468,
-  "linhas_codigo": 427671,
+  "arquivos_total": 3460,
+  "arquivos_codigo": 2469,
+  "linhas_codigo": 427938,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 172,
+  "testes": 173,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1185,
-   "linhas": 187955
+   "linhas": 187957
   },
   "src/config": {
    "arquivos": 3,
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 508,
-   "linhas": 58279
+   "linhas": 58346
   },
   "src/integrations": {
    "arquivos": 4,
@@ -627,8 +627,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 174,
-   "linhas": 43053
+   "arquivos": 175,
+   "linhas": 43251
   },
   "src/routes": {
    "arquivos": 3,

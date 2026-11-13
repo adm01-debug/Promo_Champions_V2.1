@@ -10699,6 +10699,7 @@
    "src/components/ui/card.tsx",
    "src/components/ui/skeleton.tsx",
    "src/hooks/useInactiveDeals.ts",
+   "src/hooks/useNotifications.ts",
    "src/lib/utils.ts"
   ],
   "src/pages/Index.tsx": [

@@ -6119,35 +6119,56 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useArchiveNotification",
+    "useAuth",
     "useCallback",
     "useContext",
+    "useDeleteNotification",
     "useEffect",
     "useInactiveDeals",
     "useLocation",
+    "useMarkAllNotificationsRead",
+    "useMarkNotificationRead",
     "useMemo",
+    "useMutation",
     "useNavigationType",
+    "useNotifications",
     "usePageTransitionConfig",
     "useQuery",
+    "useQueryClient",
     "useReducedMotion",
     "useRef",
+    "useSendNotification",
     "useStageInactivityRules",
     "useState"
    ],
    "hooks_locais": [
+    "useArchiveNotification",
+    "useAuth",
+    "useDeleteNotification",
     "useInactiveDeals",
-    "useReducedMotion"
+    "useMarkAllNotificationsRead",
+    "useMarkNotificationRead",
+    "useNotifications",
+    "useReducedMotion",
+    "useSendNotification"
    ],
    "tabelas": [
     "activities",
+    "notifications",
     "sales",
+    "salespeople",
     "stage_inactivity_rules"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "mark_all_notifications_read",
+    "send_notification"
+   ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 12
+   "arquivos_puxados": 15
   },
   {
    "protegida": false,
