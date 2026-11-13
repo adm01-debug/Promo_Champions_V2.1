@@ -169,7 +169,6 @@ export const ConversationalIntelligenceHub = () => {
               label="Mapeamento de Voz"
               value={data.kpis.total_calls}
               hint={`${data.kpis.coverage_percent}% coverage`}
-              trend="+12%"
               accent="text-primary"
             />
             <KPICard
@@ -177,7 +176,6 @@ export const ConversationalIntelligenceHub = () => {
               label="Tempo de Exposição"
               value={`${data.kpis.total_duration_minutes}m`}
               hint={`Média ${data.kpis.avg_duration_minutes}m / call`}
-              trend="-5%"
               accent="text-info"
             />
             <KPICard
@@ -185,7 +183,6 @@ export const ConversationalIntelligenceHub = () => {
               label="Neural Sentiment"
               value={data.kpis.avg_sentiment.toFixed(2)}
               hint="Escala de Empatia (-1 a +1)"
-              trend="+0.05"
               accent="text-success"
             />
             <KPICard
@@ -193,7 +190,6 @@ export const ConversationalIntelligenceHub = () => {
               label="Ratio de Persuasão"
               value={`${Math.round(data.kpis.avg_talk_ratio_salesperson * 100)}%`}
               hint={`${data.kpis.avg_questions_per_call} Q/call`}
-              trend="Ideal"
               accent="text-warning"
             />
           </div>

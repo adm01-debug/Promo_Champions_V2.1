@@ -153,7 +153,8 @@ const EvolutionChartComponent: FC = () => {
               <Line
                 key={sp.id}
                 type="monotone"
-                dataKey={sp.name}
+                dataKey={sp.id}
+                name={sp.name}
                 stroke={COLORS[i % COLORS.length]}
                 strokeWidth={2}
                 dot={false}

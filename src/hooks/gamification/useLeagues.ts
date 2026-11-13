@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type LeagueTier = 'bronze' | 'silver' | 'gold' | 'diamond' | 'legendary';
@@ -102,9 +102,9 @@ export function useLeagues() {
         .from('league_members')
         .select('*, leagues(*)');
 
-      if (membersErr) {
-        console.error('Error fetching league members:', membersErr);
-      }
+      // Sem as inscrições não dá para dizer quem está em qual liga: propaga o erro
+      // para a tela mostrar falha em vez de "nenhum vendedor participa".
+      if (membersErr) throw membersErr;
 
       return (salespeople || [])
         .map((sp: SalespersonRow) => {
@@ -142,6 +142,43 @@ export function useLeagues() {
   });
 }
 
+interface LeagueEnrollment {
+  /** Vendedor ligado ao usuário logado (null se o usuário não é vendedor). */
+  salespersonId: string | null;
+  /** Liga de entrada (menor tier cadastrado); null se não há liga cadastrada. */
+  starterLeagueId: string | null;
+}
+
+export function useLeagueEnrollment() {
+  return useQuery({
+    queryKey: ['league-enrollment'],
+    queryFn: async (): Promise<LeagueEnrollment> => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return { salespersonId: null, starterLeagueId: null };
+
+      const { data: sp, error: spErr } = await supabase
+        .from('salespeople')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+      if (spErr) throw spErr;
+
+      const { data: league, error: leagueErr } = await supabase
+        .from('leagues')
+        .select('id')
+        .order('tier', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (leagueErr) throw leagueErr;
+
+      return { salespersonId: sp?.id ?? null, starterLeagueId: league?.id ?? null };
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useJoinLeague() {
   const queryClient = useQueryClient();
 
@@ -153,20 +190,15 @@ export function useJoinLeague() {
       salespersonId: string;
       leagueId: string;
     }) => {
-      const { data, error } = await supabase
+      // INSERT (não upsert): a RLS só permite ao vendedor inserir a própria linha;
+      // UPDATE em league_members é restrito a admin/gestor.
+      const { error } = await supabase
         .from('league_members')
-        .upsert(
-          {
-            salesperson_id: salespersonId,
-            league_id: leagueId,
-            weekly_xp: 0,
-          },
-          { onConflict: 'salesperson_id' }
-        )
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
+        .insert({ salesperson_id: salespersonId, league_id: leagueId, weekly_xp: 0 });
+      if (error) {
+        if (error.code === '23505') throw new Error('Você já participa de uma liga.');
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['salesperson-leagues'] });
