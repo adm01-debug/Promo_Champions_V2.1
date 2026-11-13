@@ -88,13 +88,13 @@
 | supabase_realtime | public.win_loss_patterns | default |
 | supabase_realtime | public.win_probability_calibrations | default |
 | supabase_realtime | public.win_probability_deal_calibrations | default |
-| supabase_realtime_messages_publication | realtime.messages_2026_11_09 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_10 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_11 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_12 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_13 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_14 |  |
 | supabase_realtime_messages_publication | realtime.messages_2026_11_15 |  |
+| supabase_realtime_messages_publication | realtime.messages_2026_11_16 |  |
 
 ## Broadcast / Presence (policies em realtime.messages)
 

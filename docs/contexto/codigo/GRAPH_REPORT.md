@@ -1,4 +1,4 @@
-# Graph Report - Promo_Champions_V2.1  (2026-11-12)
+# Graph Report - Promo_Champions_V2.1  (2026-11-13)
 
 ## Corpus Check
 - 3392 files · ~2,068,050 words
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d51e6339`
+- Built from commit: `075d0c38`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "d51e6339eee5046bdca46c1a378552fa2c704ecc",
+  "sha": "075d0c3859e00388d5c199bdf2b1769518562ba8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-12 23:01 UTC",
+  "generated_at": "2026-11-13 02:13 UTC",
   "files_total": 3469,
   "code_files": 3140,
   "code_lines": 456904
@@ -244382,10 +244382,21 @@
   }
  },
  "git": {
-  "sha": "d51e6339eee5046bdca46c1a378552fa2c704ecc",
+  "sha": "075d0c3859e00388d5c199bdf2b1769518562ba8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "075d0c3",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump react-day-picker from 10.0.1 to 10.0.2 (#405)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "d51e633",
     "date": "2026-11-12",
@@ -245152,20 +245163,15 @@
      "docs/agentes/mapa-do-sistema.md",
      "docs/agentes/worktree.md"
     ]
-   },
-   {
-    "sha": "b80e879",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: corrige relatório de impacto do graphify (#390)",
-    "files": [
-     "scripts/graphify/impact-report.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
+    6
+   ],
+   [
+    "package-lock.json",
     5
    ],
    [
@@ -245173,7 +245179,7 @@
     5
    ],
    [
-    "package-lock.json",
+    "deno.lock",
     4
    ],
    [
@@ -245182,10 +245188,6 @@
    ],
    [
     "inventario/estado/edges.json",
-    3
-   ],
-   [
-    "deno.lock",
     3
    ],
    [

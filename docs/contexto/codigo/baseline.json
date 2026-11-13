@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d51e6339eee5046bdca46c1a378552fa2c704ecc",
+  "commit": "075d0c3859e00388d5c199bdf2b1769518562ba8",
   "branch": "main",
-  "data_commit": "2026-11-12T18:18:52-03:00",
+  "data_commit": "2026-11-12T23:56:32Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "075d0c3",
+    "data": "2026-11-12",
+    "assunto": "chore(deps): bump react-day-picker from 10.0.1 to 10.0.2 (#405)"
+   },
    {
     "sha": "d51e633",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "37bccd8",
     "data": "2026-11-08",
     "assunto": "fix: protege a saída do snapshot e o trabalho local na publicação do contexto"
-   },
-   {
-    "sha": "d67653a",
-    "data": "2026-11-08",
-    "assunto": "chore: documenta perímetro de CI/Vercel e hook de grafo na nuvem (#393)"
    }
   ],
-  "arquivos_mudados_7d": 495,
+  "arquivos_mudados_7d": 494,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -168,16 +168,16 @@
     "mudancas": 24
    },
    {
+    "pasta": "package-lock.json",
+    "mudancas": 23
+   },
+   {
     "pasta": "src/components/win-loss",
     "mudancas": 23
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 22
-   },
-   {
     "pasta": "package.json",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "pasta": "src/hooks/gamification",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 96
+    "mudancas": 97
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 95
+    "mudancas": 96
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 21
+    "commits": 22
    },
    {
     "autor": "Claude",
