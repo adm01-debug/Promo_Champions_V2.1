@@ -5046,6 +5046,7 @@
     "useChallengesWithProgress",
     "useClaimChallengeReward",
     "useContext",
+    "useDeactivateWeeklyChallenge",
     "useEffect",
     "useGamificationData",
     "useLocation",
@@ -5068,6 +5069,7 @@
     "useAuth",
     "useChallengesWithProgress",
     "useClaimChallengeReward",
+    "useDeactivateWeeklyChallenge",
     "useGamificationData",
     "useReducedMotion",
     "useSalespersonXP",
@@ -5098,7 +5100,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 28
   },
   {
    "protegida": false,

@@ -3948,6 +3948,8 @@
    "src/lib/utils.ts"
   ],
   "src/components/gamification/WeeklyChallengesCard.tsx": [
+   "src/components/gamification/CreateChallengeDialog.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",

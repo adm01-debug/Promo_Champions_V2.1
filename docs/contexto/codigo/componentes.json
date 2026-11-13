@@ -8251,14 +8251,14 @@
     "CreateChallengeDialog"
    ],
    "export_default": null,
-   "linhas": 244,
+   "linhas": 280,
    "dominio": "components/gamification",
    "hooks_locais": [],
    "tabelas": [
     "weekly_challenges"
    ],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -8464,11 +8464,12 @@
     "WeeklyChallengesCard"
    ],
    "export_default": null,
-   "linhas": 290,
+   "linhas": 375,
    "dominio": "components/gamification",
    "hooks_locais": [
     "useChallengesWithProgress",
-    "useClaimChallengeReward"
+    "useClaimChallengeReward",
+    "useDeactivateWeeklyChallenge"
    ],
    "tabelas": [],
    "edges": [],
@@ -15417,7 +15418,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -18693,7 +18694,7 @@
     "DesafiosSemanais"
    ],
    "export_default": "DesafiosSemanais",
-   "linhas": 244,
+   "linhas": 245,
    "dominio": "pages",
    "hooks_locais": [
     "useChallengesWithProgress",

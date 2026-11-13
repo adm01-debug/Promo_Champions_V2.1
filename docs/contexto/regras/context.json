@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b68acd2b2d4e0743c20de4080699758f3a902d40",
+  "sha": "1f60080cc6cbace9f740ad8e82dc13f35e7f147b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 06:07 UTC",
-  "files_total": 3479,
-  "code_files": 3150,
-  "code_lines": 459515
+  "generated_at": "2026-11-13 06:13 UTC",
+  "files_total": 3480,
+  "code_files": 3151,
+  "code_lines": 459774
  },
  "version": "1.3.2",
- "facts_hash": "3c4ca94072568f72",
+ "facts_hash": "9553e771cb0873a0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1314,
+   ".tsx": 1315,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -66865,7 +66865,7 @@
      "claim_weekly_challenge_reward",
      "sync_challenge_progress"
     ],
-    "deps_count": 26
+    "deps_count": 27
    },
    {
     "path": "/desafios-diarios",
@@ -75282,6 +75282,10 @@
     "file": "src/hooks/gamification/useWeeklyChallenges.ts"
    },
    {
+    "name": "useDeactivateWeeklyChallenge",
+    "file": "src/hooks/gamification/useWeeklyChallenges.ts"
+   },
+   {
     "name": "useWeeklyMatchups",
     "file": "src/hooks/gamification/useWeeklyMatchups.ts"
    },
@@ -77699,7 +77703,7 @@
   {
    "module": "src/components",
    "files": 1186,
-   "lines": 188190,
+   "lines": 188311,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78022,8 +78026,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 510,
-   "lines": 59222,
+   "files": 511,
+   "lines": 59359,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78647,7 +78651,7 @@
   {
    "module": "src/pages",
    "files": 176,
-   "lines": 43768,
+   "lines": 43769,
    "tables": [
     "achievements",
     "activities",
@@ -83669,13 +83673,17 @@
     ]
    },
    "weekly_challenges": {
-    "insert": [
-     "src/components/gamification/CreateChallengeDialog.tsx"
-    ],
     "select": [
      "src/components/gamification/CreateChallengeDialog.tsx",
      "src/hooks/gamification/useWeeklyChallenges.ts",
      "supabase/functions/challenge-expiration-alerts/index.ts"
+    ],
+    "update": [
+     "src/components/gamification/CreateChallengeDialog.tsx",
+     "src/hooks/gamification/useWeeklyChallenges.ts"
+    ],
+    "insert": [
+     "src/components/gamification/CreateChallengeDialog.tsx"
     ]
    },
    "weekly_matchups": {
@@ -90542,10 +90550,6 @@
    },
    {
     "file": "src/components/gamification/CreateChallengeDialog.tsx",
-    "msg": "Erro ao criar desafio"
-   },
-   {
-    "file": "src/components/gamification/CreateChallengeDialog.tsx",
     "msg": "Preencha todos os campos obrigatórios"
    },
    {
@@ -92034,7 +92038,15 @@
    },
    {
     "file": "src/hooks/gamification/useWeeklyChallenges.ts",
+    "msg": "Erro ao desativar desafio"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.ts",
     "msg": "Erro ao resgatar recompensa"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.ts",
+    "msg": "Sem permissão para desativar o desafio"
    },
    {
     "file": "src/hooks/multichannel/useChannelCredentials.ts",
@@ -94347,6 +94359,10 @@
    {
     "file": "src/hooks/email/useEmailOptOutMetrics.ts",
     "text": "* Limite defensivo para não trazer páginas gigantes ao cliente. */"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.ts",
+    "text": "RLS bloqueia sem erro: 0 linhas afetadas = sem permissão."
    },
    {
     "file": "src/hooks/orders/useOrderTracking.ts",
@@ -131755,6 +131771,22 @@
    {
     "file": "src/hooks/gamification/useStreakRanking.test.tsx",
     "name": "monta ranking correto com múltiplos vendedores e conquistas"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.test.tsx",
+    "name": "useDeactivateWeeklyChallenge"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.test.tsx",
+    "name": "desativa via is_active=false (soft-delete) e invalida a lista"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.test.tsx",
+    "name": "trata 0 linhas afetadas (bloqueio de RLS) como erro"
+   },
+   {
+    "file": "src/hooks/gamification/useWeeklyChallenges.test.tsx",
+    "name": "propaga erro do Supabase com toast"
    },
    {
     "file": "src/hooks/orders/useOrderTracking.test.tsx",
@@ -187559,18 +187591,26 @@
   },
   "src/components/gamification/CreateChallengeDialog.tsx": {
    "path": "src/components/gamification/CreateChallengeDialog.tsx",
-   "lines": 244,
+   "lines": 280,
    "exports": [
     "function CreateChallengeDialog"
    ],
    "tables": [
     {
      "table": "weekly_challenges",
+     "op": "select,update"
+    },
+    {
+     "table": "weekly_challenges",
      "op": "insert,select"
     }
    ],
+   "table_cols": {
+    "weekly_challenges": [
+     "id"
+    ]
+   },
    "errors": [
-    "Erro ao criar desafio",
     "Preencha todos os campos obrigatórios"
    ],
    "html_constraints": [
@@ -187786,7 +187826,7 @@
   },
   "src/components/gamification/WeeklyChallengesCard.tsx": {
    "path": "src/components/gamification/WeeklyChallengesCard.tsx",
-   "lines": 290,
+   "lines": 375,
    "exports": [
     "function WeeklyChallengesCard"
    ]
@@ -210046,16 +210086,29 @@
     "monta ranking correto com múltiplos vendedores e conquistas"
    ]
   },
+  "src/hooks/gamification/useWeeklyChallenges.test.tsx": {
+   "path": "src/hooks/gamification/useWeeklyChallenges.test.tsx",
+   "lines": 111,
+   "is_test": true,
+   "tests": [
+    "useDeactivateWeeklyChallenge",
+    "desativa via is_active=false (soft-delete) e invalida a lista",
+    "trata 0 linhas afetadas (bloqueio de RLS) como erro",
+    "propaga erro do Supabase com toast"
+   ]
+  },
   "src/hooks/gamification/useWeeklyChallenges.ts": {
    "path": "src/hooks/gamification/useWeeklyChallenges.ts",
-   "lines": 179,
+   "lines": 205,
    "exports": [
+    "interface WeeklyChallenge",
     "interface ChallengeWithProgress",
     "const CHALLENGE_ICONS",
     "const CHALLENGE_COLORS",
     "function useWeeklyChallenges",
     "function useChallengesWithProgress",
-    "function useClaimChallengeReward"
+    "function useClaimChallengeReward",
+    "function useDeactivateWeeklyChallenge"
    ],
    "tables": [
     {
@@ -210065,11 +210118,16 @@
     {
      "table": "challenge_progress",
      "op": "select"
+    },
+    {
+     "table": "weekly_challenges",
+     "op": "select,update"
     }
    ],
    "table_cols": {
     "weekly_challenges": [
      "end_date",
+     "id",
      "is_active",
      "start_date"
     ],
@@ -210082,12 +210140,18 @@
     "sync_challenge_progress"
    ],
    "errors": [
-    "Erro ao resgatar recompensa"
+    "Erro ao desativar desafio",
+    "Erro ao resgatar recompensa",
+    "Sem permissão para desativar o desafio"
+   ],
+   "rule_comments": [
+    "RLS bloqueia sem erro: 0 linhas afetadas = sem permissão."
    ],
    "hooks": [
     "useWeeklyChallenges",
     "useChallengesWithProgress",
-    "useClaimChallengeReward"
+    "useClaimChallengeReward",
+    "useDeactivateWeeklyChallenge"
    ],
    "temporal": [
     "Math.ceil((endDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))"
@@ -218890,7 +218954,7 @@
   },
   "src/pages/DesafiosSemanais.tsx": {
    "path": "src/pages/DesafiosSemanais.tsx",
-   "lines": 244,
+   "lines": 245,
    "exports": [
     "function DesafiosSemanais"
    ],
@@ -245198,10 +245262,23 @@
   }
  },
  "git": {
-  "sha": "b68acd2b2d4e0743c20de4080699758f3a902d40",
+  "sha": "1f60080cc6cbace9f740ad8e82dc13f35e7f147b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "1f60080",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e desativar desafios semanais (#432)",
+    "files": [
+     "src/components/gamification/CreateChallengeDialog.tsx",
+     "src/components/gamification/WeeklyChallengesCard.tsx",
+     "src/hooks/gamification/useWeeklyChallenges.test.tsx",
+     "src/hooks/gamification/useWeeklyChallenges.ts",
+     "src/pages/DesafiosSemanais.tsx"
+    ]
+   },
    {
     "sha": "b68acd2",
     "date": "2026-11-13",
@@ -245969,16 +246046,6 @@
     "files": [
      ".github/workflows/db-backup.yml"
     ]
-   },
-   {
-    "sha": "95e8e8a",
-    "date": "2026-11-09",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#412)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json"
-    ]
    }
   ],
   "hot_files": [
@@ -246003,16 +246070,16 @@
     3
    ],
    [
-    "inventario/estado/banco.json",
-    3
-   ],
-   [
-    "inventario/estado/edges.json",
-    3
-   ],
-   [
     ".github/workflows/codeql.yml",
     3
+   ],
+   [
+    "src/components/gamification/WeeklyChallengesCard.tsx",
+    2
+   ],
+   [
+    "src/pages/DesafiosSemanais.tsx",
+    2
    ],
    [
     "src/components/competitive/BattleCardItem.tsx",
@@ -246043,6 +246110,14 @@
     2
    ],
    [
+    "inventario/estado/banco.json",
+    2
+   ],
+   [
+    "inventario/estado/edges.json",
+    2
+   ],
+   [
     "src/components/analytics/ActivityOutcomesChart.tsx",
     2
    ],
@@ -246052,14 +246127,6 @@
    ],
    [
     "src/components/analytics/EmailMetricsDashboard.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/LeadSourceDistribution.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/WeightedForecastDashboard.tsx",
     2
    ]
   ]

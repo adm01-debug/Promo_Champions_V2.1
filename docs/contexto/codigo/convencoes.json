@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (94)",
+   "co-localizado (*.test) (95)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: editar e desativar desafios semanais (#432)",
    "feat: editar e cancelar batalhas de vendas (#431)",
    "feat: editar e excluir workflows no Automation Builder (#430)",
    "feat: editar e remover signatários na assinatura digital (#428)",
-   "fix(hooks): plano de conta ABM envia created_by ao criar (#467)",
-   "feat: editar e excluir contas no Account-Based Selling (#426)"
+   "fix(hooks): plano de conta ABM envia created_by ao criar (#467)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

@@ -4480,9 +4480,10 @@
    "hooks_exportados": [
     "useChallengesWithProgress",
     "useClaimChallengeReward",
+    "useDeactivateWeeklyChallenge",
     "useWeeklyChallenges"
    ],
-   "linhas": 179,
+   "linhas": 205,
    "dominio": "hooks/gamification",
    "tabelas": [
     "challenge_progress",
@@ -4506,7 +4507,7 @@
     "src/components/gamification/WeeklyChallengesCard.tsx",
     "src/pages/DesafiosSemanais.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/gamification/useWeeklyMatchups.ts",

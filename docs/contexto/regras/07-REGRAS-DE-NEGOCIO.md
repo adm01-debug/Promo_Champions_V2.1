@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b68acd2b2d` · branch `main` · 2026-11-13 06:07 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1f60080cc6` · branch `main` · 2026-11-13 06:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3899,7 +3899,6 @@ _nenhum item encontrado_
 | Erro ao executar simulação | `src/components/debug/WebhookSimulationPanel.tsx` |
 | Número de telefone ausente | `src/components/dialer/ClickToCallButton.tsx` |
 | Twilio não configurado | `src/components/dialer/ClickToCallButton.tsx` |
-| Erro ao criar desafio | `src/components/gamification/CreateChallengeDialog.tsx` |
 | Preencha todos os campos obrigatórios | `src/components/gamification/CreateChallengeDialog.tsx` |
 | Erro ao gerar desafios | `src/components/gamification/DailyChallengesCard.tsx` |
 | Erro na extração de dados. | `src/components/lead-scoring/LeadNeuralDossier.tsx` |
@@ -4027,7 +4026,8 @@ _nenhum item encontrado_
 | Falha na análise comportamental | `src/hooks/useBehavioralAnalysis.ts` |
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
-| … +647 linhas — lista completa em `context.json` | |
+| Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
+| … +648 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4133,7 +4133,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1302 testes em 144 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1306 testes em 145 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4228,6 +4228,7 @@ _nenhum item encontrado_
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
+| `src/hooks/gamification/useWeeklyChallenges.test.tsx` | 4 | useDeactivateWeeklyChallenge · desativa via is_active=false (soft-delete) e invalida a lista · trata 0 linhas afetadas (bloqueio de RLS) como erro · propaga erro do Supabase com toast |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
@@ -4615,6 +4616,7 @@ _nenhum item encontrado_
 | * Limite (%) abaixo do qual uma falha transitória indica problema operacional. */ | `src/hooks/email/recoveryRateHelpers.ts` |
 | * Limite de risco (%) acima do qual a campanha deve ser revisada. */ | `src/hooks/email/useCampaignOptOutRates.ts` |
 | * Limite defensivo para não trazer páginas gigantes ao cliente. */ | `src/hooks/email/useEmailOptOutMetrics.ts` |
+| RLS bloqueia sem erro: 0 linhas afetadas = sem permissão. | `src/hooks/gamification/useWeeklyChallenges.ts` |
 | * Lista somente pedidos existentes e autorizados pelas políticas RLS. | `src/hooks/orders/useOrderTracking.ts` |
 | sem depender do limite da listagem. | `src/hooks/orders/useOrderTracking.ts` |
 | revenue-forecast-ai é somente leitura e não "atualiza" nada. | `src/hooks/pipeline-pulse/useQuickAction.ts` |
@@ -4837,5 +4839,4 @@ _nenhum item encontrado_
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-scoring-explain/index.ts` |
 | Win-rate por faixa de desconto → slope linear (elasticidade medida). | `supabase/functions/pricing-intelligence/index.ts` |
 | Validação mínima defensiva — dados vêm de cliente autenticado, mas nunca confiar. | `supabase/functions/process-call-recording-ingest/index.ts` |
-| 6. eventos derivados (overtake/checkpoint/victory) emitem no máximo uma | `supabase/functions/process-race-event/index.ts` |
-| … +106 linhas — lista completa em `context.json` | |
+| … +107 linhas — lista completa em `context.json` | |

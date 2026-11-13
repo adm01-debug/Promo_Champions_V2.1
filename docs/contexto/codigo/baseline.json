@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b68acd2b2d4e0743c20de4080699758f3a902d40",
+  "commit": "1f60080cc6cbace9f740ad8e82dc13f35e7f147b",
   "branch": "main",
-  "data_commit": "2026-11-13T06:06:48Z",
+  "data_commit": "2026-11-13T06:13:17Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "1f60080",
+    "data": "2026-11-13",
+    "assunto": "feat: editar e desativar desafios semanais (#432)"
+   },
    {
     "sha": "b68acd2",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "258c998",
     "data": "2026-11-10",
     "assunto": "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)"
-   },
-   {
-    "sha": "ed266a1",
-    "data": "2026-11-10",
-    "assunto": "chore: inventario do estado real [auto] (#414)"
    }
   ],
-  "arquivos_mudados_7d": 517,
+  "arquivos_mudados_7d": 520,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "src/components/gamification",
-    "mudancas": 36
+    "mudancas": 38
    },
    {
     "pasta": "src/components/race",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": "src/hooks/gamification",
-    "mudancas": 20
+    "mudancas": 22
    },
    {
     "pasta": "src/components/conversational",
@@ -294,14 +294,14 @@
     "mudancas": 8
    },
    {
-    "arquivo": "src/pages/admin/AdminComercial.tsx",
+    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
     "mudancas": 8
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 75
+    "commits": 76
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3464,
-  "arquivos_codigo": 2473,
-  "linhas_codigo": 429569,
+  "arquivos_total": 3465,
+  "arquivos_codigo": 2474,
+  "linhas_codigo": 429828,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 177,
+  "testes": 178,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -596,7 +596,7 @@
   },
   "src/components": {
    "arquivos": 1186,
-   "linhas": 188191
+   "linhas": 188312
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 510,
-   "linhas": 59222
+   "arquivos": 511,
+   "linhas": 59359
   },
   "src/integrations": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 176,
-   "linhas": 43768
+   "linhas": 43769
   },
   "src/routes": {
    "arquivos": 3,
