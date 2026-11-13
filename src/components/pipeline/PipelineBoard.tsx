@@ -52,6 +52,12 @@ import {
 import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
+// Fora do componente para não somar ao teto de complexidade (lint:complexity, máx. 20).
+const phoneForClient = (
+  phones: Record<string, string> | undefined,
+  clientId: string | null | undefined
+) => (clientId ? phones?.[clientId] : undefined);
+
 export const PipelineBoard = () => {
   const [selectedPipelineId, setSelectedPipelineId] =
     useState<string>(DEFAULT_PIPELINE_ID);
@@ -562,11 +568,7 @@ export const PipelineBoard = () => {
                       { is_icp_match: boolean; grupo_nicho?: string } | undefined
                   }
                   stakeholders={stakeholdersBySale?.[activeDeal.id]}
-                  clientPhone={
-                    activeDeal.client_id
-                      ? clientPhones?.[activeDeal.client_id]
-                      : undefined
-                  }
+                  clientPhone={phoneForClient(clientPhones, activeDeal.client_id)}
                 />
               </div>
             )}
