@@ -36843,6 +36843,7 @@
     "collect-race-powerup",
     "deal-risk-digest",
     "detect-coaching-opportunities",
+    "execute-workflow",
     "extract-deal-stakeholders",
     "generate-urgent-client-tasks",
     "next-best-action",

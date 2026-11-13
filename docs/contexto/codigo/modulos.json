@@ -11218,7 +11218,7 @@
   {
    "modulo": "hooks/automation",
    "arquivos": 3,
-   "testes": 1,
+   "testes": 2,
    "linhas": 388,
    "itens_menu": [],
    "telas": [],

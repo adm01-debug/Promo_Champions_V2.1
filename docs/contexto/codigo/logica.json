@@ -567,7 +567,7 @@
     "pages/admin",
     "types"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {

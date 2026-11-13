@@ -12704,7 +12704,8 @@
    "supabase/functions/_shared/auth-client.ts",
    "supabase/functions/_shared/cors.ts",
    "supabase/functions/_shared/request-id.ts",
-   "supabase/functions/_shared/webhook-validator.ts"
+   "supabase/functions/_shared/webhook-validator.ts",
+   "supabase/functions/execute-workflow/actions.ts"
   ],
   "supabase/functions/expansion-detector/index.ts": [
    "supabase/functions/_shared/auth-client.ts",

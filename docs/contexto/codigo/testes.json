@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 193,
+ "total": 194,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 127
+  "unit": 128
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 110
+   "arquivos": 111
   },
   {
    "padrao": "tests/",
@@ -387,6 +387,16 @@
     "src/hooks/assistant/usePersonalAssistantHelpers.ts"
    ],
    "casos": 12
+  },
+  {
+   "arquivo": "src/hooks/automation/executeWorkflowActions.test.ts",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [
+    "src/integrations/supabase/types.ts",
+    "supabase/functions/execute-workflow/actions.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/hooks/automation/useAutomationWorkflows.test.tsx",
@@ -1699,6 +1709,7 @@
   "src/hooks/useScrollRestoration.ts": 1,
   "src/integrations/supabase/client.ts": 2,
   "src/integrations/supabase/env.ts": 1,
+  "src/integrations/supabase/types.ts": 1,
   "src/lib/auth/passwordErrorMessages.ts": 1,
   "src/lib/bi/markupOverviewHelpers.ts": 1,
   "src/lib/draftMigration.ts": 1,
@@ -1742,7 +1753,8 @@
   "supabase/functions/_shared/retry.ts": 1,
   "supabase/functions/_shared/winloss-contract.ts": 1,
   "supabase/functions/check-v4-callback-alerts/alerts.ts": 1,
-  "supabase/functions/detect-winloss-at-risk/scoring.ts": 1
+  "supabase/functions/detect-winloss-at-risk/scoring.ts": 1,
+  "supabase/functions/execute-workflow/actions.ts": 1
  },
  "sem_teste": {
   "telas": [

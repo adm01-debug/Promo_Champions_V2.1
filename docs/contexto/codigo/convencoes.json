@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (110)",
+   "co-localizado (*.test) (111)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)",
    "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)",
    "fix: grava vendedor logado como dono ao criar conta no ABM (#475)",
    "fix: enviar user_id ao criar preferência de notificação (#474)",
-   "fix: grava pesquisa NPS no vendedor logado (#473)",
-   "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)"
+   "fix: grava pesquisa NPS no vendedor logado (#473)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

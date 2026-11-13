@@ -2724,8 +2724,8 @@
   {
    "nome": "execute-workflow",
    "entrada": "supabase/functions/execute-workflow/index.ts",
-   "arquivos": 2,
-   "linhas": 220,
+   "arquivos": 3,
+   "linhas": 259,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2735,7 +2735,8 @@
     "agenda_events",
     "automation_runs",
     "automation_workflows",
-    "sales"
+    "sales",
+    "salespeople"
    ],
    "rpcs": [],
    "env": [],

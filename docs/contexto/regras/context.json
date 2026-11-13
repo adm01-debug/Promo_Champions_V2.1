@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7b450235c1123bc84af5c7e3c71a396844612658",
+  "sha": "ceaddbf823ddb236d773808817f2d6dfd6968e26",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 11:38 UTC",
-  "files_total": 3496,
-  "code_files": 3167,
-  "code_lines": 462485
+  "generated_at": "2026-11-13 12:20 UTC",
+  "files_total": 3498,
+  "code_files": 3169,
+  "code_lines": 462580
  },
  "version": "1.3.2",
- "facts_hash": "cab83cb8d0e197cd",
+ "facts_hash": "3a13047041a8c78c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -390,7 +390,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1331,
-   ".ts": 1078,
+   ".ts": 1080,
    ".sql": 676,
    ".mjs": 71,
    ".js": 6,
@@ -69574,7 +69574,8 @@
      "agenda_events",
      "automation_runs",
      "automation_workflows",
-     "sales"
+     "sales",
+     "salespeople"
     ],
     "env": [],
     "external": [],
@@ -78105,8 +78106,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 519,
-   "lines": 60750,
+   "files": 520,
+   "lines": 60806,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78449,7 +78450,8 @@
     "src/services",
     "src/test",
     "src/types",
-    "src/utils"
+    "src/utils",
+    "supabase/functions"
    ],
    "file_list": [
     "src/hooks/circuitBreakerUtils.ts",
@@ -79114,8 +79116,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 314,
-   "lines": 65502,
+   "files": 315,
+   "lines": 65541,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -82898,6 +82900,7 @@
      "supabase/functions/collect-race-powerup/index.ts",
      "supabase/functions/deal-risk-digest/index.ts",
      "supabase/functions/detect-coaching-opportunities/index.ts",
+     "supabase/functions/execute-workflow/index.ts",
      "supabase/functions/extract-deal-stakeholders/index.ts",
      "supabase/functions/generate-urgent-client-tasks/index.ts",
      "supabase/functions/next-best-action/index.ts",
@@ -112878,6 +112881,11 @@
     "value": "500"
    },
    {
+    "file": "supabase/functions/execute-workflow/actions.ts",
+    "name": "WORKFLOW_ACTIVITY_OUTCOME",
+    "value": "\"connected\""
+   },
+   {
     "file": "supabase/functions/geocode-proxy/index.ts",
     "name": "HIT_TTL_MS",
     "value": "90"
@@ -122850,6 +122858,12 @@
    {
     "file": "supabase/functions/execute-workflow/index.ts",
     "field": "status",
+    "value": "failed",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/execute-workflow/index.ts",
+    "field": "status",
     "value": "pending",
     "kind": "escreve"
    },
@@ -122882,6 +122896,18 @@
     "field": "status",
     "value": "success",
     "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/execute-workflow/index.ts",
+    "field": "type",
+    "value": "create_task",
+    "kind": "compara"
+   },
+   {
+    "file": "supabase/functions/execute-workflow/index.ts",
+    "field": "type",
+    "value": "log_activity",
+    "kind": "compara"
    },
    {
     "file": "supabase/functions/execute-workflow/index.ts",
@@ -131748,6 +131774,26 @@
    {
     "file": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",
     "name": "mapeia status %i para mensagem acionável"
+   },
+   {
+    "file": "src/hooks/automation/executeWorkflowActions.test.ts",
+    "name": "execute-workflow — log_activity"
+   },
+   {
+    "file": "src/hooks/automation/executeWorkflowActions.test.ts",
+    "name": "usa um outcome que existe no enum activity_outcome"
+   },
+   {
+    "file": "src/hooks/automation/executeWorkflowActions.test.ts",
+    "name": "grava o salespeople.id recebido e um activity_type válido"
+   },
+   {
+    "file": "src/hooks/automation/executeWorkflowActions.test.ts",
+    "name": "execute-workflow — create_task"
+   },
+   {
+    "file": "src/hooks/automation/executeWorkflowActions.test.ts",
+    "name": "grava o salespeople.id recebido e agenda pelo delay"
    },
    {
     "file": "src/hooks/automation/useAutomationWorkflows.test.tsx",
@@ -205045,6 +205091,19 @@
     "useAuthForm"
    ]
   },
+  "src/hooks/automation/executeWorkflowActions.test.ts": {
+   "path": "src/hooks/automation/executeWorkflowActions.test.ts",
+   "lines": 56,
+   "is_test": true,
+   "doc": "Contrato front/edge das linhas gravadas pela edge execute-workflow (supabase/functions/execute-workflow/actions.ts) contra o schema gerado.",
+   "tests": [
+    "execute-workflow — log_activity",
+    "usa um outcome que existe no enum activity_outcome",
+    "grava o salespeople.id recebido e um activity_type válido",
+    "execute-workflow — create_task",
+    "grava o salespeople.id recebido e agenda pelo delay"
+   ]
+  },
   "src/hooks/automation/useAutomationIntelligence.ts": {
    "path": "src/hooks/automation/useAutomationIntelligence.ts",
    "lines": 79,
@@ -230826,13 +230885,29 @@
    "path": "supabase/functions/enrich-lead/index.ts",
    "lines": 50
   },
+  "supabase/functions/execute-workflow/actions.ts": {
+   "path": "supabase/functions/execute-workflow/actions.ts",
+   "lines": 40,
+   "exports": [
+    "const WORKFLOW_ACTIVITY_OUTCOME",
+    "function buildTaskRow",
+    "function buildActivityRow"
+   ],
+   "params": [
+    {
+     "name": "WORKFLOW_ACTIVITY_OUTCOME",
+     "value": "\"connected\""
+    }
+   ],
+   "doc": "Montagem das linhas gravadas pelas ações create_task e log_activity. Módulo puro (sem Deno/Supabase) para ser testado também pelo vitest."
+  },
   "supabase/functions/execute-workflow/contracts_test.ts": {
    "path": "supabase/functions/execute-workflow/contracts_test.ts",
    "lines": 30
   },
   "supabase/functions/execute-workflow/index.ts": {
    "path": "supabase/functions/execute-workflow/index.ts",
-   "lines": 190,
+   "lines": 189,
    "tables": [
     {
      "table": "automation_workflows",
@@ -230841,6 +230916,10 @@
     {
      "table": "automation_runs",
      "op": "insert"
+    },
+    {
+     "table": "salespeople",
+     "op": "select"
     },
     {
      "table": "agenda_events",
@@ -230871,6 +230950,10 @@
      "is_active",
      "run_count"
     ],
+    "salespeople": [
+     "auth_user_id",
+     "id"
+    ],
     "sales": [
      "id"
     ]
@@ -230884,6 +230967,11 @@
     {
      "field": "status",
      "value": "skipped",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "failed",
      "kind": "escreve"
     },
     {
@@ -230915,6 +231003,16 @@
      "field": "status",
      "value": "success",
      "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "create_task",
+     "kind": "compara"
+    },
+    {
+     "field": "type",
+     "value": "log_activity",
+     "kind": "compara"
     },
     {
      "field": "type",
@@ -246070,10 +246168,21 @@
   }
  },
  "git": {
-  "sha": "7b450235c1123bc84af5c7e3c71a396844612658",
+  "sha": "ceaddbf823ddb236d773808817f2d6dfd6968e26",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "ceaddbf",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)",
+    "files": [
+     "src/hooks/automation/executeWorkflowActions.test.ts",
+     "supabase/functions/execute-workflow/actions.ts",
+     "supabase/functions/execute-workflow/index.ts"
+    ]
+   },
    {
     "sha": "7b45023",
     "date": "2026-11-13",
@@ -246401,26 +246510,11 @@
      "inventario/estado/banco.json",
      "inventario/estado/edges.json"
     ]
-   },
-   {
-    "sha": "566ef2f",
-    "date": "2026-11-12",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump tsx from 4.22.4 to 4.23.15 (#409)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    5
-   ],
-   [
-    "package-lock.json",
     4
    ],
    [
@@ -246432,8 +246526,12 @@
     4
    ],
    [
-    "deno.lock",
+    "package-lock.json",
     3
+   ],
+   [
+    "deno.lock",
+    2
    ],
    [
     "src/hooks/sales/useSalesEnablement.test.tsx",
@@ -246460,6 +246558,18 @@
     2
    ],
    [
+    "src/hooks/automation/executeWorkflowActions.test.ts",
+    1
+   ],
+   [
+    "supabase/functions/execute-workflow/actions.ts",
+    1
+   ],
+   [
+    "supabase/functions/execute-workflow/index.ts",
+    1
+   ],
+   [
     "src/components/reports/EmailReportConfig.test.tsx",
     1
    ],
@@ -246481,18 +246591,6 @@
    ],
    [
     "src/hooks/useNPSSurveys.ts",
-    1
-   ],
-   [
-    "src/components/cadences/EnrollCadenceDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/cadences/EnrollCadenceDialog.tsx",
-    1
-   ],
-   [
-    "src/components/sales/SaleHUDCard.test.tsx",
     1
    ]
   ]

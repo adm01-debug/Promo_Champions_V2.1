@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7b450235c1` · branch `main` · 2026-11-13 11:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ceaddbf823` · branch `main` · 2026-11-13 12:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3043,6 +3043,7 @@ _nenhum item encontrado_
 | `MAX_AUDIO_BASE64_LENGTH` | `10` | `supabase/functions/elevenlabs-stt/index.ts` |
 | `MAX_TEXT_LENGTH` | `2000` | `supabase/functions/elevenlabs-tts/index.ts` |
 | `SCAN_LIMIT` | `500` | `supabase/functions/email-bulk-retry/index.ts` |
+| `WORKFLOW_ACTIVITY_OUTCOME` | `"connected"` | `supabase/functions/execute-workflow/actions.ts` |
 | `HIT_TTL_MS` | `90` | `supabase/functions/geocode-proxy/index.ts` |
 | `MISS_TTL_MS` | `14` | `supabase/functions/geocode-proxy/index.ts` |
 | `MAX_INBOUND_EMAIL_BODY_BYTES` | `256` | `supabase/functions/inbound-email-webhook/index.ts` |
@@ -4137,7 +4138,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1381 testes em 160 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1386 testes em 161 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4219,6 +4220,7 @@ _nenhum item encontrado_
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
+| `src/hooks/automation/executeWorkflowActions.test.ts` | 5 | execute-workflow — log_activity · usa um outcome que existe no enum activity_outcome · grava o salespeople.id recebido e um activity_type válido · execute-workflow — create_task … |
 | `src/hooks/dialer/usePowerDialer.test.tsx` | 5 | usePowerDialer — editar e excluir fila · atualiza nome, estratégia e filtro da fila e invalida a lista · acusa erro quando o RLS não deixa alterar a fila (0 linhas) · exclui a fila e invalida a lista … |
 | `src/hooks/suppliers/useSupplierMutations.test.tsx` | 5 | useSupplierMutations — produtos do fornecedor · atualiza preço, qtd. mínima e preferido e invalida a lista · exclui o vínculo e invalida a lista · mostra erro quando a exclusão não afeta nenhuma linha (RLS) … |
 | `src/hooks/tasks/useTaskMutations.test.tsx` | 5 | useCreateTask — dono da tarefa (policy de INSERT de tasks) · sem responsável escolhido, grava a tarefa com o vendedor logado · responsável vazio ( · respeita o responsável escolhido sem consultar o vendedor logado … |
