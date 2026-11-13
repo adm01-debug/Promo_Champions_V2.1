@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 170,
+ "total": 172,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 104
+  "unit": 106
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 87
+   "arquivos": 89
   },
   {
    "padrao": "tests/",
@@ -267,6 +267,17 @@
    "casos": 12
   },
   {
+   "arquivo": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/components/sales/cadence/ContactFrequencyRules.tsx",
+    "src/hooks/sales/useContactFrequencyRules.ts",
+    "src/types/sales.ts"
+   ],
+   "casos": 7
+  },
+  {
    "arquivo": "src/components/sales/SaleHUDCard.test.tsx",
    "tipo": "unit",
    "linhas": 83,
@@ -440,6 +451,15 @@
     "src/config/role-permissions.json"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+   "tipo": "unit",
+   "linhas": 182,
+   "testa": [
+    "src/hooks/sales/useContactFrequencyRules.ts"
+   ],
+   "casos": 9
   },
   {
    "arquivo": "src/hooks/useBackNavigation.test.ts",
@@ -1430,6 +1450,7 @@
   "src/components/pipeline/InactivityPanel.tsx": 1,
   "src/components/reporting/funnelReportHelpers.ts": 1,
   "src/components/sales/SaleHUDCard.tsx": 1,
+  "src/components/sales/cadence/ContactFrequencyRules.tsx": 1,
   "src/components/security/KnownDevices.tsx": 1,
   "src/config/role-permissions.json": 1,
   "src/constants/index.ts": 1,
@@ -1452,6 +1473,7 @@
   "src/hooks/race/useGhostCar.ts": 1,
   "src/hooks/reports/salesReportHelpers.ts": 1,
   "src/hooks/reports/useMarkupMinSamplePreference.ts": 1,
+  "src/hooks/sales/useContactFrequencyRules.ts": 2,
   "src/hooks/sales/useSalesChartData.ts": 1,
   "src/hooks/useBackNavigation.ts": 1,
   "src/hooks/useClientsNeedingContact.ts": 1,
@@ -1499,6 +1521,7 @@
   "src/services/knownDeviceService.ts": 1,
   "src/services/salesService.ts": 1,
   "src/types/index.ts": 1,
+  "src/types/sales.ts": 1,
   "src/utils/bi-helpers.ts": 2,
   "src/utils/csvExport.ts": 1,
   "src/utils/dateHelpers.ts": 2,

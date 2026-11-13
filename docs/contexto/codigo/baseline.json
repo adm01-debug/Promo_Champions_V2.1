@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c2c73445b59a17a5429196775398cdb9213be8a2",
+  "commit": "39a5d8a48dc5a1e835138fe688a30c20871ca645",
   "branch": "main",
-  "data_commit": "2026-11-13T03:39:30Z",
+  "data_commit": "2026-11-13T04:20:35Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "39a5d8a",
+    "data": "2026-11-13",
+    "assunto": "fix: regras de frequencia de contato passam a salvar no banco (#448)"
+   },
    {
     "sha": "c2c7344",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "4424fde",
     "data": "2026-11-09",
     "assunto": "chore(deps): bump supabase/setup-cli (#400)"
-   },
-   {
-    "sha": "407c311",
-    "data": "2026-11-09",
-    "assunto": "chore(deps): bump actions/download-artifact (#399)"
    }
   ],
-  "arquivos_mudados_7d": 497,
+  "arquivos_mudados_7d": 501,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 66
+    "commits": 67
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3456,
-  "arquivos_codigo": 2465,
-  "linhas_codigo": 427179,
+  "arquivos_total": 3459,
+  "arquivos_codigo": 2468,
+  "linhas_codigo": 427671,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 173,
   "componentes": 1276,
-  "hooks": 472,
+  "hooks": 473,
   "edge_functions": 171,
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 170,
+  "testes": 172,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1184,
-   "linhas": 187787
+   "arquivos": 1185,
+   "linhas": 187955
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 506,
-   "linhas": 57955
+   "arquivos": 508,
+   "linhas": 58279
   },
   "src/integrations": {
    "arquivos": 4,

@@ -37499,7 +37499,7 @@
     "salesperson_id->salespeople"
    ],
    "criada_em": "20260103201133_44db697a-4db6-4a32-9d5f-434672cac928.sql",
-   "usada_no_front": 2,
+   "usada_no_front": 3,
    "usada_em_edges": [],
    "triggers": [
     "update_salesperson_preferences_updated_at"

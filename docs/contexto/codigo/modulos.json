@@ -5103,6 +5103,7 @@
     "useCompleteCadenceTask",
     "useCompleteTask",
     "useComposeEmail",
+    "useContactFrequencyRules",
     "useConversationAnalyses",
     "useConversationInsights",
     "useConvertQuoteToSale",
@@ -7073,8 +7074,8 @@
   {
    "modulo": "components/sales",
    "arquivos": 16,
-   "testes": 1,
-   "linhas": 4257,
+   "testes": 2,
+   "linhas": 4296,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7082,6 +7083,7 @@
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
     "useAudio",
+    "useAuth",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -7090,6 +7092,7 @@
     "useCircuitBreaker",
     "useClients",
     "useCompleteCadenceTask",
+    "useContactFrequencyRules",
     "useCreateActivity",
     "useCreateCadence",
     "useCreateCadenceStep",
@@ -7150,6 +7153,7 @@
     "sales_goals",
     "sales_with_markup",
     "salespeople",
+    "salesperson_preferences",
     "whatsapp_conversations"
    ],
    "rpcs": [
@@ -7171,6 +7175,7 @@
    "flags": [],
    "papeis": [
     "admin",
+    "alert",
     "closer",
     "combobox",
     "hybrid",
@@ -8211,6 +8216,7 @@
     "useCompleteCadenceTask",
     "useCompleteTask",
     "useComposeEmail",
+    "useContactFrequencyRules",
     "useConversationAnalyses",
     "useConversationInsights",
     "useConvertQuoteToSale",
@@ -13897,9 +13903,9 @@
   },
   {
    "modulo": "hooks/sales",
-   "arquivos": 15,
-   "testes": 0,
-   "linhas": 2122,
+   "arquivos": 16,
+   "testes": 1,
+   "linhas": 2264,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13912,6 +13918,7 @@
     "useAuth",
     "useCelebration",
     "useCircuitBreaker",
+    "useContactFrequencyRules",
     "useDeleteNotification",
     "useElevenLabsVoice",
     "useIndexEntity",
@@ -13939,6 +13946,7 @@
     "useUserRoles"
    ],
    "hooks_definidos": [
+    "useContactFrequencyRules",
     "useSalesAssistant",
     "useSalesBattles",
     "useSalesChartData",
@@ -15894,6 +15902,7 @@
     "useComposeEmail",
     "useComputeAccuracy",
     "useConfidenceScores",
+    "useContactFrequencyRules",
     "useConversationAnalyses",
     "useConversationInsights",
     "useConversationMetrics",
@@ -17692,6 +17701,7 @@
     "useComposeEmail",
     "useComputeAccuracy",
     "useConfidenceScores",
+    "useContactFrequencyRules",
     "useConversationAnalyses",
     "useConversationInsights",
     "useConversationMetrics",

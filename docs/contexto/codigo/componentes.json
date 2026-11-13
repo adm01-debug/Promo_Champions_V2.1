@@ -13368,9 +13368,11 @@
     "ContactFrequencyRules"
    ],
    "export_default": null,
-   "linhas": 187,
+   "linhas": 226,
    "dominio": "components/sales",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useContactFrequencyRules"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
@@ -15429,7 +15431,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -15476,7 +15478,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 551,
+   "usado_por": 552,
    "orfao": false
   },
   {
@@ -17317,7 +17319,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 78,
+   "usado_por": 79,
    "orfao": false
   },
   {

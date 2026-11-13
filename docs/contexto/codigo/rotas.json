@@ -3467,6 +3467,7 @@
     "useABTestResults",
     "useABTests",
     "useActiveCadencesBySaleIds",
+    "useAuth",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
@@ -3474,6 +3475,7 @@
     "useCallback",
     "useCancelCadence",
     "useCompleteCadenceTask",
+    "useContactFrequencyRules",
     "useContext",
     "useCreateABTest",
     "useCreateCadence",
@@ -3520,12 +3522,14 @@
     "useABTestResults",
     "useABTests",
     "useActiveCadencesBySaleIds",
+    "useAuth",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
     "useCancelCadence",
     "useCompleteCadenceTask",
+    "useContactFrequencyRules",
     "useCreateABTest",
     "useCreateCadence",
     "useCreateCadenceStep",
@@ -3583,8 +3587,10 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 72
+   "papeis": [
+    "alert"
+   ],
+   "arquivos_puxados": 75
   },
   {
    "protegida": false,
@@ -3600,6 +3606,7 @@
    "redireciona": null,
    "hooks": [
     "useActiveCadencesBySaleIds",
+    "useAuth",
     "useBulkCancelQuoteCadences",
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
@@ -3610,6 +3617,7 @@
     "useCallback",
     "useCancelQuoteCadence",
     "useCompleteCadenceTask",
+    "useContactFrequencyRules",
     "useContext",
     "useEffect",
     "useEnrollQuoteInCadence",
@@ -3640,6 +3648,7 @@
    ],
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
+    "useAuth",
     "useBulkCancelQuoteCadences",
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
@@ -3649,6 +3658,7 @@
     "useCadences",
     "useCancelQuoteCadence",
     "useCompleteCadenceTask",
+    "useContactFrequencyRules",
     "useEnrollQuoteInCadence",
     "useFunnelRules",
     "useGamificationSafe",
@@ -3678,6 +3688,8 @@
     "cadences",
     "intent_audit_logs",
     "prospect_cadences",
+    "salespeople",
+    "salesperson_preferences",
     "saved_filters"
    ],
    "rpcs": [
@@ -3689,10 +3701,11 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [
+    "alert",
     "region",
     "status"
    ],
-   "arquivos_puxados": 69
+   "arquivos_puxados": 72
   },
   {
    "protegida": false,

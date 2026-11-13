@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2300,
- "arestas": 9453,
+ "nos": 2301,
+ "arestas": 9460,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -10,11 +10,11 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 551
+   "importado_por": 552
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 541
+   "importado_por": 542
   },
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -77,11 +77,11 @@
    "importado_por": 84
   },
   {
-   "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 80
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 81
   },
   {
-   "arquivo": "src/contexts/AuthContext.tsx",
+   "arquivo": "src/components/ui/tooltip.tsx",
    "importado_por": 80
   },
   {

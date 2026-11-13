@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c2c73445b5` · branch `main` · 2026-11-13 04:04 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `39a5d8a48d` · branch `main` · 2026-11-13 04:27 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3947,6 +3947,8 @@ _nenhum item encontrado_
 | Selecione um lead para a simulação | `src/components/sales/cadence/CadenceSimulationDialog.tsx` |
 | Ação rejeitada | `src/components/sales/cadence/CadenceTemplateManager.tsx` |
 | Por favor, preencha o nome e o conteúdo do template. | `src/components/sales/cadence/CadenceTemplateManager.tsx` |
+| ; import { Clock, ShieldAlert, Zap, Save, Loader2 } from  | `src/components/sales/cadence/ContactFrequencyRules.tsx` |
+| Erro ao salvar regras de frequência: ${e instanceof Error ? e.message : String(e)} | `src/components/sales/cadence/ContactFrequencyRules.tsx` |
 | Erro ao salvar qualificação:  | `src/components/sdr/MQLQualificationForm.tsx` |
 | Handoff necessário | `src/components/sdr/MQLQualificationForm.tsx` |
 | Nenhum lead selecionado | `src/components/sdr/MQLQualificationForm.tsx` |
@@ -4024,9 +4026,7 @@ _nenhum item encontrado_
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
 | Erro na sincronização | `src/hooks/useBitrix24.ts` |
-| No closers found | `src/hooks/useCloserMetrics.ts` |
-| Erro ao remover premiação: ${error.message} | `src/hooks/useCommissionBonuses.ts` |
-| … +627 linhas — lista completa em `context.json` | |
+| … +630 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1240 testes em 137 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1259 testes em 139 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4176,12 +4176,14 @@ _nenhum item encontrado_
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
 | `scripts/lib/seguranca-processo.test.mjs` | 11 | resolverExecutavel devolve caminho absoluto existente igual ao do shell · resolverExecutavel lanca para comando inexistente · estaDentro aceita a raiz e subpastas · estaDentro recusa  … |
 | `src/hooks/useRunRateProjection.test.ts` | 11 | computeRunRateProjection · primeiro dia do mês: paceDaily = mtd, projeta para todos os dias do mês · meio do mês com bom ritmo: confidence media, projeção acima da meta · gap grande: dailyPaceRequired calculado corretamente … |
+| `src/hooks/sales/useContactFrequencyRules.test.tsx` | 11 | parseContactRules / serializeContactRules · retorna null quando não há regras salvas · lê o formato gravado por ContactRulesDialog e completa o que falta com o padrão · ignora valores inválidos no jsonb … |
 | `src/lib/navigationGuard.test.tsx` | 11 | navigationGuard · requestNavigation executa direto sem sujeira · requestNavigation confirma antes de sair com sujeira · requestNavigation bloqueia quando o usuário cancela … |
 | `src/lib/auth/passwordErrorMessages.test.ts` | 11 | classifyPasswordError · returns unknown for null/undefined · detects HIBP leaked password via message · detects HIBP via weak_password code even when message is empty … |
 | `src/lib/winloss/scenarioChartKey.test.ts` | 11 | buildScenarioChartKey · retorna scenario-empty quando data vazia · retorna scenario-empty quando fitN=0 mesmo com data · retorna scenario-insufficient com fitN < 3 … |
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
+| `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |
 | `src/lib/markupSummary.test.ts` | 8 | summarizeMarkup · lista vazia → tudo zerado e sem média · classifica por faixa e ignora nulos na média · mediana com quantidade par usa a média central … |

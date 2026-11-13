@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 472,
+ "total": 473,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 78,
+   "usado_por": 79,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -6407,6 +6407,31 @@
     "src/components/revenue-intelligence/calibration/WinProbabilityCalibrationPanel.tsx"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/sales/useContactFrequencyRules.ts",
+   "hooks_exportados": [
+    "useContactFrequencyRules"
+   ],
+   "linhas": 142,
+   "dominio": "hooks/sales",
+   "tabelas": [
+    "salesperson_preferences"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/sales/cadence/ContactFrequencyRules.tsx"
+   ],
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/sales/useSalesAssistant.ts",

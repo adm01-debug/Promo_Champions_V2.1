@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c2c73445b59a17a5429196775398cdb9213be8a2",
+  "sha": "39a5d8a48dc5a1e835138fe688a30c20871ca645",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 04:04 UTC",
-  "files_total": 3471,
-  "code_files": 3142,
-  "code_lines": 457120
+  "generated_at": "2026-11-13 04:27 UTC",
+  "files_total": 3474,
+  "code_files": 3145,
+  "code_lines": 457612
  },
  "version": "1.3.2",
- "facts_hash": "8d3e7258ac93d793",
+ "facts_hash": "ff15f6fb082f5dc6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,8 +389,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1307,
-   ".ts": 1077,
+   ".tsx": 1309,
+   ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
    ".js": 6,
@@ -65725,6 +65725,8 @@
      "intent_audit_logs",
      "prospect_cadences",
      "sales",
+     "salespeople",
+     "salesperson_preferences",
      "saved_filters",
      "teams"
     ],
@@ -65734,7 +65736,7 @@
      "get_auto_paused_count",
      "process_lead_intent_event"
     ],
-    "deps_count": 68
+    "deps_count": 71
    },
    {
     "path": "",
@@ -66539,7 +66541,7 @@
      "get_cadence_metrics",
      "process_lead_intent_event"
     ],
-    "deps_count": 71
+    "deps_count": 74
    },
    {
     "path": "/calendario",
@@ -73823,7 +73825,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1184,
+  "components_count": 1185,
   "hooks": [
    {
     "name": "useContacts",
@@ -75720,6 +75722,10 @@
    {
     "name": "useRunWinCalibration",
     "file": "src/hooks/revenue/useWinProbabilityCalibration.ts"
+   },
+   {
+    "name": "useContactFrequencyRules",
+    "file": "src/hooks/sales/useContactFrequencyRules.ts"
    },
    {
     "name": "useSalesAssistant",
@@ -77642,8 +77648,8 @@
   },
   {
    "module": "src/components",
-   "files": 1184,
-   "lines": 187786,
+   "files": 1185,
+   "lines": 187954,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -77966,8 +77972,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 506,
-   "lines": 57955,
+   "files": 508,
+   "lines": 58279,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -82820,11 +82826,15 @@
    "salesperson_preferences": {
     "select": [
      "src/components/cadences/ContactRulesDialog.tsx",
+     "src/hooks/sales/useContactFrequencyRules.ts",
      "src/hooks/sales/useSalespersonPreferences.ts"
     ],
     "update": [
      "src/components/cadences/ContactRulesDialog.tsx",
      "src/hooks/sales/useSalespersonPreferences.ts"
+    ],
+    "upsert": [
+     "src/hooks/sales/useContactFrequencyRules.ts"
     ],
     "insert": [
      "src/hooks/sales/useSalespersonPreferences.ts"
@@ -90652,6 +90662,14 @@
     "msg": "Por favor, preencha o nome e o conteúdo do template."
    },
    {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.tsx",
+    "msg": ";\nimport { Clock, ShieldAlert, Zap, Save, Loader2 } from "
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.tsx",
+    "msg": "Erro ao salvar regras de frequência: ${e instanceof Error ? e.message : String(e)}"
+   },
+   {
     "file": "src/components/sdr/MQLQualificationForm.tsx",
     "msg": "Erro ao salvar qualificação: "
    },
@@ -91994,6 +92012,10 @@
    {
     "file": "src/hooks/revenue/useRevenueIntelligenceHub.ts",
     "msg": "Revenue Intelligence error: ${res.status}"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.ts",
+    "msg": "Perfil de vendedor não encontrado"
    },
    {
     "file": "src/hooks/sales/useSalesAssistant.ts",
@@ -130702,6 +130724,38 @@
     "name": "handles missing AI prediction data gracefully"
    },
    {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "ContactFrequencyRules"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "avisa que as regras ainda não são aplicadas automaticamente"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "marca os valores como padrão quando nada foi salvo"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "mostra as regras salvas no banco"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "salva de verdade e só então confirma"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "mostra erro e não confirma quando o banco recusa"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "desabilita salvar sem perfil de vendedor"
+   },
+   {
+    "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+    "name": "desabilita salvar e avisa quando a leitura falha"
+   },
+   {
     "file": "src/components/security/KnownDevices.test.tsx",
     "name": "KnownDevices"
    },
@@ -131632,6 +131686,50 @@
    {
     "file": "src/hooks/reports/useMarkupMinSamplePreference.test.tsx",
     "name": "sincroniza via CustomEvent entre componentes na mesma aba"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "parseContactRules / serializeContactRules"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "retorna null quando não há regras salvas"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "lê o formato gravado por ContactRulesDialog e completa o que falta com o padrão"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "ignora valores inválidos no jsonb"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "mescla sem apagar chaves de outras telas"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "useContactFrequencyRules"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "carrega as regras salvas do vendedor logado"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "expõe savedRules null quando nada foi salvo"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "salva via upsert em salesperson_preferences preservando chaves existentes"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "propaga erro do banco ao salvar"
+   },
+   {
+    "file": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+    "name": "não consulta nem salva sem perfil de vendedor"
    },
    {
     "file": "src/lib/draftMigration.test.ts",
@@ -192391,11 +192489,30 @@
     }
    ]
   },
+  "src/components/sales/cadence/ContactFrequencyRules.test.tsx": {
+   "path": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+   "lines": 129,
+   "is_test": true,
+   "tests": [
+    "ContactFrequencyRules",
+    "avisa que as regras ainda não são aplicadas automaticamente",
+    "marca os valores como padrão quando nada foi salvo",
+    "mostra as regras salvas no banco",
+    "salva de verdade e só então confirma",
+    "mostra erro e não confirma quando o banco recusa",
+    "desabilita salvar sem perfil de vendedor",
+    "desabilita salvar e avisa quando a leitura falha"
+   ]
+  },
   "src/components/sales/cadence/ContactFrequencyRules.tsx": {
    "path": "src/components/sales/cadence/ContactFrequencyRules.tsx",
-   "lines": 187,
+   "lines": 226,
    "exports": [
     "function ContactFrequencyRules"
+   ],
+   "errors": [
+    ";\nimport { Clock, ShieldAlert, Zap, Save, Loader2 } from ",
+    "Erro ao salvar regras de frequência: ${e instanceof Error ? e.message : String(e)}"
    ]
   },
   "src/components/sales/cadence/EliteCadenceAnalytics.tsx": {
@@ -212334,6 +212451,60 @@
    ],
    "side_effects": [
     "invoke("
+   ]
+  },
+  "src/hooks/sales/useContactFrequencyRules.test.tsx": {
+   "path": "src/hooks/sales/useContactFrequencyRules.test.tsx",
+   "lines": 182,
+   "is_test": true,
+   "errors": [
+    "tabela inesperada ${table}"
+   ],
+   "tests": [
+    "parseContactRules / serializeContactRules",
+    "retorna null quando não há regras salvas",
+    "lê o formato gravado por ContactRulesDialog e completa o que falta com o padrão",
+    "ignora valores inválidos no jsonb",
+    "mescla sem apagar chaves de outras telas",
+    "useContactFrequencyRules",
+    "carrega as regras salvas do vendedor logado",
+    "expõe savedRules null quando nada foi salvo",
+    "salva via upsert em salesperson_preferences preservando chaves existentes",
+    "propaga erro do banco ao salvar",
+    "não consulta nem salva sem perfil de vendedor"
+   ]
+  },
+  "src/hooks/sales/useContactFrequencyRules.ts": {
+   "path": "src/hooks/sales/useContactFrequencyRules.ts",
+   "lines": 142,
+   "exports": [
+    "const DEFAULT_CONTACT_FREQUENCY",
+    "function parseContactRules",
+    "function serializeContactRules",
+    "const contactFrequencyRulesKey",
+    "function useContactFrequencyRules"
+   ],
+   "tables": [
+    {
+     "table": "salesperson_preferences",
+     "op": "select"
+    },
+    {
+     "table": "salesperson_preferences",
+     "op": "upsert"
+    }
+   ],
+   "table_cols": {
+    "salesperson_preferences": [
+     "contact_rules",
+     "salesperson_id"
+    ]
+   },
+   "errors": [
+    "Perfil de vendedor não encontrado"
+   ],
+   "hooks": [
+    "useContactFrequencyRules"
    ]
   },
   "src/hooks/sales/useSalesAssistant.ts": {
@@ -244451,10 +244622,22 @@
   }
  },
  "git": {
-  "sha": "c2c73445b59a17a5429196775398cdb9213be8a2",
+  "sha": "39a5d8a48dc5a1e835138fe688a30c20871ca645",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "39a5d8a",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: regras de frequencia de contato passam a salvar no banco (#448)",
+    "files": [
+     "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
+     "src/components/sales/cadence/ContactFrequencyRules.tsx",
+     "src/hooks/sales/useContactFrequencyRules.test.tsx",
+     "src/hooks/sales/useContactFrequencyRules.ts"
+    ]
+   },
    {
     "sha": "c2c7344",
     "date": "2026-11-13",
@@ -245223,15 +245406,6 @@
      "scripts/check-migrations.mjs",
      "scripts/ci/check-claude-md-integrity.mjs",
      "scripts/inventario/gerar-banco.mjs"
-    ]
-   },
-   {
-    "sha": "d95348f",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: workflow auto-corrige deno.lock em PRs do Dependabot (#368)",
-    "files": [
-     ".github/workflows/dependabot-fix-lockfile.yml"
     ]
    }
   ],

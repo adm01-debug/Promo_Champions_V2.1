@@ -6210,12 +6210,15 @@
    "src/types/sales.ts"
   ],
   "src/components/sales/cadence/ContactFrequencyRules.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/components/ui/slider.tsx",
    "src/components/ui/switch.tsx",
+   "src/hooks/sales/useContactFrequencyRules.ts",
    "src/types/sales.ts"
   ],
   "src/components/sales/cadence/EliteCadenceAnalytics.tsx": [
@@ -8729,6 +8732,12 @@
   "src/hooks/revenue/useWinProbabilityCalibration.ts": [
    "src/integrations/supabase/client.ts",
    "src/lib/supabase/realtime.ts"
+  ],
+  "src/hooks/sales/useContactFrequencyRules.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/types/sales.ts"
   ],
   "src/hooks/sales/useSalesAssistant.ts": [
    "src/integrations/supabase/client.ts",
