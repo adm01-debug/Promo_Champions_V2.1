@@ -10,6 +10,7 @@ let nextResult: Result = { data: null, error: null };
 // Fila opcional para hooks com mais de uma chamada; vazia = usa nextResult.
 const queuedResults: Result[] = [];
 const takeResult = () => queuedResults.shift() ?? nextResult;
+let currentUser: { id: string } | null = { id: 'user-1' };
 
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
@@ -45,7 +46,12 @@ vi.mock('@/integrations/supabase/client', () => {
     };
     return query;
   };
-  return { supabase: { from: builder } };
+  return {
+    supabase: {
+      from: builder,
+      auth: { getUser: () => Promise.resolve({ data: { user: currentUser } }) },
+    },
+  };
 });
 
 const {
@@ -322,8 +328,25 @@ describe('useUpdateAccountPlan', () => {
     expect(calls.find(c => c.op === 'insert')?.args[0]).toEqual({
       account_id: 'acc-1',
       fiscal_year: '2026',
+      created_by: 'user-1',
     });
     expect(ops()).not.toContain('update');
     expect(toastSuccess).toHaveBeenCalledWith('Plano de conta atualizado');
+  });
+
+  it('sem sessão: não tenta inserir e avisa para entrar de novo', async () => {
+    currentUser = null;
+    queuedResults.push({ data: null, error: null });
+    const { result } = renderHook(() => useUpdateAccountPlan(), { wrapper });
+
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ account_id: 'acc-1', fiscal_year: '2026' })
+      ).rejects.toThrow('Sessão expirada');
+    });
+
+    expect(ops()).not.toContain('insert');
+    expect(toastSuccess).not.toHaveBeenCalled();
+    currentUser = { id: 'user-1' };
   });
 });
