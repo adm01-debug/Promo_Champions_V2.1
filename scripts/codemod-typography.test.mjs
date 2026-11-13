@@ -47,7 +47,8 @@ test("variantes com prefixo (md:, hover:, !) ficam INTEIRAS — antes sobrava 'm
 });
 test("tamanho com altura de linha (text-xl/7) não é cortado pela metade", () => {
   const out = rodar(`export const X = () => <h2 className="text-xl/7 font-semibold">S</h2>;\n`, "--write");
-  assert.ok(!/className="[^"]*(^|\s)\/7/.test(out), out);
+  assert.ok(!/className="(?:[^"]*\s)?\/7/.test(out), out);   // nenhuma classe começa com "/7"
+  assert.ok(/(?:^|\s|")text-xl\/7(?:\s|")/.test(out) || /text-section-title/.test(out), out);
 });
 test("className dinâmico (cn) e texto/comentário não são tocados", () => {
   const src = `import { cn } from "@/lib/utils";\nexport const C = (x: boolean) => <h1 className={cn("mt-2", x && "o")}>T</h1>;\n// <h1 className="text-3xl font-bold"> comentário\n`;
