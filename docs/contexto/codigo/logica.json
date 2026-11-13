@@ -289,7 +289,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 11,
+   "usado_por": 10,
    "usado_por_modulos": [
     "components/activities",
     "components/cadences",
@@ -298,7 +298,7 @@
     "components/vendedor",
     "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -392,7 +392,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 541,
+   "usado_por": 544,
    "usado_por_modulos": [
     "components/activities",
     "components/admin",
@@ -487,7 +487,7 @@
     "services",
     "utils"
    ],
-   "coberto_por_testes": 2,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -549,8 +549,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 22,
+   "usado_por": 23,
    "usado_por_modulos": [
+    "components/cadences",
     "hooks",
     "hooks/abm",
     "hooks/admin",
@@ -693,9 +694,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_modulos": [
     "components/bi",
+    "components/pricing",
     "hooks/bi"
    ],
    "coberto_por_testes": 1,
@@ -1049,9 +1051,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 9,
+   "usado_por": 10,
    "usado_por_modulos": [
     "components/bi",
+    "components/pricing",
     "components/reports",
     "components/sales",
     "lib/bi",
@@ -1104,7 +1107,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 189,
+   "usado_por": 191,
    "usado_por_modulos": [
     "components/admin",
     "components/analytics",
@@ -1164,7 +1167,7 @@
     "pages/admin",
     "utils"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -1563,7 +1566,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 26,
+   "usado_por": 27,
    "usado_por_modulos": [
     "components/analytics",
     "hooks",
@@ -1571,6 +1574,7 @@
     "hooks/admin-tasks",
     "hooks/bi",
     "hooks/cadences",
+    "hooks/conversational",
     "hooks/crm",
     "hooks/deal-intelligence",
     "hooks/email",
@@ -1602,10 +1606,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "usado_por_modulos": [
     "components/dashboard",
     "hooks",
+    "hooks/forecast",
     "hooks/gamification",
     "hooks/notifications",
     "hooks/race",
@@ -1819,7 +1824,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 392,
+   "usado_por": 389,
    "usado_por_modulos": [
     "components/accessibility",
     "components/activities",
@@ -2424,10 +2429,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 30,
+   "usado_por": 33,
    "usado_por_modulos": [
     "components/ai",
     "components/analytics",
+    "components/clients",
     "components/forecast",
     "components/lead-scoring",
     "components/race",

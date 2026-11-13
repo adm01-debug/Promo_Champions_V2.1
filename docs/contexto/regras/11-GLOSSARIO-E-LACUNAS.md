@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `64382cb949` · branch `main` · 2026-11-13 15:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `914a813e48` · branch `main` · 2026-11-13 16:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `sales_goals` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `sales_streaks` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `sales_territories` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| … +311 linhas — lista completa em `context.json` | | | |
+| … +314 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -337,19 +337,11 @@
 | status | valor `closed_won` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/assistant/DealPreviewCard.tsx`<br>`compara:src/components/assistant/dealRiskCalculator.ts` |
 | status | valor `closed_lost` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/assistant/DealPreviewCard.tsx`<br>`compara:src/components/assistant/dealRiskCalculator.ts` |
 | status | valor `overdue` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/bi/ChurnTaskCompletionCard.tsx` |
-| status | valor `Active` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/clients/Client360PredictiveCards.tsx` |
-| status | valor `gap` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/competitive/FeatureComparison.tsx`<br>`escreve:src/components/competitive/FeatureComparison.tsx` |
-| status | valor `full` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/competitive/FeatureComparison.tsx`<br>`escreve:src/components/competitive/FeatureComparison.tsx` |
-| status | valor `Planning` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/competitive/FeatureComparison.tsx` |
-| status | valor `Backlog` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/competitive/FeatureComparison.tsx` |
-| status | valor `Research` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/competitive/FeatureComparison.tsx` |
 | status | valor `Pendente` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/customer-success/CustomerSuccess360Hub.tsx` |
 | status | valor `Cancelado` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/customer-success/CustomerSuccess360Hub.tsx` |
 | status | valor `SUBSCRIBED` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | status | valor `CHANNEL_ERROR` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | status | valor `breached` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/pipeline/SLADashboard.tsx`<br>`compara:src/hooks/useDealSLAs.ts` |
-| status | valor `Critical` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/pricing/MarginAlertsCard.tsx`<br>`escreve:src/components/pricing/MarginAlertsCard.tsx` |
-| status | valor `Warning` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/pricing/MarginAlertsCard.tsx` |
 | status | valor `Blocked` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/purchase-intelligence/DuplicateBlockAudit.tsx` |
 | status | valor `no-data` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/GhostCar.tsx`<br>`compara:src/components/race/GhostStatusBadge.tsx`<br>`escreve:src/hooks/race/useGhostCar.ts` |
 | status | valor `behind` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/race/GhostStatusBadge.tsx` |
@@ -513,6 +505,7 @@
 | dinâmico | 4 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/ci/inventario-rotas.unit.mjs` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/inventario/gerar-banco.mjs` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/regras_negocio/generate.py` |
+| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/useMultichannel.test.tsx` |
 | dinâmico | 3 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/win-loss/useInsightComments.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/ai-agent-orchestrator/index.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/export-winloss-pdf/index.ts` |

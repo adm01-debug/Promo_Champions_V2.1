@@ -1,36 +1,36 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2303,
- "arestas": 9488,
+ "nos": 2305,
+ "arestas": 9499,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 708
-  },
-  {
-   "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 550
+   "importado_por": 707
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 543
+   "importado_por": 547
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 545
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 540
+   "importado_por": 534
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 392
+   "importado_por": 389
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 311
+   "importado_por": 315
   },
   {
    "arquivo": "src/lib/money.ts",
-   "importado_por": 189
+   "importado_por": 192
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -66,15 +66,15 @@
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 102
+   "importado_por": 101
   },
   {
    "arquivo": "src/constants/index.ts",
-   "importado_por": 94
+   "importado_por": 95
   },
   {
    "arquivo": "src/contexts/AuthContext.tsx",
-   "importado_por": 87
+   "importado_por": 88
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
@@ -85,11 +85,11 @@
    "importado_por": 81
   },
   {
-   "arquivo": "src/components/ui/progress.tsx",
-   "importado_por": 77
+   "arquivo": "src/components/ui/avatar.tsx",
+   "importado_por": 76
   },
   {
-   "arquivo": "src/components/ui/avatar.tsx",
+   "arquivo": "src/components/ui/progress.tsx",
    "importado_por": 76
   },
   {
@@ -98,7 +98,7 @@
   },
   {
    "arquivo": "src/components/ui/switch.tsx",
-   "importado_por": 65
+   "importado_por": 64
   },
   {
    "arquivo": "supabase/functions/_shared/rate-limit.ts",
@@ -133,16 +133,16 @@
    "importado_por": 37
   },
   {
+   "arquivo": "src/utils/dateHelpers.ts",
+   "importado_por": 35
+  },
+  {
    "arquivo": "src/hooks/race/useRaceLeaderboard.ts",
    "importado_por": 33
   },
   {
-   "arquivo": "src/utils/dateHelpers.ts",
-   "importado_por": 32
-  },
-  {
    "arquivo": "src/hooks/use-toast.ts",
-   "importado_por": 31
+   "importado_por": 30
   },
   {
    "arquivo": "src/components/skeletons/SkeletonTransition.tsx",
@@ -154,7 +154,7 @@
   },
   {
    "arquivo": "src/lib/supabase/chunkedIn.ts",
-   "importado_por": 27
+   "importado_por": 28
   },
   {
    "arquivo": "src/components/ui/slider.tsx",
@@ -272,12 +272,12 @@
   {
    "modulo": "lib/supabase",
    "depende_de": 1,
-   "importado_por": 38
+   "importado_por": 39
   },
   {
    "modulo": "contexts",
    "depende_de": 3,
-   "importado_por": 33
+   "importado_por": 34
   },
   {
    "modulo": "hooks/sales",
@@ -287,17 +287,17 @@
   {
    "modulo": "constants",
    "depende_de": 0,
-   "importado_por": 30
+   "importado_por": 31
+  },
+  {
+   "modulo": "utils",
+   "depende_de": 3,
+   "importado_por": 26
   },
   {
    "modulo": "components/dashboard",
    "depende_de": 26,
    "importado_por": 2
-  },
-  {
-   "modulo": "utils",
-   "depende_de": 3,
-   "importado_por": 25
   },
   {
    "modulo": "types",

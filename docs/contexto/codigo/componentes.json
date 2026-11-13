@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1275,
+ "total": 1274,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -356,7 +356,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -3080,7 +3080,7 @@
     "ContactRulesDialog"
    ],
    "export_default": null,
-   "linhas": 193,
+   "linhas": 237,
    "dominio": "components/cadences",
    "hooks_locais": [],
    "tabelas": [
@@ -3433,7 +3433,7 @@
     "Client360AffinityCard"
    ],
    "export_default": null,
-   "linhas": 96,
+   "linhas": 37,
    "dominio": "components/clients",
    "hooks_locais": [],
    "tabelas": [],
@@ -3447,7 +3447,7 @@
     "Client360Header"
    ],
    "export_default": null,
-   "linhas": 66,
+   "linhas": 29,
    "dominio": "components/clients",
    "hooks_locais": [],
    "tabelas": [],
@@ -3461,9 +3461,11 @@
     "Client360HealthNbaSection"
    ],
    "export_default": null,
-   "linhas": 168,
+   "linhas": 208,
    "dominio": "components/clients",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useCreateTask"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -3498,20 +3500,6 @@
    "orfao": false
   },
   {
-   "arquivo": "src/components/clients/Client360PredictiveCards.tsx",
-   "exports": [
-    "Client360PredictiveCards"
-   ],
-   "export_default": null,
-   "linhas": 117,
-   "dominio": "components/clients",
-   "hooks_locais": [],
-   "tabelas": [],
-   "edges": [],
-   "usado_por": 1,
-   "orfao": false
-  },
-  {
    "arquivo": "src/components/clients/Client360Skeleton.tsx",
    "exports": [
     "Client360Skeleton"
@@ -3531,7 +3519,7 @@
     "Client360View"
    ],
    "export_default": null,
-   "linhas": 131,
+   "linhas": 113,
    "dominio": "components/clients",
    "hooks_locais": [
     "useClient360"
@@ -4410,7 +4398,7 @@
     "EvolutionChart"
    ],
    "export_default": null,
-   "linhas": 171,
+   "linhas": 172,
    "dominio": "components/competitive",
    "hooks_locais": [
     "useEvolutionCurves"
@@ -4426,9 +4414,11 @@
     "FeatureComparison"
    ],
    "export_default": null,
-   "linhas": 516,
+   "linhas": 167,
    "dominio": "components/competitive",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useCompetitorMarketIntel"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -4486,10 +4476,11 @@
     "LeagueSystem"
    ],
    "export_default": null,
-   "linhas": 203,
+   "linhas": 242,
    "dominio": "components/competitive",
    "hooks_locais": [
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues"
    ],
    "tabelas": [],
@@ -5054,7 +5045,7 @@
     "ConversationalIntelligenceHub"
    ],
    "export_default": null,
-   "linhas": 624,
+   "linhas": 620,
    "dominio": "components/conversational",
    "hooks_locais": [
     "useConversationalIntelligence",
@@ -6952,7 +6943,7 @@
     "NextBestActionPanel"
    ],
    "export_default": null,
-   "linhas": 191,
+   "linhas": 136,
    "dominio": "components/deal-intelligence",
    "hooks_locais": [
     "useDealHealth"
@@ -8599,7 +8590,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -8781,7 +8772,7 @@
     "PipelineStrategicReview"
    ],
    "export_default": null,
-   "linhas": 174,
+   "linhas": 188,
    "dominio": "components/intelligence",
    "hooks_locais": [],
    "tabelas": [],
@@ -10402,9 +10393,11 @@
     "PredictiveScenarioPlanner"
    ],
    "export_default": null,
-   "linhas": 156,
+   "linhas": 175,
    "dominio": "components/predictive",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useScenarioBaseline"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -10444,9 +10437,11 @@
     "MarginAlertsCard"
    ],
    "export_default": null,
-   "linhas": 128,
+   "linhas": 122,
    "dominio": "components/pricing",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useCriticalMarkupSales"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -10558,7 +10553,7 @@
     "RevenueLeakageCard"
    ],
    "export_default": null,
-   "linhas": 288,
+   "linhas": 283,
    "dominio": "components/pricing",
    "hooks_locais": [],
    "tabelas": [],
@@ -13165,7 +13160,7 @@
     "RevenueIntelligenceHub"
    ],
    "export_default": null,
-   "linhas": 267,
+   "linhas": 271,
    "dominio": "components/revenue-intelligence",
    "hooks_locais": [
     "useRevenueIntelligenceHub",
@@ -13245,7 +13240,7 @@
     "ApprovalQueue"
    ],
    "export_default": null,
-   "linhas": 171,
+   "linhas": 42,
    "dominio": "components/sales",
    "hooks_locais": [],
    "tabelas": [],
@@ -13327,9 +13322,12 @@
     "CadenceReportPanel"
    ],
    "export_default": null,
-   "linhas": 159,
+   "linhas": 206,
    "dominio": "components/sales",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useCadenceChannelExecution",
+    "useCadenceMetrics"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -13357,9 +13355,15 @@
     "CadenceTemplateManager"
    ],
    "export_default": null,
-   "linhas": 415,
+   "linhas": 447,
    "dominio": "components/sales",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useAuth",
+    "useCreateTemplate",
+    "useDeleteTemplate",
+    "useMessageTemplates",
+    "useUpdateTemplate"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 2,
@@ -13387,12 +13391,12 @@
     "EliteCadenceAnalytics"
    ],
    "export_default": null,
-   "linhas": 289,
+   "linhas": 180,
    "dominio": "components/sales",
-   "hooks_locais": [],
-   "tabelas": [
-    "cadence_tasks"
+   "hooks_locais": [
+    "useCadenceChannelStats"
    ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -15420,7 +15424,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 22,
+   "usado_por": 23,
    "orfao": false
   },
   {
@@ -15483,7 +15487,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 550,
+   "usado_por": 545,
    "orfao": false
   },
   {
@@ -15517,7 +15521,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 540,
+   "usado_por": 534,
    "orfao": false
   },
   {
@@ -15549,7 +15553,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 708,
+   "usado_por": 707,
    "orfao": false
   },
   {
@@ -15783,7 +15787,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 77,
+   "usado_por": 76,
    "orfao": false
   },
   {
@@ -15827,7 +15831,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 102,
+   "usado_por": 101,
    "orfao": false
   },
   {
@@ -15950,7 +15954,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 311,
+   "usado_por": 315,
    "orfao": false
   },
   {
@@ -15978,7 +15982,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 65,
+   "usado_por": 64,
    "orfao": false
   },
   {
@@ -17324,7 +17328,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 85,
+   "usado_por": 86,
    "orfao": false
   },
   {
@@ -18667,10 +18671,11 @@
     "DealVelocityPage"
    ],
    "export_default": "DealVelocityPage",
-   "linhas": 174,
+   "linhas": 154,
    "dominio": "pages",
    "hooks_locais": [
-    "useDealVelocity"
+    "useDealVelocity",
+    "useSalespeopleMin"
    ],
    "tabelas": [],
    "edges": [],
@@ -18811,9 +18816,11 @@
     "EvolutionCurvesPage"
    ],
    "export_default": "EvolutionCurvesPage",
-   "linhas": 115,
+   "linhas": 118,
    "dominio": "pages",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useEvolutionCurves"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -19195,13 +19202,11 @@
     "MetasAtividades"
    ],
    "export_default": "MetasAtividades",
-   "linhas": 625,
+   "linhas": 648,
    "dominio": "pages",
    "hooks_locais": [
     "useActivityGoalProgress",
-    "useCelebration",
-    "useSalespeople",
-    "useToast"
+    "useSalespeople"
    ],
    "tabelas": [],
    "edges": [],

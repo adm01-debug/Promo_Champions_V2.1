@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "64382cb9494868b4cd84ec7ea42ccb2748cf828a",
+  "sha": "914a813e48b105f843757a0601a8b695f10ca869",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 15:11 UTC",
-  "files_total": 3503,
-  "code_files": 3174,
-  "code_lines": 462713
+  "generated_at": "2026-11-13 16:13 UTC",
+  "files_total": 3534,
+  "code_files": 3205,
+  "code_lines": 465270
  },
  "version": "1.3.2",
- "facts_hash": "ebf1621c4c6fe99a",
+ "facts_hash": "8830f9ecbe1bfa10",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,9 +389,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1333,
-   ".ts": 1083,
-   ".sql": 676,
+   ".tsx": 1356,
+   ".ts": 1090,
+   ".sql": 677,
    ".mjs": 71,
    ".js": 6,
    ".py": 5,
@@ -42931,6 +42931,16 @@
     "using": "salesperson_id = public.get_current_salesperson_id() OR public.has_role(auth.uid(), 'admin')",
     "check": "( salesperson_id = public.get_current_salesperson_id() OR public.has_role(auth.uid(), 'admin') ) AND status = 'cancelled' AND result IS NULL AND completed_at IS NULL AND (approved_by IS NULL OR approved_by = auth.uid())",
     "src": "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
+   },
+   {
+    "name": "Admins can add battle participants",
+    "table": "battle_participants",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql"
    }
   ],
   "triggers": [
@@ -58486,6 +58496,7 @@
    "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
    "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql",
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
+   "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/canonical_role_simulation.sql",
@@ -65367,7 +65378,7 @@
      "get_current_salesperson_id",
      "search_call_library"
     ],
-    "deps_count": 95
+    "deps_count": 96
    },
    {
     "path": "",
@@ -65404,15 +65415,25 @@
    },
    {
     "path": "",
+    "file": "src/pages/DealVelocityPage.test.tsx",
+    "component": "DealVelocityPage.test",
+    "tables_transitive": [],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 0
+   },
+   {
+    "path": "",
     "file": "src/pages/DealVelocityPage.tsx",
     "component": "DealVelocityPage",
     "tables_transitive": [
      "deal_stage_history",
-     "sales"
+     "sales",
+     "salespeople_public"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 13
+    "deps_count": 14
    },
    {
     "path": "",
@@ -65460,6 +65481,15 @@
     "invokes_transitive": [],
     "rpc_transitive": [],
     "deps_count": 16
+   },
+   {
+    "path": "",
+    "file": "src/pages/EvolutionCurvesPage.test.tsx",
+    "component": "EvolutionCurvesPage.test",
+    "tables_transitive": [],
+    "invokes_transitive": [],
+    "rpc_transitive": [],
+    "deps_count": 1
    },
    {
     "path": "",
@@ -65662,6 +65692,29 @@
    },
    {
     "path": "",
+    "file": "src/pages/MetasAtividades.test.tsx",
+    "component": "MetasAtividades.test",
+    "tables_transitive": [
+     "achievements",
+     "activities",
+     "activity_goals",
+     "clients",
+     "sales",
+     "sales_goals",
+     "salespeople",
+     "salesperson_xp",
+     "teams"
+    ],
+    "invokes_transitive": [
+     "semantic-index-entity"
+    ],
+    "rpc_transitive": [
+     "merge_clients"
+    ],
+    "deps_count": 66
+   },
+   {
+    "path": "",
     "file": "src/pages/ObjectionsLibraryPage.tsx",
     "component": "ObjectionsLibraryPage",
     "tables_transitive": [
@@ -65766,10 +65819,12 @@
     "path": "",
     "file": "src/pages/PricingIntelligenceHub.tsx",
     "component": "PricingIntelligenceHub",
-    "tables_transitive": [],
+    "tables_transitive": [
+     "sales_with_markup"
+    ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 22
+    "deps_count": 27
    },
    {
     "path": "",
@@ -65782,12 +65837,15 @@
      "cadence_steps",
      "cadence_tasks",
      "cadences",
+     "channel_interactions",
      "intent_audit_logs",
+     "message_templates",
      "prospect_cadences",
      "sales",
      "salespeople",
      "salesperson_preferences",
      "saved_filters",
+     "tabela",
      "teams"
     ],
     "invokes_transitive": [],
@@ -65796,7 +65854,7 @@
      "get_auto_paused_count",
      "process_lead_intent_event"
     ],
-    "deps_count": 71
+    "deps_count": 76
    },
    {
     "path": "",
@@ -66211,6 +66269,7 @@
     "tables_transitive": [
      "achievements",
      "league_members",
+     "leagues",
      "ranking_notifications",
      "sales",
      "sales_goals",
@@ -66381,12 +66440,15 @@
      "collectible_badges",
      "competitive_chat_messages",
      "competitive_seasons",
+     "competitor_mentions",
+     "competitors_registry",
      "daily_challenge_progress",
      "daily_challenges",
      "feed_comments",
      "feed_reactions",
      "kudos",
      "league_members",
+     "leagues",
      "performance_bets",
      "prize_wheel_spins",
      "progressive_goals",
@@ -66397,6 +66459,7 @@
      "rank_change_notifications",
      "sales",
      "sales_battles",
+     "sales_enablement_assets",
      "sales_goals",
      "sales_streaks",
      "salesperson_badges",
@@ -66416,7 +66479,7 @@
      "spin_prize_wheel",
      "sync_challenge_progress"
     ],
-    "deps_count": 81
+    "deps_count": 83
    },
    {
     "path": "/assistente",
@@ -66589,13 +66652,16 @@
      "cadence_steps",
      "cadence_tasks",
      "cadences",
+     "channel_interactions",
      "error_logs",
      "intent_audit_logs",
      "lead_detailed_logs",
+     "message_templates",
      "prospect_cadences",
      "sales",
      "salespeople",
-     "salesperson_preferences"
+     "salesperson_preferences",
+     "tabela"
     ],
     "invokes_transitive": [
      "auto-enroll-cadence"
@@ -66607,7 +66673,7 @@
      "get_cadence_metrics",
      "process_lead_intent_event"
     ],
-    "deps_count": 74
+    "deps_count": 80
    },
    {
     "path": "/calendario",
@@ -66634,6 +66700,7 @@
      "icp_data",
      "sales",
      "tabela",
+     "tasks",
      "teams"
     ],
     "invokes_transitive": [
@@ -66643,9 +66710,10 @@
      "send-transactional-email"
     ],
     "rpc_transitive": [
+     "get_current_salesperson_id",
      "merge_clients"
     ],
-    "deps_count": 74
+    "deps_count": 76
    },
    {
     "path": "/closer",
@@ -67158,7 +67226,7 @@
     "rpc_transitive": [
      "get_score_trend"
     ],
-    "deps_count": 26
+    "deps_count": 29
    },
    {
     "path": "/kanban-clientes",
@@ -67229,16 +67297,20 @@
      "achievements",
      "activities",
      "activity_goals",
+     "clients",
      "sales",
      "sales_goals",
      "salespeople",
-     "salesperson_xp"
+     "salesperson_xp",
+     "teams"
     ],
     "invokes_transitive": [
      "semantic-index-entity"
     ],
-    "rpc_transitive": [],
-    "deps_count": 64
+    "rpc_transitive": [
+     "merge_clients"
+    ],
+    "deps_count": 67
    },
    {
     "path": "/metricas-categoria",
@@ -73924,7 +73996,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1193,
+  "components_count": 1206,
   "hooks": [
    {
     "name": "useContacts",
@@ -74403,6 +74475,10 @@
     "file": "src/hooks/cadences/useBulkQuoteCadenceMutations.ts"
    },
    {
+    "name": "useCadenceChannelStats",
+    "file": "src/hooks/cadences/useCadenceChannelStats.ts"
+   },
+   {
     "name": "useCadenceMetrics",
     "file": "src/hooks/cadences/useCadenceMetrics.ts"
    },
@@ -74457,6 +74533,10 @@
    {
     "name": "useFunnelRules",
     "file": "src/hooks/cadences/useCadenceQueries.ts"
+   },
+   {
+    "name": "useCadenceChannelExecution",
+    "file": "src/hooks/cadences/useCadenceReport.ts"
    },
    {
     "name": "useCompleteCadenceTask",
@@ -74688,6 +74768,10 @@
    },
    {
     "name": "useCompetitorsRegistry",
+    "file": "src/hooks/conversational/useCompetitorsRegistry.ts"
+   },
+   {
+    "name": "useCompetitorMarketIntel",
     "file": "src/hooks/conversational/useCompetitorsRegistry.ts"
    },
    {
@@ -75263,6 +75347,10 @@
     "file": "src/hooks/forecast/useRevenueForecast.ts"
    },
    {
+    "name": "useScenarioBaseline",
+    "file": "src/hooks/forecast/useScenarioBaseline.ts"
+   },
+   {
     "name": "useAchievementTrends",
     "file": "src/hooks/gamification/useAchievementTrends.ts"
    },
@@ -75332,6 +75420,10 @@
    },
    {
     "name": "useLeagues",
+    "file": "src/hooks/gamification/useLeagues.ts"
+   },
+   {
+    "name": "useLeagueEnrollment",
     "file": "src/hooks/gamification/useLeagues.ts"
    },
    {
@@ -76571,6 +76663,10 @@
     "file": "src/hooks/useMultichannel.ts"
    },
    {
+    "name": "useUpdateTemplate",
+    "file": "src/hooks/useMultichannel.ts"
+   },
+   {
     "name": "useDeleteTemplate",
     "file": "src/hooks/useMultichannel.ts"
    },
@@ -77807,8 +77903,8 @@
   },
   {
    "module": "src/components",
-   "files": 1193,
-   "lines": 189087,
+   "files": 1206,
+   "lines": 189711,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78057,8 +78153,8 @@
   },
   {
    "module": "src/config",
-   "files": 3,
-   "lines": 90,
+   "files": 4,
+   "lines": 135,
    "tables": [],
    "exports": [
     "constants.ts: CLIENT_MAP, SECURITY, UI",
@@ -78070,10 +78166,15 @@
     "external.ts: URLs externas centralizadas do PROMO CHAMPIONS. `VITE_APP_URL`/`VITE_CANONICAL_URL` permitem sobrescrever em build/deploy; os demais são endpoints de terceiros com fallback para o valor padrão.",
     "queryOptions.ts: React Query configuration presets for different data categories. Centralizes cache strategy decisions for consistency."
    ],
-   "deps": [],
+   "deps": [
+    "node:fs",
+    "node:path",
+    "vitest"
+   ],
    "imports_modules": [],
    "file_list": [
     "src/config/constants.ts",
+    "src/config/dominio-publico.test.ts",
     "src/config/external.ts",
     "src/config/queryOptions.ts"
    ]
@@ -78131,8 +78232,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 523,
-   "lines": 61021,
+   "files": 535,
+   "lines": 62598,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78260,6 +78361,7 @@
     "lead_scores",
     "lead_source_configs",
     "league_members",
+    "leagues",
     "login_alerts",
     "login_attempts",
     "message_templates",
@@ -78526,6 +78628,7 @@
     "src/hooks/useEligibleBonuses.ts",
     "src/hooks/useEmailMetrics.ts",
     "src/hooks/useEmailTracking.ts",
+    "src/hooks/useEvolutionCurves.test.tsx",
     "src/hooks/useEvolutionCurves.ts",
     "src/hooks/useFeatureFlags.ts",
     "src/hooks/useFeatureFlagsAdmin.ts",
@@ -78555,10 +78658,9 @@
     "src/hooks/useMediaQuery.ts",
     "src/hooks/useMicroGoals.ts",
     "src/hooks/useMobileNavigation.ts",
+    "src/hooks/useMultichannel.test.tsx",
     "src/hooks/useMultichannel.ts",
-    "src/hooks/useMultiplePipelines.ts",
-    "src/hooks/useMyBonusAwards.ts",
-    "src/hooks/useNPSSurveys.test.tsx"
+    "src/hooks/useMultiplePipelines.ts"
    ]
   },
   {
@@ -78757,8 +78859,8 @@
   },
   {
    "module": "src/pages",
-   "files": 177,
-   "lines": 44103,
+   "files": 180,
+   "lines": 44312,
    "tables": [
     "achievements",
     "activities",
@@ -78933,6 +79035,7 @@
     "src/pages/CustomerSuccessHub.tsx",
     "src/pages/DashboardCustom.tsx",
     "src/pages/DealIntelligence.tsx",
+    "src/pages/DealVelocityPage.test.tsx",
     "src/pages/DealVelocityPage.tsx",
     "src/pages/Deduplication.tsx",
     "src/pages/DesafiosSemanais.tsx",
@@ -78942,13 +79045,12 @@
     "src/pages/EmailTracking.tsx",
     "src/pages/EmbedReportPage.tsx",
     "src/pages/Estoque.tsx",
+    "src/pages/EvolutionCurvesPage.test.tsx",
     "src/pages/EvolutionCurvesPage.tsx",
     "src/pages/FeatureFlagsAdmin.tsx",
     "src/pages/FollowUpAudit.tsx",
     "src/pages/FollowUpInteligente.tsx",
-    "src/pages/FonteLeads.tsx",
-    "src/pages/ForecastPonderado.tsx",
-    "src/pages/Fornecedores.tsx"
+    "src/pages/FonteLeads.tsx"
    ]
   },
   {
@@ -79027,8 +79129,8 @@
   },
   {
    "module": "src/test",
-   "files": 10,
-   "lines": 946,
+   "files": 11,
+   "lines": 1026,
    "tables": [],
    "exports": [
     "factories.ts: nextTestId, nextUuid, buildSale, buildClient, buildQuote, buildSalesperson"
@@ -79036,11 +79138,15 @@
    "docs": [
     "factories.ts: Factories compartilhadas de teste — builders tipados para as entidades mais usadas nas specs. Cada builder devolve uma linha/objeto completo e válido; sobrescreva só os campos relevantes ao cenário: const vendaGanha = buildSale({ status: 'completed', amount: 1200 }); Convenções: - IDs determinístico …",
     "quote-error-messages.test.ts: @vitest-environment node",
+    "battle-participants-insert-policy.test.ts: Regressão: criar batalha (useSalesBattles.createBattle) insere >= 2 vendedores em battle_participants. Só admin/gestor cria batalha (\"Admins can manage battles\" em sales_battles), então precisa existir policy de INSERT viva em battle_participants que libere admin/gestor — a auto-inscrição (salespers …",
     "fn-cleanup-webhook-dedupe-privileges.test.ts: Teste de segurança: apenas `service_role` pode executar `public.fn_cleanup_webhook_dedupe()`. Roles `anon`, `authenticated` e `public` devem estar bloqueados. Usa fetch direto contra a Data API (PostgREST) para contornar o mock global de `@supabase/supabase-js` presente em `src/test/setup.ts`."
    ],
    "deps": [
     "@testing-library/jest-dom",
     "@testing-library/react",
+    "node:fs",
+    "node:path",
+    "node:url",
     "vitest"
    ],
    "imports_modules": [
@@ -79062,6 +79168,7 @@
     "src/test/sale-status.test.ts",
     "src/test/setup.ts",
     "src/test/smoke-target-helpers.test.ts",
+    "src/test/security/battle-participants-insert-policy.test.ts",
     "src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts"
    ]
   },
@@ -79492,8 +79599,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 669,
-   "lines": 54323,
+   "files": 670,
+   "lines": 54345,
    "tables": [
     "user_permissions_cache"
    ],
@@ -80241,8 +80348,9 @@
      "supabase/functions/process-cadence-tasks/index.ts"
     ],
     "select": [
-     "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
+     "src/hooks/cadences/useCadenceChannelStats.ts",
      "src/hooks/cadences/useCadenceQueries.ts",
+     "src/hooks/cadences/useCadenceReport.ts",
      "src/hooks/cadences/useCadenceTaskMutations.ts",
      "src/hooks/cadences/useCadenceTasksByEnrollment.ts",
      "src/hooks/cadences/useQuoteCadences.ts",
@@ -80757,6 +80865,7 @@
    "competitor_mentions": {
     "select": [
      "src/hooks/conversational/useCompetitorMentions.ts",
+     "src/hooks/conversational/useCompetitorsRegistry.ts",
      "supabase/functions/calculate-deal-health/index.ts"
     ],
     "delete": [
@@ -81668,7 +81777,12 @@
     "select": [
      "src/hooks/gamification/useLeagues.ts"
     ],
-    "upsert": [
+    "insert": [
+     "src/hooks/gamification/useLeagues.ts"
+    ]
+   },
+   "leagues": {
+    "select": [
      "src/hooks/gamification/useLeagues.ts"
     ]
    },
@@ -81694,6 +81808,9 @@
      "src/hooks/useMultichannel.ts"
     ],
     "insert": [
+     "src/hooks/useMultichannel.ts"
+    ],
+    "update": [
      "src/hooks/useMultichannel.ts"
     ],
     "delete": [
@@ -82599,6 +82716,7 @@
      "src/hooks/deal-intelligence/useAtRiskDeals.ts",
      "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
      "src/hooks/follow-up/useFollowUpData.ts",
+     "src/hooks/forecast/useScenarioBaseline.ts",
      "src/hooks/gamification/useFuturisticRanking.ts",
      "src/hooks/gamification/useGamifiedProfile.ts",
      "src/hooks/gamification/useWeeklyRanking.ts",
@@ -82771,6 +82889,7 @@
    "sales_enablement_assets": {
     "select": [
      "src/components/conversational/BattleCardSuggestion.tsx",
+     "src/hooks/conversational/useCompetitorsRegistry.ts",
      "src/hooks/sales/useSalesEnablement.ts"
     ],
     "insert": [
@@ -83024,14 +83143,9 @@
      "src/hooks/sales/useContactFrequencyRules.ts",
      "src/hooks/sales/useSalespersonPreferences.ts"
     ],
-    "update": [
-     "src/components/cadences/ContactRulesDialog.tsx",
-     "src/hooks/sales/useSalespersonPreferences.ts"
-    ],
     "upsert": [
-     "src/hooks/sales/useContactFrequencyRules.ts"
-    ],
-    "insert": [
+     "src/components/cadences/ContactRulesDialog.tsx",
+     "src/hooks/sales/useContactFrequencyRules.ts",
      "src/hooks/sales/useSalespersonPreferences.ts"
     ]
    },
@@ -84514,6 +84628,7 @@
     "status"
    ],
    "competitor_mentions": [
+    "competitor_id",
     "id",
     "recording_id"
    ],
@@ -84903,6 +85018,9 @@
     "updated_at"
    ],
    "leads": [
+    "id"
+   ],
+   "leagues": [
     "id"
    ],
    "login_alerts": [
@@ -85457,7 +85575,6 @@
    ],
    "salesperson_preferences": [
     "contact_rules",
-    "id",
     "salesperson_id"
    ],
    "salesperson_xp": [
@@ -86714,6 +86831,7 @@
     "scripts/ai-context/gerar.unit.mjs"
    ],
    "VITE_APP_URL": [
+    "src/config/dominio-publico.test.ts",
     "src/config/external.ts"
    ],
    "VITE_C": [
@@ -87047,6 +87165,7 @@
     "src/hooks/dashboard/useIntelligenceZones.ts"
    ],
    "get_current_salesperson_id": [
+    "src/components/clients/Client360HealthNbaSection.tsx",
     "src/hooks/abm/useAccounts.ts",
     "src/hooks/calendar/useAgendaEvents.ts",
     "src/hooks/conversational/useCallRecordings.ts",
@@ -87857,6 +87976,10 @@
     "count": 2
    },
    {
+    "file": "src/hooks/useMultichannel.test.tsx",
+    "count": 1
+   },
+   {
     "file": "src/hooks/win-loss/useInsightComments.ts",
     "count": 3
    },
@@ -88413,7 +88536,6 @@
    "follow_up_notifications",
    "lead_score_history",
    "league_history",
-   "leagues",
    "maintenance_log",
    "mfa_verification_attempts",
    "migration_log",
@@ -89583,6 +89705,11 @@
     "values": "today | yesterday | last_week | this_month | last_month | last_quarter | last_semester | last_year | this_year | custom"
    },
    {
+    "file": "src/hooks/cadences/useCadenceChannelStats.ts",
+    "name": "CADENCE_CHANNEL_TYPES",
+    "values": "'email', 'call', 'linkedin', 'whatsapp', 'meeting', 'other',"
+   },
+   {
     "file": "src/hooks/cadences/useCadenceQueries.ts",
     "name": "ActionType",
     "values": "email | call | linkedin | whatsapp | meeting | task | other"
@@ -89596,6 +89723,16 @@
     "file": "src/hooks/cadences/useCadenceQueries.ts",
     "name": "CadenceTaskStatus",
     "values": "pending | completed | skipped"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.ts",
+    "name": "CadenceReportPeriod",
+    "values": "weekly | monthly | quarterly"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.ts",
+    "name": "CADENCE_CHANNELS",
+    "values": "'whatsapp', 'call', 'email', 'linkedin', 'meeting', 'other',"
    },
    {
     "file": "src/hooks/calendar/useAgendaEvents.ts",
@@ -90550,6 +90687,10 @@
    },
    {
     "file": "src/components/cadences/ContactRulesDialog.tsx",
+    "msg": "Erro ao carregar regras de contato: ${error.message}"
+   },
+   {
+    "file": "src/components/cadences/ContactRulesDialog.tsx",
     "msg": "Erro: ${e instanceof Error ? e.message : String(e)}"
    },
    {
@@ -90575,6 +90716,10 @@
    {
     "file": "src/components/cadences/EnrollmentRulesDialog.tsx",
     "msg": "Erro ao executar auto-enrollment"
+   },
+   {
+    "file": "src/components/clients/Client360HealthNbaSection.tsx",
+    "msg": "Não foi possível identificar o vendedor responsável."
    },
    {
     "file": "src/components/closer/CloserHandoffs.tsx",
@@ -90606,7 +90751,7 @@
    },
    {
     "file": "src/components/competitive/LeagueSystem.tsx",
-    "msg": "Erro ao entrar na liga"
+    "msg": "Não foi possível entrar na liga"
    },
    {
     "file": "src/components/competitive/PerformanceBets.tsx",
@@ -90749,6 +90894,10 @@
     "msg": "Erro ao executar macro"
    },
    {
+    "file": "src/components/predictive/PredictiveScenarioPlanner.tsx",
+    "msg": ">\n            Não foi possível carregar a receita ganha dos últimos {SCENARIO_BASELINE_DAYS}{"
+   },
+   {
     "file": "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx",
     "msg": ",\n                              title: "
    },
@@ -90845,10 +90994,6 @@
     "msg": "Falha ao enviar e-mail"
    },
    {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "msg": "Mensagem descartada."
-   },
-   {
     "file": "src/components/sales/cadence/CadenceAlertConfig.tsx",
     "msg": "Erro ao carregar templates"
    },
@@ -90890,11 +91035,15 @@
    },
    {
     "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "msg": "Ação rejeitada"
+    "msg": " className="
    },
    {
     "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
     "msg": "Por favor, preencha o nome e o conteúdo do template."
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
+    "msg": "Seu usuário não está vinculado a um vendedor."
    },
    {
     "file": "src/components/sales/cadence/ContactFrequencyRules.tsx",
@@ -91363,6 +91512,10 @@
    {
     "file": "src/hooks/useMFA.ts",
     "msg": "Tipo de fator inesperado"
+   },
+   {
+    "file": "src/hooks/useMultichannel.ts",
+    "msg": "Erro ao atualizar template"
    },
    {
     "file": "src/hooks/useMultichannel.ts",
@@ -92207,6 +92360,10 @@
    {
     "file": "src/hooks/gamification/useDailyMissions.ts",
     "msg": "No salesperson"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.ts",
+    "msg": "Você já participa de uma liga."
    },
    {
     "file": "src/hooks/gamification/usePrizeWheel.ts",
@@ -94329,6 +94486,10 @@
     "text": "Extracted to keep the main component below the 400-LoC limit."
    },
    {
+    "file": "src/components/competitive/FeatureComparison.tsx",
+    "text": "* Market Intel da Arena: mostra apenas dados reais de concorrentes"
+   },
+   {
     "file": "src/components/dashboard/IntegrationStatusPanel.tsx",
     "text": "Simula disparo de teste e loga no banco para validação"
    },
@@ -94557,6 +94718,26 @@
     "text": "Fonte: view `sales_with_markup` (mascara custos absolutos conforme permissão)."
    },
    {
+    "file": "src/hooks/cadences/useCadenceChannelStats.ts",
+    "text": "Janela de N dias corridos incluindo hoje (data local), mesma regra do"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.ts",
+    "text": "tarefas com vencimento entre (hoje - dias + 1) e hoje, e quantas foram concluídas."
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.ts",
+    "text": "Usa contagem exata (head) para não truncar no limite de linhas do PostgREST."
+   },
+   {
+    "file": "src/hooks/crm/useClient360.ts",
+    "text": "Próxima ação sugerida: regra estática baseada só nos dados reais do cliente"
+   },
+   {
+    "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
+    "text": "* Dias entre criação e última atualização de um deal ganho (mínimo 1). */"
+   },
+   {
     "file": "src/hooks/dialer/usePowerDialer.ts",
     "text": "RLS filtra silenciosamente: 0 linhas = sem permissão ou fila inexistente."
    },
@@ -94579,6 +94760,10 @@
    {
     "file": "src/hooks/email/useEmailOptOutMetrics.ts",
     "text": "* Limite defensivo para não trazer páginas gigantes ao cliente. */"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.ts",
+    "text": "* Ganhas / (ganhas + perdidas) em %, ou null sem negócio fechado. */"
    },
    {
     "file": "src/hooks/gamification/useWeeklyChallenges.ts",
@@ -112195,6 +112380,11 @@
     "value": "32"
    },
    {
+    "file": "src/components/pricing/MarginAlertsCard.tsx",
+    "name": "ALERTS_LIMIT",
+    "value": "10"
+   },
+   {
     "file": "src/components/race/DailyBriefingModal.tsx",
     "name": "SLIDE_DURATION",
     "value": "1400"
@@ -112278,6 +112468,11 @@
     "file": "src/components/race/track/TrackTireMarks.tsx",
     "name": "FADE_MS",
     "value": "1500"
+   },
+   {
+    "file": "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
+    "name": "PERIOD_DAYS",
+    "value": "30"
    },
    {
     "file": "src/components/ui/sidebar.tsx",
@@ -112448,6 +112643,11 @@
     "file": "src/hooks/email/useFailedDrafts.ts",
     "name": "READ_LIMIT",
     "value": "200"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.ts",
+    "name": "SCENARIO_BASELINE_DAYS",
+    "value": "90"
    },
    {
     "file": "src/hooks/nlq/useNLQ.ts",
@@ -112693,6 +112893,11 @@
     "file": "src/pages/AdminSupressaoEmails.tsx",
     "name": "PAGE_SIZE",
     "value": "25"
+   },
+   {
+    "file": "src/pages/EvolutionCurvesPage.tsx",
+    "name": "LEADERS_PERIOD_DAYS",
+    "value": "30"
    },
    {
     "file": "src/pages/MinhasPremiacoes.tsx",
@@ -114163,24 +114368,6 @@
     "kind": "compara"
    },
    {
-    "file": "src/components/clients/Client360PredictiveCards.tsx",
-    "field": "status",
-    "value": "Active",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/clients/Client360PredictiveCards.tsx",
-    "field": "status",
-    "value": "Active",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/clients/Client360PredictiveCards.tsx",
-    "field": "status",
-    "value": "Active",
-    "kind": "escreve"
-   },
-   {
     "file": "src/components/clients/ClientKanban.tsx",
     "field": "status",
     "value": "active",
@@ -114365,84 +114552,6 @@
     "field": "status",
     "value": "won",
     "kind": "filtra"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "partial",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "gap",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "full",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "gap",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "gap",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "full",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "Planning",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "Backlog",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "Research",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "Backlog",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "full",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "partial",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "field": "status",
-    "value": "gap",
-    "kind": "compara"
    },
    {
     "file": "src/components/competitive/HeadToHead.tsx",
@@ -116059,42 +116168,6 @@
     "kind": "escreve"
    },
    {
-    "file": "src/components/pricing/MarginAlertsCard.tsx",
-    "field": "status",
-    "value": "Critical",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/pricing/MarginAlertsCard.tsx",
-    "field": "status",
-    "value": "Warning",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/pricing/MarginAlertsCard.tsx",
-    "field": "status",
-    "value": "Critical",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/pricing/MarginAlertsCard.tsx",
-    "field": "status",
-    "value": "Critical",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/pricing/MarginAlertsCard.tsx",
-    "field": "status",
-    "value": "Critical",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/pricing/MarginAlertsCard.tsx",
-    "field": "status",
-    "value": "Critical",
-    "kind": "compara"
-   },
-   {
     "file": "src/components/pricing/PricingKpiCard.tsx",
     "field": "type",
     "value": "spring",
@@ -116605,60 +116678,6 @@
     "kind": "compara"
    },
    {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "status",
-    "value": "pending",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "call",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "status",
-    "value": "pending",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "email",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "email",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/ApprovalQueue.tsx",
-    "field": "type",
-    "value": "call",
-    "kind": "compara"
-   },
-   {
     "file": "src/components/sales/cadence/CadenceAlertConfig.tsx",
     "field": "type",
     "value": "push",
@@ -116716,78 +116735,6 @@
     "file": "src/components/sales/cadence/CadenceOutcomeConfig.tsx",
     "field": "type",
     "value": "email",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "email",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "call",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "whatsapp",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "email",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-    "field": "type",
-    "value": "call",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
-    "field": "status",
-    "value": "completed",
     "kind": "compara"
    },
    {
@@ -118597,6 +118544,12 @@
     "kind": "escreve"
    },
    {
+    "file": "src/hooks/cadences/useCadenceChannelStats.ts",
+    "field": "status",
+    "value": "completed",
+    "kind": "filtra"
+   },
+   {
     "file": "src/hooks/cadences/useCadenceQueries.ts",
     "field": "funnel_stage",
     "value": "new",
@@ -118628,6 +118581,12 @@
    },
    {
     "file": "src/hooks/cadences/useCadenceQueries.ts",
+    "field": "status",
+    "value": "completed",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.ts",
     "field": "status",
     "value": "completed",
     "kind": "filtra"
@@ -127023,6 +126982,18 @@
     "body": "if (previous === 0) return current > 0 ? 100 : 0; return Number((((current - previous) / previous) * 100).toFixed(1));"
    },
    {
+    "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
+    "name": "computeSalespersonVelocity",
+    "params": "sales: VelocitySaleRow[]",
+    "body": "const map = new Map<string, { durations: number[]; openDeals: number }>(); sales.forEach(s => { if (!s.salesperson_id) return; const entry = map.get(s.salesperson_id) ?? { durations: [], openDeals: 0 }; if (isWonSaleStatus(s.status)) entry.durations.push(wonDealDurationDays(s)); else if (isOpenSaleStatus(s.status)) entry.openDeals += 1; map.set(s.salesperson_id, entry); }); return Array.from(map.entries()) .filter(([, e]) => e.durations.length > 0) .map(([salespersonId, e]) => ({ salespersonId, …"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.ts",
+    "name": "computeScenarioBaseline",
+    "params": "rows: ScenarioBaselineRow[], start: Date",
+    "body": "let wonRevenue = 0; let wonCount = 0; let lostCount = 0; const sellers = new Set<string>(); for (const row of rows) { const refDate = new Date(row.closed_at ?? row.created_at); if (Number.isNaN(refDate.getTime()) || refDate < start) continue; if (isWonSaleStatus(row.status)) { wonRevenue += Number(row.amount) || 0; wonCount += 1; if (row.salesperson_id) sellers.add(row.salesperson_id); } else if (isLostSaleStatus(row.status)) { lostCount += 1; } } const closed = wonCount + lostCount; return { wo …"
+   },
+   {
     "file": "src/hooks/gamification/useFuturisticRanking.ts",
     "name": "rank",
     "params": "map: Map<string, { revenue: number; deals: number }>",
@@ -127567,10 +127538,6 @@
    {
     "file": "src/components/clients/Client360HealthNbaSection.tsx",
     "line": "? `${Math.floor((new Date().getTime() - new Date(data.orders[0]!.created_at).getTime()) / (1000 * 60 * 60 * 24))} dias`"
-   },
-   {
-    "file": "src/components/clients/Client360View.tsx",
-    "line": "toast.promise(new Promise(resolve => setTimeout(resolve, 2000)), {"
    },
    {
     "file": "src/components/clients/InsightBanner.tsx",
@@ -128138,6 +128105,10 @@
    },
    {
     "file": "src/hooks/crm/useClient360.ts",
+    "line": "(1000 * 60 * 60 * 24)"
+   },
+   {
+    "file": "src/hooks/crm/useClient360.ts",
     "line": "(new Date().getTime() - lastPurchaseDate) / (1000 * 60 * 60 * 24);"
    },
    {
@@ -128222,11 +128193,11 @@
    },
    {
     "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
-    "line": "(exited.getTime() - entered.getTime()) / (1000 * 60 * 60 * 24)"
+    "line": "(1000 * 60 * 60 * 24)"
    },
    {
     "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
-    "line": "Math.ceil((updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24))"
+    "line": "(exited.getTime() - entered.getTime()) / (1000 * 60 * 60 * 24)"
    },
    {
     "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
@@ -128259,6 +128230,10 @@
    {
     "file": "src/hooks/gamification/useGamificationData.ts",
     "line": "const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.ts",
+    "line": "staleTime: 5 * 60 * 1000,"
    },
    {
     "file": "src/hooks/gamification/useSalespersonXP.ts",
@@ -129411,18 +129386,6 @@
     "line": "transition={{ delay: idx * 0.03 }}"
    },
    {
-    "file": "src/components/clients/Client360AffinityCard.tsx",
-    "line": "transition={{ delay: 0.5 + i * 0.1 }}"
-   },
-   {
-    "file": "src/components/clients/Client360HealthNbaSection.tsx",
-    "line": "85% Confiança"
-   },
-   {
-    "file": "src/components/clients/Client360PredictiveCards.tsx",
-    "line": "92% Probabilidade"
-   },
-   {
     "file": "src/components/clients/OrdersTimeline.tsx",
     "line": "transition={{ delay: idx * 0.05 }}"
    },
@@ -129489,10 +129452,6 @@
    {
     "file": "src/components/competitive/EnhancedTVMode.tsx",
     "line": "transition={{ delay: i * 0.1 }}"
-   },
-   {
-    "file": "src/components/competitive/FeatureComparison.tsx",
-    "line": "transition={{ delay: index * 0.1 }}"
    },
    {
     "file": "src/components/competitive/GamifiedProfile.tsx",
@@ -129821,10 +129780,6 @@
    {
     "file": "src/components/playbooks/PlaybooksManager.tsx",
     "line": "transition={{ delay: idx * 0.05 }}"
-   },
-   {
-    "file": "src/components/predictive/PredictiveScenarioPlanner.tsx",
-    "line": "{(32 + conversionBoost[0] * 0.5).toFixed(1)}%"
    },
    {
     "file": "src/components/pricing/DiscountOptimizer.tsx",
@@ -130165,10 +130120,6 @@
    {
     "file": "src/components/sales/cadence/CadenceReportPanel.tsx",
     "line": "transition={{ delay: index * 0.1 }}"
-   },
-   {
-    "file": "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
-    "line": "Sua cadência está performando 15% acima da média do setor. O canal{' '}"
    },
    {
     "file": "src/components/sdr/LeadScoreBreakdown.tsx",
@@ -131025,6 +130976,26 @@
     "name": "sem vendas, não exibe a seção de insights"
    },
    {
+    "file": "src/components/cadences/ContactRulesDialog.test.tsx",
+    "name": "ContactRulesDialog"
+   },
+   {
+    "file": "src/components/cadences/ContactRulesDialog.test.tsx",
+    "name": "cria a linha via upsert quando o vendedor ainda não tem preferências"
+   },
+   {
+    "file": "src/components/cadences/ContactRulesDialog.test.tsx",
+    "name": "preserva chaves gravadas por outra tela ao salvar"
+   },
+   {
+    "file": "src/components/cadences/ContactRulesDialog.test.tsx",
+    "name": "mostra erro e não confirma quando o banco recusa a gravação"
+   },
+   {
+    "file": "src/components/cadences/ContactRulesDialog.test.tsx",
+    "name": "avisa quando não consegue carregar as regras salvas"
+   },
+   {
     "file": "src/components/cadences/EnrollCadenceDialog.test.tsx",
     "name": "EnrollCadenceDialog — responsável da inscrição"
    },
@@ -131041,12 +131012,80 @@
     "name": "admin/gestor continua vendo todos os vendedores"
    },
    {
+    "file": "src/components/clients/Client360HealthNbaSection.test.tsx",
+    "name": "Client360HealthNbaSection"
+   },
+   {
+    "file": "src/components/clients/Client360HealthNbaSection.test.tsx",
+    "name": "não exibe confiança fixa inventada"
+   },
+   {
+    "file": "src/components/clients/Client360HealthNbaSection.test.tsx",
+    "name": "não rotula a regra estática como IA"
+   },
+   {
+    "file": "src/components/clients/Client360HealthNbaSection.test.tsx",
+    "name": "Agendar follow-up cria tarefa real para o cliente"
+   },
+   {
+    "file": "src/components/clients/Client360HealthNbaSection.test.tsx",
+    "name": "não cria tarefa e avisa quando o vendedor não pode ser identificado"
+   },
+   {
     "file": "src/components/competitive/BattleArena.test.tsx",
     "name": "BattleArena — gerenciar batalhas"
    },
    {
     "file": "src/components/competitive/BattleArena.test.tsx",
     "name": "mostra editar/cancelar só na batalha ativa, nunca na finalizada"
+   },
+   {
+    "file": "src/components/competitive/FeatureComparison.test.tsx",
+    "name": "FeatureComparison (Market Intel)"
+   },
+   {
+    "file": "src/components/competitive/FeatureComparison.test.tsx",
+    "name": "mostra estado vazio honesto quando não há concorrentes cadastrados"
+   },
+   {
+    "file": "src/components/competitive/FeatureComparison.test.tsx",
+    "name": "lista concorrentes reais com menções e battle card vinculado"
+   },
+   {
+    "file": "src/components/competitive/FeatureComparison.test.tsx",
+    "name": "mostra erro com ação de tentar novamente"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "LeagueSystem"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "não coloca vendedores sem inscrição na Liga Bronze"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "sem liga cadastrada não oferece botão de entrar e explica o motivo"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "mostra toast de erro quando a inscrição falha"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "lista apenas quem tem inscrição real e não oferece entrar a quem já participa"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "usuário que não é vendedor não vê o botão de entrar"
+   },
+   {
+    "file": "src/components/competitive/LeagueSystem.test.tsx",
+    "name": "mostra erro quando a consulta falha"
    },
    {
     "file": "src/components/conversational/BattleCardSuggestion.test.tsx",
@@ -131063,6 +131102,26 @@
    {
     "file": "src/components/conversational/BattleCardSuggestion.test.tsx",
     "name": "mostra o material ativo sugerido"
+   },
+   {
+    "file": "src/components/conversational/ConversationalIntelligenceHub.test.tsx",
+    "name": "ConversationalIntelligenceHub — KPIs"
+   },
+   {
+    "file": "src/components/conversational/ConversationalIntelligenceHub.test.tsx",
+    "name": "mostra os valores reais sem tendência inventada ao lado"
+   },
+   {
+    "file": "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
+    "name": "NextBestActionPanel"
+   },
+   {
+    "file": "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
+    "name": "mostra estado vazio sem recomendação real (sem texto inventado)"
+   },
+   {
+    "file": "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
+    "name": "exibe ações e raciocínio vindos de deal_health_scores"
    },
    {
     "file": "src/components/email/aiEmailComposer.test.ts",
@@ -131099,6 +131158,18 @@
    {
     "file": "src/components/enablement/SalesEnablementHub.test.tsx",
     "name": "mostra estado vazio honesto quando não há arquivados"
+   },
+   {
+    "file": "src/components/intelligence/PipelineStrategicReview.test.tsx",
+    "name": "PipelineStrategicReview"
+   },
+   {
+    "file": "src/components/intelligence/PipelineStrategicReview.test.tsx",
+    "name": "mostra estado vazio sem inspeção nem win rate (sem números inventados)"
+   },
+   {
+    "file": "src/components/intelligence/PipelineStrategicReview.test.tsx",
+    "name": "calcula indicadores a partir da inspeção e do win rate reais"
    },
    {
     "file": "src/components/pipeline/DealCard.test.tsx",
@@ -131139,6 +131210,46 @@
    {
     "file": "src/components/pipeline/InactivityPanel.test.tsx",
     "name": "lista os deals inativos retornados"
+   },
+   {
+    "file": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+    "name": "PredictiveScenarioPlanner"
+   },
+   {
+    "file": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+    "name": "mostra skeleton enquanto carrega a base real"
+   },
+   {
+    "file": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+    "name": "mostra erro honesto quando a consulta falha"
+   },
+   {
+    "file": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+    "name": "mostra estado vazio sem vendas ganhas, sem projeção inventada"
+   },
+   {
+    "file": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+    "name": "projeta a partir da receita ganha real e não oferece ação falsa"
+   },
+   {
+    "file": "src/components/pricing/MarginAlertsCard.test.tsx",
+    "name": "MarginAlertsCard"
+   },
+   {
+    "file": "src/components/pricing/MarginAlertsCard.test.tsx",
+    "name": "mostra estado vazio quando não há vendas com markup crítico"
+   },
+   {
+    "file": "src/components/pricing/MarginAlertsCard.test.tsx",
+    "name": "lista vendas reais com markup crítico e conta os incidentes"
+   },
+   {
+    "file": "src/components/pricing/RevenueLeakageCard.test.tsx",
+    "name": "RevenueLeakageCard"
+   },
+   {
+    "file": "src/components/pricing/RevenueLeakageCard.test.tsx",
+    "name": "leva às vendas com markup crítico em vez de só exibir um toast"
    },
    {
     "file": "src/components/reporting/funnelReportHelpers.test.ts",
@@ -131233,6 +131344,86 @@
     "name": "handles missing AI prediction data gracefully"
    },
    {
+    "file": "src/components/sales/cadence/ApprovalQueue.test.tsx",
+    "name": "Filas de aprovação de cadência"
+   },
+   {
+    "file": "src/components/sales/cadence/ApprovalQueue.test.tsx",
+    "name": "ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos"
+   },
+   {
+    "file": "src/components/sales/cadence/ApprovalQueue.test.tsx",
+    "name": "aba Fila de Aprovação do gerenciador não exibe itens fictícios"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+    "name": "CadenceReportPanel"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+    "name": "busca o período semanal (7 dias) por padrão"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+    "name": "sem dados mostra estado vazio honesto e nenhum valor fixo antigo"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+    "name": "mostra métricas consolidadas e execução por canal vindas do banco"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+    "name": "erro de carregamento é exibido em vez de zeros"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "CadenceTemplateManager (message_templates)"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "mostra estado vazio sem template fictício"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "mostra erro com opção de tentar novamente"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "lista os templates reais do banco"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "cria template persistindo via mutation, sem toast falso"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "não cria template sem vendedor vinculado"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "edita template existente via update"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "exclui template via delete no banco somente após confirmação"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "fecha o diálogo de exclusão quando o banco confirma"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "cancelar a exclusão não apaga nada"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "mostra loading e erro no diálogo de exclusão"
+   },
+   {
+    "file": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+    "name": "rotula a pré-visualização como exemplo fictício, sem selo de dado real"
+   },
+   {
     "file": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
     "name": "ContactFrequencyRules"
    },
@@ -131265,6 +131456,22 @@
     "name": "desabilita salvar e avisa quando a leitura falha"
    },
    {
+    "file": "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+    "name": "EliteCadenceAnalytics"
+   },
+   {
+    "file": "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+    "name": "mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios"
+   },
+   {
+    "file": "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+    "name": "mostra estado vazio quando não há tarefas no período"
+   },
+   {
+    "file": "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+    "name": "mostra erro quando a consulta falha"
+   },
+   {
     "file": "src/components/security/KnownDevices.test.tsx",
     "name": "KnownDevices"
    },
@@ -131295,6 +131502,26 @@
    {
     "file": "src/components/tasks/CreateTaskDialog.test.tsx",
     "name": "admin/gestor continua vendo todos os vendedores"
+   },
+   {
+    "file": "src/config/dominio-publico.test.ts",
+    "name": "domínio público do app"
+   },
+   {
+    "file": "src/config/dominio-publico.test.ts",
+    "name": "%s não referencia domínio legado da Lovable"
+   },
+   {
+    "file": "src/config/dominio-publico.test.ts",
+    "name": "APP_URL padrão é o domínio de produção"
+   },
+   {
+    "file": "src/config/dominio-publico.test.ts",
+    "name": "canonical, og:url, twitter:url e imagens do index.html usam o domínio de produção"
+   },
+   {
+    "file": "src/config/dominio-publico.test.ts",
+    "name": "robots.txt aponta o sitemap do domínio de produção"
    },
    {
     "file": "src/hooks/rolePermissions.test.ts",
@@ -131413,6 +131640,18 @@
     "name": "malformed trigger: does not throw"
    },
    {
+    "file": "src/hooks/useEvolutionCurves.test.tsx",
+    "name": "useEvolutionCurves"
+   },
+   {
+    "file": "src/hooks/useEvolutionCurves.test.tsx",
+    "name": "indexa a receita acumulada pelo id, sem somar vendedores homônimos"
+   },
+   {
+    "file": "src/hooks/useEvolutionCurves.test.tsx",
+    "name": "filtra pelos ids selecionados"
+   },
+   {
     "file": "src/hooks/useFormDraft.test.tsx",
     "name": "useFormDraft"
    },
@@ -131511,6 +131750,18 @@
    {
     "file": "src/hooks/useLoginRateLimiter.test.tsx",
     "name": "registra sucesso sem aceitar e-mail fornecido pelo cliente"
+   },
+   {
+    "file": "src/hooks/useMultichannel.test.tsx",
+    "name": "useUpdateTemplate"
+   },
+   {
+    "file": "src/hooks/useMultichannel.test.tsx",
+    "name": "atualiza a linha em message_templates pelo id"
+   },
+   {
+    "file": "src/hooks/useMultichannel.test.tsx",
+    "name": "propaga erro do banco sem toast de sucesso"
    },
    {
     "file": "src/hooks/useNPSSurveys.test.tsx",
@@ -131897,6 +132148,78 @@
     "name": "particiona a consulta de vendedores quando há mais de 100 IDs"
    },
    {
+    "file": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    "name": "fetchCadenceChannelStats"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    "name": "conta no banco (HEAD + count exato) filtrando o período, sem trazer linhas"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    "name": "usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje)"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    "name": "calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas)"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    "name": "retorna vazio honesto quando não há tarefas no período"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    "name": "propaga erro do banco em vez de mostrar zero"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "aggregateCadenceReport"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "sem linhas devolve zeros (sem número inventado)"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "pondera resposta/conversão pelo número de inscritos de cada cadência"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "useCadenceChannelExecution"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "conta tarefas reais por canal no período, só os canais com tarefa, ordenado por taxa"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "sem tarefas no período devolve lista vazia"
+   },
+   {
+    "file": "src/hooks/cadences/useCadenceReport.test.tsx",
+    "name": "propaga erro do banco em vez de mostrar zero"
+   },
+   {
+    "file": "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+    "name": "useCompetitorMarketIntel"
+   },
+   {
+    "file": "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+    "name": "combina registro, contagem de menções e battle card, ordenando por menções"
+   },
+   {
+    "file": "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+    "name": "mutations de concorrente"
+   },
+   {
+    "file": "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+    "name": "salvar concorrente invalida também a Market Intel"
+   },
+   {
+    "file": "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+    "name": "excluir concorrente invalida também a Market Intel"
+   },
+   {
     "file": "src/hooks/crm/useClientPortfolio.test.tsx",
     "name": "useAssignClient"
    },
@@ -131939,6 +132262,18 @@
    {
     "file": "src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts",
     "name": "manager: totalRevenue is the global aggregate; clients/conversion are populated"
+   },
+   {
+    "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts",
+    "name": "computeSalespersonVelocity"
+   },
+   {
+    "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts",
+    "name": "calcula média de dias até o ganho por vendedor, do mais rápido ao mais lento"
+   },
+   {
+    "file": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts",
+    "name": "ignora vendedores sem deal ganho e vendas sem vendedor"
    },
    {
     "file": "src/hooks/dialer/usePowerDialer.test.tsx",
@@ -132227,6 +132562,62 @@
    {
     "file": "src/hooks/email/useFailedDrafts.test.tsx",
     "name": "particiona o descarte manual de rascunhos"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.test.tsx",
+    "name": "computeScenarioBaseline"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.test.tsx",
+    "name": "soma só vendas ganhas na janela e calcula win-rate e receita por vendedor"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.test.tsx",
+    "name": "sem vendas fechadas devolve base zerada e métricas nulas (sem número inventado)"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.test.tsx",
+    "name": "useScenarioBaseline"
+   },
+   {
+    "file": "src/hooks/forecast/useScenarioBaseline.test.tsx",
+    "name": "consulta sales ganhas/perdidas não excluídas e agrega o resultado"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "useLeagues"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "falha (isError) quando league_members não pode ser lido, em vez de lista vazia"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "marca league_id e pontos de quem tem inscrição"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "useLeagueEnrollment"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "retorna o vendedor logado e a liga de menor tier"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "starterLeagueId null quando não há liga cadastrada"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "useJoinLeague"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "insere a inscrição do vendedor e invalida o ranking de ligas"
+   },
+   {
+    "file": "src/hooks/gamification/useLeagues.test.tsx",
+    "name": "traduz violação de unicidade em mensagem legível"
    },
    {
     "file": "src/hooks/gamification/useStreakRanking.test.tsx",
@@ -132615,6 +133006,18 @@
    {
     "file": "src/hooks/sales/useSalesEnablement.test.tsx",
     "name": "não insere se a consulta do vendedor falhar"
+   },
+   {
+    "file": "src/hooks/sales/useSalespersonPreferences.test.tsx",
+    "name": "useSalespersonPreferences.updatePreferences"
+   },
+   {
+    "file": "src/hooks/sales/useSalespersonPreferences.test.tsx",
+    "name": "grava via upsert por salesperson_id, sem update/insert separados"
+   },
+   {
+    "file": "src/hooks/sales/useSalespersonPreferences.test.tsx",
+    "name": "mostra erro e não confirma quando o banco recusa"
    },
    {
     "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
@@ -133989,6 +134392,22 @@
     "name": "admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão"
    },
    {
+    "file": "src/pages/DealVelocityPage.test.tsx",
+    "name": "DealVelocityPage"
+   },
+   {
+    "file": "src/pages/DealVelocityPage.test.tsx",
+    "name": "mostra o comparativo real e não exibe o botão Exportar sem ação"
+   },
+   {
+    "file": "src/pages/EvolutionCurvesPage.test.tsx",
+    "name": "EvolutionCurvesPage"
+   },
+   {
+    "file": "src/pages/EvolutionCurvesPage.test.tsx",
+    "name": "mostra a receita de cada vendedor homônimo separadamente, sem botões sem ação"
+   },
+   {
     "file": "src/pages/InactivityTriggers.test.tsx",
     "name": "InactivityTriggers"
    },
@@ -134031,6 +134450,14 @@
    {
     "file": "src/pages/Index.test.tsx",
     "name": "renders correct modules for SDR role"
+   },
+   {
+    "file": "src/pages/MetasAtividades.test.tsx",
+    "name": "MetasAtividades"
+   },
+   {
+    "file": "src/pages/MetasAtividades.test.tsx",
+    "name": "mostra indicadores calculados das metas reais, sem valores fixos"
    },
    {
     "file": "src/pages/PowerDialer.test.tsx",
@@ -134367,6 +134794,18 @@
    {
     "file": "src/test/smoke-target-helpers.test.ts",
     "name": "inclui ícone, fase, id e duração"
+   },
+   {
+    "file": "src/test/security/battle-participants-insert-policy.test.ts",
+    "name": "battle_participants — INSERT para admin/gestor"
+   },
+   {
+    "file": "src/test/security/battle-participants-insert-policy.test.ts",
+    "name": "existe policy de INSERT viva liberando is_admin_or_manager(auth.uid())"
+   },
+   {
+    "file": "src/test/security/battle-participants-insert-policy.test.ts",
+    "name": "vendedor continua limitado à auto-inscrição"
    },
    {
     "file": "src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts",
@@ -147763,6 +148202,16 @@
     "using": "salesperson_id = public.get_current_salesperson_id() OR public.has_role(auth.uid(), 'admin')",
     "check": "( salesperson_id = public.get_current_salesperson_id() OR public.has_role(auth.uid(), 'admin') ) AND status = 'cancelled' AND result IS NULL AND completed_at IS NULL AND (approved_by IS NULL OR approved_by = auth.uid())",
     "src": "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
+   },
+   {
+    "name": "Admins can add battle participants",
+    "table": "battle_participants",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.is_admin_or_manager(auth.uid())",
+    "src": "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql"
    }
   ],
   "db_triggers": [
@@ -156911,6 +157360,10 @@
     "limit": "1"
    },
    {
+    "file": "src/hooks/gamification/useLeagues.ts",
+    "limit": "1"
+   },
+   {
     "file": "src/hooks/gamification/usePrizeWheel.ts",
     "limit": "10"
    },
@@ -159533,10 +159986,8 @@
      ],
      "email": [
       "compara:src/components/dashboard/IntegrationStatusPanel.tsx",
-      "compara:src/components/sales/cadence/ApprovalQueue.tsx",
       "compara:src/components/sales/cadence/CadenceAlertConfig.tsx",
       "compara:src/components/sales/cadence/CadenceOutcomeConfig.tsx",
-      "compara:src/components/sales/cadence/CadenceTemplateManager.tsx",
       "compara:src/components/tasks/NextBestAction.tsx",
       "escreve:src/components/dashboard/IntegrationStatusPanel.tsx",
       "escreve:src/components/pipeline/QuickActionsMenu.tsx",
@@ -159607,11 +160058,8 @@
       "escreve:supabase/functions/automation-suggestions/index.ts"
      ],
      "call": [
-      "compara:src/components/sales/cadence/ApprovalQueue.tsx",
-      "compara:src/components/sales/cadence/CadenceTemplateManager.tsx",
       "compara:src/components/tasks/NextBestAction.tsx",
       "escreve:src/components/pipeline/QuickActionsMenu.tsx",
-      "escreve:src/components/sales/cadence/ApprovalQueue.tsx",
       "escreve:src/types/index.ts"
      ],
      "meeting": [
@@ -159667,13 +160115,6 @@
      "quarter": [
       "compara:src/components/revenue-intelligence/forecastHelpers.ts"
      ],
-     "whatsapp": [
-      "compara:src/components/sales/cadence/ApprovalQueue.tsx",
-      "compara:src/components/sales/cadence/CadenceTemplateManager.tsx",
-      "compara:src/components/tasks/NextBestAction.tsx",
-      "escreve:src/components/sales/cadence/ApprovalQueue.tsx",
-      "escreve:src/components/sales/cadence/CadenceTemplateManager.tsx"
-     ],
      "lead_handoff": [
       "escreve:src/components/sdr/MQLQualificationForm.tsx"
      ],
@@ -159691,6 +160132,9 @@
       "compara:src/components/tasks/NextBestAction.tsx"
      ],
      "linkedin": [
+      "compara:src/components/tasks/NextBestAction.tsx"
+     ],
+     "whatsapp": [
       "compara:src/components/tasks/NextBestAction.tsx"
      ],
      "activity": [
@@ -160399,7 +160843,6 @@
       "compara:src/components/clients/OrdersTimeline.tsx",
       "compara:src/components/competitive/BattleArena.tsx",
       "compara:src/components/competitive/HeadToHead.tsx",
-      "compara:src/components/sales/cadence/EliteCadenceAnalytics.tsx",
       "compara:src/components/sdr/SDRSequenceOrchestrator.tsx",
       "compara:src/components/security/PasswordResetApproval.tsx",
       "compara:src/components/sequences/sequenceHelpers.ts",
@@ -160450,7 +160893,9 @@
       "escreve:supabase/functions/sequence-runner/index.ts",
       "filtra:src/components/analytics/LTVBySegment.tsx",
       "filtra:src/components/assistant/AssistantTodayTasks.tsx",
+      "filtra:src/hooks/cadences/useCadenceChannelStats.ts",
       "filtra:src/hooks/cadences/useCadenceQueries.ts",
+      "filtra:src/hooks/cadences/useCadenceReport.ts",
       "filtra:src/hooks/cadences/useQuoteCadences.ts",
       "filtra:src/hooks/gamification/useGamifiedProfile.ts",
       "filtra:src/hooks/tasks/useTaskQueries.ts",
@@ -160490,7 +160935,6 @@
       "compara:supabase/functions/customer-success-360/index.ts",
       "compara:supabase/functions/revops-hub/index.ts",
       "escreve:src/components/sales/CreateSaleDialog.tsx",
-      "escreve:src/components/sales/cadence/ApprovalQueue.tsx",
       "escreve:src/components/sdr/PredictiveSuccessMap.tsx",
       "escreve:src/components/security/PasswordResetApproval.tsx",
       "escreve:src/components/security/password/PasswordResetRequestList.tsx",
@@ -160616,9 +161060,6 @@
       "escreve:supabase/functions/execute-workflow/index.ts",
       "escreve:supabase/functions/process-cadence-tasks/index.ts"
      ],
-     "Active": [
-      "escreve:src/components/clients/Client360PredictiveCards.tsx"
-     ],
      "qualified": [
       "compara:src/components/pipeline/DealSummaryCard.tsx",
       "compara:src/components/sdr/MQLQualificationForm.tsx",
@@ -160642,27 +161083,6 @@
       "filtra:src/components/competitive/TerritoryWars.tsx",
       "filtra:src/hooks/useLeadRouting.ts",
       "filtra:supabase/functions/pipeline-pulse-aggregator/index.ts"
-     ],
-     "partial": [
-      "compara:src/components/competitive/FeatureComparison.tsx",
-      "escreve:src/components/competitive/FeatureComparison.tsx"
-     ],
-     "gap": [
-      "compara:src/components/competitive/FeatureComparison.tsx",
-      "escreve:src/components/competitive/FeatureComparison.tsx"
-     ],
-     "full": [
-      "compara:src/components/competitive/FeatureComparison.tsx",
-      "escreve:src/components/competitive/FeatureComparison.tsx"
-     ],
-     "Planning": [
-      "escreve:src/components/competitive/FeatureComparison.tsx"
-     ],
-     "Backlog": [
-      "escreve:src/components/competitive/FeatureComparison.tsx"
-     ],
-     "Research": [
-      "escreve:src/components/competitive/FeatureComparison.tsx"
      ],
      "upcoming": [
       "compara:src/components/competitive/TournamentBrackets.tsx",
@@ -160854,13 +161274,6 @@
       "compara:src/components/portfolio/PortfolioCloserGrid.tsx",
       "compara:src/hooks/crm/useClientPortfolio.ts",
       "filtra:supabase/functions/auto-reassign-inactive/index.ts"
-     ],
-     "Critical": [
-      "compara:src/components/pricing/MarginAlertsCard.tsx",
-      "escreve:src/components/pricing/MarginAlertsCard.tsx"
-     ],
-     "Warning": [
-      "escreve:src/components/pricing/MarginAlertsCard.tsx"
      ],
      "Blocked": [
       "compara:src/components/purchase-intelligence/DuplicateBlockAudit.tsx"
@@ -162180,7 +162593,8 @@
      "public: auth.uid() IS NOT NULL"
     ],
     "INSERT": [
-     "authenticated: salesperson_id = public.get_current_salesperson_id()"
+     "authenticated: salesperson_id = public.get_current_salesperson_id()",
+     "authenticated: public.is_admin_or_manager(auth.uid())"
     ],
     "UPDATE": [
      "authenticated: public.is_admin_or_manager(auth.uid())"
@@ -175141,50 +175555,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `Active` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/components/clients/Client360PredictiveCards.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `gap` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/competitive/FeatureComparison.tsx",
-     "escreve:src/components/competitive/FeatureComparison.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `full` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/competitive/FeatureComparison.tsx",
-     "escreve:src/components/competitive/FeatureComparison.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `Planning` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/components/competitive/FeatureComparison.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `Backlog` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/components/competitive/FeatureComparison.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `Research` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/components/competitive/FeatureComparison.tsx"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `Pendente` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:src/components/customer-success/CustomerSuccess360Hub.tsx"
@@ -175217,21 +175587,6 @@
     "where": [
      "compara:src/components/pipeline/SLADashboard.tsx",
      "compara:src/hooks/useDealSLAs.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `Critical` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/pricing/MarginAlertsCard.tsx",
-     "escreve:src/components/pricing/MarginAlertsCard.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `Warning` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/components/pricing/MarginAlertsCard.tsx"
     ]
    },
    {
@@ -176343,6 +176698,13 @@
     "msg": "2 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "scripts/regras_negocio/generate.py"
+    ]
+   },
+   {
+    "kind": "dinâmico",
+    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
+     "src/hooks/useMultichannel.test.tsx"
     ]
    },
    {
@@ -182756,9 +183118,21 @@
     "Validation before save"
    ]
   },
+  "src/components/cadences/ContactRulesDialog.test.tsx": {
+   "path": "src/components/cadences/ContactRulesDialog.test.tsx",
+   "lines": 159,
+   "is_test": true,
+   "tests": [
+    "ContactRulesDialog",
+    "cria a linha via upsert quando o vendedor ainda não tem preferências",
+    "preserva chaves gravadas por outra tela ao salvar",
+    "mostra erro e não confirma quando o banco recusa a gravação",
+    "avisa quando não consegue carregar as regras salvas"
+   ]
+  },
   "src/components/cadences/ContactRulesDialog.tsx": {
    "path": "src/components/cadences/ContactRulesDialog.tsx",
-   "lines": 193,
+   "lines": 237,
    "exports": [
     "function ContactRulesDialog"
    ],
@@ -182777,7 +183151,11 @@
     },
     {
      "table": "salesperson_preferences",
-     "op": "update"
+     "op": "select"
+    },
+    {
+     "table": "salesperson_preferences",
+     "op": "upsert"
     }
    ],
    "table_cols": {
@@ -182791,6 +183169,7 @@
     ]
    },
    "errors": [
+    "Erro ao carregar regras de contato: ${error.message}",
     "Erro: ${e instanceof Error ? e.message : String(e)}",
     "Usuário não autenticado",
     "Vendedor não encontrado"
@@ -183183,32 +183562,44 @@
   },
   "src/components/clients/Client360AffinityCard.tsx": {
    "path": "src/components/clients/Client360AffinityCard.tsx",
-   "lines": 96,
+   "lines": 37,
    "exports": [
     "function Client360AffinityCard"
-   ],
-   "percents": [
-    "transition={{ delay: 0.5 + i * 0.1 }}"
    ]
   },
   "src/components/clients/Client360Header.tsx": {
    "path": "src/components/clients/Client360Header.tsx",
-   "lines": 66,
+   "lines": 29,
    "exports": [
     "function Client360Header"
    ]
   },
+  "src/components/clients/Client360HealthNbaSection.test.tsx": {
+   "path": "src/components/clients/Client360HealthNbaSection.test.tsx",
+   "lines": 85,
+   "is_test": true,
+   "tests": [
+    "Client360HealthNbaSection",
+    "não exibe confiança fixa inventada",
+    "não rotula a regra estática como IA",
+    "Agendar follow-up cria tarefa real para o cliente",
+    "não cria tarefa e avisa quando o vendedor não pode ser identificado"
+   ]
+  },
   "src/components/clients/Client360HealthNbaSection.tsx": {
    "path": "src/components/clients/Client360HealthNbaSection.tsx",
-   "lines": 168,
+   "lines": 208,
    "exports": [
     "function Client360HealthNbaSection"
    ],
+   "rpc": [
+    "get_current_salesperson_id"
+   ],
+   "errors": [
+    "Não foi possível identificar o vendedor responsável."
+   ],
    "temporal": [
     "? `${Math.floor((new Date().getTime() - new Date(data.orders[0]!.created_at).getTime()) / (1000 * 60 * 60 * 24))} dias`"
-   ],
-   "percents": [
-    "85% Confiança"
    ]
   },
   "src/components/clients/Client360KpiCards.tsx": {
@@ -183225,33 +183616,6 @@
     "function Client360OrdersCard"
    ]
   },
-  "src/components/clients/Client360PredictiveCards.tsx": {
-   "path": "src/components/clients/Client360PredictiveCards.tsx",
-   "lines": 117,
-   "exports": [
-    "function Client360PredictiveCards"
-   ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "Active",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Active",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Active",
-     "kind": "escreve"
-    }
-   ],
-   "percents": [
-    "92% Probabilidade"
-   ]
-  },
   "src/components/clients/Client360Skeleton.tsx": {
    "path": "src/components/clients/Client360Skeleton.tsx",
    "lines": 19,
@@ -183261,12 +183625,9 @@
   },
   "src/components/clients/Client360View.tsx": {
    "path": "src/components/clients/Client360View.tsx",
-   "lines": 131,
+   "lines": 113,
    "exports": [
     "function Client360View"
-   ],
-   "temporal": [
-    "toast.promise(new Promise(resolve => setTimeout(resolve, 2000)), {"
    ]
   },
   "src/components/clients/Client360ViewHelpers.ts": {
@@ -184311,7 +184672,7 @@
   },
   "src/components/competitive/EvolutionChart.tsx": {
    "path": "src/components/competitive/EvolutionChart.tsx",
-   "lines": 171,
+   "lines": 172,
    "exports": [
     "const EvolutionChart"
    ],
@@ -184319,81 +184680,25 @@
     "/analytics/evolution"
    ]
   },
+  "src/components/competitive/FeatureComparison.test.tsx": {
+   "path": "src/components/competitive/FeatureComparison.test.tsx",
+   "lines": 86,
+   "is_test": true,
+   "tests": [
+    "FeatureComparison (Market Intel)",
+    "mostra estado vazio honesto quando não há concorrentes cadastrados",
+    "lista concorrentes reais com menções e battle card vinculado",
+    "mostra erro com ação de tentar novamente"
+   ]
+  },
   "src/components/competitive/FeatureComparison.tsx": {
    "path": "src/components/competitive/FeatureComparison.tsx",
-   "lines": 516,
+   "lines": 167,
    "exports": [
     "const FeatureComparison"
    ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "partial",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "gap",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "full",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "gap",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "gap",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "full",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Planning",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Backlog",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Research",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Backlog",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "full",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "partial",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "gap",
-     "kind": "compara"
-    }
-   ],
-   "percents": [
-    "transition={{ delay: index * 0.1 }}"
+   "rule_comments": [
+    "* Market Intel da Arena: mostra apenas dados reais de concorrentes"
    ]
   },
   "src/components/competitive/GamifiedProfile.tsx": {
@@ -184496,14 +184801,29 @@
     "transition={{ delay: idx * 0.05 }}"
    ]
   },
+  "src/components/competitive/LeagueSystem.test.tsx": {
+   "path": "src/components/competitive/LeagueSystem.test.tsx",
+   "lines": 146,
+   "is_test": true,
+   "tests": [
+    "LeagueSystem",
+    "não coloca vendedores sem inscrição na Liga Bronze",
+    "sem liga cadastrada não oferece botão de entrar e explica o motivo",
+    "inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga",
+    "mostra toast de erro quando a inscrição falha",
+    "lista apenas quem tem inscrição real e não oferece entrar a quem já participa",
+    "usuário que não é vendedor não vê o botão de entrar",
+    "mostra erro quando a consulta falha"
+   ]
+  },
   "src/components/competitive/LeagueSystem.tsx": {
    "path": "src/components/competitive/LeagueSystem.tsx",
-   "lines": 203,
+   "lines": 242,
    "exports": [
     "const LeagueSystem"
    ],
    "errors": [
-    "Erro ao entrar na liga"
+    "Não foi possível entrar na liga"
    ],
    "percents": [
     "transition={{ delay: i * 0.05 }}"
@@ -185007,9 +185327,18 @@
     "function CompetitorsAdminDialog"
    ]
   },
+  "src/components/conversational/ConversationalIntelligenceHub.test.tsx": {
+   "path": "src/components/conversational/ConversationalIntelligenceHub.test.tsx",
+   "lines": 70,
+   "is_test": true,
+   "tests": [
+    "ConversationalIntelligenceHub — KPIs",
+    "mostra os valores reais sem tendência inventada ao lado"
+   ]
+  },
   "src/components/conversational/ConversationalIntelligenceHub.tsx": {
    "path": "src/components/conversational/ConversationalIntelligenceHub.tsx",
-   "lines": 624,
+   "lines": 620,
    "exports": [
     "const ConversationalIntelligenceHub"
    ],
@@ -186937,9 +187266,19 @@
     "function DealVelocityCard"
    ]
   },
+  "src/components/deal-intelligence/NextBestActionPanel.test.tsx": {
+   "path": "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
+   "lines": 47,
+   "is_test": true,
+   "tests": [
+    "NextBestActionPanel",
+    "mostra estado vazio sem recomendação real (sem texto inventado)",
+    "exibe ações e raciocínio vindos de deal_health_scores"
+   ]
+  },
   "src/components/deal-intelligence/NextBestActionPanel.tsx": {
    "path": "src/components/deal-intelligence/NextBestActionPanel.tsx",
-   "lines": 191,
+   "lines": 136,
    "exports": [
     "function NextBestActionPanel"
    ],
@@ -188746,9 +189085,19 @@
     "staleTime: 5 * 60 * 1000,"
    ]
   },
+  "src/components/intelligence/PipelineStrategicReview.test.tsx": {
+   "path": "src/components/intelligence/PipelineStrategicReview.test.tsx",
+   "lines": 74,
+   "is_test": true,
+   "tests": [
+    "PipelineStrategicReview",
+    "mostra estado vazio sem inspeção nem win rate (sem números inventados)",
+    "calcula indicadores a partir da inspeção e do win rate reais"
+   ]
+  },
   "src/components/intelligence/PipelineStrategicReview.tsx": {
    "path": "src/components/intelligence/PipelineStrategicReview.tsx",
-   "lines": 174,
+   "lines": 188,
    "exports": [
     "const PipelineStrategicReview"
    ],
@@ -190425,14 +190774,29 @@
     "function PredictiveIntelligenceDashboard"
    ]
   },
+  "src/components/predictive/PredictiveScenarioPlanner.test.tsx": {
+   "path": "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+   "lines": 87,
+   "is_test": true,
+   "errors": [
+    ")).toHaveTextContent(\n      "
+   ],
+   "tests": [
+    "PredictiveScenarioPlanner",
+    "mostra skeleton enquanto carrega a base real",
+    "mostra erro honesto quando a consulta falha",
+    "mostra estado vazio sem vendas ganhas, sem projeção inventada",
+    "projeta a partir da receita ganha real e não oferece ação falsa"
+   ]
+  },
   "src/components/predictive/PredictiveScenarioPlanner.tsx": {
    "path": "src/components/predictive/PredictiveScenarioPlanner.tsx",
-   "lines": 156,
+   "lines": 175,
    "exports": [
     "const PredictiveScenarioPlanner"
    ],
-   "percents": [
-    "{(32 + conversionBoost[0] * 0.5).toFixed(1)}%"
+   "errors": [
+    ">\n            Não foi possível carregar a receita ganha dos últimos {SCENARIO_BASELINE_DAYS}{"
    ]
   },
   "src/components/pricing/CompetitorRadarCard.tsx": {
@@ -190472,42 +190836,29 @@
     "// (varre 0-40% em passos de 1 ponto percentual)."
    ]
   },
+  "src/components/pricing/MarginAlertsCard.test.tsx": {
+   "path": "src/components/pricing/MarginAlertsCard.test.tsx",
+   "lines": 65,
+   "is_test": true,
+   "tests": [
+    "MarginAlertsCard",
+    "mostra estado vazio quando não há vendas com markup crítico",
+    "lista vendas reais com markup crítico e conta os incidentes"
+   ]
+  },
   "src/components/pricing/MarginAlertsCard.tsx": {
    "path": "src/components/pricing/MarginAlertsCard.tsx",
-   "lines": 128,
+   "lines": 122,
    "exports": [
     "function MarginAlertsCard"
    ],
-   "status_values": [
+   "navigates": [
+    "/vendas?markup=critical"
+   ],
+   "params": [
     {
-     "field": "status",
-     "value": "Critical",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Warning",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Critical",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "Critical",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "Critical",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "Critical",
-     "kind": "compara"
+     "name": "ALERTS_LIMIT",
+     "value": "10"
     }
    ]
   },
@@ -190582,9 +190933,18 @@
     "function ProductRecommenderCard"
    ]
   },
+  "src/components/pricing/RevenueLeakageCard.test.tsx": {
+   "path": "src/components/pricing/RevenueLeakageCard.test.tsx",
+   "lines": 28,
+   "is_test": true,
+   "tests": [
+    "RevenueLeakageCard",
+    "leva às vendas com markup crítico em vez de só exibir um toast"
+   ]
+  },
   "src/components/pricing/RevenueLeakageCard.tsx": {
    "path": "src/components/pricing/RevenueLeakageCard.tsx",
-   "lines": 288,
+   "lines": 283,
    "exports": [
     "const RevenueLeakageCard"
    ],
@@ -192863,7 +193223,7 @@
   },
   "src/components/revenue-intelligence/RevenueIntelligenceHub.tsx": {
    "path": "src/components/revenue-intelligence/RevenueIntelligenceHub.tsx",
-   "lines": 267,
+   "lines": 271,
    "exports": [
     "const RevenueIntelligenceHub"
    ],
@@ -193258,61 +193618,21 @@
     "function WhatsAppDialog"
    ]
   },
+  "src/components/sales/cadence/ApprovalQueue.test.tsx": {
+   "path": "src/components/sales/cadence/ApprovalQueue.test.tsx",
+   "lines": 46,
+   "is_test": true,
+   "tests": [
+    "Filas de aprovação de cadência",
+    "ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos",
+    "aba Fila de Aprovação do gerenciador não exibe itens fictícios"
+   ]
+  },
   "src/components/sales/cadence/ApprovalQueue.tsx": {
    "path": "src/components/sales/cadence/ApprovalQueue.tsx",
-   "lines": 171,
+   "lines": 42,
    "exports": [
     "function ApprovalQueue"
-   ],
-   "errors": [
-    "Mensagem descartada."
-   ],
-   "status_values": [
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pending",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "call",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pending",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "email",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "email",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "call",
-     "kind": "compara"
-    }
    ]
   },
   "src/components/sales/cadence/CadenceAlertConfig.tsx": {
@@ -193490,9 +193810,21 @@
     }
    ]
   },
+  "src/components/sales/cadence/CadenceReportPanel.test.tsx": {
+   "path": "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+   "lines": 102,
+   "is_test": true,
+   "tests": [
+    "CadenceReportPanel",
+    "busca o período semanal (7 dias) por padrão",
+    "sem dados mostra estado vazio honesto e nenhum valor fixo antigo",
+    "mostra métricas consolidadas e execução por canal vindas do banco",
+    "erro de carregamento é exibido em vez de zeros"
+   ]
+  },
   "src/components/sales/cadence/CadenceReportPanel.tsx": {
    "path": "src/components/sales/cadence/CadenceReportPanel.tsx",
-   "lines": 159,
+   "lines": 206,
    "exports": [
     "function CadenceReportPanel"
    ],
@@ -193514,72 +193846,38 @@
     "Selecione um lead para a simulação"
    ]
   },
+  "src/components/sales/cadence/CadenceTemplateManager.test.tsx": {
+   "path": "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+   "lines": 204,
+   "is_test": true,
+   "errors": [
+    ").textContent).toContain(\n      "
+   ],
+   "tests": [
+    "CadenceTemplateManager (message_templates)",
+    "mostra estado vazio sem template fictício",
+    "mostra erro com opção de tentar novamente",
+    "lista os templates reais do banco",
+    "cria template persistindo via mutation, sem toast falso",
+    "não cria template sem vendedor vinculado",
+    "edita template existente via update",
+    "exclui template via delete no banco somente após confirmação",
+    "fecha o diálogo de exclusão quando o banco confirma",
+    "cancelar a exclusão não apaga nada",
+    "mostra loading e erro no diálogo de exclusão",
+    "rotula a pré-visualização como exemplo fictício, sem selo de dado real"
+   ]
+  },
   "src/components/sales/cadence/CadenceTemplateManager.tsx": {
    "path": "src/components/sales/cadence/CadenceTemplateManager.tsx",
-   "lines": 415,
+   "lines": 447,
    "exports": [
     "function CadenceTemplateManager"
    ],
    "errors": [
-    "Ação rejeitada",
-    "Por favor, preencha o nome e o conteúdo do template."
-   ],
-   "status_values": [
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "email",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "call",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "whatsapp",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "email",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "call",
-     "kind": "compara"
-    }
+    " className=",
+    "Por favor, preencha o nome e o conteúdo do template.",
+    "Seu usuário não está vinculado a um vendedor."
    ]
   },
   "src/components/sales/cadence/ContactFrequencyRules.test.tsx": {
@@ -193608,32 +193906,28 @@
     "Erro ao salvar regras de frequência: ${e instanceof Error ? e.message : String(e)}"
    ]
   },
+  "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx": {
+   "path": "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+   "lines": 73,
+   "is_test": true,
+   "tests": [
+    "EliteCadenceAnalytics",
+    "mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios",
+    "mostra estado vazio quando não há tarefas no período",
+    "mostra erro quando a consulta falha"
+   ]
+  },
   "src/components/sales/cadence/EliteCadenceAnalytics.tsx": {
    "path": "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
-   "lines": 289,
+   "lines": 180,
    "exports": [
     "function EliteCadenceAnalytics"
    ],
-   "tables": [
+   "params": [
     {
-     "table": "cadence_tasks",
-     "op": "select"
+     "name": "PERIOD_DAYS",
+     "value": "30"
     }
-   ],
-   "table_cols": {
-    "cadence_tasks": [
-     "status"
-    ]
-   },
-   "status_values": [
-    {
-     "field": "status",
-     "value": "completed",
-     "kind": "compara"
-    }
-   ],
-   "percents": [
-    "Sua cadência está performando 15% acima da média do setor. O canal{' '}"
    ]
   },
   "src/components/sales/cadence/LeadDetailedAuditLogs.tsx": {
@@ -197258,6 +197552,27 @@
     "TOKEN_REFRESH_INTERVAL_MS: 4 * 60 * 1000,"
    ]
   },
+  "src/config/dominio-publico.test.ts": {
+   "path": "src/config/dominio-publico.test.ts",
+   "lines": 45,
+   "is_test": true,
+   "env": [
+    "VITE_APP_URL"
+   ],
+   "params": [
+    {
+     "name": "PRODUCAO",
+     "value": "'https://promo-champions-v2-1.vercel.app'"
+    }
+   ],
+   "tests": [
+    "domínio público do app",
+    "%s não referencia domínio legado da Lovable",
+    "APP_URL padrão é o domínio de produção",
+    "canonical, og:url, twitter:url e imagens do index.html usam o domínio de produção",
+    "robots.txt aponta o sitemap do domínio de produção"
+   ]
+  },
   "src/config/external.ts": {
    "path": "src/config/external.ts",
    "lines": 19,
@@ -199293,9 +199608,22 @@
     "200"
    ]
   },
+  "src/hooks/useEvolutionCurves.test.tsx": {
+   "path": "src/hooks/useEvolutionCurves.test.tsx",
+   "lines": 79,
+   "is_test": true,
+   "rule_comments": [
+    "Dois vendedores ativos com o mesmo nome: a curva não pode misturar as receitas."
+   ],
+   "tests": [
+    "useEvolutionCurves",
+    "indexa a receita acumulada pelo id, sem somar vendedores homônimos",
+    "filtra pelos ids selecionados"
+   ]
+  },
   "src/hooks/useEvolutionCurves.ts": {
    "path": "src/hooks/useEvolutionCurves.ts",
-   "lines": 101,
+   "lines": 107,
    "exports": [
     "function useEvolutionCurves"
    ],
@@ -200293,15 +200621,27 @@
     "useMobileNavigation"
    ]
   },
+  "src/hooks/useMultichannel.test.tsx": {
+   "path": "src/hooks/useMultichannel.test.tsx",
+   "lines": 86,
+   "is_test": true,
+   "dyn_from": 1,
+   "tests": [
+    "useUpdateTemplate",
+    "atualiza a linha em message_templates pelo id",
+    "propaga erro do banco sem toast de sucesso"
+   ]
+  },
   "src/hooks/useMultichannel.ts": {
    "path": "src/hooks/useMultichannel.ts",
-   "lines": 192,
+   "lines": 222,
    "exports": [
     "type Channel",
     "interface MessageTemplate",
     "interface ChannelInteraction",
     "const useMessageTemplates",
     "const useCreateTemplate",
+    "const useUpdateTemplate",
     "const useDeleteTemplate",
     "const useChannelInteractions",
     "const useChannelStats"
@@ -200314,6 +200654,10 @@
     {
      "table": "message_templates",
      "op": "insert,select"
+    },
+    {
+     "table": "message_templates",
+     "op": "select,update"
     },
     {
      "table": "message_templates",
@@ -200340,6 +200684,7 @@
     ]
    },
    "errors": [
+    "Erro ao atualizar template",
     "Erro ao criar template",
     "Erro ao excluir template"
    ],
@@ -200369,6 +200714,7 @@
    "hooks": [
     "useMessageTemplates",
     "useCreateTemplate",
+    "useUpdateTemplate",
     "useDeleteTemplate",
     "useChannelInteractions",
     "useChannelStats"
@@ -206186,10 +206532,67 @@
     }
    ]
   },
+  "src/hooks/cadences/useCadenceChannelStats.test.ts": {
+   "path": "src/hooks/cadences/useCadenceChannelStats.test.ts",
+   "lines": 124,
+   "is_test": true,
+   "tests": [
+    "fetchCadenceChannelStats",
+    "conta no banco (HEAD + count exato) filtrando o período, sem trazer linhas",
+    "usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje)",
+    "calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas)",
+    "retorna vazio honesto quando não há tarefas no período",
+    "propaga erro do banco em vez de mostrar zero"
+   ]
+  },
+  "src/hooks/cadences/useCadenceChannelStats.ts": {
+   "path": "src/hooks/cadences/useCadenceChannelStats.ts",
+   "lines": 101,
+   "exports": [
+    "const CADENCE_CHANNEL_TYPES",
+    "type CadenceChannelType",
+    "interface CadenceChannelStat",
+    "interface CadenceChannelStats",
+    "function fetchCadenceChannelStats",
+    "function useCadenceChannelStats"
+   ],
+   "tables": [
+    {
+     "table": "cadence_tasks",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "cadence_tasks": [
+     "id",
+     "scheduled_date"
+    ]
+   },
+   "enums": [
+    {
+     "name": "CADENCE_CHANNEL_TYPES",
+     "values": "'email', 'call', 'linkedin', 'whatsapp', 'meeting', 'other',"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "completed",
+     "kind": "filtra"
+    }
+   ],
+   "rule_comments": [
+    "Janela de N dias corridos incluindo hoje (data local), mesma regra do"
+   ],
+   "hooks": [
+    "useCadenceChannelStats"
+   ]
+  },
   "src/hooks/cadences/useCadenceMetrics.ts": {
    "path": "src/hooks/cadences/useCadenceMetrics.ts",
    "lines": 37,
    "exports": [
+    "interface CadenceMetrics",
     "function useCadenceMetrics"
    ],
    "rpc": [
@@ -206393,6 +206796,70 @@
    "side_effects": [
     "notify_email",
     "notify_push"
+   ]
+  },
+  "src/hooks/cadences/useCadenceReport.test.tsx": {
+   "path": "src/hooks/cadences/useCadenceReport.test.tsx",
+   "lines": 181,
+   "is_test": true,
+   "tests": [
+    "aggregateCadenceReport",
+    "sem linhas devolve zeros (sem número inventado)",
+    "pondera resposta/conversão pelo número de inscritos de cada cadência",
+    "useCadenceChannelExecution",
+    "conta tarefas reais por canal no período, só os canais com tarefa, ordenado por taxa",
+    "sem tarefas no período devolve lista vazia",
+    "propaga erro do banco em vez de mostrar zero"
+   ]
+  },
+  "src/hooks/cadences/useCadenceReport.ts": {
+   "path": "src/hooks/cadences/useCadenceReport.ts",
+   "lines": 129,
+   "exports": [
+    "type CadenceReportPeriod",
+    "const CADENCE_REPORT_PERIOD_DAYS",
+    "const CADENCE_CHANNELS",
+    "type CadenceChannel",
+    "interface CadenceReportTotals",
+    "interface CadenceChannelExecution",
+    "function aggregateCadenceReport",
+    "function useCadenceChannelExecution"
+   ],
+   "tables": [
+    {
+     "table": "cadence_tasks",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "cadence_tasks": [
+     "id",
+     "scheduled_date"
+    ]
+   },
+   "enums": [
+    {
+     "name": "CadenceReportPeriod",
+     "values": "weekly | monthly | quarterly"
+    },
+    {
+     "name": "CADENCE_CHANNELS",
+     "values": "'whatsapp', 'call', 'email', 'linkedin', 'meeting', 'other',"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "completed",
+     "kind": "filtra"
+    }
+   ],
+   "rule_comments": [
+    "tarefas com vencimento entre (hoje - dias + 1) e hoje, e quantas foram concluídas.",
+    "Usa contagem exata (head) para não truncar no limite de linhas do PostgREST."
+   ],
+   "hooks": [
+    "useCadenceChannelExecution"
    ]
   },
   "src/hooks/cadences/useCadenceTaskMutations.ts": {
@@ -207403,6 +207870,18 @@
     "invoke("
    ]
   },
+  "src/hooks/conversational/useCompetitorMarketIntel.test.tsx": {
+   "path": "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+   "lines": 112,
+   "is_test": true,
+   "tests": [
+    "useCompetitorMarketIntel",
+    "combina registro, contagem de menções e battle card, ordenando por menções",
+    "mutations de concorrente",
+    "salvar concorrente invalida também a Market Intel",
+    "excluir concorrente invalida também a Market Intel"
+   ]
+  },
   "src/hooks/conversational/useCompetitorMentions.ts": {
    "path": "src/hooks/conversational/useCompetitorMentions.ts",
    "lines": 55,
@@ -207437,16 +207916,30 @@
   },
   "src/hooks/conversational/useCompetitorsRegistry.ts": {
    "path": "src/hooks/conversational/useCompetitorsRegistry.ts",
-   "lines": 72,
+   "lines": 147,
    "exports": [
     "interface CompetitorRegistry",
     "function useCompetitorsRegistry",
+    "interface CompetitorMarketIntel",
+    "function useCompetitorMarketIntel",
     "function useUpsertCompetitor",
     "function useDeleteCompetitor"
    ],
    "tables": [
     {
      "table": "competitors_registry",
+     "op": "select"
+    },
+    {
+     "table": "competitors_registry",
+     "op": "select"
+    },
+    {
+     "table": "sales_enablement_assets",
+     "op": "select"
+    },
+    {
+     "table": "competitor_mentions",
      "op": "select"
     },
     {
@@ -207460,11 +207953,26 @@
    ],
    "table_cols": {
     "competitors_registry": [
+     "aliases",
+     "default_battle_card_id",
+     "id",
+     "is_active",
+     "name"
+    ],
+    "sales_enablement_assets": [
+     "file_url",
+     "id",
+     "is_active",
+     "title"
+    ],
+    "competitor_mentions": [
+     "competitor_id",
      "id"
     ]
    },
    "hooks": [
     "useCompetitorsRegistry",
+    "useCompetitorMarketIntel",
     "useUpsertCompetitor",
     "useDeleteCompetitor"
    ],
@@ -207812,7 +208320,7 @@
   },
   "src/hooks/crm/useClient360.ts": {
    "path": "src/hooks/crm/useClient360.ts",
-   "lines": 249,
+   "lines": 261,
    "exports": [
     "interface Client360Data",
     "function useClient360"
@@ -207844,10 +208352,14 @@
    "errors": [
     "Client name is required"
    ],
+   "rule_comments": [
+    "Próxima ação sugerida: regra estática baseada só nos dados reais do cliente"
+   ],
    "hooks": [
     "useClient360"
    ],
    "temporal": [
+    "(1000 * 60 * 60 * 24)",
     "(new Date().getTime() - lastPurchaseDate) / (1000 * 60 * 60 * 24);",
     "intervals.push((dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24));"
    ]
@@ -208772,10 +209284,25 @@
     "50"
    ]
   },
+  "src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts": {
+   "path": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts",
+   "lines": 52,
+   "is_test": true,
+   "temporal": [
+    "const updated = new Date(created.getTime() + days * 24 * 60 * 60 * 1000);"
+   ],
+   "tests": [
+    "computeSalespersonVelocity",
+    "calcula média de dias até o ganho por vendedor, do mais rápido ao mais lento",
+    "ignora vendedores sem deal ganho e vendas sem vendedor"
+   ]
+  },
   "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts": {
    "path": "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
-   "lines": 151,
+   "lines": 199,
    "exports": [
+    "interface SalespersonVelocity",
+    "function computeSalespersonVelocity",
     "const useDealVelocity"
    ],
    "tables": [
@@ -208803,12 +209330,22 @@
      "stage"
     ]
    },
+   "rule_comments": [
+    "* Dias entre criação e última atualização de um deal ganho (mínimo 1). */"
+   ],
    "hooks": [
     "useDealVelocity"
    ],
+   "calc_fns": [
+    {
+     "name": "computeSalespersonVelocity",
+     "params": "sales: VelocitySaleRow[]",
+     "body": "const map = new Map<string, { durations: number[]; openDeals: number }>(); sales.forEach(s => { if (!s.salesperson_id) return; const entry = map.get(s.salesperson_id) ?? { durations: [], openDeals: 0 }; if (isWonSaleStatus(s.status)) entry.durations.push(wonDealDurationDays(s)); else if (isOpenSaleStatus(s.status)) entry.openDeals += 1; map.set(s.salesperson_id, entry); }); return Array.from(map.entries()) .filter(([, e]) => e.durations.length > 0) .map(([salespersonId, e]) => ({ salespersonId, …"
+    }
+   ],
    "temporal": [
+    "(1000 * 60 * 60 * 24)",
     "(exited.getTime() - entered.getTime()) / (1000 * 60 * 60 * 24)",
-    "Math.ceil((updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24))",
     "staleTime: 1000 * 60 * 60,"
    ]
   },
@@ -210194,6 +210731,64 @@
     "invoke("
    ]
   },
+  "src/hooks/forecast/useScenarioBaseline.test.tsx": {
+   "path": "src/hooks/forecast/useScenarioBaseline.test.tsx",
+   "lines": 148,
+   "is_test": true,
+   "tests": [
+    "computeScenarioBaseline",
+    "soma só vendas ganhas na janela e calcula win-rate e receita por vendedor",
+    "sem vendas fechadas devolve base zerada e métricas nulas (sem número inventado)",
+    "useScenarioBaseline",
+    "consulta sales ganhas/perdidas não excluídas e agrega o resultado"
+   ]
+  },
+  "src/hooks/forecast/useScenarioBaseline.ts": {
+   "path": "src/hooks/forecast/useScenarioBaseline.ts",
+   "lines": 99,
+   "exports": [
+    "const SCENARIO_BASELINE_DAYS",
+    "interface ScenarioBaselineRow",
+    "interface ScenarioBaseline",
+    "function computeScenarioBaseline",
+    "function useScenarioBaseline"
+   ],
+   "tables": [
+    {
+     "table": "sales",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "sales": [
+     "amount",
+     "closed_at",
+     "created_at",
+     "deleted_at",
+     "salesperson_id",
+     "status"
+    ]
+   },
+   "params": [
+    {
+     "name": "SCENARIO_BASELINE_DAYS",
+     "value": "90"
+    }
+   ],
+   "rule_comments": [
+    "* Ganhas / (ganhas + perdidas) em %, ou null sem negócio fechado. */"
+   ],
+   "hooks": [
+    "useScenarioBaseline"
+   ],
+   "calc_fns": [
+    {
+     "name": "computeScenarioBaseline",
+     "params": "rows: ScenarioBaselineRow[], start: Date",
+     "body": "let wonRevenue = 0; let wonCount = 0; let lostCount = 0; const sellers = new Set<string>(); for (const row of rows) { const refDate = new Date(row.closed_at ?? row.created_at); if (Number.isNaN(refDate.getTime()) || refDate < start) continue; if (isWonSaleStatus(row.status)) { wonRevenue += Number(row.amount) || 0; wonCount += 1; if (row.salesperson_id) sellers.add(row.salesperson_id); } else if (isLostSaleStatus(row.status)) { lostCount += 1; } } const closed = wonCount + lostCount; return { wo …"
+    }
+   ]
+  },
   "src/hooks/gamification/useAchievementTrends.ts": {
    "path": "src/hooks/gamification/useAchievementTrends.ts",
    "lines": 66,
@@ -210693,13 +211288,30 @@
     "useGamifiedProfile"
    ]
   },
+  "src/hooks/gamification/useLeagues.test.tsx": {
+   "path": "src/hooks/gamification/useLeagues.test.tsx",
+   "lines": 176,
+   "is_test": true,
+   "tests": [
+    "useLeagues",
+    "falha (isError) quando league_members não pode ser lido, em vez de lista vazia",
+    "marca league_id e pontos de quem tem inscrição",
+    "useLeagueEnrollment",
+    "retorna o vendedor logado e a liga de menor tier",
+    "starterLeagueId null quando não há liga cadastrada",
+    "useJoinLeague",
+    "insere a inscrição do vendedor e invalida o ranking de ligas",
+    "traduz violação de unicidade em mensagem legível"
+   ]
+  },
   "src/hooks/gamification/useLeagues.ts": {
    "path": "src/hooks/gamification/useLeagues.ts",
-   "lines": 176,
+   "lines": 208,
    "exports": [
     "type LeagueTier",
     "const LEAGUE_CONFIG",
     "function useLeagues",
+    "function useLeagueEnrollment",
     "function useJoinLeague"
    ],
    "tables": [
@@ -210712,18 +211324,33 @@
      "op": "select"
     },
     {
+     "table": "salespeople",
+     "op": "select"
+    },
+    {
+     "table": "leagues",
+     "op": "select"
+    },
+    {
      "table": "league_members",
-     "op": "select,upsert"
+     "op": "insert"
     }
    ],
    "table_cols": {
     "salespeople": [
+     "auth_user_id",
      "avatar_url",
      "id",
      "is_active",
      "name"
+    ],
+    "leagues": [
+     "id"
     ]
    },
+   "errors": [
+    "Você já participa de uma liga."
+   ],
    "enums": [
     {
      "name": "LeagueTier",
@@ -210732,7 +211359,14 @@
    ],
    "hooks": [
     "useLeagues",
+    "useLeagueEnrollment",
     "useJoinLeague"
+   ],
+   "temporal": [
+    "staleTime: 5 * 60 * 1000,"
+   ],
+   "pagination": [
+    "1"
    ]
   },
   "src/hooks/gamification/useLevelUpCelebration.ts": {
@@ -214641,9 +215275,19 @@
     "useSalespersonCustomFields"
    ]
   },
+  "src/hooks/sales/useSalespersonPreferences.test.tsx": {
+   "path": "src/hooks/sales/useSalespersonPreferences.test.tsx",
+   "lines": 101,
+   "is_test": true,
+   "tests": [
+    "useSalespersonPreferences.updatePreferences",
+    "grava via upsert por salesperson_id, sem update/insert separados",
+    "mostra erro e não confirma quando o banco recusa"
+   ]
+  },
   "src/hooks/sales/useSalespersonPreferences.ts": {
    "path": "src/hooks/sales/useSalespersonPreferences.ts",
-   "lines": 117,
+   "lines": 103,
    "exports": [
     "type ResponseMode",
     "function useSalespersonPreferences"
@@ -214655,20 +215299,11 @@
     },
     {
      "table": "salesperson_preferences",
-     "op": "select"
-    },
-    {
-     "table": "salesperson_preferences",
-     "op": "update"
-    },
-    {
-     "table": "salesperson_preferences",
-     "op": "insert"
+     "op": "upsert"
     }
    ],
    "table_cols": {
     "salesperson_preferences": [
-     "id",
      "salesperson_id"
     ]
    },
@@ -219904,9 +220539,18 @@
     "function DealIntelligence"
    ]
   },
+  "src/pages/DealVelocityPage.test.tsx": {
+   "path": "src/pages/DealVelocityPage.test.tsx",
+   "lines": 47,
+   "is_test": true,
+   "tests": [
+    "DealVelocityPage",
+    "mostra o comparativo real e não exibe o botão Exportar sem ação"
+   ]
+  },
   "src/pages/DealVelocityPage.tsx": {
    "path": "src/pages/DealVelocityPage.tsx",
-   "lines": 174,
+   "lines": 154,
    "exports": [
     "function DealVelocityPage"
    ]
@@ -219976,11 +220620,26 @@
     "transition={{ delay: idx * 0.1 }}"
    ]
   },
+  "src/pages/EvolutionCurvesPage.test.tsx": {
+   "path": "src/pages/EvolutionCurvesPage.test.tsx",
+   "lines": 46,
+   "is_test": true,
+   "tests": [
+    "EvolutionCurvesPage",
+    "mostra a receita de cada vendedor homônimo separadamente, sem botões sem ação"
+   ]
+  },
   "src/pages/EvolutionCurvesPage.tsx": {
    "path": "src/pages/EvolutionCurvesPage.tsx",
-   "lines": 115,
+   "lines": 118,
    "exports": [
     "function EvolutionCurvesPage"
+   ],
+   "params": [
+    {
+     "name": "LEADERS_PERIOD_DAYS",
+     "value": "30"
+    }
    ]
   },
   "src/pages/FeatureFlagsAdmin.tsx": {
@@ -220393,9 +221052,18 @@
     "manager"
    ]
   },
+  "src/pages/MetasAtividades.test.tsx": {
+   "path": "src/pages/MetasAtividades.test.tsx",
+   "lines": 110,
+   "is_test": true,
+   "tests": [
+    "MetasAtividades",
+    "mostra indicadores calculados das metas reais, sem valores fixos"
+   ]
+  },
   "src/pages/MetasAtividades.tsx": {
    "path": "src/pages/MetasAtividades.tsx",
-   "lines": 625,
+   "lines": 648,
    "exports": [
     "function MetasAtividades"
    ],
@@ -223551,6 +224219,23 @@
     "é vermelho quando tudo foi pulado",
     "formatLine",
     "inclui ícone, fase, id e duração"
+   ]
+  },
+  "src/test/security/battle-participants-insert-policy.test.ts": {
+   "path": "src/test/security/battle-participants-insert-policy.test.ts",
+   "lines": 80,
+   "is_test": true,
+   "params": [
+    {
+     "name": "TABLE",
+     "value": "'battle_participants'"
+    }
+   ],
+   "doc": "Regressão: criar batalha (useSalesBattles.createBattle) insere >= 2 vendedores em battle_participants. Só admin/gestor cria batalha (\"Admins can manage battles\" em sales_battles), então precisa existir policy de INSERT viva em battle_participants que libere admin/gestor — a auto-inscrição (salespers …",
+   "tests": [
+    "battle_participants — INSERT para admin/gestor",
+    "existe policy de INSERT viva liberando is_admin_or_manager(auth.uid())",
+    "vendedor continua limitado à auto-inscrição"
    ]
   },
   "src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts": {
@@ -244252,6 +244937,10 @@
    "lines": 84,
    "uses_service_role": true
   },
+  "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql": {
+   "path": "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql",
+   "lines": 22
+  },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
    "lines": 220,
@@ -246313,10 +247002,221 @@
   }
  },
  "git": {
-  "sha": "64382cb9494868b4cd84ec7ea42ccb2748cf828a",
+  "sha": "914a813e48b105f843757a0601a8b695f10ca869",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "914a813",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)",
+    "files": [
+     "src/components/pricing/RevenueLeakageCard.test.tsx",
+     "src/components/pricing/RevenueLeakageCard.tsx"
+    ]
+   },
+   {
+    "sha": "389ba61",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: remover tendências fixas dos KPIs de conversas (#451)",
+    "files": [
+     "src/components/conversational/ConversationalIntelligenceHub.test.tsx",
+     "src/components/conversational/ConversationalIntelligenceHub.tsx"
+    ]
+   },
+   {
+    "sha": "2ed73dc",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: troca valores fixos de inteligência por dados reais ou estado vazio (#442)",
+    "files": [
+     "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
+     "src/components/deal-intelligence/NextBestActionPanel.tsx",
+     "src/components/intelligence/PipelineStrategicReview.test.tsx",
+     "src/components/intelligence/PipelineStrategicReview.tsx",
+     "src/components/pricing/MarginAlertsCard.test.tsx",
+     "src/components/pricing/MarginAlertsCard.tsx",
+     "src/components/pricing/PricingIntelligenceHub.tsx",
+     "src/components/revenue-intelligence/RevenueIntelligenceHub.tsx"
+    ]
+   },
+   {
+    "sha": "bb623b7",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)",
+    "files": [
+     "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+     "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
+     "src/hooks/cadences/useCadenceChannelStats.test.ts",
+     "src/hooks/cadences/useCadenceChannelStats.ts"
+    ]
+   },
+   {
+    "sha": "b83d412",
+    "date": "2026-11-13",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "3f027d1",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: remover fila de aprovação fictícia das cadências (#440)",
+    "files": [
+     "src/components/sales/cadence/ApprovalQueue.test.tsx",
+     "src/components/sales/cadence/ApprovalQueue.tsx",
+     "src/components/sales/cadence/CadenceTemplateManager.test.tsx",
+     "src/components/sales/cadence/CadenceTemplateManager.tsx",
+     "src/hooks/useMultichannel.test.tsx",
+     "src/hooks/useMultichannel.ts"
+    ]
+   },
+   {
+    "sha": "824a372",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: desabilita entrada na liga enquanto não há ligas cadastradas (#443)",
+    "files": [
+     "src/components/competitive/LeagueSystem.test.tsx",
+     "src/components/competitive/LeagueSystem.tsx",
+     "src/hooks/gamification/useLeagues.test.tsx",
+     "src/hooks/gamification/useLeagues.ts"
+    ]
+   },
+   {
+    "sha": "b97dd91",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: permite gestor inscrever participantes ao criar batalha (#478)",
+    "files": [
+     "src/test/security/battle-participants-insert-policy.test.ts",
+     "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql"
+    ]
+   },
+   {
+    "sha": "749babe",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: metas de atividades sem indicadores e ações fictícias (#444)",
+    "files": [
+     "src/pages/MetasAtividades.test.tsx",
+     "src/pages/MetasAtividades.tsx"
+    ]
+   },
+   {
+    "sha": "c82f9b3",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: relatório de cadências passa a usar dados reais do banco (#449)",
+    "files": [
+     "src/components/sales/cadence/CadenceReportPanel.test.tsx",
+     "src/components/sales/cadence/CadenceReportPanel.tsx",
+     "src/hooks/cadences/useCadenceMetrics.ts",
+     "src/hooks/cadences/useCadenceReport.test.tsx",
+     "src/hooks/cadences/useCadenceReport.ts"
+    ]
+   },
+   {
+    "sha": "05eca38",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: apontar APP_URL para o domínio de produção na Vercel (#439)",
+    "files": [
+     "index.html",
+     "public/robots.txt",
+     "public/sitemap.xml",
+     "src/config/dominio-publico.test.ts",
+     "src/config/external.ts"
+    ]
+   },
+   {
+    "sha": "fb51238",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: aba Market Intel da /arena mostra concorrentes reais em vez de matriz fixa (#455)",
+    "files": [
+     "src/components/competitive/FeatureComparison.test.tsx",
+     "src/components/competitive/FeatureComparison.tsx",
+     "src/hooks/conversational/useCompetitorMarketIntel.test.tsx",
+     "src/hooks/conversational/useCompetitorsRegistry.ts"
+    ]
+   },
+   {
+    "sha": "3c77d1d",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: troca vendedores fictícios do analytics por dados reais (#438)",
+    "files": [
+     "src/components/competitive/EvolutionChart.tsx",
+     "src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts",
+     "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
+     "src/hooks/useEvolutionCurves.test.tsx",
+     "src/hooks/useEvolutionCurves.ts",
+     "src/pages/DealVelocityPage.test.tsx",
+     "src/pages/DealVelocityPage.tsx",
+     "src/pages/EvolutionCurvesPage.test.tsx",
+     "src/pages/EvolutionCurvesPage.tsx"
+    ]
+   },
+   {
+    "sha": "37fafa5",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: regras de contato gravam via upsert e avisam erro de verdade (#456)",
+    "files": [
+     "src/components/cadences/ContactRulesDialog.test.tsx",
+     "src/components/cadences/ContactRulesDialog.tsx",
+     "src/hooks/sales/useSalespersonPreferences.test.tsx",
+     "src/hooks/sales/useSalespersonPreferences.ts"
+    ]
+   },
+   {
+    "sha": "77cf11d",
+    "date": "2026-11-13",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump @simplewebauthn/server from 14.0.2 to 14.0.3 (#411)",
+    "files": [
+     "deno.lock",
+     "package-lock.json",
+     "package.json",
+     "supabase/functions/webauthn/index.ts"
+    ]
+   },
+   {
+    "sha": "d0da8ad",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: simulador de cenarios usa receita ganha real e remove plano falso (#450)",
+    "files": [
+     "src/components/predictive/PredictiveScenarioPlanner.test.tsx",
+     "src/components/predictive/PredictiveScenarioPlanner.tsx",
+     "src/hooks/forecast/useScenarioBaseline.test.tsx",
+     "src/hooks/forecast/useScenarioBaseline.ts"
+    ]
+   },
+   {
+    "sha": "0915aab",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: remove ações e previsões falsas do Cliente 360 (#441)",
+    "files": [
+     "src/components/clients/Client360AffinityCard.tsx",
+     "src/components/clients/Client360Header.tsx",
+     "src/components/clients/Client360HealthNbaSection.test.tsx",
+     "src/components/clients/Client360HealthNbaSection.tsx",
+     "src/components/clients/Client360PredictiveCards.tsx",
+     "src/components/clients/Client360View.tsx",
+     "src/hooks/crm/useClient360.ts"
+    ]
+   },
    {
     "sha": "64382cb",
     "date": "2026-11-13",
@@ -246465,287 +247365,87 @@
      "src/hooks/tasks/useTaskMutations.test.tsx",
      "src/hooks/tasks/useTaskMutations.ts"
     ]
-   },
-   {
-    "sha": "6a1d1c3",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: preencher vendedor logado ao criar venda (#468)",
-    "files": [
-     "src/services/salesService.test.ts",
-     "src/services/salesService.ts"
-    ]
-   },
-   {
-    "sha": "7bc13e2",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e excluir produto do fornecedor no comparador de preços (#437)",
-    "files": [
-     "src/components/comparador/SupplierProductActions.tsx",
-     "src/hooks/suppliers/useSupplierMutations.test.tsx",
-     "src/hooks/suppliers/useSupplierMutations.ts",
-     "src/pages/ComparadorPrecos.tsx"
-    ]
-   },
-   {
-    "sha": "2c36718",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)",
-    "files": [
-     "src/hooks/admin/useApprovalWorkflows.test.tsx",
-     "src/hooks/admin/useApprovalWorkflows.ts",
-     "src/pages/ApprovalWorkflowsPage.tsx"
-    ]
-   },
-   {
-    "sha": "4e0bb00",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e excluir filas do Power Dialer (#435)",
-    "files": [
-     "src/components/dialer/DialerQueueCard.tsx",
-     "src/components/dialer/QueueBuilderDialog.tsx",
-     "src/hooks/dialer/usePowerDialer.test.tsx",
-     "src/hooks/dialer/usePowerDialer.ts",
-     "src/pages/PowerDialer.test.tsx",
-     "src/pages/PowerDialer.tsx"
-    ]
-   },
-   {
-    "sha": "7ab97e0",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e arquivar materiais no Sales Enablement (#433)",
-    "files": [
-     "src/components/conversational/BattleCardSuggestion.test.tsx",
-     "src/components/conversational/BattleCardSuggestion.tsx",
-     "src/components/enablement/SalesEnablementHub.test.tsx",
-     "src/components/enablement/SalesEnablementHub.tsx",
-     "src/hooks/sales/useSalesEnablement.test.tsx",
-     "src/hooks/sales/useSalesEnablement.ts"
-    ]
-   },
-   {
-    "sha": "1f60080",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e desativar desafios semanais (#432)",
-    "files": [
-     "src/components/gamification/CreateChallengeDialog.tsx",
-     "src/components/gamification/WeeklyChallengesCard.tsx",
-     "src/hooks/gamification/useWeeklyChallenges.test.tsx",
-     "src/hooks/gamification/useWeeklyChallenges.ts",
-     "src/pages/DesafiosSemanais.tsx"
-    ]
-   },
-   {
-    "sha": "b68acd2",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e cancelar batalhas de vendas (#431)",
-    "files": [
-     "src/components/competitive/BattleArena.test.tsx",
-     "src/components/competitive/BattleArena.tsx",
-     "src/components/competitive/BattleCardItem.tsx",
-     "src/components/competitive/CreateBattleDialog.tsx",
-     "src/hooks/sales/useSalesBattles.test.tsx",
-     "src/hooks/sales/useSalesBattles.ts"
-    ]
-   },
-   {
-    "sha": "9d3c316",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e excluir workflows no Automation Builder (#430)",
-    "files": [
-     "src/hooks/automation/useAutomationWorkflows.test.tsx",
-     "src/hooks/automation/useAutomationWorkflows.ts",
-     "src/pages/AutomationBuilder.tsx"
-    ]
-   },
-   {
-    "sha": "5d2f222",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e remover signatários na assinatura digital (#428)",
-    "files": [
-     "src/hooks/useDigitalSignatures.test.tsx",
-     "src/hooks/useDigitalSignatures.ts",
-     "src/pages/AssinaturaDigital.tsx"
-    ]
-   },
-   {
-    "sha": "56b4d2b",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(hooks): plano de conta ABM envia created_by ao criar (#467)",
-    "files": [
-     "src/hooks/abm/useAccounts.test.tsx",
-     "src/hooks/abm/useAccounts.ts"
-    ]
-   },
-   {
-    "sha": "21eae42",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "feat: editar e excluir contas no Account-Based Selling (#426)",
-    "files": [
-     "src/hooks/abm/useAccounts.test.tsx",
-     "src/hooks/abm/useAccounts.ts",
-     "src/pages/AccountBasedSelling.test.tsx",
-     "src/pages/AccountBasedSelling.tsx"
-    ]
-   },
-   {
-    "sha": "53e363f",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "test: serializa execuções do stress quote→sale com lock consultivo (#465)",
-    "files": [
-     "supabase/tests/quote-to-sale-stress.sql"
-    ]
-   },
-   {
-    "sha": "0c1ae11",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)",
-    "files": [
-     "package.json",
-     "supabase/functions/cron-failure-alerter/index.test.ts"
-    ]
-   },
-   {
-    "sha": "91cded0",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)",
-    "files": [
-     "src/components/pipeline/InactivityPanel.test.tsx",
-     "src/hooks/useInactiveDeals.test.tsx",
-     "src/hooks/useInactiveDeals.ts",
-     "src/pages/InactivityTriggers.test.tsx",
-     "src/pages/InactivityTriggers.tsx"
-    ]
-   },
-   {
-    "sha": "39a5d8a",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: regras de frequencia de contato passam a salvar no banco (#448)",
-    "files": [
-     "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
-     "src/components/sales/cadence/ContactFrequencyRules.tsx",
-     "src/hooks/sales/useContactFrequencyRules.test.tsx",
-     "src/hooks/sales/useContactFrequencyRules.ts"
-    ]
-   },
-   {
-    "sha": "c2c7344",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: estados de loading e erro reais no painel de deals inativos (#458)",
-    "files": [
-     "src/components/pipeline/InactivityPanel.test.tsx",
-     "src/components/pipeline/InactivityPanel.tsx",
-     "src/hooks/useInactiveDeals.test.tsx",
-     "src/hooks/useInactiveDeals.ts"
-    ]
-   },
-   {
-    "sha": "c4f625e",
-    "date": "2026-11-13",
-    "author": "github-actions[bot]",
-    "subject": "chore(main): release 1.3.0 (#462)",
-    "files": [
-     ".release-please-manifest.json",
-     "CHANGELOG.md",
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "deno.lock",
+    3
+   ],
+   [
+    "package-lock.json",
+    3
+   ],
    [
     "package.json",
     3
    ],
    [
-    "src/hooks/abm/useAccounts.test.tsx",
-    3
-   ],
-   [
-    "src/hooks/abm/useAccounts.ts",
-    3
-   ],
-   [
-    "package-lock.json",
-    2
-   ],
-   [
-    "src/hooks/sales/useSalesEnablement.test.tsx",
-    2
-   ],
-   [
-    "src/hooks/sales/useSalesEnablement.ts",
-    2
-   ],
-   [
-    "src/components/pipeline/InactivityPanel.test.tsx",
-    2
-   ],
-   [
-    "src/hooks/useInactiveDeals.test.tsx",
-    2
-   ],
-   [
-    "src/hooks/useInactiveDeals.ts",
-    2
-   ],
-   [
-    "src/components/analytics/ABCActionableAutomations.tsx",
+    "src/components/pricing/RevenueLeakageCard.test.tsx",
     1
    ],
    [
-    "src/components/analytics/ABCAnalysis.test.tsx",
+    "src/components/pricing/RevenueLeakageCard.tsx",
     1
    ],
    [
-    "src/components/analytics/ABCAnalysis.tsx",
+    "src/components/conversational/ConversationalIntelligenceHub.test.tsx",
     1
    ],
    [
-    "src/components/analytics/ABCChartTable.tsx",
+    "src/components/conversational/ConversationalIntelligenceHub.tsx",
     1
    ],
    [
-    "src/components/analytics/ABCMatrixShift.tsx",
+    "src/components/deal-intelligence/NextBestActionPanel.test.tsx",
     1
    ],
    [
-    "src/components/analytics/ABCNeuralInsights.tsx",
+    "src/components/deal-intelligence/NextBestActionPanel.tsx",
     1
    ],
    [
-    "src/hooks/bi/useABCAnalysis.test.tsx",
+    "src/components/intelligence/PipelineStrategicReview.test.tsx",
     1
    ],
    [
-    "src/hooks/bi/useABCAnalysis.ts",
+    "src/components/intelligence/PipelineStrategicReview.tsx",
     1
    ],
    [
-    "src/components/pipeline/DealCard.test.tsx",
+    "src/components/pricing/MarginAlertsCard.test.tsx",
     1
    ],
    [
-    "src/components/pipeline/DealCard.tsx",
+    "src/components/pricing/MarginAlertsCard.tsx",
     1
    ],
    [
-    "src/components/pipeline/PipelineBoard.tsx",
+    "src/components/pricing/PricingIntelligenceHub.tsx",
+    1
+   ],
+   [
+    "src/components/revenue-intelligence/RevenueIntelligenceHub.tsx",
+    1
+   ],
+   [
+    "src/components/sales/cadence/EliteCadenceAnalytics.test.tsx",
+    1
+   ],
+   [
+    "src/components/sales/cadence/EliteCadenceAnalytics.tsx",
+    1
+   ],
+   [
+    "src/hooks/cadences/useCadenceChannelStats.test.ts",
+    1
+   ],
+   [
+    "src/hooks/cadences/useCadenceChannelStats.ts",
+    1
+   ],
+   [
+    "src/components/sales/cadence/ApprovalQueue.test.tsx",
     1
    ]
   ]

@@ -1107,8 +1107,8 @@
   {
    "modulo": "components/cadences",
    "arquivos": 22,
-   "testes": 1,
-   "linhas": 4789,
+   "testes": 2,
+   "linhas": 4833,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1321,19 +1321,20 @@
   },
   {
    "modulo": "components/clients",
-   "arquivos": 20,
-   "testes": 0,
-   "linhas": 2957,
+   "arquivos": 19,
+   "testes": 1,
+   "linhas": 2766,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 19,
+   "componentes": 18,
    "hooks_locais": [
     "useBehavioralAnalysis",
     "useClient360",
     "useClientKanban",
     "useCountUp",
     "useCreateClient",
+    "useCreateTask",
     "useIndexEntity",
     "useUpdateClient",
     "useUpdateKanbanStatus"
@@ -1348,9 +1349,11 @@
     "client_interactions",
     "client_portfolio",
     "clients",
-    "sales"
+    "sales",
+    "tasks"
    ],
    "rpcs": [
+    "get_current_salesperson_id",
     "merge_clients",
     "update_client_portfolio_status"
    ],
@@ -1374,7 +1377,9 @@
      "client_interactions",
      "sales"
     ],
-    "rpcs": []
+    "rpcs": [
+     "get_current_salesperson_id"
+    ]
    },
    "importado_por_outros_modulos": [
     "pages"
@@ -1384,10 +1389,12 @@
     "components/ui",
     "hooks",
     "hooks/crm",
+    "hooks/tasks",
     "integrations/supabase",
     "lib",
     "lib/supabase",
-    "lib/validators"
+    "lib/validators",
+    "utils"
    ],
    "pacotes_externos": [
     "@hookform/resolvers",
@@ -1734,8 +1741,8 @@
   {
    "modulo": "components/competitive",
    "arquivos": 33,
-   "testes": 1,
-   "linhas": 8328,
+   "testes": 3,
+   "linhas": 8019,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1746,11 +1753,15 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useDailyMissions",
+    "useDeleteCompetitor",
     "useEvolutionCurves",
     "useGamifiedProfile",
     "useJoinLeague",
     "useKudos",
+    "useLeagueEnrollment",
     "useLeagues",
     "usePrizeWheel",
     "useProgressiveGoals",
@@ -1763,6 +1774,7 @@
     "useSalespeople",
     "useSalespeopleRanking",
     "useUpdateSalesperson",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
@@ -1779,12 +1791,15 @@
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
+    "competitor_mentions",
+    "competitors_registry",
     "daily_challenge_progress",
     "daily_challenges",
     "feed_comments",
     "feed_reactions",
     "kudos",
     "league_members",
+    "leagues",
     "performance_bets",
     "prize_wheel_spins",
     "progressive_goals",
@@ -1795,6 +1810,7 @@
     "rank_change_notifications",
     "sales",
     "sales_battles",
+    "sales_enablement_assets",
     "sales_goals",
     "sales_streaks",
     "salespeople",
@@ -1859,6 +1875,7 @@
     "constants",
     "contexts",
     "hooks",
+    "hooks/conversational",
     "hooks/gamification",
     "hooks/sales",
     "integrations/supabase",
@@ -1933,8 +1950,8 @@
   {
    "modulo": "components/conversational",
    "arquivos": 58,
-   "testes": 1,
-   "linhas": 6151,
+   "testes": 2,
+   "linhas": 6147,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1953,6 +1970,7 @@
     "useCoachingActions",
     "useCoachingLeaderboard",
     "useCoachingScorecard",
+    "useCompetitorMarketIntel",
     "useCompetitorMentions",
     "useCompetitorsRegistry",
     "useConversationMetrics",
@@ -2185,6 +2203,8 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useCompleteTask",
     "useConversationAnalyses",
     "useConversationInsights",
@@ -2201,6 +2221,7 @@
     "useDashboardLayout",
     "useDashboardTheme",
     "useDeactivateWeeklyChallenge",
+    "useDeleteCompetitor",
     "useDeleteCustomReport",
     "useDeleteSequence",
     "useEngagementLeaderboard",
@@ -2219,6 +2240,7 @@
     "useLatestBriefing",
     "useLeadEnrichment",
     "useLeadTemperatureDistribution",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLogAuditEvent",
     "useMicroGoals",
@@ -2259,6 +2281,7 @@
     "useUpdateCustomReport",
     "useUpdateSalesperson",
     "useUpdateSequence",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyChallenges",
@@ -2292,6 +2315,8 @@
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
+    "competitor_mentions",
+    "competitors_registry",
     "contact_engagement_score",
     "conversation_analyses",
     "custom_reports",
@@ -2313,6 +2338,7 @@
     "kudos",
     "lead_scores",
     "league_members",
+    "leagues",
     "mood_entries",
     "notification_preferences",
     "notifications",
@@ -2328,6 +2354,7 @@
     "rank_change_notifications",
     "sales",
     "sales_battles",
+    "sales_enablement_assets",
     "sales_goals",
     "sales_streaks",
     "salespeople",
@@ -2455,8 +2482,8 @@
   {
    "modulo": "components/deal-intelligence",
    "arquivos": 47,
-   "testes": 0,
-   "linhas": 4786,
+   "testes": 1,
+   "linhas": 4731,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3393,6 +3420,7 @@
     "useDeactivateWeeklyChallenge",
     "useIsMobile",
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useMediaQuery",
@@ -3416,6 +3444,7 @@
     "daily_challenges",
     "daily_streak_achievements",
     "league_members",
+    "leagues",
     "salespeople",
     "salesperson_xp",
     "weekly_challenges"
@@ -3563,6 +3592,7 @@
     "components/cadences",
     "components/engagement",
     "components/multichannel",
+    "components/sales",
     "components/sdr",
     "components/sequences",
     "components/tasks",
@@ -3633,28 +3663,41 @@
   {
    "modulo": "components/intelligence",
    "arquivos": 10,
-   "testes": 0,
-   "linhas": 1847,
+   "testes": 1,
+   "linhas": 1861,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 10,
    "hooks_locais": [
+    "useBuyingCommittee",
     "useDashboardKPIsPeriod",
+    "useDeleteCommitteeMember",
     "useGenerateBriefing",
-    "useLatestBriefing"
+    "useGenerateQBR",
+    "useLatestBriefing",
+    "useQBRReports",
+    "useRevenueIntelligenceHub",
+    "useRunPipelineInspection",
+    "useUpsertCommitteeMember"
    ],
    "hooks_definidos": [],
    "edges": [
-    "generate-executive-briefing"
+    "generate-executive-briefing",
+    "qbr-generator",
+    "revenue-intelligence"
    ],
    "tabelas": [
+    "buying_committee_members",
     "daily_metrics",
     "executive_briefings",
+    "qbr_reports",
     "sales",
     "tasks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "compute_pipeline_inspection"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -3684,6 +3727,7 @@
     "constants",
     "hooks/dashboard",
     "hooks/executive-briefing",
+    "hooks/revenue",
     "integrations/supabase",
     "lib"
    ],
@@ -4241,6 +4285,8 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useCompleteCadenceTask",
     "useCompleteTask",
     "useComposeEmail",
@@ -4288,6 +4334,7 @@
     "useDeleteChannelCredential",
     "useDeleteClient",
     "useDeleteCommissionBonus",
+    "useDeleteCompetitor",
     "useDeleteFeatureFlag",
     "useDeleteNotification",
     "useDeleteNotificationPreference",
@@ -4343,6 +4390,7 @@
     "useLeadScoring",
     "useLeadScoringMetrics",
     "useLeadTemperatureDistribution",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLogAuditEvent",
     "useMFA",
@@ -4494,6 +4542,7 @@
     "useUpdateTask",
     "useUpsertActivityGoal",
     "useUpsertCommissionBonus",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVendasMacro",
     "useVictoryFeed",
@@ -4582,6 +4631,8 @@
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
+    "competitor_mentions",
+    "competitors_registry",
     "contact_engagement_score",
     "conversation_analyses",
     "daily_challenge_progress",
@@ -4625,6 +4676,7 @@
     "lead_score_trends",
     "lead_scores",
     "league_members",
+    "leagues",
     "message_templates",
     "mood_entries",
     "notification_preferences",
@@ -4661,6 +4713,7 @@
     "sale_notifications_audit",
     "sales",
     "sales_battles",
+    "sales_enablement_assets",
     "sales_goals",
     "sales_streaks",
     "sales_with_markup",
@@ -5164,6 +5217,8 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useCompleteAgendaEvent",
     "useCompleteCadenceTask",
     "useCompleteTask",
@@ -5216,6 +5271,7 @@
     "useDeleteChannelCredential",
     "useDeleteClient",
     "useDeleteCommissionBonus",
+    "useDeleteCompetitor",
     "useDeleteFeatureFlag",
     "useDeleteNotification",
     "useDeleteNotificationPreference",
@@ -5276,6 +5332,7 @@
     "useLeadScoring",
     "useLeadScoringMetrics",
     "useLeadTemperatureDistribution",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useLogAuditEvent",
@@ -5446,8 +5503,10 @@
     "useUpdateSalesperson",
     "useUpdateSequence",
     "useUpdateTask",
+    "useUpdateTemplate",
     "useUpsertActivityGoal",
     "useUpsertCommissionBonus",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVendasMacro",
     "useVictoryFeed",
@@ -5539,6 +5598,8 @@
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
+    "competitor_mentions",
+    "competitors_registry",
     "contact_engagement_score",
     "conversation_analyses",
     "daily_challenge_progress",
@@ -5583,6 +5644,7 @@
     "lead_score_trends",
     "lead_scores",
     "league_members",
+    "leagues",
     "login_alerts",
     "message_templates",
     "mood_entries",
@@ -5620,6 +5682,7 @@
     "sale_notifications_audit",
     "sales",
     "sales_battles",
+    "sales_enablement_assets",
     "sales_goals",
     "sales_streaks",
     "sales_with_markup",
@@ -6175,8 +6238,8 @@
   {
    "modulo": "components/predictive",
    "arquivos": 2,
-   "testes": 0,
-   "linhas": 614,
+   "testes": 1,
+   "linhas": 633,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6184,6 +6247,7 @@
    "hooks_locais": [
     "useLeadScoreExplanation",
     "usePredictiveIntelligence",
+    "useScenarioBaseline",
     "useScoreTrend"
    ],
    "hooks_definidos": [],
@@ -6210,7 +6274,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "alert"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -6223,31 +6289,34 @@
     "components/lead-scoring",
     "components/ui",
     "hooks",
+    "hooks/forecast",
     "lib"
    ],
    "pacotes_externos": [
     "lucide-react",
-    "react-helmet-async",
-    "sonner"
+    "react-helmet-async"
    ]
   },
   {
    "modulo": "components/pricing",
    "arquivos": 13,
-   "testes": 0,
-   "linhas": 1751,
+   "testes": 2,
+   "linhas": 1740,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 12,
    "hooks_locais": [
+    "useCriticalMarkupSales",
     "usePricingIntelligence"
    ],
    "hooks_definidos": [],
    "edges": [
     "pricing-intelligence"
    ],
-   "tabelas": [],
+   "tabelas": [
+    "sales_with_markup"
+   ],
    "rpcs": [],
    "buckets": [],
    "canais_realtime": [],
@@ -6269,13 +6338,15 @@
    "depende_de_modulos": [
     "components/ui",
     "hooks",
-    "lib"
+    "hooks/bi",
+    "lib",
+    "lib/bi"
    ],
    "pacotes_externos": [
     "framer-motion",
     "lucide-react",
-    "recharts",
-    "sonner"
+    "react-router-dom",
+    "recharts"
    ]
   },
   {
@@ -6905,7 +6976,7 @@
    "modulo": "components/revenue-intelligence",
    "arquivos": 37,
    "testes": 0,
-   "linhas": 3467,
+   "linhas": 3471,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7159,8 +7230,8 @@
   {
    "modulo": "components/sales",
    "arquivos": 16,
-   "testes": 2,
-   "linhas": 4296,
+   "testes": 6,
+   "linhas": 4137,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7169,6 +7240,9 @@
     "useActiveCadencesBySaleIds",
     "useAudio",
     "useAuth",
+    "useCadenceChannelExecution",
+    "useCadenceChannelStats",
+    "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -7182,14 +7256,17 @@
     "useCreateCadence",
     "useCreateCadenceStep",
     "useCreateSale",
+    "useCreateTemplate",
     "useDeleteCadence",
     "useDeleteCadenceStep",
+    "useDeleteTemplate",
     "useEnrollInCadence",
     "useEnrollQuoteInCadence",
     "useFormGuard",
     "useFunnelRules",
     "useIndexEntity",
     "useLeadDetailedLogs",
+    "useMessageTemplates",
     "usePauseCadence",
     "useProductRecommendations",
     "useProducts",
@@ -7210,6 +7287,7 @@
     "useUpdateCadenceStep",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
+    "useUpdateTemplate",
     "useUserRoles",
     "useWhatsApp"
    ],
@@ -7229,10 +7307,12 @@
     "cadence_steps",
     "cadence_tasks",
     "cadences",
+    "channel_interactions",
     "circuit_breaker_events",
     "clients",
     "intent_audit_logs",
     "lead_detailed_logs",
+    "message_templates",
     "products",
     "prospect_cadences",
     "sales",
@@ -7246,6 +7326,7 @@
    "rpcs": [
     "enroll_quote_in_cadence",
     "get_auto_paused_count",
+    "get_cadence_metrics",
     "get_current_salesperson_id",
     "merge_clients",
     "process_lead_intent_event"
@@ -7280,7 +7361,6 @@
      "cadence_alert_templates",
      "cadence_funnel_rules",
      "cadence_outcome_rules",
-     "cadence_tasks",
      "clients",
      "intent_audit_logs"
     ],
@@ -7294,7 +7374,9 @@
    "depende_de_modulos": [
     "components/activities",
     "components/cadences",
+    "components/icons",
     "components/ui",
+    "contexts",
     "hooks",
     "hooks/cadences",
     "hooks/crm",
@@ -8314,6 +8396,8 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useCompleteAgendaEvent",
     "useCompleteCadenceTask",
     "useCompleteTask",
@@ -8366,6 +8450,7 @@
     "useDeleteChannelCredential",
     "useDeleteClient",
     "useDeleteCommissionBonus",
+    "useDeleteCompetitor",
     "useDeleteFeatureFlag",
     "useDeleteNotification",
     "useDeleteNotificationPreference",
@@ -8426,6 +8511,7 @@
     "useLeadScoring",
     "useLeadScoringMetrics",
     "useLeadTemperatureDistribution",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useLogAuditEvent",
@@ -8600,8 +8686,10 @@
     "useUpdateSalesperson",
     "useUpdateSequence",
     "useUpdateTask",
+    "useUpdateTemplate",
     "useUpsertActivityGoal",
     "useUpsertCommissionBonus",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVendasMacro",
     "useVictoryFeed",
@@ -8695,6 +8783,8 @@
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
+    "competitor_mentions",
+    "competitors_registry",
     "contact_engagement_score",
     "conversation_analyses",
     "daily_challenge_progress",
@@ -8739,6 +8829,7 @@
     "lead_score_trends",
     "lead_scores",
     "league_members",
+    "leagues",
     "login_alerts",
     "message_templates",
     "mood_entries",
@@ -8777,6 +8868,7 @@
     "sale_notifications_audit",
     "sales",
     "sales_battles",
+    "sales_enablement_assets",
     "sales_goals",
     "sales_streaks",
     "sales_with_markup",
@@ -9547,7 +9639,7 @@
   {
    "modulo": "config",
    "arquivos": 3,
-   "testes": 0,
+   "testes": 1,
    "linhas": 90,
    "itens_menu": [],
    "telas": [],
@@ -9626,6 +9718,7 @@
     "hooks/crm",
     "hooks/dashboard",
     "hooks/deal-intelligence",
+    "hooks/forecast",
     "hooks/gamification",
     "hooks/notifications",
     "hooks/race",
@@ -9710,6 +9803,7 @@
     "components/organisms",
     "components/race",
     "components/reports",
+    "components/sales",
     "components/security",
     "components/settings",
     "components/tasks",
@@ -9735,8 +9829,8 @@
   {
    "modulo": "hooks",
    "arquivos": 145,
-   "testes": 16,
-   "linhas": 19501,
+   "testes": 18,
+   "linhas": 19537,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10053,6 +10147,7 @@
     "useCreateTemplate",
     "useDeleteTemplate",
     "useMessageTemplates",
+    "useUpdateTemplate",
     "useMoveDealMultiPipeline",
     "usePipelineDealsByPipeline",
     "usePipelineStages",
@@ -11408,6 +11503,7 @@
    "importado_por_outros_modulos": [
     "components/analytics",
     "components/bi",
+    "components/pricing",
     "pages"
    ],
    "depende_de_modulos": [
@@ -11428,9 +11524,9 @@
   },
   {
    "modulo": "hooks/cadences",
-   "arquivos": 17,
-   "testes": 0,
-   "linhas": 1651,
+   "arquivos": 19,
+   "testes": 2,
+   "linhas": 1881,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -11442,6 +11538,8 @@
     "useBulkCancelQuoteCadences",
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
+    "useCadenceChannelExecution",
+    "useCadenceChannelStats",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
@@ -11493,6 +11591,7 @@
     "useBulkCancelQuoteCadences",
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
+    "useCadenceChannelStats",
     "useCadenceMetrics",
     "useCreateCadence",
     "useCreateCadenceStep",
@@ -11507,6 +11606,7 @@
     "useFunnelRules",
     "useProspectCadences",
     "useTodaysCadenceTasks",
+    "useCadenceChannelExecution",
     "useCompleteCadenceTask",
     "useSkipCadenceTask",
     "useCadenceTasksByEnrollment",
@@ -11786,8 +11886,8 @@
   {
    "modulo": "hooks/conversational",
    "arquivos": 16,
-   "testes": 0,
-   "linhas": 1433,
+   "testes": 1,
+   "linhas": 1508,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -11805,6 +11905,7 @@
     "useCoachingActions",
     "useCoachingLeaderboard",
     "useCoachingScorecard",
+    "useCompetitorMarketIntel",
     "useCompetitorMentions",
     "useCompetitorsRegistry",
     "useConversationMetrics",
@@ -11847,6 +11948,7 @@
     "useCoachingScorecard",
     "useCompetitorMentions",
     "useDetectCompetitors",
+    "useCompetitorMarketIntel",
     "useCompetitorsRegistry",
     "useDeleteCompetitor",
     "useUpsertCompetitor",
@@ -11903,6 +12005,7 @@
     "competitor_mentions",
     "competitors_registry",
     "objection_library",
+    "sales_enablement_assets",
     "salesperson_coaching_aggregates"
    ],
    "rpcs": [
@@ -11950,6 +12053,7 @@
      "competitor_mentions",
      "competitors_registry",
      "objection_library",
+     "sales_enablement_assets",
      "salesperson_coaching_aggregates"
     ],
     "rpcs": [
@@ -11959,6 +12063,7 @@
     ]
    },
    "importado_por_outros_modulos": [
+    "components/competitive",
     "components/conversational",
     "pages"
    ],
@@ -11978,7 +12083,7 @@
    "modulo": "hooks/crm",
    "arquivos": 6,
    "testes": 1,
-   "linhas": 897,
+   "linhas": 909,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -12243,8 +12348,8 @@
   {
    "modulo": "hooks/deal-intelligence",
    "arquivos": 10,
-   "testes": 0,
-   "linhas": 1430,
+   "testes": 1,
+   "linhas": 1478,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -12819,23 +12924,27 @@
   },
   {
    "modulo": "hooks/forecast",
-   "arquivos": 1,
-   "testes": 0,
-   "linhas": 67,
+   "arquivos": 2,
+   "testes": 1,
+   "linhas": 166,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 0,
    "hooks_locais": [
-    "useRevenueForecast"
+    "useRevenueForecast",
+    "useScenarioBaseline"
    ],
    "hooks_definidos": [
-    "useRevenueForecast"
+    "useRevenueForecast",
+    "useScenarioBaseline"
    ],
    "edges": [
     "revenue-forecast-ai"
    ],
-   "tabelas": [],
+   "tabelas": [
+    "sales"
+   ],
    "rpcs": [],
    "buckets": [],
    "canais_realtime": [],
@@ -12850,24 +12959,30 @@
     "edges": [
      "revenue-forecast-ai"
     ],
-    "tabelas": [],
+    "tabelas": [
+     "sales"
+    ],
     "rpcs": []
    },
    "importado_por_outros_modulos": [
-    "components/forecast"
+    "components/forecast",
+    "components/predictive"
    ],
    "depende_de_modulos": [
-    "integrations/supabase"
+    "constants",
+    "integrations/supabase",
+    "lib/supabase"
    ],
    "pacotes_externos": [
-    "@tanstack/react-query"
+    "@tanstack/react-query",
+    "date-fns"
    ]
   },
   {
    "modulo": "hooks/gamification",
    "arquivos": 17,
-   "testes": 2,
-   "linhas": 2401,
+   "testes": 3,
+   "linhas": 2433,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -12889,6 +13004,7 @@
     "useGamificationData",
     "useGamifiedProfile",
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "usePrizeWheel",
@@ -12919,6 +13035,7 @@
     "useGamificationData",
     "useGamifiedProfile",
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "usePrizeWheel",
@@ -12943,6 +13060,7 @@
     "daily_streak_achievements",
     "kudos",
     "league_members",
+    "leagues",
     "prize_wheel_spins",
     "sales",
     "sales_streaks",
@@ -12986,6 +13104,7 @@
      "daily_streak_achievements",
      "kudos",
      "league_members",
+     "leagues",
      "prize_wheel_spins",
      "sales",
      "sales_streaks",
@@ -13951,6 +14070,7 @@
     ]
    },
    "importado_por_outros_modulos": [
+    "components/intelligence",
     "components/revenue-intelligence",
     "pages"
    ],
@@ -14044,8 +14164,8 @@
   {
    "modulo": "hooks/sales",
    "arquivos": 16,
-   "testes": 3,
-   "linhas": 2395,
+   "testes": 4,
+   "linhas": 2381,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -14657,6 +14777,7 @@
    "importado_por_outros_modulos": [
     "components/ai",
     "components/assistant",
+    "components/clients",
     "components/win-loss",
     "hooks",
     "hooks/win-loss"
@@ -15278,6 +15399,7 @@
    },
    "importado_por_outros_modulos": [
     "components/bi",
+    "components/pricing",
     "hooks/bi",
     "hooks/dashboard"
    ],
@@ -15539,6 +15661,7 @@
     "hooks/deal-intelligence",
     "hooks/email",
     "hooks/engagement",
+    "hooks/forecast",
     "hooks/gamification",
     "hooks/notifications",
     "hooks/pipeline",
@@ -15640,8 +15763,8 @@
   {
    "modulo": "pages",
    "arquivos": 161,
-   "testes": 4,
-   "linhas": 39430,
+   "testes": 7,
+   "linhas": 39436,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -16000,6 +16123,8 @@
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
     "useBuyingCommittee",
+    "useCadenceChannelExecution",
+    "useCadenceChannelStats",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
@@ -16075,6 +16200,7 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
     "useCompetitorMentions",
     "useCompetitorsRegistry",
     "useCompleteAgendaEvent",
@@ -16301,6 +16427,7 @@
     "useLeadSourceTrend",
     "useLeadTemperatureDistribution",
     "useLeaderTakeoverDetector",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useLogAssetUsage",
@@ -16522,6 +16649,7 @@
     "useSaveWorkflow",
     "useSavedFilters",
     "useScanSLAViolations",
+    "useScenarioBaseline",
     "useScheduleOptimalSend",
     "useScheduledReportRuns",
     "useScheduledReports",
@@ -16656,6 +16784,7 @@
     "useUpdateSequence",
     "useUpdateTask",
     "useUpdateTeam",
+    "useUpdateTemplate",
     "useUpdateWebhook",
     "useUpdateWorkflow",
     "useUploadCallRecording",
@@ -16985,6 +17114,7 @@
     "lead_scores",
     "lead_source_configs",
     "league_members",
+    "leagues",
     "login_attempts",
     "message_templates",
     "mood_entries",
@@ -17811,6 +17941,8 @@
     "useBulkPauseQuoteCadences",
     "useBulkResumeQuoteCadences",
     "useBuyingCommittee",
+    "useCadenceChannelExecution",
+    "useCadenceChannelStats",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
@@ -17886,6 +18018,7 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
     "useCompetitorMentions",
     "useCompetitorsRegistry",
     "useCompleteAgendaEvent",
@@ -18122,6 +18255,7 @@
     "useLeadSourceTrend",
     "useLeadTemperatureDistribution",
     "useLeaderTakeoverDetector",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useLogAssetUsage",
@@ -18348,6 +18482,7 @@
     "useSaveWorkflow",
     "useSavedFilters",
     "useScanSLAViolations",
+    "useScenarioBaseline",
     "useScheduleOptimalSend",
     "useScheduledReportRuns",
     "useScheduledReports",
@@ -18489,6 +18624,7 @@
     "useUpdateSequence",
     "useUpdateTask",
     "useUpdateTeam",
+    "useUpdateTemplate",
     "useUpdateWebhook",
     "useUpdateWorkflow",
     "useUploadCallRecording",
@@ -18837,6 +18973,7 @@
     "lead_scores",
     "lead_source_configs",
     "league_members",
+    "leagues",
     "login_alerts",
     "login_attempts",
     "message_templates",
@@ -19252,7 +19389,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 10,
+   "testes": 11,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -19376,6 +19513,7 @@
     "components/activities",
     "components/ai",
     "components/analytics",
+    "components/clients",
     "components/customer-success",
     "components/dashboard",
     "components/forecast",

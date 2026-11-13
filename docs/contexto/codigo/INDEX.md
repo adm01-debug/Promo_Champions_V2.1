@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `64382cb9494868b4cd84ec7ea42ccb2748cf828a` (2026-11-13T14:24:20Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `914a813e48b105f843757a0601a8b695f10ca869` (2026-11-13T12:13:33-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2417), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2447), SQL (677), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3488 |
-| arquivos_codigo | 2497 |
-| linhas_codigo | 432767 |
+| arquivos_total | 3519 |
+| arquivos_codigo | 2527 |
+| linhas_codigo | 435302 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 174 |
-| componentes | 1275 |
-| hooks | 474 |
+| componentes | 1274 |
+| hooks | 477 |
 | edge_functions | 171 |
 | tabelas | 414 |
-| migrations | 669 |
+| migrations | 670 |
 | cron_jobs | 28 |
-| testes | 199 |
+| testes | 227 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
-- componentes: src/components (1095), src/pages (173), src/contexts (5)
-- hooks: src/hooks (462), src/contexts (6), src/components (4)
+- componentes: src/components (1094), src/pages (173), src/contexts (5)
+- hooks: src/hooks (465), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (116), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (144), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -79,14 +79,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/auth | 0 | 0 | 5 | 3 | 0 | 3 |
 | components/bi | 0 | 0 | 30 | 11 | 0 | 8 |
 | components/cadences | 0 | 0 | 22 | 54 | 1 | 17 |
-| components/clients | 0 | 0 | 20 | 8 | 1 | 6 |
+| components/clients | 0 | 0 | 19 | 9 | 1 | 7 |
 | components/closer | 0 | 0 | 8 | 7 | 0 | 6 |
 | components/coaching | 0 | 0 | 23 | 16 | 5 | 7 |
-| components/competitive | 0 | 0 | 33 | 26 | 0 | 36 |
+| components/competitive | 0 | 0 | 33 | 31 | 0 | 40 |
 | components/conversation-intelligence | 0 | 0 | 6 | 3 | 1 | 1 |
-| components/conversational | 0 | 0 | 58 | 47 | 15 | 24 |
+| components/conversational | 0 | 0 | 58 | 48 | 15 | 24 |
 | components/customer-success | 0 | 0 | 12 | 4 | 6 | 0 |
-| components/dashboard | 0 | 0 | 56 | 95 | 8 | 71 |
+| components/dashboard | 0 | 0 | 56 | 100 | 8 | 75 |
 | components/deal-intelligence | 0 | 0 | 47 | 30 | 10 | 15 |
 | components/dialer | 0 | 0 | 7 | 10 | 2 | 7 |
 | components/email | 0 | 0 | 10 | 15 | 3 | 5 |
@@ -94,27 +94,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/executive-briefing | 0 | 0 | 6 | 4 | 1 | 2 |
 | components/follow-up | 0 | 0 | 6 | 1 | 0 | 1 |
 | components/forecast | 0 | 0 | 7 | 1 | 1 | 2 |
-| components/gamification | 0 | 0 | 21 | 23 | 1 | 11 |
+| components/gamification | 0 | 0 | 21 | 24 | 1 | 12 |
 | components/goals | 0 | 0 | 6 | 2 | 0 | 2 |
 | components/icp | 0 | 0 | 5 | 6 | 0 | 3 |
-| components/intelligence | 0 | 0 | 10 | 3 | 1 | 4 |
+| components/intelligence | 0 | 0 | 10 | 10 | 3 | 6 |
 | components/lead-routing | 0 | 0 | 6 | 4 | 0 | 4 |
 | components/lead-scoring | 0 | 0 | 13 | 5 | 1 | 8 |
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
-| components/navigation | 0 | 0 | 9 | 333 | 32 | 160 |
+| components/navigation | 0 | 0 | 9 | 338 | 32 | 164 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
 | components/pipeline | 0 | 0 | 16 | 61 | 3 | 28 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
 | components/playbooks | 0 | 0 | 5 | 7 | 0 | 3 |
 | components/portfolio | 0 | 0 | 11 | 17 | 0 | 7 |
-| components/pricing | 0 | 0 | 13 | 1 | 1 | 0 |
+| components/pricing | 0 | 0 | 13 | 2 | 1 | 1 |
 | components/purchase-intelligence | 0 | 0 | 10 | 5 | 1 | 7 |
 | components/race | 0 | 0 | 102 | 45 | 3 | 16 |
 | components/ranking | 0 | 0 | 5 | 4 | 1 | 2 |
 | components/reporting | 0 | 0 | 15 | 19 | 1 | 7 |
 | components/reports | 0 | 0 | 13 | 4 | 0 | 6 |
 | components/revenue-intelligence | 0 | 0 | 37 | 59 | 19 | 32 |
-| components/sales | 0 | 0 | 16 | 46 | 3 | 22 |
+| components/sales | 0 | 0 | 16 | 53 | 3 | 24 |
 | components/sdr | 0 | 0 | 26 | 22 | 2 | 17 |
 | components/security | 0 | 0 | 18 | 14 | 3 | 14 |
 | components/sequences | 0 | 0 | 19 | 28 | 4 | 13 |
@@ -131,14 +131,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/admin | 0 | 0 | 10 | 34 | 2 | 22 |
 | hooks/admin-tasks | 0 | 0 | 6 | 0 | 0 | 5 |
 | hooks/bi | 0 | 0 | 19 | 12 | 0 | 16 |
-| hooks/cadences | 0 | 0 | 17 | 47 | 0 | 9 |
-| hooks/conversational | 0 | 0 | 16 | 39 | 12 | 16 |
+| hooks/cadences | 0 | 0 | 19 | 49 | 0 | 9 |
+| hooks/conversational | 0 | 0 | 16 | 40 | 12 | 17 |
 | hooks/crm | 0 | 0 | 6 | 7 | 0 | 5 |
 | hooks/dashboard | 0 | 0 | 11 | 9 | 0 | 12 |
 | hooks/deal-intelligence | 0 | 0 | 10 | 2 | 11 | 17 |
 | hooks/email | 0 | 0 | 12 | 15 | 3 | 3 |
 | hooks/engagement | 0 | 0 | 6 | 21 | 5 | 10 |
-| hooks/gamification | 0 | 0 | 17 | 26 | 0 | 20 |
+| hooks/gamification | 0 | 0 | 17 | 27 | 0 | 21 |
 | hooks/race | 0 | 0 | 41 | 47 | 3 | 16 |
 | hooks/reporting | 0 | 0 | 10 | 18 | 3 | 7 |
 | hooks/revenue | 0 | 0 | 5 | 18 | 4 | 9 |
@@ -148,7 +148,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 27 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 110 | 155 | 161 | 803 | 114 | 293 |
+| pages | 110 | 155 | 161 | 809 | 114 | 294 |
 | pages/admin | 1 | 12 | 12 | 81 | 10 | 46 |
 | services | 0 | 0 | 5 | 0 | 0 | 12 |
 
@@ -546,12 +546,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: ai.gateway.lovable.dev, x.test, api.resend.com, example.test, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, promo-champions-v2-1.vercel.app, promochampions.com.br, wa.me, x.supabase.co, api.dicebear.com
+- hosts mais citados: ai.gateway.lovable.dev, x.test, api.resend.com, example.test, promo-champions-v2-1.vercel.app, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, promochampions.com.br, wa.me, x.supabase.co, api.dicebear.com
 - webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-quote-sync, receive-quote-webhook, report-embed-public, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
 - env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, LOVABLE_API_KEY, METRICS_INGEST_TOKEN, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
 
 ## Permissões / papéis
-- papéis no código: user (52), system (43), closer (21), sdr (20), admin (19), hybrid (14), status (13), alert (12), region (10), authenticated (8), manager (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), alertdialog (2), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), tab (2), tool (2), Roles (1), agent (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), salesperson (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
+- papéis no código: user (52), system (43), closer (21), sdr (21), admin (19), alert (14), hybrid (14), status (13), region (10), authenticated (8), manager (8), list (7), assistant (5), img (5), main (5), button (3), grid (3), group (3), tablist (3), alertdialog (2), combobox (2), dialog (2), gridcell (2), listitem (2), presentation (2), radio (2), radiogroup (2), row (2), tab (2), tool (2), Roles (1), agent (1), anon (1), champion (1), columnheader (1), dev (1), economic (1), link (1), listbox (1), navigation (1), rowheader (1), sales_rep (1), salesperson (1), service_role (1), slider (1), string (1), sup (1), table (1), technical (1), toolbar (1), tooltip (1)
 - enums de papel: salesperson_role: sdr|closer|hybrid; app_role: admin|manager|salesperson
 - guards: src/components/auth/ProtectedRoute.tsx, src/components/navigation/NavigationGuard.tsx · rotas protegidas: 36 · públicas: /*, /abm, /acesso-negado, /admin/regras-comissao, /agenda, /agentes, /analytics, /analytics/abc, /analytics/closing-time, /analytics/deal-velocity, /analytics/emails, /analytics/evolution, /analytics/objections, /analytics/win-loss, /aprovacoes, /arena, /assinatura-digital, /assistente, /atividades, /audit-logs, /automacao-inteligente, /automacoes, /benchmarking, /bi-closer, /bi-gestor, /bi-sdr, /bi-vendedor, /bitrix24, /busca, /busca-inteligente, /cadencias, /cadencias-orcamentos, /calendario, /clientes, /coaching-inteligente, /comissoes, /comparador-precos, /competencias, /configuracoes, /contas/:id, /conversational-intelligence, /conversational-intelligence/gravacoes, /customer-success, /customer-success-360, /deal-intelligence, /deduplicacao, /desafios, /desafios-diarios, /email-tracking, /embed/report/:token, /engagement/abm, /engagement/abm/:accountId, /engagement/bulk-composer, /engagement/dialer, /engagement/email-scoring, /engagement/send-time, /estoque, /evolucao-precos, /ferramentas/bi, /follow-up, /follow-up/audit, /fonte-leads, /forecast, /fornecedores, /funil, /gamificacao/badges, /gatilhos-inatividade, /health-score, /icp, /importar-exportar, /inteligencia, /inteligencia-compras, /inteligencia-preditiva, /kanban-clientes, /lead-routing, /lead-scoring, /mapa-clientes, /metas, /metas-atividades, /metricas-categoria, /meu-assistente, /minhas-premiacoes, /multichannel, /notificacoes, /nps, /onboarding-tracking, /orcamentos, /perfil-gamer, /perguntar, /pipeline, /playbooks, /portfolio, /previsao-demanda, /pricing-intelligence, /produtos, /race-arena, /race-arena/career, /race-arena/closer, /race-arena/garage, /race-arena/sdr, /race-arena/spectator/:seasonId, /ranking, /relatorio-atividades, /relatorios, /relatorios-agendados, /relatorios-custom, /relatorios-custom/:id, /relatorios-email, /relatorios-executivos, /relatorios/cohort, /relatorios/funil, /reset-password, /revenue-forecast, /revenue-forecast-v2, /revenue-intelligence, /revops, /roi, /sales-enablement, /sequences, /sla-tracking, /tarefas, /team-activity, /territorios, /territory-optimization, /times, /top-produtos, /vendedores, /victory-feed, /webhooks, /win-loss-intelligence, /workflow-builder, /workflows
 - feature flags: ENABLE_RLS, FEATURE_X, experimental_ui, nova-tela, novo-inbox
@@ -574,26 +574,26 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20331 nós · 64526 arestas · 1446 comunidades · grafo do commit `64382cb9`
-- comunidades maiores: Card (536), react (435), Label (291), DialogContent (285), Índice (277), PageTransition (269), Badge (269), client.ts (250), getCorsHeaders (207), AccountBasedSelling.tsx (207), vitest (203), formatBRL (183)
-- símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
+- 20470 nós · 64868 arestas · 1468 comunidades · grafo do commit `914a813e`
+- comunidades maiores: Índice (279), Button (269), client.ts (266), getCorsHeaders (244), TabsTrigger (239), framer-motion (235), sonner (223), Badge (223), vitest (204), utils.ts (201), Input (182), card.tsx (176)
+- símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (87)
-- package-lock.json (85)
-- .github/workflows/pr-checks.yml (36)
-- deno.lock (27)
-- .github/workflows/quote-to-sale-e2e.yml (19)
-- .github/workflows/codeql.yml (18)
+- package.json (86)
+- package-lock.json (84)
+- .github/workflows/pr-checks.yml (34)
+- deno.lock (29)
+- .github/workflows/codeql.yml (19)
+- .github/workflows/quote-to-sale-e2e.yml (18)
 - RELATORIO_CI.md (18)
-- .github/workflows/cron-monitoring.yml (14)
 - CLAUDE.md (14)
+- .github/workflows/cron-monitoring.yml (13)
 - .github/workflows/qa-exhaustive.yml (13)
+- .github/workflows/edge-functions-bundle.yml (12)
 - PENDENCIAS.md (12)
-- supabase/functions/bitrix24-sync/index.ts (12)
-- .github/workflows/edge-functions-bundle.yml (11)
 - src/integrations/supabase/types.ts (11)
+- supabase/functions/bitrix24-sync/index.ts (11)
 - .github/workflows/graphify.yml (10)
 
 ## Workflows
@@ -752,21 +752,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
-- 2026-11-13 `64382cb` fix: remover dados e automações fictícios da análise ABC (#446)
-- 2026-11-13 `84c7cad` fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)
-- 2026-11-13 `3cf041b` fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)
-- 2026-11-13 `ceaddbf` fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)
-- 2026-11-13 `7b45023` chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)
-- 2026-11-13 `52ad2f4` fix: grava vendedor logado como dono ao criar conta no ABM (#475)
-- 2026-11-13 `3044064` fix: enviar user_id ao criar preferência de notificação (#474)
-- 2026-11-13 `e399094` fix: grava pesquisa NPS no vendedor logado (#473)
-- 2026-11-13 `e37f60a` Inscrição em cadência usa o vendedor logado como responsável padrão (#472)
-- 2026-11-13 `39cb90c` fix: etapa do playbook grava o vendedor certo em completed_by (#479)
-- 2026-11-13 `d21dcd1` fix: enviar completed_by ao marcar item do playbook no pipeline (#470)
-- 2026-11-13 `9bf39de` fix: campo Vendedor do registro de atividade vem com o vendedor logado (#471)
-- 2026-11-13 `f2155e8` fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)
-- 2026-11-13 `6a1d1c3` fix: preencher vendedor logado ao criar venda (#468)
-- 2026-11-13 `7bc13e2` feat: editar e excluir produto do fornecedor no comparador de preços (#437)
+- 2026-11-13 `914a813` fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)
+- 2026-11-13 `389ba61` fix: remover tendências fixas dos KPIs de conversas (#451)
+- 2026-11-13 `2ed73dc` fix: troca valores fixos de inteligência por dados reais ou estado vazio (#442)
+- 2026-11-13 `bb623b7` fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)
+- 2026-11-13 `b83d412` chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)
+- 2026-11-13 `3f027d1` fix: remover fila de aprovação fictícia das cadências (#440)
+- 2026-11-13 `824a372` fix: desabilita entrada na liga enquanto não há ligas cadastradas (#443)
+- 2026-11-13 `b97dd91` fix: permite gestor inscrever participantes ao criar batalha (#478)
+- 2026-11-13 `749babe` fix: metas de atividades sem indicadores e ações fictícias (#444)
+- 2026-11-13 `c82f9b3` fix: relatório de cadências passa a usar dados reais do banco (#449)
+- 2026-11-13 `05eca38` fix: apontar APP_URL para o domínio de produção na Vercel (#439)
+- 2026-11-13 `fb51238` fix: aba Market Intel da /arena mostra concorrentes reais em vez de matriz fixa (#455)
+- 2026-11-13 `3c77d1d` fix: troca vendedores fictícios do analytics por dados reais (#438)
+- 2026-11-13 `37fafa5` fix: regras de contato gravam via upsert e avisam erro de verdade (#456)
+- 2026-11-13 `77cf11d` chore(deps): bump @simplewebauthn/server from 14.0.2 to 14.0.3 (#411)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

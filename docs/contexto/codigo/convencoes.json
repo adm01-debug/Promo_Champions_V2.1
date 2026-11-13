@@ -6,12 +6,12 @@
    "src/pages (166)"
   ],
   "componentes": [
-   "src/components (1095)",
+   "src/components (1094)",
    "src/pages (173)",
    "src/contexts (5)"
   ],
   "hooks": [
-   "src/hooks (462)",
+   "src/hooks (465)",
    "src/contexts (6)",
    "src/components (4)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (116)",
+   "co-localizado (*.test) (144)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1275)"
+  ".tsx (1274)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: remover dados e automações fictícios da análise ABC (#446)",
-   "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)",
-   "fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)",
-   "fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)",
-   "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)"
+   "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)",
+   "fix: remover tendências fixas dos KPIs de conversas (#451)",
+   "fix: troca valores fixos de inteligência por dados reais ou estado vazio (#442)",
+   "fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)",
+   "chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

@@ -1463,7 +1463,8 @@
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/components/ui/switch.tsx",
-   "src/integrations/supabase/client.ts"
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
   ],
   "src/components/cadences/CreateCadenceDialog.tsx": [
    "src/components/cadences/MergeTagPicker.tsx",
@@ -1630,17 +1631,15 @@
    "src/components/clients/CategoryPie.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/tooltip.tsx",
-   "src/hooks/crm/useClient360.ts",
-   "src/lib/utils.ts"
-  ],
-  "src/components/clients/Client360Header.tsx": [
-   "src/components/ui/badge.tsx"
+   "src/hooks/crm/useClient360.ts"
   ],
   "src/components/clients/Client360HealthNbaSection.tsx": [
-   "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
    "src/hooks/crm/useClient360.ts",
-   "src/lib/utils.ts"
+   "src/hooks/tasks/useTaskMutations.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/components/clients/Client360KpiCards.tsx": [
    "src/components/clients/Client360ViewHelpers.ts",
@@ -1657,10 +1656,6 @@
    "src/components/ui/select.tsx",
    "src/lib/utils.ts"
   ],
-  "src/components/clients/Client360PredictiveCards.tsx": [
-   "src/components/ui/badge.tsx",
-   "src/components/ui/card.tsx"
-  ],
   "src/components/clients/Client360Skeleton.tsx": [
    "src/components/ui/skeleton.tsx"
   ],
@@ -1670,7 +1665,6 @@
    "src/components/clients/Client360HealthNbaSection.tsx",
    "src/components/clients/Client360KpiCards.tsx",
    "src/components/clients/Client360OrdersCard.tsx",
-   "src/components/clients/Client360PredictiveCards.tsx",
    "src/components/clients/Client360Skeleton.tsx",
    "src/components/clients/Client360ViewHelpers.ts",
    "src/components/clients/ClientChurnJustificationCard.tsx",
@@ -2097,9 +2091,8 @@
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/components/ui/dialog.tsx",
-   "src/components/ui/progress.tsx",
-   "src/components/ui/table.tsx"
+   "src/components/ui/table.tsx",
+   "src/hooks/conversational/useCompetitorsRegistry.ts"
   ],
   "src/components/competitive/GamifiedProfile.tsx": [
    "src/components/profile/MyRaceCarMiniCard.tsx",
@@ -3196,7 +3189,6 @@
   ],
   "src/components/deal-intelligence/NextBestActionPanel.tsx": [
    "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/hooks/deal-intelligence/useDealHealth.ts",
    "src/lib/utils.ts"
@@ -4081,7 +4073,8 @@
   "src/components/intelligence/PipelineStrategicReview.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx"
+   "src/components/ui/card.tsx",
+   "src/hooks/revenue/useRevenueIntelligenceHub.ts"
   ],
   "src/components/intelligence/RelationshipGraph.tsx": [
    "src/components/ui/card.tsx"
@@ -4882,9 +4875,11 @@
   ],
   "src/components/predictive/PredictiveScenarioPlanner.tsx": [
    "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/components/ui/slider.tsx"
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/slider.tsx",
+   "src/hooks/forecast/useScenarioBaseline.ts",
+   "src/lib/money.ts"
   ],
   "src/components/pricing/CompetitorRadarCard.tsx": [
    "src/components/pricing/pricing-ui.tsx",
@@ -4900,10 +4895,14 @@
    "src/components/ui/tooltip.tsx"
   ],
   "src/components/pricing/MarginAlertsCard.tsx": [
+   "src/components/pricing/pricing-ui.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/lib/utils.ts"
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/bi/useCriticalMarkupSales.ts",
+   "src/lib/bi/markupOverviewHelpers.ts",
+   "src/lib/markupHelpers.ts"
   ],
   "src/components/pricing/PriceElasticityChart.tsx": [
    "src/components/ui/badge.tsx",
@@ -6150,12 +6149,7 @@
    "src/types/sales.ts"
   ],
   "src/components/sales/cadence/ApprovalQueue.tsx": [
-   "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/scroll-area.tsx",
-   "src/lib/utils.ts",
-   "src/types/sales.ts"
+   "src/components/ui/card.tsx"
   ],
   "src/components/sales/cadence/CadenceAlertConfig.tsx": [
    "src/components/ui/button.tsx",
@@ -6192,9 +6186,12 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/components/sales/cadence/CadenceReportPanel.tsx": [
-   "src/components/ui/badge.tsx",
+   "src/components/icons/Linkedin.tsx",
    "src/components/ui/card.tsx",
-   "src/components/ui/select.tsx"
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/cadences/useCadenceMetrics.ts",
+   "src/hooks/cadences/useCadenceReport.ts"
   ],
   "src/components/sales/cadence/CadenceSimulationDialog.tsx": [
    "src/components/ui/badge.tsx",
@@ -6207,15 +6204,17 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/components/sales/cadence/CadenceTemplateManager.tsx": [
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/components/ui/select.tsx",
-   "src/components/ui/switch.tsx",
+   "src/components/ui/skeleton.tsx",
    "src/components/ui/textarea.tsx",
-   "src/types/sales.ts"
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/useMultichannel.ts"
   ],
   "src/components/sales/cadence/ContactFrequencyRules.tsx": [
    "src/components/ui/alert.tsx",
@@ -6231,9 +6230,8 @@
   ],
   "src/components/sales/cadence/EliteCadenceAnalytics.tsx": [
    "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/integrations/supabase/client.ts"
+   "src/hooks/cadences/useCadenceChannelStats.ts"
   ],
   "src/components/sales/cadence/LeadDetailedAuditLogs.tsx": [
    "src/components/ui/badge.tsx",
@@ -8078,6 +8076,10 @@
    "src/integrations/supabase/client.ts",
    "src/lib/supabase/chunkedIn.ts"
   ],
+  "src/hooks/cadences/useCadenceChannelStats.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/dateHelpers.ts"
+  ],
   "src/hooks/cadences/useCadenceMetrics.ts": [
    "src/integrations/supabase/client.ts"
   ],
@@ -8089,6 +8091,11 @@
   "src/hooks/cadences/useCadenceQueries.ts": [
    "src/integrations/supabase/client.ts",
    "src/lib/supabase/chunkedIn.ts"
+  ],
+  "src/hooks/cadences/useCadenceReport.ts": [
+   "src/hooks/cadences/useCadenceMetrics.ts",
+   "src/integrations/supabase/client.ts",
+   "src/utils/dateHelpers.ts"
   ],
   "src/hooks/cadences/useCadenceTaskMutations.ts": [
    "src/integrations/supabase/client.ts"
@@ -8181,7 +8188,8 @@
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/conversational/useCompetitorsRegistry.ts": [
-   "src/integrations/supabase/client.ts"
+   "src/integrations/supabase/client.ts",
+   "src/lib/supabase/chunkedIn.ts"
   ],
   "src/hooks/conversational/useConversationMetrics.ts": [
    "src/components/conversational/metrics/metricsHelpers.ts",
@@ -8423,6 +8431,11 @@
   ],
   "src/hooks/forecast/useRevenueForecast.ts": [
    "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/forecast/useScenarioBaseline.ts": [
+   "src/constants/index.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/supabase/fetchAllRows.ts"
   ],
   "src/hooks/gamification/useAchievementTrends.ts": [
    "src/integrations/supabase/client.ts"
@@ -10480,10 +10493,10 @@
   "src/pages/DealVelocityPage.tsx": [
    "src/components/analytics/DealVelocityChart.tsx",
    "src/components/transitions/PageTransition.tsx",
-   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/select.tsx",
-   "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts"
+   "src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts",
+   "src/hooks/sales/useSalespeopleMin.ts"
   ],
   "src/pages/Deduplication.tsx": [
    "src/components/admin/MergeConflictsResolver.tsx",
@@ -10559,8 +10572,9 @@
   "src/pages/EvolutionCurvesPage.tsx": [
    "src/components/competitive/EvolutionChart.tsx",
    "src/components/transitions/PageTransition.tsx",
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx"
+   "src/components/ui/card.tsx",
+   "src/hooks/useEvolutionCurves.ts",
+   "src/lib/money.ts"
   ],
   "src/pages/FeatureFlagsAdmin.tsx": [
    "src/components/transitions/PageTransition.tsx",
@@ -10810,6 +10824,7 @@
    "src/components/activities/AchievementBadgeDisplay.tsx",
    "src/components/activities/ActivityGoalEditDialog.tsx",
    "src/components/activities/ActivityHeatmap.tsx",
+   "src/components/activities/ActivityLogForm.tsx",
    "src/components/activities/ActivityVersusDuel.tsx",
    "src/components/activities/ArenaAITips.tsx",
    "src/components/activities/ArenaPulseFeed.tsx",
@@ -10824,13 +10839,11 @@
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tabs.tsx",
-   "src/config/external.ts",
    "src/hooks/activities/useActivityGoals.ts",
    "src/hooks/sales/useSalespeople.ts",
-   "src/hooks/use-toast.ts",
-   "src/hooks/useCelebration.ts",
    "src/lib/utils.ts"
   ],
   "src/pages/MeuAssistente.tsx": [

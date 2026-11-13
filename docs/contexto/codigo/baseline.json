@@ -2,11 +2,96 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "64382cb9494868b4cd84ec7ea42ccb2748cf828a",
+  "commit": "914a813e48b105f843757a0601a8b695f10ca869",
   "branch": "main",
-  "data_commit": "2026-11-13T14:24:20Z",
+  "data_commit": "2026-11-13T12:13:33-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "914a813",
+    "data": "2026-11-13",
+    "assunto": "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)"
+   },
+   {
+    "sha": "389ba61",
+    "data": "2026-11-13",
+    "assunto": "fix: remover tendências fixas dos KPIs de conversas (#451)"
+   },
+   {
+    "sha": "2ed73dc",
+    "data": "2026-11-13",
+    "assunto": "fix: troca valores fixos de inteligência por dados reais ou estado vazio (#442)"
+   },
+   {
+    "sha": "bb623b7",
+    "data": "2026-11-13",
+    "assunto": "fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)"
+   },
+   {
+    "sha": "b83d412",
+    "data": "2026-11-13",
+    "assunto": "chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)"
+   },
+   {
+    "sha": "3f027d1",
+    "data": "2026-11-13",
+    "assunto": "fix: remover fila de aprovação fictícia das cadências (#440)"
+   },
+   {
+    "sha": "824a372",
+    "data": "2026-11-13",
+    "assunto": "fix: desabilita entrada na liga enquanto não há ligas cadastradas (#443)"
+   },
+   {
+    "sha": "b97dd91",
+    "data": "2026-11-13",
+    "assunto": "fix: permite gestor inscrever participantes ao criar batalha (#478)"
+   },
+   {
+    "sha": "749babe",
+    "data": "2026-11-13",
+    "assunto": "fix: metas de atividades sem indicadores e ações fictícias (#444)"
+   },
+   {
+    "sha": "c82f9b3",
+    "data": "2026-11-13",
+    "assunto": "fix: relatório de cadências passa a usar dados reais do banco (#449)"
+   },
+   {
+    "sha": "05eca38",
+    "data": "2026-11-13",
+    "assunto": "fix: apontar APP_URL para o domínio de produção na Vercel (#439)"
+   },
+   {
+    "sha": "fb51238",
+    "data": "2026-11-13",
+    "assunto": "fix: aba Market Intel da /arena mostra concorrentes reais em vez de matriz fixa (#455)"
+   },
+   {
+    "sha": "3c77d1d",
+    "data": "2026-11-13",
+    "assunto": "fix: troca vendedores fictícios do analytics por dados reais (#438)"
+   },
+   {
+    "sha": "37fafa5",
+    "data": "2026-11-13",
+    "assunto": "fix: regras de contato gravam via upsert e avisam erro de verdade (#456)"
+   },
+   {
+    "sha": "77cf11d",
+    "data": "2026-11-13",
+    "assunto": "chore(deps): bump @simplewebauthn/server from 14.0.2 to 14.0.3 (#411)"
+   },
+   {
+    "sha": "d0da8ad",
+    "data": "2026-11-13",
+    "assunto": "fix: simulador de cenarios usa receita ganha real e remove plano falso (#450)"
+   },
+   {
+    "sha": "0915aab",
+    "data": "2026-11-13",
+    "assunto": "fix: remove ações e previsões falsas do Cliente 360 (#441)"
+   },
    {
     "sha": "64382cb",
     "data": "2026-11-13",
@@ -46,94 +131,9 @@
     "sha": "e399094",
     "data": "2026-11-13",
     "assunto": "fix: grava pesquisa NPS no vendedor logado (#473)"
-   },
-   {
-    "sha": "e37f60a",
-    "data": "2026-11-13",
-    "assunto": "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)"
-   },
-   {
-    "sha": "39cb90c",
-    "data": "2026-11-13",
-    "assunto": "fix: etapa do playbook grava o vendedor certo em completed_by (#479)"
-   },
-   {
-    "sha": "d21dcd1",
-    "data": "2026-11-13",
-    "assunto": "fix: enviar completed_by ao marcar item do playbook no pipeline (#470)"
-   },
-   {
-    "sha": "9bf39de",
-    "data": "2026-11-13",
-    "assunto": "fix: campo Vendedor do registro de atividade vem com o vendedor logado (#471)"
-   },
-   {
-    "sha": "f2155e8",
-    "data": "2026-11-13",
-    "assunto": "fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)"
-   },
-   {
-    "sha": "6a1d1c3",
-    "data": "2026-11-13",
-    "assunto": "fix: preencher vendedor logado ao criar venda (#468)"
-   },
-   {
-    "sha": "7bc13e2",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e excluir produto do fornecedor no comparador de preços (#437)"
-   },
-   {
-    "sha": "2c36718",
-    "data": "2026-11-13",
-    "assunto": "feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)"
-   },
-   {
-    "sha": "4e0bb00",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e excluir filas do Power Dialer (#435)"
-   },
-   {
-    "sha": "7ab97e0",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e arquivar materiais no Sales Enablement (#433)"
-   },
-   {
-    "sha": "1f60080",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e desativar desafios semanais (#432)"
-   },
-   {
-    "sha": "b68acd2",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e cancelar batalhas de vendas (#431)"
-   },
-   {
-    "sha": "9d3c316",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e excluir workflows no Automation Builder (#430)"
-   },
-   {
-    "sha": "5d2f222",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e remover signatários na assinatura digital (#428)"
-   },
-   {
-    "sha": "56b4d2b",
-    "data": "2026-11-13",
-    "assunto": "fix(hooks): plano de conta ABM envia created_by ao criar (#467)"
-   },
-   {
-    "sha": "21eae42",
-    "data": "2026-11-13",
-    "assunto": "feat: editar e excluir contas no Account-Based Selling (#426)"
-   },
-   {
-    "sha": "53e363f",
-    "data": "2026-11-13",
-    "assunto": "test: serializa execuções do stress quote→sale com lock consultivo (#465)"
    }
   ],
-  "arquivos_mudados_7d": 571,
+  "arquivos_mudados_7d": 628,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -161,11 +161,27 @@
    },
    {
     "pasta": "src/components/competitive",
-    "mudancas": 29
+    "mudancas": 34
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 24
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 24
+   },
+   {
+    "pasta": "src/hooks/gamification",
+    "mudancas": 24
    },
    {
     "pasta": "src/hooks/race",
     "mudancas": 24
+   },
+   {
+    "pasta": "src/components/conversational",
+    "mudancas": 23
    },
    {
     "pasta": "src/components/pipeline",
@@ -176,49 +192,33 @@
     "mudancas": 23
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 22
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 22
-   },
-   {
-    "pasta": "src/hooks/gamification",
-    "mudancas": 22
-   },
-   {
-    "pasta": "src/components/conversational",
-    "mudancas": 21
-   },
-   {
     "pasta": "src/hooks/sales",
-    "mudancas": 19
+    "mudancas": 21
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 87
+    "mudancas": 86
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 85
+    "mudancas": 84
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 36
+    "mudancas": 34
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 27
-   },
-   {
-    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 19
+    "mudancas": 29
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
+    "mudancas": 19
+   },
+   {
+    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
     "mudancas": 18
    },
    {
@@ -226,31 +226,31 @@
     "mudancas": 18
    },
    {
-    "arquivo": ".github/workflows/cron-monitoring.yml",
+    "arquivo": "CLAUDE.md",
     "mudancas": 14
    },
    {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 14
+    "arquivo": ".github/workflows/cron-monitoring.yml",
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/qa-exhaustive.yml",
     "mudancas": 13
    },
    {
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "mudancas": 12
+   },
+   {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 12
-   },
-   {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 11
    },
    {
@@ -258,50 +258,50 @@
     "mudancas": 10
    },
    {
-    "arquivo": "vite.config.ts",
+    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
     "mudancas": 10
+   },
+   {
+    "arquivo": "docs/RUNBOOK.md",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "index.html",
+    "mudancas": 9
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
    },
    {
-    "arquivo": "src/hooks/useQuotes.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 8
-   },
-   {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 8
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/admin/useV4Callbacks.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/useQuotes.ts",
+    "mudancas": 9
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 93
+    "commits": 108
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 20
+    "commits": 22
    },
    {
     "autor": "Claude",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3488,
-  "arquivos_codigo": 2497,
-  "linhas_codigo": 432767,
+  "arquivos_total": 3519,
+  "arquivos_codigo": 2527,
+  "linhas_codigo": 435302,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1275,
-  "hooks": 474,
+  "componentes": 1274,
+  "hooks": 477,
   "edge_functions": 171,
   "tabelas": 414,
-  "migrations": 669,
+  "migrations": 670,
   "cron_jobs": 28,
-  "testes": 199,
+  "testes": 227,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,12 +595,12 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1193,
-   "linhas": 189088
+   "arquivos": 1206,
+   "linhas": 189712
   },
   "src/config": {
-   "arquivos": 3,
-   "linhas": 90
+   "arquivos": 4,
+   "linhas": 135
   },
   "src/constants": {
    "arquivos": 1,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 523,
-   "linhas": 61021
+   "arquivos": 535,
+   "linhas": 62598
   },
   "src/integrations": {
    "arquivos": 4,
@@ -627,8 +627,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 177,
-   "linhas": 44103
+   "arquivos": 180,
+   "linhas": 44312
   },
   "src/routes": {
    "arquivos": 3,
@@ -639,8 +639,8 @@
    "linhas": 1175
   },
   "src/test": {
-   "arquivos": 10,
-   "linhas": 946
+   "arquivos": 11,
+   "linhas": 1026
   },
   "src/types": {
    "arquivos": 4,
@@ -787,7 +787,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
-  "arquivos_acima_500_linhas": 69
+  "arquivos_acima_500_linhas": 68
  },
  "todos": [
   {

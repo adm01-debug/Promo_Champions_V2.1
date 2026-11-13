@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2417)",
-   "SQL (676)",
+   "TypeScript (2447)",
+   "SQL (677)",
    "Markdown (205)",
    "JavaScript (77)",
    "JSON (33)",
@@ -1598,6 +1598,10 @@
     "arquivos": 5
    },
    {
+    "host": "promo-champions-v2-1.vercel.app",
+    "arquivos": 4
+   },
+   {
     "host": "usyxfpqlsspldubptrdl.supabase.co",
     "arquivos": 4
    },
@@ -1619,10 +1623,6 @@
    },
    {
     "host": "c.test",
-    "arquivos": 2
-   },
-   {
-    "host": "promo-champions-v2-1.vercel.app",
     "arquivos": 2
    },
    {
@@ -1674,10 +1674,6 @@
     "arquivos": 1
    },
    {
-    "host": "championgifts.lovable.app",
-    "arquivos": 1
-   },
-   {
     "host": "champions.promobrindes.com.br",
     "arquivos": 1
    },
@@ -1691,6 +1687,10 @@
    },
    {
     "host": "example.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "exemplo.test",
     "arquivos": 1
    },
    {
@@ -1853,11 +1853,15 @@
    },
    {
     "papel": "sdr",
-    "ocorrencias": 20
+    "ocorrencias": 21
    },
    {
     "papel": "admin",
     "ocorrencias": 19
+   },
+   {
+    "papel": "alert",
+    "ocorrencias": 14
    },
    {
     "papel": "hybrid",
@@ -1866,10 +1870,6 @@
    {
     "papel": "status",
     "ocorrencias": 13
-   },
-   {
-    "papel": "alert",
-    "ocorrencias": 12
    },
    {
     "papel": "region",

@@ -2247,22 +2247,25 @@
     "usePageTransitionConfig",
     "useReducedMotion",
     "useRef",
+    "useSalespeopleMin",
     "useState"
    ],
    "hooks_locais": [
     "useDealVelocity",
-    "useReducedMotion"
+    "useReducedMotion",
+    "useSalespeopleMin"
    ],
    "tabelas": [
     "deal_stage_history",
-    "sales"
+    "sales",
+    "salespeople_public"
    ],
    "rpcs": [],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 14
+   "arquivos_puxados": 15
   },
   {
    "protegida": false,
@@ -2535,14 +2538,18 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useContext",
     "useCountdown",
     "useDailyMissions",
+    "useDeleteCompetitor",
     "useEffect",
     "useEvolutionCurves",
     "useGamifiedProfile",
     "useJoinLeague",
     "useKudos",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLocation",
     "useMemo",
@@ -2566,6 +2573,7 @@
     "useSalespeopleRanking",
     "useState",
     "useUpdateSalesperson",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
@@ -2577,11 +2585,15 @@
     "useCompetitiveChat",
     "useCompetitiveRanking",
     "useCompetitiveSeasons",
+    "useCompetitorMarketIntel",
+    "useCompetitorsRegistry",
     "useDailyMissions",
+    "useDeleteCompetitor",
     "useEvolutionCurves",
     "useGamifiedProfile",
     "useJoinLeague",
     "useKudos",
+    "useLeagueEnrollment",
     "useLeagues",
     "usePrizeWheel",
     "useProgressiveGoals",
@@ -2595,6 +2607,7 @@
     "useSalespeople",
     "useSalespeopleRanking",
     "useUpdateSalesperson",
+    "useUpsertCompetitor",
     "useUserRoles",
     "useVictoryFeed",
     "useWeeklyMatchups",
@@ -2609,12 +2622,15 @@
     "competitive_chat_messages",
     "competitive_ranking",
     "competitive_seasons",
+    "competitor_mentions",
+    "competitors_registry",
     "daily_challenge_progress",
     "daily_challenges",
     "feed_comments",
     "feed_reactions",
     "kudos",
     "league_members",
+    "leagues",
     "performance_bets",
     "prize_wheel_spins",
     "progressive_goals",
@@ -2625,6 +2641,7 @@
     "rank_change_notifications",
     "sales",
     "sales_battles",
+    "sales_enablement_assets",
     "sales_goals",
     "sales_streaks",
     "salespeople",
@@ -2656,7 +2673,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 84
   },
   {
    "protegida": false,
@@ -3526,6 +3543,8 @@
     "useABTests",
     "useActiveCadencesBySaleIds",
     "useAuth",
+    "useCadenceChannelExecution",
+    "useCadenceChannelStats",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
@@ -3539,10 +3558,12 @@
     "useCreateCadence",
     "useCreateCadenceStep",
     "useCreateEnrollmentRule",
+    "useCreateTemplate",
     "useDeclareWinner",
     "useDeleteCadence",
     "useDeleteCadenceStep",
     "useDeleteEnrollmentRule",
+    "useDeleteTemplate",
     "useEffect",
     "useEnrollInCadence",
     "useEnrollQuoteInCadence",
@@ -3554,6 +3575,7 @@
     "useLeadDetailedLogs",
     "useLocation",
     "useMemo",
+    "useMessageTemplates",
     "useMutation",
     "useNavigationType",
     "usePageTransitionConfig",
@@ -3574,13 +3596,16 @@
     "useUpdateCadence",
     "useUpdateCadenceStep",
     "useUpdateEnrollmentRule",
-    "useUpdateLeadStage"
+    "useUpdateLeadStage",
+    "useUpdateTemplate"
    ],
    "hooks_locais": [
     "useABTestResults",
     "useABTests",
     "useActiveCadencesBySaleIds",
     "useAuth",
+    "useCadenceChannelExecution",
+    "useCadenceChannelStats",
     "useCadenceMetrics",
     "useCadenceStats",
     "useCadenceSteps",
@@ -3592,15 +3617,18 @@
     "useCreateCadence",
     "useCreateCadenceStep",
     "useCreateEnrollmentRule",
+    "useCreateTemplate",
     "useDeclareWinner",
     "useDeleteCadence",
     "useDeleteCadenceStep",
     "useDeleteEnrollmentRule",
+    "useDeleteTemplate",
     "useEnrollInCadence",
     "useEnrollQuoteInCadence",
     "useEnrollmentRules",
     "useFunnelRules",
     "useLeadDetailedLogs",
+    "useMessageTemplates",
     "usePauseCadence",
     "useProspectCadences",
     "useQuoteCadenceStats",
@@ -3614,7 +3642,8 @@
     "useUpdateCadence",
     "useUpdateCadenceStep",
     "useUpdateEnrollmentRule",
-    "useUpdateLeadStage"
+    "useUpdateLeadStage",
+    "useUpdateTemplate"
    ],
    "tabelas": [
     "cadence_ab_tests",
@@ -3625,9 +3654,11 @@
     "cadence_steps",
     "cadence_tasks",
     "cadences",
+    "channel_interactions",
     "error_logs",
     "intent_audit_logs",
     "lead_detailed_logs",
+    "message_templates",
     "prospect_cadences",
     "salespeople",
     "salesperson_preferences"
@@ -3648,7 +3679,7 @@
    "papeis": [
     "alert"
    ],
-   "arquivos_puxados": 75
+   "arquivos_puxados": 81
   },
   {
    "protegida": false,
@@ -3677,6 +3708,8 @@
     "useCompleteCadenceTask",
     "useContactFrequencyRules",
     "useContext",
+    "useCreateTemplate",
+    "useDeleteTemplate",
     "useEffect",
     "useEnrollQuoteInCadence",
     "useFunnelRules",
@@ -3684,6 +3717,7 @@
     "useIsMobile",
     "useMediaQuery",
     "useMemo",
+    "useMessageTemplates",
     "useMutation",
     "usePauseQuoteCadence",
     "usePrefersReducedMotion",
@@ -3702,7 +3736,8 @@
     "useSearchParams",
     "useSkipCadenceTask",
     "useState",
-    "useTodaysCadenceTasks"
+    "useTodaysCadenceTasks",
+    "useUpdateTemplate"
    ],
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
@@ -3717,11 +3752,14 @@
     "useCancelQuoteCadence",
     "useCompleteCadenceTask",
     "useContactFrequencyRules",
+    "useCreateTemplate",
+    "useDeleteTemplate",
     "useEnrollQuoteInCadence",
     "useFunnelRules",
     "useGamificationSafe",
     "useIsMobile",
     "useMediaQuery",
+    "useMessageTemplates",
     "usePauseQuoteCadence",
     "usePrefersReducedMotion",
     "useProspectCadences",
@@ -3735,7 +3773,8 @@
     "useResumeQuoteCadence",
     "useSavedFilters",
     "useSkipCadenceTask",
-    "useTodaysCadenceTasks"
+    "useTodaysCadenceTasks",
+    "useUpdateTemplate"
    ],
    "tabelas": [
     "cadence_alert_templates",
@@ -3744,7 +3783,9 @@
     "cadence_steps",
     "cadence_tasks",
     "cadences",
+    "channel_interactions",
     "intent_audit_logs",
+    "message_templates",
     "prospect_cadences",
     "salespeople",
     "salesperson_preferences",
@@ -3763,7 +3804,7 @@
     "region",
     "status"
    ],
-   "arquivos_puxados": 72
+   "arquivos_puxados": 77
   },
   {
    "protegida": false,
@@ -3836,6 +3877,7 @@
     "useContext",
     "useCountUp",
     "useCreateClient",
+    "useCreateTask",
     "useDebouncedValue",
     "useDeleteClient",
     "useEffect",
@@ -3871,6 +3913,7 @@
     "useComposeEmail",
     "useCountUp",
     "useCreateClient",
+    "useCreateTask",
     "useDebouncedValue",
     "useDeleteClient",
     "useICPByClientName",
@@ -3889,9 +3932,11 @@
     "client_interactions",
     "clients",
     "icp_data",
-    "sales"
+    "sales",
+    "tasks"
    ],
    "rpcs": [
+    "get_current_salesperson_id",
     "merge_clients"
    ],
    "edges": [
@@ -3906,7 +3951,7 @@
     "navigation",
     "region"
    ],
-   "arquivos_puxados": 75
+   "arquivos_puxados": 77
   },
   {
    "protegida": false,
@@ -4411,6 +4456,7 @@
     "useCoachingActions",
     "useCoachingLeaderboard",
     "useCoachingScorecard",
+    "useCompetitorMarketIntel",
     "useCompetitorMentions",
     "useCompetitorsRegistry",
     "useContext",
@@ -4465,6 +4511,7 @@
     "useCoachingActions",
     "useCoachingLeaderboard",
     "useCoachingScorecard",
+    "useCompetitorMarketIntel",
     "useCompetitorMentions",
     "useCompetitorsRegistry",
     "useConversationMetrics",
@@ -4552,7 +4599,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 101
+   "arquivos_puxados": 102
   },
   {
    "protegida": false,
@@ -6550,6 +6597,7 @@
     "useQueryClient",
     "useReducedMotion",
     "useRef",
+    "useScenarioBaseline",
     "useScoreTrend",
     "useState"
    ],
@@ -6557,6 +6605,7 @@
     "useLeadScoreExplanation",
     "usePredictiveIntelligence",
     "useReducedMotion",
+    "useScenarioBaseline",
     "useScoreTrend"
    ],
    "tabelas": [
@@ -6576,8 +6625,10 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 27
+   "papeis": [
+    "alert"
+   ],
+   "arquivos_puxados": 30
   },
   {
    "protegida": false,
@@ -6903,10 +6954,11 @@
     "useActivityGoalProgress",
     "useActivityGoals",
     "useAllSalespeopleXP",
-    "useAudio",
+    "useAuth",
     "useCallback",
-    "useCelebration",
+    "useClients",
     "useContext",
+    "useCreateActivity",
     "useEffect",
     "useFormContext",
     "useFormField",
@@ -6920,17 +6972,14 @@
     "usePageTransitionConfig",
     "useQuery",
     "useQueryClient",
-    "useRecordAchievement",
     "useReducedMotion",
     "useRef",
     "useSalespeople",
     "useSalespeopleRanking",
     "useSalespersonXP",
-    "useSoundSettings",
     "useState",
     "useStreakRanking",
     "useTeamAchievementStats",
-    "useToast",
     "useUpdateSalesperson",
     "useUpsertActivityGoal",
     "useXpConfig"
@@ -6943,18 +6992,16 @@
     "useActivityGoalProgress",
     "useActivityGoals",
     "useAllSalespeopleXP",
-    "useAudio",
-    "useCelebration",
+    "useAuth",
+    "useClients",
+    "useCreateActivity",
     "useIndexEntity",
-    "useRecordAchievement",
     "useReducedMotion",
     "useSalespeople",
     "useSalespeopleRanking",
     "useSalespersonXP",
-    "useSoundSettings",
     "useStreakRanking",
     "useTeamAchievementStats",
-    "useToast",
     "useUpdateSalesperson",
     "useUpsertActivityGoal"
    ],
@@ -6963,17 +7010,23 @@
     "activities",
     "activity_goals",
     "app_config",
+    "clients",
     "sales",
     "sales_goals",
     "salespeople",
     "salesperson_xp"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "merge_clients"
+   ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 65
+   "papeis": [
+    "admin",
+    "combobox"
+   ],
+   "arquivos_puxados": 68
   },
   {
    "protegida": false,
@@ -8118,14 +8171,19 @@
    "redireciona": null,
    "hooks": [
     "useCallback",
+    "useCriticalMarkupSales",
     "useMemo",
+    "useNavigate",
     "usePricingIntelligence",
     "useState"
    ],
    "hooks_locais": [
+    "useCriticalMarkupSales",
     "usePricingIntelligence"
    ],
-   "tabelas": [],
+   "tabelas": [
+    "sales_with_markup"
+   ],
    "rpcs": [],
    "edges": [
     "pricing-intelligence"
@@ -8133,7 +8191,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 29
+   "arquivos_puxados": 33
   },
   {
    "protegida": false,
@@ -10674,6 +10732,7 @@
     "useGamificationData",
     "useId",
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useLocation",
@@ -10706,6 +10765,7 @@
     "useCountUp",
     "useGamificationData",
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues",
     "useLevelUpCelebration",
     "useMarkRankingNotificationRead",
@@ -10724,6 +10784,7 @@
     "achievements",
     "app_config",
     "league_members",
+    "leagues",
     "ranking_notifications",
     "sales",
     "sales_goals",

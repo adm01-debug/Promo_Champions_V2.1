@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `64382cb949` · branch `main` · 2026-11-13 15:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `914a813e48` · branch `main` · 2026-11-13 16:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `client_portfolio` | Users can read own client_portfolio | SELECT | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
 | `document_signers` | Authenticated users can insert document_signers | INSERT | authenticated | permissive |  | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |
 | `document_signers` | Authenticated users can update document_signers | UPDATE | authenticated | permissive | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| … +741 linhas — lista completa em `context.json` | | | | | | |
+| … +742 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -1210,7 +1210,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `boost` | compara | `src/hooks/race/useRaceSounds.ts` |
 | `type` | `bounce` | compara | `supabase/functions/_shared/unsubscribe.ts` |
 | `type` | `calendar_preview` | escreve | `src/hooks/dashboard/useDashboardLayout.ts` |
-| `type` | `call` | compara, escreve | `src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/sales/cadence/ApprovalQueue.tsx`<br>`src/components/sales/cadence/CadenceTemplateManager.tsx`<br>`src/components/tasks/NextBestAction.tsx`<br>`src/types/index.ts` |
+| `type` | `call` | compara, escreve | `src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/tasks/NextBestAction.tsx`<br>`src/types/index.ts` |
 | `type` | `call_now` | compara | `src/components/tasks/NextBestAction.tsx` |
 | `type` | `call_recording` | compara | `supabase/functions/semantic-index-entity/index.ts` |
 | `type` | `change_stage` | compara, escreve | `src/components/pipeline/QuickActionsMenu.tsx` |
@@ -1239,7 +1239,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `default` | escreve | `src/pages/WorkflowsPage.tsx` |
 | `type` | `discount` | compara | `src/components/tasks/NextBestAction.tsx` |
 | `type` | `drs` | compara | `src/components/race/raceTrackHelpers.ts` |
-| `type` | `email` | compara, escreve | `src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/sales/cadence/ApprovalQueue.tsx`<br>`src/components/sales/cadence/CadenceAlertConfig.tsx`<br>`src/components/sales/cadence/CadenceOutcomeConfig.tsx`<br>… +3 |
+| `type` | `email` | compara, escreve | `src/components/dashboard/IntegrationStatusPanel.tsx`<br>`src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/sales/cadence/CadenceAlertConfig.tsx`<br>`src/components/sales/cadence/CadenceOutcomeConfig.tsx`<br>`src/components/tasks/NextBestAction.tsx`<br>… +1 |
 | `type` | `email_message` | compara | `supabase/functions/semantic-index-entity/index.ts` |
 | `type` | `enps` | compara, escreve | `src/components/engagement/PulseSurveyWidget.tsx` |
 | `type` | `enum` | escreve | `src/hooks/reporting/reportBuilderHelpers.ts` |
@@ -1373,28 +1373,22 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `type` | `warning` | compara, escreve | `src/components/analytics/ABCNeuralInsights.tsx`<br>`src/components/analytics/AIPerformanceInsights.tsx`<br>`src/components/dashboard/AlertsPanel.tsx`<br>`src/components/intelligence/PipelineStrategicReview.tsx`<br>`src/pages/RelatoriosExecutivos.tsx` |
 | `type` | `week` | compara, escreve | `src/components/revenue-intelligence/forecastHelpers.ts`<br>`supabase/functions/generate-revenue-forecast/index.ts` |
 | `type` | `weekday` | compara | `supabase/functions/schedule-optimal-send/index.ts`<br>`supabase/functions/send-time-optimizer/index.ts` |
-| `type` | `whatsapp` | compara, escreve | `src/components/sales/cadence/ApprovalQueue.tsx`<br>`src/components/sales/cadence/CadenceTemplateManager.tsx`<br>`src/components/tasks/NextBestAction.tsx` |
+| `type` | `whatsapp` | compara | `src/components/tasks/NextBestAction.tsx` |
 | `type` | `whatsapp_message` | compara | `supabase/functions/semantic-index-entity/index.ts` |
 | `type` | `win_factor` | compara | `src/lib/winloss/riskSeverity.ts`<br>`supabase/functions/detect-winloss-at-risk/action_matrix_combinations_test.ts` |
 | `type` | `window` | escreve | `public/sw.js` |
 | `type` | `xp` | escreve | `src/components/gamification/XPToast.tsx`<br>`src/hooks/gamification/usePrizeWheel.ts` |
 | `last_status` | `succeeded` | compara | `src/components/admin/AdminSystemStatus.tsx` |
-| `status` | `Active` | escreve | `src/components/clients/Client360PredictiveCards.tsx` |
-| `status` | `Backlog` | escreve | `src/components/competitive/FeatureComparison.tsx` |
 | `status` | `Blocked` | compara | `src/components/purchase-intelligence/DuplicateBlockAudit.tsx` |
 | `status` | `CHANNEL_ERROR` | compara | `src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | `status` | `CLOSED` | compara | `src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | `status` | `Cancelado` | escreve | `src/components/customer-success/CustomerSuccess360Hub.tsx` |
-| `status` | `Critical` | compara, escreve | `src/components/pricing/MarginAlertsCard.tsx` |
 | `status` | `Fechado` | compara | `supabase/functions/pricing-intelligence/index.ts` |
 | `status` | `Pendente` | escreve | `src/components/customer-success/CustomerSuccess360Hub.tsx` |
 | `status` | `Perdido` | filtra | `supabase/functions/dialer-queue-builder/index.ts` |
-| `status` | `Planning` | escreve | `src/components/competitive/FeatureComparison.tsx` |
 | `status` | `Proposta` | compara | `src/hooks/useNextBestAction.ts` |
-| `status` | `Research` | escreve | `src/components/competitive/FeatureComparison.tsx` |
 | `status` | `SUBSCRIBED` | compara | `src/components/lead-scoring/LeadScoringDashboard.tsx` |
 | `status` | `Vendido` | filtra | `supabase/functions/dialer-queue-builder/index.ts` |
-| `status` | `Warning` | escreve | `src/components/pricing/MarginAlertsCard.tsx` |
 | `status` | `abaixo` | compara | `src/pages/admin/AdminPlatformSLOPage.tsx` |
 | `status` | `abandoned` | compara | `src/pages/RelatoriosExecutivos.tsx` |
 | `status` | `accepted` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
@@ -1418,7 +1412,7 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `closed` | compara | `supabase/migrations/20260105000004_performance_indexes.sql` |
 | `status` | `closed_lost` | compara | `src/components/assistant/DealPreviewCard.tsx`<br>`src/components/assistant/dealRiskCalculator.ts` |
 | `status` | `closed_won` | compara | `src/components/assistant/DealPreviewCard.tsx`<br>`src/components/assistant/dealRiskCalculator.ts` |
-| `status` | `completed` | compara, escreve, filtra | `src/components/analytics/LTVBySegment.tsx`<br>`src/components/assistant/AssistantTodayTasks.tsx`<br>`src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>… +64 |
+| `status` | `completed` | compara, escreve, filtra | `src/components/analytics/LTVBySegment.tsx`<br>`src/components/assistant/AssistantTodayTasks.tsx`<br>`src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>… +65 |
 | `status` | `confirmed` | compara | `src/components/orders/orderHelpers.ts` |
 | `status` | `correlation_key_required` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
 | `status` | `critical` | compara | `src/components/sdr/PredictiveSuccessMap.tsx`<br>`src/pages/AccountBasedSelling.tsx` |
@@ -1444,8 +1438,6 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `finished` | compara, escreve, filtra | `src/components/race/admin/SeasonsManagerTable.tsx`<br>`src/hooks/race/useChampionsHistory.ts`<br>`src/hooks/race/useGhostCar.ts`<br>`src/hooks/race/useMonthlyChampion.ts`<br>`src/hooks/race/useMyCareer.ts`<br>… +2 |
 | `status` | `fired` | compara | `src/hooks/win-loss/useWebhookAlertHistory.ts` |
 | `status` | `fulfilled` | compara | `supabase/functions/process-call-recording-ingest/index.ts`<br>`supabase/functions/send-push-notification/index.ts` |
-| `status` | `full` | compara, escreve | `src/components/competitive/FeatureComparison.tsx` |
-| `status` | `gap` | compara, escreve | `src/components/competitive/FeatureComparison.tsx` |
 | `status` | `generating` | escreve | `supabase/functions/email-composer-bulk/index.ts` |
 | `status` | `good` | compara, escreve | `src/components/customer-success/CustomerSuccessHub.tsx`<br>`src/hooks/useCustomerSuccess.ts`<br>`supabase/functions/customer-success-hub/index.ts` |
 | `status` | `healthy` | compara, escreve | `src/components/atoms/SystemHealthBadge.tsx`<br>`src/components/pipeline-pulse/pulseHelpers.ts`<br>`src/pages/AccountBasedSelling.tsx`<br>`supabase/functions/territory-optimization/index.ts` |
@@ -1482,13 +1474,21 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | `status` | `overdue` | escreve | `src/components/bi/ChurnTaskCompletionCard.tsx` |
 | `status` | `overloaded` | compara | `supabase/functions/territory-optimization/index.ts` |
 | `status` | `paid` | compara, escreve | `src/components/customer-success/CustomerSuccess360Hub.tsx`<br>`src/hooks/useCommissionBonusAwards.ts`<br>`src/hooks/useCommissions.ts`<br>`src/pages/AdminAuditoriaPremiacoes.tsx`<br>`src/pages/Comissoes.tsx`<br>… +2 |
-| `status` | `partial` | compara, escreve | `src/components/competitive/FeatureComparison.tsx` |
 | `status` | `passed` | compara, escreve | `src/hooks/useRetryTestRun.ts`<br>`src/pages/RetryTestStatusPage.tsx`<br>`supabase/functions/run-retry-tests/index.ts` |
 | `status` | `paused` | compara, escreve, filtra | `src/components/cadences/ABTestDialog.tsx`<br>`src/components/cadences/ProspectCadenceControls.tsx`<br>`src/components/cadences/TodaysCadenceTasks.tsx`<br>`src/components/cadences/quote/QuoteCadenceCard.tsx`<br>`src/components/sequences/sequenceHelpers.ts`<br>… +4 |
 | `status` | `pendente` | compara | `src/components/admin/AdminSystemStatus.tsx` |
-| `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +59 |
+| `status` | `pending` | compara, escreve, filtra | `src/components/analytics/LeadSLAMonitor.tsx`<br>`src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx`<br>`src/components/clients/OrderDetailsDialog.tsx`<br>`src/components/clients/OrdersTable.tsx`<br>`src/components/clients/OrdersTimeline.tsx`<br>… +58 |
 | `status` | `pending_approval` | compara, filtra | `supabase/functions/ai-agent-orchestrator/index.ts` |
-| … +133 linhas — lista completa em `context.json` | | | |
+| `status` | `permanent` | compara | `src/hooks/email/failedDraftsHelpers.ts` |
+| `status` | `practiced` | compara, escreve | `src/components/conversational/CoachingActionsList.tsx`<br>`src/hooks/conversational/useCoachingActions.ts` |
+| `status` | `preparing` | compara | `src/components/orders/orderHelpers.ts` |
+| `status` | `processed` | escreve | `supabase/functions/receive-quote-sync/index.ts` |
+| `status` | `processing` | escreve, filtra | `supabase/functions/process-scheduled-sends/index.ts`<br>`supabase/functions/receive-quote-webhook/index.ts` |
+| `status` | `proposal` | compara, escreve, filtra | `src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/sdr/SDRConversionRanking.tsx`<br>`src/hooks/useCloserMetrics.ts`<br>`src/hooks/useNextBestAction.ts`<br>`src/lib/winloss/atRiskFixtures.ts`<br>… +4 |
+| `status` | `proposed` | compara | `supabase/functions/customer-success-360/index.ts` |
+| `status` | `prospecting` | compara | `src/components/pipeline/DealSummaryCard.tsx` |
+| `status` | `qualified` | compara, escreve, filtra | `src/components/closer/CloserHandoffs.tsx`<br>`src/components/pipeline/DealSummaryCard.tsx`<br>`src/components/pipeline/QuickActionsMenu.tsx`<br>`src/components/sdr/MQLQualificationForm.tsx`<br>`src/components/sdr/RecentProspects.tsx`<br>… +5 |
+| … +124 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1613,9 +1613,12 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 | TriggerType | deal_created \| stage_changed \| activity_logged \| scheduled \| manual \| no_activity_days \| proposal_opened \| price_clicked | `src/hooks/automation/useAutomationWorkflows.ts` |
 | ActionType | create_task \| send_notification \| update_stage \| log_activity \| assign_owner \| create_call_now_task | `src/hooks/automation/useAutomationWorkflows.ts` |
 | PeriodType | today \| yesterday \| last_week \| this_month \| last_month \| last_quarter \| last_semester \| last_year \| this_year \| custom | `src/hooks/bi/useBIFilters.ts` |
+| CADENCE_CHANNEL_TYPES | 'email', 'call', 'linkedin', 'whatsapp', 'meeting', 'other', | `src/hooks/cadences/useCadenceChannelStats.ts` |
 | ActionType | email \| call \| linkedin \| whatsapp \| meeting \| task \| other | `src/hooks/cadences/useCadenceQueries.ts` |
 | CadenceStatus | active \| paused \| completed \| cancelled | `src/hooks/cadences/useCadenceQueries.ts` |
 | CadenceTaskStatus | pending \| completed \| skipped | `src/hooks/cadences/useCadenceQueries.ts` |
+| CadenceReportPeriod | weekly \| monthly \| quarterly | `src/hooks/cadences/useCadenceReport.ts` |
+| CADENCE_CHANNELS | 'whatsapp', 'call', 'email', 'linkedin', 'meeting', 'other', | `src/hooks/cadences/useCadenceReport.ts` |
 | AgendaEventType | reminder \| follow_up \| meeting \| call \| task | `src/hooks/calendar/useAgendaEvents.ts` |
 | AgendaEventStatus | pending \| in_progress \| completed \| cancelled | `src/hooks/calendar/useAgendaEvents.ts` |
 | AgendaEventPriority | low \| medium \| high \| urgent | `src/hooks/calendar/useAgendaEvents.ts` |
@@ -2256,6 +2259,14 @@ _nenhum item encontrado_
   ```
   if (previous === 0) return current > 0 ? 100 : 0; return Number((((current - previous) / previous) * 100).toFixed(1));
   ```
+- **computeSalespersonVelocity(sales: VelocitySaleRow[])** — `src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts`
+  ```
+  const map = new Map<string, { durations: number[]; openDeals: number }>(); sales.forEach(s => { if (!s.salesperson_id) return; const entry = map.get(s.salesperson_id) ?? { durations: [], openDeals: 0 }; if (isWonSaleStatus(s.status)) entry.durations.push(wonDealDurationDays(s)); else if (isOpenSaleStatus(s.status)) entry.openDeals += 1; map.set(s.salesperson_id, entry); }); return Array.from(map.entries()) .filter(([, e]) => e.durations.length > 0) .map(([salespersonId, e]) => ({ salespersonId, …
+  ```
+- **computeScenarioBaseline(rows: ScenarioBaselineRow[], start: Date)** — `src/hooks/forecast/useScenarioBaseline.ts`
+  ```
+  let wonRevenue = 0; let wonCount = 0; let lostCount = 0; const sellers = new Set<string>(); for (const row of rows) { const refDate = new Date(row.closed_at ?? row.created_at); if (Number.isNaN(refDate.getTime()) || refDate < start) continue; if (isWonSaleStatus(row.status)) { wonRevenue += Number(row.amount) || 0; wonCount += 1; if (row.salesperson_id) sellers.add(row.salesperson_id); } else if (isLostSaleStatus(row.status)) { lostCount += 1; } } const closed = wonCount + lostCount; return { wo …
+  ```
 - **rank(map: Map<string, { revenue: number; deals: number }>)** — `src/hooks/gamification/useFuturisticRanking.ts`
   ```
   const entries = Array.from(map.entries()).sort((a, b) => b[1].revenue - a[1].revenue); const positions = new Map<string, number>(); entries.forEach(([id], i) => positions.set(id, i + 1)); return positions;
@@ -2607,9 +2618,6 @@ _nenhum item encontrado_
 | `transition={{ delay: i * 0.1 }}` | `src/components/bi/EmpiricalRecommendations.tsx` |
 | `transition={{ delay: idx * 0.04 }}` | `src/components/bi/TopSellersRankList.tsx` |
 | `transition={{ delay: idx * 0.03 }}` | `src/components/cadences/quote/QuoteCadenceDetailDrawer.tsx` |
-| `transition={{ delay: 0.5 + i * 0.1 }}` | `src/components/clients/Client360AffinityCard.tsx` |
-| `85% Confiança` | `src/components/clients/Client360HealthNbaSection.tsx` |
-| `92% Probabilidade` | `src/components/clients/Client360PredictiveCards.tsx` |
 | `transition={{ delay: idx * 0.05 }}` | `src/components/clients/OrdersTimeline.tsx` |
 | `transition={{ duration: 1.5, ease: 'easeOut', delay: index * 0.1 }}` | `src/components/closer/CloserPipeline.tsx` |
 | `transition={{ duration: 0.25, delay: index * 0.04 }}` | `src/components/coaching/impact/ImpactSessionCard.tsx` |
@@ -2627,7 +2635,6 @@ _nenhum item encontrado_
 | `transition={{ delay: i * 0.1 }}` | `src/components/competitive/DailyMissions.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/competitive/EnhancedTVMode.tsx` |
 | `transition={{ delay: i * 0.1 }}` | `src/components/competitive/EnhancedTVMode.tsx` |
-| `transition={{ delay: index * 0.1 }}` | `src/components/competitive/FeatureComparison.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/competitive/GamifiedProfile.tsx` |
 | `transition={{ delay: i * 0.1 }}` | `src/components/competitive/HeadToHead.tsx` |
 | `transition={{ delay: idx * 0.05 }}` | `src/components/competitive/ImprovementPlan.tsx` |
@@ -2710,7 +2717,6 @@ _nenhum item encontrado_
 | `transition={{ delay: index * 0.05, duration: 0.3 }}` | `src/components/pipeline-pulse/PulseKpiGrid.tsx` |
 | `transition={{ delay: 0.1 + idx * 0.08, duration: 0.35 }}` | `src/components/playbooks/PlaybookEmptyState.tsx` |
 | `transition={{ delay: idx * 0.05 }}` | `src/components/playbooks/PlaybooksManager.tsx` |
-| `{(32 + conversionBoost[0] * 0.5).toFixed(1)}%` | `src/components/predictive/PredictiveScenarioPlanner.tsx` |
 | `/** Win-rate medido na faixa de ~0% de desconto (0-1). */` | `src/components/pricing/DiscountOptimizer.tsx` |
 | `// (varre 0-40% em passos de 1 ponto percentual).` | `src/components/pricing/DiscountOptimizer.tsx` |
 | `x={optPrice * 0.9}` | `src/components/pricing/PriceElasticityChart.tsx` |
@@ -2796,7 +2802,6 @@ _nenhum item encontrado_
 | `transition={{ delay: i * 0.05 }}` | `src/components/roi/ROIRankingList.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/components/sales/cadence/CadenceFunnel.tsx` |
 | `transition={{ delay: index * 0.1 }}` | `src/components/sales/cadence/CadenceReportPanel.tsx` |
-| `Sua cadência está performando 15% acima da média do setor. O canal{' '}` | `src/components/sales/cadence/EliteCadenceAnalytics.tsx` |
 | `transition={{ delay: i * 0.1 }}` | `src/components/sdr/LeadScoreBreakdown.tsx` |
 | `transition={{ delay: i * 0.1 }}` | `src/components/sdr/PerformanceCoaching.tsx` |
 | `+24% conversão esperada` | `src/components/sdr/PredictiveSuccessMap.tsx` |
@@ -2873,7 +2878,13 @@ _nenhum item encontrado_
 | `levando 40% a mais que a média histórica. Recomendamos revisar o` | `src/pages/ClosingTimePage.tsx` |
 | `regras aplicáveis, o padrão é <strong>5%</strong>.` | `src/pages/CommissionRules.tsx` |
 | `Competências acima de 80%` | `src/pages/Competencias.tsx` |
-| … +65 linhas — lista completa em `context.json` | |
+| `Competências entre 40-60%` | `src/pages/Competencias.tsx` |
+| `transition={{ delay: index * 0.05 }}` | `src/pages/DesafiosSemanais.tsx` |
+| `transition={{ delay: idx * 0.1 }}` | `src/pages/Estoque.tsx` |
+| `transition={{ delay: index * 0.1 }}` | `src/pages/FunnelAnalysis.tsx` |
+| `transition={{ delay: index * 0.1 }}` | `src/pages/HistoricoDesafiosDiarios.tsx` |
+| `transition={{ duration: 0.8 + Math.random() * 0.4, ease: 'easeOut' }}` | `src/pages/MetasAtividades.tsx` |
+| … +59 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -2899,6 +2910,7 @@ _nenhum item encontrado_
 | `MAX` | `25` | `src/components/lead-routing/CapacityDashboard.tsx` |
 | `DEFAULT_FPS_THRESHOLD` | `45` | `src/components/performance/PerformanceMonitor.tsx` |
 | `DEFAULT_RENDER_THRESHOLD` | `32` | `src/components/performance/PerformanceMonitor.tsx` |
+| `ALERTS_LIMIT` | `10` | `src/components/pricing/MarginAlertsCard.tsx` |
 | `SLIDE_DURATION` | `1400` | `src/components/race/DailyBriefingModal.tsx` |
 | `PROGRESS_TO_SECONDS` | `45` | `src/components/race/LeaderGapIndicator.tsx` |
 | `DURATION_MS` | `2800` | `src/components/race/LeaderTakeoverCelebration.tsx` |
@@ -2916,6 +2928,7 @@ _nenhum item encontrado_
 | `STRIPE_W` | `22` | `src/components/race/track/TrackStartGantry.tsx` |
 | `MAX_MARKS` | `30` | `src/components/race/track/TrackTireMarks.tsx` |
 | `FADE_MS` | `1500` | `src/components/race/track/TrackTireMarks.tsx` |
+| `PERIOD_DAYS` | `30` | `src/components/sales/cadence/EliteCadenceAnalytics.tsx` |
 | `SIDEBAR_COOKIE_MAX_AGE` | `60` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH_MOBILE` | `'18rem'` | `src/components/ui/sidebar.tsx` |
@@ -2950,6 +2963,7 @@ _nenhum item encontrado_
 | `MAX_ROWS` | `5000` | `src/hooks/email/useEmailOptOutMetrics.ts` |
 | `WINDOW_DAYS` | `90` | `src/hooks/email/useEmailOptOutMetrics.ts` |
 | `READ_LIMIT` | `200` | `src/hooks/email/useFailedDrafts.ts` |
+| `SCENARIO_BASELINE_DAYS` | `90` | `src/hooks/forecast/useScenarioBaseline.ts` |
 | `MAX_HISTORY` | `10` | `src/hooks/nlq/useNLQ.ts` |
 | `STAGNANT_WARNING_DAYS` | `7` | `src/hooks/notifications/useAlerts.ts` |
 | `STAGNANT_CRITICAL_DAYS` | `14` | `src/hooks/notifications/useAlerts.ts` |
@@ -2999,6 +3013,7 @@ _nenhum item encontrado_
 | `PAGE_SIZE` | `25` | `src/pages/AdminHistoricoAlertasChurn.tsx` |
 | `PAGE_SIZE` | `25` | `src/pages/AdminSolicitacoesTitular.tsx` |
 | `PAGE_SIZE` | `25` | `src/pages/AdminSupressaoEmails.tsx` |
+| `LEADERS_PERIOD_DAYS` | `30` | `src/pages/EvolutionCurvesPage.tsx` |
 | `PAGE_SIZE` | `10` | `src/pages/MinhasPremiacoes.tsx` |
 | `ROTATION_MS` | `30` | `src/pages/RaceArenaTV.tsx` |
 | `BUSINESS_TZ` | `"America/Sao_Paulo"` | `supabase/functions/_shared/business-date.ts` |
@@ -3142,7 +3157,6 @@ _nenhum item encontrado_
 | `onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}` | `src/components/calendar/ActivityCalendar.tsx` |
 | `onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}` | `src/components/calendar/ActivityCalendar.tsx` |
 | `? `${Math.floor((new Date().getTime() - new Date(data.orders[0]!.created_at).getTime()) / (1000 * 60 * 60 * 24))} dias`` | `src/components/clients/Client360HealthNbaSection.tsx` |
-| `toast.promise(new Promise(resolve => setTimeout(resolve, 2000)), {` | `src/components/clients/Client360View.tsx` |
 | `? `${Math.floor((new Date().getTime() - new Date(data.orders[data.orders.length - 1].created_at).getTime()) / (1000 * 60 * 60 * 24 * 30))} meses`` | `src/components/clients/InsightBanner.tsx` |
 | `: new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1);` | `src/components/closer/CloserRevenueEvolution.tsx` |
 | `? new Date(periodStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1)` | `src/components/closer/CloserRevenueEvolution.tsx` |
@@ -3284,6 +3298,7 @@ _nenhum item encontrado_
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/coaching/useCoachingImpact.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/coaching/useCoachingSessions.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/conversational/useCompetitorsRegistry.ts` |
+| `(1000 * 60 * 60 * 24)` | `src/hooks/crm/useClient360.ts` |
 | `(new Date().getTime() - lastPurchaseDate) / (1000 * 60 * 60 * 24);` | `src/hooks/crm/useClient360.ts` |
 | `intervals.push((dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24));` | `src/hooks/crm/useClient360.ts` |
 | `staleTime: 1000 * 60 * 60, // 1 hour` | `src/hooks/crm/useClientPredictions.ts` |
@@ -3305,8 +3320,8 @@ _nenhum item encontrado_
 | `prevStart: startOfYear(subYears(now, 1)),` | `src/hooks/dashboard/useDashboardKPIsPeriod.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/dashboard/useGoalsDashboard.ts` |
 | `const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();` | `src/hooks/deal-intelligence/useCommitteeCoverage.ts` |
+| `(1000 * 60 * 60 * 24)` | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts` |
 | `(exited.getTime() - entered.getTime()) / (1000 * 60 * 60 * 24)` | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts` |
-| `Math.ceil((updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24))` | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts` |
 | `staleTime: 1000 * 60 * 60,` | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts` |
 | `staleTime: 2 * 60 * 1000,` | `src/hooks/follow-up/useFollowUpData.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/gamification/useAchievements.ts` |
@@ -3315,6 +3330,7 @@ _nenhum item encontrado_
 | `const prev = subMonths(now, 1);` | `src/hooks/gamification/useFuturisticRanking.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/gamification/useFuturisticRanking.ts` |
 | `const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');` | `src/hooks/gamification/useGamificationData.ts` |
+| `staleTime: 5 * 60 * 1000,` | `src/hooks/gamification/useLeagues.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
 | `gcTime: 15 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/gamification/useSalespersonXP.ts` |
@@ -3422,8 +3438,7 @@ _nenhum item encontrado_
 | `const CLAIM_LEASE_MS = 5 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
 | `const DELIVERY_RETRY_MS = 15 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
 | `const SKIPPED_RETRY_MS = 24 * 60 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
-| `const earliest = new Date(Date.now() + 5 * 60 * 1000).toISOString();` | `supabase/functions/sequence-runner/index.ts` |
-| … +145 linhas — lista completa em `context.json` | |
+| … +146 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -3532,6 +3547,7 @@ _nenhum item encontrado_
 | 5 | `src/hooks/dialer/usePowerDialer.ts` |
 | 50 | `src/hooks/engagement/useBulkComposer.ts` |
 | 1 | `src/hooks/executive-briefing/useLatestBriefing.ts` |
+| 1 | `src/hooks/gamification/useLeagues.ts` |
 | 10 | `src/hooks/gamification/usePrizeWheel.ts` |
 | 100 | `src/hooks/orders/useOrderTracking.ts` |
 | 1 | `src/hooks/pipeline-pulse/useQuickAction.ts` |
@@ -3728,8 +3744,7 @@ _nenhum item encontrado_
 | 50000 | `supabase/functions/revops-hub/index.ts` |
 | 100 | `supabase/functions/rotate-daily-challenges/index.ts` |
 | 10 | `supabase/functions/sales-assistant-chat/index.ts` |
-| 10000 | `supabase/functions/sales-assistant-chat/index.ts` |
-| … +34 linhas — lista completa em `context.json` | |
+| … +35 linhas — lista completa em `context.json` | |
 
 ## I. Regras implícitas em mensagens de erro/validação
 
@@ -3871,6 +3886,7 @@ _nenhum item encontrado_
 | Erro de voz | `src/components/assistant/SalesAssistantChat.tsx` |
 | Ações automáticas exigem template preenchido | `src/components/cadences/CadenceStepRow.tsx` |
 | Título deve ter pelo menos 3 caracteres | `src/components/cadences/CadenceStepRow.tsx` |
+| Erro ao carregar regras de contato: ${error.message} | `src/components/cadences/ContactRulesDialog.tsx` |
 | Erro: ${e instanceof Error ? e.message : String(e)} | `src/components/cadences/ContactRulesDialog.tsx` |
 | Usuário não autenticado | `src/components/cadences/ContactRulesDialog.tsx` |
 | Vendedor não encontrado | `src/components/cadences/ContactRulesDialog.tsx` |
@@ -3878,6 +3894,7 @@ _nenhum item encontrado_
 | Corrija os erros nas novas etapas | `src/components/cadences/EditCadenceDialog.tsx` |
 | Cadência e nome são obrigatórios | `src/components/cadences/EnrollmentRulesDialog.tsx` |
 | Erro ao executar auto-enrollment | `src/components/cadences/EnrollmentRulesDialog.tsx` |
+| Não foi possível identificar o vendedor responsável. | `src/components/clients/Client360HealthNbaSection.tsx` |
 | Erro ao aceitar lead | `src/components/closer/CloserHandoffs.tsx` |
 | Erro ao cancelar batalha | `src/components/competitive/BattleArena.tsx` |
 | Erro ao atualizar batalha | `src/components/competitive/CreateBattleDialog.tsx` |
@@ -3885,7 +3902,7 @@ _nenhum item encontrado_
 | Selecione pelo menos 2 gladiadores | `src/components/competitive/CreateBattleDialog.tsx` |
 | Selecione uma data de encerramento | `src/components/competitive/CreateBattleDialog.tsx` |
 | Usuário não identificado | `src/components/competitive/CreateBattleDialog.tsx` |
-| Erro ao entrar na liga | `src/components/competitive/LeagueSystem.tsx` |
+| Não foi possível entrar na liga | `src/components/competitive/LeagueSystem.tsx` |
 | Erro ao criar aposta | `src/components/competitive/PerformanceBets.tsx` |
 | No salesperson | `src/components/competitive/PerformanceBets.tsx` |
 | Erro ao girar a roda | `src/components/competitive/PrizeWheel.tsx` |
@@ -3921,6 +3938,7 @@ _nenhum item encontrado_
 |  className= | `src/components/pipeline/InactivityPanel.tsx` |
 | Erro ao encaminhar lead | `src/components/pipeline/QuickActionsMenu.tsx` |
 | Erro ao executar macro | `src/components/pipeline/QuickActionsMenu.tsx` |
+| >             Não foi possível carregar a receita ganha dos últimos {SCENARIO_BASELINE_DAYS}{ | `src/components/predictive/PredictiveScenarioPlanner.tsx` |
 | ,                               title:  | `src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx` |
 | Falha ao enviar orçamento: ${e instanceof Error ? e.message :  | `src/components/quotes/QuoteCard.tsx` |
 | Orçamento não enviado — ${detail \|\|  | `src/components/quotes/QuoteCard.tsx` |
@@ -3945,7 +3963,6 @@ _nenhum item encontrado_
 | Cliente sem vínculo cadastrado. | `src/components/sales/AIEmailDialog.tsx` |
 | Erro ao gerar e-mail com IA | `src/components/sales/AIEmailDialog.tsx` |
 | Falha ao enviar e-mail | `src/components/sales/AIEmailDialog.tsx` |
-| Mensagem descartada. | `src/components/sales/cadence/ApprovalQueue.tsx` |
 | Erro ao carregar templates | `src/components/sales/cadence/CadenceAlertConfig.tsx` |
 | Erro ao excluir | `src/components/sales/cadence/CadenceAlertConfig.tsx` |
 | Erro ao salvar:  | `src/components/sales/cadence/CadenceAlertConfig.tsx` |
@@ -3956,8 +3973,9 @@ _nenhum item encontrado_
 | Erro:  | `src/components/sales/cadence/CadenceOutcomeConfig.tsx` |
 | Erro ao processar evento no banco | `src/components/sales/cadence/CadenceSimulationDialog.tsx` |
 | Selecione um lead para a simulação | `src/components/sales/cadence/CadenceSimulationDialog.tsx` |
-| Ação rejeitada | `src/components/sales/cadence/CadenceTemplateManager.tsx` |
+|  className= | `src/components/sales/cadence/CadenceTemplateManager.tsx` |
 | Por favor, preencha o nome e o conteúdo do template. | `src/components/sales/cadence/CadenceTemplateManager.tsx` |
+| Seu usuário não está vinculado a um vendedor. | `src/components/sales/cadence/CadenceTemplateManager.tsx` |
 | ; import { Clock, ShieldAlert, Zap, Save, Loader2 } from  | `src/components/sales/cadence/ContactFrequencyRules.tsx` |
 | Erro ao salvar regras de frequência: ${e instanceof Error ? e.message : String(e)} | `src/components/sales/cadence/ContactFrequencyRules.tsx` |
 | Erro ao salvar qualificação:  | `src/components/sdr/MQLQualificationForm.tsx` |
@@ -4032,10 +4050,7 @@ _nenhum item encontrado_
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
 | Créditos de IA esgotados. | `src/hooks/useBehavioralAnalysis.ts` |
-| Falha na análise comportamental | `src/hooks/useBehavioralAnalysis.ts` |
-| Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
-| Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
-| … +664 linhas — lista completa em `context.json` | |
+| … +669 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4141,7 +4156,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1411 testes em 166 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1533 testes em 194 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4182,6 +4197,7 @@ _nenhum item encontrado_
 | `src/lib/validators/brSchemas.test.ts` | 13 | brPhoneField · aceita campo vazio (opcional):  · brCpfOrCnpjField · aceita documento válido: %s … |
 | `supabase/functions/_shared/retry-policy.test.ts` | 13 | erros permanentes são reconhecidos · erros transitórios não são permanentes · já enviado é ignorado · sem erro é ignorado … |
 | `tests/e2e/pages-sales-commerce.spec.ts` | 13 | Orçamentos — CPQ Engine · carrega heading  · title da página correto · mostra filtros de status … |
+| `src/components/sales/cadence/CadenceTemplateManager.test.tsx` | 12 | CadenceTemplateManager (message_templates) · mostra estado vazio sem template fictício · mostra erro com opção de tentar novamente · lista os templates reais do banco … |
 | `src/lib/bi/markupOverviewHelpers.test.ts` | 12 | aggregateMarkupOverview · lista vazia → resumo zerado e sem vendedores · agrupa média por vendedor e ordena desc · conta vendas críticas abaixo do limiar … |
 | `src/lib/log/pii.test.ts` | 12 | maskEmail · preserva primeira e última letra do local + domínio · retorna vazio para entrada nula e *** para formato inválido · maskPhone … |
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
@@ -4194,12 +4210,15 @@ _nenhum item encontrado_
 | `tests/e2e/pages-navigation.spec.ts` | 11 | Auth Page · mostra título de login · não redireciona para /auth quando já autenticado (redireciona para /) · Protected Routes — redirect anonymous users to /auth … |
 | `scripts/graphify/extract-code-only.test.mjs` | 10 | publica somente snapshot validado com metadados de origem · aceita escopo de arquivo regular e registra uma única entrada · recusa link simbólico intermediário antes de criar saída externa · recusa link simbólico aninhado no escopo antes de chamar o extrator … |
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
+| `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
+| `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |
 | `src/lib/markupSummary.test.ts` | 8 | summarizeMarkup · lista vazia → tudo zerado e sem média · classifica por faixa e ignora nulos na média · mediana com quantidade par usa a média central … |
 | `src/hooks/automation/useAutomationWorkflows.test.tsx` | 7 | useUpdateWorkflow · atualiza o mesmo registro com os campos do construtor · mostra toast de erro quando o banco recusa · trata UPDATE sem linha afetada (RLS) como erro de permissão, não sucesso … |
+| `src/hooks/cadences/useCadenceReport.test.tsx` | 7 | aggregateCadenceReport · sem linhas devolve zeros (sem número inventado) · pondera resposta/conversão pelo número de inscritos de cada cadência · useCadenceChannelExecution … |
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
@@ -4207,6 +4226,7 @@ _nenhum item encontrado_
 | `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
 | `src/hooks/bi/useABCAnalysis.test.tsx` | 6 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |
+| `src/hooks/cadences/useCadenceChannelStats.test.ts` | 6 | fetchCadenceChannelStats · conta no banco (HEAD + count exato) filtrando o período, sem trazer linhas · usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje) · calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas) … |
 | `src/hooks/reports/useMarkupMinSamplePreference.test.tsx` | 6 | useMarkupMinSamplePreference · começa com a amostra padrão 1 e expõe as opções · lê valor válido persistido no localStorage · ignora valor inválido persistido e volta ao padrão … |
 | `src/hooks/sales/useSalesBattles.test.tsx` | 6 | useSalesBattles — editar e cancelar · atualiza somente os campos da batalha pelo id · falha quando a RLS não deixa editar (0 linhas) · cancela a batalha pelo id sem apagar a linha … |
 | `src/lib/supabase/chunkedIn.test.ts` | 6 | chunkedIn · short-circuits on empty array · splits into chunks of chunkSize and concatenates data · preserves order in sequential mode … |
@@ -4219,15 +4239,22 @@ _nenhum item encontrado_
 | `tests/e2e/quote-to-sale-validations.spec.ts` | 6 | Conversão de orçamento — validações e concorrência · EMPTY_ITEMS: orçamento sem itens é bloqueado e mensagem PT-BR na UI · Tolerância ±R$ 0,02: 3× 33,33 vs total 100,00 converte (0,01 de diff) · TOTAL_MISMATCH: diferença de R$ 0,05 é bloqueada … |
 | `tests/e2e/rls-authorization-edge-cases.spec.ts` | 6 | SEC-02 — RLS edge cases (anon) · anon não lê ${table} (select cru) · anon não lê ${table} com filtro user_id fabricado · apikey ausente é bloqueado pelo gateway … |
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
+| `src/components/cadences/ContactRulesDialog.test.tsx` | 5 | ContactRulesDialog · cria a linha via upsert quando o vendedor ainda não tem preferências · preserva chaves gravadas por outra tela ao salvar · mostra erro e não confirma quando o banco recusa a gravação … |
+| `src/components/clients/Client360HealthNbaSection.test.tsx` | 5 | Client360HealthNbaSection · não exibe confiança fixa inventada · não rotula a regra estática como IA · Agendar follow-up cria tarefa real para o cliente … |
 | `src/components/enablement/SalesEnablementHub.test.tsx` | 5 | SalesEnablementHub — materiais arquivados · gestor alterna para Arquivados e reativa o material · vendedor não vê o filtro de arquivados nem ações de gestão · vendedor não vê  … |
 | `src/components/pipeline/DealCard.test.tsx` | 5 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
+| `src/components/predictive/PredictiveScenarioPlanner.test.tsx` | 5 | PredictiveScenarioPlanner · mostra skeleton enquanto carrega a base real · mostra erro honesto quando a consulta falha · mostra estado vazio sem vendas ganhas, sem projeção inventada … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
+| `src/components/sales/cadence/CadenceReportPanel.test.tsx` | 5 | CadenceReportPanel · busca o período semanal (7 dias) por padrão · sem dados mostra estado vazio honesto e nenhum valor fixo antigo · mostra métricas consolidadas e execução por canal vindas do banco … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
+| `src/config/dominio-publico.test.ts` | 5 | domínio público do app · %s não referencia domínio legado da Lovable · APP_URL padrão é o domínio de produção · canonical, og:url, twitter:url e imagens do index.html usam o domínio de produção … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
 | `src/hooks/automation/executeWorkflowActions.test.ts` | 5 | execute-workflow — log_activity · usa um outcome que existe no enum activity_outcome · grava o salespeople.id recebido e um activity_type válido · execute-workflow — create_task … |
+| `src/hooks/conversational/useCompetitorMarketIntel.test.tsx` | 5 | useCompetitorMarketIntel · combina registro, contagem de menções e battle card, ordenando por menções · mutations de concorrente · salvar concorrente invalida também a Market Intel … |
 | `src/hooks/dialer/usePowerDialer.test.tsx` | 5 | usePowerDialer — editar e excluir fila · atualiza nome, estratégia e filtro da fila e invalida a lista · acusa erro quando o RLS não deixa alterar a fila (0 linhas) · exclui a fila e invalida a lista … |
+| `src/hooks/forecast/useScenarioBaseline.test.tsx` | 5 | computeScenarioBaseline · soma só vendas ganhas na janela e calcula win-rate e receita por vendedor · sem vendas fechadas devolve base zerada e métricas nulas (sem número inventado) · useScenarioBaseline … |
 | `src/hooks/suppliers/useSupplierMutations.test.tsx` | 5 | useSupplierMutations — produtos do fornecedor · atualiza preço, qtd. mínima e preferido e invalida a lista · exclui o vínculo e invalida a lista · mostra erro quando a exclusão não afeta nenhuma linha (RLS) … |
 | `src/hooks/tasks/useTaskMutations.test.tsx` | 5 | useCreateTask — dono da tarefa (policy de INSERT de tasks) · sem responsável escolhido, grava a tarefa com o vendedor logado · responsável vazio ( · respeita o responsável escolhido sem consultar o vendedor logado … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
@@ -4245,8 +4272,10 @@ _nenhum item encontrado_
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
 | `src/components/analytics/ABCAnalysis.test.tsx` | 4 | ABCAnalysis · mostra só o insight calculado, sem automações, movimentações nem ações falsas · usa rótulos factuais, sem prometer IA ou versão inexistente · sem vendas, não exibe a seção de insights |
 | `src/components/cadences/EnrollCadenceDialog.test.tsx` | 4 | EnrollCadenceDialog — responsável da inscrição · vendedor sem escolher responsável inscreve com o próprio salesperson_id · vendedor só vê a si mesmo na lista de responsáveis · admin/gestor continua vendo todos os vendedores |
+| `src/components/competitive/FeatureComparison.test.tsx` | 4 | FeatureComparison (Market Intel) · mostra estado vazio honesto quando não há concorrentes cadastrados · lista concorrentes reais com menções e battle card vinculado · mostra erro com ação de tentar novamente |
 | `src/components/conversational/BattleCardSuggestion.test.tsx` | 4 | BattleCardSuggestion · busca só battle card ativo (arquivado não é sugerido) · não renderiza nada quando o material não volta (arquivado ou inexistente) · mostra o material ativo sugerido |
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
+| `src/components/sales/cadence/EliteCadenceAnalytics.test.tsx` | 4 | EliteCadenceAnalytics · mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios · mostra estado vazio quando não há tarefas no período · mostra erro quando a consulta falha |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/hooks/gamification/useWeeklyChallenges.test.tsx` | 4 | useDeactivateWeeklyChallenge · desativa via is_active=false (soft-delete) e invalida a lista · trata 0 linhas afetadas (bloqueio de RLS) como erro · propaga erro do Supabase com toast |
@@ -4264,22 +4293,33 @@ _nenhum item encontrado_
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
 | `src/components/activities/ActivityLogForm.test.tsx` | 3 | ActivityLogForm · envia o vendedor logado como salesperson_id sem abrir o combo Vendedor · preenche o vendedor logado quando o perfil carrega depois da montagem |
+| `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
+| `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
+| `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |
+| `src/components/sales/cadence/ApprovalQueue.test.tsx` | 3 | Filas de aprovação de cadência · ApprovalQueue mostra estado vazio sem leads fictícios nem botões falsos · aba Fila de Aprovação do gerenciador não exibe itens fictícios |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
+| `src/hooks/useEvolutionCurves.test.tsx` | 3 | useEvolutionCurves · indexa a receita acumulada pelo id, sem somar vendedores homônimos · filtra pelos ids selecionados |
+| `src/hooks/useMultichannel.test.tsx` | 3 | useUpdateTemplate · atualiza a linha em message_templates pelo id · propaga erro do banco sem toast de sucesso |
 | `src/hooks/useNPSSurveys.test.tsx` | 3 | useCreateNPSSurvey · grava a pesquisa no vendedor logado quando a tela não informa o dono · respeita o salesperson_id explícito sem consultar o vendedor logado |
 | `src/hooks/useNotificationPreferences.test.tsx` | 3 | useCreateNotificationPreference · envia user_id do usuário logado (RLS exige user_id = auth.uid()) · não chama o banco sem usuário autenticado |
 | `src/hooks/useProductRecommendations.test.tsx` | 3 | useProductRecommendations — regressão Onda J/K · particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn · agrega counts ignorando product_id null e tolera product_name/amount nulos |
+| `src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts` | 3 | computeSalespersonVelocity · calcula média de dias até o ganho por vendedor, do mais rápido ao mais lento · ignora vendedores sem deal ganho e vendas sem vendedor |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |
 | `src/hooks/gamification/useStreakRanking.test.tsx` | 3 | useStreakRanking — agregação sem N+1 · busca conquistas de todos os vendedores em uma única query .in() · monta ranking correto com múltiplos vendedores e conquistas |
 | `src/hooks/orders/useOrderTracking.test.tsx` | 3 | useOrderTracking · retorna somente pedidos persistidos, sem complementar a listagem com mocks · consulta o detalhe diretamente, sem depender do limite da listagem |
 | `src/hooks/race/useGhostCar.test.tsx` | 3 | useGhostCar — histórico sem N+1 · busca progresso de todas as seasons em uma única query .in() · usa a melhor season do usuário como referência do ghost |
+| `src/hooks/sales/useSalespersonPreferences.test.tsx` | 3 | useSalespersonPreferences.updatePreferences · grava via upsert por salesperson_id, sem update/insert separados · mostra erro e não confirma quando o banco recusa |
 | `src/lib/usageAnalytics.test.ts` | 3 | usage analytics · agrega visualizações a partir de eventos reais · mantém somente a última atividade observada por usuário |
 | `src/pages/PowerDialer.test.tsx` | 3 | PowerDialer — permissão de editar/excluir fila · usuário não admin (ex.: gestor) só vê Editar/Excluir nas próprias filas · admin vê Editar/Excluir em todas as filas |
 | `src/services/callFeedbackService.test.ts` | 3 | callFeedbackService.submitCallFeedback · insere evento call_feedback em lead_detailed_logs · propaga erro do insert |
+| `src/test/security/battle-participants-insert-policy.test.ts` | 3 | battle_participants — INSERT para admin/gestor · existe policy de INSERT viva liberando is_admin_or_manager(auth.uid()) · vendedor continua limitado à auto-inscrição |
 | `tests/e2e/quote-to-sale-error-payload-ui.spec.ts` | 3 | Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN) · TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada · FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada |
 | `tests/e2e/quote-to-sale-seq-no-advance.spec.ts` | 3 | Sequence: falha de conversão não avança sequence · TOTAL_MISMATCH: sequence estável e zero orders/sales · FORBIDDEN: sequence estável e zero orders/sales |
 | `tests/e2e/quote-to-sale-won-path.spec.ts` | 3 | Path novo (won): RPC cria ORC-* e avança sequence · won: 1 conversão gera ORC-* e sequence +1 · won x3 quotes independentes: sequence avança exatamente +3, números únicos |
 | `tests/e2e/smoke.spec.ts` | 3 | Smoke Tests · should load the home page · should redirect to auth if not logged in |
 | `src/components/competitive/BattleArena.test.tsx` | 2 | BattleArena — gerenciar batalhas · mostra editar/cancelar só na batalha ativa, nunca na finalizada |
+| `src/components/conversational/ConversationalIntelligenceHub.test.tsx` | 2 | ConversationalIntelligenceHub — KPIs · mostra os valores reais sem tendência inventada ao lado |
+| `src/components/pricing/RevenueLeakageCard.test.tsx` | 2 | RevenueLeakageCard · leva às vendas com markup crítico em vez de só exibir um toast |
 | `src/components/reports/EmailReportConfig.test.tsx` | 2 | EmailReportConfig — primeira configuração · insere com user_id do usuário logado (RLS exige user_id = auth.uid()) |
 | `src/hooks/useClientsNeedingContact.test.tsx` | 2 | useClientsNeedingContact · particiona a busca de contatos para carteiras grandes |
 | `src/hooks/useLeadAssignment.test.ts` | 2 | assignLeadRoundRobin · não mantém cursor de round-robin no módulo do navegador |
@@ -4287,6 +4327,9 @@ _nenhum item encontrado_
 | `src/hooks/crm/useClientPortfolio.test.tsx` | 2 | useAssignClient · usa a RPC de atribuição manual, que é idempotente e registra auditoria no banco |
 | `src/hooks/dashboard/useDashboardKPIsPeriod.test.tsx` | 2 | useDashboardKPIsPeriod · deve buscar KPIs corretamente |
 | `src/lib/supabase/all-in-calls.test.ts` | 2 | chunkedInClient guard-rail · no high-cardinality .in() call escapes chunkedInClient |
+| `src/pages/DealVelocityPage.test.tsx` | 2 | DealVelocityPage · mostra o comparativo real e não exibe o botão Exportar sem ação |
+| `src/pages/EvolutionCurvesPage.test.tsx` | 2 | EvolutionCurvesPage · mostra a receita de cada vendedor homônimo separadamente, sem botões sem ação |
+| `src/pages/MetasAtividades.test.tsx` | 2 | MetasAtividades · mostra indicadores calculados das metas reais, sem valores fixos |
 | `src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts` | 2 | has_function_privilege confirma bloqueio de anon/authenticated/public e permite service_role · anon executando fn_cleanup_webhook_dedupe recebe permission denied |
 | `supabase/functions/cron-failure-alerter/dead-letter-rbac.test.ts` | 2 | fn_admin_list_dead_letter_ingest_jobs — anon (403) · fn_admin_replay_dead_letter_ingest_job — anon (403) |
 | `tests/e2e/auth-logout.spec.ts` | 2 | Auth — logout desktop · signOut limpa sessão e redireciona para /auth |
@@ -4585,6 +4628,7 @@ _nenhum item encontrado_
 | Validation before save | `src/components/cadences/CadenceStepRow.tsx` |
 | Filtra apenas cadências de quote_followup ativas | `src/components/cadences/quote/EnrollQuoteCadenceDialog.tsx` |
 | Extracted to keep the main component below the 400-LoC limit. | `src/components/clients/Client360ViewHelpers.ts` |
+| * Market Intel da Arena: mostra apenas dados reais de concorrentes | `src/components/competitive/FeatureComparison.tsx` |
 | Simula disparo de teste e loga no banco para validação | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | * Conversor minimalista de markdown -> HTML seguro (apenas h2/h3, parágrafos, bold, lista). | `src/components/executive-briefing/briefingHelpers.ts` |
 | Generate 7-day mini heatmap data (must be before early returns) | `src/components/gamification/StreakWidget.tsx` |
@@ -4642,12 +4686,18 @@ _nenhum item encontrado_
 | - staleTime alto pois histórico muda no máximo 1x por dia. | `src/hooks/assistant/useBriefingHistory.ts` |
 | Check if MFA upgrade is required (AAL1 → AAL2) | `src/hooks/auth/useAuthForm.ts` |
 | Fonte: view `sales_with_markup` (mascara custos absolutos conforme permissão). | `src/hooks/bi/useMarkupOverview.ts` |
+| Janela de N dias corridos incluindo hoje (data local), mesma regra do | `src/hooks/cadences/useCadenceChannelStats.ts` |
+| tarefas com vencimento entre (hoje - dias + 1) e hoje, e quantas foram concluídas. | `src/hooks/cadences/useCadenceReport.ts` |
+| Usa contagem exata (head) para não truncar no limite de linhas do PostgREST. | `src/hooks/cadences/useCadenceReport.ts` |
+| Próxima ação sugerida: regra estática baseada só nos dados reais do cliente | `src/hooks/crm/useClient360.ts` |
+| * Dias entre criação e última atualização de um deal ganho (mínimo 1). */ | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.ts` |
 | RLS filtra silenciosamente: 0 linhas = sem permissão ou fila inexistente. | `src/hooks/dialer/usePowerDialer.ts` |
 | * Número máximo de tentativas automáticas — espelha MAX_RETRIES do backend. */ | `src/hooks/email/failedDraftsHelpers.ts` |
 | `public.normalize_bulk_failure_reason`; aqui apenas traduzimos os códigos | `src/hooks/email/recoveryRateHelpers.ts` |
 | * Limite (%) abaixo do qual uma falha transitória indica problema operacional. */ | `src/hooks/email/recoveryRateHelpers.ts` |
 | * Limite de risco (%) acima do qual a campanha deve ser revisada. */ | `src/hooks/email/useCampaignOptOutRates.ts` |
 | * Limite defensivo para não trazer páginas gigantes ao cliente. */ | `src/hooks/email/useEmailOptOutMetrics.ts` |
+| * Ganhas / (ganhas + perdidas) em %, ou null sem negócio fechado. */ | `src/hooks/forecast/useScenarioBaseline.ts` |
 | RLS bloqueia sem erro: 0 linhas afetadas = sem permissão. | `src/hooks/gamification/useWeeklyChallenges.ts` |
 | * Lista somente pedidos existentes e autorizados pelas políticas RLS. | `src/hooks/orders/useOrderTracking.ts` |
 | sem depender do limite da listagem. | `src/hooks/orders/useOrderTracking.ts` |
@@ -4861,11 +4911,4 @@ _nenhum item encontrado_
 | *Dica do Coach**\n${coachTip ?? "Faça um contato objetivo com o próximo passo e prazo claramente combinados."}\n\nQual prioridade você quer atacar primeiro?`; | `supabase/functions/personal-assistant-stream/fallback.ts` |
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/personal-assistant-stream/index.ts` |
 | externa (Lovable AI Gateway), aqui testamos apenas as unidades puras | `supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts` |
-| (validação de modo e prompt building) exportadas se disponíveis, além de | `supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts` |
-| simular a checagem de erros de validação/CORS via chamada direta ao handler | `supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts` |
-| Não deve declarar um objeto corsHeaders próprio (regra do lint compartilhado). | `supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts` |
-| O agregado retorna indicadores de todo o time e, portanto, não pode usar | `supabase/functions/pipeline-pulse-aggregator/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predict-deal-velocity/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predict-quota-attainment/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-intelligence/index.ts` |
-| … +110 linhas — lista completa em `context.json` | |
+| … +117 linhas — lista completa em `context.json` | |

@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `64382cb949` · branch `main` · 2026-11-13 15:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `914a813e48` · branch `main` · 2026-11-13 16:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -46,7 +46,7 @@
 | `automation_runs` | enabled | authenticated: true<br>authenticated: public.is_admin_or_manager(auth.uid()) | — | — | — |
 | `automation_workflows` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>public: auth.uid() IS NOT NULL | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `available_spins` | enabled | authenticated: salesperson_id IN ( SELECT id FROM public.salespeople WHERE auth_user_id = auth.uid() ) OR public.has_role(auth.uid(), 'admin | — | — | — |
-| `battle_participants` | enabled | public: auth.uid() IS NOT NULL | authenticated: salesperson_id = public.get_current_salesperson_id() | authenticated: public.is_admin_or_manager(auth.uid()) | — |
+| `battle_participants` | enabled | public: auth.uid() IS NOT NULL | authenticated: salesperson_id = public.get_current_salesperson_id()<br>authenticated: public.is_admin_or_manager(auth.uid()) | authenticated: public.is_admin_or_manager(auth.uid()) | — |
 | `bitrix24_sync_logs` | enabled | public: is_admin_or_manager(auth.uid()) | — | — | — |
 | `blocked_ips` | enabled | public: public.has_role(auth.uid(), 'admin') | public: public.has_role(auth.uid(), 'admin') | public: public.has_role(auth.uid(), 'admin') | public: public.has_role(auth.uid(), 'admin') |
 | `buying_committee` | enabled | — | — | — | — |

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 474,
+ "total": 477,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 85,
+   "usado_por": 86,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -426,7 +426,7 @@
     "src/components/arena/EnhancedActivityCard.tsx",
     "src/pages/MetasAtividades.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/activities/useActivityQualityScore.ts",
@@ -1555,11 +1555,12 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
-    "src/components/bi/CriticalMarkupAlertCard.tsx"
+    "src/components/bi/CriticalMarkupAlertCard.tsx",
+    "src/components/pricing/MarginAlertsCard.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/bi/useIndustryTrends.ts",
@@ -1665,6 +1666,28 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/cadences/useCadenceChannelStats.ts",
+   "hooks_exportados": [
+    "useCadenceChannelStats"
+   ],
+   "linhas": 101,
+   "dominio": "hooks/cadences",
+   "tabelas": [
+    "cadence_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/sales/cadence/EliteCadenceAnalytics.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
    "arquivo": "src/hooks/cadences/useCadenceMetrics.ts",
    "hooks_exportados": [
     "useCadenceMetrics"
@@ -1680,11 +1703,13 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "usado_por_arquivos": [
-    "src/components/cadences/CadenceMetricsPanel.tsx"
+    "src/components/cadences/CadenceMetricsPanel.tsx",
+    "src/components/sales/cadence/CadenceReportPanel.tsx",
+    "src/hooks/cadences/useCadenceReport.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/cadences/useCadenceMutations.ts",
@@ -1756,6 +1781,28 @@
     "src/pages/Cadencias.tsx"
    ],
    "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/cadences/useCadenceReport.ts",
+   "hooks_exportados": [
+    "useCadenceChannelExecution"
+   ],
+   "linhas": 129,
+   "dominio": "hooks/cadences",
+   "tabelas": [
+    "cadence_tasks"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/sales/cadence/CadenceReportPanel.tsx"
+   ],
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/cadences/useCadenceTaskMutations.ts",
@@ -2414,14 +2461,17 @@
   {
    "arquivo": "src/hooks/conversational/useCompetitorsRegistry.ts",
    "hooks_exportados": [
+    "useCompetitorMarketIntel",
     "useCompetitorsRegistry",
     "useDeleteCompetitor",
     "useUpsertCompetitor"
    ],
-   "linhas": 72,
+   "linhas": 147,
    "dominio": "hooks/conversational",
    "tabelas": [
-    "competitors_registry"
+    "competitor_mentions",
+    "competitors_registry",
+    "sales_enablement_assets"
    ],
    "rpcs": [],
    "edges": [],
@@ -2431,11 +2481,12 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/competitive/FeatureComparison.tsx",
     "src/components/conversational/CompetitorsAdminDialog.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/conversational/useConversationMetrics.ts",
@@ -2724,7 +2775,7 @@
    "hooks_exportados": [
     "useClient360"
    ],
-   "linhas": 249,
+   "linhas": 261,
    "dominio": "hooks/crm",
    "tabelas": [
     "activities",
@@ -2744,7 +2795,7 @@
     "src/components/clients/Client360View.tsx",
     "src/components/clients/Client360ViewHelpers.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/crm/useClientKanban.ts",
@@ -3282,7 +3333,7 @@
    "hooks_exportados": [
     "useDealVelocity"
    ],
-   "linhas": 151,
+   "linhas": 199,
    "dominio": "hooks/deal-intelligence",
    "tabelas": [
     "deal_stage_history",
@@ -3297,7 +3348,7 @@
     "src/components/analytics/DealVelocityChart.tsx",
     "src/pages/DealVelocityPage.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/deal-intelligence/useDealHealth.ts",
@@ -3339,7 +3390,7 @@
     "src/components/deal-intelligence/health/HealthDistributionChart.tsx",
     "src/components/deal-intelligence/health/HealthKpiCards.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/deal-intelligence/useDealStakeholders.ts",
@@ -4098,6 +4149,26 @@
    "coberto_por_testes": 0
   },
   {
+   "arquivo": "src/hooks/forecast/useScenarioBaseline.ts",
+   "hooks_exportados": [
+    "useScenarioBaseline"
+   ],
+   "linhas": 99,
+   "dominio": "hooks/forecast",
+   "tabelas": [
+    "sales"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/predictive/PredictiveScenarioPlanner.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
    "arquivo": "src/hooks/gamification/useAchievements.ts",
    "hooks_exportados": [
     "useAchievements",
@@ -4370,12 +4441,14 @@
    "arquivo": "src/hooks/gamification/useLeagues.ts",
    "hooks_exportados": [
     "useJoinLeague",
+    "useLeagueEnrollment",
     "useLeagues"
    ],
-   "linhas": 176,
+   "linhas": 208,
    "dominio": "hooks/gamification",
    "tabelas": [
     "league_members",
+    "leagues",
     "salespeople"
    ],
    "rpcs": [],
@@ -4391,7 +4464,7 @@
     "src/components/competitive/LeagueSystem.tsx",
     "src/components/gamification/LeagueCard.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/gamification/useLevelUpCelebration.ts",
@@ -6403,8 +6476,9 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "usado_por_arquivos": [
+    "src/components/intelligence/PipelineStrategicReview.tsx",
     "src/components/revenue-intelligence/BuyingCommitteeMap.tsx",
     "src/components/revenue-intelligence/ForecastCategoriesPanel.tsx",
     "src/components/revenue-intelligence/PipelineInspectionTable.tsx",
@@ -6736,11 +6810,12 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/components/admin/task-console/SquadManager.tsx",
     "src/components/admin/task-console/TaskAssignmentDialog.tsx",
-    "src/components/admin/task-console/XpAdjustmentPanel.tsx"
+    "src/components/admin/task-console/XpAdjustmentPanel.tsx",
+    "src/pages/DealVelocityPage.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -6826,7 +6901,7 @@
    "hooks_exportados": [
     "useSalespersonPreferences"
    ],
-   "linhas": 117,
+   "linhas": 103,
    "dominio": "hooks/sales",
    "tabelas": [
     "salesperson_preferences"
@@ -6845,7 +6920,7 @@
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/settings/AIAssistantSettings.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/sales/useSalesRealtime.ts",
@@ -7460,10 +7535,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/components/ai/NextBestActionCard.tsx",
     "src/components/assistant/AssistantTodayTasks.tsx",
+    "src/components/clients/Client360HealthNbaSection.tsx",
     "src/hooks/tasks/index.ts"
    ],
    "coberto_por_testes": 1
@@ -7503,7 +7579,7 @@
     "useEffect"
    ],
    "canais_realtime": [],
-   "usado_por": 31,
+   "usado_por": 30,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/cadences/TodaysCadenceTasks.tsx",
@@ -7533,8 +7609,8 @@
     "src/hooks/useSDRAlertNotifications.ts",
     "src/hooks/useSecurityAlertNotifications.ts",
     "src/hooks/useStagnantTasks.ts",
-    "src/pages/MetasAtividades.tsx",
-    "src/pages/admin/AdminComercial.tsx"
+    "src/pages/admin/AdminComercial.tsx",
+    "src/pages/admin/WebhookAlertSettingsPage.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -7731,12 +7807,11 @@
     "useSoundSettings"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/sales/CreateSaleDialog.tsx",
     "src/hooks/gamification/useLevelUpCelebration.ts",
-    "src/hooks/sales/useSalesRealtime.ts",
-    "src/pages/MetasAtividades.tsx"
+    "src/hooks/sales/useSalesRealtime.ts"
    ],
    "coberto_por_testes": 0
   },
@@ -8499,7 +8574,7 @@
    "hooks_exportados": [
     "useEvolutionCurves"
    ],
-   "linhas": 101,
+   "linhas": 107,
    "dominio": "hooks",
    "tabelas": [
     "sales",
@@ -8512,11 +8587,12 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
-    "src/components/competitive/EvolutionChart.tsx"
+    "src/components/competitive/EvolutionChart.tsx",
+    "src/pages/EvolutionCurvesPage.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useFeatureFlags.ts",
@@ -9149,9 +9225,10 @@
     "useChannelStats",
     "useCreateTemplate",
     "useDeleteTemplate",
-    "useMessageTemplates"
+    "useMessageTemplates",
+    "useUpdateTemplate"
    ],
-   "linhas": 192,
+   "linhas": 222,
    "dominio": "hooks",
    "tabelas": [
     "channel_interactions",
@@ -9165,14 +9242,15 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_arquivos": [
     "src/components/multichannel/ChannelStatsCards.tsx",
     "src/components/multichannel/InteractionTimeline.tsx",
     "src/components/multichannel/MultichannelDashboard.tsx",
-    "src/components/multichannel/TemplateManager.tsx"
+    "src/components/multichannel/TemplateManager.tsx",
+    "src/components/sales/cadence/CadenceTemplateManager.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useMultiplePipelines.ts",
