@@ -55,14 +55,14 @@ describe('useCreateTask — dono da tarefa (policy de INSERT de tasks)', () => {
     await act(() => result.current.mutateAsync({ ...base }));
 
     expect(state.rpcCalls).toEqual(['get_current_salesperson_id']);
-    expect(state.inserts[0].salesperson_id).toBe('sp-logado');
+    expect(state.inserts[0]?.salesperson_id).toBe('sp-logado');
   });
 
   it('responsável vazio ("") também cai no vendedor logado', async () => {
     const { result } = renderHook(() => useCreateTask(), { wrapper });
     await act(() => result.current.mutateAsync({ ...base, salesperson_id: '' }));
 
-    expect(state.inserts[0].salesperson_id).toBe('sp-logado');
+    expect(state.inserts[0]?.salesperson_id).toBe('sp-logado');
   });
 
   it('respeita o responsável escolhido sem consultar o vendedor logado', async () => {
@@ -70,7 +70,7 @@ describe('useCreateTask — dono da tarefa (policy de INSERT de tasks)', () => {
     await act(() => result.current.mutateAsync({ ...base, salesperson_id: 'sp-outro' }));
 
     expect(state.rpcCalls).toEqual([]);
-    expect(state.inserts[0].salesperson_id).toBe('sp-outro');
+    expect(state.inserts[0]?.salesperson_id).toBe('sp-outro');
   });
 
   it('usuário sem cadastro de vendedor (ex.: admin) segue com responsável nulo', async () => {
@@ -78,6 +78,6 @@ describe('useCreateTask — dono da tarefa (policy de INSERT de tasks)', () => {
     const { result } = renderHook(() => useCreateTask(), { wrapper });
     await act(() => result.current.mutateAsync({ ...base }));
 
-    expect(state.inserts[0].salesperson_id).toBeNull();
+    expect(state.inserts[0]?.salesperson_id).toBeNull();
   });
 });
