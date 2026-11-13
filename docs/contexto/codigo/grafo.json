@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2305,
- "arestas": 9498,
+ "nos": 2303,
+ "arestas": 9488,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 710
+   "importado_por": 708
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 552
+   "importado_por": 550
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 542
+   "importado_por": 540
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -157,12 +157,12 @@
    "importado_por": 27
   },
   {
-   "arquivo": "src/components/ui/checkbox.tsx",
+   "arquivo": "src/components/ui/slider.tsx",
    "importado_por": 26
   },
   {
-   "arquivo": "src/components/ui/slider.tsx",
-   "importado_por": 26
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 25
   }
  ],
  "ciclos": {

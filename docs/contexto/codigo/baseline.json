@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "84c7cad953200eb24b7843eead3a951178245b20",
+  "commit": "64382cb9494868b4cd84ec7ea42ccb2748cf828a",
   "branch": "main",
-  "data_commit": "2026-11-13T13:37:27Z",
+  "data_commit": "2026-11-13T14:24:20Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "64382cb",
+    "data": "2026-11-13",
+    "assunto": "fix: remover dados e automações fictícios da análise ABC (#446)"
+   },
    {
     "sha": "84c7cad",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "53e363f",
     "data": "2026-11-13",
     "assunto": "test: serializa execuções do stress quote→sale com lock consultivo (#465)"
-   },
-   {
-    "sha": "0c1ae11",
-    "data": "2026-11-13",
-    "assunto": "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)"
    }
   ],
-  "arquivos_mudados_7d": 566,
+  "arquivos_mudados_7d": 571,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/components/analytics",
-    "mudancas": 40
+    "mudancas": 46
    },
    {
     "pasta": "src/components/gamification",
@@ -258,10 +258,6 @@
     "mudancas": 10
    },
    {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 10
-   },
-   {
     "arquivo": "vite.config.ts",
     "mudancas": 10
    },
@@ -275,6 +271,10 @@
    },
    {
     "arquivo": "src/hooks/win-loss/useInsightComments.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "supabase/config.toml",
     "mudancas": 9
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 92
+    "commits": 93
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,19 +324,19 @@
  "contagens": {
   "arquivos_total": 3488,
   "arquivos_codigo": 2497,
-  "linhas_codigo": 432963,
+  "linhas_codigo": 432767,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1277,
+  "componentes": 1275,
   "hooks": 474,
   "edge_functions": 171,
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 197,
+  "testes": 199,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1194,
-   "linhas": 189330
+   "arquivos": 1193,
+   "linhas": 189088
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 522,
-   "linhas": 60975
+   "arquivos": 523,
+   "linhas": 61021
   },
   "src/integrations": {
    "arquivos": 4,

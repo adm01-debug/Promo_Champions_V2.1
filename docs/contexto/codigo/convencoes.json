@@ -6,7 +6,7 @@
    "src/pages (166)"
   ],
   "componentes": [
-   "src/components (1097)",
+   "src/components (1095)",
    "src/pages (173)",
    "src/contexts (5)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (114)",
+   "co-localizado (*.test) (116)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1277)"
+  ".tsx (1275)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: remover dados e automações fictícios da análise ABC (#446)",
    "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)",
    "fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)",
    "fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)",
-   "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)",
-   "fix: grava vendedor logado como dono ao criar conta no ABM (#475)"
+   "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

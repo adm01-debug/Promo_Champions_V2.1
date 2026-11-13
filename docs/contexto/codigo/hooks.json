@@ -1196,7 +1196,7 @@
    "hooks_exportados": [
     "useABCAnalysis"
    ],
-   "linhas": 217,
+   "linhas": 142,
    "dominio": "hooks/bi",
    "tabelas": [
     "sales"
@@ -1209,7 +1209,7 @@
    "usado_por_arquivos": [
     "src/components/analytics/ABCAnalysis.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/bi/useBICloser.ts",

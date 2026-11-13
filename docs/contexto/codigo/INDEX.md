@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `84c7cad953200eb24b7843eead3a951178245b20` (2026-11-13T13:37:27Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `64382cb9494868b4cd84ec7ea42ccb2748cf828a` (2026-11-13T14:24:20Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,29 +36,29 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3488 |
 | arquivos_codigo | 2497 |
-| linhas_codigo | 432963 |
+| linhas_codigo | 432767 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 174 |
-| componentes | 1277 |
+| componentes | 1275 |
 | hooks | 474 |
 | edge_functions | 171 |
 | tabelas | 414 |
 | migrations | 669 |
 | cron_jobs | 28 |
-| testes | 197 |
+| testes | 199 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
-- componentes: src/components (1097), src/pages (173), src/contexts (5)
+- componentes: src/components (1095), src/pages (173), src/contexts (5)
 - hooks: src/hooks (462), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (114), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (116), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -73,7 +73,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/activities | 0 | 0 | 20 | 18 | 0 | 10 |
 | components/admin | 0 | 0 | 59 | 38 | 7 | 26 |
 | components/agents | 0 | 0 | 5 | 3 | 0 | 1 |
-| components/analytics | 0 | 0 | 50 | 33 | 2 | 22 |
+| components/analytics | 0 | 0 | 48 | 33 | 2 | 22 |
 | components/assistant | 0 | 0 | 13 | 13 | 3 | 13 |
 | components/atoms | 0 | 0 | 6 | 2 | 0 | 1 |
 | components/auth | 0 | 0 | 5 | 3 | 0 | 3 |
@@ -574,8 +574,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20334 nós · 64574 arestas · 1462 comunidades · grafo do commit `84c7cad9`
-- comunidades maiores: react (300), SelectContent (294), getCorsHeaders (289), Índice (277), client.ts (215), card.tsx (187), CardHeader (187), lazyPages.ts (187), formatBRL (175), AccountBasedSelling.tsx (174), Badge (174), Card (169)
+- 20331 nós · 64526 arestas · 1446 comunidades · grafo do commit `64382cb9`
+- comunidades maiores: Card (536), react (435), Label (291), DialogContent (285), Índice (277), PageTransition (269), Badge (269), client.ts (250), getCorsHeaders (207), AccountBasedSelling.tsx (207), vitest (203), formatBRL (183)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `64382cb` fix: remover dados e automações fictícios da análise ABC (#446)
 - 2026-11-13 `84c7cad` fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)
 - 2026-11-13 `3cf041b` fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)
 - 2026-11-13 `ceaddbf` fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `f2155e8` fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)
 - 2026-11-13 `6a1d1c3` fix: preencher vendedor logado ao criar venda (#468)
 - 2026-11-13 `7bc13e2` feat: editar e excluir produto do fornecedor no comparador de preços (#437)
-- 2026-11-13 `2c36718` feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

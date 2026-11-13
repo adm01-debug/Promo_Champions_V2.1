@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1277,
+ "total": 1275,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -1436,26 +1436,12 @@
    "orfao": false
   },
   {
-   "arquivo": "src/components/analytics/ABCActionableAutomations.tsx",
-   "exports": [
-    "ABCActionableAutomations"
-   ],
-   "export_default": null,
-   "linhas": 96,
-   "dominio": "components/analytics",
-   "hooks_locais": [],
-   "tabelas": [],
-   "edges": [],
-   "usado_por": 1,
-   "orfao": false
-  },
-  {
    "arquivo": "src/components/analytics/ABCAnalysis.tsx",
    "exports": [
     "ABCAnalysis"
    ],
    "export_default": null,
-   "linhas": 272,
+   "linhas": 241,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useABCAnalysis"
@@ -1471,21 +1457,7 @@
     "ABCChartTable"
    ],
    "export_default": null,
-   "linhas": 357,
-   "dominio": "components/analytics",
-   "hooks_locais": [],
-   "tabelas": [],
-   "edges": [],
-   "usado_por": 1,
-   "orfao": false
-  },
-  {
-   "arquivo": "src/components/analytics/ABCMatrixShift.tsx",
-   "exports": [
-    "ABCMatrixShift"
-   ],
-   "export_default": null,
-   "linhas": 93,
+   "linhas": 261,
    "dominio": "components/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -1499,7 +1471,7 @@
     "ABCNeuralInsights"
    ],
    "export_default": null,
-   "linhas": 82,
+   "linhas": 67,
    "dominio": "components/analytics",
    "hooks_locais": [],
    "tabelas": [],
@@ -15511,7 +15483,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 552,
+   "usado_por": 550,
    "orfao": false
   },
   {
@@ -15545,7 +15517,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 542,
+   "usado_por": 540,
    "orfao": false
   },
   {
@@ -15577,7 +15549,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 710,
+   "usado_por": 708,
    "orfao": false
   },
   {
@@ -15607,7 +15579,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 26,
+   "usado_por": 25,
    "orfao": false
   },
   {
@@ -15686,7 +15658,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 13,
    "orfao": false
   },
   {
