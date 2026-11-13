@@ -52,6 +52,10 @@ import {
 import { formatBRLCompact } from '@/lib/money';
 const DEFAULT_PIPELINE_ID = '00000000-0000-0000-0000-000000000001';
 
+// Fora do componente para não somar ao teto de complexidade (lint:complexity, máx. 20).
+const formatWeeklyWonDeals = (n: number | undefined) =>
+  n === undefined ? '—' : `${n} ${n === 1 ? 'Deal' : 'Deals'}`;
+
 export const PipelineBoard = () => {
   const [selectedPipelineId, setSelectedPipelineId] =
     useState<string>(DEFAULT_PIPELINE_ID);
@@ -475,9 +479,7 @@ export const PipelineBoard = () => {
                     data-testid="weekly-won-deals"
                     title={weeklyWonError ? 'Não foi possível carregar' : undefined}
                   >
-                    {weeklyWonDeals === undefined
-                      ? '—'
-                      : `${weeklyWonDeals} ${weeklyWonDeals === 1 ? 'Deal' : 'Deals'}`}
+                    {formatWeeklyWonDeals(weeklyWonDeals)}
                   </span>
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">
                     / {WEEKLY_WON_DEALS_WINDOW_DAYS} dias
