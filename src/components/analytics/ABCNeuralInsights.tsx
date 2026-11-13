@@ -1,12 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brain, Sparkles, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Lightbulb, Sparkles, TrendingUp, AlertTriangle, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface NeuralInsight {
   title: string;
   description: string;
-  type: 'opportunity' | 'warning' | 'trend';
-  score: number;
+  type: 'opportunity' | 'warning' | 'trend' | 'info';
 }
 
 interface ABCNeuralInsightsProps {
@@ -34,6 +33,7 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
               {insight.type === 'trend' && (
                 <TrendingUp className="h-12 w-12 text-primary" />
               )}
+              {insight.type === 'info' && <Info className="h-12 w-12 text-primary" />}
             </div>
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
                         : 'bg-primary/20 text-primary'
                   }`}
                 >
-                  <Brain className="h-4 w-4" />
+                  <Lightbulb className="h-4 w-4" />
                 </div>
                 <CardTitle className="text-section-title text-sm uppercase tracking-wider">
                   {insight.title}
@@ -54,24 +54,9 @@ export function ABCNeuralInsights({ insights }: ABCNeuralInsightsProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {insight.description}
               </p>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">
-                  Confidence Score
-                </span>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map(s => (
-                    <div
-                      key={s}
-                      className={`h-1 w-4 rounded-full ${
-                        s <= insight.score ? 'bg-primary' : 'bg-muted/30'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
             </CardContent>
           </Card>
         </motion.div>

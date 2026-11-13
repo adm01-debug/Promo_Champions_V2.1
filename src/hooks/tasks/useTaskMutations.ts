@@ -23,6 +23,17 @@ export const useCreateTask = () => {
       client_id?: string;
       salesperson_id?: string;
     }) => {
+      // A policy de INSERT de tasks exige salesperson_id = get_current_salesperson_id()
+      // (ou admin/gestor): sem responsável escolhido, a tarefa fica com o vendedor logado.
+      let salespersonId = input.salesperson_id || null;
+      if (!salespersonId) {
+        const { data: currentId, error: spError } = await supabase.rpc(
+          'get_current_salesperson_id'
+        );
+        if (spError) throw spError;
+        salespersonId = currentId || null;
+      }
+
       const { data, error } = await supabase
         .from('tasks')
         .insert([
@@ -35,7 +46,7 @@ export const useCreateTask = () => {
             due_time: input.due_time || null,
             sale_id: input.sale_id || null,
             client_id: input.client_id || null,
-            salesperson_id: input.salesperson_id || null,
+            salesperson_id: salespersonId,
             status: 'pending',
           },
         ])

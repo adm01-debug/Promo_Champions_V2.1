@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { differenceInDays, parseISO } from 'date-fns';
 import { CACHE_TIMES } from '@/constants';
 
@@ -82,6 +82,10 @@ interface InactiveDeal {
   criticalDays: number;
   severity: 'mild' | 'moderate' | 'critical';
   lastActivityDate: string;
+  /** Nome do vendedor responsável (null se o deal não tem vendedor ou o RLS não expõe). */
+  salespersonName: string | null;
+  /** auth.users.id do vendedor — destino real da notificação; null = não notificável. */
+  salespersonUserId: string | null;
 }
 
 const useStageInactivityRules = () =>
@@ -110,14 +114,21 @@ const useStageInactivityRules = () =>
   });
 
 export const useInactiveDeals = () => {
-  const { data: rules } = useStageInactivityRules();
+  const { data: rules, isLoading: rulesLoading } = useStageInactivityRules();
 
-  const { data: sales } = useQuery({
+  const {
+    data: sales,
+    isLoading: salesLoading,
+    isError: salesError,
+    refetch: refetchSales,
+  } = useQuery({
     queryKey: ['sales-inactivity'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('sales')
-        .select('id, client_name, status, updated_at, created_at')
+        .select(
+          'id, client_name, status, updated_at, created_at, salesperson:salespeople!sales_salesperson_id_fkey(name, auth_user_id)'
+        )
         .not('status', 'in', '("closed")')
         .order('updated_at', { ascending: true });
       if (error) throw error;
@@ -126,7 +137,12 @@ export const useInactiveDeals = () => {
     staleTime: CACHE_TIMES.STALE_TIME,
   });
 
-  const { data: activities } = useQuery({
+  const {
+    data: activities,
+    isLoading: activitiesLoading,
+    isError: activitiesError,
+    refetch: refetchActivities,
+  } = useQuery({
     queryKey: ['activities-latest-per-sale'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -179,6 +195,8 @@ export const useInactiveDeals = () => {
         criticalDays: rule.criticalDays,
         severity,
         lastActivityDate: lastDate,
+        salespersonName: sale.salesperson?.name ?? null,
+        salespersonUserId: sale.salesperson?.auth_user_id ?? null,
       });
     });
 
@@ -195,5 +213,17 @@ export const useInactiveDeals = () => {
     [inactiveDeals]
   );
 
-  return { inactiveDeals, summary };
+  const refetch = useCallback(() => {
+    void refetchSales();
+    void refetchActivities();
+  }, [refetchSales, refetchActivities]);
+
+  return {
+    inactiveDeals,
+    summary,
+    // Regras têm fallback local; sem vendas/atividades a lista não é confiável.
+    isLoading: salesLoading || activitiesLoading || rulesLoading,
+    isError: salesError || activitiesError,
+    refetch,
+  };
 };

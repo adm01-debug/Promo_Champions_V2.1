@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { isWonSaleStatus } from '@/constants';
+import { isOpenSaleStatus, isWonSaleStatus } from '@/constants';
 import { supabase } from '@/integrations/supabase/client';
 import { chunkedIn, type PostgrestLike } from '@/lib/supabase/chunkedIn';
 
@@ -20,6 +20,60 @@ interface DealVelocityData {
   overallAverage: number;
   stageVelocities: StageVelocity[];
   bottlenecks: string[];
+  bySalesperson: SalespersonVelocity[];
+}
+
+export interface SalespersonVelocity {
+  salespersonId: string;
+  avgDays: number;
+  wonDeals: number;
+  openDeals: number;
+}
+
+interface VelocitySaleRow {
+  status: string | null;
+  created_at: string;
+  updated_at: string;
+  salesperson_id: string | null;
+}
+
+/** Dias entre criação e última atualização de um deal ganho (mínimo 1). */
+const wonDealDurationDays = (s: VelocitySaleRow): number =>
+  Math.max(
+    1,
+    Math.ceil(
+      (new Date(s.updated_at).getTime() - new Date(s.created_at).getTime()) /
+        (1000 * 60 * 60 * 24)
+    )
+  );
+
+/**
+ * Velocidade média (dias até ganhar) por vendedor, a partir das vendas do período.
+ * Só entram vendedores com ao menos 1 deal ganho; ordenado do mais rápido ao mais lento.
+ */
+export function computeSalespersonVelocity(
+  sales: VelocitySaleRow[]
+): SalespersonVelocity[] {
+  const map = new Map<string, { durations: number[]; openDeals: number }>();
+  sales.forEach(s => {
+    if (!s.salesperson_id) return;
+    const entry = map.get(s.salesperson_id) ?? { durations: [], openDeals: 0 };
+    if (isWonSaleStatus(s.status)) entry.durations.push(wonDealDurationDays(s));
+    else if (isOpenSaleStatus(s.status)) entry.openDeals += 1;
+    map.set(s.salesperson_id, entry);
+  });
+
+  return Array.from(map.entries())
+    .filter(([, e]) => e.durations.length > 0)
+    .map(([salespersonId, e]) => ({
+      salespersonId,
+      avgDays:
+        Math.round((e.durations.reduce((a, b) => a + b, 0) / e.durations.length) * 10) /
+        10,
+      wonDeals: e.durations.length,
+      openDeals: e.openDeals,
+    }))
+    .sort((a, b) => a.avgDays - b.avgDays);
 }
 
 /**
@@ -102,14 +156,7 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
 
       // Calculate overall velocity from completed sales
       const completedSales = (sales || []).filter(s => isWonSaleStatus(s.status));
-      const dealDurations = completedSales.map(s => {
-        const created = new Date(s.created_at);
-        const updated = new Date(s.updated_at);
-        return Math.max(
-          1,
-          Math.ceil((updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24))
-        );
-      });
+      const dealDurations = completedSales.map(wonDealDurationDays);
 
       const overallAverage =
         dealDurations.length > 0
@@ -143,6 +190,7 @@ export const useDealVelocity = (salespersonId?: string, timeframe: number = 90) 
         overallAverage,
         stageVelocities: stages,
         bottlenecks,
+        bySalesperson: computeSalespersonVelocity(sales || []),
       };
     },
     staleTime: 1000 * 60 * 60,
