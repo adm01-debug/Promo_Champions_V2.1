@@ -1,11 +1,18 @@
 // Cenários do codemod de tipografia (12/11/2026): roda o script de verdade numa pasta temporária com src/ de fixture.
-import test from "node:test";
+import testBase from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+
+// O codemod lê a árvore de sintaxe do TypeScript. O job "Contratos da automação local" roda SEM npm ci (de propósito):
+// lá os cenários são pulados com o motivo explícito; nos hooks locais (com node_modules) rodam todos.
+let semTs = false;
+try { createRequire(import.meta.url)("typescript"); } catch { semTs = "typescript não instalado neste ambiente (rode npm ci)"; }
+const test = (nome, fn) => testBase(nome, { skip: semTs }, fn);
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), "codemod-typography.mjs");
 function rodar(conteudo, ...args) {
