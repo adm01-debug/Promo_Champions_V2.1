@@ -87305,6 +87305,10 @@
         "callers": {
           "code": [
             {
+              "file": "src/hooks/abm/useAccounts.ts",
+              "hits": 1
+            },
+            {
               "file": "src/hooks/calendar/useAgendaEvents.ts",
               "hits": 1
             },
@@ -87419,13 +87423,9 @@
             {
               "file": "supabase/migrations/20260404161351_d53443ba-8f31-4fe5-b682-193dc710b80e.sql",
               "hits": 4
-            },
-            {
-              "file": "supabase/migrations/20260412114808_21a14a17-3912-4a14-86dc-55aebea09e2d.sql",
-              "hits": 2
             }
           ],
-          "code_total_files": 73,
+          "code_total_files": 74,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",

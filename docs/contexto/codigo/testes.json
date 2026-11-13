@@ -364,11 +364,11 @@
   {
    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
    "tipo": "unit",
-   "linhas": 353,
+   "linhas": 431,
    "testa": [
     "src/hooks/abm/useAccounts.ts"
    ],
-   "casos": 14
+   "casos": 18
   },
   {
    "arquivo": "src/hooks/admin/useApprovalWorkflows.test.tsx",

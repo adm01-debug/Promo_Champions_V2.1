@@ -290,7 +290,8 @@
     "user_roles"
    ],
    "rpcs": [
-    "calculate_account_score"
+    "calculate_account_score",
+    "get_current_salesperson_id"
    ],
    "edges": [],
    "canais_realtime": [],

@@ -10636,7 +10636,7 @@
    "modulo": "hooks/abm",
    "arquivos": 1,
    "testes": 1,
-   "linhas": 330,
+   "linhas": 340,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -10662,7 +10662,8 @@
     "accounts"
    ],
    "rpcs": [
-    "calculate_account_score"
+    "calculate_account_score",
+    "get_current_salesperson_id"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -10681,7 +10682,8 @@
      "accounts"
     ],
     "rpcs": [
-     "calculate_account_score"
+     "calculate_account_score",
+     "get_current_salesperson_id"
     ]
    },
    "importado_por_outros_modulos": [

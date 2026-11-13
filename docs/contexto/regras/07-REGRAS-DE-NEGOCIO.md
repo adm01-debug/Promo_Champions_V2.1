@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3044064dc7` · branch `main` · 2026-11-13 09:55 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `52ad2f4057` · branch `main` · 2026-11-13 10:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4137,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1376 testes em 160 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1381 testes em 160 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4151,13 +4151,13 @@ _nenhum item encontrado_
 | `tests/e2e/pages-automation-ai.spec.ts` | 26 | Automation Builder · carrega heading  · title da página correto · mostra botão Novo Workflow … |
 | `src/lib/staleAssetRecovery.test.ts` | 24 | isRecoverableAssetError · recognizes failed dynamic import pattern · recognizes importing module script failed · recognizes loading chunk errors … |
 | `src/lib/validators/brDocuments.test.ts` | 24 | isValidCPF · aceita CPF válido: %s · rejeita CPF com dígito verificador errado: %s · rejeita CPF com tamanho ou conteúdo inválido: %s … |
+| `src/hooks/abm/useAccounts.test.tsx` | 23 | useCreateAccount · vendedor: grava owner_id = vendedor logado (exigido pela RLS de accounts) · admin/gestor sem vendedor vinculado: segue com owner_id null · owner_id vindo no payload é respeitado, sem consultar o vendedor logado … |
 | `tests/e2e/pages-gamification.spec.ts` | 23 | Ranking Competitivo — Circuito de Vencedores · carrega heading · title da página correto · mostra tabs de ranking … |
 | `src/lib/markupHelpers.test.ts` | 22 | markupHelpers · computeMarkupPct · calcula markup positivo · retorna 0 quando amount = custo … |
 | `src/lib/gamification.test.ts` | 20 | getLevelFromXP · retorna nível 1 para XP 0 · retorna nível correto no limiar inferior · progressPercent aumenta dentro do nível … |
 | `tests/e2e/pages-critical-routes.spec.ts` | 20 | Dashboard SDR · carrega heading · title da página correto · Dashboard Closer … |
 | `src/hooks/email/failedDraftsHelpers.test.ts` | 19 | isPermanentError · não classifica ausência de erro como permanente · marca  · mantém  … |
 | `src/hooks/email/recoveryRateHelpers.test.ts` | 19 | failureTypeLabel · traduz códigos conhecidos · devolve o código bruto quando desconhecido · isPermanentFailureType … |
-| `src/hooks/abm/useAccounts.test.tsx` | 18 | useUpdateAccount · atualiza a conta pelo id, sem enviar o id no payload, e invalida a lista · RLS com 0 linhas vira erro de permissão em PT-BR (sem mensagem crua do PostgREST) · nome duplicado (23505) mostra mensagem amigável … |
 | `tests/e2e/pages-crm-core.spec.ts` | 18 | Vendas — Deals Pipeline · carrega heading e filtros · title da página correto · Clientes — Client Hub … |
 | `scripts/db-audit/gen-migration-probes.test.mjs` | 17 | ALTER TABLE com vários ADD em uma linha carrega a tabela em todos · ALTER TABLE IF EXISTS não captura  · ALTER TABLE IF EXISTS com , ADD encadeado resolve a tabela certa · DROP CONSTRAINT + ADD CONSTRAINT na mesma statement resolve a tabela … |
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |

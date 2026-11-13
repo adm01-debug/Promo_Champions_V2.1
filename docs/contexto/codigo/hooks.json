@@ -325,7 +325,7 @@
     "useUpdateAccountPlan",
     "useUpdateContact"
    ],
-   "linhas": 330,
+   "linhas": 340,
    "dominio": "hooks/abm",
    "tabelas": [
     "account_contacts",
@@ -333,7 +333,8 @@
     "accounts"
    ],
    "rpcs": [
-    "calculate_account_score"
+    "calculate_account_score",
+    "get_current_salesperson_id"
    ],
    "edges": [],
    "hooks_internos": [

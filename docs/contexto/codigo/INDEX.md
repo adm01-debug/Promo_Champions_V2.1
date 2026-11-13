@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3044064dc780f9970210b07a9842a2b099e1998a` (2026-11-13T09:25:07Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `52ad2f4057c69d1331632e65fd2084c5b298cd51` (2026-11-13T09:48:57Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3481 |
 | arquivos_codigo | 2490 |
-| linhas_codigo | 432451 |
+| linhas_codigo | 432539 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,27 +574,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20300 nós · 64484 arestas · 1457 comunidades · grafo do commit `3044064d`
-- comunidades maiores: Card (582), Badge (359), Input (324), getCorsHeaders (285), Índice (277), DialogContent (275), client.ts (270), lucide-react (260), PageTransition (257), formatBRL (204), date-fns (188), vitest (187)
+- 20301 nós · 64485 arestas · 1477 comunidades · grafo do commit `52ad2f40`
+- comunidades maiores: Card (808), Button (538), client.ts (310), getCorsHeaders (286), Índice (277), Cadencias.tsx (235), utils.ts (232), Skeleton (223), Avatar (207), TabsTrigger (198), react (174), constants/index.ts (167)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (89)
-- package-lock.json (88)
-- .github/workflows/pr-checks.yml (39)
+- package.json (88)
+- package-lock.json (87)
+- .github/workflows/pr-checks.yml (38)
 - deno.lock (26)
-- .github/workflows/quote-to-sale-e2e.yml (22)
-- .github/workflows/codeql.yml (21)
+- .github/workflows/quote-to-sale-e2e.yml (21)
+- .github/workflows/codeql.yml (20)
 - RELATORIO_CI.md (18)
-- .github/workflows/cron-monitoring.yml (17)
-- .github/workflows/qa-exhaustive.yml (16)
-- supabase/functions/bitrix24-sync/index.ts (15)
-- .github/workflows/edge-functions-bundle.yml (14)
+- .github/workflows/cron-monitoring.yml (16)
+- .github/workflows/qa-exhaustive.yml (15)
 - CLAUDE.md (14)
-- src/integrations/supabase/types.ts (14)
-- supabase/config.toml (14)
-- vite.config.ts (13)
+- supabase/functions/bitrix24-sync/index.ts (14)
+- .github/workflows/edge-functions-bundle.yml (13)
+- src/integrations/supabase/types.ts (13)
+- supabase/config.toml (13)
+- PENDENCIAS.md (12)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `52ad2f4` fix: grava vendedor logado como dono ao criar conta no ABM (#475)
 - 2026-11-13 `3044064` fix: enviar user_id ao criar preferência de notificação (#474)
 - 2026-11-13 `e399094` fix: grava pesquisa NPS no vendedor logado (#473)
 - 2026-11-13 `e37f60a` Inscrição em cadência usa o vendedor logado como responsável padrão (#472)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `7ab97e0` feat: editar e arquivar materiais no Sales Enablement (#433)
 - 2026-11-13 `1f60080` feat: editar e desativar desafios semanais (#432)
 - 2026-11-13 `b68acd2` feat: editar e cancelar batalhas de vendas (#431)
-- 2026-11-13 `9d3c316` feat: editar e excluir workflows no Automation Builder (#430)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
