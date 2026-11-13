@@ -142,7 +142,9 @@ describe('DealCard — sem presença inventada de usuários', () => {
   it('não oferece o botão simulado de enriquecimento', () => {
     renderCard({});
 
-    expect(screen.queryByText(/Enriquecer com Dados de Ecossistema/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Enriquecer com Dados de Ecossistema/)
+    ).not.toBeInTheDocument();
     expect(document.querySelector('.lucide-database')).toBeNull();
   });
 });
