@@ -101,9 +101,14 @@ export const useUpdateAccountPlan = () => {
         if (!data) throw new Error('Sem permissão para editar o plano da conta.');
         return data;
       } else {
+        // A policy de INSERT exige created_by = auth.uid(); a coluna não tem default.
+        const { data: auth } = await supabase.auth.getUser();
+        const userId = auth.user?.id;
+        if (!userId)
+          throw new Error('Sessão expirada: entre de novo para criar o plano da conta.');
         const { data, error } = await supabase
           .from('account_plans')
-          .insert({ account_id, ...rest })
+          .insert({ account_id, ...rest, created_by: userId })
           .select()
           .single();
         if (error) throw error;
