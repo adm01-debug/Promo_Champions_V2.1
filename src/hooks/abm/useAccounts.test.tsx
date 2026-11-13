@@ -412,6 +412,41 @@ describe('useUpdateAccountPlan', () => {
     expect(toastSuccess).toHaveBeenCalledWith('Plano de conta atualizado');
   });
 
+  it('erro na checagem de plano existente não cai no INSERT', async () => {
+    queuedResults.push({
+      data: null,
+      error: { message: 'falha de rede', code: 'XX000' },
+    });
+    const { result } = renderHook(() => useUpdateAccountPlan(), { wrapper });
+
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ account_id: 'acc-1', fiscal_year: '2026' })
+      ).rejects.toMatchObject({ message: 'falha de rede' });
+    });
+
+    expect(ops()).not.toContain('insert');
+    expect(toastSuccess).not.toHaveBeenCalled();
+  });
+
+  it('plano criado por outro usuário (23505) vira mensagem para recarregar', async () => {
+    queuedResults.push(
+      { data: null, error: null },
+      { data: null, error: { message: 'duplicate key', code: '23505' } }
+    );
+    const { result } = renderHook(() => useUpdateAccountPlan(), { wrapper });
+
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ account_id: 'acc-1', fiscal_year: '2026' })
+      ).rejects.toThrow('Esta conta já tem um plano. Recarregue a página para editá-lo.');
+    });
+
+    expect(toastError).toHaveBeenCalledWith(
+      'Erro: Esta conta já tem um plano. Recarregue a página para editá-lo.'
+    );
+  });
+
   it('sem sessão: não tenta inserir e avisa para entrar de novo', async () => {
     currentUser = null;
     queuedResults.push({ data: null, error: null });
