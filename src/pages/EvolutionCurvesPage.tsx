@@ -1,12 +1,30 @@
 import { Helmet } from 'react-helmet-async';
 import { EvolutionChart } from '@/components/competitive/EvolutionChart';
 import { PageTransition } from '@/components/transitions/PageTransition';
-import { TrendingUp, Users, Filter, Share2 } from 'lucide-react';
+import { TrendingUp, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useEvolutionCurves } from '@/hooks/useEvolutionCurves';
+import { formatBRL } from '@/lib/money';
+import { useMemo } from 'react';
+
+const LEADERS_PERIOD_DAYS = 30;
 
 export default function EvolutionCurvesPage() {
+  const { chartData, salespeople, isLoading, isError } =
+    useEvolutionCurves(LEADERS_PERIOD_DAYS);
+
+  // Receita ganha acumulada por vendedor no período (último ponto da curva).
+  const leaders = useMemo(() => {
+    const last = chartData[chartData.length - 1];
+    if (!last) return [];
+    return salespeople
+      .map(sp => ({ id: sp.id, name: sp.name, revenue: Number(last[sp.id]) || 0 }))
+      .filter(l => l.revenue > 0)
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 3);
+  }, [chartData, salespeople]);
+
   return (
     <>
       <Helmet>
@@ -35,25 +53,6 @@ export default function EvolutionCurvesPage() {
                 </p>
               </div>
             </motion.div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="glass gap-2 border-border/50"
-              >
-                <Share2 className="h-4 w-4" />
-                Compartilhar
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="glass gap-2 border-border/50"
-              >
-                <Filter className="h-4 w-4" />
-                Filtrar Segmentos
-              </Button>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-6">
@@ -67,41 +66,45 @@ export default function EvolutionCurvesPage() {
                   <CardHeader>
                     <CardTitle className="text-section-title text-sm flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
-                      Líderes de Crescimento
+                      Líderes de Receita
                     </CardTitle>
+                    <p className="text-xs text-muted-foreground">
+                      Vendas ganhas nos últimos {LEADERS_PERIOD_DAYS} dias
+                    </p>
                   </CardHeader>
                   <CardContent className="p-0">
-                    <div className="divide-y divide-border/30">
-                      {[
-                        { name: 'Carlos Silva', growth: '+24%', trend: 'up' },
-                        { name: 'Mariana Costa', growth: '+18%', trend: 'up' },
-                        { name: 'Ana Beatriz', growth: '+12%', trend: 'up' },
-                      ].map((v, i) => (
-                        <div key={i} className="flex items-center justify-between p-4">
-                          <span className="text-xs font-medium">{v.name}</span>
-                          <span className="text-xs text-status-success font-bold">
-                            {v.growth}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="glass border-primary/20 bg-primary/5">
-                  <CardHeader>
-                    <CardTitle className="text-section-title text-sm flex items-center gap-2 text-primary">
-                      <TrendingUp className="h-4 w-4" />
-                      Projeção de Fechamento
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      Mantendo a taxa de aceleração atual, a equipe atingirá a meta
-                      trimestral{' '}
-                      <span className="text-foreground font-semibold">12 dias</span> antes
-                      do previsto.
-                    </p>
+                    {isLoading ? (
+                      <div className="space-y-2 p-4">
+                        {[0, 1, 2].map(i => (
+                          <div
+                            key={i}
+                            className="h-8 rounded-lg bg-muted/30 animate-pulse"
+                          />
+                        ))}
+                      </div>
+                    ) : isError ? (
+                      <p className="p-4 text-xs text-destructive">
+                        Não foi possível carregar os líderes de receita.
+                      </p>
+                    ) : leaders.length === 0 ? (
+                      <p className="p-4 text-xs text-muted-foreground">
+                        Sem vendas ganhas no período ainda.
+                      </p>
+                    ) : (
+                      <div className="divide-y divide-border/30">
+                        {leaders.map(v => (
+                          <div
+                            key={v.id}
+                            className="flex items-center justify-between p-4"
+                          >
+                            <span className="text-xs font-medium">{v.name}</span>
+                            <span className="text-xs text-status-success font-bold">
+                              {formatBRL(v.revenue)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
