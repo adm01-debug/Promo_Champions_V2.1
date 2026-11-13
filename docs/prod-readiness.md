@@ -1048,10 +1048,10 @@ Falhas de severidade baixa (registradas, sem correção nesta rodada): #470: Des
 
 ## Fechamento
 
-Estado em 2026-11-13 16:45 UTC.
+Estado em 2026-11-13 18:25 UTC.
 
 - **Qualidade no `main` final `c0af40180` (16:14 UTC):** `typecheck`, `typecheck:baseline`, `lint`, `lint:complexity`, `format:check` e `build` com exit 0; `npx vitest run` com exit 0 — 126 arquivos (1 pulado), **884 testes passaram**, 2 pulados (linha de base: 649). Deploy Vercel do commit: `success`; `GET /` → 200.
-- **GitHub Actions no `main` final:** CodeQL, CI/CD Post-merge, Release Please e Automação local `success` em `c0af40180`; types-sync e Migrations Drift `success` em `b97dd9195` (merge da #478). PR Checks, CI Failure Alert e Contexto ainda na fila do GitHub no fechamento desta versão (ver nota de atualização abaixo, se houver). `deploy.yml` nunca rodou (B6).
+- **GitHub Actions no `main` final `c0af40180` (conferido 18:25 UTC, depois do último merge):** PR Checks `success` (run 43460687691: lint, types, unit tests, build, deno lint/tests, migrations gate, SQL suites, security audit, k6 smoke e CI Gate), CodeQL, CI/CD Post-merge, Release Please, Automação local e CI Failure Alert `success`; Contexto: último run concluído com sucesso em `c0af40180` às 17:27 UTC — os demais 73 'cancelled' do histórico são execuções agendadas descartadas pela fila de concorrência (`concurrency: contexto`), sem nenhuma falha nos últimos 100. Nunca rodaram no `main`: `deploy.yml` (B6), `dependabot-fix-lockfile.yml` (só em PR de dependabot) e `diag-probes-node-test.yml` (arquivo inexistente no `main`).
 - **Entregue em produção:** 43 PRs mergeadas com deploy Vercel `SUCCESS` (tabelas das seções 9 e 10). A regra "branch atualizada" do `main` foi desligada em 2026-11-13 15:08 UTC com aprovação do dono (`strict: false`; checks obrigatórios mantidos).
 - **Banco:** advisors de segurança com **0 ERROR**; RLS ligado nas 405 tabelas `public`. As 19 migrations pendentes (as 10 de B7, já no `main`, e as das 8 PRs de banco) passaram em teste dentro de transação desfeita em produção. A aplicação real foi negada pela trava automática da sessão, então migrations do repo ≠ banco até alguém aplicar (B7).
 - **Produção:** erros recorrentes pré-existentes nas chamadas do banco para edge functions (B18). Logs da Management API indisponíveis (B3).
