@@ -32,6 +32,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { generateCurrentMonthReport } from '@/lib/generateMonthlyReport';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ReportConfig {
   id: string;
@@ -56,6 +57,7 @@ const FREQUENCIES = [
 
 export function EmailReportConfig() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { data: config, isLoading: _isLoading } = useQuery({
     queryKey: ['email-report-config'],
@@ -82,9 +84,11 @@ export function EmailReportConfig() {
           .eq('id', config.id);
         if (error) throw error;
       } else {
+        if (!user) throw new Error('Usuário não autenticado');
+        // RLS exige user_id = auth.uid() no INSERT
         const { error } = await supabase
           .from('notification_preferences')
-          .insert({ email: values.email || '', ...values });
+          .insert({ email: values.email || '', ...values, user_id: user.id });
         if (error) throw error;
       }
     },

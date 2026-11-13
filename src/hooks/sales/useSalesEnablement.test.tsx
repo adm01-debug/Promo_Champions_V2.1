@@ -6,6 +6,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const from = vi.fn();
 const update = vi.fn();
 const eq = vi.fn();
+const insert = vi.fn();
+const rpc = vi.fn();
 const toastSuccess = vi.fn();
 const toastError = vi.fn();
 let mutationResult: {
@@ -38,6 +40,10 @@ vi.mock('@/integrations/supabase/client', () => {
           },
         };
       },
+      insert: (...args: unknown[]) => {
+        insert(...args);
+        return Promise.resolve({ error: null });
+      },
       eq: (...args: unknown[]) => {
         eq(...args);
         return query;
@@ -54,12 +60,21 @@ vi.mock('@/integrations/supabase/client', () => {
         from(table);
         return builder();
       },
+      rpc: (...args: unknown[]) => rpc(...args),
+      auth: {
+        getUser: () => Promise.resolve({ data: { user: { id: 'auth-uid-1' } } }),
+      },
     },
   };
 });
 
-const { useEnablementAssets, useUpdateAsset, useArchiveAsset, useRestoreAsset } =
-  await import('./useSalesEnablement');
+const {
+  useEnablementAssets,
+  useUpdateAsset,
+  useArchiveAsset,
+  useRestoreAsset,
+  useTogglePlaybookItem,
+} = await import('./useSalesEnablement');
 
 let client: QueryClient;
 function wrapper({ children }: { children: ReactNode }) {
@@ -197,5 +212,54 @@ describe('useSalesEnablement — editar, arquivar e reativar materiais', () => {
         'Sem permissão para reativar este material'
       );
     });
+  });
+});
+
+describe('useTogglePlaybookItem — marcar etapa do playbook', () => {
+  const marcar = { playbook_item_id: 'item-1', sale_id: 'sale-1', completed: true };
+
+  beforeEach(() => {
+    insert.mockClear();
+    rpc.mockReset();
+    client = new QueryClient({
+      defaultOptions: { mutations: { retry: false }, queries: { retry: false } },
+    });
+  });
+
+  it('grava completed_by com o salespeople.id do vendedor logado (FK para salespeople), não o auth uid', async () => {
+    rpc.mockResolvedValue({ data: 'salesperson-1', error: null });
+    const { result } = renderHook(() => useTogglePlaybookItem(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync(marcar);
+    });
+
+    expect(rpc).toHaveBeenCalledWith('get_current_salesperson_id');
+    expect(insert).toHaveBeenCalledWith({
+      playbook_item_id: 'item-1',
+      sale_id: 'sale-1',
+      completed_by: 'salesperson-1',
+    });
+  });
+
+  it('admin/gestor sem cadastro de vendedor grava completed_by NULL', async () => {
+    rpc.mockResolvedValue({ data: null, error: null });
+    const { result } = renderHook(() => useTogglePlaybookItem(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync(marcar);
+    });
+
+    expect(insert).toHaveBeenCalledWith(expect.objectContaining({ completed_by: null }));
+  });
+
+  it('não insere se a consulta do vendedor falhar', async () => {
+    rpc.mockResolvedValue({ data: null, error: new Error('rpc falhou') });
+    const { result } = renderHook(() => useTogglePlaybookItem(), { wrapper });
+
+    await act(async () => {
+      await expect(result.current.mutateAsync(marcar)).rejects.toThrow('rpc falhou');
+    });
+    expect(insert).not.toHaveBeenCalled();
   });
 });
