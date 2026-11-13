@@ -33,6 +33,7 @@ import { useProducts } from '@/hooks/useProducts';
 import { usePriceAlerts, usePriceHistory } from '@/hooks/usePriceHistory';
 import { PriceAlertsPanel } from '@/components/comparador/PriceAlertsPanel';
 import { PriceHistoryTable } from '@/components/comparador/PriceHistoryTable';
+import { SupplierProductActions } from '@/components/comparador/SupplierProductActions';
 import { PageTransition } from '@/components/transitions/PageTransition';
 
 import { formatBRL } from '@/lib/money';
@@ -254,6 +255,7 @@ export default function ComparadorPrecos() {
                                 <TableHead className="text-center">
                                   Recomendação
                                 </TableHead>
+                                <TableHead className="text-right">Ações</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -299,6 +301,12 @@ export default function ComparadorPrecos() {
                                         Melhor Opção
                                       </Badge>
                                     )}
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    <SupplierProductActions
+                                      supplierProduct={sp}
+                                      productName={product.name}
+                                    />
                                   </TableCell>
                                 </TableRow>
                               ))}
