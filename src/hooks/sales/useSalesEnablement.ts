@@ -266,10 +266,16 @@ export const useTogglePlaybookItem = () => {
       if (!userData.user) throw new Error('Não autenticado');
 
       if (params.completed) {
+        // FK completed_by -> salespeople(id) e RLS exigem o salespeople.id (não o
+        // auth uid); admin/gestor sem cadastro de vendedor passam com NULL.
+        const { data: salespersonId, error: spError } = await supabase.rpc(
+          'get_current_salesperson_id'
+        );
+        if (spError) throw spError;
         const { error } = await supabase.from('playbook_progress').insert({
           playbook_item_id: params.playbook_item_id,
           sale_id: params.sale_id,
-          completed_by: userData.user.id,
+          completed_by: salespersonId ?? null,
         });
         if (error) throw error;
       } else {
