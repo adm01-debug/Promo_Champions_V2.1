@@ -5418,14 +5418,18 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallLogsForSale",
     "useCallSession",
     "useCallback",
+    "useContext",
     "useCreateQueue",
+    "useDeleteQueue",
     "useDialerQueues",
     "useEffect",
     "useInitiateCall",
     "useLogCall",
+    "useMemo",
     "useMutation",
     "useNextItem",
     "useQuery",
@@ -5435,12 +5439,16 @@
     "useSnoozeItem",
     "useState",
     "useToast",
-    "useTwilioCredentialsCheck"
+    "useTwilioCredentialsCheck",
+    "useUpdateQueue",
+    "useUserRoles"
    ],
    "hooks_locais": [
+    "useAuth",
     "useCallLogsForSale",
     "useCallSession",
     "useCreateQueue",
+    "useDeleteQueue",
     "useDialerQueues",
     "useInitiateCall",
     "useLogCall",
@@ -5449,7 +5457,9 @@
     "useRebuildQueue",
     "useSnoozeItem",
     "useToast",
-    "useTwilioCredentialsCheck"
+    "useTwilioCredentialsCheck",
+    "useUpdateQueue",
+    "useUserRoles"
    ],
    "tabelas": [
     "account_contacts",
@@ -5458,7 +5468,9 @@
     "dialer_queue_items",
     "dialer_queues",
     "sales",
-    "twilio_call_sessions"
+    "salespeople",
+    "twilio_call_sessions",
+    "user_roles"
    ],
    "rpcs": [
     "get_dialer_queue_stats",
@@ -5470,8 +5482,15 @@
    ],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 25
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
+   "arquivos_puxados": 29
   },
   {
    "protegida": false,

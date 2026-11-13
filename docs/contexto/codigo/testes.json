@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 181,
+ "total": 183,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 115
+  "unit": 117
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 98
+   "arquivos": 100
   },
   {
    "padrao": "tests/",
@@ -388,6 +388,15 @@
     "src/integrations/supabase/client.ts"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/dialer/usePowerDialer.test.tsx",
+   "tipo": "unit",
+   "linhas": 140,
+   "testa": [
+    "src/hooks/dialer/usePowerDialer.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/hooks/email/campaignDeliveryHelpers.test.ts",
@@ -885,6 +894,15 @@
     "src/pages/Index.tsx"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/pages/PowerDialer.test.tsx",
+   "tipo": "unit",
+   "linhas": 88,
+   "testa": [
+    "src/pages/PowerDialer.tsx"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/services/callFeedbackService.test.ts",
@@ -1549,6 +1567,7 @@
   "src/hooks/crm/useClientPortfolio.ts": 1,
   "src/hooks/dashboard/useDashboardKPIsPeriod.ts": 2,
   "src/hooks/dashboard/useGoalsDashboard.ts": 1,
+  "src/hooks/dialer/usePowerDialer.ts": 1,
   "src/hooks/email/campaignDeliveryHelpers.ts": 1,
   "src/hooks/email/emailOptOutMetricsHelpers.ts": 1,
   "src/hooks/email/failedDraftsHelpers.ts": 1,
@@ -1608,6 +1627,7 @@
   "src/pages/InactivityTriggers.tsx": 1,
   "src/pages/Index.tsx": 1,
   "src/pages/NotFound.tsx": 1,
+  "src/pages/PowerDialer.tsx": 1,
   "src/routes/AppRoutes.tsx": 1,
   "src/services/callFeedbackService.ts": 1,
   "src/services/knownDeviceService.ts": 1,
@@ -1726,7 +1746,6 @@
    "src/pages/Pipeline.tsx",
    "src/pages/Playbooks.tsx",
    "src/pages/Portfolio.tsx",
-   "src/pages/PowerDialer.tsx",
    "src/pages/PrevisaoDemanda.tsx",
    "src/pages/PriceEvolution.tsx",
    "src/pages/PricingIntelligenceHub.tsx",
@@ -1913,7 +1932,6 @@
    "src/hooks/deal-intelligence/useStageVelocity.ts",
    "src/hooks/deal-intelligence/useWinLoss.ts",
    "src/hooks/dialer/useClickToCall.ts",
-   "src/hooks/dialer/usePowerDialer.ts",
    "src/hooks/email/useCampaignDeliveryStats.ts",
    "src/hooks/email/useCampaignHealthAlerts.ts",
    "src/hooks/email/useCampaignOptOutRates.ts",

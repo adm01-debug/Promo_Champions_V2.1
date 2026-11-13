@@ -2601,7 +2601,7 @@
    "modulo": "components/dialer",
    "arquivos": 7,
    "testes": 0,
-   "linhas": 682,
+   "linhas": 741,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -2615,7 +2615,8 @@
     "useQueueStats",
     "useSnoozeItem",
     "useToast",
-    "useTwilioCredentialsCheck"
+    "useTwilioCredentialsCheck",
+    "useUpdateQueue"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -12300,8 +12301,8 @@
   {
    "modulo": "hooks/dialer",
    "arquivos": 2,
-   "testes": 0,
-   "linhas": 313,
+   "testes": 1,
+   "linhas": 381,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -12315,12 +12316,14 @@
     "useTwilioCredentialsCheck",
     "useCallLogsForSale",
     "useCreateQueue",
+    "useDeleteQueue",
     "useDialerQueues",
     "useLogCall",
     "useNextItem",
     "useQueueStats",
     "useRebuildQueue",
-    "useSnoozeItem"
+    "useSnoozeItem",
+    "useUpdateQueue"
    ],
    "edges": [
     "dialer-queue-builder",
@@ -15499,8 +15502,8 @@
   {
    "modulo": "pages",
    "arquivos": 161,
-   "testes": 3,
-   "linhas": 39184,
+   "testes": 4,
+   "linhas": 39265,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -16045,6 +16048,7 @@
     "useDeleteObjection",
     "useDeletePlaybookItem",
     "useDeleteProduct",
+    "useDeleteQueue",
     "useDeleteQuote",
     "useDeleteRecording",
     "useDeleteReportEmbedToken",
@@ -16504,6 +16508,7 @@
     "useUpdatePortfolioSetting",
     "useUpdatePortfolioStatus",
     "useUpdateProduct",
+    "useUpdateQueue",
     "useUpdateQuoteStatus",
     "useUpdateSLAPolicy",
     "useUpdateSalesperson",
@@ -17858,6 +17863,7 @@
     "useDeleteObjection",
     "useDeletePlaybookItem",
     "useDeleteProduct",
+    "useDeleteQueue",
     "useDeleteQuote",
     "useDeleteRecording",
     "useDeleteReportEmbedToken",
@@ -18332,6 +18338,7 @@
     "useUpdatePortfolioSetting",
     "useUpdatePortfolioStatus",
     "useUpdateProduct",
+    "useUpdateQueue",
     "useUpdateQuoteStatus",
     "useUpdateSLAPolicy",
     "useUpdateSalesperson",

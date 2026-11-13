@@ -7408,7 +7408,7 @@
     "DialerQueueCard"
    ],
    "export_default": null,
-   "linhas": 94,
+   "linhas": 122,
    "dominio": "components/dialer",
    "hooks_locais": [
     "useQueueStats"
@@ -7424,10 +7424,11 @@
     "QueueBuilderDialog"
    ],
    "export_default": null,
-   "linhas": 108,
+   "linhas": 139,
    "dominio": "components/dialer",
    "hooks_locais": [
-    "useCreateQueue"
+    "useCreateQueue",
+    "useUpdateQueue"
    ],
    "tabelas": [],
    "edges": [],
@@ -15422,7 +15423,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -17326,7 +17327,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 79,
+   "usado_por": 80,
    "orfao": false
   },
   {
@@ -19437,12 +19438,15 @@
     "PowerDialer"
    ],
    "export_default": "PowerDialer",
-   "linhas": 143,
+   "linhas": 224,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
+    "useDeleteQueue",
     "useDialerQueues",
     "useNextItem",
-    "useRebuildQueue"
+    "useRebuildQueue",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7ab97e01e7` · branch `main` · 2026-11-13 06:27 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4e0bb0027d` · branch `main` · 2026-11-13 07:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2372,6 +2372,10 @@ _nenhum item encontrado_
   ```
   
   ```
+- **canManage(queue: DialerQueue)** — `src/pages/PowerDialer.tsx`
+  ```
+  isAdmin || queue.owner_id === user?.id;
+  ```
 - **PriceEvolution()** — `src/pages/PriceEvolution.tsx`
   ```
   const [selectedProduct, setSelectedProduct] = useState<string>(''); const { data: products, isLoading: _productsLoading } = useProducts(); const { data: history, isLoading: historyLoading } = usePriceHistory( selectedProduct || undefined ); const { alerts, unreadCount, markAsRead, markAllAsRead } = usePriceAlerts(); const chartData = React.useMemo(() => { if (!history?.length) return []; const grouped = new Map< string, { date: string; [supplier: string]: number | string } >(); history.forEach(h …
@@ -4027,7 +4031,7 @@ _nenhum item encontrado_
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
-| … +651 linhas — lista completa em `context.json` | |
+| … +653 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4133,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1324 testes em 148 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1332 testes em 150 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4214,6 +4218,7 @@ _nenhum item encontrado_
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
+| `src/hooks/dialer/usePowerDialer.test.tsx` | 5 | usePowerDialer — editar e excluir fila · atualiza nome, estratégia e filtro da fila e invalida a lista · acusa erro quando o RLS não deixa alterar a fila (0 linhas) · exclui a fila e invalida a lista … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
 | `src/pages/InactivityTriggers.test.tsx` | 5 | InactivityTriggers · não afirma  · mostra erro com nova tentativa real quando a consulta falha · notifica o vendedor via send_notification e só confirma após sucesso … |
@@ -4249,6 +4254,7 @@ _nenhum item encontrado_
 | `src/hooks/orders/useOrderTracking.test.tsx` | 3 | useOrderTracking · retorna somente pedidos persistidos, sem complementar a listagem com mocks · consulta o detalhe diretamente, sem depender do limite da listagem |
 | `src/hooks/race/useGhostCar.test.tsx` | 3 | useGhostCar — histórico sem N+1 · busca progresso de todas as seasons em uma única query .in() · usa a melhor season do usuário como referência do ghost |
 | `src/lib/usageAnalytics.test.ts` | 3 | usage analytics · agrega visualizações a partir de eventos reais · mantém somente a última atividade observada por usuário |
+| `src/pages/PowerDialer.test.tsx` | 3 | PowerDialer — permissão de editar/excluir fila · usuário não admin (ex.: gestor) só vê Editar/Excluir nas próprias filas · admin vê Editar/Excluir em todas as filas |
 | `src/services/callFeedbackService.test.ts` | 3 | callFeedbackService.submitCallFeedback · insere evento call_feedback em lead_detailed_logs · propaga erro do insert |
 | `tests/e2e/quote-to-sale-error-payload-ui.spec.ts` | 3 | Payload de erro padronizado + toast UI (TOTAL_MISMATCH, FORBIDDEN) · TOTAL_MISMATCH: RPC devolve [TOTAL_MISMATCH] e UI mostra mensagem padronizada · FORBIDDEN: RPC devolve [FORBIDDEN] e UI mostra mensagem padronizada |
 | `tests/e2e/quote-to-sale-seq-no-advance.spec.ts` | 3 | Sequence: falha de conversão não avança sequence · TOTAL_MISMATCH: sequence estável e zero orders/sales · FORBIDDEN: sequence estável e zero orders/sales |
@@ -4614,6 +4620,7 @@ _nenhum item encontrado_
 | - staleTime alto pois histórico muda no máximo 1x por dia. | `src/hooks/assistant/useBriefingHistory.ts` |
 | Check if MFA upgrade is required (AAL1 → AAL2) | `src/hooks/auth/useAuthForm.ts` |
 | Fonte: view `sales_with_markup` (mascara custos absolutos conforme permissão). | `src/hooks/bi/useMarkupOverview.ts` |
+| RLS filtra silenciosamente: 0 linhas = sem permissão ou fila inexistente. | `src/hooks/dialer/usePowerDialer.ts` |
 | * Número máximo de tentativas automáticas — espelha MAX_RETRIES do backend. */ | `src/hooks/email/failedDraftsHelpers.ts` |
 | `public.normalize_bulk_failure_reason`; aqui apenas traduzimos os códigos | `src/hooks/email/recoveryRateHelpers.ts` |
 | * Limite (%) abaixo do qual uma falha transitória indica problema operacional. */ | `src/hooks/email/recoveryRateHelpers.ts` |
@@ -4841,5 +4848,4 @@ _nenhum item encontrado_
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-intelligence/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-scoring-explain/index.ts` |
 | Win-rate por faixa de desconto → slope linear (elasticidade medida). | `supabase/functions/pricing-intelligence/index.ts` |
-| Validação mínima defensiva — dados vêm de cliente autenticado, mas nunca confiar. | `supabase/functions/process-call-recording-ingest/index.ts` |
-| … +107 linhas — lista completa em `context.json` | |
+| … +108 linhas — lista completa em `context.json` | |

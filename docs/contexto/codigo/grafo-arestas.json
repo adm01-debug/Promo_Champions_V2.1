@@ -10987,9 +10987,12 @@
    "src/components/dialer/CurrentCallCard.tsx",
    "src/components/dialer/DialerQueueCard.tsx",
    "src/components/dialer/QueueBuilderDialog.tsx",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/hooks/dialer/usePowerDialer.ts"
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/dialer/usePowerDialer.ts",
+   "src/hooks/useUserRoles.ts"
   ],
   "src/pages/PrevisaoDemanda.tsx": [
    "src/components/analytics/DemandForecastDashboard.tsx",

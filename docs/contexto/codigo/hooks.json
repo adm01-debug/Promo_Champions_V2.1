@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 79,
+   "usado_por": 80,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -3567,14 +3567,16 @@
    "hooks_exportados": [
     "useCallLogsForSale",
     "useCreateQueue",
+    "useDeleteQueue",
     "useDialerQueues",
     "useLogCall",
     "useNextItem",
     "useQueueStats",
     "useRebuildQueue",
-    "useSnoozeItem"
+    "useSnoozeItem",
+    "useUpdateQueue"
    ],
-   "linhas": 232,
+   "linhas": 300,
    "dominio": "hooks/dialer",
    "tabelas": [
     "call_logs",
@@ -3603,7 +3605,7 @@
     "src/pages/PowerDialer.tsx",
     "src/pages/SDRDashboard.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/email/useCampaignDeliveryStats.ts",
@@ -10807,7 +10809,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 35,
+   "usado_por": 36,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",

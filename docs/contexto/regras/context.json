@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7ab97e01e7ad92e0cc7181504c2c4ca40c4db6bc",
+  "sha": "4e0bb0027dbd429dec86b045e78a959f9c6de156",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 06:27 UTC",
-  "files_total": 3483,
-  "code_files": 3154,
-  "code_lines": 460389
+  "generated_at": "2026-11-13 07:03 UTC",
+  "files_total": 3485,
+  "code_files": 3156,
+  "code_lines": 460825
  },
  "version": "1.3.2",
- "facts_hash": "d0710099c80b7271",
+ "facts_hash": "4e884b9bc6d735d4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1318,
+   ".tsx": 1320,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -65706,6 +65706,31 @@
    },
    {
     "path": "",
+    "file": "src/pages/PowerDialer.test.tsx",
+    "component": "PowerDialer.test",
+    "tables_transitive": [
+     "account_contacts",
+     "call_logs",
+     "channel_credentials",
+     "dialer_queue_items",
+     "dialer_queues",
+     "sales",
+     "salespeople",
+     "twilio_call_sessions",
+     "user_roles"
+    ],
+    "invokes_transitive": [
+     "dialer-queue-builder",
+     "twilio-click-to-call"
+    ],
+    "rpc_transitive": [
+     "get_dialer_queue_stats",
+     "next_dialer_item"
+    ],
+    "deps_count": 29
+   },
+   {
+    "path": "",
     "file": "src/pages/PrevisaoDemanda.tsx",
     "component": "PrevisaoDemanda",
     "tables_transitive": [
@@ -66971,7 +66996,9 @@
      "dialer_queue_items",
      "dialer_queues",
      "sales",
-     "twilio_call_sessions"
+     "salespeople",
+     "twilio_call_sessions",
+     "user_roles"
     ],
     "invokes_transitive": [
      "dialer-queue-builder",
@@ -66981,7 +67008,7 @@
      "get_dialer_queue_stats",
      "next_dialer_item"
     ],
-    "deps_count": 24
+    "deps_count": 28
    },
    {
     "path": "/engagement/email-scoring",
@@ -74995,6 +75022,14 @@
     "file": "src/hooks/dialer/usePowerDialer.ts"
    },
    {
+    "name": "useUpdateQueue",
+    "file": "src/hooks/dialer/usePowerDialer.ts"
+   },
+   {
+    "name": "useDeleteQueue",
+    "file": "src/hooks/dialer/usePowerDialer.ts"
+   },
+   {
     "name": "useRebuildQueue",
     "file": "src/hooks/dialer/usePowerDialer.ts"
    },
@@ -77716,7 +77751,7 @@
   {
    "module": "src/components",
    "files": 1188,
-   "lines": 188647,
+   "lines": 188706,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78039,8 +78074,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 512,
-   "lines": 59638,
+   "files": 513,
+   "lines": 59846,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78663,8 +78698,8 @@
   },
   {
    "module": "src/pages",
-   "files": 176,
-   "lines": 43769,
+   "files": 177,
+   "lines": 43938,
    "tables": [
     "achievements",
     "activities",
@@ -80979,7 +81014,11 @@
      "src/hooks/dialer/usePowerDialer.ts"
     ],
     "update": [
+     "src/hooks/dialer/usePowerDialer.ts",
      "supabase/functions/dialer-queue-builder/index.ts"
+    ],
+    "delete": [
+     "src/hooks/dialer/usePowerDialer.ts"
     ]
    },
    "digital_signatures": {
@@ -91986,6 +92025,14 @@
    },
    {
     "file": "src/hooks/dialer/usePowerDialer.ts",
+    "msg": "Erro ao atualizar fila"
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.ts",
+    "msg": "Erro ao excluir fila"
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.ts",
     "msg": "Not authenticated"
    },
    {
@@ -94367,6 +94414,10 @@
    {
     "file": "src/hooks/bi/useMarkupOverview.ts",
     "text": "Fonte: view `sales_with_markup` (mascara custos absolutos conforme permissão)."
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.ts",
+    "text": "RLS filtra silenciosamente: 0 linhas = sem permissão ou fila inexistente."
    },
    {
     "file": "src/hooks/email/failedDraftsHelpers.ts",
@@ -127027,6 +127078,12 @@
     "body": ""
    },
    {
+    "file": "src/pages/PowerDialer.tsx",
+    "name": "canManage",
+    "params": "queue: DialerQueue",
+    "body": "isAdmin || queue.owner_id === user?.id;"
+   },
+   {
     "file": "src/pages/PriceEvolution.tsx",
     "name": "PriceEvolution",
     "params": "",
@@ -131557,6 +131614,26 @@
     "name": "manager: totalRevenue is the global aggregate; clients/conversion are populated"
    },
    {
+    "file": "src/hooks/dialer/usePowerDialer.test.tsx",
+    "name": "usePowerDialer — editar e excluir fila"
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.test.tsx",
+    "name": "atualiza nome, estratégia e filtro da fila e invalida a lista"
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.test.tsx",
+    "name": "acusa erro quando o RLS não deixa alterar a fila (0 linhas)"
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.test.tsx",
+    "name": "exclui a fila e invalida a lista"
+   },
+   {
+    "file": "src/hooks/dialer/usePowerDialer.test.tsx",
+    "name": "mostra erro ao excluir quando o banco retorna falha"
+   },
+   {
     "file": "src/hooks/email/campaignDeliveryHelpers.test.ts",
     "name": "campaignDeliveryHelpers"
    },
@@ -133539,6 +133616,18 @@
    {
     "file": "src/pages/Index.test.tsx",
     "name": "renders correct modules for SDR role"
+   },
+   {
+    "file": "src/pages/PowerDialer.test.tsx",
+    "name": "PowerDialer — permissão de editar/excluir fila"
+   },
+   {
+    "file": "src/pages/PowerDialer.test.tsx",
+    "name": "usuário não admin (ex.: gestor) só vê Editar/Excluir nas próprias filas"
+   },
+   {
+    "file": "src/pages/PowerDialer.test.tsx",
+    "name": "admin vê Editar/Excluir em todas as filas"
    },
    {
     "file": "src/services/callFeedbackService.test.ts",
@@ -186939,14 +187028,14 @@
   },
   "src/components/dialer/DialerQueueCard.tsx": {
    "path": "src/components/dialer/DialerQueueCard.tsx",
-   "lines": 94,
+   "lines": 122,
    "exports": [
     "const DialerQueueCard"
    ]
   },
   "src/components/dialer/QueueBuilderDialog.tsx": {
    "path": "src/components/dialer/QueueBuilderDialog.tsx",
-   "lines": 108,
+   "lines": 139,
    "exports": [
     "const QueueBuilderDialog"
    ]
@@ -208535,14 +208624,28 @@
     "1"
    ]
   },
+  "src/hooks/dialer/usePowerDialer.test.tsx": {
+   "path": "src/hooks/dialer/usePowerDialer.test.tsx",
+   "lines": 140,
+   "is_test": true,
+   "tests": [
+    "usePowerDialer — editar e excluir fila",
+    "atualiza nome, estratégia e filtro da fila e invalida a lista",
+    "acusa erro quando o RLS não deixa alterar a fila (0 linhas)",
+    "exclui a fila e invalida a lista",
+    "mostra erro ao excluir quando o banco retorna falha"
+   ]
+  },
   "src/hooks/dialer/usePowerDialer.ts": {
    "path": "src/hooks/dialer/usePowerDialer.ts",
-   "lines": 232,
+   "lines": 300,
    "exports": [
     "type DialerQueue",
     "const useDialerQueues",
     "const useQueueStats",
     "const useCreateQueue",
+    "const useUpdateQueue",
+    "const useDeleteQueue",
     "const useRebuildQueue",
     "const useNextItem",
     "const useLogCall",
@@ -208557,6 +208660,14 @@
     {
      "table": "dialer_queues",
      "op": "insert,select"
+    },
+    {
+     "table": "dialer_queues",
+     "op": "select,update"
+    },
+    {
+     "table": "dialer_queues",
+     "op": "delete,select"
     },
     {
      "table": "call_logs",
@@ -208576,6 +208687,9 @@
     }
    ],
    "table_cols": {
+    "dialer_queues": [
+     "id"
+    ],
     "dialer_queue_items": [
      "id"
     ],
@@ -208591,6 +208705,8 @@
     "dialer-queue-builder"
    ],
    "errors": [
+    "Erro ao atualizar fila",
+    "Erro ao excluir fila",
     "Not authenticated"
    ],
    "status_values": [
@@ -208605,10 +208721,15 @@
      "kind": "escreve"
     }
    ],
+   "rule_comments": [
+    "RLS filtra silenciosamente: 0 linhas = sem permissão ou fila inexistente."
+   ],
    "hooks": [
     "useDialerQueues",
     "useQueueStats",
     "useCreateQueue",
+    "useUpdateQueue",
+    "useDeleteQueue",
     "useRebuildQueue",
     "useNextItem",
     "useLogCall",
@@ -219880,11 +220001,28 @@
     "hybrid"
    ]
   },
+  "src/pages/PowerDialer.test.tsx": {
+   "path": "src/pages/PowerDialer.test.tsx",
+   "lines": 88,
+   "is_test": true,
+   "tests": [
+    "PowerDialer — permissão de editar/excluir fila",
+    "usuário não admin (ex.: gestor) só vê Editar/Excluir nas próprias filas",
+    "admin vê Editar/Excluir em todas as filas"
+   ]
+  },
   "src/pages/PowerDialer.tsx": {
    "path": "src/pages/PowerDialer.tsx",
-   "lines": 143,
+   "lines": 224,
    "exports": [
     "default PowerDialer"
+   ],
+   "calc_fns": [
+    {
+     "name": "canManage",
+     "params": "queue: DialerQueue",
+     "body": "isAdmin || queue.owner_id === user?.id;"
+    }
    ]
   },
   "src/pages/PrevisaoDemanda.tsx": {
@@ -245425,10 +245563,24 @@
   }
  },
  "git": {
-  "sha": "7ab97e01e7ad92e0cc7181504c2c4ca40c4db6bc",
+  "sha": "4e0bb0027dbd429dec86b045e78a959f9c6de156",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "4e0bb00",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e excluir filas do Power Dialer (#435)",
+    "files": [
+     "src/components/dialer/DialerQueueCard.tsx",
+     "src/components/dialer/QueueBuilderDialog.tsx",
+     "src/hooks/dialer/usePowerDialer.test.tsx",
+     "src/hooks/dialer/usePowerDialer.ts",
+     "src/pages/PowerDialer.test.tsx",
+     "src/pages/PowerDialer.tsx"
+    ]
+   },
    {
     "sha": "7ab97e0",
     "date": "2026-11-13",
@@ -246204,15 +246356,6 @@
     "subject": "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)",
     "files": [
      "scripts/inventario/gerar-banco.mjs"
-    ]
-   },
-   {
-    "sha": "7535bb0",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix: k6-smoke mira funções não deployadas e health sem chave (#388)",
-    "files": [
-     "scripts/load/k6-smoke.js"
     ]
    }
   ],
