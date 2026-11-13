@@ -112,7 +112,12 @@ const useStageInactivityRules = () =>
 export const useInactiveDeals = () => {
   const { data: rules } = useStageInactivityRules();
 
-  const { data: sales } = useQuery({
+  const {
+    data: sales,
+    isLoading: salesLoading,
+    isError: salesError,
+    refetch: refetchSales,
+  } = useQuery({
     queryKey: ['sales-inactivity'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -126,7 +131,12 @@ export const useInactiveDeals = () => {
     staleTime: CACHE_TIMES.STALE_TIME,
   });
 
-  const { data: activities } = useQuery({
+  const {
+    data: activities,
+    isLoading: activitiesLoading,
+    isError: activitiesError,
+    refetch: refetchActivities,
+  } = useQuery({
     queryKey: ['activities-latest-per-sale'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -195,5 +205,12 @@ export const useInactiveDeals = () => {
     [inactiveDeals]
   );
 
-  return { inactiveDeals, summary };
+  // Sem `activities` a inatividade cairia para `updated_at` e ficaria errada;
+  // por isso falha em qualquer das duas consultas conta como erro.
+  // As regras por etapa têm fallback documentado (INACTIVITY_RULES).
+  const isLoading = salesLoading || activitiesLoading;
+  const isError = salesError || activitiesError;
+  const refetch = () => Promise.all([refetchSales(), refetchActivities()]);
+
+  return { inactiveDeals, summary, isLoading, isError, refetch };
 };
