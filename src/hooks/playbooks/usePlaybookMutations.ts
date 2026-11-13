@@ -24,9 +24,16 @@ export const useTogglePlaybookItem = () => {
           .eq('sale_id', saleId);
         if (error) throw error;
       } else {
+        // RLS exige completed_by = get_current_salesperson_id() (salespeople.id,
+        // não auth uid) para vendedor; admin/gestor sem vendedor passam com NULL.
+        const { data: salespersonId, error: spError } = await supabase.rpc(
+          'get_current_salesperson_id'
+        );
+        if (spError) throw spError;
         const { error } = await supabase.from('playbook_progress').insert({
           playbook_item_id: itemId,
           sale_id: saleId,
+          completed_by: salespersonId ?? null,
         });
         if (error) throw error;
       }

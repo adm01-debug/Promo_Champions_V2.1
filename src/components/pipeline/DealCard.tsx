@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Deal } from '@/hooks/usePipeline';
 import { cn } from '@/lib/utils';
-import { DICEBEAR_AVATARS_URL } from '@/config/external';
+import { DICEBEAR_AVATARS_URL, WA_ME_URL } from '@/config/external';
+import { useNavigate } from 'react-router-dom';
 import {
   DollarSign,
   Calendar,
@@ -19,12 +20,13 @@ import {
   Edit2,
   Check,
   Sparkles,
-  RefreshCw,
-  Mic,
-  ShieldCheck,
-  History,
-  Database,
+  MessageCircle,
 } from 'lucide-react';
+import type { DealStakeholderSummary } from '@/hooks/pipeline/useDealCardContext';
+import {
+  dmuRoleLabel,
+  sentimentLabel,
+} from '@/components/deal-intelligence/committeeHelpers';
 import { StagnantDealAlert } from './StagnantDealAlert';
 import { DealSummaryCard } from './DealSummaryCard';
 import { DealScoreIndicator } from './DealScoreIndicator';
@@ -61,7 +63,17 @@ interface DealCardProps {
     is_icp_match: boolean;
     grupo_nicho?: string;
   };
+  /** Comitê de compra real (public.deal_stakeholders) do deal. */
+  stakeholders?: DealStakeholderSummary[];
+  /** Telefone cadastrado do cliente (public.clients.phone). */
+  clientPhone?: string | null;
 }
+
+const SENTIMENT_TEXT_COLOR: Record<DealStakeholderSummary['sentiment'], string> = {
+  positive: 'text-emerald-500',
+  neutral: 'text-amber-500',
+  negative: 'text-destructive',
+};
 
 export const DealCard = ({
   deal,
@@ -69,8 +81,11 @@ export const DealCard = ({
   leadScore,
   activeCadence,
   icpData,
+  stakeholders,
+  clientPhone,
 }: DealCardProps) => {
-  const [isEnriching, setIsEnriching] = useState(false); // Etapa 3: Data Enrichment
+  const navigate = useNavigate();
+  const whatsappDigits = clientPhone?.replace(/\D/g, '') ?? '';
   const [playbookOpen, setPlaybookOpen] = useState(false);
   useLeadScoreExplanation(leadScore ? deal.id : null);
   const { data: playbooks } = usePlaybooksByStage(deal.status);
@@ -173,74 +188,53 @@ export const DealCard = ({
         <div className="flex items-start justify-between gap-2 mb-2 relative">
           {/* Etapa 4: Quick Action Overlay */}
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-around z-20 rounded-lg">
+            {whatsappDigits && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Abrir WhatsApp do cliente"
+                    className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500 group/btn"
+                    onClick={e => {
+                      e.stopPropagation();
+                      window.open(
+                        `${WA_ME_URL}/${whatsappDigits}`,
+                        '_blank',
+                        'noopener,noreferrer'
+                      );
+                    }}
+                  >
+                    <MessageCircle className="h-4 w-4 group-hover/btn:scale-125 transition-transform" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="font-bold">
+                  Abrir WhatsApp do cliente
+                </TooltipContent>
+              </Tooltip>
+            )}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-emerald-500/20 text-emerald-500 group/btn"
-                >
-                  <Zap className="h-4 w-4 group-hover/btn:scale-125 transition-transform" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="font-bold">
-                WhatsApp Rápido (Automação Etapa 2)
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    'h-8 w-8 hover:bg-indigo-500/20 text-indigo-500',
-                    isEnriching && 'animate-pulse'
-                  )}
+                  aria-label="Abrir minhas tarefas"
+                  className="h-8 w-8 hover:bg-primary/20 text-primary"
                   onClick={e => {
                     e.stopPropagation();
-                    setIsEnriching(true);
-                    setTimeout(() => setIsEnriching(false), 2000);
+                    navigate('/tarefas');
                   }}
-                >
-                  <Database className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="font-bold">
-                Enriquecer com Dados de Ecossistema (Etapa 3)
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-orange-500/20 text-orange-500"
-                >
-                  <Mic className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="font-bold">
-                AI Voice Command (Etapa 4)
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-primary/20 text-primary"
                 >
                   <ListTodo className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="font-bold">Ver Tarefas</TooltipContent>
+              <TooltipContent className="font-bold">Abrir minhas tarefas</TooltipContent>
             </Tooltip>
           </div>
 
           <div className="flex-1 min-w-0">
             <h4 className="font-display font-semibold text-sm truncate group-hover:text-primary transition-colors flex items-center gap-1.5">
               {deal.client_name}
-              {isEnriching && <RefreshCw className="h-3 w-3 animate-spin text-primary" />}
             </h4>
             <p className="text-xs text-muted-foreground truncate mt-0.5">
               {deal.product_name}
@@ -385,36 +379,6 @@ export const DealCard = ({
         </AnimatePresence>
 
         <div className="flex flex-wrap gap-1.5 text-[10px] text-muted-foreground items-center">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge
-                variant="outline"
-                className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-emerald-500/10 text-emerald-500 border-none cursor-help"
-              >
-                <ShieldCheck className="h-2.5 w-2.5 mr-0.5" />
-                RevOps OK
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px]">
-              Auditoria de Revenue Operations validada (Etapa 6)
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 hover:text-primary transition-colors"
-              >
-                <History className="h-3 w-3" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="text-[10px]">
-              Ver Histórico de Auditoria (Etapa 6)
-            </TooltipContent>
-          </Tooltip>
-
           {probability && (
             <Badge
               variant="outline"
@@ -440,34 +404,36 @@ export const DealCard = ({
             </Badge>
           )}
 
-          {/* Etapa 5: Stakeholder Influence */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Badge
-                variant="outline"
-                className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-primary/10 text-primary border-none cursor-help"
-              >
-                <Users className="h-2.5 w-2.5 mr-0.5" />3 Decisores
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-[10px] p-2 space-y-1">
-              <p className="font-bold border-b border-border/10 pb-1 mb-1">
-                Mapa de Influência
-              </p>
-              <p className="flex justify-between">
-                <span>CEO (Decisor)</span>{' '}
-                <span className="text-emerald-500 font-bold">Favorável</span>
-              </p>
-              <p className="flex justify-between">
-                <span>CTO (Influenciador)</span>{' '}
-                <span className="text-amber-500 font-bold">Neutro</span>
-              </p>
-              <p className="flex justify-between">
-                <span>Diretor Vendas</span>{' '}
-                <span className="text-emerald-500 font-bold">Favorável</span>
-              </p>
-            </TooltipContent>
-          </Tooltip>
+          {/* Etapa 5: Stakeholder Influence — comitê real (deal_stakeholders) */}
+          {stakeholders && stakeholders.length > 0 && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge
+                  variant="outline"
+                  className="text-[9px] font-black uppercase tracking-tighter px-1.5 py-0 bg-primary/10 text-primary border-none cursor-help"
+                >
+                  <Users className="h-2.5 w-2.5 mr-0.5" />
+                  {stakeholders.length}{' '}
+                  {stakeholders.length === 1 ? 'Stakeholder' : 'Stakeholders'}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="text-[10px] p-2 space-y-1">
+                <p className="font-bold border-b border-border/10 pb-1 mb-1">
+                  Mapa de Influência
+                </p>
+                {stakeholders.map(st => (
+                  <p key={st.id} className="flex justify-between gap-3">
+                    <span>
+                      {st.name} ({st.role_title || dmuRoleLabel(st.dmu_role)})
+                    </span>
+                    <span className={cn('font-bold', SENTIMENT_TEXT_COLOR[st.sentiment])}>
+                      {sentimentLabel(st.sentiment)}
+                    </span>
+                  </p>
+                ))}
+              </TooltipContent>
+            </Tooltip>
+          )}
 
           {deal.sdr_id && !deal.salesperson_id && (
             <Badge
