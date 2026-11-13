@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 228,
+ "total": 230,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 162
+  "unit": 164
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 145
+   "arquivos": 147
   },
   {
    "padrao": "tests/",
@@ -250,11 +250,11 @@
   {
    "arquivo": "src/components/activities/ActivityLogForm.test.tsx",
    "tipo": "unit",
-   "linhas": 59,
+   "linhas": 78,
    "testa": [
     "src/components/activities/ActivityLogForm.tsx"
    ],
-   "casos": 2
+   "casos": 3
   },
   {
    "arquivo": "src/components/analytics/ABCAnalysis.test.tsx",
@@ -382,14 +382,14 @@
   {
    "arquivo": "src/components/pipeline/DealCard.test.tsx",
    "tipo": "unit",
-   "linhas": 129,
+   "linhas": 151,
    "testa": [
     "src/components/pipeline/DealCard.tsx",
     "src/components/ui/tooltip.tsx",
     "src/hooks/pipeline/useDealCardContext.ts",
     "src/hooks/usePipeline.ts"
    ],
-   "casos": 4
+   "casos": 6
   },
   {
    "arquivo": "src/components/pipeline/InactivityPanel.test.tsx",
@@ -398,6 +398,16 @@
    "testa": [
     "src/components/pipeline/InactivityPanel.tsx",
     "src/hooks/useInactiveDeals.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/pipeline/PipelineBoard.test.tsx",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [
+    "src/components/pipeline/PipelineBoard.tsx",
+    "src/hooks/usePipeline.ts"
    ],
    "casos": 4
   },
@@ -763,6 +773,15 @@
     "src/hooks/orders/useOrderTracking.ts"
    ],
    "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/pipeline/useWeeklyWonDeals.test.tsx",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/hooks/pipeline/useWeeklyWonDeals.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
@@ -1983,6 +2002,7 @@
   "src/components/intelligence/PipelineStrategicReview.tsx": 1,
   "src/components/pipeline/DealCard.tsx": 1,
   "src/components/pipeline/InactivityPanel.tsx": 1,
+  "src/components/pipeline/PipelineBoard.tsx": 1,
   "src/components/predictive/PredictiveScenarioPlanner.tsx": 1,
   "src/components/pricing/MarginAlertsCard.tsx": 1,
   "src/components/pricing/RevenueLeakageCard.tsx": 1,
@@ -2032,6 +2052,7 @@
   "src/hooks/gamification/useWeeklyChallenges.ts": 1,
   "src/hooks/orders/useOrderTracking.ts": 1,
   "src/hooks/pipeline/useDealCardContext.ts": 1,
+  "src/hooks/pipeline/useWeeklyWonDeals.ts": 1,
   "src/hooks/playbooks/usePlaybookMutations.ts": 1,
   "src/hooks/quoteErrorMessages.ts": 5,
   "src/hooks/race/useGhostCar.ts": 1,
@@ -2058,7 +2079,7 @@
   "src/hooks/useMultichannel.ts": 1,
   "src/hooks/useNPSSurveys.ts": 1,
   "src/hooks/useNotificationPreferences.ts": 1,
-  "src/hooks/usePipeline.ts": 2,
+  "src/hooks/usePipeline.ts": 3,
   "src/hooks/useProductRecommendations.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
   "src/hooks/useScrollRestoration.ts": 1,

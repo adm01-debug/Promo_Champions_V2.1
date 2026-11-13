@@ -9882,7 +9882,7 @@
     "DealCard"
    ],
    "export_default": null,
-   "linhas": 516,
+   "linhas": 486,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useDealPlaybookProgress",
@@ -9977,7 +9977,7 @@
     "PipelineBoard"
    ],
    "export_default": null,
-   "linhas": 581,
+   "linhas": 610,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
@@ -9993,7 +9993,8 @@
     "usePipelineStages",
     "usePipelines",
     "useStageProbabilities",
-    "useStakeholdersBySaleIds"
+    "useStakeholdersBySaleIds",
+    "useWeeklyWonDeals"
    ],
    "tabelas": [],
    "edges": [],

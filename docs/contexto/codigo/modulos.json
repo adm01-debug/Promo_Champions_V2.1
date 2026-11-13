@@ -4552,6 +4552,7 @@
     "useWeeklyComparison",
     "useWeeklyMatchups",
     "useWeeklyRanking",
+    "useWeeklyWonDeals",
     "useWhatsApp",
     "useWinLossAnalysis"
    ],
@@ -5516,6 +5517,7 @@
     "useWeeklyComparison",
     "useWeeklyMatchups",
     "useWeeklyRanking",
+    "useWeeklyWonDeals",
     "useWhatsApp",
     "useWinLossAnalysis"
    ],
@@ -5873,8 +5875,8 @@
   {
    "modulo": "components/pipeline",
    "arquivos": 16,
-   "testes": 2,
-   "linhas": 3087,
+   "testes": 3,
+   "linhas": 3086,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5940,7 +5942,8 @@
     "useUpdateICPData",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
-    "useUserRoles"
+    "useUserRoles",
+    "useWeeklyWonDeals"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -8700,6 +8703,7 @@
     "useWeeklyComparison",
     "useWeeklyMatchups",
     "useWeeklyRanking",
+    "useWeeklyWonDeals",
     "useWhatsApp",
     "useWinLossAnalysis"
    ],
@@ -9721,6 +9725,7 @@
     "hooks/forecast",
     "hooks/gamification",
     "hooks/notifications",
+    "hooks/pipeline",
     "hooks/race",
     "hooks/reporting",
     "hooks/reports",
@@ -13377,9 +13382,9 @@
   },
   {
    "modulo": "hooks/pipeline",
-   "arquivos": 2,
-   "testes": 0,
-   "linhas": 113,
+   "arquivos": 3,
+   "testes": 1,
+   "linhas": 144,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13387,18 +13392,21 @@
    "hooks_locais": [
     "useClientPhonesByIds",
     "usePipelineHealthScore",
-    "useStakeholdersBySaleIds"
+    "useStakeholdersBySaleIds",
+    "useWeeklyWonDeals"
    ],
    "hooks_definidos": [
     "useClientPhonesByIds",
     "useStakeholdersBySaleIds",
-    "usePipelineHealthScore"
+    "usePipelineHealthScore",
+    "useWeeklyWonDeals"
    ],
    "edges": [],
    "tabelas": [
     "clients",
     "deal_stakeholders",
-    "revenue_forecast_view"
+    "revenue_forecast_view",
+    "sales"
    ],
    "rpcs": [],
    "buckets": [],
@@ -13415,7 +13423,8 @@
     "tabelas": [
      "clients",
      "deal_stakeholders",
-     "revenue_forecast_view"
+     "revenue_forecast_view",
+     "sales"
     ],
     "rpcs": []
    },
@@ -13424,11 +13433,13 @@
    ],
    "depende_de_modulos": [
     "components/deal-intelligence",
+    "constants",
     "integrations/supabase",
     "lib/supabase"
    ],
    "pacotes_externos": [
-    "@tanstack/react-query"
+    "@tanstack/react-query",
+    "date-fns"
    ]
   },
   {
@@ -16819,6 +16830,7 @@
     "useWeeklyComparison",
     "useWeeklyMatchups",
     "useWeeklyRanking",
+    "useWeeklyWonDeals",
     "useWeightedForecast",
     "useWhatsApp",
     "useWinByHourMatrix",
@@ -18669,6 +18681,7 @@
     "useWeeklyComparison",
     "useWeeklyMatchups",
     "useWeeklyRanking",
+    "useWeeklyWonDeals",
     "useWeightedForecast",
     "useWhatsApp",
     "useWinByHourMatrix",

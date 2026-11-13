@@ -7825,7 +7825,8 @@
     "useUpdateICPData",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
-    "useUserRoles"
+    "useUserRoles",
+    "useWeeklyWonDeals"
    ],
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
@@ -7889,7 +7890,8 @@
     "useUpdateICPData",
     "useUpdateLeadStage",
     "useUpdateSalesperson",
-    "useUserRoles"
+    "useUserRoles",
+    "useWeeklyWonDeals"
    ],
    "tabelas": [
     "activities",
@@ -7945,7 +7947,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 102
+   "arquivos_puxados": 103
   },
   {
    "protegida": false,

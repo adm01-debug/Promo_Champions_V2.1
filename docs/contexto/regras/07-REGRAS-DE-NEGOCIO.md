@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c0af40180b` · branch `main` · 2026-11-13 17:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d03b42e6a8` · branch `main` · 2026-11-13 21:24 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2968,6 +2968,7 @@ _nenhum item encontrado_
 | `STAGNANT_WARNING_DAYS` | `7` | `src/hooks/notifications/useAlerts.ts` |
 | `STAGNANT_CRITICAL_DAYS` | `14` | `src/hooks/notifications/useAlerts.ts` |
 | `INACTIVE_CLIENT_DAYS` | `30` | `src/hooks/notifications/useAlerts.ts` |
+| `WEEKLY_WON_DEALS_WINDOW_DAYS` | `7` | `src/hooks/pipeline/useWeeklyWonDeals.ts` |
 | `EVENT` | `'race-calm-mode-change'` | `src/hooks/race/useCalmMode.ts` |
 | `AUTO_DISMISS_MS` | `5500` | `src/hooks/race/useOvertakeDetector.ts` |
 | `MAX_QUEUE` | `2` | `src/hooks/race/useOvertakeDetector.ts` |
@@ -4156,7 +4157,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1555 testes em 195 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1568 testes em 197 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4213,6 +4214,7 @@ _nenhum item encontrado_
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
 | `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
 | `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
+| `src/components/pipeline/DealCard.test.tsx` | 8 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
@@ -4243,8 +4245,8 @@ _nenhum item encontrado_
 | `src/components/cadences/ContactRulesDialog.test.tsx` | 5 | ContactRulesDialog · cria a linha via upsert quando o vendedor ainda não tem preferências · preserva chaves gravadas por outra tela ao salvar · mostra erro e não confirma quando o banco recusa a gravação … |
 | `src/components/clients/Client360HealthNbaSection.test.tsx` | 5 | Client360HealthNbaSection · não exibe confiança fixa inventada · não rotula a regra estática como IA · Agendar follow-up cria tarefa real para o cliente … |
 | `src/components/enablement/SalesEnablementHub.test.tsx` | 5 | SalesEnablementHub — materiais arquivados · gestor alterna para Arquivados e reativa o material · vendedor não vê o filtro de arquivados nem ações de gestão · vendedor não vê  … |
-| `src/components/pipeline/DealCard.test.tsx` | 5 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
+| `src/components/pipeline/PipelineBoard.test.tsx` | 5 | PipelineBoard — vendas ganhas na semana · mostra a contagem real de vendas ganhas nos últimos 7 dias · não exibe o indicador fixo de Pipeline Health (92.4%) · usa singular quando há uma única venda ganha … |
 | `src/components/predictive/PredictiveScenarioPlanner.test.tsx` | 5 | PredictiveScenarioPlanner · mostra skeleton enquanto carrega a base real · mostra erro honesto quando a consulta falha · mostra estado vazio sem vendas ganhas, sem projeção inventada … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/sales/cadence/CadenceReportPanel.test.tsx` | 5 | CadenceReportPanel · busca o período semanal (7 dias) por padrão · sem dados mostra estado vazio honesto e nenhum valor fixo antigo · mostra métricas consolidadas e execução por canal vindas do banco … |
@@ -4271,6 +4273,7 @@ _nenhum item encontrado_
 | `tests/e2e/win-loss-analysis.spec.ts` | 5 | Win/Loss Analysis — página dedicada · redireciona usuário anônimo para /auth · renderiza header, título e ações principais quando autenticado · exibe painéis laterais de Estratégia e Projeção … |
 | `scripts/graphify/multigraph.test.mjs` | 4 | preserva relações múltiplas dirigidas entre os mesmos nós · materializa importações externas e mantém todas as relações da fonte · impacto reverso conserva evidência e informa relações ambíguas · rejeita documento que perde uma relação da fonte |
 | `scripts/graphify/static-contracts.test.mjs` | 4 | extrai referências literais entre código e Supabase · registra SQL dinâmico em corpo de função como lacuna e não como objeto comprovado · não interpreta comentário ou string como DDL e expõe ACL/RLS como lacuna · não confunde delimitadores de comentário dentro de literal com comentário SQL |
+| `src/components/activities/ActivityLogForm.test.tsx` | 4 | ActivityLogForm · envia o vendedor logado como salesperson_id sem abrir o combo Vendedor · preenche o vendedor logado quando o perfil carrega depois da montagem · %s grava no vendedor logado, não no primeiro da lista |
 | `src/components/analytics/ABCAnalysis.test.tsx` | 4 | ABCAnalysis · mostra só o insight calculado, sem automações, movimentações nem ações falsas · usa rótulos factuais, sem prometer IA ou versão inexistente · sem vendas, não exibe a seção de insights |
 | `src/components/cadences/EnrollCadenceDialog.test.tsx` | 4 | EnrollCadenceDialog — responsável da inscrição · vendedor sem escolher responsável inscreve com o próprio salesperson_id · vendedor só vê a si mesmo na lista de responsáveis · admin/gestor continua vendo todos os vendedores |
 | `src/components/competitive/FeatureComparison.test.tsx` | 4 | FeatureComparison (Market Intel) · mostra estado vazio honesto quando não há concorrentes cadastrados · lista concorrentes reais com menções e battle card vinculado · mostra erro com ação de tentar novamente |
@@ -4280,6 +4283,7 @@ _nenhum item encontrado_
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/hooks/gamification/useWeeklyChallenges.test.tsx` | 4 | useDeactivateWeeklyChallenge · desativa via is_active=false (soft-delete) e invalida a lista · trata 0 linhas afetadas (bloqueio de RLS) como erro · propaga erro do Supabase com toast |
+| `src/hooks/pipeline/useWeeklyWonDeals.test.tsx` | 4 | useWeeklyWonDeals · conta vendas ganhas não excluídas fechadas nos últimos 7 dias · retorna 0 quando o banco não devolve contagem · propaga erro do banco em vez de inventar número |
 | `src/hooks/playbooks/usePlaybookMutations.test.tsx` | 4 | useTogglePlaybookItem — marcar item do checklist · envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS) · admin/gestor sem registro de vendedor grava completed_by NULL · não insere se a consulta do vendedor falhar |
 | `src/lib/qbr/qbrSchedulerAgendaEvent.test.ts` | 4 | qbr-scheduler — linha de agenda_events · respeita os CHECKs de event_type, status e priority · mantém dono, horário e título reconhecível pelo dedup · a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
@@ -4293,7 +4297,6 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
-| `src/components/activities/ActivityLogForm.test.tsx` | 3 | ActivityLogForm · envia o vendedor logado como salesperson_id sem abrir o combo Vendedor · preenche o vendedor logado quando o perfil carrega depois da montagem |
 | `src/components/deal-intelligence/NextBestActionPanel.test.tsx` | 3 | NextBestActionPanel · mostra estado vazio sem recomendação real (sem texto inventado) · exibe ações e raciocínio vindos de deal_health_scores |
 | `src/components/intelligence/PipelineStrategicReview.test.tsx` | 3 | PipelineStrategicReview · mostra estado vazio sem inspeção nem win rate (sem números inventados) · calcula indicadores a partir da inspeção e do win rate reais |
 | `src/components/pricing/MarginAlertsCard.test.tsx` | 3 | MarginAlertsCard · mostra estado vazio quando não há vendas com markup crítico · lista vendas reais com markup crítico e conta os incidentes |

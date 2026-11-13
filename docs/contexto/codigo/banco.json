@@ -36034,7 +36034,7 @@
     "territory_id->territories"
    ],
    "criada_em": "20251212200226_932d9de6-0394-4b03-afef-1f3489abf03e.sql",
-   "usada_no_front": 109,
+   "usada_no_front": 110,
    "usada_em_edges": [
     "ai-copilot",
     "ai-email-composer",

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c0af40180b9ba6026d332f907820a08bf0eac485",
+  "commit": "d03b42e6a8bffb08ba23c180163c389f5126246d",
   "branch": "main",
-  "data_commit": "2026-11-13T16:14:17Z",
+  "data_commit": "2026-11-13T17:07:52-03:00",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d03b42e",
+    "data": "2026-11-13",
+    "assunto": "fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)"
+   },
+   {
+    "sha": "01cd315",
+    "data": "2026-11-13",
+    "assunto": "fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)"
+   },
    {
     "sha": "c0af401",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "7b45023",
     "data": "2026-11-13",
     "assunto": "chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)"
-   },
-   {
-    "sha": "52ad2f4",
-    "data": "2026-11-13",
-    "assunto": "fix: grava vendedor logado como dono ao criar conta no ABM (#475)"
-   },
-   {
-    "sha": "3044064",
-    "data": "2026-11-13",
-    "assunto": "fix: enviar user_id ao criar preferência de notificação (#474)"
    }
   ],
-  "arquivos_mudados_7d": 629,
+  "arquivos_mudados_7d": 632,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -164,6 +164,10 @@
     "mudancas": 34
    },
    {
+    "pasta": "src/components/pipeline",
+    "mudancas": 27
+   },
+   {
     "pasta": "package-lock.json",
     "mudancas": 24
    },
@@ -178,10 +182,6 @@
    {
     "pasta": "src/hooks/race",
     "mudancas": 24
-   },
-   {
-    "pasta": "src/components/pipeline",
-    "mudancas": 23
    },
    {
     "pasta": "src/components/conversational",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 85
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 83
    },
    {
+    "arquivo": "package-lock.json",
+    "mudancas": 81
+   },
+   {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 34
+    "mudancas": 33
    },
    {
     "arquivo": "deno.lock",
@@ -258,6 +258,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 10
+   },
+   {
     "arquivo": "src/hooks/win-loss/useInsightComments.ts",
     "mudancas": 10
    },
@@ -266,19 +270,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "index.html",
-    "mudancas": 9
-   },
-   {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
    },
    {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
     "mudancas": 9
    },
    {
@@ -296,12 +292,16 @@
    {
     "arquivo": "src/hooks/useQuotes.ts",
     "mudancas": 9
+   },
+   {
+    "arquivo": "src/pages/admin/AdminComercial.tsx",
+    "mudancas": 9
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 108
+    "commits": 110
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3520,
-  "arquivos_codigo": 2528,
-  "linhas_codigo": 435407,
+  "arquivos_total": 3523,
+  "arquivos_codigo": 2531,
+  "linhas_codigo": 435683,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
   "componentes": 1274,
-  "hooks": 477,
+  "hooks": 478,
   "edge_functions": 171,
   "tabelas": 414,
   "migrations": 670,
   "cron_jobs": 28,
-  "testes": 228,
+  "testes": 230,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -599,8 +599,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1206,
-   "linhas": 189712
+   "arquivos": 1207,
+   "linhas": 189874
   },
   "src/config": {
    "arquivos": 4,
@@ -615,8 +615,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 535,
-   "linhas": 62598
+   "arquivos": 537,
+   "linhas": 62712
   },
   "src/integrations": {
    "arquivos": 4,
@@ -791,7 +791,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
-  "arquivos_acima_500_linhas": 68
+  "arquivos_acima_500_linhas": 67
  },
  "todos": [
   {

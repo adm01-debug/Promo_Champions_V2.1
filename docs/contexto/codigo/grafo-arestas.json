@@ -4689,6 +4689,7 @@
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tooltip.tsx",
    "src/hooks/pipeline/useDealCardContext.ts",
+   "src/hooks/pipeline/useWeeklyWonDeals.ts",
    "src/hooks/useCadences.ts",
    "src/hooks/useDealProbability.ts",
    "src/hooks/useICPData.ts",
@@ -8542,6 +8543,10 @@
    "src/lib/supabase/chunkedIn.ts"
   ],
   "src/hooks/pipeline/usePipelineHealthScore.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/pipeline/useWeeklyWonDeals.ts": [
+   "src/constants/index.ts",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/playbooks/usePlaybookMutations.ts": [
