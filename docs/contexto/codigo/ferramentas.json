@@ -6,7 +6,7 @@
    "TypeScript (2447)",
    "SQL (677)",
    "Markdown (205)",
-   "JavaScript (77)",
+   "JavaScript (78)",
    "JSON (33)",
    "YAML (28)",
    "Shell (7)",
@@ -247,7 +247,9 @@
    "scripts_usados": [
     "scripts/automation.mjs"
    ],
-   "npm_scripts": [],
+   "npm_scripts": [
+    "ci"
+   ],
    "secrets": [],
    "actions": [
     "actions/checkout",

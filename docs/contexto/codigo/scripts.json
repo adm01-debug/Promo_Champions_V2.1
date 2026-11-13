@@ -243,7 +243,7 @@
   {
    "arquivo": "scripts/codemod-typography.mjs",
    "descricao": "* Codemod: aplica tokens tipográficos semânticos",
-   "linhas": 136,
+   "linhas": 148,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

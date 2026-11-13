@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `914a813e48` · branch `main` · 2026-11-13 16:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c0af40180b` · branch `main` · 2026-11-13 17:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4156,7 +4156,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1533 testes em 194 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1555 testes em 195 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4172,6 +4172,7 @@ _nenhum item encontrado_
 | `src/lib/validators/brDocuments.test.ts` | 24 | isValidCPF · aceita CPF válido: %s · rejeita CPF com dígito verificador errado: %s · rejeita CPF com tamanho ou conteúdo inválido: %s … |
 | `src/hooks/abm/useAccounts.test.tsx` | 23 | useCreateAccount · vendedor: grava owner_id = vendedor logado (exigido pela RLS de accounts) · admin/gestor sem vendedor vinculado: segue com owner_id null · owner_id vindo no payload é respeitado, sem consultar o vendedor logado … |
 | `tests/e2e/pages-gamification.spec.ts` | 23 | Ranking Competitivo — Circuito de Vencedores · carrega heading · title da página correto · mostra tabs de ranking … |
+| `scripts/codemod-typography.test.mjs` | 22 | sem --write: só simula · h1 com tamanho+peso vira o token · classes de layout e cor são mantidas · variantes com prefixo (md:, hover:, !) ficam INTEIRAS — antes sobrava  … |
 | `src/lib/markupHelpers.test.ts` | 22 | markupHelpers · computeMarkupPct · calcula markup positivo · retorna 0 quando amount = custo … |
 | `src/lib/gamification.test.ts` | 20 | getLevelFromXP · retorna nível 1 para XP 0 · retorna nível correto no limiar inferior · progressPercent aumenta dentro do nível … |
 | `tests/e2e/pages-critical-routes.spec.ts` | 20 | Dashboard SDR · carrega heading · title da página correto · Dashboard Closer … |

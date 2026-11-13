@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "914a813e48b105f843757a0601a8b695f10ca869",
+  "commit": "c0af40180b9ba6026d332f907820a08bf0eac485",
   "branch": "main",
-  "data_commit": "2026-11-13T12:13:33-03:00",
+  "data_commit": "2026-11-13T16:14:17Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "c0af401",
+    "data": "2026-11-13",
+    "assunto": "codemod de tipografia: tracking-* sem \\b e comentários ignorados (#480)"
+   },
    {
     "sha": "914a813",
     "data": "2026-11-13",
@@ -126,18 +131,13 @@
     "sha": "3044064",
     "data": "2026-11-13",
     "assunto": "fix: enviar user_id ao criar preferência de notificação (#474)"
-   },
-   {
-    "sha": "e399094",
-    "data": "2026-11-13",
-    "assunto": "fix: grava pesquisa NPS no vendedor logado (#473)"
    }
   ],
-  "arquivos_mudados_7d": 628,
+  "arquivos_mudados_7d": 629,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 54
+    "mudancas": 53
    },
    {
     "pasta": "src/components/ui",
@@ -180,16 +180,16 @@
     "mudancas": 24
    },
    {
-    "pasta": "src/components/conversational",
-    "mudancas": 23
-   },
-   {
     "pasta": "src/components/pipeline",
     "mudancas": 23
    },
    {
+    "pasta": "src/components/conversational",
+    "mudancas": 22
+   },
+   {
     "pasta": "src/components/win-loss",
-    "mudancas": 23
+    "mudancas": 21
    },
    {
     "pasta": "src/hooks/sales",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 86
+    "mudancas": 85
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 84
+    "mudancas": 83
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3519,
-  "arquivos_codigo": 2527,
-  "linhas_codigo": 435302,
+  "arquivos_total": 3520,
+  "arquivos_codigo": 2528,
+  "linhas_codigo": 435407,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 670,
   "cron_jobs": 28,
-  "testes": 227,
+  "testes": 228,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -436,7 +436,11 @@
   },
   "scripts/codemod-typography.mjs": {
    "arquivos": 1,
-   "linhas": 136
+   "linhas": 148
+  },
+  "scripts/codemod-typography.test.mjs": {
+   "arquivos": 1,
+   "linhas": 93
   },
   "scripts/db": {
    "arquivos": 1,

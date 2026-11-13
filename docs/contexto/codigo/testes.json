@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 227,
+ "total": 228,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 161
+  "unit": 162
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 144
+   "arquivos": 145
   },
   {
    "padrao": "tests/",
@@ -133,6 +133,15 @@
     "scripts/types-sync/validar.mjs"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "scripts/codemod-typography.test.mjs",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/lib/utils.ts"
+   ],
+   "casos": 19
   },
   {
    "arquivo": "scripts/db-audit/gen-migration-probes.test.mjs",
@@ -2073,6 +2082,7 @@
   "src/lib/supabase/chunkedIn.ts": 1,
   "src/lib/supabase/typed-payloads.ts": 1,
   "src/lib/usageAnalytics.ts": 1,
+  "src/lib/utils.ts": 1,
   "src/lib/validators/brDocuments.ts": 1,
   "src/lib/validators/brSchemas.ts": 1,
   "src/lib/winloss/riskReasons.ts": 2,

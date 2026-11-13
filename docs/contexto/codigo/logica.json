@@ -1897,7 +1897,7 @@
     "pages",
     "pages/admin"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
