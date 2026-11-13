@@ -13,25 +13,7 @@ interface ABCItem {
 interface NeuralInsight {
   title: string;
   description: string;
-  type: 'opportunity' | 'warning' | 'trend';
-  score: number;
-}
-
-interface MatrixShift {
-  name: string;
-  from: 'A' | 'B' | 'C';
-  to: 'A' | 'B' | 'C';
-  change: number;
-  reason: string;
-}
-
-interface Automation {
-  id: string;
-  title: string;
-  description: string;
-  target: string;
-  impact: string;
-  type: 'retention' | 'expansion' | 'reactivation';
+  type: 'opportunity' | 'warning' | 'trend' | 'info';
 }
 
 interface ABCSummary {
@@ -45,9 +27,14 @@ interface ABCAnalysisResult {
   summary: ABCSummary;
   totalRevenue: number;
   neuralInsights: NeuralInsight[];
-  matrixShifts: MatrixShift[];
-  automations: Automation[];
 }
+
+/**
+ * Limiar de alerta de concentração: quando os até 3 maiores clientes somam mais
+ * de 50% da receita ganha, metade do faturamento depende de poucos clientes e o
+ * insight vira 'warning'. Abaixo (ou igual) disso, é só informativo ('info').
+ */
+export const CONCENTRATION_WARNING_THRESHOLD_PCT = 50;
 
 function classifyABC(items: { name: string; revenue: number }[]): ABCItem[] {
   const sorted = [...items].sort((a, b) => b.revenue - a.revenue);
@@ -120,83 +107,23 @@ export const useABCAnalysis = () => {
         C: items.filter(i => i.classification === 'C').length,
       });
 
-      // Simulated Neural Insights based on data
-      const neuralInsights: NeuralInsight[] = [
-        {
-          title: 'Concentração Crítica em A',
-          description: `Seus principais 3 clientes geram ${((clients.slice(0, 3).reduce((s, i) => s + i.revenue, 0) / (sales?.reduce((s, i) => s + (i.amount || 0), 0) || 1)) * 100).toFixed(1)}% da receita. Risco alto de churn.`,
-          type: 'warning',
-          score: 5,
-        },
-        {
-          title: 'Expansão em Segmento B',
-          description:
-            'O segmento B cresceu 14% este mês. Recomendamos upselling para migração para classe A.',
-          type: 'opportunity',
-          score: 4,
-        },
-        {
-          title: 'Predição de Cross-Sell',
-          description:
-            'Clientes que compram Produto X têm 85% de chance de aceitar upgrade para Pacote Elite.',
-          type: 'trend',
-          score: 4,
-        },
-      ];
+      const totalRevenue = (sales || []).reduce((sum, s) => sum + (s.amount || 0), 0);
 
-      const matrixShifts: MatrixShift[] = [
-        {
-          name: 'Cliente VIP S/A',
-          from: 'B',
-          to: 'A',
-          change: 25,
-          reason: 'Aumento de recorrência',
-        },
-        {
-          name: 'Distribuidora Beta',
-          from: 'A',
-          to: 'B',
-          change: -12,
-          reason: 'Redução de pedidos semanais',
-        },
-        {
-          name: 'Tech Solutions',
-          from: 'C',
-          to: 'B',
-          change: 40,
-          reason: 'Novo contrato assinado',
-        },
-      ];
-
-      const automations: Automation[] = [
-        {
-          id: '1',
-          title: 'Escudo de Retenção Classe A',
+      // Único insight exibido: calculado a partir das vendas reais (concentração da receita).
+      const neuralInsights: NeuralInsight[] = [];
+      const topClients = clients.slice(0, 3);
+      if (topClients.length > 0 && totalRevenue > 0) {
+        const topShare =
+          (topClients.reduce((s, i) => s + i.revenue, 0) / totalRevenue) * 100;
+        neuralInsights.push({
+          title: 'Concentração de Receita',
           description:
-            'Dispara check-in personalizado automático via WhatsApp para clientes Classe A com 15 dias sem compra.',
-          target: 'Classe A',
-          impact: '+15% Retenção',
-          type: 'retention',
-        },
-        {
-          id: '2',
-          title: 'Upgrade Velocity B->A',
-          description:
-            'Envia oferta exclusiva de upgrade para clientes Classe B que atingirem 90% do teto do segmento.',
-          target: 'Classe B',
-          impact: '+22% Receita',
-          type: 'expansion',
-        },
-        {
-          id: '3',
-          title: 'Reativação Neural',
-          description:
-            'Identifica padrões de churn em Classe C e dispara sequência de re-engajamento automatizada.',
-          target: 'Classe C',
-          impact: '+8% Recuperação',
-          type: 'reactivation',
-        },
-      ];
+            topClients.length === 1
+              ? `Seu principal cliente gera ${topShare.toFixed(1)}% da receita.`
+              : `Seus ${topClients.length} principais clientes geram ${topShare.toFixed(1)}% da receita.`,
+          type: topShare > CONCENTRATION_WARNING_THRESHOLD_PCT ? 'warning' : 'info',
+        });
+      }
 
       return {
         products,
@@ -205,10 +132,8 @@ export const useABCAnalysis = () => {
           products: countByClass(products),
           clients: countByClass(clients),
         },
-        totalRevenue: (sales || []).reduce((sum, s) => sum + (s.amount || 0), 0),
+        totalRevenue,
         neuralInsights,
-        matrixShifts,
-        automations,
       };
     },
     staleTime: 1000 * 60 * 30,
