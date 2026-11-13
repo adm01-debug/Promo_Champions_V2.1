@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3cf041b47cadb2cdcacb8219e13098980a6e397e",
+  "commit": "84c7cad953200eb24b7843eead3a951178245b20",
   "branch": "main",
-  "data_commit": "2026-11-13T09:30:58-03:00",
+  "data_commit": "2026-11-13T13:37:27Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "84c7cad",
+    "data": "2026-11-13",
+    "assunto": "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)"
+   },
    {
     "sha": "3cf041b",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "0c1ae11",
     "data": "2026-11-13",
     "assunto": "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)"
-   },
-   {
-    "sha": "91cded0",
-    "data": "2026-11-13",
-    "assunto": "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)"
    }
   ],
-  "arquivos_mudados_7d": 562,
+  "arquivos_mudados_7d": 566,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -168,6 +168,10 @@
     "mudancas": 24
    },
    {
+    "pasta": "src/components/pipeline",
+    "mudancas": 23
+   },
+   {
     "pasta": "src/components/win-loss",
     "mudancas": 23
    },
@@ -188,10 +192,6 @@
     "mudancas": 21
    },
    {
-    "pasta": "src/components/pipeline",
-    "mudancas": 19
-   },
-   {
     "pasta": "src/hooks/sales",
     "mudancas": 19
    }
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 88
+    "mudancas": 87
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 86
+    "mudancas": 85
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "arquivo": "deno.lock",
@@ -215,11 +215,11 @@
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "RELATORIO_CI.md",
@@ -227,10 +227,6 @@
    },
    {
     "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 15
-   },
-   {
-    "arquivo": ".github/workflows/qa-exhaustive.yml",
     "mudancas": 14
    },
    {
@@ -238,27 +234,23 @@
     "mudancas": 14
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "arquivo": ".github/workflows/qa-exhaustive.yml",
     "mudancas": 13
-   },
-   {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
-    "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 12
    },
    {
-    "arquivo": "supabase/config.toml",
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
     "mudancas": 11
    },
    {
-    "arquivo": "vite.config.ts",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 11
    },
    {
@@ -266,42 +258,50 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/hooks/useQuotes.ts",
+    "arquivo": "supabase/config.toml",
     "mudancas": 10
    },
    {
-    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
+    "arquivo": "vite.config.ts",
     "mudancas": 10
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 9
    },
    {
     "arquivo": "scripts/inventario/gerar-banco.mjs",
     "mudancas": 9
    },
    {
-    "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    "arquivo": "src/hooks/useQuotes.ts",
     "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "docs/RUNBOOK.md",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 8
    },
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/hooks/admin/useV4Callbacks.ts",
-    "mudancas": 9
+    "mudancas": 8
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 91
+    "commits": 92
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3485,
-  "arquivos_codigo": 2494,
-  "linhas_codigo": 432710,
+  "arquivos_total": 3488,
+  "arquivos_codigo": 2497,
+  "linhas_codigo": 432963,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
   "componentes": 1277,
-  "hooks": 473,
+  "hooks": 474,
   "edge_functions": 171,
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 195,
+  "testes": 197,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1193,
-   "linhas": 189246
+   "arquivos": 1194,
+   "linhas": 189330
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 520,
-   "linhas": 60806
+   "arquivos": 522,
+   "linhas": 60975
   },
   "src/integrations": {
    "arquivos": 4,

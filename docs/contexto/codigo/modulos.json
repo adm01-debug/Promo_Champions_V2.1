@@ -2543,9 +2543,11 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/pipeline",
     "components/revenue-intelligence",
     "components/win-loss",
     "hooks/deal-intelligence",
+    "hooks/pipeline",
     "pages"
    ],
    "depende_de_modulos": [
@@ -4226,6 +4228,7 @@
     "useClaimDailyChallengeReward",
     "useClient360",
     "useClientByName",
+    "useClientPhonesByIds",
     "useClientPredictions",
     "useClients",
     "useClientsPage",
@@ -4447,6 +4450,7 @@
     "useSnoozeItem",
     "useSoundSettings",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useStockForecast",
     "useStockMovements",
     "useStreakAchievements",
@@ -4587,6 +4591,7 @@
     "deal_chat_history",
     "deal_outcomes",
     "deal_stage_history",
+    "deal_stakeholders",
     "dialer_queue_items",
     "dialer_queues",
     "digital_signatures",
@@ -5146,6 +5151,7 @@
     "useClaimDailyChallengeReward",
     "useClient360",
     "useClientByName",
+    "useClientPhonesByIds",
     "useClientPredictions",
     "useClients",
     "useClientsPage",
@@ -5395,6 +5401,7 @@
     "useSnoozeItem",
     "useSoundSettings",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useStockForecast",
     "useStockMovements",
     "useStreakAchievements",
@@ -5541,6 +5548,7 @@
     "deal_chat_history",
     "deal_outcomes",
     "deal_stage_history",
+    "deal_stakeholders",
     "dialer_queue_items",
     "dialer_queues",
     "digital_signatures",
@@ -5802,8 +5810,8 @@
   {
    "modulo": "components/pipeline",
    "arquivos": 16,
-   "testes": 1,
-   "linhas": 3132,
+   "testes": 2,
+   "linhas": 3087,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5819,6 +5827,7 @@
     "useCalculateLeadScores",
     "useCancelCadence",
     "useCircuitBreaker",
+    "useClientPhonesByIds",
     "useClients",
     "useCompleteCadenceTask",
     "useCreateCadence",
@@ -5859,6 +5868,7 @@
     "useSalespeopleRanking",
     "useSkipCadenceTask",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useSystemSoundSettings",
     "useTodaysCadenceTasks",
     "useTogglePlaybookItem",
@@ -5884,6 +5894,7 @@
     "circuit_breaker_events",
     "clients",
     "deal_stage_history",
+    "deal_stakeholders",
     "icp_data",
     "lead_churn_risk",
     "lead_score_explanations",
@@ -5947,6 +5958,7 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/deal-intelligence",
     "components/tasks",
     "components/ui",
     "config",
@@ -5967,6 +5979,7 @@
     "date-fns",
     "framer-motion",
     "lucide-react",
+    "react-router-dom",
     "recharts",
     "sonner"
    ]
@@ -8288,6 +8301,7 @@
     "useClaimDailyChallengeReward",
     "useClient360",
     "useClientByName",
+    "useClientPhonesByIds",
     "useClientPredictions",
     "useClients",
     "useClientsPage",
@@ -8541,6 +8555,7 @@
     "useSnoozeItem",
     "useSoundSettings",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useStockForecast",
     "useStockMovements",
     "useStreakAchievements",
@@ -8689,6 +8704,7 @@
     "deal_chat_history",
     "deal_outcomes",
     "deal_stage_history",
+    "deal_stakeholders",
     "dialer_queue_items",
     "dialer_queues",
     "digital_signatures",
@@ -9719,8 +9735,8 @@
   {
    "modulo": "hooks",
    "arquivos": 145,
-   "testes": 15,
-   "linhas": 19487,
+   "testes": 16,
+   "linhas": 19501,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13242,21 +13258,27 @@
   },
   {
    "modulo": "hooks/pipeline",
-   "arquivos": 1,
+   "arquivos": 2,
    "testes": 0,
-   "linhas": 38,
+   "linhas": 113,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 0,
    "hooks_locais": [
-    "usePipelineHealthScore"
+    "useClientPhonesByIds",
+    "usePipelineHealthScore",
+    "useStakeholdersBySaleIds"
    ],
    "hooks_definidos": [
+    "useClientPhonesByIds",
+    "useStakeholdersBySaleIds",
     "usePipelineHealthScore"
    ],
    "edges": [],
    "tabelas": [
+    "clients",
+    "deal_stakeholders",
     "revenue_forecast_view"
    ],
    "rpcs": [],
@@ -13272,6 +13294,8 @@
    "diretos": {
     "edges": [],
     "tabelas": [
+     "clients",
+     "deal_stakeholders",
      "revenue_forecast_view"
     ],
     "rpcs": []
@@ -13280,7 +13304,9 @@
     "components/pipeline"
    ],
    "depende_de_modulos": [
-    "integrations/supabase"
+    "components/deal-intelligence",
+    "integrations/supabase",
+    "lib/supabase"
    ],
    "pacotes_externos": [
     "@tanstack/react-query"
@@ -15515,6 +15541,7 @@
     "hooks/engagement",
     "hooks/gamification",
     "hooks/notifications",
+    "hooks/pipeline",
     "hooks/playbooks",
     "hooks/race",
     "hooks/reporting",
@@ -16016,6 +16043,7 @@
     "useClientBI",
     "useClientByName",
     "useClientKanban",
+    "useClientPhonesByIds",
     "useClientPortfolio",
     "useClientPredictions",
     "useClientSearch",
@@ -16538,6 +16566,7 @@
     "useStageBottlenecks",
     "useStageConversion",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useStartAgentRun",
     "useStartRaceSeason",
     "useStepVariantPerformance",
@@ -17825,6 +17854,7 @@
     "useClientBI",
     "useClientByName",
     "useClientKanban",
+    "useClientPhonesByIds",
     "useClientPortfolio",
     "useClientPredictions",
     "useClientSearch",
@@ -18364,6 +18394,7 @@
     "useStageBottlenecks",
     "useStageConversion",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useStartAgentRun",
     "useStartRaceSeason",
     "useStepVariantPerformance",

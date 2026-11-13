@@ -7701,6 +7701,7 @@
     "useCallback",
     "useCancelCadence",
     "useCircuitBreaker",
+    "useClientPhonesByIds",
     "useClients",
     "useCompleteCadenceTask",
     "useContext",
@@ -7732,6 +7733,7 @@
     "useMoveDeal",
     "useMoveDealMultiPipeline",
     "useMutation",
+    "useNavigate",
     "useNavigationType",
     "usePageTransitionConfig",
     "usePauseCadence",
@@ -7760,6 +7762,7 @@
     "useSortable",
     "useStageInactivityRules",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useState",
     "useSystemSoundSettings",
     "useTodaysCadenceTasks",
@@ -7782,6 +7785,7 @@
     "useCalculateLeadScores",
     "useCancelCadence",
     "useCircuitBreaker",
+    "useClientPhonesByIds",
     "useClients",
     "useCompleteCadenceTask",
     "useCreateCadence",
@@ -7823,6 +7827,7 @@
     "useSalespeopleRanking",
     "useSkipCadenceTask",
     "useStageProbabilities",
+    "useStakeholdersBySaleIds",
     "useSystemSoundSettings",
     "useTodaysCadenceTasks",
     "useTogglePlaybookItem",
@@ -7842,6 +7847,7 @@
     "circuit_breaker_events",
     "clients",
     "deal_stage_history",
+    "deal_stakeholders",
     "icp_data",
     "lead_churn_risk",
     "lead_score_explanations",
@@ -7886,7 +7892,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 100
+   "arquivos_puxados": 102
   },
   {
    "protegida": false,

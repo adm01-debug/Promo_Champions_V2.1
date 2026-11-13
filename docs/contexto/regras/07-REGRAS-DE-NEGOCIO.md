@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3cf041b47c` · branch `main` · 2026-11-13 13:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `84c7cad953` · branch `main` · 2026-11-13 14:22 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2706,7 +2706,6 @@ _nenhum item encontrado_
 | `transition={{ delay: index * 0.04 }}` | `src/components/order-tracking/OrderTrackingCard.tsx` |
 | `transition={{ delay: idx * 0.07 }}` | `src/components/orders/OrderStatusTimeline.tsx` |
 | `(renderTime * 0.9 + frameDuration * 0.1).toFixed(2)` | `src/components/performance/PerformanceMonitor.tsx` |
-| `92.4%` | `src/components/pipeline/PipelineBoard.tsx` |
 | `transition={{ delay: i * 0.03 }}` | `src/components/pipeline-pulse/CriticalAlertsFeed.tsx` |
 | `transition={{ delay: index * 0.05, duration: 0.3 }}` | `src/components/pipeline-pulse/PulseKpiGrid.tsx` |
 | `transition={{ delay: 0.1 + idx * 0.08, duration: 0.35 }}` | `src/components/playbooks/PlaybookEmptyState.tsx` |
@@ -2873,7 +2872,8 @@ _nenhum item encontrado_
 | `levando 40% a mais que a média histórica. Recomendamos revisar o` | `src/pages/ClosingTimePage.tsx` |
 | `regras aplicáveis, o padrão é <strong>5%</strong>.` | `src/pages/CommissionRules.tsx` |
 | `Competências acima de 80%` | `src/pages/Competencias.tsx` |
-| … +65 linhas — lista completa em `context.json` | |
+| `Competências entre 40-60%` | `src/pages/Competencias.tsx` |
+| … +64 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -3171,7 +3171,6 @@ _nenhum item encontrado_
 | `setTimeout(() => setCopied(false), 2000);` | `src/components/navigation/Breadcrumbs.tsx` |
 | `setTimeout(() => setHasAlert(false), 3000);` | `src/components/performance/PerformanceMonitor.tsx` |
 | `(Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 10;` | `src/components/pipeline/DealCard.tsx` |
-| `setTimeout(() => setIsEnriching(false), 2000);` | `src/components/pipeline/DealCard.tsx` |
 | `setTimeout(() => setCopied(false), 2000);` | `src/components/pipeline/DealSummaryCard.tsx` |
 | `(Date.now() - new Date(updatedAt).getTime()) / (1000 * 60 * 60 * 24)` | `src/components/pipeline/SLACountdown.tsx` |
 | `return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));` | `src/components/pipeline/StagnantDealAlert.tsx` |
@@ -3422,7 +3421,8 @@ _nenhum item encontrado_
 | `const VAPID_EXPIRATION_SECONDS = 12 * 60 * 60;` | `supabase/functions/send-push-notification/index.ts` |
 | `const CLAIM_LEASE_MS = 5 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
 | `const DELIVERY_RETRY_MS = 15 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
-| … +147 linhas — lista completa em `context.json` | |
+| `const SKIPPED_RETRY_MS = 24 * 60 * 60 * 1000;` | `supabase/functions/sequence-runner/index.ts` |
+| … +146 linhas — lista completa em `context.json` | |
 
 ### H.3 Limites de paginação
 
@@ -4140,7 +4140,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1390 testes em 162 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1401 testes em 164 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4203,6 +4203,7 @@ _nenhum item encontrado_
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
 | `src/hooks/useLoginRateLimiter.test.tsx` | 6 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
+| `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
 | `src/hooks/reports/useMarkupMinSamplePreference.test.tsx` | 6 | useMarkupMinSamplePreference · começa com a amostra padrão 1 e expõe as opções · lê valor válido persistido no localStorage · ignora valor inválido persistido e volta ao padrão … |
 | `src/hooks/sales/useSalesBattles.test.tsx` | 6 | useSalesBattles — editar e cancelar · atualiza somente os campos da batalha pelo id · falha quando a RLS não deixa editar (0 linhas) · cancela a batalha pelo id sem apagar a linha … |
@@ -4217,6 +4218,7 @@ _nenhum item encontrado_
 | `tests/e2e/rls-authorization-edge-cases.spec.ts` | 6 | SEC-02 — RLS edge cases (anon) · anon não lê ${table} (select cru) · anon não lê ${table} com filtro user_id fabricado · apikey ausente é bloqueado pelo gateway … |
 | `tests/e2e/rls-scope-salesperson.spec.ts` | 6 | SEC-RLS-Scope — salesperson não cruza escopo · sessão é salesperson (skip se admin/manager) · ${c.table}: filtro ${c.ownerCol}=neq.<meu> não retorna linhas de terceiros · ${c.table}: INSERT com dono fabricado é rejeitado … |
 | `src/components/enablement/SalesEnablementHub.test.tsx` | 5 | SalesEnablementHub — materiais arquivados · gestor alterna para Arquivados e reativa o material · vendedor não vê o filtro de arquivados nem ações de gestão · vendedor não vê  … |
+| `src/components/pipeline/DealCard.test.tsx` | 5 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/components/pipeline/InactivityPanel.test.tsx` | 5 | InactivityPanel · mostra skeleton durante o carregamento, sem estado vazio · mostra erro com retry quando a consulta falha, sem estado vazio · mostra estado vazio só quando carregou sem deals inativos … |
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |

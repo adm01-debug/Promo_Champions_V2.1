@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3cf041b47cadb2cdcacb8219e13098980a6e397e` (2026-11-13T09:30:58-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `84c7cad953200eb24b7843eead3a951178245b20` (2026-11-13T13:37:27Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2414), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2417), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,21 +34,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3485 |
-| arquivos_codigo | 2494 |
-| linhas_codigo | 432710 |
+| arquivos_total | 3488 |
+| arquivos_codigo | 2497 |
+| linhas_codigo | 432963 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 174 |
 | componentes | 1277 |
-| hooks | 473 |
+| hooks | 474 |
 | edge_functions | 171 |
 | tabelas | 414 |
 | migrations | 669 |
 | cron_jobs | 28 |
-| testes | 195 |
+| testes | 197 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
@@ -56,9 +56,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Onde ficam as coisas
 - telas: src/pages (166)
 - componentes: src/components (1097), src/pages (173), src/contexts (5)
-- hooks: src/hooks (461), src/contexts (6), src/components (4)
+- hooks: src/hooks (462), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (112), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (114), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -101,9 +101,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/lead-routing | 0 | 0 | 6 | 4 | 0 | 4 |
 | components/lead-scoring | 0 | 0 | 13 | 5 | 1 | 8 |
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
-| components/navigation | 0 | 0 | 9 | 331 | 32 | 159 |
+| components/navigation | 0 | 0 | 9 | 333 | 32 | 160 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
-| components/pipeline | 0 | 0 | 16 | 59 | 3 | 27 |
+| components/pipeline | 0 | 0 | 16 | 61 | 3 | 28 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
 | components/playbooks | 0 | 0 | 5 | 7 | 0 | 3 |
 | components/portfolio | 0 | 0 | 11 | 17 | 0 | 7 |
@@ -148,7 +148,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | lib | 0 | 0 | 27 | 10 | 2 | 9 |
 | lib/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib/winloss | 0 | 0 | 6 | 0 | 0 | 3 |
-| pages | 110 | 155 | 161 | 801 | 114 | 293 |
+| pages | 110 | 155 | 161 | 803 | 114 | 293 |
 | pages/admin | 1 | 12 | 12 | 81 | 10 | 46 |
 | services | 0 | 0 | 5 | 0 | 0 | 12 |
 
@@ -546,7 +546,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: ai.gateway.lovable.dev, x.test, api.resend.com, example.test, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, promo-champions-v2-1.vercel.app, promochampions.com.br, x.supabase.co, api.dicebear.com, api.intercom.io
+- hosts mais citados: ai.gateway.lovable.dev, x.test, api.resend.com, example.test, usyxfpqlsspldubptrdl.supabase.co, api.elevenlabs.io, a.test, api.twilio.com, b.test, c.test, promo-champions-v2-1.vercel.app, promochampions.com.br, wa.me, x.supabase.co, api.dicebear.com
 - webhooks recebidos: bitrix24-oauth, campaign-health-alert, check-v4-callback-alerts, cron-failure-alerter, deal-risk-digest, detect-client-churn-alerts, edge-retry-threshold-alert, email-bulk-retry, email-unsubscribe, generate-urgent-client-tasks, health, inbound-email-webhook, log-web-vitals, multichannel-status-webhook, notify-v4-quote-status, process-call-recording-ingest, receive-quote-sync, receive-quote-webhook, report-embed-public, twilio-call-status, twilio-call-twiml, whatsapp-inbound-webhook
 - env de integração (só nomes): BITRIX24_CLIENT_ID, BITRIX24_CLIENT_SECRET, BITRIX24_STATE_SECRET, ELEVENLABS_API_KEY, EVOLUTION_API_KEY, EVOLUTION_API_URL, EVOLUTION_INSTANCE, FRESHDESK_API_KEY, INTERCOM_ACCESS_TOKEN, LOVABLE_API_KEY, METRICS_INGEST_TOKEN, PROMOGIFTS_WEBHOOK_SECRET, QUOTE_CONVERSION_WEBHOOK_URL, QUOTE_SYNC_API_KEY, QUOTE_SYNC_WEBHOOK_SECRET, RESEND_API_KEY, SLACK_ALERT_WEBHOOK_URL, SLACK_DIGEST_WEBHOOK_URL, SLACK_WEBHOOK_URL, TEST_USER_ACCESS_TOKEN, TWILIO_ALLOWED_DIAL_PREFIXES, TWILIO_AUTH_TOKEN, TWILIO_CALL_STATUS_URL, TWILIO_TWIML_URL, UNSUBSCRIBE_SECRET, V4_CALLBACK_API_KEY, VITE_SENTRY_DSN, WHATSAPP_INBOUND_WEBHOOK_SECRET, ZENDESK_API_TOKEN
 
@@ -574,27 +574,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20317 nós · 64518 arestas · 1477 comunidades · grafo do commit `3cf041b4`
-- comunidades maiores: CardContent (475), Badge (327), date-fns (320), cn (311), Índice (277), getCorsHeaders (244), client.ts (241), Input (236), formatBRL (222), SelectContent (208), react (207), vitest (173)
+- 20334 nós · 64574 arestas · 1462 comunidades · grafo do commit `84c7cad9`
+- comunidades maiores: react (300), SelectContent (294), getCorsHeaders (289), Índice (277), client.ts (215), card.tsx (187), CardHeader (187), lazyPages.ts (187), formatBRL (175), AccountBasedSelling.tsx (174), Badge (174), Card (169)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (88)
-- package-lock.json (86)
-- .github/workflows/pr-checks.yml (37)
+- package.json (87)
+- package-lock.json (85)
+- .github/workflows/pr-checks.yml (36)
 - deno.lock (27)
-- .github/workflows/quote-to-sale-e2e.yml (20)
-- .github/workflows/codeql.yml (19)
+- .github/workflows/quote-to-sale-e2e.yml (19)
+- .github/workflows/codeql.yml (18)
 - RELATORIO_CI.md (18)
-- .github/workflows/cron-monitoring.yml (15)
-- .github/workflows/qa-exhaustive.yml (14)
+- .github/workflows/cron-monitoring.yml (14)
 - CLAUDE.md (14)
-- supabase/functions/bitrix24-sync/index.ts (13)
-- .github/workflows/edge-functions-bundle.yml (12)
+- .github/workflows/qa-exhaustive.yml (13)
 - PENDENCIAS.md (12)
-- src/integrations/supabase/types.ts (12)
-- supabase/config.toml (11)
+- supabase/functions/bitrix24-sync/index.ts (12)
+- .github/workflows/edge-functions-bundle.yml (11)
+- src/integrations/supabase/types.ts (11)
+- .github/workflows/graphify.yml (10)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -752,6 +752,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `84c7cad` fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)
 - 2026-11-13 `3cf041b` fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)
 - 2026-11-13 `ceaddbf` fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)
 - 2026-11-13 `7b45023` chore(deps): bump @lovable.dev/cloud-auth-js from 1.2.1 to 1.2.3 (#408)
@@ -766,7 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `6a1d1c3` fix: preencher vendedor logado ao criar venda (#468)
 - 2026-11-13 `7bc13e2` feat: editar e excluir produto do fornecedor no comparador de preços (#437)
 - 2026-11-13 `2c36718` feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)
-- 2026-11-13 `4e0bb00` feat: editar e excluir filas do Power Dialer (#435)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -4648,6 +4648,7 @@
    "src/hooks/deal-intelligence/useAtRiskDeals.ts"
   ],
   "src/components/pipeline/DealCard.tsx": [
+   "src/components/deal-intelligence/committeeHelpers.ts",
    "src/components/pipeline/DealPlaybookModal.tsx",
    "src/components/pipeline/DealScoreIndicator.tsx",
    "src/components/pipeline/DealSummaryCard.tsx",
@@ -4662,6 +4663,7 @@
    "src/components/ui/input.tsx",
    "src/components/ui/tooltip.tsx",
    "src/config/external.ts",
+   "src/hooks/pipeline/useDealCardContext.ts",
    "src/hooks/scoring/useLeadScoreExplanation.ts",
    "src/hooks/usePipeline.ts",
    "src/hooks/usePlaybooks.ts",
@@ -4704,11 +4706,10 @@
    "src/components/pipeline/PipelineColumn.tsx",
    "src/components/pipeline/PipelineHealthScore.tsx",
    "src/components/pipeline/PipelineSelector.tsx",
-   "src/components/ui/avatar.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/skeleton.tsx",
    "src/components/ui/tooltip.tsx",
-   "src/config/external.ts",
+   "src/hooks/pipeline/useDealCardContext.ts",
    "src/hooks/useCadences.ts",
    "src/hooks/useDealProbability.ts",
    "src/hooks/useICPData.ts",
@@ -4722,6 +4723,7 @@
   "src/components/pipeline/PipelineColumn.tsx": [
    "src/components/pipeline/DealCard.tsx",
    "src/components/ui/badge.tsx",
+   "src/hooks/pipeline/useDealCardContext.ts",
    "src/hooks/useICPData.ts",
    "src/hooks/usePipeline.ts",
    "src/lib/money.ts",
@@ -8534,6 +8536,11 @@
   ],
   "src/hooks/pipeline-pulse/useQuickAction.ts": [
    "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/pipeline/useDealCardContext.ts": [
+   "src/components/deal-intelligence/committeeHelpers.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/supabase/chunkedIn.ts"
   ],
   "src/hooks/pipeline/usePipelineHealthScore.ts": [
    "src/integrations/supabase/client.ts"

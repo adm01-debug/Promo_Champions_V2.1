@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2304,
- "arestas": 9493,
+ "nos": 2305,
+ "arestas": 9498,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -13,11 +13,11 @@
    "importado_por": 552
   },
   {
-   "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 542
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 543
   },
   {
-   "arquivo": "src/integrations/supabase/client.ts",
+   "arquivo": "src/components/ui/button.tsx",
    "importado_por": 542
   },
   {
@@ -82,15 +82,15 @@
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 80
-  },
-  {
-   "arquivo": "src/components/ui/avatar.tsx",
-   "importado_por": 77
+   "importado_por": 81
   },
   {
    "arquivo": "src/components/ui/progress.tsx",
    "importado_por": 77
+  },
+  {
+   "arquivo": "src/components/ui/avatar.tsx",
+   "importado_por": 76
   },
   {
    "arquivo": "supabase/functions/_shared/fetch-with-timeout.ts",
@@ -153,15 +153,15 @@
    "importado_por": 28
   },
   {
+   "arquivo": "src/lib/supabase/chunkedIn.ts",
+   "importado_por": 27
+  },
+  {
    "arquivo": "src/components/ui/checkbox.tsx",
    "importado_por": 26
   },
   {
    "arquivo": "src/components/ui/slider.tsx",
-   "importado_por": 26
-  },
-  {
-   "arquivo": "src/lib/supabase/chunkedIn.ts",
    "importado_por": 26
   }
  ],
@@ -272,7 +272,7 @@
   {
    "modulo": "lib/supabase",
    "depende_de": 1,
-   "importado_por": 37
+   "importado_por": 38
   },
   {
    "modulo": "contexts",

@@ -1291,6 +1291,7 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.xp_history | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.xp_history | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.xp_history | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| storage.bucket_lifecycle_states | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | storage.buckets | anon | DELETE, INSERT, SELECT, UPDATE |
 | storage.buckets | authenticated | DELETE, INSERT, SELECT, UPDATE |
 | storage.buckets | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
@@ -1300,6 +1301,7 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | storage.buckets_vectors | anon | SELECT |
 | storage.buckets_vectors | authenticated | SELECT |
 | storage.buckets_vectors | service_role | SELECT |
+| storage.lifecycle_abandoned_artifacts | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | storage.objects | anon | DELETE, INSERT, SELECT, UPDATE |
 | storage.objects | authenticated | DELETE, INSERT, SELECT, UPDATE |
 | storage.objects | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

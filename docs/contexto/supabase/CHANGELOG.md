@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-13 14:22 UTC
+
+- **grants** adicionado (2): `storage.bucket_lifecycle_states:service_role`, `storage.lifecycle_abandoned_artifacts:service_role`
+- **triggers** adicionado (4): `storage.buckets.enforce_versioning_status_transition`, `storage.buckets.protect_active_lifecycle_states`, `storage.buckets.wake_lifecycle_on_policy_write`, `storage.buckets.wake_lifecycle_on_versioning_enable`
+
 ## 2026-11-13 10:20 UTC
 
 - **functions** alterado (1): `public.get_current_salesperson_id()`

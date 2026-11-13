@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 195,
+ "total": 197,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 129
+  "unit": 131
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 112
+   "arquivos": 114
   },
   {
    "padrao": "tests/",
@@ -290,6 +290,18 @@
    "testa": [
     "src/components/enablement/SalesEnablementHub.tsx",
     "src/hooks/sales/useSalesEnablement.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/pipeline/DealCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/components/pipeline/DealCard.tsx",
+    "src/components/ui/tooltip.tsx",
+    "src/hooks/pipeline/useDealCardContext.ts",
+    "src/hooks/usePipeline.ts"
    ],
    "casos": 4
   },
@@ -715,6 +727,15 @@
     "src/hooks/useNPSSurveys.ts"
    ],
    "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/usePipeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/hooks/usePipeline.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/hooks/useProductRecommendations.test.tsx",
@@ -1662,6 +1683,7 @@
   "src/components/conversational/BattleCardSuggestion.tsx": 1,
   "src/components/email/aiEmailHelpers.ts": 1,
   "src/components/enablement/SalesEnablementHub.tsx": 1,
+  "src/components/pipeline/DealCard.tsx": 1,
   "src/components/pipeline/InactivityPanel.tsx": 1,
   "src/components/reporting/funnelReportHelpers.ts": 1,
   "src/components/reports/EmailReportConfig.tsx": 1,
@@ -1669,6 +1691,7 @@
   "src/components/sales/cadence/ContactFrequencyRules.tsx": 1,
   "src/components/security/KnownDevices.tsx": 1,
   "src/components/tasks/CreateTaskDialog.tsx": 1,
+  "src/components/ui/tooltip.tsx": 1,
   "src/config/role-permissions.json": 1,
   "src/constants/index.ts": 1,
   "src/contexts/AuthContext.tsx": 2,
@@ -1690,6 +1713,7 @@
   "src/hooks/gamification/useAchievements.ts": 1,
   "src/hooks/gamification/useWeeklyChallenges.ts": 1,
   "src/hooks/orders/useOrderTracking.ts": 1,
+  "src/hooks/pipeline/useDealCardContext.ts": 1,
   "src/hooks/playbooks/usePlaybookMutations.ts": 1,
   "src/hooks/quoteErrorMessages.ts": 5,
   "src/hooks/race/useGhostCar.ts": 1,
@@ -1713,6 +1737,7 @@
   "src/hooks/useLoginRateLimiter.ts": 1,
   "src/hooks/useNPSSurveys.ts": 1,
   "src/hooks/useNotificationPreferences.ts": 1,
+  "src/hooks/usePipeline.ts": 2,
   "src/hooks/useProductRecommendations.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
   "src/hooks/useScrollRestoration.ts": 1,
@@ -2253,7 +2278,6 @@
    "src/hooks/usePerformanceComparison.ts",
    "src/hooks/usePeriodTrend.ts",
    "src/hooks/usePermissions.ts",
-   "src/hooks/usePipeline.ts",
    "src/hooks/usePipelineVelocity.ts",
    "src/hooks/usePlaybooks.ts",
    "src/hooks/usePortfolioSettings.ts",

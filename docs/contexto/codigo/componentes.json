@@ -9919,7 +9919,7 @@
     "DealCard"
    ],
    "export_default": null,
-   "linhas": 550,
+   "linhas": 516,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useDealPlaybookProgress",
@@ -10014,11 +10014,12 @@
     "PipelineBoard"
    ],
    "export_default": null,
-   "linhas": 599,
+   "linhas": 581,
    "dominio": "components/pipeline",
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
     "useCalculateLeadScores",
+    "useClientPhonesByIds",
     "useDealProbabilities",
     "useICPByClientName",
     "useLeadScores",
@@ -10028,7 +10029,8 @@
     "usePipelineDealsByPipeline",
     "usePipelineStages",
     "usePipelines",
-    "useStageProbabilities"
+    "useStageProbabilities",
+    "useStakeholdersBySaleIds"
    ],
    "tabelas": [],
    "edges": [],
@@ -10041,7 +10043,7 @@
     "PipelineColumn"
    ],
    "export_default": null,
-   "linhas": 179,
+   "linhas": 186,
    "dominio": "components/pipeline",
    "hooks_locais": [],
    "tabelas": [],
@@ -15494,7 +15496,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 77,
+   "usado_por": 76,
    "orfao": false
   },
   {

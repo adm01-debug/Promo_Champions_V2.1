@@ -289,7 +289,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 12,
+   "usado_por": 11,
    "usado_por_modulos": [
     "components/activities",
     "components/cadences",
@@ -392,7 +392,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 540,
+   "usado_por": 541,
    "usado_por_modulos": [
     "components/activities",
     "components/admin",
@@ -1563,7 +1563,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 25,
+   "usado_por": 26,
    "usado_por_modulos": [
     "components/analytics",
     "hooks",
@@ -1575,6 +1575,7 @@
     "hooks/deal-intelligence",
     "hooks/email",
     "hooks/gamification",
+    "hooks/pipeline",
     "hooks/playbooks",
     "hooks/sales",
     "hooks/sequences",

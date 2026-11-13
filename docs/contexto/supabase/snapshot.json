@@ -102868,6 +102868,12 @@
           "table": "xp_history"
         },
         {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "storage",
+          "table": "bucket_lifecycle_states"
+        },
+        {
           "grantee": "anon",
           "privileges": "DELETE, INSERT, SELECT, UPDATE",
           "schema": "storage",
@@ -102920,6 +102926,12 @@
           "privileges": "SELECT",
           "schema": "storage",
           "table": "buckets_vectors"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "storage",
+          "table": "lifecycle_abandoned_artifacts"
         },
         {
           "grantee": "anon",
@@ -153593,6 +153605,28 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER enforce_versioning_status_transition BEFORE UPDATE OF versioning_status ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.enforce_versioning_status_transition()",
+        "events": "UPDATE",
+        "function": "storage.enforce_versioning_status_transition",
+        "level": "ROW",
+        "name": "enforce_versioning_status_transition",
+        "schema": "storage",
+        "status": "enabled",
+        "table": "buckets",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER protect_active_lifecycle_states BEFORE DELETE ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.protect_active_lifecycle_states()",
+        "events": "DELETE",
+        "function": "storage.protect_active_lifecycle_states",
+        "level": "ROW",
+        "name": "protect_active_lifecycle_states",
+        "schema": "storage",
+        "status": "enabled",
+        "table": "buckets",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER protect_bucket_control_insert BEFORE INSERT ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.protect_bucket_control_columns('service_role')",
         "events": "INSERT",
         "function": "storage.protect_bucket_control_columns",
@@ -153635,6 +153669,28 @@
         "status": "enabled",
         "table": "buckets",
         "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER wake_lifecycle_on_policy_write AFTER INSERT OR UPDATE OF lifecycle_configuration_generation ON storage.buckets FOR EACH ROW EXECUTE FUNCTION storage.wake_lifecycle_state()",
+        "events": "INSERT OR UPDATE",
+        "function": "storage.wake_lifecycle_state",
+        "level": "ROW",
+        "name": "wake_lifecycle_on_policy_write",
+        "schema": "storage",
+        "status": "enabled",
+        "table": "buckets",
+        "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER wake_lifecycle_on_versioning_enable AFTER UPDATE OF versioning_status ON storage.buckets FOR EACH ROW WHEN (new.lifecycle_configuration IS NOT NULL) EXECUTE FUNCTION storage.wake_lifecycle_state()",
+        "events": "UPDATE",
+        "function": "storage.wake_lifecycle_state",
+        "level": "ROW",
+        "name": "wake_lifecycle_on_versioning_enable",
+        "schema": "storage",
+        "status": "enabled",
+        "table": "buckets",
+        "timing": "AFTER"
       },
       {
         "definition": "CREATE TRIGGER protect_objects_delete BEFORE DELETE ON storage.objects FOR EACH STATEMENT EXECUTE FUNCTION storage.protect_delete()",

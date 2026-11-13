@@ -11751,7 +11751,7 @@
     "user_id->auth"
    ],
    "criada_em": "20251214012659_3118d383-73c6-4815-a245-4105e62cb87b.sql",
-   "usada_no_front": 23,
+   "usada_no_front": 24,
    "usada_em_edges": [
     "ai-email-composer",
     "bitrix24-sync",
@@ -17315,7 +17315,7 @@
     "sale_id->sales"
    ],
    "criada_em": "20260418004622_d7fe1b7b-e43d-44b0-a0bf-ce1e7e8b4d74.sql",
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [
     "calculate-committee-coverage",
     "extract-committee-from-call",

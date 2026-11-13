@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2414)",
+   "TypeScript (2417)",
    "SQL (676)",
    "Markdown (205)",
    "JavaScript (77)",
@@ -1630,6 +1630,10 @@
     "arquivos": 2
    },
    {
+    "host": "wa.me",
+    "arquivos": 2
+   },
+   {
     "host": "x.supabase.co",
     "arquivos": 2
    },
@@ -1759,10 +1763,6 @@
    },
    {
     "host": "test.supabase.co",
-    "arquivos": 1
-   },
-   {
-    "host": "wa.me",
     "arquivos": 1
    },
    {

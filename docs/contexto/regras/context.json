@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3cf041b47cadb2cdcacb8219e13098980a6e397e",
+  "sha": "84c7cad953200eb24b7843eead3a951178245b20",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 13:20 UTC",
-  "files_total": 3500,
-  "code_files": 3171,
-  "code_lines": 462656
+  "generated_at": "2026-11-13 14:22 UTC",
+  "files_total": 3503,
+  "code_files": 3174,
+  "code_lines": 462909
  },
  "version": "1.3.2",
- "facts_hash": "f3f505cfcdd2d374",
+ "facts_hash": "09676740ce9c37b2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,8 +389,8 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1331,
-   ".ts": 1082,
+   ".tsx": 1333,
+   ".ts": 1083,
    ".sql": 676,
    ".mjs": 71,
    ".js": 6,
@@ -67430,6 +67430,7 @@
      "cadences",
      "clients",
      "deal_stage_history",
+     "deal_stakeholders",
      "icp_data",
      "lead_churn_risk",
      "lead_score_explanations",
@@ -67457,7 +67458,7 @@
      "get_current_salesperson_id",
      "transition_sale_status"
     ],
-    "deps_count": 68
+    "deps_count": 70
    },
    {
     "path": "/produtos",
@@ -73424,6 +73425,13 @@
    },
    {
     "path": "/pipeline",
+    "component": "DndContext",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/pipeline/DealCard.test.tsx"
+   },
+   {
+    "path": "/pipeline",
     "component": "Pipeline",
     "guard": "",
     "roles": [],
@@ -73676,6 +73684,13 @@
    },
    {
     "path": "/tarefas",
+    "component": "p",
+    "guard": "",
+    "roles": [],
+    "file": "src/components/pipeline/DealCard.test.tsx"
+   },
+   {
+    "path": "/tarefas",
     "component": "Tarefas",
     "guard": "",
     "roles": [],
@@ -73909,7 +73924,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1193,
+  "components_count": 1194,
   "hooks": [
    {
     "name": "useContacts",
@@ -75422,6 +75437,14 @@
    {
     "name": "useQuickAction",
     "file": "src/hooks/pipeline-pulse/useQuickAction.ts"
+   },
+   {
+    "name": "useStakeholdersBySaleIds",
+    "file": "src/hooks/pipeline/useDealCardContext.ts"
+   },
+   {
+    "name": "useClientPhonesByIds",
+    "file": "src/hooks/pipeline/useDealCardContext.ts"
    },
    {
     "name": "usePipelineHealthScore",
@@ -77784,8 +77807,8 @@
   },
   {
    "module": "src/components",
-   "files": 1193,
-   "lines": 189245,
+   "files": 1194,
+   "lines": 189329,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78108,8 +78131,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 520,
-   "lines": 60806,
+   "files": 522,
+   "lines": 60975,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -80553,6 +80576,7 @@
      "src/hooks/crm/useClientPortfolio.ts",
      "src/hooks/crm/useDeduplicationScan.ts",
      "src/hooks/dashboard/useIntelligenceZones.ts",
+     "src/hooks/pipeline/useDealCardContext.ts",
      "src/hooks/reporting/useCohortRetention.ts",
      "src/hooks/sales/useSalesInsights.ts",
      "src/hooks/useClientsNeedingContact.ts",
@@ -80992,6 +81016,7 @@
    "deal_stakeholders": {
     "select": [
      "src/hooks/deal-intelligence/useDealStakeholders.ts",
+     "src/hooks/pipeline/useDealCardContext.ts",
      "supabase/functions/calculate-committee-coverage/index.ts",
      "supabase/functions/extract-committee-from-call/index.ts",
      "supabase/functions/extract-deal-stakeholders/index.ts"
@@ -84627,6 +84652,7 @@
     "id",
     "influence_level",
     "name",
+    "role_title",
     "sale_id",
     "sentiment",
     "source"
@@ -127712,10 +127738,6 @@
     "line": "(Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 10;"
    },
    {
-    "file": "src/components/pipeline/DealCard.tsx",
-    "line": "setTimeout(() => setIsEnriching(false), 2000);"
-   },
-   {
     "file": "src/components/pipeline/DealSummaryCard.tsx",
     "line": "setTimeout(() => setCopied(false), 2000);"
    },
@@ -129838,10 +129860,6 @@
     "line": "(renderTime * 0.9 + frameDuration * 0.1).toFixed(2)"
    },
    {
-    "file": "src/components/pipeline/PipelineBoard.tsx",
-    "line": "92.4%"
-   },
-   {
     "file": "src/components/pipeline-pulse/CriticalAlertsFeed.tsx",
     "line": "transition={{ delay: i * 0.03 }}"
    },
@@ -131116,6 +131134,26 @@
     "name": "mostra estado vazio honesto quando não há arquivados"
    },
    {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "DealCard — sem dado inventado"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "não mostra comitê fictício, selo RevOps nem ações falsas"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "mostra a contagem real de stakeholders do deal"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "abre o WhatsApp com o telefone cadastrado do cliente"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "o botão de tarefas navega para a rota real de tarefas"
+   },
+   {
     "file": "src/components/pipeline/InactivityPanel.test.tsx",
     "name": "InactivityPanel"
    },
@@ -131530,6 +131568,30 @@
    {
     "file": "src/hooks/useNotificationPreferences.test.tsx",
     "name": "não chama o banco sem usuário autenticado"
+   },
+   {
+    "file": "src/hooks/usePipeline.test.tsx",
+    "name": "saleStatusToStage"
+   },
+   {
+    "file": "src/hooks/usePipeline.test.tsx",
+    "name": "mantém status que já são colunas do board"
+   },
+   {
+    "file": "src/hooks/usePipeline.test.tsx",
+    "name": "venda concluída vai para "
+   },
+   {
+    "file": "src/hooks/usePipeline.test.tsx",
+    "name": "estágios abertos iniciais e status ausente vão para a primeira coluna"
+   },
+   {
+    "file": "src/hooks/usePipeline.test.tsx",
+    "name": "usePipelineDeals"
+   },
+   {
+    "file": "src/hooks/usePipeline.test.tsx",
+    "name": "agrupa as vendas pela coluna correta do status real"
    },
    {
     "file": "src/hooks/useProductRecommendations.test.tsx",
@@ -189721,11 +189783,40 @@
     "Limite de requisições atingido. Tente novamente em alguns minutos."
    ]
   },
+  "src/components/pipeline/DealCard.test.tsx": {
+   "path": "src/components/pipeline/DealCard.test.tsx",
+   "lines": 129,
+   "is_test": true,
+   "routes": [
+    {
+     "path": "/pipeline",
+     "component": "DndContext",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/tarefas",
+     "component": "p",
+     "guard": "",
+     "roles": []
+    }
+   ],
+   "tests": [
+    "DealCard — sem dado inventado",
+    "não mostra comitê fictício, selo RevOps nem ações falsas",
+    "mostra a contagem real de stakeholders do deal",
+    "abre o WhatsApp com o telefone cadastrado do cliente",
+    "o botão de tarefas navega para a rota real de tarefas"
+   ]
+  },
   "src/components/pipeline/DealCard.tsx": {
    "path": "src/components/pipeline/DealCard.tsx",
-   "lines": 550,
+   "lines": 516,
    "exports": [
     "const DealCard"
+   ],
+   "navigates": [
+    "/tarefas"
    ],
    "status_values": [
     {
@@ -189735,8 +189826,7 @@
     }
    ],
    "temporal": [
-    "(Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 10;",
-    "setTimeout(() => setIsEnriching(false), 2000);"
+    "(Date.now() - new Date(deal.updated_at).getTime()) / (1000 * 60 * 60 * 24) > 10;"
    ]
   },
   "src/components/pipeline/DealPlaybookModal.tsx": {
@@ -189839,17 +189929,14 @@
   },
   "src/components/pipeline/PipelineBoard.tsx": {
    "path": "src/components/pipeline/PipelineBoard.tsx",
-   "lines": 599,
+   "lines": 581,
    "exports": [
     "const PipelineBoard"
-   ],
-   "percents": [
-    "92.4%"
    ]
   },
   "src/components/pipeline/PipelineColumn.tsx": {
    "path": "src/components/pipeline/PipelineColumn.tsx",
-   "lines": 179,
+   "lines": 186,
    "exports": [
     "const PipelineColumn"
    ],
@@ -200971,14 +201058,28 @@
     "1"
    ]
   },
+  "src/hooks/usePipeline.test.tsx": {
+   "path": "src/hooks/usePipeline.test.tsx",
+   "lines": 80,
+   "is_test": true,
+   "tests": [
+    "saleStatusToStage",
+    "mantém status que já são colunas do board",
+    "venda concluída vai para ",
+    "estágios abertos iniciais e status ausente vão para a primeira coluna",
+    "usePipelineDeals",
+    "agrupa as vendas pela coluna correta do status real"
+   ]
+  },
   "src/hooks/usePipeline.ts": {
    "path": "src/hooks/usePipeline.ts",
-   "lines": 212,
+   "lines": 226,
    "exports": [
     "type PipelineStageId",
     "interface PipelineStageConfig",
     "const PIPELINE_STAGES",
     "interface Deal",
+    "const saleStatusToStage",
     "const usePipelineDeals",
     "const useMoveDeal"
    ],
@@ -211304,6 +211405,43 @@
    },
    "hooks": [
     "usePurchaseHistory"
+   ]
+  },
+  "src/hooks/pipeline/useDealCardContext.ts": {
+   "path": "src/hooks/pipeline/useDealCardContext.ts",
+   "lines": 75,
+   "exports": [
+    "interface DealStakeholderSummary",
+    "function useStakeholdersBySaleIds",
+    "function useClientPhonesByIds"
+   ],
+   "tables": [
+    {
+     "table": "deal_stakeholders",
+     "op": "select"
+    },
+    {
+     "table": "clients",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "deal_stakeholders": [
+     "dmu_role",
+     "id",
+     "name",
+     "role_title",
+     "sale_id",
+     "sentiment"
+    ],
+    "clients": [
+     "id",
+     "phone"
+    ]
+   },
+   "hooks": [
+    "useStakeholdersBySaleIds",
+    "useClientPhonesByIds"
    ]
   },
   "src/hooks/pipeline/usePipelineHealthScore.ts": {
@@ -246227,10 +246365,25 @@
   }
  },
  "git": {
-  "sha": "3cf041b47cadb2cdcacb8219e13098980a6e397e",
+  "sha": "84c7cad953200eb24b7843eead3a951178245b20",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "84c7cad",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)",
+    "files": [
+     "src/components/pipeline/DealCard.test.tsx",
+     "src/components/pipeline/DealCard.tsx",
+     "src/components/pipeline/PipelineBoard.tsx",
+     "src/components/pipeline/PipelineColumn.tsx",
+     "src/hooks/pipeline/useDealCardContext.ts",
+     "src/hooks/usePipeline.test.tsx",
+     "src/hooks/usePipeline.ts"
+    ]
+   },
    {
     "sha": "3cf041b",
     "date": "2026-11-13",
@@ -246559,17 +246712,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "d51e633",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "feat: editar e excluir stakeholders da conta ABM (#427)",
-    "files": [
-     "src/hooks/abm/useAccounts.test.tsx",
-     "src/hooks/abm/useAccounts.ts",
-     "src/pages/AccountBasedSelling.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -246578,15 +246720,15 @@
     4
    ],
    [
+    "package-lock.json",
+    3
+   ],
+   [
     "src/hooks/abm/useAccounts.test.tsx",
-    4
+    3
    ],
    [
     "src/hooks/abm/useAccounts.ts",
-    4
-   ],
-   [
-    "package-lock.json",
     3
    ],
    [
@@ -246602,10 +246744,6 @@
     2
    ],
    [
-    "src/pages/AccountBasedSelling.tsx",
-    2
-   ],
-   [
     "src/components/pipeline/InactivityPanel.test.tsx",
     2
    ],
@@ -246618,6 +246756,34 @@
     2
    ],
    [
+    "src/components/pipeline/DealCard.test.tsx",
+    1
+   ],
+   [
+    "src/components/pipeline/DealCard.tsx",
+    1
+   ],
+   [
+    "src/components/pipeline/PipelineBoard.tsx",
+    1
+   ],
+   [
+    "src/components/pipeline/PipelineColumn.tsx",
+    1
+   ],
+   [
+    "src/hooks/pipeline/useDealCardContext.ts",
+    1
+   ],
+   [
+    "src/hooks/usePipeline.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/usePipeline.ts",
+    1
+   ],
+   [
     "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
     1
    ],
@@ -246627,30 +246793,6 @@
    ],
    [
     "supabase/functions/qbr-scheduler/index.ts",
-    1
-   ],
-   [
-    "src/hooks/automation/executeWorkflowActions.test.ts",
-    1
-   ],
-   [
-    "supabase/functions/execute-workflow/actions.ts",
-    1
-   ],
-   [
-    "supabase/functions/execute-workflow/index.ts",
-    1
-   ],
-   [
-    "src/components/reports/EmailReportConfig.test.tsx",
-    1
-   ],
-   [
-    "src/components/reports/EmailReportConfig.tsx",
-    1
-   ],
-   [
-    "src/hooks/useNotificationPreferences.test.tsx",
     1
    ]
   ]
