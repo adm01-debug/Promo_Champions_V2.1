@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a",
+  "commit": "d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8",
   "branch": "main",
-  "data_commit": "2026-11-13T07:41:08Z",
+  "data_commit": "2026-11-13T08:06:31Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d21dcd1",
+    "data": "2026-11-13",
+    "assunto": "fix: enviar completed_by ao marcar item do playbook no pipeline (#470)"
+   },
+   {
+    "sha": "9bf39de",
+    "data": "2026-11-13",
+    "assunto": "fix: campo Vendedor do registro de atividade vem com o vendedor logado (#471)"
+   },
    {
     "sha": "f2155e8",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "e324e95",
     "data": "2026-11-12",
     "assunto": "chore(main): release 1.2.0 (#391)"
-   },
-   {
-    "sha": "f5e1a4f",
-    "data": "2026-11-11",
-    "assunto": "feat: migra tailwind 3->4 (v4.3.5) (#423)"
-   },
-   {
-    "sha": "e6a7784",
-    "data": "2026-11-11",
-    "assunto": "feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)"
    }
   ],
-  "arquivos_mudados_7d": 545,
+  "arquivos_mudados_7d": 548,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 99
+    "mudancas": 96
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 97
+    "mudancas": 95
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -234,19 +234,19 @@
     "mudancas": 17
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 16
-   },
-   {
-    "arquivo": "supabase/config.toml",
-    "mudancas": 16
-   },
-   {
     "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 16
    },
    {
     "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "mudancas": 15
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 15
+   },
+   {
+    "arquivo": "supabase/config.toml",
     "mudancas": 15
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 82
+    "commits": 84
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3475,
-  "arquivos_codigo": 2484,
-  "linhas_codigo": 431874,
+  "arquivos_total": 3477,
+  "arquivos_codigo": 2486,
+  "linhas_codigo": 432036,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 187,
+  "testes": 189,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1190,
-   "linhas": 188974
+   "arquivos": 1191,
+   "linhas": 189044
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 516,
-   "linhas": 60357
+   "arquivos": 517,
+   "linhas": 60449
   },
   "src/integrations": {
    "arquivos": 4,
@@ -770,7 +770,7 @@
   },
   {
    "arquivo": "src/components/activities/ActivityLogForm.tsx",
-   "linhas": 763
+   "linhas": 774
   },
   {
    "arquivo": "src/components/win-loss/ScenarioForecastChart.tsx",

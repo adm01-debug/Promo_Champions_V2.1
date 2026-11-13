@@ -177,10 +177,11 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 81,
+   "usado_por": 82,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
+    "src/components/activities/ActivityLogForm.tsx",
     "src/components/activities/ActivityStats.tsx",
     "src/components/analytics/ActivityHeatmap.tsx",
     "src/components/analytics/RouteTracker.tsx",
@@ -207,8 +208,7 @@
     "src/components/dashboard/widgets/SelfBenchmarkWidget.tsx",
     "src/components/deal-intelligence/health/CriticalDealsTable.tsx",
     "src/components/engagement/MoodTrackerWidget.tsx",
-    "src/components/gamification/CelebrationOverlayProvider.tsx",
-    "src/components/gamification/CompetitiveStatusBar.tsx"
+    "src/components/gamification/CelebrationOverlayProvider.tsx"
    ],
    "coberto_por_testes": 2
   },
@@ -4819,14 +4819,16 @@
     "useTogglePlaybookItem",
     "useUpdatePlaybookItem"
    ],
-   "linhas": 232,
+   "linhas": 239,
    "dominio": "hooks/playbooks",
    "tabelas": [
     "playbook_items",
     "playbook_progress",
     "playbooks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "edges": [],
    "hooks_internos": [
     "useMutation",
@@ -4837,7 +4839,7 @@
    "usado_por_arquivos": [
     "src/hooks/usePlaybooks.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/playbooks/usePlaybookQueries.ts",

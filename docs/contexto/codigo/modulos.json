@@ -94,8 +94,8 @@
   {
    "modulo": "components/activities",
    "arquivos": 20,
-   "testes": 0,
-   "linhas": 4459,
+   "testes": 1,
+   "linhas": 4470,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6036,7 +6036,9 @@
     "playbook_progress",
     "playbooks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -13321,8 +13323,8 @@
   {
    "modulo": "hooks/playbooks",
    "arquivos": 2,
-   "testes": 0,
-   "linhas": 397,
+   "testes": 1,
+   "linhas": 404,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -13347,7 +13349,9 @@
     "playbook_progress",
     "playbooks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -13364,7 +13368,9 @@
      "playbook_progress",
      "playbooks"
     ],
-    "rpcs": []
+    "rpcs": [
+     "get_current_salesperson_id"
+    ]
    },
    "importado_por_outros_modulos": [
     "hooks"

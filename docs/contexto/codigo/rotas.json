@@ -39,6 +39,7 @@
    "hooks": [
     "useActiveCadencesBySaleIds",
     "useAudio",
+    "useAuth",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -103,6 +104,7 @@
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
     "useAudio",
+    "useAuth",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -188,7 +190,7 @@
     "navigation",
     "sdr"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 85
   },
   {
    "protegida": false,
@@ -7932,7 +7934,9 @@
     "playbook_progress",
     "playbooks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],

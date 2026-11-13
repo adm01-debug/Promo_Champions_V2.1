@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a",
+  "sha": "d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 08:10 UTC",
-  "files_total": 3490,
-  "code_files": 3161,
-  "code_lines": 461820
+  "generated_at": "2026-11-13 08:41 UTC",
+  "files_total": 3492,
+  "code_files": 3163,
+  "code_lines": 461982
  },
  "version": "1.3.2",
- "facts_hash": "fb043545d5957d1d",
+ "facts_hash": "eb3df3587892c4be",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1325,
+   ".tsx": 1327,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -65682,7 +65682,9 @@
      "teams"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_current_salesperson_id"
+    ],
     "deps_count": 26
    },
    {
@@ -67447,6 +67449,7 @@
     "rpc_transitive": [
      "enroll_quote_in_cadence",
      "get_auto_paused_count",
+     "get_current_salesperson_id",
      "transition_sale_status"
     ],
     "deps_count": 68
@@ -67707,7 +67710,7 @@
      "get_current_salesperson_id",
      "merge_clients"
     ],
-    "deps_count": 79
+    "deps_count": 80
    },
    {
     "path": "/vendedor/:id",
@@ -73896,7 +73899,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1190,
+  "components_count": 1191,
   "hooks": [
    {
     "name": "useContacts",
@@ -77771,8 +77774,8 @@
   },
   {
    "module": "src/components",
-   "files": 1190,
-   "lines": 188973,
+   "files": 1191,
+   "lines": 189043,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -77952,6 +77955,7 @@
     "src/components/activities/ActivityItemRow.tsx",
     "src/components/activities/ActivityLeaderboard.tsx",
     "src/components/activities/ActivityList.tsx",
+    "src/components/activities/ActivityLogForm.test.tsx",
     "src/components/activities/ActivityLogForm.tsx",
     "src/components/activities/ActivityStats.tsx",
     "src/components/activities/ActivityStatsCharts.tsx",
@@ -78015,8 +78019,7 @@
     "src/components/admin/task-console/SquadManager.tsx",
     "src/components/admin/task-console/TaskAssignmentDialog.tsx",
     "src/components/admin/task-console/TaskCatalogManager.tsx",
-    "src/components/admin/task-console/TaskConsoleHub.tsx",
-    "src/components/admin/task-console/XpAdjustmentPanel.tsx"
+    "src/components/admin/task-console/TaskConsoleHub.tsx"
    ]
   },
   {
@@ -78095,8 +78098,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 516,
-   "lines": 60357,
+   "files": 517,
+   "lines": 60449,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -87007,6 +87010,7 @@
     "src/hooks/calendar/useAgendaEvents.ts",
     "src/hooks/conversational/useCallRecordings.ts",
     "src/hooks/conversational/useUploadCallRecording.ts",
+    "src/hooks/playbooks/usePlaybookMutations.ts",
     "src/hooks/tasks/useTaskMutations.ts",
     "src/services/salesService.ts",
     "tests/e2e/helpers/quote-to-sale-helpers.ts"
@@ -130968,6 +130972,18 @@
     "name": "resolverExecutavel ignora entrada relativa do PATH"
    },
    {
+    "file": "src/components/activities/ActivityLogForm.test.tsx",
+    "name": "ActivityLogForm"
+   },
+   {
+    "file": "src/components/activities/ActivityLogForm.test.tsx",
+    "name": "envia o vendedor logado como salesperson_id sem abrir o combo Vendedor"
+   },
+   {
+    "file": "src/components/activities/ActivityLogForm.test.tsx",
+    "name": "preenche o vendedor logado quando o perfil carrega depois da montagem"
+   },
+   {
     "file": "src/components/competitive/BattleArena.test.tsx",
     "name": "BattleArena — gerenciar batalhas"
    },
@@ -132054,6 +132070,22 @@
    {
     "file": "src/hooks/orders/useOrderTracking.test.tsx",
     "name": "consulta o detalhe diretamente, sem depender do limite da listagem"
+   },
+   {
+    "file": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
+    "name": "useTogglePlaybookItem — marcar item do checklist"
+   },
+   {
+    "file": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
+    "name": "envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS)"
+   },
+   {
+    "file": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
+    "name": "admin/gestor sem registro de vendedor grava completed_by NULL"
+   },
+   {
+    "file": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
+    "name": "não insere se a consulta do vendedor falhar"
    },
    {
     "file": "src/hooks/race/useGhostCar.test.tsx",
@@ -179634,9 +179666,19 @@
     "const ActivityList"
    ]
   },
+  "src/components/activities/ActivityLogForm.test.tsx": {
+   "path": "src/components/activities/ActivityLogForm.test.tsx",
+   "lines": 59,
+   "is_test": true,
+   "tests": [
+    "ActivityLogForm",
+    "envia o vendedor logado como salesperson_id sem abrir o combo Vendedor",
+    "preenche o vendedor logado quando o perfil carrega depois da montagem"
+   ]
+  },
   "src/components/activities/ActivityLogForm.tsx": {
    "path": "src/components/activities/ActivityLogForm.tsx",
-   "lines": 763,
+   "lines": 774,
    "exports": [
     "function ActivityLogForm"
    ],
@@ -211090,9 +211132,20 @@
     "1"
    ]
   },
+  "src/hooks/playbooks/usePlaybookMutations.test.tsx": {
+   "path": "src/hooks/playbooks/usePlaybookMutations.test.tsx",
+   "lines": 85,
+   "is_test": true,
+   "tests": [
+    "useTogglePlaybookItem — marcar item do checklist",
+    "envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS)",
+    "admin/gestor sem registro de vendedor grava completed_by NULL",
+    "não insere se a consulta do vendedor falhar"
+   ]
+  },
   "src/hooks/playbooks/usePlaybookMutations.ts": {
    "path": "src/hooks/playbooks/usePlaybookMutations.ts",
-   "lines": 232,
+   "lines": 239,
    "exports": [
     "const useTogglePlaybookItem",
     "const useCreatePlaybook",
@@ -211161,6 +211214,9 @@
      "playbook_id"
     ]
    },
+   "rpc": [
+    "get_current_salesperson_id"
+   ],
    "errors": [
     "Erro ao adicionar item",
     "Erro ao atualizar checklist",
@@ -245845,10 +245901,30 @@
   }
  },
  "git": {
-  "sha": "f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a",
+  "sha": "d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "d21dcd1",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: enviar completed_by ao marcar item do playbook no pipeline (#470)",
+    "files": [
+     "src/hooks/playbooks/usePlaybookMutations.test.tsx",
+     "src/hooks/playbooks/usePlaybookMutations.ts"
+    ]
+   },
+   {
+    "sha": "9bf39de",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: campo Vendedor do registro de atividade vem com o vendedor logado (#471)",
+    "files": [
+     "src/components/activities/ActivityLogForm.test.tsx",
+     "src/components/activities/ActivityLogForm.tsx"
+    ]
+   },
    {
     "sha": "f2155e8",
     "date": "2026-11-13",
@@ -246588,50 +246664,12 @@
     "files": [
      ".github/workflows/codeql.yml"
     ]
-   },
-   {
-    "sha": "5bccdda",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#418)",
-    "files": [
-     ".github/workflows/automation-local.yml",
-     ".gitignore",
-     "docs/AUTOMACAO_LOCAL.md",
-     "eslint.config.js",
-     "graphify.local.json",
-     "package.json",
-     "scripts/automation.config.json",
-     "scripts/automation.mjs",
-     "scripts/automation.unit.mjs",
-     "scripts/graphify-local.mjs",
-     "scripts/graphify-local.unit.mjs",
-     "scripts/maintenance/README.md",
-     "scripts/maintenance/config.example.json",
-     "scripts/maintenance/config.json",
-     "scripts/maintenance/lib.mjs",
-     "scripts/maintenance/maintenance.unit.mjs",
-     "scripts/maintenance/run.mjs",
-     "scripts/maintenance/run.sh",
-     "scripts/maintenance/typecheck.mjs",
-     "tools/graphify/pyproject.toml",
-     "tools/graphify/uv.lock"
-    ]
-   },
-   {
-    "sha": "31f6e2b",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir timeout da seção grants no snapshot do banco (#417)",
-    "files": [
-     "scripts/supabase_snapshot/snapshot.py"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    8
+    7
    ],
    [
     "package-lock.json",
@@ -246648,6 +246686,10 @@
    [
     "src/hooks/abm/useAccounts.ts",
     3
+   ],
+   [
+    "src/components/activities/ActivityLogForm.tsx",
+    2
    ],
    [
     "src/components/gamification/WeeklyChallengesCard.tsx",
@@ -246703,10 +246745,6 @@
    ],
    [
     "src/components/analytics/WeightedForecastDashboard.tsx",
-    2
-   ],
-   [
-    "src/components/analytics/performance/PerformanceCharts.tsx",
     2
    ]
   ]

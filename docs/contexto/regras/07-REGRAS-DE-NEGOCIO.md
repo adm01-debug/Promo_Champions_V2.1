@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f2155e8e9d` · branch `main` · 2026-11-13 08:10 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d21dcd1524` · branch `main` · 2026-11-13 08:41 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4137,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1353 testes em 154 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1360 testes em 156 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4240,6 +4240,7 @@ _nenhum item encontrado_
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
 | `src/hooks/gamification/useWeeklyChallenges.test.tsx` | 4 | useDeactivateWeeklyChallenge · desativa via is_active=false (soft-delete) e invalida a lista · trata 0 linhas afetadas (bloqueio de RLS) como erro · propaga erro do Supabase com toast |
+| `src/hooks/playbooks/usePlaybookMutations.test.tsx` | 4 | useTogglePlaybookItem — marcar item do checklist · envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS) · admin/gestor sem registro de vendedor grava completed_by NULL · não insere se a consulta do vendedor falhar |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
@@ -4251,6 +4252,7 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
+| `src/components/activities/ActivityLogForm.test.tsx` | 3 | ActivityLogForm · envia o vendedor logado como salesperson_id sem abrir o combo Vendedor · preenche o vendedor logado quando o perfil carrega depois da montagem |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
 | `src/hooks/useProductRecommendations.test.tsx` | 3 | useProductRecommendations — regressão Onda J/K · particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn · agrega counts ignorando product_id null e tolera product_name/amount nulos |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |

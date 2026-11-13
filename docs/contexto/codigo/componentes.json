@@ -346,9 +346,10 @@
     "ActivityLogForm"
    ],
    "export_default": null,
-   "linhas": 763,
+   "linhas": 774,
    "dominio": "components/activities",
    "hooks_locais": [
+    "useAuth",
     "useClients",
     "useCreateActivity",
     "useSalespeople"
@@ -17345,7 +17346,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 81,
+   "usado_por": 82,
    "orfao": false
   },
   {
