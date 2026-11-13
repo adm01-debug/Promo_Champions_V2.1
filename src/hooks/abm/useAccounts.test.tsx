@@ -50,11 +50,19 @@ vi.mock('@/integrations/supabase/client', () => {
     supabase: {
       from: builder,
       auth: { getUser: () => Promise.resolve({ data: { user: currentUser } }) },
+      rpc: (fn: string, ...args: unknown[]) => {
+        calls.push({ op: 'rpc', args: [fn, ...args] });
+        return Promise.resolve(rpcResult);
+      },
     },
   };
 });
 
+// Resultado do rpc('get_current_salesperson_id'); null = usuário sem vendedor vinculado.
+let rpcResult: Result = { data: 'sp-1', error: null };
+
 const {
+  useCreateAccount,
   useUpdateAccount,
   useDeleteAccount,
   useUpdateContact,
@@ -68,6 +76,76 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 const ops = () => calls.map(c => c.op);
+
+describe('useCreateAccount', () => {
+  beforeEach(() => {
+    calls.length = 0;
+    queuedResults.length = 0;
+    rpcResult = { data: 'sp-1', error: null };
+    toastSuccess.mockReset();
+    toastError.mockReset();
+    client = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  });
+
+  it('vendedor: grava owner_id = vendedor logado (exigido pela RLS de accounts)', async () => {
+    nextResult = { data: { id: 'acc-9', name: 'Nova' }, error: null };
+    const { result } = renderHook(() => useCreateAccount(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ name: 'Nova', tier: 'smb' });
+    });
+
+    expect(calls.find(c => c.op === 'rpc')?.args).toEqual(['get_current_salesperson_id']);
+    expect(calls.find(c => c.op === 'insert')?.args[0]).toEqual({
+      name: 'Nova',
+      tier: 'smb',
+      owner_id: 'sp-1',
+    });
+    expect(toastSuccess).toHaveBeenCalledWith('Conta criada com sucesso');
+  });
+
+  it('admin/gestor sem vendedor vinculado: segue com owner_id null', async () => {
+    rpcResult = { data: null, error: null };
+    nextResult = { data: { id: 'acc-9', name: 'Nova' }, error: null };
+    const { result } = renderHook(() => useCreateAccount(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ name: 'Nova' });
+    });
+
+    expect(calls.find(c => c.op === 'insert')?.args[0]).toEqual({
+      name: 'Nova',
+      owner_id: null,
+    });
+  });
+
+  it('owner_id vindo no payload é respeitado, sem consultar o vendedor logado', async () => {
+    nextResult = { data: { id: 'acc-9', name: 'Nova' }, error: null };
+    const { result } = renderHook(() => useCreateAccount(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({ name: 'Nova', owner_id: 'sp-2' });
+    });
+
+    expect(ops()).not.toContain('rpc');
+    expect(calls.find(c => c.op === 'insert')?.args[0]).toEqual({
+      name: 'Nova',
+      owner_id: 'sp-2',
+    });
+  });
+
+  it('falha ao identificar o vendedor: não insere e mostra o erro', async () => {
+    rpcResult = { data: null, error: { message: 'falha rpc' } };
+    const { result } = renderHook(() => useCreateAccount(), { wrapper });
+
+    await act(async () => {
+      await expect(result.current.mutateAsync({ name: 'Nova' })).rejects.toBeTruthy();
+    });
+
+    expect(ops()).not.toContain('insert');
+    expect(toastError).toHaveBeenCalledWith('Erro: falha rpc');
+  });
+});
 
 describe('useUpdateAccount', () => {
   beforeEach(() => {
