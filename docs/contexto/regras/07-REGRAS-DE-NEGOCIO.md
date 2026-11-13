@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1ae8ecb61c` · branch `main` · 2026-11-13 22:22 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `614d67573c` · branch `main` · 2026-11-13 23:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4157,7 +4157,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1568 testes em 197 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1571 testes em 197 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4204,6 +4204,7 @@ _nenhum item encontrado_
 | `src/lib/log/pii.test.ts` | 12 | maskEmail · preserva primeira e última letra do local + domínio · retorna vazio para entrada nula e *** para formato inválido · maskPhone … |
 | `supabase/functions/_shared/campaign-health.test.ts` | 12 | percent protege contra divisão por zero · campanha saudável não gera alertas · snapshot inválido não gera alertas · opt-out acima do limiar gera warning e crítico … |
 | `scripts/lib/seguranca-processo.test.mjs` | 11 | resolverExecutavel devolve caminho absoluto existente igual ao do shell · resolverExecutavel lanca para comando inexistente · estaDentro aceita a raiz e subpastas · estaDentro recusa  … |
+| `src/components/pipeline/DealCard.test.tsx` | 11 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/hooks/useRunRateProjection.test.ts` | 11 | computeRunRateProjection · primeiro dia do mês: paceDaily = mtd, projeta para todos os dias do mês · meio do mês com bom ritmo: confidence media, projeção acima da meta · gap grande: dailyPaceRequired calculado corretamente … |
 | `src/hooks/sales/useContactFrequencyRules.test.tsx` | 11 | parseContactRules / serializeContactRules · retorna null quando não há regras salvas · lê o formato gravado por ContactRulesDialog e completa o que falta com o padrão · ignora valores inválidos no jsonb … |
 | `src/lib/navigationGuard.test.tsx` | 11 | navigationGuard · requestNavigation executa direto sem sujeira · requestNavigation confirma antes de sair com sujeira · requestNavigation bloqueia quando o usuário cancela … |
@@ -4214,7 +4215,6 @@ _nenhum item encontrado_
 | `src/hooks/useEligibleBonuses.test.ts` | 9 | evaluateBonus · rejects inactive · rejects individual bonus for other salesperson · milestone: achieved when mtdRevenue >= threshold … |
 | `src/hooks/gamification/useLeagues.test.tsx` | 9 | useLeagues · falha (isError) quando league_members não pode ser lido, em vez de lista vazia · marca league_id e pontos de quem tem inscrição · useLeagueEnrollment … |
 | `src/components/competitive/LeagueSystem.test.tsx` | 8 | LeagueSystem · não coloca vendedores sem inscrição na Liga Bronze · sem liga cadastrada não oferece botão de entrar e explica o motivo · inscreve o vendedor logado na liga de entrada ao clicar em Entrar na Liga … |
-| `src/components/pipeline/DealCard.test.tsx` | 8 | DealCard — sem dado inventado · não mostra comitê fictício, selo RevOps nem ações falsas · mostra a contagem real de stakeholders do deal · abre o WhatsApp com o telefone cadastrado do cliente … |
 | `src/components/sales/cadence/ContactFrequencyRules.test.tsx` | 8 | ContactFrequencyRules · avisa que as regras ainda não são aplicadas automaticamente · marca os valores como padrão quando nada foi salvo · mostra as regras salvas no banco … |
 | `src/hooks/useDigitalSignatures.test.tsx` | 8 | useDigitalSignatures sem provedor configurado · não altera o status ao tentar enviar um documento · não permite registrar assinatura ou recusa pelo cliente · useDigitalSignatures — edição e remoção de signatários … |
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |

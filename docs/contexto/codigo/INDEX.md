@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1ae8ecb61c90d3dba886aa214a0671c7f19cea0c` (2026-11-13T17:57:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `614d67573c3afdccd05714dbe564600a67d63ab3` (2026-11-13T22:30:49Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3524 |
 | arquivos_codigo | 2531 |
-| linhas_codigo | 435683 |
+| linhas_codigo | 435708 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,14 +574,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20516 nós · 64966 arestas · 1478 comunidades · grafo do commit `1ae8ecb6`
-- comunidades maiores: Card (732), Button (587), client.ts (294), Índice (279), PageTransition (274), getCorsHeaders (247), Badge (234), react (219), vitest (208), ref_npm_supabase (195), Avatar (184), RaceArena.tsx (178)
+- 20517 nós · 64967 arestas · 1468 comunidades · grafo do commit `614d6757`
+- comunidades maiores: CardContent (433), cn (379), client.ts (319), Button (292), Skeleton (282), Índice (277), SelectContent (243), getCorsHeaders (238), ref_npm_supabase (216), vitest (210), Input (193), date-fns (174)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (82)
-- package-lock.json (81)
+- package.json (80)
+- package-lock.json (78)
 - .github/workflows/pr-checks.yml (33)
 - deno.lock (30)
 - .github/workflows/codeql.yml (20)
@@ -746,13 +746,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/accessibility-checklist.md` — ♿ Accessibility Checklist — Promo Champions v2 (55 linhas)
 - `docs/auditoria_enterprise_v5.md` — 🏆 PROMO CHAMPIONS - RELATÓRIO DE AUDITORIA ENTERPRISE (V5.0) (95 linhas)
 - `docs/component-guidelines.md` — 🏗 Component Guidelines — Promo Champions v2 (42 linhas)
-- `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1060 linhas)
+- `docs/prod-readiness.md` — Prontidão para produção — Promo_Champions_V2.1 (1066 linhas)
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
 - subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/agentes (6), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `614d675` docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)
+- 2026-11-13 `31447ff` fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)
 - 2026-11-13 `1ae8ecb` docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)
 - 2026-11-13 `d03b42e` fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)
 - 2026-11-13 `01cd315` fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)
@@ -766,8 +768,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `824a372` fix: desabilita entrada na liga enquanto não há ligas cadastradas (#443)
 - 2026-11-13 `b97dd91` fix: permite gestor inscrever participantes ao criar batalha (#478)
 - 2026-11-13 `749babe` fix: metas de atividades sem indicadores e ações fictícias (#444)
-- 2026-11-13 `c82f9b3` fix: relatório de cadências passa a usar dados reais do banco (#449)
-- 2026-11-13 `05eca38` fix: apontar APP_URL para o domínio de produção na Vercel (#439)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

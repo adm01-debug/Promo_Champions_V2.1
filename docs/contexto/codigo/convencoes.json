@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)",
+   "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)",
    "docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)",
    "fix: Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista (#481)",
-   "fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)",
-   "codemod de tipografia: tracking-* sem \\b e comentários ignorados (#480)",
-   "fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)"
+   "fix: remove presença fictícia do pipeline e liga vendas ganhas reais (#453)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

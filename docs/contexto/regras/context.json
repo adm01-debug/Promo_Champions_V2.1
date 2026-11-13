@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1ae8ecb61c90d3dba886aa214a0671c7f19cea0c",
+  "sha": "614d67573c3afdccd05714dbe564600a67d63ab3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 22:22 UTC",
+  "generated_at": "2026-11-13 23:00 UTC",
   "files_total": 3539,
   "code_files": 3209,
-  "code_lines": 465651
+  "code_lines": 465676
  },
  "version": "1.3.2",
- "facts_hash": "c84aec32e7c4d130",
+ "facts_hash": "8801fcf9b00ed9f2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -77908,7 +77908,7 @@
   {
    "module": "src/components",
    "files": 1207,
-   "lines": 189873,
+   "lines": 189898,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -131304,6 +131304,18 @@
    {
     "file": "src/components/pipeline/DealCard.test.tsx",
     "name": "não oferece o botão simulado de enriquecimento"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "DealCard — saúde sem valor inventado"
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "deal sem health_score e sem lead score não recebe saúde 50 nem "
+   },
+   {
+    "file": "src/components/pipeline/DealCard.test.tsx",
+    "name": "deal com health_score baixo real continua mostrando o alerta"
    },
    {
     "file": "src/components/pipeline/InactivityPanel.test.tsx",
@@ -190285,7 +190297,7 @@
   },
   "src/components/pipeline/DealCard.test.tsx": {
    "path": "src/components/pipeline/DealCard.test.tsx",
-   "lines": 151,
+   "lines": 170,
    "is_test": true,
    "routes": [
     {
@@ -190309,12 +190321,15 @@
     "o botão de tarefas navega para a rota real de tarefas",
     "DealCard — sem presença inventada de usuários",
     "renderiza o deal sem presença fictícia de outros usuários",
-    "não oferece o botão simulado de enriquecimento"
+    "não oferece o botão simulado de enriquecimento",
+    "DealCard — saúde sem valor inventado",
+    "deal sem health_score e sem lead score não recebe saúde 50 nem ",
+    "deal com health_score baixo real continua mostrando o alerta"
    ]
   },
   "src/components/pipeline/DealCard.tsx": {
    "path": "src/components/pipeline/DealCard.tsx",
-   "lines": 486,
+   "lines": 492,
    "exports": [
     "const DealCard"
    ],
@@ -247253,10 +247268,29 @@
   }
  },
  "git": {
-  "sha": "1ae8ecb61c90d3dba886aa214a0671c7f19cea0c",
+  "sha": "614d67573c3afdccd05714dbe564600a67d63ab3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "614d675",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "31447ff",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)",
+    "files": [
+     "src/components/pipeline/DealCard.test.tsx",
+     "src/components/pipeline/DealCard.tsx"
+    ]
+   },
    {
     "sha": "1ae8ecb",
     "date": "2026-11-13",
@@ -247598,30 +247632,17 @@
      "src/hooks/useNotificationPreferences.test.tsx",
      "src/hooks/useNotificationPreferences.ts"
     ]
-   },
-   {
-    "sha": "e399094",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: grava pesquisa NPS no vendedor logado (#473)",
-    "files": [
-     "src/hooks/useNPSSurveys.test.tsx",
-     "src/hooks/useNPSSurveys.ts"
-    ]
-   },
-   {
-    "sha": "e37f60a",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)",
-    "files": [
-     "src/components/cadences/EnrollCadenceDialog.test.tsx",
-     "src/components/cadences/EnrollCadenceDialog.tsx",
-     "src/components/sales/SaleHUDCard.test.tsx"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "src/components/pipeline/DealCard.test.tsx",
+    3
+   ],
+   [
+    "src/components/pipeline/DealCard.tsx",
+    3
+   ],
    [
     "deno.lock",
     3
@@ -247635,20 +247656,12 @@
     3
    ],
    [
-    "src/components/pipeline/DealCard.test.tsx",
-    2
-   ],
-   [
-    "src/components/pipeline/DealCard.tsx",
+    "docs/prod-readiness.md",
     2
    ],
    [
     "src/components/pipeline/PipelineBoard.tsx",
     2
-   ],
-   [
-    "docs/prod-readiness.md",
-    1
    ],
    [
     "src/components/activities/ActivityLogForm.test.tsx",

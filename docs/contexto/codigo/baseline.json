@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1ae8ecb61c90d3dba886aa214a0671c7f19cea0c",
+  "commit": "614d67573c3afdccd05714dbe564600a67d63ab3",
   "branch": "main",
-  "data_commit": "2026-11-13T17:57:12-03:00",
+  "data_commit": "2026-11-13T22:30:49Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "614d675",
+    "data": "2026-11-13",
+    "assunto": "docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)"
+   },
+   {
+    "sha": "31447ff",
+    "data": "2026-11-13",
+    "assunto": "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)"
+   },
    {
     "sha": "1ae8ecb",
     "data": "2026-11-13",
@@ -121,16 +131,6 @@
     "sha": "84c7cad",
     "data": "2026-11-13",
     "assunto": "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)"
-   },
-   {
-    "sha": "3cf041b",
-    "data": "2026-11-13",
-    "assunto": "fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)"
-   },
-   {
-    "sha": "ceaddbf",
-    "data": "2026-11-13",
-    "assunto": "fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)"
    }
   ],
   "arquivos_mudados_7d": 633,
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "src/components/pipeline",
-    "mudancas": 27
+    "mudancas": 29
    },
    {
     "pasta": "package-lock.json",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 82
+    "mudancas": 80
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 81
+    "mudancas": 78
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -258,10 +258,6 @@
     "mudancas": 11
    },
    {
-    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 11
-   },
-   {
     "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 10
    },
@@ -271,6 +267,10 @@
    },
    {
     "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 10
    },
    {
@@ -290,7 +290,7 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/pages/admin/AdminComercial.tsx",
+    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
     "mudancas": 10
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 111
+    "commits": 113
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3524,
   "arquivos_codigo": 2531,
-  "linhas_codigo": 435683,
+  "linhas_codigo": 435708,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -600,7 +600,7 @@
   },
   "src/components": {
    "arquivos": 1207,
-   "linhas": 189874
+   "linhas": 189899
   },
   "src/config": {
    "arquivos": 4,

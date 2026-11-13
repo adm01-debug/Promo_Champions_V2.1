@@ -382,14 +382,14 @@
   {
    "arquivo": "src/components/pipeline/DealCard.test.tsx",
    "tipo": "unit",
-   "linhas": 151,
+   "linhas": 170,
    "testa": [
     "src/components/pipeline/DealCard.tsx",
     "src/components/ui/tooltip.tsx",
     "src/hooks/pipeline/useDealCardContext.ts",
     "src/hooks/usePipeline.ts"
    ],
-   "casos": 6
+   "casos": 8
   },
   {
    "arquivo": "src/components/pipeline/InactivityPanel.test.tsx",
