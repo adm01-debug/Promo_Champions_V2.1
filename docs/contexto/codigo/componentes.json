@@ -15415,7 +15415,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -18133,13 +18133,15 @@
     "AutomationBuilder"
    ],
    "export_default": "AutomationBuilder",
-   "linhas": 416,
+   "linhas": 551,
    "dominio": "pages",
    "hooks_locais": [
     "useAutomationWorkflows",
     "useCreateWorkflow",
+    "useDeleteWorkflow",
     "useExecuteWorkflow",
     "useToggleWorkflow",
+    "useUpdateWorkflow",
     "useWorkflowRuns"
    ],
    "tabelas": [],

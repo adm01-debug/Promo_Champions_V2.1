@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5d2f222306a05820320574ab510ba90c68fffc58",
+  "commit": "9d3c316eac7a49bede04e12dd209182463ea6cd7",
   "branch": "main",
-  "data_commit": "2026-11-13T05:52:51Z",
+  "data_commit": "2026-11-13T06:00:37Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "9d3c316",
+    "data": "2026-11-13",
+    "assunto": "feat: editar e excluir workflows no Automation Builder (#430)"
+   },
    {
     "sha": "5d2f222",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "09ee2d8",
     "data": "2026-11-09",
     "assunto": "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)"
-   },
-   {
-    "sha": "4f31f1f",
-    "data": "2026-11-09",
-    "assunto": "fix: surfaçar migrations_no_repo em banco.json.resumo (#413)"
    }
   ],
-  "arquivos_mudados_7d": 509,
+  "arquivos_mudados_7d": 512,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 73
+    "commits": 74
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3461,
-  "arquivos_codigo": 2470,
-  "linhas_codigo": 428775,
+  "arquivos_total": 3462,
+  "arquivos_codigo": 2471,
+  "linhas_codigo": 429133,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 174,
+  "testes": 175,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 508,
-   "linhas": 58797
+   "arquivos": 509,
+   "linhas": 59020
   },
   "src/integrations": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 176,
-   "linhas": 43633
+   "linhas": 43768
   },
   "src/routes": {
    "arquivos": 3,
@@ -787,7 +787,7 @@
   "ts_ignore": 0,
   "eslint_disable": 9,
   "todos": 5,
-  "arquivos_acima_500_linhas": 67
+  "arquivos_acima_500_linhas": 68
  },
  "todos": [
   {

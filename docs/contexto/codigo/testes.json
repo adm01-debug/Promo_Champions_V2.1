@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 174,
+ "total": 175,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 108
+  "unit": 109
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 91
+   "arquivos": 92
   },
   {
    "padrao": "tests/",
@@ -314,6 +314,15 @@
     "src/hooks/assistant/usePersonalAssistantHelpers.ts"
    ],
    "casos": 12
+  },
+  {
+   "arquivo": "src/hooks/automation/useAutomationWorkflows.test.tsx",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "src/hooks/automation/useAutomationWorkflows.ts"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/hooks/bi/useChurnOverdueBySeller.test.tsx",
@@ -1477,6 +1486,7 @@
   "src/contexts/DashboardThemeContext.tsx": 1,
   "src/hooks/abm/useAccounts.ts": 2,
   "src/hooks/assistant/usePersonalAssistantHelpers.ts": 1,
+  "src/hooks/automation/useAutomationWorkflows.ts": 1,
   "src/hooks/bi/useChurnOverdueBySeller.ts": 1,
   "src/hooks/crm/useClientPortfolio.ts": 1,
   "src/hooks/dashboard/useDashboardKPIsPeriod.ts": 2,
@@ -1756,7 +1766,6 @@
    "src/hooks/auth/useAuthForm.ts",
    "src/hooks/automation/useAutomationIntelligence.ts",
    "src/hooks/automation/useAutomationRules.ts",
-   "src/hooks/automation/useAutomationWorkflows.ts",
    "src/hooks/bi/useABCAnalysis.ts",
    "src/hooks/bi/useBICloser.ts",
    "src/hooks/bi/useBICloserTransformers.ts",

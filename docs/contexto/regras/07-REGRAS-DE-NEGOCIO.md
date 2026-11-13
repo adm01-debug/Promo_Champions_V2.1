@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5d2f222306` · branch `main` · 2026-11-13 05:53 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9d3c316eac` · branch `main` · 2026-11-13 06:01 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4027,7 +4027,7 @@ _nenhum item encontrado_
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
 | Erro na sincronização | `src/hooks/useBitrix24.ts` |
-| … +641 linhas — lista completa em `context.json` | |
+| … +643 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4133,7 +4133,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1287 testes em 141 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1294 testes em 142 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4190,6 +4190,7 @@ _nenhum item encontrado_
 | `src/hooks/useFormDraft.test.tsx` | 8 | useFormDraft · restaura rascunho existente uma vez · não restaura nem grava com chave nula · primeira edição antes do debounce é gravada (baseline da montagem) … |
 | `src/lib/draftMigration.test.ts` | 8 | migrateLegacyDraft · retorna none quando não há legado · migra quando o destino não existe · migra por cima de destino que é só baseline vazio … |
 | `src/lib/markupSummary.test.ts` | 8 | summarizeMarkup · lista vazia → tudo zerado e sem média · classifica por faixa e ignora nulos na média · mediana com quantidade par usa a média central … |
+| `src/hooks/automation/useAutomationWorkflows.test.tsx` | 7 | useUpdateWorkflow · atualiza o mesmo registro com os campos do construtor · mostra toast de erro quando o banco recusa · trata UPDATE sem linha afetada (RLS) como erro de permissão, não sucesso … |
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |

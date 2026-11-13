@@ -1157,11 +1157,13 @@
    "hooks_exportados": [
     "useAutomationWorkflows",
     "useCreateWorkflow",
+    "useDeleteWorkflow",
     "useExecuteWorkflow",
     "useToggleWorkflow",
+    "useUpdateWorkflow",
     "useWorkflowRuns"
    ],
-   "linhas": 154,
+   "linhas": 218,
    "dominio": "hooks/automation",
    "tabelas": [
     "automation_runs",
@@ -1183,7 +1185,7 @@
    "usado_por_arquivos": [
     "src/pages/AutomationBuilder.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/bi/useABCAnalysis.ts",

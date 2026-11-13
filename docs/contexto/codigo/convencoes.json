@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (91)",
+   "co-localizado (*.test) (92)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: editar e excluir workflows no Automation Builder (#430)",
    "feat: editar e remover signatários na assinatura digital (#428)",
    "fix(hooks): plano de conta ABM envia created_by ao criar (#467)",
    "feat: editar e excluir contas no Account-Based Selling (#426)",
-   "test: serializa execuções do stress quote→sale com lock consultivo (#465)",
-   "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)"
+   "test: serializa execuções do stress quote→sale com lock consultivo (#465)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

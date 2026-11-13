@@ -10955,19 +10955,23 @@
     "useAutomationWorkflows",
     "useCallback",
     "useCreateWorkflow",
+    "useDeleteWorkflow",
     "useExecuteWorkflow",
     "useMutation",
     "useQuery",
     "useQueryClient",
     "useState",
     "useToggleWorkflow",
+    "useUpdateWorkflow",
     "useWorkflowRuns"
    ],
    "hooks_locais": [
     "useAutomationWorkflows",
     "useCreateWorkflow",
+    "useDeleteWorkflow",
     "useExecuteWorkflow",
     "useToggleWorkflow",
+    "useUpdateWorkflow",
     "useWorkflowRuns"
    ],
    "tabelas": [
@@ -10983,7 +10987,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 17
+   "arquivos_puxados": 18
   },
   {
    "protegida": false,
