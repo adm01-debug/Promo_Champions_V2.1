@@ -170,6 +170,7 @@
    "rpcs": [
     "enroll_quote_in_cadence",
     "get_auto_paused_count",
+    "get_current_salesperson_id",
     "merge_clients"
    ],
    "edges": [
@@ -2117,7 +2118,8 @@
     "stage_probabilities"
    ],
    "rpcs": [
-    "compute_salesperson_retention_cohort"
+    "compute_salesperson_retention_cohort",
+    "get_current_salesperson_id"
    ],
    "edges": [
     "salesperson-coaching"
@@ -3794,7 +3796,9 @@
     "salespeople",
     "tasks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "edges": [],
    "canais_realtime": [],
    "flags": [],
@@ -4093,7 +4097,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 25
+   "arquivos_puxados": 32
   },
   {
    "protegida": false,
@@ -6580,6 +6584,7 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
     "useCircuitBreaker",
     "useClientKanban",
@@ -6608,9 +6613,11 @@
     "useState",
     "useSystemSoundSettings",
     "useUpdateKanbanStatus",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useUserRoles"
    ],
    "hooks_locais": [
+    "useAuth",
     "useCircuitBreaker",
     "useClientKanban",
     "useClients",
@@ -6624,7 +6631,8 @@
     "useSalespeopleRanking",
     "useSystemSoundSettings",
     "useUpdateKanbanStatus",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useUserRoles"
    ],
    "tabelas": [
     "circuit_breaker_events",
@@ -6634,9 +6642,11 @@
     "sales_goals",
     "sales_with_markup",
     "salespeople",
-    "tasks"
+    "tasks",
+    "user_roles"
    ],
    "rpcs": [
+    "get_current_salesperson_id",
     "merge_clients",
     "update_client_portfolio_status"
    ],
@@ -6644,9 +6654,14 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [
-    "admin"
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
    ],
-   "arquivos_puxados": 47
+   "arquivos_puxados": 50
   },
   {
    "protegida": false,
@@ -7668,6 +7683,7 @@
     "useActiveCadencesBySaleIds",
     "useAnalyzeAtRiskDeal",
     "useAtRiskDeals",
+    "useAuth",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -7742,12 +7758,14 @@
     "useUpdateCadenceStep",
     "useUpdateICPData",
     "useUpdateLeadStage",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useUserRoles"
    ],
    "hooks_locais": [
     "useActiveCadencesBySaleIds",
     "useAnalyzeAtRiskDeal",
     "useAtRiskDeals",
+    "useAuth",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -7802,7 +7820,8 @@
     "useUpdateCadenceStep",
     "useUpdateICPData",
     "useUpdateLeadStage",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useUserRoles"
    ],
    "tabelas": [
     "activities",
@@ -7830,11 +7849,13 @@
     "salespeople",
     "stage_inactivity_rules",
     "stage_probabilities",
-    "tasks"
+    "tasks",
+    "user_roles"
    ],
    "rpcs": [
     "enroll_quote_in_cadence",
     "get_auto_paused_count",
+    "get_current_salesperson_id",
     "merge_clients",
     "transition_sale_status"
    ],
@@ -7850,9 +7871,12 @@
     "alert",
     "button",
     "closer",
-    "hybrid"
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
    ],
-   "arquivos_puxados": 97
+   "arquivos_puxados": 100
   },
   {
    "protegida": false,
@@ -9933,6 +9957,7 @@
    ],
    "rpcs": [
     "calculate_asset_efficiency",
+    "get_current_salesperson_id",
     "mark_all_notifications_read",
     "send_notification"
    ],
@@ -10221,6 +10246,7 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
     "useCircuitBreaker",
     "useClients",
@@ -10258,9 +10284,11 @@
     "useToast",
     "useTodayTasks",
     "useUpdateSalesperson",
-    "useUpdateTask"
+    "useUpdateTask",
+    "useUserRoles"
    ],
    "hooks_locais": [
+    "useAuth",
     "useCircuitBreaker",
     "useClients",
     "useCompleteTask",
@@ -10278,7 +10306,8 @@
     "useToast",
     "useTodayTasks",
     "useUpdateSalesperson",
-    "useUpdateTask"
+    "useUpdateTask",
+    "useUserRoles"
    ],
    "tabelas": [
     "activities",
@@ -10289,9 +10318,11 @@
     "sales_goals",
     "sales_with_markup",
     "salespeople",
-    "tasks"
+    "tasks",
+    "user_roles"
    ],
    "rpcs": [
+    "get_current_salesperson_id",
     "merge_clients"
    ],
    "edges": [
@@ -10301,9 +10332,14 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [
-    "admin"
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
    ],
-   "arquivos_puxados": 64
+   "arquivos_puxados": 67
   },
   {
    "protegida": false,

@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2c36718033f0e336dc9794c8703e25404ce8ac0a",
+  "commit": "f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a",
   "branch": "main",
-  "data_commit": "2026-11-13T07:08:40Z",
+  "data_commit": "2026-11-13T07:41:08Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "f2155e8",
+    "data": "2026-11-13",
+    "assunto": "fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)"
+   },
+   {
+    "sha": "6a1d1c3",
+    "data": "2026-11-13",
+    "assunto": "fix: preencher vendedor logado ao criar venda (#468)"
+   },
+   {
+    "sha": "7bc13e2",
+    "data": "2026-11-13",
+    "assunto": "feat: editar e excluir produto do fornecedor no comparador de preços (#437)"
+   },
    {
     "sha": "2c36718",
     "data": "2026-11-13",
@@ -116,24 +131,9 @@
     "sha": "e6a7784",
     "data": "2026-11-11",
     "assunto": "feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)"
-   },
-   {
-    "sha": "3c3c10d",
-    "data": "2026-11-11",
-    "assunto": "chore: exclui testes e2e e do graphify do escopo do CodeQL (#420)"
-   },
-   {
-    "sha": "22662d4",
-    "data": "2026-11-11",
-    "assunto": "chore: alerta de lentidão no snapshot do banco (threshold 60s) (#421)"
-   },
-   {
-    "sha": "b315faa",
-    "data": "2026-11-10",
-    "assunto": "chore: exclui testes unitários do escopo do CodeQL (#419)"
    }
   ],
-  "arquivos_mudados_7d": 535,
+  "arquivos_mudados_7d": 545,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 102
+    "mudancas": 99
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 100
+    "mudancas": 97
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 79
+    "commits": 82
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3471,
-  "arquivos_codigo": 2480,
-  "linhas_codigo": 431260,
+  "arquivos_total": 3475,
+  "arquivos_codigo": 2484,
+  "linhas_codigo": 431874,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 173,
-  "componentes": 1276,
+  "componentes": 1277,
   "hooks": 473,
   "edge_functions": 171,
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 184,
+  "testes": 187,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -595,8 +595,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1188,
-   "linhas": 188707
+   "arquivos": 1190,
+   "linhas": 188974
   },
   "src/config": {
    "arquivos": 3,
@@ -611,8 +611,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 514,
-   "linhas": 60070
+   "arquivos": 516,
+   "linhas": 60357
   },
   "src/integrations": {
    "arquivos": 4,
@@ -628,7 +628,7 @@
   },
   "src/pages": {
    "arquivos": 177,
-   "linhas": 44095
+   "linhas": 44103
   },
   "src/routes": {
    "arquivos": 3,
@@ -636,7 +636,7 @@
   },
   "src/services": {
    "arquivos": 7,
-   "linhas": 1123
+   "linhas": 1175
   },
   "src/test": {
    "arquivos": 10,

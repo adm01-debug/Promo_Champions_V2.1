@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1276,
+ "total": 1277,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -4223,6 +4223,22 @@
    "linhas": 101,
    "dominio": "components/comparador",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/comparador/SupplierProductActions.tsx",
+   "exports": [
+    "SupplierProductActions"
+   ],
+   "export_default": null,
+   "linhas": 203,
+   "dominio": "components/comparador",
+   "hooks_locais": [
+    "useSupplierMutations"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -14930,7 +14946,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -15159,13 +15175,15 @@
     "CreateTaskDialog"
    ],
    "export_default": null,
-   "linhas": 377,
+   "linhas": 386,
    "dominio": "components/tasks",
    "hooks_locais": [
+    "useAuth",
     "useClients",
     "useCreateTask",
     "useSalesData",
-    "useSalespeople"
+    "useSalespeople",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],
@@ -15520,7 +15538,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 541,
+   "usado_por": 542,
    "orfao": false
   },
   {
@@ -15623,7 +15641,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 115,
+   "usado_por": 116,
    "orfao": false
   },
   {
@@ -15694,7 +15712,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 185,
+   "usado_por": 186,
    "orfao": false
   },
   {
@@ -15708,7 +15726,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 135,
+   "usado_por": 136,
    "orfao": false
   },
   {
@@ -15981,7 +15999,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 64,
+   "usado_por": 65,
    "orfao": false
   },
   {
@@ -17327,7 +17345,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 80,
+   "usado_por": 81,
    "orfao": false
   },
   {
@@ -18492,7 +18510,7 @@
     "ComparadorPrecos"
    ],
    "export_default": "ComparadorPrecos",
-   "linhas": 333,
+   "linhas": 341,
    "dominio": "pages",
    "hooks_locais": [
     "usePriceAlerts",

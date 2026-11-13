@@ -445,7 +445,9 @@
     "salespeople",
     "tasks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -555,7 +557,8 @@
     "stock_movements"
    ],
    "rpcs": [
-    "compute_salesperson_retention_cohort"
+    "compute_salesperson_retention_cohort",
+    "get_current_salesperson_id"
    ],
    "buckets": [],
    "canais_realtime": [],
@@ -711,7 +714,9 @@
     "tasks",
     "user_roles"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -1273,7 +1278,9 @@
     "salespeople",
     "tasks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -1669,21 +1676,32 @@
   },
   {
    "modulo": "components/comparador",
-   "arquivos": 2,
+   "arquivos": 3,
    "testes": 0,
-   "linhas": 203,
+   "linhas": 406,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 2,
-   "hooks_locais": [],
+   "componentes": 3,
+   "hooks_locais": [
+    "useSupplierMutations",
+    "useToast"
+   ],
    "hooks_definidos": [],
    "edges": [],
-   "tabelas": [],
+   "tabelas": [
+    "supplier_products",
+    "supplier_risk_assessments",
+    "suppliers"
+   ],
    "rpcs": [],
    "buckets": [],
    "canais_realtime": [],
-   "env": [],
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
    "flags": [],
    "papeis": [],
    "diretos": {
@@ -1695,7 +1713,9 @@
     "pages"
    ],
    "depende_de_modulos": [
-    "components/ui"
+    "components/shared",
+    "components/ui",
+    "hooks/suppliers"
    ],
    "pacotes_externos": [
     "date-fns",
@@ -2328,6 +2348,7 @@
     "get_active_salespeople",
     "get_client_seasonality",
     "get_client_top_products",
+    "get_current_salesperson_id",
     "get_dashboard_kpis",
     "get_industry_benchmark_stats",
     "get_industry_seasonality",
@@ -2838,6 +2859,7 @@
    ],
    "rpcs": [
     "calculate_asset_efficiency",
+    "get_current_salesperson_id",
     "mark_all_notifications_read",
     "send_notification"
    ],
@@ -4684,6 +4706,7 @@
     "get_auto_paused_count",
     "get_client_seasonality",
     "get_client_top_products",
+    "get_current_salesperson_id",
     "get_dashboard_kpis",
     "get_dialer_queue_stats",
     "get_industry_benchmark_stats",
@@ -5780,6 +5803,7 @@
     "useActiveCadencesBySaleIds",
     "useAnalyzeAtRiskDeal",
     "useAtRiskDeals",
+    "useAuth",
     "useCadenceStats",
     "useCadenceSteps",
     "useCadences",
@@ -5833,7 +5857,8 @@
     "useUpdateCadenceStep",
     "useUpdateICPData",
     "useUpdateLeadStage",
-    "useUpdateSalesperson"
+    "useUpdateSalesperson",
+    "useUserRoles"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -5867,11 +5892,13 @@
     "salespeople",
     "stage_inactivity_rules",
     "stage_probabilities",
-    "tasks"
+    "tasks",
+    "user_roles"
    ],
    "rpcs": [
     "enroll_quote_in_cadence",
     "get_auto_paused_count",
+    "get_current_salesperson_id",
     "merge_clients",
     "transition_sale_status"
    ],
@@ -5891,7 +5918,10 @@
     "alert",
     "button",
     "closer",
-    "hybrid"
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
    ],
    "diretos": {
     "edges": [],
@@ -7187,6 +7217,7 @@
    "rpcs": [
     "enroll_quote_in_cadence",
     "get_auto_paused_count",
+    "get_current_salesperson_id",
     "merge_clients",
     "process_lead_intent_event"
    ],
@@ -7911,6 +7942,7 @@
    "importado_por_outros_modulos": [
     "components/activities",
     "components/coaching",
+    "components/comparador",
     "components/conversational",
     "components/portfolio",
     "pages"
@@ -8005,13 +8037,14 @@
   {
    "modulo": "components/tasks",
    "arquivos": 7,
-   "testes": 0,
-   "linhas": 1546,
+   "testes": 1,
+   "linhas": 1555,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 7,
    "hooks_locais": [
+    "useAuth",
     "useCircuitBreaker",
     "useClients",
     "useCompleteTask",
@@ -8027,7 +8060,8 @@
     "useToast",
     "useTodayTasks",
     "useUpdateSalesperson",
-    "useUpdateTask"
+    "useUpdateTask",
+    "useUserRoles"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -8042,9 +8076,11 @@
     "sales_goals",
     "sales_with_markup",
     "salespeople",
-    "tasks"
+    "tasks",
+    "user_roles"
    ],
    "rpcs": [
+    "get_current_salesperson_id",
     "merge_clients"
    ],
    "buckets": [],
@@ -8059,7 +8095,12 @@
    ],
    "flags": [],
    "papeis": [
-    "admin"
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
    ],
    "diretos": {
     "edges": [],
@@ -8073,6 +8114,7 @@
    "depende_de_modulos": [
     "components/icons",
     "components/ui",
+    "contexts",
     "hooks",
     "hooks/crm",
     "hooks/sales",
@@ -9635,6 +9677,7 @@
     "components/race",
     "components/security",
     "components/settings",
+    "components/tasks",
     "hooks",
     "hooks/admin",
     "hooks/auth",
@@ -10271,6 +10314,7 @@
     "fn_convert_quote_to_sale",
     "generate_api_token",
     "get_auto_paused_count",
+    "get_current_salesperson_id",
     "get_login_lockout_status",
     "get_mfa_status",
     "is_ip_blocked",
@@ -14057,6 +14101,7 @@
    "rpcs": [
     "award_sale_xp",
     "calculate_asset_efficiency",
+    "get_current_salesperson_id",
     "mark_all_notifications_read",
     "send_notification"
    ],
@@ -14458,8 +14503,8 @@
   {
    "modulo": "hooks/suppliers",
    "arquivos": 4,
-   "testes": 0,
-   "linhas": 268,
+   "testes": 1,
+   "linhas": 325,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -14503,6 +14548,7 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/comparador",
     "hooks"
    ],
    "depende_de_modulos": [
@@ -14516,8 +14562,8 @@
   {
    "modulo": "hooks/tasks",
    "arquivos": 4,
-   "testes": 0,
-   "linhas": 287,
+   "testes": 1,
+   "linhas": 298,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -14534,7 +14580,9 @@
    "tabelas": [
     "tasks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "buckets": [],
    "canais_realtime": [],
    "env": [
@@ -14549,7 +14597,9 @@
     "tabelas": [
      "tasks"
     ],
-    "rpcs": []
+    "rpcs": [
+     "get_current_salesperson_id"
+    ]
    },
    "importado_por_outros_modulos": [
     "components/ai",
@@ -15509,7 +15559,7 @@
    "modulo": "pages",
    "arquivos": 161,
    "testes": 4,
-   "linhas": 39422,
+   "linhas": 39430,
    "itens_menu": [
     "ABM (Contas)",
     "Acompanhamento",
@@ -19035,7 +19085,7 @@
    "modulo": "services",
    "arquivos": 5,
    "testes": 2,
-   "linhas": 826,
+   "linhas": 831,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -19058,6 +19108,7 @@
     "stage_probabilities"
    ],
    "rpcs": [
+    "get_current_salesperson_id",
     "merge_clients"
    ],
    "buckets": [],
@@ -19087,6 +19138,7 @@
      "salespeople"
     ],
     "rpcs": [
+     "get_current_salesperson_id",
      "merge_clients"
     ]
    },

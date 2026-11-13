@@ -6,7 +6,7 @@
    "src/pages (166)"
   ],
   "componentes": [
-   "src/components (1096)",
+   "src/components (1097)",
    "src/pages (173)",
    "src/contexts (5)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (101)",
+   "co-localizado (*.test) (104)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1276)"
+  ".tsx (1277)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)",
+   "fix: preencher vendedor logado ao criar venda (#468)",
+   "feat: editar e excluir produto do fornecedor no comparador de preços (#437)",
    "feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)",
-   "feat: editar e excluir filas do Power Dialer (#435)",
-   "feat: editar e arquivar materiais no Sales Enablement (#433)",
-   "feat: editar e desativar desafios semanais (#432)",
-   "feat: editar e cancelar batalhas de vendas (#431)"
+   "feat: editar e excluir filas do Power Dialer (#435)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

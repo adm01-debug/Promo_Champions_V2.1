@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2c36718033f0e336dc9794c8703e25404ce8ac0a` (2026-11-13T07:08:40Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a` (2026-11-13T07:41:08Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2400), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2404), SQL (676), Markdown (205), JavaScript (77), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3471 |
-| arquivos_codigo | 2480 |
-| linhas_codigo | 431260 |
+| arquivos_total | 3475 |
+| arquivos_codigo | 2484 |
+| linhas_codigo | 431874 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 173 |
-| componentes | 1276 |
+| componentes | 1277 |
 | hooks | 473 |
 | edge_functions | 171 |
 | tabelas | 414 |
 | migrations | 669 |
 | cron_jobs | 28 |
-| testes | 184 |
+| testes | 187 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 205 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
-- componentes: src/components (1096), src/pages (173), src/contexts (5)
+- componentes: src/components (1097), src/pages (173), src/contexts (5)
 - hooks: src/hooks (461), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (101), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (104), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -103,7 +103,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/multichannel | 0 | 0 | 11 | 16 | 3 | 5 |
 | components/navigation | 0 | 0 | 9 | 331 | 32 | 159 |
 | components/nlq | 0 | 0 | 5 | 1 | 1 | 0 |
-| components/pipeline | 0 | 0 | 16 | 57 | 3 | 26 |
+| components/pipeline | 0 | 0 | 16 | 59 | 3 | 27 |
 | components/pipeline-pulse | 0 | 0 | 7 | 2 | 1 | 1 |
 | components/playbooks | 0 | 0 | 5 | 7 | 0 | 3 |
 | components/portfolio | 0 | 0 | 11 | 17 | 0 | 7 |
@@ -121,7 +121,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/settings | 0 | 0 | 25 | 28 | 4 | 25 |
 | components/shared | 0 | 0 | 8 | 4 | 0 | 2 |
 | components/skeletons | 0 | 0 | 5 | 1 | 0 | 0 |
-| components/tasks | 0 | 0 | 7 | 16 | 1 | 9 |
+| components/tasks | 0 | 0 | 7 | 18 | 1 | 10 |
 | components/ui | 0 | 0 | 46 | 5 | 0 | 0 |
 | components/vendedor | 0 | 0 | 6 | 8 | 0 | 8 |
 | components/vendedores | 0 | 0 | 13 | 2 | 0 | 2 |
@@ -574,14 +574,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20255 nós · 64352 arestas · 1452 comunidades · grafo do commit `2c367180`
-- comunidades maiores: Card (576), cn (336), lucide-react (310), Índice (277), getCorsHeaders (259), Skeleton (229), client.ts (223), Button (223), ref_npm_supabase (209), react (188), input.tsx (186), DialogContent (180)
+- 20273 nós · 64419 arestas · 1449 comunidades · grafo do commit `f2155e8e`
+- comunidades maiores: Badge (397), CardContent (330), Índice (277), Input (270), client.ts (252), getCorsHeaders (249), Card (245), Button (238), formatBRL (208), useUserRoles (194), lazyPages.ts (191), Label (187)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), Input (src/components/ui/input.tsx), formatBRL() (src/lib/money.ts), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (102)
-- package-lock.json (100)
+- package.json (99)
+- package-lock.json (97)
 - .github/workflows/pr-checks.yml (40)
 - deno.lock (26)
 - .github/workflows/quote-to-sale-e2e.yml (23)
@@ -752,6 +752,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-13 `f2155e8` fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)
+- 2026-11-13 `6a1d1c3` fix: preencher vendedor logado ao criar venda (#468)
+- 2026-11-13 `7bc13e2` feat: editar e excluir produto do fornecedor no comparador de preços (#437)
 - 2026-11-13 `2c36718` feat: editar, ativar/desativar e excluir fluxos de aprovação (#436)
 - 2026-11-13 `4e0bb00` feat: editar e excluir filas do Power Dialer (#435)
 - 2026-11-13 `7ab97e0` feat: editar e arquivar materiais no Sales Enablement (#433)
@@ -764,9 +767,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `53e363f` test: serializa execuções do stress quote→sale com lock consultivo (#465)
 - 2026-11-13 `0c1ae11` test: ids sintéticos por execução no teste do cron-failure-alerter (#463)
 - 2026-11-13 `91cded0` fix: gatilhos de inatividade notificam o vendedor de verdade (#452)
-- 2026-11-13 `39a5d8a` fix: regras de frequencia de contato passam a salvar no banco (#448)
-- 2026-11-13 `c2c7344` fix: estados de loading e erro reais no painel de deals inativos (#458)
-- 2026-11-13 `c4f625e` chore(main): release 1.3.0 (#462)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

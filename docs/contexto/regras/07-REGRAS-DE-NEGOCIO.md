@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2c36718033` · branch `main` · 2026-11-13 07:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f2155e8e9d` · branch `main` · 2026-11-13 08:10 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4031,7 +4031,7 @@ _nenhum item encontrado_
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
-| … +659 linhas — lista completa em `context.json` | |
+| … +661 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4137,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1337 testes em 151 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1353 testes em 154 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4163,6 +4163,7 @@ _nenhum item encontrado_
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |
 | `src/components/reporting/funnelReportHelpers.test.ts` | 16 | funnelReportHelpers.computeStageDeltas · calcula delta absoluto, percentual, valor e conversão por estágio · trata previous ausente como zero (novo estágio ganha 100%) · retorna 0% quando previous é 0 e current também … |
 | `src/hooks/assistant/usePersonalAssistantHelpers.test.ts` | 16 | parseSSELine · extrai delta.content de linha data: · retorna string vazia para [DONE] · retorna string vazia para linha sem prefixo data: … |
+| `src/services/salesService.test.ts` | 16 | salesService.getSales · mapeia rows do Supabase para o formato do domínio · faz fallback para client_name/product_name quando joins vêm nulos · sanitiza o searchTerm (remove vírgulas/parênteses) e chama .or() … |
 | `supabase/functions/cron-failure-alerter/index.test.ts` | 16 | fn_cron_expected_interval → cada schedule mapeia para o intervalo correto · fn_cron_stalled_threshold → 5min job usa piso de 30min · fn_cron_stalled_threshold → 15min job usa 30min (2× intervalo) · fn_cron_stalled_threshold → 30min job usa 60min (2× intervalo) … |
 | `src/lib/winloss/riskReasons.test.ts` | 15 | getReasonKindMeta · todos os códigos retornam meta com label + variant · STAGNATION_HIGH tem contribMax=50 e source=stagnation · COMPETITOR_PRESSURE tem source=competitor e variant=destructive … |
 | `src/test/quote-conversion-errors.test.ts` | 15 | parseConvertQuoteError · extrai código de  · devolve UNKNOWN para mensagens sem prefixo, vazias ou desconhecidas · tolera espaços em branco antes do prefixo … |
@@ -4174,7 +4175,6 @@ _nenhum item encontrado_
 | `src/hooks/email/campaignDeliveryHelpers.test.ts` | 13 | campaignDeliveryHelpers · toFiniteNumber trata nulos, strings e NaN · normalizeDeliveryRow preenche defaults seguros · failureRate calcula sobre o total processado … |
 | `src/hooks/email/emailOptOutMetricsHelpers.test.ts` | 13 | aggregateOptOutMetrics · retorna estrutura vazia coerente sem registros · conta janelas de 7 e 30 dias corretamente · calcula delta percentual contra os 7 dias anteriores … |
 | `src/lib/validators/brSchemas.test.ts` | 13 | brPhoneField · aceita campo vazio (opcional):  · brCpfOrCnpjField · aceita documento válido: %s … |
-| `src/services/salesService.test.ts` | 13 | salesService.getSales · mapeia rows do Supabase para o formato do domínio · faz fallback para client_name/product_name quando joins vêm nulos · sanitiza o searchTerm (remove vírgulas/parênteses) e chama .or() … |
 | `supabase/functions/_shared/retry-policy.test.ts` | 13 | erros permanentes são reconhecidos · erros transitórios não são permanentes · já enviado é ignorado · sem erro é ignorado … |
 | `tests/e2e/pages-sales-commerce.spec.ts` | 13 | Orçamentos — CPQ Engine · carrega heading  · title da página correto · mostra filtros de status … |
 | `src/lib/bi/markupOverviewHelpers.test.ts` | 12 | aggregateMarkupOverview · lista vazia → resumo zerado e sem vendedores · agrupa média por vendedor e ordena desc · conta vendas críticas abaixo do limiar … |
@@ -4220,6 +4220,8 @@ _nenhum item encontrado_
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
 | `src/hooks/admin/useApprovalWorkflows.test.tsx` | 5 | CRUD de workflows de aprovação · atualiza os campos editáveis do workflow · ativa/desativa via is_active e falha quando RLS não altera nenhuma linha · exclui workflow sem solicitações vinculadas … |
 | `src/hooks/dialer/usePowerDialer.test.tsx` | 5 | usePowerDialer — editar e excluir fila · atualiza nome, estratégia e filtro da fila e invalida a lista · acusa erro quando o RLS não deixa alterar a fila (0 linhas) · exclui a fila e invalida a lista … |
+| `src/hooks/suppliers/useSupplierMutations.test.tsx` | 5 | useSupplierMutations — produtos do fornecedor · atualiza preço, qtd. mínima e preferido e invalida a lista · exclui o vínculo e invalida a lista · mostra erro quando a exclusão não afeta nenhuma linha (RLS) … |
+| `src/hooks/tasks/useTaskMutations.test.tsx` | 5 | useCreateTask — dono da tarefa (policy de INSERT de tasks) · sem responsável escolhido, grava a tarefa com o vendedor logado · responsável vazio ( · respeita o responsável escolhido sem consultar o vendedor logado … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
 | `src/pages/InactivityTriggers.test.tsx` | 5 | InactivityTriggers · não afirma  · mostra erro com nova tentativa real quando a consulta falha · notifica o vendedor via send_notification e só confirma após sucesso … |
@@ -4249,6 +4251,7 @@ _nenhum item encontrado_
 | `tests/e2e/v4-callbacks-admin.spec.ts` | 4 | Admin V4 Callbacks · rota /admin/v4-callbacks carrega sem crash · dispatcher notify-v4-quote-status responde 200 com secrets ativos · cron de alertas check-v4-callback-alerts responde 200 |
 | `scripts/graphify/catalog-adapter.test.mjs` | 3 | normaliza catálogo rico sem incluir linhas de negócio · recusa projeto, sessão e linhas não comprovados · reconciliação trata ausência como pendência, não como remoção |
 | `scripts/graphify/docs-index.test.mjs` | 3 | indexa links explícitos sem concluir implementação · recusa documentação alcançada por link simbólico · não classifica como local um link para symlink externo |
+| `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
 | `src/hooks/useProductRecommendations.test.tsx` | 3 | useProductRecommendations — regressão Onda J/K · particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn · agrega counts ignorando product_id null e tolera product_name/amount nulos |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |
 | `src/hooks/gamification/useStreakRanking.test.tsx` | 3 | useStreakRanking — agregação sem N+1 · busca conquistas de todos os vendedores em uma única query .in() · monta ranking correto com múltiplos vendedores e conquistas |
@@ -4584,6 +4587,7 @@ _nenhum item encontrado_
 | Base: apenas vendas ganhas com custo conhecido — vendedores sem custo não aparecem. | `src/components/reports/sales/SalesMarkupRankingTable.tsx` |
 | Permission Denied Warning */} | `src/components/security/PushNotificationSettings.tsx` |
 | Writes agregados em até 2 queries (evita N+1 por permissão). | `src/components/settings/PermissionMatrix.tsx` |
+| o seletor espelha a mesma regra para não oferecer um responsável que dá erro. | `src/components/tasks/CreateTaskDialog.tsx` |
 | Validation: must have exactly 2 Closers | `src/components/teams/CreateTeamDialog.tsx` |
 | * Percentual de comissão do vendedor (ex.: 5 para 5%). */ | `src/components/vendedor/RunRateProjectionCard.tsx` |
 | Comissão projetada no bolso do vendedor */} | `src/components/vendedor/RunRateProjectionCard.tsx` |
@@ -4848,5 +4852,4 @@ _nenhum item encontrado_
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predict-deal-velocity/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predict-quota-attainment/index.ts` |
 | Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-intelligence/index.ts` |
-| Rate limit por IP — endpoint de IA consome créditos (função não autentica chamador) | `supabase/functions/predictive-scoring-explain/index.ts` |
-| … +109 linhas — lista completa em `context.json` | |
+| … +110 linhas — lista completa em `context.json` | |

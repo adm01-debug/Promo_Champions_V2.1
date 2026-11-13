@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2c36718033f0e336dc9794c8703e25404ce8ac0a",
+  "sha": "f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 07:33 UTC",
-  "files_total": 3486,
-  "code_files": 3157,
-  "code_lines": 461206
+  "generated_at": "2026-11-13 08:10 UTC",
+  "files_total": 3490,
+  "code_files": 3161,
+  "code_lines": 461820
  },
  "version": "1.3.2",
- "facts_hash": "f0872d00e4391e68",
+ "facts_hash": "fb043545d5957d1d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1321,
+   ".tsx": 1325,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -65088,7 +65088,8 @@
      "semantic-index-entity"
     ],
     "rpc_transitive": [
-     "compute_salesperson_retention_cohort"
+     "compute_salesperson_retention_cohort",
+     "get_current_salesperson_id"
     ],
     "deps_count": 90
    },
@@ -65305,7 +65306,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 24
+    "deps_count": 31
    },
    {
     "path": "",
@@ -66612,7 +66613,9 @@
      "tasks"
     ],
     "invokes_transitive": [],
-    "rpc_transitive": [],
+    "rpc_transitive": [
+     "get_current_salesperson_id"
+    ],
     "deps_count": 16
    },
    {
@@ -67164,17 +67167,19 @@
      "sales_with_markup",
      "salespeople",
      "tasks",
-     "teams"
+     "teams",
+     "user_roles"
     ],
     "invokes_transitive": [
      "process-race-event",
      "semantic-index-entity"
     ],
     "rpc_transitive": [
+     "get_current_salesperson_id",
      "merge_clients",
      "update_client_portfolio_status"
     ],
-    "deps_count": 45
+    "deps_count": 48
    },
    {
     "path": "/lead-scoring",
@@ -67617,7 +67622,8 @@
      "sales_with_markup",
      "salespeople",
      "tasks",
-     "teams"
+     "teams",
+     "user_roles"
     ],
     "invokes_transitive": [
      "create-stagnant-tasks",
@@ -67626,9 +67632,10 @@
      "semantic-index-entity"
     ],
     "rpc_transitive": [
+     "get_current_salesperson_id",
      "merge_clients"
     ],
-    "deps_count": 58
+    "deps_count": 61
    },
    {
     "path": "/team-activity",
@@ -67697,6 +67704,7 @@
     "rpc_transitive": [
      "enroll_quote_in_cadence",
      "get_auto_paused_count",
+     "get_current_salesperson_id",
      "merge_clients"
     ],
     "deps_count": 79
@@ -67721,7 +67729,8 @@
      "next-best-action"
     ],
     "rpc_transitive": [
-     "award_bonus_if_eligible"
+     "award_bonus_if_eligible",
+     "get_current_salesperson_id"
     ],
     "deps_count": 50
    },
@@ -73887,7 +73896,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1188,
+  "components_count": 1190,
   "hooks": [
    {
     "name": "useContacts",
@@ -77762,8 +77771,8 @@
   },
   {
    "module": "src/components",
-   "files": 1188,
-   "lines": 188706,
+   "files": 1190,
+   "lines": 188973,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78086,8 +78095,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 514,
-   "lines": 60070,
+   "files": 516,
+   "lines": 60357,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78711,7 +78720,7 @@
   {
    "module": "src/pages",
    "files": 177,
-   "lines": 44095,
+   "lines": 44103,
    "tables": [
     "achievements",
     "activities",
@@ -78933,7 +78942,7 @@
   {
    "module": "src/services",
    "files": 7,
-   "lines": 1123,
+   "lines": 1175,
    "tables": [
     "achievements",
     "activities",
@@ -83340,6 +83349,12 @@
     "select": [
      "src/hooks/suppliers/useSupplierMutations.ts",
      "src/hooks/suppliers/useSupplierQueries.ts"
+    ],
+    "update": [
+     "src/hooks/suppliers/useSupplierMutations.ts"
+    ],
+    "delete": [
+     "src/hooks/suppliers/useSupplierMutations.ts"
     ]
    },
    "supplier_risk_assessments": {
@@ -85586,6 +85601,9 @@
     "supplier_id",
     "total_amount"
    ],
+   "supplier_products": [
+    "id"
+   ],
    "suppliers": [
     "deleted_at",
     "id",
@@ -86989,6 +87007,8 @@
     "src/hooks/calendar/useAgendaEvents.ts",
     "src/hooks/conversational/useCallRecordings.ts",
     "src/hooks/conversational/useUploadCallRecording.ts",
+    "src/hooks/tasks/useTaskMutations.ts",
+    "src/services/salesService.ts",
     "tests/e2e/helpers/quote-to-sale-helpers.ts"
    ],
    "get_dashboard_kpis": [
@@ -92342,6 +92362,14 @@
     "msg": "Não autenticado"
    },
    {
+    "file": "src/hooks/suppliers/useSupplierMutations.ts",
+    "msg": "Sem permissão para editar este produto do fornecedor."
+   },
+   {
+    "file": "src/hooks/suppliers/useSupplierMutations.ts",
+    "msg": "Sem permissão para excluir ou produto já removido."
+   },
+   {
     "file": "src/hooks/tasks/useTaskMutations.ts",
     "msg": "Erro ao atualizar tarefa"
    },
@@ -94312,6 +94340,10 @@
    {
     "file": "src/components/settings/PermissionMatrix.tsx",
     "text": "Writes agregados em até 2 queries (evita N+1 por permissão)."
+   },
+   {
+    "file": "src/components/tasks/CreateTaskDialog.tsx",
+    "text": "o seletor espelha a mesma regra para não oferecer um responsável que dá erro."
    },
    {
     "file": "src/components/teams/CreateTeamDialog.tsx",
@@ -131152,6 +131184,18 @@
     "name": "descarta resposta antiga quando o usuário troca durante o fetch"
    },
    {
+    "file": "src/components/tasks/CreateTaskDialog.test.tsx",
+    "name": "CreateTaskDialog — opções de responsável"
+   },
+   {
+    "file": "src/components/tasks/CreateTaskDialog.test.tsx",
+    "name": "vendedor só pode escolher a si mesmo (a policy recusa outro responsável)"
+   },
+   {
+    "file": "src/components/tasks/CreateTaskDialog.test.tsx",
+    "name": "admin/gestor continua vendo todos os vendedores"
+   },
+   {
     "file": "src/hooks/rolePermissions.test.ts",
     "name": "fonte única de permissões (role-permissions.json)"
    },
@@ -132326,6 +132370,46 @@
    {
     "file": "src/hooks/sales/useSalesEnablement.test.tsx",
     "name": "falha ao reativar quando a RLS bloqueia (0 linhas)"
+   },
+   {
+    "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
+    "name": "useSupplierMutations — produtos do fornecedor"
+   },
+   {
+    "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
+    "name": "atualiza preço, qtd. mínima e preferido e invalida a lista"
+   },
+   {
+    "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
+    "name": "exclui o vínculo e invalida a lista"
+   },
+   {
+    "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
+    "name": "mostra erro quando a exclusão não afeta nenhuma linha (RLS)"
+   },
+   {
+    "file": "src/hooks/suppliers/useSupplierMutations.test.tsx",
+    "name": "mostra erro de permissão quando a edição não afeta nenhuma linha (RLS)"
+   },
+   {
+    "file": "src/hooks/tasks/useTaskMutations.test.tsx",
+    "name": "useCreateTask — dono da tarefa (policy de INSERT de tasks)"
+   },
+   {
+    "file": "src/hooks/tasks/useTaskMutations.test.tsx",
+    "name": "sem responsável escolhido, grava a tarefa com o vendedor logado"
+   },
+   {
+    "file": "src/hooks/tasks/useTaskMutations.test.tsx",
+    "name": "responsável vazio ("
+   },
+   {
+    "file": "src/hooks/tasks/useTaskMutations.test.tsx",
+    "name": "respeita o responsável escolhido sem consultar o vendedor logado"
+   },
+   {
+    "file": "src/hooks/tasks/useTaskMutations.test.tsx",
+    "name": "usuário sem cadastro de vendedor (ex.: admin) segue com responsável nulo"
    },
    {
     "file": "src/lib/draftMigration.test.ts",
@@ -133742,6 +133826,18 @@
    {
     "file": "src/services/salesService.test.ts",
     "name": "salesService.createSale"
+   },
+   {
+    "file": "src/services/salesService.test.ts",
+    "name": "preenche salesperson_id com o vendedor logado quando o payload não traz"
+   },
+   {
+    "file": "src/services/salesService.test.ts",
+    "name": "mantém salesperson_id explícito sem consultar o RPC"
+   },
+   {
+    "file": "src/services/salesService.test.ts",
+    "name": "propaga erro do RPC sem inserir"
    },
    {
     "file": "src/services/salesService.test.ts",
@@ -183691,6 +183787,13 @@
     }
    ]
   },
+  "src/components/comparador/SupplierProductActions.tsx": {
+   "path": "src/components/comparador/SupplierProductActions.tsx",
+   "lines": 203,
+   "exports": [
+    "function SupplierProductActions"
+   ]
+  },
   "src/components/competitive/ActivityHeatmap.tsx": {
    "path": "src/components/competitive/ActivityHeatmap.tsx",
    "lines": 186,
@@ -195207,9 +195310,19 @@
     "const SmartSkeleton"
    ]
   },
+  "src/components/tasks/CreateTaskDialog.test.tsx": {
+   "path": "src/components/tasks/CreateTaskDialog.test.tsx",
+   "lines": 55,
+   "is_test": true,
+   "tests": [
+    "CreateTaskDialog — opções de responsável",
+    "vendedor só pode escolher a si mesmo (a policy recusa outro responsável)",
+    "admin/gestor continua vendo todos os vendedores"
+   ]
+  },
   "src/components/tasks/CreateTaskDialog.tsx": {
    "path": "src/components/tasks/CreateTaskDialog.tsx",
-   "lines": 377,
+   "lines": 386,
    "exports": [
     "function CreateTaskDialog"
    ],
@@ -195221,6 +195334,9 @@
      "refines": [],
      "chain": []
     }
+   ],
+   "rule_comments": [
+    "o seletor espelha a mesma regra para não oferecer um responsável que dá erro."
    ]
   },
   "src/components/tasks/DraggableTaskCard.tsx": {
@@ -214756,9 +214872,21 @@
     "interface Supplier"
    ]
   },
+  "src/hooks/suppliers/useSupplierMutations.test.tsx": {
+   "path": "src/hooks/suppliers/useSupplierMutations.test.tsx",
+   "lines": 135,
+   "is_test": true,
+   "tests": [
+    "useSupplierMutations — produtos do fornecedor",
+    "atualiza preço, qtd. mínima e preferido e invalida a lista",
+    "exclui o vínculo e invalida a lista",
+    "mostra erro quando a exclusão não afeta nenhuma linha (RLS)",
+    "mostra erro de permissão quando a edição não afeta nenhuma linha (RLS)"
+   ]
+  },
   "src/hooks/suppliers/useSupplierMutations.ts": {
    "path": "src/hooks/suppliers/useSupplierMutations.ts",
-   "lines": 162,
+   "lines": 219,
    "exports": [
     "function useSupplierMutations"
    ],
@@ -214780,6 +214908,14 @@
      "op": "insert,select"
     },
     {
+     "table": "supplier_products",
+     "op": "select,update"
+    },
+    {
+     "table": "supplier_products",
+     "op": "delete,select"
+    },
+    {
      "table": "supplier_risk_assessments",
      "op": "insert,select"
     }
@@ -214787,8 +214923,15 @@
    "table_cols": {
     "suppliers": [
      "id"
+    ],
+    "supplier_products": [
+     "id"
     ]
    },
+   "errors": [
+    "Sem permissão para editar este produto do fornecedor.",
+    "Sem permissão para excluir ou produto já removido."
+   ],
    "hooks": [
     "useSupplierMutations"
    ]
@@ -214864,9 +215007,24 @@
     }
    ]
   },
+  "src/hooks/tasks/useTaskMutations.test.tsx": {
+   "path": "src/hooks/tasks/useTaskMutations.test.tsx",
+   "lines": 84,
+   "is_test": true,
+   "errors": [
+    "tabela inesperada ${table}"
+   ],
+   "tests": [
+    "useCreateTask — dono da tarefa (policy de INSERT de tasks)",
+    "sem responsável escolhido, grava a tarefa com o vendedor logado",
+    "responsável vazio (",
+    "respeita o responsável escolhido sem consultar o vendedor logado",
+    "usuário sem cadastro de vendedor (ex.: admin) segue com responsável nulo"
+   ]
+  },
   "src/hooks/tasks/useTaskMutations.ts": {
    "path": "src/hooks/tasks/useTaskMutations.ts",
-   "lines": 175,
+   "lines": 186,
    "exports": [
     "const useCreateTask",
     "const useUpdateTask",
@@ -214891,6 +215049,9 @@
      "id"
     ]
    },
+   "rpc": [
+    "get_current_salesperson_id"
+   ],
    "errors": [
     "Erro ao atualizar tarefa",
     "Erro ao concluir tarefa",
@@ -219161,7 +219322,7 @@
   },
   "src/pages/ComparadorPrecos.tsx": {
    "path": "src/pages/ComparadorPrecos.tsx",
-   "lines": 333,
+   "lines": 341,
    "exports": [
     "function ComparadorPrecos"
    ]
@@ -222754,7 +222915,7 @@
   },
   "src/services/salesService.test.ts": {
    "path": "src/services/salesService.test.ts",
-   "lines": 244,
+   "lines": 291,
    "is_test": true,
    "rule_comments": [
     "limit é o terminal awaitable no getSales sem searchTerm",
@@ -222771,6 +222932,9 @@
     "propaga erro do Supabase",
     "retorna array vazio quando data é null sem erro",
     "salesService.createSale",
+    "preenche salesperson_id com o vendedor logado quando o payload não traz",
+    "mantém salesperson_id explícito sem consultar o RPC",
+    "propaga erro do RPC sem inserir",
     "insere e retorna a row criada",
     "propaga erro do insert",
     "salesService.getSales — branch gaps",
@@ -222780,7 +222944,7 @@
   },
   "src/services/salesService.ts": {
    "path": "src/services/salesService.ts",
-   "lines": 248,
+   "lines": 253,
    "exports": [
     "type SalesSortKey",
     "interface SalesPageQuery",
@@ -222800,6 +222964,9 @@
      "table": "sales",
      "op": "insert,select"
     }
+   ],
+   "rpc": [
+    "get_current_salesperson_id"
    ],
    "enums": [
     {
@@ -245678,10 +245845,44 @@
   }
  },
  "git": {
-  "sha": "2c36718033f0e336dc9794c8703e25404ce8ac0a",
+  "sha": "f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "f2155e8",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: tarefa sem responsável passa a ficar com o vendedor logado (#469)",
+    "files": [
+     "src/components/tasks/CreateTaskDialog.test.tsx",
+     "src/components/tasks/CreateTaskDialog.tsx",
+     "src/hooks/tasks/useTaskMutations.test.tsx",
+     "src/hooks/tasks/useTaskMutations.ts"
+    ]
+   },
+   {
+    "sha": "6a1d1c3",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: preencher vendedor logado ao criar venda (#468)",
+    "files": [
+     "src/services/salesService.test.ts",
+     "src/services/salesService.ts"
+    ]
+   },
+   {
+    "sha": "7bc13e2",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e excluir produto do fornecedor no comparador de preços (#437)",
+    "files": [
+     "src/components/comparador/SupplierProductActions.tsx",
+     "src/hooks/suppliers/useSupplierMutations.test.tsx",
+     "src/hooks/suppliers/useSupplierMutations.ts",
+     "src/pages/ComparadorPrecos.tsx"
+    ]
+   },
    {
     "sha": "2c36718",
     "date": "2026-11-13",
@@ -246425,55 +246626,6 @@
     "files": [
      "scripts/supabase_snapshot/snapshot.py"
     ]
-   },
-   {
-    "sha": "258c998",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "ci: verifica que cada pin de Action é o commit real da tag declarada (#395)",
-    "files": [
-     ".github/workflows/a11y-sweep.yml",
-     ".github/workflows/apply-migration.yml",
-     ".github/workflows/codeql.yml",
-     ".github/workflows/cron-monitoring.yml",
-     ".github/workflows/db-backup.yml",
-     ".github/workflows/db-probe.yml",
-     ".github/workflows/dependabot-fix-lockfile.yml",
-     ".github/workflows/deploy.yml",
-     ".github/workflows/edge-functions-bundle.yml",
-     ".github/workflows/edge-functions-input-validation.yml",
-     ".github/workflows/edge-functions-request-id.yml",
-     ".github/workflows/graphify.yml",
-     ".github/workflows/main.yml",
-     ".github/workflows/migrations-drift.yml",
-     ".github/workflows/pr-checks.yml",
-     ".github/workflows/qa-exhaustive.yml",
-     ".github/workflows/quote-to-sale-e2e.yml",
-     ".github/workflows/release-please.yml",
-     "scripts/ci/check-workflow-pins-resolvem.mjs",
-     "scripts/ci/check-workflow-pins-resolvem.unit.mjs",
-     "scripts/lib/seguranca-processo.mjs",
-     "scripts/lib/seguranca-processo.test.mjs"
-    ]
-   },
-   {
-    "sha": "ed266a1",
-    "date": "2026-11-10",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#414)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json"
-    ]
-   },
-   {
-    "sha": "09ee2d8",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir migrations_no_repo para contar apenas .sql do repo (~669)",
-    "files": [
-     "scripts/inventario/gerar-banco.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -246495,10 +246647,6 @@
    ],
    [
     "src/hooks/abm/useAccounts.ts",
-    3
-   ],
-   [
-    ".github/workflows/codeql.yml",
     3
    ],
    [
@@ -246538,14 +246686,6 @@
     2
    ],
    [
-    "inventario/estado/banco.json",
-    2
-   ],
-   [
-    "inventario/estado/edges.json",
-    2
-   ],
-   [
     "src/components/analytics/ActivityOutcomesChart.tsx",
     2
    ],
@@ -246555,6 +246695,18 @@
    ],
    [
     "src/components/analytics/EmailMetricsDashboard.tsx",
+    2
+   ],
+   [
+    "src/components/analytics/LeadSourceDistribution.tsx",
+    2
+   ],
+   [
+    "src/components/analytics/WeightedForecastDashboard.tsx",
+    2
+   ],
+   [
+    "src/components/analytics/performance/PerformanceCharts.tsx",
     2
    ]
   ]

@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 80,
+   "usado_por": 81,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -7345,7 +7345,7 @@
    "hooks_exportados": [
     "useSupplierMutations"
    ],
-   "linhas": 162,
+   "linhas": 219,
    "dominio": "hooks/suppliers",
    "tabelas": [
     "supplier_products",
@@ -7360,11 +7360,12 @@
     "useToast"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/comparador/SupplierProductActions.tsx",
     "src/hooks/useSuppliers.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/suppliers/useSupplierQueries.ts",
@@ -7415,12 +7416,14 @@
     "useCreateTask",
     "useUpdateTask"
    ],
-   "linhas": 175,
+   "linhas": 186,
    "dominio": "hooks/tasks",
    "tabelas": [
     "tasks"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "edges": [],
    "hooks_internos": [
     "useMutation",
@@ -7433,7 +7436,7 @@
     "src/components/assistant/AssistantTodayTasks.tsx",
     "src/hooks/tasks/index.ts"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/tasks/useTaskQueries.ts",
@@ -10812,7 +10815,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 36,
+   "usado_por": 37,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
@@ -10833,6 +10836,7 @@
     "src/components/settings/PermissionRoleCards.tsx",
     "src/components/settings/RoleManagement.tsx",
     "src/components/settings/SecurityAlertSettings.tsx",
+    "src/components/tasks/CreateTaskDialog.tsx",
     "src/components/win-loss/WebhookDeadLetterPanel.tsx",
     "src/hooks/dashboard/useDashboardRedirect.ts",
     "src/hooks/sales/useSalesRealtime.ts",
@@ -10842,8 +10846,7 @@
     "src/pages/AccountBasedEngagement.tsx",
     "src/pages/AccountBasedSelling.tsx",
     "src/pages/ApprovalWorkflowsPage.tsx",
-    "src/pages/AssinaturaDigital.tsx",
-    "src/pages/Configuracoes.tsx"
+    "src/pages/AssinaturaDigital.tsx"
    ],
    "coberto_por_testes": 0
   },

@@ -2306,12 +2306,14 @@
     "salesService"
    ],
    "export_default": null,
-   "linhas": 248,
+   "linhas": 253,
    "tabelas": [
     "sales",
     "sales_with_markup"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "get_current_salesperson_id"
+   ],
    "edges": [],
    "env": [],
    "externos": [
