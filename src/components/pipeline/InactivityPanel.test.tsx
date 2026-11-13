@@ -72,6 +72,8 @@ describe('InactivityPanel', () => {
           criticalDays: 4,
           severity: 'critical',
           lastActivityDate: '2026-01-01T00:00:00Z',
+          salespersonName: null,
+          salespersonUserId: null,
         },
       ],
       summary: { critical: 1, moderate: 0, mild: 0, total: 1 },
