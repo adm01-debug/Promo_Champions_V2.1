@@ -240,33 +240,46 @@
     "useAccountContacts",
     "useAccountPlan",
     "useAccounts",
+    "useAuth",
     "useCallback",
+    "useContext",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteAccount",
     "useDeleteContact",
+    "useEffect",
+    "useMemo",
     "useMutation",
     "useQuery",
     "useQueryClient",
     "useRecalculateAccountScore",
     "useState",
+    "useUpdateAccount",
     "useUpdateAccountPlan",
-    "useUpdateContact"
+    "useUpdateContact",
+    "useUserRoles"
    ],
    "hooks_locais": [
     "useAccountContacts",
     "useAccountPlan",
     "useAccounts",
+    "useAuth",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteAccount",
     "useDeleteContact",
     "useRecalculateAccountScore",
+    "useUpdateAccount",
     "useUpdateAccountPlan",
-    "useUpdateContact"
+    "useUpdateContact",
+    "useUserRoles"
    ],
    "tabelas": [
     "account_contacts",
     "account_plans",
-    "accounts"
+    "accounts",
+    "salespeople",
+    "user_roles"
    ],
    "rpcs": [
     "calculate_account_score"
@@ -274,8 +287,15 @@
    "edges": [],
    "canais_realtime": [],
    "flags": [],
-   "papeis": [],
-   "arquivos_puxados": 18
+   "papeis": [
+    "admin",
+    "closer",
+    "hybrid",
+    "manager",
+    "salesperson",
+    "sdr"
+   ],
+   "arquivos_puxados": 21
   },
   {
    "protegida": false,

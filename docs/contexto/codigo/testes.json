@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 173,
+ "total": 174,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 107
+  "unit": 108
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 90
+   "arquivos": 91
   },
   {
    "padrao": "tests/",
@@ -300,11 +300,11 @@
   {
    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
    "tipo": "unit",
-   "linhas": 124,
+   "linhas": 330,
    "testa": [
     "src/hooks/abm/useAccounts.ts"
    ],
-   "casos": 4
+   "casos": 13
   },
   {
    "arquivo": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",
@@ -788,6 +788,16 @@
     "supabase/functions/detect-winloss-at-risk/scoring.ts"
    ],
    "casos": 10
+  },
+  {
+   "arquivo": "src/pages/AccountBasedSelling.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/hooks/abm/useAccounts.ts",
+    "src/pages/AccountBasedSelling.tsx"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/pages/InactivityTriggers.test.tsx",
@@ -1465,7 +1475,7 @@
   "src/constants/index.ts": 1,
   "src/contexts/AuthContext.tsx": 2,
   "src/contexts/DashboardThemeContext.tsx": 1,
-  "src/hooks/abm/useAccounts.ts": 1,
+  "src/hooks/abm/useAccounts.ts": 2,
   "src/hooks/assistant/usePersonalAssistantHelpers.ts": 1,
   "src/hooks/bi/useChurnOverdueBySeller.ts": 1,
   "src/hooks/crm/useClientPortfolio.ts": 1,
@@ -1521,6 +1531,7 @@
   "src/lib/winloss/riskSeverity.ts": 2,
   "src/lib/winloss/scenarioChartKey.ts": 1,
   "src/lib/winloss/severityFromScore.ts": 2,
+  "src/pages/AccountBasedSelling.tsx": 1,
   "src/pages/Auth.tsx": 1,
   "src/pages/Clientes.tsx": 1,
   "src/pages/InactivityTriggers.tsx": 1,
@@ -1548,7 +1559,6 @@
    "src/pages/AIAgents.tsx",
    "src/pages/AccessDenied.tsx",
    "src/pages/AccountBasedEngagement.tsx",
-   "src/pages/AccountBasedSelling.tsx",
    "src/pages/AccountDetail.tsx",
    "src/pages/AcompanhamentoPedidoDetalhe.tsx",
    "src/pages/AcompanhamentoPedidos.tsx",

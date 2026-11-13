@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "53e363f436ae7070b150621eaf20cfd7d04e669a",
+  "commit": "21eae42a81259886458779fa5f31c1fee0f656bc",
   "branch": "main",
-  "data_commit": "2026-11-13T05:00:25Z",
+  "data_commit": "2026-11-13T05:22:07Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "21eae42",
+    "data": "2026-11-13",
+    "assunto": "feat: editar e excluir contas no Account-Based Selling (#426)"
+   },
    {
     "sha": "53e363f",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "999a708",
     "data": "2026-11-09",
     "assunto": "infra: valida restauracao do dump antes do upload no db-backup (#387)"
-   },
-   {
-    "sha": "95e8e8a",
-    "data": "2026-11-09",
-    "assunto": "chore: inventario do estado real [auto] (#412)"
    }
   ],
-  "arquivos_mudados_7d": 505,
+  "arquivos_mudados_7d": 506,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 70
+    "commits": 71
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3460,
-  "arquivos_codigo": 2469,
-  "linhas_codigo": 427942,
+  "arquivos_total": 3461,
+  "arquivos_codigo": 2470,
+  "linhas_codigo": 428431,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 414,
   "migrations": 669,
   "cron_jobs": 28,
-  "testes": 173,
+  "testes": 174,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 205
@@ -612,7 +612,7 @@
   },
   "src/hooks": {
    "arquivos": 508,
-   "linhas": 58346
+   "linhas": 58614
   },
   "src/integrations": {
    "arquivos": 4,
@@ -627,8 +627,8 @@
    "linhas": 52
   },
   "src/pages": {
-   "arquivos": 175,
-   "linhas": 43251
+   "arquivos": 176,
+   "linhas": 43472
   },
   "src/routes": {
    "arquivos": 3,
@@ -741,6 +741,10 @@
    "linhas": 859
   },
   {
+   "arquivo": "src/pages/AccountBasedSelling.tsx",
+   "linhas": 843
+  },
+  {
    "arquivo": "supabase/functions/winloss-webhook-health-monitor/index.ts",
    "linhas": 811
   },
@@ -771,10 +775,6 @@
   {
    "arquivo": "supabase/functions/detect-winloss-at-risk/scenarios_test.ts",
    "linhas": 742
-  },
-  {
-   "arquivo": "src/pages/AccountBasedSelling.tsx",
-   "linhas": 732
   },
   {
    "arquivo": "src/components/ui/sidebar.tsx",

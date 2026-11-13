@@ -318,12 +318,14 @@
     "useAccounts",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteAccount",
     "useDeleteContact",
     "useRecalculateAccountScore",
+    "useUpdateAccount",
     "useUpdateAccountPlan",
     "useUpdateContact"
    ],
-   "linhas": 263,
+   "linhas": 325,
    "dominio": "hooks/abm",
    "tabelas": [
     "account_contacts",
@@ -344,7 +346,7 @@
    "usado_por_arquivos": [
     "src/pages/AccountBasedSelling.tsx"
    ],
-   "coberto_por_testes": 1
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/activities/useActivities.ts",
@@ -10799,7 +10801,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 31,
+   "usado_por": 32,
    "usado_por_arquivos": [
     "src/components/assistant/SalesAssistantChat.tsx",
     "src/components/auth/ProtectedRoute.tsx",
@@ -10825,12 +10827,12 @@
     "src/hooks/useSecurityAlertNotifications.ts",
     "src/pages/AccessDenied.tsx",
     "src/pages/AccountBasedEngagement.tsx",
+    "src/pages/AccountBasedSelling.tsx",
     "src/pages/ApprovalWorkflowsPage.tsx",
     "src/pages/Configuracoes.tsx",
     "src/pages/DesafiosSemanais.tsx",
     "src/pages/FollowUpInteligente.tsx",
-    "src/pages/RaceArenaHub.tsx",
-    "src/pages/RaceArenaView.tsx"
+    "src/pages/RaceArenaHub.tsx"
    ],
    "coberto_por_testes": 0
   },

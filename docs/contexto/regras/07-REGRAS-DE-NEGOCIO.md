@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `53e363f436` · branch `main` · 2026-11-13 05:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `21eae42a81` · branch `main` · 2026-11-13 05:35 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4026,7 +4026,7 @@ _nenhum item encontrado_
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
 | Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
 | Erro na sincronização | `src/hooks/useBitrix24.ts` |
-| … +631 linhas — lista completa em `context.json` | |
+| … +636 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4132,7 +4132,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1265 testes em 140 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1281 testes em 141 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4154,6 +4154,7 @@ _nenhum item encontrado_
 | `src/hooks/email/recoveryRateHelpers.test.ts` | 19 | failureTypeLabel · traduz códigos conhecidos · devolve o código bruto quando desconhecido · isPermanentFailureType … |
 | `tests/e2e/pages-crm-core.spec.ts` | 18 | Vendas — Deals Pipeline · carrega heading e filtros · title da página correto · Clientes — Client Hub … |
 | `scripts/db-audit/gen-migration-probes.test.mjs` | 17 | ALTER TABLE com vários ADD em uma linha carrega a tabela em todos · ALTER TABLE IF EXISTS não captura  · ALTER TABLE IF EXISTS com , ADD encadeado resolve a tabela certa · DROP CONSTRAINT + ADD CONSTRAINT na mesma statement resolve a tabela … |
+| `src/hooks/abm/useAccounts.test.tsx` | 17 | useUpdateAccount · atualiza a conta pelo id, sem enviar o id no payload, e invalida a lista · RLS com 0 linhas vira erro de permissão em PT-BR (sem mensagem crua do PostgREST) · nome duplicado (23505) mostra mensagem amigável … |
 | `src/lib/orderTracking/stages.test.ts` | 17 | stages catálogo · OPERATIONAL_STAGES tem 8 estágios com order 1-8 · FINANCIAL_STAGES tem 4 estágios · POST_SALE_STAGES tem 3 estágios … |
 | `src/components/reporting/funnelReportHelpers.test.ts` | 16 | funnelReportHelpers.computeStageDeltas · calcula delta absoluto, percentual, valor e conversão por estágio · trata previous ausente como zero (novo estágio ganha 100%) · retorna 0% quando previous é 0 e current também … |
 | `src/hooks/assistant/usePersonalAssistantHelpers.test.ts` | 16 | parseSSELine · extrai delta.content de linha data: · retorna string vazia para [DONE] · retorna string vazia para linha sem prefixo data: … |
@@ -4207,7 +4208,6 @@ _nenhum item encontrado_
 | `src/components/sales/SaleHUDCard.test.tsx` | 5 | SaleHUDCard · renders sale information correctly · shows AI insights when brain icon is clicked · applies correct color for high prediction scores … |
 | `src/components/security/KnownDevices.test.tsx` | 5 | KnownDevices · sai do estado de loading quando não há usuário autenticado · lista dispositivos quando o usuário está autenticado · não atualiza estado quando o componente desmonta durante o fetch … |
 | `src/hooks/useInactiveDeals.test.tsx` | 5 | useInactiveDeals · começa carregando e expõe o vendedor real do deal para notificação · sinaliza erro quando a consulta de vendas falha (não mostra  · começa em loading e termina com os deals inativos reais … |
-| `src/hooks/abm/useAccounts.test.tsx` | 5 | contatos da conta ABM · edita o contato sem enviar id nem account_id no payload e invalida a lista · acusa erro quando a edição não afeta nenhuma linha (RLS) · exclui o contato e invalida a lista … |
 | `src/lib/safeNavigation.test.ts` | 5 | isSafeInternalPath · aceita rota interna com query e hash · safeNavigationHref · preserva somente HTTP(S), hash e rotas internas seguras … |
 | `src/lib/revenueForecast/csvExport.test.ts` | 5 | buildRevenueForecastCsv · emite header + linhas de história e forecast · escapa períodos com vírgula · adiciona prefixo  … |
 | `src/pages/InactivityTriggers.test.tsx` | 5 | InactivityTriggers · não afirma  · mostra erro com nova tentativa real quando a consulta falha · notifica o vendedor via send_notification e só confirma após sucesso … |
@@ -4224,6 +4224,7 @@ _nenhum item encontrado_
 | `src/components/email/aiEmailComposer.test.ts` | 4 | AIEmailComposer mapping logic · should map form values to API input correctly · should include contact_context for manual recipient type · should use fallback values for missing fields |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
+| `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
 | `supabase/functions/forecast-narrative/index.test.ts` | 4 | GET → 405 Method not allowed · OPTIONS → 200 CORS preflight · Sem Authorization → 401 · Bearer inválido → 401 Invalid or expired token |

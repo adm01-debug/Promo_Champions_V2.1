@@ -9738,7 +9738,8 @@
    "src/components/ui/select.tsx",
    "src/components/ui/tabs.tsx",
    "src/components/ui/textarea.tsx",
-   "src/hooks/abm/useAccounts.ts"
+   "src/hooks/abm/useAccounts.ts",
+   "src/hooks/useUserRoles.ts"
   ],
   "src/pages/AccountDetail.tsx": [
    "src/components/engagement/Account/AccountCoverageBar.tsx",

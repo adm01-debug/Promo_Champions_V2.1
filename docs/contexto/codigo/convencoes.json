@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (90)",
+   "co-localizado (*.test) (91)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: editar e excluir contas no Account-Based Selling (#426)",
    "test: serializa execuções do stress quote→sale com lock consultivo (#465)",
    "test: ids sintéticos por execução no teste do cron-failure-alerter (#463)",
    "fix: gatilhos de inatividade notificam o vendedor de verdade (#452)",
-   "fix: regras de frequencia de contato passam a salvar no banco (#448)",
-   "fix: estados de loading e erro reais no painel de deals inativos (#458)"
+   "fix: regras de frequencia de contato passam a salvar no banco (#448)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

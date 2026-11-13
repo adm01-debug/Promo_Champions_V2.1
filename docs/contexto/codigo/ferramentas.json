@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2389)",
+   "TypeScript (2390)",
    "SQL (676)",
    "Markdown (205)",
    "JavaScript (77)",
@@ -1916,6 +1916,10 @@
     "ocorrencias": 3
    },
    {
+    "papel": "alertdialog",
+    "ocorrencias": 2
+   },
+   {
     "papel": "combobox",
     "ocorrencias": 2
    },
@@ -1961,10 +1965,6 @@
    },
    {
     "papel": "agent",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "alertdialog",
     "ocorrencias": 1
    },
    {

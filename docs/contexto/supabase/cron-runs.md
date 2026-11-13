@@ -93,9 +93,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-13 05:35:00 | succeeded | 0.03 | 1 row |
 | 2026-11-13 05:30:00 | succeeded | 0.04 | 1 row |
 | 2026-11-13 05:25:00 | succeeded | 0.05 | 1 row |
-| 2026-11-13 05:20:00 | succeeded | 0.05 | 1 row |
 
 
 ## 14 · purge-rollback-snapshots-daily
@@ -174,18 +174,18 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-13 05:35:00 | succeeded | 0.02 | 1 row |
 | 2026-11-13 05:30:00 | succeeded | 0.03 | 1 row |
 | 2026-11-13 05:25:00 | succeeded | 0.03 | 1 row |
-| 2026-11-13 05:20:00 | succeeded | 0.01 | 1 row |
 
 
 ## 37 · check-v4-callback-alerts-every-5min
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-13 05:35:00 | succeeded | 0.03 | 1 row |
 | 2026-11-13 05:30:00 | succeeded | 0.07 | 1 row |
 | 2026-11-13 05:25:00 | succeeded | 0.03 | 1 row |
-| 2026-11-13 05:20:00 | succeeded | 0.02 | 1 row |
 
 
 ## 38 · cron-failure-alerter-10min
@@ -201,9 +201,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
-| 2026-11-13 05:31:00 | succeeded | 0.09 | 1 row |
-| 2026-11-13 05:30:00 | succeeded | 0.02 | 1 row |
-| 2026-11-13 05:29:00 | succeeded | 0.03 | 1 row |
+| 2026-11-13 05:37:00 | succeeded | 0.04 | 1 row |
+| 2026-11-13 05:36:00 | succeeded | 0.01 | 1 row |
+| 2026-11-13 05:35:00 | succeeded | 0.03 | 1 row |
 
 
 ## 40 · edge-retry-threshold-alert-15min
@@ -219,9 +219,9 @@
 
 | início (UTC) | status | duração (s) | mensagem |
 |---|---|---|---|
+| 2026-11-13 05:35:00 | succeeded | 0.02 | 1 row |
 | 2026-11-13 05:30:00 | succeeded | 0.03 | 1 row |
 | 2026-11-13 05:25:00 | succeeded | 0.03 | 1 row |
-| 2026-11-13 05:20:00 | succeeded | 0.02 | 1 row |
 
 
 ## 42 · winloss-webhook-health-monitor-15min

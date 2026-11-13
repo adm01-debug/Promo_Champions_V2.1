@@ -17424,7 +17424,7 @@
     "AccountBasedSelling"
    ],
    "export_default": "AccountBasedSelling",
-   "linhas": 732,
+   "linhas": 843,
    "dominio": "pages",
    "hooks_locais": [
     "useAccountContacts",
@@ -17432,10 +17432,13 @@
     "useAccounts",
     "useCreateAccount",
     "useCreateContact",
+    "useDeleteAccount",
     "useDeleteContact",
     "useRecalculateAccountScore",
+    "useUpdateAccount",
     "useUpdateAccountPlan",
-    "useUpdateContact"
+    "useUpdateContact",
+    "useUserRoles"
    ],
    "tabelas": [],
    "edges": [],

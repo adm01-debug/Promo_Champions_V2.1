@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "53e363f436ae7070b150621eaf20cfd7d04e669a",
+  "sha": "21eae42a81259886458779fa5f31c1fee0f656bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 05:05 UTC",
-  "files_total": 3475,
-  "code_files": 3146,
-  "code_lines": 457888
+  "generated_at": "2026-11-13 05:35 UTC",
+  "files_total": 3476,
+  "code_files": 3147,
+  "code_lines": 458377
  },
  "version": "1.3.2",
- "facts_hash": "e187c96c9baf9b17",
+ "facts_hash": "3d0bc851d80f4f21",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1310,
+   ".tsx": 1311,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -64877,6 +64877,22 @@
    },
    {
     "path": "",
+    "file": "src/pages/AccountBasedSelling.test.tsx",
+    "component": "AccountBasedSelling.test",
+    "tables_transitive": [
+     "account_contacts",
+     "account_plans",
+     "accounts",
+     "teams"
+    ],
+    "invokes_transitive": [],
+    "rpc_transitive": [
+     "calculate_account_score"
+    ],
+    "deps_count": 4
+   },
+   {
+    "path": "",
     "file": "src/pages/AdminAlertasChurn.tsx",
     "component": "AdminAlertasChurn",
     "tables_transitive": [],
@@ -66236,13 +66252,15 @@
      "account_contacts",
      "account_plans",
      "accounts",
-     "teams"
+     "salespeople",
+     "teams",
+     "user_roles"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
      "calculate_account_score"
     ],
-    "deps_count": 17
+    "deps_count": 20
    },
    {
     "path": "/acesso-negado",
@@ -73902,6 +73920,14 @@
     "file": "src/hooks/abm/useAccounts.ts"
    },
    {
+    "name": "useUpdateAccount",
+    "file": "src/hooks/abm/useAccounts.ts"
+   },
+   {
+    "name": "useDeleteAccount",
+    "file": "src/hooks/abm/useAccounts.ts"
+   },
+   {
     "name": "useCreateContact",
     "file": "src/hooks/abm/useAccounts.ts"
    },
@@ -77987,7 +78013,7 @@
   {
    "module": "src/hooks",
    "files": 508,
-   "lines": 58346,
+   "lines": 58614,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78610,8 +78636,8 @@
   },
   {
    "module": "src/pages",
-   "files": 175,
-   "lines": 43251,
+   "files": 176,
+   "lines": 43472,
    "tables": [
     "achievements",
     "activities",
@@ -78726,6 +78752,7 @@
     "src/pages/AIAgents.tsx",
     "src/pages/AccessDenied.tsx",
     "src/pages/AccountBasedEngagement.tsx",
+    "src/pages/AccountBasedSelling.test.tsx",
     "src/pages/AccountBasedSelling.tsx",
     "src/pages/AccountDetail.tsx",
     "src/pages/AcompanhamentoPedidoDetalhe.tsx",
@@ -78800,8 +78827,7 @@
     "src/pages/FollowUpInteligente.tsx",
     "src/pages/FonteLeads.tsx",
     "src/pages/ForecastPonderado.tsx",
-    "src/pages/Fornecedores.tsx",
-    "src/pages/FunnelAnalysis.tsx"
+    "src/pages/Fornecedores.tsx"
    ]
   },
   {
@@ -79662,6 +79688,12 @@
      "supabase/functions/qbr-scheduler/index.ts"
     ],
     "insert": [
+     "src/hooks/abm/useAccounts.ts"
+    ],
+    "update": [
+     "src/hooks/abm/useAccounts.ts"
+    ],
+    "delete": [
      "src/hooks/abm/useAccounts.ts"
     ],
     "upsert": [
@@ -91421,6 +91453,10 @@
    },
    {
     "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "A conta possui registros vinculados e não pode ser excluída"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
     "msg": "Contato não encontrado ou sem permissão para editar"
    },
    {
@@ -91430,6 +91466,22 @@
    {
     "file": "src/hooks/abm/useAccounts.ts",
     "msg": "Erro: ${e.message}"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Já existe uma conta com esse nome"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Sem permissão para editar o plano da conta."
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Você não tem permissão para editar esta conta"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Você não tem permissão para excluir esta conta"
    },
    {
     "file": "src/hooks/activities/useActivityGoals.ts",
@@ -131077,6 +131129,38 @@
    },
    {
     "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "useUpdateAccount"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "atualiza a conta pelo id, sem enviar o id no payload, e invalida a lista"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "RLS com 0 linhas vira erro de permissão em PT-BR (sem mensagem crua do PostgREST)"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "nome duplicado (23505) mostra mensagem amigável"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "useDeleteAccount"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "exclui pelo id, invalida a lista e descarta o cache da conta"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "RLS com 0 linhas não finge sucesso: erro de permissão"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "vínculo restritivo (23503) mostra mensagem amigável"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
     "name": "contatos da conta ABM"
    },
    {
@@ -131094,6 +131178,22 @@
    {
     "file": "src/hooks/abm/useAccounts.test.tsx",
     "name": "acusa erro quando a exclusão não remove nenhuma linha (RLS)"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "useUpdateAccountPlan"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "plano existente: atualiza pela conta e invalida o cache do plano"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "RLS com 0 linhas no update vira erro de permissão em PT-BR"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "sem plano: cria um novo para a conta"
    },
    {
     "file": "src/hooks/assistant/usePersonalAssistantHelpers.test.ts",
@@ -133058,6 +133158,22 @@
    {
     "file": "src/lib/winloss/winlossContract.test.ts",
     "name": "STUCK_STATUSES do contrato (usado por stageMatchScore na edge)"
+   },
+   {
+    "file": "src/pages/AccountBasedSelling.test.tsx",
+    "name": "AccountBasedSelling — editar/excluir conta"
+   },
+   {
+    "file": "src/pages/AccountBasedSelling.test.tsx",
+    "name": "vendedor (dono) vê Editar mas não vê Excluir"
+   },
+   {
+    "file": "src/pages/AccountBasedSelling.test.tsx",
+    "name": "dono edita a conta: envia id e campos do formulário"
+   },
+   {
+    "file": "src/pages/AccountBasedSelling.test.tsx",
+    "name": "admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão"
    },
    {
     "file": "src/pages/InactivityTriggers.test.tsx",
@@ -202635,19 +202751,31 @@
   },
   "src/hooks/abm/useAccounts.test.tsx": {
    "path": "src/hooks/abm/useAccounts.test.tsx",
-   "lines": 124,
+   "lines": 330,
    "is_test": true,
    "tests": [
+    "useUpdateAccount",
+    "atualiza a conta pelo id, sem enviar o id no payload, e invalida a lista",
+    "RLS com 0 linhas vira erro de permissão em PT-BR (sem mensagem crua do PostgREST)",
+    "nome duplicado (23505) mostra mensagem amigável",
+    "useDeleteAccount",
+    "exclui pelo id, invalida a lista e descarta o cache da conta",
+    "RLS com 0 linhas não finge sucesso: erro de permissão",
+    "vínculo restritivo (23503) mostra mensagem amigável",
     "contatos da conta ABM",
     "edita o contato sem enviar id nem account_id no payload e invalida a lista",
     "acusa erro quando a edição não afeta nenhuma linha (RLS)",
     "exclui o contato e invalida a lista",
-    "acusa erro quando a exclusão não remove nenhuma linha (RLS)"
+    "acusa erro quando a exclusão não remove nenhuma linha (RLS)",
+    "useUpdateAccountPlan",
+    "plano existente: atualiza pela conta e invalida o cache do plano",
+    "RLS com 0 linhas no update vira erro de permissão em PT-BR",
+    "sem plano: cria um novo para a conta"
    ]
   },
   "src/hooks/abm/useAccounts.ts": {
    "path": "src/hooks/abm/useAccounts.ts",
-   "lines": 263,
+   "lines": 325,
    "exports": [
     "type AccountTier",
     "type BuyingRole",
@@ -202659,6 +202787,8 @@
     "const useAccounts",
     "const useAccountContacts",
     "const useCreateAccount",
+    "const useUpdateAccount",
+    "const useDeleteAccount",
     "const useCreateContact",
     "const useUpdateContact",
     "const useDeleteContact",
@@ -202694,6 +202824,14 @@
      "op": "insert,select"
     },
     {
+     "table": "accounts",
+     "op": "select,update"
+    },
+    {
+     "table": "accounts",
+     "op": "delete,select"
+    },
+    {
      "table": "account_contacts",
      "op": "insert,select"
     },
@@ -202714,15 +202852,23 @@
     "account_contacts": [
      "account_id",
      "id"
+    ],
+    "accounts": [
+     "id"
     ]
    },
    "rpc": [
     "calculate_account_score"
    ],
    "errors": [
+    "A conta possui registros vinculados e não pode ser excluída",
     "Contato não encontrado ou sem permissão para editar",
     "Contato não encontrado ou sem permissão para excluir",
-    "Erro: ${e.message}"
+    "Erro: ${e.message}",
+    "Já existe uma conta com esse nome",
+    "Sem permissão para editar o plano da conta.",
+    "Você não tem permissão para editar esta conta",
+    "Você não tem permissão para excluir esta conta"
    ],
    "enums": [
     {
@@ -202740,6 +202886,8 @@
     "useAccounts",
     "useAccountContacts",
     "useCreateAccount",
+    "useUpdateAccount",
+    "useDeleteAccount",
     "useCreateContact",
     "useUpdateContact",
     "useDeleteContact",
@@ -217201,9 +217349,20 @@
     "/engagement/abm"
    ]
   },
+  "src/pages/AccountBasedSelling.test.tsx": {
+   "path": "src/pages/AccountBasedSelling.test.tsx",
+   "lines": 110,
+   "is_test": true,
+   "tests": [
+    "AccountBasedSelling — editar/excluir conta",
+    "vendedor (dono) vê Editar mas não vê Excluir",
+    "dono edita a conta: envia id e campos do formulário",
+    "admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão"
+   ]
+  },
   "src/pages/AccountBasedSelling.tsx": {
    "path": "src/pages/AccountBasedSelling.tsx",
-   "lines": 732,
+   "lines": 843,
    "exports": [
     "function AccountBasedSelling"
    ],
@@ -244725,10 +244884,22 @@
   }
  },
  "git": {
-  "sha": "53e363f436ae7070b150621eaf20cfd7d04e669a",
+  "sha": "21eae42a81259886458779fa5f31c1fee0f656bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "21eae42",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "feat: editar e excluir contas no Account-Based Selling (#426)",
+    "files": [
+     "src/hooks/abm/useAccounts.test.tsx",
+     "src/hooks/abm/useAccounts.ts",
+     "src/pages/AccountBasedSelling.test.tsx",
+     "src/pages/AccountBasedSelling.tsx"
+    ]
+   },
    {
     "sha": "53e363f",
     "date": "2026-11-13",
@@ -245488,16 +245659,6 @@
      ".github/workflows/contexto.yml",
      ".github/workflows/types-sync.yml"
     ]
-   },
-   {
-    "sha": "042d3e7",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: corrige restore incondicional no hook de grafo e typo no count de workflows",
-    "files": [
-     ".claude/hooks/session-start.sh",
-     "docs/agentes/github-ci.md"
-    ]
    }
   ],
   "hot_files": [
@@ -245524,6 +245685,18 @@
    [
     "inventario/estado/edges.json",
     3
+   ],
+   [
+    "src/hooks/abm/useAccounts.test.tsx",
+    2
+   ],
+   [
+    "src/hooks/abm/useAccounts.ts",
+    2
+   ],
+   [
+    "src/pages/AccountBasedSelling.tsx",
+    2
    ],
    [
     "src/components/pipeline/InactivityPanel.test.tsx",
@@ -245567,18 +245740,6 @@
    ],
    [
     "src/components/analytics/performance/PerformanceCharts.tsx",
-    2
-   ],
-   [
-    "src/components/bi/BICloserCharts.tsx",
-    2
-   ],
-   [
-    "src/components/bi/BISDRCharts.tsx",
-    2
-   ],
-   [
-    "src/components/bi/BIVendedorCharts.tsx",
     2
    ]
   ]
