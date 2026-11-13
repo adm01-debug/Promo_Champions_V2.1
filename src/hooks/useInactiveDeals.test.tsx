@@ -19,8 +19,8 @@ vi.mock('@/integrations/supabase/client', () => ({
         not: () => query,
         is: () => query,
         order: () => query,
-        then: (resolve: (value: Result) => unknown) =>
-          Promise.resolve(responses[table] ?? { data: [], error: null }).then(resolve),
+        then: (resolve: (value: Result) => unknown, reject?: (e: unknown) => unknown) =>
+          Promise.resolve(responses[table] ?? { data: [], error: null }).then(resolve, reject),
       };
       return query;
     },
@@ -33,6 +33,14 @@ function wrapper({ children }: { children: ReactNode }) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return createElement(QueryClientProvider, { client }, children);
 }
+
+const oldSale = {
+  id: 'sale-1',
+  client_name: 'Cliente Antigo',
+  status: 'lead',
+  updated_at: '2020-01-01T00:00:00Z',
+  created_at: '2020-01-01T00:00:00Z',
+};
 
 describe('useInactiveDeals', () => {
   beforeEach(() => {
@@ -94,5 +102,25 @@ describe('useInactiveDeals', () => {
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.isLoading).toBe(false);
     expect(result.current.inactiveDeals).toEqual([]);
+  });
+
+  it('começa em loading e termina com os deals inativos reais', async () => {
+    responses.sales = { data: [oldSale], error: null };
+    const { result } = renderHook(() => useInactiveDeals(), { wrapper });
+
+    expect(result.current.isLoading).toBe(true);
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.isError).toBe(false);
+    expect(result.current.inactiveDeals.map(d => d.id)).toEqual(['sale-1']);
+    expect(result.current.summary.total).toBe(1);
+  });
+
+  it('sinaliza erro quando a consulta de atividades falha', async () => {
+    responses.sales = { data: [oldSale], error: null };
+    responses.activities = { data: null, error: { message: 'timeout' } };
+    const { result } = renderHook(() => useInactiveDeals(), { wrapper });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
   });
 });
