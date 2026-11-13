@@ -5768,6 +5768,7 @@
    "src/components/ui/select.tsx",
    "src/components/ui/separator.tsx",
    "src/components/ui/switch.tsx",
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts",
    "src/lib/generateMonthlyReport.ts"
   ],
@@ -9161,6 +9162,7 @@
    "src/utils/dateHelpers.ts"
   ],
   "src/hooks/useNotificationPreferences.ts": [
+   "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts"
   ],
   "src/hooks/useNotifications.ts": [

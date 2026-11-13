@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3990945df` · branch `main` · 2026-11-13 09:25 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3044064dc7` · branch `main` · 2026-11-13 09:55 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3934,6 +3934,7 @@ _nenhum item encontrado_
 | Não foi possível gerar link | `src/components/reporting/ScheduledReportRunsDrawer.tsx` |
 | Erro ao salvar configurações | `src/components/reports/EmailReportConfig.tsx` |
 | Informe um email | `src/components/reports/EmailReportConfig.tsx` |
+| Usuário não autenticado | `src/components/reports/EmailReportConfig.tsx` |
 | Forecast ainda não calculado | `src/components/revenue-intelligence/ForecastNarrative.tsx` |
 | Resposta vazia da IA | `src/components/revenue-intelligence/ForecastNarrative.tsx` |
 | Cliente sem e-mail cadastrado. | `src/components/sales/AIEmailDialog.tsx` |
@@ -4030,8 +4031,7 @@ _nenhum item encontrado_
 | Falha na análise comportamental | `src/hooks/useBehavioralAnalysis.ts` |
 | Limite de análises atingido. Tente novamente em instantes. | `src/hooks/useBehavioralAnalysis.ts` |
 | Erro ao atualizar token | `src/hooks/useBitrix24.ts` |
-| Erro ao iniciar autorização | `src/hooks/useBitrix24.ts` |
-| … +661 linhas — lista completa em `context.json` | |
+| … +663 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4137,7 +4137,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1371 testes em 158 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1376 testes em 160 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4256,6 +4256,7 @@ _nenhum item encontrado_
 | `src/components/activities/ActivityLogForm.test.tsx` | 3 | ActivityLogForm · envia o vendedor logado como salesperson_id sem abrir o combo Vendedor · preenche o vendedor logado quando o perfil carrega depois da montagem |
 | `src/components/tasks/CreateTaskDialog.test.tsx` | 3 | CreateTaskDialog — opções de responsável · vendedor só pode escolher a si mesmo (a policy recusa outro responsável) · admin/gestor continua vendo todos os vendedores |
 | `src/hooks/useNPSSurveys.test.tsx` | 3 | useCreateNPSSurvey · grava a pesquisa no vendedor logado quando a tela não informa o dono · respeita o salesperson_id explícito sem consultar o vendedor logado |
+| `src/hooks/useNotificationPreferences.test.tsx` | 3 | useCreateNotificationPreference · envia user_id do usuário logado (RLS exige user_id = auth.uid()) · não chama o banco sem usuário autenticado |
 | `src/hooks/useProductRecommendations.test.tsx` | 3 | useProductRecommendations — regressão Onda J/K · particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn · agrega counts ignorando product_id null e tolera product_name/amount nulos |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |
 | `src/hooks/gamification/useStreakRanking.test.tsx` | 3 | useStreakRanking — agregação sem N+1 · busca conquistas de todos os vendedores em uma única query .in() · monta ranking correto com múltiplos vendedores e conquistas |
@@ -4269,6 +4270,7 @@ _nenhum item encontrado_
 | `tests/e2e/quote-to-sale-won-path.spec.ts` | 3 | Path novo (won): RPC cria ORC-* e avança sequence · won: 1 conversão gera ORC-* e sequence +1 · won x3 quotes independentes: sequence avança exatamente +3, números únicos |
 | `tests/e2e/smoke.spec.ts` | 3 | Smoke Tests · should load the home page · should redirect to auth if not logged in |
 | `src/components/competitive/BattleArena.test.tsx` | 2 | BattleArena — gerenciar batalhas · mostra editar/cancelar só na batalha ativa, nunca na finalizada |
+| `src/components/reports/EmailReportConfig.test.tsx` | 2 | EmailReportConfig — primeira configuração · insere com user_id do usuário logado (RLS exige user_id = auth.uid()) |
 | `src/hooks/useClientsNeedingContact.test.tsx` | 2 | useClientsNeedingContact · particiona a busca de contatos para carteiras grandes |
 | `src/hooks/useLeadAssignment.test.ts` | 2 | assignLeadRoundRobin · não mantém cursor de round-robin no módulo do navegador |
 | `src/hooks/bi/useChurnOverdueBySeller.test.tsx` | 2 | useChurnOverdueBySeller · particiona a consulta de vendedores quando há mais de 100 IDs |

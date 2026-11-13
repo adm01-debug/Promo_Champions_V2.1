@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-13 09:55 UTC
+
+- **functions** alterado (1): `public.get_current_salesperson_id()`
+
 ## 2026-11-13 08:43 UTC
 
 - **functions** alterado (1): `public.get_current_salesperson_id()`

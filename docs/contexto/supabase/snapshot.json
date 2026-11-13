@@ -87321,7 +87321,15 @@
               "hits": 1
             },
             {
+              "file": "src/hooks/sales/useSalesEnablement.ts",
+              "hits": 1
+            },
+            {
               "file": "src/hooks/tasks/useTaskMutations.ts",
+              "hits": 1
+            },
+            {
+              "file": "src/hooks/useNPSSurveys.ts",
               "hits": 1
             },
             {
@@ -87415,17 +87423,9 @@
             {
               "file": "supabase/migrations/20260412114808_21a14a17-3912-4a14-86dc-55aebea09e2d.sql",
               "hits": 2
-            },
-            {
-              "file": "supabase/migrations/20260412115357_dcf9ab46-7f4b-484f-bf6f-7a87bcbc40f7.sql",
-              "hits": 1
-            },
-            {
-              "file": "supabase/migrations/20260412115439_2c138808-113d-4264-aa0d-82a9a94875fa.sql",
-              "hits": 5
             }
           ],
-          "code_total_files": 71,
+          "code_total_files": 73,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",

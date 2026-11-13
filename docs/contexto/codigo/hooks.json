@@ -177,7 +177,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 83,
+   "usado_por": 85,
    "usado_por_arquivos": [
     "src/App.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
@@ -9239,7 +9239,7 @@
     "useNotificationPreferences",
     "useUpdateNotificationPreference"
    ],
-   "linhas": 95,
+   "linhas": 99,
    "dominio": "hooks",
    "tabelas": [
     "notification_preferences"
@@ -9247,6 +9247,7 @@
    "rpcs": [],
    "edges": [],
    "hooks_internos": [
+    "useAuth",
     "useMutation",
     "useQuery",
     "useQueryClient"
@@ -9257,7 +9258,7 @@
     "src/components/notifications/NotificationPreferenceCard.tsx",
     "src/pages/Notificacoes.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useNotifications.ts",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e3990945df3e11a6b365b273c6a86fa9890bb61e",
+  "sha": "3044064dc780f9970210b07a9842a2b099e1998a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 09:25 UTC",
-  "files_total": 3494,
-  "code_files": 3165,
-  "code_lines": 462255
+  "generated_at": "2026-11-13 09:55 UTC",
+  "files_total": 3496,
+  "code_files": 3167,
+  "code_lines": 462397
  },
  "version": "1.3.2",
- "facts_hash": "f67167721e564cf1",
+ "facts_hash": "f6e30b2cc69657a2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1329,
+   ".tsx": 1331,
    ".ts": 1078,
    ".sql": 676,
    ".mjs": 71,
@@ -67545,13 +67545,14 @@
      "daily_metrics",
      "notification_preferences",
      "sales",
-     "sales_goals"
+     "sales_goals",
+     "salespeople"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
      "get_active_salespeople"
     ],
-    "deps_count": 18
+    "deps_count": 19
    },
    {
     "path": "/relatorios/vendas",
@@ -73903,7 +73904,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1192,
+  "components_count": 1193,
   "hooks": [
    {
     "name": "useContacts",
@@ -77778,8 +77779,8 @@
   },
   {
    "module": "src/components",
-   "files": 1192,
-   "lines": 189181,
+   "files": 1193,
+   "lines": 189245,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78102,8 +78103,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 518,
-   "lines": 60584,
+   "files": 519,
+   "lines": 60662,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -90780,6 +90781,10 @@
     "msg": "Informe um email"
    },
    {
+    "file": "src/components/reports/EmailReportConfig.tsx",
+    "msg": "Usuário não autenticado"
+   },
+   {
     "file": "src/components/revenue-intelligence/ForecastNarrative.tsx",
     "msg": "Forecast ainda não calculado"
    },
@@ -91350,6 +91355,10 @@
    {
     "file": "src/hooks/useNotificationPreferences.ts",
     "msg": "Erro: "
+   },
+   {
+    "file": "src/hooks/useNotificationPreferences.ts",
+    "msg": "Usuário não autenticado"
    },
    {
     "file": "src/hooks/useNotifications.ts",
@@ -131150,6 +131159,14 @@
     "name": "retorna 0 quando maxCount é 0 ou negativo"
    },
    {
+    "file": "src/components/reports/EmailReportConfig.test.tsx",
+    "name": "EmailReportConfig — primeira configuração"
+   },
+   {
+    "file": "src/components/reports/EmailReportConfig.test.tsx",
+    "name": "insere com user_id do usuário logado (RLS exige user_id = auth.uid())"
+   },
+   {
     "file": "src/components/sales/SaleHUDCard.test.tsx",
     "name": "SaleHUDCard"
    },
@@ -131460,6 +131477,18 @@
    {
     "file": "src/hooks/useNPSSurveys.test.tsx",
     "name": "respeita o salesperson_id explícito sem consultar o vendedor logado"
+   },
+   {
+    "file": "src/hooks/useNotificationPreferences.test.tsx",
+    "name": "useCreateNotificationPreference"
+   },
+   {
+    "file": "src/hooks/useNotificationPreferences.test.tsx",
+    "name": "envia user_id do usuário logado (RLS exige user_id = auth.uid())"
+   },
+   {
+    "file": "src/hooks/useNotificationPreferences.test.tsx",
+    "name": "não chama o banco sem usuário autenticado"
    },
    {
     "file": "src/hooks/useProductRecommendations.test.tsx",
@@ -192452,9 +192481,21 @@
     }
    ]
   },
+  "src/components/reports/EmailReportConfig.test.tsx": {
+   "path": "src/components/reports/EmailReportConfig.test.tsx",
+   "lines": 60,
+   "is_test": true,
+   "errors": [
+    "tabela inesperada ${table}"
+   ],
+   "tests": [
+    "EmailReportConfig — primeira configuração",
+    "insere com user_id do usuário logado (RLS exige user_id = auth.uid())"
+   ]
+  },
   "src/components/reports/EmailReportConfig.tsx": {
    "path": "src/components/reports/EmailReportConfig.tsx",
-   "lines": 310,
+   "lines": 314,
    "exports": [
     "function EmailReportConfig"
    ],
@@ -192479,7 +192520,8 @@
    },
    "errors": [
     "Erro ao salvar configurações",
-    "Informe um email"
+    "Informe um email",
+    "Usuário não autenticado"
    ],
    "side_effects": [
     "notify_at_risk_goals",
@@ -200444,9 +200486,27 @@
     "30"
    ]
   },
+  "src/hooks/useNotificationPreferences.test.tsx": {
+   "path": "src/hooks/useNotificationPreferences.test.tsx",
+   "lines": 74,
+   "is_test": true,
+   "errors": [
+    "tabela inesperada ${table}"
+   ],
+   "tests": [
+    "useCreateNotificationPreference",
+    "envia user_id do usuário logado (RLS exige user_id = auth.uid())",
+    "não chama o banco sem usuário autenticado"
+   ],
+   "side_effects": [
+    "notify_at_risk_goals",
+    "notify_inactive_clients",
+    "notify_stagnant_deals"
+   ]
+  },
   "src/hooks/useNotificationPreferences.ts": {
    "path": "src/hooks/useNotificationPreferences.ts",
-   "lines": 95,
+   "lines": 99,
    "exports": [
     "interface NotificationPreference",
     "const useNotificationPreferences",
@@ -200478,7 +200538,8 @@
     ]
    },
    "errors": [
-    "Erro: "
+    "Erro: ",
+    "Usuário não autenticado"
    ],
    "hooks": [
     "useNotificationPreferences",
@@ -245980,10 +246041,22 @@
   }
  },
  "git": {
-  "sha": "e3990945df3e11a6b365b273c6a86fa9890bb61e",
+  "sha": "3044064dc780f9970210b07a9842a2b099e1998a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "3044064",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: enviar user_id ao criar preferência de notificação (#474)",
+    "files": [
+     "src/components/reports/EmailReportConfig.test.tsx",
+     "src/components/reports/EmailReportConfig.tsx",
+     "src/hooks/useNotificationPreferences.test.tsx",
+     "src/hooks/useNotificationPreferences.ts"
+    ]
+   },
    {
     "sha": "e399094",
     "date": "2026-11-13",
@@ -246685,82 +246758,16 @@
      "src/pages/admin/AdminComercial.tsx",
      "src/pages/admin/WebhookTimelinePage.tsx"
     ]
-   },
-   {
-    "sha": "e6a7784",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "feat: migra recharts 2->3 (v3.10.1) typecheck/lint verdes (#422)",
-    "files": [
-     "deno.lock",
-     "package-lock.json",
-     "package.json",
-     "src/components/achievements/AchievementComparisonChart.tsx",
-     "src/components/achievements/AchievementTrendChart.tsx",
-     "src/components/admin/connections/CronAlertBreakdownChart.tsx",
-     "src/components/admin/connections/DbRollbackRatePanel.tsx",
-     "src/components/analytics/ActivityOutcomesChart.tsx",
-     "src/components/analytics/DealVelocityChart.tsx",
-     "src/components/analytics/EmailMetricsDashboard.tsx",
-     "src/components/analytics/LTVBySegment.tsx",
-     "src/components/analytics/LeadSourceDistribution.tsx",
-     "src/components/analytics/RevenueForecast.tsx",
-     "src/components/analytics/WeightedForecastDashboard.tsx",
-     "src/components/analytics/performance/PerformanceCharts.tsx",
-     "src/components/bi/BICloserCharts.tsx",
-     "src/components/bi/BISDRCharts.tsx",
-     "src/components/bi/BIVendedorCharts.tsx",
-     "src/components/bi/charts/AbcPieChart.tsx",
-     "src/components/bi/charts/RevenueAreaChart.tsx",
-     "src/components/bi/charts/SourceBarChart.tsx",
-     "src/components/closer/CloserRevenueComparison.tsx",
-     "src/components/coaching/impact/CoachingImpactTracker.tsx",
-     "src/components/competitive/EvolutionChart.tsx",
-     "src/components/conversational/SentimentTimelineChart.tsx",
-     "src/components/conversational/questions/QuestionDepthChart.tsx",
-     "src/components/conversational/questions/QuestionMixDonut.tsx",
-     "src/components/dashboard/widgets/ForecastWidget.tsx",
-     "src/components/dashboard/widgets/TeamRankingWidget.tsx",
-     "src/components/dashboard/widgets/VelocityScoreWidget.tsx",
-     "src/components/deal-intelligence/ConversionFunnelChart.tsx",
-     "src/components/deal-intelligence/committee/CommitteeCoverageSparkline.tsx",
-     "src/components/deal-intelligence/velocity/StageBottlenecksChart.tsx",
-     "src/components/email/EmailSuppressionMetricsCard.tsx",
-     "src/components/forecast/PipelineContributionChart.tsx",
-     "src/components/goals/GoalComparisonChart.tsx",
-     "src/components/icp/ICPPerformanceChart.tsx",
-     "src/components/portfolio/PortfolioDistributionChart.tsx",
-     "src/components/portfolio/PortfolioValueChart.tsx",
-     "src/components/pricing/PricingDistributionCard.tsx",
-     "src/components/purchase-intelligence/PurchaseIntelligenceHub.tsx",
-     "src/components/ranking/HistoryTab.tsx",
-     "src/components/revenue-intelligence/WinRateBreakdownChart.tsx",
-     "src/components/revenue-intelligence/forecast/MapeBySegmentChart.tsx",
-     "src/components/revenue-intelligence/quota/QuotaProbabilityChart.tsx",
-     "src/components/sdr/LeadTemperatureChart.tsx",
-     "src/components/settings/SecurityAlertHistory.tsx",
-     "src/components/ui/chart.tsx",
-     "src/components/vendedor/VendedorCharts.tsx",
-     "src/components/win-loss/CycleTimeHistogram.tsx",
-     "src/components/win-loss/LossReasonFlow.tsx",
-     "src/pages/ROIDashboard.tsx",
-     "src/pages/RelatoriosExecutivos.tsx",
-     "src/pages/UsageAnalytics.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "package.json",
-    7
-   ],
-   [
-    "package-lock.json",
     6
    ],
    [
-    "deno.lock",
-    4
+    "package-lock.json",
+    5
    ],
    [
     "src/hooks/abm/useAccounts.test.tsx",
@@ -246768,6 +246775,10 @@
    ],
    [
     "src/hooks/abm/useAccounts.ts",
+    3
+   ],
+   [
+    "deno.lock",
     3
    ],
    [
@@ -246823,12 +246834,12 @@
     2
    ],
    [
-    "src/components/analytics/ActivityOutcomesChart.tsx",
-    2
+    "src/components/reports/EmailReportConfig.test.tsx",
+    1
    ],
    [
-    "src/components/analytics/DealVelocityChart.tsx",
-    2
+    "src/components/reports/EmailReportConfig.tsx",
+    1
    ]
   ]
  }

@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (108)",
+   "co-localizado (*.test) (110)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: enviar user_id ao criar preferência de notificação (#474)",
    "fix: grava pesquisa NPS no vendedor logado (#473)",
    "Inscrição em cadência usa o vendedor logado como responsável padrão (#472)",
    "fix: etapa do playbook grava o vendedor certo em completed_by (#479)",
-   "fix: enviar completed_by ao marcar item do playbook no pipeline (#470)",
-   "fix: campo Vendedor do registro de atividade vem com o vendedor logado (#471)"
+   "fix: enviar completed_by ao marcar item do playbook no pipeline (#470)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",

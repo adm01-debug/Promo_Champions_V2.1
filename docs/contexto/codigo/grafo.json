@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 2302,
- "arestas": 9489,
+ "arestas": 9491,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/contexts/AuthContext.tsx",
-   "importado_por": 85
+   "importado_por": 87
   },
   {
    "arquivo": "src/components/ui/tabs.tsx",
@@ -277,7 +277,7 @@
   {
    "modulo": "contexts",
    "depende_de": 3,
-   "importado_por": 32
+   "importado_por": 33
   },
   {
    "modulo": "hooks/sales",

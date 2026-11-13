@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 191,
+ "total": 193,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 125
+  "unit": 127
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 108
+   "arquivos": 110
   },
   {
    "padrao": "tests/",
@@ -311,6 +311,15 @@
     "src/components/reporting/funnelReportHelpers.ts"
    ],
    "casos": 12
+  },
+  {
+   "arquivo": "src/components/reports/EmailReportConfig.test.tsx",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/components/reports/EmailReportConfig.tsx"
+   ],
+   "casos": 1
   },
   {
    "arquivo": "src/components/sales/cadence/ContactFrequencyRules.test.tsx",
@@ -678,6 +687,15 @@
     "src/hooks/useLoginRateLimiter.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/useNotificationPreferences.test.tsx",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/hooks/useNotificationPreferences.ts"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/hooks/useNPSSurveys.test.tsx",
@@ -1627,6 +1645,7 @@
   "src/components/enablement/SalesEnablementHub.tsx": 1,
   "src/components/pipeline/InactivityPanel.tsx": 1,
   "src/components/reporting/funnelReportHelpers.ts": 1,
+  "src/components/reports/EmailReportConfig.tsx": 1,
   "src/components/sales/SaleHUDCard.tsx": 1,
   "src/components/sales/cadence/ContactFrequencyRules.tsx": 1,
   "src/components/security/KnownDevices.tsx": 1,
@@ -1674,6 +1693,7 @@
   "src/hooks/useLeadRouting.ts": 1,
   "src/hooks/useLoginRateLimiter.ts": 1,
   "src/hooks/useNPSSurveys.ts": 1,
+  "src/hooks/useNotificationPreferences.ts": 1,
   "src/hooks/useProductRecommendations.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
   "src/hooks/useScrollRestoration.ts": 1,
@@ -2204,7 +2224,6 @@
    "src/hooks/useMultiplePipelines.ts",
    "src/hooks/useMyBonusAwards.ts",
    "src/hooks/useNextBestAction.ts",
-   "src/hooks/useNotificationPreferences.ts",
    "src/hooks/useNotifications.ts",
    "src/hooks/useObjectionsLibrary.ts",
    "src/hooks/useOnboardingChecklist.ts",

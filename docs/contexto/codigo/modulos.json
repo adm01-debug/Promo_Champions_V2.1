@@ -6822,13 +6822,14 @@
   {
    "modulo": "components/reports",
    "arquivos": 13,
-   "testes": 0,
-   "linhas": 1551,
+   "testes": 1,
+   "linhas": 1555,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 13,
    "hooks_locais": [
+    "useAuth",
     "useBackNavigation",
     "useCountUp",
     "useMarkupMinSamplePreference"
@@ -6840,7 +6841,8 @@
     "notification_preferences",
     "page_analytics",
     "sales",
-    "sales_goals"
+    "sales_goals",
+    "salespeople"
    ],
    "rpcs": [
     "get_active_salespeople"
@@ -6870,6 +6872,7 @@
    ],
    "depende_de_modulos": [
     "components/ui",
+    "contexts",
     "hooks",
     "hooks/reports",
     "integrations/supabase",
@@ -9690,6 +9693,7 @@
     "components/notifications",
     "components/organisms",
     "components/race",
+    "components/reports",
     "components/security",
     "components/settings",
     "components/tasks",
@@ -9715,8 +9719,8 @@
   {
    "modulo": "hooks",
    "arquivos": 145,
-   "testes": 14,
-   "linhas": 19483,
+   "testes": 15,
+   "linhas": 19487,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

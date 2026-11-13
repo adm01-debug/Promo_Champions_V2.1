@@ -12530,9 +12530,11 @@
     "EmailReportConfig"
    ],
    "export_default": null,
-   "linhas": 310,
+   "linhas": 314,
    "dominio": "components/reports",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useAuth"
+   ],
    "tabelas": [
     "notification_preferences"
    ],
@@ -17348,7 +17350,7 @@
     "salespeople"
    ],
    "edges": [],
-   "usado_por": 83,
+   "usado_por": 85,
    "orfao": false
   },
   {

@@ -9284,6 +9284,7 @@
    "definida_em": "src/routes/AppRoutes.tsx",
    "redireciona": null,
    "hooks": [
+    "useAuth",
     "useCallback",
     "useContext",
     "useEffect",
@@ -9299,13 +9300,15 @@
     "useState"
    ],
    "hooks_locais": [
+    "useAuth",
     "useReducedMotion"
    ],
    "tabelas": [
     "daily_metrics",
     "notification_preferences",
     "sales",
-    "sales_goals"
+    "sales_goals",
+    "salespeople"
    ],
    "rpcs": [
     "get_active_salespeople"
@@ -9314,7 +9317,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": false,
