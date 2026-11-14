@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `614d67573c` · branch `main` · 2026-11-13 23:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `12b6200f50` · branch `main` · 2026-11-14 01:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `client_portfolio` | Users can read own client_portfolio | SELECT | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
 | `document_signers` | Authenticated users can insert document_signers | INSERT | authenticated | permissive |  | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |
 | `document_signers` | Authenticated users can update document_signers | UPDATE | authenticated | permissive | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| … +742 linhas — lista completa em `context.json` | | | | | | |
+| … +744 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -4051,7 +4051,7 @@ _nenhum item encontrado_
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
 | Créditos de IA esgotados. | `src/hooks/useBehavioralAnalysis.ts` |
-| … +669 linhas — lista completa em `context.json` | |
+| … +670 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4157,7 +4157,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1571 testes em 197 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1578 testes em 198 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4169,9 +4169,9 @@ _nenhum item encontrado_
 | `tests/e2e/pages-customer-success.spec.ts` | 31 | Customer Success Hub · carrega página sem crash · title da página correto · NPS & Satisfação … |
 | `src/lib/revenueForecast/forecastEngine.test.ts` | 28 | computeRevenueForecast · produz horizonte solicitado · respeita bounds do horizonte (1-24) · usa defaults quando opts não fornecido (cobre horizon ?? 3 e simulations ?? 1000) … |
 | `tests/e2e/pages-automation-ai.spec.ts` | 26 | Automation Builder · carrega heading  · title da página correto · mostra botão Novo Workflow … |
+| `src/hooks/abm/useAccounts.test.tsx` | 25 | useCreateAccount · vendedor: grava owner_id = vendedor logado (exigido pela RLS de accounts) · admin/gestor sem vendedor vinculado: segue com owner_id null · owner_id vindo no payload é respeitado, sem consultar o vendedor logado … |
 | `src/lib/staleAssetRecovery.test.ts` | 24 | isRecoverableAssetError · recognizes failed dynamic import pattern · recognizes importing module script failed · recognizes loading chunk errors … |
 | `src/lib/validators/brDocuments.test.ts` | 24 | isValidCPF · aceita CPF válido: %s · rejeita CPF com dígito verificador errado: %s · rejeita CPF com tamanho ou conteúdo inválido: %s … |
-| `src/hooks/abm/useAccounts.test.tsx` | 23 | useCreateAccount · vendedor: grava owner_id = vendedor logado (exigido pela RLS de accounts) · admin/gestor sem vendedor vinculado: segue com owner_id null · owner_id vindo no payload é respeitado, sem consultar o vendedor logado … |
 | `tests/e2e/pages-gamification.spec.ts` | 23 | Ranking Competitivo — Circuito de Vencedores · carrega heading · title da página correto · mostra tabs de ranking … |
 | `scripts/codemod-typography.test.mjs` | 22 | sem --write: só simula · h1 com tamanho+peso vira o token · classes de layout e cor são mantidas · variantes com prefixo (md:, hover:, !) ficam INTEIRAS — antes sobrava  … |
 | `src/lib/markupHelpers.test.ts` | 22 | markupHelpers · computeMarkupPct · calcula markup positivo · retorna 0 quando amount = custo … |
@@ -4266,6 +4266,7 @@ _nenhum item encontrado_
 | `src/test/csv-export.test.ts` | 5 | CSV Export Utils · formatDateForExport should format correctly · formatPercentForExport should format correctly · formatCurrencyForExport should format correctly … |
 | `src/test/quote-error-messages.test.ts` | 5 | parseConvertQuoteError (módulo standalone) · normaliza espaços em branco antes do prefixo · devolve UNKNOWN para prefixo inválido ou desconhecido · todos os códigos têm mensagem PT-BR não-vazia mapeada … |
 | `src/test/sale-status.test.ts` | 5 | sale status helpers · treats manual and integration successful statuses as won · recognises lost statuses · treats pipeline stages as open (neither won nor lost) … |
+| `src/test/security/accounts-delete-policy.test.ts` | 5 | accounts — RLS de DELETE só para gestor · existe policy viva cobrindo DELETE · nenhuma policy que cobre DELETE aceita o dono (vendedor) · a policy FOR ALL antiga foi removida … |
 | `supabase/functions/create-stagnant-tasks/index.test.ts` | 5 | create-stagnant-tasks - should respond with valid structure · lead-scoring - should respond to invocation · deal-probability - should respond to invocation · next-best-action - should respond to invocation … |
 | `supabase/functions/receive-quote-sync/index.test.ts` | 5 | GET is not allowed · body não-JSON retorna 400 · PromoGifts sem x-webhook-signature retorna 401 · PromoGifts com signature inválida retorna 401 … |
 | `tests/e2e/pipeline-flows.spec.ts` | 5 | Pipeline — fluxos críticos · redireciona anônimo de /pipeline para /auth · carrega board com heading e descrição · painel lateral de risco alterna visibilidade … |

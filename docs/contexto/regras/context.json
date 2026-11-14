@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "614d67573c3afdccd05714dbe564600a67d63ab3",
+  "sha": "12b6200f5043af677b628267190fc54b6e798917",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-13 23:00 UTC",
-  "files_total": 3539,
-  "code_files": 3209,
-  "code_lines": 465676
+  "generated_at": "2026-11-14 01:21 UTC",
+  "files_total": 3542,
+  "code_files": 3212,
+  "code_lines": 465919
  },
  "version": "1.3.2",
- "facts_hash": "8801fcf9b00ed9f2",
+ "facts_hash": "d4985d32976916e3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -390,8 +390,8 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1358,
-   ".ts": 1091,
-   ".sql": 677,
+   ".ts": 1092,
+   ".sql": 679,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -37263,26 +37263,6 @@
     "src": "supabase/migrations/20260416195725_4d7ca4a9-1812-4b95-83ca-d216d7fc129c.sql"
    },
    {
-    "name": "Owners and managers can view accounts",
-    "table": "accounts",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-    "check": "",
-    "src": "supabase/migrations/20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql"
-   },
-   {
-    "name": "Owners and managers can manage accounts",
-    "table": "accounts",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-    "check": "is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-    "src": "supabase/migrations/20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql"
-   },
-   {
     "name": "View contacts of accessible accounts",
     "table": "account_contacts",
     "cmd": "SELECT",
@@ -41773,26 +41753,6 @@
     "src": "supabase/migrations/20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0.sql"
    },
    {
-    "name": "Account plans owner or admin can read",
-    "table": "account_plans",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid()",
-    "check": "",
-    "src": "supabase/migrations/20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0.sql"
-   },
-   {
-    "name": "Account plans owner or admin can update",
-    "table": "account_plans",
-    "cmd": "UPDATE",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid()",
-    "check": "",
-    "src": "supabase/migrations/20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0.sql"
-   },
-   {
     "name": "Client renewals scoped visibility",
     "table": "client_renewals",
     "cmd": "SELECT",
@@ -42933,6 +42893,46 @@
     "src": "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
    },
    {
+    "name": "Owners and managers can view accounts",
+    "table": "accounts",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "check": "",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
+    "name": "Owners and managers can insert accounts",
+    "table": "accounts",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
+    "name": "Owners and managers can update accounts",
+    "table": "accounts",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "check": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
+    "name": "Managers can delete accounts",
+    "table": "accounts",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(SELECT public.is_admin_or_manager((SELECT auth.uid())))",
+    "check": "",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
     "name": "Admins can add battle participants",
     "table": "battle_participants",
     "cmd": "INSERT",
@@ -42941,6 +42941,26 @@
     "using": "",
     "check": "public.is_admin_or_manager(auth.uid())",
     "src": "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql"
+   },
+   {
+    "name": "Account plans owner or admin can read",
+    "table": "account_plans",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_plans.account_id AND a.owner_id = public.get_current_salesperson_id() )",
+    "check": "",
+    "src": "supabase/migrations/20261113181500_account_plans_um_por_conta.sql"
+   },
+   {
+    "name": "Account plans owner or admin can update",
+    "table": "account_plans",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_plans.account_id AND a.owner_id = public.get_current_salesperson_id() )",
+    "check": "",
+    "src": "supabase/migrations/20261113181500_account_plans_um_por_conta.sql"
    }
   ],
   "triggers": [
@@ -57466,6 +57486,14 @@
     "unique": true,
     "where": "",
     "src": "supabase/migrations/20261018200000_fix_stage_history_views_e_forecast_category.sql"
+   },
+   {
+    "name": "account_plans_account_id_key",
+    "table": "account_plans",
+    "columns": "account_id",
+    "unique": true,
+    "where": "",
+    "src": "supabase/migrations/20261113181500_account_plans_um_por_conta.sql"
    }
   ],
   "cron_jobs": [
@@ -58496,7 +58524,9 @@
    "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
    "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql",
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
+   "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql",
+   "supabase/migrations/20261113181500_account_plans_um_por_conta.sql",
    "supabase/seed.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "supabase/tests/canonical_role_simulation.sql",
@@ -78237,7 +78267,7 @@
   {
    "module": "src/hooks",
    "files": 537,
-   "lines": 62712,
+   "lines": 62754,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -79133,8 +79163,8 @@
   },
   {
    "module": "src/test",
-   "files": 11,
-   "lines": 1026,
+   "files": 12,
+   "lines": 1123,
    "tables": [],
    "exports": [
     "factories.ts: nextTestId, nextUuid, buildSale, buildClient, buildQuote, buildSalesperson"
@@ -79142,6 +79172,7 @@
    "docs": [
     "factories.ts: Factories compartilhadas de teste — builders tipados para as entidades mais usadas nas specs. Cada builder devolve uma linha/objeto completo e válido; sobrescreva só os campos relevantes ao cenário: const vendaGanha = buildSale({ status: 'completed', amount: 1200 }); Convenções: - IDs determinístico …",
     "quote-error-messages.test.ts: @vitest-environment node",
+    "accounts-delete-policy.test.ts: Teste de segurança: DELETE em `public.accounts` só para gestor. Apagar uma conta remove em cascata (ON DELETE CASCADE) contatos, planos, renovações, tickets e demais dados de CS. A policy FOR ALL antiga liberava isso ao dono (vendedor). Aqui reproduzimos as migrations em ordem (CREATE/DROP POLICY) e …",
     "battle-participants-insert-policy.test.ts: Regressão: criar batalha (useSalesBattles.createBattle) insere >= 2 vendedores em battle_participants. Só admin/gestor cria batalha (\"Admins can manage battles\" em sales_battles), então precisa existir policy de INSERT viva em battle_participants que libere admin/gestor — a auto-inscrição (salespers …",
     "fn-cleanup-webhook-dedupe-privileges.test.ts: Teste de segurança: apenas `service_role` pode executar `public.fn_cleanup_webhook_dedupe()`. Roles `anon`, `authenticated` e `public` devem estar bloqueados. Usa fetch direto contra a Data API (PostgREST) para contornar o mock global de `@supabase/supabase-js` presente em `src/test/setup.ts`."
    ],
@@ -79172,6 +79203,7 @@
     "src/test/sale-status.test.ts",
     "src/test/setup.ts",
     "src/test/smoke-target-helpers.test.ts",
+    "src/test/security/accounts-delete-policy.test.ts",
     "src/test/security/battle-participants-insert-policy.test.ts",
     "src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts"
    ]
@@ -79603,8 +79635,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 670,
-   "lines": 54345,
+   "files": 672,
+   "lines": 54449,
    "tables": [
     "user_permissions_cache"
    ],
@@ -91833,6 +91865,10 @@
    {
     "file": "src/hooks/abm/useAccounts.ts",
     "msg": "Erro: ${e.message}"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.ts",
+    "msg": "Esta conta já tem um plano. Recarregue a página para editá-lo."
    },
    {
     "file": "src/hooks/abm/useAccounts.ts",
@@ -132127,6 +132163,14 @@
    },
    {
     "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "erro na checagem de plano existente não cai no INSERT"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
+    "name": "plano criado por outro usuário (23505) vira mensagem para recarregar"
+   },
+   {
+    "file": "src/hooks/abm/useAccounts.test.tsx",
     "name": "sem sessão: não tenta inserir e avisa para entrar de novo"
    },
    {
@@ -134956,6 +135000,26 @@
    {
     "file": "src/test/smoke-target-helpers.test.ts",
     "name": "inclui ícone, fase, id e duração"
+   },
+   {
+    "file": "src/test/security/accounts-delete-policy.test.ts",
+    "name": "accounts — RLS de DELETE só para gestor"
+   },
+   {
+    "file": "src/test/security/accounts-delete-policy.test.ts",
+    "name": "existe policy viva cobrindo DELETE"
+   },
+   {
+    "file": "src/test/security/accounts-delete-policy.test.ts",
+    "name": "nenhuma policy que cobre DELETE aceita o dono (vendedor)"
+   },
+   {
+    "file": "src/test/security/accounts-delete-policy.test.ts",
+    "name": "a policy FOR ALL antiga foi removida"
+   },
+   {
+    "file": "src/test/security/accounts-delete-policy.test.ts",
+    "name": "dono continua coberto em %s"
    },
    {
     "file": "src/test/security/battle-participants-insert-policy.test.ts",
@@ -142696,26 +142760,6 @@
     "src": "supabase/migrations/20260416195725_4d7ca4a9-1812-4b95-83ca-d216d7fc129c.sql"
    },
    {
-    "name": "Owners and managers can view accounts",
-    "table": "accounts",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-    "check": "",
-    "src": "supabase/migrations/20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql"
-   },
-   {
-    "name": "Owners and managers can manage accounts",
-    "table": "accounts",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-    "check": "is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-    "src": "supabase/migrations/20260416195950_1a2c27e7-aa6b-4149-8cfa-9fe6cf894af3.sql"
-   },
-   {
     "name": "View contacts of accessible accounts",
     "table": "account_contacts",
     "cmd": "SELECT",
@@ -147206,26 +147250,6 @@
     "src": "supabase/migrations/20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0.sql"
    },
    {
-    "name": "Account plans owner or admin can read",
-    "table": "account_plans",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid()",
-    "check": "",
-    "src": "supabase/migrations/20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0.sql"
-   },
-   {
-    "name": "Account plans owner or admin can update",
-    "table": "account_plans",
-    "cmd": "UPDATE",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid()",
-    "check": "",
-    "src": "supabase/migrations/20260706144104_4c585ea9-1bf5-4852-9d5c-471ffd19d7b0.sql"
-   },
-   {
     "name": "Client renewals scoped visibility",
     "table": "client_renewals",
     "cmd": "SELECT",
@@ -148366,6 +148390,46 @@
     "src": "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
    },
    {
+    "name": "Owners and managers can view accounts",
+    "table": "accounts",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "check": "",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
+    "name": "Owners and managers can insert accounts",
+    "table": "accounts",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
+    "name": "Owners and managers can update accounts",
+    "table": "accounts",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "check": "(SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
+    "name": "Managers can delete accounts",
+    "table": "accounts",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "(SELECT public.is_admin_or_manager((SELECT auth.uid())))",
+    "check": "",
+    "src": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+   },
+   {
     "name": "Admins can add battle participants",
     "table": "battle_participants",
     "cmd": "INSERT",
@@ -148374,6 +148438,26 @@
     "using": "",
     "check": "public.is_admin_or_manager(auth.uid())",
     "src": "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql"
+   },
+   {
+    "name": "Account plans owner or admin can read",
+    "table": "account_plans",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_plans.account_id AND a.owner_id = public.get_current_salesperson_id() )",
+    "check": "",
+    "src": "supabase/migrations/20261113181500_account_plans_um_por_conta.sql"
+   },
+   {
+    "name": "Account plans owner or admin can update",
+    "table": "account_plans",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_plans.account_id AND a.owner_id = public.get_current_salesperson_id() )",
+    "check": "",
+    "src": "supabase/migrations/20261113181500_account_plans_um_por_conta.sql"
    }
   ],
   "db_triggers": [
@@ -162428,30 +162512,29 @@
    "account_plans": {
     "rls": "enabled",
     "SELECT": [
-     "public: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid()"
+     "authenticated: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = ac"
     ],
     "INSERT": [
      "authenticated: created_by = auth.uid() AND (is_admin_or_manager(auth.uid()) OR created_by = auth.uid())"
     ],
     "UPDATE": [
-     "public: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid()"
+     "authenticated: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = ac"
     ],
     "DELETE": []
    },
    "accounts": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()",
-     "authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()"
+     "authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())"
     ],
     "INSERT": [
-     "authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()"
+     "authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())"
     ],
     "UPDATE": [
-     "authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()"
+     "authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id())"
     ],
     "DELETE": [
-     "authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()"
+     "authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid())))"
     ]
    },
    "achievements": {
@@ -168233,6 +168316,7 @@
    "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql",
    "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
+   "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
    "tests/migrations/canonical_hardening_contract_test.ts"
@@ -204317,7 +204401,7 @@
   },
   "src/hooks/abm/useAccounts.test.tsx": {
    "path": "src/hooks/abm/useAccounts.test.tsx",
-   "lines": 431,
+   "lines": 466,
    "is_test": true,
    "tests": [
     "useCreateAccount",
@@ -204342,12 +204426,14 @@
     "plano existente: atualiza pela conta e invalida o cache do plano",
     "RLS com 0 linhas no update vira erro de permissão em PT-BR",
     "sem plano: cria um novo para a conta",
+    "erro na checagem de plano existente não cai no INSERT",
+    "plano criado por outro usuário (23505) vira mensagem para recarregar",
     "sem sessão: não tenta inserir e avisa para entrar de novo"
    ]
   },
   "src/hooks/abm/useAccounts.ts": {
    "path": "src/hooks/abm/useAccounts.ts",
-   "lines": 340,
+   "lines": 347,
    "exports": [
     "type AccountTier",
     "type BuyingRole",
@@ -204438,6 +204524,7 @@
     "Contato não encontrado ou sem permissão para editar",
     "Contato não encontrado ou sem permissão para excluir",
     "Erro: ${e.message}",
+    "Esta conta já tem um plano. Recarregue a página para editá-lo.",
     "Já existe uma conta com esse nome",
     "Sem permissão para editar o plano da conta.",
     "Sessão expirada: entre de novo para criar o plano da conta.",
@@ -224485,6 +224572,19 @@
     "é vermelho quando tudo foi pulado",
     "formatLine",
     "inclui ícone, fase, id e duração"
+   ]
+  },
+  "src/test/security/accounts-delete-policy.test.ts": {
+   "path": "src/test/security/accounts-delete-policy.test.ts",
+   "lines": 97,
+   "is_test": true,
+   "doc": "Teste de segurança: DELETE em `public.accounts` só para gestor. Apagar uma conta remove em cascata (ON DELETE CASCADE) contatos, planos, renovações, tickets e demais dados de CS. A policy FOR ALL antiga liberava isso ao dono (vendedor). Aqui reproduzimos as migrations em ordem (CREATE/DROP POLICY) e …",
+   "tests": [
+    "accounts — RLS de DELETE só para gestor",
+    "existe policy viva cobrindo DELETE",
+    "nenhuma policy que cobre DELETE aceita o dono (vendedor)",
+    "a policy FOR ALL antiga foi removida",
+    "dono continua coberto em %s"
    ]
   },
   "src/test/security/battle-participants-insert-policy.test.ts": {
@@ -245203,9 +245303,18 @@
    "lines": 84,
    "uses_service_role": true
   },
+  "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql": {
+   "path": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
+   "lines": 57,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql": {
    "path": "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql",
    "lines": 22
+  },
+  "supabase/migrations/20261113181500_account_plans_um_por_conta.sql": {
+   "path": "supabase/migrations/20261113181500_account_plans_um_por_conta.sql",
+   "lines": 47
   },
   "supabase/tests/canonical_post_migration_assertions.sql": {
    "path": "supabase/tests/canonical_post_migration_assertions.sql",
@@ -247268,10 +247377,31 @@
   }
  },
  "git": {
-  "sha": "614d67573c3afdccd05714dbe564600a67d63ab3",
+  "sha": "12b6200f5043af677b628267190fc54b6e798917",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "12b6200",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: restringe DELETE de accounts a gestor na RLS (#460)",
+    "files": [
+     "src/test/security/accounts-delete-policy.test.ts",
+     "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql"
+    ]
+   },
+   {
+    "sha": "2c56590",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)",
+    "files": [
+     "src/hooks/abm/useAccounts.test.tsx",
+     "src/hooks/abm/useAccounts.ts",
+     "supabase/migrations/20261113181500_account_plans_um_por_conta.sql"
+    ]
+   },
    {
     "sha": "614d675",
     "date": "2026-11-13",
@@ -247610,28 +247740,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "52ad2f4",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: grava vendedor logado como dono ao criar conta no ABM (#475)",
-    "files": [
-     "src/hooks/abm/useAccounts.test.tsx",
-     "src/hooks/abm/useAccounts.ts"
-    ]
-   },
-   {
-    "sha": "3044064",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: enviar user_id ao criar preferência de notificação (#474)",
-    "files": [
-     "src/components/reports/EmailReportConfig.test.tsx",
-     "src/components/reports/EmailReportConfig.tsx",
-     "src/hooks/useNotificationPreferences.test.tsx",
-     "src/hooks/useNotificationPreferences.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -247664,6 +247772,26 @@
     2
    ],
    [
+    "src/test/security/accounts-delete-policy.test.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
+    1
+   ],
+   [
+    "src/hooks/abm/useAccounts.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/abm/useAccounts.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261113181500_account_plans_um_por_conta.sql",
+    1
+   ],
+   [
     "src/components/activities/ActivityLogForm.test.tsx",
     1
    ],
@@ -247693,26 +247821,6 @@
    ],
    [
     "scripts/codemod-typography.mjs",
-    1
-   ],
-   [
-    "scripts/codemod-typography.test.mjs",
-    1
-   ],
-   [
-    "src/components/pricing/RevenueLeakageCard.test.tsx",
-    1
-   ],
-   [
-    "src/components/pricing/RevenueLeakageCard.tsx",
-    1
-   ],
-   [
-    "src/components/conversational/ConversationalIntelligenceHub.test.tsx",
-    1
-   ],
-   [
-    "src/components/conversational/ConversationalIntelligenceHub.tsx",
     1
    ]
   ]

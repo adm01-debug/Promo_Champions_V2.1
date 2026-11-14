@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 01:30 UTC
+
+- **functions** alterado (3): `public.get_current_salesperson_id()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`
+
 ## 2026-11-13 16:09 UTC
 
 - **functions** alterado (3): `public.get_current_salesperson_id()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`

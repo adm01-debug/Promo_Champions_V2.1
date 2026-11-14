@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "614d67573c3afdccd05714dbe564600a67d63ab3",
+  "commit": "12b6200f5043af677b628267190fc54b6e798917",
   "branch": "main",
-  "data_commit": "2026-11-13T22:30:49Z",
+  "data_commit": "2026-11-14T00:13:38Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "12b6200",
+    "data": "2026-11-14",
+    "assunto": "fix: restringe DELETE de accounts a gestor na RLS (#460)"
+   },
+   {
+    "sha": "2c56590",
+    "data": "2026-11-14",
+    "assunto": "fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)"
+   },
    {
     "sha": "614d675",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "0915aab",
     "data": "2026-11-13",
     "assunto": "fix: remove ações e previsões falsas do Cliente 360 (#441)"
-   },
-   {
-    "sha": "64382cb",
-    "data": "2026-11-13",
-    "assunto": "fix: remover dados e automações fictícios da análise ABC (#446)"
-   },
-   {
-    "sha": "84c7cad",
-    "data": "2026-11-13",
-    "assunto": "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)"
    }
   ],
-  "arquivos_mudados_7d": 633,
+  "arquivos_mudados_7d": 636,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 80
+    "mudancas": 79
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 78
+    "mudancas": 77
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
@@ -258,6 +258,10 @@
     "mudancas": 11
    },
    {
+    "arquivo": "src/hooks/abm/useAccounts.ts",
+    "mudancas": 11
+   },
+   {
     "arquivo": ".github/workflows/graphify.yml",
     "mudancas": 10
    },
@@ -266,19 +270,7 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/components/lead-scoring/LeadScoringDashboard.tsx",
-    "mudancas": 10
-   },
-   {
     "arquivo": "src/components/pipeline/DealCard.tsx",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/hooks/admin/useV4Callbacks.ts",
     "mudancas": 10
    },
    {
@@ -286,22 +278,30 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/hooks/useQuotes.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/hooks/win-loss/useInsightComments.ts",
-    "mudancas": 10
-   },
-   {
     "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
     "mudancas": 10
+   },
+   {
+    "arquivo": ".github/workflows/edge-functions-request-id.yml",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "index.html",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/components/activities/ActivityLogForm.tsx",
+    "mudancas": 9
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 113
+    "commits": 115
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3524,
-  "arquivos_codigo": 2531,
-  "linhas_codigo": 435708,
+  "arquivos_total": 3527,
+  "arquivos_codigo": 2532,
+  "linhas_codigo": 435847,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -334,9 +334,9 @@
   "hooks": 478,
   "edge_functions": 171,
   "tabelas": 414,
-  "migrations": 670,
+  "migrations": 672,
   "cron_jobs": 28,
-  "testes": 230,
+  "testes": 231,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 206
@@ -616,7 +616,7 @@
   },
   "src/hooks": {
    "arquivos": 537,
-   "linhas": 62712
+   "linhas": 62754
   },
   "src/integrations": {
    "arquivos": 4,
@@ -643,8 +643,8 @@
    "linhas": 1175
   },
   "src/test": {
-   "arquivos": 11,
-   "linhas": 1026
+   "arquivos": 12,
+   "linhas": 1123
   },
   "src/types": {
    "arquivos": 4,

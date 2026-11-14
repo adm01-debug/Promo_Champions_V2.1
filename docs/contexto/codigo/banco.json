@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 670,
+ "migrations": 672,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -2998,13 +2998,13 @@
     {
      "nome": "Account plans owner or admin can read",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
      "nome": "Account plans owner or admin can update",
      "comando": "update",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
@@ -3014,7 +3014,13 @@
      "tipo": "permissive"
     }
    ],
-   "indices": [],
+   "indices": [
+    {
+     "nome": "account_plans_account_id_key",
+     "colunas": "account_id",
+     "unico": true
+    }
+   ],
    "fks": [
     "account_id->accounts",
     "created_by->auth"
@@ -3188,8 +3194,20 @@
    "rls": true,
    "policies": [
     {
-     "nome": "Owners and managers can manage accounts",
-     "comando": "all",
+     "nome": "Managers can delete accounts",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Owners and managers can insert accounts",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Owners and managers can update accounts",
+     "comando": "update",
      "para": "authenticated",
      "tipo": "permissive"
     },

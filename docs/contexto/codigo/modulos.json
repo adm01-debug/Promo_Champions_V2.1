@@ -10752,7 +10752,7 @@
    "modulo": "hooks/abm",
    "arquivos": 1,
    "testes": 1,
-   "linhas": 340,
+   "linhas": 347,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -19402,7 +19402,7 @@
   {
    "modulo": "test",
    "arquivos": 0,
-   "testes": 11,
+   "testes": 12,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

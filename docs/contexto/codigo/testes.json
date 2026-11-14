@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 230,
+ "total": 231,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 164
+  "unit": 165
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 147
+   "arquivos": 148
   },
   {
    "padrao": "tests/",
@@ -549,11 +549,11 @@
   {
    "arquivo": "src/hooks/abm/useAccounts.test.tsx",
    "tipo": "unit",
-   "linhas": 431,
+   "linhas": 466,
    "testa": [
     "src/hooks/abm/useAccounts.ts"
    ],
-   "casos": 18
+   "casos": 20
   },
   {
    "arquivo": "src/hooks/admin/useApprovalWorkflows.test.tsx",
@@ -1419,6 +1419,13 @@
     "src/constants/index.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/test/security/accounts-delete-policy.test.ts",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [],
+   "casos": 5
   },
   {
    "arquivo": "src/test/security/battle-participants-insert-policy.test.ts",

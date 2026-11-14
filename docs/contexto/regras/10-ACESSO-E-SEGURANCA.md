@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `614d67573c` · branch `main` · 2026-11-13 23:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `12b6200f50` · branch `main` · 2026-11-14 01:21 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -21,8 +21,8 @@
 | `access_denied_logs` | enabled | authenticated: has_role(auth.uid(), 'admin') | authenticated: user_id = auth.uid()<br>authenticated: auth.uid() = user_id | — | — |
 | `account_activities` | enabled | authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_activities.account_id AND a. | authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_activities.account_id AND a. | — | — |
 | `account_contacts` | enabled | authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_contacts.account_id AND a.ow<br>authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_contacts.account_id AND a.ow | authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_contacts.account_id AND a.ow | authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_contacts.account_id AND a.ow | authenticated: is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_contacts.account_id AND a.ow |
-| `account_plans` | enabled | public: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() | authenticated: created_by = auth.uid() AND (is_admin_or_manager(auth.uid()) OR created_by = auth.uid()) | public: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() | — |
-| `accounts` | enabled | authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id()<br>authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id() | authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id() | authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id() | authenticated: is_admin_or_manager(auth.uid()) OR owner_id = get_current_salesperson_id() |
+| `account_plans` | enabled | authenticated: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = ac | authenticated: created_by = auth.uid() AND (is_admin_or_manager(auth.uid()) OR created_by = auth.uid()) | authenticated: public.is_admin_or_manager(auth.uid()) OR created_by = auth.uid() OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = ac | — |
+| `accounts` | enabled | authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id()) | authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id()) | authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) OR owner_id = (SELECT public.get_current_salesperson_id()) | authenticated: (SELECT public.is_admin_or_manager((SELECT auth.uid()))) |
 | `achievements` | enabled | authenticated: true | authenticated: salesperson_id = public.get_current_salesperson_id() | — | — |
 | `active_power_ups` | enabled | authenticated: salesperson_id IN ( SELECT id FROM public.salespeople WHERE auth_user_id = auth.uid() ) OR public.has_role(auth.uid(), 'admin | authenticated: salesperson_id = public.get_current_salesperson_id() | — | — |
 | `active_sessions` | enabled | public: auth.uid() = user_id<br>public: public.has_role(auth.uid(), 'admin')<br>authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() |
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 310 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 311 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -472,7 +472,7 @@
 - `supabase/functions/winloss-webhook-dispatcher/index.ts`
 - `supabase/functions/winloss-webhook-dispatcher/retry_persist_status_test.ts`
 - `supabase/functions/winloss-webhook-health-monitor/index.ts`
-- … +160 (lista completa em `context.json`)
+- … +161 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
