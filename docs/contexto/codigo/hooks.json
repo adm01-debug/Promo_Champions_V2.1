@@ -11009,7 +11009,7 @@
    "hooks_exportados": [
     "useVictoryFeed"
    ],
-   "linhas": 110,
+   "linhas": 161,
    "dominio": "hooks",
    "tabelas": [
     "feed_comments",
@@ -11030,7 +11030,7 @@
     "src/components/competitive/VictoryFeed.tsx",
     "src/pages/VictoryFeedPage.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/useVoiceNavigation.ts",

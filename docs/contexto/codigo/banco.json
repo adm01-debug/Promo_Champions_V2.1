@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 672,
+ "migrations": 674,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -15253,7 +15253,14 @@
     }
    },
    "rls": true,
-   "policies": [],
+   "policies": [
+    {
+     "nome": "Deny all access to daily_challenge_rotations",
+     "comando": "all",
+     "para": "anon, authenticated",
+     "tipo": "permissive"
+    }
+   ],
    "indices": [],
    "fks": [],
    "criada_em": "20261018190100_gamificacao_claim_matchups_rotations.sql",
@@ -20843,8 +20850,20 @@
      "tipo": "permissive"
     },
     {
+     "nome": "Users can delete own feed_comments",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "Users can insert own feed_comments",
      "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Users can update own feed_comments",
+     "comando": "update",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -22085,7 +22104,14 @@
     }
    },
    "rls": true,
-   "policies": [],
+   "policies": [
+    {
+     "nome": "Deny all access to geocode_cache",
+     "comando": "all",
+     "para": "anon, authenticated",
+     "tipo": "permissive"
+    }
+   ],
    "indices": [
     {
      "nome": "geocode_cache_created_at_idx",

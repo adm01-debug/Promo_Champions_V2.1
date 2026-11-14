@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d620c119ee` · branch `main` · 2026-11-14 11:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3668b5e32` · branch `main` · 2026-11-14 15:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `client_portfolio` | Users can read own client_portfolio | SELECT | authenticated | permissive | `salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid())` |  |
 | `document_signers` | Authenticated users can insert document_signers | INSERT | authenticated | permissive |  | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |
 | `document_signers` | Authenticated users can update document_signers | UPDATE | authenticated | permissive | `document_id IN ( SELECT id FROM public.digital_signatures WHERE created_by = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())` |  |
-| … +744 linhas — lista completa em `context.json` | | | | | | |
+| … +748 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -4051,7 +4051,7 @@ _nenhum item encontrado_
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
 | Créditos de IA esgotados. | `src/hooks/useBehavioralAnalysis.ts` |
-| … +670 linhas — lista completa em `context.json` | |
+| … +674 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4157,7 +4157,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1578 testes em 198 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1582 testes em 199 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4283,6 +4283,7 @@ _nenhum item encontrado_
 | `src/components/sales/cadence/EliteCadenceAnalytics.test.tsx` | 4 | EliteCadenceAnalytics · mostra taxa de conclusão real e não exibe score, fluxo ou ação fictícios · mostra estado vazio quando não há tarefas no período · mostra erro quando a consulta falha |
 | `src/hooks/rolePermissions.test.ts` | 4 | fonte única de permissões (role-permissions.json) · migration versionada é idêntica ao SQL gerado do JSON (sem drift) · toda permissão declarada tem policy viva cobrindo a ação na tabela mapeada · papeis e recursos declarados usam o vocabulário esperado |
 | `src/hooks/useLeadRouting.test.tsx` | 4 | useLeadRouting · delega round-robin à RPC transacional sem gravar estado no navegador · mantém as estratégias de melhor desempenho e manual no contrato do servidor · recusa estratégia sem implementação no servidor em vez de escolher um vendedor arbitrário |
+| `src/hooks/useVictoryFeed.test.tsx` | 4 | useVictoryFeed — comentários próprios · edita o conteúdo do comentário pelo id · exclui o comentário pelo id · falha com toast de erro quando o RLS não afeta nenhuma linha |
 | `src/hooks/gamification/useWeeklyChallenges.test.tsx` | 4 | useDeactivateWeeklyChallenge · desativa via is_active=false (soft-delete) e invalida a lista · trata 0 linhas afetadas (bloqueio de RLS) como erro · propaga erro do Supabase com toast |
 | `src/hooks/pipeline/useWeeklyWonDeals.test.tsx` | 4 | useWeeklyWonDeals · conta vendas ganhas não excluídas fechadas nos últimos 7 dias · retorna 0 quando o banco não devolve contagem · propaga erro do banco em vez de inventar número |
 | `src/hooks/playbooks/usePlaybookMutations.test.tsx` | 4 | useTogglePlaybookItem — marcar item do checklist · envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS) · admin/gestor sem registro de vendedor grava completed_by NULL · não insere se a consulta do vendedor falhar |

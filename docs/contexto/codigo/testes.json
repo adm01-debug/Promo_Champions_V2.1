@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 231,
+ "total": 232,
  "por_tipo": {
   "contrato": 5,
   "e2e": 54,
   "pytest": 2,
-  "unit": 165
+  "unit": 166
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 148
+   "arquivos": 149
   },
   {
    "padrao": "tests/",
@@ -1036,6 +1036,15 @@
     "src/hooks/useScrollRestoration.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/useVictoryFeed.test.tsx",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "src/hooks/useVictoryFeed.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/lib/auth/passwordErrorMessages.test.ts",
@@ -2090,6 +2099,7 @@
   "src/hooks/useProductRecommendations.ts": 1,
   "src/hooks/useRunRateProjection.ts": 1,
   "src/hooks/useScrollRestoration.ts": 1,
+  "src/hooks/useVictoryFeed.ts": 1,
   "src/integrations/supabase/client.ts": 3,
   "src/integrations/supabase/env.ts": 1,
   "src/integrations/supabase/types.ts": 1,
@@ -2668,7 +2678,6 @@
    "src/hooks/useUnreadNotificationsCount.ts",
    "src/hooks/useUserRoles.ts",
    "src/hooks/useVendasMacro.ts",
-   "src/hooks/useVictoryFeed.ts",
    "src/hooks/useVoiceNavigation.ts",
    "src/hooks/useWebAuthn.ts",
    "src/hooks/useWebhooks.ts",

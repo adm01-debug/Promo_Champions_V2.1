@@ -2673,7 +2673,7 @@
     "salesperson",
     "sdr"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 86
   },
   {
    "protegida": false,
@@ -10851,7 +10851,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 16
+   "arquivos_puxados": 21
   },
   {
    "protegida": false,

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1274,
+ "total": 1275,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -4425,6 +4425,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/competitive/FeedCommentOwnerActions.tsx",
+   "exports": [
+    "FeedCommentOwnerActions"
+   ],
+   "export_default": null,
+   "linhas": 121,
+   "dominio": "components/competitive",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/competitive/GamifiedProfile.tsx",
    "exports": [
     "GamifiedProfile"
@@ -4673,7 +4687,7 @@
     "VictoryFeed"
    ],
    "export_default": null,
-   "linhas": 108,
+   "linhas": 122,
    "dominio": "components/competitive",
    "hooks_locais": [
     "useVictoryFeed"
@@ -4689,7 +4703,7 @@
     "VictoryFeedItem"
    ],
    "export_default": null,
-   "linhas": 248,
+   "linhas": 280,
    "dominio": "components/competitive",
    "hooks_locais": [],
    "tabelas": [],
@@ -14930,7 +14944,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "orfao": false
   },
   {
@@ -15522,7 +15536,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 534,
+   "usado_por": 535,
    "orfao": false
   },
   {
@@ -15625,7 +15639,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 116,
+   "usado_por": 117,
    "orfao": false
   },
   {
@@ -16033,7 +16047,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 59,
+   "usado_por": 60,
    "orfao": false
   },
   {
@@ -20249,7 +20263,7 @@
     "VictoryFeedPage"
    ],
    "export_default": "VictoryFeedPage",
-   "linhas": 289,
+   "linhas": 307,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

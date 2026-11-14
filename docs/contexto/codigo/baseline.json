@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d620c119ee5680894ec27e3cf8d9fd8942725373",
+  "commit": "e3668b5e32ede1046bfa25c5ea0b2c1ca087127a",
   "branch": "main",
-  "data_commit": "2026-11-14T11:32:54Z",
+  "data_commit": "2026-11-14T14:46:10Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "e3668b5",
+    "data": "2026-11-14",
+    "assunto": "fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)"
+   },
+   {
+    "sha": "331599a",
+    "data": "2026-11-14",
+    "assunto": "chore(main): release 1.4.0 (#466)"
+   },
+   {
+    "sha": "6cae050",
+    "data": "2026-11-14",
+    "assunto": "feat: editar e excluir o próprio comentário no feed de vitórias (#434)"
+   },
    {
     "sha": "d620c11",
     "data": "2026-11-14",
@@ -116,24 +131,9 @@
     "sha": "3c77d1d",
     "data": "2026-11-13",
     "assunto": "fix: troca vendedores fictícios do analytics por dados reais (#438)"
-   },
-   {
-    "sha": "37fafa5",
-    "data": "2026-11-13",
-    "assunto": "fix: regras de contato gravam via upsert e avisam erro de verdade (#456)"
-   },
-   {
-    "sha": "77cf11d",
-    "data": "2026-11-13",
-    "assunto": "chore(deps): bump @simplewebauthn/server from 14.0.2 to 14.0.3 (#411)"
-   },
-   {
-    "sha": "d0da8ad",
-    "data": "2026-11-13",
-    "assunto": "fix: simulador de cenarios usa receita ganha real e remove plano falso (#450)"
    }
   ],
-  "arquivos_mudados_7d": 641,
+  "arquivos_mudados_7d": 647,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -152,6 +152,10 @@
     "mudancas": 38
    },
    {
+    "pasta": "src/components/competitive",
+    "mudancas": 37
+   },
+   {
     "pasta": "src/components/race",
     "mudancas": 37
    },
@@ -160,20 +164,16 @@
     "mudancas": 35
    },
    {
-    "pasta": "src/components/competitive",
-    "mudancas": 34
-   },
-   {
     "pasta": "src/components/pipeline",
     "mudancas": 29
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "pasta": "package.json",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "pasta": "src/hooks/gamification",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 79
+    "mudancas": 75
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 77
+    "mudancas": 73
    },
    {
     "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 33
+    "mudancas": 32
    },
    {
     "arquivo": "deno.lock",
@@ -215,31 +215,31 @@
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "RELATORIO_CI.md",
     "mudancas": 18
    },
    {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 15
-   },
-   {
     "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/qa-exhaustive.yml",
-    "mudancas": 14
+    "mudancas": 13
+   },
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/edge-functions-bundle.yml",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -247,18 +247,6 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
-   },
-   {
-    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "src/hooks/abm/useAccounts.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 11
    },
    {
@@ -266,27 +254,15 @@
     "mudancas": 10
    },
    {
+    "arquivo": "src/components/pipeline/PipelineBoard.tsx",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/hooks/abm/useAccounts.ts",
+    "mudancas": 10
+   },
+   {
     "arquivo": "docs/RUNBOOK.md",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/components/pipeline/DealCard.tsx",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": ".github/workflows/edge-functions-request-id.yml",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "index.html",
     "mudancas": 9
    },
    {
@@ -294,14 +270,38 @@
     "mudancas": 9
    },
    {
-    "arquivo": "src/components/activities/ActivityLogForm.tsx",
+    "arquivo": "src/components/pipeline/DealCard.tsx",
     "mudancas": 9
+   },
+   {
+    "arquivo": "src/hooks/gamification/useWeeklyChallenges.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "supabase/functions/ai-agent-orchestrator/index.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": ".github/workflows/edge-functions-request-id.yml",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "index.html",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/components/activities/ActivityLogForm.tsx",
+    "mudancas": 8
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 115
+    "commits": 117
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -317,26 +317,26 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 8
+    "commits": 9
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 3527,
-  "arquivos_codigo": 2532,
-  "linhas_codigo": 435851,
+  "arquivos_total": 3531,
+  "arquivos_codigo": 2534,
+  "linhas_codigo": 436198,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1274,
+  "componentes": 1275,
   "hooks": 478,
   "edge_functions": 171,
   "tabelas": 414,
-  "migrations": 672,
+  "migrations": 674,
   "cron_jobs": 28,
-  "testes": 231,
+  "testes": 232,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 206
@@ -599,8 +599,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1207,
-   "linhas": 189903
+   "arquivos": 1208,
+   "linhas": 190070
   },
   "src/config": {
    "arquivos": 4,
@@ -615,8 +615,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 537,
-   "linhas": 62754
+   "arquivos": 538,
+   "linhas": 62916
   },
   "src/integrations": {
    "arquivos": 4,
@@ -632,7 +632,7 @@
   },
   "src/pages": {
    "arquivos": 180,
-   "linhas": 44312
+   "linhas": 44330
   },
   "src/routes": {
    "arquivos": 3,

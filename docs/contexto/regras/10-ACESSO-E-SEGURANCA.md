@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d620c119ee` · branch `main` · 2026-11-14 11:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3668b5e32` · branch `main` · 2026-11-14 15:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -122,7 +122,7 @@
 | `csat_ces_surveys` | enabled | public: public.is_admin_or_manager(auth.uid()) OR EXISTS ( SELECT 1 FROM public.accounts a WHERE a.id = account_id AND a.owner_id = public.g<br>public: public.is_admin_or_manager(auth.uid()) | public: public.is_admin_or_manager(auth.uid()) | public: public.is_admin_or_manager(auth.uid()) | public: public.is_admin_or_manager(auth.uid()) |
 | `custom_reports` | enabled | authenticated: owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid())<br>authenticated: is_shared = true | authenticated: owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()) | authenticated: owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()) | authenticated: owner_id = auth.uid() OR public.is_admin_or_manager(auth.uid()) |
 | `daily_challenge_progress` | enabled | authenticated: salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid()) | — | — | — |
-| `daily_challenge_rotations` | enabled | — | — | — | — |
+| `daily_challenge_rotations` | enabled | anon, authenticated: false | anon, authenticated: false | anon, authenticated: false | anon, authenticated: false |
 | `daily_challenges` | enabled | public: auth.uid() = user_id<br>authenticated: true | public: is_admin_or_manager(auth.uid()) | public: is_admin_or_manager(auth.uid()) | public: is_admin_or_manager(auth.uid()) |
 | `daily_metrics` | enabled | authenticated: public.is_admin_or_manager(auth.uid()) | public: is_admin_or_manager(auth.uid()) | public: is_admin_or_manager(auth.uid()) | public: is_admin_or_manager(auth.uid()) |
 | `daily_streak_achievements` | enabled | authenticated: salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid()) | — | — | — |
@@ -174,7 +174,7 @@
 | `experiments` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `external_seller_map` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `feature_flags` | enabled | authenticated: true<br>authenticated: public.has_role(auth.uid(), 'admin') | authenticated: public.has_role(auth.uid(), 'admin') | authenticated: public.has_role(auth.uid(), 'admin') | authenticated: public.has_role(auth.uid(), 'admin') |
-| `feed_comments` | enabled | public: auth.uid() IS NOT NULL | authenticated: salesperson_id = public.get_current_salesperson_id() | — | — |
+| `feed_comments` | enabled | public: auth.uid() IS NOT NULL | authenticated: salesperson_id = public.get_current_salesperson_id() | authenticated: salesperson_id = (SELECT public.get_current_salesperson_id()) | authenticated: salesperson_id = (SELECT public.get_current_salesperson_id()) |
 | `feed_reactions` | enabled | public: auth.uid() IS NOT NULL | authenticated: salesperson_id = public.get_current_salesperson_id() | — | authenticated: salesperson_id = public.get_current_salesperson_id() |
 | `follow_up_audit_logs` | enabled | public: auth.uid() IS NOT NULL | public: auth.uid() IS NOT NULL | — | — |
 | `follow_up_notifications` | enabled | public: user_id = auth.uid() | public: user_id = auth.uid() | public: user_id = auth.uid() | public: user_id = auth.uid() |
@@ -188,7 +188,7 @@
 | `forecast_snapshots` | enabled | authenticated: true<br>authenticated: public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'manager')<br>public: auth.role() = 'authenticated' | authenticated: public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'manager') | authenticated: public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'manager') | authenticated: public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'manager') |
 | `geo_access_logs` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `geo_blocked_regions` | não encontrado | authenticated: public.is_admin_or_manager(auth.uid()) | sem RLS | sem RLS | sem RLS |
-| `geocode_cache` | enabled | — | — | — | — |
+| `geocode_cache` | enabled | anon, authenticated: false | anon, authenticated: false | anon, authenticated: false | anon, authenticated: false |
 | `icp_data` | enabled | authenticated: client_id IN (SELECT client_id FROM public.client_portfolio WHERE salesperson_id = public.get_current_salesperson_id()) OR pu | authenticated: public.is_admin_or_manager(auth.uid()) | authenticated: public.is_admin_or_manager(auth.uid()) | — |
 | `icp_parameters` | enabled | authenticated: is_admin_or_manager(auth.uid())<br>authenticated: true | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) | authenticated: is_admin_or_manager(auth.uid()) |
 | `inbound_reply_events` | enabled | authenticated: public.has_role(auth.uid(), 'admin'::app_role) | — | — | — |
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 311 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 312 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -472,7 +472,7 @@
 - `supabase/functions/winloss-webhook-dispatcher/index.ts`
 - `supabase/functions/winloss-webhook-dispatcher/retry_persist_status_test.ts`
 - `supabase/functions/winloss-webhook-health-monitor/index.ts`
-- … +161 (lista completa em `context.json`)
+- … +162 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -858,11 +858,9 @@ Middleware matcher (Next.js): nenhum
 | `app_config` | RLS ligado sem nenhuma política → só service_role acessa |  |
 | `chat_messages` | front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
 | `client_portfolio` | front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/hooks/crm/useClientPortfolio.ts` |
-| `daily_challenge_rotations` | RLS ligado sem nenhuma política → só service_role acessa |  |
 | `follow_up_audit_logs` | front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
 | `geo_access_logs` | acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/components/security/GeoBlockingManager.tsx` |
 | `geo_blocked_regions` | acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/components/security/GeoBlockingManager.tsx`<br>`src/components/security/GeoBlockingMap.tsx` |
-| `geocode_cache` | RLS ligado sem nenhuma política → só service_role acessa |  |
 | `integration_logs` | front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | `sale_notifications_audit` | RLS ligado sem nenhuma política → só service_role acessa | `src/hooks/useSaleNotificationAudits.ts` |
 

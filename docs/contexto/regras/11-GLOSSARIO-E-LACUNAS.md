@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d620c119ee` · branch `main` · 2026-11-14 11:37 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3668b5e32` · branch `main` · 2026-11-14 15:03 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -468,11 +468,9 @@
 | rls | `app_config`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `chat_messages`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/hooks/sales/useSalesAssistant.ts` |
 | rls | `client_portfolio`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/hooks/crm/useClientPortfolio.ts` |
-| rls | `daily_challenge_rotations`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `follow_up_audit_logs`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários | `src/pages/FollowUpAudit.tsx` |
 | rls | `geo_access_logs`: acessada do front (1 arquivo(s)) sem RLS (não encontrado) | `src/components/security/GeoBlockingManager.tsx` |
 | rls | `geo_blocked_regions`: acessada do front (2 arquivo(s)) sem RLS (não encontrado) | `src/components/security/GeoBlockingManager.tsx`<br>`src/components/security/GeoBlockingMap.tsx` |
-| rls | `geocode_cache`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `integration_logs`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/components/dashboard/IntegrationStatusPanel.tsx` |
 | rls | `sale_notifications_audit`: RLS ligado sem nenhuma política → só service_role acessa | `src/hooks/useSaleNotificationAudits.ts` |
 | dinheiro | `slow_query_alerts.total_exec_ms` guarda dinheiro em `double precision NOT NULL` (ponto flutuante) — arredondamento imprevisível; padrão é numeric |  |
@@ -506,6 +504,7 @@
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/inventario/gerar-banco.mjs` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/regras_negocio/generate.py` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/useMultichannel.test.tsx` |
+| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/useVictoryFeed.test.tsx` |
 | dinâmico | 3 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/hooks/win-loss/useInsightComments.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/ai-agent-orchestrator/index.ts` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/export-winloss-pdf/index.ts` |

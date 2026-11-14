@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d620c119ee5680894ec27e3cf8d9fd8942725373` (2026-11-14T11:32:54Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e3668b5e32ede1046bfa25c5ea0b2c1ca087127a` (2026-11-14T14:46:10Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2451), SQL (679), Markdown (206), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
+- linguagens: TypeScript (2453), SQL (681), Markdown (206), JavaScript (78), JSON (33), YAML (28), Shell (7), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3527 |
-| arquivos_codigo | 2532 |
-| linhas_codigo | 435851 |
+| arquivos_total | 3531 |
+| arquivos_codigo | 2534 |
+| linhas_codigo | 436198 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
 | itens_menu | 133 |
 | modulos | 174 |
-| componentes | 1274 |
+| componentes | 1275 |
 | hooks | 478 |
 | edge_functions | 171 |
 | tabelas | 414 |
-| migrations | 672 |
+| migrations | 674 |
 | cron_jobs | 28 |
-| testes | 231 |
+| testes | 232 |
 | workflows | 26 |
 | scripts | 78 |
 | docs_md | 206 |
 
 ## Onde ficam as coisas
 - telas: src/pages (166)
-- componentes: src/components (1094), src/pages (173), src/contexts (5)
+- componentes: src/components (1095), src/pages (173), src/contexts (5)
 - hooks: src/hooks (466), src/contexts (6), src/components (4)
 - servicos_logica: src/lib (52), src/services (5), src/integrations (4)
-- testes: co-localizado (*.test) (148), tests/ (59), outro (18)
+- testes: co-localizado (*.test) (149), tests/ (59), outro (18)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/graphify (9), scripts/inventario (5), scripts/ci (4)
@@ -82,7 +82,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/clients | 0 | 0 | 19 | 9 | 1 | 7 |
 | components/closer | 0 | 0 | 8 | 7 | 0 | 6 |
 | components/coaching | 0 | 0 | 23 | 16 | 5 | 7 |
-| components/competitive | 0 | 0 | 33 | 31 | 0 | 40 |
+| components/competitive | 0 | 0 | 34 | 31 | 0 | 40 |
 | components/conversation-intelligence | 0 | 0 | 6 | 3 | 1 | 1 |
 | components/conversational | 0 | 0 | 58 | 48 | 15 | 24 |
 | components/customer-success | 0 | 0 | 12 | 4 | 6 | 0 |
@@ -574,27 +574,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20529 nós · 64981 arestas · 1477 comunidades · grafo do commit `d620c119`
-- comunidades maiores: Card (753), Button (517), react (348), Badge (342), client.ts (318), Índice (277), getCorsHeaders (232), vitest (212), fetchWithTimeout (211), useQuotes.ts (208), CardDescription (164), RaceArena.tsx (156)
+- 20541 nós · 65022 arestas · 1509 comunidades · grafo do commit `e3668b5e`
+- comunidades maiores: Card (589), lucide-react (385), Badge (346), DialogContent (323), client.ts (290), Índice (277), Label (273), getCorsHeaders (251), PageTransition (223), react (219), Button (205), TableRow (199)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (79)
-- package-lock.json (77)
-- .github/workflows/pr-checks.yml (33)
+- package.json (75)
+- package-lock.json (73)
+- .github/workflows/pr-checks.yml (32)
 - deno.lock (31)
-- .github/workflows/codeql.yml (20)
-- .github/workflows/quote-to-sale-e2e.yml (19)
+- .github/workflows/codeql.yml (19)
+- .github/workflows/quote-to-sale-e2e.yml (18)
 - RELATORIO_CI.md (18)
-- CLAUDE.md (15)
-- .github/workflows/cron-monitoring.yml (14)
-- .github/workflows/qa-exhaustive.yml (14)
-- .github/workflows/edge-functions-bundle.yml (13)
+- .github/workflows/cron-monitoring.yml (13)
+- .github/workflows/qa-exhaustive.yml (13)
+- CLAUDE.md (13)
+- .github/workflows/edge-functions-bundle.yml (12)
 - PENDENCIAS.md (12)
-- src/integrations/supabase/types.ts (12)
-- src/components/pipeline/PipelineBoard.tsx (11)
-- src/hooks/abm/useAccounts.ts (11)
+- src/integrations/supabase/types.ts (11)
+- .github/workflows/graphify.yml (10)
+- src/components/pipeline/PipelineBoard.tsx (10)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -693,7 +693,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `.github/ENVIRONMENTS.md` — GitHub Environments — Modelo de Segurança (73 linhas)
 - `.github/pull_request_template.md` (84 linhas)
 - `AGENTS.md` — AGENTS.md — Promo_Champions_V2.1 (73 linhas)
-- `CHANGELOG.md` — Changelog (132 linhas)
+- `CHANGELOG.md` — Changelog (184 linhas)
 - `CLAUDE.md` (2 linhas)
 - `CODE_OF_CONDUCT.md` — Código de Conduta — Promo Champions (38 linhas)
 - `CONTRIBUTING.md` — Contribuindo com Promo Champions v2 (73 linhas)
@@ -750,9 +750,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/soft-delete.md` — Soft delete — política por tabela (58 linhas)
 - `docs/style-guide.md` — 🎨 Style Guide — Promo Champions v2 (36 linhas)
 - subpastas de docs/: docs/auditoria (27), docs/estado (19), docs/runbooks (16), docs/decisions (11), docs/reports (11), docs/graphify (9), docs/execucao (8), docs/agentes (6), docs/contexto (2), docs/benchmark (1), docs/handoff (1), docs/planos (1), docs/postmortems (1), docs/testes (1)
-- CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
+- CHANGELOG topo: [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
 
 ## Últimos commits
+- 2026-11-14 `e3668b5` fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)
+- 2026-11-14 `331599a` chore(main): release 1.4.0 (#466)
+- 2026-11-14 `6cae050` feat: editar e excluir o próprio comentário no feed de vitórias (#434)
 - 2026-11-14 `d620c11` chore(deps): bump the react-core group across 1 directory with 5 updates (#398)
 - 2026-11-14 `12b6200` fix: restringe DELETE de accounts a gestor na RLS (#460)
 - 2026-11-14 `2c56590` fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)
@@ -765,9 +768,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `914a813` fix: liga a recuperação de clientes da Arena às vendas críticas reais (#447)
 - 2026-11-13 `389ba61` fix: remover tendências fixas dos KPIs de conversas (#451)
 - 2026-11-13 `2ed73dc` fix: troca valores fixos de inteligência por dados reais ou estado vazio (#442)
-- 2026-11-13 `bb623b7` fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)
-- 2026-11-13 `b83d412` chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)
-- 2026-11-13 `3f027d1` fix: remover fila de aprovação fictícia das cadências (#440)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

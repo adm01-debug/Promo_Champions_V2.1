@@ -2094,6 +2094,12 @@
    "src/components/ui/table.tsx",
    "src/hooks/conversational/useCompetitorsRegistry.ts"
   ],
+  "src/components/competitive/FeedCommentOwnerActions.tsx": [
+   "src/components/shared/DeleteConfirmDialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
   "src/components/competitive/GamifiedProfile.tsx": [
    "src/components/profile/MyRaceCarMiniCard.tsx",
    "src/components/ui/avatar.tsx",
@@ -2213,6 +2219,7 @@
    "src/hooks/useVictoryFeed.ts"
   ],
   "src/components/competitive/VictoryFeedItem.tsx": [
+   "src/components/competitive/FeedCommentOwnerActions.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/lib/money.ts",
@@ -11539,6 +11546,7 @@
    "src/hooks/sales/useSalespeople.ts"
   ],
   "src/pages/VictoryFeedPage.tsx": [
+   "src/components/competitive/FeedCommentOwnerActions.tsx",
    "src/components/transitions/PageTransition.tsx",
    "src/components/ui/avatar.tsx",
    "src/components/ui/badge.tsx",

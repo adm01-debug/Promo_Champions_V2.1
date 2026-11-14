@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d620c119ee5680894ec27e3cf8d9fd8942725373",
+  "sha": "e3668b5e32ede1046bfa25c5ea0b2c1ca087127a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-14 11:37 UTC",
-  "files_total": 3542,
-  "code_files": 3212,
-  "code_lines": 465923
+  "generated_at": "2026-11-14 15:03 UTC",
+  "files_total": 3546,
+  "code_files": 3216,
+  "code_lines": 466318
  },
  "version": "1.3.2",
- "facts_hash": "cdf72bb4920e0f91",
+ "facts_hash": "8ba498571f2bcccd",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,9 +389,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1358,
+   ".tsx": 1360,
    ".ts": 1092,
-   ".sql": 679,
+   ".sql": 681,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -42893,6 +42893,46 @@
     "src": "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
    },
    {
+    "name": "Deny all access to daily_challenge_rotations",
+    "table": "daily_challenge_rotations",
+    "cmd": "ALL",
+    "roles": "anon, authenticated",
+    "mode": "permissive",
+    "using": "false",
+    "check": "false",
+    "src": "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql"
+   },
+   {
+    "name": "Deny all access to geocode_cache",
+    "table": "geocode_cache",
+    "cmd": "ALL",
+    "roles": "anon, authenticated",
+    "mode": "permissive",
+    "using": "false",
+    "check": "false",
+    "src": "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql"
+   },
+   {
+    "name": "Users can update own feed_comments",
+    "table": "feed_comments",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "salesperson_id = (SELECT public.get_current_salesperson_id())",
+    "check": "salesperson_id = (SELECT public.get_current_salesperson_id())",
+    "src": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
+   },
+   {
+    "name": "Users can delete own feed_comments",
+    "table": "feed_comments",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "salesperson_id = (SELECT public.get_current_salesperson_id())",
+    "check": "",
+    "src": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
+   },
+   {
     "name": "Owners and managers can view accounts",
     "table": "accounts",
     "cmd": "SELECT",
@@ -58524,6 +58564,8 @@
    "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
    "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql",
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
+   "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
+   "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql",
    "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql",
    "supabase/migrations/20261113181500_account_plans_um_por_conta.sql",
@@ -66509,7 +66551,7 @@
      "spin_prize_wheel",
      "sync_challenge_progress"
     ],
-    "deps_count": 83
+    "deps_count": 84
    },
    {
     "path": "/assistente",
@@ -67859,7 +67901,7 @@
     ],
     "invokes_transitive": [],
     "rpc_transitive": [],
-    "deps_count": 15
+    "deps_count": 20
    },
    {
     "path": "/win-loss-intelligence",
@@ -74026,7 +74068,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1207,
+  "components_count": 1208,
   "hooks": [
    {
     "name": "useContacts",
@@ -77937,8 +77979,8 @@
   },
   {
    "module": "src/components",
-   "files": 1207,
-   "lines": 189902,
+   "files": 1208,
+   "lines": 190069,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78266,8 +78308,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 537,
-   "lines": 62754,
+   "files": 538,
+   "lines": 62916,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78894,7 +78936,7 @@
   {
    "module": "src/pages",
    "files": 180,
-   "lines": 44312,
+   "lines": 44330,
    "tables": [
     "achievements",
     "activities",
@@ -79635,8 +79677,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 672,
-   "lines": 54449,
+   "files": 674,
+   "lines": 54497,
    "tables": [
     "user_permissions_cache"
    ],
@@ -81431,6 +81473,15 @@
    },
    "feed_comments": {
     "insert": [
+     "src/hooks/useVictoryFeed.ts"
+    ],
+    "select": [
+     "src/hooks/useVictoryFeed.ts"
+    ],
+    "update": [
+     "src/hooks/useVictoryFeed.ts"
+    ],
+    "delete": [
      "src/hooks/useVictoryFeed.ts"
     ]
    },
@@ -84931,6 +84982,9 @@
    "feature_flags": [
     "id"
    ],
+   "feed_comments": [
+    "id"
+   ],
    "feed_reactions": [
     "feed_item_id",
     "id",
@@ -88014,6 +88068,10 @@
    },
    {
     "file": "src/hooks/useMultichannel.test.tsx",
+    "count": 1
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.test.tsx",
     "count": 1
    },
    {
@@ -91753,6 +91811,22 @@
    {
     "file": "src/hooks/useUserRoles.ts",
     "msg": "Erro ao atualizar role. Apenas admins podem fazer isso."
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.ts",
+    "msg": "Erro ao editar comentário: ${err.message}"
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.ts",
+    "msg": "Erro ao excluir comentário: ${err.message}"
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.ts",
+    "msg": "Sem permissão para editar este comentário"
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.ts",
+    "msg": "Sem permissão para excluir este comentário"
    },
    {
     "file": "src/hooks/useVoiceNavigation.ts",
@@ -132074,6 +132148,22 @@
     "name": "vai ao topo no POP quando não há posição salva"
    },
    {
+    "file": "src/hooks/useVictoryFeed.test.tsx",
+    "name": "useVictoryFeed — comentários próprios"
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.test.tsx",
+    "name": "edita o conteúdo do comentário pelo id"
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.test.tsx",
+    "name": "exclui o comentário pelo id"
+   },
+   {
+    "file": "src/hooks/useVictoryFeed.test.tsx",
+    "name": "falha com toast de erro quando o RLS não afeta nenhuma linha"
+   },
+   {
     "file": "src/hooks/abm/useAccounts.test.tsx",
     "name": "useCreateAccount"
    },
@@ -148390,6 +148480,46 @@
     "src": "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql"
    },
    {
+    "name": "Deny all access to daily_challenge_rotations",
+    "table": "daily_challenge_rotations",
+    "cmd": "ALL",
+    "roles": "anon, authenticated",
+    "mode": "permissive",
+    "using": "false",
+    "check": "false",
+    "src": "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql"
+   },
+   {
+    "name": "Deny all access to geocode_cache",
+    "table": "geocode_cache",
+    "cmd": "ALL",
+    "roles": "anon, authenticated",
+    "mode": "permissive",
+    "using": "false",
+    "check": "false",
+    "src": "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql"
+   },
+   {
+    "name": "Users can update own feed_comments",
+    "table": "feed_comments",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "salesperson_id = (SELECT public.get_current_salesperson_id())",
+    "check": "salesperson_id = (SELECT public.get_current_salesperson_id())",
+    "src": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
+   },
+   {
+    "name": "Users can delete own feed_comments",
+    "table": "feed_comments",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "salesperson_id = (SELECT public.get_current_salesperson_id())",
+    "check": "",
+    "src": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
+   },
+   {
     "name": "Owners and managers can view accounts",
     "table": "accounts",
     "cmd": "SELECT",
@@ -163897,10 +164027,18 @@
    },
    "daily_challenge_rotations": {
     "rls": "enabled",
-    "SELECT": [],
-    "INSERT": [],
-    "UPDATE": [],
-    "DELETE": []
+    "SELECT": [
+     "anon, authenticated: false"
+    ],
+    "INSERT": [
+     "anon, authenticated: false"
+    ],
+    "UPDATE": [
+     "anon, authenticated: false"
+    ],
+    "DELETE": [
+     "anon, authenticated: false"
+    ]
    },
    "daily_challenges": {
     "rls": "enabled",
@@ -164600,8 +164738,12 @@
     "INSERT": [
      "authenticated: salesperson_id = public.get_current_salesperson_id()"
     ],
-    "UPDATE": [],
-    "DELETE": []
+    "UPDATE": [
+     "authenticated: salesperson_id = (SELECT public.get_current_salesperson_id())"
+    ],
+    "DELETE": [
+     "authenticated: salesperson_id = (SELECT public.get_current_salesperson_id())"
+    ]
    },
    "feed_reactions": {
     "rls": "enabled",
@@ -164778,10 +164920,18 @@
    },
    "geocode_cache": {
     "rls": "enabled",
-    "SELECT": [],
-    "INSERT": [],
-    "UPDATE": [],
-    "DELETE": []
+    "SELECT": [
+     "anon, authenticated: false"
+    ],
+    "INSERT": [
+     "anon, authenticated: false"
+    ],
+    "UPDATE": [
+     "anon, authenticated: false"
+    ],
+    "DELETE": [
+     "anon, authenticated: false"
+    ]
    },
    "icp_data": {
     "rls": "enabled",
@@ -167962,11 +168112,6 @@
     ]
    },
    {
-    "table": "daily_challenge_rotations",
-    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
-    "files": []
-   },
-   {
     "table": "follow_up_audit_logs",
     "issue": "front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
     "files": [
@@ -167987,11 +168132,6 @@
      "src/components/security/GeoBlockingManager.tsx",
      "src/components/security/GeoBlockingMap.tsx"
     ]
-   },
-   {
-    "table": "geocode_cache",
-    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
-    "files": []
    },
    {
     "table": "integration_logs",
@@ -168316,6 +168456,7 @@
    "supabase/migrations/20261027131000_agent_runs_r3_rls_lockdown.sql",
    "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
+   "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
    "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -176692,11 +176833,6 @@
    },
    {
     "kind": "rls",
-    "msg": "`daily_challenge_rotations`: RLS ligado sem nenhuma política → só service_role acessa",
-    "where": []
-   },
-   {
-    "kind": "rls",
     "msg": "`follow_up_audit_logs`: front faz UPDATE mas nenhuma política RLS permite UPDATE → vai falhar/retornar vazio para usuários",
     "where": [
      "src/pages/FollowUpAudit.tsx"
@@ -176716,11 +176852,6 @@
      "src/components/security/GeoBlockingManager.tsx",
      "src/components/security/GeoBlockingMap.tsx"
     ]
-   },
-   {
-    "kind": "rls",
-    "msg": "`geocode_cache`: RLS ligado sem nenhuma política → só service_role acessa",
-    "where": []
    },
    {
     "kind": "rls",
@@ -176951,6 +177082,13 @@
     "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "src/hooks/useMultichannel.test.tsx"
+    ]
+   },
+   {
+    "kind": "dinâmico",
+    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "where": [
+     "src/hooks/useVictoryFeed.test.tsx"
     ]
    },
    {
@@ -184988,6 +185126,13 @@
     "* Market Intel da Arena: mostra apenas dados reais de concorrentes"
    ]
   },
+  "src/components/competitive/FeedCommentOwnerActions.tsx": {
+   "path": "src/components/competitive/FeedCommentOwnerActions.tsx",
+   "lines": 121,
+   "exports": [
+    "const FeedCommentOwnerActions"
+   ]
+  },
   "src/components/competitive/GamifiedProfile.tsx": {
    "path": "src/components/competitive/GamifiedProfile.tsx",
    "lines": 213,
@@ -185384,7 +185529,7 @@
   },
   "src/components/competitive/VictoryFeed.tsx": {
    "path": "src/components/competitive/VictoryFeed.tsx",
-   "lines": 108,
+   "lines": 122,
    "exports": [
     "const VictoryFeed"
    ],
@@ -185394,7 +185539,7 @@
   },
   "src/components/competitive/VictoryFeedItem.tsx": {
    "path": "src/components/competitive/VictoryFeedItem.tsx",
-   "lines": 248,
+   "lines": 280,
    "exports": [
     "const VictoryFeedItem"
    ]
@@ -203903,9 +204048,21 @@
     "useVendasMacro"
    ]
   },
+  "src/hooks/useVictoryFeed.test.tsx": {
+   "path": "src/hooks/useVictoryFeed.test.tsx",
+   "lines": 111,
+   "is_test": true,
+   "dyn_from": 1,
+   "tests": [
+    "useVictoryFeed — comentários próprios",
+    "edita o conteúdo do comentário pelo id",
+    "exclui o comentário pelo id",
+    "falha com toast de erro quando o RLS não afeta nenhuma linha"
+   ]
+  },
   "src/hooks/useVictoryFeed.ts": {
    "path": "src/hooks/useVictoryFeed.ts",
-   "lines": 110,
+   "lines": 161,
    "exports": [
     "function useVictoryFeed"
    ],
@@ -203931,6 +204088,14 @@
      "op": "insert"
     },
     {
+     "table": "feed_comments",
+     "op": "select,update"
+    },
+    {
+     "table": "feed_comments",
+     "op": "delete,select"
+    },
+    {
      "table": "victory_feed",
      "op": "insert"
     }
@@ -203940,8 +204105,17 @@
      "feed_item_id",
      "id",
      "salesperson_id"
+    ],
+    "feed_comments": [
+     "id"
     ]
    },
+   "errors": [
+    "Erro ao editar comentário: ${err.message}",
+    "Erro ao excluir comentário: ${err.message}",
+    "Sem permissão para editar este comentário",
+    "Sem permissão para excluir este comentário"
+   ],
    "hooks": [
     "useVictoryFeed"
    ]
@@ -222420,7 +222594,7 @@
   },
   "src/pages/VictoryFeedPage.tsx": {
    "path": "src/pages/VictoryFeedPage.tsx",
-   "lines": 289,
+   "lines": 307,
    "exports": [
     "default VictoryFeedPage"
    ]
@@ -245303,6 +245477,15 @@
    "lines": 84,
    "uses_service_role": true
   },
+  "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql": {
+   "path": "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
+   "lines": 25,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql": {
+   "path": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql",
+   "lines": 23
+  },
   "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql": {
    "path": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "lines": 57,
@@ -247377,10 +247560,46 @@
   }
  },
  "git": {
-  "sha": "d620c119ee5680894ec27e3cf8d9fd8942725373",
+  "sha": "e3668b5e32ede1046bfa25c5ea0b2c1ca087127a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "e3668b5",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)",
+    "files": [
+     "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql"
+    ]
+   },
+   {
+    "sha": "331599a",
+    "date": "2026-11-14",
+    "author": "github-actions[bot]",
+    "subject": "chore(main): release 1.4.0 (#466)",
+    "files": [
+     ".release-please-manifest.json",
+     "CHANGELOG.md",
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "6cae050",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "feat: editar e excluir o próprio comentário no feed de vitórias (#434)",
+    "files": [
+     "src/components/competitive/FeedCommentOwnerActions.tsx",
+     "src/components/competitive/VictoryFeed.tsx",
+     "src/components/competitive/VictoryFeedItem.tsx",
+     "src/hooks/useVictoryFeed.test.tsx",
+     "src/hooks/useVictoryFeed.ts",
+     "src/pages/VictoryFeedPage.tsx",
+     "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
+    ]
+   },
    {
     "sha": "d620c11",
     "date": "2026-11-14",
@@ -247711,64 +247930,19 @@
      "src/hooks/bi/useABCAnalysis.test.tsx",
      "src/hooks/bi/useABCAnalysis.ts"
     ]
-   },
-   {
-    "sha": "84c7cad",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: pipeline sem saúde/decisores inventados e status nas colunas certas (#457)",
-    "files": [
-     "src/components/pipeline/DealCard.test.tsx",
-     "src/components/pipeline/DealCard.tsx",
-     "src/components/pipeline/PipelineBoard.tsx",
-     "src/components/pipeline/PipelineColumn.tsx",
-     "src/hooks/pipeline/useDealCardContext.ts",
-     "src/hooks/usePipeline.test.tsx",
-     "src/hooks/usePipeline.ts"
-    ]
-   },
-   {
-    "sha": "3cf041b",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: qbr-scheduler grava QBR como meeting/pending e não engole erro (#477)",
-    "files": [
-     "src/lib/qbr/qbrSchedulerAgendaEvent.test.ts",
-     "supabase/functions/qbr-scheduler/agenda-event.ts",
-     "supabase/functions/qbr-scheduler/index.ts"
-    ]
-   },
-   {
-    "sha": "ceaddbf",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: corrigir vendedor e outcome nas ações do execute-workflow (#476)",
-    "files": [
-     "src/hooks/automation/executeWorkflowActions.test.ts",
-     "supabase/functions/execute-workflow/actions.ts",
-     "supabase/functions/execute-workflow/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    "deno.lock",
-    3
-   ],
-   [
     "package-lock.json",
-    3
+    4
    ],
    [
     "package.json",
-    3
+    4
    ],
    [
-    "src/components/pipeline/DealCard.test.tsx",
-    3
-   ],
-   [
-    "src/components/pipeline/DealCard.tsx",
+    "deno.lock",
     3
    ],
    [
@@ -247776,8 +247950,52 @@
     2
    ],
    [
-    "src/components/pipeline/PipelineBoard.tsx",
+    "src/components/pipeline/DealCard.test.tsx",
     2
+   ],
+   [
+    "src/components/pipeline/DealCard.tsx",
+    2
+   ],
+   [
+    "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
+    1
+   ],
+   [
+    ".release-please-manifest.json",
+    1
+   ],
+   [
+    "CHANGELOG.md",
+    1
+   ],
+   [
+    "src/components/competitive/FeedCommentOwnerActions.tsx",
+    1
+   ],
+   [
+    "src/components/competitive/VictoryFeed.tsx",
+    1
+   ],
+   [
+    "src/components/competitive/VictoryFeedItem.tsx",
+    1
+   ],
+   [
+    "src/hooks/useVictoryFeed.test.tsx",
+    1
+   ],
+   [
+    "src/hooks/useVictoryFeed.ts",
+    1
+   ],
+   [
+    "src/pages/VictoryFeedPage.tsx",
+    1
+   ],
+   [
+    "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql",
+    1
    ],
    [
     "src/components/email/EmailTrackingDashboard.tsx",
@@ -247793,42 +248011,6 @@
    ],
    [
     "src/components/race/RacePanelEmptyState.tsx",
-    1
-   ],
-   [
-    "src/components/sequences/SequenceStepDialog.tsx",
-    1
-   ],
-   [
-    "src/components/win-loss/InsightExplainPopover.tsx",
-    1
-   ],
-   [
-    "src/hooks/useCountUp.ts",
-    1
-   ],
-   [
-    "src/pages/AccountBasedSelling.tsx",
-    1
-   ],
-   [
-    "src/test/security/accounts-delete-policy.test.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
-    1
-   ],
-   [
-    "src/hooks/abm/useAccounts.test.tsx",
-    1
-   ],
-   [
-    "src/hooks/abm/useAccounts.ts",
-    1
-   ],
-   [
-    "supabase/migrations/20261113181500_account_plans_um_por_conta.sql",
     1
    ]
   ]

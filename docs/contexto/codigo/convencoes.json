@@ -6,7 +6,7 @@
    "src/pages (166)"
   ],
   "componentes": [
-   "src/components (1094)",
+   "src/components (1095)",
    "src/pages (173)",
    "src/contexts (5)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (148)",
+   "co-localizado (*.test) (149)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1274)"
+  ".tsx (1275)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)",
+   "chore(main): release 1.4.0 (#466)",
+   "feat: editar e excluir o próprio comentário no feed de vitórias (#434)",
    "chore(deps): bump the react-core group across 1 directory with 5 updates (#398)",
-   "fix: restringe DELETE de accounts a gestor na RLS (#460)",
-   "fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)",
-   "docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)",
-   "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)"
+   "fix: restringe DELETE de accounts a gestor na RLS (#460)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
