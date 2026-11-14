@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 14:40 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_17`
+
 ## 2026-11-14 13:54 UTC
 
 - **functions** adicionado (3): `public.data_subject_requests_guard_payload()`, `public.match_whatsapp_reply_to_enrollment(_from_digits text, _owner_ids uuid[], _received_at timestamp with time zone)`, `public.release_edge_job_lock(_job_name text, _request_id text)`
