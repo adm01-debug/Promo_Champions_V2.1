@@ -17,14 +17,14 @@ BEGIN
     SELECT
       COALESCE(%I::text, 'unknown'),
       COUNT(*)::integer,
-      COUNT(*) FILTER (WHERE status = 'completed')::integer,
+      COUNT(*) FILTER (WHERE status IN ('completed','won','closed'))::integer,
       COUNT(*) FILTER (WHERE status IN ('lost','cancelled'))::integer,
-      CASE WHEN COUNT(*) FILTER (WHERE status IN ('completed','lost','cancelled')) > 0
-        THEN ROUND(100.0 * COUNT(*) FILTER (WHERE status='completed')::numeric
-          / NULLIF(COUNT(*) FILTER (WHERE status IN ('completed','lost','cancelled')),0), 1)
+      CASE WHEN COUNT(*) FILTER (WHERE status IN ('completed','won','closed','lost','cancelled')) > 0
+        THEN ROUND(100.0 * COUNT(*) FILTER (WHERE status IN ('completed','won','closed'))::numeric
+          / NULLIF(COUNT(*) FILTER (WHERE status IN ('completed','won','closed','lost','cancelled')),0), 1)
         ELSE 0 END,
-      COALESCE(AVG(amount) FILTER (WHERE status='completed'), 0)::numeric,
-      COALESCE(SUM(amount) FILTER (WHERE status='completed'), 0)::numeric
+      COALESCE(AVG(amount) FILTER (WHERE status IN ('completed','won','closed')), 0)::numeric,
+      COALESCE(SUM(amount) FILTER (WHERE status IN ('completed','won','closed')), 0)::numeric
     FROM public.sales
     WHERE created_at >= now() - ($1 || ' days')::interval
       AND (public.is_admin_or_manager(auth.uid()) OR salesperson_id = public.get_current_salesperson_id())

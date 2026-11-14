@@ -35,6 +35,8 @@ BEGIN
     FROM public.clients
     WHERE (p_subject_email IS NOT NULL AND lower(email) = lower(p_subject_email))
        OR (p_subject_id IS NOT NULL AND id = p_subject_id)
+       OR (p_phone IS NOT NULL AND phone IS NOT NULL
+           AND public.canonical_phone_key(phone) = public.canonical_phone_key(p_phone))
     LIMIT 1;
     v_name := COALESCE(v_name, 'Titular anonimizado ' || v_token);
   EXCEPTION WHEN undefined_table OR undefined_column THEN
@@ -47,7 +49,9 @@ BEGIN
     SELECT array_agg(id) INTO v_client_ids
     FROM public.clients
     WHERE (p_subject_email IS NOT NULL AND lower(email) = lower(p_subject_email))
-       OR (p_subject_id IS NOT NULL AND id = p_subject_id);
+       OR (p_subject_id IS NOT NULL AND id = p_subject_id)
+       OR (p_phone IS NOT NULL AND phone IS NOT NULL
+           AND public.canonical_phone_key(phone) = public.canonical_phone_key(p_phone));
     v_client_ids := COALESCE(v_client_ids, '{}'::uuid[]);
   EXCEPTION WHEN undefined_table OR undefined_column THEN
     v_client_ids := '{}'::uuid[];
@@ -62,7 +66,9 @@ BEGIN
            phone = NULL,
            updated_at = now()
      WHERE (p_subject_email IS NOT NULL AND lower(email) = lower(p_subject_email))
-        OR (p_subject_id IS NOT NULL AND id = p_subject_id);
+        OR (p_subject_id IS NOT NULL AND id = p_subject_id)
+        OR (p_phone IS NOT NULL AND phone IS NOT NULL
+            AND public.canonical_phone_key(phone) = public.canonical_phone_key(p_phone));
     GET DIAGNOSTICS v_n = ROW_COUNT;
     v_counts := v_counts || jsonb_build_object('clients', v_n);
   EXCEPTION WHEN undefined_table OR undefined_column THEN
@@ -76,7 +82,9 @@ BEGIN
            phone = NULL,
            linkedin_url = NULL,
            notes = NULL
-     WHERE p_subject_email IS NOT NULL AND lower(email) = lower(p_subject_email);
+     WHERE (p_subject_email IS NOT NULL AND lower(email) = lower(p_subject_email))
+        OR (p_phone IS NOT NULL AND phone IS NOT NULL
+            AND public.canonical_phone_key(phone) = public.canonical_phone_key(p_phone));
     GET DIAGNOSTICS v_n = ROW_COUNT;
     v_counts := v_counts || jsonb_build_object('account_contacts', v_n);
   EXCEPTION WHEN undefined_table OR undefined_column THEN
@@ -160,6 +168,55 @@ BEGIN
     v_counts := v_counts || jsonb_build_object('csat_ces_surveys', v_n);
   EXCEPTION WHEN undefined_table OR undefined_column THEN
     v_counts := v_counts || jsonb_build_object('csat_ces_surveys', 0);
+  END;
+
+  -- Logs e filas de e-mail: recipient_email era PII preservada.
+  BEGIN
+    UPDATE public.email_logs
+       SET recipient_email = 'anon-' || v_token || '@anon.invalid'
+     WHERE p_subject_email IS NOT NULL AND lower(recipient_email) = lower(p_subject_email);
+    GET DIAGNOSTICS v_n = ROW_COUNT;
+    v_counts := v_counts || jsonb_build_object('email_logs', v_n);
+  EXCEPTION WHEN undefined_table OR undefined_column THEN
+    v_counts := v_counts || jsonb_build_object('email_logs', 0);
+  END;
+
+  BEGIN
+    UPDATE public.email_tracking_events
+       SET recipient_email = 'anon-' || v_token || '@anon.invalid'
+     WHERE p_subject_email IS NOT NULL AND lower(recipient_email) = lower(p_subject_email);
+    GET DIAGNOSTICS v_n = ROW_COUNT;
+    v_counts := v_counts || jsonb_build_object('email_tracking_events', v_n);
+  EXCEPTION WHEN undefined_table OR undefined_column THEN
+    v_counts := v_counts || jsonb_build_object('email_tracking_events', 0);
+  END;
+
+  -- Rascunhos de envio em massa: além do e-mail, casa por client_id do
+  -- titular (cobra o titular identificado só por telefone).
+  BEGIN
+    UPDATE public.email_bulk_drafts
+       SET recipient_email = 'anon-' || v_token || '@anon.invalid',
+           recipient_name = 'Titular anonimizado ' || v_token,
+           updated_at = now()
+     WHERE (p_subject_email IS NOT NULL AND lower(recipient_email) = lower(p_subject_email))
+        OR client_id = ANY (v_client_ids);
+    GET DIAGNOSTICS v_n = ROW_COUNT;
+    v_counts := v_counts || jsonb_build_object('email_bulk_drafts', v_n);
+  EXCEPTION WHEN undefined_table OR undefined_column THEN
+    v_counts := v_counts || jsonb_build_object('email_bulk_drafts', 0);
+  END;
+
+  -- Transcrições/análises de conversa dos clientes do titular: transcript é
+  -- NOT NULL, então recebe marcador; decision_makers guarda nomes de pessoas.
+  BEGIN
+    UPDATE public.conversation_analyses
+       SET transcript = 'Transcrição anonimizada',
+           decision_makers = '{}'::text[]
+     WHERE client_id = ANY (v_client_ids);
+    GET DIAGNOSTICS v_n = ROW_COUNT;
+    v_counts := v_counts || jsonb_build_object('conversation_analyses', v_n);
+  EXCEPTION WHEN undefined_table OR undefined_column THEN
+    v_counts := v_counts || jsonb_build_object('conversation_analyses', 0);
   END;
 
   -- channel_interactions: casa por e-mail ou telefone canônico do titular
@@ -485,6 +542,17 @@ BEGIN
     v_counts := v_counts || jsonb_build_object('consent_records_revoked', v_n);
   EXCEPTION WHEN undefined_table OR undefined_column THEN
     v_counts := v_counts || jsonb_build_object('consent_records_revoked', 0);
+  END;
+
+  -- mv_client_ltv carrega clients.name — sem refresh o nome antigo fica
+  -- servido até a agenda de refresh_materialized_views() rodar. REFRESH
+  -- sem CONCURRENTLY é permitido em função; falhas não abortam a
+  -- anonimização (a agenda cobre o reprocessamento).
+  BEGIN
+    REFRESH MATERIALIZED VIEW public.mv_client_ltv;
+    v_counts := v_counts || jsonb_build_object('mv_client_ltv_refreshed', true);
+  EXCEPTION WHEN OTHERS THEN
+    v_counts := v_counts || jsonb_build_object('mv_client_ltv_refreshed', false);
   END;
 
   -- Se a chamada veio de uma solicitação de titular, marca-a como concluída.

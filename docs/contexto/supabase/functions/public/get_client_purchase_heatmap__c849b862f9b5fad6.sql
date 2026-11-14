@@ -7,7 +7,7 @@ AS $function$
 DECLARE
   _uid uuid := auth.uid();
   _is_privileged boolean := public.has_role(_uid, 'admin') OR public.has_role(_uid, 'manager');
-  _start date := (date_trunc('month', now()) - (_months || ' months')::interval)::date;
+  _start date := (date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo') - (_months || ' months')::interval)::date;
 BEGIN
   RETURN QUERY
   SELECT
@@ -19,7 +19,7 @@ BEGIN
     (s.salesperson_id = _uid) AS is_current_user,
     COUNT(*)::bigint AS deal_count,
     COALESCE(SUM(s.amount), 0)::numeric AS revenue,
-    COUNT(*) FILTER (WHERE s.status = 'won')::bigint AS won_count
+    COUNT(*) FILTER (WHERE s.status IN ('completed', 'won', 'closed'))::bigint AS won_count
   FROM public.sales s
   JOIN public.clients c ON c.name = s.client_name
   LEFT JOIN public.salespeople sp ON sp.id = s.salesperson_id

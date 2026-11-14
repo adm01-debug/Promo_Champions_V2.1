@@ -595,7 +595,7 @@ Uso e tamanho em `stats.md`.
 | public.inbound_reply_events | idx_inbound_reply_events_matched_enrollment_id | btree | matched_enrollment_id | não | sim |  |
 | public.inbound_reply_events | idx_inbound_reply_events_received_at | btree | received_at | não | sim |  |
 | public.inbound_reply_events | inbound_reply_events_pkey | btree | id | sim | sim |  |
-| public.inbound_reply_events | uq_inbound_reply_events_provider_message_id | btree | provider, message_id | sim | sim | `(message_id IS NOT NULL)` |
+| public.inbound_reply_events | uq_inbound_reply_events_provider_message_id | btree | provider, message_id | sim | sim |  |
 | public.integration_autotest_jobs | idx_autotest_jobs_started | btree | started_at | não | sim |  |
 | public.integration_autotest_jobs | integration_autotest_jobs_pkey | btree | id | sim | sim |  |
 | public.integration_autotest_settings | integration_autotest_settings_pkey | btree | id | sim | sim |  |

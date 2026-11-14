@@ -40,14 +40,14 @@ BEGIN
     MAX(created_at)
   INTO _total_purchases, _total_revenue, _avg_ticket, _last_date
   FROM public.sales
-  WHERE client_name = _client_name AND status = 'won';
+  WHERE client_name = _client_name AND status IN ('completed', 'won', 'closed');
 
   -- avg cycle (days between consecutive won purchases)
   WITH ordered AS (
     SELECT created_at,
            LAG(created_at) OVER (ORDER BY created_at) AS prev_dt
     FROM public.sales
-    WHERE client_name = _client_name AND status = 'won'
+    WHERE client_name = _client_name AND status IN ('completed', 'won', 'closed')
   )
   SELECT COALESCE(AVG(EXTRACT(EPOCH FROM (created_at - prev_dt)) / 86400.0), 0)
   INTO _avg_cycle
@@ -64,7 +64,7 @@ BEGIN
     ELSE 0 END
   INTO _share_me, _share_others
   FROM public.sales
-  WHERE client_name = _client_name AND status = 'won';
+  WHERE client_name = _client_name AND status IN ('completed', 'won', 'closed');
 
   -- top internal competitor (other salesperson with most revenue)
   SELECT jsonb_build_object(
@@ -77,7 +77,7 @@ BEGIN
   FROM public.sales s
   LEFT JOIN public.salespeople sp ON sp.id = s.salesperson_id
   WHERE s.client_name = _client_name
-    AND s.status = 'won'
+    AND s.status IN ('completed', 'won', 'closed')
     AND (s.salesperson_id IS DISTINCT FROM _uid)
   GROUP BY sp.id, sp.name
   ORDER BY SUM(s.amount) DESC NULLS LAST

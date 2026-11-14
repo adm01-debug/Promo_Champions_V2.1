@@ -16,11 +16,11 @@ BEGIN
     SELECT s.id AS sale_id, s.stage, s.updated_at, p.id AS policy_id, p.max_hours, p.warning_hours
     FROM public.sales s
     JOIN public.sla_policies p ON p.stage = s.stage AND p.is_active = true
-    WHERE s.status NOT IN ('completed', 'lost', 'cancelled')
+    WHERE s.status NOT IN ('completed', 'won', 'closed', 'lost', 'cancelled')
   LOOP
     _processed := _processed + 1;
     _hours := EXTRACT(EPOCH FROM (now() - _row.updated_at)) / 3600.0;
-    
+
     IF _hours >= _row.max_hours THEN
       _new_status := 'violated';
     ELSIF _hours >= _row.warning_hours THEN

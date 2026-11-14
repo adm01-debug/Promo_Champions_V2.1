@@ -10,14 +10,14 @@ DECLARE
   v_anon_key text;
   v_cron_secret text;
 BEGIN
-  IF NEW.status IS DISTINCT FROM 'completed' THEN
+  IF NEW.deal_status IS DISTINCT FROM 'completed' THEN
     RETURN NEW;
   END IF;
 
-  -- Dispara apenas na transição para 'completed' (INSERT ou UPDATE que muda
+  -- Dispara apenas na transição para venda ganha (INSERT ou UPDATE que muda
   -- o status). Se o enqueue falhar, a venda fica com broadcast_sent_at nulo e
   -- o erro em edge_call_failures — sem re-tentar a cada update posterior.
-  IF TG_OP = 'UPDATE' AND OLD.status = 'completed' THEN
+  IF TG_OP = 'UPDATE' AND OLD.deal_status = 'completed' THEN
     RETURN NEW;
   END IF;
 

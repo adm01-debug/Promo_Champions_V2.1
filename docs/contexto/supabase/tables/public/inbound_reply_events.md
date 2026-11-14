@@ -44,7 +44,7 @@
 | idx_inbound_reply_events_matched_enrollment_id | btree | matched_enrollment_id | não | sim |  | `CREATE INDEX idx_inbound_reply_events_matched_enrollment_id ON public.inbound_reply_events USING btree (matched_enrollment_id)` |
 | idx_inbound_reply_events_received_at | btree | received_at | não | sim |  | `CREATE INDEX idx_inbound_reply_events_received_at ON public.inbound_reply_events USING btree (received_at DESC)` |
 | inbound_reply_events_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX inbound_reply_events_pkey ON public.inbound_reply_events USING btree (id)` |
-| uq_inbound_reply_events_provider_message_id | btree | provider, message_id | sim | sim | `(message_id IS NOT NULL)` | `CREATE UNIQUE INDEX uq_inbound_reply_events_provider_message_id ON public.inbound_reply_events USING btree (provider, message_id) WHERE (message_id IS NOT NULL)` |
+| uq_inbound_reply_events_provider_message_id | btree | provider, message_id | sim | sim |  | `CREATE UNIQUE INDEX uq_inbound_reply_events_provider_message_id ON public.inbound_reply_events USING btree (provider, message_id)` |
 
 
 ## Policies (RLS)

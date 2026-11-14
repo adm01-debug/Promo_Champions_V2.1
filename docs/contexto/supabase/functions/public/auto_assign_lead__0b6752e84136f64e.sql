@@ -78,7 +78,7 @@ BEGIN
     FROM public.salespeople AS s
     LEFT JOIN public.sales AS sa
       ON sa.salesperson_id = s.id
-      AND sa.status NOT IN ('completed', 'lost', 'cancelled')
+      AND sa.status NOT IN ('completed', 'won', 'closed', 'lost', 'cancelled')
     WHERE s.is_active IS TRUE
     GROUP BY s.id
     ORDER BY COUNT(sa.id) ASC, s.id
@@ -89,7 +89,7 @@ BEGIN
     FROM public.salespeople AS s
     LEFT JOIN public.sales AS sa
       ON sa.salesperson_id = s.id
-      AND sa.status IN ('won', 'completed')
+      AND sa.status IN ('completed', 'won', 'closed')
     WHERE s.is_active IS TRUE
     GROUP BY s.id
     ORDER BY COALESCE(SUM(sa.amount), 0) DESC, s.id

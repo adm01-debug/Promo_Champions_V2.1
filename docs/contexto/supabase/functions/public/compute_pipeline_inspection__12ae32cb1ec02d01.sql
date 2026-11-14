@@ -19,7 +19,7 @@ BEGIN
   FOR _r IN
     SELECT id, status, updated_at, salesperson_id
     FROM public.sales
-    WHERE status NOT IN ('completed','lost','cancelled')
+    WHERE status NOT IN ('completed','won','closed','lost','cancelled')
   LOOP
     _flags := '[]'::jsonb;
     _days_stage := EXTRACT(epoch FROM (now() - _r.updated_at))::integer / 86400;

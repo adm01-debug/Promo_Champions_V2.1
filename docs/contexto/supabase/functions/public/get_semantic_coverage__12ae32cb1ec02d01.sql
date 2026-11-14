@@ -13,7 +13,7 @@ BEGIN
   WITH base AS (
     SELECT 'client'::text AS et, (SELECT count(*) FROM public.clients) AS total
     UNION ALL SELECT 'lead', (SELECT count(*) FROM public.sales WHERE status IN ('lead','prospecting','qualified'))
-    UNION ALL SELECT 'deal', (SELECT count(*) FROM public.sales WHERE status IN ('proposal','negotiation','won','lost','closed'))
+    UNION ALL SELECT 'deal', (SELECT count(*) FROM public.sales WHERE status IN ('proposal','negotiation','pending','completed','won','closed','lost','cancelled'))
     UNION ALL SELECT 'activity', (SELECT count(*) FROM public.activities)
     UNION ALL SELECT 'call_recording', (SELECT count(*) FROM public.call_recordings)
   ),

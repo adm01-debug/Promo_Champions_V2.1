@@ -7,7 +7,7 @@ AS $function$
 DECLARE
   _sp_id uuid;
   _bonus record;
-  _period date := date_trunc('month', now())::date;
+  _period date := date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo')::date;
   _existing uuid;
   _new_id uuid;
 BEGIN
@@ -20,7 +20,7 @@ BEGIN
   END IF;
 
   IF _bonus_kind NOT IN ('fixed','percentage') THEN
-    RAISE EXCEPTION 'invalid bonus_kind';
+    RETURN NULL;
   END IF;
 
   -- Deriva salesperson_id do usuário autenticado (impossível forjar)

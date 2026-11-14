@@ -9,10 +9,16 @@ DECLARE
     v_new_xp INTEGER;
     v_old_level INTEGER;
     v_new_level INTEGER;
-    v_xp_step INTEGER := 1000; -- Exemplo de escala de nível
+    v_xp_step INTEGER := 1000;
     v_result JSONB;
 BEGIN
-    -- Bloqueia a linha para atualização atômica
+    -- Amount arbitrário não pode vir do cliente: só service_role (edge
+    -- functions/cron). auth.role() é NULL em SQL direto (migrations/admin),
+    -- que segue autorizado.
+    IF auth.role() IS NOT NULL AND auth.role() <> 'service_role' THEN
+        RAISE EXCEPTION 'forbidden: award_salesperson_xp é interno (service_role)';
+    END IF;
+
     INSERT INTO public.salesperson_xp (salesperson_id, total_xp, current_level, updated_at)
     VALUES (p_salesperson_id, p_xp_amount, 1, now())
     ON CONFLICT (salesperson_id) DO UPDATE
@@ -20,18 +26,16 @@ BEGIN
         updated_at = now()
     RETURNING total_xp, current_level INTO v_new_xp, v_old_level;
 
-    -- Cálculo simples de nível (pode ser ajustado conforme useSalespersonXP.ts)
     v_new_level := floor(v_new_xp / v_xp_step) + 1;
-    
+
     IF v_new_level > v_old_level THEN
-        UPDATE public.salesperson_xp 
+        UPDATE public.salesperson_xp
         SET current_level = v_new_level
         WHERE salesperson_id = p_salesperson_id;
     END IF;
 
-    -- Registrar no histórico
     INSERT INTO public.xp_history (salesperson_id, xp_amount, source_type, source_id, description)
-    VALUES (p_salesperson_id, p_xp_amount, p_source_type, p_source_id, p_description);
+    VALUES (p_salesperson_id, p_xp_amount, p_source_type, p_source_id::text, p_description);
 
     SELECT jsonb_build_object(
         'leveled_up', v_new_level > v_old_level,

@@ -109,6 +109,7 @@
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
 | set_updated_at | BEFORE | UPDATE | ROW | enabled | public.handle_updated_at |
+| trg_race_cars_guard_counters | BEFORE | INSERT OR UPDATE | ROW | enabled | public.race_cars_guard_counters |
 | trg_race_cars_updated | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

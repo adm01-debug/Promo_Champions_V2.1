@@ -37122,7 +37122,7 @@
       },
       {
         "comment": null,
-        "default": "(date_trunc('month'::text, now()))::date",
+        "default": "(date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text)))::date",
         "generated": null,
         "identity": null,
         "is_enum": false,
@@ -80069,6 +80069,15 @@
           "jobname": "weekly-matchups-resolution",
           "schedule": "5 0 * * 1",
           "username": "postgres"
+        },
+        {
+          "active": true,
+          "command": "SELECT public.sync_challenge_progress()",
+          "database": "postgres",
+          "jobid": 76,
+          "jobname": "challenge-progress-sync",
+          "schedule": "15 3 * * *",
+          "username": "postgres"
         }
       ]
     },
@@ -82106,7 +82115,7 @@
         ],
         "definition": null,
         "definition_sha": "6ac5ab017552f9b8",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -82390,7 +82399,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "8a3adcf2edf04cef",
+        "definition_sha": "5103ba55d7362926",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -82869,7 +82878,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "1ba20c2b414e0d1f",
+        "definition_sha": "010d6f5efc3de21e",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -83083,7 +83092,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "80d73292bd5f7b43",
+        "definition_sha": "62014db783c126e0",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -83093,6 +83102,45 @@
         "name": "award_bonus_if_eligible",
         "owner": "postgres",
         "returns": "uuid",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_sale_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "src/hooks/salesRealtimeUtils.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Credita XP de venda com amount derivado do banco (nunca do cliente). Idempotente por sale_id.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "fd985a948f2e7d46",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "award_sale_xp",
+        "owner": "postgres",
+        "returns": "jsonb",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -83113,8 +83161,8 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "04241c5455ca7cf8",
-        "execute_api_roles": "authenticated, service_role",
+        "definition_sha": "b1232c7494e9b367",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -83207,7 +83255,7 @@
           "search_path=public, net"
         ],
         "definition": null,
-        "definition_sha": "3e6cfe3c11df38b5",
+        "definition_sha": "e30b253f6cebec55",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -83601,36 +83649,6 @@
         "volatility": "volatile"
       },
       {
-        "args": "_salesperson_id uuid",
-        "callers": {
-          "code": [],
-          "code_total_files": 0,
-          "cron": [],
-          "db": [],
-          "triggers": [],
-          "views": []
-        },
-        "comment": null,
-        "config": [
-          "search_path=public"
-        ],
-        "definition": null,
-        "definition_sha": "cd40fdaceb67e9d8",
-        "execute_api_roles": "authenticated, service_role",
-        "execute_public": false,
-        "is_trigger_fn": false,
-        "kind": "function",
-        "language": "plpgsql",
-        "leakproof": false,
-        "name": "calculate_performance_pace",
-        "owner": "postgres",
-        "returns": "TABLE(current_pct numeric, predicted_pct numeric, status text)",
-        "schema": "public",
-        "security_definer": false,
-        "strict": false,
-        "volatility": "volatile"
-      },
-      {
         "args": "_source text, _days integer",
         "callers": {
           "code": [
@@ -83727,7 +83745,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "963f592cebd0d7bb",
+        "definition_sha": "6eb929fc4c311189",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -83969,7 +83987,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "99261180b583d396",
+        "definition_sha": "afdf8c2208178c5f",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -84345,6 +84363,43 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_salesperson_id uuid, p_challenge_type text, p_start date, p_end date",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [
+            "public.sync_challenge_progress"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "38831d22ada3224e",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "compute_challenge_progress_value",
+        "owner": "postgres",
+        "returns": "integer",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
         "args": "_horizon_days integer",
         "callers": {
           "code": [
@@ -84438,7 +84493,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "0f1af52603be840a",
+        "definition_sha": "8a2511bf7bcce737",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -84473,7 +84528,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "b21c3f0c531c24ce",
+        "definition_sha": "72024758942ac0e3",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -84510,8 +84565,8 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "fe3248825c2f40c4",
-        "execute_api_roles": "authenticated, service_role",
+        "definition_sha": "24f8d668786c46c1",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -87195,7 +87250,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "d44a663a6f491e9d",
+        "definition_sha": "a82d4d1a5bd895c1",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -87439,13 +87494,13 @@
             "public.compute_forecast_rollup",
             "public.create_activities_from_action_items",
             "public.create_agent_run",
-            "public.get_revenue_forecast",
             "public.increment_combo",
             "public.increment_goal_progress",
             "public.increment_sales_streak",
             "public.match_semantic",
             "public.route_unassigned_client_portfolio",
             "public.spin_prize_wheel",
+            "public.sync_challenge_progress",
             "public.transition_sale_status",
             "public.update_call_recording_diarization",
             "public.update_call_recording_summary",
@@ -87602,36 +87657,6 @@
         "security_definer": true,
         "strict": false,
         "volatility": "volatile"
-      },
-      {
-        "args": "",
-        "callers": {
-          "code": [],
-          "code_total_files": 0,
-          "cron": [],
-          "db": [],
-          "triggers": [],
-          "views": []
-        },
-        "comment": null,
-        "config": [
-          "search_path=public"
-        ],
-        "definition": null,
-        "definition_sha": "d9961ca13bcaa38d",
-        "execute_api_roles": "authenticated, service_role",
-        "execute_public": false,
-        "is_trigger_fn": false,
-        "kind": "function",
-        "language": "plpgsql",
-        "leakproof": false,
-        "name": "get_detailed_kpis",
-        "owner": "postgres",
-        "returns": "jsonb",
-        "schema": "public",
-        "security_definer": true,
-        "strict": false,
-        "volatility": "stable"
       },
       {
         "args": "_queue_id uuid",
@@ -88072,7 +88097,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "1674244471b287ae",
+        "definition_sha": "f4642dc68e571163",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -88117,36 +88142,6 @@
         "name": "get_recovery_by_failure_type",
         "owner": "postgres",
         "returns": "TABLE(failure_type text, failed_total integer, recovered_count integer, still_failing integer, recovery_rate numeric, avg_recovery_minutes numeric)",
-        "schema": "public",
-        "security_definer": true,
-        "strict": false,
-        "volatility": "stable"
-      },
-      {
-        "args": "_days integer",
-        "callers": {
-          "code": [],
-          "code_total_files": 0,
-          "cron": [],
-          "db": [],
-          "triggers": [],
-          "views": []
-        },
-        "comment": null,
-        "config": [
-          "search_path=public"
-        ],
-        "definition": null,
-        "definition_sha": "2026db86cc40ff93",
-        "execute_api_roles": "authenticated, service_role",
-        "execute_public": false,
-        "is_trigger_fn": false,
-        "kind": "function",
-        "language": "plpgsql",
-        "leakproof": false,
-        "name": "get_revenue_forecast",
-        "owner": "postgres",
-        "returns": "TABLE(period text, weighted_revenue numeric, raw_pipeline numeric, deal_count integer, avg_health integer)",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -88207,7 +88202,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "ce9849893916d9dd",
+        "definition_sha": "1a31a98a1487b593",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -89205,7 +89200,7 @@
         ],
         "definition": null,
         "definition_sha": "15a8544de5950aaa",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -89240,7 +89235,7 @@
         ],
         "definition": null,
         "definition_sha": "202f1e7f0be91dc5",
-        "execute_api_roles": "authenticated, service_role",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -89489,7 +89484,6 @@
             "public.compute_pipeline_inspection",
             "public.create_activities_from_action_items",
             "public.get_deleted_records",
-            "public.get_revenue_forecast",
             "public.get_semantic_coverage",
             "public.increment_combo",
             "public.increment_goal_progress",
@@ -89501,6 +89495,7 @@
             "public.route_unassigned_client_portfolio",
             "public.send_notification",
             "public.soft_delete_record",
+            "public.sync_challenge_progress",
             "public.toggle_workflow_active",
             "public.transition_commission_status",
             "public.transition_sale_status",
@@ -89673,7 +89668,6 @@
             "public.compute_pipeline_inspection",
             "public.create_activities_from_action_items",
             "public.get_deleted_records",
-            "public.get_revenue_forecast",
             "public.get_semantic_coverage",
             "public.increment_combo",
             "public.increment_goal_progress",
@@ -89685,6 +89679,7 @@
             "public.route_unassigned_client_portfolio",
             "public.send_notification",
             "public.soft_delete_record",
+            "public.sync_challenge_progress",
             "public.toggle_workflow_active",
             "public.transition_commission_status",
             "public.transition_sale_status",
@@ -90017,6 +90012,47 @@
         "returns": "boolean",
         "schema": "public",
         "security_definer": false,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
+        "args": "_salesperson_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261027120000_sales_status_canonizacao_rpcs.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": [
+            "public.revenue_forecast_view"
+          ]
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "d086f5de634ace56",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "is_salesperson_active",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": true,
         "strict": false,
         "volatility": "stable"
       },
@@ -90846,8 +90882,8 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "3461c4c1b4d5c678",
-        "execute_api_roles": "authenticated, service_role",
+        "definition_sha": "3137e5a7d85bad57",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
         "kind": "function",
@@ -91243,6 +91279,43 @@
         "returns": "TABLE(table_name text, deleted_rows bigint)",
         "schema": "public",
         "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.race_cars.trg_race_cars_guard_counters"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "7a12a1c795f766ff",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "race_cars_guard_counters",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
         "strict": false,
         "volatility": "volatile"
       },
@@ -91742,7 +91815,9 @@
           ],
           "code_total_files": 3,
           "cron": [],
-          "db": [],
+          "db": [
+            "public.anonymize_data_subject"
+          ],
           "triggers": [],
           "views": []
         },
@@ -92064,7 +92139,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "d516294bd905905d",
+        "definition_sha": "10ba5e71efa5fb92",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -92676,6 +92751,55 @@
         "name": "sync_battle_score",
         "owner": "postgres",
         "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "p_salesperson_id uuid",
+        "callers": {
+          "code": [
+            {
+              "file": "src/hooks/gamification/useDailyChallenges.ts",
+              "hits": 1
+            },
+            {
+              "file": "src/hooks/gamification/useDailyMissions.ts",
+              "hits": 1
+            },
+            {
+              "file": "src/hooks/gamification/useWeeklyChallenges.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261019153000_lgpd_gamificacao_r2.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 4,
+          "cron": [
+            "76:challenge-progress-sync"
+          ],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Recomputa o progresso de desafios semanais/diários a partir das tabelas reais. Cliente sincroniza só o próprio; service_role/cron, todos.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "b60ef54b9241435c",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "sync_challenge_progress",
+        "owner": "postgres",
+        "returns": "jsonb",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -94826,7 +94950,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "3e01db12bdf79e21",
+        "definition_sha": "685d16d3200c16f6",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -111397,13 +111521,13 @@
           "provider",
           "message_id"
         ],
-        "definition": "CREATE UNIQUE INDEX uq_inbound_reply_events_provider_message_id ON public.inbound_reply_events USING btree (provider, message_id) WHERE (message_id IS NOT NULL)",
+        "definition": "CREATE UNIQUE INDEX uq_inbound_reply_events_provider_message_id ON public.inbound_reply_events USING btree (provider, message_id)",
         "is_primary": false,
         "is_unique": true,
         "is_valid": true,
         "method": "btree",
         "name": "uq_inbound_reply_events_provider_message_id",
-        "predicate": "(message_id IS NOT NULL)",
+        "predicate": null,
         "schema": "public",
         "table": "inbound_reply_events"
       },
@@ -130192,6 +130316,11 @@
         "version": "20261013171000"
       },
       {
+        "name": "20261013172000_inbound_reply_events_full_unique",
+        "statements": null,
+        "version": "20261013172000"
+      },
+      {
         "name": "20261014000000_gamificacao_server_side",
         "statements": null,
         "version": "20261014000000"
@@ -130225,6 +130354,16 @@
         "name": "20261018200000_fix_stage_history_views_e_forecast_category",
         "statements": null,
         "version": "20261018200000"
+      },
+      {
+        "name": "20261019153000_lgpd_gamificacao_r2",
+        "statements": null,
+        "version": "20261019153000"
+      },
+      {
+        "name": "20261027120000_sales_status_canonizacao_rpcs",
+        "statements": null,
+        "version": "20261027120000"
       }
     ],
     "policies": [
@@ -151916,6 +152055,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_race_cars_guard_counters BEFORE INSERT OR UPDATE ON race_cars FOR EACH ROW EXECUTE FUNCTION race_cars_guard_counters()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.race_cars_guard_counters",
+        "level": "ROW",
+        "name": "trg_race_cars_guard_counters",
+        "schema": "public",
+        "status": "enabled",
+        "table": "race_cars",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_race_cars_updated BEFORE UPDATE ON race_cars FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
         "events": "UPDATE",
         "function": "public.update_updated_at_column",
@@ -154069,7 +154219,7 @@
       },
       {
         "comment": null,
-        "definition": " SELECT c.id AS client_id,\n    c.name AS client_name,\n    EXTRACT(month FROM s.created_at)::integer AS month_of_year,\n    EXTRACT(dow FROM s.created_at)::integer AS day_of_week,\n    count(*)::integer AS deal_count,\n    COALESCE(avg(s.amount), 0::numeric) AS avg_revenue,\n    COALESCE(sum(s.amount), 0::numeric) AS total_revenue\n   FROM sales s\n     JOIN clients c ON c.name = s.client_name\n  WHERE s.status = 'won'::text\n  GROUP BY c.id, c.name, (EXTRACT(month FROM s.created_at)), (EXTRACT(dow FROM s.created_at));",
+        "definition": " SELECT c.id AS client_id,\n    c.name AS client_name,\n    EXTRACT(month FROM s.created_at)::integer AS month_of_year,\n    EXTRACT(dow FROM s.created_at)::integer AS day_of_week,\n    count(*)::integer AS deal_count,\n    COALESCE(avg(s.amount), 0::numeric) AS avg_revenue,\n    COALESCE(sum(s.amount), 0::numeric) AS total_revenue\n   FROM sales s\n     JOIN clients c ON c.name = s.client_name\n  WHERE s.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])\n  GROUP BY c.id, c.name, (EXTRACT(month FROM s.created_at)), (EXTRACT(dow FROM s.created_at));",
         "depends_on": [
           "public.clients",
           "public.sales"
@@ -154289,7 +154439,7 @@
       },
       {
         "comment": null,
-        "definition": " WITH open_deals AS (\n         SELECT s.id,\n            s.salesperson_id,\n            s.amount,\n            s.status,\n            s.forecast_category,\n            s.created_at,\n            s.updated_at,\n            sp.probability AS stage_probability\n           FROM sales s\n             JOIN stage_probabilities sp ON sp.stage = s.status\n          WHERE sp.probability > 0::numeric AND sp.probability < 1::numeric\n        ), category_agg AS (\n         SELECT open_deals.salesperson_id,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'commit'::forecast_category) AS commit_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'best_case'::forecast_category) AS best_case_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'pipeline'::forecast_category) AS pipeline_amount\n           FROM open_deals\n          GROUP BY open_deals.salesperson_id\n        ), closed_recent AS (\n         SELECT sales.salesperson_id,\n            count(*) AS won_count,\n            avg(EXTRACT(epoch FROM COALESCE(sales.closed_at, sales.updated_at) - sales.created_at) / 86400.0) AS avg_cycle_days,\n            sum(sales.amount) AS won_amount_90d\n           FROM sales\n          WHERE (sales.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) AND COALESCE(sales.closed_at, sales.updated_at) >= (now() - '90 days'::interval)\n          GROUP BY sales.salesperson_id\n        ), goals_current AS (\n         SELECT DISTINCT ON (sales_goals.salesperson_id) sales_goals.salesperson_id,\n            sales_goals.goal_amount\n           FROM sales_goals\n          WHERE sales_goals.month <= date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text))::date\n          ORDER BY sales_goals.salesperson_id, sales_goals.month DESC\n        )\n SELECT COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id) AS salesperson_id,\n    COALESCE(sum(od.amount), 0::numeric) AS total_open_pipeline,\n    COALESCE(sum(od.amount * od.stage_probability), 0::numeric) AS weighted_forecast,\n    count(od.id) FILTER (WHERE od.id IS NOT NULL) AS open_deals_count,\n    COALESCE(max(cr.avg_cycle_days), 45::numeric) AS avg_cycle_days,\n    COALESCE(max(cr.won_amount_90d), 0::numeric) AS won_amount_90d,\n    COALESCE(max(cr.won_count), 0::bigint) AS won_count_90d,\n    COALESCE(max(gc.goal_amount), 0::numeric) AS monthly_goal,\n    COALESCE(max(ca.commit_amount), 0::numeric) AS commit_amount,\n    COALESCE(max(ca.best_case_amount), 0::numeric) AS best_case_amount,\n    COALESCE(max(ca.pipeline_amount), 0::numeric) AS pipeline_amount,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric)), 0::numeric) AS pessimistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) * 0.5), 0::numeric) AS realistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) + COALESCE(ca.pipeline_amount, 0::numeric) * 0.3), 0::numeric) AS optimistic_30d\n   FROM open_deals od\n     FULL JOIN closed_recent cr ON cr.salesperson_id = od.salesperson_id\n     FULL JOIN goals_current gc ON gc.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n     LEFT JOIN category_agg ca ON ca.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n  GROUP BY (COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id));",
+        "definition": " WITH open_deals AS (\n         SELECT s.id,\n            s.salesperson_id,\n            s.amount,\n            s.status,\n            s.forecast_category,\n            s.created_at,\n            s.updated_at,\n            sp.probability AS stage_probability\n           FROM sales s\n             JOIN stage_probabilities sp ON sp.stage = s.status\n          WHERE sp.probability > 0::numeric AND sp.probability < 1::numeric\n        ), category_agg AS (\n         SELECT open_deals.salesperson_id,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'commit'::forecast_category) AS commit_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'best_case'::forecast_category) AS best_case_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'pipeline'::forecast_category) AS pipeline_amount\n           FROM open_deals\n          GROUP BY open_deals.salesperson_id\n        ), closed_recent AS (\n         SELECT sales.salesperson_id,\n            count(*) AS won_count,\n            avg(EXTRACT(epoch FROM COALESCE(sales.closed_at, sales.updated_at) - sales.created_at) / 86400.0) AS avg_cycle_days,\n            sum(sales.amount) AS won_amount_90d\n           FROM sales\n          WHERE (sales.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) AND COALESCE(sales.closed_at, sales.updated_at) >= (now() - '90 days'::interval)\n          GROUP BY sales.salesperson_id\n        ), goals_current AS (\n         SELECT DISTINCT ON (sales_goals.salesperson_id) sales_goals.salesperson_id,\n            sales_goals.goal_amount\n           FROM sales_goals\n          WHERE sales_goals.month <= date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text))::date\n          ORDER BY sales_goals.salesperson_id, sales_goals.month DESC\n        )\n SELECT COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id) AS salesperson_id,\n    COALESCE(sum(od.amount), 0::numeric) AS total_open_pipeline,\n    COALESCE(sum(od.amount * od.stage_probability), 0::numeric) AS weighted_forecast,\n    count(od.id) FILTER (WHERE od.id IS NOT NULL) AS open_deals_count,\n    COALESCE(max(cr.avg_cycle_days), 45::numeric) AS avg_cycle_days,\n    COALESCE(max(cr.won_amount_90d), 0::numeric) AS won_amount_90d,\n    COALESCE(max(cr.won_count), 0::bigint) AS won_count_90d,\n    COALESCE(max(gc.goal_amount), 0::numeric) AS monthly_goal,\n    COALESCE(max(ca.commit_amount), 0::numeric) AS commit_amount,\n    COALESCE(max(ca.best_case_amount), 0::numeric) AS best_case_amount,\n    COALESCE(max(ca.pipeline_amount), 0::numeric) AS pipeline_amount,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric)), 0::numeric) AS pessimistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) * 0.5), 0::numeric) AS realistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) + COALESCE(ca.pipeline_amount, 0::numeric) * 0.3), 0::numeric) AS optimistic_30d\n   FROM open_deals od\n     FULL JOIN closed_recent cr ON cr.salesperson_id = od.salesperson_id\n     FULL JOIN goals_current gc ON gc.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n     LEFT JOIN category_agg ca ON ca.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n  WHERE is_salesperson_active(COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id))\n  GROUP BY (COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id));",
         "depends_on": [
           "public.sales",
           "public.sales_goals",

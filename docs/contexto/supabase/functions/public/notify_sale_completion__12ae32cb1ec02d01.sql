@@ -12,10 +12,11 @@ DECLARE
     v_seller_id UUID;
     v_formatted_amount TEXT;
 BEGIN
-    -- Detect closure event (deal_status = 'completed')
-    IF (TG_OP = 'UPDATE' AND NEW.deal_status = 'completed'::deal_status AND (OLD.deal_status IS NULL OR OLD.deal_status != 'completed'::deal_status)) 
+    -- Detect closure event (deal_status = 'completed' cobre o trio WON via
+    -- coluna GENERATED — 'won'/'closed' também disparam o alerta).
+    IF (TG_OP = 'UPDATE' AND NEW.deal_status = 'completed'::deal_status AND (OLD.deal_status IS NULL OR OLD.deal_status != 'completed'::deal_status))
        OR (TG_OP = 'INSERT' AND NEW.deal_status = 'completed'::deal_status) THEN
-        
+
         v_seller_id := NEW.salesperson_id;
         v_sale_amount := NEW.amount;
         v_formatted_amount := 'R$ ' || to_char(v_sale_amount, 'FM999G999G990D00');
@@ -24,30 +25,30 @@ BEGIN
         SELECT name INTO v_seller_name FROM public.salespeople WHERE id = v_seller_id;
 
         -- Calculate seller rank at this exact moment
-        SELECT pos INTO v_seller_rank 
+        SELECT pos INTO v_seller_rank
         FROM (
             SELECT salesperson_id, RANK() OVER (ORDER BY SUM(amount) DESC) as pos
-            FROM public.sales 
-            WHERE deal_status = 'completed'::deal_status 
-              AND created_at >= date_trunc('month', now())
+            FROM public.sales
+            WHERE deal_status = 'completed'::deal_status
+              AND created_at >= date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo') AT TIME ZONE 'America/Sao_Paulo'
             GROUP BY salesperson_id
         ) snap WHERE salesperson_id = v_seller_id;
 
         IF v_seller_rank IS NULL THEN v_seller_rank := 1; END IF;
 
         -- Notify ALL other active salespeople
-        FOR v_recipient IN 
+        FOR v_recipient IN
             SELECT sp.id, sp.auth_user_id, sp.name, COALESCE(r.pos, 0) as recipient_rank
             FROM public.salespeople sp
             LEFT JOIN (
                 SELECT salesperson_id, RANK() OVER (ORDER BY SUM(amount) DESC) as pos
-                FROM public.sales 
-                WHERE deal_status = 'completed'::deal_status 
-                  AND created_at >= date_trunc('month', now())
+                FROM public.sales
+                WHERE deal_status = 'completed'::deal_status
+                  AND created_at >= date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo') AT TIME ZONE 'America/Sao_Paulo'
                 GROUP BY salesperson_id
             ) r ON r.salesperson_id = sp.id
-            WHERE sp.is_active = true 
-              AND sp.id != v_seller_id 
+            WHERE sp.is_active = true
+              AND sp.id != v_seller_id
               AND sp.auth_user_id IS NOT NULL
         LOOP
             v_recipient_rank := v_recipient.recipient_rank;
@@ -68,8 +69,8 @@ BEGIN
                 'gamification',
                 'high',
                 '🚀 ' || v_seller_name || ' vendeu!',
-                'Fechou ' || v_formatted_amount || '! Rank dele: #' || v_seller_rank || 
-                '. Seu rank: ' || CASE WHEN v_recipient_rank = 0 THEN 'S/R' ELSE '#' || v_recipient_rank END || 
+                'Fechou ' || v_formatted_amount || '! Rank dele: #' || v_seller_rank ||
+                '. Seu rank: ' || CASE WHEN v_recipient_rank = 0 THEN 'S/R' ELSE '#' || v_recipient_rank END ||
                 '. Vamos buscar!',
                 'Zap',
                 jsonb_build_object(
@@ -115,7 +116,7 @@ BEGIN
             'Acabei de fechar ' || v_formatted_amount || '! A meta tá logo ali! 🔥',
             'chat'
         );
-        
+
     END IF;
     RETURN NEW;
 END;

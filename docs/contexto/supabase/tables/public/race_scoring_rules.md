@@ -24,7 +24,7 @@
 | 5 | `points_per_unit` | `numeric` | não | `1.0` |  |  |
 | 6 | `label` | `text` | sim |  |  |  |
 | 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
-| 8 | `month` | `date` | sim | `(date_trunc('month'::text, now()))::date` |  |  |
+| 8 | `month` | `date` | sim | `(date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text)))::date` |  |  |
 
 
 ## Constraints

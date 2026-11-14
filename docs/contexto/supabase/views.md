@@ -80,7 +80,7 @@ SELECT c.id AS client_id,
     COALESCE(sum(s.amount), 0::numeric) AS total_revenue
    FROM sales s
      JOIN clients c ON c.name = s.client_name
-  WHERE s.status = 'won'::text
+  WHERE s.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])
   GROUP BY c.id, c.name, (EXTRACT(month FROM s.created_at)), (EXTRACT(dow FROM s.created_at));
 ```
 
@@ -672,6 +672,7 @@ WITH open_deals AS (
      FULL JOIN closed_recent cr ON cr.salesperson_id = od.salesperson_id
      FULL JOIN goals_current gc ON gc.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)
      LEFT JOIN category_agg ca ON ca.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)
+  WHERE is_salesperson_active(COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id))
   GROUP BY (COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id));
 ```
 

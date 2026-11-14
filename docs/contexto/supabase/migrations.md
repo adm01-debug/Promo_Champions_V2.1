@@ -304,6 +304,7 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261013153000 | [20261013153000_integration_secret_refs](migrations/20261013153000_20261013153000_integration_secret_refs.sql) | 0 |
 | 20261013170000 | [20261013170000_bitrix24_sync_cron](migrations/20261013170000_20261013170000_bitrix24_sync_cron.sql) | 0 |
 | 20261013171000 | [20261013171000_channel_credentials_provider_evolution](migrations/20261013171000_20261013171000_channel_credentials_provider_evolution.sql) | 0 |
+| 20261013172000 | [20261013172000_inbound_reply_events_full_unique](migrations/20261013172000_20261013172000_inbound_reply_events_full_unique.sql) | 0 |
 | 20261014000000 | [20261014000000_gamificacao_server_side](migrations/20261014000000_20261014000000_gamificacao_server_side.sql) | 0 |
 | 20261014000001 | [20261014000001_fix_allowlist_bitrix24_gamificacao](migrations/20261014000001_20261014000001_fix_allowlist_bitrix24_gamificacao.sql) | 0 |
 | 20261014000002 | [20261014000002_fix_concurrently_indexes](migrations/20261014000002_20261014000002_fix_concurrently_indexes.sql) | 0 |
@@ -311,3 +312,5 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261018190000 | [20261018190000_lgpd_fixes_consent_anonymize](migrations/20261018190000_20261018190000_lgpd_fixes_consent_anonymize.sql) | 0 |
 | 20261018190100 | [20261018190100_gamificacao_claim_matchups_rotations](migrations/20261018190100_20261018190100_gamificacao_claim_matchups_rotations.sql) | 0 |
 | 20261018200000 | [20261018200000_fix_stage_history_views_e_forecast_category](migrations/20261018200000_20261018200000_fix_stage_history_views_e_forecast_category.sql) | 0 |
+| 20261019153000 | [20261019153000_lgpd_gamificacao_r2](migrations/20261019153000_20261019153000_lgpd_gamificacao_r2.sql) | 0 |
+| 20261027120000 | [20261027120000_sales_status_canonizacao_rpcs](migrations/20261027120000_20261027120000_sales_status_canonizacao_rpcs.sql) | 0 |

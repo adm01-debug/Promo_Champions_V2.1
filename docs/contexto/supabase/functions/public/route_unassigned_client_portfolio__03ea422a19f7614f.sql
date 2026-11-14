@@ -103,8 +103,8 @@ BEGIN
     FROM public.salespeople AS s
     LEFT JOIN public.sales AS sa
       ON sa.salesperson_id = s.id
-      AND sa.status IN ('won', 'completed')
-      AND sa.created_at >= date_trunc('month', now())
+      AND sa.status IN ('completed', 'won', 'closed')
+      AND sa.created_at >= date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo') AT TIME ZONE 'America/Sao_Paulo'
     WHERE s.is_active IS TRUE
       AND s.role IN ('closer', 'hybrid')
     GROUP BY s.id

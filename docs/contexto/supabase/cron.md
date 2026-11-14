@@ -36,3 +36,4 @@ Horários em UTC. Execuções recentes em `cron-runs.md`.
 | 47 | weekly-matchmaking | `1 0 * * 1` | sim | postgres | postgres | `SELECT public.match_weekly_players()` |
 | 48 | bitrix24-sync-hourly | `17 * * * *` | sim | postgres | postgres | `SELECT public.trigger_internal_edge_job('bitrix24-sync');` |
 | 49 | weekly-matchups-resolution | `5 0 * * 1` | sim | postgres | postgres | `SELECT public.resolve_weekly_matchups()` |
+| 76 | challenge-progress-sync | `15 3 * * *` | sim | postgres | postgres | `SELECT public.sync_challenge_progress()` |
