@@ -83,11 +83,13 @@ export const useUpdateAccountPlan = () => {
     mutationFn: async (payload: Partial<AccountPlan> & { account_id: string }) => {
       const { account_id, ...rest } = payload;
 
-      const { data: existing } = await supabase
+      const { data: existing, error: existingError } = await supabase
         .from('account_plans')
         .select('id')
         .eq('account_id', account_id)
         .maybeSingle();
+      // Sem isto um erro na checagem caía no INSERT e duplicava o plano.
+      if (existingError) throw existingError;
 
       if (existing) {
         const { data, error } = await supabase
@@ -111,6 +113,11 @@ export const useUpdateAccountPlan = () => {
           .insert({ account_id, ...rest, created_by: userId })
           .select()
           .single();
+        // 23505 = account_plans_account_id_key: outro usuário criou o plano antes.
+        if (error?.code === '23505')
+          throw new Error(
+            'Esta conta já tem um plano. Recarregue a página para editá-lo.'
+          );
         if (error) throw error;
         return data;
       }
