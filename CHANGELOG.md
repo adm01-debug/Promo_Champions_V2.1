@@ -1,5 +1,57 @@
 # Changelog
 
+## [1.4.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.3.0...promo-champions-v2-v1.4.0) (2026-11-14)
+
+
+### Funcionalidades
+
+* editar e arquivar materiais no Sales Enablement ([#433](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/433)) ([7ab97e0](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/7ab97e01e7ad92e0cc7181504c2c4ca40c4db6bc))
+* editar e cancelar batalhas de vendas ([#431](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/431)) ([b68acd2](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b68acd2b2d4e0743c20de4080699758f3a902d40))
+* editar e desativar desafios semanais ([#432](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/432)) ([1f60080](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/1f60080cc6cbace9f740ad8e82dc13f35e7f147b))
+* editar e excluir contas no Account-Based Selling ([#426](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/426)) ([21eae42](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/21eae42a81259886458779fa5f31c1fee0f656bc))
+* editar e excluir filas do Power Dialer ([#435](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/435)) ([4e0bb00](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/4e0bb0027dbd429dec86b045e78a959f9c6de156))
+* editar e excluir produto do fornecedor no comparador de preços ([#437](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/437)) ([7bc13e2](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/7bc13e25a6e36e3b7610cd9e136c44abe6f45d7f))
+* editar e excluir workflows no Automation Builder ([#430](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/430)) ([9d3c316](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/9d3c316eac7a49bede04e12dd209182463ea6cd7))
+* editar e remover signatários na assinatura digital ([#428](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/428)) ([5d2f222](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/5d2f222306a05820320574ab510ba90c68fffc58))
+* editar, ativar/desativar e excluir fluxos de aprovação ([#436](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/436)) ([2c36718](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2c36718033f0e336dc9794c8703e25404ce8ac0a))
+
+
+### Correções
+
+* aba Market Intel da /arena mostra concorrentes reais em vez de matriz fixa ([#455](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/455)) ([fb51238](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/fb51238cd7206081390a4e746203490a73a0b39e))
+* apontar APP_URL para o domínio de produção na Vercel ([#439](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/439)) ([05eca38](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/05eca381531e708c5e13a648c2df4ede971aed41))
+* Call Rápida e Email Rápido gravam no vendedor do formulário, não no primeiro da lista ([#481](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/481)) ([d03b42e](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d03b42e6a8bffb08ba23c180163c389f5126246d))
+* campo Vendedor do registro de atividade vem com o vendedor logado ([#471](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/471)) ([9bf39de](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/9bf39de0f9235b0f8ea11c3ea1431f2aefad80c0))
+* card do pipeline não inventa saúde 50 nem recomendação para deal sem score ([#483](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/483)) ([31447ff](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/31447ff16118284d0f0ae6fbf57fb80695041ac4))
+* corrigir vendedor e outcome nas ações do execute-workflow ([#476](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/476)) ([ceaddbf](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/ceaddbf823ddb236d773808817f2d6dfd6968e26))
+* desabilita entrada na liga enquanto não há ligas cadastradas ([#443](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/443)) ([824a372](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/824a372bc23c834856139a846b492f53794085ec))
+* Elite Analytics de cadências mostra taxa real e remove score e números fictícios ([#454](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/454)) ([bb623b7](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/bb623b7e109b47d0b691d8617715cfb3365ca73f))
+* enviar completed_by ao marcar item do playbook no pipeline ([#470](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/470)) ([d21dcd1](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d21dcd1524d25b725cdd7a2c7698f8d56bbfe1e8))
+* enviar user_id ao criar preferência de notificação ([#474](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/474)) ([3044064](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/3044064dc780f9970210b07a9842a2b099e1998a))
+* etapa do playbook grava o vendedor certo em completed_by ([#479](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/479)) ([39cb90c](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/39cb90c0e438e48f3f91fccdc672d06466fb647f))
+* grava pesquisa NPS no vendedor logado ([#473](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/473)) ([e399094](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/e3990945df3e11a6b365b273c6a86fa9890bb61e))
+* grava vendedor logado como dono ao criar conta no ABM ([#475](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/475)) ([52ad2f4](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/52ad2f4057c69d1331632e65fd2084c5b298cd51))
+* **hooks:** plano de conta ABM envia created_by ao criar ([#467](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/467)) ([56b4d2b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/56b4d2b8f1f7436f95dd704f0995b77a9bfbb31c))
+* liga a recuperação de clientes da Arena às vendas críticas reais ([#447](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/447)) ([914a813](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/914a813e48b105f843757a0601a8b695f10ca869))
+* metas de atividades sem indicadores e ações fictícias ([#444](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/444)) ([749babe](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/749babe33860a05d65554bbe34b343c4497c586f))
+* permite gestor inscrever participantes ao criar batalha ([#478](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/478)) ([b97dd91](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/b97dd9195cec7f1d835fbfa2a0cc393fe39bc637))
+* pipeline sem saúde/decisores inventados e status nas colunas certas ([#457](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/457)) ([84c7cad](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/84c7cad953200eb24b7843eead3a951178245b20))
+* plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) ([#482](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/482)) ([2c56590](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2c565905a7675354240cd13515ed7fb45908cc8a))
+* preencher vendedor logado ao criar venda ([#468](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/468)) ([6a1d1c3](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/6a1d1c31c85ea6b3325414440ce164ada4e24dab))
+* qbr-scheduler grava QBR como meeting/pending e não engole erro ([#477](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/477)) ([3cf041b](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/3cf041b47cadb2cdcacb8219e13098980a6e397e))
+* regras de contato gravam via upsert e avisam erro de verdade ([#456](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/456)) ([37fafa5](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/37fafa508d94551113726549602fa90af2471898))
+* relatório de cadências passa a usar dados reais do banco ([#449](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/449)) ([c82f9b3](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/c82f9b3b30246e242373527597b7643a91514694))
+* remove ações e previsões falsas do Cliente 360 ([#441](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/441)) ([0915aab](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/0915aab8564fff8dde969d42c0deae6ddf5a93da))
+* remove presença fictícia do pipeline e liga vendas ganhas reais ([#453](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/453)) ([01cd315](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/01cd31563d69a0bada1666fff1e8567fc2ca6d46))
+* remover dados e automações fictícios da análise ABC ([#446](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/446)) ([64382cb](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/64382cb9494868b4cd84ec7ea42ccb2748cf828a))
+* remover fila de aprovação fictícia das cadências ([#440](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/440)) ([3f027d1](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/3f027d173dc40a2ac638f0c6a5705ac5cd2a2b04))
+* remover tendências fixas dos KPIs de conversas ([#451](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/451)) ([389ba61](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/389ba6185a8f6423e46cb5dd2f7469dd95f8e5b3))
+* restringe DELETE de accounts a gestor na RLS ([#460](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/460)) ([12b6200](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/12b6200f5043af677b628267190fc54b6e798917))
+* simulador de cenarios usa receita ganha real e remove plano falso ([#450](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/450)) ([d0da8ad](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/d0da8ade8235cff4a22097ae07eced7d3e311600))
+* tarefa sem responsável passa a ficar com o vendedor logado ([#469](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/469)) ([f2155e8](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/f2155e8e9d09b6a7f7984b4b4cdd15a7e98f7e3a))
+* troca valores fixos de inteligência por dados reais ou estado vazio ([#442](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/442)) ([2ed73dc](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/2ed73dc88a7ef1a5b0c8d7aae8ccd322bd4d5455))
+* troca vendedores fictícios do analytics por dados reais ([#438](https://github.com/adm01-debug/Promo_Champions_V2.1/issues/438)) ([3c77d1d](https://github.com/adm01-debug/Promo_Champions_V2.1/commit/3c77d1d82401cbe24fa191eac096d4ad2cbcc397))
+
 ## [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 
