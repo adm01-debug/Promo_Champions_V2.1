@@ -84,6 +84,7 @@ async function getUnderperformingSDRs(
   const { data: activities, error: activitiesError } = await supabase
     .from('activities')
     .select('salesperson_id, created_at')
+    .is('deleted_at', null)
     .gte('created_at', sevenDaysAgo.toISOString())
     .limit(50000);
 

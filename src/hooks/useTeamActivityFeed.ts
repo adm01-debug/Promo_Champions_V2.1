@@ -100,6 +100,7 @@ export const useTeamActivityFeed = (limit = 20) => {
       const { data: activities } = await supabase
         .from('activities')
         .select('id, activity_type, contact_name, outcome, created_at, salesperson_id')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(limit);
 

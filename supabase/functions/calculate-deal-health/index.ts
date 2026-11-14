@@ -67,6 +67,7 @@ async function gatherContext(
   const { data: lastActivity } = await supabase
     .from('activities')
     .select('created_at')
+    .is('deleted_at', null)
     .eq('sale_id', saleId)
     .order('created_at', { ascending: false })
     .limit(1)
@@ -79,6 +80,7 @@ async function gatherContext(
   const { count: activitiesCount } = await supabase
     .from('activities')
     .select('id', { count: 'exact', head: true })
+    .is('deleted_at', null)
     .eq('sale_id', saleId);
 
   const { data: recordings } = await supabase

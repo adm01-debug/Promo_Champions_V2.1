@@ -69,6 +69,7 @@ export function useSalespersonActivityReport(months: number = 1) {
       const { data: activities, error: actError } = await supabase
         .from('activities')
         .select('*')
+        .is('deleted_at', null)
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString());
 
@@ -175,6 +176,7 @@ export function useActivityTrend(salespersonId?: string, days: number = 30) {
       let query = supabase
         .from('activities')
         .select('created_at, activity_type')
+        .is('deleted_at', null)
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString());
 

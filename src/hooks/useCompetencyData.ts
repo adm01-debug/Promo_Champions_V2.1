@@ -21,6 +21,7 @@ export function useCompetencyData(salespersonId?: string) {
         supabase
           .from('activities')
           .select('activity_type, outcome')
+          .is('deleted_at', null)
           .eq('salesperson_id', spId)
           .limit(500),
         supabase

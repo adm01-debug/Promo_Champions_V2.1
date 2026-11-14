@@ -45,7 +45,7 @@ Deno.serve(withRequestId("coaching-intelligence", async (req, _ctx) => {
     const [{ data: salespeople }, { data: sales }, { data: activities }, goalsRes] = await Promise.all([
       supabase.from("salespeople").select("id, name, avatar_url, role, is_active").eq("is_active", true).limit(500),
       supabase.from("sales").select("id, salesperson_id, status, amount, created_at").gte("created_at", since30).limit(10000),
-      supabase.from("activities").select("id, salesperson_id, created_at").gte("created_at", since30).limit(50000),
+      supabase.from("activities").select("id, salesperson_id, created_at").is("deleted_at", null).gte("created_at", since30).limit(50000),
       supabase
         .from("sales_goals")
         .select("salesperson_id, goal_amount, month")

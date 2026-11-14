@@ -148,6 +148,7 @@ export const useInactiveDeals = () => {
       const { data, error } = await supabase
         .from('activities')
         .select('sale_id, created_at')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];

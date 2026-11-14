@@ -50,7 +50,7 @@ Deno.serve(withRequestId("revops-hub", async (req, _ctx) => {
 
     const [salesRes, activitiesRes, commissionsRes, goalsRes] = await Promise.all([
       supabase.from("sales").select("id,amount,stage,status,created_at,updated_at,salesperson_id").limit(10000),
-      supabase.from("activities").select("id,outcome,created_at").gte("created_at", since).limit(50000),
+      supabase.from("activities").select("id,outcome,created_at").is("deleted_at", null).gte("created_at", since).limit(50000),
       supabase.from("commissions").select("commission_amount,status,created_at").gte("created_at", since).limit(10000),
       supabase
         .from("sales_goals")

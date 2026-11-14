@@ -58,6 +58,7 @@ async function loadContext(
     admin
       .from('activities')
       .select('activity_type, outcome, notes, created_at')
+      .is('deleted_at', null)
       .eq('sale_id', saleId)
       .order('created_at', { ascending: false })
       .limit(3),
