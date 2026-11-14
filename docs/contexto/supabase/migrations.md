@@ -303,6 +303,7 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261013152000 | [20261013152000_fix_kpis_auditoria_top25](migrations/20261013152000_20261013152000_fix_kpis_auditoria_top25.sql) | 0 |
 | 20261013153000 | [20261013153000_integration_secret_refs](migrations/20261013153000_20261013153000_integration_secret_refs.sql) | 0 |
 | 20261013170000 | [20261013170000_bitrix24_sync_cron](migrations/20261013170000_20261013170000_bitrix24_sync_cron.sql) | 0 |
+| 20261013171000 | [20261013171000_channel_credentials_provider_evolution](migrations/20261013171000_20261013171000_channel_credentials_provider_evolution.sql) | 0 |
 | 20261014000000 | [20261014000000_gamificacao_server_side](migrations/20261014000000_20261014000000_gamificacao_server_side.sql) | 0 |
 | 20261014000001 | [20261014000001_fix_allowlist_bitrix24_gamificacao](migrations/20261014000001_20261014000001_fix_allowlist_bitrix24_gamificacao.sql) | 0 |
 | 20261014000002 | [20261014000002_fix_concurrently_indexes](migrations/20261014000002_20261014000002_fix_concurrently_indexes.sql) | 0 |

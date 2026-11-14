@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 12:02 UTC
+
+- **constraints** alterado (1): `public.channel_credentials.channel_credentials_provider_check`
+- **migrations** adicionado (1): `20261013171000_20261013171000_channel_credentials_provider_evolution`
+
 ## 2026-11-14 01:30 UTC
 
 - **functions** alterado (3): `public.get_current_salesperson_id()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`

@@ -61659,7 +61659,7 @@
           "provider"
         ],
         "deferrable": false,
-        "definition": "CHECK (provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text]))",
+        "definition": "CHECK (provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text, 'evolution'::text]))",
         "name": "channel_credentials_provider_check",
         "on_delete": null,
         "on_update": null,
@@ -130185,6 +130185,11 @@
         "name": "20261013170000_bitrix24_sync_cron",
         "statements": null,
         "version": "20261013170000"
+      },
+      {
+        "name": "20261013171000_channel_credentials_provider_evolution",
+        "statements": null,
+        "version": "20261013171000"
       },
       {
         "name": "20261014000000_gamificacao_server_side",

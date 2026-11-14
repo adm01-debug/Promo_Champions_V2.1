@@ -35,7 +35,7 @@
 |---|---|---|---|---|---|
 | channel_credentials_channel_check | CHECK | `CHECK (channel = ANY (ARRAY['whatsapp'::text, 'sms'::text]))` |  |  | sim |
 | channel_credentials_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
-| channel_credentials_provider_check | CHECK | `CHECK (provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text]))` |  |  | sim |
+| channel_credentials_provider_check | CHECK | `CHECK (provider = ANY (ARRAY['twilio'::text, 'meta_cloud'::text, 'zapi'::text, 'messagebird'::text, 'evolution'::text]))` |  |  | sim |
 
 
 ## Referenciada por (FKs de outras tabelas)
