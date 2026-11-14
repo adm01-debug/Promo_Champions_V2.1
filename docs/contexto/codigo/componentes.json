@@ -7534,7 +7534,7 @@
     "EmailTrackingDashboard"
    ],
    "export_default": null,
-   "linhas": 361,
+   "linhas": 364,
    "dominio": "components/email",
    "hooks_locais": [
     "useEmailTracking",
@@ -16627,7 +16627,7 @@
     "InsightExplainPopover"
    ],
    "export_default": null,
-   "linhas": 72,
+   "linhas": 73,
    "dominio": "components/win-loss",
    "hooks_locais": [
     "useInsightExplanation"

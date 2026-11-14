@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `12b6200f5043af677b628267190fc54b6e798917` (2026-11-14T00:13:38Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d620c119ee5680894ec27e3cf8d9fd8942725373` (2026-11-14T11:32:54Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 3527 |
 | arquivos_codigo | 2532 |
-| linhas_codigo | 435847 |
+| linhas_codigo | 435851 |
 | rotas | 170 |
 | rotas_http_backend | 12 |
 | vistas_por_id | 0 |
@@ -574,8 +574,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: scripts/ai-context/cenarios.mjs:102, scripts/ci/inventario-banco.unit.mjs:165
 
 ## Grafo de código (graphify)
-- 20529 nós · 64980 arestas · 1468 comunidades · grafo do commit `12b6200f`
-- comunidades maiores: Card (737), Button (735), Badge (337), client.ts (328), Índice (277), getCorsHeaders (228), vitest (223), ref_npm_supabase (175), utils.ts (175), Avatar (170), useQuotes.ts (168), RaceArena.tsx (157)
+- 20529 nós · 64981 arestas · 1477 comunidades · grafo do commit `d620c119`
+- comunidades maiores: Card (753), Button (517), react (348), Badge (342), client.ts (318), Índice (277), getCorsHeaders (232), vitest (212), fetchWithTimeout (211), useQuotes.ts (208), CardDescription (164), RaceArena.tsx (156)
 - símbolos mais chamados: Card (src/components/ui/card.tsx), CardContent (src/components/ui/card.tsx), Badge (src/components/ui/badge.tsx), Button (src/components/ui/button.tsx), cn() (src/lib/utils.ts), CardHeader (src/components/ui/card.tsx), CardTitle (src/components/ui/card.tsx), Skeleton (src/components/ui/skeleton.tsx), formatBRL() (src/lib/money.ts), Input (src/components/ui/input.tsx), Label (src/components/ui/label.tsx), SelectContent (src/components/ui/select.tsx)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -583,7 +583,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (79)
 - package-lock.json (77)
 - .github/workflows/pr-checks.yml (33)
-- deno.lock (30)
+- deno.lock (31)
 - .github/workflows/codeql.yml (20)
 - .github/workflows/quote-to-sale-e2e.yml (19)
 - RELATORIO_CI.md (18)
@@ -593,8 +593,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - .github/workflows/edge-functions-bundle.yml (13)
 - PENDENCIAS.md (12)
 - src/integrations/supabase/types.ts (12)
-- supabase/functions/bitrix24-sync/index.ts (12)
 - src/components/pipeline/PipelineBoard.tsx (11)
+- src/hooks/abm/useAccounts.ts (11)
 
 ## Workflows
 - `a11y-sweep.yml` — A11y Sweep (UI PRs) (pull_request, workflow_dispatch)
@@ -753,6 +753,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [1.3.0](https://github.com/adm01-debug/Promo_Champions_V2.1/compare/promo-champions-v2-v1.2.0...promo-champions-v2-v1.3.0) (2026-11-12)
 
 ## Últimos commits
+- 2026-11-14 `d620c11` chore(deps): bump the react-core group across 1 directory with 5 updates (#398)
 - 2026-11-14 `12b6200` fix: restringe DELETE de accounts a gestor na RLS (#460)
 - 2026-11-14 `2c56590` fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)
 - 2026-11-13 `614d675` docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)
@@ -767,7 +768,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `bb623b7` fix: Elite Analytics de cadências mostra taxa real e remove score e números fictícios (#454)
 - 2026-11-13 `b83d412` chore(deps): bump @xyflow/react from 12.12.0 to 12.12.1 (#410)
 - 2026-11-13 `3f027d1` fix: remover fila de aprovação fictícia das cadências (#440)
-- 2026-11-13 `824a372` fix: desabilita entrada na liga enquanto não há ligas cadastradas (#443)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

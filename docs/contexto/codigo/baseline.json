@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "12b6200f5043af677b628267190fc54b6e798917",
+  "commit": "d620c119ee5680894ec27e3cf8d9fd8942725373",
   "branch": "main",
-  "data_commit": "2026-11-14T00:13:38Z",
+  "data_commit": "2026-11-14T11:32:54Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "d620c11",
+    "data": "2026-11-14",
+    "assunto": "chore(deps): bump the react-core group across 1 directory with 5 updates (#398)"
+   },
    {
     "sha": "12b6200",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "d0da8ad",
     "data": "2026-11-13",
     "assunto": "fix: simulador de cenarios usa receita ganha real e remove plano falso (#450)"
-   },
-   {
-    "sha": "0915aab",
-    "data": "2026-11-13",
-    "assunto": "fix: remove ações e previsões falsas do Cliente 360 (#441)"
    }
   ],
-  "arquivos_mudados_7d": 636,
+  "arquivos_mudados_7d": 641,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "src/components/race",
-    "mudancas": 36
+    "mudancas": 37
    },
    {
     "pasta": "src/hooks/win-loss",
@@ -169,11 +169,11 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 24
+    "mudancas": 25
    },
    {
     "pasta": "package.json",
-    "mudancas": 24
+    "mudancas": 25
    },
    {
     "pasta": "src/hooks/gamification",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/components/win-loss",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "pasta": "src/hooks/sales",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "deno.lock",
-    "mudancas": 30
+    "mudancas": 31
    },
    {
     "arquivo": ".github/workflows/codeql.yml",
@@ -250,15 +250,15 @@
     "mudancas": 12
    },
    {
-    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
-    "mudancas": 12
-   },
-   {
     "arquivo": "src/components/pipeline/PipelineBoard.tsx",
     "mudancas": 11
    },
    {
     "arquivo": "src/hooks/abm/useAccounts.ts",
+    "mudancas": 11
+   },
+   {
+    "arquivo": "supabase/functions/bitrix24-sync/index.ts",
     "mudancas": 11
    },
    {
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 22
+    "commits": 23
    },
    {
     "autor": "Claude",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 3527,
   "arquivos_codigo": 2532,
-  "linhas_codigo": 435847,
+  "linhas_codigo": 435851,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
@@ -600,7 +600,7 @@
   },
   "src/components": {
    "arquivos": 1207,
-   "linhas": 189899
+   "linhas": 189903
   },
   "src/config": {
    "arquivos": 4,

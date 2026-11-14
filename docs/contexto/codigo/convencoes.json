@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps): bump the react-core group across 1 directory with 5 updates (#398)",
    "fix: restringe DELETE de accounts a gestor na RLS (#460)",
    "fix: plano de conta do ABM deixa de duplicar (um plano por conta, visível ao dono) (#482)",
    "docs: fecha o relatório de prontidão com o main final e o quadro dos 9 itens (#484)",
-   "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)",
-   "docs: relatório de prontidão para produção (inventário, provas e bloqueios) (#445)"
+   "fix: card do pipeline não inventa saúde 50 nem recomendação para deal sem score (#483)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
