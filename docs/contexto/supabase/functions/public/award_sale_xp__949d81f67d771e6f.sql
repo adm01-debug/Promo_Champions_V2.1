@@ -13,8 +13,11 @@ DECLARE
   v_thresholds jsonb;
   v_prev_level integer;
   v_new_level integer;
+  v_full_result boolean;
 BEGIN
-  IF auth.uid() IS NULL THEN
+  -- service_role não carrega uid de usuário: o GRANT já é a fronteira —
+  -- a concessão é feita em nome do dono da venda, nunca do caller.
+  IF auth.role() IS DISTINCT FROM 'service_role' AND auth.uid() IS NULL THEN
     RAISE EXCEPTION 'Autenticação obrigatória' USING ERRCODE = '28000';
   END IF;
 
@@ -25,6 +28,13 @@ BEGIN
   IF NOT FOUND THEN
     RAISE EXCEPTION 'Venda não encontrada' USING ERRCODE = 'P0002';
   END IF;
+
+  -- Posse: todo cliente recebe o broadcast e pode disparar o crédito
+  -- (idempotente por sale_id), mas só o dono da venda, admin/manager ou
+  -- service_role recebem os totais — os demais recebem {'awarded': true}.
+  v_full_result := auth.role() = 'service_role'
+    OR public.is_admin_or_manager(auth.uid())
+    OR v_sale.salesperson_id = public.get_current_salesperson_id();
 
   -- Status ganho canônico: WON/COUNTED = ('completed','won','closed').
   IF v_sale.status IS NULL
@@ -91,6 +101,10 @@ BEGIN
      SET current_level = GREATEST(current_level, v_new_level),
          updated_at = now()
    WHERE salesperson_id = v_sale.salesperson_id;
+
+  IF NOT v_full_result THEN
+    RETURN jsonb_build_object('awarded', true);
+  END IF;
 
   RETURN jsonb_build_object(
     'awarded', true,

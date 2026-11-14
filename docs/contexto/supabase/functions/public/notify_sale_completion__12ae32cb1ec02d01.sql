@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION public.notify_sale_completion()
  RETURNS trigger
  LANGUAGE plpgsql
+ SECURITY DEFINER
  SET search_path TO 'public'
 AS $function$
 DECLARE
@@ -14,8 +15,17 @@ DECLARE
 BEGIN
     -- Detect closure event (deal_status = 'completed' cobre o trio WON via
     -- coluna GENERATED — 'won'/'closed' também disparam o alerta).
-    IF (TG_OP = 'UPDATE' AND NEW.deal_status = 'completed'::deal_status AND (OLD.deal_status IS NULL OR OLD.deal_status != 'completed'::deal_status))
-       OR (TG_OP = 'INSERT' AND NEW.deal_status = 'completed'::deal_status) THEN
+    -- Dispara também quando uma venda já WON ganha dono depois
+    -- (OLD.salesperson_id NULL → NEW preenchido) e ignora WON sem dono —
+    -- competitive_chat_messages.salesperson_id é NOT NULL, inserir com
+    -- NULL abortava a transação inteira.
+    IF NEW.deal_status = 'completed'::deal_status
+       AND NEW.salesperson_id IS NOT NULL
+       AND (
+         TG_OP = 'INSERT'
+         OR OLD.deal_status IS DISTINCT FROM 'completed'::deal_status
+         OR OLD.salesperson_id IS NULL
+       ) THEN
 
         v_seller_id := NEW.salesperson_id;
         v_sale_amount := NEW.amount;

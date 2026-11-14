@@ -15,14 +15,6 @@ BEGIN
     RAISE EXCEPTION 'not authenticated';
   END IF;
 
-  IF _computed_amount IS NULL OR _computed_amount <= 0 THEN
-    RETURN NULL;
-  END IF;
-
-  IF _bonus_kind NOT IN ('fixed','percentage') THEN
-    RETURN NULL;
-  END IF;
-
   -- Deriva salesperson_id do usuário autenticado (impossível forjar)
   SELECT id INTO _sp_id FROM public.salespeople WHERE auth_user_id = auth.uid() LIMIT 1;
   IF _sp_id IS NULL THEN
@@ -52,10 +44,11 @@ BEGIN
     RETURN _existing;
   END IF;
 
+  -- Valor/tipo vêm da regra no banco — o cliente não pode forjar o prêmio.
   INSERT INTO public.commission_bonus_awards (
     bonus_id, salesperson_id, period_month, computed_amount, bonus_kind, status
   ) VALUES (
-    _bonus_id, _sp_id, _period, _computed_amount, _bonus_kind, 'pending'
+    _bonus_id, _sp_id, _period, _bonus.bonus_amount, _bonus.bonus_kind, 'pending'
   )
   ON CONFLICT (bonus_id, salesperson_id, period_month) DO NOTHING
   RETURNING id INTO _new_id;

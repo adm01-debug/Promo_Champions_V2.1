@@ -91,6 +91,7 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| trg_data_subject_requests_guard_payload | BEFORE | INSERT OR UPDATE | ROW | enabled | public.data_subject_requests_guard_payload |
 | update_data_subject_requests_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

@@ -317,3 +317,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261027120100 | [20261027120100_edge_job_lock_lease](migrations/20261027120100_20261027120100_edge_job_lock_lease.sql) | 0 |
 | 20261027130000 | [20261027130000_agent_runs_owner_check_e_grants](migrations/20261027130000_20261027130000_agent_runs_owner_check_e_grants.sql) | 0 |
 | 20261027131000 | [20261027131000_agent_runs_r3_rls_lockdown](migrations/20261027131000_20261027131000_agent_runs_r3_rls_lockdown.sql) | 0 |
+| 20261027140000 | [20261027140000_lgpd_gamificacao_r3](migrations/20261027140000_20261027140000_lgpd_gamificacao_r3.sql) | 0 |
+| 20261027210000 | [20261027210000_r3_db_kpis_fixes](migrations/20261027210000_20261027210000_r3_db_kpis_fixes.sql) | 0 |
+| 20261027211000 | [20261027211000_match_whatsapp_reply_e_lock_release](migrations/20261027211000_20261027211000_match_whatsapp_reply_e_lock_release.sql) | 0 |

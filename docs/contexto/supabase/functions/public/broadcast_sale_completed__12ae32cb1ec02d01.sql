@@ -14,10 +14,13 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Dispara apenas na transição para venda ganha (INSERT ou UPDATE que muda
-  -- o status). Se o enqueue falhar, a venda fica com broadcast_sent_at nulo e
+  -- Dispara apenas na transição para venda ganha OU quando uma venda já
+  -- WON ganha dono depois (OLD.salesperson_id NULL → NEW preenchido).
+  -- Se o enqueue falhar, a venda fica com broadcast_sent_at nulo e
   -- o erro em edge_call_failures — sem re-tentar a cada update posterior.
-  IF TG_OP = 'UPDATE' AND OLD.deal_status = 'completed' THEN
+  IF TG_OP = 'UPDATE'
+     AND OLD.deal_status = 'completed'
+     AND OLD.salesperson_id IS NOT NULL THEN
     RETURN NEW;
   END IF;
 

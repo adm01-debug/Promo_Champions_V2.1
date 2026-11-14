@@ -82455,7 +82455,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "5103ba55d7362926",
+        "definition_sha": "a38c242c7e193bbd",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -83148,7 +83148,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "62014db783c126e0",
+        "definition_sha": "bd9f36f999e53713",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -83182,12 +83182,12 @@
           "triggers": [],
           "views": []
         },
-        "comment": "Credita XP de venda com amount derivado do banco (nunca do cliente). Idempotente por sale_id.",
+        "comment": "Credita XP de venda com amount derivado do banco (nunca do cliente). Idempotente por sale_id. Caller que não é o dono/admin recebe retorno mínimo; service_role chama em nome do dono.",
         "config": [
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "fd985a948f2e7d46",
+        "definition_sha": "9a203148ae1d7d5e",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -83311,7 +83311,7 @@
           "search_path=public, net"
         ],
         "definition": null,
-        "definition_sha": "e30b253f6cebec55",
+        "definition_sha": "3c6b37b8bc4367f4",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -84621,7 +84621,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "24f8d668786c46c1",
+        "definition_sha": "283995e1aceb42e1",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -84836,6 +84836,43 @@
         "returns": "trigger",
         "schema": "public",
         "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.data_subject_requests.trg_data_subject_requests_guard_payload"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "1c5ad6bcec3de74e",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "data_subject_requests_guard_payload",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
         "strict": false,
         "volatility": "volatile"
       },
@@ -87306,7 +87343,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "a82d4d1a5bd895c1",
+        "definition_sha": "f9803cdf90a27da7",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -87545,6 +87582,7 @@
             "public.append_agent_step",
             "public.approve_agent_run",
             "public.auto_add_client_to_portfolio",
+            "public.award_sale_xp",
             "public.claim_daily_challenge_reward",
             "public.claim_streak_achievements",
             "public.claim_weekly_challenge_reward",
@@ -87552,6 +87590,8 @@
             "public.compute_forecast_rollup",
             "public.create_activities_from_action_items",
             "public.create_agent_run",
+            "public.get_client_purchase_heatmap",
+            "public.get_purchase_intelligence_summary",
             "public.increment_combo",
             "public.increment_goal_progress",
             "public.increment_sales_streak",
@@ -88155,7 +88195,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "f4642dc68e571163",
+        "definition_sha": "e199c0cf175cf4c4",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -88260,7 +88300,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "1a31a98a1487b593",
+        "definition_sha": "c28f4753cc48fdac",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -89539,11 +89579,13 @@
             "public.admin_edge_cron_status",
             "public.anonymize_data_subject",
             "public.auto_assign_lead",
+            "public.award_sale_xp",
             "public.check_2fa_failed_attempts",
             "public.compute_forecast_rollup",
             "public.compute_pipeline_inspection",
             "public.create_activities_from_action_items",
             "public.create_agent_run",
+            "public.data_subject_requests_guard_payload",
             "public.get_deleted_records",
             "public.get_semantic_coverage",
             "public.increment_combo",
@@ -89724,11 +89766,13 @@
             "public.admin_edge_cron_status",
             "public.anonymize_data_subject",
             "public.auto_assign_lead",
+            "public.award_sale_xp",
             "public.check_2fa_failed_attempts",
             "public.compute_forecast_rollup",
             "public.compute_pipeline_inspection",
             "public.create_activities_from_action_items",
             "public.create_agent_run",
+            "public.data_subject_requests_guard_payload",
             "public.get_deleted_records",
             "public.get_semantic_coverage",
             "public.increment_combo",
@@ -90732,6 +90776,41 @@
         "volatility": "volatile"
       },
       {
+        "args": "_from_digits text, _owner_ids uuid[], _received_at timestamp with time zone",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/whatsapp-inbound-webhook/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "ceea09bc8f338c91",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "match_whatsapp_reply_to_enrollment",
+        "owner": "postgres",
+        "returns": "uuid",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
         "args": "target_id uuid, duplicate_ids uuid[], preferred_fields jsonb",
         "callers": {
           "code": [
@@ -90944,7 +91023,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "3137e5a7d85bad57",
+        "definition_sha": "5179e8af19f9c5e0",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -90955,7 +91034,7 @@
         "owner": "postgres",
         "returns": "trigger",
         "schema": "public",
-        "security_definer": false,
+        "security_definer": true,
         "strict": false,
         "volatility": "volatile"
       },
@@ -92035,7 +92114,7 @@
         "volatility": "volatile"
       },
       {
-        "args": "_job_name text",
+        "args": "_job_name text, _request_id text",
         "callers": {
           "code": [
             {
@@ -92054,7 +92133,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "feff3bbd0588e577",
+        "definition_sha": "09d796ed8c376156",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -130543,6 +130622,21 @@
         "name": "20261027131000_agent_runs_r3_rls_lockdown",
         "statements": null,
         "version": "20261027131000"
+      },
+      {
+        "name": "20261027140000_lgpd_gamificacao_r3",
+        "statements": null,
+        "version": "20261027140000"
+      },
+      {
+        "name": "20261027210000_r3_db_kpis_fixes",
+        "statements": null,
+        "version": "20261027210000"
+      },
+      {
+        "name": "20261027211000_match_whatsapp_reply_e_lock_release",
+        "statements": null,
+        "version": "20261027211000"
       }
     ],
     "policies": [
@@ -150974,6 +151068,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_data_subject_requests_guard_payload BEFORE INSERT OR UPDATE OF payload ON data_subject_requests FOR EACH ROW EXECUTE FUNCTION data_subject_requests_guard_payload()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.data_subject_requests_guard_payload",
+        "level": "ROW",
+        "name": "trg_data_subject_requests_guard_payload",
+        "schema": "public",
+        "status": "enabled",
+        "table": "data_subject_requests",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER update_data_subject_requests_updated_at BEFORE UPDATE ON data_subject_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
         "events": "UPDATE",
         "function": "public.update_updated_at_column",
@@ -152767,7 +152872,7 @@
         "timing": "BEFORE"
       },
       {
-        "definition": "CREATE TRIGGER trg_broadcast_sale_completed AFTER INSERT OR UPDATE OF status, deal_status ON sales FOR EACH ROW EXECUTE FUNCTION broadcast_sale_completed()",
+        "definition": "CREATE TRIGGER trg_broadcast_sale_completed AFTER INSERT OR UPDATE OF status, deal_status, salesperson_id ON sales FOR EACH ROW EXECUTE FUNCTION broadcast_sale_completed()",
         "events": "INSERT OR UPDATE",
         "function": "public.broadcast_sale_completed",
         "level": "ROW",
@@ -154425,7 +154530,7 @@
       },
       {
         "comment": null,
-        "definition": " SELECT c.id AS client_id,\n    c.name AS client_name,\n    EXTRACT(month FROM s.created_at)::integer AS month_of_year,\n    EXTRACT(dow FROM s.created_at)::integer AS day_of_week,\n    count(*)::integer AS deal_count,\n    COALESCE(avg(s.amount), 0::numeric) AS avg_revenue,\n    COALESCE(sum(s.amount), 0::numeric) AS total_revenue\n   FROM sales s\n     JOIN clients c ON c.name = s.client_name\n  WHERE s.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])\n  GROUP BY c.id, c.name, (EXTRACT(month FROM s.created_at)), (EXTRACT(dow FROM s.created_at));",
+        "definition": " SELECT c.id AS client_id,\n    c.name AS client_name,\n    EXTRACT(month FROM (s.created_at AT TIME ZONE 'America/Sao_Paulo'::text))::integer AS month_of_year,\n    EXTRACT(dow FROM (s.created_at AT TIME ZONE 'America/Sao_Paulo'::text))::integer AS day_of_week,\n    count(*)::integer AS deal_count,\n    COALESCE(avg(s.amount), 0::numeric) AS avg_revenue,\n    COALESCE(sum(s.amount), 0::numeric) AS total_revenue\n   FROM sales s\n     JOIN clients c ON c.name = s.client_name\n  WHERE s.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])\n  GROUP BY c.id, c.name, (EXTRACT(month FROM (s.created_at AT TIME ZONE 'America/Sao_Paulo'::text))), (EXTRACT(dow FROM (s.created_at AT TIME ZONE 'America/Sao_Paulo'::text)));",
         "depends_on": [
           "public.clients",
           "public.sales"
@@ -154645,7 +154750,7 @@
       },
       {
         "comment": null,
-        "definition": " WITH open_deals AS (\n         SELECT s.id,\n            s.salesperson_id,\n            s.amount,\n            s.status,\n            s.forecast_category,\n            s.created_at,\n            s.updated_at,\n            sp.probability AS stage_probability\n           FROM sales s\n             JOIN stage_probabilities sp ON sp.stage = s.status\n          WHERE sp.probability > 0::numeric AND sp.probability < 1::numeric\n        ), category_agg AS (\n         SELECT open_deals.salesperson_id,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'commit'::forecast_category) AS commit_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'best_case'::forecast_category) AS best_case_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'pipeline'::forecast_category) AS pipeline_amount\n           FROM open_deals\n          GROUP BY open_deals.salesperson_id\n        ), closed_recent AS (\n         SELECT sales.salesperson_id,\n            count(*) AS won_count,\n            avg(EXTRACT(epoch FROM COALESCE(sales.closed_at, sales.updated_at) - sales.created_at) / 86400.0) AS avg_cycle_days,\n            sum(sales.amount) AS won_amount_90d\n           FROM sales\n          WHERE (sales.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) AND COALESCE(sales.closed_at, sales.updated_at) >= (now() - '90 days'::interval)\n          GROUP BY sales.salesperson_id\n        ), goals_current AS (\n         SELECT DISTINCT ON (sales_goals.salesperson_id) sales_goals.salesperson_id,\n            sales_goals.goal_amount\n           FROM sales_goals\n          WHERE sales_goals.month <= date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text))::date\n          ORDER BY sales_goals.salesperson_id, sales_goals.month DESC\n        )\n SELECT COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id) AS salesperson_id,\n    COALESCE(sum(od.amount), 0::numeric) AS total_open_pipeline,\n    COALESCE(sum(od.amount * od.stage_probability), 0::numeric) AS weighted_forecast,\n    count(od.id) FILTER (WHERE od.id IS NOT NULL) AS open_deals_count,\n    COALESCE(max(cr.avg_cycle_days), 45::numeric) AS avg_cycle_days,\n    COALESCE(max(cr.won_amount_90d), 0::numeric) AS won_amount_90d,\n    COALESCE(max(cr.won_count), 0::bigint) AS won_count_90d,\n    COALESCE(max(gc.goal_amount), 0::numeric) AS monthly_goal,\n    COALESCE(max(ca.commit_amount), 0::numeric) AS commit_amount,\n    COALESCE(max(ca.best_case_amount), 0::numeric) AS best_case_amount,\n    COALESCE(max(ca.pipeline_amount), 0::numeric) AS pipeline_amount,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric)), 0::numeric) AS pessimistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) * 0.5), 0::numeric) AS realistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) + COALESCE(ca.pipeline_amount, 0::numeric) * 0.3), 0::numeric) AS optimistic_30d\n   FROM open_deals od\n     FULL JOIN closed_recent cr ON cr.salesperson_id = od.salesperson_id\n     FULL JOIN goals_current gc ON gc.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n     LEFT JOIN category_agg ca ON ca.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n  WHERE is_salesperson_active(COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id))\n  GROUP BY (COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id));",
+        "definition": " WITH open_deals AS (\n         SELECT s.id,\n            s.salesperson_id,\n            s.amount,\n            s.status,\n            s.forecast_category,\n            s.created_at,\n            s.updated_at,\n            sp.probability AS stage_probability\n           FROM sales s\n             JOIN stage_probabilities sp ON sp.stage = s.status\n          WHERE sp.probability > 0::numeric AND sp.probability < 1::numeric\n        ), category_agg AS (\n         SELECT open_deals.salesperson_id,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'commit'::forecast_category) AS commit_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'best_case'::forecast_category) AS best_case_amount,\n            sum(open_deals.amount) FILTER (WHERE open_deals.forecast_category = 'pipeline'::forecast_category) AS pipeline_amount\n           FROM open_deals\n          GROUP BY open_deals.salesperson_id\n        ), closed_recent AS (\n         SELECT sales.salesperson_id,\n            count(*) AS won_count,\n            avg(EXTRACT(epoch FROM COALESCE(sales.closed_at, sales.updated_at) - sales.created_at) / 86400.0) AS avg_cycle_days,\n            sum(sales.amount) AS won_amount_90d\n           FROM sales\n          WHERE (sales.status = ANY (ARRAY['completed'::text, 'won'::text, 'closed'::text])) AND COALESCE(sales.closed_at, sales.updated_at) >= (now() - '90 days'::interval)\n          GROUP BY sales.salesperson_id\n        ), goals_current AS (\n         SELECT DISTINCT ON (sales_goals.salesperson_id) sales_goals.salesperson_id,\n            sales_goals.goal_amount\n           FROM sales_goals\n          WHERE sales_goals.month <= date_trunc('month'::text, (now() AT TIME ZONE 'America/Sao_Paulo'::text))::date\n          ORDER BY sales_goals.salesperson_id, sales_goals.month DESC\n        )\n SELECT COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id) AS salesperson_id,\n    COALESCE(sum(od.amount), 0::numeric) AS total_open_pipeline,\n    COALESCE(sum(od.amount * od.stage_probability), 0::numeric) AS weighted_forecast,\n    count(od.id) FILTER (WHERE od.id IS NOT NULL) AS open_deals_count,\n    COALESCE(max(cr.avg_cycle_days), 45::numeric) AS avg_cycle_days,\n    COALESCE(max(cr.won_amount_90d), 0::numeric) AS won_amount_90d,\n    COALESCE(max(cr.won_count), 0::bigint) AS won_count_90d,\n    COALESCE(max(gc.goal_amount), 0::numeric) AS monthly_goal,\n    COALESCE(max(ca.commit_amount), 0::numeric) AS commit_amount,\n    COALESCE(max(ca.best_case_amount), 0::numeric) AS best_case_amount,\n    COALESCE(max(ca.pipeline_amount), 0::numeric) AS pipeline_amount,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric)), 0::numeric) AS pessimistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) * 0.5), 0::numeric) AS realistic_30d,\n    COALESCE(max(COALESCE(ca.commit_amount, 0::numeric) + COALESCE(ca.best_case_amount, 0::numeric) + COALESCE(ca.pipeline_amount, 0::numeric) * 0.3), 0::numeric) AS optimistic_30d\n   FROM open_deals od\n     FULL JOIN closed_recent cr ON cr.salesperson_id = od.salesperson_id\n     FULL JOIN goals_current gc ON gc.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n     LEFT JOIN category_agg ca ON ca.salesperson_id = COALESCE(od.salesperson_id, cr.salesperson_id)\n  WHERE COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id) IS NULL OR is_salesperson_active(COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id))\n  GROUP BY (COALESCE(od.salesperson_id, cr.salesperson_id, gc.salesperson_id));",
         "depends_on": [
           "public.sales",
           "public.sales_goals",

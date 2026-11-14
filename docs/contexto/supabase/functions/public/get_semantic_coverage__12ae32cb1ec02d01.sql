@@ -18,9 +18,9 @@ BEGIN
     UNION ALL SELECT 'call_recording', (SELECT count(*) FROM public.call_recordings)
   ),
   idx AS (
-    SELECT entity_type AS et, count(*) AS indexed, max(updated_at) AS last_at
-    FROM public.semantic_index
-    GROUP BY entity_type
+    SELECT si.entity_type AS et, count(*) AS indexed, max(si.updated_at) AS last_at
+    FROM public.semantic_index si
+    GROUP BY si.entity_type
   )
   SELECT
     b.et,

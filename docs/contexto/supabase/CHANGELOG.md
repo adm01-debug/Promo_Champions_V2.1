@@ -2,6 +2,16 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 13:54 UTC
+
+- **functions** adicionado (3): `public.data_subject_requests_guard_payload()`, `public.match_whatsapp_reply_to_enrollment(_from_digits text, _owner_ids uuid[], _received_at timestamp with time zone)`, `public.release_edge_job_lock(_job_name text, _request_id text)`
+- **functions** removido (1): `public.release_edge_job_lock(_job_name text)`
+- **functions** alterado (12): `public.anonymize_data_subject(p_subject_email text, p_subject_id uuid, p_phone text, p_ip text, p_request_id uuid)`, `public.award_bonus_if_eligible(_bonus_id uuid, _computed_amount numeric, _bonus_kind text)`, `public.award_sale_xp(p_sale_id uuid)`, `public.broadcast_sale_completed()`, `public.compute_scheduled_report_next_run()`, `public.get_client_purchase_heatmap(_client_id uuid, _months integer)`, `public.get_current_salesperson_id()`, `public.get_purchase_intelligence_summary(_client_id uuid)`, `public.get_semantic_coverage()`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`, `public.notify_sale_completion()`
+- **migrations** adicionado (3): `20261027140000_20261027140000_lgpd_gamificacao_r3`, `20261027210000_20261027210000_r3_db_kpis_fixes`, `20261027211000_20261027211000_match_whatsapp_reply_e_lock_release`
+- **triggers** adicionado (1): `public.data_subject_requests.trg_data_subject_requests_guard_payload`
+- **triggers** alterado (1): `public.sales.trg_broadcast_sale_completed`
+- **views** alterado (2): `public.client_purchase_seasonality`, `public.revenue_forecast_view`
+
 ## 2026-11-14 13:34 UTC
 
 - **colunas** adicionado (3): `public.edge_job_locks.job_name`, `public.edge_job_locks.locked_at`, `public.edge_job_locks.request_id`

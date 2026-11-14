@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION public.get_client_purchase_heatmap(_client_id uuid DE
 AS $function$
 DECLARE
   _uid uuid := auth.uid();
+  _sp_id uuid := public.get_current_salesperson_id();
   _is_privileged boolean := public.has_role(_uid, 'admin') OR public.has_role(_uid, 'manager');
   _start date := (date_trunc('month', now() AT TIME ZONE 'America/Sao_Paulo') - (_months || ' months')::interval)::date;
 BEGIN
@@ -13,10 +14,10 @@ BEGIN
   SELECT
     c.id AS client_id,
     c.name AS client_name,
-    date_trunc('month', s.created_at)::date AS month_start,
+    date_trunc('month', s.created_at AT TIME ZONE 'America/Sao_Paulo')::date AS month_start,
     s.salesperson_id,
     sp.name AS salesperson_name,
-    (s.salesperson_id = _uid) AS is_current_user,
+    (_sp_id IS NOT NULL AND s.salesperson_id = _sp_id) AS is_current_user,
     COUNT(*)::bigint AS deal_count,
     COALESCE(SUM(s.amount), 0)::numeric AS revenue,
     COUNT(*) FILTER (WHERE s.status IN ('completed', 'won', 'closed'))::bigint AS won_count
@@ -29,10 +30,10 @@ BEGIN
       _is_privileged
       OR EXISTS (
         SELECT 1 FROM public.sales s2
-        WHERE s2.client_name = c.name AND s2.salesperson_id = _uid
+        WHERE s2.client_name = c.name AND s2.salesperson_id = _sp_id
       )
     )
-  GROUP BY c.id, c.name, date_trunc('month', s.created_at), s.salesperson_id, sp.name
+  GROUP BY c.id, c.name, date_trunc('month', s.created_at AT TIME ZONE 'America/Sao_Paulo'), s.salesperson_id, sp.name
   ORDER BY month_start DESC, revenue DESC;
 END;
 $function$

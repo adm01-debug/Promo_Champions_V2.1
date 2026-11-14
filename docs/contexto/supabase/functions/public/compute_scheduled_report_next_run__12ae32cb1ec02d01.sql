@@ -5,10 +5,8 @@ CREATE OR REPLACE FUNCTION public.compute_scheduled_report_next_run()
  SET search_path TO 'public'
 AS $function$
 DECLARE
-  base TIMESTAMPTZ;
   candidate TIMESTAMP; -- instante local America/Sao_Paulo; convertido no final
 BEGIN
-  base := COALESCE(NEW.last_run_at, now());
   IF NEW.frequency = 'daily' THEN
     candidate := date_trunc('day', now() AT TIME ZONE 'America/Sao_Paulo') + (NEW.hour_of_day || ' hours')::interval;
     IF candidate <= now() AT TIME ZONE 'America/Sao_Paulo' THEN

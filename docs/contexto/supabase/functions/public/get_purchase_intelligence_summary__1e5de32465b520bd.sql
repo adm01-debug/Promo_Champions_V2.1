@@ -6,6 +6,7 @@ CREATE OR REPLACE FUNCTION public.get_purchase_intelligence_summary(_client_id u
 AS $function$
 DECLARE
   _uid uuid := auth.uid();
+  _sp_id uuid := public.get_current_salesperson_id();
   _is_privileged boolean := public.has_role(_uid, 'admin') OR public.has_role(_uid, 'manager');
   _client_name text;
   _result jsonb;
@@ -27,7 +28,7 @@ BEGIN
   -- access check
   IF NOT _is_privileged THEN
     IF NOT EXISTS (
-      SELECT 1 FROM public.sales WHERE client_name = _client_name AND salesperson_id = _uid
+      SELECT 1 FROM public.sales WHERE client_name = _client_name AND salesperson_id = _sp_id
     ) THEN
       RETURN jsonb_build_object('error', 'forbidden');
     END IF;
@@ -54,13 +55,13 @@ BEGIN
   FROM ordered
   WHERE prev_dt IS NOT NULL;
 
-  -- shares
+  -- shares (IS DISTINCT FROM cobre salesperson_id NULL e _sp_id NULL)
   SELECT
     CASE WHEN _total_revenue > 0 THEN
-      COALESCE(SUM(amount) FILTER (WHERE salesperson_id = _uid), 0) / _total_revenue * 100
+      COALESCE(SUM(amount) FILTER (WHERE salesperson_id = _sp_id), 0) / _total_revenue * 100
     ELSE 0 END,
     CASE WHEN _total_revenue > 0 THEN
-      COALESCE(SUM(amount) FILTER (WHERE salesperson_id <> _uid OR salesperson_id IS NULL), 0) / _total_revenue * 100
+      COALESCE(SUM(amount) FILTER (WHERE salesperson_id IS DISTINCT FROM _sp_id), 0) / _total_revenue * 100
     ELSE 0 END
   INTO _share_me, _share_others
   FROM public.sales
@@ -78,7 +79,7 @@ BEGIN
   LEFT JOIN public.salespeople sp ON sp.id = s.salesperson_id
   WHERE s.client_name = _client_name
     AND s.status IN ('completed', 'won', 'closed')
-    AND (s.salesperson_id IS DISTINCT FROM _uid)
+    AND (s.salesperson_id IS DISTINCT FROM _sp_id)
   GROUP BY sp.id, sp.name
   ORDER BY SUM(s.amount) DESC NULLS LAST
   LIMIT 1;
