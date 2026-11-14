@@ -7549,6 +7549,24 @@ export type Database = {
         }
         Relationships: []
       }
+      edge_job_locks: {
+        Row: {
+          job_name: string
+          locked_at: string
+          request_id: string | null
+        }
+        Insert: {
+          job_name: string
+          locked_at?: string
+          request_id?: string | null
+        }
+        Update: {
+          job_name?: string
+          locked_at?: string
+          request_id?: string | null
+        }
+        Relationships: []
+      }
       edge_retry_events: {
         Row: {
           attempt: number
@@ -23733,6 +23751,7 @@ export type Database = {
         }
         Returns: string
       }
+      award_sale_xp: { Args: { p_sale_id: string }; Returns: Json }
       award_salesperson_xp: {
         Args: {
           p_description: string
@@ -23795,14 +23814,6 @@ export type Database = {
       }
       calculate_deal_probability: { Args: { deal_id: string }; Returns: number }
       calculate_lead_distribution: { Args: never; Returns: Json }
-      calculate_performance_pace: {
-        Args: { _salesperson_id: string }
-        Returns: {
-          current_pct: number
-          predicted_pct: number
-          status: string
-        }[]
-      }
       calculate_source_roi: {
         Args: { _days?: number; _source: string }
         Returns: {
@@ -23891,6 +23902,15 @@ export type Database = {
       complete_call_recording_ingest_job: {
         Args: { _error?: string; _job_id: string; _success: boolean }
         Returns: undefined
+      }
+      compute_challenge_progress_value: {
+        Args: {
+          p_challenge_type: string
+          p_end: string
+          p_salesperson_id: string
+          p_start: string
+        }
+        Returns: number
       }
       compute_forecast_rollup: {
         Args: { _horizon_days?: number }
@@ -24425,7 +24445,6 @@ export type Database = {
           id: string
         }[]
       }
-      get_detailed_kpis: { Args: never; Returns: Json }
       get_dialer_queue_stats: {
         Args: { _queue_id: string }
         Returns: {
@@ -24547,16 +24566,6 @@ export type Database = {
           still_failing: number
         }[]
       }
-      get_revenue_forecast: {
-        Args: { _days?: number }
-        Returns: {
-          avg_health: number
-          deal_count: number
-          period: string
-          raw_pipeline: number
-          weighted_revenue: number
-        }[]
-      }
       get_score_trend: {
         Args: { _days?: number; _sale_id: string }
         Returns: {
@@ -24676,6 +24685,10 @@ export type Database = {
       }
       is_mfa_enabled: { Args: { check_user_id: string }; Returns: boolean }
       is_recipient_opted_out: { Args: { p_phone: string }; Returns: boolean }
+      is_salesperson_active: {
+        Args: { _salesperson_id: string }
+        Returns: boolean
+      }
       is_valid_status_transition: {
         Args: { p_destino: string; p_entity: string; p_origem: string }
         Returns: boolean
@@ -24737,6 +24750,14 @@ export type Database = {
         }[]
       }
       match_weekly_players: { Args: never; Returns: undefined }
+      match_whatsapp_reply_to_enrollment: {
+        Args: {
+          _from_digits: string
+          _owner_ids?: string[]
+          _received_at?: string
+        }
+        Returns: string
+      }
       merge_clients: {
         Args: {
           duplicate_ids: string[]
@@ -24873,6 +24894,10 @@ export type Database = {
         Returns: Json
       }
       reindex_tables: { Args: never; Returns: undefined }
+      release_edge_job_lock: {
+        Args: { _job_name: string; _request_id: string }
+        Returns: undefined
+      }
       reset_pg_stat_statements_weekly: { Args: never; Returns: undefined }
       resolve_weekly_matchups: { Args: never; Returns: number }
       restore_deleted_record: {
@@ -24977,6 +25002,10 @@ export type Database = {
         Args: { date_val: string; start_day?: number }
         Returns: string
       }
+      sync_challenge_progress: {
+        Args: { p_salesperson_id?: string }
+        Returns: Json
+      }
       sync_quote_from_webhook: {
         Args: {
           p_approved_at: string
@@ -25033,6 +25062,10 @@ export type Database = {
       trigger_internal_edge_job: {
         Args: { p_function_name: string }
         Returns: number
+      }
+      try_edge_job_lock: {
+        Args: { _job_name: string; _request_id?: string; _ttl_seconds: number }
+        Returns: boolean
       }
       unlock_race_item: {
         Args: { _required_league?: string; _unlock_key: string }
