@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 3 |
 | realtime (publication) | sim |
 | replica identity | full |
 | vem de extensão | não |
@@ -62,6 +62,26 @@
 
 ## Policies (RLS)
 
+### `Cancel own agent runs`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))` |
+| WITH CHECK | `(((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)) AND (status = 'cancelled'::text) AND (result IS NULL) AND (completed_at IS NULL) AND ((approved_by IS NULL) OR (approved_by = auth.uid())))` |
+
+### `Insert own pending agent runs`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `(((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)) AND (status = 'pending'::text) AND (approved_by IS NULL) AND (result IS NULL) AND (completed_at IS NULL) AND (steps = '[]'::jsonb))` |
+
 ### `Salespeople view own agent runs`
 
 | campo | valor |
@@ -71,16 +91,6 @@
 | roles | authenticated |
 | USING | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))` |
 | WITH CHECK |  |
-
-### `System manages agent runs`
-
-| campo | valor |
-|---|---|
-| comando | ALL |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))` |
-| WITH CHECK | `((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))` |
 
 
 ## Triggers

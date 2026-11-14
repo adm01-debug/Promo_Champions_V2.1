@@ -6,7 +6,24 @@ CREATE OR REPLACE FUNCTION public.append_agent_step(_run_id uuid, _tool_name tex
 AS $function$
 DECLARE
   v_idx integer;
+  v_sp uuid;
+  v_owner uuid;
 BEGIN
+  -- Owner check (mesmo padrão de approve_agent_run): service_role bypassa;
+  -- autenticado precisa ser dono do run ou admin/manager.
+  SELECT salesperson_id INTO v_owner FROM public.ai_agent_runs WHERE id = _run_id;
+  IF v_owner IS NULL THEN
+    RAISE EXCEPTION 'Run not found';
+  END IF;
+  IF auth.role() <> 'service_role' THEN
+    v_sp := public.get_current_salesperson_id();
+    IF (v_sp IS NULL OR v_owner <> v_sp)
+       AND NOT public.has_role(auth.uid(), 'admin')
+       AND NOT public.has_role(auth.uid(), 'manager') THEN
+      RAISE EXCEPTION 'Not authorized';
+    END IF;
+  END IF;
+
   SELECT COALESCE(MAX(step_index), -1) + 1 INTO v_idx
   FROM public.ai_agent_actions WHERE run_id = _run_id;
 

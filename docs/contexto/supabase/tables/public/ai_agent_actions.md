@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 1 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -34,7 +34,7 @@
 | ai_agent_actions_executed_by_check | CHECK | `CHECK (executed_by = ANY (ARRAY['ai'::text, 'user'::text, 'system'::text]))` |  |  | sim |
 | ai_agent_actions_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
 | ai_agent_actions_run_id_fkey | FOREIGN KEY | `FOREIGN KEY (run_id) REFERENCES ai_agent_runs(id) ON DELETE CASCADE` | CASCADE | NO ACTION | sim |
-| ai_agent_actions_status_check | CHECK | `CHECK (status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text]))` |  |  | sim |
+| ai_agent_actions_status_check | CHECK | `CHECK (status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text, 'executing'::text]))` |  |  | sim |
 
 
 ## Índices
@@ -46,16 +46,6 @@
 
 
 ## Policies (RLS)
-
-### `Insert actions of own runs`
-
-| campo | valor |
-|---|---|
-| comando | INSERT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING |  |
-| WITH CHECK | `(EXISTS ( SELECT 1    FROM ai_agent_runs r   WHERE ((r.id = ai_agent_actions.run_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)))))` |
 
 ### `View actions of accessible runs`
 

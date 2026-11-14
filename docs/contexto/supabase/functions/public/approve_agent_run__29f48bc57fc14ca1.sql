@@ -13,7 +13,11 @@ BEGIN
   IF v_owner IS NULL THEN
     RAISE EXCEPTION 'Run not found';
   END IF;
-  IF v_owner <> v_sp AND NOT public.has_role(auth.uid(), 'admin') AND NOT public.has_role(auth.uid(), 'manager') THEN
+  -- v_sp NULL (autenticado sem salespeople) não autoriza — antes `v_owner <> v_sp`
+  -- avaliava NULL e aprovar run alheio passava sem exceção.
+  IF (v_sp IS NULL OR v_owner <> v_sp)
+     AND NOT public.has_role(auth.uid(), 'admin')
+     AND NOT public.has_role(auth.uid(), 'manager') THEN
     RAISE EXCEPTION 'Not authorized';
   END IF;
   UPDATE public.ai_agent_runs

@@ -18,8 +18,8 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.activity_audit_logs](tables/public/activity_audit_logs.md) | table | sim | 1 | 7 | não |  |
 | [public.activity_goals](tables/public/activity_goals.md) | table | sim | 4 | 9 | não |  |
 | [public.agenda_events](tables/public/agenda_events.md) | table | sim | 2 | 14 | não |  |
-| [public.ai_agent_actions](tables/public/ai_agent_actions.md) | table | sim | 2 | 9 | não |  |
-| [public.ai_agent_runs](tables/public/ai_agent_runs.md) | table | sim | 2 | 15 | sim |  |
+| [public.ai_agent_actions](tables/public/ai_agent_actions.md) | table | sim | 1 | 9 | não |  |
+| [public.ai_agent_runs](tables/public/ai_agent_runs.md) | table | sim | 3 | 15 | sim |  |
 | [public.ai_narrative_cache](tables/public/ai_narrative_cache.md) | table | sim | 2 | 12 | não |  |
 | [public.ai_sales_insights](tables/public/ai_sales_insights.md) | table | sim | 1 | 6 | não |  |
 | [public.api_tokens](tables/public/api_tokens.md) | table | sim | 2 | 10 | não |  |
@@ -138,6 +138,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.document_signers](tables/public/document_signers.md) | table | sim | 4 | 8 | não |  |
 | [public.duplicate_block_logs](tables/public/duplicate_block_logs.md) | table | sim | 1 | 8 | não |  |
 | [public.edge_call_failures](tables/public/edge_call_failures.md) | table | sim | 1 | 6 | não |  |
+| [public.edge_job_locks](tables/public/edge_job_locks.md) | table | sim | 1 | 3 | não |  |
 | [public.edge_retry_events](tables/public/edge_retry_events.md) | table | sim | 2 | 12 | não |  |
 | [public.email_bulk_drafts](tables/public/email_bulk_drafts.md) | table | sim | 4 | 19 | não |  |
 | [public.email_bulk_jobs](tables/public/email_bulk_jobs.md) | table | sim | 4 | 11 | não |  |

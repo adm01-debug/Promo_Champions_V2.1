@@ -465,6 +465,7 @@ Uso e tamanho em `stats.md`.
 | public.duplicate_block_logs | duplicate_block_logs_pkey | btree | id | sim | sim |  |
 | public.edge_call_failures | edge_call_failures_pkey | btree | id | sim | sim |  |
 | public.edge_call_failures | idx_edge_call_failures_created_at | btree | created_at | não | sim |  |
+| public.edge_job_locks | edge_job_locks_pkey | btree | job_name | sim | sim |  |
 | public.edge_retry_events | edge_retry_events_pkey | btree | id | sim | sim |  |
 | public.edge_retry_events | idx_edge_retry_events_fn_created | btree | function_name, created_at | não | sim |  |
 | public.edge_retry_events | idx_edge_retry_events_outcome_created | btree | outcome, created_at | não | sim |  |

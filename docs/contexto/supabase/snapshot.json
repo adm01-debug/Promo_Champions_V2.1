@@ -19208,6 +19208,45 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "job_name",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
+        "table": "edge_job_locks",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "locked_at",
+        "nullable": false,
+        "position": 2,
+        "schema": "public",
+        "table": "edge_job_locks",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "request_id",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "edge_job_locks",
+        "type": "text"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -58866,7 +58905,7 @@
           "status"
         ],
         "deferrable": false,
-        "definition": "CHECK (status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text]))",
+        "definition": "CHECK (status = ANY (ARRAY['success'::text, 'error'::text, 'pending_approval'::text, 'skipped'::text, 'executing'::text]))",
         "name": "ai_agent_actions_status_check",
         "on_delete": null,
         "on_update": null,
@@ -65704,6 +65743,23 @@
         "ref_table": null,
         "schema": "public",
         "table": "edge_call_failures",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "job_name"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (job_name)",
+        "name": "edge_job_locks_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "edge_job_locks",
         "type": "PRIMARY KEY",
         "validated": true
       },
@@ -82434,8 +82490,8 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "114b0f869f5860c4",
-        "execute_api_roles": "authenticated, service_role",
+        "definition_sha": "7e1d808b48831d1c",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -82473,7 +82529,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "a7e9b291ac17ff52",
+        "definition_sha": "47672d37d5cb2b3f",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -84312,8 +84368,8 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "d969f7a2691c16a3",
-        "execute_api_roles": "authenticated, service_role",
+        "definition_sha": "231d5f554b169d18",
+        "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
@@ -84740,7 +84796,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "1794a9cb2290ccc8",
+        "definition_sha": "3372b1d9c79f86f6",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -87486,11 +87542,13 @@
             "private.add_salesperson_xp",
             "public.add_league_weekly_xp",
             "public.add_salesperson_xp",
+            "public.append_agent_step",
             "public.approve_agent_run",
             "public.auto_add_client_to_portfolio",
             "public.claim_daily_challenge_reward",
             "public.claim_streak_achievements",
             "public.claim_weekly_challenge_reward",
+            "public.complete_agent_run",
             "public.compute_forecast_rollup",
             "public.create_activities_from_action_items",
             "public.create_agent_run",
@@ -89021,9 +89079,11 @@
             "public.admin_get_rollback_rate_series",
             "public.admin_reset_query_stats",
             "public.admin_top_queries",
+            "public.append_agent_step",
             "public.approve_agent_run",
             "public.assign_task_to_squad",
             "public.bulk_approve_assignments",
+            "public.complete_agent_run",
             "public.create_agent_run",
             "public.finalize_race_season",
             "public.fn_admin_cleanup_stale_logs",
@@ -89483,6 +89543,7 @@
             "public.compute_forecast_rollup",
             "public.compute_pipeline_inspection",
             "public.create_activities_from_action_items",
+            "public.create_agent_run",
             "public.get_deleted_records",
             "public.get_semantic_coverage",
             "public.increment_combo",
@@ -89667,6 +89728,7 @@
             "public.compute_forecast_rollup",
             "public.compute_pipeline_inspection",
             "public.create_activities_from_action_items",
+            "public.create_agent_run",
             "public.get_deleted_records",
             "public.get_semantic_coverage",
             "public.increment_combo",
@@ -91973,6 +92035,41 @@
         "volatility": "volatile"
       },
       {
+        "args": "_job_name text",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/bitrix24-sync/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "feff3bbd0588e577",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "release_edge_job_lock",
+        "owner": "postgres",
+        "returns": "void",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "",
         "callers": {
           "code": [
@@ -93655,6 +93752,41 @@
         "name": "trigger_internal_edge_job",
         "owner": "postgres",
         "returns": "bigint",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "_job_name text, _ttl_seconds integer, _request_id text",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/functions/bitrix24-sync/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "c234f0fa80b40be3",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "try_edge_job_lock",
+        "owner": "postgres",
+        "returns": "boolean",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -97812,6 +97944,24 @@
           "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "edge_call_failures"
+        },
+        {
+          "grantee": "anon",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
+          "schema": "public",
+          "table": "edge_job_locks"
+        },
+        {
+          "grantee": "authenticated",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE",
+          "schema": "public",
+          "table": "edge_job_locks"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "edge_job_locks"
         },
         {
           "grantee": "anon",
@@ -109677,6 +109827,20 @@
         "predicate": null,
         "schema": "public",
         "table": "edge_call_failures"
+      },
+      {
+        "columns": [
+          "job_name"
+        ],
+        "definition": "CREATE UNIQUE INDEX edge_job_locks_pkey ON public.edge_job_locks USING btree (job_name)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "edge_job_locks_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "edge_job_locks"
       },
       {
         "columns": [
@@ -123421,25 +123585,25 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.ai_agent_actions.Insert actions of own runs",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.ai_agent_actions.View actions of accessible runs",
         "severity": "BAIXA"
       },
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.ai_agent_runs.Salespeople view own agent runs",
+        "object": "public.ai_agent_runs.Cancel own agent runs",
         "severity": "BAIXA"
       },
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.ai_agent_runs.System manages agent runs",
+        "object": "public.ai_agent_runs.Insert own pending agent runs",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.ai_agent_runs.Salespeople view own agent runs",
         "severity": "BAIXA"
       },
       {
@@ -130364,6 +130528,21 @@
         "name": "20261027120000_sales_status_canonizacao_rpcs",
         "statements": null,
         "version": "20261027120000"
+      },
+      {
+        "name": "20261027120100_edge_job_lock_lease",
+        "statements": null,
+        "version": "20261027120100"
+      },
+      {
+        "name": "20261027130000_agent_runs_owner_check_e_grants",
+        "statements": null,
+        "version": "20261027130000"
+      },
+      {
+        "name": "20261027131000_agent_runs_r3_rls_lockdown",
+        "statements": null,
+        "version": "20261027131000"
       }
     ],
     "policies": [
@@ -130801,18 +130980,6 @@
         "with_check": "(salesperson_id = get_current_salesperson_id())"
       },
       {
-        "cmd": "INSERT",
-        "name": "Insert actions of own runs",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "ai_agent_actions",
-        "using": null,
-        "with_check": "(EXISTS ( SELECT 1\n   FROM ai_agent_runs r\n  WHERE ((r.id = ai_agent_actions.run_id) AND ((r.salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)))))"
-      },
-      {
         "cmd": "SELECT",
         "name": "View actions of accessible runs",
         "permissive": "PERMISSIVE",
@@ -130825,6 +130992,30 @@
         "with_check": null
       },
       {
+        "cmd": "UPDATE",
+        "name": "Cancel own agent runs",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ai_agent_runs",
+        "using": "((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))",
+        "with_check": "(((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)) AND (status = 'cancelled'::text) AND (result IS NULL) AND (completed_at IS NULL) AND ((approved_by IS NULL) OR (approved_by = auth.uid())))"
+      },
+      {
+        "cmd": "INSERT",
+        "name": "Insert own pending agent runs",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "ai_agent_runs",
+        "using": null,
+        "with_check": "(((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role)) AND (status = 'pending'::text) AND (approved_by IS NULL) AND (result IS NULL) AND (completed_at IS NULL) AND (steps = '[]'::jsonb))"
+      },
+      {
         "cmd": "SELECT",
         "name": "Salespeople view own agent runs",
         "permissive": "PERMISSIVE",
@@ -130835,18 +131026,6 @@
         "table": "ai_agent_runs",
         "using": "((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'manager'::app_role))",
         "with_check": null
-      },
-      {
-        "cmd": "ALL",
-        "name": "System manages agent runs",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "ai_agent_runs",
-        "using": "((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))",
-        "with_check": "((salesperson_id = get_current_salesperson_id()) OR has_role(auth.uid(), 'admin'::app_role))"
       },
       {
         "cmd": "SELECT",
@@ -134279,6 +134458,18 @@
         "table": "edge_call_failures",
         "using": "has_role(auth.uid(), 'admin'::app_role)",
         "with_check": null
+      },
+      {
+        "cmd": "ALL",
+        "name": "Service role can manage job locks",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "service_role"
+        ],
+        "schema": "public",
+        "table": "edge_job_locks",
+        "using": "true",
+        "with_check": "true"
       },
       {
         "cmd": "SELECT",
@@ -145448,6 +145639,21 @@
         "is_partition": false,
         "kind": "table",
         "name": "edge_call_failures",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
+        "comment": null,
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "edge_job_locks",
         "owner": "postgres",
         "parent": null,
         "partition_bound": null,

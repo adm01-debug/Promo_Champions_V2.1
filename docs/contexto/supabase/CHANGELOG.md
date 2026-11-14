@@ -2,6 +2,22 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 13:34 UTC
+
+- **colunas** adicionado (3): `public.edge_job_locks.job_name`, `public.edge_job_locks.locked_at`, `public.edge_job_locks.request_id`
+- **constraints** adicionado (1): `public.edge_job_locks.edge_job_locks_pkey`
+- **constraints** alterado (1): `public.ai_agent_actions.ai_agent_actions_status_check`
+- **functions** adicionado (2): `public.release_edge_job_lock(_job_name text)`, `public.try_edge_job_lock(_job_name text, _ttl_seconds integer, _request_id text)`
+- **functions** alterado (8): `public.append_agent_step(_run_id uuid, _tool_name text, _tool_input jsonb, _tool_output jsonb, _status text, _executed_by text)`, `public.approve_agent_run(_run_id uuid)`, `public.complete_agent_run(_run_id uuid, _result jsonb, _status text, _error text)`, `public.create_agent_run(_agent_type text, _goal text, _target_entity_type text, _target_entity_id uuid, _requires_approval boolean)`, `public.get_current_salesperson_id()`, `public.has_role(_user_id uuid, _role app_role)`, `public.is_admin_or_manager()`, `public.is_admin_or_manager(_user_id uuid)`
+- **grants** adicionado (3): `public.edge_job_locks:anon`, `public.edge_job_locks:authenticated`, `public.edge_job_locks:service_role`
+- **indexes** adicionado (1): `public.edge_job_locks_pkey`
+- **lints** adicionado (2): `policy_auth_fn_not_wrapped:public.ai_agent_runs.Cancel own agent runs`, `policy_auth_fn_not_wrapped:public.ai_agent_runs.Insert own pending agent runs`
+- **lints** removido (2): `policy_auth_fn_not_wrapped:public.ai_agent_actions.Insert actions of own runs`, `policy_auth_fn_not_wrapped:public.ai_agent_runs.System manages agent runs`
+- **migrations** adicionado (3): `20261027120100_20261027120100_edge_job_lock_lease`, `20261027130000_20261027130000_agent_runs_owner_check_e_grants`, `20261027131000_20261027131000_agent_runs_r3_rls_lockdown`
+- **policies (RLS)** adicionado (3): `public.ai_agent_runs.Cancel own agent runs`, `public.ai_agent_runs.Insert own pending agent runs`, `public.edge_job_locks.Service role can manage job locks`
+- **policies (RLS)** removido (2): `public.ai_agent_actions.Insert actions of own runs`, `public.ai_agent_runs.System manages agent runs`
+- **tabelas** adicionado (1): `public.edge_job_locks`
+
 ## 2026-11-14 13:24 UTC
 
 - **colunas** alterado (1): `public.race_scoring_rules.month`

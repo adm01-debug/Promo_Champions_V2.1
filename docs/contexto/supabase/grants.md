@@ -428,6 +428,9 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.duplicate_block_logs | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.edge_call_failures | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.edge_call_failures | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.edge_job_locks | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
+| public.edge_job_locks | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
+| public.edge_job_locks | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.edge_retry_events | anon | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.edge_retry_events | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, UPDATE |
 | public.edge_retry_events | service_role | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

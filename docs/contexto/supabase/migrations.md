@@ -314,3 +314,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261018200000 | [20261018200000_fix_stage_history_views_e_forecast_category](migrations/20261018200000_20261018200000_fix_stage_history_views_e_forecast_category.sql) | 0 |
 | 20261019153000 | [20261019153000_lgpd_gamificacao_r2](migrations/20261019153000_20261019153000_lgpd_gamificacao_r2.sql) | 0 |
 | 20261027120000 | [20261027120000_sales_status_canonizacao_rpcs](migrations/20261027120000_20261027120000_sales_status_canonizacao_rpcs.sql) | 0 |
+| 20261027120100 | [20261027120100_edge_job_lock_lease](migrations/20261027120100_20261027120100_edge_job_lock_lease.sql) | 0 |
+| 20261027130000 | [20261027130000_agent_runs_owner_check_e_grants](migrations/20261027130000_20261027130000_agent_runs_owner_check_e_grants.sql) | 0 |
+| 20261027131000 | [20261027131000_agent_runs_r3_rls_lockdown](migrations/20261027131000_20261027131000_agent_runs_r3_rls_lockdown.sql) | 0 |
