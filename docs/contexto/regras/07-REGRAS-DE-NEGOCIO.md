@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3668b5e32` · branch `main` · 2026-11-14 15:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `362dfda6e3` · branch `main` · 2026-11-14 15:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `team_closers` | `closer_id` | obrigatório; FK → salespeople.id ON DELETE CASCADE |
 | `team_closers` | `created_at` | default now() |
 | `team_closers` | `(tabela)` | UNIQUE(team_id, closer_id) |
-| … +2940 linhas — lista completa em `context.json` | | |
+| … +2941 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -658,7 +658,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trigger_record_price_history | AFTER UPDATE | `supplier_products` | `record_price_history` |  |
 | audit_soft_delete_clients | AFTER UPDATE | `clients` | `log_soft_delete` |  |
 | audit_soft_delete_deals | AFTER UPDATE | `deals` | `log_soft_delete` |  |
-| audit_soft_delete_activities | AFTER UPDATE | `activities` | `log_soft_delete` |  |
 | audit_soft_delete_products | AFTER UPDATE | `products` | `log_soft_delete` |  |
 | audit_soft_delete_suppliers | AFTER UPDATE | `suppliers` | `log_soft_delete` |  |
 | audit_soft_delete_teams | AFTER UPDATE | `teams` | `log_soft_delete` |  |
@@ -674,7 +673,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | audit_deals | AFTER INSERT OR UPDATE OR DELETE | `deals` | `audit_trigger_func` |  |
 | audit_clients | AFTER INSERT OR UPDATE OR DELETE | `clients` | `audit_trigger_func` |  |
 | audit_users | AFTER INSERT OR UPDATE OR DELETE | `users` | `audit_trigger_func` |  |
-| audit_activities | AFTER INSERT OR UPDATE OR DELETE | `activities` | `audit_trigger_func` |  |
 | update_saved_filters_updated_at | BEFORE UPDATE | `saved_filters` | `update_updated_at_column` |  |
 | ensure_single_default_filter_trigger | BEFORE INSERT OR UPDATE | `saved_filters` | `ensure_single_default_filter` |  |
 | update_quotes_updated_at | BEFORE UPDATE | `quotes` | `update_updated_at_column` |  |
@@ -769,7 +767,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | tr_update_client_total_value | AFTER INSERT OR UPDATE OR DELETE | `sales` | `handle_client_ltv_update` |  |
 | tr_handle_stock_on_sale | AFTER UPDATE | `sales` | `handle_stock_management` |  |
 | tr_auto_followup_on_sale | AFTER UPDATE | `sales` | `auto_create_sale_followup` |  |
-| audit_activities_trigger | AFTER UPDATE OR DELETE | `activities` | `audit_activity_changes` |  |
 | update_mql_qualifications_updated_at | BEFORE UPDATE | `mql_qualifications` | `handle_updated_at` |  |
 | audit_sales_changes | AFTER UPDATE | `sales` | `handle_audit_logging` |  |
 | audit_tasks_changes | AFTER UPDATE | `tasks` | `handle_audit_logging` |  |
@@ -795,8 +792,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | update_bets_on_activity | AFTER INSERT OR UPDATE | `activities` | `trigger_update_performance_bets` |  |
 | update_territories_on_sale | AFTER INSERT OR UPDATE | `sales` | `trigger_update_territories` |  |
 | refresh_monthly_summary_on_sale | AFTER INSERT OR UPDATE OR DELETE | `sales` | `trigger_refresh_monthly_summary` |  |
-| tr_update_bets_on_sale | AFTER INSERT | `sales` | `process_performance_bet_event` |  |
-| tr_update_bets_on_activity | AFTER INSERT | `activities` | `process_performance_bet_event` |  |
 | tr_performance_update_sales | AFTER INSERT OR UPDATE | `sales` | `handle_performance_update` |  |
 | tr_performance_update_activities | AFTER INSERT OR UPDATE | `activities` | `handle_performance_update` |  |
 | tr_territory_conquest | AFTER INSERT | `sales` | `handle_territory_conquest` | `NEW.status = 'won' OR NEW.status = 'completed'` |
@@ -840,6 +835,9 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_integration_secret_refs_updated_at | BEFORE UPDATE | `integration_secret_refs` | `update_updated_at_column` |  |
 | trg_race_cars_guard_counters | BEFORE INSERT OR UPDATE | `race_cars` | `race_cars_guard_counters` |  |
 | trg_data_subject_requests_guard_payload | BEFORE INSERT OR UPDATE OF PAYLOAD | `data_subject_requests` | `data_subject_requests_guard_payload` |  |
+| audit_activities_trigger | AFTER UPDATE | `activities` | `audit_activity_changes` |  |
+| audit_business_changes | AFTER UPDATE OR DELETE | `activities` | `audit_log_row_change` |  |
+| update_performance_bets_updated_at | BEFORE UPDATE | `performance_bets` | `update_updated_at_column` |  |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1021,6 +1019,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `award_sale_xp` | Venda não encontrada | `supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql` |
 | `get_semantic_coverage` | forbidden | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `award_bonus_if_eligible` | not authenticated | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
+| `guard_activity_soft_delete` | Somente admin ou gestor pode restaurar uma atividade excluída | `supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql` |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -1705,6 +1704,11 @@ _nenhum mapa explícito encontrado — transições só existem implicitamente n
 
 ### F.1 Schemas Zod
 
+- **activityEditSchema** (`src/components/activities/ActivityEditDialog.tsx`, z.object):
+  ```ts
+  { activity_type: z.enum([ 'call', 'email', 'meeting', 'linkedin', 'whatsapp', 'note', 'other', ]), outcome: z.enum([ 'connected', 'no_answer', 'scheduled', 'voicemail', 'busy', 'callback', 'not_interested', 'qualified', 'bad_timing', 'wrong_person', 'unsubscribed', ]), contact_name: z .string() .max(100, 'Nome do contato deve ter no máximo 100 caracteres') .optional(), duration_minutes: z .string() .optional() .refine(val => { if (!val) return true; const num = parseInt(val); return !isNaN(num) && num >= 1 && num <= 480; }, 'Duração deve ser entre 1 e 480 minutos'), notes: z .string() .max(1000, 'Observações devem ter no máximo 1000 caracteres') .optional(), }
+  ```
+  - Regras cruzadas (refine): “Duração deve ser entre 1 e 480 minutos”
 - **activityGoalSchema** (`src/components/activities/ActivityGoalEditDialog.tsx`, z.object):
   ```ts
   { calls_goal: z .string() .refine(val => !isNaN(parseInt(val)), 'Valor inválido') .refine(val => parseInt(val) >= 0, 'Valor deve ser positivo') .refine(val => parseInt(val) <= 200, 'Valor máximo é 200'), emails_goal: z .string() .refine(val => !isNaN(parseInt(val)), 'Valor inválido') .refine(val => parseInt(val) >= 0, 'Valor deve ser positivo') .refine(val => parseInt(val) <= 200, 'Valor máximo é 200'), meetings_goal: z .string() .refine(val => !isNaN(parseInt(val)), 'Valor inválido') .refine(val => parseInt(val) >= 0, 'Valor deve ser positivo') .refine(val => parseInt(val) <= 50, 'Valor máximo é 50'), linkedin_goal: z .string() .refine(val => !isNaN(parseInt(val)), 'Valor inválido') .refine(val => parseInt(val) >= 0, 'Valor deve ser positivo') .refine(val => parseInt(val) <= 200, 'Valor m …
@@ -2197,7 +2201,7 @@ _nenhum item encontrado_
   ```
 - **generateLocalSuggestions(salespersonId: string)** — `src/hooks/useNextBestAction.ts`
   ```
-  const { data: sp } = await supabase .from('salespeople') .select('name') .eq('id', salespersonId) .maybeSingle(); const { data: sales } = await supabase .from('sales') .select('id, client_name, amount, status, created_at, updated_at') .eq('salesperson_id', salespersonId) .order('created_at', { ascending: false }) .limit(20); const { data: activities } = await supabase .from('activities') .select('id, activity_type, outcome, created_at') .eq('salesperson_id', salespersonId) .order('created_at', { …
+  const { data: sp } = await supabase .from('salespeople') .select('name') .eq('id', salespersonId) .maybeSingle(); const { data: sales } = await supabase .from('sales') .select('id, client_name, amount, status, created_at, updated_at') .eq('salesperson_id', salespersonId) .order('created_at', { ascending: false }) .limit(20); const { data: activities } = await supabase .from('activities') .select('id, activity_type, outcome, created_at') .is('deleted_at', null) .eq('salesperson_id', salespersonId …
   ```
 - **canAccess(resource: string, action: 'read' | 'write' | 'delete')** — `src/hooks/usePermissions.ts`
   ```
@@ -2951,6 +2955,7 @@ _nenhum item encontrado_
 | `ALERT_COOLDOWN_MS` | `30000` | `src/hooks/useQueryPerformance.ts` |
 | `JITTER_FACTOR` | `0.3` | `src/hooks/useRetryMutation.ts` |
 | `MAX_ENTRIES` | `50` | `src/hooks/useScrollRestoration.ts` |
+| `NO_PERMISSION_MESSAGE` | `'Atividade não encontrada ou sem permissão para alterá-la'` | `src/hooks/activities/useActivities.ts` |
 | `MAX_ATTEMPTS` | `5` | `src/hooks/admin/useV4Callbacks.ts` |
 | `CONCENTRATION_WARNING_THRESHOLD_PCT` | `50` | `src/hooks/bi/useABCAnalysis.ts` |
 | `DEFAULT_DAYS` | `30` | `src/hooks/bi/useChurnPeriodPreference.ts` |
@@ -4051,7 +4056,7 @@ _nenhum item encontrado_
 | Serviço temporariamente indisponível. Tentando novamente em ${resetTimeout / 1000}s... | `src/hooks/circuitBreakerUtils.ts` |
 | Não autenticado | `src/hooks/useApiTokens.ts` |
 | Créditos de IA esgotados. | `src/hooks/useBehavioralAnalysis.ts` |
-| … +674 linhas — lista completa em `context.json` | |
+| … +676 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4157,7 +4162,7 @@ _nenhum item encontrado_
 | `admin` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 | `manager` | `supabase/migrations/20261027210000_r3_db_kpis_fixes.sql` |
 
-## K. Testes como especificação (1582 testes em 199 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (1601 testes em 203 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4224,10 +4229,12 @@ _nenhum item encontrado_
 | `src/hooks/cadences/useCadenceReport.test.tsx` | 7 | aggregateCadenceReport · sem linhas devolve zeros (sem número inventado) · pondera resposta/conversão pelo número de inscritos de cada cadência · useCadenceChannelExecution … |
 | `src/hooks/dashboard/__tests__/useDashboardKPIs.contract.test.ts` | 7 | get_dashboard_kpis RPC contract · returns a fully-shaped KPI payload for authorized callers · surfaces  · returns zeroed metrics for a salesperson with no own sales (RLS scoping) … |
 | `src/lib/winloss/severityFromScore.test.ts` | 7 | severityFromScore · classifica critical em score >= 80 · classifica high entre 65 e 79 · classifica medium entre 50 e 64 … |
+| `src/components/activities/ActivityItemRow.test.tsx` | 6 | ActivityItemRow — exclusão · mantém o diálogo aberto com  · mantém o diálogo aberto e mostra o erro quando a exclusão falha · ActivityItemRow — histórico de alterações … |
 | `src/hooks/useBackNavigation.test.ts` | 6 | resolveBackFallback · sobe um nível quando o último segmento é uuid (página de detalhe) · sobe um nível quando o último segmento é numérico · usa o override quando o prefixo não é rota de listagem … |
 | `src/hooks/useLoginRateLimiter.test.tsx` | 6 | useLoginRateLimiter · consome somente o resumo agregado e normaliza o e-mail · bloqueia enquanto lockout_until estiver no futuro · falha aberta quando o resumo não está disponível … |
 | `src/hooks/usePipeline.test.tsx` | 6 | saleStatusToStage · mantém status que já são colunas do board · venda concluída vai para  · estágios abertos iniciais e status ausente vão para a primeira coluna … |
 | `src/hooks/useScrollRestoration.test.tsx` | 6 | useScrollRestoration · vai ao topo em navegação PUSH · restaura posição salva ao voltar (POP) · retentativas reaplicam a posição quando não há scroll externo … |
+| `src/hooks/activities/useActivities.test.tsx` | 6 | useUpdateActivity · atualiza só atividades não excluídas e invalida lista, stats e ranking · mostra erro quando a RLS bloqueia a alteração (0 linhas afetadas) · useDeleteActivity … |
 | `src/hooks/bi/useABCAnalysis.test.tsx` | 6 | useABCAnalysis · calcula a concentração dos maiores clientes a partir das vendas reais · não devolve insights, movimentações nem automações fictícias · concentração até o limiar documentado é informativa, não alerta … |
 | `src/hooks/cadences/useCadenceChannelStats.test.ts` | 6 | fetchCadenceChannelStats · conta no banco (HEAD + count exato) filtrando o período, sem trazer linhas · usa janela de N dias incluindo hoje (N=30 → hoje e os 29 anteriores; N=1 → só hoje) · calcula taxa geral e por canal a partir das contagens reais (acima de 1000 linhas) … |
 | `src/hooks/reports/useMarkupMinSamplePreference.test.tsx` | 6 | useMarkupMinSamplePreference · começa com a amostra padrão 1 e expõe as opções · lê valor válido persistido no localStorage · ignora valor inválido persistido e volta ao padrão … |
@@ -4289,6 +4296,7 @@ _nenhum item encontrado_
 | `src/hooks/playbooks/usePlaybookMutations.test.tsx` | 4 | useTogglePlaybookItem — marcar item do checklist · envia completed_by com o salespeople.id do vendedor logado (exigido pela RLS) · admin/gestor sem registro de vendedor grava completed_by NULL · não insere se a consulta do vendedor falhar |
 | `src/lib/qbr/qbrSchedulerAgendaEvent.test.ts` | 4 | qbr-scheduler — linha de agenda_events · respeita os CHECKs de event_type, status e priority · mantém dono, horário e título reconhecível pelo dedup · a edge usa o builder, deduplica pelo mesmo tipo e não engole erro do insert |
 | `src/pages/AccountBasedSelling.test.tsx` | 4 | AccountBasedSelling — editar/excluir conta · vendedor (dono) vê Editar mas não vê Excluir · dono edita a conta: envia id e campos do formulário · admin/gestor vê Excluir, com aviso da cascata, e confirma a exclusão |
+| `src/test/activities-bets-migration.test.ts` | 4 | migration 20261112140200 — apostas de performance · remove os dois triggers de process_performance_bet_event (activities e sales) · update_performance_bet_progress credita XP da aposta ganha só via xp_history · handle_performance_update credita XP só via xp_history |
 | `src/test/bi-helpers.test.ts` | 4 | BI Helpers · buildSalespeoplePerformance should calculate correct metrics · computePipelineHealth should calculate health metrics · computeForecast should calculate forecast metrics |
 | `src/utils/dateHelpers.test.ts` | 4 | getLocalISODate · formata data no formato YYYY-MM-DD · usa Date.now() como default · mês/dia com zero-pad |
 | `supabase/functions/forecast-narrative/index.test.ts` | 4 | GET → 405 Method not allowed · OPTIONS → 200 CORS preflight · Sem Authorization → 401 · Bearer inválido → 401 Invalid or expired token |
@@ -4309,6 +4317,7 @@ _nenhum item encontrado_
 | `src/hooks/useNPSSurveys.test.tsx` | 3 | useCreateNPSSurvey · grava a pesquisa no vendedor logado quando a tela não informa o dono · respeita o salesperson_id explícito sem consultar o vendedor logado |
 | `src/hooks/useNotificationPreferences.test.tsx` | 3 | useCreateNotificationPreference · envia user_id do usuário logado (RLS exige user_id = auth.uid()) · não chama o banco sem usuário autenticado |
 | `src/hooks/useProductRecommendations.test.tsx` | 3 | useProductRecommendations — regressão Onda J/K · particiona 250 client IDs em 3 chunks (100/100/50) via chunkedIn · agrega counts ignorando product_id null e tolera product_name/amount nulos |
+| `src/hooks/activities/activitiesSoftDelete.guard.test.ts` | 3 | soft-delete de activities — guard-rail · toda leitura de activities no front filtra deleted_at IS NULL · toda leitura de activities nas edge functions filtra deleted_at IS NULL |
 | `src/hooks/deal-intelligence/useDealAnalyticsVelocity.test.ts` | 3 | computeSalespersonVelocity · calcula média de dias até o ganho por vendedor, do mais rápido ao mais lento · ignora vendedores sem deal ganho e vendas sem vendedor |
 | `src/hooks/email/useFailedDrafts.test.tsx` | 3 | mutações de rascunhos com falha · particiona o reenvio manual e mantém o mesmo horário para todos os chunks · particiona o descarte manual de rascunhos |
 | `src/hooks/gamification/useStreakRanking.test.tsx` | 3 | useStreakRanking — agregação sem N+1 · busca conquistas de todos os vendedores em uma única query .in() · monta ranking correto com múltiplos vendedores e conquistas |
@@ -4624,6 +4633,7 @@ _nenhum item encontrado_
 | regra o Rollup o alocava dentro de vendor-pdf, arrastando 591 KB de | `vite.config.ts` |
 | shadcn/ui: primitivas geradas, sem lógica de negócio própria. | `vitest.config.ts` |
 | // Registro do Service Worker (produção apenas — um SW em dev cacheia chunks | `public/register-sw.js` |
+| Mesmas regras de validação do formulário de criação (ActivityLogForm). | `src/components/activities/ActivityEditDialog.tsx` |
 | Regra real: gap entre líder e lanterna indica desempenho disperso | `src/components/activities/ArenaAITips.tsx` |
 | * Limite acima do qual o sistema deve alertar (rollbacks/min). */ | `src/components/admin/connections/DbRollbackRatePanel.tsx` |
 | chunked-in-safe: leadIds já capados por .limit() upstream | `src/components/analytics/LeadSLAMonitor.tsx` |
@@ -4916,5 +4926,4 @@ _nenhum item encontrado_
 | Guarda de configuração: sem secrets, apenas conta o backlog e retorna | `supabase/functions/notify-v4-quote-status/index.ts` |
 | *Dica do Coach**\n${coachTip ?? "Faça um contato objetivo com o próximo passo e prazo claramente combinados."}\n\nQual prioridade você quer atacar primeiro?`; | `supabase/functions/personal-assistant-stream/fallback.ts` |
 | Rate limit por usuário autenticado (fallback: IP) — endpoint de IA consome créditos | `supabase/functions/personal-assistant-stream/index.ts` |
-| externa (Lovable AI Gateway), aqui testamos apenas as unidades puras | `supabase/functions/personal-assistant-stream/personal-assistant-stream_test.ts` |
-| … +117 linhas — lista completa em `context.json` | |
+| … +118 linhas — lista completa em `context.json` | |

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3668b5e32` · branch `main` · 2026-11-14 15:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `362dfda6e3` · branch `main` · 2026-11-14 15:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -231,7 +231,7 @@
 | `page_analytics` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `password_history` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
-| `performance_bets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
+| `performance_bets` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `performance_impact_factors` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `permissions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `person_intelligence` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
@@ -524,7 +524,6 @@
 | segurança | função `process_weekly_league_reset` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512143013_d0ee44c6-25d4-42a1-8f86-4492bda7491c.sql` |
 | segurança | função `auto_victory_post` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260814190000_fix_broken_sales_triggers.sql` |
 | segurança | função `maintain_sales_streaks` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260815110000_fix_maintain_sales_streaks.sql` |
-| segurança | função `handle_performance_update` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql` |
 | segurança | função `handle_territory_conquest` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql` |
 | segurança | função `calculate_deal_risk_score` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260513194322_de774cc9-8b6f-4814-9c4e-3f80fbffaadb.sql` |
 | segurança | função `refresh_competitive_ranking` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260517113746_ba2cd7eb-24e5-40ef-a0e6-2b2a233dedb2.sql` |

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 1275,
+ "total": 1276,
  "orfaos": 1,
  "nomes_duplicados": {
   "ActivityHeatmap": [
@@ -224,6 +224,23 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/activities/ActivityEditDialog.tsx",
+   "exports": [
+    "ActivityEditDialog",
+    "EditableActivity"
+   ],
+   "export_default": null,
+   "linhas": 292,
+   "dominio": "components/activities",
+   "hooks_locais": [
+    "useUpdateActivity"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/activities/ActivityEffectiveness.tsx",
    "exports": [
     "ActivityEffectiveness"
@@ -296,9 +313,11 @@
     "ActivityItemRow"
    ],
    "export_default": null,
-   "linhas": 227,
+   "linhas": 299,
    "dominio": "components/activities",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useDeleteActivity"
+   ],
    "tabelas": [
     "activity_audit_logs"
    ],
@@ -1485,7 +1504,7 @@
     "ActivityHeatmap"
    ],
    "export_default": null,
-   "linhas": 265,
+   "linhas": 266,
    "dominio": "components/analytics",
    "hooks_locais": [
     "useAuth"
@@ -1623,7 +1642,7 @@
     "ClientHealthPanel"
    ],
    "export_default": null,
-   "linhas": 292,
+   "linhas": 293,
    "dominio": "components/analytics",
    "hooks_locais": [],
    "tabelas": [
@@ -1855,7 +1874,7 @@
     "LeadSLAMonitor"
    ],
    "export_default": null,
-   "linhas": 164,
+   "linhas": 165,
    "dominio": "components/analytics",
    "hooks_locais": [],
    "tabelas": [
@@ -2280,7 +2299,7 @@
     "DealPreviewCard"
    ],
    "export_default": null,
-   "linhas": 290,
+   "linhas": 291,
    "dominio": "components/assistant",
    "hooks_locais": [],
    "tabelas": [
@@ -3569,7 +3588,7 @@
     "ClientTimeline"
    ],
    "export_default": null,
-   "linhas": 326,
+   "linhas": 328,
    "dominio": "components/clients",
    "hooks_locais": [],
    "tabelas": [
@@ -3788,7 +3807,7 @@
     "SDRHandoffContext"
    ],
    "export_default": null,
-   "linhas": 140,
+   "linhas": 141,
    "dominio": "components/closer",
    "hooks_locais": [],
    "tabelas": [
@@ -4213,7 +4232,7 @@
     "ActivityHeatmap"
    ],
    "export_default": null,
-   "linhas": 186,
+   "linhas": 187,
    "dominio": "components/competitive",
    "hooks_locais": [],
    "tabelas": [
@@ -6362,7 +6381,7 @@
     "ActivitiesTodayWidget"
    ],
    "export_default": null,
-   "linhas": 59,
+   "linhas": 60,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useAuth"
@@ -6413,7 +6432,7 @@
     "CalendarPreviewWidget"
    ],
    "export_default": null,
-   "linhas": 79,
+   "linhas": 80,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useAuth"
@@ -6548,7 +6567,7 @@
     "RecentActivitiesWidget"
    ],
    "export_default": null,
-   "linhas": 78,
+   "linhas": 79,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useAuth"
@@ -13784,7 +13803,7 @@
     "SDRConversionEvolution"
    ],
    "export_default": null,
-   "linhas": 314,
+   "linhas": 315,
    "dominio": "components/sdr",
    "hooks_locais": [],
    "tabelas": [
@@ -13802,7 +13821,7 @@
     "SDRConversionRanking"
    ],
    "export_default": null,
-   "linhas": 318,
+   "linhas": 319,
    "dominio": "components/sdr",
    "hooks_locais": [],
    "tabelas": [
@@ -14944,7 +14963,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -15536,7 +15555,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 535,
+   "usado_por": 536,
    "orfao": false
   },
   {
@@ -15639,7 +15658,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 117,
+   "usado_por": 118,
    "orfao": false
   },
   {
@@ -15696,7 +15715,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -15710,7 +15729,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 186,
+   "usado_por": 187,
    "orfao": false
   },
   {
@@ -15878,7 +15897,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 128,
+   "usado_por": 129,
    "orfao": false
   },
   {
@@ -16047,7 +16066,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 60,
+   "usado_por": 61,
    "orfao": false
   },
   {
@@ -19799,7 +19818,7 @@
     "RelatoriosExecutivos"
    ],
    "export_default": "RelatoriosExecutivos",
-   "linhas": 478,
+   "linhas": 479,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [
@@ -20115,7 +20134,7 @@
     "TeamActivityFeed"
    ],
    "export_default": "TeamActivityFeed",
-   "linhas": 191,
+   "linhas": 192,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [

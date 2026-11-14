@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e3668b5e32ede1046bfa25c5ea0b2c1ca087127a",
+  "commit": "362dfda6e35f5bcd348b5c412321f7597b00b9af",
   "branch": "main",
-  "data_commit": "2026-11-14T14:46:10Z",
+  "data_commit": "2026-11-14T14:56:25Z",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "ultimos_commits": [
+   {
+    "sha": "362dfda",
+    "data": "2026-11-14",
+    "assunto": "feat: editar e excluir atividades (+ migration que remove triggers legados que quebram UPDATE) (#429)"
+   },
+   {
+    "sha": "0657d49",
+    "data": "2026-11-14",
+    "assunto": "docs: marca B7 como aplicada em producao (10 migrations no ar, 2026-11-14) (#486)"
+   },
    {
     "sha": "e3668b5",
     "data": "2026-11-14",
@@ -121,39 +131,29 @@
     "sha": "05eca38",
     "data": "2026-11-13",
     "assunto": "fix: apontar APP_URL para o domínio de produção na Vercel (#439)"
-   },
-   {
-    "sha": "fb51238",
-    "data": "2026-11-13",
-    "assunto": "fix: aba Market Intel da /arena mostra concorrentes reais em vez de matriz fixa (#455)"
-   },
-   {
-    "sha": "3c77d1d",
-    "data": "2026-11-13",
-    "assunto": "fix: troca vendedores fictícios do analytics por dados reais (#438)"
    }
   ],
-  "arquivos_mudados_7d": 647,
+  "arquivos_mudados_7d": 694,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 53
+    "mudancas": 56
+   },
+   {
+    "pasta": "src/components/analytics",
+    "mudancas": 49
    },
    {
     "pasta": "src/components/ui",
     "mudancas": 49
    },
    {
-    "pasta": "src/components/analytics",
-    "mudancas": 46
+    "pasta": "src/components/competitive",
+    "mudancas": 38
    },
    {
     "pasta": "src/components/gamification",
     "mudancas": 38
-   },
-   {
-    "pasta": "src/components/competitive",
-    "mudancas": 37
    },
    {
     "pasta": "src/components/race",
@@ -184,41 +184,37 @@
     "mudancas": 24
    },
    {
+    "pasta": "src/hooks/sales",
+    "mudancas": 23
+   },
+   {
     "pasta": "src/components/conversational",
     "mudancas": 22
    },
    {
     "pasta": "src/components/win-loss",
     "mudancas": 22
-   },
-   {
-    "pasta": "src/hooks/sales",
-    "mudancas": 21
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 75
+    "mudancas": 74
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 73
-   },
-   {
-    "arquivo": ".github/workflows/pr-checks.yml",
-    "mudancas": 32
+    "mudancas": 71
    },
    {
     "arquivo": "deno.lock",
     "mudancas": 31
    },
    {
-    "arquivo": ".github/workflows/codeql.yml",
-    "mudancas": 19
+    "arquivo": ".github/workflows/pr-checks.yml",
+    "mudancas": 29
    },
    {
-    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
+    "arquivo": ".github/workflows/codeql.yml",
     "mudancas": 18
    },
    {
@@ -226,24 +222,28 @@
     "mudancas": 18
    },
    {
-    "arquivo": ".github/workflows/cron-monitoring.yml",
-    "mudancas": 13
-   },
-   {
-    "arquivo": ".github/workflows/qa-exhaustive.yml",
-    "mudancas": 13
+    "arquivo": ".github/workflows/quote-to-sale-e2e.yml",
+    "mudancas": 15
    },
    {
     "arquivo": "CLAUDE.md",
     "mudancas": 13
    },
    {
-    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "arquivo": ".github/workflows/cron-monitoring.yml",
     "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
+   },
+   {
+    "arquivo": ".github/workflows/edge-functions-bundle.yml",
+    "mudancas": 11
+   },
+   {
+    "arquivo": ".github/workflows/qa-exhaustive.yml",
+    "mudancas": 11
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -286,22 +286,22 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/edge-functions-request-id.yml",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "index.html",
-    "mudancas": 8
-   },
-   {
     "arquivo": "src/components/activities/ActivityLogForm.tsx",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/hooks/dashboard/useDashboardKPIsPeriod.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "supabase/functions/analyze-pipeline-coverage/index.ts",
     "mudancas": 8
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 117
+    "commits": 119
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3531,
-  "arquivos_codigo": 2534,
-  "linhas_codigo": 436198,
+  "arquivos_total": 3538,
+  "arquivos_codigo": 2539,
+  "linhas_codigo": 437120,
   "rotas": 170,
   "rotas_http_backend": 12,
   "vistas_por_id": 0,
   "itens_menu": 133,
   "modulos": 174,
-  "componentes": 1275,
+  "componentes": 1276,
   "hooks": 478,
   "edge_functions": 171,
   "tabelas": 414,
-  "migrations": 674,
+  "migrations": 676,
   "cron_jobs": 28,
-  "testes": 232,
+  "testes": 236,
   "workflows": 26,
   "scripts": 78,
   "docs_md": 206
@@ -599,8 +599,8 @@
    "linhas": 133
   },
   "src/components": {
-   "arquivos": 1208,
-   "linhas": 190070
+   "arquivos": 1210,
+   "linhas": 190599
   },
   "src/config": {
    "arquivos": 4,
@@ -615,8 +615,8 @@
    "linhas": 606
   },
   "src/hooks": {
-   "arquivos": 538,
-   "linhas": 62916
+   "arquivos": 540,
+   "linhas": 63235
   },
   "src/integrations": {
    "arquivos": 4,
@@ -632,7 +632,7 @@
   },
   "src/pages": {
    "arquivos": 180,
-   "linhas": 44330
+   "linhas": 44332
   },
   "src/routes": {
    "arquivos": 3,
@@ -640,11 +640,11 @@
   },
   "src/services": {
    "arquivos": 7,
-   "linhas": 1175
+   "linhas": 1177
   },
   "src/test": {
-   "arquivos": 12,
-   "linhas": 1123
+   "arquivos": 13,
+   "linhas": 1179
   },
   "src/types": {
    "arquivos": 4,
@@ -656,7 +656,7 @@
   },
   "supabase/functions": {
    "arquivos": 316,
-   "linhas": 65563
+   "linhas": 65577
   },
   "tailwind.config.ts": {
    "arquivos": 1,
@@ -790,8 +790,8 @@
   "console_log": 167,
   "ts_ignore": 0,
   "eslint_disable": 9,
-  "todos": 5,
-  "arquivos_acima_500_linhas": 67
+  "todos": 6,
+  "arquivos_acima_500_linhas": 68
  },
  "todos": [
   {
@@ -817,6 +817,12 @@
    "linha": 4,
    "tipo": "TODO",
    "texto": "PR (scan do diretório):"
+  },
+  {
+   "arquivo": "src/test/activities-bets-migration.test.ts",
+   "linha": 5,
+   "tipo": "TODO",
+   "texto": "INSERT em sales falhava (`record \"new\" has no field \"value\"`,"
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",

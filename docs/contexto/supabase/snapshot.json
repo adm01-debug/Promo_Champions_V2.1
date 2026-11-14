@@ -81144,9 +81144,13 @@
             {
               "file": "supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -82022,9 +82026,13 @@
             {
               "file": "supabase/migrations/20260619145322_df537bec-72b5-4e50-8778-17637a1e009d.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [
             "private.trigger_update_performance_bets"
@@ -82646,9 +82654,13 @@
             {
               "file": "supabase/migrations/20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -82683,9 +82695,13 @@
             {
               "file": "supabase/migrations/20261001193100_audit_log_canonical.sql",
               "hits": 6
+            },
+            {
+              "file": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -82811,9 +82827,13 @@
             {
               "file": "supabase/migrations/20261001193100_audit_log_canonical.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [
@@ -83922,9 +83942,13 @@
             {
               "file": "supabase/migrations/20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "public.process_performance_bet_event"
@@ -87573,7 +87597,7 @@
               "hits": 8
             }
           ],
-          "code_total_files": 78,
+          "code_total_files": 80,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -89569,7 +89593,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 178,
+          "code_total_files": 180,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -89756,7 +89780,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 178,
+          "code_total_files": 180,
           "cron": [],
           "db": [
             "private.add_salesperson_xp",
@@ -90439,9 +90463,13 @@
             {
               "file": "supabase/migrations/20261001193100_audit_log_canonical.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -91199,9 +91227,13 @@
             {
               "file": "supabase/migrations/20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -94543,7 +94575,7 @@
               "hits": 3
             }
           ],
-          "code_total_files": 87,
+          "code_total_files": 88,
           "cron": [],
           "db": [],
           "triggers": [
@@ -143291,11 +143323,6 @@
           "publication": "supabase_realtime",
           "schema": "public",
           "table": "win_probability_deal_calibrations"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_10"
         },
         {
           "publication": "supabase_realtime_messages_publication",

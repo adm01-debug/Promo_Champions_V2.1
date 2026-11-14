@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e3668b5e32` · branch `main` · 2026-11-14 15:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `362dfda6e3` · branch `main` · 2026-11-14 15:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -27,7 +27,7 @@
 | `active_power_ups` | enabled | authenticated: salesperson_id IN ( SELECT id FROM public.salespeople WHERE auth_user_id = auth.uid() ) OR public.has_role(auth.uid(), 'admin | authenticated: salesperson_id = public.get_current_salesperson_id() | — | — |
 | `active_sessions` | enabled | public: auth.uid() = user_id<br>public: public.has_role(auth.uid(), 'admin')<br>authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() | authenticated: user_id = auth.uid() |
 | `activities` | enabled | public: deleted_at IS NOT NULL AND EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND is_admin = true)<br>public: salesperson_id = get_current_salesperson_id() OR is_admin_or_manager(auth.uid())<br>public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )<br>public: user_id = auth.uid() OR EXISTS ( SELECT 1 FROM deals WHERE deals.id = activities.deal_id AND (deals.assigned_to = auth.uid() OR deal | public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )<br>public: user_id = auth.uid() | public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' )<br>public: user_id = auth.uid() | public: auth.uid() = user_id<br>public: EXISTS ( SELECT 1 FROM users WHERE users.id = auth.uid() AND users.role = 'admin' ) |
-| `activity_audit_logs` | enabled | public: auth.uid() IN ( SELECT salesperson_id FROM public.activities WHERE id = activity_id ) OR EXISTS ( SELECT 1 FROM public.user_roles WH | — | — | — |
+| `activity_audit_logs` | enabled | authenticated: EXISTS ( SELECT 1 FROM public.activities a WHERE a.id = activity_audit_logs.activity_id AND a.salesperson_id = public.get_cur | — | — | — |
 | `activity_goals` | enabled | authenticated: salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid()) | authenticated: salesperson_id = public.get_current_salesperson_id() | authenticated: salesperson_id = public.get_current_salesperson_id() OR public.is_admin_or_manager(auth.uid()) | authenticated: public.is_admin_or_manager(auth.uid()) |
 | `agenda_events` | enabled | public: salesperson_id = public.get_current_salesperson_id()<br>public: public.is_admin_or_manager(auth.uid()) | public: salesperson_id = public.get_current_salesperson_id() | public: salesperson_id = public.get_current_salesperson_id() | public: salesperson_id = public.get_current_salesperson_id() |
 | `ai_agent_actions` | enabled | authenticated: EXISTS ( SELECT 1 FROM public.ai_agent_runs r WHERE r.id = ai_agent_actions.run_id AND ( r.salesperson_id = public.get_curren | — | — | — |
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 312 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 314 arquivo(s)
 
 - `scripts/ai-context/cenarios.mjs`
 - `scripts/ai-context/gerar.unit.mjs`
@@ -338,6 +338,7 @@
 - `scripts/seed-race-cars.ts`
 - `scripts/seed-real-people.ts`
 - `scripts/supabase_snapshot/snapshot.py`
+- `src/hooks/activities/activitiesSoftDelete.guard.test.ts`
 - `src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts`
 - `supabase/functions/_shared/auth-client.ts`
 - `supabase/functions/_shared/circuit-breaker.ts`
@@ -471,8 +472,7 @@
 - `supabase/functions/whatsapp-inbound-webhook/index.ts`
 - `supabase/functions/winloss-webhook-dispatcher/index.ts`
 - `supabase/functions/winloss-webhook-dispatcher/retry_persist_status_test.ts`
-- `supabase/functions/winloss-webhook-health-monitor/index.ts`
-- … +162 (lista completa em `context.json`)
+- … +164 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -835,7 +835,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC | execute | `public`, `disable_totp`, `initialize_totp`, `disable_sms`, `has_pending_reset_request`, `get_mfa_status`, `public`, `public`, `fn_cleanup_webhook_dedupe`, `fn_auto_map_inbound_seller`, `detect_stalled_cron_jobs`, `verify_reauth_request`, `get_mfa_status` |
 | revoke | PUBLIC, anon | all | `get_dashboard_kpis`, `fn_test_cleanup_dedupe_privileges`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `orders_conversion_seq`, `fn_convert_quote_to_sale`, `fn_admin_platform_slo`, `fn_record_conversion_attempt`, `v_quote_conversion_history`, `v_quote_conversion_metrics_daily`, `fn_admin_conversion_trail`, `fn_admin_cleanup_stale_logs`, `fn_admin_web_vitals_p75`, `fn_admin_reset_circuit`, `admin_get_cron_job_stats` … +55 |
 | revoke | PUBLIC, anon | execute | `fn_list_cron_jobs`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `fn_convert_quote_to_sale`, `fn_get_orders_conversion_seq_last`, `fn_backfill_orders_conversion_seq`, `fn_admin_security_definer_exposure`, `fn_admin_wal_health`, `compute_salesperson_retention_cohort`, `compute_salesperson_retention_cohort` |
-| revoke | PUBLIC, anon, authenticated | all | `private.add_salesperson_xp`, `private.refresh_competitive_ranking`, `private.refresh_monthly_sales_summary`, `private.snapshot_race_daily`, `private.award_achievement_if_not_exists`, `private.check_is_first_activation`, `private.update_performance_bet_progress`, `private.update_territory_conquests`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health` … +67 |
+| revoke | PUBLIC, anon, authenticated | all | `private.add_salesperson_xp`, `private.refresh_competitive_ranking`, `private.refresh_monthly_sales_summary`, `private.snapshot_race_daily`, `private.award_achievement_if_not_exists`, `private.check_is_first_activation`, `private.update_performance_bet_progress`, `private.update_territory_conquests`, `upsert_client_from_quote`, `convert_quote_to_order`, `enqueue_v4_callback`, `auto_add_client_to_portfolio`, `v_quote_to_sale_invariants`, `v_security_definer_exposure`, `v_platform_wal_health` … +69 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_battle_achievements`, `compute_scheduled_report_next_run`, `fn_calculate_icp_score`, `increment_asset_view_count`, `maintain_sales_streaks`, `manage_stock_on_sale`, `generate_mfa_backup_codes`, `get_current_user_email`, `record_engagement_signal`, `is_authenticated`, `backfill_orders_conversion_seq`, `fn_slo_burn_rate`, `fn_check_slo_burn_rate`, `increment_race_car_wins`, `increment_race_car_overtakes` … +6 |
 | revoke | PUBLIC, anon, authenticated | insert, update, delete | `maintenance_log` |
 | revoke | anon | all | `salespeople_public`, `salespeople_public`, `salespeople_public`, `fn_cleanup_webhook_dedupe`, `webhook_inbound_dedupe`, `fn_cleanup_webhook_dedupe`, `edge_call_failures` |
@@ -1049,7 +1049,7 @@ Middleware matcher (Next.js): nenhum
 | `tournaments` | `created_at`, `created_by` |
 | `tournament_participants` | `created_at` |
 | `tournament_matches` | `created_at` |
-| `performance_bets` | `created_at` |
+| `performance_bets` | `created_at`, `updated_at` |
 | `sales_territories` | `created_at`, `updated_at` |
 | `territory_history` | `created_at` |
 | `query_telemetry` | `created_at` |

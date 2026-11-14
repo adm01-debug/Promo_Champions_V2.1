@@ -356,11 +356,13 @@
     "useActivityGoals",
     "useActivityStats",
     "useCreateActivity",
+    "useDeleteActivity",
     "useRecentActivities",
     "useSDRLeaderboard",
+    "useUpdateActivity",
     "useUpdateActivityGoals"
    ],
-   "linhas": 456,
+   "linhas": 528,
    "dominio": "hooks/activities",
    "tabelas": [
     "activities",
@@ -375,9 +377,10 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "usado_por_arquivos": [
     "src/components/activities/ActivityChannelEffectiveness.tsx",
+    "src/components/activities/ActivityEditDialog.tsx",
     "src/components/activities/ActivityEffectiveness.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
     "src/components/activities/ActivityHeatmap.tsx",
@@ -391,7 +394,7 @@
     "src/components/activities/exportUtils.ts",
     "src/pages/Atividades.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/hooks/activities/useActivityGoals.ts",
@@ -400,7 +403,7 @@
     "useActivityGoals",
     "useUpsertActivityGoal"
    ],
-   "linhas": 205,
+   "linhas": 206,
    "dominio": "hooks/activities",
    "tabelas": [
     "activities",
@@ -433,7 +436,7 @@
    "hooks_exportados": [
     "useActivityQualityScore"
    ],
-   "linhas": 116,
+   "linhas": 117,
    "dominio": "hooks/activities",
    "tabelas": [
     "activities",
@@ -1323,7 +1326,7 @@
    "hooks_exportados": [
     "useBISDR"
    ],
-   "linhas": 184,
+   "linhas": 188,
    "dominio": "hooks/bi",
    "tabelas": [
     "activities",
@@ -2775,7 +2778,7 @@
    "hooks_exportados": [
     "useClient360"
    ],
-   "linhas": 261,
+   "linhas": 262,
    "dominio": "hooks/crm",
    "tabelas": [
     "activities",
@@ -3240,7 +3243,7 @@
    "hooks_exportados": [
     "useROIDashboard"
    ],
-   "linhas": 185,
+   "linhas": 186,
    "dominio": "hooks/dashboard",
    "tabelas": [
     "activities",
@@ -3266,7 +3269,7 @@
     "useAnalyzeAtRiskDeal",
     "useAtRiskDeals"
    ],
-   "linhas": 190,
+   "linhas": 191,
    "dominio": "hooks/deal-intelligence",
    "tabelas": [
     "activities",
@@ -4104,7 +4107,7 @@
     "useFollowUpLeads",
     "useFollowUpSettings"
    ],
-   "linhas": 137,
+   "linhas": 138,
    "dominio": "hooks/follow-up",
    "tabelas": [
     "activities",
@@ -6845,7 +6848,7 @@
     "useActivityTrend",
     "useSalespersonActivityReport"
    ],
-   "linhas": 216,
+   "linhas": 218,
    "dominio": "hooks/sales",
    "tabelas": [
     "activities",
@@ -6872,7 +6875,7 @@
    "hooks_exportados": [
     "useSalespersonCoaching"
    ],
-   "linhas": 219,
+   "linhas": 220,
    "dominio": "hooks/sales",
    "tabelas": [
     "activities",
@@ -8113,7 +8116,7 @@
    "hooks_exportados": [
     "useCompetencyData"
    ],
-   "linhas": 115,
+   "linhas": 116,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8340,7 +8343,7 @@
     "useDealProbabilities",
     "useDealProbability"
    ],
-   "linhas": 125,
+   "linhas": 126,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8389,7 +8392,7 @@
    "hooks_exportados": [
     "useDealTimeline"
    ],
-   "linhas": 161,
+   "linhas": 162,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -8829,7 +8832,7 @@
    "hooks_exportados": [
     "useInactiveDeals"
    ],
-   "linhas": 230,
+   "linhas": 231,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -9334,7 +9337,7 @@
     "useNextBestAction",
     "useNextBestActionQuery"
    ],
-   "linhas": 305,
+   "linhas": 306,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -9533,7 +9536,7 @@
    "hooks_exportados": [
     "usePerformanceComparison"
    ],
-   "linhas": 159,
+   "linhas": 160,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -10290,7 +10293,7 @@
    "hooks_exportados": [
     "useSDRActivityTrend"
    ],
-   "linhas": 307,
+   "linhas": 308,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -10472,7 +10475,7 @@
    "hooks_exportados": [
     "useSelfBenchmark"
    ],
-   "linhas": 128,
+   "linhas": 129,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -10759,7 +10762,7 @@
    "hooks_exportados": [
     "useTeamActivityFeed"
    ],
-   "linhas": 145,
+   "linhas": 146,
    "dominio": "hooks",
    "tabelas": [
     "activities",
@@ -11119,7 +11122,7 @@
    "hooks_exportados": [
     "useWeeklyComparison"
    ],
-   "linhas": 95,
+   "linhas": 97,
    "dominio": "hooks",
    "tabelas": [
     "activities",

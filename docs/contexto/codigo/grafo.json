@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 2307,
- "arestas": 9508,
+ "nos": 2308,
+ "arestas": 9518,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 535
+   "importado_por": 536
   },
   {
    "arquivo": "src/lib/utils.ts",
@@ -34,7 +34,7 @@
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 186
+   "importado_por": 187
   },
   {
    "arquivo": "supabase/functions/_shared/request-id.ts",
@@ -50,7 +50,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 128
+   "importado_por": 129
   },
   {
    "arquivo": "src/components/transitions/PageTransition.tsx",
@@ -58,7 +58,7 @@
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 117
+   "importado_por": 118
   },
   {
    "arquivo": "supabase/functions/_shared/auth-client.ts",
@@ -106,7 +106,7 @@
   },
   {
    "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 60
+   "importado_por": 61
   },
   {
    "arquivo": "src/components/ui/table.tsx",

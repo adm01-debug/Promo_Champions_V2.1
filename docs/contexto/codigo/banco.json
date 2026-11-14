@@ -8,7 +8,7 @@
   "supabase/migrations",
   "typeorm"
  ],
- "migrations": 674,
+ "migrations": 676,
  "seeds": [
   "supabase/seed.sql"
  ],
@@ -616,25 +616,18 @@
    "funcao": "update_updated_at_column"
   },
   {
-   "nome": "audit_activities",
-   "quando": "after",
-   "evento": "insert or update or delete",
-   "tabela": "activities",
-   "funcao": "audit_trigger_func"
-  },
-  {
    "nome": "audit_activities_trigger",
    "quando": "after",
-   "evento": "update or delete",
+   "evento": "update",
    "tabela": "activities",
    "funcao": "audit_activity_changes"
   },
   {
-   "nome": "audit_soft_delete_activities",
+   "nome": "audit_business_changes",
    "quando": "after",
-   "evento": "update",
+   "evento": "update or delete",
    "tabela": "activities",
-   "funcao": "log_soft_delete"
+   "funcao": "audit_log_row_change"
   },
   {
    "nome": "tr_maintain_streaks",
@@ -663,13 +656,6 @@
    "evento": "insert or update or delete",
    "tabela": "activities",
    "funcao": "sync_performance_bets"
-  },
-  {
-   "nome": "tr_update_bets_on_activity",
-   "quando": "after",
-   "evento": "insert",
-   "tabela": "activities",
-   "funcao": "process_performance_bet_event"
   },
   {
    "nome": "trg_activities_auto_pause",
@@ -1379,6 +1365,13 @@
    "funcao": "update_updated_at_column"
   },
   {
+   "nome": "update_performance_bets_updated_at",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "performance_bets",
+   "funcao": "update_updated_at_column"
+  },
+  {
    "nome": "update_person_intelligence_updated_at",
    "quando": "before",
    "evento": "update",
@@ -1706,13 +1699,6 @@
    "evento": "insert",
    "tabela": "sales",
    "funcao": "handle_territory_conquest"
-  },
-  {
-   "nome": "tr_update_bets_on_sale",
-   "quando": "after",
-   "evento": "insert",
-   "tabela": "sales",
-   "funcao": "process_performance_bet_event"
   },
   {
    "nome": "tr_update_client_ltv",
@@ -3902,14 +3888,12 @@
     "sdr-consecutive-alerts"
    ],
    "triggers": [
-    "audit_activities",
     "audit_activities_trigger",
-    "audit_soft_delete_activities",
+    "audit_business_changes",
     "tr_maintain_streaks",
     "tr_performance_update_activities",
     "tr_sync_battle_score_activities",
     "tr_sync_bets_activities",
-    "tr_update_bets_on_activity",
     "trg_activities_auto_pause",
     "update_bets_on_activity"
    ],
@@ -3973,7 +3957,7 @@
     {
      "nome": "Users can view audit logs for their activities",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -27705,6 +27689,13 @@
      "default": null,
      "ref": null
     },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
     "xp_multiplier": {
      "tipo": "numeric",
      "nn": true,
@@ -27759,7 +27750,9 @@
    "criada_em": "20260317215431_2cc79944-6a99-47c8-b348-bae816d9eda7.sql",
    "usada_no_front": 1,
    "usada_em_edges": [],
-   "triggers": [],
+   "triggers": [
+    "update_performance_bets_updated_at"
+   ],
    "sem_rls": false,
    "nao_usada": false
   },
@@ -36149,7 +36142,6 @@
     "tr_sync_bets_sales",
     "tr_sync_territory",
     "tr_territory_conquest",
-    "tr_update_bets_on_sale",
     "tr_update_client_ltv",
     "tr_update_client_total_value",
     "tr_update_client_value",

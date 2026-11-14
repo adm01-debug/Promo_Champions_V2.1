@@ -132,6 +132,16 @@
    "src/components/ui/progress.tsx",
    "src/hooks/activities/useActivities.ts"
   ],
+  "src/components/activities/ActivityEditDialog.tsx": [
+   "src/components/activities/activityConstants.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/activities/useActivities.ts"
+  ],
   "src/components/activities/ActivityEffectiveness.tsx": [
    "src/components/ui/card.tsx",
    "src/components/ui/progress.tsx",
@@ -163,7 +173,9 @@
    "src/lib/utils.ts"
   ],
   "src/components/activities/ActivityItemRow.tsx": [
+   "src/components/activities/ActivityEditDialog.tsx",
    "src/components/activities/activityConstants.ts",
+   "src/components/shared/DeleteConfirmDialog.tsx",
    "src/components/ui/avatar.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/popover.tsx",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e3668b5e32ede1046bfa25c5ea0b2c1ca087127a",
+  "sha": "362dfda6e35f5bcd348b5c412321f7597b00b9af",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
-  "generated_at": "2026-11-14 15:03 UTC",
-  "files_total": 3546,
-  "code_files": 3216,
-  "code_lines": 466318
+  "generated_at": "2026-11-14 15:47 UTC",
+  "files_total": 3553,
+  "code_files": 3223,
+  "code_lines": 467736
  },
  "version": "1.3.2",
- "facts_hash": "8ba498571f2bcccd",
+ "facts_hash": "3e507a20884cc1ef",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,9 +389,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".tsx": 1360,
-   ".ts": 1092,
-   ".sql": 681,
+   ".tsx": 1363,
+   ".ts": 1094,
+   ".sql": 683,
    ".mjs": 72,
    ".js": 6,
    ".py": 5,
@@ -10099,6 +10099,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/migrations/20260317215431_2cc79944-6a99-47c8-b348-bae816d9eda7.sql"
+     },
+     {
+      "name": "updated_at",
+      "type": "timestamptz NOT NULL DEFAULT now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
      }
     ],
     "constraints": [],
@@ -40913,16 +40920,6 @@
     "src": "supabase/migrations/20260509182848_a140c5d8-f21d-4169-9378-ab41e29bc730.sql"
    },
    {
-    "name": "Users can view audit logs for their activities",
-    "table": "activity_audit_logs",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "auth.uid() IN ( SELECT salesperson_id FROM public.activities WHERE id = activity_id ) OR EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'manager') )",
-    "check": "",
-    "src": "supabase/migrations/20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql"
-   },
-   {
     "name": "Users can manage their own alert configs",
     "table": "sdr_alert_configs",
     "cmd": "ALL",
@@ -42933,6 +42930,16 @@
     "src": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
    },
    {
+    "name": "Users can view audit logs for their activities",
+    "table": "activity_audit_logs",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.activities a WHERE a.id = activity_audit_logs.activity_id AND a.salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
     "name": "Owners and managers can view accounts",
     "table": "accounts",
     "cmd": "SELECT",
@@ -43320,15 +43327,6 @@
     "src": "supabase/migrations/20251228000001_add_soft_delete.sql"
    },
    {
-    "name": "audit_soft_delete_activities",
-    "when": "AFTER UPDATE",
-    "table": "activities",
-    "function": "log_soft_delete",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20251228000001_add_soft_delete.sql"
-   },
-   {
     "name": "audit_soft_delete_products",
     "when": "AFTER UPDATE",
     "table": "products",
@@ -43458,15 +43456,6 @@
     "name": "audit_users",
     "when": "AFTER INSERT OR UPDATE OR DELETE",
     "table": "users",
-    "function": "audit_trigger_func",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260105000002_audit_trail.sql"
-   },
-   {
-    "name": "audit_activities",
-    "when": "AFTER INSERT OR UPDATE OR DELETE",
-    "table": "activities",
     "function": "audit_trigger_func",
     "condition": "",
     "each": "row",
@@ -44319,15 +44308,6 @@
     "src": "supabase/migrations/20260509162507_90a60455-df25-4ebc-844e-d47c5dc02cdf.sql"
    },
    {
-    "name": "audit_activities_trigger",
-    "when": "AFTER UPDATE OR DELETE",
-    "table": "activities",
-    "function": "audit_activity_changes",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql"
-   },
-   {
     "name": "update_mql_qualifications_updated_at",
     "when": "BEFORE UPDATE",
     "table": "mql_qualifications",
@@ -44551,24 +44531,6 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260512175631_b0636deb-fb97-49da-b54e-82c70bafd65f.sql"
-   },
-   {
-    "name": "tr_update_bets_on_sale",
-    "when": "AFTER INSERT",
-    "table": "sales",
-    "function": "process_performance_bet_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql"
-   },
-   {
-    "name": "tr_update_bets_on_activity",
-    "when": "AFTER INSERT",
-    "table": "activities",
-    "function": "process_performance_bet_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql"
    },
    {
     "name": "tr_performance_update_sales",
@@ -44956,6 +44918,33 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql"
+   },
+   {
+    "name": "audit_activities_trigger",
+    "when": "AFTER UPDATE",
+    "table": "activities",
+    "function": "audit_activity_changes",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
+    "name": "audit_business_changes",
+    "when": "AFTER UPDATE OR DELETE",
+    "table": "activities",
+    "function": "audit_log_row_change",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
+    "name": "update_performance_bets_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "performance_bets",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    }
   ],
   "functions": {
@@ -48043,7 +48032,7 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260902180000_fix_sync_battle_score_stale_v_score.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_battle_id UUID; v_metric TEXT; v_score NUMERIC; BEGIN FOR v_battle_id, v_metric IN SELECT b.id, b.metric FROM public.sales_battles b JOIN public.battle_participants p ON p.battle_id = b.id WHERE b.status = 'active' AND p.salesperson_id = COALESCE(NEW.salesperson_id, OLD.salesperson_id) AND (b.starts_at <= NOW() AND b.ends_at >= NOW()) LOOP v_score := 0; IF v_metric = 'revenue' THEN SELECT COALESCE(SUM(amount), 0) INTO v_score FROM public.sales WHERE salesperson_id = COALESCE(NEW.salesperson_id, OLD.salesperson_id) AND (status = 'won' OR status = 'completed') AND created_at >= (SELECT starts_at FROM public.sales_battles WHERE id = v_battle_id); ELSIF v_metric = 'deals' THEN SELECT C …",
@@ -48162,7 +48151,7 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260512174528_edb98a5b-cb15-451f-928c-7bb53757cd11.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_salesperson_id UUID; BEGIN v_salesperson_id := COALESCE(NEW.salesperson_id, OLD.salesperson_id); UPDATE public.performance_bets b SET current_value = ( CASE WHEN b.bet_type = 'deals' THEN ( SELECT COUNT(*) FROM public.sales WHERE salesperson_id = v_salesperson_id AND deal_status = 'completed' AND created_at >= b.starts_at AND created_at <= b.ends_at ) WHEN b.bet_type = 'revenue' THEN ( SELECT COALESCE(SUM(amount), 0) FROM public.sales WHERE salesperson_id = v_salesperson_id AND deal_status = 'completed' AND created_at >= b.starts_at AND created_at <= b.ends_at ) WHEN b.bet_type = 'calls' THEN ( SELECT COUNT(*) FROM public.activities WHERE salesperson_id = v_salesperson_id AND activ …",
@@ -48211,7 +48200,7 @@
     "args": "",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260513192607_6ac577a4-6ab2-4c3e-b5c7-656f81de14b1.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE bet_record RECORD; progress_val NUMERIC; xp_change INTEGER; BEGIN FOR bet_record IN SELECT * FROM public.performance_bets WHERE status = 'active' LOOP progress_val := 0; IF bet_record.bet_type = 'deals' THEN SELECT COUNT(*) INTO progress_val FROM public.sales WHERE salesperson_id = bet_record.salesperson_id AND created_at >= bet_record.created_at AND created_at <= bet_record.ends_at AND (status = 'won' OR status = 'completed'); ELSIF bet_record.bet_type = 'revenue' THEN SELECT COALESCE(SUM(amount), 0) INTO progress_val FROM public.sales WHERE salesperson_id = bet_record.salesperson_id AND created_at >= bet_record.created_at AND created_at <= bet_record.ends_at AND (status = 'won' OR …",
@@ -48351,11 +48340,11 @@
    },
    "handle_performance_update": {
     "args": "",
-    "returns": "TRIGGER",
+    "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
-    "search_path": false,
+    "search_path": true,
     "body": "DECLARE v_bet RECORD; v_xp_change INTEGER; BEGIN FOR v_bet IN SELECT * FROM public.performance_bets WHERE status = 'active' AND salesperson_id = NEW.salesperson_id LOOP IF v_bet.bet_type = 'deals' THEN SELECT COUNT(*) INTO v_bet.current_value FROM public.sales WHERE salesperson_id = v_bet.salesperson_id AND created_at >= v_bet.created_at AND created_at <= v_bet.ends_at AND (status = 'won' OR status = 'completed'); ELSIF v_bet.bet_type = 'revenue' THEN SELECT COALESCE(SUM(amount), 0) INTO v_bet.current_value FROM public.sales WHERE salesperson_id = v_bet.salesperson_id AND created_at >= v_bet.created_at AND created_at <= v_bet.ends_at AND (status = 'won' OR status = 'completed'); ELSIF v_bet. …",
     "raises": [],
     "tables": [
@@ -48363,7 +48352,7 @@
      "performance_bets",
      "sales",
      "v_bet",
-     "xp_transactions"
+     "xp_history"
     ]
    },
    "handle_territory_conquest": {
@@ -50544,6 +50533,21 @@
      "_enrollment_id",
      "outbound_messages",
      "sequence_enrollments"
+    ]
+   },
+   "guard_activity_soft_delete": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF NEW.deleted_at IS NOT DISTINCT FROM OLD.deleted_at THEN NEW.deleted_by := OLD.deleted_by; RETURN NEW; END IF; IF OLD.deleted_at IS NULL THEN NEW.deleted_by := COALESCE(auth.uid(), NEW.deleted_by); RETURN NEW; END IF; IF current_user IN ('authenticated', 'anon') AND NOT public.is_admin_or_manager(auth.uid()) THEN RAISE EXCEPTION 'Somente admin ou gestor pode restaurar uma atividade excluída' USING ERRCODE = '42501'; END IF; IF NEW.deleted_at IS NULL THEN NEW.deleted_by := NULL; END IF; RETURN NEW; END;",
+    "raises": [
+     "Somente admin ou gestor pode restaurar uma atividade excluída"
+    ],
+    "tables": [
+     "OLD"
     ]
    },
    "check_rls": {
@@ -57810,8 +57814,8 @@
     "src": "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql"
    },
    "race_leaderboard_view": {
-    "body": "WITH season_metrics AS ( SELECT rs.id AS season_id, rs.role_type, rs.start_date, rs.end_date, rs.goal_amount, rc.id AS car_id, rc.salesperson_id, sp.name AS salesperson_name, sp.avatar_url, rc.car_number, rc.primary_color, rc.secondary_color, rc.car_style, rc.nickname, COALESCE(sum(s.amount) FILTER (WHERE (s.status = ANY (ARRAY['won'::text, 'completed'::text]))), (0)::numeric) AS sales_value_raw, (count(s.id) FILTER (WHERE (s.status = ANY (ARRAY['won'::text, 'completed'::text]))))::numeric AS deals_count_raw, (count(DISTINCT s.client_name) FILTER (WHERE (s.status = ANY (ARRAY['won'::text, 'com …",
-    "src": "supabase/migrations/20260830000000_fix_race_leaderboard_status.sql"
+    "body": "WITH season_metrics AS ( SELECT rs.id AS season_id, rs.role_type, rs.start_date, rs.end_date, rs.goal_amount, rc.id AS car_id, rc.salesperson_id, sp.name AS salesperson_name, sp.avatar_url, rc.car_number, rc.primary_color, rc.secondary_color, rc.car_style, rc.nickname, COALESCE(sum(s.amount) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::text])), 0::numeric) AS sales_value_raw, count(s.id) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::text]))::numeric AS deals_count_raw, count(DISTINCT s.client_name) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::t …",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    },
    "v_pipeline_coverage_summary": {
     "body": "SELECT DISTINCT ON (COALESCE((owner_id)::text, 'global'::text)) COALESCE((owner_id)::text, 'global'::text) AS owner_key, owner_id, period_start, period_end, sum(quota_amount) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS total_quota, sum(weighted_pipeline) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS total_weighted, avg(coverage_ratio) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS avg_ratio, health, calculated_at FROM public.pipeline_coverage_snapshots ORDER BY COALESCE((owner_id)::text, ' …",
@@ -58566,6 +58570,8 @@
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
    "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
    "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql",
+   "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+   "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
    "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "supabase/migrations/20261113060500_battle_participants_insert_gestor.sql",
    "supabase/migrations/20261113181500_account_plans_um_por_conta.sql",
@@ -63965,6 +63971,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "audit_activity_changes",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "private.guard_activity_soft_delete",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    }
   ],
   "raises": [
@@ -64847,6 +64869,11 @@
     "function": "award_bonus_if_eligible",
     "msg": "not authenticated",
     "src": "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql"
+   },
+   {
+    "function": "guard_activity_soft_delete",
+    "msg": "Somente admin ou gestor pode restaurar uma atividade excluída",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    }
   ],
   "seed": [
@@ -66594,7 +66621,7 @@
     "rpc_transitive": [
      "merge_clients"
     ],
-    "deps_count": 64
+    "deps_count": 67
    },
    {
     "path": "/auth",
@@ -74068,7 +74095,7 @@
     "file": ".github/workflows/types-sync.yml"
    }
   ],
-  "components_count": 1208,
+  "components_count": 1210,
   "hooks": [
    {
     "name": "useContacts",
@@ -74180,6 +74207,14 @@
    },
    {
     "name": "useCreateActivity",
+    "file": "src/hooks/activities/useActivities.ts"
+   },
+   {
+    "name": "useUpdateActivity",
+    "file": "src/hooks/activities/useActivities.ts"
+   },
+   {
+    "name": "useDeleteActivity",
     "file": "src/hooks/activities/useActivities.ts"
    },
    {
@@ -77979,8 +78014,8 @@
   },
   {
    "module": "src/components",
-   "files": 1208,
-   "lines": 190069,
+   "files": 1210,
+   "lines": 190598,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78063,6 +78098,7 @@
     "TeamAchievementStats.tsx: TeamAchievementStats",
     "AchievementBadgeDisplay.tsx: AchievementBadgeDisplay",
     "ActivityChannelEffectiveness.tsx: ActivityChannelEffectiveness",
+    "ActivityEditDialog.tsx: EditableActivity, ActivityEditDialog",
     "ActivityEffectiveness.tsx: ActivityEffectiveness",
     "ActivityGoalEditDialog.tsx: ActivityGoalEditDialog",
     "ActivityGoalForm.tsx: ActivityGoalForm",
@@ -78093,8 +78129,7 @@
     "PerformanceMonitor.tsx: PerformanceMonitor",
     "QuoteSyncLogsPanel.tsx: QuoteSyncLogsPanel",
     "SemanticReindexPanel.tsx: SemanticReindexPanel",
-    "ChurnHistoryChart.tsx: ChurnHistoryChart",
-    "CommercialDiffViewer.tsx: CommercialDiffViewer"
+    "ChurnHistoryChart.tsx: ChurnHistoryChart"
    ],
    "docs": [
     "DealVelocityChart.tsx: DealVelocityChart - visualizes deal pipeline velocity",
@@ -78153,10 +78188,12 @@
     "src/components/achievements/TeamAchievementStats.tsx",
     "src/components/activities/AchievementBadgeDisplay.tsx",
     "src/components/activities/ActivityChannelEffectiveness.tsx",
+    "src/components/activities/ActivityEditDialog.tsx",
     "src/components/activities/ActivityEffectiveness.tsx",
     "src/components/activities/ActivityGoalEditDialog.tsx",
     "src/components/activities/ActivityGoalForm.tsx",
     "src/components/activities/ActivityHeatmap.tsx",
+    "src/components/activities/ActivityItemRow.test.tsx",
     "src/components/activities/ActivityItemRow.tsx",
     "src/components/activities/ActivityLeaderboard.tsx",
     "src/components/activities/ActivityList.tsx",
@@ -78222,9 +78259,7 @@
     "src/components/admin/task-console/BulkActionBar.tsx",
     "src/components/admin/task-console/PendingApprovalsQueue.tsx",
     "src/components/admin/task-console/SquadManager.tsx",
-    "src/components/admin/task-console/TaskAssignmentDialog.tsx",
-    "src/components/admin/task-console/TaskCatalogManager.tsx",
-    "src/components/admin/task-console/TaskConsoleHub.tsx"
+    "src/components/admin/task-console/TaskAssignmentDialog.tsx"
    ]
   },
   {
@@ -78308,8 +78343,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 538,
-   "lines": 62916,
+   "files": 540,
+   "lines": 63235,
    "tables": [
     "access_denied_logs",
     "account_contacts",
@@ -78936,7 +78971,7 @@
   {
    "module": "src/pages",
    "files": 180,
-   "lines": 44330,
+   "lines": 44332,
    "tables": [
     "achievements",
     "activities",
@@ -79158,7 +79193,7 @@
   {
    "module": "src/services",
    "files": 7,
-   "lines": 1175,
+   "lines": 1177,
    "tables": [
     "achievements",
     "activities",
@@ -79205,13 +79240,14 @@
   },
   {
    "module": "src/test",
-   "files": 12,
-   "lines": 1123,
+   "files": 13,
+   "lines": 1179,
    "tables": [],
    "exports": [
     "factories.ts: nextTestId, nextUuid, buildSale, buildClient, buildQuote, buildSalesperson"
    ],
    "docs": [
+    "activities-bets-migration.test.ts: Regressão da migration de apostas de performance (soft-delete de atividades). Validado em Postgres 16 com o schema do snapshot: antes da correção, com 1 aposta 'revenue' ativa, TODO INSERT em sales falhava (`record \"new\" has no field \"value\"`, trigger tr_update_bets_on_sale) e a aposta ganha pelo re …",
     "factories.ts: Factories compartilhadas de teste — builders tipados para as entidades mais usadas nas specs. Cada builder devolve uma linha/objeto completo e válido; sobrescreva só os campos relevantes ao cenário: const vendaGanha = buildSale({ status: 'completed', amount: 1200 }); Convenções: - IDs determinístico …",
     "quote-error-messages.test.ts: @vitest-environment node",
     "accounts-delete-policy.test.ts: Teste de segurança: DELETE em `public.accounts` só para gestor. Apagar uma conta remove em cascata (ON DELETE CASCADE) contatos, planos, renovações, tickets e demais dados de CS. A policy FOR ALL antiga liberava isso ao dono (vendedor). Aqui reproduzimos as migrations em ordem (CREATE/DROP POLICY) e …",
@@ -79236,6 +79272,7 @@
     "src/utils"
    ],
    "file_list": [
+    "src/test/activities-bets-migration.test.ts",
     "src/test/bi-helpers.test.ts",
     "src/test/csv-export.test.ts",
     "src/test/factories.ts",
@@ -79328,7 +79365,7 @@
   {
    "module": "supabase/functions",
    "files": 316,
-   "lines": 65563,
+   "lines": 65577,
    "tables": [
     "_internal_secrets",
     "access_denied_logs",
@@ -79677,8 +79714,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 674,
-   "lines": 54497,
+   "files": 676,
+   "lines": 54993,
    "tables": [
     "user_permissions_cache"
    ],
@@ -80054,6 +80091,7 @@
      "src/components/dashboard/widgets/RecentActivitiesWidget.tsx",
      "src/components/sdr/SDRConversionEvolution.tsx",
      "src/components/sdr/SDRConversionRanking.tsx",
+     "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
      "src/hooks/activities/useActivities.ts",
      "src/hooks/activities/useActivityGoals.ts",
      "src/hooks/activities/useActivityQualityScore.ts",
@@ -80091,6 +80129,9 @@
      "supabase/functions/revops-hub/index.ts",
      "supabase/functions/sales-assistant-chat/index.ts",
      "supabase/functions/sdr-consecutive-alerts/index.ts"
+    ],
+    "update": [
+     "src/hooks/activities/useActivities.ts"
     ]
    },
    "activity_audit_logs": {
@@ -88777,6 +88818,16 @@
  "rules": {
   "validation_schemas": [
    {
+    "file": "src/components/activities/ActivityEditDialog.tsx",
+    "name": "activityEditSchema",
+    "kind": "object",
+    "body": "{ activity_type: z.enum([ 'call', 'email', 'meeting', 'linkedin', 'whatsapp', 'note', 'other', ]), outcome: z.enum([ 'connected', 'no_answer', 'scheduled', 'voicemail', 'busy', 'callback', 'not_interested', 'qualified', 'bad_timing', 'wrong_person', 'unsubscribed', ]), contact_name: z .string() .max(100, 'Nome do contato deve ter no máximo 100 caracteres') .optional(), duration_minutes: z .string() .optional() .refine(val => { if (!val) return true; const num = parseInt(val); return !isNaN(num) && num >= 1 && num <= 480; }, 'Duração deve ser entre 1 e 480 minutos'), notes: z .string() .max(1000, 'Observações devem ter no máximo 1000 caracteres') .optional(), }",
+    "refines": [
+     "Duração deve ser entre 1 e 480 minutos"
+    ],
+    "chain": []
+   },
+   {
     "file": "src/components/activities/ActivityGoalEditDialog.tsx",
     "name": "activityGoalSchema",
     "kind": "object",
@@ -91965,6 +92016,14 @@
     "msg": "Você não tem permissão para excluir esta conta"
    },
    {
+    "file": "src/hooks/activities/useActivities.ts",
+    "msg": "Erro ao atualizar atividade: ${err.message}"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.ts",
+    "msg": "Erro ao excluir atividade: ${err.message}"
+   },
+   {
     "file": "src/hooks/activities/useActivityGoals.ts",
     "msg": "Erro ao salvar metas"
    },
@@ -94559,6 +94618,10 @@
    {
     "file": "public/register-sw.js",
     "text": "// Registro do Service Worker (produção apenas — um SW em dev cacheia chunks"
+   },
+   {
+    "file": "src/components/activities/ActivityEditDialog.tsx",
+    "text": "Mesmas regras de validação do formulário de criação (ActivityLogForm)."
    },
    {
     "file": "src/components/activities/ArenaAITips.tsx",
@@ -101015,6 +101078,11 @@
    {
     "table": "performance_bets",
     "column": "created_at",
+    "rule": "default now()"
+   },
+   {
+    "table": "performance_bets",
+    "column": "updated_at",
     "rule": "default now()"
    },
    {
@@ -112698,6 +112766,11 @@
     "file": "src/hooks/useScrollRestoration.ts",
     "name": "MAX_ENTRIES",
     "value": "50"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.ts",
+    "name": "NO_PERMISSION_MESSAGE",
+    "value": "'Atividade não encontrada ou sem permissão para alterá-la'"
    },
    {
     "file": "src/hooks/admin/useV4Callbacks.ts",
@@ -127009,7 +127082,7 @@
     "file": "src/hooks/useNextBestAction.ts",
     "name": "generateLocalSuggestions",
     "params": "salespersonId: string",
-    "body": "const { data: sp } = await supabase .from('salespeople') .select('name') .eq('id', salespersonId) .maybeSingle(); const { data: sales } = await supabase .from('sales') .select('id, client_name, amount, status, created_at, updated_at') .eq('salesperson_id', salespersonId) .order('created_at', { ascending: false }) .limit(20); const { data: activities } = await supabase .from('activities') .select('id, activity_type, outcome, created_at') .eq('salesperson_id', salespersonId) .order('created_at', { …"
+    "body": "const { data: sp } = await supabase .from('salespeople') .select('name') .eq('id', salespersonId) .maybeSingle(); const { data: sales } = await supabase .from('sales') .select('id, client_name, amount, status, created_at, updated_at') .eq('salesperson_id', salespersonId) .order('created_at', { ascending: false }) .limit(20); const { data: activities } = await supabase .from('activities') .select('id, activity_type, outcome, created_at') .is('deleted_at', null) .eq('salesperson_id', salespersonId …"
    },
    {
     "file": "src/hooks/usePermissions.ts",
@@ -131156,6 +131229,30 @@
     "name": "resolverExecutavel ignora entrada relativa do PATH"
    },
    {
+    "file": "src/components/activities/ActivityItemRow.test.tsx",
+    "name": "ActivityItemRow — exclusão"
+   },
+   {
+    "file": "src/components/activities/ActivityItemRow.test.tsx",
+    "name": "mantém o diálogo aberto com "
+   },
+   {
+    "file": "src/components/activities/ActivityItemRow.test.tsx",
+    "name": "mantém o diálogo aberto e mostra o erro quando a exclusão falha"
+   },
+   {
+    "file": "src/components/activities/ActivityItemRow.test.tsx",
+    "name": "ActivityItemRow — histórico de alterações"
+   },
+   {
+    "file": "src/components/activities/ActivityItemRow.test.tsx",
+    "name": "lê activity_audit_logs da atividade e lista as alterações"
+   },
+   {
+    "file": "src/components/activities/ActivityItemRow.test.tsx",
+    "name": "mostra erro (e não "
+   },
+   {
     "file": "src/components/activities/ActivityLogForm.test.tsx",
     "name": "ActivityLogForm"
    },
@@ -132262,6 +132359,42 @@
    {
     "file": "src/hooks/abm/useAccounts.test.tsx",
     "name": "sem sessão: não tenta inserir e avisa para entrar de novo"
+   },
+   {
+    "file": "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
+    "name": "soft-delete de activities — guard-rail"
+   },
+   {
+    "file": "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
+    "name": "toda leitura de activities no front filtra deleted_at IS NULL"
+   },
+   {
+    "file": "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
+    "name": "toda leitura de activities nas edge functions filtra deleted_at IS NULL"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.test.tsx",
+    "name": "useUpdateActivity"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.test.tsx",
+    "name": "atualiza só atividades não excluídas e invalida lista, stats e ranking"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.test.tsx",
+    "name": "mostra erro quando a RLS bloqueia a alteração (0 linhas afetadas)"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.test.tsx",
+    "name": "useDeleteActivity"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.test.tsx",
+    "name": "faz soft-delete preenchendo deleted_at e deleted_by"
+   },
+   {
+    "file": "src/hooks/activities/useActivities.test.tsx",
+    "name": "mostra toast de erro quando o banco recusa"
    },
    {
     "file": "src/hooks/admin/useApprovalWorkflows.test.tsx",
@@ -134842,6 +134975,22 @@
    {
     "file": "src/services/salesService.test.ts",
     "name": "usa sale.status como statusLabel quando status não está no mapa"
+   },
+   {
+    "file": "src/test/activities-bets-migration.test.ts",
+    "name": "migration 20261112140200 — apostas de performance"
+   },
+   {
+    "file": "src/test/activities-bets-migration.test.ts",
+    "name": "remove os dois triggers de process_performance_bet_event (activities e sales)"
+   },
+   {
+    "file": "src/test/activities-bets-migration.test.ts",
+    "name": "update_performance_bet_progress credita XP da aposta ganha só via xp_history"
+   },
+   {
+    "file": "src/test/activities-bets-migration.test.ts",
+    "name": "handle_performance_update credita XP só via xp_history"
    },
    {
     "file": "src/test/bi-helpers.test.ts",
@@ -146500,16 +146649,6 @@
     "src": "supabase/migrations/20260509182848_a140c5d8-f21d-4169-9378-ab41e29bc730.sql"
    },
    {
-    "name": "Users can view audit logs for their activities",
-    "table": "activity_audit_logs",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "auth.uid() IN ( SELECT salesperson_id FROM public.activities WHERE id = activity_id ) OR EXISTS ( SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'manager') )",
-    "check": "",
-    "src": "supabase/migrations/20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql"
-   },
-   {
     "name": "Users can manage their own alert configs",
     "table": "sdr_alert_configs",
     "cmd": "ALL",
@@ -148520,6 +148659,16 @@
     "src": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql"
    },
    {
+    "name": "Users can view audit logs for their activities",
+    "table": "activity_audit_logs",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.activities a WHERE a.id = activity_audit_logs.activity_id AND a.salesperson_id = public.get_current_salesperson_id() ) OR public.is_admin_or_manager(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
     "name": "Owners and managers can view accounts",
     "table": "accounts",
     "cmd": "SELECT",
@@ -148907,15 +149056,6 @@
     "src": "supabase/migrations/20251228000001_add_soft_delete.sql"
    },
    {
-    "name": "audit_soft_delete_activities",
-    "when": "AFTER UPDATE",
-    "table": "activities",
-    "function": "log_soft_delete",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20251228000001_add_soft_delete.sql"
-   },
-   {
     "name": "audit_soft_delete_products",
     "when": "AFTER UPDATE",
     "table": "products",
@@ -149045,15 +149185,6 @@
     "name": "audit_users",
     "when": "AFTER INSERT OR UPDATE OR DELETE",
     "table": "users",
-    "function": "audit_trigger_func",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260105000002_audit_trail.sql"
-   },
-   {
-    "name": "audit_activities",
-    "when": "AFTER INSERT OR UPDATE OR DELETE",
-    "table": "activities",
     "function": "audit_trigger_func",
     "condition": "",
     "each": "row",
@@ -149906,15 +150037,6 @@
     "src": "supabase/migrations/20260509162507_90a60455-df25-4ebc-844e-d47c5dc02cdf.sql"
    },
    {
-    "name": "audit_activities_trigger",
-    "when": "AFTER UPDATE OR DELETE",
-    "table": "activities",
-    "function": "audit_activity_changes",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260509184206_ce500ccc-d327-4234-abad-200a7a136bac.sql"
-   },
-   {
     "name": "update_mql_qualifications_updated_at",
     "when": "BEFORE UPDATE",
     "table": "mql_qualifications",
@@ -150138,24 +150260,6 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20260512175631_b0636deb-fb97-49da-b54e-82c70bafd65f.sql"
-   },
-   {
-    "name": "tr_update_bets_on_sale",
-    "when": "AFTER INSERT",
-    "table": "sales",
-    "function": "process_performance_bet_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql"
-   },
-   {
-    "name": "tr_update_bets_on_activity",
-    "when": "AFTER INSERT",
-    "table": "activities",
-    "function": "process_performance_bet_event",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260512184157_4fb6807e-164e-43ef-92ea-00266e437054.sql"
    },
    {
     "name": "tr_performance_update_sales",
@@ -150543,6 +150647,33 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql"
+   },
+   {
+    "name": "audit_activities_trigger",
+    "when": "AFTER UPDATE",
+    "table": "activities",
+    "function": "audit_activity_changes",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
+    "name": "audit_business_changes",
+    "when": "AFTER UPDATE OR DELETE",
+    "table": "activities",
+    "function": "audit_log_row_change",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
+    "name": "update_performance_bets_updated_at",
+    "when": "BEFORE UPDATE",
+    "table": "performance_bets",
+    "function": "update_updated_at_column",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    }
   ],
   "db_functions": {
@@ -153630,7 +153761,7 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260902180000_fix_sync_battle_score_stale_v_score.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_battle_id UUID; v_metric TEXT; v_score NUMERIC; BEGIN FOR v_battle_id, v_metric IN SELECT b.id, b.metric FROM public.sales_battles b JOIN public.battle_participants p ON p.battle_id = b.id WHERE b.status = 'active' AND p.salesperson_id = COALESCE(NEW.salesperson_id, OLD.salesperson_id) AND (b.starts_at <= NOW() AND b.ends_at >= NOW()) LOOP v_score := 0; IF v_metric = 'revenue' THEN SELECT COALESCE(SUM(amount), 0) INTO v_score FROM public.sales WHERE salesperson_id = COALESCE(NEW.salesperson_id, OLD.salesperson_id) AND (status = 'won' OR status = 'completed') AND created_at >= (SELECT starts_at FROM public.sales_battles WHERE id = v_battle_id); ELSIF v_metric = 'deals' THEN SELECT C …",
@@ -153749,7 +153880,7 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260512174528_edb98a5b-cb15-451f-928c-7bb53757cd11.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_salesperson_id UUID; BEGIN v_salesperson_id := COALESCE(NEW.salesperson_id, OLD.salesperson_id); UPDATE public.performance_bets b SET current_value = ( CASE WHEN b.bet_type = 'deals' THEN ( SELECT COUNT(*) FROM public.sales WHERE salesperson_id = v_salesperson_id AND deal_status = 'completed' AND created_at >= b.starts_at AND created_at <= b.ends_at ) WHEN b.bet_type = 'revenue' THEN ( SELECT COALESCE(SUM(amount), 0) FROM public.sales WHERE salesperson_id = v_salesperson_id AND deal_status = 'completed' AND created_at >= b.starts_at AND created_at <= b.ends_at ) WHEN b.bet_type = 'calls' THEN ( SELECT COUNT(*) FROM public.activities WHERE salesperson_id = v_salesperson_id AND activ …",
@@ -153798,7 +153929,7 @@
     "args": "",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260513192607_6ac577a4-6ab2-4c3e-b5c7-656f81de14b1.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE bet_record RECORD; progress_val NUMERIC; xp_change INTEGER; BEGIN FOR bet_record IN SELECT * FROM public.performance_bets WHERE status = 'active' LOOP progress_val := 0; IF bet_record.bet_type = 'deals' THEN SELECT COUNT(*) INTO progress_val FROM public.sales WHERE salesperson_id = bet_record.salesperson_id AND created_at >= bet_record.created_at AND created_at <= bet_record.ends_at AND (status = 'won' OR status = 'completed'); ELSIF bet_record.bet_type = 'revenue' THEN SELECT COALESCE(SUM(amount), 0) INTO progress_val FROM public.sales WHERE salesperson_id = bet_record.salesperson_id AND created_at >= bet_record.created_at AND created_at <= bet_record.ends_at AND (status = 'won' OR …",
@@ -153938,11 +154069,11 @@
    },
    "handle_performance_update": {
     "args": "",
-    "returns": "TRIGGER",
+    "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
     "security_definer": true,
-    "search_path": false,
+    "search_path": true,
     "body": "DECLARE v_bet RECORD; v_xp_change INTEGER; BEGIN FOR v_bet IN SELECT * FROM public.performance_bets WHERE status = 'active' AND salesperson_id = NEW.salesperson_id LOOP IF v_bet.bet_type = 'deals' THEN SELECT COUNT(*) INTO v_bet.current_value FROM public.sales WHERE salesperson_id = v_bet.salesperson_id AND created_at >= v_bet.created_at AND created_at <= v_bet.ends_at AND (status = 'won' OR status = 'completed'); ELSIF v_bet.bet_type = 'revenue' THEN SELECT COALESCE(SUM(amount), 0) INTO v_bet.current_value FROM public.sales WHERE salesperson_id = v_bet.salesperson_id AND created_at >= v_bet.created_at AND created_at <= v_bet.ends_at AND (status = 'won' OR status = 'completed'); ELSIF v_bet. …",
     "raises": [],
     "tables": [
@@ -153950,7 +154081,7 @@
      "performance_bets",
      "sales",
      "v_bet",
-     "xp_transactions"
+     "xp_history"
     ]
    },
    "handle_territory_conquest": {
@@ -156133,6 +156264,21 @@
      "sequence_enrollments"
     ]
    },
+   "guard_activity_soft_delete": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF NEW.deleted_at IS NOT DISTINCT FROM OLD.deleted_at THEN NEW.deleted_by := OLD.deleted_by; RETURN NEW; END IF; IF OLD.deleted_at IS NULL THEN NEW.deleted_by := COALESCE(auth.uid(), NEW.deleted_by); RETURN NEW; END IF; IF current_user IN ('authenticated', 'anon') AND NOT public.is_admin_or_manager(auth.uid()) THEN RAISE EXCEPTION 'Somente admin ou gestor pode restaurar uma atividade excluída' USING ERRCODE = '42501'; END IF; IF NEW.deleted_at IS NULL THEN NEW.deleted_by := NULL; END IF; RETURN NEW; END;",
+    "raises": [
+     "Somente admin ou gestor pode restaurar uma atividade excluída"
+    ],
+    "tables": [
+     "OLD"
+    ]
+   },
    "check_rls": {
     "args": "tbl_name text",
     "returns": "boolean",
@@ -157145,6 +157291,11 @@
     "function": "award_bonus_if_eligible",
     "msg": "not authenticated",
     "src": "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql"
+   },
+   {
+    "function": "guard_activity_soft_delete",
+    "msg": "Somente admin ou gestor pode restaurar uma atividade excluída",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    }
   ],
   "db_generated": [
@@ -157238,8 +157389,8 @@
     "src": "supabase/migrations/20261027210000_r3_db_kpis_fixes.sql"
    },
    "race_leaderboard_view": {
-    "body": "WITH season_metrics AS ( SELECT rs.id AS season_id, rs.role_type, rs.start_date, rs.end_date, rs.goal_amount, rc.id AS car_id, rc.salesperson_id, sp.name AS salesperson_name, sp.avatar_url, rc.car_number, rc.primary_color, rc.secondary_color, rc.car_style, rc.nickname, COALESCE(sum(s.amount) FILTER (WHERE (s.status = ANY (ARRAY['won'::text, 'completed'::text]))), (0)::numeric) AS sales_value_raw, (count(s.id) FILTER (WHERE (s.status = ANY (ARRAY['won'::text, 'completed'::text]))))::numeric AS deals_count_raw, (count(DISTINCT s.client_name) FILTER (WHERE (s.status = ANY (ARRAY['won'::text, 'com …",
-    "src": "supabase/migrations/20260830000000_fix_race_leaderboard_status.sql"
+    "body": "WITH season_metrics AS ( SELECT rs.id AS season_id, rs.role_type, rs.start_date, rs.end_date, rs.goal_amount, rc.id AS car_id, rc.salesperson_id, sp.name AS salesperson_name, sp.avatar_url, rc.car_number, rc.primary_color, rc.secondary_color, rc.car_style, rc.nickname, COALESCE(sum(s.amount) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::text])), 0::numeric) AS sales_value_raw, count(s.id) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::text]))::numeric AS deals_count_raw, count(DISTINCT s.client_name) FILTER (WHERE s.status = ANY (ARRAY['won'::text, 'completed'::t …",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    },
    "v_pipeline_coverage_summary": {
     "body": "SELECT DISTINCT ON (COALESCE((owner_id)::text, 'global'::text)) COALESCE((owner_id)::text, 'global'::text) AS owner_key, owner_id, period_start, period_end, sum(quota_amount) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS total_quota, sum(weighted_pipeline) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS total_weighted, avg(coverage_ratio) OVER (PARTITION BY COALESCE((owner_id)::text, 'global'::text), calculated_at) AS avg_ratio, health, calculated_at FROM public.pipeline_coverage_snapshots ORDER BY COALESCE((owner_id)::text, ' …",
@@ -162733,7 +162884,7 @@
    "activity_audit_logs": {
     "rls": "enabled",
     "SELECT": [
-     "public: auth.uid() IN ( SELECT salesperson_id FROM public.activities WHERE id = activity_id ) OR EXISTS ( SELECT 1 FROM public.user_roles WH"
+     "authenticated: EXISTS ( SELECT 1 FROM public.activities a WHERE a.id = activity_audit_logs.activity_id AND a.salesperson_id = public.get_cur"
     ],
     "INSERT": [],
     "UPDATE": [],
@@ -168165,6 +168316,7 @@
    "scripts/seed-race-cars.ts",
    "scripts/seed-real-people.ts",
    "scripts/supabase_snapshot/snapshot.py",
+   "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
    "src/test/security/fn-cleanup-webhook-dedupe-privileges.test.ts",
    "supabase/functions/_shared/auth-client.ts",
    "supabase/functions/_shared/circuit-breaker.ts",
@@ -168457,6 +168609,7 @@
    "supabase/migrations/20261027140000_lgpd_gamificacao_r3.sql",
    "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql",
    "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
+   "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
    "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "supabase/tests/canonical_post_migration_assertions.sql",
    "tests/e2e/security-definer-rpc-access.spec.ts",
@@ -173762,6 +173915,22 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261027211000_match_whatsapp_reply_e_lock_release.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "audit_activity_changes",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "private.guard_activity_soft_delete",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
    }
   ],
   "guards": [
@@ -174578,7 +174747,8 @@
     "created_at"
    ],
    "performance_bets": [
-    "created_at"
+    "created_at",
+    "updated_at"
    ],
    "sales_territories": [
     "created_at",
@@ -177222,13 +177392,6 @@
     "msg": "função `maintain_sales_streaks` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
     "where": [
      "supabase/migrations/20260815110000_fix_maintain_sales_streaks.sql"
-    ]
-   },
-   {
-    "kind": "segurança",
-    "msg": "função `handle_performance_update` é SECURITY DEFINER sem `set search_path` (risco de escalação)",
-    "where": [
-     "supabase/migrations/20260512191103_395a3146-26cb-43f1-904d-59fa4d441723.sql"
     ]
    },
    {
@@ -180578,6 +180741,28 @@
     "function ActivityChannelEffectiveness"
    ]
   },
+  "src/components/activities/ActivityEditDialog.tsx": {
+   "path": "src/components/activities/ActivityEditDialog.tsx",
+   "lines": 292,
+   "exports": [
+    "interface EditableActivity",
+    "function ActivityEditDialog"
+   ],
+   "zod": [
+    {
+     "name": "activityEditSchema",
+     "kind": "object",
+     "body": "{ activity_type: z.enum([ 'call', 'email', 'meeting', 'linkedin', 'whatsapp', 'note', 'other', ]), outcome: z.enum([ 'connected', 'no_answer', 'scheduled', 'voicemail', 'busy', 'callback', 'not_interested', 'qualified', 'bad_timing', 'wrong_person', 'unsubscribed', ]), contact_name: z .string() .max(100, 'Nome do contato deve ter no máximo 100 caracteres') .optional(), duration_minutes: z .string() .optional() .refine(val => { if (!val) return true; const num = parseInt(val); return !isNaN(num) && num >= 1 && num <= 480; }, 'Duração deve ser entre 1 e 480 minutos'), notes: z .string() .max(1000, 'Observações devem ter no máximo 1000 caracteres') .optional(), }",
+     "refines": [
+      "Duração deve ser entre 1 e 480 minutos"
+     ],
+     "chain": []
+    }
+   ],
+   "rule_comments": [
+    "Mesmas regras de validação do formulário de criação (ActivityLogForm)."
+   ]
+  },
   "src/components/activities/ActivityEffectiveness.tsx": {
    "path": "src/components/activities/ActivityEffectiveness.tsx",
    "lines": 130,
@@ -180632,9 +180817,22 @@
     }
    ]
   },
+  "src/components/activities/ActivityItemRow.test.tsx": {
+   "path": "src/components/activities/ActivityItemRow.test.tsx",
+   "lines": 152,
+   "is_test": true,
+   "tests": [
+    "ActivityItemRow — exclusão",
+    "mantém o diálogo aberto com ",
+    "mantém o diálogo aberto e mostra o erro quando a exclusão falha",
+    "ActivityItemRow — histórico de alterações",
+    "lê activity_audit_logs da atividade e lista as alterações",
+    "mostra erro (e não "
+   ]
+  },
   "src/components/activities/ActivityItemRow.tsx": {
    "path": "src/components/activities/ActivityItemRow.tsx",
-   "lines": 227,
+   "lines": 299,
    "exports": [
     "const ActivityItemRow"
    ],
@@ -181955,7 +182153,7 @@
   },
   "src/components/analytics/ActivityHeatmap.tsx": {
    "path": "src/components/analytics/ActivityHeatmap.tsx",
-   "lines": 265,
+   "lines": 266,
    "exports": [
     "function ActivityHeatmap"
    ],
@@ -181968,6 +182166,7 @@
    "table_cols": {
     "activities": [
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ]
    },
@@ -182042,7 +182241,7 @@
   },
   "src/components/analytics/ClientHealthPanel.tsx": {
    "path": "src/components/analytics/ClientHealthPanel.tsx",
-   "lines": 292,
+   "lines": 293,
    "exports": [
     "const ClientHealthPanel"
    ],
@@ -182072,6 +182271,7 @@
      "total_value"
     ],
     "activities": [
+     "deleted_at",
      "id",
      "sale_id"
     ]
@@ -182308,7 +182508,7 @@
   },
   "src/components/analytics/LeadSLAMonitor.tsx": {
    "path": "src/components/analytics/LeadSLAMonitor.tsx",
-   "lines": 164,
+   "lines": 165,
    "exports": [
     "const LeadSLAMonitor"
    ],
@@ -182330,6 +182530,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "sale_id"
     ]
    },
@@ -182720,7 +182921,7 @@
   },
   "src/components/assistant/DealPreviewCard.tsx": {
    "path": "src/components/assistant/DealPreviewCard.tsx",
-   "lines": 290,
+   "lines": 291,
    "exports": [
     "const DealPreviewCard"
    ],
@@ -182747,6 +182948,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "sale_id"
     ],
     "deal_stage_history": [
@@ -184124,7 +184326,7 @@
   },
   "src/components/clients/ClientTimeline.tsx": {
    "path": "src/components/clients/ClientTimeline.tsx",
-   "lines": 326,
+   "lines": 328,
    "exports": [
     "const ClientTimeline"
    ],
@@ -184150,7 +184352,8 @@
      "status"
     ],
     "activities": [
-     "client_id"
+     "client_id",
+     "deleted_at"
     ]
    },
    "pagination": [
@@ -184473,7 +184676,7 @@
   },
   "src/components/closer/SDRHandoffContext.tsx": {
    "path": "src/components/closer/SDRHandoffContext.tsx",
-   "lines": 140,
+   "lines": 141,
    "exports": [
     "const SDRHandoffContext"
    ],
@@ -184485,6 +184688,7 @@
    ],
    "table_cols": {
     "activities": [
+     "deleted_at",
      "sale_id"
     ]
    },
@@ -184832,7 +185036,7 @@
   },
   "src/components/competitive/ActivityHeatmap.tsx": {
    "path": "src/components/competitive/ActivityHeatmap.tsx",
-   "lines": 186,
+   "lines": 187,
    "exports": [
     "const ActivityHeatmap"
    ],
@@ -184848,7 +185052,8 @@
    ],
    "table_cols": {
     "activities": [
-     "created_at"
+     "created_at",
+     "deleted_at"
     ],
     "sales": [
      "created_at",
@@ -187404,7 +187609,7 @@
   },
   "src/components/dashboard/widgets/ActivitiesTodayWidget.tsx": {
    "path": "src/components/dashboard/widgets/ActivitiesTodayWidget.tsx",
-   "lines": 59,
+   "lines": 60,
    "exports": [
     "const ActivitiesTodayWidget"
    ],
@@ -187418,6 +187623,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -187433,7 +187639,7 @@
   },
   "src/components/dashboard/widgets/CalendarPreviewWidget.tsx": {
    "path": "src/components/dashboard/widgets/CalendarPreviewWidget.tsx",
-   "lines": 79,
+   "lines": 80,
    "exports": [
     "const CalendarPreviewWidget"
    ],
@@ -187448,6 +187654,7 @@
      "activity_type",
      "contact_name",
      "created_at",
+     "deleted_at",
      "id",
      "salesperson_id"
     ]
@@ -187537,7 +187744,7 @@
   },
   "src/components/dashboard/widgets/RecentActivitiesWidget.tsx": {
    "path": "src/components/dashboard/widgets/RecentActivitiesWidget.tsx",
-   "lines": 78,
+   "lines": 79,
    "exports": [
     "const RecentActivitiesWidget"
    ],
@@ -187552,6 +187759,7 @@
      "activity_type",
      "contact_name",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -194835,7 +195043,7 @@
   },
   "src/components/sdr/SDRConversionEvolution.tsx": {
    "path": "src/components/sdr/SDRConversionEvolution.tsx",
-   "lines": 314,
+   "lines": 315,
    "exports": [
     "function SDRConversionEvolution"
    ],
@@ -194862,6 +195070,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "outcome",
      "salesperson_id"
     ],
@@ -194885,7 +195094,7 @@
   },
   "src/components/sdr/SDRConversionRanking.tsx": {
    "path": "src/components/sdr/SDRConversionRanking.tsx",
-   "lines": 318,
+   "lines": 319,
    "exports": [
     "const SDRConversionRanking"
    ],
@@ -194913,6 +195122,7 @@
     ],
     "activities": [
      "activity_type",
+     "deleted_at",
      "outcome",
      "salesperson_id"
     ],
@@ -199158,7 +199368,7 @@
   },
   "src/hooks/useCompetencyData.ts": {
    "path": "src/hooks/useCompetencyData.ts",
-   "lines": 115,
+   "lines": 116,
    "exports": [
     "function useCompetencyData"
    ],
@@ -199179,6 +199389,7 @@
    "table_cols": {
     "activities": [
      "activity_type",
+     "deleted_at",
      "outcome",
      "salesperson_id"
     ],
@@ -199412,7 +199623,7 @@
   },
   "src/hooks/useDealProbability.ts": {
    "path": "src/hooks/useDealProbability.ts",
-   "lines": 125,
+   "lines": 126,
    "exports": [
     "const useDealProbability",
     "const useDealProbabilities"
@@ -199440,6 +199651,7 @@
      "status"
     ],
     "activities": [
+     "deleted_at",
      "id",
      "sale_id"
     ]
@@ -199584,7 +199796,7 @@
   },
   "src/hooks/useDealTimeline.ts": {
    "path": "src/hooks/useDealTimeline.ts",
-   "lines": 161,
+   "lines": 162,
    "exports": [
     "function useDealTimeline"
    ],
@@ -199615,6 +199827,7 @@
      "activity_type",
      "contact_name",
      "created_at",
+     "deleted_at",
      "duration_minutes",
      "id",
      "notes",
@@ -200387,7 +200600,7 @@
   },
   "src/hooks/useInactiveDeals.ts": {
    "path": "src/hooks/useInactiveDeals.ts",
-   "lines": 230,
+   "lines": 231,
    "exports": [
     "const INACTIVITY_RULES",
     "const useInactiveDeals"
@@ -200424,6 +200637,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "sale_id"
     ]
    },
@@ -201344,7 +201558,7 @@
   },
   "src/hooks/useNextBestAction.ts": {
    "path": "src/hooks/useNextBestAction.ts",
-   "lines": 305,
+   "lines": 306,
    "exports": [
     "interface NextBestAction",
     "function useNextBestActionQuery",
@@ -201381,6 +201595,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -201414,7 +201629,7 @@
     {
      "name": "generateLocalSuggestions",
      "params": "salespersonId: string",
-     "body": "const { data: sp } = await supabase .from('salespeople') .select('name') .eq('id', salespersonId) .maybeSingle(); const { data: sales } = await supabase .from('sales') .select('id, client_name, amount, status, created_at, updated_at') .eq('salesperson_id', salespersonId) .order('created_at', { ascending: false }) .limit(20); const { data: activities } = await supabase .from('activities') .select('id, activity_type, outcome, created_at') .eq('salesperson_id', salespersonId) .order('created_at', { …"
+     "body": "const { data: sp } = await supabase .from('salespeople') .select('name') .eq('id', salespersonId) .maybeSingle(); const { data: sales } = await supabase .from('sales') .select('id, client_name, amount, status, created_at, updated_at') .eq('salesperson_id', salespersonId) .order('created_at', { ascending: false }) .limit(20); const { data: activities } = await supabase .from('activities') .select('id, activity_type, outcome, created_at') .is('deleted_at', null) .eq('salesperson_id', salespersonId …"
     }
    ],
    "side_effects": [
@@ -201673,7 +201888,7 @@
   },
   "src/hooks/usePerformanceComparison.ts": {
    "path": "src/hooks/usePerformanceComparison.ts",
-   "lines": 159,
+   "lines": 160,
    "exports": [
     "interface SalespersonPerformance",
     "const usePerformanceComparison"
@@ -201717,6 +201932,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "salesperson_id"
     ],
@@ -202836,7 +203052,7 @@
   },
   "src/hooks/useSDRActivityTrend.ts": {
    "path": "src/hooks/useSDRActivityTrend.ts",
-   "lines": 307,
+   "lines": 308,
    "exports": [
     "type PeriodFilter",
     "type ViewMode",
@@ -202878,6 +203094,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ]
    },
@@ -203367,7 +203584,7 @@
   },
   "src/hooks/useSelfBenchmark.ts": {
    "path": "src/hooks/useSelfBenchmark.ts",
-   "lines": 128,
+   "lines": 129,
    "exports": [
     "function useSelfBenchmark"
    ],
@@ -203394,6 +203611,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -203618,7 +203836,7 @@
   },
   "src/hooks/useTeamActivityFeed.ts": {
    "path": "src/hooks/useTeamActivityFeed.ts",
-   "lines": 145,
+   "lines": 146,
    "exports": [
     "interface TeamActivity",
     "const useTeamActivityFeed"
@@ -203656,6 +203874,7 @@
      "activity_type",
      "contact_name",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -204236,7 +204455,7 @@
   },
   "src/hooks/useWeeklyComparison.ts": {
    "path": "src/hooks/useWeeklyComparison.ts",
-   "lines": 95,
+   "lines": 97,
    "exports": [
     "function useWeeklyComparison"
    ],
@@ -204275,6 +204494,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id"
     ],
     "clients": [
@@ -204729,9 +204949,43 @@
     "useRecalculateAccountScore"
    ]
   },
+  "src/hooks/activities/activitiesSoftDelete.guard.test.ts": {
+   "path": "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
+   "lines": 74,
+   "is_test": true,
+   "tables": [
+    {
+     "table": "activities",
+     "op": "select"
+    }
+   ],
+   "rule_comments": [
+    "Guard-rail estático: atividade excluída (soft-delete via `deleted_at`) não pode aparecer"
+   ],
+   "doc": "Guard-rail estático: atividade excluída (soft-delete via `deleted_at`) não pode aparecer nem contar em tela nenhuma. A RLS de SELECT de `activities` não filtra `deleted_at` (o UPDATE...RETURNING do soft-delete depende disso), então TODA leitura `.from('activities').select(...)` precisa de `.is('dele …",
+   "tests": [
+    "soft-delete de activities — guard-rail",
+    "toda leitura de activities no front filtra deleted_at IS NULL",
+    "toda leitura de activities nas edge functions filtra deleted_at IS NULL"
+   ],
+   "uses_service_role": true
+  },
+  "src/hooks/activities/useActivities.test.tsx": {
+   "path": "src/hooks/activities/useActivities.test.tsx",
+   "lines": 149,
+   "is_test": true,
+   "tests": [
+    "useUpdateActivity",
+    "atualiza só atividades não excluídas e invalida lista, stats e ranking",
+    "mostra erro quando a RLS bloqueia a alteração (0 linhas afetadas)",
+    "useDeleteActivity",
+    "faz soft-delete preenchendo deleted_at e deleted_by",
+    "mostra toast de erro quando o banco recusa"
+   ]
+  },
   "src/hooks/activities/useActivities.ts": {
    "path": "src/hooks/activities/useActivities.ts",
-   "lines": 456,
+   "lines": 528,
    "exports": [
     "type ActivityType",
     "type ActivityOutcome",
@@ -204743,7 +204997,10 @@
     "const useSDRLeaderboard",
     "const useActivityGoals",
     "const useUpdateActivityGoals",
-    "const useCreateActivity"
+    "const useCreateActivity",
+    "interface UpdateActivityInput",
+    "const useUpdateActivity",
+    "const useDeleteActivity"
    ],
    "tables": [
     {
@@ -204777,18 +205034,31 @@
     {
      "table": "activities",
      "op": "insert,select"
+    },
+    {
+     "table": "activities",
+     "op": "select,update"
+    },
+    {
+     "table": "activities",
+     "op": "select,update"
     }
    ],
    "table_cols": {
     "activities": [
      "created_at",
      "deleted_at",
+     "id",
      "salesperson_id"
     ],
     "activity_goals": [
      "salesperson_id"
     ]
    },
+   "errors": [
+    "Erro ao atualizar atividade: ${err.message}",
+    "Erro ao excluir atividade: ${err.message}"
+   ],
    "enums": [
     {
      "name": "ActivityType",
@@ -204799,6 +205069,12 @@
      "values": "connected | no_answer | scheduled | voicemail | busy | callback | not_interested | qualified | bad_timing | wrong_person | unsubscribed"
     }
    ],
+   "params": [
+    {
+     "name": "NO_PERMISSION_MESSAGE",
+     "value": "'Atividade não encontrada ou sem permissão para alterá-la'"
+    }
+   ],
    "doc": "Activity types and hooks",
    "hooks": [
     "useActivities",
@@ -204807,12 +205083,14 @@
     "useSDRLeaderboard",
     "useActivityGoals",
     "useUpdateActivityGoals",
-    "useCreateActivity"
+    "useCreateActivity",
+    "useUpdateActivity",
+    "useDeleteActivity"
    ]
   },
   "src/hooks/activities/useActivityGoals.ts": {
    "path": "src/hooks/activities/useActivityGoals.ts",
-   "lines": 205,
+   "lines": 206,
    "exports": [
     "interface ActivityGoalProgress",
     "function useActivityGoals",
@@ -204852,6 +205130,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ]
    },
@@ -204873,7 +205152,7 @@
   },
   "src/hooks/activities/useActivityQualityScore.ts": {
    "path": "src/hooks/activities/useActivityQualityScore.ts",
-   "lines": 116,
+   "lines": 117,
    "exports": [
     "function useActivityQualityScore"
    ],
@@ -204897,6 +205176,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "outcome",
      "salesperson_id"
     ]
@@ -206418,7 +206698,7 @@
   },
   "src/hooks/bi/useBISDR.ts": {
    "path": "src/hooks/bi/useBISDR.ts",
-   "lines": 184,
+   "lines": 188,
    "exports": [
     "interface BISDRData",
     "function useBISDR"
@@ -206481,6 +206761,7 @@
      "activity_type",
      "contact_name",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -208802,7 +209083,7 @@
   },
   "src/hooks/crm/useClient360.ts": {
    "path": "src/hooks/crm/useClient360.ts",
-   "lines": 261,
+   "lines": 262,
    "exports": [
     "interface Client360Data",
     "function useClient360"
@@ -208828,6 +209109,7 @@
     ],
     "activities": [
      "client_id",
+     "deleted_at",
      "id"
     ]
    },
@@ -209586,7 +209868,7 @@
   },
   "src/hooks/dashboard/useROIDashboard.ts": {
    "path": "src/hooks/dashboard/useROIDashboard.ts",
-   "lines": 185,
+   "lines": 186,
    "exports": [
     "function useROIDashboard"
    ],
@@ -209623,6 +209905,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -209660,7 +209943,7 @@
   },
   "src/hooks/deal-intelligence/useAtRiskDeals.ts": {
    "path": "src/hooks/deal-intelligence/useAtRiskDeals.ts",
-   "lines": 190,
+   "lines": 191,
    "exports": [
     "interface AtRiskDeal",
     "function useAtRiskDeals",
@@ -209679,6 +209962,9 @@
    "table_cols": {
     "sales": [
      "status"
+    ],
+    "activities": [
+     "deleted_at"
     ]
    },
    "invokes": [
@@ -211117,7 +211403,7 @@
   },
   "src/hooks/follow-up/useFollowUpData.ts": {
    "path": "src/hooks/follow-up/useFollowUpData.ts",
-   "lines": 137,
+   "lines": 138,
    "exports": [
     "function useFollowUpSettings",
     "function useFollowUpLeads",
@@ -211163,6 +211449,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "notes",
      "sale_id"
     ],
@@ -215661,7 +215948,7 @@
   },
   "src/hooks/sales/useSalespersonActivityReport.ts": {
    "path": "src/hooks/sales/useSalespersonActivityReport.ts",
-   "lines": 216,
+   "lines": 218,
    "exports": [
     "interface SalespersonActivityData",
     "interface ActivityTrendData",
@@ -215692,7 +215979,8 @@
     ],
     "activities": [
      "activity_type",
-     "created_at"
+     "created_at",
+     "deleted_at"
     ]
    },
    "hooks": [
@@ -215705,7 +215993,7 @@
   },
   "src/hooks/sales/useSalespersonCoaching.ts": {
    "path": "src/hooks/sales/useSalespersonCoaching.ts",
-   "lines": 219,
+   "lines": 220,
    "exports": [
     "type CoachingData",
     "const useSalespersonCoaching"
@@ -215756,6 +216044,7 @@
     ],
     "activities": [
      "activity_type",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -222161,7 +222450,7 @@
   },
   "src/pages/RelatoriosExecutivos.tsx": {
    "path": "src/pages/RelatoriosExecutivos.tsx",
-   "lines": 478,
+   "lines": 479,
    "exports": [
     "default RelatoriosExecutivos"
    ],
@@ -222188,6 +222477,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "salesperson_id"
@@ -222451,7 +222741,7 @@
   },
   "src/pages/TeamActivityFeed.tsx": {
    "path": "src/pages/TeamActivityFeed.tsx",
-   "lines": 191,
+   "lines": 192,
    "exports": [
     "default TeamActivityFeed"
    ],
@@ -222466,6 +222756,7 @@
      "activity_type",
      "contact_name",
      "created_at",
+     "deleted_at",
      "duration_minutes",
      "id",
      "notes",
@@ -224253,7 +224544,7 @@
   },
   "src/services/biService.ts": {
    "path": "src/services/biService.ts",
-   "lines": 357,
+   "lines": 359,
    "exports": [
     "const biService"
    ],
@@ -224361,6 +224652,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ],
     "activity_goals": [
@@ -224591,6 +224883,18 @@
    ],
    "pagination": [
     "100"
+   ]
+  },
+  "src/test/activities-bets-migration.test.ts": {
+   "path": "src/test/activities-bets-migration.test.ts",
+   "lines": 56,
+   "is_test": true,
+   "doc": "Regressão da migration de apostas de performance (soft-delete de atividades). Validado em Postgres 16 com o schema do snapshot: antes da correção, com 1 aposta 'revenue' ativa, TODO INSERT em sales falhava (`record \"new\" has no field \"value\"`, trigger tr_update_bets_on_sale) e a aposta ganha pelo re …",
+   "tests": [
+    "migration 20261112140200 — apostas de performance",
+    "remove os dois triggers de process_performance_bet_event (activities e sales)",
+    "update_performance_bet_progress credita XP da aposta ganha só via xp_history",
+    "handle_performance_update credita XP só via xp_history"
    ]
   },
   "src/test/bi-helpers.test.ts": {
@@ -226652,7 +226956,7 @@
   },
   "supabase/functions/activity-goal-alerts/index.ts": {
    "path": "supabase/functions/activity-goal-alerts/index.ts",
-   "lines": 313,
+   "lines": 314,
    "tables": [
     {
      "table": "_internal_secrets",
@@ -226699,6 +227003,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ],
     "notification_preferences": [
@@ -227133,7 +227438,7 @@
   },
   "supabase/functions/ai-copilot/index.ts": {
    "path": "supabase/functions/ai-copilot/index.ts",
-   "lines": 305,
+   "lines": 306,
    "tables": [
     {
      "table": "salespeople",
@@ -227175,6 +227480,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "salesperson_id"
     ],
@@ -228865,7 +229171,7 @@
   },
   "supabase/functions/calculate-deal-health/index.ts": {
    "path": "supabase/functions/calculate-deal-health/index.ts",
-   "lines": 475,
+   "lines": 477,
    "tables": [
     {
      "table": "sales",
@@ -228921,6 +229227,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "sale_id"
     ],
@@ -229276,7 +229583,7 @@
   },
   "supabase/functions/check-lead-sla/index.ts": {
    "path": "supabase/functions/check-lead-sla/index.ts",
-   "lines": 243,
+   "lines": 244,
    "tables": [
     {
      "table": "_internal_secrets",
@@ -229319,6 +229626,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "sale_id"
     ]
    },
@@ -229592,6 +229900,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "salesperson_id"
     ],
@@ -229629,7 +229938,7 @@
   },
   "supabase/functions/coaching-session-prep/index.ts": {
    "path": "supabase/functions/coaching-session-prep/index.ts",
-   "lines": 196,
+   "lines": 197,
    "tables": [
     {
      "table": "salespeople",
@@ -229675,6 +229984,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ]
    },
@@ -230593,7 +230903,7 @@
   },
   "supabase/functions/detect-at-risk-deals/index.ts": {
    "path": "supabase/functions/detect-at-risk-deals/index.ts",
-   "lines": 255,
+   "lines": 256,
    "tables": [
     {
      "table": "sales",
@@ -230615,6 +230925,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "sale_id"
@@ -230780,7 +231091,7 @@
   },
   "supabase/functions/detect-coaching-opportunities/index.ts": {
    "path": "supabase/functions/detect-coaching-opportunities/index.ts",
-   "lines": 334,
+   "lines": 335,
    "tables": [
     {
      "table": "salespeople",
@@ -230823,6 +231134,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "salesperson_id"
     ],
@@ -232025,7 +232337,7 @@
   },
   "supabase/functions/email-composer-bulk/index.ts": {
    "path": "supabase/functions/email-composer-bulk/index.ts",
-   "lines": 267,
+   "lines": 268,
    "tables": [
     {
      "table": "sales",
@@ -232075,6 +232387,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "notes",
      "outcome",
      "sale_id"
@@ -234238,7 +234551,7 @@
   },
   "supabase/functions/next-best-action/index.ts": {
    "path": "supabase/functions/next-best-action/index.ts",
-   "lines": 554,
+   "lines": 555,
    "tables": [
     {
      "table": "salespeople",
@@ -234315,6 +234628,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "id",
      "outcome",
      "sale_id",
@@ -234678,7 +234992,7 @@
   },
   "supabase/functions/nlq-query/queryResolvers.ts": {
    "path": "supabase/functions/nlq-query/queryResolvers.ts",
-   "lines": 343,
+   "lines": 344,
    "exports": [
     "type ResolverResult",
     "interface ResolverArgs",
@@ -234730,6 +235044,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "duration_minutes",
      "id",
      "outcome"
@@ -237627,6 +237942,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "id",
      "outcome"
     ],
@@ -237838,7 +238154,7 @@
   },
   "supabase/functions/sales-assistant-chat/index.ts": {
    "path": "supabase/functions/sales-assistant-chat/index.ts",
-   "lines": 484,
+   "lines": 486,
    "tables": [
     {
      "table": "salespeople",
@@ -237926,6 +238242,7 @@
     "activities": [
      "activity_type",
      "created_at",
+     "deleted_at",
      "notes",
      "outcome",
      "sale_id",
@@ -238394,7 +238711,7 @@
   },
   "supabase/functions/sdr-consecutive-alerts/index.ts": {
    "path": "supabase/functions/sdr-consecutive-alerts/index.ts",
-   "lines": 529,
+   "lines": 530,
    "tables": [
     {
      "table": "salespeople",
@@ -238459,6 +238776,7 @@
     ],
     "activities": [
      "created_at",
+     "deleted_at",
      "salesperson_id"
     ],
     "_internal_secrets": [
@@ -245486,6 +245804,15 @@
    "path": "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql",
    "lines": 23
   },
+  "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql": {
+   "path": "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+   "lines": 64
+  },
+  "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql": {
+   "path": "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql",
+   "lines": 432,
+   "uses_service_role": true
+  },
   "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql": {
    "path": "supabase/migrations/20261112190100_accounts_delete_so_gestor.sql",
    "lines": 57,
@@ -247560,10 +247887,84 @@
   }
  },
  "git": {
-  "sha": "e3668b5e32ede1046bfa25c5ea0b2c1ca087127a",
+  "sha": "362dfda6e35f5bcd348b5c412321f7597b00b9af",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Promo_Champions_V2.1",
   "commits": [
+   {
+    "sha": "362dfda",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "feat: editar e excluir atividades (+ migration que remove triggers legados que quebram UPDATE) (#429)",
+    "files": [
+     "src/components/activities/ActivityEditDialog.tsx",
+     "src/components/activities/ActivityItemRow.test.tsx",
+     "src/components/activities/ActivityItemRow.tsx",
+     "src/components/analytics/ActivityHeatmap.tsx",
+     "src/components/analytics/ClientHealthPanel.tsx",
+     "src/components/analytics/LeadSLAMonitor.tsx",
+     "src/components/assistant/DealPreviewCard.tsx",
+     "src/components/clients/ClientTimeline.tsx",
+     "src/components/closer/SDRHandoffContext.tsx",
+     "src/components/competitive/ActivityHeatmap.tsx",
+     "src/components/dashboard/widgets/ActivitiesTodayWidget.tsx",
+     "src/components/dashboard/widgets/CalendarPreviewWidget.tsx",
+     "src/components/dashboard/widgets/RecentActivitiesWidget.tsx",
+     "src/components/sdr/SDRConversionEvolution.tsx",
+     "src/components/sdr/SDRConversionRanking.tsx",
+     "src/hooks/activities/activitiesSoftDelete.guard.test.ts",
+     "src/hooks/activities/useActivities.test.tsx",
+     "src/hooks/activities/useActivities.ts",
+     "src/hooks/activities/useActivityGoals.ts",
+     "src/hooks/activities/useActivityQualityScore.ts",
+     "src/hooks/bi/useBISDR.ts",
+     "src/hooks/crm/useClient360.ts",
+     "src/hooks/dashboard/useROIDashboard.ts",
+     "src/hooks/deal-intelligence/useAtRiskDeals.ts",
+     "src/hooks/follow-up/useFollowUpData.ts",
+     "src/hooks/sales/useSalespersonActivityReport.ts",
+     "src/hooks/sales/useSalespersonCoaching.ts",
+     "src/hooks/useCompetencyData.ts",
+     "src/hooks/useDealProbability.ts",
+     "src/hooks/useDealTimeline.ts",
+     "src/hooks/useInactiveDeals.ts",
+     "src/hooks/useNextBestAction.ts",
+     "src/hooks/usePerformanceComparison.ts",
+     "src/hooks/useSDRActivityTrend.ts",
+     "src/hooks/useSelfBenchmark.ts",
+     "src/hooks/useTeamActivityFeed.ts",
+     "src/hooks/useWeeklyComparison.ts",
+     "src/pages/RelatoriosExecutivos.tsx",
+     "src/pages/TeamActivityFeed.tsx",
+     "src/services/biService.ts",
+     "src/test/activities-bets-migration.test.ts",
+     "supabase/functions/activity-goal-alerts/index.ts",
+     "supabase/functions/ai-copilot/index.ts",
+     "supabase/functions/calculate-deal-health/index.ts",
+     "supabase/functions/check-lead-sla/index.ts",
+     "supabase/functions/coaching-intelligence/index.ts",
+     "supabase/functions/coaching-session-prep/index.ts",
+     "supabase/functions/detect-at-risk-deals/index.ts",
+     "supabase/functions/detect-coaching-opportunities/index.ts",
+     "supabase/functions/email-composer-bulk/index.ts",
+     "supabase/functions/next-best-action/index.ts",
+     "supabase/functions/nlq-query/queryResolvers.ts",
+     "supabase/functions/revops-hub/index.ts",
+     "supabase/functions/sales-assistant-chat/index.ts",
+     "supabase/functions/sdr-consecutive-alerts/index.ts",
+     "supabase/migrations/20261112140100_activities_remove_triggers_audit_legados.sql",
+     "supabase/migrations/20261112140200_activities_soft_delete_apostas_placar.sql"
+    ]
+   },
+   {
+    "sha": "0657d49",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "docs: marca B7 como aplicada em producao (10 migrations no ar, 2026-11-14) (#486)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "e3668b5",
     "date": "2026-11-14",
@@ -247899,37 +248300,6 @@
      "src/hooks/forecast/useScenarioBaseline.test.tsx",
      "src/hooks/forecast/useScenarioBaseline.ts"
     ]
-   },
-   {
-    "sha": "0915aab",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: remove ações e previsões falsas do Cliente 360 (#441)",
-    "files": [
-     "src/components/clients/Client360AffinityCard.tsx",
-     "src/components/clients/Client360Header.tsx",
-     "src/components/clients/Client360HealthNbaSection.test.tsx",
-     "src/components/clients/Client360HealthNbaSection.tsx",
-     "src/components/clients/Client360PredictiveCards.tsx",
-     "src/components/clients/Client360View.tsx",
-     "src/hooks/crm/useClient360.ts"
-    ]
-   },
-   {
-    "sha": "64382cb",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: remover dados e automações fictícios da análise ABC (#446)",
-    "files": [
-     "src/components/analytics/ABCActionableAutomations.tsx",
-     "src/components/analytics/ABCAnalysis.test.tsx",
-     "src/components/analytics/ABCAnalysis.tsx",
-     "src/components/analytics/ABCChartTable.tsx",
-     "src/components/analytics/ABCMatrixShift.tsx",
-     "src/components/analytics/ABCNeuralInsights.tsx",
-     "src/hooks/bi/useABCAnalysis.test.tsx",
-     "src/hooks/bi/useABCAnalysis.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -247942,12 +248312,12 @@
     4
    ],
    [
-    "deno.lock",
+    "docs/prod-readiness.md",
     3
    ],
    [
-    "docs/prod-readiness.md",
-    2
+    "deno.lock",
+    3
    ],
    [
     "src/components/pipeline/DealCard.test.tsx",
@@ -247958,59 +248328,59 @@
     2
    ],
    [
-    "supabase/migrations/20261112134500_rls_deny_all_daily_challenge_rotations_geocode_cache.sql",
+    "src/components/activities/ActivityEditDialog.tsx",
     1
    ],
    [
-    ".release-please-manifest.json",
+    "src/components/activities/ActivityItemRow.test.tsx",
     1
    ],
    [
-    "CHANGELOG.md",
+    "src/components/activities/ActivityItemRow.tsx",
     1
    ],
    [
-    "src/components/competitive/FeedCommentOwnerActions.tsx",
+    "src/components/analytics/ActivityHeatmap.tsx",
     1
    ],
    [
-    "src/components/competitive/VictoryFeed.tsx",
+    "src/components/analytics/ClientHealthPanel.tsx",
     1
    ],
    [
-    "src/components/competitive/VictoryFeedItem.tsx",
+    "src/components/analytics/LeadSLAMonitor.tsx",
     1
    ],
    [
-    "src/hooks/useVictoryFeed.test.tsx",
+    "src/components/assistant/DealPreviewCard.tsx",
     1
    ],
    [
-    "src/hooks/useVictoryFeed.ts",
+    "src/components/clients/ClientTimeline.tsx",
     1
    ],
    [
-    "src/pages/VictoryFeedPage.tsx",
+    "src/components/closer/SDRHandoffContext.tsx",
     1
    ],
    [
-    "supabase/migrations/20261112140000_feed_comments_update_delete_proprio.sql",
+    "src/components/competitive/ActivityHeatmap.tsx",
     1
    ],
    [
-    "src/components/email/EmailTrackingDashboard.tsx",
+    "src/components/dashboard/widgets/ActivitiesTodayWidget.tsx",
     1
    ],
    [
-    "src/components/organisms/DesktopTopBar.tsx",
+    "src/components/dashboard/widgets/CalendarPreviewWidget.tsx",
     1
    ],
    [
-    "src/components/performance/PerformanceMonitor.tsx",
+    "src/components/dashboard/widgets/RecentActivitiesWidget.tsx",
     1
    ],
    [
-    "src/components/race/RacePanelEmptyState.tsx",
+    "src/components/sdr/SDRConversionEvolution.tsx",
     1
    ]
   ]

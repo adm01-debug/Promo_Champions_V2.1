@@ -187,7 +187,7 @@
    "nome": "activity-goal-alerts",
    "entrada": "supabase/functions/activity-goal-alerts/index.ts",
    "arquivos": 1,
-   "linhas": 313,
+   "linhas": 314,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -352,7 +352,7 @@
    "nome": "ai-copilot",
    "entrada": "supabase/functions/ai-copilot/index.ts",
    "arquivos": 1,
-   "linhas": 305,
+   "linhas": 306,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1149,7 +1149,7 @@
    "nome": "calculate-deal-health",
    "entrada": "supabase/functions/calculate-deal-health/index.ts",
    "arquivos": 1,
-   "linhas": 475,
+   "linhas": 477,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1319,7 +1319,7 @@
    "nome": "check-lead-sla",
    "entrada": "supabase/functions/check-lead-sla/index.ts",
    "arquivos": 1,
-   "linhas": 243,
+   "linhas": 244,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1498,7 +1498,7 @@
    "nome": "coaching-session-prep",
    "entrada": "supabase/functions/coaching-session-prep/index.ts",
    "arquivos": 1,
-   "linhas": 196,
+   "linhas": 197,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1946,7 +1946,7 @@
    "nome": "detect-at-risk-deals",
    "entrada": "supabase/functions/detect-at-risk-deals/index.ts",
    "arquivos": 1,
-   "linhas": 255,
+   "linhas": 256,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2026,7 +2026,7 @@
    "nome": "detect-coaching-opportunities",
    "entrada": "supabase/functions/detect-coaching-opportunities/index.ts",
    "arquivos": 1,
-   "linhas": 334,
+   "linhas": 335,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -2554,7 +2554,7 @@
    "nome": "email-composer-bulk",
    "entrada": "supabase/functions/email-composer-bulk/index.ts",
    "arquivos": 1,
-   "linhas": 267,
+   "linhas": 268,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3602,7 +3602,7 @@
    "nome": "next-best-action",
    "entrada": "supabase/functions/next-best-action/index.ts",
    "arquivos": 1,
-   "linhas": 554,
+   "linhas": 555,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -3650,7 +3650,7 @@
    "nome": "nlq-query",
    "entrada": "supabase/functions/nlq-query/index.ts",
    "arquivos": 2,
-   "linhas": 698,
+   "linhas": 699,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -4962,7 +4962,7 @@
    "nome": "sales-assistant-chat",
    "entrada": "supabase/functions/sales-assistant-chat/index.ts",
    "arquivos": 1,
-   "linhas": 484,
+   "linhas": 486,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -5164,7 +5164,7 @@
    "nome": "sdr-consecutive-alerts",
    "entrada": "supabase/functions/sdr-consecutive-alerts/index.ts",
    "arquivos": 1,
-   "linhas": 529,
+   "linhas": 530,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

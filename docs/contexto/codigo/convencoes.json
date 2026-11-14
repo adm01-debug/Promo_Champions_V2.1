@@ -6,7 +6,7 @@
    "src/pages (166)"
   ],
   "componentes": [
-   "src/components (1095)",
+   "src/components (1096)",
    "src/pages (173)",
    "src/contexts (5)"
   ],
@@ -21,7 +21,7 @@
    "src/integrations (4)"
   ],
   "testes": [
-   "co-localizado (*.test) (149)",
+   "co-localizado (*.test) (153)",
    "tests/ (59)",
    "outro (18)"
   ],
@@ -47,7 +47,7 @@
  },
  "barrels_index": 8,
  "extensao_componentes": [
-  ".tsx (1275)"
+  ".tsx (1276)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -58,11 +58,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: editar e excluir atividades (+ migration que remove triggers legados que quebram UPDATE) (#429)",
+   "docs: marca B7 como aplicada em producao (10 migrations no ar, 2026-11-14) (#486)",
    "fix(db): policy deny-all em daily_challenge_rotations e geocode_cache (#424)",
    "chore(main): release 1.4.0 (#466)",
-   "feat: editar e excluir o próprio comentário no feed de vitórias (#434)",
-   "chore(deps): bump the react-core group across 1 directory with 5 updates (#398)",
-   "fix: restringe DELETE de accounts a gestor na RLS (#460)"
+   "feat: editar e excluir o próprio comentário no feed de vitórias (#434)"
   ]
  },
  "pr_template": ".github/pull_request_template.md",
