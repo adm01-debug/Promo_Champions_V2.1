@@ -46,14 +46,18 @@ export interface PlaybookItem {
   is_required: boolean;
 }
 
-export const useEnablementAssets = (category?: string) => {
+/**
+ * `archived` lista os materiais arquivados (is_active = false). A RLS só
+ * devolve arquivados para admin/gestor; para o vendedor a lista vem vazia.
+ */
+export const useEnablementAssets = (category?: string, archived = false) => {
   return useQuery({
-    queryKey: ['enablement-assets', category],
+    queryKey: ['enablement-assets', category, archived],
     queryFn: async () => {
       let q = supabase
         .from('sales_enablement_assets')
         .select('*')
-        .eq('is_active', true)
+        .eq('is_active', !archived)
         .order('view_count', { ascending: false });
       if (category && category !== 'all') q = q.eq('category', category);
       const { data, error } = await q;
@@ -177,6 +181,79 @@ export const useCreateAsset = () => {
   });
 };
 
+export type EnablementAssetUpdate = Pick<
+  EnablementAsset,
+  'id' | 'title' | 'description' | 'category' | 'asset_type' | 'file_url' | 'funnel_stage'
+>;
+
+export const useUpdateAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...fields }: EnablementAssetUpdate) => {
+      const { data, error } = await supabase
+        .from('sales_enablement_assets')
+        .update({
+          title: fields.title,
+          description: fields.description || null,
+          category: fields.category,
+          asset_type: fields.asset_type,
+          file_url: fields.file_url || null,
+          funnel_stage: fields.funnel_stage || null,
+        })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      // RLS (is_admin_or_manager) bloqueia em silêncio: 0 linhas afetadas sem erro.
+      if (!data?.length) throw new Error('Sem permissão para editar este material');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['enablement-assets'] });
+      toast.success('Material atualizado');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
+export const useArchiveAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('sales_enablement_assets')
+        .update({ is_active: false })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para arquivar este material');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['enablement-assets'] });
+      toast.success('Material arquivado');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
+export const useRestoreAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase
+        .from('sales_enablement_assets')
+        .update({ is_active: true })
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Sem permissão para reativar este material');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['enablement-assets'] });
+      toast.success('Material reativado');
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+};
+
 export const useTogglePlaybookItem = () => {
   const qc = useQueryClient();
   return useMutation({
@@ -189,10 +266,16 @@ export const useTogglePlaybookItem = () => {
       if (!userData.user) throw new Error('Não autenticado');
 
       if (params.completed) {
+        // FK completed_by -> salespeople(id) e RLS exigem o salespeople.id (não o
+        // auth uid); admin/gestor sem cadastro de vendedor passam com NULL.
+        const { data: salespersonId, error: spError } = await supabase.rpc(
+          'get_current_salesperson_id'
+        );
+        if (spError) throw spError;
         const { error } = await supabase.from('playbook_progress').insert({
           playbook_item_id: params.playbook_item_id,
           sale_id: params.sale_id,
-          completed_by: userData.user.id,
+          completed_by: salespersonId ?? null,
         });
         if (error) throw error;
       } else {

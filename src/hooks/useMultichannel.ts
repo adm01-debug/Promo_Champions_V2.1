@@ -86,6 +86,36 @@ export const useCreateTemplate = () => {
   });
 };
 
+export const useUpdateTemplate = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...changes
+    }: {
+      id: string;
+      name: string;
+      channel: Channel;
+      body: string;
+      variables: string[];
+    }) => {
+      const { data, error } = await supabase
+        .from('message_templates')
+        .update(changes)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['message-templates'] });
+      toast.success('Template atualizado');
+    },
+    onError: () => toast.error('Erro ao atualizar template'),
+  });
+};
+
 export const useDeleteTemplate = () => {
   const qc = useQueryClient();
   return useMutation({

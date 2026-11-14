@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useClient360 } from '@/hooks/crm/useClient360';
-import { toast } from 'sonner';
 import {
   extractCategories,
   filterOrders,
@@ -14,7 +13,6 @@ import { ClientChurnJustificationCard } from './ClientChurnJustificationCard';
 import { Client360Header } from './Client360Header';
 import { Client360AffinityCard } from './Client360AffinityCard';
 import { Client360HealthNbaSection } from './Client360HealthNbaSection';
-import { Client360PredictiveCards } from './Client360PredictiveCards';
 import { Client360OrdersCard } from './Client360OrdersCard';
 import { OrderDetailsDialog } from './OrderDetailsDialog';
 
@@ -30,17 +28,6 @@ export function Client360View({ clientName }: Client360ViewProps) {
   const [valueRange, setValueRange] = useState<[number, number]>([0, 100000]);
   const [selectedOrder, setSelectedOrder] = useState<SelectedOrder | null>(null);
   const [viewMode, setViewMode] = useState<'table' | 'timeline'>('timeline');
-  const [isExporting, setIsExporting] = useState(false);
-
-  const handleExport = () => {
-    setIsExporting(true);
-    toast.promise(new Promise(resolve => setTimeout(resolve, 2000)), {
-      loading: 'Gerando dossiê estratégico com IA...',
-      success: 'Dossiê PDF gerado com sucesso!',
-      error: 'Erro ao gerar dossiê.',
-      finally: () => setIsExporting(false),
-    });
-  };
 
   const handleClearFilters = () => {
     setStatusFilter('all');
@@ -78,8 +65,6 @@ export function Client360View({ clientName }: Client360ViewProps) {
       <Client360Header
         clientName={clientName}
         isVip={data.ltv > data.segmentAverageLtv * 1.5}
-        isExporting={isExporting}
-        onExport={handleExport}
       />
 
       {/* Smart Insight Banner */}
@@ -100,10 +85,7 @@ export function Client360View({ clientName }: Client360ViewProps) {
       </div>
 
       {/* Health Score & NBA (Next Best Action) Section */}
-      <Client360HealthNbaSection data={data} />
-
-      {/* Predictive & UI Refactoring Section (Etapas 8-10) */}
-      <Client360PredictiveCards />
+      <Client360HealthNbaSection data={data} clientName={clientName} />
 
       {/* Histórico com Filtros e Deep-dive */}
       <Client360OrdersCard

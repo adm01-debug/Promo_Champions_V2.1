@@ -60,30 +60,16 @@ export function useSalespersonPreferences() {
     }) => {
       if (!salesperson?.id) throw new Error('No salesperson');
 
-      // Check if preferences exist
-      const { data: existing } = await supabase
+      // Upsert atômico por salesperson_id (UNIQUE): cria a linha se o vendedor
+      // ainda não tiver preferências e atualiza só as colunas enviadas se tiver.
+      const { error } = await supabase
         .from('salesperson_preferences')
-        .select('id')
-        .eq('salesperson_id', salesperson.id)
-        .maybeSingle();
+        .upsert(
+          { salesperson_id: salesperson.id, ...updates },
+          { onConflict: 'salesperson_id' }
+        );
 
-      if (existing) {
-        // Update existing
-        const { error } = await supabase
-          .from('salesperson_preferences')
-          .update(updates)
-          .eq('salesperson_id', salesperson.id);
-
-        if (error) throw error;
-      } else {
-        // Insert new
-        const { error } = await supabase.from('salesperson_preferences').insert({
-          salesperson_id: salesperson.id,
-          ...updates,
-        });
-
-        if (error) throw error;
-      }
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['salesperson-preferences'] });

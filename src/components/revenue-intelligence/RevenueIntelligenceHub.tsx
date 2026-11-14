@@ -179,7 +179,11 @@ export const RevenueIntelligenceHub: FC = () => {
             <BriefingHub />
           </TabsContent>
           <TabsContent value="revisao-ai" className="mt-4">
-            <PipelineStrategicReview />
+            <PipelineStrategicReview
+              winRateBreakdown={data.win_rate_breakdown}
+              inspection={data.pipeline_inspection}
+              onNavigateTab={setActiveTab}
+            />
           </TabsContent>
           <TabsContent value="comando" className="mt-4">
             <PipelinePulseHub onNavigateTab={setActiveTab} />

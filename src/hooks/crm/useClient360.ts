@@ -202,24 +202,36 @@ export function useClient360(clientName: string | undefined) {
       const preferredTimeOfDay =
         maxHour < 12 ? 'Manhã' : maxHour < 18 ? 'Tarde' : 'Noite';
 
-      // Next Best Action Generator
+      // Próxima ação sugerida: regra estática baseada só nos dados reais do cliente
+      // (sem ofertas, cupons ou brindes que não existam no sistema).
+      const lastSale = sales[0];
+      const daysSinceLast = lastSale
+        ? Math.floor(
+            (new Date().getTime() - new Date(lastSale.created_at).getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        : null;
+      const topProductName = topProducts[0]?.name;
+
       let nba = {
-        title: 'Upsell Premium',
-        description: 'Oferecer upgrade para linha Gold baseada no ticket médio.',
-        script: `Olá ${clientName}, notamos seu interesse em ${topProducts[0]?.name || 'nossos produtos'}. Temos uma condição exclusiva para o upgrade da sua conta!`,
+        title: 'Acompanhar relacionamento',
+        description: topProductName
+          ? `${ordersCount} pedidos registrados. Produto mais comprado: ${topProductName}.`
+          : `${ordersCount} pedidos registrados.`,
+        script: `Olá ${clientName}, tudo bem? Passando para saber como foi a experiência com ${topProductName || 'seu último pedido'} e se há alguma nova demanda em que possamos ajudar.`,
       };
 
       if (churnRisk > 50) {
         nba = {
-          title: 'Resgate Crítico',
-          description: 'Enviar cupom de 20% OFF para reativação imediata.',
-          script: `Oi ${clientName}, sentimos sua falta! Preparamos um cupom de 20% (VOLTA20) válido por 48h para seu próximo pedido.`,
+          title: 'Reativar cliente',
+          description: `Última compra há ${daysSinceLast ?? 0} dias (frequência média de ${Math.round(purchaseFrequency)} dias). Risco de churn: ${churnRisk}%.`,
+          script: `Olá ${clientName}, tudo bem? Faz um tempo desde o seu último pedido. Há alguma demanda prevista em que possamos ajudar?`,
         };
       } else if (ordersCount < 3) {
         nba = {
-          title: 'Boas-vindas Revisitada',
-          description: 'Garantir a segunda compra com amostra grátis.',
-          script: `Olá ${clientName}, tudo bem? Queremos te presentear com um item extra no seu próximo pedido para celebrar nossa parceria!`,
+          title: 'Garantir recompra',
+          description: `Cliente com ${ordersCount} ${ordersCount === 1 ? 'pedido registrado' : 'pedidos registrados'}. Contato para entender a próxima demanda.`,
+          script: `Olá ${clientName}, tudo bem? Queremos saber como foi a experiência com o seu pedido e se há alguma nova demanda em que possamos ajudar.`,
         };
       }
 

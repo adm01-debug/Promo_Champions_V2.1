@@ -19,11 +19,11 @@ import {
   generateRegistrationOptions,
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
-} from 'npm:@simplewebauthn/server@14.0.2';
+} from 'npm:@simplewebauthn/server@14.0.3';
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
-} from 'npm:@simplewebauthn/server@14.0.2';
+} from 'npm:@simplewebauthn/server@14.0.3';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withRequestId } from '../_shared/request-id.ts';
 import {

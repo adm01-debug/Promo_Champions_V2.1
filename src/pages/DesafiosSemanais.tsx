@@ -166,6 +166,7 @@ export default function DesafiosSemanais() {
               ) : (
                 <WeeklyChallengesCard
                   salespersonId={currentSalesperson?.salesperson_id}
+                  canManage={canCreateChallenges}
                 />
               )}
             </TabsContent>

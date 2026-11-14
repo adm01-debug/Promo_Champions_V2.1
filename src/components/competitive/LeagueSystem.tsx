@@ -6,14 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
   useLeagues,
+  useLeagueEnrollment,
   useJoinLeague,
   LEAGUE_CONFIG,
   LeagueTier,
 } from '@/hooks/gamification/useLeagues';
-import { toast } from 'sonner';
 
 interface LeagueSystemProps {
   className?: string;
@@ -22,15 +23,27 @@ interface LeagueSystemProps {
 const LEAGUE_ORDER: LeagueTier[] = ['legendary', 'diamond', 'gold', 'silver', 'bronze'];
 
 const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
-  const { data: members, isLoading } = useLeagues();
+  const { data, isLoading, isError } = useLeagues();
+  // useLeagues lista todos os vendedores ativos; só quem tem linha em league_members
+  // (league_id NOT NULL) está de fato numa liga. Os demais não podem aparecer como "Bronze".
+  const members = data?.filter(m => m.league_id !== null);
+  const enrollment = useLeagueEnrollment();
   const joinLeague = useJoinLeague();
+  const salespersonId = enrollment.data?.salespersonId ?? null;
+  const starterLeagueId = enrollment.data?.starterLeagueId ?? null;
+  const isMember =
+    !!salespersonId && !!members?.some(m => m.salesperson_id === salespersonId);
 
-  const _handleJoinLeague = (salespersonId: string, leagueId: string) => {
+  const handleJoin = () => {
+    if (!salespersonId || !starterLeagueId) return;
     joinLeague.mutate(
-      { salespersonId, leagueId },
+      { salespersonId, leagueId: starterLeagueId },
       {
-        onSuccess: () => toast.success('Entrou na liga!'),
-        onError: () => toast.error('Erro ao entrar na liga'),
+        onSuccess: () => toast.success('Você entrou na liga!'),
+        onError: err =>
+          toast.error('Não foi possível entrar na liga', {
+            description: err instanceof Error ? err.message : undefined,
+          }),
       }
     );
   };
@@ -42,6 +55,14 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
           <div key={i} className="h-20 rounded-xl bg-muted/30 animate-pulse" />
         ))}
       </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <p className={cn('text-sm text-destructive text-center py-6', className)}>
+        Não foi possível carregar as ligas. Tente novamente mais tarde.
+      </p>
     );
   }
 
@@ -176,22 +197,40 @@ const LeagueSystemComponent: FC<LeagueSystemProps> = ({ className }) => {
           })}
 
           {!members?.length && (
-            <div className="text-center py-6 space-y-3">
+            <div className="text-center py-6">
               <Shield className="h-8 w-8 mx-auto text-muted-foreground/30 mb-2" />
               <p className="text-sm text-muted-foreground">
-                Sistema de ligas será ativado na próxima temporada
+                Nenhum vendedor participa de uma liga ainda
               </p>
-              <Button
-                size="sm"
-                className="gap-2"
-                variant="outline"
-                onClick={() =>
-                  toast.info('Aguarde a próxima temporada para entrar em uma liga')
-                }
-              >
-                <LogIn className="h-4 w-4" /> Entrar na Liga
-              </Button>
             </div>
+          )}
+
+          {!isMember && salespersonId && (
+            <div className="text-center space-y-2">
+              {starterLeagueId ? (
+                <Button
+                  size="sm"
+                  className="gap-2"
+                  variant="outline"
+                  onClick={handleJoin}
+                  disabled={joinLeague.isPending}
+                >
+                  <LogIn className="h-4 w-4" />
+                  {joinLeague.isPending ? 'Entrando...' : 'Entrar na Liga'}
+                </Button>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Nenhuma liga cadastrada ainda. A inscrição fica disponível quando um
+                  administrador cadastrar as ligas.
+                </p>
+              )}
+            </div>
+          )}
+
+          {enrollment.isError && (
+            <p className="text-xs text-destructive text-center">
+              Não foi possível verificar sua inscrição em ligas.
+            </p>
           )}
         </CardContent>
       </Card>

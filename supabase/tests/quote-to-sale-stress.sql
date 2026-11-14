@@ -35,6 +35,11 @@
 
 BEGIN;
 
+-- Serializa execuções simultâneas deste teste (CI de várias PRs no mesmo
+-- banco): sem isso, outra execução consome orders_conversion_seq no meio da
+-- medição e o delta passa de 50. Lock de transação: liberado no ROLLBACK.
+SELECT pg_advisory_xact_lock(hashtext('supabase/tests/quote-to-sale-stress.sql'));
+
 -- Injeta auth.uid() para a RPC fn_convert_quote_to_sale.
 -- Nota: não usamos SET ROLE authenticated porque exec-user não tem grant;
 -- a RPC é SECURITY DEFINER e só depende de auth.uid() via jwt.claims.sub.

@@ -25,6 +25,7 @@ export function BattleCardSuggestion({ battleCardId, competitorName }: Props) {
         .from('sales_enablement_assets')
         .select('id, title, description, file_url')
         .eq('id', battleCardId)
+        .eq('is_active', true)
         .maybeSingle();
       if (error) throw error;
       return (data as AssetSummary) ?? null;

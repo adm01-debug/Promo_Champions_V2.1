@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toBusinessDate } from '@/lib/date';
 
-interface WeeklyChallenge {
+export interface WeeklyChallenge {
   id: string;
   title: string;
   description: string | null;
@@ -173,6 +173,32 @@ export function useClaimChallengeReward() {
     },
     onError: () => {
       toast.error('Erro ao resgatar recompensa');
+    },
+  });
+}
+
+/** Desativa (soft-delete) um desafio semanal: is_active=false. RLS restringe a admin/gestor. */
+export function useDeactivateWeeklyChallenge() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (challengeId: string) => {
+      const { data, error } = await supabase
+        .from('weekly_challenges')
+        .update({ is_active: false })
+        .eq('id', challengeId)
+        .select('id');
+
+      if (error) throw error;
+      // RLS bloqueia sem erro: 0 linhas afetadas = sem permissão.
+      if (!data?.length) throw new Error('Sem permissão para desativar o desafio');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['weekly-challenges'] });
+      toast.success('Desafio desativado');
+    },
+    onError: () => {
+      toast.error('Erro ao desativar desafio');
     },
   });
 }

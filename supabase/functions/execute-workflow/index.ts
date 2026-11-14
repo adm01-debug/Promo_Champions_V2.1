@@ -2,6 +2,7 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 import { withRequestId } from "../_shared/request-id.ts";
 import { validateWebhookPayload, WebhookContracts } from "../_shared/webhook-validator.ts";
 import { getUserClient, getServiceClient, UnauthorizedError } from "../_shared/auth-client.ts";
+import { buildActivityRow, buildTaskRow } from "./actions.ts";
 
 interface ActionDef {
   type: "create_task" | "send_notification" | "update_stage" | "log_activity" | "assign_owner";
@@ -109,27 +110,25 @@ Deno.serve(withRequestId('execute-workflow', async (req, _ctx) => {
     const stageUpdates: Array<{ stage: string }> = [];
     const executedMap: Array<{ index: number; action: string; status: string; error?: string }> = [];
 
+    // FK salesperson_id → salespeople.id (não auth.users.id): resolve o
+    // vendedor do chamador pelo JWT — IDOR prevention, nunca pelo payload.
+    const { data: callerSp } = await supabase
+      .from("salespeople")
+      .select("id")
+      .eq("auth_user_id", callerUserId)
+      .maybeSingle();
+    const callerSalespersonId: string | null = callerSp?.id ?? null;
+
     for (let i = 0; i < actions.length; i++) {
       const act = actions[i];
-      if (act.type === "create_task") {
-        taskRows.push({
-          // Use authenticated caller's id — IDOR prevention
-          salesperson_id: callerUserId,
-          sale_id: trigger_payload.sale_id ?? null,
-          title: String(act.params.title ?? "Tarefa automatizada"),
-          description: String(act.params.description ?? ""),
-          event_type: "task",
-          scheduled_at: new Date(Date.now() + Number(act.params.delay_hours ?? 24) * 3600_000).toISOString(),
-        });
+      if ((act.type === "create_task" || act.type === "log_activity") && !callerSalespersonId) {
+        hasFailure = true;
+        executed.push({ action: act.type, status: "failed", error: "salesperson_not_found" });
+      } else if (act.type === "create_task" && callerSalespersonId) {
+        taskRows.push(buildTaskRow(act.params, callerSalespersonId, trigger_payload.sale_id, Date.now()));
         executedMap.push({ index: i, action: act.type, status: "pending" });
-      } else if (act.type === "log_activity") {
-        activityRows.push({
-          salesperson_id: callerUserId,
-          sale_id: trigger_payload.sale_id ?? null,
-          activity_type: String(act.params.activity_type ?? "note"),
-          outcome: "completed",
-          notes: String(act.params.notes ?? "Automação executada"),
-        });
+      } else if (act.type === "log_activity" && callerSalespersonId) {
+        activityRows.push(buildActivityRow(act.params, callerSalespersonId, trigger_payload.sale_id));
         executedMap.push({ index: i, action: act.type, status: "pending" });
       } else if (act.type === "update_stage" && trigger_payload.sale_id) {
         stageUpdates.push({ stage: String(act.params.stage) });

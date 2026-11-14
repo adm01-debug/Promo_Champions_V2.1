@@ -23,7 +23,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus, Loader2 } from 'lucide-react';
-import { CHALLENGE_ICONS } from '@/hooks/gamification/useWeeklyChallenges';
+import {
+  CHALLENGE_ICONS,
+  type WeeklyChallenge,
+} from '@/hooks/gamification/useWeeklyChallenges';
 import { toBusinessDate } from '@/lib/date';
 
 const CHALLENGE_TYPES = [
@@ -38,9 +41,15 @@ const CHALLENGE_TYPES = [
 
 interface CreateChallengeDialogProps {
   children?: React.ReactNode;
+  /** Quando informado, o diálogo edita este desafio em vez de criar um novo. */
+  challenge?: WeeklyChallenge;
 }
 
-export function CreateChallengeDialog({ children }: CreateChallengeDialogProps) {
+export function CreateChallengeDialog({
+  children,
+  challenge,
+}: CreateChallengeDialogProps) {
+  const isEditing = !!challenge;
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -54,33 +63,56 @@ export function CreateChallengeDialog({ children }: CreateChallengeDialogProps) 
 
   const createChallenge = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('weekly_challenges')
-        .insert({
-          title,
-          description: description || null,
-          challenge_type: challengeType,
-          target_value: parseInt(targetValue),
-          xp_reward: parseInt(xpReward),
-          start_date: startDate,
-          end_date: endDate,
-        })
-        .select()
-        .single();
+      const payload = {
+        title,
+        description: description || null,
+        challenge_type: challengeType,
+        target_value: parseInt(targetValue),
+        xp_reward: parseInt(xpReward),
+        start_date: startDate,
+        end_date: endDate,
+      };
+
+      // .single() falha com 0 linhas, cobrindo UPDATE bloqueado por RLS.
+      const { data, error } = challenge
+        ? await supabase
+            .from('weekly_challenges')
+            .update(payload)
+            .eq('id', challenge.id)
+            .select()
+            .single()
+        : await supabase.from('weekly_challenges').insert(payload).select().single();
 
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['weekly-challenges'] });
-      toast.success('Desafio criado com sucesso!');
+      toast.success(
+        isEditing ? 'Desafio atualizado com sucesso!' : 'Desafio criado com sucesso!'
+      );
       setOpen(false);
       resetForm();
     },
     onError: () => {
-      toast.error('Erro ao criar desafio');
+      toast.error(isEditing ? 'Erro ao atualizar desafio' : 'Erro ao criar desafio');
     },
   });
+
+  const fillForm = (c: WeeklyChallenge) => {
+    setTitle(c.title);
+    setDescription(c.description ?? '');
+    setChallengeType(c.challenge_type);
+    setTargetValue(String(c.target_value));
+    setXpReward(String(c.xp_reward));
+    setStartDate(c.start_date);
+    setEndDate(c.end_date);
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    if (next && challenge) fillForm(challenge);
+    setOpen(next);
+  };
 
   const resetForm = () => {
     setTitle('');
@@ -115,7 +147,7 @@ export function CreateChallengeDialog({ children }: CreateChallengeDialogProps) 
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {children || (
           <Button>
@@ -127,9 +159,13 @@ export function CreateChallengeDialog({ children }: CreateChallengeDialogProps) 
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Criar Novo Desafio</DialogTitle>
+            <DialogTitle>
+              {isEditing ? 'Editar Desafio' : 'Criar Novo Desafio'}
+            </DialogTitle>
             <DialogDescription>
-              Crie um desafio semanal para motivar a equipe de vendas.
+              {isEditing
+                ? 'Altere os dados do desafio semanal.'
+                : 'Crie um desafio semanal para motivar a equipe de vendas.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -233,7 +269,7 @@ export function CreateChallengeDialog({ children }: CreateChallengeDialogProps) 
               {createChallenge.isPending && (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               )}
-              Criar Desafio
+              {isEditing ? 'Salvar Alterações' : 'Criar Desafio'}
             </Button>
           </DialogFooter>
         </form>

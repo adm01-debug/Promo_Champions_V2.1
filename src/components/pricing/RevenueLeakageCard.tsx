@@ -19,7 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -107,14 +107,6 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
   // Segmento dominante → insight textual derivado dos dados reais.
   const dominant = items.reduce((a, b) => (b.value > a.value ? b : a));
 
-  const handleApplyRecovery = () => {
-    toast.success('Plano de Recuperação', {
-      description:
-        'Revise os segmentos medidos acima e ajuste as alçadas de desconto junto ao gestor comercial.',
-      duration: 5000,
-    });
-  };
-
   return (
     <Card className="glass border-destructive/20 overflow-hidden relative group transition-all duration-500 hover:shadow-[0_0_40px_rgba(239,68,68,0.1)]">
       {/* Background Neural Pattern */}
@@ -152,13 +144,16 @@ export const RevenueLeakageCard = memo(function RevenueLeakageCard({
           </p>
 
           <div className="flex flex-col gap-3 mt-8">
+            {/* Leva às vendas com markup crítico (< 20%) — mesma fonte do CriticalMarkupAlertCard. */}
             <Button
+              asChild
               size="sm"
               className="bg-destructive text-white hover:bg-destructive/90 shadow-lg shadow-destructive/20 rounded-full px-6 h-11 font-bold text-xs tracking-wider gap-2 w-full transition-transform hover:scale-[1.02] active:scale-95"
-              onClick={handleApplyRecovery}
             >
-              <Sparkles className="h-4 w-4" />
-              INICIAR RECUPERAÇÃO
+              <Link to="/vendas?markup=critical">
+                <Sparkles className="h-4 w-4" />
+                VER VENDAS COM MARKUP CRÍTICO
+              </Link>
             </Button>
           </div>
         </div>

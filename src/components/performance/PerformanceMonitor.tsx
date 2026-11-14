@@ -35,7 +35,7 @@ export const PerformanceMonitor = memo(() => {
 
   const frameCount = useRef(0);
   const lastTime = useRef(performance.now());
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | null>(null);
   const lastRenderRef = useRef(performance.now());
   const lastAlertTime = useRef(0);
   // Only update renderTime state every 500ms to avoid 60 state updates/second
