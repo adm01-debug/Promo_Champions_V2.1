@@ -4,28 +4,28 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { PRAVATAR_URL } from '@/config/external';
 import {
   Target,
   TrendingUp,
   Users,
   AlertTriangle,
   CheckCircle,
-  PartyPopper,
+  ClipboardPlus,
   Trophy,
   Flame,
   Calendar,
   Cpu,
-  MousePointer2,
 } from 'lucide-react';
-import { useActivityGoalProgress } from '@/hooks/activities/useActivityGoals';
+import {
+  useActivityGoalProgress,
+  type ActivityGoalProgress,
+} from '@/hooks/activities/useActivityGoals';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { ActivityGoalEditDialog } from '@/components/activities/ActivityGoalEditDialog';
 import { DailyActivityRanking } from '@/components/activities/DailyActivityRanking';
 import { AchievementsHistory } from '@/components/achievements/AchievementsHistory';
 import { StreakRanking } from '@/components/achievements/StreakRanking';
 import { TeamAchievementStats } from '@/components/achievements/TeamAchievementStats';
-import { useCelebration } from '@/hooks/useCelebration';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -42,8 +42,40 @@ import { AchievementBadgeDisplay } from '@/components/activities/AchievementBadg
 import { ArenaStatusBadge } from '@/components/arena/ArenaStatusBadge';
 import { EnhancedActivityCard } from '@/components/arena/EnhancedActivityCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { ActivityLogForm } from '@/components/activities/ActivityLogForm';
+import { useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Até 4 vendedores com metas no cabeçalho (fora do componente da página para não somar
+// complexidade a ele — lint:complexity tem teto de 20).
+const TeamAvatars = ({ members }: { members: ActivityGoalProgress[] }) => {
+  if (members.length === 0) return null;
+  return (
+    <div className="flex -space-x-3 mr-4 transition-all hover:-space-x-1">
+      {members.slice(0, 4).map(sp => (
+        <div
+          key={sp.salesperson_id}
+          className="relative group/avatar"
+          title={sp.salesperson_name}
+        >
+          <Avatar className="border-2 border-background h-12 w-12 ring-2 ring-primary/20 shadow-xl transition-transform group-hover/avatar:-translate-y-2">
+            <AvatarImage src={sp.avatar_url ?? undefined} alt={sp.salesperson_name} />
+            <AvatarFallback>
+              {sp.salesperson_name.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const EmojiParticles = ({ x, y, emoji }: { x: number; y: number; emoji: string }) => {
   return (
@@ -73,8 +105,8 @@ export default function MetasAtividades() {
   const { data: progressData, isLoading } = useActivityGoalProgress();
   const { data: salespeople } = useSalespeople();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const { celebrate, resetCelebration } = useCelebration();
-  const { toast } = useToast();
+  const [showLog, setShowLog] = useState(false);
+  const queryClient = useQueryClient();
   const [emojiEffect, setEmojiEffect] = useState<{
     x: number;
     y: number;
@@ -91,9 +123,9 @@ export default function MetasAtividades() {
 
   const editingSalesperson = salespeople?.find(sp => sp.id === editingId);
 
-  const handleTestCelebration = () => {
-    resetCelebration('test-celebration');
-    celebrate('test-celebration');
+  const handleActivityLogged = () => {
+    setShowLog(false);
+    queryClient.invalidateQueries({ queryKey: ['activity-goal-progress'] });
   };
 
   // Calculate summary stats
@@ -114,7 +146,7 @@ export default function MetasAtividades() {
       color: 'text-primary',
       bgColor: 'bg-primary/10',
       description: 'Base total monitorada',
-      trend: 'Estável',
+      trend: 'Ativas',
     },
     {
       label: 'Performance Turbo',
@@ -123,7 +155,7 @@ export default function MetasAtividades() {
       color: 'text-info',
       bgColor: 'bg-info/10',
       description: 'Acima de 70% da meta',
-      trend: '+12%',
+      trend: 'No Ritmo',
     },
     {
       label: 'Hall da Fama',
@@ -252,10 +284,13 @@ export default function MetasAtividades() {
                     <div className="relative">
                       <h1 className="text-6xl sm:text-8xl font-display font-black tracking-tighter gradient-text uppercase italic leading-none filter drop-shadow-glow transition-all duration-700 group-hover/arena-header:scale-[1.02] flex items-center gap-4">
                         Arena de Atividades
-                        <div className="hidden sm:flex items-center justify-center h-20 w-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow p-1 relative shadow-glow-primary/20">
+                        <div
+                          className="hidden sm:flex items-center justify-center h-20 w-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow p-1 relative shadow-glow-primary/20"
+                          title="Metas concluídas hoje / vendedores com metas"
+                        >
                           <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
                             <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">
-                              14/10
+                              {completed}/{withGoals.length}
                             </span>
                           </div>
                         </div>
@@ -278,43 +313,16 @@ export default function MetasAtividades() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 relative z-10">
-                    <div className="flex -space-x-3 mr-4 transition-all hover:-space-x-1">
-                      {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="relative group/avatar cursor-pointer">
-                          <Avatar className="border-2 border-background h-12 w-12 ring-2 ring-primary/20 shadow-xl transition-transform group-hover/avatar:-translate-y-2">
-                            <AvatarImage src={`${PRAVATAR_URL}?u=${i + 20}`} />
-                            <AvatarFallback>U{i}</AvatarFallback>
-                          </Avatar>
-                          <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success border-2 border-background rounded-full shadow-sm" />
-                        </div>
-                      ))}
-                    </div>
+                    <TeamAvatars members={withGoals} />
                     <Button
                       variant="outline"
                       size="lg"
-                      onClick={() =>
-                        toast({
-                          title: 'Modo Foco Ativado',
-                          description:
-                            'Interface simplificada para máxima produtividade.',
-                        })
-                      }
-                      className="gap-3 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 rounded-2xl bg-background/40 backdrop-blur-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
-                    >
-                      <MousePointer2 className="h-5 w-5 text-primary" />
-                      <span className="text-xs font-black uppercase tracking-widest">
-                        Modo Foco
-                      </span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      onClick={handleTestCelebration}
+                      onClick={() => setShowLog(true)}
                       className="gap-3 border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all duration-500 group rounded-2xl bg-background/40 backdrop-blur-xl shadow-lg hover:shadow-primary/20 hover:-translate-y-1"
                     >
-                      <PartyPopper className="h-5 w-5 text-primary group-hover:rotate-12 group-hover:scale-110 transition-all" />
+                      <ClipboardPlus className="h-5 w-5 text-primary group-hover:rotate-12 group-hover:scale-110 transition-all" />
                       <span className="text-xs font-black uppercase tracking-widest">
-                        Lançar Resultado
+                        Registrar Atividade
                       </span>
                     </Button>
 
@@ -366,11 +374,12 @@ export default function MetasAtividades() {
                             </div>
                             <div
                               className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow flex items-center justify-center p-1 relative shadow-glow-primary/10 cursor-help"
+                              title="Vendedores acima de 70% da meta / vendedores com metas"
                               onMouseEnter={e => handleStatInteraction(e, 'trophy')}
                             >
                               <div className="h-full w-full rounded-full bg-primary/10 flex items-center justify-center">
                                 <span className="text-xl font-black text-primary tracking-widest italic animate-pulse">
-                                  14/10
+                                  {onTrack}/{withGoals.length}
                                 </span>
                               </div>
                             </div>
@@ -617,6 +626,20 @@ export default function MetasAtividades() {
             salespersonId={editingId || ''}
             salespersonName={editingSalesperson?.name || ''}
           />
+
+          <Dialog open={showLog} onOpenChange={setShowLog}>
+            <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl border-primary/20 rounded-3xl">
+              <DialogHeader>
+                <DialogTitle className="text-section-title font-black uppercase tracking-tighter italic">
+                  Registrar Atividade
+                </DialogTitle>
+                <DialogDescription className="sr-only">
+                  Formulário para registrar atividades de vendas.
+                </DialogDescription>
+              </DialogHeader>
+              <ActivityLogForm onSuccess={handleActivityLogged} />
+            </DialogContent>
+          </Dialog>
         </SkeletonTransition>
       </>
     </PageTransition>

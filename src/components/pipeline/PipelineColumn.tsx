@@ -5,6 +5,7 @@ import { Deal, PipelineStageConfig } from '@/hooks/usePipeline';
 import { DealCard } from './DealCard';
 import { cn } from '@/lib/utils';
 import { ICPData } from '@/hooks/useICPData';
+import type { DealStakeholderSummary } from '@/hooks/pipeline/useDealCardContext';
 import { Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -33,6 +34,8 @@ interface PipelineColumnProps {
   leadScores?: Record<string, LeadScoreData>;
   activeCadences?: Record<string, ActiveCadenceInfo>;
   icpByClientName?: Map<string, ICPData>;
+  stakeholdersBySale?: Record<string, DealStakeholderSummary[]>;
+  clientPhones?: Record<string, string>;
   showFunnelLayer?: boolean; // Etapa 7
   conversionRate?: number; // Etapa 7
 }
@@ -44,6 +47,8 @@ export const PipelineColumn = ({
   leadScores,
   activeCadences,
   icpByClientName,
+  stakeholdersBySale,
+  clientPhones,
   showFunnelLayer,
   conversionRate,
 }: PipelineColumnProps) => {
@@ -168,6 +173,8 @@ export const PipelineColumn = ({
                   icpByClientName?.get(deal.client_name.toLowerCase()) as
                     { is_icp_match: boolean; grupo_nicho?: string } | undefined
                 }
+                stakeholders={stakeholdersBySale?.[deal.id]}
+                clientPhone={deal.client_id ? clientPhones?.[deal.client_id] : undefined}
               />
             ))
           )}

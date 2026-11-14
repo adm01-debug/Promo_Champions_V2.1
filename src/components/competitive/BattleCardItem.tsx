@@ -1,8 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Swords, Timer, Trophy, Zap, Sparkles } from 'lucide-react';
+import { Swords, Timer, Trophy, Zap, Sparkles, Pencil, Ban } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface BattleParticipant {
@@ -44,7 +45,14 @@ function useCountdown(endDate: string) {
   return timeLeft;
 }
 
-export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) => {
+interface Props {
+  battle: Battle;
+  /** Só informados para quem pode gerenciar batalhas (admin/gestor). */
+  onEdit?: (battle: Battle) => void;
+  onCancel?: (battle: Battle) => void;
+}
+
+export const BattleCardItem: FC<Props> = React.memo(({ battle, onEdit, onCancel }) => {
   const countdown = useCountdown(battle.ends_at);
   const participants = battle.battle_participants || [];
   const isActive = battle.status === 'active';
@@ -92,6 +100,32 @@ export const BattleCardItem: FC<{ battle: Battle }> = React.memo(({ battle }) =>
             </div>
           </div>
           <div className="flex items-center md:flex-col md:items-end gap-3">
+            {(onEdit || onCancel) && (
+              <div className="flex items-center gap-1">
+                {onEdit && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    aria-label="Editar batalha"
+                    onClick={() => onEdit(battle)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                )}
+                {onCancel && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    aria-label="Cancelar batalha"
+                    onClick={() => onCancel(battle)}
+                  >
+                    <Ban className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            )}
             {isActive ? (
               <Badge
                 variant="outline"

@@ -8,6 +8,7 @@ import {
   getUserClient,
   UnauthorizedError,
 } from "../_shared/auth-client.ts";
+import { buildQbrAgendaEvent, QBR_EVENT_TYPE, QBR_TITLE_PREFIX } from "./agenda-event.ts";
 
 
 Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
@@ -102,7 +103,8 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
           .from("agenda_events")
           .select("salesperson_id, scheduled_at")
           .in("salesperson_id", chunk)
-          .eq("event_type", "qbr")
+          .eq("event_type", QBR_EVENT_TYPE)
+          .like("title", `${QBR_TITLE_PREFIX}%`)
           .gte("scheduled_at", `${today}T00:00:00Z`)
           .lte("scheduled_at", `${horizon}T23:59:59Z`)
           .limit(active.length * 3),
@@ -131,17 +133,7 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
       if (existingQbrKeys.has(dedupKey)) continue;
       existingQbrKeys.add(dedupKey); // prevent duplicates within same run
 
-      const scheduledAt = new Date(`${s.next_qbr_at}T14:00:00Z`).toISOString();
-      eventRows.push({
-        salesperson_id: s.owner_salesperson_id,
-        event_type: "qbr",
-        title: `QBR ${s.frequency} — ${accountName}`,
-        description: `Quarterly Business Review com ${accountName}. Revisar métricas, ROI, roadmap e expansão.`,
-        scheduled_at: scheduledAt,
-        priority: "high",
-        status: "scheduled",
-        reminder_minutes_before: 1440,
-      });
+      eventRows.push(buildQbrAgendaEvent(s, accountName));
 
       const authUserId = authUserById.get(s.owner_salesperson_id);
       if (authUserId) {
@@ -163,12 +155,17 @@ Deno.serve(withRequestId("qbr-scheduler", async (req, _ctx) => {
       console.warn("[qbr-scheduler] notifications_invalid", { count: invalidNotifRows.length, samples: invalidNotifRows.slice(0, 3).map(i => i.reason) });
     }
 
-    // Batch insert events and notifications in parallel — 2 DB calls regardless of schedule count
-    const [evResult, notifResult] = await Promise.all([
-      eventRows.length > 0 ? supabase.from("agenda_events").insert(eventRows) : Promise.resolve({ error: null }),
-      safeNotifRows.length > 0 ? supabase.from("notifications").insert(safeNotifRows) : Promise.resolve({ error: null }),
-    ]);
-    if (!evResult.error) eventsCreated = eventRows.length;
+    // Eventos primeiro: se o insert falhar, devolve o erro (500) antes de notificar,
+    // em vez de responder ok com 0 eventos e deixar alertas sem evento na agenda.
+    if (eventRows.length > 0) {
+      const { error: evError } = await supabase.from("agenda_events").insert(eventRows);
+      // PostgrestError chega como objeto simples: embrulha para o catch devolver a mensagem.
+      if (evError) throw new Error(`agenda_events: ${evError.message}`);
+      eventsCreated = eventRows.length;
+    }
+    const notifResult = safeNotifRows.length > 0
+      ? await supabase.from("notifications").insert(safeNotifRows)
+      : { error: null };
     if (!notifResult.error) notificationsCreated = safeNotifRows.length;
 
     return new Response(

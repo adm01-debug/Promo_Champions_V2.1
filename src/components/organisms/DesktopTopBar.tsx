@@ -69,7 +69,7 @@ const PAGE_TITLES: Record<string, string> = {
 };
 
 interface DesktopTopBarProps {
-  searchRef: RefObject<GlobalSearchHandle>;
+  searchRef: RefObject<GlobalSearchHandle | null>;
 }
 
 export const DesktopTopBar = React.memo(({ searchRef }: DesktopTopBarProps) => {

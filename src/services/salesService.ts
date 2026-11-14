@@ -235,11 +235,16 @@ export const salesService = {
   },
 
   async createSale(input: CreateSaleInput) {
-    const { data, error } = await supabase
-      .from('sales')
-      .insert([input])
-      .select()
-      .single();
+    // RLS de INSERT em `sales` exige salesperson_id do próprio vendedor (ou admin/gestor).
+    // Sem cadastro de vendedor (admin/gestor) o RPC devolve null e o campo fica ausente.
+    let row = input;
+    if (!input.salesperson_id) {
+      const { data: sp, error: spErr } = await supabase.rpc('get_current_salesperson_id');
+      if (spErr) throw spErr;
+      if (sp) row = { ...input, salesperson_id: sp };
+    }
+
+    const { data, error } = await supabase.from('sales').insert([row]).select().single();
 
     if (error) throw error;
     return data;

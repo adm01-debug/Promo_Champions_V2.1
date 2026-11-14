@@ -22,6 +22,8 @@ import {
   Cadence,
 } from '@/hooks/useCadences';
 import { useSalespeople } from '@/hooks/sales/useSalespeople';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { CadenceCard } from './CadenceCard';
 import { Play } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -43,6 +45,14 @@ export function EnrollCadenceDialog({
 
   const { data: cadences } = useCadences();
   const { data: salespeople } = useSalespeople();
+  // A policy de INSERT de prospect_cadences só aceita salesperson_id do próprio
+  // vendedor (ou admin/manager): padrão = vendedor logado e seletor restrito.
+  const { salesperson: authSalesperson } = useAuth();
+  const { isAdminOrManager } = useUserRoles();
+  const selectableSalespeople = isAdminOrManager
+    ? salespeople
+    : salespeople?.filter(s => s.id === authSalesperson?.id);
+  const responsibleId = salespersonId || authSalesperson?.id || '';
   const { data: _steps } = useCadenceSteps(selectedCadenceId || undefined);
   const enrollInCadence = useEnrollInCadence();
 
@@ -54,7 +64,7 @@ export function EnrollCadenceDialog({
     await enrollInCadence.mutateAsync({
       sale_id: saleId,
       cadence_id: selectedCadenceId,
-      salesperson_id: salespersonId || undefined,
+      salesperson_id: responsibleId || undefined,
     });
 
     setOpen(false);
@@ -98,12 +108,12 @@ export function EnrollCadenceDialog({
 
           <div className="space-y-2">
             <Label className="text-label">Responsável</Label>
-            <Select value={salespersonId} onValueChange={setSalespersonId}>
+            <Select value={responsibleId} onValueChange={setSalespersonId}>
               <SelectTrigger className="bg-muted/30 border-border/50 focus:border-primary transition-colors">
                 <SelectValue placeholder="Selecione o vendedor responsável" />
               </SelectTrigger>
               <SelectContent className="glass border-border/50">
-                {salespeople?.map(sp => (
+                {selectableSalespeople?.map(sp => (
                   <SelectItem key={sp.id} value={sp.id}>
                     {sp.name}
                   </SelectItem>

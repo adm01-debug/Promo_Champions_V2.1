@@ -35,5 +35,11 @@ jobs:
           node-version: '24'
       - name: Valida perfis, aliases e encadeamentos
         run: node scripts/automation.mjs doctor --static
+      - name: TypeScript do lockfile (só ele) para o codemod de tipografia
+        # o job continua sem npm ci; instala apenas o typescript na versão EXATA do package-lock, fora do projeto
+        run: |
+          v=$(node -p "require('./package-lock.json').packages['node_modules/typescript'].version")
+          npm install --prefix "$RUNNER_TEMP/ts" --no-save --no-audit --no-fund --ignore-scripts "typescript@$v"
+          echo "NODE_PATH=$RUNNER_TEMP/ts/node_modules" >> "$GITHUB_ENV"
       - name: Executa suites registradas de automação
         run: node scripts/automation.mjs test

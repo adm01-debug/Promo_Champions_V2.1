@@ -71,11 +71,21 @@ export const useCreateNPSSurvey = () => {
       salesperson_id?: string;
       survey_type?: 'nps' | 'csat';
     }) => {
+      // Sem dono explícito, a pesquisa é do vendedor logado: a RLS de INSERT
+      // exige salesperson_id = get_current_salesperson_id() (ou admin/gestor).
+      let salespersonId = data.salesperson_id || null;
+      if (!salespersonId) {
+        const { data: sp, error: spErr } = await supabase.rpc(
+          'get_current_salesperson_id'
+        );
+        if (spErr) throw spErr;
+        salespersonId = sp || null;
+      }
       const { error } = await supabase.from('nps_surveys').insert([
         {
           client_name: data.client_name,
           sale_id: data.sale_id || null,
-          salesperson_id: data.salesperson_id || null,
+          salesperson_id: salespersonId,
           survey_type: data.survey_type || 'nps',
           status: 'sent' as const,
           sent_at: new Date().toISOString(),

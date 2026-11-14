@@ -7,6 +7,8 @@ import { useSalespeople } from '@/hooks/sales/useSalespeople';
 import { useClients } from '@/hooks/crm/useClients';
 import { useSalesData } from '@/hooks/sales/useSalesData';
 import { getLocalISODate } from '@/utils/dateHelpers';
+import { useAuth } from '@/contexts/AuthContext';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import {
   Dialog,
   DialogContent,
@@ -85,6 +87,13 @@ export function CreateTaskDialog({
 
   const createTask = useCreateTask();
   const { data: salespeople } = useSalespeople();
+  // A policy de INSERT de tasks só aceita o próprio vendedor (ou admin/gestor):
+  // o seletor espelha a mesma regra para não oferecer um responsável que dá erro.
+  const { salesperson: authSalesperson } = useAuth();
+  const { isAdminOrManager } = useUserRoles();
+  const selectableSalespeople = isAdminOrManager
+    ? salespeople
+    : salespeople?.filter(s => s.id === authSalesperson?.id);
   const { data: clients } = useClients();
   const { data: sales } = useSalesData();
 
@@ -291,7 +300,7 @@ export function CreateTaskDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {salespeople?.map(sp => (
+                      {selectableSalespeople?.map(sp => (
                         <SelectItem key={sp.id} value={sp.id}>
                           {sp.name}
                         </SelectItem>

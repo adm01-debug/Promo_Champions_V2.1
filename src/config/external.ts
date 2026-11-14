@@ -4,9 +4,9 @@
  * os demais são endpoints de terceiros com fallback para o valor padrão.
  */
 // ── URLs do próprio app ──
-/** URL pública do app (deploy Lovable). Sobrescrever com VITE_APP_URL em outros ambientes. */
+/** URL pública do app (produção na Vercel). Sobrescrever com VITE_APP_URL em outros ambientes. */
 export const APP_URL =
-  import.meta.env.VITE_APP_URL ?? 'https://championgifts.lovable.app';
+  import.meta.env.VITE_APP_URL ?? 'https://promo-champions-v2-1.vercel.app';
 /** Domínio canônico de produção (SEO/links públicos). */
 export const CANONICAL_URL =
   import.meta.env.VITE_CANONICAL_URL ?? 'https://promochampions.com.br';

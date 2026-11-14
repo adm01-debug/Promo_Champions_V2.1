@@ -208,7 +208,7 @@ interface SingleProps {
   setSubject: (v: string) => void;
   body: string;
   setBody: (v: string) => void;
-  bodyRef: React.RefObject<HTMLTextAreaElement>;
+  bodyRef: React.RefObject<HTMLTextAreaElement | null>;
   showAI: boolean;
   setShowAI: (v: boolean | ((p: boolean) => boolean)) => void;
   insertVariable: (token: string) => void;
