@@ -77,6 +77,7 @@ Deno.serve(withRequestId("coaching-session-prep", async (req, _ctx) => {
       supabase
         .from("activities")
         .select("activity_type, created_at")
+        .is("deleted_at", null)
         .eq("salesperson_id", salesperson_id)
         .gte("created_at", sixMonthsAgo)
         .limit(5000),

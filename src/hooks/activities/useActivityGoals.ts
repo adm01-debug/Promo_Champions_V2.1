@@ -84,6 +84,7 @@ export function useActivityGoalProgress() {
       const { data: activities, error: actError } = await supabase
         .from('activities')
         .select('salesperson_id, activity_type')
+        .is('deleted_at', null)
         .gte('created_at', dayStart)
         .lte('created_at', dayEnd);
 

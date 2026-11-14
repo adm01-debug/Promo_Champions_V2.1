@@ -44,6 +44,7 @@ export function useDealTimeline(saleId: string | null) {
             .select(
               'id, activity_type, outcome, contact_name, notes, duration_minutes, created_at'
             )
+            .is('deleted_at', null)
             .eq('sale_id', saleId)
             .order('created_at', { ascending: false }),
           supabase

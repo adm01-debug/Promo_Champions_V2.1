@@ -89,6 +89,7 @@ export function useClient360(clientName: string | undefined) {
       const { data: activities } = await supabase
         .from('activities')
         .select('id')
+        .is('deleted_at', null)
         .eq('client_id', firstSale?.client_id || '');
 
       const engagementRatio =

@@ -95,7 +95,8 @@ const useClientHealthScores = () => {
 
       const { data: activities } = await supabase
         .from('activities')
-        .select('sale_id, id');
+        .select('sale_id, id')
+        .is('deleted_at', null);
 
       const activityMap: Record<string, number> = {};
       (activities || []).forEach(a => {

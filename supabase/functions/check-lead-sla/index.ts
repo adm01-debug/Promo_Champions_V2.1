@@ -113,6 +113,7 @@ Deno.serve(
     const { data: activities, error: actError } = await supabase
       .from('activities')
       .select('sale_id, created_at')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .limit(50000);
 

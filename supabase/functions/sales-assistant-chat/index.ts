@@ -157,6 +157,7 @@ Deno.serve(withRequestId('sales-assistant-chat', async (req, _ctx) => {
       const { data: activities } = await supabase
         .from('activities')
         .select('activity_type, outcome')
+        .is('deleted_at', null)
         .eq('salesperson_id', effectiveSalespersonId)
         .gte('created_at', today)
         .limit(500);
@@ -313,6 +314,7 @@ ${performanceSuggestions}
           const { data: dealActivities } = await supabase
             .from('activities')
             .select('activity_type, outcome, created_at, notes')
+            .is('deleted_at', null)
             .eq('sale_id', dealContext.dealId)
             .order('created_at', { ascending: false })
             .limit(5);

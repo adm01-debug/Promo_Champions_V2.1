@@ -143,6 +143,7 @@ export const useSDRActivityTrend = (
       let activitiesQuery = supabase
         .from('activities')
         .select('salesperson_id, created_at, activity_type')
+        .is('deleted_at', null)
         .gte('created_at', startDate.toISOString())
         // chunked-in-safe: sdrs.map derivado de is_active (~50)
         .in(

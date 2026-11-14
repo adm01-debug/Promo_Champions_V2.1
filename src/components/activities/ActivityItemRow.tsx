@@ -2,13 +2,27 @@ import { memo, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Clock, ChevronDown, ChevronUp, History, User } from 'lucide-react';
+import {
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  History,
+  User,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { formatDistanceToNow, differenceInMinutes, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { activityIcons, activityLabels, outcomeLabels } from './activityConstants';
-import { ActivityType, ActivityOutcome } from '@/hooks/activities/useActivities';
+import {
+  ActivityType,
+  ActivityOutcome,
+  useDeleteActivity,
+} from '@/hooks/activities/useActivities';
+import { DeleteConfirmDialog } from '@/components/shared/DeleteConfirmDialog';
+import { ActivityEditDialog } from './ActivityEditDialog';
 
 interface AuditLog {
   id: string;
@@ -17,7 +31,7 @@ interface AuditLog {
   old_data: Record<string, unknown> | null;
   new_data: Record<string, unknown> | null;
   created_at: string;
-  user_id: string | null;
+  changed_by: string | null;
 }
 
 interface ActivityItemRowProps {
@@ -38,6 +52,10 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
   const [expanded, setExpanded] = useState(false);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [loadingAudit, setLoadingAudit] = useState(false);
+  const [auditError, setAuditError] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const deleteActivity = useDeleteActivity();
 
   const Icon = activityIcons[activity.activity_type];
   const outcomeStyle = outcomeLabels[activity.outcome];
@@ -46,6 +64,7 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
 
   const fetchAuditLogs = useCallback(async () => {
     setLoadingAudit(true);
+    setAuditError(false);
     const { data, error } = await supabase
       .from('activity_audit_logs')
       .select('*')
@@ -53,12 +72,26 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
       .order('created_at', { ascending: false });
 
     /* eslint-disable no-restricted-syntax */
-    if (!error && data) setAuditLogs(data as unknown as AuditLog[]);
+    if (error) setAuditError(true);
+    else setAuditLogs((data ?? []) as unknown as AuditLog[]);
     /* eslint-enable no-restricted-syntax */
     setLoadingAudit(false);
   }, [activity.id]);
 
   const isSuccess = activity.outcome === 'scheduled' || activity.outcome === 'qualified';
+
+  // O AlertDialogAction fecha o diálogo no clique; o preventDefault mantém o diálogo aberto
+  // (com "Excluindo...") até a mutation terminar: fecha no sucesso e fica aberto no erro.
+  // Assinatura com rest para casar com o onConfirm `() => void` do DeleteConfirmDialog compartilhado.
+  const handleConfirmDelete = (...args: unknown[]) => {
+    (args[0] as { preventDefault?: () => void } | undefined)?.preventDefault?.();
+    deleteActivity.mutate(activity.id, { onSuccess: () => setDeleteOpen(false) });
+  };
+
+  const handleDeleteOpenChange = (next: boolean) => {
+    if (!next && deleteActivity.isPending) return;
+    setDeleteOpen(next);
+  };
 
   return (
     <div
@@ -122,6 +155,10 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
                     <div className="text-[10px] text-center py-4 text-muted-foreground">
                       Carregando histórico...
                     </div>
+                  ) : auditError ? (
+                    <div className="text-[10px] text-center py-4 text-destructive">
+                      Não foi possível carregar o histórico
+                    </div>
                   ) : auditLogs.length === 0 ? (
                     <div className="text-[10px] text-center py-4 text-muted-foreground">
                       Nenhuma alteração registrada
@@ -162,6 +199,25 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
                 </div>
               </PopoverContent>
             </Popover>
+            <button
+              type="button"
+              onClick={() => setEditOpen(true)}
+              aria-label="Editar atividade"
+              title="Editar atividade"
+              className="p-1 rounded-md hover:bg-muted/50 transition-colors"
+            >
+              <Pencil className="h-3 w-3 text-muted-foreground hover:text-primary" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeleteOpen(true)}
+              disabled={deleteActivity.isPending}
+              aria-label="Excluir atividade"
+              title="Excluir atividade"
+              className="p-1 rounded-md hover:bg-destructive/10 transition-colors disabled:opacity-50"
+            >
+              <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+            </button>
           </div>
           {activity.contact_name && (
             <p className="text-xs text-muted-foreground mt-0.5 font-medium">
@@ -220,6 +276,22 @@ const ActivityItemRowComponent = ({ activity, salesperson }: ActivityItemRowProp
           </span>
         </div>
       )}
+
+      {editOpen && (
+        <ActivityEditDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          activity={activity}
+        />
+      )}
+      <DeleteConfirmDialog
+        open={deleteOpen}
+        onOpenChange={handleDeleteOpenChange}
+        onConfirm={handleConfirmDelete}
+        title="Excluir atividade?"
+        description={`A atividade "${activityLabels[activity.activity_type]}" será removida do log de atividades.`}
+        isDeleting={deleteActivity.isPending}
+      />
     </div>
   );
 };

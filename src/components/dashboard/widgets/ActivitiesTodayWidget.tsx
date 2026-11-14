@@ -17,6 +17,7 @@ export const ActivitiesTodayWidget = React.memo(function ActivitiesTodayWidget()
       const { data, error } = await supabase
         .from('activities')
         .select('id, activity_type, outcome')
+        .is('deleted_at', null)
         .eq('salesperson_id', salesperson!.id)
         .gte('created_at', `${today}T00:00:00`)
         .lte('created_at', `${today}T23:59:59`);

@@ -55,6 +55,7 @@ export function useFollowUpLeads(minDaysInactive: number) {
       const { data: activities, error: activitiesError } = await supabase
         .from('activities')
         .select('sale_id, notes, created_at, activity_type')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
       if (activitiesError) throw activitiesError;
 

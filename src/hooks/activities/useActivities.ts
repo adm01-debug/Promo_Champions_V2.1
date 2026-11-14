@@ -453,3 +453,75 @@ export const useCreateActivity = () => {
     },
   });
 };
+
+export interface UpdateActivityInput {
+  id: string;
+  activity_type: ActivityType;
+  outcome: ActivityOutcome;
+  contact_name: string | null;
+  notes: string | null;
+  duration_minutes: number | null;
+}
+
+// RLS bloqueia UPDATE em silêncio (0 linhas, sem erro): conferir o retorno.
+const NO_PERMISSION_MESSAGE = 'Atividade não encontrada ou sem permissão para alterá-la';
+
+export const useUpdateActivity = () => {
+  const queryClient = useQueryClient();
+  const { index } = useIndexEntity();
+
+  return useMutation({
+    mutationFn: async ({ id, ...changes }: UpdateActivityInput) => {
+      const { data, error } = await supabase
+        .from('activities')
+        .update(changes)
+        .eq('id', id)
+        .is('deleted_at', null)
+        .select('id');
+
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error(NO_PERMISSION_MESSAGE);
+      return id;
+    },
+    onSuccess: id => {
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['sdr-leaderboard'] });
+      index('activity', id);
+      toast.success('Atividade atualizada!');
+    },
+    onError: (err: Error) => toast.error(`Erro ao atualizar atividade: ${err.message}`),
+  });
+};
+
+/** Soft-delete: preenche deleted_at/deleted_by (DELETE físico é restrito a admin/gestor na RLS). */
+export const useDeleteActivity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from('activities')
+        .update({ deleted_at: new Date().toISOString(), deleted_by: user?.id ?? null })
+        .eq('id', id)
+        .is('deleted_at', null)
+        .select('id');
+
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error(NO_PERMISSION_MESSAGE);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['activity-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['sdr-leaderboard'] });
+      // Última atividade por venda (useInactiveDeals): sem isto, o painel e os gatilhos de
+      // inatividade seguem com a data da atividade excluída até o staleTime vencer.
+      queryClient.invalidateQueries({ queryKey: ['activities-latest-per-sale'] });
+      toast.success('Atividade excluída');
+    },
+    onError: (err: Error) => toast.error(`Erro ao excluir atividade: ${err.message}`),
+  });
+};

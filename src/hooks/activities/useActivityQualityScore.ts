@@ -39,6 +39,7 @@ export function useActivityQualityScore() {
         supabase
           .from('activities')
           .select('salesperson_id, activity_type, outcome')
+          .is('deleted_at', null)
           .gte('created_at', monthStart.toISOString())
           .lte('created_at', monthEnd.toISOString()),
       ]);

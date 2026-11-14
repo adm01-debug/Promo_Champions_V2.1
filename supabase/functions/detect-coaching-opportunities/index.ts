@@ -125,6 +125,7 @@ Deno.serve(
           supabase
             .from('activities')
             .select('id, salesperson_id, created_at')
+            .is('deleted_at', null)
             .gte('created_at', since)
             .limit(50000),
         ]);

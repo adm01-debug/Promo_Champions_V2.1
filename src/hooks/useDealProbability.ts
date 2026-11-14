@@ -31,6 +31,7 @@ export const useDealProbability = (saleId: string) => {
       const { count: activityCount } = await supabase
         .from('activities')
         .select('id', { count: 'exact', head: true })
+        .is('deleted_at', null)
         .eq('sale_id', saleId);
 
       const stageProbabilities = await fetchStageProbabilities();

@@ -63,6 +63,7 @@ const DealPreviewCardInner = function DealPreviewCard({
         supabase
           .from('activities')
           .select('created_at, activity_type')
+          .is('deleted_at', null)
           .eq('sale_id', dealId)
           .order('created_at', { ascending: false })
           .limit(1),

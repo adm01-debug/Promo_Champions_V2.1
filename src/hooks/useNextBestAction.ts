@@ -90,6 +90,7 @@ async function generateLocalSuggestions(
   const { data: activities } = await supabase
     .from('activities')
     .select('id, activity_type, outcome, created_at')
+    .is('deleted_at', null)
     .eq('salesperson_id', salespersonId)
     .order('created_at', { ascending: false })
     .limit(30);

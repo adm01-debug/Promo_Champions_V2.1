@@ -54,6 +54,7 @@ export const usePerformanceComparison = (timeframe: number = 30) => {
       const { data: activities } = await supabase
         .from('activities')
         .select('id, salesperson_id')
+        .is('deleted_at', null)
         .gte('created_at', startDate.toISOString());
 
       // Get deal outcomes

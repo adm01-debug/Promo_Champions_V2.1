@@ -21,6 +21,7 @@ const ActivityHeatmapComponent: FC = () => {
       const { data, error } = await supabase
         .from('activities')
         .select('created_at')
+        .is('deleted_at', null)
         .gte('created_at', since.toISOString());
       if (error) throw error;
 

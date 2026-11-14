@@ -19,6 +19,7 @@ export const CalendarPreviewWidget = React.memo(function CalendarPreviewWidget()
       const { data, error } = await supabase
         .from('activities')
         .select('id, activity_type, contact_name, created_at')
+        .is('deleted_at', null)
         .eq('salesperson_id', salesperson!.id)
         .gte('created_at', `${today}T00:00:00`)
         .lte('created_at', `${nextWeek}T23:59:59`)

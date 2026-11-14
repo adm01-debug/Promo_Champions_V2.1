@@ -105,6 +105,7 @@ const RelatoriosExecutivos = () => {
       const { data } = await supabase
         .from('activities')
         .select('id, activity_type, outcome, salesperson_id, created_at')
+        .is('deleted_at', null)
         .gte('created_at', dateRange.start.toISOString())
         .lte('created_at', dateRange.end.toISOString());
       return data || [];

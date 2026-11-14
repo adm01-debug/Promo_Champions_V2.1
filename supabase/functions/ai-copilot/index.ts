@@ -179,6 +179,7 @@ Deno.serve(withRequestId('ai-copilot', async (req, _ctx) => {
       const { count: activityCount } = await supabase
         .from('activities')
         .select('id', { count: 'exact', head: true })
+        .is('deleted_at', null)
         .eq('salesperson_id', effectiveSalespersonId)
         .gte('created_at', weekAgo);
 
