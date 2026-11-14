@@ -6,6 +6,7 @@ import { Trophy, MessageCircle, Send, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { FeedCommentOwnerActions } from './FeedCommentOwnerActions';
 
 import { formatBRL } from '@/lib/money';
 const REACTIONS = ['🔥', '👏', '🚀', '💪', '🏆'];
@@ -20,7 +21,9 @@ interface VictoryFeedItemProps {
     salesperson_id?: string;
     created_at?: string;
     feed_reactions?: Array<{ reaction: string; salesperson_id: string }>;
-    feed_comments?: Array<Record<string, unknown> & { id?: string; content?: string }>;
+    feed_comments?: Array<
+      Record<string, unknown> & { id?: string; content?: string; salesperson_id?: string }
+    >;
     metadata?: Record<string, unknown> | null;
     salespeople?: Record<string, string> | null;
   };
@@ -29,10 +32,25 @@ interface VictoryFeedItemProps {
   eventColors: Record<string, string>;
   onReaction: (feedItemId: string, reaction: string) => void;
   onComment: (feedItemId: string, content: string) => void;
+  onUpdateComment?: (commentId: string, content: string) => Promise<unknown>;
+  onDeleteComment?: (commentId: string) => void;
+  isUpdatingComment?: boolean;
+  isDeletingComment?: boolean;
 }
 
 export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(
-  ({ item, currentSalespersonId, eventIcons, eventColors, onReaction, onComment }) => {
+  ({
+    item,
+    currentSalespersonId,
+    eventIcons,
+    eventColors,
+    onReaction,
+    onComment,
+    onUpdateComment,
+    onDeleteComment,
+    isUpdatingComment,
+    isDeletingComment,
+  }) => {
     const [commentInput, setCommentInput] = useState('');
     const [showComments, setShowComments] = useState(false);
 
@@ -197,6 +215,7 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(
                         c: Record<string, unknown> & {
                           id?: string;
                           content?: string;
+                          salesperson_id?: string;
                           salespeople?: Record<string, string> | null;
                         }
                       ) => (
@@ -212,6 +231,19 @@ export const VictoryFeedItem: FC<VictoryFeedItemProps> = React.memo(
                           <span className="text-muted-foreground wrap-break-word">
                             {c.content}
                           </span>
+                          {!!currentSalespersonId &&
+                            c.salesperson_id === currentSalespersonId &&
+                            !!c.id &&
+                            onUpdateComment &&
+                            onDeleteComment && (
+                              <FeedCommentOwnerActions
+                                content={c.content ?? ''}
+                                onUpdate={content => onUpdateComment(c.id ?? '', content)}
+                                onDelete={() => onDeleteComment(c.id ?? '')}
+                                isUpdating={isUpdatingComment}
+                                isDeleting={isDeletingComment}
+                              />
+                            )}
                         </div>
                       )
                     )}
