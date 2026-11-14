@@ -208,6 +208,74 @@ export function useDigitalSignatures() {
     },
   });
 
+  const updateSigner = useMutation({
+    mutationFn: async ({
+      signerId,
+      name,
+      email,
+    }: {
+      signerId: string;
+      name: string;
+      email: string;
+    }) => {
+      const { data, error } = await supabase
+        .from('document_signers')
+        .update({ name: name.trim(), email: email.trim() })
+        .eq('id', signerId)
+        .select('id');
+
+      if (error) throw error;
+      // RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão
+      if (!data || data.length === 0) {
+        throw new Error('Você não tem permissão para editar este signatário.');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
+      toast({
+        title: 'Signatário atualizado',
+        description: 'Nome e e-mail do signatário foram salvos.',
+      });
+    },
+    onError: error => {
+      toast({
+        title: 'Erro ao atualizar signatário',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const removeSigner = useMutation({
+    mutationFn: async (signerId: string) => {
+      const { data, error } = await supabase
+        .from('document_signers')
+        .delete()
+        .eq('id', signerId)
+        .select('id');
+
+      if (error) throw error;
+      // RLS filtra a linha sem erro: nenhuma linha afetada = sem permissão
+      if (!data || data.length === 0) {
+        throw new Error('Apenas administradores e gestores podem remover signatários.');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['digital-signatures'] });
+      toast({
+        title: 'Signatário removido',
+        description: 'O signatário foi removido do documento.',
+      });
+    },
+    onError: error => {
+      toast({
+        title: 'Erro ao remover signatário',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
   return {
     documents,
     isLoading,
@@ -217,6 +285,8 @@ export function useDigitalSignatures() {
     updateSignerStatus,
     deleteDocument,
     addSigner,
+    updateSigner,
+    removeSigner,
     signatureIntegrationConfigured: false,
     signatureIntegrationMessage: DIGITAL_SIGNATURE_INTEGRATION_MESSAGE,
   };

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,9 +14,19 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Clock, ShieldCheck, UserCheck } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 
+type JsonObject = { [key: string]: Json | undefined };
+
+function asObject(value: Json | null | undefined): JsonObject | null {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? (value as JsonObject)
+    : null;
+}
+
 export function ContactRulesDialog() {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rules, setRules] = useState({
@@ -38,11 +49,16 @@ export function ContactRulesDialog() {
 
     if (!sp) return;
 
-    const { data: pref } = await supabase
+    const { data: pref, error } = await supabase
       .from('salesperson_preferences')
       .select('contact_rules')
       .eq('salesperson_id', sp.id)
       .maybeSingle();
+
+    if (error) {
+      toast.error(`Erro ao carregar regras de contato: ${error.message}`);
+      return;
+    }
 
     if (pref?.contact_rules) {
       setRules(pref.contact_rules as typeof rules);
@@ -63,20 +79,48 @@ export function ContactRulesDialog() {
       } = await supabase.auth.getUser();
       if (!user) throw new Error('Usuário não autenticado');
 
-      const { data: sp } = await supabase
+      const { data: sp, error: spError } = await supabase
         .from('salespeople')
         .select('id')
         .eq('auth_user_id', user.id)
         .maybeSingle();
 
+      if (spError) throw new Error(spError.message);
       if (!sp) throw new Error('Vendedor não encontrado');
 
-      const { error } = await supabase
+      // Relê o jsonb atual para não apagar chaves gravadas por outra tela
+      // (ex.: max_messages_per_day/min_interval_minutes das regras de frequência).
+      const { data: current, error: readError } = await supabase
         .from('salesperson_preferences')
-        .update({ contact_rules: rules })
-        .eq('salesperson_id', sp.id);
+        .select('contact_rules')
+        .eq('salesperson_id', sp.id)
+        .maybeSingle();
 
-      if (error) throw error;
+      if (readError) throw new Error(readError.message);
+
+      const base = asObject(current?.contact_rules) ?? {};
+      const baseQuiet = asObject(base.quiet_hours ?? null) ?? {};
+
+      // Upsert: vendedor sem linha em salesperson_preferences ganha a linha
+      // (UNIQUE salesperson_id); antes o .update() não gravava nada e confirmava.
+      const { error } = await supabase.from('salesperson_preferences').upsert(
+        {
+          salesperson_id: sp.id,
+          contact_rules: {
+            ...base,
+            quiet_hours: { ...baseQuiet, ...rules.quiet_hours },
+            max_calls_per_day: rules.max_calls_per_day,
+            prioritize_human: rules.prioritize_human,
+          },
+        },
+        { onConflict: 'salesperson_id' }
+      );
+
+      if (error) throw new Error(error.message);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['contact-frequency-rules'] }),
+        queryClient.invalidateQueries({ queryKey: ['salesperson-preferences'] }),
+      ]);
       toast.success('Regras de contato salvas!');
       setOpen(false);
     } catch (e) {

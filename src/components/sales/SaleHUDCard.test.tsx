@@ -3,7 +3,13 @@ import { screen, fireEvent } from '@testing-library/dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ComponentProps } from 'react';
 import { SaleHUDCard } from './SaleHUDCard';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+// O card monta o EnrollCadenceDialog, que lê o vendedor logado e o papel do usuário.
+vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => ({ salesperson: null }) }));
+vi.mock('@/hooks/useUserRoles', () => ({
+  useUserRoles: () => ({ isAdminOrManager: false }),
+}));
 
 const mockSale = {
   id: 'SALE-001',

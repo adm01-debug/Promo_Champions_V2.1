@@ -5,10 +5,32 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, Clock, Zap, Gift, CheckCircle2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  Trophy,
+  Clock,
+  Zap,
+  Gift,
+  CheckCircle2,
+  Pencil,
+  Power,
+  Loader2,
+} from 'lucide-react';
+import { CreateChallengeDialog } from '@/components/gamification/CreateChallengeDialog';
 import {
   useChallengesWithProgress,
   useClaimChallengeReward,
+  useDeactivateWeeklyChallenge,
   CHALLENGE_ICONS,
   CHALLENGE_COLORS,
   type ChallengeWithProgress,
@@ -17,16 +39,74 @@ import {
 interface WeeklyChallengesCardProps {
   salespersonId?: string;
   compact?: boolean;
+  /** Admin/gestor: exibe ações de editar e desativar (RLS: is_admin_or_manager). */
+  canManage?: boolean;
+}
+
+function ChallengeManageActions({ challenge }: { challenge: ChallengeWithProgress }) {
+  const deactivate = useDeactivateWeeklyChallenge();
+
+  return (
+    <div className="flex items-center gap-1">
+      <CreateChallengeDialog challenge={challenge}>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-7 w-7 text-white hover:bg-white/20 hover:text-white"
+          aria-label={`Editar desafio ${challenge.title}`}
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </Button>
+      </CreateChallengeDialog>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-7 w-7 text-white hover:bg-white/20 hover:text-white"
+            aria-label={`Desativar desafio ${challenge.title}`}
+            disabled={deactivate.isPending}
+          >
+            {deactivate.isPending ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Power className="h-3.5 w-3.5" />
+            )}
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Desativar desafio?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O desafio "{challenge.title}" deixará de aparecer para a equipe. O progresso
+              já registrado é mantido.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deactivate.mutate(challenge.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Desativar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
 }
 
 function ChallengeItem({
   challenge,
   salespersonId,
   compact,
+  canManage,
 }: {
   challenge: ChallengeWithProgress;
   salespersonId: string;
   compact?: boolean;
+  canManage?: boolean;
 }) {
   const claimReward = useClaimChallengeReward();
   const canClaim = challenge.isCompleted && !challenge.progress?.xp_claimed;
@@ -108,10 +188,13 @@ function ChallengeItem({
               </p>
             </div>
           </div>
-          <Badge className="bg-white/20 text-white border-none shadow-md backdrop-blur-md font-black text-[10px] uppercase tracking-widest px-2.5 py-1">
-            <Zap className="h-3 w-3 mr-1.5 text-yellow-300 animate-pulse" />+
-            {challenge.xp_reward} XP
-          </Badge>
+          <div className="flex items-center gap-1 shrink-0">
+            {canManage && <ChallengeManageActions challenge={challenge} />}
+            <Badge className="bg-white/20 text-white border-none shadow-md backdrop-blur-md font-black text-[10px] uppercase tracking-widest px-2.5 py-1">
+              <Zap className="h-3 w-3 mr-1.5 text-yellow-300 animate-pulse" />+
+              {challenge.xp_reward} XP
+            </Badge>
+          </div>
         </div>
 
         {/* Progress System */}
@@ -192,6 +275,7 @@ function ChallengeItem({
 export function WeeklyChallengesCard({
   salespersonId,
   compact = false,
+  canManage = false,
 }: WeeklyChallengesCardProps) {
   const { challenges, isLoading } = useChallengesWithProgress(salespersonId);
 
@@ -267,6 +351,7 @@ export function WeeklyChallengesCard({
               challenge={challenge}
               salespersonId={salespersonId || ''}
               compact={compact}
+              canManage={canManage}
             />
           ))}
         </div>

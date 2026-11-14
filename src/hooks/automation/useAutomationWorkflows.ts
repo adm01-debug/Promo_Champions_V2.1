@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { parseRows, toJson } from '@/lib/supabase/parseRows';
+import { parseRow, parseRows, toJson } from '@/lib/supabase/parseRows';
 import { toast } from 'sonner';
 import type { Json } from '@/integrations/supabase/types';
-import { insertPayload } from '@/lib/supabase/typed-payloads';
+import { insertPayload, updatePayload } from '@/lib/supabase/typed-payloads';
 
 export type TriggerType =
   | 'deal_created'
@@ -107,6 +107,70 @@ export const useCreateWorkflow = () => {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['automation-workflows'] });
       toast.success('Workflow criado');
+    },
+    onError: (e: Error) => toast.error(`Erro: ${e.message}`),
+  });
+};
+
+export const useUpdateWorkflow = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...payload
+    }: Partial<AutomationWorkflow> & {
+      id: string;
+      name: string;
+      trigger_type: TriggerType;
+    }) => {
+      const { data, error } = await supabase
+        .from('automation_workflows')
+        .update(
+          updatePayload('automation_workflows', {
+            name: payload.name,
+            description: payload.description,
+            trigger_type: payload.trigger_type,
+            trigger_config: payload.trigger_config as Json | undefined,
+            conditions:
+              payload.conditions === undefined ? undefined : toJson(payload.conditions),
+            actions: payload.actions === undefined ? undefined : toJson(payload.actions),
+            is_active: payload.is_active,
+          })
+        )
+        .eq('id', id)
+        .select()
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Sem permissão para editar este workflow.');
+      return parseRow<AutomationWorkflow>(data);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['automation-workflows'] });
+      toast.success('Workflow atualizado');
+    },
+    onError: (e: Error) => toast.error(`Erro: ${e.message}`),
+  });
+};
+
+export const useDeleteWorkflow = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // automation_runs.workflow_id tem ON DELETE CASCADE: o histórico do fluxo sai junto.
+      const { data, error } = await supabase
+        .from('automation_workflows')
+        .delete()
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('Workflow não encontrado ou sem permissão para excluir');
+      }
+    },
+    onSuccess: (_data, id) => {
+      qc.invalidateQueries({ queryKey: ['automation-workflows'] });
+      qc.removeQueries({ queryKey: ['workflow-runs', id] });
+      toast.success('Workflow excluído');
     },
     onError: (e: Error) => toast.error(`Erro: ${e.message}`),
   });

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -11,23 +11,36 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
-import { Clock, ShieldAlert, Zap, Save } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Clock, ShieldAlert, Zap, Save, Loader2 } from 'lucide-react';
 import type { ContactFrequencyConfig } from '@/types/sales';
 import { toast } from 'sonner';
+import {
+  DEFAULT_CONTACT_FREQUENCY,
+  useContactFrequencyRules,
+} from '@/hooks/sales/useContactFrequencyRules';
 
 export function ContactFrequencyRules() {
-  const [config, setConfig] = useState<ContactFrequencyConfig>({
-    quiet_hours_start: '20:00',
-    quiet_hours_end: '08:00',
-    max_calls_per_day: 2,
-    max_messages_per_day: 3,
-    min_interval_minutes: 240,
-    prioritize_human: true,
-  });
+  const { hasSalesperson, savedRules, isLoading, isError, saveRules, isSaving } =
+    useContactFrequencyRules();
+  const [config, setConfig] = useState<ContactFrequencyConfig>(DEFAULT_CONTACT_FREQUENCY);
 
-  const handleSave = () => {
-    // In a real app, we would save to a backend/Supabase
-    toast.success('Regras de frequência atualizadas com sucesso.');
+  useEffect(() => {
+    if (savedRules) setConfig(savedRules);
+  }, [savedRules]);
+
+  const canSave = hasSalesperson && !isLoading && !isError && !isSaving;
+
+  const handleSave = async () => {
+    try {
+      await saveRules(config);
+      toast.success('Regras de frequência salvas.');
+    } catch (e) {
+      toast.error(
+        `Erro ao salvar regras de frequência: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
   };
 
   return (
@@ -37,12 +50,35 @@ export function ContactFrequencyRules() {
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-primary" />
             <CardTitle>Regras de Frequência e Janelas</CardTitle>
+            {hasSalesperson && !isLoading && !isError && !savedRules && (
+              <Badge variant="outline" className="text-xs">
+                Padrão — ainda não salvo
+              </Badge>
+            )}
           </div>
           <CardDescription>
             Evite incomodar o lead e garanta que mensagens humanas tenham prioridade.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              Estas regras ficam salvas no seu perfil, mas ainda não são aplicadas
+              automaticamente no envio das cadências.
+            </AlertDescription>
+          </Alert>
+          {!hasSalesperson && (
+            <p className="text-sm text-muted-foreground">
+              Perfil de vendedor não encontrado — não é possível salvar regras.
+            </p>
+          )}
+          {isError && (
+            <p className="text-sm text-destructive">
+              Não foi possível carregar as regras salvas. Recarregue a página para tentar
+              novamente.
+            </p>
+          )}
           {/* Quiet Hours */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -70,11 +106,6 @@ export function ContactFrequencyRules() {
                   }
                 />
               </div>
-              <p className="col-span-full text-xs text-muted-foreground flex items-start gap-1">
-                <Info className="h-3 w-3 mt-0.5" />
-                Mensagens agendadas para este período serão enviadas automaticamente assim
-                que a janela terminar.
-              </p>
             </div>
           </div>
 
@@ -153,9 +184,17 @@ export function ContactFrequencyRules() {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button onClick={handleSave} className="w-full md:w-auto">
-              <Save className="h-4 w-4 mr-2" />
-              Salvar Configurações
+            <Button
+              onClick={() => void handleSave()}
+              disabled={!canSave}
+              className="w-full md:w-auto"
+            >
+              {isSaving || isLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? 'Salvando...' : 'Salvar Configurações'}
             </Button>
           </div>
         </CardContent>

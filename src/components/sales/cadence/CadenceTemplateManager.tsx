@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -20,18 +20,46 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Plus,
   Save,
   Trash2,
   MessageSquare,
   Mail,
-  Phone,
   Eye,
   CheckCircle,
-  XCircle,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react';
-import type { CadenceTemplate, TemplateType } from '@/types/sales';
+import {
+  useMessageTemplates,
+  useCreateTemplate,
+  useUpdateTemplate,
+  useDeleteTemplate,
+  type MessageTemplate,
+} from '@/hooks/useMultichannel';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+
+// Canais aceitos por message_templates.channel (CHECK) e editáveis aqui.
+type TemplateChannel = 'whatsapp' | 'email';
+
+interface TemplateForm {
+  name: string;
+  channel: TemplateChannel;
+  body: string;
+}
+
+const EMPTY_FORM: TemplateForm = { name: '', channel: 'whatsapp', body: '' };
 
 const SINGU_VARIABLES = [
   { name: 'singu_lead_name', label: 'Nome do Lead' },
@@ -42,63 +70,75 @@ const SINGU_VARIABLES = [
 ];
 
 export function CadenceTemplateManager() {
-  const [templates, setTemplates] = useState<CadenceTemplate[]>([
-    {
-      id: '1',
-      name: 'Follow-up Interesse Alto',
-      type: 'whatsapp',
-      content:
-        'Oi {{singu_lead_name}}! Vi que você acessou nossa proposta. Como posso te ajudar a avançar?',
-      requires_approval: true,
-      variables: ['singu_lead_name'],
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ]);
+  const { salesperson } = useAuth();
+  const { data: allTemplates = [], isLoading, isError, refetch } = useMessageTemplates();
+  const createTemplate = useCreateTemplate();
+  const updateTemplate = useUpdateTemplate();
+  const deleteTemplate = useDeleteTemplate();
+  const templates = allTemplates.filter(
+    (t): t is MessageTemplate & { channel: TemplateChannel } =>
+      t.channel === 'whatsapp' || t.channel === 'email'
+  );
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<CadenceTemplate>>({
-    type: 'whatsapp',
-    requires_approval: true,
-    content: '',
-    name: '',
-  });
+  const [formData, setFormData] = useState<TemplateForm>(EMPTY_FORM);
   const [activeTab, setActiveTab] = useState<'manage' | 'approval'>('manage');
+  const [pendingDelete, setPendingDelete] = useState<MessageTemplate | null>(null);
+  const isSaving = createTemplate.isPending || updateTemplate.isPending;
+
+  const closeForm = () => {
+    setEditingId(null);
+    setFormData(EMPTY_FORM);
+  };
 
   const handleSave = () => {
-    if (!formData.name || !formData.content) {
+    const name = formData.name.trim();
+    const body = formData.body.trim();
+    if (!name || !body) {
       toast.error('Por favor, preencha o nome e o conteúdo do template.');
       return;
     }
 
-    const newTemplate: CadenceTemplate = {
-      id: editingId === 'new' ? crypto.randomUUID() : editingId!,
-      name: formData.name!,
-      type: formData.type as TemplateType,
-      content: formData.content!,
-      requires_approval: formData.requires_approval ?? true,
-      variables: SINGU_VARIABLES.filter(v =>
-        formData.content?.includes(`{{${v.name}}}`)
-      ).map(v => v.name),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+    const payload = {
+      name,
+      channel: formData.channel,
+      body,
+      variables: SINGU_VARIABLES.filter(v => body.includes(`{{${v.name}}}`)).map(
+        v => v.name
+      ),
     };
 
     if (editingId && editingId !== 'new') {
-      setTemplates(prev => prev.map(t => (t.id === editingId ? newTemplate : t)));
-      toast.success('Template atualizado com sucesso.');
-    } else {
-      setTemplates(prev => [newTemplate, ...prev]);
-      toast.success('Novo template criado.');
+      updateTemplate.mutate({ id: editingId, ...payload }, { onSuccess: closeForm });
+      return;
     }
 
-    setEditingId(null);
-    setFormData({ type: 'whatsapp', requires_approval: true, content: '', name: '' });
+    if (!salesperson?.id) {
+      toast.error('Seu usuário não está vinculado a um vendedor.');
+      return;
+    }
+    createTemplate.mutate(
+      { ...payload, salesperson_id: salesperson.id },
+      { onSuccess: closeForm }
+    );
+  };
+
+  const handleDeleteOpenChange = (open: boolean) => {
+    if (open || deleteTemplate.isPending) return;
+    setPendingDelete(null);
+    deleteTemplate.reset();
+  };
+
+  const confirmDelete = () => {
+    if (!pendingDelete) return;
+    deleteTemplate.mutate(pendingDelete.id, {
+      onSuccess: () => setPendingDelete(null),
+    });
   };
 
   const insertVariable = (variable: string) => {
     setFormData(prev => ({
       ...prev,
-      content: (prev.content || '') + `{{${variable}}}`,
+      body: prev.body + `{{${variable}}}`,
     }));
   };
 
@@ -120,7 +160,6 @@ export function CadenceTemplateManager() {
           className="rounded-none border-b-2 border-transparent data-[variant=default]:border-primary"
         >
           Fila de Aprovação
-          <Badge className="ml-2 bg-amber-500">2</Badge>
         </Button>
       </div>
 
@@ -159,9 +198,9 @@ export function CadenceTemplateManager() {
                   <div className="space-y-2">
                     <Label>Tipo</Label>
                     <Select
-                      value={formData.type}
+                      value={formData.channel}
                       onValueChange={v =>
-                        setFormData(prev => ({ ...prev, type: v as TemplateType }))
+                        setFormData(prev => ({ ...prev, channel: v as TemplateChannel }))
                       }
                     >
                       <SelectTrigger>
@@ -170,7 +209,6 @@ export function CadenceTemplateManager() {
                       <SelectContent>
                         <SelectItem value="whatsapp">WhatsApp</SelectItem>
                         <SelectItem value="email">E-mail</SelectItem>
-                        <SelectItem value="call">Roteiro de Ligação</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -194,9 +232,9 @@ export function CadenceTemplateManager() {
                     </div>
                   </div>
                   <Textarea
-                    value={formData.content}
+                    value={formData.body}
                     onChange={e =>
-                      setFormData(prev => ({ ...prev, content: e.target.value }))
+                      setFormData(prev => ({ ...prev, body: e.target.value }))
                     }
                     rows={5}
                     placeholder="Olá {{singu_lead_name}}, vi que sua última compra foi..."
@@ -207,28 +245,25 @@ export function CadenceTemplateManager() {
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-bold uppercase flex items-center gap-2">
                       <Eye className="h-4 w-4" />
-                      Pré-visualização (Simulação com Variáveis)
+                      Pré-visualização
                     </Label>
                     <Badge variant="outline" className="text-[10px] bg-background">
-                      Preview Real
+                      Exemplo com dados fictícios
                     </Badge>
                   </div>
                   <div className="p-3 bg-background rounded-md border border-border/40 min-h-[80px]">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-2">
-                      {formData.type === 'whatsapp' && (
+                      {formData.channel === 'whatsapp' && (
                         <MessageSquare className="h-3 w-3 text-green-500" />
                       )}
-                      {formData.type === 'email' && (
+                      {formData.channel === 'email' && (
                         <Mail className="h-3 w-3 text-blue-500" />
-                      )}
-                      {formData.type === 'call' && (
-                        <Phone className="h-3 w-3 text-orange-500" />
                       )}
                       Visualização Final:
                     </div>
                     <p className="text-xs italic whitespace-pre-wrap">
-                      {formData.content
-                        ? formData.content
+                      {formData.body
+                        ? formData.body
                             .replace(/{{singu_lead_name}}/g, 'Maria Oliveira')
                             .replace(/{{singu_last_purchase}}/g, 'Ontem')
                             .replace(/{{singu_total_spent}}/g, 'R$ 450,00')
@@ -240,39 +275,49 @@ export function CadenceTemplateManager() {
                         : 'O conteúdo aparecerá aqui...'}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] text-muted-foreground">
-                      Variáveis validadas:{' '}
-                      {(formData.content?.match(/{{.*?}}/g) || []).length} encontradas
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 border rounded-lg bg-background">
-                  <div className="space-y-0.5">
-                    <Label>Exigir Aprovação Humana</Label>
-                    <p className="text-xs text-muted-foreground">
-                      O envio não será automático até que alguém aprove.
-                    </p>
-                  </div>
-                  <Switch
-                    checked={formData.requires_approval}
-                    onCheckedChange={v =>
-                      setFormData(prev => ({ ...prev, requires_approval: v }))
-                    }
-                  />
+                  <p className="text-[10px] text-muted-foreground">
+                    As variáveis acima foram substituídas por valores de exemplo; no envio
+                    real usam os dados do lead. Variáveis no texto:{' '}
+                    {(formData.body.match(/{{.*?}}/g) || []).length}
+                  </p>
                 </div>
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={() => setEditingId(null)}>
+                  <Button variant="ghost" onClick={closeForm} disabled={isSaving}>
                     Cancelar
                   </Button>
-                  <Button onClick={handleSave}>
+                  <Button onClick={handleSave} disabled={isSaving}>
                     <Save className="h-4 w-4 mr-2" />
-                    Salvar Template
+                    {isSaving ? 'Salvando...' : 'Salvar Template'}
                   </Button>
                 </div>
+              </div>
+            ) : isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <Skeleton key={i} className="h-40 rounded-xl" />
+                ))}
+              </div>
+            ) : isError ? (
+              <div className="text-center py-10 text-muted-foreground">
+                <AlertCircle className="h-10 w-10 mx-auto mb-3 text-destructive opacity-60" />
+                <p className="font-medium">Não foi possível carregar os templates.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => refetch()}
+                >
+                  Tentar novamente
+                </Button>
+              </div>
+            ) : templates.length === 0 ? (
+              <div className="text-center py-10 text-muted-foreground">
+                <MessageSquare className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                <p className="font-medium">Nenhum template cadastrado.</p>
+                <p className="text-sm">
+                  Clique em &quot;Novo Template&quot; para criar o primeiro.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,39 +332,29 @@ export function CadenceTemplateManager() {
                         size="icon"
                         aria-label="Excluir template"
                         className="h-8 w-8 text-destructive"
-                        onClick={() =>
-                          setTemplates(prev => prev.filter(x => x.id !== t.id))
-                        }
+                        disabled={deleteTemplate.isPending}
+                        onClick={() => setPendingDelete(t)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                     <CardContent className="pt-6">
                       <div className="flex items-center gap-2 mb-2">
-                        {t.type === 'whatsapp' && (
+                        {t.channel === 'whatsapp' && (
                           <MessageSquare className="h-4 w-4 text-green-500" />
                         )}
-                        {t.type === 'email' && <Mail className="h-4 w-4 text-blue-500" />}
-                        {t.type === 'call' && (
-                          <Phone className="h-4 w-4 text-orange-500" />
+                        {t.channel === 'email' && (
+                          <Mail className="h-4 w-4 text-blue-500" />
                         )}
                         <span className="font-semibold">{t.name}</span>
                       </div>
                       <p className="text-sm text-muted-foreground line-clamp-3 mb-4 italic">
-                        "{t.content}"
+                        "{t.body}"
                       </p>
                       <div className="flex items-center justify-between mt-auto pt-4 border-t">
                         <div className="flex gap-1">
-                          {t.requires_approval && (
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20"
-                            >
-                              Aprovação Necessária
-                            </Badge>
-                          )}
                           <Badge variant="outline" className="text-[10px] uppercase">
-                            {t.type}
+                            {t.channel}
                           </Badge>
                         </div>
                         <Button
@@ -327,7 +362,11 @@ export function CadenceTemplateManager() {
                           size="sm"
                           onClick={() => {
                             setEditingId(t.id);
-                            setFormData(t);
+                            setFormData({
+                              name: t.name,
+                              channel: t.channel,
+                              body: t.body,
+                            });
                           }}
                         >
                           Editar
@@ -350,65 +389,58 @@ export function CadenceTemplateManager() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {[
-                {
-                  id: 'p1',
-                  lead: 'Ana Silva',
-                  template: 'Follow-up Interesse Alto',
-                  content: 'Oi Ana! Vi que você acessou nossa proposta...',
-                  type: 'whatsapp',
-                },
-                {
-                  id: 'p2',
-                  lead: 'Bruno Costa',
-                  template: 'Follow-up Interesse Alto',
-                  content: 'Oi Bruno! Vi que você acessou nossa proposta...',
-                  type: 'whatsapp',
-                },
-              ].map(pending => (
-                <div
-                  key={pending.id}
-                  className="p-4 border rounded-lg bg-background flex flex-col md:flex-row justify-between gap-4"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm">{pending.lead}</span>
-                      <Badge variant="outline" className="text-[10px]">
-                        {pending.template}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground italic">
-                      "{pending.content}"
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Trigger: Clique em Link de Preço (3x)
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 text-destructive border-destructive/30"
-                      onClick={() => toast.error('Ação rejeitada')}
-                    >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Rejeitar
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-8 bg-green-600 hover:bg-green-700"
-                      onClick={() => toast.success('Ação aprovada e enviada!')}
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Aprovar & Enviar
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              {/* Sem backend que retenha ações de cadência para aprovação:
+                  estado vazio honesto, sem itens fictícios nem botões sem efeito. */}
+              <div className="text-center py-10 text-muted-foreground">
+                <CheckCircle className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                <p className="font-medium">Nenhuma ação aguardando aprovação.</p>
+                <p className="text-sm">
+                  As cadências ainda não enviam mensagens que dependam de aprovação.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
       )}
+
+      <AlertDialog open={pendingDelete !== null} onOpenChange={handleDeleteOpenChange}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir template?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O template &quot;{pendingDelete?.name}&quot; será excluído definitivamente.
+              Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deleteTemplate.isError && (
+            <p role="alert" className="text-sm text-destructive">
+              Não foi possível excluir o template. Tente novamente.
+            </p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteTemplate.isPending}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteTemplate.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={e => {
+                e.preventDefault();
+                confirmDelete();
+              }}
+            >
+              {deleteTemplate.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Excluindo...
+                </>
+              ) : (
+                'Excluir'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

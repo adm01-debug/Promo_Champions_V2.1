@@ -1,11 +1,57 @@
-import { ShieldCheck, Zap, Copy, MessageSquare, CalendarPlus } from 'lucide-react';
+import { useState } from 'react';
+import { ShieldCheck, Zap, Copy, CalendarPlus, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useCreateTask } from '@/hooks/tasks/useTaskMutations';
+import { getLocalISODate } from '@/utils/dateHelpers';
 import type { Client360Data } from '@/hooks/crm/useClient360';
 
-export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
+interface Client360HealthNbaSectionProps {
+  data: Client360Data;
+  clientName: string;
+}
+
+export function Client360HealthNbaSection({
+  data,
+  clientName,
+}: Client360HealthNbaSectionProps) {
+  const createTask = useCreateTask();
+  const [isResolvingOwner, setIsResolvingOwner] = useState(false);
+  const isScheduling = isResolvingOwner || createTask.isPending;
+
+  // Cria tarefa real de follow-up (tabela tasks) com a próxima ação sugerida.
+  const handleScheduleFollowUp = async () => {
+    const lastOrder = data.orders[0];
+    setIsResolvingOwner(true);
+    const { data: currentSalespersonId, error } = await supabase.rpc(
+      'get_current_salesperson_id'
+    );
+    setIsResolvingOwner(false);
+    if (error) {
+      toast.error('Não foi possível identificar o vendedor responsável.');
+      return;
+    }
+    const orderSalespersonId =
+      typeof lastOrder?.salesperson_id === 'string'
+        ? lastOrder.salesperson_id
+        : undefined;
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + (data.predictedNextPurchaseDays ?? 0));
+
+    createTask.mutate({
+      title: `${data.nba.title} — ${clientName}`.slice(0, 200),
+      description: data.nba.description,
+      task_type: 'follow_up',
+      priority: data.churnRisk > 50 ? 'high' : 'medium',
+      due_date: getLocalISODate(dueDate),
+      client_id:
+        typeof lastOrder?.client_id === 'string' ? lastOrder.client_id : undefined,
+      salesperson_id: currentSalespersonId || orderSalespersonId,
+    });
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <Card className="lg:col-span-1 border-border/40 bg-card/40 backdrop-blur-md shadow-xl rounded-2xl overflow-hidden group">
@@ -90,7 +136,7 @@ export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
         <CardHeader className="pb-2">
           <CardTitle className="text-section-title flex items-center gap-2 text-sm uppercase font-black tracking-tighter text-primary">
             <Zap className="h-4 w-4 fill-primary" />
-            IA Next Best Action (NBA)
+            Próxima Ação Sugerida
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -110,7 +156,7 @@ export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(data.nba.script);
-                      toast.success('Script copiado para o clipboard!');
+                      toast.success('Mensagem copiada!');
                     }}
                     className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-all"
                   >
@@ -118,7 +164,7 @@ export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
                   </button>
                 </div>
                 <span className="text-[8px] font-black text-primary uppercase tracking-widest block mb-2">
-                  Script Sugerido pela IA
+                  Sugestão de Mensagem
                 </span>
                 <p className="text-xs italic text-foreground/80 leading-relaxed pr-6">
                   "{data.nba.script}"
@@ -136,26 +182,20 @@ export function Client360HealthNbaSection({ data }: { data: Client360Data }) {
                     ? `Em ~${data.predictedNextPurchaseDays} dias`
                     : 'Indefinido'}
                 </div>
-                <Badge
-                  variant="outline"
-                  className="text-[8px] font-bold mt-2 border-primary/20 text-primary"
-                >
-                  85% Confiança
-                </Badge>
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => toast.success('Follow-up agendado com sucesso!')}
-                  className="flex-1 py-3 px-2 rounded-xl bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-tighter hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-1.5"
+                  type="button"
+                  onClick={handleScheduleFollowUp}
+                  disabled={isScheduling}
+                  className="flex-1 py-3 px-2 rounded-xl bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-tighter hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:scale-100"
                 >
-                  <CalendarPlus className="h-3.5 w-3.5" />
-                  Agendar
-                </button>
-                <button
-                  onClick={() => toast.info('Abrindo canal de comunicação...')}
-                  className="py-3 px-3 rounded-xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 transition-all"
-                >
-                  <MessageSquare className="h-3.5 w-3.5" />
+                  {isScheduling ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <CalendarPlus className="h-3.5 w-3.5" />
+                  )}
+                  Agendar follow-up
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface NotificationPreference {
   id: string;
@@ -32,13 +33,16 @@ export const useNotificationPreferences = () => {
 
 export const useCreateNotificationPreference = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   return useMutation({
     mutationFn: async (
       pref: Omit<NotificationPreference, 'id' | 'created_at' | 'updated_at'>
     ) => {
+      if (!user) throw new Error('Usuário não autenticado');
+      // RLS exige user_id = auth.uid() no INSERT
       const { data, error } = await supabase
         .from('notification_preferences')
-        .insert(pref)
+        .insert({ ...pref, user_id: user.id })
         .select()
         .single();
       if (error) throw error;

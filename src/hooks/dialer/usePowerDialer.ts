@@ -96,6 +96,74 @@ export const useCreateQueue = () => {
   });
 };
 
+const NO_PERMISSION_MESSAGE =
+  'Fila não encontrada ou sem permissão (apenas o dono ou um admin pode alterá-la).';
+
+export const useUpdateQueue = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      id: string;
+      name: string;
+      priority_strategy: DialerQueue['priority_strategy'];
+      filter: Record<string, unknown>;
+    }) => {
+      const { data, error } = await supabase
+        .from('dialer_queues')
+        .update({
+          name: payload.name,
+          priority_strategy: payload.priority_strategy,
+          filter: payload.filter as never,
+        })
+        .eq('id', payload.id)
+        .select('id');
+      if (error) throw error;
+      // RLS filtra silenciosamente: 0 linhas = sem permissão ou fila inexistente.
+      if (!data || data.length === 0) throw new Error(NO_PERMISSION_MESSAGE);
+      return data[0];
+    },
+    onSuccess: (_d, payload) => {
+      qc.invalidateQueries({ queryKey: ['dialer-queues'] });
+      qc.invalidateQueries({ queryKey: ['dialer-queue-stats', payload.id] });
+      toast({ title: 'Fila atualizada' });
+    },
+    onError: (err: Error) =>
+      toast({
+        title: 'Erro ao atualizar fila',
+        description: err.message,
+        variant: 'destructive',
+      }),
+  });
+};
+
+export const useDeleteQueue = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (queueId: string) => {
+      // Itens da fila são removidos em cascata; call_logs mantêm o histórico (FK SET NULL).
+      const { data, error } = await supabase
+        .from('dialer_queues')
+        .delete()
+        .eq('id', queueId)
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error(NO_PERMISSION_MESSAGE);
+    },
+    onSuccess: (_d, queueId) => {
+      qc.invalidateQueries({ queryKey: ['dialer-queues'] });
+      qc.removeQueries({ queryKey: ['dialer-queue-stats', queueId] });
+      qc.removeQueries({ queryKey: ['dialer-queue-items', queueId] });
+      toast({ title: 'Fila excluída' });
+    },
+    onError: (err: Error) =>
+      toast({
+        title: 'Erro ao excluir fila',
+        description: err.message,
+        variant: 'destructive',
+      }),
+  });
+};
+
 export const useRebuildQueue = () => {
   const qc = useQueryClient();
   return useMutation({

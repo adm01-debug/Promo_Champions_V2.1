@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Phone, RefreshCw, Play } from 'lucide-react';
+import { Phone, RefreshCw, Play, Pencil, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { type DialerQueue, useQueueStats } from '@/hooks/dialer/usePowerDialer';
@@ -13,6 +13,8 @@ interface Props {
   onSelect: () => void;
   onRebuild: () => void;
   onStart: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   rebuilding?: boolean;
 }
 
@@ -22,6 +24,8 @@ export const DialerQueueCard = ({
   onSelect,
   onRebuild,
   onStart,
+  onEdit,
+  onDelete,
   rebuilding,
 }: Props) => {
   const { data: stats } = useQueueStats(queue.id);
@@ -37,10 +41,34 @@ export const DialerQueueCard = ({
             <h3 className="font-semibold">{queue.name}</h3>
             <p className="text-xs text-muted-foreground">{strategy}</p>
           </button>
-          <Badge variant="outline" className="shrink-0">
-            <Phone className="h-3 w-3 mr-1" />
-            {stats?.pending_count ?? 0}
-          </Badge>
+          <div className="flex items-center gap-1 shrink-0">
+            <Badge variant="outline">
+              <Phone className="h-3 w-3 mr-1" />
+              {stats?.pending_count ?? 0}
+            </Badge>
+            {onEdit && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7"
+                onClick={onEdit}
+                aria-label={`Editar fila ${queue.name}`}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7 text-destructive hover:text-destructive"
+                onClick={onDelete}
+                aria-label={`Excluir fila ${queue.name}`}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-xs text-center">

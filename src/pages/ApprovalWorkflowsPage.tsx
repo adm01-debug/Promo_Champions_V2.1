@@ -21,6 +21,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -30,6 +41,10 @@ import {
   useCreateApprovalRequest,
   useDecideApproval,
   useCreateWorkflow,
+  useUpdateWorkflow,
+  useToggleWorkflowActive,
+  useDeleteWorkflow,
+  type ApprovalWorkflow,
 } from '@/hooks/admin/useApprovalWorkflows';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import {
@@ -42,6 +57,8 @@ import {
   AlertTriangle,
   DollarSign,
   Percent,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -101,13 +118,18 @@ const ApprovalWorkflowsPage = () => {
   const [comments, setComments] = useState('');
   const [newRequestOpen, setNewRequestOpen] = useState(false);
   const [newWorkflowOpen, setNewWorkflowOpen] = useState(false);
+  const [editingWorkflowId, setEditingWorkflowId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ApprovalWorkflow | null>(null);
   const { isAdminOrManager } = useUserRoles();
 
   const { data: requests, isLoading: loadingReqs } = useApprovalRequests(statusFilter);
-  const { data: workflows } = useApprovalWorkflows();
+  const { data: workflows, isLoading: loadingWorkflows } = useApprovalWorkflows();
   const createRequest = useCreateApprovalRequest();
   const decide = useDecideApproval();
   const createWorkflow = useCreateWorkflow();
+  const updateWorkflow = useUpdateWorkflow();
+  const toggleWorkflow = useToggleWorkflowActive();
+  const deleteWorkflow = useDeleteWorkflow();
 
   // New request form
   const [reqForm, setReqForm] = useState({
@@ -118,14 +140,15 @@ const ApprovalWorkflowsPage = () => {
     justification: '',
   });
 
-  // New workflow form
-  const [wfForm, setWfForm] = useState({
+  // New workflow form (reaproveitado para edição)
+  const emptyWfForm = {
     name: '',
     workflow_type: 'discount',
     threshold_amount: '',
     required_approvers: '1',
     description: '',
-  });
+  };
+  const [wfForm, setWfForm] = useState(emptyWfForm);
 
   const handleSubmitRequest = () => {
     if (!reqForm.workflow_id || !reqForm.requested_value) return;
@@ -174,29 +197,52 @@ const ApprovalWorkflowsPage = () => {
     );
   };
 
+  const handleWorkflowDialogChange = (open: boolean) => {
+    setNewWorkflowOpen(open);
+    if (!open && editingWorkflowId) {
+      setEditingWorkflowId(null);
+      setWfForm(emptyWfForm);
+    }
+  };
+
+  const openEditWorkflow = (w: ApprovalWorkflow) => {
+    setEditingWorkflowId(w.id);
+    setWfForm({
+      name: w.name,
+      workflow_type: w.workflow_type,
+      threshold_amount: w.threshold_amount != null ? String(w.threshold_amount) : '',
+      required_approvers: String(w.required_approvers),
+      description: w.description ?? '',
+    });
+    setNewWorkflowOpen(true);
+  };
+
   const handleCreateWorkflow = () => {
     if (!wfForm.name) return;
-    createWorkflow.mutate(
-      {
-        name: wfForm.name,
-        workflow_type: wfForm.workflow_type,
-        threshold_amount: parseFloat(wfForm.threshold_amount) || null,
-        required_approvers: parseInt(wfForm.required_approvers) || 1,
-        description: wfForm.description || null,
-      },
-      {
-        onSuccess: () => {
-          setNewWorkflowOpen(false);
-          setWfForm({
-            name: '',
-            workflow_type: 'discount',
-            threshold_amount: '',
-            required_approvers: '1',
-            description: '',
-          });
-        },
-      }
-    );
+    const fields = {
+      name: wfForm.name,
+      workflow_type: wfForm.workflow_type,
+      threshold_amount: parseFloat(wfForm.threshold_amount) || null,
+      required_approvers: parseInt(wfForm.required_approvers) || 1,
+      description: wfForm.description || null,
+    };
+    const onSuccess = () => {
+      setNewWorkflowOpen(false);
+      setEditingWorkflowId(null);
+      setWfForm(emptyWfForm);
+    };
+    if (editingWorkflowId) {
+      updateWorkflow.mutate({ id: editingWorkflowId, ...fields }, { onSuccess });
+    } else {
+      createWorkflow.mutate(fields, { onSuccess });
+    }
+  };
+
+  const handleDeleteWorkflow = () => {
+    if (!deleteTarget) return;
+    deleteWorkflow.mutate(deleteTarget.id, {
+      onSettled: () => setDeleteTarget(null),
+    });
   };
 
   const pendingCount = useMemo(
@@ -257,11 +303,13 @@ const ApprovalWorkflowsPage = () => {
                           <SelectValue placeholder="Selecione o fluxo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {workflows?.map(w => (
-                            <SelectItem key={w.id} value={w.id}>
-                              {w.name} ({TYPE_LABELS[w.workflow_type]})
-                            </SelectItem>
-                          ))}
+                          {workflows
+                            ?.filter(w => w.is_active)
+                            .map(w => (
+                              <SelectItem key={w.id} value={w.id}>
+                                {w.name} ({TYPE_LABELS[w.workflow_type]})
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -322,7 +370,7 @@ const ApprovalWorkflowsPage = () => {
               </Dialog>
 
               {isAdminOrManager && (
-                <Dialog open={newWorkflowOpen} onOpenChange={setNewWorkflowOpen}>
+                <Dialog open={newWorkflowOpen} onOpenChange={handleWorkflowDialogChange}>
                   <DialogTrigger asChild>
                     <Button size="sm" variant="outline" className="gap-2">
                       <FileCheck className="h-4 w-4" /> Novo Workflow
@@ -330,7 +378,11 @@ const ApprovalWorkflowsPage = () => {
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Criar Workflow de Aprovação</DialogTitle>
+                      <DialogTitle>
+                        {editingWorkflowId
+                          ? 'Editar Workflow de Aprovação'
+                          : 'Criar Workflow de Aprovação'}
+                      </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -401,9 +453,13 @@ const ApprovalWorkflowsPage = () => {
                       <Button
                         onClick={handleCreateWorkflow}
                         className="w-full"
-                        disabled={createWorkflow.isPending}
+                        disabled={createWorkflow.isPending || updateWorkflow.isPending}
                       >
-                        Criar Workflow
+                        {editingWorkflowId
+                          ? updateWorkflow.isPending
+                            ? 'Salvando...'
+                            : 'Salvar Alterações'
+                          : 'Criar Workflow'}
                       </Button>
                     </div>
                   </DialogContent>
@@ -454,6 +510,76 @@ const ApprovalWorkflowsPage = () => {
               </Card>
             ))}
           </motion.div>
+
+          {/* Workflows (gestão: admin/gestor) */}
+          {isAdminOrManager && (
+            <motion.div variants={itemVariants} className="space-y-3">
+              <h2 className="font-display font-semibold">Workflows</h2>
+              {loadingWorkflows ? (
+                <Skeleton className="h-16 rounded-xl" />
+              ) : !workflows?.length ? (
+                <Card className="p-6 text-center glass border-border/40">
+                  <p className="text-sm text-muted-foreground">
+                    Nenhum workflow cadastrado.
+                  </p>
+                </Card>
+              ) : (
+                workflows.map(w => (
+                  <Card key={w.id} className="glass border-border/40">
+                    <CardContent className="p-4 flex items-center justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-sm font-medium truncate">{w.name}</span>
+                          <Badge variant="secondary" className="text-[10px]">
+                            {TYPE_LABELS[w.workflow_type] ?? w.workflow_type}
+                          </Badge>
+                          {!w.is_active && (
+                            <Badge variant="outline" className="text-[10px]">
+                              Inativo
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {w.required_approvers} aprovador(es)
+                          {w.threshold_amount != null &&
+                            ` · acima de ${formatBRL(w.threshold_amount, { decimals: 2 })}`}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Switch
+                          checked={w.is_active}
+                          disabled={toggleWorkflow.isPending}
+                          onCheckedChange={checked =>
+                            toggleWorkflow.mutate({ id: w.id, is_active: checked })
+                          }
+                          aria-label={
+                            w.is_active ? 'Desativar workflow' : 'Ativar workflow'
+                          }
+                        />
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => openEditWorkflow(w)}
+                          aria-label="Editar workflow"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="text-destructive hover:bg-destructive/10"
+                          onClick={() => setDeleteTarget(w)}
+                          aria-label="Excluir workflow"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </motion.div>
+          )}
 
           {/* Filter Tabs */}
           <motion.div variants={itemVariants}>
@@ -619,6 +745,37 @@ const ApprovalWorkflowsPage = () => {
               </div>
             </DialogContent>
           </Dialog>
+
+          <AlertDialog
+            open={!!deleteTarget}
+            onOpenChange={open => !open && setDeleteTarget(null)}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Excluir workflow?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  O workflow <strong>{deleteTarget?.name}</strong> será excluído
+                  permanentemente. Se houver solicitações vinculadas, a exclusão será
+                  bloqueada — desative-o para preservar o histórico.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={deleteWorkflow.isPending}>
+                  Cancelar
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={e => {
+                    e.preventDefault();
+                    handleDeleteWorkflow();
+                  }}
+                  disabled={deleteWorkflow.isPending}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleteWorkflow.isPending ? 'Excluindo…' : 'Excluir'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </motion.div>
       </PageTransition>
     </>

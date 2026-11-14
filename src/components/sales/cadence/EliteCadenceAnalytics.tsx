@@ -6,62 +6,14 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Zap,
-  Target,
-  TrendingUp,
-  CheckCircle2,
-  BarChart2,
-  ArrowRight,
-  Sparkles,
-  ArrowUpRight,
-  Layers,
-  Activity,
-} from 'lucide-react';
+import { Zap, Target, TrendingUp, Sparkles, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useCadenceChannelStats } from '@/hooks/cadences/useCadenceChannelStats';
+
+const PERIOD_DAYS = 30;
 
 export function EliteCadenceAnalytics() {
-  const { data: metrics, isLoading } = useQuery({
-    queryKey: ['elite-cadence-analytics'],
-    queryFn: async () => {
-      // Pareto Insight Logic: Analisando performance por tipo de ação
-      const { data: stepStats } = await supabase
-        .from('cadence_tasks')
-        .select('status, cadence_step:cadence_steps(action_type)');
-
-      const statsByChannel: Record<string, { total: number; completed: number }> = {};
-
-      stepStats?.forEach(
-        (task: { status?: string; cadence_step?: { action_type?: string } | null }) => {
-          const type = task.cadence_step?.action_type || 'other';
-          if (!statsByChannel[type]) statsByChannel[type] = { total: 0, completed: 0 };
-          statsByChannel[type].total++;
-          if (task.status === 'completed') statsByChannel[type].completed++;
-        }
-      );
-
-      const channels = Object.entries(statsByChannel)
-        .map(([type, s]) => ({
-          type,
-          rate: s.total > 0 ? (s.completed / s.total) * 100 : 0,
-          total: s.total,
-        }))
-        .sort((a, b) => b.rate - a.rate);
-
-      return {
-        channels,
-        paretoInsight: channels[0], // O canal que mais converte (Top 20%)
-        efficiencyScore: 88, // Mock score for overall engine
-        matrixShifts: [
-          { from: 'Step 1 (E-mail)', to: 'Step 2 (WhatsApp)', drop: 12, lift: 85 },
-          { from: 'Step 2 (WhatsApp)', to: 'Step 3 (Call)', drop: 5, lift: 92 },
-        ],
-      };
-    },
-  });
+  const { data: metrics, isLoading, isError } = useCadenceChannelStats(PERIOD_DAYS);
 
   if (isLoading)
     return (
@@ -69,6 +21,22 @@ export function EliteCadenceAnalytics() {
         Calculando Insights Neurais...
       </div>
     );
+
+  if (isError)
+    return (
+      <div className="h-64 flex items-center justify-center text-destructive">
+        Não foi possível carregar as métricas de cadência. Tente novamente.
+      </div>
+    );
+
+  if (!metrics || metrics.totalTasks === 0)
+    return (
+      <div className="h-64 flex items-center justify-center text-muted-foreground">
+        Nenhuma tarefa de cadência agendada nos últimos {PERIOD_DAYS} dias.
+      </div>
+    );
+
+  const top = metrics.topChannel;
 
   return (
     <div className="space-y-6">
@@ -92,11 +60,9 @@ export function EliteCadenceAnalytics() {
               Otimização Estratégica
             </CardTitle>
             <CardDescription className="text-base text-muted-foreground/80">
-              Sua cadência está performando 15% acima da média do setor. O canal{' '}
-              <span className="text-primary font-bold uppercase">
-                {metrics?.paretoInsight?.type}
-              </span>{' '}
-              é o seu motor principal de engajamento.
+              Nos últimos {metrics.days} dias, o canal{' '}
+              <span className="text-primary font-bold uppercase">{top?.type}</span> teve a
+              maior taxa de conclusão de tarefas.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -105,11 +71,12 @@ export function EliteCadenceAnalytics() {
                 <TrendingUp className="h-6 w-6" />
               </div>
               <div>
-                <p className="font-semibold">Recomendação de Shift:</p>
+                <p className="font-semibold">
+                  {top ? `${top.rate.toFixed(1)}% de conclusão` : '—'}
+                </p>
                 <p className="text-sm text-muted-foreground">
-                  Antecipe o passo de {metrics?.paretoInsight?.type} para o Dia 1.
-                  Projeção de{' '}
-                  <span className="text-success font-bold">+22% em agendamentos</span>.
+                  {top?.completed ?? 0} de {top?.total ?? 0} tarefas concluídas no canal{' '}
+                  {top?.type}.
                 </p>
               </div>
             </div>
@@ -120,7 +87,7 @@ export function EliteCadenceAnalytics() {
           <CardHeader>
             <CardTitle className="text-section-title text-sm font-medium flex items-center gap-2">
               <Activity className="h-4 w-4 text-primary" />
-              Elite Efficiency Score
+              Taxa de conclusão geral
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center pb-8">
@@ -145,16 +112,17 @@ export function EliteCadenceAnalytics() {
                   strokeDasharray="364.4"
                   initial={{ strokeDashoffset: 364.4 }}
                   animate={{
-                    strokeDashoffset:
-                      364.4 - (364.4 * (metrics?.efficiencyScore || 0)) / 100,
+                    strokeDashoffset: 364.4 - (364.4 * metrics.completionRate) / 100,
                   }}
                   className="text-primary"
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-bold">{metrics?.efficiencyScore}</span>
-                <span className="text-[10px] text-muted-foreground uppercase">
-                  Ranking S
+                <span className="text-3xl font-bold">
+                  {Math.round(metrics.completionRate)}%
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  {metrics.completedTasks} de {metrics.totalTasks} tarefas
                 </span>
               </div>
             </div>
@@ -162,125 +130,48 @@ export function EliteCadenceAnalytics() {
         </Card>
       </div>
 
-      {/* Matrix Shift Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="glass border-border/40">
-          <CardHeader>
-            <CardTitle className="text-section-title text-sm flex items-center gap-2">
-              <Layers className="h-4 w-4 text-purple-500" />
-              Matrix Shift Analytics (Fluxo de Etapas)
-            </CardTitle>
-            <CardDescription>
-              Visualização da progressão de leads entre steps neurais
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {metrics?.matrixShifts.map((shift, idx) => (
-              <div key={idx} className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
+      {/* Channel Health Matrix */}
+      <Card className="glass border-border/40">
+        <CardHeader>
+          <CardTitle className="text-section-title text-sm flex items-center gap-2">
+            <Target className="h-4 w-4 text-blue-500" />
+            Health Matrix por Canal (últimos {metrics.days} dias)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {metrics.channels.map(
+              (channel: { type: string; rate: number; total: number }) => (
+                <div key={channel.type} className="flex items-center gap-4">
+                  <div className="w-20 text-[10px] font-bold uppercase text-muted-foreground">
+                    {channel.type}
+                  </div>
+                  <div className="flex-1 h-8 bg-muted/20 rounded-lg overflow-hidden flex items-center px-1">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${channel.rate}%` }}
+                      className={`h-6 rounded-md flex items-center justify-end px-2 transition-all ${
+                        channel.rate > 70
+                          ? 'bg-success/40 text-success'
+                          : channel.rate > 40
+                            ? 'bg-warning/40 text-warning'
+                            : 'bg-destructive/40 text-destructive'
+                      }`}
+                    >
+                      <span className="text-[10px] font-bold">
+                        {channel.rate.toFixed(1)}%
+                      </span>
+                    </motion.div>
+                  </div>
+                  <div className="w-12 text-right">
                     <Badge variant="secondary" className="text-[10px]">
-                      {shift.from}
-                    </Badge>
-                    <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                    <Badge variant="outline" className="text-[10px] border-primary/20">
-                      {shift.to}
+                      {channel.total}
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-1 text-success text-xs font-bold">
-                    <ArrowUpRight className="h-3 w-3" />
-                    {shift.lift}% Conversion
-                  </div>
                 </div>
-                <div className="h-2 w-full bg-muted/30 rounded-full overflow-hidden flex">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${shift.lift}%` }}
-                    className="h-full bg-primary"
-                  />
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${shift.drop}%` }}
-                    className="h-full bg-destructive/40"
-                  />
-                </div>
-                <div className="flex justify-between mt-1">
-                  <span className="text-[9px] text-muted-foreground">
-                    Progresso: {shift.lift}%
-                  </span>
-                  <span className="text-[9px] text-destructive/60">
-                    Drop-off: {shift.drop}%
-                  </span>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Channel Health Matrix */}
-        <Card className="glass border-border/40">
-          <CardHeader>
-            <CardTitle className="text-section-title text-sm flex items-center gap-2">
-              <Target className="h-4 w-4 text-blue-500" />
-              Health Matrix por Canal
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {metrics?.channels.map(
-                (channel: { type: string; rate: number; total: number }) => (
-                  <div key={channel.type} className="flex items-center gap-4">
-                    <div className="w-20 text-[10px] font-bold uppercase text-muted-foreground">
-                      {channel.type}
-                    </div>
-                    <div className="flex-1 h-8 bg-muted/20 rounded-lg overflow-hidden flex items-center px-1">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${channel.rate}%` }}
-                        className={`h-6 rounded-md flex items-center justify-end px-2 transition-all ${
-                          channel.rate > 70
-                            ? 'bg-success/40 text-success'
-                            : channel.rate > 40
-                              ? 'bg-warning/40 text-warning'
-                              : 'bg-destructive/40 text-destructive'
-                        }`}
-                      >
-                        <span className="text-[10px] font-bold">
-                          {channel.rate.toFixed(1)}%
-                        </span>
-                      </motion.div>
-                    </div>
-                    <div className="w-12 text-right">
-                      <Badge variant="secondary" className="text-[10px]">
-                        {channel.total}
-                      </Badge>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Actionable Automations Footer */}
-      <Card className="glass border-border/40 border-l-4 border-l-primary shadow-lg">
-        <CardContent className="p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <CheckCircle2 className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-bold">Actionable Automations Ativas</p>
-              <p className="text-xs text-muted-foreground">
-                Otimização automática baseada em performance detectada
-              </p>
-            </div>
+              )
+            )}
           </div>
-          <Button variant="outline" size="sm" className="h-8 text-xs gap-2">
-            <BarChart2 className="h-3.5 w-3.5" />
-            Ver Log de Melhorias
-          </Button>
         </CardContent>
       </Card>
     </div>
