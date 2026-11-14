@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
