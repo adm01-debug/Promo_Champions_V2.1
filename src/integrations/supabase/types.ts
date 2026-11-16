@@ -10847,6 +10847,7 @@ export type Database = {
       monthly_sales_summary: {
         Row: {
           deals: number | null
+          lost_deals: number
           month: string
           revenue: number | null
           updated_at: string | null
@@ -10854,6 +10855,7 @@ export type Database = {
         }
         Insert: {
           deals?: number | null
+          lost_deals?: number
           month: string
           revenue?: number | null
           updated_at?: string | null
@@ -10861,6 +10863,7 @@ export type Database = {
         }
         Update: {
           deals?: number | null
+          lost_deals?: number
           month?: string
           revenue?: number | null
           updated_at?: string | null
@@ -11868,6 +11871,7 @@ export type Database = {
           starts_at: string
           status: string
           target_value: number
+          updated_at: string
           xp_multiplier: number
           xp_wagered: number
         }
@@ -11883,6 +11887,7 @@ export type Database = {
           starts_at?: string
           status?: string
           target_value: number
+          updated_at?: string
           xp_multiplier?: number
           xp_wagered?: number
         }
@@ -11898,6 +11903,7 @@ export type Database = {
           starts_at?: string
           status?: string
           target_value?: number
+          updated_at?: string
           xp_multiplier?: number
           xp_wagered?: number
         }
