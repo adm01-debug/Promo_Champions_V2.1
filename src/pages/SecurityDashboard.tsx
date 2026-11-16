@@ -27,6 +27,7 @@ import { GeoBlockingMap } from '@/components/security/GeoBlockingMap';
 import { MFASetup } from '@/components/security/MFASetup';
 import { BlockedIPsPanel } from '@/components/security/BlockedIPsPanel';
 import { RateLimitDashboard } from '@/components/security/RateLimitDashboard';
+import { SessionManager } from '@/components/security/SessionManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const SecurityDashboard = () => {
@@ -268,15 +269,19 @@ const SecurityDashboard = () => {
           </motion.div>
 
           <Tabs defaultValue="blocked-ips" className="space-y-4">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-lg grid-cols-3">
               <TabsTrigger value="blocked-ips">IPs Bloqueados</TabsTrigger>
               <TabsTrigger value="rate-limiting">Rate Limiting</TabsTrigger>
+              <TabsTrigger value="sessions">Sessões Ativas</TabsTrigger>
             </TabsList>
             <TabsContent value="blocked-ips">
               <BlockedIPsPanel />
             </TabsContent>
             <TabsContent value="rate-limiting">
               <RateLimitDashboard />
+            </TabsContent>
+            <TabsContent value="sessions">
+              <SessionManager />
             </TabsContent>
           </Tabs>
         </div>
