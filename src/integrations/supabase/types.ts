@@ -24546,6 +24546,7 @@ export type Database = {
         Args: { months_back?: number }
         Returns: {
           deals: number
+          lost_deals: number
           month: string
           revenue: number
           won_deals: number
