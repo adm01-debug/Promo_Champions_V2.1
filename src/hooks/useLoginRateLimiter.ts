@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 const MAX_ATTEMPTS = 5;
@@ -20,10 +20,23 @@ export function useLoginRateLimiter() {
     remainingSeconds: 0,
     attempts: 0,
   });
+  // Erro da consulta de lockout — o fluxo é fail-open (canAttempt: true),
+  // mas a UI pode avisar que a proteção está degradada.
+  const [queryError, setQueryError] = useState<unknown>(null);
+  // A consulta é disparada a cada mudança de e-mail; uma resposta atrasada
+  // do e-mail anterior não pode sobrescrever o status do e-mail atual.
+  const lastQueriedEmail = useRef<string | null>(null);
+  // Contador de geração: cobre também A→B→A (duas consultas do MESMO
+  // e-mail — a resposta tardia da primeira não pode sobrescrever a segunda).
+  const querySeq = useRef(0);
 
   const checkLoginAttempts = useCallback(
     async (email: string): Promise<LoginAttemptResult> => {
       const normalizedEmail = email.toLowerCase().trim();
+      lastQueriedEmail.current = normalizedEmail;
+      const seq = ++querySeq.current;
+      const isLatest = () =>
+        seq === querySeq.current && lastQueriedEmail.current === normalizedEmail;
 
       const { data, error } = await supabase.rpc('get_login_lockout_status', {
         p_email: normalizedEmail,
@@ -32,6 +45,14 @@ export function useLoginRateLimiter() {
       if (error) {
         if (import.meta.env.DEV) {
           console.error('Erro ao verificar tentativas de login:', error);
+        }
+        // Falha aberta (canAttempt) e estado limpo na tela — manter o
+        // lockout do e-mail anterior seria enganoso. Falha aberta é
+        // decisão deliberada: fail-closed bloquearia todo login quando a
+        // RPC cai. O chamador pode ler queryError para avisar a UI.
+        if (isLatest()) {
+          setQueryError(error);
+          setLockoutStatus({ isLocked: false, remainingSeconds: 0, attempts: 0 });
         }
         return {
           canAttempt: true,
@@ -50,7 +71,10 @@ export function useLoginRateLimiter() {
         remainingSeconds,
         attempts,
       };
-      setLockoutStatus(status);
+      if (isLatest()) {
+        setQueryError(null);
+        setLockoutStatus(status);
+      }
       return { canAttempt: !status.isLocked, lockoutStatus: status };
     },
     []
@@ -73,6 +97,15 @@ export function useLoginRateLimiter() {
       if (error && import.meta.env.DEV) {
         console.error('Erro ao registrar tentativa de login:', error);
       }
+
+      // Se o usuario ja trocou o e-mail no campo, esta resposta tardia nao
+      // pode deslocar o marcador nem limpar o lockout do e-mail atual.
+      // lastQueriedEmail null = nenhuma consulta ainda — pode refrescar.
+      if (
+        lastQueriedEmail.current !== null &&
+        lastQueriedEmail.current !== normalizedEmail
+      )
+        return;
 
       if (!success) {
         await checkLoginAttempts(normalizedEmail);
@@ -97,6 +130,7 @@ export function useLoginRateLimiter() {
 
   return {
     lockoutStatus,
+    queryError,
     checkLoginAttempts,
     recordLoginAttempt,
     formatRemainingTime,
