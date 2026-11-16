@@ -140,7 +140,7 @@ jobs:
       # no runner e a imagem postgres (container) nao tem aws cli.
       - name: Configurar credenciais AWS (off-site)
         if: steps.gate.outputs.run == 'true' && env.AWS_BACKUP_ACCESS_KEY_ID != '' && env.AWS_BACKUP_SECRET_ACCESS_KEY != '' && env.AWS_BACKUP_REGION != '' && env.AWS_BACKUP_BUCKET != ''
-        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           aws-access-key-id: ${{ secrets.AWS_BACKUP_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_BACKUP_SECRET_ACCESS_KEY }}
