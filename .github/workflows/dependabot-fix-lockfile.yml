@@ -5,6 +5,12 @@ name: Dependabot – Fix deno.lock
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
+  # Dispatch manual: o drift do deno.lock tambem aparece fora de PR do
+  # Dependabot (ex.: bump aplicado direto na main). Sem isto, a unica forma de
+  # regenerar o lockfile e abrir uma PR do Dependabot — e o gate
+  # "Edge Functions Lint (deno) / Lockfile drift check" trava toda PR ate la.
+  # Rode apontando o dispatch para a branch que deve receber o commit.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,12 +20,13 @@ jobs:
     name: Atualizar deno.lock desatualizado
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: github.actor == 'dependabot[bot]'
+    if: github.actor == 'dependabot[bot]' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout da branch do PR
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          # Em dispatch manual nao existe pull_request: usa a ref escolhida.
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Deno
