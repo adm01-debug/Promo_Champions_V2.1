@@ -38,9 +38,11 @@ import {
   Zap,
   Download,
   FileJson,
+  FileSpreadsheet,
   FileText,
 } from 'lucide-react';
 import { exportToCSV } from '@/lib/csvExporter';
+import { exportToExcel } from '@/lib/excelExporter';
 import { exportToPDF } from '@/lib/pdfExporter';
 
 import { SDRAdvancedFilters } from '@/components/sdr/SDRAdvancedFilters';
@@ -112,7 +114,7 @@ export default function SDRDashboard() {
     }
   };
 
-  const handleExport = async (format: 'csv' | 'pdf') => {
+  const handleExport = async (format: 'csv' | 'excel' | 'pdf') => {
     if (!metrics) {
       toast.error('Sem dados para exportar');
       return;
@@ -152,6 +154,8 @@ export default function SDRDashboard() {
     try {
       if (format === 'csv') {
         await exportToCSV(summaryData, `relatorio-sdr-resumo-${period}`);
+      } else if (format === 'excel') {
+        await exportToExcel(summaryData, `relatorio-sdr-resumo-${period}`, 'Resumo SDR');
       } else {
         await exportToPDF(
           summaryData,
@@ -283,6 +287,13 @@ export default function SDRDashboard() {
                             >
                               <FileJson className="h-4 w-4 text-green-500" />
                               Exportar CSV
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleExport('excel')}
+                              className="gap-2"
+                            >
+                              <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+                              Exportar Excel
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => handleExport('pdf')}
