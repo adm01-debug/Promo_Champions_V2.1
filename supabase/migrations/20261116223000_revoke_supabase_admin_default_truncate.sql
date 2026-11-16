@@ -1,3 +1,24 @@
+-- NAO APLICAVEL NESTE PROJETO (verificado em 2026-11-16, via apply-migration.yml).
+-- O comando exige ser o proprio supabase_admin ou superuser. O usuario do
+-- SUPABASE_DB_URL e `postgres`, que no Supabase gerenciado NAO e superuser nem
+-- membro de supabase_admin (confirmado: select current_user, rolsuper -> postgres,
+-- false; pg_auth_members -> 0). O DO block no fim desta migration falha de
+-- proposito quando o REVOKE nao tem efeito, entao o run aborta e a versao nao e
+-- registrada. Isso e por design do autor original, nao bug.
+--
+-- RISCO ATUAL: zero. O default ACL afeta apenas tabelas FUTURAS criadas por
+-- supabase_admin, e hoje nenhuma tabela de public concede TRUNCATE a
+-- anon/authenticated (verificado: 0 linhas em role_table_grants com
+-- privilege_type='TRUNCATE' para esses papeis).
+--
+-- MITIGACAO ALTERNATIVA: ao criar tabela nova pelo dashboard do Supabase (que
+-- usa supabase_admin), revogar TRUNCATE explicitamente na migration da propria
+-- tabela. A migration 20260902121000 ja cobre o default ACL do papel executor.
+--
+-- Mantida versionada para preservar o trabalho de origem
+-- (branch fix/hermes-graphify-p0-correcoes-20260911) e o teste de pos-condicao
+-- em supabase/tests/db01_default_acl_assertions.sql.
+--
 -- RESGATE: conteudo originalmente escrito na branch
 -- fix/hermes-graphify-p0-correcoes-20260911 como
 -- 20260910130000_revoke_supabase_admin_default_truncate.sql. Aquela branch tem
