@@ -9,6 +9,7 @@ import { Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { EngagementBadgeForContact } from './EngagementBadgeForContact';
+import { BestSendWindowCard } from './BestSendWindowCard';
 import { AutoPausedBadge } from './AutoPausedBadge';
 import { ResumeEnrollmentButton } from './ResumeEnrollmentButton';
 import { OutboundMessageLog } from '@/components/multichannel/OutboundMessageLog';
@@ -58,6 +59,16 @@ export function SequenceEnrollmentsDrawer({ open, onOpenChange, sequenceId }: Pr
                       {STATUS_LABEL[e.status] ?? e.status}
                     </Badge>
                   </div>
+                  {/* Melhores janelas de envio DESTE contato. O dado ja era
+                      agregado pela view contact_best_send_window e nao chegava
+                      a nenhuma tela por contato. */}
+                  <div className="mb-2">
+                    <BestSendWindowCard
+                      contactId={e.contact_id}
+                      contactType={e.contact_type as 'lead' | 'client'}
+                    />
+                  </div>
+
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
                     <span>Passo {e.current_step}</span>
                     <span>•</span>
