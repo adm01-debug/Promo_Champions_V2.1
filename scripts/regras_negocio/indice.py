@@ -197,6 +197,14 @@ def main() -> int:
         estado = f["status"]
         if f["idade_min"] is not None:
             estado += f" · {f['idade_min']} min atrás" if f["idade_min"] < 120 else f" · {f['idade_min'] // 60}h atrás"
+            # A idade é relativa ao instante da geração e congela junto com o
+            # arquivo: quem lê a branch dias depois (ou com o produtor parado)
+            # vê "15 min atrás" e confia em dado velho. O carimbo absoluto da
+            # coleta não envelhece, então a leitura antiga se denuncia sozinha.
+            # O `strip` abaixo já remove datas neste formato, logo o curto-circuito
+            # de "sem mudança estrutural" continua valendo.
+            if f["gerado"]:
+                estado += f" (coleta {f['gerado'].strftime('%Y-%m-%d %H:%M UTC')})"
         if f["avisos"]:
             estado += " · ⚠️ " + "; ".join(f["avisos"])
         L.append(f"| {desc} | **{nome}** | {como_ler(f)} | {estado} |")
