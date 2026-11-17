@@ -20524,6 +20524,33 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_allowed_domains: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          pattern: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          pattern: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          pattern?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       webhook_deliveries: {
         Row: {
           attempts: number
@@ -20570,6 +20597,38 @@ export type Database = {
             columns: ["webhook_id"]
             isOneToOne: false
             referencedRelation: "webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_dispatch_rate: {
+        Row: {
+          created_at: string
+          dispatched_at: string
+          id: string
+          subscription_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dispatched_at?: string
+          id?: string
+          subscription_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dispatched_at?: string
+          id?: string
+          subscription_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_dispatch_rate_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "winloss_webhook_subscriptions"
             referencedColumns: ["id"]
           },
         ]
@@ -21734,6 +21793,8 @@ export type Database = {
           id: string
           last_dispatch_at: string | null
           last_status: number | null
+          rate_limit_per_minute: number
+          rate_limit_window_seconds: number
           secret: string | null
           url: string
         }
@@ -21745,6 +21806,8 @@ export type Database = {
           id?: string
           last_dispatch_at?: string | null
           last_status?: number | null
+          rate_limit_per_minute?: number
+          rate_limit_window_seconds?: number
           secret?: string | null
           url: string
         }
@@ -21756,6 +21819,8 @@ export type Database = {
           id?: string
           last_dispatch_at?: string | null
           last_status?: number | null
+          rate_limit_per_minute?: number
+          rate_limit_window_seconds?: number
           secret?: string | null
           url?: string
         }
@@ -23868,6 +23933,10 @@ export type Database = {
           processed: number
         }[]
       }
+      check_webhook_rate_limit: {
+        Args: { _subscription_id: string }
+        Returns: boolean
+      }
       claim_daily_challenge_reward: {
         Args: { p_challenge_id: string }
         Returns: Json
@@ -24700,6 +24769,7 @@ export type Database = {
         Args: { p_destino: string; p_entity: string; p_origem: string }
         Returns: boolean
       }
+      is_webhook_host_allowed: { Args: { p_host: string }; Returns: boolean }
       log_audit_event: {
         Args: {
           _action: string
