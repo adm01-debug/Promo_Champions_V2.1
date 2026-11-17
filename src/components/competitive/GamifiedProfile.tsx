@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useGamifiedProfile } from '@/hooks/gamification/useGamifiedProfile';
 import { MyRaceCarMiniCard } from '@/components/profile/MyRaceCarMiniCard';
+import { XPHistoryTimeline } from '@/components/gamification/XPHistoryTimeline';
 
 interface GamifiedProfileProps {
   salespersonId?: string;
@@ -162,6 +163,11 @@ const GamifiedProfileComponent: FC<GamifiedProfileProps> = ({ salespersonId }) =
 
       {/* Race Arena mini card */}
       <MyRaceCarMiniCard salespersonId={salespersonId} />
+
+      {/* Extrato de XP: a tabela xp_history ja era gravada e nunca era lida, e
+          o vendedor via o saldo sem saber de onde veio. A RLS garante que cada
+          um ve o proprio extrato (admin/gestor veem o de todos). */}
+      {salespersonId && <XPHistoryTimeline salespersonId={salespersonId} />}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

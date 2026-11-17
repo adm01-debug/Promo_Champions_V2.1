@@ -35,6 +35,7 @@ import { RunRateProjectionCard } from '@/components/vendedor/RunRateProjectionCa
 import { EligibleBonusesCard } from '@/components/vendedor/EligibleBonusesCard';
 import { CoachingProgressCard } from '@/components/conversational/CoachingProgressCard';
 import { PersonalAssistantSummaryCard } from '@/components/dashboard/PersonalAssistantSummaryCard';
+import { MyAssignedTasks } from '@/components/dashboard/MyAssignedTasks';
 import { ClientContactAlertsWidget } from '@/components/vendedor/ClientContactAlertsWidget';
 import { useNavigate } from 'react-router-dom';
 
@@ -307,6 +308,13 @@ const VendedorDashboard = () => {
             />
 
             <PersonalAssistantSummaryCard onOpenHub={() => navigate('/meu-assistente')} />
+
+            {/* Tarefas que o gestor atribuiu a este vendedor. O componente se
+                esconde sozinho quando nao ha atribuicao ativa. Fecha o fluxo do
+                console de tarefas: antes o gestor atribuia e o vendedor nao
+                tinha onde ver nem submeter, e por isso a fila de aprovacao
+                (PendingApprovalsCard) nunca recebia nada. */}
+            <MyAssignedTasks />
 
             <RunRateProjectionCard
               salespersonId={id}

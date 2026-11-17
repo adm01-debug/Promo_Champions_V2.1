@@ -222,3 +222,47 @@ export function useAllSalespeopleXP() {
     gcTime: 15 * 60 * 1000,
   });
 }
+
+/** Uma linha do extrato de XP, como gravada em public.xp_history. */
+export interface XPHistory {
+  id: string;
+  salesperson_id: string;
+  xp_amount: number;
+  source_type: string;
+  source_id: string | null;
+  description: string | null;
+  created_at: string;
+}
+
+/**
+ * Extrato de XP do vendedor: de onde veio cada ganho, do mais recente para o
+ * mais antigo. A tabela xp_history ja era GRAVADA pelos fluxos de desafio,
+ * missao e sequencia (useDailyChallenges, useDailyMissions,
+ * useWeeklyChallenges) e nunca era LIDA por ninguem -- o saldo aparecia sem
+ * extrato, e pontuacao contestada por vendedor nao tinha como ser conferida.
+ *
+ * A RLS de xp_history ja permite a leitura certa:
+ *   (salesperson_id = get_current_salesperson_id()) OR is_admin_or_manager(auth.uid())
+ * ou seja, o vendedor ve o proprio extrato e admin/gestor ve o de todos.
+ */
+export function useXPHistory(salespersonId?: string) {
+  return useQuery({
+    queryKey: ['xp-history', salespersonId],
+    queryFn: async () => {
+      if (!salespersonId) return [];
+
+      const { data, error } = await supabase
+        .from('xp_history')
+        .select('*')
+        .eq('salesperson_id', salespersonId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (error) throw error;
+      return (data || []) as XPHistory[];
+    },
+    enabled: !!salespersonId,
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+}

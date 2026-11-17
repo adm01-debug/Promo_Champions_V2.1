@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-type TimelineEventType =
+// Exportados porque a timeline do pipeline (src/components/pipeline/DealTimeline.tsx)
+// filtra por tipo de evento e tipa a lista; antes so o hook os usava.
+export type TimelineEventType =
   'activity' | 'stage_change' | 'task_completed' | 'outcome' | 'chat';
 
-interface DealTimelineEvent {
+export interface DealTimelineEvent {
   id: string;
   type: TimelineEventType;
   timestamp: string;

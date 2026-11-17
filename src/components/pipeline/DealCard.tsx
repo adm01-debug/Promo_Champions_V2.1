@@ -34,6 +34,7 @@ import { SLACountdown } from './SLACountdown';
 import { useLeadScoreExplanation } from '@/hooks/scoring/useLeadScoreExplanation';
 import { useDealPlaybookProgress, usePlaybooksByStage } from '@/hooks/usePlaybooks';
 import { DealPlaybookModal } from './DealPlaybookModal';
+import { DealTimeline } from './DealTimeline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format, parseISO } from 'date-fns';
@@ -472,10 +473,16 @@ export const DealCard = ({
           updatedAt={deal.updated_at || deal.created_at}
         />
 
-        {/* Date */}
-        <div className="mt-2 pt-2 border-t border-border/30 flex items-center gap-1 text-[10px] text-muted-foreground">
-          <Calendar className="h-3 w-3" />
-          <span>{format(parseISO(deal.created_at), 'dd MMM', { locale: ptBR })}</span>
+        {/* Date + historico do negocio. A timeline so consulta o banco quando
+            o dialogo e aberto, e o proprio componente traz o botao: antes esse
+            historico existia apenas na analise de ganhos/perdidas, ou seja
+            depois do negocio fechado, quando nao servia mais para agir. */}
+        <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between gap-1 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            <span>{format(parseISO(deal.created_at), 'dd MMM', { locale: ptBR })}</span>
+          </div>
+          <DealTimeline deal={deal} />
         </div>
 
         <DealPlaybookModal
