@@ -220,6 +220,13 @@ $function$;
 
 -- ───────────────────────── triggers ─────────────────────────
 
+-- quotes_inbound.event_at existe em produção mas NENHUMA migration a cria:
+-- 20260706211719 cria a tabela com source_updated_at e sem event_at. Sem esta
+-- coluna o trigger abaixo faz todo INSERT/UPDATE em quotes_inbound falhar numa
+-- base montada pelo repo, derrubando o webhook receive-quote-sync. No-op em
+-- produção, onde a coluna já existe.
+ALTER TABLE public.quotes_inbound ADD COLUMN IF NOT EXISTS event_at timestamptz;
+
 DROP TRIGGER IF EXISTS trg_quotes_inbound_ordering_guard ON public.quotes_inbound;
 CREATE TRIGGER trg_quotes_inbound_ordering_guard
   BEFORE INSERT OR UPDATE ON public.quotes_inbound
