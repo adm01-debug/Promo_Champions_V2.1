@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAbcMatrixShifts } from './ABCMatrixShift';
+import { buildAbcMatrixShifts, type AbcMatrixShift } from './ABCMatrixShift';
 
 type Cls = 'A' | 'B' | 'C';
 const item = (name: string, revenue: number, classification: Cls) => ({
@@ -9,6 +9,17 @@ const item = (name: string, revenue: number, classification: Cls) => ({
   cumulativePercentage: 0,
   classification,
 });
+
+/**
+ * Primeira mudanca da lista, com o tipo estreitado. Sob
+ * noUncheckedIndexedAccess o acesso por indice devolve `| undefined`, e um
+ * teste que sondasse campo de undefined passaria calado; aqui ele falha alto.
+ */
+function primeira(shifts: AbcMatrixShift[]): AbcMatrixShift {
+  const [shift] = shifts;
+  if (!shift) throw new Error('esperava ao menos uma mudanca de classe');
+  return shift;
+}
 
 describe('buildAbcMatrixShifts', () => {
   it('não gera nada quando falta uma das janelas', () => {
@@ -30,9 +41,8 @@ describe('buildAbcMatrixShifts', () => {
   });
 
   it('reporta subida de classe com a variação medida e as duas receitas', () => {
-    const [shift] = buildAbcMatrixShifts(
-      [item('Cresceu', 150, 'A')],
-      [item('Cresceu', 100, 'C')]
+    const shift = primeira(
+      buildAbcMatrixShifts([item('Cresceu', 150, 'A')], [item('Cresceu', 100, 'C')])
     );
     expect(shift.from).toBe('C');
     expect(shift.to).toBe('A');
@@ -42,9 +52,8 @@ describe('buildAbcMatrixShifts', () => {
   });
 
   it('reporta queda de classe com variação negativa', () => {
-    const [shift] = buildAbcMatrixShifts(
-      [item('Caiu', 40, 'C')],
-      [item('Caiu', 100, 'A')]
+    const shift = primeira(
+      buildAbcMatrixShifts([item('Caiu', 40, 'C')], [item('Caiu', 100, 'A')])
     );
     expect(shift.from).toBe('A');
     expect(shift.to).toBe('C');
@@ -60,9 +69,8 @@ describe('buildAbcMatrixShifts', () => {
   });
 
   it('não divide por zero quando a janela anterior tinha receita 0', () => {
-    const [shift] = buildAbcMatrixShifts(
-      [item('Zerado', 100, 'A')],
-      [item('Zerado', 0, 'C')]
+    const shift = primeira(
+      buildAbcMatrixShifts([item('Zerado', 100, 'A')], [item('Zerado', 0, 'C')])
     );
     expect(Number.isFinite(shift.changePct)).toBe(true);
     expect(shift.changePct).toBe(100);
